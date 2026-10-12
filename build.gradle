@@ -61,6 +61,9 @@ neoForge {
             if (project.providers.gradleProperty('miteWoodenEquipmentSmoke').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.woodenEquipmentSmoke', 'true'
             }
+            if (project.providers.gradleProperty('miteGrassMiningSmoke').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.grassMiningSmoke', 'true'
+            }
         }
         server {
             server()

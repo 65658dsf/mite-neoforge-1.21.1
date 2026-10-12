@@ -41,3 +41,7 @@ Composition/framing: square canvas, one centered diagonal club inside the centra
 Scene/backdrop: genuine transparent alpha outside the item and in gaps; no drawn checkerboard.
 Avoid: sword blade, sharp cutting edge, crossguard, metal, nails, spikes, stone, straps, extra objects, text, signature, border, glow, shadow, ground, scenery, gradients, antialiasing or perspective background.
 ```
+
+## 013 模型方向修正
+
+用户实测指出手持方向错误。PNG 的斜向与原版 handheld 预期相反，已仅调整模型 `display`，在显示时将局部几何顺时针转90°，并保留原平移/缩放及左右手镜像语义。物品栏改为头在右上、柄在左下，手持向上直立；PNG 原始内容不变。本次没有生成或编辑位图，实机证据见 [013 验收](../testing/013-grass-and-club.md)。

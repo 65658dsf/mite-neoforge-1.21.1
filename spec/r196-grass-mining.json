@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "analysis_date": "2026-10-12",
+  "feature": "草、蕨、枯灌木采集硬度与铁剪刀效率",
+  "status": "已核对原始注册、继承链及字节码；记录已决现代适配，不声明游戏验证通过。",
+  "source": {
+    "archive": "MITE 1.6.4 R196.zip",
+    "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+    "decompiler": "CFR 0.152",
+    "line_basis": ".reference/r196/decompiled/*.java",
+    "runtime_inventory": "reference-data/runtime-registry.json",
+    "modern_source_jar": "build/moddev/artifacts/neoforge-21.1.259-sources.jar"
+  },
+  "rules": [
+    {
+      "id": "grass_actual_registered_hardness",
+      "evidence_status": "confirmed_static_runtime_and_bytecode",
+      "blocks": [
+        {"id": 31, "symbol": "aqz.ac", "class": "aqv", "source_file": "BlockTallGrass.java", "valid_metadata": [1, 2], "metadata_names": {"1": "草", "2": "蕨"}, "hardness": 0.02, "hardness_bits": "0x3ca3d70a", "min_harvest_level": 0, "portable": false},
+        {"id": 32, "symbol": "aqz.ad", "class": "ant", "source_file": "BlockDeadBush.java", "valid_metadata": [0, 1], "metadata_names": {"0": "普通枯灌木", "1": "Witherwood"}, "hardness": 0.02, "hardness_bits": "0x3ca3d70a", "min_harvest_level": 0, "portable": false}
+      ],
+      "rejected_inference": "BlockHardness.deadBush=0.04 不是 aqz.ad 的实际注册值；纹理槽不等于有效 metadata。",
+      "sources": [
+        {"class": "aqz", "line": 2291, "symbol": "ac", "bytecode_method": "<clinit>", "bytecode_offsets": [1453, 1456], "bytecode_fact": "加载 0.02f 后调用硬度 setter。"},
+        {"class": "aqz", "line": 2292, "symbol": "ad", "bytecode_method": "<clinit>", "bytecode_offsets": [1492, 1495], "bytecode_fact": "加载 0.02f 后调用硬度 setter。"},
+        {"class": "BlockHardness", "line": 30, "symbol": "deadBush"},
+        {"class": "aqv", "line": 47, "symbol": "isValidMetadata"},
+        {"class": "ant", "line": 50, "symbol": "isValidMetadata"}
+      ]
+    },
+    {
+      "id": "grass_not_portable",
+      "inheritance_paths": [["aqv", "BlockPlant", "aqz"], ["ant", "ane", "BlockPlant", "aqz"]],
+      "portable": false,
+      "hardness_read_path": ["abw.getBlockHardness", "aqz.getBlockHardness", "aqz.cG"],
+      "general_portable_semantics": "S_min=4f*H；最后 max(S,S_min)。这是强度下限及最多128次累加的慢速保护，不是必须至少128tick。草类不适用。",
+      "sources": [
+        {"class": "aqv", "line": 5, "symbol": "extends BlockPlant"},
+        {"class": "ant", "line": 7, "symbol": "extends ane"},
+        {"class": "ane", "line": 5, "symbol": "extends BlockPlant"},
+        {"class": "BlockPlant", "line": 5, "symbol": "extends aqz"},
+        {"class": "abw", "line": 278, "symbol": "getBlockHardness"},
+        {"class": "aqz", "line": 654, "symbol": "getBlockHardness"},
+        {"class": "aqz", "line": 1687, "symbol": "isPortable", "bytecode_offsets": [0, 1], "bytecode_fact": "iconst_0; ireturn"},
+        {"class": "uf", "line": 787, "symbol": "getCurrentPlayerStrVsBlock", "bytecode_offsets": [65, 71, 76, 401]}
+      ]
+    },
+    {
+      "id": "grass_hand_ordinary_item_and_club",
+      "block_material": "akc.l / vine",
+      "requires_tool": false,
+      "base_strength": 1.0,
+      "behavior": "普通物或无效工具先返回小于1的工具强度，再由玩家递归回退为空手。木棒有效材料列表不包含vine，因此同样为1。",
+      "skill_gate": false,
+      "sources": [
+        {"class": "aqv", "line": 10, "symbol": "constructor"},
+        {"class": "ant", "line": 12, "symbol": "constructor"},
+        {"class": "akc", "line": 648, "symbol": "l"},
+        {"class": "yc", "line": 559, "symbol": "getStrVsBlock"},
+        {"class": "ItemCudgel", "line": 8, "symbol": "addMaterialsEffectiveAgainst"},
+        {"class": "xj", "line": 125, "symbol": "isEffectiveAgainstBlock"},
+        {"class": "xj", "line": 134, "symbol": "getStrVsBlock"},
+        {"class": "uf", "line": 791, "symbol": "getCurrentPlayerStrVsBlock"},
+        {"class": "uf", "line": 802, "symbol": "requiresTool"}
+      ]
+    },
+    {
+      "id": "grass_shears_and_scythe",
+      "base_efficiency": 4.0,
+      "strength_by_material": {"rusted_iron": 5.0, "copper": 7.0, "silver": 7.0, "gold": 7.0, "iron": 8.0, "mithril": 10.0, "adamantium": 12.0, "ancient_metal": 8.0},
+      "shears": {"class": "yx", "effective_against": ["aqz.ac:1", "aqz.ac:2", "aqz.ad:0", "aqz.ad:1"], "basis": "vine属于有效材料，工具等级满足方块最低等级0。", "right_click_is_separate_path": true},
+      "scythe": {"class": "ItemScythe", "effective_block_list": ["aqz.ac", "aqz.aE"], "grass_and_fern_use_material_efficiency": true, "dead_bush_falls_back_to_hand_strength": 1.0},
+      "sources": [
+        {"class": "yx", "line": 8, "symbol": "addMaterialsEffectiveAgainst"},
+        {"class": "yx", "line": 19, "symbol": "getBaseHarvestEfficiency"},
+        {"class": "yx", "line": 70, "symbol": "onItemRightClick"},
+        {"class": "yc", "line": 104, "symbol": "bg"},
+        {"class": "ItemScythe", "line": 8, "symbol": "addBlocksEffectiveAgainst"},
+        {"class": "xj", "line": 43, "symbol": "getBaseHarvestEfficiency"},
+        {"class": "xj", "line": 57, "symbol": "getMultipliedHarvestEfficiency"},
+        {"class": "xj", "line": 65, "symbol": "getMaterialHarvestEfficiency"}
+      ]
+    },
+    {
+      "id": "grass_progress_arithmetic",
+      "arithmetic": "每个运算按Java IEEE-754 float舍入；逐次float累加到>=1。",
+      "food_energy_original": "satiation + nutrition != 0",
+      "ordered_steps": ["无能量时 S/=5f", "S*=1f+level*0.02f", "relative=H/S", "relative<0.0029296875f 时 progress=1f", "否则 progress=(1f/relative)/512f"],
+      "instant_threshold": 0.0029296875,
+      "instant_comparison": "strict_less_than",
+      "level_minus40_factor": 0.20000004768371582,
+      "level_minus40_factor_bits": "0x3e4cccd0",
+      "sources": [
+        {"class": "uf", "line": 558, "symbol": "getLevelModifier"},
+        {"class": "uf", "line": 825, "symbol": "getCurrentPlayerStrVsBlock", "bytecode_offsets": [380, 393, 394], "bytecode_fact": "食物 fdiv 在等级 fadd/fmul 之前。"},
+        {"class": "uf", "line": 831, "symbol": "getRelativeBlockHardness", "bytecode_offsets": [82, 87, 91], "bytecode_fact": "H/S 后严格小于阈值才返回0相对硬度。"},
+        {"class": "uf", "line": 850, "symbol": "getRelativeStrVsBlock", "bytecode_offsets": [34]},
+        {"class": "uf", "line": 861, "symbol": "getDamageVsBlock", "bytecode_offsets": [12]},
+        {"class": "uf", "line": 1735, "symbol": "hasFoodEnergy"}
+      ]
+    },
+    {
+      "id": "grass_progress_update_timing",
+      "unit": "有效进度累加次数，非完整输入到服务端确认tick数。",
+      "first_click": "progress>=1 时可立即破坏；否则累计值初始化为0，不把该次计算当累计。",
+      "subsequent_update": "持续采集每次累加getDamageVsBlock，达到1完成。",
+      "post_break_cooldown_ticks": 5,
+      "sources": [
+        {"class": "bdc", "line": 141, "symbol": "clickBlock"},
+        {"class": "bdc", "line": 150, "symbol": "damage_vs_block >= 1"},
+        {"class": "bdc", "line": 190, "symbol": "onPlayerDamageBlock"},
+        {"class": "bdc", "line": 203, "symbol": "this.i = 5"}
+      ]
+    }
+  ],
+  "modern_adaptation": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.259",
+    "effective_hardness": 0.02,
+    "direct_counterparts": ["minecraft:short_grass", "minecraft:fern", "minecraft:dead_bush"],
+    "explicit_modern_double_plant_extension": ["minecraft:tall_grass", "minecraft:large_fern"],
+    "both_double_plant_halves": true,
+    "shears": {"item": "minecraft:shears", "base_mining_strength_on_five_targets": 8.0, "later_adjustments_retained": ["现代附魔", "现代环境", "食物", "等级"], "other_targets_keep_original_tool_rules": true},
+    "other_tools": "保留现代工具速度；不新增镰刀。",
+    "food_energy": "foodLevel>0；不是宣称已实现旧satiation/nutrition双资源。",
+    "cause_before_fix": "五种现代目标注册instabreak，原始硬度为0；R196纯公式对H0也会瞬破。现代剪刀对它们的原Tool默认强度为1，需同时局部适配铁剪刀8。",
+    "modern_sources": [
+      {"file_in_source_jar": "net/minecraft/world/level/block/Blocks.java", "lines": [776, 783, 790, 797, 804, 811, 3712, 3719, 3726, 3733]},
+      {"file_in_source_jar": "net/minecraft/world/level/block/state/BlockBehaviour.java", "lines": [1114, 1115]},
+      {"file_in_source_jar": "net/minecraft/world/item/ShearsItem.java", "lines": [27, 35]}
+    ],
+    "preserved_boundaries": ["不修改全局注册硬度或爆抗", "其它零硬度方块不改", "创造/旁观保留", "现有取消事件/非正强度保护保留", "现代掉落/双格联动/剪刀耐久保留", "第三方植物/剪刀不自动扩展"],
+    "not_implemented_here": ["全局portable规则", "旧剪刀右键剪取", "旧草种子/枯灌木掉落概率", "Witherwood功能", "镰刀", "全量旧工具/技能/品质/耐久体系"]
+  },
+  "acceptance_vectors": [
+    {"id": "hand_or_club_level0_fed", "hardness": 0.02, "base_strength": 1.0, "level": 0, "has_food_energy": true, "strength_bits": "0x3f800000", "progress": 0.09765625, "progress_bits": "0x3dc80000", "increments": 11},
+    {"id": "iron_shears_level0_fed", "hardness": 0.02, "base_strength": 8.0, "level": 0, "has_food_energy": true, "strength_bits": "0x41000000", "progress": 1.0, "progress_bits": "0x3f800000", "increments": 1, "instant_branch": true},
+    {"id": "rusted_iron_shears_level0_fed", "hardness": 0.02, "base_strength": 5.0, "level": 0, "has_food_energy": true, "strength_bits": "0x40a00000", "progress": 0.4882812798023224, "progress_bits": "0x3efa0001", "increments": 3, "scope": "R196证据；现代未新增该剪刀。"},
+    {"id": "copper_shears_level0_fed", "hardness": 0.02, "base_strength": 7.0, "level": 0, "has_food_energy": true, "strength_bits": "0x40e00000", "progress": 1.0, "progress_bits": "0x3f800000", "increments": 1, "instant_branch": true, "scope": "R196证据；现代未新增该剪刀。"},
+    {"id": "iron_shears_level0_starved", "hardness": 0.02, "base_strength": 8.0, "level": 0, "has_food_energy": false, "strength": 1.600000023841858, "strength_bits": "0x3fcccccd", "progress": 0.1562500149011612, "progress_bits": "0x3e200001", "increments": 7},
+    {"id": "iron_shears_level_minus40_fed", "hardness": 0.02, "base_strength": 8.0, "level": -40, "has_food_energy": true, "strength": 1.6000003814697266, "strength_bits": "0x3fccccd0", "progress": 0.15625004470348358, "progress_bits": "0x3e200003", "increments": 7},
+    {"id": "iron_shears_level_minus40_starved", "hardness": 0.02, "base_strength": 8.0, "level": -40, "has_food_energy": false, "strength": 0.3200000822544098, "strength_bits": "0x3ea3d70d", "progress": 0.031250011175870895, "progress_bits": "0x3d000003", "increments": 32},
+    {"id": "hand_or_club_level0_starved", "hardness": 0.02, "base_strength": 1.0, "level": 0, "has_food_energy": false, "strength_bits": "0x3e4ccccd", "progress": 0.01953125186264515, "progress_bits": "0x3ca00001", "increments": 52},
+    {"id": "hand_or_club_level_minus40_fed", "hardness": 0.02, "base_strength": 1.0, "level": -40, "has_food_energy": true, "strength_bits": "0x3e4cccd0", "progress": 0.019531255587935448, "progress_bits": "0x3ca00003", "increments": 52},
+    {"id": "hand_or_club_level_minus40_starved", "hardness": 0.02, "base_strength": 1.0, "level": -40, "has_food_energy": false, "strength_bits": "0x3d23d70d", "progress": 0.003906251396983862, "progress_bits": "0x3b800003", "increments": 256},
+    {"id": "grass_block_is_distinct", "hardness": 0.5, "base_strength": 1.0, "level": 0, "has_food_energy": true, "strength_bits": "0x3f800000", "progress": 0.00390625, "progress_bits": "0x3b800000", "increments": 256}
+  ],
+  "acceptance_matrix": [
+    "五种现代目标各检查空手、普通物、木棒和剪刀。",
+    "双格草/大型蕨的上下半部进度一致，保留现代另一半消失行为。",
+    "剪刀检查0级/负40级与有能量/无能量四组固定向量。",
+    "非目标草方块、花、藤蔓、树叶及剪刀原有其它有效目标不被新映射覆盖。",
+    "取消或非正BreakSpeed仍无进度；创造/旁观行为不扩改。",
+    "进度位型及累加次数与完整客户端输入耗时分开记录，不宣称本规格本身是游戏实测。"
+  ]
+}

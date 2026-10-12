@@ -18,6 +18,10 @@ public final class MiningProgress {
         if (raw < 0.0F) {
             return raw;
         }
+        // R196's tallgrass (grass/fern) and deadbush registrations use .02, not modern zero.
+        if (GrassMining.matches(state)) {
+            return 0.02F;
+        }
         if (state.is(Blocks.GRASS_BLOCK)) {
             return 0.5F;
         }

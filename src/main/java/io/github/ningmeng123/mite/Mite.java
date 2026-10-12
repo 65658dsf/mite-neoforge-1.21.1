@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite;
 
 import com.mojang.logging.LogUtils;
 import io.github.ningmeng123.mite.item.WoodenClubBehavior;
+import io.github.ningmeng123.mite.mining.GrassMining;
 import io.github.ningmeng123.mite.registry.MiteAttachments;
 import io.github.ningmeng123.mite.registry.MiteItems;
 import io.github.ningmeng123.mite.registry.MiteLootModifiers;
@@ -24,6 +25,7 @@ public final class Mite {
         MiteItems.register(modBus);
         MiteLootModifiers.register(modBus);
         modBus.addListener(WoodenClubBehavior::modifyComponents);
+        modBus.addListener(GrassMining::modifyShears);
         LOGGER.info("MITE: Modern initialized for Minecraft 1.21.1");
     }
 }
