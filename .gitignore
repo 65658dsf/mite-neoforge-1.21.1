@@ -1,0 +1,29 @@
+# Generated build and local game state
+.gradle/
+build/
+out/
+run/
+run-*/
+logs/
+crash-reports/
+.idea/
+*.iml
+.vscode/
+
+# Original game binaries, analysis dependencies and decompiled third-party code
+.reference/
+.tools/
+MITE 1.6.4 R196.zip
+*.class
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Machine-local files
+.env
+.env.*
+local.properties
+*.log
+hs_err_pid*
