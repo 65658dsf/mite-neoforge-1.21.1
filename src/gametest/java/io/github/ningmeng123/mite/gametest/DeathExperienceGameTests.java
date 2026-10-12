@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.registry.MiteAttachments;
 import io.github.ningmeng123.mite.survival.DeathExperience;
+import io.github.ningmeng123.mite.survival.DeathOrbQueue;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,6 +15,8 @@ import java.util.function.Consumer;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
@@ -39,8 +42,11 @@ public final class DeathExperienceGameTests {
         ServerPlayer player = newPlayer(helper);
         GameRules.BooleanValue keep = keepInventory(helper);
         boolean oldKeep = keep.get();
+        GameRules.BooleanValue loot = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOMOBLOOT);
+        boolean oldLoot = loot.get();
         try {
             keep.set(false, helper.getLevel().getServer());
+            loot.set(false, helper.getLevel().getServer());
             int[][] cases = {{20, 0}, {19, -1}, {0, -20}, {-1, -21}, {-20, -40},
                     {-779, -799}, {-780, -800}, {-799, -800}, {-800, -800}};
             for (int[] entry : cases) {
@@ -63,6 +69,7 @@ public final class DeathExperienceGameTests {
             }
         } finally {
             keep.set(oldKeep, helper.getLevel().getServer());
+            loot.set(oldLoot, helper.getLevel().getServer());
             clearDeathOrbs(helper);
             removePlayer(helper, player);
         }
@@ -86,6 +93,8 @@ public final class DeathExperienceGameTests {
                         "keepInventory suppresses death experience drops");
                 player.kill();
                 helper.assertValueEqual(deathOrbTotal(helper), 0, "keepInventory death produces no XP orbs");
+                helper.assertValueEqual(captureDropQueue(helper, player).pendingCount(), 0,
+                        "keepInventory death does not create delayed rewards");
                 player = respawn(helper, player, false);
                 assertTotal(helper, player, total);
                 assertNoPending(helper, player, "Exempt death clears pending state");
@@ -98,6 +107,8 @@ public final class DeathExperienceGameTests {
             helper.assertValueEqual(player.getExperienceReward(helper.getLevel(), null), 0,
                     "Spectators do not drop experience");
             player.kill();
+            helper.assertValueEqual(captureDropQueue(helper, player).pendingCount(), 0,
+                    "Spectator death does not create delayed rewards");
             player = respawn(helper, player, false);
             assertTotal(helper, player, -21);
             assertNoPending(helper, player, "Spectator death clears pending state");
@@ -137,8 +148,11 @@ public final class DeathExperienceGameTests {
         ServerPlayer loaded = null;
         GameRules.BooleanValue keep = keepInventory(helper);
         boolean oldKeep = keep.get();
+        GameRules.BooleanValue loot = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOMOBLOOT);
+        boolean oldLoot = loot.get();
         try {
             keep.set(false, helper.getLevel().getServer());
+            loot.set(false, helper.getLevel().getServer());
             PlayerExperience.setTotal(original, 19);
             prepareDeathPosition(helper, original);
             original.kill();
@@ -164,6 +178,7 @@ public final class DeathExperienceGameTests {
             assertTotal(helper, loaded, -21);
         } finally {
             keep.set(oldKeep, helper.getLevel().getServer());
+            loot.set(oldLoot, helper.getLevel().getServer());
             clearDeathOrbs(helper);
             removePlayer(helper, original);
             if (loaded != null) {
@@ -178,6 +193,8 @@ public final class DeathExperienceGameTests {
         ServerPlayer player = newPlayer(helper);
         GameRules.BooleanValue keep = keepInventory(helper);
         boolean oldKeep = keep.get();
+        GameRules.BooleanValue loot = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOMOBLOOT);
+        boolean oldLoot = loot.get();
         PlayerExperience.setTotal(player, 19);
         ServerPlayer target = player;
         Consumer<LivingDeathEvent> cancel = event -> {
@@ -188,6 +205,7 @@ public final class DeathExperienceGameTests {
         };
         try {
             keep.set(false, helper.getLevel().getServer());
+            loot.set(false, helper.getLevel().getServer());
             NeoForge.EVENT_BUS.addListener(LivingDeathEvent.class, cancel);
             try {
                 prepareDeathPosition(helper, player);
@@ -209,6 +227,7 @@ public final class DeathExperienceGameTests {
             assertTotal(helper, player, -1);
         } finally {
             keep.set(oldKeep, helper.getLevel().getServer());
+            loot.set(oldLoot, helper.getLevel().getServer());
             clearDeathOrbs(helper);
             removePlayer(helper, player);
         }
@@ -232,7 +251,16 @@ public final class DeathExperienceGameTests {
                 helper.assertValueEqual(player.getExperienceReward(helper.getLevel(), null), entry[1],
                         "Death reward uses integer total/3 before any respawn penalty");
                 player.kill();
-                helper.assertValueEqual(deathOrbTotal(helper), entry[1], "Actual spawned and merged orbs preserve total death XP");
+                helper.assertValueEqual(deathOrbTotal(helper), 0, "Death XP is not emitted immediately");
+                DeathOrbQueue captured = captureDropQueue(helper, player);
+                helper.assertValueEqual(captured.pendingCount(), entry[1] > 0 ? 1 : 0,
+                        "Death creates exactly one positive reward record");
+                for (int tick = 1; tick <= 20; tick++) {
+                    captured = advanceQueueOneTick(helper, captured);
+                    helper.assertValueEqual(deathOrbTotal(helper), tick < 20 ? 0 : entry[1],
+                            "The captured death reward emits only after twenty loaded ticks");
+                }
+                helper.assertValueEqual(captured.pendingCount(), 0, "The emitted reward is consumed from its queue");
                 clearDeathOrbs(helper);
                 player = respawn(helper, player, false);
             }
@@ -243,6 +271,8 @@ public final class DeathExperienceGameTests {
                     "Disabling mob loot suppresses the death experience reward");
             player.kill();
             helper.assertValueEqual(deathOrbTotal(helper), 0, "Disabling mob loot produces no actual XP orbs");
+            helper.assertValueEqual(captureDropQueue(helper, player).pendingCount(), 0,
+                    "Disabling mob loot also suppresses delayed XP");
             player = respawn(helper, player, false);
             assertTotal(helper, player, 0);
         } finally {
@@ -279,6 +309,8 @@ public final class DeathExperienceGameTests {
         ServerPlayer player = newPlayer(helper);
         GameRules.BooleanValue keep = keepInventory(helper);
         boolean oldKeep = keep.get();
+        GameRules.BooleanValue loot = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOMOBLOOT);
+        boolean oldLoot = loot.get();
         List<ClientboundSetExperiencePacket> packets = new ArrayList<>();
         ChannelPipeline pipeline = player.connection.getConnection().channel().pipeline();
         pipeline.addLast(PACKET_CAPTURE, new ChannelOutboundHandlerAdapter() {
@@ -292,6 +324,7 @@ public final class DeathExperienceGameTests {
         });
         try {
             keep.set(false, helper.getLevel().getServer());
+            loot.set(false, helper.getLevel().getServer());
             PlayerExperience.setTotal(player, 0);
             player.doTick();
             packets.clear();
@@ -315,6 +348,7 @@ public final class DeathExperienceGameTests {
         } finally {
             pipeline.remove(PACKET_CAPTURE);
             keep.set(oldKeep, helper.getLevel().getServer());
+            loot.set(oldLoot, helper.getLevel().getServer());
             clearDeathOrbs(helper);
             removePlayer(helper, player);
         }
@@ -361,6 +395,7 @@ public final class DeathExperienceGameTests {
     }
 
     private static void removePlayer(GameTestHelper helper, ServerPlayer player) {
+        DeathOrbQueue.get(helper.getLevel()).removeForOwner(player.getUUID());
         ServerPlayer current = helper.getLevel().getServer().getPlayerList().getPlayer(player.getUUID());
         if (current != null) {
             helper.getLevel().getServer().getPlayerList().remove(current);
@@ -369,6 +404,31 @@ public final class DeathExperienceGameTests {
 
     private static GameRules.BooleanValue keepInventory(GameTestHelper helper) {
         return helper.getLevel().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY);
+    }
+
+    private static DeathOrbQueue captureDropQueue(GameTestHelper helper, ServerPlayer owner) {
+        DeathOrbQueue live = DeathOrbQueue.get(helper.getLevel());
+        CompoundTag saved = live.save(new CompoundTag(), helper.getLevel().registryAccess());
+        ListTag selected = new ListTag();
+        for (Tag entry : saved.getList("drops", Tag.TAG_COMPOUND)) {
+            CompoundTag drop = (CompoundTag) entry;
+            if (drop.hasUUID("owner") && drop.getUUID("owner").equals(owner.getUUID())) {
+                selected.add(drop.copy());
+            }
+        }
+        saved.put("drops", selected);
+        live.removeForOwner(owner.getUUID());
+        return DeathOrbQueue.load(saved, helper.getLevel().registryAccess());
+    }
+
+    private static DeathOrbQueue advanceQueueOneTick(GameTestHelper helper, DeathOrbQueue queue) {
+        CompoundTag saved = queue.save(new CompoundTag(), helper.getLevel().registryAccess());
+        for (Tag entry : saved.getList("drops", Tag.TAG_COMPOUND)) {
+            ((CompoundTag) entry).putLong("last_tick", helper.getLevel().getGameTime() - 1);
+        }
+        DeathOrbQueue restored = DeathOrbQueue.load(saved, helper.getLevel().registryAccess());
+        restored.tick(helper.getLevel());
+        return restored;
     }
 
     private static AABB deathArea(GameTestHelper helper) {

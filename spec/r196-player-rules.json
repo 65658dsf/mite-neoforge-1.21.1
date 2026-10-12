@@ -655,6 +655,43 @@
       "notes": [
         "Negative experience uses the ordinary green progress bar. Book GUI hides the legacy display; mounted jump bar takes precedence."
       ]
+    },
+    {
+      "id": "death_orb_ownership_lifetime_delay",
+      "evidence_status": "confirmed_bytecode",
+      "owner": "Exact case-sensitive player name in R196; controls both attraction and pickup.",
+      "lifetime_entity_ticks": 24000,
+      "ordinary_orb_lifetime_entity_ticks": 6000,
+      "legacy_age_range": [
+        -18000,
+        6000
+      ],
+      "delay": "DeathTime == 20 on the original corpse; early respawn may remove the corpse before delivery.",
+      "merge": "No orb merge implementation in R196.",
+      "evidence": [
+        {
+          "file": ".reference/r196/classes/oa.class",
+          "method": "l_",
+          "bytecode_offsets": "149-216 owner attraction, 573-594 age/despawn"
+        },
+        {
+          "file": ".reference/r196/classes/oa.class",
+          "method": "b_(uf)",
+          "bytecode_offsets": "10-54 reach/cooldown/owner checks"
+        },
+        {
+          "file": ".reference/r196/classes/of.class",
+          "method": "aB",
+          "bytecode_offsets": "37-43 death tick, 163-166 age initialization"
+        }
+      ],
+      "modern_adaptations": [
+        "UUID ownership, synchronized attachment version 1.",
+        "Snapshot final event reward and position at death; persistent dimension queue survives immediate respawn.",
+        "Pause countdown until original position has entities loaded and can entity-tick; no forced chunk loading.",
+        "Server age 0..23999; client waits for removal packet.",
+        "Disable all merges involving owned orbs; keep modern ordinary merging, mending, and collision/reach behavior."
+      ]
     }
   ],
   "validation_vectors": {
