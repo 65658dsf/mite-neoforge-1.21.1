@@ -36,6 +36,9 @@ public final class MiningProgress {
         if (rawHardness < 0.0F) {
             return 0.0F;
         }
+        if (LogHarvestRules.isBlocked(player, state)) {
+            return 0.0F;
+        }
         // This already includes modern tool/environment factors and our BreakSpeed level factor.
         float strength = player.getDigSpeed(state, pos);
         if (!(strength > 0.0F)) {

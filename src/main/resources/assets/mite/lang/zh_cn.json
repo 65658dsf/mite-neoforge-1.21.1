@@ -2,5 +2,6 @@
   "commands.mite.experience.level_too_high": "MITE 的最高经验等级为 %s，未更改目标玩家的经验。",
   "item.mite.flint_chip": "燧石碎片",
   "item.mite.sinew": "筋",
-  "item.mite.flint_hatchet": "燧石短斧"
+  "item.mite.flint_hatchet": "燧石短斧",
+  "message.mite.log_requires_axe": "需要燧石短斧或更好的斧头"
 }

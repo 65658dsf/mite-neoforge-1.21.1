@@ -1,0 +1,629 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "analysis_date": "2026-10-12",
+  "feature": "011 原木采集工具门槛",
+  "source": {
+    "archive": "MITE 1.6.4 R196.zip",
+    "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+    "decompiler": "CFR 0.152",
+    "line_basis": ".reference/r196/decompiled/*.java",
+    "runtime_inventory": "reference-data/runtime-registry.json"
+  },
+  "target": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.259"
+  },
+  "status": "规格与预期；不声明自动测试、客户端或联机实测已经完成。",
+  "rules": [
+    {
+      "id": "r196_log_requires_tool",
+      "evidence_status": "confirmed_static_and_runtime",
+      "r196_log_id": 17,
+      "species": [
+        "oak",
+        "spruce",
+        "birch",
+        "jungle"
+      ],
+      "material": "wood",
+      "material_min_harvest_level": 0,
+      "block_min_harvest_level": 1,
+      "block_hardness": 1.2,
+      "portable": false,
+      "requires_tool": true,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/arj.java",
+          "start_line": 7,
+          "end_line": 14
+        },
+        {
+          "file": ".reference/r196/decompiled/akc.java",
+          "start_line": 623,
+          "end_line": 623
+        },
+        {
+          "file": ".reference/r196/decompiled/aqz.java",
+          "start_line": 404,
+          "end_line": 404
+        },
+        {
+          "file": ".reference/r196/decompiled/akc.java",
+          "start_line": 324,
+          "end_line": 325
+        },
+        {
+          "file": ".reference/r196/decompiled/aqz.java",
+          "start_line": 1687,
+          "end_line": 1688
+        }
+      ],
+      "runtime_source": "reference-data/runtime-registry.json: blocks[id=17].scalars"
+    },
+    {
+      "id": "r196_tool_or_empty_hand",
+      "evidence_status": "confirmed_bytecode",
+      "order": [
+        "没有目标方块：强度0",
+        "硬度恰为0：强度1，后续相对硬度为0",
+        "便携方块：初始强度及最终下限均4H",
+        "应用持物且非空：读取工具对方块强度",
+        "持物强度<1：递归apply_held_item=false，不再使用持物效率",
+        "空手或回退：requiresTool?0:1",
+        "执行效果、环境、食物和等级，最后保持便携下限"
+      ],
+      "ordinary_item_strength": 0,
+      "effective_tool_condition": "有效材料/方块目标，并且工具采集等级>=方块最低等级；砂岩台阶有特殊提前放行分支。",
+      "ineffective_tool_strength": 0,
+      "default_skill_gate": false,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 774,
+          "end_line": 828,
+          "method": "getCurrentPlayerStrVsBlock",
+          "bytecode": "65检查portable；113读取持物速度；122 ifge 134，否则125..133递归false；186调用requiresTool，189..199选0/1。"
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 559,
+          "end_line": 560,
+          "method": "getStrVsBlock",
+          "bytecode": "0 fconst_0; 1 freturn"
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 125,
+          "end_line": 138,
+          "method": "isEffectiveAgainstBlock/getStrVsBlock",
+          "bytecode": "61读取工具等级；67读取方块门槛；70 if_icmplt 77。"
+        }
+      ]
+    },
+    {
+      "id": "r196_tier_zero_wood_and_tier_one_flint",
+      "evidence_status": "confirmed_bytecode",
+      "formula": "material_min==0 ? 0 : (material.isMetal() ? material_min : material_min-1)",
+      "wood_tier": 0,
+      "flint_tier": 1,
+      "wooden_axe_and_pickaxe_default_recipe": null,
+      "modern_wooden_axe": "保留现代物品和原木以外用途；在本轮低阶物品标签中，不能采集受限原木。",
+      "modern_other_axes": "仅适配原木采集资格，不宣称现代石/金/铁/钻石/下界合金完整对应R196等级。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 61,
+          "end_line": 62,
+          "method": "getMaterialHarvestLevel",
+          "bytecode": "0..11处理零门槛；18..31金属直接取门槛；34..42非金属减1。"
+        },
+        {
+          "file": ".reference/r196/decompiled/akc.java",
+          "start_line": 623,
+          "end_line": 624
+        },
+        {
+          "file": ".reference/r196/decompiled/aal.java",
+          "start_line": 5,
+          "end_line": 5
+        }
+      ]
+    },
+    {
+      "id": "r196_normal_progress_blocked",
+      "evidence_status": "confirmed_static",
+      "required_tool_and_no_effective_tool": {
+        "strength": 0,
+        "relative_hardness": -1,
+        "relative_strength": 0,
+        "progress": 0,
+        "ordinary_client_break": false
+      },
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 831,
+          "end_line": 862
+        },
+        {
+          "file": ".reference/r196/decompiled/bdc.java",
+          "start_line": 141,
+          "end_line": 143
+        },
+        {
+          "file": ".reference/r196/decompiled/bdc.java",
+          "start_line": 190,
+          "end_line": 200
+        }
+      ]
+    },
+    {
+      "id": "strict_modern_final_break",
+      "evidence_status": "r196_source_and_explicit_modern_security_adaptation",
+      "r196_ordinary_client": "进度0，正常输入不能完成破坏。",
+      "r196_server_gap": "收到complete信号可直接调用最终破坏；原代码先移除方块，再按canDamage控制掉落，存在移除但不掉落的校验缺口。",
+      "modern_required_behavior": "实际服务端破坏前重新验证当前目标与主手，不合格时保持方块、禁止掉落和挖掘磨损。",
+      "modern_recheck_cases": [
+        "正常破坏流程",
+        "直接进入最终破坏路径",
+        "有效工具开始后切空手",
+        "有效工具开始后切错工具或木斧"
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ka.java",
+          "start_line": 285,
+          "end_line": 291,
+          "method": "handleDiggingPacket",
+          "bytecode": "原complete路径389调用jw.b(III)Z。"
+        },
+        {
+          "file": ".reference/r196/decompiled/jw.java",
+          "start_line": 129,
+          "end_line": 149,
+          "method": "b(int,int,int)"
+        }
+      ]
+    },
+    {
+      "id": "mite:logs_requiring_axe",
+      "evidence_status": "explicit_modern_adaptation",
+      "registry": "block",
+      "default_values": [
+        "minecraft:acacia_log",
+        "minecraft:acacia_wood",
+        "minecraft:birch_log",
+        "minecraft:birch_wood",
+        "minecraft:cherry_log",
+        "minecraft:cherry_wood",
+        "minecraft:crimson_hyphae",
+        "minecraft:crimson_stem",
+        "minecraft:dark_oak_log",
+        "minecraft:dark_oak_wood",
+        "minecraft:jungle_log",
+        "minecraft:jungle_wood",
+        "minecraft:mangrove_log",
+        "minecraft:mangrove_wood",
+        "minecraft:oak_log",
+        "minecraft:oak_wood",
+        "minecraft:spruce_log",
+        "minecraft:spruce_wood",
+        "minecraft:stripped_acacia_log",
+        "minecraft:stripped_acacia_wood",
+        "minecraft:stripped_birch_log",
+        "minecraft:stripped_birch_wood",
+        "minecraft:stripped_cherry_log",
+        "minecraft:stripped_cherry_wood",
+        "minecraft:stripped_crimson_hyphae",
+        "minecraft:stripped_crimson_stem",
+        "minecraft:stripped_dark_oak_log",
+        "minecraft:stripped_dark_oak_wood",
+        "minecraft:stripped_jungle_log",
+        "minecraft:stripped_jungle_wood",
+        "minecraft:stripped_mangrove_log",
+        "minecraft:stripped_mangrove_wood",
+        "minecraft:stripped_oak_log",
+        "minecraft:stripped_oak_wood",
+        "minecraft:stripped_spruce_log",
+        "minecraft:stripped_spruce_wood",
+        "minecraft:stripped_warped_hyphae",
+        "minecraft:stripped_warped_stem",
+        "minecraft:warped_hyphae",
+        "minecraft:warped_stem"
+      ],
+      "default_count": 40,
+      "default_is_explicit_id_list": true,
+      "default_dynamic_reference_to_minecraft_logs": false,
+      "default_bamboo_block": false,
+      "default_stripped_bamboo_block": false,
+      "third_party_default": "未显式加入此标签的第三方方块不受限制；加入通用minecraft:logs本身不触发此规则。",
+      "datapack_opt_in": "数据包可增删mite:logs_requiring_axe成员，加入的第三方方块使用同样资格判定。",
+      "modern_expansion": [
+        "新版树种",
+        "原木各轴木块变体",
+        "去皮变体",
+        "绯红/诡异菌柄与菌核"
+      ],
+      "minecraft_evidence": {
+        "artifact": "build/moddev/artifacts/neoforge-21.1.259-client-extra-aka-minecraft-resources.jar",
+        "tag": "data/minecraft/tags/block/logs.json",
+        "root_values": [
+          "#minecraft:logs_that_burn",
+          "#minecraft:crimson_stems",
+          "#minecraft:warped_stems"
+        ],
+        "resolved_member_count": 40
+      }
+    },
+    {
+      "id": "modern_mainhand_qualification",
+      "evidence_status": "explicit_modern_adaptation",
+      "item_tag": "mite:below_log_mining_tier",
+      "default_low_tier_values": [
+        "minecraft:wooden_axe"
+      ],
+      "predicate_steps": [
+        "主手stack非空",
+        "stack.canPerformAction(ItemAbilities.AXE_DIG)",
+        "stack.getDestroySpeed(state)>1.0f",
+        "stack.isCorrectToolForDrops(state)",
+        "!stack.is(mite:below_log_mining_tier)"
+      ],
+      "combine": "AND；任一false即不合格。",
+      "offhand_can_substitute": false,
+      "speed_input": "工具对目标的基础强度；不是叠加急迫、等级、环境或食物后的玩家强度。",
+      "default_allowed_examples": [
+        "mite:flint_hatchet",
+        "minecraft:stone_axe",
+        "minecraft:golden_axe",
+        "minecraft:iron_axe",
+        "minecraft:diamond_axe",
+        "minecraft:netherite_axe"
+      ],
+      "default_denied_examples": [
+        "empty",
+        "minecraft:stick",
+        "minecraft:flint",
+        "mite:flint_chip",
+        "minecraft:wooden_axe",
+        "minecraft:iron_pickaxe",
+        "minecraft:iron_shovel",
+        "minecraft:iron_sword",
+        "minecraft:iron_hoe"
+      ],
+      "third_party_tools": "不要求AxeItem子类或固定ID，满足能力、速度、掉落资格且不在低阶标签即可；数据包可扩展低阶标签。"
+    },
+    {
+      "id": "modern_mode_and_existing_rules",
+      "evidence_status": "explicit_modern_adaptation",
+      "applies_to": [
+        "survival",
+        "adventure"
+      ],
+      "bypass_new_gate": [
+        "creative",
+        "spectator"
+      ],
+      "preserve": [
+        "原版冒险权限",
+        "已有事件取消",
+        "其他禁止破坏规则",
+        "已有基础进度、饥饿和等级倍率",
+        "已有掉落与磨损规则"
+      ],
+      "passing_gate_does_not_force_break": true
+    },
+    {
+      "id": "ungated_planks_and_table",
+      "evidence_status": "confirmed_static_and_runtime_with_limited_modern_scope",
+      "r196_planks": {
+        "id": 5,
+        "hardness": 0.8,
+        "min_harvest_level": 0,
+        "empty_hand_strength_at_level_zero": 1
+      },
+      "r196_crafting_table": {
+        "id": 58,
+        "hardness": 1.6,
+        "min_harvest_level": 0,
+        "portable": true,
+        "empty_hand_strength_at_level_zero": 6.4,
+        "normal_level_zero_progress": 0.0078125,
+        "normal_level_zero_progress_bits": "0x3c000000",
+        "effective_progress_steps": 128
+      },
+      "modern": "默认不封木板、工作台及其他未列入目标标签的家具；本轮不移植portable强度下限或128tick工作台时长。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/art.java",
+          "start_line": 9,
+          "end_line": 13
+        },
+        {
+          "file": ".reference/r196/decompiled/akc.java",
+          "start_line": 623,
+          "end_line": 623
+        },
+        {
+          "file": ".reference/r196/decompiled/arv.java",
+          "start_line": 13,
+          "end_line": 16
+        },
+        {
+          "file": ".reference/r196/decompiled/arv.java",
+          "start_line": 102,
+          "end_line": 103
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 787,
+          "end_line": 788
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 828,
+          "end_line": 828
+        }
+      ],
+      "runtime_source": "reference-data/runtime-registry.json: blocks[id=5 or id=58].scalars"
+    },
+    {
+      "id": "independent_effective_hardness",
+      "evidence_status": "existing_modern_adaptation",
+      "rule": "已实现的minecraft命名空间LOGS有效硬度1.2继续沿用。",
+      "third_party_opt_in_to_gate_changes_hardness": false,
+      "notes": [
+        "此门槛标签不改方块注册硬度、爆炸抗性和世界生成。",
+        "第三方方块加入采集门槛标签后仍使用其已有有效硬度规则。"
+      ]
+    },
+    {
+      "id": "starting_route_remains_obtainable",
+      "evidence_status": "cross_feature_contract",
+      "steps": [
+        "以空手采集砂砾取得燧石碎片或整燧石",
+        "4碎片合成1整燧石",
+        "保留现代木棍与皮革/线来源，1皮革拆为4筋",
+        "背包2×2合成燧石短斧",
+        "用短斧采集受限原木"
+      ],
+      "requires_preexisting_crafting_table": false,
+      "requires_preexisting_wooden_axe": false,
+      "related_spec": "spec/r196-flint-start.json"
+    }
+  ],
+  "acceptance": {
+    "vectors": [
+      {
+        "id": "empty_hand",
+        "target": "minecraft:oak_log",
+        "mainhand": "empty",
+        "allowed": false,
+        "progress": 0,
+        "final_break": false
+      },
+      {
+        "id": "ordinary_item",
+        "target": "minecraft:oak_log",
+        "mainhand": "minecraft:stick",
+        "allowed": false,
+        "progress": 0,
+        "final_break": false
+      },
+      {
+        "id": "whole_flint_is_not_tool",
+        "target": "minecraft:oak_log",
+        "mainhand": "minecraft:flint",
+        "allowed": false
+      },
+      {
+        "id": "wrong_pickaxe",
+        "target": "minecraft:oak_log",
+        "mainhand": "minecraft:diamond_pickaxe",
+        "allowed": false
+      },
+      {
+        "id": "wooden_axe_below_threshold",
+        "target": "minecraft:oak_log",
+        "mainhand": "minecraft:wooden_axe",
+        "allowed": false
+      },
+      {
+        "id": "flint_hatchet",
+        "target": "minecraft:oak_log",
+        "mainhand": "mite:flint_hatchet",
+        "allowed": true,
+        "level": 0,
+        "food_energy": true,
+        "on_ground": true,
+        "effects": [],
+        "effective_hardness": 1.2,
+        "tool_strength": 2.5,
+        "progress_bits": "0x3b855555",
+        "effective_float_progress_steps": 246
+      },
+      {
+        "id": "offhand_not_used",
+        "target": "minecraft:oak_log",
+        "mainhand": "empty",
+        "offhand": "mite:flint_hatchet",
+        "allowed": false
+      },
+      {
+        "id": "haste_and_levels_do_not_replace_tool",
+        "target": "minecraft:oak_log",
+        "mainhand": "minecraft:stick",
+        "level": 200,
+        "haste": true,
+        "allowed": false
+      },
+      {
+        "id": "final_break_rechecks_switch",
+        "target": "minecraft:oak_log",
+        "start_mainhand": "mite:flint_hatchet",
+        "completion_mainhand": "minecraft:wooden_axe",
+        "final_break": false,
+        "target_remains": true,
+        "drops_created": 0,
+        "tool_wear": 0
+      },
+      {
+        "id": "unqualified_custom_capability",
+        "axe_dig": false,
+        "base_speed": 8.0,
+        "correct_for_drops": true,
+        "low_tier_tag": false,
+        "allowed": false
+      },
+      {
+        "id": "unqualified_custom_speed",
+        "axe_dig": true,
+        "base_speed": 1.0,
+        "correct_for_drops": true,
+        "low_tier_tag": false,
+        "allowed": false
+      },
+      {
+        "id": "unqualified_custom_harvest",
+        "axe_dig": true,
+        "base_speed": 4.0,
+        "correct_for_drops": false,
+        "low_tier_tag": false,
+        "allowed": false
+      },
+      {
+        "id": "unqualified_custom_tier",
+        "axe_dig": true,
+        "base_speed": 4.0,
+        "correct_for_drops": true,
+        "low_tier_tag": true,
+        "allowed": false
+      },
+      {
+        "id": "qualified_custom_item",
+        "axe_dig": true,
+        "base_speed": 4.0,
+        "correct_for_drops": true,
+        "low_tier_tag": false,
+        "inherits_axe_item": false,
+        "allowed": true
+      },
+      {
+        "id": "ungated_vanilla_targets",
+        "targets": [
+          "minecraft:oak_planks",
+          "minecraft:crafting_table",
+          "minecraft:bamboo_block",
+          "minecraft:stripped_bamboo_block",
+          "minecraft:stone",
+          "minecraft:iron_ore",
+          "minecraft:dirt",
+          "minecraft:gravel",
+          "minecraft:oak_leaves"
+        ],
+        "new_gate_applies": false,
+        "previous_behavior_preserved": true
+      },
+      {
+        "id": "third_party_generic_logs_only",
+        "namespace": "example",
+        "in_minecraft_logs": true,
+        "in_mite_target_tag": false,
+        "new_gate_applies": false
+      },
+      {
+        "id": "third_party_opt_in",
+        "namespace": "example",
+        "in_mite_target_tag": true,
+        "mainhand": "empty",
+        "new_gate_applies": true,
+        "allowed": false,
+        "hardness_automatically_changed_to_1_2": false
+      },
+      {
+        "id": "creative_spectator_preserved",
+        "modes": [
+          "creative",
+          "spectator"
+        ],
+        "new_gate_applies": false
+      },
+      {
+        "id": "adventure_and_cancellation_preserved",
+        "qualified_axe": true,
+        "prior_permission_denied": true,
+        "final_break": false
+      }
+    ],
+    "all_vanilla_axe_expectations": {
+      "minecraft:wooden_axe": false,
+      "minecraft:stone_axe": true,
+      "minecraft:golden_axe": true,
+      "minecraft:iron_axe": true,
+      "minecraft:diamond_axe": true,
+      "minecraft:netherite_axe": true,
+      "mite:flint_hatchet": true
+    },
+    "default_members_to_test": [
+      "minecraft:acacia_log",
+      "minecraft:acacia_wood",
+      "minecraft:birch_log",
+      "minecraft:birch_wood",
+      "minecraft:cherry_log",
+      "minecraft:cherry_wood",
+      "minecraft:crimson_hyphae",
+      "minecraft:crimson_stem",
+      "minecraft:dark_oak_log",
+      "minecraft:dark_oak_wood",
+      "minecraft:jungle_log",
+      "minecraft:jungle_wood",
+      "minecraft:mangrove_log",
+      "minecraft:mangrove_wood",
+      "minecraft:oak_log",
+      "minecraft:oak_wood",
+      "minecraft:spruce_log",
+      "minecraft:spruce_wood",
+      "minecraft:stripped_acacia_log",
+      "minecraft:stripped_acacia_wood",
+      "minecraft:stripped_birch_log",
+      "minecraft:stripped_birch_wood",
+      "minecraft:stripped_cherry_log",
+      "minecraft:stripped_cherry_wood",
+      "minecraft:stripped_crimson_hyphae",
+      "minecraft:stripped_crimson_stem",
+      "minecraft:stripped_dark_oak_log",
+      "minecraft:stripped_dark_oak_wood",
+      "minecraft:stripped_jungle_log",
+      "minecraft:stripped_jungle_wood",
+      "minecraft:stripped_mangrove_log",
+      "minecraft:stripped_mangrove_wood",
+      "minecraft:stripped_oak_log",
+      "minecraft:stripped_oak_wood",
+      "minecraft:stripped_spruce_log",
+      "minecraft:stripped_spruce_wood",
+      "minecraft:stripped_warped_hyphae",
+      "minecraft:stripped_warped_stem",
+      "minecraft:warped_hyphae",
+      "minecraft:warped_stem"
+    ],
+    "required_integration": [
+      "客户端真实按键：不合格主手不能破坏，换短斧可破坏",
+      "服务端实际最终破坏：不合格工具保持方块、无掉落和磨损",
+      "开始后切不合格工具、直接最终破坏路径",
+      "目标标签与低阶工具标签重载、客户端同步",
+      "第三方方块默认豁免及显式选择加入",
+      "第三方工具能力资格与低阶覆盖",
+      "通过门槛不取消原有冒险或事件限制"
+    ],
+    "numeric_scope": "246次为零级正常条件下的有效float累加，不包含首次输入、服务器STOP容差和连挖冷却。"
+  },
+  "not_implemented": [
+    "完整R196材料等级与现代全部装备映射",
+    "石头和矿石的R196空手/错误工具门槛",
+    "便携方块采集强度下限及免磨损",
+    "旧版木板/工作台完整时长",
+    "原矿物与木制家具全部特殊行为",
+    "旧服务端伪造完成包移除方块的漏洞"
+  ]
+}

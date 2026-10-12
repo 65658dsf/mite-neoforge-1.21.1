@@ -2,5 +2,6 @@
   "commands.mite.experience.level_too_high": "MITE's maximum experience level is %s. No target's experience was changed.",
   "item.mite.flint_chip": "Flint Chip",
   "item.mite.sinew": "Sinew",
-  "item.mite.flint_hatchet": "Flint Hatchet"
+  "item.mite.flint_hatchet": "Flint Hatchet",
+  "message.mite.log_requires_axe": "Requires a flint hatchet or a better axe"
 }
