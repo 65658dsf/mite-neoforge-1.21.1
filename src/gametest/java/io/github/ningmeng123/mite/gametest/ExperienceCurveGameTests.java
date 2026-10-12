@@ -21,7 +21,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /**
  * Exercises the transformed vanilla XP APIs and their integer state in a server.
  * Expected thresholds are literal vectors from the R196 initializer bytecode;
- * the 0..200 gameplay cap and proportional level spending are modern decisions.
+ * the upper gameplay cap and proportional level spending are modern decisions.
  *
  * @author NingMeng123
  */
@@ -85,6 +85,13 @@ public final class ExperienceCurveGameTests {
         assertExperience(helper, player, 171, 4, 31, 60, "The level API used by anvils also spends the canonical total");
         player.giveExperiencePoints(1);
         assertExperience(helper, player, 172, 4, 32, 60, "The next point must not restore the pre-enchantment balance");
+
+        Player creative = helper.makeMockPlayer(GameType.CREATIVE);
+        PlayerExperience.setTotal(creative, -1);
+        creative.onEnchantmentPerformed(new ItemStack(Items.DIAMOND_SWORD), 0);
+        assertExperience(helper, creative, -1, -1, 19, 20, "Creative enchanting must not clear an existing debt");
+        creative.onEnchantmentPerformed(new ItemStack(Items.DIAMOND_SWORD), 1);
+        assertExperience(helper, creative, -21, -2, 19, 20, "The enchantment callback preserves signed level spending");
         helper.succeed();
     }
 
@@ -105,10 +112,12 @@ public final class ExperienceCurveGameTests {
         loaded.giveExperiencePoints(3);
         CompoundTag saved = new CompoundTag();
         loaded.addAdditionalSaveData(saved);
-        helper.assertValueEqual(saved.getInt(PlayerExperience.VERSION_TAG), 1, "Saving marks the canonical XP schema");
+        helper.assertValueEqual(saved.getInt(PlayerExperience.VERSION_TAG), PlayerExperience.CURRENT_VERSION,
+                "Saving marks the current canonical XP schema");
         helper.assertValueEqual(saved.getInt("XpTotal"), 493, "Saving preserves the exact total");
 
         // Conflicting derived fields must not override a versioned integer total.
+        saved.putInt(PlayerExperience.VERSION_TAG, 1);
         saved.putInt("XpLevel", 35);
         saved.putFloat("XpP", 0.9F);
         Player reloaded = helper.makeMockPlayer(GameType.SURVIVAL);
@@ -116,6 +125,10 @@ public final class ExperienceCurveGameTests {
         assertExperience(helper, reloaded, 493, 8, 53, 100, "Version one restores from total rather than stale derived fields");
         PlayerExperience.normalizeLoaded(reloaded, saved);
         assertExperience(helper, reloaded, 493, 8, 53, 100, "Normalizing a canonical save is idempotent");
+        saved.putInt(PlayerExperience.VERSION_TAG, PlayerExperience.CURRENT_VERSION);
+        saved.putInt("XpTotal", -1);
+        reloaded.readAdditionalSaveData(saved);
+        assertExperience(helper, reloaded, -1, -1, 19, 20, "The signed schema preserves negative canonical experience");
         helper.succeed();
     }
 
@@ -183,16 +196,32 @@ public final class ExperienceCurveGameTests {
         player.giveExperiencePoints(Integer.MAX_VALUE);
         assertExperience(helper, player, 203000, 200, 0, 1, "Repeated capped award cannot wrap the total");
         player.giveExperiencePoints(Integer.MIN_VALUE);
-        assertExperience(helper, player, 0, 0, 0, 20, "Large point subtraction clamps at zero");
+        assertExperience(helper, player, -800, -40, 0, 20, "Large point subtraction clamps at the debt floor");
         player.giveExperienceLevels(Integer.MAX_VALUE);
         assertExperience(helper, player, 203000, 200, 0, 1, "Large level addition stops at the gameplay cap");
         player.giveExperienceLevels(Integer.MIN_VALUE);
-        assertExperience(helper, player, 0, 0, 0, 20, "Large level subtraction cannot overflow");
+        assertExperience(helper, player, -800, -40, 0, 20, "Large level subtraction cannot overflow");
         PlayerExperience.setLevels(player, Integer.MAX_VALUE);
         PlayerExperience.setPoints(player, Integer.MAX_VALUE);
         assertExperience(helper, player, 203000, 200, 0, 1, "Set APIs cannot fill a nonexistent level 201 bar");
         PlayerExperience.setLevels(player, Integer.MIN_VALUE);
-        assertExperience(helper, player, 0, 0, 0, 20, "Negative target levels clamp all derived state");
+        assertExperience(helper, player, -800, -40, 0, 20, "Extreme negative target levels clamp all derived state");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void negativeExperienceUsesTheSameModelInEveryGameMode(GameTestHelper helper) {
+        for (GameType mode : GameType.values()) {
+            Player player = helper.makeMockPlayer(mode);
+            PlayerExperience.setTotal(player, -21);
+            assertExperience(helper, player, -21, -2, 19, 20, mode + " keeps signed experience");
+            player.giveExperiencePoints(1);
+            assertExperience(helper, player, -20, -1, 0, 20, mode + " crosses a negative boundary");
+            player.giveExperiencePoints(19);
+            assertExperience(helper, player, -1, -1, 19, 20, mode + " retains the final debt point");
+            player.giveExperiencePoints(1);
+            assertExperience(helper, player, 0, 0, 0, 20, mode + " reaches zero without a skipped level");
+        }
         helper.succeed();
     }
 

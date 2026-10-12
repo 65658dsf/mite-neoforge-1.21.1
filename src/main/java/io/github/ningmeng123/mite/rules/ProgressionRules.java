@@ -11,8 +11,8 @@ public final class ProgressionRules {
 
     /**
      * Returns base maximum health in HP (two HP per heart).
-     * The caller supplies the synchronized experience level. Negative experience
-     * and the R196 death penalty are separate gameplay features.
+     * The caller supplies the synchronized signed experience level. Negative
+     * levels retain the minimum of three hearts.
      */
     public static double maxHealthForLevel(int level) {
         return foodLimitForLevel(level);

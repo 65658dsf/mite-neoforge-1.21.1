@@ -10,7 +10,7 @@
 最终保留 5 级、总经验 235、等级内 35 点、半条经验，供截图与保存重进检查。
 
 本包仅用于开发，不写入模组资源。预期是原 R196 字节码阈值以及已选定的现代
-运行策略：经验下限 0，上限 203000，200 级空经验条且下一等级需求为 1。
+运行策略：经验下限 -800，上限 203000，200 级空经验条且下一等级需求为 1。
 静态校验覆盖格式和引用，不代表已通过 Brigadier 解析或真实游戏测试。
 """
 from __future__ import annotations
@@ -51,8 +51,9 @@ def cases() -> list[dict]:
         {"name": "subtract_three_levels", "commands": ["experience add @s -3 levels"],
          "level": 7, "total": 397, "points": 47},
         {"name": "minimum_int_points", "commands": ["experience add @s -2147483648 points"],
-         "level": 0, "total": 0, "points": 0},
-        {"name": "level_thirty_five", "commands": ["experience add @s 6650 points"],
+         "level": -40, "total": -800, "points": 0},
+        {"name": "level_thirty_five", "commands": ["experience set @s 0 levels",
+            "experience set @s 0 points", "experience add @s 6650 points"],
          "level": 35, "total": 6650, "points": 0, "health": 20, "food_cap": 20},
         {"name": "maximum_int_points", "commands": ["experience add @s 2147483647 points"],
          "level": 200, "total": 203000, "points": 0, "bar_x1000": 0, "health": 20, "food_cap": 20},

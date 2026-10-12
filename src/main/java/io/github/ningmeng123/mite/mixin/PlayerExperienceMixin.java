@@ -1,10 +1,13 @@
 package io.github.ningmeng123.mite.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.ningmeng123.mite.rules.ExperienceRules;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,8 +28,8 @@ public abstract class PlayerExperienceMixin {
         PlayerExperience.addPoints(player, amount);
         if (player.experienceLevel > oldLevel) {
             // Vanilla's point loop plays at the first multiple of five it crosses.
-            long milestone = (Math.floorDiv((long) oldLevel, 5L) + 1L) * 5L;
-            if (milestone > 0 && milestone <= player.experienceLevel) {
+            long milestone = Math.max(5L, (Math.floorDiv((long) oldLevel, 5L) + 1L) * 5L);
+            if (milestone <= player.experienceLevel) {
                 mite$playLevelUpSound(player, (int) milestone);
             }
         }
@@ -38,7 +41,7 @@ public abstract class PlayerExperienceMixin {
         Player player = (Player) (Object) this;
         int oldLevel = player.experienceLevel;
         PlayerExperience.addLevels(player, levels);
-        if (player.experienceLevel > oldLevel && player.experienceLevel % 5 == 0) {
+        if (player.experienceLevel > oldLevel && player.experienceLevel > 0 && player.experienceLevel % 5 == 0) {
             mite$playLevelUpSound(player, player.experienceLevel);
         }
         ci.cancel();
@@ -48,7 +51,24 @@ public abstract class PlayerExperienceMixin {
     private void mite$useR196LevelWidth(CallbackInfoReturnable<Integer> cir) {
         int level = ((Player) (Object) this).experienceLevel;
         cir.setReturnValue(level >= ExperienceRules.MAX_LEVEL
-                ? 1 : ExperienceRules.experienceNeededForNextLevel(Math.max(0, level)));
+                ? 1 : ExperienceRules.experienceNeededForNextLevel(level));
+    }
+
+    @ModifyExpressionValue(method = "onEnchantmentPerformed", at = @At(value = "FIELD",
+            target = "Lnet/minecraft/world/entity/player/Player;experienceLevel:I", opcode = Opcodes.GETFIELD),
+            require = 1, allow = 1)
+    private int mite$keepSignedExperienceAfterEnchanting(int levelForVanillaResetCheck) {
+        // Only bypass vanilla's post-cost negative-level reset. Keep the call to
+        // giveExperienceLevels and enchantment-seed randomization unchanged.
+        return Math.max(0, levelForVanillaResetCheck);
+    }
+
+    @Inject(method = "getBaseExperienceReward", at = @At("HEAD"), cancellable = true)
+    private void mite$deathExperienceReward(CallbackInfoReturnable<Integer> cir) {
+        Player player = (Player) (Object) this;
+        boolean keep = player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)
+                || player.isSpectator() || !player.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT);
+        cir.setReturnValue(keep ? 0 : ExperienceRules.deathExperienceReward(player.totalExperience));
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))

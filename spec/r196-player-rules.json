@@ -518,7 +518,7 @@
     },
     {
       "id": "death_experience",
-      "evidence_status": "confirmed_static",
+      "evidence_status": "confirmed_bytecode",
       "formula": "On death if XP<20: respawn_experience=max(XP-20,-800); else leave respawn_experience unchanged",
       "evidence": [
         {
@@ -537,7 +537,10 @@
       "initial_respawn_experience": 0,
       "notes": [
         "Do not rewrite as a universal subtract-20 rule.",
-        "Level-one threshold corrected to 20 after checking uf.class initialization bytecode."
+        "Level-one threshold corrected to 20 after checking uf.class initialization bytecode.",
+        "jv.<init> bytecode 87-89 initializes pending XP to zero; death a(nb) offsets 133-175 compare <20, subtract 20 and clamp to -800.",
+        "jv.a(by)/b(by) offsets 5-13 read/write respawn_experience. Normal logout and login retain the death snapshot until an actual respawn.",
+        "hn respawn bytecode 171-177 transfers pending XP before uf clone at 319. Non-death/keepInventory copies override it with original XP."
       ]
     },
     {
@@ -619,6 +622,38 @@
           "start_line": 195,
           "end_line": 204
         }
+      ]
+    },
+    {
+      "id": "death_experience_reward",
+      "evidence_status": "confirmed_bytecode",
+      "formula": "returnedValue = keepInventory ? 0 : totalXP / 3; actual dropped XP = max(0, returnedValue)",
+      "evidence": [
+        {
+          "file": ".reference/r196/classes/uf.class",
+          "method": "getExperienceValue",
+          "bytecode_offsets": "18-24"
+        }
+      ],
+      "notes": [
+        "R196 drops on death animation tick 20, server side, with doMobLoot enabled.",
+        "No vanilla level*7 or 100-point cap. 235 XP yields 78 points.",
+        "Old orbs are owner-name restricted and last 24000 loaded ticks (Age -18000 to 6000). Modern port implements the reward amount separately from these orb behaviors."
+      ]
+    },
+    {
+      "id": "negative_experience_hud",
+      "evidence_status": "confirmed_bytecode",
+      "formula": "Show nonzero levels; negative text #FF1313; positive text #80FF20; black outline; bar width int(progress*183)",
+      "evidence": [
+        {
+          "file": ".reference/r196/classes/avj.class",
+          "method": "GuiIngame HUD",
+          "bytecode_offsets": "1298,1433"
+        }
+      ],
+      "notes": [
+        "Negative experience uses the ordinary green progress bar. Book GUI hides the legacy display; mounted jump bar takes precedence."
       ]
     }
   ],
@@ -796,6 +831,56 @@
       "Lowering level clamps current HP only if it exceeds new cap.",
       "Respawn preserves micronutrient and insulin deficits.",
       "keepInventory can override death XP penalty."
+    ],
+    "death_experience": [
+      {
+        "before": -800,
+        "after": -800
+      },
+      {
+        "before": -799,
+        "after": -800
+      },
+      {
+        "before": -780,
+        "after": -800
+      },
+      {
+        "before": -21,
+        "after": -41
+      },
+      {
+        "before": -20,
+        "after": -40
+      },
+      {
+        "before": -1,
+        "after": -21
+      },
+      {
+        "before": 0,
+        "after": -20
+      },
+      {
+        "before": 1,
+        "after": -19
+      },
+      {
+        "before": 19,
+        "after": -1
+      },
+      {
+        "before": 20,
+        "after": 0
+      },
+      {
+        "before": 235,
+        "after": 0
+      },
+      {
+        "before": 203000,
+        "after": 0
+      }
     ]
   },
   "modern_integration_recommendation": {

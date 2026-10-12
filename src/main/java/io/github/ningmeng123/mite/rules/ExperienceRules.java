@@ -29,6 +29,17 @@ public final class ExperienceRules {
     private ExperienceRules() {
     }
 
+    /** R196 jv.onDeath: only totals below level one's threshold incur debt. */
+    public static int experienceAfterDeath(int totalExperience) {
+        return totalExperience < 20
+                ? (int) Math.max(MIN_TOTAL_EXPERIENCE, (long) totalExperience - 20L) : 0;
+    }
+
+    /** R196 uf.getExperienceValue: positive cumulative XP divided by three. */
+    public static int deathExperienceReward(int totalExperience) {
+        return Math.max(0, totalExperience / 3);
+    }
+
     /**
      * Returns the cumulative XP threshold. Levels below the supported minimum
      * normalize to -40; levels above 200 retain R196's sentinel.

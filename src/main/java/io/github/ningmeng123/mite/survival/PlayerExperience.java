@@ -9,13 +9,13 @@ import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 /**
  * Keeps the modern player's experience fields consistent with one integer total.
  *
- * <p>This first gameplay stage supports only nonnegative XP and caps progress at
- * level 200. Negative experience and R196's sentinel interval are not enabled.
+ * <p>Gameplay XP spans -800 through 203000. Negative XP is retained across game
+ * modes; creative and spectator modes keep vanilla's hidden experience HUD.
  *
  * @author NingMeng123
  */
 public final class PlayerExperience {
-    public static final int CURRENT_VERSION = 1;
+    public static final int CURRENT_VERSION = 2;
     public static final String VERSION_TAG = "mite_experience_version";
 
     private PlayerExperience() {
@@ -31,9 +31,9 @@ public final class PlayerExperience {
             return;
         }
 
-        int oldTotal = positiveTotal(player.totalExperience);
+        int oldTotal = boundedTotal(player.totalExperience);
         int oldLevel = ExperienceRules.levelForTotalExperience(oldTotal);
-        int proposedTotal = positiveTotal((long) oldTotal + pointEvent.getAmount());
+        int proposedTotal = boundedTotal((long) oldTotal + pointEvent.getAmount());
         int proposedLevel = ExperienceRules.levelForTotalExperience(proposedTotal);
         int levelDelta = proposedLevel - oldLevel;
         if (levelDelta != 0) {
@@ -58,19 +58,19 @@ public final class PlayerExperience {
         if (NeoForge.EVENT_BUS.post(event).isCanceled()) {
             return;
         }
-        int oldTotal = positiveTotal(player.totalExperience);
+        int oldTotal = boundedTotal(player.totalExperience);
         int oldLevel = ExperienceRules.levelForTotalExperience(oldTotal);
         commit(player, totalAtLevelWithSameFraction(oldTotal, (long) oldLevel + event.getLevels()));
     }
 
     /** Sets a level without events, preserving the old bar proportion. */
     public static void setLevels(Player player, int level) {
-        commit(player, totalAtLevelWithSameFraction(positiveTotal(player.totalExperience), level));
+        commit(player, totalAtLevelWithSameFraction(boundedTotal(player.totalExperience), level));
     }
 
     /** Sets points within the current level without promoting the player or posting events. */
     public static void setPoints(Player player, int points) {
-        int level = ExperienceRules.levelForTotalExperience(positiveTotal(player.totalExperience));
+        int level = ExperienceRules.levelForTotalExperience(boundedTotal(player.totalExperience));
         if (level == ExperienceRules.MAX_LEVEL) {
             commit(player, ExperienceRules.MAX_LEVEL_EXPERIENCE);
             return;
@@ -84,14 +84,16 @@ public final class PlayerExperience {
      * proportion; versioned worlds use the saved integer total as authority.
      */
     public static void normalizeLoaded(Player player, CompoundTag tag) {
-        if (tag.getInt(VERSION_TAG) >= CURRENT_VERSION) {
+        // Version 1 already stored a canonical total. Never remigrate it via a
+        // rounded float bar when upgrading to the signed version 2 model.
+        if (tag.getInt(VERSION_TAG) >= 1) {
             commit(player, tag.getInt("XpTotal"));
             return;
         }
 
         int level = tag.getInt("XpLevel");
-        if (level < 0) {
-            commit(player, 0);
+        if (level < ExperienceRules.MIN_LEVEL) {
+            commit(player, ExperienceRules.MIN_TOTAL_EXPERIENCE);
         } else if (level >= ExperienceRules.MAX_LEVEL) {
             commit(player, ExperienceRules.MAX_LEVEL_EXPERIENCE);
         } else {
@@ -107,13 +109,13 @@ public final class PlayerExperience {
 
     /** Returns exact points, without reconstructing them from the rounded float bar. */
     public static int pointsWithinLevel(Player player) {
-        int total = positiveTotal(player.totalExperience);
+        int total = boundedTotal(player.totalExperience);
         return total - ExperienceRules.experienceRequiredForLevel(ExperienceRules.levelForTotalExperience(total));
     }
 
     private static int totalAtLevelWithSameFraction(int sourceTotal, long targetLevel) {
-        if (targetLevel < 0) {
-            return 0;
+        if (targetLevel < ExperienceRules.MIN_LEVEL) {
+            return ExperienceRules.MIN_TOTAL_EXPERIENCE;
         }
         if (targetLevel >= ExperienceRules.MAX_LEVEL) {
             return ExperienceRules.MAX_LEVEL_EXPERIENCE;
@@ -125,19 +127,25 @@ public final class PlayerExperience {
         return ExperienceRules.experienceRequiredForLevel(target) + targetPoints;
     }
 
-    private static int positiveTotal(long total) {
-        return (int) Math.max(0L, Math.min(ExperienceRules.MAX_LEVEL_EXPERIENCE, total));
+    private static int boundedTotal(long total) {
+        return (int) Math.max(ExperienceRules.MIN_TOTAL_EXPERIENCE,
+                Math.min(ExperienceRules.MAX_LEVEL_EXPERIENCE, total));
     }
 
     private static int barWidth(int level) {
         return level >= ExperienceRules.MAX_LEVEL ? 1 : ExperienceRules.experienceNeededForNextLevel(level);
     }
 
+    /** Restores authoritative saved/respawn state, without XP gain/spending events. */
+    public static void setTotal(Player player, int total) {
+        commit(player, total);
+    }
+
     private static void commit(Player player, int total) {
-        int boundedTotal = positiveTotal(total);
-        int level = ExperienceRules.levelForTotalExperience(boundedTotal);
-        int points = boundedTotal - ExperienceRules.experienceRequiredForLevel(level);
-        player.totalExperience = boundedTotal;
+        int bounded = boundedTotal(total);
+        int level = ExperienceRules.levelForTotalExperience(bounded);
+        int points = bounded - ExperienceRules.experienceRequiredForLevel(level);
+        player.totalExperience = bounded;
         player.experienceLevel = level;
         player.experienceProgress = level == ExperienceRules.MAX_LEVEL ? 0.0F : (float) points / barWidth(level);
     }

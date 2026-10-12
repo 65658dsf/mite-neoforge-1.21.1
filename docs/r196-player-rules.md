@@ -78,6 +78,15 @@
 - 死亡设置重生倒计时 120；倒计时方法在世界时间整 20 tick 时减 1。`afterRespawn` 设置保护计数 60；保护期伤害代码另有坠落/特殊伤害来源例外。这里只确认计数与判断，自动重生触发和登录中断流程尚未完整审计。证据：`jv.java:406-409,778,784-809`。
 - FoodStats 存档保存 `fullness`、`nutrition`、`heal_progress`、`starve_progress`、`hunger`、`hunger_for_nutrition_only`。玩家经验读取 `experience`，若存在旧 `XpTotal` 则后者覆盖；微量营养和抵抗另行持久化。证据：`ux.java:89-106`，`uf.java:865-870`，`jv.java:123,148-152,195-204`。
 
+### 死亡与负等级字节码复核（2026-10-12）
+
+- `jv.<init>` 偏移 87–89 把待重生经验初始化为 0；`jv.a(nb)` 偏移 133–175 明确比较 `<20`、减 20、钳制 −800。高经验分支跳过赋值，每次正常重生新建玩家，因此通常归零。
+- `jv.a(by)`、`jv.b(by)` 偏移 5–13 分别读写 `respawn_experience`。正常退出先保存玩家，重登恢复死亡生命状态与待重生值；只有真正请求重生才调用 `hn.a(jv,int,boolean)`。这不代表崩溃或保存失败后的回滚已验证。
+- `hn.a(jv,int,boolean)` 偏移 171–177 把旧待重生值赋给新玩家，319 调用复制。`uf.a(uf,boolean)` 偏移 15–20 / 85–90 分别由 keepAll / keepInventory 覆盖回原经验。
+- `uf.getExperienceValue()` 偏移 18–24 是 `totalXP / 3`；keepInventory 返回 0，负经验不会进入分球循环。`of.aB()` 在死亡动画第 20 tick、逻辑服务端、doMobLoot 开启时分球。球带原玩家名字，仅该玩家可拾取；初始 Age 为 −18000，到 6000 消失，共 24000 加载 tick。235 点死亡掉 78 点，按 73、3、1、1 分球；球数量与经验点数不能混淆。
+- `avj`（GuiIngame）只显示非零等级，负数颜色为 `0xFF1313`，正数为 `0x80FF20`，四向黑描边。条宽仍为 `int(progress*183)`，负级经验条保持绿色。骑马跳跃条优先，书本界面隐藏显示。
+- 创造模式的负经验等级查询返回 0，但不会删除原始负经验；原发布包 `in_dev_mode=false`，正常模式入口锁定生存。旧版不存在旁观模式。
+
 ## 1.21.1 最小生命上限功能的接入证据
 
 已检查 `build/moddev/artifacts/neoforge-21.1.259-sources.jar`，以下是建议，未在此分析任务中编写功能代码。
