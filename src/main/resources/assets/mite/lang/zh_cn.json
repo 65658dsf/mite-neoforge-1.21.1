@@ -1,4 +1,6 @@
 {
+  "block.minecraft.crafting_table": "燧石工作台",
+  "tooltip.mite.planks_require_workbench": "加工木板需要工作台或自动合成器",
   "item.minecraft.wooden_sword": "木棒",
   "commands.mite.experience.level_too_high": "MITE 的最高经验等级为 %s，未更改目标玩家的经验。",
   "item.mite.flint_chip": "燧石碎片",

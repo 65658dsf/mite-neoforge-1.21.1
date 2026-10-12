@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "analysis_date": "2026-10-12",
+  "feature": "014 燧石工作台直接制造与背包木板加工门槛",
+  "status": "已核对R196注册、匹配和界面门槛；记录现代决策，不声明构建或游戏验证完成。",
+  "source": {
+    "archive": "MITE 1.6.4 R196.zip",
+    "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+    "decompiler": "CFR 0.152",
+    "line_basis": ".reference/r196/decompiled/*.java",
+    "runtime_inventory": "reference-data/runtime-registry.json"
+  },
+  "rules": [
+    {
+      "id": "flint_workbench_direct_recipe",
+      "runtime_orders": [311, 312, 313, 314, 315, 316, 317, 318],
+      "recipe_type": "shaped",
+      "width": 2,
+      "height": 2,
+      "pattern": ["FB", "SL"],
+      "ingredients": {"F": "yc.ar / 燧石 / ID318", "B": ["yc.M / 线 / ID287", "yc.sinew / 筋 / ID1174"], "S": "yc.F / 木棍 / ID280", "L": "aqz.O / 原木 / ID17"},
+      "count_each": 1,
+      "output_id": 58,
+      "output_symbol": "aqz.aD",
+      "output_count": 1,
+      "difficulty": 270.0,
+      "bench_material": null,
+      "skillsets": null,
+      "wood_variants": [
+        {"name": "oak", "log_subtype": 0, "table_subtype": 0, "runtime_orders": [311, 312]},
+        {"name": "spruce", "log_subtype": 1, "table_subtype": 1, "runtime_orders": [313, 314]},
+        {"name": "birch", "log_subtype": 2, "table_subtype": 2, "runtime_orders": [315, 316]},
+        {"name": "jungle", "log_subtype": 3, "table_subtype": 3, "runtime_orders": [317, 318]}
+      ],
+      "sources": [
+        {"class": "RecipesMITE", "line": 113, "symbol": "workbench registration loop"},
+        {"class": "RecipesMITE", "line": 117, "symbol": "FS/s# with string"},
+        {"class": "RecipesMITE", "line": 118, "symbol": "FS/s# with sinew"},
+        {"class": "arv", "line": 69, "symbol": "getToolMaterial"},
+        {"class": "arv", "line": 76, "symbol": "getBlockComponent"},
+        {"class": "arj", "line": 7, "symbol": "subtypes"}
+      ]
+    },
+    {
+      "id": "flint_workbench_binding_is_fixed",
+      "horizontal_mirror": true,
+      "translation_in_3x3": true,
+      "rotation": false,
+      "vertical_mirror": false,
+      "binding_can_move_independently": false,
+      "extra_occupied_slots": false,
+      "reason": "aai的任意线/筋分支只识别八种石质工具产物，不包含工作台ID58。线与筋由两条普通有序配方支持。",
+      "sources": [
+        {"class": "aai", "line": 38, "symbol": "translation and horizontal mirror matching"},
+        {"class": "aai", "line": 53, "symbol": "has_strings_or_sinews_that_can_be_anywhere", "bytecode_method": "a(vk,int,int,boolean)", "bytecode_offsets": [0, 101, 108, 126, 416], "bytecode_fact": "仅八种工具ID触发自由绑定；工作台直接走普通匹配。"},
+        {"class": "aai", "line": 109, "symbol": "ordinary shaped matching"}
+      ]
+    },
+    {
+      "id": "logs_to_planks_output",
+      "runtime_orders": [503, 504, 505, 506],
+      "input_id": 17,
+      "input_count": 1,
+      "output_id": 5,
+      "output_count": 4,
+      "subtypes_preserved": [0, 1, 2, 3],
+      "width": 1,
+      "height": 1,
+      "difficulty_runtime": 120.00001,
+      "skillsets": [128],
+      "bench_material": "wood",
+      "sources": [
+        {"class": "aaf", "line": 66, "symbol": "oak log to four planks"},
+        {"class": "aaf", "line": 67, "symbol": "spruce log to four planks"},
+        {"class": "aaf", "line": 68, "symbol": "birch log to four planks"},
+        {"class": "aaf", "line": 69, "symbol": "jungle log to four planks"},
+        {"class": "art", "line": 7, "symbol": "subtypes"}
+      ]
+    },
+    {
+      "id": "planks_require_tools_on_workbench",
+      "rule_trigger": "配方输出aqz.C木板，不按输入或配方格数判定。",
+      "required_bench_material": "akc.d / wood",
+      "wood_material_durability": 0.5,
+      "flint_material_durability": 1.0,
+      "flint_bench_satisfies_requirement": true,
+      "normal_ui_behavior": "非vl工作台容器标记needsToolBench；工作台比较工具材质durability；取出时检查prevented标记。",
+      "security_scope": "原正常客户端调用链证据，不声明原作具有覆盖伪造请求的统一服务端设备校验。",
+      "sources": [
+        {"class": "RecipeHelper", "line": 71, "symbol": "aqz.C output", "bytecode_method": "addRecipe", "bytecode_offsets": [519, 529, 532], "bytecode_fact": "比较木板ID后写入akc.d工作台材料要求。"},
+        {"class": "EnumEquipmentMaterial", "line": 6, "symbol": "wood"},
+        {"class": "EnumEquipmentMaterial", "line": 7, "symbol": "flint"},
+        {"class": "awy", "line": 172, "symbol": "getMaterialToCheckToolBenchHardnessAgainst"},
+        {"class": "awy", "line": 185, "symbol": "durability comparison"},
+        {"class": "awy", "line": 190, "symbol": "needsToolBench"},
+        {"class": "wd", "line": 161, "symbol": "crafting_result_shown_but_prevented"},
+        {"class": "MITEContainerCrafting", "line": 73, "symbol": "canPlayerCraftItem"}
+      ]
+    },
+    {
+      "id": "flint_workbench_alternative_routes_deferred",
+      "original_knife_recipe": {"pattern": ["K", "L"], "input": ["yc.knifeFlint", "对应原木"], "output": "对应燧石工作台"},
+      "original_dismantle": {"input": "燧石工作台", "recipe_output": "燧石刀", "remainder": "对应原木", "difficulty": 25.0},
+      "implemented_this_step": false,
+      "sources": [
+        {"class": "RecipesMITE", "line": 116, "symbol": "knife and log recipe"},
+        {"class": "RecipesMITE", "line": 119, "symbol": "dismantle recipe"},
+        {"class": "wd", "line": 130, "symbol": "workbench component check"},
+        {"class": "wd", "line": 131, "symbol": "getBlockComponent return"}
+      ]
+    },
+    {
+      "id": "workbench_no_default_profession_lock",
+      "default_professions_enabled": false,
+      "modern_skill_gate": false,
+      "sources": [
+        {"class": "atv", "line": 156, "symbol": "professions_suppressed"},
+        {"class": "is", "line": 87, "symbol": "are_skills_enabled_in_settings_file = false"}
+      ]
+    }
+  ],
+  "modern_adaptation": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.259",
+    "reused_block_and_item_id": "minecraft:crafting_table",
+    "chinese_name": "燧石工作台",
+    "texture": "原版1.21.1工作台材质",
+    "replace_four_plank_recipe": true,
+    "direct_recipe": {"pattern": ["FB", "SL"], "ingredients": {"F": "minecraft:flint", "B": ["minecraft:string", "mite:sinew"], "S": "minecraft:stick", "L": "#minecraft:logs"}, "output_count": 1},
+    "single_output_for_all_log_variants": true,
+    "log_tag_scope": "沿用现代logs标签；去皮、木块、菌柄/菌核及新树种均为明确现代扩展。固定1.21.1默认40种，竹块不属于此标签。",
+    "bamboo_block_as_table_ingredient": false,
+    "bamboo_scope_basis": "采用当前指定#minecraft:logs；没有额外加入#minecraft:bamboo_blocks。",
+    "plank_gate": {"result_tag": "#minecraft:planks", "vanilla_player_inventory_2x2": "拒绝制造及取出，不消耗原料", "vanilla_workbench_3x3": "允许", "vanilla_crafter": "允许，视为基本加工设备", "third_party_custom_menus": "后续按容器明确适配，不宣称已全覆盖。"},
+    "preserve_vanilla_plank_recipes_and_counts": true,
+    "bamboo_plank_output_count": 2,
+    "bamboo_plank_gated_in_inventory": true,
+    "modern_source_resource_jar": "build/moddev/artifacts/neoforge-21.1.259-client-extra-aka-minecraft-resources.jar",
+    "modern_resources": ["data/minecraft/tags/item/logs.json", "data/minecraft/tags/item/logs_that_burn.json", "data/minecraft/tags/item/bamboo_blocks.json", "data/minecraft/tags/item/planks.json", "data/minecraft/recipe/bamboo_planks.json"],
+    "not_implemented": ["燧石刀与刀造台配方", "拆台返刀和原木", "高级工作台", "制作时间", "品质", "制造经验成本", "旧portable规则", "旧工作台堆叠限制", "全量第三方设备接口"]
+  },
+  "acceptance_vectors": [
+    {"id": "inventory_string_standard", "grid": ["FB", "SL"], "binding": "minecraft:string", "log": "minecraft:oak_log", "output": "minecraft:crafting_table", "count": 1},
+    {"id": "inventory_sinew_mirror", "grid": ["BF", "LS"], "binding": "mite:sinew", "log": "minecraft:birch_log", "output": "minecraft:crafting_table", "count": 1},
+    {"id": "bench_translation", "grid": ["   ", " FB", " SL"], "output": "minecraft:crafting_table", "count": 1},
+    {"id": "binding_outside_pattern", "grid": ["F B", "SL ", "   "], "matches": false},
+    {"id": "rotated_pattern", "grid": ["SF", "LB"], "matches": false},
+    {"id": "duplicate_binding", "grid": ["FBB", "SL ", "   "], "matches": false},
+    {"id": "four_planks_no_table", "grid": ["PP", "PP"], "P": "#minecraft:planks", "produces_table": false},
+    {"id": "inventory_oak_planks_denied", "container": "minecraft:inventory", "input": "minecraft:oak_log", "input_count": 1, "output_count": 0, "consumed_count": 0},
+    {"id": "workbench_oak_planks", "container": "minecraft:crafting", "input": "minecraft:oak_log", "input_count": 1, "output": "minecraft:oak_planks", "output_count": 4},
+    {"id": "crafter_oak_planks", "container": "minecraft:crafter", "input": "minecraft:oak_log", "input_count": 1, "output": "minecraft:oak_planks", "output_count": 4},
+    {"id": "inventory_bamboo_planks_denied", "container": "minecraft:inventory", "input": "minecraft:bamboo_block", "input_count": 1, "output_count": 0, "consumed_count": 0},
+    {"id": "workbench_bamboo_planks", "container": "minecraft:crafting", "input": "minecraft:bamboo_block", "input_count": 1, "output": "minecraft:bamboo_planks", "output_count": 2},
+    {"id": "crafter_bamboo_planks", "container": "minecraft:crafter", "input": "minecraft:stripped_bamboo_block", "input_count": 1, "output": "minecraft:bamboo_planks", "output_count": 2}
+  ],
+  "validation_required": [
+    "线/筋、原式/镜像、2x2与3x3四位置平移均匹配且材料各消耗一。",
+    "固定绑定位置不沿用短斧自由绑定逻辑。",
+    "背包普通取出、快捷取出与配方书入口均不能加工PLANKS产物。",
+    "工作台与实际Crafter方块保持原板配方、种类与产量。",
+    "非木板结果不受该门槛误封。",
+    "现有工作台ID与存档兼容，采用当前原版纹理，不伪称旧台外观复刻。"
+  ]
+}

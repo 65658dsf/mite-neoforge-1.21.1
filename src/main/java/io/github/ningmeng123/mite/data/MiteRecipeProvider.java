@@ -28,6 +28,15 @@ public final class MiteRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput output) {
+        // R196's flint workbench uses a fixed 2x2 pattern (horizontal mirror allowed).
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Items.CRAFTING_TABLE)
+                .pattern("FB").pattern("SL")
+                .define('F', Items.FLINT)
+                .define('B', Ingredient.of(Items.STRING, MiteItems.SINEW.get()))
+                .define('S', Items.STICK).define('L', ItemTags.LOGS)
+                .unlockedBy("has_flint", has(Items.FLINT))
+                .save(output, ResourceLocation.withDefaultNamespace("crafting_table"));
+
         // Override the vanilla recipe IDs. RecipeProvider applies these conditions to both
         // recipes and their recipe-book advancements; old registered item stacks stay valid.
         RecipeOutput disabledWoodenTools = output.withConditions(FalseCondition.INSTANCE);

@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "io.github.ningmeng123.mite.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["PlayerFoodMixin", "FoodDataMixin", "PlayerExperienceMixin", "ServerPlayerExperienceMixin", "ExperienceCommandMixin", "ExperienceOrbMixin", "LivingEntityExperienceDropMixin", "BlockMiningProgressMixin", "WoodenClubSwordMixin"],
+  "mixins": ["PlayerFoodMixin", "FoodDataMixin", "PlayerExperienceMixin", "ServerPlayerExperienceMixin", "ExperienceCommandMixin", "ExperienceOrbMixin", "LivingEntityExperienceDropMixin", "BlockMiningProgressMixin", "WoodenClubSwordMixin", "CraftingMenuAccessMixin", "CraftingResultPickupMixin", "InventoryCraftingAccessMixin"],
   "client": ["client.GuiFoodMixin", "client.LocalPlayerFoodMixin"],
   "injectors": {
     "defaultRequire": 1
