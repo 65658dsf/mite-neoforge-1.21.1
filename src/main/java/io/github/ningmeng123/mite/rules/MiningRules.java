@@ -1,6 +1,6 @@
 package io.github.ningmeng123.mite.rules;
 
-/** R196's level multiplier and relative-hardness progress formula. @author NingMeng123 */
+/** R196's food-energy penalty, level multiplier and progress formula. @author NingMeng123 */
 public final class MiningRules {
     private MiningRules() {
     }
@@ -9,6 +9,14 @@ public final class MiningRules {
     public static float speedMultiplierForLevel(int level) {
         int boundedLevel = Math.max(ExperienceRules.MIN_LEVEL, Math.min(ExperienceRules.MAX_LEVEL, level));
         return 1.0F + boundedLevel * 0.02F;
+    }
+
+    /** Apply food-energy loss before the level factor, matching R196's float division order. */
+    public static float adjustStrengthForSurvival(float strength, int level, boolean hasFoodEnergy) {
+        if (!hasFoodEnergy) {
+            strength /= 5.0F;
+        }
+        return strength * speedMultiplierForLevel(level);
     }
 
     /** Preserves R196's zero-hardness priority, strict instant threshold and float operation order. */

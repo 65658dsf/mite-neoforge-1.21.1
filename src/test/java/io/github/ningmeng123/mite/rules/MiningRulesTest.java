@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Independent level-multiplier vectors; gameplay bounds are -40 and 200. @author NingMeng123 */
+/** Independent mining vectors; gameplay bounds are -40 and 200. @author NingMeng123 */
 class MiningRulesTest {
     @ParameterizedTest(name = "level {0} multiplies final mining speed by {1}")
     @CsvSource({
@@ -69,6 +69,35 @@ class MiningRulesTest {
             float progress = MiningRules.destroyProgress(MiningRules.speedMultiplierForLevel(levels[i]), 0.5F);
             assertEquals(progressBits[i], Float.floatToRawIntBits(progress), "level " + levels[i]);
             assertEquals(ticks[i], accumulateTicks(progress), "level " + levels[i]);
+        }
+    }
+
+    @Test
+    void hungryStrengthDividesBeforeApplyingTheLevelMultiplier() {
+        float[] strengths = {1.0F, 1.0F, 1.0F, 3.0F, 8.0F, 0.3F, 0.2F};
+        int[] levels = {0, 5, 35, -40, 5, 35, 200};
+        int[] hungryBits = {0x3e4ccccd, 0x3e6147af, 0x3eae147b, 0x3df5c294,
+                0x3fe147af, 0x3dd0e561, 0x3e4ccccc};
+        for (int i = 0; i < levels.length; i++) {
+            // In particular S=1,L=5 and S=3,L=-40 differ by one ULP if multiplication runs first.
+            assertEquals(hungryBits[i], Float.floatToRawIntBits(
+                    MiningRules.adjustStrengthForSurvival(strengths[i], levels[i], false)), "vector " + i);
+        }
+        assertEquals(0x3f800000, Float.floatToRawIntBits(MiningRules.adjustStrengthForSurvival(1.0F, 0, true)));
+        assertEquals(0x3fd9999a, Float.floatToRawIntBits(MiningRules.adjustStrengthForSurvival(1.0F, 35, true)));
+    }
+
+    @Test
+    void hungryLeafProgressMatchesIndependentFloatAndAccumulationVectors() {
+        int[] levels = {0, 0, 35, -40};
+        boolean[] hasFood = {true, false, false, false};
+        int[] progressBits = {0x3c200000, 0x3b000000, 0x3b599999, 0x39ccccd1};
+        int[] ticks = {103, 512, 302, 2560};
+        for (int i = 0; i < levels.length; i++) {
+            float strength = MiningRules.adjustStrengthForSurvival(1.0F, levels[i], hasFood[i]);
+            float progress = MiningRules.destroyProgress(strength, 0.2F);
+            assertEquals(progressBits[i], Float.floatToRawIntBits(progress), "vector " + i);
+            assertEquals(ticks[i], accumulateTicks(progress), "vector " + i);
         }
     }
 

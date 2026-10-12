@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-/** Applies the level factor to modern mining speed on both logical sides. @author NingMeng123 */
+/** Applies food energy and level rules on both logical sides. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class PlayerMiningEvents {
     private PlayerMiningEvents() {
@@ -20,7 +20,9 @@ public final class PlayerMiningEvents {
         if (event.isCanceled() || player.isCreative() || player.isSpectator() || !(event.getNewSpeed() > 0.0F)) {
             return;
         }
-        // Keep tool, attribute, environment and earlier event adjustments intact.
-        event.setNewSpeed(event.getNewSpeed() * MiningRules.speedMultiplierForLevel(player.experienceLevel));
+        // Modern tool/environment/event adjustments already produced this strength.
+        // Until dual-resource food is ported, the synchronized food bar supplies energy.
+        event.setNewSpeed(MiningRules.adjustStrengthForSurvival(event.getNewSpeed(), player.experienceLevel,
+                player.getFoodData().getFoodLevel() > 0));
     }
 }

@@ -41,27 +41,37 @@ public final class MiningSpeedClientSmoke {
     private static final float PITCH = 20.472F;
     // Literal progress bits and repeated float-addition counts, independent of production rules.
     private static final MiningCase FINAL_CASE = new MiningCase("dirt_35", Blocks.DIRT.defaultBlockState(),
-            35, 1.7F, 0.5F, 0x3bd9999a, 151);
+            35, 20, 1.7F, 0.5F, 0x3bd9999a, 151);
     private static final MiningCase[] LEVEL_CASES = {
-        new MiningCase("dirt_0", Blocks.DIRT.defaultBlockState(), 0, 1.0F, 0.5F, 0x3b800000, 256),
-        new MiningCase("dirt_minus_40", Blocks.DIRT.defaultBlockState(), -40, 0.2F, 0.5F, 0x3a4ccccf, 1281),
+        new MiningCase("dirt_0", Blocks.DIRT.defaultBlockState(), 0, 6, 1.0F, 0.5F, 0x3b800000, 256),
+        new MiningCase("dirt_minus_40", Blocks.DIRT.defaultBlockState(), -40, 6, 0.2F, 0.5F, 0x3a4ccccf, 1281),
         FINAL_CASE,
-        new MiningCase("dirt_200", Blocks.DIRT.defaultBlockState(), 200, 5.0F, 0.5F, 0x3ca00000, 52),
-        new MiningCase("dirt_5", Blocks.DIRT.defaultBlockState(), 5, 1.1F, 0.5F, 0x3b8ccccd, 233)
+        new MiningCase("dirt_200", Blocks.DIRT.defaultBlockState(), 200, 20, 5.0F, 0.5F, 0x3ca00000, 52),
+        new MiningCase("dirt_5", Blocks.DIRT.defaultBlockState(), 5, 8, 1.1F, 0.5F, 0x3b8ccccd, 233)
     };
     private static final MiningCase[] BASE_CASES = {
         LEVEL_CASES[0],
-        new MiningCase("grass_block_0", Blocks.GRASS_BLOCK.defaultBlockState(), 0, 1.0F, 0.6F, 0x3b800000, 256),
-        new MiningCase("sand_0", Blocks.SAND.defaultBlockState(), 0, 1.0F, 0.5F, 0x3ba00000, 205),
-        new MiningCase("gravel_0", Blocks.GRAVEL.defaultBlockState(), 0, 1.0F, 0.6F, 0x3b555555, 308),
+        new MiningCase("grass_block_0", Blocks.GRASS_BLOCK.defaultBlockState(), 0, 6, 1.0F, 0.6F, 0x3b800000, 256),
+        new MiningCase("sand_0", Blocks.SAND.defaultBlockState(), 0, 6, 1.0F, 0.5F, 0x3ba00000, 205),
+        new MiningCase("gravel_0", Blocks.GRAVEL.defaultBlockState(), 0, 6, 1.0F, 0.6F, 0x3b555555, 308),
         new MiningCase("oak_leaves_0", Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true),
-                0, 1.0F, 0.2F, 0x3c200000, 103),
+                0, 6, 1.0F, 0.2F, 0x3c200000, 103),
         FINAL_CASE
+    };
+    private static final MiningCase[] HUNGER_CASES = {
+        new MiningCase("oak_leaves_0_food_1", Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true),
+                0, 1, 1.0F, 0.2F, 0x3c200000, 103),
+        new MiningCase("oak_leaves_0_food_0", Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true),
+                0, 0, 0.2F, 0.2F, 0x3b000000, 512),
+        new MiningCase("oak_leaves_0_food_1_restored", Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true),
+                0, 1, 1.0F, 0.2F, 0x3c200000, 103),
+        new MiningCase("oak_leaves_35_food_0", Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true),
+                35, 0, Float.intBitsToFloat(0x3eae147b), 0.2F, 0x3b599999, 302)
     };
     private static Runner runner;
     private static boolean conflictingModesReported;
 
-    private record MiningCase(String name, BlockState state, int level, float strength,
+    private record MiningCase(String name, BlockState state, int level, int foodLevel, float strength,
             float rawHardness, int progressBits, int accumulatedTicks) {
     }
 
@@ -90,18 +100,20 @@ public final class MiningSpeedClientSmoke {
         Minecraft minecraft = Minecraft.getInstance();
         boolean levelSmoke = Boolean.getBoolean("mite.miningSmoke");
         boolean baseSmoke = Boolean.getBoolean("mite.miningBaseSmoke");
-        if (levelSmoke && baseSmoke) {
+        boolean hungerSmoke = Boolean.getBoolean("mite.miningHungerSmoke");
+        int enabledModes = (levelSmoke ? 1 : 0) + (baseSmoke ? 1 : 0) + (hungerSmoke ? 1 : 0);
+        if (enabledModes > 1) {
             if (runner != null && runner.active.get()) {
-                runner.fail(minecraft, "Both mining smoke modes were enabled");
+                runner.fail(minecraft, "Multiple mining smoke modes were enabled");
             } else if (!conflictingModesReported) {
-                String message = "MITE_MINING FAIL: miningSmoke and miningBaseSmoke are mutually exclusive";
+                String message = "MITE_MINING FAIL: miningSmoke, miningBaseSmoke and miningHungerSmoke are mutually exclusive";
                 Mite.LOGGER.error(message);
                 minecraft.gui.getChat().addMessage(Component.literal(message));
             }
             conflictingModesReported = true;
             return;
         }
-        if (!levelSmoke && !baseSmoke) {
+        if (enabledModes == 0) {
             if (runner != null && runner.active.get()) {
                 runner.fail(minecraft, "Opt-in property was disabled");
             }
@@ -112,11 +124,11 @@ public final class MiningSpeedClientSmoke {
                     || minecraft.screen != null || minecraft.getSingleplayerServer() == null) {
                 return;
             }
-            runner = new Runner(minecraft.getSingleplayerServer(), minecraft.player.getUUID(), baseSmoke);
+            runner = new Runner(minecraft.getSingleplayerServer(), minecraft.player.getUUID(), baseSmoke, hungerSmoke);
             Mite.LOGGER.info("MITE_MINING START copy={} cases={}", runner.worldFolder,
                     Arrays.toString(Arrays.stream(runner.cases).map(MiningCase::name).toArray()));
             runner.prepare(runner.cases[0], true);
-        } else if (runner.baseSmoke != baseSmoke) {
+        } else if (runner.baseSmoke != baseSmoke || runner.hungerSmoke != hungerSmoke) {
             if (runner.active.get()) {
                 runner.fail(minecraft, "The selected smoke mode changed during the test");
             }
@@ -133,6 +145,7 @@ public final class MiningSpeedClientSmoke {
         private final IntegratedServer server;
         private final UUID playerId;
         private final boolean baseSmoke;
+        private final boolean hungerSmoke;
         private final String worldFolder;
         private final MiningCase[] cases;
         private final AtomicBoolean active = new AtomicBoolean(true);
@@ -144,19 +157,20 @@ public final class MiningSpeedClientSmoke {
         private int stableTicks;
         private int currentMiningTicks;
 
-        private Runner(IntegratedServer server, UUID playerId, boolean baseSmoke) {
+        private Runner(IntegratedServer server, UUID playerId, boolean baseSmoke, boolean hungerSmoke) {
             this.server = server;
             this.playerId = playerId;
             this.baseSmoke = baseSmoke;
-            worldFolder = baseSmoke ? "MITE Mining Test-008" : "MITE Mining Test-007";
-            cases = baseSmoke ? BASE_CASES : LEVEL_CASES;
+            this.hungerSmoke = hungerSmoke;
+            worldFolder = hungerSmoke ? "MITE Mining Test-009" : baseSmoke ? "MITE Mining Test-008" : "MITE Mining Test-007";
+            cases = hungerSmoke ? HUNGER_CASES : baseSmoke ? BASE_CASES : LEVEL_CASES;
             miningTicks = new int[cases.length];
         }
 
         private void prepare(MiningCase testCase, boolean createPlatform) {
             stableTicks = 0;
             serverWork = onServer(player -> {
-                preparePlayer(player, testCase, createPlatform);
+                preparePlayer(player, testCase, createPlatform, hungerSmoke);
                 return true;
             });
         }
@@ -207,8 +221,8 @@ public final class MiningSpeedClientSmoke {
                             // Minecraft's normal handleKeybinds/continueAttack path
                             // calls startDestroyBlock and continueDestroyBlock.
                             minecraft.options.keyAttack.setDown(true);
-                            Mite.LOGGER.info("MITE_MINING CASE_START case={} level={} rawHardness={} speed={} progress={} expectedAdditions={}",
-                                    testCase.name(), testCase.level(), testCase.rawHardness(), testCase.strength(),
+                            Mite.LOGGER.info("MITE_MINING CASE_START case={} level={} food={} rawHardness={} speed={} progress={} expectedAdditions={}",
+                                    testCase.name(), testCase.level(), testCase.foodLevel(), testCase.rawHardness(), testCase.strength(),
                                     Float.intBitsToFloat(testCase.progressBits()), testCase.accumulatedTicks());
                         }
                     }
@@ -225,6 +239,9 @@ public final class MiningSpeedClientSmoke {
                             require(minecraft.mouseHandler.isMouseGrabbed(), "Mouse capture was released during mining");
                             require(minecraft.options.keyAttack.isDown(), "Attack input was released during mining");
                             require(minecraft.player.experienceLevel == cases[caseIndex].level(), "XP changed during mining");
+                            require(minecraft.player.getFoodData().getFoodLevel() == cases[caseIndex].foodLevel(),
+                                    "Food changed during mining: expected=" + cases[caseIndex].foodLevel()
+                                            + " actual=" + minecraft.player.getFoodData().getFoodLevel());
                             require(minecraft.player.onGround(), "Player left the test platform during mining");
                             require(minecraft.player.getMainHandItem().isEmpty(), "Mining is no longer empty-handed");
                             require(minecraft.hitResult instanceof BlockHitResult hit && hit.getBlockPos().equals(TARGET),
@@ -254,13 +271,13 @@ public final class MiningSpeedClientSmoke {
                         require(miningTicks[caseIndex] >= expectedTicks && miningTicks[caseIndex] <= expectedTicks + 6,
                                 testCase.name() + " client ticks outside [" + expectedTicks + "," + (expectedTicks + 6)
                                         + "]: " + miningTicks[caseIndex]);
-                        Mite.LOGGER.info("MITE_MINING CASE_PASS case={} level={} clientTicks={} expectedAdditions={} serverAir=true",
-                                testCase.name(), testCase.level(), miningTicks[caseIndex], expectedTicks);
+                        Mite.LOGGER.info("MITE_MINING CASE_PASS case={} level={} food={} clientTicks={} expectedAdditions={} serverAir=true",
+                                testCase.name(), testCase.level(), testCase.foodLevel(), miningTicks[caseIndex], expectedTicks);
                         if (++caseIndex < cases.length) {
                             phase = Phase.PREPARING;
                             prepare(cases[caseIndex], false);
                         } else {
-                            if (!baseSmoke) {
+                            if (!baseSmoke && !hungerSmoke) {
                                 require(miningTicks[1] > miningTicks[0] * 2,
                                         "Level -40 was not clearly slower than level 0: " + Arrays.toString(miningTicks));
                                 require(miningTicks[3] < miningTicks[0],
@@ -321,7 +338,7 @@ public final class MiningSpeedClientSmoke {
         }
     }
 
-    private static void preparePlayer(ServerPlayer player, MiningCase testCase, boolean createPlatform) {
+    private static void preparePlayer(ServerPlayer player, MiningCase testCase, boolean createPlatform, boolean hungerSmoke) {
         ServerLevel world = player.server.getLevel(Level.OVERWORLD);
         require(world != null, "Overworld is unavailable");
         world.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false, player.server);
@@ -332,7 +349,10 @@ public final class MiningSpeedClientSmoke {
         world.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, player.server);
         world.setDayTime(6000L);
         world.setWeatherParameters(6000, 0, false, false);
-        player.server.setDifficulty(Difficulty.PEACEFUL, true);
+        player.server.setDifficulty(hungerSmoke ? Difficulty.NORMAL : Difficulty.PEACEFUL, true);
+        if (hungerSmoke) {
+            world.getGameRules().getRule(GameRules.RULE_NATURAL_REGENERATION).set(false, player.server);
+        }
         if (createPlatform) {
             for (ItemEntity item : world.getEntitiesOfClass(ItemEntity.class,
                     new AABB(11000, 199, 11000, 11010, 204, 11010))) {
@@ -358,7 +378,12 @@ public final class MiningSpeedClientSmoke {
         player.getAttribute(Attributes.MINING_EFFICIENCY).setBaseValue(0.0);
         PlayerExperience.setTotal(player, ExperienceRules.experienceRequiredForLevel(testCase.level()));
         player.setExperiencePoints(0); // Uses the normal dirty flag and XP packet.
-        player.getFoodData().setFoodLevel(20);
+        // Other modes retain their original full food bar at each level (6/8/20).
+        player.getFoodData().setFoodLevel(testCase.foodLevel());
+        if (hungerSmoke) {
+            player.getFoodData().setSaturation(0.0F);
+            player.getFoodData().setExhaustion(0.0F);
+        }
         player.setHealth(player.getMaxHealth());
         player.teleportTo(world, STAND.x, STAND.y, STAND.z, YAW, PITCH);
         player.setDeltaMovement(Vec3.ZERO);
@@ -371,6 +396,7 @@ public final class MiningSpeedClientSmoke {
                 && minecraft.isWindowActive() && minecraft.mouseHandler.isMouseGrabbed()
                 && minecraft.level.dimension().equals(Level.OVERWORLD)
                 && minecraft.player.experienceLevel == testCase.level() && minecraft.player.experienceProgress == 0.0F
+                && minecraft.player.getFoodData().getFoodLevel() == testCase.foodLevel()
                 && !minecraft.player.isCreative() && !minecraft.player.isSpectator()
                 && minecraft.player.position().distanceToSqr(STAND) < 0.1
                 && minecraft.player.onGround() && minecraft.player.getMainHandItem().isEmpty()

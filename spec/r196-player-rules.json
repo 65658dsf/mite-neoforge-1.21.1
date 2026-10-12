@@ -274,6 +274,62 @@
       }
     },
     {
+      "id": "harvesting_food_energy_penalty",
+      "evidence_status": "confirmed_bytecode",
+      "legacy_energy_formula": "getSatiation() + getNutrition() != 0",
+      "strength_formula": "energy ? strength : strength / 5.0f",
+      "evaluation_order": "水下修正、浮空修正、食物能量/5、等级倍率、便携下限；逐步 Java float。",
+      "skill_gate": false,
+      "proportional_food_threshold": false,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "hasFoodEnergy",
+          "start_line": 1735,
+          "end_line": 1736
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getCurrentPlayerStrVsBlock",
+          "start_line": 819,
+          "end_line": 828
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getCurrentPlayerStrVsBlock",
+          "start_line": 787,
+          "end_line": 788
+        },
+        {
+          "file": ".reference/r196/decompiled/arv.java",
+          "method": "isPortable",
+          "start_line": 102,
+          "end_line": 103
+        }
+      ],
+      "bytecode_evidence": [
+        "uf.hasFoodEnergy offsets 1 and 5 call getSatiation/getNutrition; 8 adds the integers; 9-17 return whether the sum is nonzero.",
+        "uf.getCurrentPlayerStrVsBlock offsets 328-351 handle water, 353-366 handle airborne state, 368-381 test food energy and divide strength by 5.0f.",
+        "The same method offsets 383-404 then apply the level multiplier and Math.max with the portable minimum."
+      ],
+      "modern_adaptation": {
+        "status": "documented_scope_not_gameplay_verification",
+        "energy_formula": "FoodData.foodLevel > 0",
+        "one_food_point_restores_normal_strength": true,
+        "saturation_is_legacy_nutrition": false,
+        "saturation_affects_this_gate": false,
+        "strength_input": "现代工具、属性、药水及环境已修正强度；只增加一次食物/5，然后应用一次既有等级倍率。",
+        "creative_and_spectator": "preserve_modern_behavior_without_food_penalty",
+        "canceled_or_nonpositive_strength": "现有接入层继续拒绝破坏进度，包含零硬度方块。",
+        "portable_floor_ported": false,
+        "notes": [
+          "原作正常非负资源中两项都为零才无能量；现代单foodLevel判断是暂时适配，不是双资源复刻。",
+          "原作便携下限可能抵消食物惩罚，本轮现代容器仍受食物减速。",
+          "不改水下/浮空等既有惩罚，不增加空手或材料工具门槛。"
+        ]
+      }
+    },
+    {
       "id": "food_limits",
       "evidence_status": "confirmed_static",
       "formula": "satiationLimit = nutritionLimit = max(min(6+(L/5)*2,20),6)",
@@ -876,6 +932,41 @@
       {"hardness": 0.0, "strength": 0.0, "canceled": false, "expected_progress": 0.0},
       {"hardness": 0.0, "strength": -1.0, "canceled": false, "expected_progress": 0.0},
       {"hardness": 0.0, "strength": 1.0, "canceled": false, "expected_progress": 1.0}
+    ],
+    "harvesting_legacy_food_energy": [
+      {"satiation": 0, "nutrition": 0, "expected_energy": false},
+      {"satiation": 0, "nutrition": 1, "expected_energy": true},
+      {"satiation": 1, "nutrition": 0, "expected_energy": true},
+      {"satiation": 1, "nutrition": 1, "expected_energy": true}
+    ],
+    "harvesting_modern_food_gate": [
+      {"food_level": 0, "saturation": 0.0, "input_strength": 1.0, "level": 0, "expected_strength_bits": "0x3e4ccccd"},
+      {"food_level": 1, "saturation": 0.0, "input_strength": 1.0, "level": 0, "expected_strength_bits": "0x3f800000"},
+      {"food_level": 6, "saturation": 0.0, "input_strength": 1.0, "level": 0, "expected_strength_bits": "0x3f800000"},
+      {"food_level": 20, "saturation": 5.0, "input_strength": 1.0, "level": 0, "expected_strength_bits": "0x3f800000"},
+      {"food_level": 0, "saturation": 5.0, "input_strength": 1.0, "level": 0, "expected_strength_bits": "0x3e4ccccd", "note": "仅验证判断不读取saturation；正常容量校验会将此不一致状态的saturation限制为0。"}
+    ],
+    "harvesting_hungry_dirt": [
+      {"food_level": 0, "level": 0, "input_strength": 1.0, "hardness": 0.5, "expected_strength_bits": "0x3e4ccccd", "expected_progress_bits": "0x3a4ccccd", "expected_client_additions": 1281},
+      {"food_level": 0, "level": -40, "input_strength": 1.0, "hardness": 0.5, "expected_strength_bits": "0x3d23d70d", "expected_progress_bits": "0x3923d70d", "expected_client_additions": 6401},
+      {"food_level": 0, "level": 5, "input_strength": 1.0, "hardness": 0.5, "expected_strength_bits": "0x3e6147af", "expected_progress_bits": "0x3a6147b0", "expected_client_additions": 1164},
+      {"food_level": 0, "level": 35, "input_strength": 1.0, "hardness": 0.5, "expected_strength_bits": "0x3eae147b", "expected_progress_bits": "0x3aae147b", "expected_client_additions": 753},
+      {"food_level": 0, "level": 200, "input_strength": 1.0, "hardness": 0.5, "expected_strength_bits": "0x3f800000", "expected_progress_bits": "0x3b800000", "expected_client_additions": 256},
+      {"food_level": 1, "level": 0, "input_strength": 1.0, "hardness": 0.5, "expected_strength_bits": "0x3f800000", "expected_progress_bits": "0x3b800000", "expected_client_additions": 256}
+    ],
+    "harvesting_food_order_regression": {
+      "input_strength": 1.0,
+      "food_level": 0,
+      "level": 5,
+      "expected_strength_bits": "0x3e6147af",
+      "incorrect_level_before_food_bits": "0x3e6147ae"
+    },
+    "harvesting_food_wrapper": [
+      {"mode": "creative", "food_level": 0, "input_strength": 8.0, "level": 200, "expected_strength": 8.0},
+      {"mode": "spectator", "food_level": 0, "input_strength": 8.0, "level": -40, "expected_strength": 8.0},
+      {"mode": "survival", "food_level": 0, "input_strength": 1.0, "canceled": true, "hardness": 0.0, "expected_progress": 0.0},
+      {"mode": "survival", "food_level": 0, "input_strength": 0.0, "canceled": false, "hardness": 0.0, "expected_progress": 0.0},
+      {"mode": "survival", "food_level": 0, "input_strength": -1.0, "canceled": false, "hardness": 0.0, "expected_progress": 0.0}
     ],
     "health": [
       {
