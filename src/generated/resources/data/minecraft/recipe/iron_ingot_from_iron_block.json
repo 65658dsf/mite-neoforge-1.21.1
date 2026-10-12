@@ -1,0 +1,11 @@
+{
+  "type": "mite:bulk_material",
+  "group": "iron_ingot",
+  "ingredient": {
+    "item": "minecraft:iron_block"
+  },
+  "result": {
+    "count": 9,
+    "id": "minecraft:iron_ingot"
+  }
+}

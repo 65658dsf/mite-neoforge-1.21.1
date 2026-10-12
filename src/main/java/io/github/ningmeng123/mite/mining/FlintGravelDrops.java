@@ -2,6 +2,9 @@ package io.github.ningmeng123.mite.mining;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.registry.MiteItems;
+import io.github.ningmeng123.mite.registry.MiteMaterials;
+import io.github.ningmeng123.mite.registry.MiteShards;
+import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.rules.FlintGravelRules;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -15,7 +18,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
-/** Replaces only the ordinary player-mined gravel/flint result. @author NingMeng123 */
+/** Complete R196 player-mined gravel tree, with persistent Nether-gravel identity. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class FlintGravelDrops {
     private FlintGravelDrops() {
@@ -23,7 +26,8 @@ public final class FlintGravelDrops {
 
     @SubscribeEvent
     public static void onBlockDrops(BlockDropsEvent event) {
-        if (event.isCanceled() || !event.getState().is(Blocks.GRAVEL)
+        boolean netherGravel = event.getState().is(MiteResourceBlocks.NETHER_GRAVEL.get());
+        if (event.isCanceled() || (!event.getState().is(Blocks.GRAVEL) && !netherGravel)
                 || !(event.getBreaker() instanceof Player player) || player.isCreative() || player.isSpectator()
                 || !event.getLevel().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
             return;
@@ -37,11 +41,20 @@ public final class FlintGravelDrops {
             return;
         }
         int fortune = event.getTool().getEnchantmentLevel(enchantments.getHolderOrThrow(Enchantments.FORTUNE));
-        var result = FlintGravelRules.roll(fortune, event.getLevel().random::nextInt);
+        var result = FlintGravelRules.roll(fortune, netherGravel, event.getLevel().random::nextInt);
         ItemStack stack = switch (result) {
-            case GRAVEL -> new ItemStack(Items.GRAVEL);
+            case GRAVEL -> new ItemStack(netherGravel ? MiteResourceBlocks.NETHER_GRAVEL.asItem() : Items.GRAVEL);
             case FLINT_CHIP -> new ItemStack(MiteItems.FLINT_CHIP.get());
             case FLINT -> new ItemStack(Items.FLINT);
+            case COPPER_NUGGET -> new ItemStack(MiteMaterials.COPPER_NUGGET.get());
+            case SILVER_NUGGET -> new ItemStack(MiteMaterials.SILVER_NUGGET.get());
+            case GOLD_NUGGET -> new ItemStack(Items.GOLD_NUGGET);
+            case OBSIDIAN_SHARD -> new ItemStack(MiteShards.OBSIDIAN_SHARD.get());
+            case EMERALD_SHARD -> new ItemStack(MiteShards.EMERALD_SHARD.get());
+            case DIAMOND_SHARD -> new ItemStack(MiteShards.DIAMOND_SHARD.get());
+            case MITHRIL_NUGGET -> new ItemStack(MiteMaterials.MITHRIL_NUGGET.get());
+            case ADAMANTIUM_NUGGET -> new ItemStack(MiteMaterials.ADAMANTIUM_NUGGET.get());
+            case QUARTZ_SHARD -> new ItemStack(MiteShards.QUARTZ_SHARD.get());
         };
         event.getDrops().removeIf(FlintGravelDrops::isOrdinaryDrop);
         var pos = event.getPos();
@@ -51,6 +64,7 @@ public final class FlintGravelDrops {
     }
 
     private static boolean isOrdinaryDrop(ItemEntity entity) {
-        return entity.getItem().is(Items.GRAVEL) || entity.getItem().is(Items.FLINT);
+        return entity.getItem().is(Items.GRAVEL) || entity.getItem().is(Items.FLINT)
+                || entity.getItem().is(MiteResourceBlocks.NETHER_GRAVEL.asItem());
     }
 }

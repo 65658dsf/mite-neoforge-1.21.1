@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.client;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.item.GemSacrifice;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
@@ -16,6 +17,8 @@ public final class CraftingTooltips {
 
     @SubscribeEvent
     public static void explainEquipment(ItemTooltipEvent event) {
+        int xp = GemSacrifice.experienceValue(event.getItemStack());
+        if (xp > 0) event.getToolTip().add(Component.translatable("tooltip.mite.gem_sacrifice", xp).withStyle(ChatFormatting.AQUA));
         if (event.getItemStack().is(ItemTags.LOGS) || event.getItemStack().is(ItemTags.BAMBOO_BLOCKS)) {
             event.getToolTip().add(Component.translatable("tooltip.mite.planks_require_workbench")
                     .withStyle(ChatFormatting.GRAY));

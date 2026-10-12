@@ -1,0 +1,416 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "title": "R196 seven-metal nugget and ingot conversion batch",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "runtime_source": "reference-data/runtime-registry.json",
+  "activation_flags": {
+    "professions_suppressed": true,
+    "in_dev_mode": false,
+    "allow_new_sand_physics": false
+  },
+  "materials": [
+    {
+      "metal": "copper",
+      "nugget": {
+        "r196_id": 956,
+        "symbols": [
+          "yc.copperNugget"
+        ],
+        "modern_id": "mite:copper_nugget",
+        "stack": 64,
+        "component_difficulty": 44.444443
+      },
+      "ingot": {
+        "r196_id": 962,
+        "symbols": [
+          "yc.ingotCopper"
+        ],
+        "modern_id": "minecraft:copper_ingot",
+        "stack": 8,
+        "component_difficulty": 400.0,
+        "furnace_xp_reward_metadata_not_crafting_xp": 10
+      },
+      "packing": {
+        "runtime_order": 54,
+        "kind": "aai",
+        "width": 3,
+        "height": 3,
+        "nugget_count": 9,
+        "ingot_count": 1,
+        "difficulty": 400.0,
+        "skillsets": [
+          256
+        ],
+        "bench_material": null
+      },
+      "unpacking": {
+        "runtime_order": 837,
+        "kind": "aaj",
+        "ingot_count": 1,
+        "nugget_count": 9,
+        "difficulty": 400.0,
+        "skillsets": null,
+        "bench_material": null
+      }
+    },
+    {
+      "metal": "silver",
+      "nugget": {
+        "r196_id": 957,
+        "symbols": [
+          "yc.silverNugget"
+        ],
+        "modern_id": "mite:silver_nugget",
+        "stack": 64,
+        "component_difficulty": 44.444443
+      },
+      "ingot": {
+        "r196_id": 963,
+        "symbols": [
+          "yc.ingotSilver"
+        ],
+        "modern_id": "mite:silver_ingot",
+        "stack": 8,
+        "component_difficulty": 400.0,
+        "furnace_xp_reward_metadata_not_crafting_xp": 15
+      },
+      "packing": {
+        "runtime_order": 55,
+        "kind": "aai",
+        "width": 3,
+        "height": 3,
+        "nugget_count": 9,
+        "ingot_count": 1,
+        "difficulty": 400.0,
+        "skillsets": [
+          256
+        ],
+        "bench_material": null
+      },
+      "unpacking": {
+        "runtime_order": 838,
+        "kind": "aaj",
+        "ingot_count": 1,
+        "nugget_count": 9,
+        "difficulty": 400.0,
+        "skillsets": null,
+        "bench_material": null
+      }
+    },
+    {
+      "metal": "gold",
+      "nugget": {
+        "r196_id": 371,
+        "symbols": [
+          "yc.bs"
+        ],
+        "modern_id": "minecraft:gold_nugget",
+        "stack": 64,
+        "component_difficulty": 44.444443
+      },
+      "ingot": {
+        "r196_id": 266,
+        "symbols": [
+          "yc.r"
+        ],
+        "modern_id": "minecraft:gold_ingot",
+        "stack": 8,
+        "component_difficulty": 400.0,
+        "furnace_xp_reward_metadata_not_crafting_xp": 20
+      },
+      "packing": {
+        "runtime_order": 56,
+        "kind": "aai",
+        "width": 3,
+        "height": 3,
+        "nugget_count": 9,
+        "ingot_count": 1,
+        "difficulty": 400.0,
+        "skillsets": [
+          256
+        ],
+        "bench_material": null
+      },
+      "unpacking": {
+        "runtime_order": 839,
+        "kind": "aaj",
+        "ingot_count": 1,
+        "nugget_count": 9,
+        "difficulty": 400.0,
+        "skillsets": null,
+        "bench_material": null
+      }
+    },
+    {
+      "metal": "iron",
+      "nugget": {
+        "r196_id": 958,
+        "symbols": [
+          "yc.ironNugget"
+        ],
+        "modern_id": "minecraft:iron_nugget",
+        "stack": 64,
+        "component_difficulty": 88.888885
+      },
+      "ingot": {
+        "r196_id": 265,
+        "symbols": [
+          "yc.q"
+        ],
+        "modern_id": "minecraft:iron_ingot",
+        "stack": 8,
+        "component_difficulty": 800.0,
+        "furnace_xp_reward_metadata_not_crafting_xp": 10
+      },
+      "packing": {
+        "runtime_order": 57,
+        "kind": "aai",
+        "width": 3,
+        "height": 3,
+        "nugget_count": 9,
+        "ingot_count": 1,
+        "difficulty": 800.0,
+        "skillsets": [
+          256
+        ],
+        "bench_material": null
+      },
+      "unpacking": {
+        "runtime_order": 840,
+        "kind": "aaj",
+        "ingot_count": 1,
+        "nugget_count": 9,
+        "difficulty": 800.0,
+        "skillsets": null,
+        "bench_material": null
+      }
+    },
+    {
+      "metal": "ancient_metal",
+      "nugget": {
+        "r196_id": 961,
+        "symbols": [
+          "yc.ancientMetalNugget"
+        ],
+        "modern_id": "mite:ancient_metal_nugget",
+        "stack": 64,
+        "component_difficulty": 177.77777
+      },
+      "ingot": {
+        "r196_id": 966,
+        "symbols": [
+          "yc.ingotAncientMetal"
+        ],
+        "modern_id": "mite:ancient_metal_ingot",
+        "stack": 8,
+        "component_difficulty": 1600.0,
+        "furnace_xp_reward_metadata_not_crafting_xp": 20
+      },
+      "packing": {
+        "runtime_order": 60,
+        "kind": "aai",
+        "width": 3,
+        "height": 3,
+        "nugget_count": 9,
+        "ingot_count": 1,
+        "difficulty": 1600.0,
+        "skillsets": [
+          256
+        ],
+        "bench_material": null
+      },
+      "unpacking": {
+        "runtime_order": 843,
+        "kind": "aaj",
+        "ingot_count": 1,
+        "nugget_count": 9,
+        "difficulty": 1600.0,
+        "skillsets": null,
+        "bench_material": null
+      }
+    },
+    {
+      "metal": "mithril",
+      "nugget": {
+        "r196_id": 959,
+        "symbols": [
+          "yc.mithrilNugget"
+        ],
+        "modern_id": "mite:mithril_nugget",
+        "stack": 64,
+        "component_difficulty": 711.1111
+      },
+      "ingot": {
+        "r196_id": 964,
+        "symbols": [
+          "yc.ingotMithril"
+        ],
+        "modern_id": "mite:mithril_ingot",
+        "stack": 8,
+        "component_difficulty": 6400.0,
+        "furnace_xp_reward_metadata_not_crafting_xp": 40
+      },
+      "packing": {
+        "runtime_order": 58,
+        "kind": "aai",
+        "width": 3,
+        "height": 3,
+        "nugget_count": 9,
+        "ingot_count": 1,
+        "difficulty": 6400.0,
+        "skillsets": [
+          256
+        ],
+        "bench_material": null
+      },
+      "unpacking": {
+        "runtime_order": 841,
+        "kind": "aaj",
+        "ingot_count": 1,
+        "nugget_count": 9,
+        "difficulty": 6400.0,
+        "skillsets": null,
+        "bench_material": null
+      }
+    },
+    {
+      "metal": "adamantium",
+      "nugget": {
+        "r196_id": 960,
+        "symbols": [
+          "yc.adamantiumNugget"
+        ],
+        "modern_id": "mite:adamantium_nugget",
+        "stack": 64,
+        "component_difficulty": 2844.4443
+      },
+      "ingot": {
+        "r196_id": 965,
+        "symbols": [
+          "yc.ingotAdamantium"
+        ],
+        "modern_id": "mite:adamantium_ingot",
+        "stack": 8,
+        "component_difficulty": 25600.0,
+        "furnace_xp_reward_metadata_not_crafting_xp": 100
+      },
+      "packing": {
+        "runtime_order": 59,
+        "kind": "aai",
+        "width": 3,
+        "height": 3,
+        "nugget_count": 9,
+        "ingot_count": 1,
+        "difficulty": 25600.0,
+        "skillsets": [
+          256
+        ],
+        "bench_material": null
+      },
+      "unpacking": {
+        "runtime_order": 842,
+        "kind": "aaj",
+        "ingot_count": 1,
+        "nugget_count": 9,
+        "difficulty": 25600.0,
+        "skillsets": null,
+        "bench_material": null
+      }
+    }
+  ],
+  "source_rules": {
+    "registration": [
+      "yc.java:28-29 iron/gold ingots",
+      "yc.java:116 gold nugget",
+      "yc.java:158-168 other nuggets and ingots"
+    ],
+    "stack_and_difficulty": [
+      "ItemIngot.java:6-15 stack8 and material.durability*100F",
+      "ItemNugget.java:4-11 stack64 and ingot component difficulty/9F"
+    ],
+    "conversions": [
+      "aae.java:5-6 arrays and full 3x3 nugget pattern",
+      "aae.java:16-50 shaped packing and shapeless unpacking registration"
+    ],
+    "workbench": {
+      "sources": [
+        "RecipeHelper.java:59-63 ItemIngot early return before bench-grade test"
+      ],
+      "rule": "ItemIngot and its ItemNugget subclass do not require a metal-grade workbench. Nine-nugget packing still needs physical 3x3 grid space; ingot unpacking fits 2x2."
+    },
+    "experience": {
+      "sources": [
+        "yc.java:1193-1194 hasQuality defaults false",
+        "wd.java:285-287 no-quality output has zero crafting XP cost"
+      ],
+      "crafting_xp_cost": 0,
+      "crafting_xp_award": 0,
+      "note": "The item xp_reward scalar is furnace/output XP metadata, not a nugget-conversion reward."
+    },
+    "skills": {
+      "source": "wd.java:152 world.areSkillsEnabled gate",
+      "rule": "Packing records BLACKSMITHING bit256 but the release runtime snapshot has professions_suppressed=true; do not claim a default mandatory profession gate."
+    },
+    "timing": {
+      "sources": [
+        "bex.java:450-457 difficulty compression",
+        "bex.java:497-503 minimum period and level/bench/speed effects"
+      ],
+      "base_function": "D<25 ->25; D>100 ->round(pow(D-100F,0.8F))+100; otherwise round(D)",
+      "implemented_this_batch": false,
+      "note": "Modern conversion remains instant until the shared timed-crafting feature is integrated. Runtime difficulty is retained here as evidence, not silently treated as zero."
+    }
+  },
+  "modern_compatibility": {
+    "original_item_identity_preserved": [
+      "minecraft:copper_ingot",
+      "minecraft:iron_ingot",
+      "minecraft:gold_ingot",
+      "minecraft:iron_nugget",
+      "minecraft:gold_nugget"
+    ],
+    "default_component_patch": "Only MAX_STACK_SIZE of copper/iron/gold ingots becomes8; all other components are preserved. New ingots use8 and all nuggets64.",
+    "vanilla_recipe_overrides": [
+      "minecraft:iron_ingot_from_nuggets",
+      "minecraft:gold_ingot_from_nuggets",
+      "minecraft:iron_nugget",
+      "minecraft:gold_nugget"
+    ],
+    "bulk_recipe_reason": "Vanilla crafting serializers use ItemStack.STRICT_CODEC and reject nine ingots when max stack is eight. A dedicated single-input recipe accepts exactly count9 of these seven ingot identities with maxstack8, remains in the crafting book, and preserves the nine-for-one conversion.",
+    "bulk_recipe_serializer": "mite:bulk_material",
+    "existing_bulk_recipe_overrides": [
+      "minecraft:copper_ingot",
+      "minecraft:copper_ingot_from_waxed_copper_block",
+      "minecraft:iron_ingot_from_iron_block",
+      "minecraft:gold_ingot_from_gold_block"
+    ],
+    "bulk_transfer_boundary": "Result/cursor may transiently hold the whole batch9; storage slots split to at most8. Scoped native-menu Mixins recognize the actual BulkMaterialRecipe: Shift repeats the existing inventory transfer until empty or no progress; empty hotbar/offhand swaps store8 then add/drop the remaining1 while leaving original onTake/count intact. Full inventories preserve vanilla no-move or partial-transfer/remainder-drop semantics. Creative mode also retains the ninth ingot rather than silently deleting it.",
+    "waxed_copper": "Retained modern copper-block compatibility, not an R196 block form.",
+    "bulk_transfer_sources": [
+      "BulkMaterialTransfers.isBulkResult: real native menu, actual current recipe type and same result components",
+      "InventoryMenu.quickMoveStack: first moveItemStackTo call only",
+      "CraftingMenu.quickMoveStack: first moveItemStackTo call only",
+      "AbstractContainerMenu.doClick: first Inventory.setItem call, the empty-target SWAP branch only",
+      "CrafterBlock.dispenseItem: vanilla already uses unit insertion when batch exceeds target stack limit"
+    ]
+  },
+  "scope": {
+    "implemented": [
+      "Nine new material item identities",
+      "R196 nugget64 and ingot8 stack sizes",
+      "All seven full3x3 9nuggets->1ingot recipes",
+      "All seven shapeless1ingot->9nuggets recipes",
+      "Compatibility for the four existing vanilla block->9ingot recipe IDs"
+    ],
+    "not_completed": [
+      "Shared timed crafting and skill framework",
+      "New silver/ancient-metal/mithril/adamantium blocks",
+      "Ore registration, furnace heat and furnace XP system",
+      "Metal item explosion immunity",
+      "Chains, coins, armor and metal tools",
+      "Full catalog completion"
+    ],
+    "claim": "This is one material conversion batch; it does not complete the metal category or all R196 items."
+  }
+}

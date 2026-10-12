@@ -2,6 +2,10 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.mining.FlintGravelDrops;
 import io.github.ningmeng123.mite.registry.MiteItems;
+import io.github.ningmeng123.mite.registry.MiteMaterials;
+import io.github.ningmeng123.mite.registry.MiteShards;
+import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
+import net.minecraft.world.item.Item;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +49,7 @@ public final class FlintGravelGameTests {
             int chips = 0;
             int flint = 0;
             int gravel = 0;
+            int minerals = 0;
             for (int roll = 0; roll < 256; roll++) {
                 Block.dropResources(Blocks.GRAVEL.defaultBlockState(), helper.getLevel(), position, null, player, ItemStack.EMPTY);
                 List<ItemEntity> drops = fixture.newDrops();
@@ -53,13 +58,12 @@ public final class FlintGravelGameTests {
                 helper.assertValueEqual(result.getCount(), 1, "Replacement does not duplicate the ordinary drop");
                 if (result.is(MiteItems.FLINT_CHIP.get())) chips++;
                 else if (result.is(Items.FLINT)) flint++;
-                else {
-                    helper.assertTrue(result.is(Items.GRAVEL), "Unported mineral outcomes currently retain ordinary gravel");
-                    gravel++;
-                }
+                else if (result.is(Items.GRAVEL)) gravel++;
+                else { helper.assertTrue(minerals().contains(result.getItem()), "The completed R196 mineral branch emits only its eight results"); minerals++; }
                 drops.forEach(ItemEntity::discard);
             }
-            helper.assertValueEqual(chips + flint + gravel, 256, "All actual drops are accounted for exactly once");
+            helper.assertValueEqual(chips + flint + gravel + minerals, 256, "All actual drops are accounted for exactly once");
+            helper.assertTrue(minerals > 0, "Mineral outcomes no longer fall back to gravel");
             helper.assertTrue(chips > 0, "The seeded real drop path produces registered flint-chip entities");
             helper.assertTrue(flint > 0, "The seeded real drop path also produces whole flint");
             helper.assertTrue(gravel > 0, "The seeded real drop path retains gravel results");
@@ -148,11 +152,46 @@ public final class FlintGravelGameTests {
             helper.assertValueEqual(extra.getItem().getCount(), 3, "Unrelated loot retains its stack count");
             ItemStack ordinaryResult = replacement.getDrops().stream().filter(drop -> drop != extra).findFirst().orElseThrow().getItem();
             helper.assertValueEqual(ordinaryResult.getCount(), 1, "Multiple ordinary inputs do not create duplicate replacement output");
-            helper.assertTrue(ordinaryResult.is(Items.GRAVEL) || ordinaryResult.is(Items.FLINT) || ordinaryResult.is(MiteItems.FLINT_CHIP.get()),
-                    "The replacement remains inside the explicitly implemented flint branch");
+            helper.assertTrue(ordinaryResult.is(Items.GRAVEL) || ordinaryResult.is(Items.FLINT)
+                            || ordinaryResult.is(MiteItems.FLINT_CHIP.get()) || minerals().contains(ordinaryResult.getItem()),
+                    "The replacement remains inside the full R196 gravel outcome set");
             helper.assertTrue(fixture.newDrops().isEmpty(), "Direct event mutation alone does not spawn any entities");
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void netherGravelDropsFollowBlockIdentityEvenInTheOverworld(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        BlockPos position = helper.absolutePos(new BlockPos(1, 2, 1));
+        long nextSeed = helper.getLevel().random.nextLong();
+        try (DropFixture fixture = new DropFixture(helper, position)) {
+            helper.getLevel().random.setSeed(196L);
+            int nuggets = 0;
+            int fragments = 0;
+            for (int roll = 0; roll < 2048; roll++) {
+                Block.dropResources(MiteResourceBlocks.NETHER_GRAVEL.get().defaultBlockState(), helper.getLevel(), position, null, player, ItemStack.EMPTY);
+                List<ItemEntity> drops = fixture.newDrops();
+                helper.assertValueEqual(drops.size(), 1, "Nether gravel emits one entity per player harvest");
+                ItemStack stack = drops.getFirst().getItem();
+                helper.assertValueEqual(stack.getCount(), 1, "Nether gravel never duplicates the roll");
+                if (stack.is(Items.GOLD_NUGGET)) nuggets++;
+                else if (stack.is(MiteShards.QUARTZ_SHARD.get())) fragments++;
+                else helper.assertTrue(stack.is(MiteResourceBlocks.NETHER_GRAVEL.asItem()) || stack.is(Items.FLINT)
+                                || stack.is(MiteItems.FLINT_CHIP.get()), "Only gold/quartz can replace the Nether mineral branch");
+                drops.forEach(ItemEntity::discard);
+            }
+            helper.assertTrue(nuggets > 0 && fragments > 0, "Both converted mineral families are exercised in the overworld");
+        } finally {
+            helper.getLevel().random.setSeed(nextSeed);
+        }
+        helper.succeed();
+    }
+
+    private static Set<Item> minerals() {
+        return Set.of(MiteMaterials.COPPER_NUGGET.get(), MiteMaterials.SILVER_NUGGET.get(), Items.GOLD_NUGGET,
+                MiteShards.OBSIDIAN_SHARD.get(), MiteShards.EMERALD_SHARD.get(), MiteShards.DIAMOND_SHARD.get(),
+                MiteMaterials.MITHRIL_NUGGET.get(), MiteMaterials.ADAMANTIUM_NUGGET.get());
     }
 
     private static BlockDropsEvent event(GameTestHelper helper, BlockPos position, BlockState state, Entity breaker, List<ItemEntity> drops) {

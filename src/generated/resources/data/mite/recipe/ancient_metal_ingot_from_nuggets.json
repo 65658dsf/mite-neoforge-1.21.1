@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "ancient_metal_ingot",
+  "key": {
+    "N": {
+      "item": "mite:ancient_metal_nugget"
+    }
+  },
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:ancient_metal_ingot"
+  }
+}

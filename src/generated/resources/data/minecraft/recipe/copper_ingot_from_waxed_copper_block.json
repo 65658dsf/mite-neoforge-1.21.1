@@ -1,0 +1,11 @@
+{
+  "type": "mite:bulk_material",
+  "group": "copper_ingot",
+  "ingredient": {
+    "item": "minecraft:waxed_copper_block"
+  },
+  "result": {
+    "count": 9,
+    "id": "minecraft:copper_ingot"
+  }
+}

@@ -28,6 +28,8 @@ public final class MiteRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput output) {
+        MaterialRecipes.addRecipes(output);
+        ShardRecipes.addRecipes(output);
         // R196's flint workbench uses a fixed 2x2 pattern (horizontal mirror allowed).
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Items.CRAFTING_TABLE)
                 .pattern("FB").pattern("SL")

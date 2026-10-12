@@ -67,6 +67,9 @@ neoForge {
             if (project.providers.gradleProperty('miteFlintWorkbenchSmoke').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.flintWorkbenchSmoke', 'true'
             }
+            if (project.providers.gradleProperty('miteMaterialSmoke').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.materialSmoke', 'true'
+            }
         }
         server {
             server()

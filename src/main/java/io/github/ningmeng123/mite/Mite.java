@@ -5,6 +5,9 @@ import io.github.ningmeng123.mite.item.WoodenClubBehavior;
 import io.github.ningmeng123.mite.mining.GrassMining;
 import io.github.ningmeng123.mite.registry.MiteAttachments;
 import io.github.ningmeng123.mite.registry.MiteItems;
+import io.github.ningmeng123.mite.registry.MiteMaterials;
+import io.github.ningmeng123.mite.registry.MiteShards;
+import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.registry.MiteLootModifiers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -23,6 +26,9 @@ public final class Mite {
     public Mite(IEventBus modBus) {
         MiteAttachments.register(modBus);
         MiteItems.register(modBus);
+        MiteMaterials.register(modBus);
+        MiteShards.register(modBus);
+        MiteResourceBlocks.register(modBus);
         MiteLootModifiers.register(modBus);
         modBus.addListener(WoodenClubBehavior::modifyComponents);
         modBus.addListener(GrassMining::modifyShears);
