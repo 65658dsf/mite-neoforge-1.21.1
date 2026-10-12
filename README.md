@@ -10,6 +10,8 @@
 
 实现与验证状态见 [实施状态](docs/implementation-status.md)。每项玩法只有完成游戏实测后才会标为已验证。
 
+已实现并实测：生命和饱食度上限随等级成长（0 级 3 格、5 级 4 格、35 级 10 格），饥饿值大于 0 时可疾跑，清空后停止。当前仍使用新版经验等级及食物机制，R196 完整经验曲线、双资源营养与代谢尚未实现。
+
 ## 开发环境
 
 - Java 21（64 位）
@@ -22,9 +24,12 @@
 .\gradlew.bat build
 .\gradlew.bat runClient
 .\gradlew.bat runServer
+.\gradlew.bat runGameTestServer
 ```
 
 使用独立测试存档，不导入 1.6.4 存档。
+
+客户端、专服、GameTest 的运行目录分别为 `run/`、`run-server/`、`run-gametest/`。GameTest 源码独立于发布 JAR；当前有 3 组饱食度集成测试。自动验证不能替代游戏内显示和操作验收。
 
 ## 每个小功能的交付流程
 

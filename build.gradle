@@ -23,8 +23,17 @@ sourceSets.main.resources {
     exclude '**/*.bbmodel'
 }
 
+// Runtime integration tests are loaded in development runs, never in the mod JAR.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
 neoForge {
     version = project.neo_version
+    addModdingDependenciesTo sourceSets.gametest
 
     runs {
         client {
@@ -33,11 +42,13 @@ neoForge {
         }
         server {
             server()
+            gameDirectory = file('run-server')
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
         gameTestServer {
             type = 'gameTestServer'
+            gameDirectory = file('run-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
         data {
@@ -55,6 +66,7 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet sourceSets.main
+            sourceSet sourceSets.gametest
         }
     }
 }

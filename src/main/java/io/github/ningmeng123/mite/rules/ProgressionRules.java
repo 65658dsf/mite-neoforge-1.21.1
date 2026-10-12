@@ -15,13 +15,18 @@ public final class ProgressionRules {
      * experience curve and negative experience are separate rules.
      */
     public static double maxHealthForLevel(int level) {
+        return foodLimitForLevel(level);
+    }
+
+    /** R196 food capacity uses the same level curve as base maximum health. */
+    public static int foodLimitForLevel(int level) {
         // Check boundaries before arithmetic so every int input is supported.
         if (level >= 35) {
-            return 20.0;
+            return 20;
         }
         if (level <= 0) {
-            return 6.0;
+            return 6;
         }
-        return 6.0 + (level / 5) * 2.0;
+        return 6 + (level / 5) * 2;
     }
 }

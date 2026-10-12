@@ -3,8 +3,8 @@
   "minVersion": "0.8",
   "package": "io.github.ningmeng123.mite.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
-  "client": [],
+  "mixins": ["PlayerFoodMixin", "FoodDataMixin"],
+  "client": ["client.GuiFoodMixin", "client.LocalPlayerFoodMixin"],
   "injectors": {
     "defaultRequire": 1
   }

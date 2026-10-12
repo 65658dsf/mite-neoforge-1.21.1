@@ -44,5 +44,6 @@ class ProgressionRulesTest {
     })
     void matchesHealthCurveAtEveryTransition(int level, double expectedHealth) {
         assertEquals(expectedHealth, ProgressionRules.maxHealthForLevel(level));
+        assertEquals((int) expectedHealth, ProgressionRules.foodLimitForLevel(level));
     }
 }
