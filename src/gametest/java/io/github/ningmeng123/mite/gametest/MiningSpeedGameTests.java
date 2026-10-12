@@ -36,11 +36,94 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Final modern mining speed, event composition and actual server breaking. @author NingMeng123 */
+/** Modern strength, R196 progress, event composition and actual server breaking. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 @SuppressWarnings("deprecation")
 public final class MiningSpeedGameTests {
+    @GameTest(template = "empty")
+    public static void emptyHandedLevelZeroMatchesOriginalProgressWithoutChangingBlockProperties(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setOnGround(true);
+        player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        PlayerExperience.setTotal(player, 0);
+        BlockPos position = helper.absolutePos(BlockPos.ZERO);
+        BlockState[] states = {Blocks.DIRT.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState(),
+                Blocks.SAND.defaultBlockState(), Blocks.GRAVEL.defaultBlockState(),
+                Blocks.OAK_LEAVES.defaultBlockState(), Blocks.RED_SAND.defaultBlockState()};
+        float[] modernHardness = {0.5F, 0.6F, 0.5F, 0.6F, 0.2F, 0.5F};
+        int[] progressBits = {0x3b800000, 0x3b800000, 0x3ba00000, 0x3b555555, 0x3c200000, 0x3ba00000};
+        int[] accumulationTicks = {256, 256, 205, 308, 103, 205};
+        for (int i = 0; i < states.length; i++) {
+            helper.assertValueEqual(states[i].getDestroySpeed(helper.getLevel(), position), modernHardness[i],
+                    "Registered hardness retains its modern value before mining");
+            helper.assertValueEqual(states[i].getBlock().getExplosionResistance(), modernHardness[i],
+                    "Blast resistance retains its modern value");
+            float progress = states[i].getDestroyProgress(player, helper.getLevel(), position);
+            helper.assertValueEqual(Float.floatToRawIntBits(progress), progressBits[i],
+                    "Actual block progress matches the original float vector for " + states[i]);
+            helper.assertValueEqual(accumulateTicks(progress), accumulationTicks[i],
+                    "Repeated float accumulation matches the original timing vector for " + states[i]);
+            helper.assertValueEqual(states[i].getDestroySpeed(helper.getLevel(), position), modernHardness[i],
+                    "Effective mining hardness never mutates the registered block hardness");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void progressReadsStrengthOnceAndHonorsCancellationEvenForZeroHardness(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setOnGround(true);
+        PlayerExperience.setTotal(player, 6650);
+        BlockPos position = helper.absolutePos(BlockPos.ZERO);
+        int[] calls = {0};
+        Float[] replacement = {null};
+        boolean[] canceled = {false};
+        Consumer<PlayerEvent.BreakSpeed> listener = event -> {
+            if (event.getEntity() == player) {
+                calls[0]++;
+                if (replacement[0] != null) event.setNewSpeed(replacement[0]);
+                event.setCanceled(canceled[0]);
+            }
+        };
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, PlayerEvent.BreakSpeed.class, listener);
+        try {
+            float dirt = Blocks.DIRT.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position);
+            helper.assertValueEqual(Float.floatToRawIntBits(dirt), 0x3bd9999a,
+                    "Level 35 dirt applies the level multiplier once before R196 progress");
+            helper.assertValueEqual(calls[0], 1, "A progress query invokes getDigSpeed exactly once");
+            helper.assertValueEqual(accumulateTicks(dirt), 151, "Level 35 dirt uses the recorded float accumulation count");
+
+            calls[0] = 0;
+            helper.assertValueEqual(Blocks.BEDROCK.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0.0F,
+                    "Negative raw hardness remains unbreakable");
+            helper.assertValueEqual(calls[0], 0, "Negative raw hardness returns before evaluating player strength");
+
+            BlockState torch = Blocks.TORCH.defaultBlockState();
+            helper.assertValueEqual(torch.getDestroySpeed(helper.getLevel(), position), 0.0F, "Torch is a zero-hardness fixture");
+            helper.assertValueEqual(torch.getDestroyProgress(player, helper.getLevel(), position), 1.0F,
+                    "Positive strength keeps zero-hardness instant breaking");
+            for (float blocked : new float[]{0.0F, -1.0F}) {
+                replacement[0] = blocked;
+                helper.assertValueEqual(torch.getDestroyProgress(player, helper.getLevel(), position), 0.0F,
+                        "The modern wrapper blocks zero-hardness progress for nonpositive strength");
+            }
+            replacement[0] = 4.0F;
+            canceled[0] = true;
+            helper.assertValueEqual(torch.getDestroyProgress(player, helper.getLevel(), position), 0.0F,
+                    "Canceled speed cannot be converted into zero-hardness instant breaking");
+            helper.assertValueEqual(Blocks.DIRT.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0.0F,
+                    "Cancellation blocks positive-hardness progress too");
+            canceled[0] = false;
+            replacement[0] = 256.0F;
+            helper.assertValueEqual(Blocks.DIRT.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 1.0F,
+                    "Sufficient positive final strength crosses the R196 instant threshold");
+        } finally {
+            NeoForge.EVENT_BUS.unregister(listener);
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = "empty")
     public static void differentToolsKeepTheirModernSpeedsAndHarvestRequirements(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
@@ -153,6 +236,9 @@ public final class MiningSpeedGameTests {
                 float multiplier = mode == GameType.CREATIVE || mode == GameType.SPECTATOR ? 1.0F : 1.7F;
                 assertClose(helper, player.getDestroySpeed(Blocks.STONE.defaultBlockState()), baseline * multiplier,
                         "Level 35 mining in " + mode);
+                float progress = Blocks.STONE.defaultBlockState().getDestroyProgress(player, helper.getLevel(), helper.absolutePos(BlockPos.ZERO));
+                assertClose(helper, progress, mode == GameType.CREATIVE || mode == GameType.SPECTATOR ? 0.17777778F : 0.017708333F,
+                        "Creative/spectator keep modern progress while survival/adventure use R196 progress");
                 PlayerExperience.setTotal(player, -800);
                 float negativeMultiplier = mode == GameType.CREATIVE || mode == GameType.SPECTATOR ? 1.0F : 0.2F;
                 assertClose(helper, player.getDestroySpeed(Blocks.STONE.defaultBlockState()), baseline * negativeMultiplier,
@@ -167,6 +253,8 @@ public final class MiningSpeedGameTests {
             helper.assertValueEqual(restored.experienceLevel, 35, "Full entity load restores the canonical level");
             assertClose(helper, restored.getDestroySpeed(Blocks.STONE.defaultBlockState()), baseline * 1.7F,
                     "Reloaded player uses the restored level without a separate mining cache");
+            assertClose(helper, Blocks.STONE.defaultBlockState().getDestroyProgress(restored, helper.getLevel(), helper.absolutePos(BlockPos.ZERO)),
+                    0.017708333F, "Reloaded player uses R196 progress as well as the level multiplier");
         }
         helper.succeed();
     }
@@ -192,30 +280,40 @@ public final class MiningSpeedGameTests {
             helper.getLevel().setBlockAndUpdate(fastPos, Blocks.STONE.defaultBlockState());
             float slowProgress = Blocks.STONE.defaultBlockState().getDestroyProgress(slow, helper.getLevel(), slowPos);
             float fastProgress = Blocks.STONE.defaultBlockState().getDestroyProgress(fast, helper.getLevel(), fastPos);
-            assertClose(helper, fastProgress, slowProgress * 1.7F, "Modern block progress uses the same final-speed event");
+            assertClose(helper, slowProgress, 0.010416667F, "Zero-level diamond mining of stone uses R196 1/96 progress");
+            assertClose(helper, fastProgress, 0.017708333F, "Level 35 uses its strength multiplier exactly once");
             action(helper, slow, slowPos, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, 1);
             action(helper, fast, fastPos, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, 2);
-            for (int tick = 0; tick < 2; tick++) {
+            for (int tick = 0; tick < 39; tick++) {
                 slow.gameMode.tick();
                 fast.gameMode.tick();
             }
             action(helper, slow, slowPos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, 3);
             action(helper, fast, fastPos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, 4);
             helper.assertTrue(helper.getLevel().getBlockState(slowPos).is(Blocks.STONE),
-                    "Level zero has not reached the modern STOP threshold after two ticks");
+                    "Level zero has not reached the retained modern STOP threshold after 39 ticks");
             helper.assertTrue(helper.getLevel().getBlockState(fastPos).isAir(),
                     "Level 35 reaches the modern STOP threshold earlier");
-            slow.gameMode.tick();
-            slow.gameMode.tick();
+            for (int tick = 0; tick < 55; tick++) slow.gameMode.tick();
             helper.assertTrue(helper.getLevel().getBlockState(slowPos).is(Blocks.STONE),
                     "The delayed level-zero path still respects its unfinished progress");
             slow.gameMode.tick();
             helper.assertTrue(helper.getLevel().getBlockState(slowPos).isAir(),
-                    "The delayed path eventually finishes at the ordinary speed");
+                    "The delayed path finishes when the R196 progress reaches one");
             int cobblestone = helper.getLevel().getEntitiesOfClass(ItemEntity.class, dropsArea).stream()
                     .filter(item -> !existingDrops.contains(item.getUUID()) && item.getItem().is(Items.COBBLESTONE))
                     .mapToInt(item -> item.getItem().getCount()).sum();
             helper.assertValueEqual(cobblestone, 2, "Both correct-tool breaks retain their normal cobblestone drops");
+            slow.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            PlayerExperience.setTotal(slow, 203000);
+            helper.getLevel().setBlockAndUpdate(slowPos, Blocks.STONE.defaultBlockState());
+            helper.assertFalse(Blocks.STONE.defaultBlockState().canHarvestBlock(helper.getLevel(), slowPos, slow),
+                    "Maximum level does not make the empty hand a valid stone harvesting tool");
+            helper.assertTrue(slow.gameMode.destroyBlock(slowPos), "Modern empty-handed removal remains possible");
+            int afterWrongTool = helper.getLevel().getEntitiesOfClass(ItemEntity.class, dropsArea).stream()
+                    .filter(item -> !existingDrops.contains(item.getUUID()) && item.getItem().is(Items.COBBLESTONE))
+                    .mapToInt(item -> item.getItem().getCount()).sum();
+            helper.assertValueEqual(afterWrongTool, 2, "The wrong tool produces no extra cobblestone despite its level bonus");
         } finally {
             tileDrops.set(oldTileDrops, helper.getLevel().getServer());
             helper.getLevel().setBlockAndUpdate(slowPos, previousSlow);
@@ -273,5 +371,15 @@ public final class MiningSpeedGameTests {
         float tolerance = Math.max(0.000001F, Math.abs(expected) * 0.000001F);
         helper.assertTrue(Float.isFinite(actual) && Math.abs(actual - expected) <= tolerance,
                 context + ": expected " + expected + ", actual " + actual);
+    }
+
+    private static int accumulateTicks(float progress) {
+        float accumulated = 0.0F;
+        int ticks = 0;
+        while (accumulated < 1.0F && ticks < 10000) {
+            accumulated += progress;
+            ticks++;
+        }
+        return ticks;
     }
 }

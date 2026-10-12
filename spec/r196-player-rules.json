@@ -210,6 +210,70 @@
       }
     },
     {
+      "id": "harvesting_base_progress",
+      "evidence_status": "confirmed_bytecode",
+      "formula": "H==0 ? 1f : (H<0 || S<=0 ? 0f : ((relative=float(H/S))<0.0029296875f ? 1f : float(float(1f/relative)/512f)))",
+      "numeric_semantics": "每一步使用 Java float，保留 H/S、1/relative、/512 的顺序；进度逐次 float 累加。",
+      "instant_threshold_bits": "0x3b400000",
+      "instant_comparison": "strictly_less_than",
+      "zero_hardness_precedes_strength_guard_in_legacy_formula": true,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getRelativeBlockHardness/getRelativeStrVsBlock/getDamageVsBlock",
+          "start_line": 831,
+          "end_line": 862
+        },
+        {
+          "file": ".reference/r196/decompiled/aqz.java",
+          "method": "<clinit>",
+          "start_line": 2262,
+          "end_line": 2278
+        },
+        {
+          "file": ".reference/r196/decompiled/bdc.java",
+          "method": "clickBlock/onPlayerDamageBlock",
+          "start_line": 130,
+          "end_line": 209
+        }
+      ],
+      "bytecode_evidence": [
+        "uf.getRelativeBlockHardness offsets 37-45 return zero relative hardness before strength guards; 46-70 reject negative hardness or nonpositive strength; 71-98 divide H/S and test the strict instant threshold.",
+        "uf.getRelativeStrVsBlock offsets 31-35 calculate 1f/relative; uf.getDamageVsBlock offsets 9-13 divide by 512f.",
+        "aqz.<clinit> offsets 767-770 register gravel hardness 0.6f; the separate BlockHardness.gravel=0.8f constant is not used here.",
+        "bdc.onPlayerDamageBlock offsets 111-131 perform the float progress addition; offsets 319-321 set the five-call cooldown. clickBlock offsets 330-332 reset progress without adding an initial increment."
+      ],
+      "baseline_assumptions": {
+        "level": 0,
+        "strength": 1.0,
+        "held_item": "empty",
+        "on_ground": true,
+        "underwater": false,
+        "effects": [],
+        "has_food_energy": true,
+        "tested_legacy_blocks": "dirt, grass, sand, gravel, leaves: minHarvestLevel=0, material.requires_tool=false, isPortable=false"
+      },
+      "modern_adaptation": {
+        "status": "documented_scope_not_gameplay_verification",
+        "entrypoint": "BlockBehaviour 通用破坏进度；方块专用覆写保留，包括竹子的剑破坏行为。",
+        "strength_input": "一次现代挖掘速度查询，BreakSpeed 已包含等级倍率；不重复查询或乘等级。",
+        "effective_hardness_overrides": {
+          "minecraft:grass_block": 0.5,
+          "minecraft:sand": 0.4,
+          "minecraft:red_sand": 0.4
+        },
+        "other_hardness": "使用现代原始硬度；泥土0.5、砂砾0.6及原版树叶0.2无需额外映射。",
+        "red_sand": "现代适配，不能视为 R196 原始砂亚型。",
+        "global_hardness_blast_resistance_or_terrain_changes": false,
+        "wrapper_guard": "接入层先拒绝取消或非正速度，再调用纯公式；因此 H=0 且取消/S<=0 返回0，与原纯公式的判断顺序不同。",
+        "creative_and_spectator": "preserve_modern_behavior",
+        "modern_stop_tolerance": 0.7,
+        "modern_continuous_mining_cooldown_ticks": 5,
+        "preserved": ["现代工具效率", "现代环境修正", "现代掉落", "方块专用破坏覆写"],
+        "not_ported": ["R196空手与错误工具门槛", "材料采集等级", "便携速度下限", "其他旧版硬度", "完整采集耐久与饥饿"]
+      }
+    },
+    {
       "id": "food_limits",
       "evidence_status": "confirmed_static",
       "formula": "satiationLimit = nutritionLimit = max(min(6+(L/5)*2,20),6)",
@@ -788,6 +852,31 @@
       {"level": 200, "mode": "spectator", "input_speed": 10.0, "expected_speed": 10.0}
     ],
     "harvesting_float_absolute_tolerance": 0.00001,
+    "harvesting_base_progress": [
+      {"hardness": -1.0, "strength": 1.0, "expected_progress_bits": "0x00000000"},
+      {"hardness": 0.0, "strength": 0.0, "expected_progress_bits": "0x3f800000"},
+      {"hardness": 0.0, "strength": -1.0, "expected_progress_bits": "0x3f800000"},
+      {"hardness": 0.5, "strength": 0.0, "expected_progress_bits": "0x00000000"},
+      {"hardness": 0.5, "strength": -1.0, "expected_progress_bits": "0x00000000"},
+      {"hardness_bits": "0x3b3fffff", "strength": 1.0, "expected_progress_bits": "0x3f800000", "expected_additions": 1},
+      {"hardness_bits": "0x3b400000", "strength": 1.0, "expected_progress_bits": "0x3f2aaaab", "expected_additions": 2},
+      {"hardness_bits": "0x3b400001", "strength": 1.0, "expected_progress_bits": "0x3f2aaaaa", "expected_additions": 2},
+      {"hardness": 0.1, "strength": 3.0, "expected_progress_bits": "0x3d6fffff", "note": "位级回归：S/H/512会得到错误的0x3d700000。"}
+    ],
+    "harvesting_base_float_assertion": "上述bits向量使用 Float.floatToIntBits 精确比较，不沿用倍率向量的近似容差。",
+    "harvesting_level_zero_blocks": [
+      {"block": "dirt", "legacy_id": 3, "hardness": 0.5, "expected_progress_bits": "0x3b800000", "expected_additions": 256, "seconds_at_20tps": 12.8},
+      {"block": "grass", "legacy_id": 2, "hardness": 0.5, "expected_progress_bits": "0x3b800000", "expected_additions": 256, "seconds_at_20tps": 12.8},
+      {"block": "sand", "legacy_id": 12, "hardness": 0.4, "expected_progress_bits": "0x3ba00000", "expected_additions": 205, "seconds_at_20tps": 10.25},
+      {"block": "gravel", "legacy_id": 13, "hardness": 0.6, "expected_progress_bits": "0x3b555555", "expected_additions": 308, "seconds_at_20tps": 15.4},
+      {"block": "leaves", "legacy_id": 18, "hardness": 0.2, "expected_progress_bits": "0x3c200000", "expected_additions": 103, "seconds_at_20tps": 5.15}
+    ],
+    "harvesting_modern_wrapper": [
+      {"hardness": 0.0, "strength": 1.0, "canceled": true, "expected_progress": 0.0},
+      {"hardness": 0.0, "strength": 0.0, "canceled": false, "expected_progress": 0.0},
+      {"hardness": 0.0, "strength": -1.0, "canceled": false, "expected_progress": 0.0},
+      {"hardness": 0.0, "strength": 1.0, "canceled": false, "expected_progress": 1.0}
+    ],
     "health": [
       {
         "level": -40,
