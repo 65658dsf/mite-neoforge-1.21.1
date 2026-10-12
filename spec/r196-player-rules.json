@@ -1,0 +1,858 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "analysis_date": "2026-10-12",
+  "target_game": "Minecraft 1.21.1",
+  "target_neoforge": "21.1.259",
+  "source": {
+    "archive": "MITE 1.6.4 R196.zip",
+    "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+    "branch": "R196 experimental",
+    "decompiler": "CFR 0.152",
+    "line_basis": ".reference/r196/decompiled/*.java",
+    "execution": "Static inspection only; no R196 gameplay verification."
+  },
+  "numeric_semantics": {
+    "integer_division": "Java truncation toward zero",
+    "tick_accumulators": "IEEE-754 Java float, preserve evaluation order",
+    "health_unit": "1 HP = half a heart",
+    "game_ticks_per_second_assumption": 20
+  },
+  "rules": [
+    {
+      "id": "experience_threshold",
+      "evidence_status": "confirmed_static",
+      "formula": "L < 0 ? 20*L : (L <= 200 ? 5*L*L+25*L : Integer.MAX_VALUE)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getExperienceRequired",
+          "start_line": 520,
+          "end_line": 525
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "<clinit>",
+          "start_line": 2652,
+          "end_line": 2657
+        }
+      ],
+      "notes": [
+        "Nonnegative polynomial is an algebraic derivation from the initialization loop.",
+        "Level table covers 0 through 200."
+      ]
+    },
+    {
+      "id": "experience_to_level",
+      "evidence_status": "confirmed_static",
+      "formula": "XP < 0 ? (creative ? 0 : max(-((-XP-1)/20+1),-40)) : largest L in [0,200] with threshold(L)<=XP",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getExperienceLevel",
+          "start_line": 528,
+          "end_line": 542
+        }
+      ],
+      "notes": [
+        "Positive Integer.MAX_VALUE and integer overflow behavior are not safe normalized inputs."
+      ]
+    },
+    {
+      "id": "experience_change",
+      "evidence_status": "confirmed_static",
+      "formula": "XP := max(XP + amount, -800)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "addExperience",
+          "start_line": 1630,
+          "end_line": 1674
+        }
+      ],
+      "on_level_decrease": [
+        "Clamp current health through setHealth.",
+        "Clamp satiation and nutrition to their new upper limits."
+      ],
+      "on_level_increase": [
+        "Do not heal; suppress_healing is unconditionally set true at method entry."
+      ],
+      "notes": [
+        "Original positive addition uses Java int without upper overflow protection."
+      ]
+    },
+    {
+      "id": "level_progress",
+      "evidence_status": "confirmed_static",
+      "formula": "(XP-threshold(L))/(float)(threshold(L+1)-threshold(L))",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getLevelProgress",
+          "start_line": 545,
+          "end_line": 547
+        }
+      ]
+    },
+    {
+      "id": "health_limit",
+      "evidence_status": "confirmed_static",
+      "formula": "max(min(6+(L/5)*2,20),6)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getHealthLimit",
+          "start_line": 550,
+          "end_line": 555
+        },
+        {
+          "file": ".reference/r196/decompiled/of.java",
+          "method": "aT",
+          "start_line": 1172,
+          "end_line": 1176
+        }
+      ],
+      "unit": "health_points",
+      "health_points_per_heart": 2,
+      "notes": [
+        "Java integer division truncates toward zero.",
+        "No creative-mode branch exists in this formula."
+      ]
+    },
+    {
+      "id": "level_bonus",
+      "evidence_status": "confirmed_static",
+      "formula": "L > 0 && kind == MELEE_DAMAGE ? L*0.005f : L*0.02f",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getLevelModifier",
+          "start_line": 558,
+          "end_line": 566
+        }
+      ],
+      "conditions": [
+        "Individual call sites and enabled skills decide whether a bonus is applied."
+      ]
+    },
+    {
+      "id": "food_limits",
+      "evidence_status": "confirmed_static",
+      "formula": "satiationLimit = nutritionLimit = max(min(6+(L/5)*2,20),6)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "getSatiationLimit/getNutritionLimit",
+          "start_line": 174,
+          "end_line": 179
+        }
+      ],
+      "initial_values": "FoodStats constructor sets satiation and nutrition to its current nutritionLimit.",
+      "setter": "check_limit ? min(value,limit) : value; no lower clamp in these setters",
+      "additional_evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "<init>",
+          "start_line": 14,
+          "end_line": 17
+        },
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "setSatiation/setNutrition",
+          "start_line": 156,
+          "end_line": 170
+        }
+      ]
+    },
+    {
+      "id": "food_flags",
+      "evidence_status": "confirmed_static",
+      "formula": "hungry=(satiation==0); starving=(nutrition==0); foodEnergy=(satiation+nutrition!=0)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "isHungry/isStarving/hasFoodEnergy",
+          "start_line": 1727,
+          "end_line": 1740
+        }
+      ]
+    },
+    {
+      "id": "food_update_guards",
+      "evidence_status": "confirmed_static",
+      "formula": "skip when ghost || isZevimrgvInTournament || entity.M || health<=0",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "onUpdate",
+          "start_line": 36,
+          "end_line": 42
+        }
+      ],
+      "notes": [
+        "Creative mode separately disables nutrient decay and nutrition-only hunger accumulation.",
+        "Hunger accumulation separately skips creative/instabuild and invulnerable abilities."
+      ]
+    },
+    {
+      "id": "basal_hunger",
+      "evidence_status": "confirmed_static",
+      "formula": "hunger = min(hunger + 0.002f * wetnessAndMalnourishmentMultiplier * global_hunger_rate,40.0f)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "onUpdate",
+          "start_line": 43,
+          "end_line": 49
+        },
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "addHunger",
+          "start_line": 117,
+          "end_line": 125
+        }
+      ],
+      "constants": {
+        "base_per_tick": 0.002,
+        "global_rate_default": 1.0,
+        "hunger_max": 40.0,
+        "food_unit_hunger": 4.0
+      },
+      "nutrition_only_accumulator": "If noncreative: hunger_for_nutrition_only += 0.002f*0.25f",
+      "notes": [
+        "Extra action hunger uses the same addHunger path.",
+        "global_hunger_rate is a private field initialized to 1.0f; no setter found in FoodStats."
+      ]
+    },
+    {
+      "id": "food_consumption",
+      "evidence_status": "confirmed_static",
+      "formula": "if hunger>=4: hunger-=4; if satiation>0 || nutrition>0: if satiation<1 || (hunger_for_nutrition_only+0.001f>=4 && nutrition>0): nutrition--; hunger_for_nutrition_only=0; else: satiation--",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "onUpdate",
+          "start_line": 50,
+          "end_line": 60
+        }
+      ],
+      "notes": [
+        "At most one food unit consumed per update; this is not a while loop."
+      ]
+    },
+    {
+      "id": "hit_list_bed_cost",
+      "evidence_status": "confirmed_static",
+      "formula": "if inBed && isOnHitList: addHungerServerSide(0.002f*20.0f)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "onUpdate",
+          "start_line": 61,
+          "end_line": 63
+        }
+      ],
+      "conditions": [
+        "Both predicates required."
+      ],
+      "order": "After the regular hunger threshold/food consumption branch."
+    },
+    {
+      "id": "starvation",
+      "evidence_status": "confirmed_static",
+      "formula": "heal_progress=0; starve_progress+=0.002f; if starve_progress>=1: if health>10 || difficulty>=3 || (health>1 && difficulty>=2): apply 1 HP starvation Damage; starve_progress-=1; hunger_for_nutrition_only=0",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "onUpdate",
+          "start_line": 64,
+          "end_line": 73
+        }
+      ],
+      "conditions": [
+        "nutrition==0"
+      ],
+      "notes": [
+        "Progress is reduced even if the difficulty/health condition suppresses damage.",
+        "Actual damage can still be affected by downstream damage rules."
+      ]
+    },
+    {
+      "id": "natural_regeneration",
+      "evidence_status": "confirmed_static",
+      "formula": "heal_progress += (0.0004f+nutrition*0.00002f)*(malnourished?0.25f:1)*(inBed?4:1)*(1+highestWornRegenerationLevel*0.5f)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "onUpdate",
+          "start_line": 74,
+          "end_line": 85
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "bJ",
+          "start_line": 1802,
+          "end_line": 1803
+        },
+        {
+          "file": ".reference/r196/decompiled/aaw.java",
+          "method": "a(int,ye[])",
+          "start_line": 120,
+          "end_line": 133
+        },
+        {
+          "file": ".reference/r196/decompiled/aaw.java",
+          "method": "getRegenerationModifier",
+          "start_line": 333,
+          "end_line": 334
+        }
+      ],
+      "conditions": [
+        "nutrition!=0",
+        "naturalRegeneration gamerule true",
+        "0<health<maxHealth"
+      ],
+      "effects_at_threshold": [
+        "When heal_progress>=1: heal 1 HP, add 1.0f hunger, subtract 1 from heal_progress.",
+        "At most one heal per update.",
+        "If gamerule disabled or not injured/alive: clear heal_progress.",
+        "Clear starve_progress in non-starving branch."
+      ]
+    },
+    {
+      "id": "micronutrients",
+      "evidence_status": "confirmed_static",
+      "formula": "For each protein/essential_fats/phytonutrients: initialize 160000; setters clamp to [0,160000]; subtract 1 per enabled noncreative tick if >0",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "<init>",
+          "start_line": 91,
+          "end_line": 93
+        },
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "decrementNutrients",
+          "start_line": 295,
+          "end_line": 307
+        },
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "setProtein/setEssentialFats/setPhytonutrients",
+          "start_line": 320,
+          "end_line": 329
+        }
+      ],
+      "food_gain": "Corresponding item category flag ? item.getNutrition()*8000 : 0",
+      "extra": "Wheat seeds yc.U additionally add 2000 essential_fats.",
+      "additional_evidence": [
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "addNutrients",
+          "start_line": 366,
+          "end_line": 384
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "method": "getProtein/getEssentialFats/getPhytonutrients",
+          "start_line": 1531,
+          "end_line": 1540
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "method": "U registration",
+          "start_line": 44,
+          "end_line": 44
+        }
+      ]
+    },
+    {
+      "id": "malnourishment",
+      "evidence_status": "confirmed_static",
+      "formula": "malnourished=(protein==0 || phytonutrients==0); doubleMalnourished=(protein==0 && phytonutrients==0)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "isMalnourished/isDoubleMalnourished",
+          "start_line": 1257,
+          "end_line": 1262
+        }
+      ],
+      "notes": [
+        "Essential fats do not participate in these R196 checks.",
+        "Two depleted categories do not double the hunger or regeneration penalty in the inspected formulas."
+      ]
+    },
+    {
+      "id": "wetness_multiplier",
+      "evidence_status": "confirmed_static",
+      "formula": "1.0f + adjustedWetness + (malnourished?0.5f:0)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "getWetnessAndMalnourishmentHungerMultiplier",
+          "start_line": 1508,
+          "end_line": 1525
+        },
+        {
+          "file": ".reference/r196/decompiled/acq.java",
+          "method": "desertRiver registration",
+          "start_line": 34,
+          "end_line": 34
+        }
+      ],
+      "steps": [
+        "rain = inRain ? (thundering ? 0.5f : 0.25f) : 0",
+        "immersion = waterAtFeetYPlus1 ? 0.5f : (waterAtFeetY ? 0.25f : 0)",
+        "wetness = max(rain,immersion)",
+        "If inRain && !thundering && immersion==0.25f: wetness += 0.125f",
+        "If freezingBiome: wetness *= 2; else if biomeTemperature>=1.4f: wetness=0"
+      ],
+      "bytecode_crosscheck": {
+        "class": "jv.class",
+        "method": "getWetnessAndMalnourishmentHungerMultiplier",
+        "offsets": [
+          15,
+          46,
+          97,
+          104,
+          141,
+          187
+        ],
+        "reason": "CFR line 1513 has a malformed local-variable assignment; original bytecode confirms rain is always stored in local slot 4."
+      }
+    },
+    {
+      "id": "insulin_numeric",
+      "evidence_status": "confirmed_static",
+      "formula": "insulin=clamp(value,0,192000); each enabled noncreative tick subtract 1 if positive; food addition=(int)(sugarContent*4.8f)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "decrementInsulinResistance/setInsulinResistance",
+          "start_line": 310,
+          "end_line": 350
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "method": "getInsulinResponse",
+          "start_line": 1145,
+          "end_line": 1146
+        }
+      ],
+      "thresholds": {
+        "mild": 48000,
+        "moderate": 96000,
+        "severe": 144000
+      },
+      "additional_evidence": [
+        {
+          "file": ".reference/r196/decompiled/EnumInsulinResistanceLevel.java",
+          "method": "enum constants",
+          "start_line": 5,
+          "end_line": 7
+        }
+      ]
+    },
+    {
+      "id": "insulin_hysteresis",
+      "evidence_status": "confirmed_static",
+      "formula": "If value==0: state=null; else calculate thresholdState; if thresholdState==null && oldState!=null: state=mild; else if oldState==null: state=thresholdState; else if oldState<thresholdState: state=thresholdState; else if oldState>thresholdState: state=thresholdState.next; otherwise retain state",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "setInsulinResistance",
+          "start_line": 333,
+          "end_line": 350
+        },
+        {
+          "file": ".reference/r196/decompiled/EnumInsulinResistanceLevel.java",
+          "method": "getNext/getInsulinResistanceLevel",
+          "start_line": 81,
+          "end_line": 90
+        }
+      ],
+      "notes": [
+        "Ordered severity comparison is used, not direct ordinal integer assignment.",
+        "Do not replace this with a stateless threshold lookup."
+      ]
+    },
+    {
+      "id": "sugar_and_resistance_effects",
+      "evidence_status": "confirmed_static",
+      "formula": "Moderate/severe resistance prevents sugar metabolism; sugar>0 then adjustedSatiation=satiation-(sugar<1000?1:sugar/1000)",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "canMetabolizeFoodSugars",
+          "start_line": 2640,
+          "end_line": 2641
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "method": "getSatiation",
+          "start_line": 1127,
+          "end_line": 1134
+        },
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "addInsulinResistance",
+          "start_line": 387,
+          "end_line": 393
+        }
+      ],
+      "effects": [
+        "Positive added resistance while resistant applies confusion for 400 ticks with amplifier=severity ordinal.",
+        "When severe, also applies poison for max((int)(addedResistance/48.0f),100) ticks with amplifier=0."
+      ],
+      "additional_evidence": [
+        {
+          "file": ".reference/r196/decompiled/ni.java",
+          "method": "confusion/poison registration",
+          "start_line": 22,
+          "end_line": 32
+        }
+      ]
+    },
+    {
+      "id": "death_experience",
+      "evidence_status": "confirmed_static",
+      "formula": "On death if XP<30: respawn_experience=max(XP-30,-800); else leave respawn_experience unchanged",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "respawn_experience field",
+          "start_line": 47,
+          "end_line": 47
+        },
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "a(DamageSource)",
+          "start_line": 753,
+          "end_line": 778
+        }
+      ],
+      "initial_respawn_experience": 0,
+      "notes": [
+        "Do not rewrite as a universal subtract-30 rule."
+      ]
+    },
+    {
+      "id": "respawn_state",
+      "evidence_status": "confirmed_static",
+      "formula": "Create new player; assign old.respawn_experience; copy micronutrients and insulin value/state; invoke player copy method",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/hn.java",
+          "method": "a(EntityPlayerMP,int,boolean)",
+          "start_line": 221,
+          "end_line": 250
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "a(EntityPlayer,boolean)",
+          "start_line": 1852,
+          "end_line": 1864
+        }
+      ],
+      "copy_branches": {
+        "preserving_or_non_death": "Copies inventory, original XP, health and the original FoodStats object.",
+        "normal_death_keepInventory": "Copies inventory and original XP, overriding respawn_experience.",
+        "normal_death_default": "Keeps the new FoodStats; retains copied micronutrients and insulin resistance."
+      },
+      "notes": [
+        "Fresh FoodStats values come from its construction-time level, before later XP assignments."
+      ]
+    },
+    {
+      "id": "respawn_timers",
+      "evidence_status": "confirmed_static",
+      "formula": "Death sets respawn_countdown=120; updateRespawnCountdown subtracts 1 when positive and worldTime%20==0; afterRespawn sets protection counter=60",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "updateRespawnCountdown",
+          "start_line": 406,
+          "end_line": 409
+        },
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "a(DamageSource)/afterRespawn/attackEntityFrom",
+          "start_line": 778,
+          "end_line": 809
+        }
+      ],
+      "notes": [
+        "Auto-respawn trigger and reconnect flow not fully audited.",
+        "Protection has damage-source and server fall-damage exceptions."
+      ]
+    },
+    {
+      "id": "persistence",
+      "evidence_status": "confirmed_static",
+      "formula": "FoodStats saves fullness,nutrition,heal_progress,starve_progress,hunger,hunger_for_nutrition_only; player reads experience and then overwrites with XpTotal if present",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ux.java",
+          "method": "a(NBT)/b(NBT)",
+          "start_line": 89,
+          "end_line": 106
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "a(NBT)",
+          "start_line": 865,
+          "end_line": 870
+        },
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "a(NBT)",
+          "start_line": 148,
+          "end_line": 152
+        },
+        {
+          "file": ".reference/r196/decompiled/jv.java",
+          "method": "b(NBT)",
+          "start_line": 195,
+          "end_line": 204
+        }
+      ]
+    }
+  ],
+  "validation_vectors": {
+    "health": [
+      {
+        "level": -40,
+        "max_health": 6
+      },
+      {
+        "level": -1,
+        "max_health": 6
+      },
+      {
+        "level": 0,
+        "max_health": 6
+      },
+      {
+        "level": 4,
+        "max_health": 6
+      },
+      {
+        "level": 5,
+        "max_health": 8
+      },
+      {
+        "level": 9,
+        "max_health": 8
+      },
+      {
+        "level": 10,
+        "max_health": 10
+      },
+      {
+        "level": 15,
+        "max_health": 12
+      },
+      {
+        "level": 20,
+        "max_health": 14
+      },
+      {
+        "level": 25,
+        "max_health": 16
+      },
+      {
+        "level": 30,
+        "max_health": 18
+      },
+      {
+        "level": 34,
+        "max_health": 18
+      },
+      {
+        "level": 35,
+        "max_health": 20
+      },
+      {
+        "level": 200,
+        "max_health": 20
+      }
+    ],
+    "experience_threshold": [
+      {
+        "level": -40,
+        "total_experience": -800
+      },
+      {
+        "level": -2,
+        "total_experience": -40
+      },
+      {
+        "level": -1,
+        "total_experience": -20
+      },
+      {
+        "level": 0,
+        "total_experience": 0
+      },
+      {
+        "level": 1,
+        "total_experience": 30
+      },
+      {
+        "level": 2,
+        "total_experience": 70
+      },
+      {
+        "level": 5,
+        "total_experience": 250
+      },
+      {
+        "level": 10,
+        "total_experience": 750
+      },
+      {
+        "level": 35,
+        "total_experience": 7000
+      },
+      {
+        "level": 200,
+        "total_experience": 205000
+      }
+    ],
+    "experience_to_level": [
+      {
+        "experience": -800,
+        "level": -40
+      },
+      {
+        "experience": -21,
+        "level": -2
+      },
+      {
+        "experience": -20,
+        "level": -1
+      },
+      {
+        "experience": -1,
+        "level": -1
+      },
+      {
+        "experience": 0,
+        "level": 0
+      },
+      {
+        "experience": 29,
+        "level": 0
+      },
+      {
+        "experience": 30,
+        "level": 1
+      },
+      {
+        "experience": 69,
+        "level": 1
+      },
+      {
+        "experience": 70,
+        "level": 2
+      }
+    ],
+    "wetness": [
+      {
+        "rain": "none",
+        "immersion": "none",
+        "freezing": false,
+        "malnourished": false,
+        "multiplier": 1.0
+      },
+      {
+        "rain": "normal",
+        "immersion": "none",
+        "freezing": false,
+        "malnourished": false,
+        "multiplier": 1.25
+      },
+      {
+        "rain": "normal",
+        "immersion": "feet",
+        "freezing": false,
+        "malnourished": false,
+        "multiplier": 1.375
+      },
+      {
+        "rain": "thunder",
+        "immersion": "none",
+        "freezing": true,
+        "malnourished": true,
+        "multiplier": 2.5
+      }
+    ],
+    "life_cycle": [
+      "Raising level increases cap without healing.",
+      "Lowering level clamps current HP only if it exceeds new cap.",
+      "Respawn preserves micronutrient and insulin deficits.",
+      "keepInventory can override death XP penalty."
+    ]
+  },
+  "modern_integration_recommendation": {
+    "status": "Advice only; no gameplay implementation in this analysis task.",
+    "source_jar": "build/moddev/artifacts/neoforge-21.1.259-sources.jar",
+    "attribute": {
+      "name": "Attributes.MAX_HEALTH",
+      "syncable": true,
+      "file": "net/minecraft/world/entity/ai/attributes/Attributes.java",
+      "lines": [
+        66,
+        67
+      ]
+    },
+    "events": [
+      "PlayerEvent.PlayerLoggedInEvent",
+      "PlayerEvent.PlayerRespawnEvent",
+      "PlayerTickEvent.Post"
+    ],
+    "execution_side": "Logical server only; require ServerPlayer in tick callbacks.",
+    "behavior": "Idempotently set the max-health base value from the selected level source; clamp current HP downward only; never heal on level-up.",
+    "xp_event_limitation": {
+      "event": "PlayerXpEvent.LevelChange",
+      "timing": "Before Player.experienceLevel is changed; cancellable and mutable.",
+      "bypass": "ServerPlayer.setExperienceLevels directly assigns the level.",
+      "evidence": [
+        {
+          "file": "net/minecraft/world/entity/player/Player.java",
+          "lines": [
+            1709,
+            1718
+          ]
+        },
+        {
+          "file": "net/minecraft/server/level/ServerPlayer.java",
+          "lines": [
+            446,
+            448
+          ]
+        }
+      ]
+    },
+    "staging_limit": "Using modern experienceLevel implements the health curve only, not the R196 XP curve, negative levels or death rules.",
+    "tests": [
+      "Integrated server",
+      "Dedicated server",
+      "Login and relog",
+      "Death and keepInventory",
+      "Direct level-setting command",
+      "Level gain and loss",
+      "Dimension travel and End return"
+    ]
+  },
+  "unresolved": [
+    "All additional movement/combat/mining hunger sources.",
+    "Per-food registration values.",
+    "Complete potion/curse/tournament flow.",
+    "Invalid NBT and integer overflow extremes.",
+    "Full automatic-respawn and reconnect behavior.",
+    "Whether skills are enabled in a particular world.",
+    "Modern creative/spectator policy and interoperability with external max-health modifiers."
+  ]
+}

@@ -1,0 +1,48 @@
+package io.github.ningmeng123.mite.rules;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * Boundary vectors for the R196 health curve, including integer overflow edges.
+ *
+ * @author NingMeng123
+ */
+class ProgressionRulesTest {
+    @ParameterizedTest(name = "level {0} has {1} base HP")
+    @CsvSource({
+            "-2147483648, 6",
+            "-40, 6",
+            "-1, 6",
+            "0, 6",
+            "1, 6",
+            "4, 6",
+            "5, 8",
+            "6, 8",
+            "9, 8",
+            "10, 10",
+            "11, 10",
+            "14, 10",
+            "15, 12",
+            "16, 12",
+            "19, 12",
+            "20, 14",
+            "21, 14",
+            "24, 14",
+            "25, 16",
+            "26, 16",
+            "29, 16",
+            "30, 18",
+            "31, 18",
+            "34, 18",
+            "35, 20",
+            "36, 20",
+            "200, 20",
+            "2147483647, 20"
+    })
+    void matchesHealthCurveAtEveryTransition(int level, double expectedHealth) {
+        assertEquals(expectedHealth, ProgressionRules.maxHealthForLevel(level));
+    }
+}
