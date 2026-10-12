@@ -39,6 +39,9 @@ neoForge {
         client {
             client()
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            if (project.providers.gradleProperty('miteTestWorld').isPresent()) {
+                programArguments.addAll '--quickPlaySingleplayer', project.providers.gradleProperty('miteTestWorld').get()
+            }
         }
         server {
             server()

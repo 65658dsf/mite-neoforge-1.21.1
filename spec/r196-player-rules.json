@@ -21,8 +21,8 @@
   "rules": [
     {
       "id": "experience_threshold",
-      "evidence_status": "confirmed_static",
-      "formula": "L < 0 ? 20*L : (L <= 200 ? 5*L*L+25*L : Integer.MAX_VALUE)",
+      "evidence_status": "confirmed_bytecode",
+      "formula": "L < 0 ? 20*L : (L <= 200 ? 5*L*L+15*L : Integer.MAX_VALUE)",
       "evidence": [
         {
           "file": ".reference/r196/decompiled/uf.java",
@@ -38,7 +38,9 @@
         }
       ],
       "notes": [
-        "Nonnegative polynomial is an algebraic derivation from the initialization loop.",
+        "CFR 0.152 misorders the initialization increment at uf.java:2656. Bytecode is authoritative: xp += increase, THEN increase += 10.",
+        "uf.class SHA256: 6aadb6b6596d5328fe512a14f1714abb44b9d1dcc791d0b3abb2349140aeca19",
+        "<clinit> offsets 18-20: increase=20; 31-34: xp+=increase; 35: increase+=10; 38-43: experience_for_level[level]=xp.",
         "Level table covers 0 through 200."
       ]
     },
@@ -517,7 +519,7 @@
     {
       "id": "death_experience",
       "evidence_status": "confirmed_static",
-      "formula": "On death if XP<30: respawn_experience=max(XP-30,-800); else leave respawn_experience unchanged",
+      "formula": "On death if XP<20: respawn_experience=max(XP-20,-800); else leave respawn_experience unchanged",
       "evidence": [
         {
           "file": ".reference/r196/decompiled/jv.java",
@@ -534,7 +536,8 @@
       ],
       "initial_respawn_experience": 0,
       "notes": [
-        "Do not rewrite as a universal subtract-30 rule."
+        "Do not rewrite as a universal subtract-20 rule.",
+        "Level-one threshold corrected to 20 after checking uf.class initialization bytecode."
       ]
     },
     {
@@ -697,27 +700,27 @@
       },
       {
         "level": 1,
-        "total_experience": 30
+        "total_experience": 20
       },
       {
         "level": 2,
-        "total_experience": 70
+        "total_experience": 50
       },
       {
         "level": 5,
-        "total_experience": 250
+        "total_experience": 200
       },
       {
         "level": 10,
-        "total_experience": 750
+        "total_experience": 650
       },
       {
         "level": 35,
-        "total_experience": 7000
+        "total_experience": 6650
       },
       {
         "level": 200,
-        "total_experience": 205000
+        "total_experience": 203000
       }
     ],
     "experience_to_level": [
@@ -742,19 +745,19 @@
         "level": 0
       },
       {
-        "experience": 29,
+        "experience": 19,
         "level": 0
       },
       {
-        "experience": 30,
+        "experience": 20,
         "level": 1
       },
       {
-        "experience": 69,
+        "experience": 49,
         "level": 1
       },
       {
-        "experience": 70,
+        "experience": 50,
         "level": 2
       }
     ],
