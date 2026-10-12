@@ -138,6 +138,78 @@
       ]
     },
     {
+      "id": "harvesting_level_multiplier",
+      "evidence_status": "confirmed_bytecode",
+      "formula": "factor = 1.0f + level * 0.02f",
+      "skill_gate": false,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getLevelModifier",
+          "start_line": 558,
+          "end_line": 566
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getCurrentPlayerStrVsBlock",
+          "start_line": 774,
+          "end_line": 828
+        },
+        {
+          "file": ".reference/r196/decompiled/bdc.java",
+          "method": "clickBlock/onPlayerDamageBlock",
+          "start_line": 130,
+          "end_line": 190
+        }
+      ],
+      "bytecode_evidence": [
+        "uf.getLevelModifier(int,EnumLevelBonus) offsets 18-23: float(level)*0.02f; the positive MELEE_DAMAGE exception at offsets 0-17 does not apply to HARVESTING.",
+        "uf.getCurrentPlayerStrVsBlock offsets 383-404: multiply by 1+HARVESTING modifier, then Math.max with the portable minimum."
+      ],
+      "legacy_portable_floor": {
+        "initial_strength_and_minimum": "4.0f * hardness",
+        "final_strength": "max(strength_after_other_modifiers * factor, minimum)",
+        "evidence": [
+          {
+            "file": ".reference/r196/decompiled/uf.java",
+            "method": "getCurrentPlayerStrVsBlock",
+            "start_line": 787,
+            "end_line": 788
+          },
+          {
+            "file": ".reference/r196/decompiled/uf.java",
+            "method": "getCurrentPlayerStrVsBlock",
+            "start_line": 828,
+            "end_line": 828
+          },
+          {
+            "file": ".reference/r196/decompiled/arv.java",
+            "method": "isPortable",
+            "start_line": 102,
+            "end_line": 103
+          },
+          {
+            "file": ".reference/r196/decompiled/BlockStrongbox.java",
+            "method": "isPortable",
+            "start_line": 75,
+            "end_line": 80
+          }
+        ],
+        "notes": "便携下限位于全部修正之后；正等级可加速，负等级及环境惩罚可能被下限抵消。工作台恒可便携，保险箱依赖所有者。"
+      },
+      "modern_adaptation": {
+        "status": "documented_scope_not_gameplay_verification",
+        "minimum_level": -40,
+        "maximum_level": 200,
+        "formula": "modern_adjusted_speed * factor",
+        "creative_and_spectator": "preserve_modern_behavior_without_multiplier",
+        "recalculate_tool_or_environment_speed": false,
+        "portable_floor_ported": false,
+        "permission_and_loot_changes": false,
+        "notes": "只在现代已修正速度上叠加一次等级倍率，不表示完整 R196 采集公式已复刻。"
+      }
+    },
+    {
       "id": "food_limits",
       "evidence_status": "confirmed_static",
       "formula": "satiationLimit = nutritionLimit = max(min(6+(L/5)*2,20),6)",
@@ -695,6 +767,27 @@
     }
   ],
   "validation_vectors": {
+    "harvesting_level_multiplier": [
+      {"level": -40, "expected_factor": 0.2},
+      {"level": -2, "expected_factor": 0.96},
+      {"level": -1, "expected_factor": 0.98},
+      {"level": 0, "expected_factor": 1.0},
+      {"level": 1, "expected_factor": 1.02},
+      {"level": 5, "expected_factor": 1.1},
+      {"level": 35, "expected_factor": 1.7},
+      {"level": 200, "expected_factor": 5.0}
+    ],
+    "harvesting_modern_speed": [
+      {"level": -40, "mode": "survival", "input_speed": 10.0, "expected_speed": 2.0},
+      {"level": 0, "mode": "survival", "input_speed": 10.0, "expected_speed": 10.0},
+      {"level": 35, "mode": "survival", "input_speed": 10.0, "expected_speed": 17.0},
+      {"level": 200, "mode": "survival", "input_speed": 10.0, "expected_speed": 50.0},
+      {"level": 35, "mode": "survival", "input_speed": 2.5, "expected_speed": 4.25, "note": "输入已含环境和工具修正，不能重复计算。"},
+      {"level": 200, "mode": "survival", "input_speed": 0.0, "expected_speed": 0.0},
+      {"level": -40, "mode": "creative", "input_speed": 10.0, "expected_speed": 10.0},
+      {"level": 200, "mode": "spectator", "input_speed": 10.0, "expected_speed": 10.0}
+    ],
+    "harvesting_float_absolute_tolerance": 0.00001,
     "health": [
       {
         "level": -40,

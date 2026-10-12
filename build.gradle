@@ -42,6 +42,10 @@ neoForge {
             if (project.providers.gradleProperty('miteTestWorld').isPresent()) {
                 programArguments.addAll '--quickPlaySingleplayer', project.providers.gradleProperty('miteTestWorld').get()
             }
+            // Opt-in client integration checks live only in the gametest source set.
+            if (project.providers.gradleProperty('miteMiningSmoke').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.miningSmoke', 'true'
+            }
         }
         server {
             server()
