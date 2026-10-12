@@ -1,0 +1,1158 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "analysis_date": "2026-10-12",
+  "scope": "燧石开局可获得路线；不是完整R196采集、制造、砂砾掉落或战斗体系。",
+  "source": {
+    "archive": "MITE 1.6.4 R196.zip",
+    "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+    "decompiler": "CFR 0.152",
+    "line_basis": ".reference/r196/decompiled/*.java",
+    "runtime_inventory": "reference-data/runtime-registry.json",
+    "verification": "局部原始字节码复核和结构化静态提取；本文不声明游戏验收已通过。"
+  },
+  "target": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.259",
+    "namespace": "mite"
+  },
+  "numeric_semantics": {
+    "float": "IEEE-754 Java float，逐运算保留求值顺序",
+    "integer_cast": "Java float转int向零截断",
+    "probability": "以下概率针对均匀随机数的单次普通玩家非丝触砂砾采集；不表示短样本频率必然精确。"
+  },
+  "items": [
+    {
+      "id": "mite:flint_chip",
+      "r196_symbol": "yc.chipFlint",
+      "r196_numeric_id": 1121,
+      "max_stack": 64,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 333,
+          "end_line": 333
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemShard.java",
+          "start_line": 5,
+          "end_line": 10
+        }
+      ]
+    },
+    {
+      "id": "mite:sinew",
+      "r196_symbol": "yc.sinew",
+      "r196_numeric_id": 1174,
+      "max_stack": 16,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 376,
+          "end_line": 376
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 468,
+          "end_line": 468
+        }
+      ]
+    },
+    {
+      "id": "mite:flint_hatchet",
+      "r196_symbol": "yc.hatchetFlint",
+      "r196_numeric_id": 978,
+      "max_stack": 1,
+      "average_quality_durability": 400,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 182,
+          "end_line": 182
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 20,
+          "end_line": 40
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemHatchet.java",
+          "start_line": 32,
+          "end_line": 33
+        },
+        {
+          "file": ".reference/r196/decompiled/EnumEquipmentMaterial.java",
+          "start_line": 7,
+          "end_line": 7
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "flint_material_conversions",
+      "evidence_status": "confirmed_static_and_runtime",
+      "inputs_consumed_per_occupied_slot": 1,
+      "conversions": [
+        {
+          "input": "mite:flint_chip",
+          "input_count": 4,
+          "shape": [
+            "CC",
+            "CC"
+          ],
+          "output": "minecraft:flint",
+          "output_count": 1
+        },
+        {
+          "input": "minecraft:flint",
+          "input_count": 1,
+          "shape": [
+            "F"
+          ],
+          "output": "mite:flint_chip",
+          "output_count": 4
+        },
+        {
+          "input": "minecraft:leather",
+          "input_count": 1,
+          "shape": [
+            "L"
+          ],
+          "output": "mite:sinew",
+          "output_count": 4
+        }
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aae.java",
+          "start_line": 12,
+          "end_line": 44
+        },
+        {
+          "file": ".reference/r196/decompiled/RecipesMITE.java",
+          "start_line": 41,
+          "end_line": 41
+        },
+        {
+          "file": ".reference/r196/decompiled/CraftingResult.java",
+          "start_line": 11,
+          "end_line": 11
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "start_line": 105,
+          "end_line": 118
+        }
+      ],
+      "notes": [
+        "旧配方成分堆叠对象的count=4不是每格消耗4；默认consumption=1。"
+      ]
+    },
+    {
+      "id": "hatchet_free_binding",
+      "evidence_status": "confirmed_static_and_bytecode",
+      "base_pattern": [
+        "FS",
+        "BS"
+      ],
+      "symbols": {
+        "F": "minecraft:flint",
+        "S": "minecraft:stick",
+        "B": [
+          "minecraft:string",
+          "mite:sinew"
+        ]
+      },
+      "constraints": {
+        "flint_slots": 1,
+        "stick_slots": 2,
+        "binder_slots": 1,
+        "other_occupied_slots": 0,
+        "horizontal_mirror": true,
+        "translation": true,
+        "rotation": false,
+        "binder": "剔除恰好一个筋或线占用槽后，剩余输入必须匹配短斧骨架。绑定物可以在3×3骨架外空格。"
+      },
+      "modern_implementation": {
+        "ordinary_shaped_recipes": 13,
+        "base_id": "mite:flint_hatchet",
+        "variant_ids": "mite:flint_hatchet_binding_1..12",
+        "group": "mite:flint_hatchet",
+        "custom_serializer": false
+      },
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aal.java",
+          "start_line": 10,
+          "end_line": 10
+        },
+        {
+          "file": ".reference/r196/decompiled/aai.java",
+          "start_line": 36,
+          "end_line": 113,
+          "bytecode": "输入绑定物扫描：306 getstatic yc.M，314 getstatic yc.sinew。模板扫描204及218均为sinew，发布包实际重复判断；当前注册模板用sinew。"
+        }
+      ]
+    },
+    {
+      "id": "default_professions",
+      "evidence_status": "confirmed_static",
+      "r196_recipe_skill": "Skill.MASONRY",
+      "r196_server_enabled": false,
+      "modern_gate": false,
+      "modern_not_implemented": [
+        "品质",
+        "职业与模式差异",
+        "制作时间",
+        "制造经验消耗"
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aal.java",
+          "start_line": 10,
+          "end_line": 10
+        },
+        {
+          "file": ".reference/r196/decompiled/is.java",
+          "start_line": 86,
+          "end_line": 87
+        },
+        {
+          "file": ".reference/r196/decompiled/avb.java",
+          "start_line": 42,
+          "end_line": 42
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "start_line": 152,
+          "end_line": 152
+        }
+      ],
+      "notes": [
+        "不能仅凭配方的技能标记认定默认世界启用职业限制；可制作品质还影响非默认模式判定。"
+      ]
+    },
+    {
+      "id": "gravel_partial_flint_branch",
+      "evidence_status": "confirmed_static",
+      "r196_normal_path": "普通玩家采集，非道路metadata1、非爆炸；丝触在上层先分流。",
+      "r196_denominator": "12 - 2 * min(fortune, 3)",
+      "modern_denominator": "12 - 2 * clamp(fortune, 0, 3)",
+      "random_steps": [
+        {
+          "bound": "D",
+          "outcome": "大于2则砂砾；0..2进入特殊分支"
+        },
+        {
+          "bound": 3,
+          "outcome": "0是未迁移矿物分支，现代暂回落砂砾；1..2进入燧石分支"
+        },
+        {
+          "bound": 16,
+          "outcome": "0为1整燧石，1..15为1碎片"
+        }
+      ],
+      "probability_formulas": {
+        "whole_flint": "1 / (8*D)",
+        "flint_chip": "15 / (8*D)",
+        "r196_minerals": "1 / D",
+        "r196_gravel": "1 - 3 / D",
+        "modern_gravel_including_mineral_fallback": "1 - 2 / D"
+      },
+      "modern_guards": [
+        "事件未取消",
+        "方块为minecraft:gravel",
+        "破坏者为非创造/旁观玩家",
+        "doTileDrops为true",
+        "无丝触",
+        "原事件存在普通砂砾或整燧石掉落"
+      ],
+      "modern_preserved": [
+        "其他不同物品的额外掉落",
+        "无普通掉落时的数据包抑制结果",
+        "非玩家及爆炸的现代掉落路径"
+      ],
+      "modern_not_implemented": [
+        "矿物和金属粒分支",
+        "下界砂砾重映射",
+        "村庄道路metadata",
+        "旧版成就与赛事计分"
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aoo.java",
+          "start_line": 16,
+          "end_line": 57
+        },
+        {
+          "file": ".reference/r196/decompiled/jw.java",
+          "start_line": 144,
+          "end_line": 149
+        }
+      ]
+    },
+    {
+      "id": "hatchet_base_stats",
+      "evidence_status": "confirmed_static",
+      "r196_average_quality": {
+        "durability": 400,
+        "durability_formula": "(int)(4.0f * 1.0f * 1.0f * 100.0f)",
+        "ordinary_effective_speed": 2.5,
+        "speed_formula": "(4.0f * 0.5f) * 1.25f",
+        "material_harvest_level": 1,
+        "attack_modifier": 3.0,
+        "player_base_attack": 1.0,
+        "unmodified_attack_total": 4.0,
+        "enchantability": 0,
+        "repair_material": null
+      },
+      "modern": {
+        "tool_effective_tag": "minecraft:mineable/axe",
+        "denies_drops_tag": "minecraft:incorrect_for_wooden_tool",
+        "default_tool_speed": 1.0,
+        "full_charge_attack_total": 4.0,
+        "attack_speed_attribute": 1.0,
+        "attack_speed_adaptation": "现代基础4加修饰-3，保留现代冷却；不是R196攻击间隔。",
+        "item_class": "Item",
+        "abilities": [
+          "AXE_DIG"
+        ],
+        "axe_right_click_actions": false,
+        "material_repair": false,
+        "modern_combine_repair": true
+      },
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 35,
+          "end_line": 72
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemHatchet.java",
+          "start_line": 17,
+          "end_line": 33
+        },
+        {
+          "file": ".reference/r196/decompiled/ya.java",
+          "start_line": 23,
+          "end_line": 24
+        },
+        {
+          "file": ".reference/r196/decompiled/akc.java",
+          "start_line": 351,
+          "end_line": 356
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 94,
+          "end_line": 96
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 209,
+          "end_line": 220
+        },
+        {
+          "file": ".reference/r196/decompiled/EnumEquipmentMaterial.java",
+          "start_line": 7,
+          "end_line": 7
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 590,
+          "end_line": 605
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 882,
+          "end_line": 910
+        }
+      ]
+    },
+    {
+      "id": "hatchet_scaled_wear",
+      "evidence_status": "confirmed_bytecode",
+      "ordinary_block_formula_steps": [
+        "if (H == 0.0f) return 0",
+        "baseDecay = 1.0f * 4.0f / 3.0f",
+        "decay = 100.0f * baseDecay",
+        "max(max((int)(H*decay), (int)(decay/20.0f)), 1)"
+      ],
+      "attack_formula": "max((int)(100.0f * (1.0f * 4.0f / 3.0f)), 1)",
+      "attack_cost": 133,
+      "r196_entry_guards": [
+        "可损坏工具",
+        "非便携方块",
+        "非创造",
+        "H>0",
+        "tool.getStrVsBlock>1"
+      ],
+      "modern_entry_guards": [
+        "服务端",
+        "可损坏工具",
+        "非创造/旁观",
+        "有效挖掘硬度H>0",
+        "现代工具基础速度>1"
+      ],
+      "modern_differences": [
+        "未迁移便携方块免磨损",
+        "有效目标采用现代斧标签",
+        "攻击扣损在现代postHurtEnemy阶段，保留现代创造和耐久附魔处理",
+        "原砂岩强度1.25与baseDecay2.5未迁移至当前普通工具规则"
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ItemHatchet.java",
+          "start_line": 37,
+          "end_line": 43,
+          "bytecode": "getBaseDecayRateForBreakingBlock/getBaseDecayRateForAttackingEntity：偏移5加载4f，7 fmul，8加载3f，10 fdiv。"
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 145,
+          "end_line": 180,
+          "bytecode": "getToolDecayFromBreakingBlock：13加载100f，23 fmul，27 fmul，28 f2i，33 fdiv，34 f2i，35/39 Math.max。攻击偏移0..10先100f乘基数、f2i、max1。"
+        },
+        {
+          "file": ".reference/r196/decompiled/ya.java",
+          "start_line": 18,
+          "end_line": 19
+        },
+        {
+          "file": ".reference/r196/decompiled/ya.java",
+          "start_line": 33,
+          "end_line": 38
+        }
+      ]
+    },
+    {
+      "id": "log_effective_hardness",
+      "evidence_status": "confirmed_static_with_explicit_modern_extension",
+      "r196_value": 1.2,
+      "r196_log_species": [
+        "oak",
+        "spruce",
+        "birch",
+        "jungle"
+      ],
+      "modern_selector": {
+        "namespace": "minecraft",
+        "block_tag": "minecraft:logs"
+      },
+      "modern_value": 1.2,
+      "applies_to": [
+        "玩家挖掘有效硬度",
+        "短斧挖掘磨损有效硬度"
+      ],
+      "does_not_mutate": [
+        "方块注册硬度",
+        "爆炸抗性",
+        "地形生成"
+      ],
+      "modern_extension": "新版原木、木质块、去皮变体、下界菌柄等LOGS标签成员随同使用1.2；其他命名空间方块不因此改变。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EnumMaterialHardness.java",
+          "start_line": 7,
+          "end_line": 7
+        },
+        {
+          "file": ".reference/r196/decompiled/BlockHardness.java",
+          "start_line": 16,
+          "end_line": 16
+        },
+        {
+          "file": ".reference/r196/decompiled/arj.java",
+          "start_line": 7,
+          "end_line": 13
+        }
+      ]
+    },
+    {
+      "id": "repair_scope",
+      "evidence_status": "confirmed_static",
+      "r196_material_repair_item": null,
+      "r196_reported_repair_cost": 2,
+      "r196_combining": {
+        "same_id": true,
+        "count_each": 1,
+        "both_damaged": true,
+        "same_quality": true,
+        "enchanted_inputs_allowed": false,
+        "dyed_inputs": "如存在染色，两件都必须染色且颜色一致",
+        "subtype_equality_check": false,
+        "output_subtype": "第一件",
+        "durability": "min(max_damage, remaining_first + remaining_second)",
+        "extra_durability_bonus": 0,
+        "other_conditions": "制作品质与修复技能关联的检查；成本/品质不能简化成现代普通配方。"
+      },
+      "modern": "无材料修复；现代两件工具合并修复保留，不声称R196修复公式已迁移。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 882,
+          "end_line": 910
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 260,
+          "end_line": 261
+        },
+        {
+          "file": ".reference/r196/decompiled/aaf.java",
+          "start_line": 263,
+          "end_line": 320
+        }
+      ]
+    },
+    {
+      "id": "modern_starting_sources",
+      "evidence_status": "explicit_modern_adaptation",
+      "preserved": [
+        "现代树叶木棍掉落",
+        "现代皮革来源",
+        "现代线来源",
+        "现代手工合成和自动合成器"
+      ],
+      "r196_leaf_rules_not_ported": true,
+      "r196_leaf_evidence": [
+        {
+          "file": ".reference/r196/decompiled/aoz.java",
+          "start_line": 191,
+          "end_line": 214
+        }
+      ],
+      "bare_hand_log_gate_added": false
+    }
+  ],
+  "generated_recipes": [
+    {
+      "id": "mite:flint_from_chips",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_from_chips.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "CC",
+        "CC"
+      ],
+      "ingredients": {
+        "C": {
+          "item": "mite:flint_chip"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "minecraft:flint"
+      },
+      "group": ""
+    },
+    {
+      "id": "mite:flint_chips_from_flint",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_chips_from_flint.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "F"
+      ],
+      "ingredients": {
+        "F": {
+          "item": "minecraft:flint"
+        }
+      },
+      "result": {
+        "count": 4,
+        "id": "mite:flint_chip"
+      },
+      "group": ""
+    },
+    {
+      "id": "mite:sinew_from_leather",
+      "generated_file": "src/generated/resources/data/mite/recipe/sinew_from_leather.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "L"
+      ],
+      "ingredients": {
+        "L": {
+          "item": "minecraft:leather"
+        }
+      },
+      "result": {
+        "count": 4,
+        "id": "mite:sinew"
+      },
+      "group": ""
+    },
+    {
+      "id": "mite:flint_hatchet",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "FS",
+        "BS"
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_1",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_1.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "BSF",
+        " S "
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_2",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_2.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        " SF",
+        "BS "
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_3",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_3.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "FS",
+        " S",
+        "B "
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_4",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_4.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "FS",
+        " S",
+        " B"
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_5",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_5.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        " SF",
+        " S ",
+        "B  "
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_6",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_6.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "BFS",
+        "  S"
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_7",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_7.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        " FS",
+        "B S"
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_8",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_8.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        " FS",
+        "  S",
+        "B  "
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_9",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_9.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        " B",
+        "SF",
+        "S "
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_10",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_10.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        " B",
+        "FS",
+        " S"
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_11",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_11.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "  B",
+        "FS ",
+        " S "
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    },
+    {
+      "id": "mite:flint_hatchet_binding_12",
+      "generated_file": "src/generated/resources/data/mite/recipe/flint_hatchet_binding_12.json",
+      "serializer": "minecraft:crafting_shaped",
+      "pattern": [
+        "  B",
+        "SF ",
+        "S  "
+      ],
+      "ingredients": {
+        "B": [
+          {
+            "item": "minecraft:string"
+          },
+          {
+            "item": "mite:sinew"
+          }
+        ],
+        "F": {
+          "item": "minecraft:flint"
+        },
+        "S": {
+          "item": "minecraft:stick"
+        }
+      },
+      "result": {
+        "count": 1,
+        "id": "mite:flint_hatchet"
+      },
+      "group": "mite:flint_hatchet"
+    }
+  ],
+  "acceptance_vectors": {
+    "status": "字面预期；通过状态由独立测试记录报告。",
+    "hatchet_grid_enumeration": {
+      "two_by_two_candidates": 24,
+      "three_by_three_candidates": 3024,
+      "total_candidates": 3048,
+      "accepted_two_by_two": 4,
+      "accepted_three_by_three": 96,
+      "accepted_total": 100,
+      "ingredients": "恰好1燧石、2木棍、1绑定物；分别枚举筋/线；交换两个相同木棍不重复计数。"
+    },
+    "rejected_layouts": [
+      "缺绑定物",
+      "两个占用绑定槽（筋与线也算两个）",
+      "附加任意无关材料",
+      "皮革直接代替筋",
+      "碎片代替整燧石",
+      "旋转骨架"
+    ],
+    "consumption": [
+      {
+        "inputs_per_slot": 2,
+        "occupied_slots": 4,
+        "first_craft_output": 1,
+        "remaining_each_slot": 1
+      },
+      {
+        "inputs_per_slot": 1,
+        "occupied_slots": 4,
+        "second_craft_output": 1,
+        "remaining_each_slot": 0,
+        "third_craft_output": 0
+      }
+    ],
+    "gravel_probabilities": [
+      {
+        "fortune": 0,
+        "denominator": 12,
+        "flint": "1/96",
+        "flint_chip": "15/96",
+        "gravel": "80/96"
+      },
+      {
+        "fortune": 1,
+        "denominator": 10,
+        "flint": "1/80",
+        "flint_chip": "15/80",
+        "gravel": "64/80"
+      },
+      {
+        "fortune": 2,
+        "denominator": 8,
+        "flint": "1/64",
+        "flint_chip": "15/64",
+        "gravel": "48/64"
+      },
+      {
+        "fortune": 3,
+        "denominator": 6,
+        "flint": "1/48",
+        "flint_chip": "15/48",
+        "gravel": "32/48"
+      }
+    ],
+    "block_wear": [
+      {
+        "hardness": 0,
+        "wear": 0
+      },
+      {
+        "hardness": 0.001,
+        "wear": 6
+      },
+      {
+        "hardness": 0.05,
+        "wear": 6
+      },
+      {
+        "hardness": 0.1,
+        "wear": 13
+      },
+      {
+        "hardness": 0.2,
+        "wear": 26
+      },
+      {
+        "hardness": 0.4,
+        "wear": 53
+      },
+      {
+        "hardness": 0.5,
+        "wear": 66
+      },
+      {
+        "hardness": 0.8,
+        "wear": 106
+      },
+      {
+        "hardness": 1.0,
+        "wear": 133
+      },
+      {
+        "hardness": 1.2,
+        "wear": 160
+      },
+      {
+        "hardness": 1.5,
+        "wear": 200
+      },
+      {
+        "hardness": 2.0,
+        "wear": 266
+      },
+      {
+        "hardness": 3.0,
+        "wear": 400
+      }
+    ],
+    "block_wear_float_boundary": [
+      {
+        "hardness_bits": "0x3d570a3b",
+        "wear": 6
+      },
+      {
+        "hardness_bits": "0x3d570a3c",
+        "wear": 7
+      },
+      {
+        "hardness_bits": "0x3d570a3d",
+        "wear": 7
+      }
+    ],
+    "unenchanted_original_log_sequence": {
+      "max_damage": 400,
+      "per_log_cost": 160,
+      "damage_after_first": 160,
+      "damage_after_second": 320,
+      "break_after_completed_logs": 3
+    },
+    "unenchanted_attack_sequence": {
+      "per_attack_cost": 133,
+      "damage_after_three": 399,
+      "break_after_successful_attacks": 4
+    },
+    "integration_cases": [
+      "RecipeManager真实载入16配方",
+      "13短斧有序配方及统一group",
+      "InventoryMenu快速取出和每占用槽消耗1",
+      "真实红石Crafter方块输出到箱子并逐槽消耗1",
+      "取消、创造、丝触、关闭方块掉落不被额外添物",
+      "非minecraft命名空间日志不采用1.2映射"
+    ]
+  },
+  "implementation_files": [
+    "src/main/java/io/github/ningmeng123/mite/registry/MiteItems.java",
+    "src/main/java/io/github/ningmeng123/mite/item/FlintHatchetItem.java",
+    "src/main/java/io/github/ningmeng123/mite/rules/FlintToolRules.java",
+    "src/main/java/io/github/ningmeng123/mite/rules/FlintGravelRules.java",
+    "src/main/java/io/github/ningmeng123/mite/mining/FlintGravelDrops.java",
+    "src/main/java/io/github/ningmeng123/mite/mining/MiningProgress.java",
+    "src/main/java/io/github/ningmeng123/mite/data/MiteRecipeProvider.java",
+    "src/main/java/io/github/ningmeng123/mite/data/MiteDataGenerators.java"
+  ],
+  "not_completed": [
+    "全量工具材料门槛与空手原木限制",
+    "品质与职业模式",
+    "制作时间和经验成本",
+    "便携方块免磨损及采集下限",
+    "原版额外触及距离",
+    "完整砂砾矿物/下界/道路分支",
+    "旧版树叶和动物生态",
+    "R196合并修复与完整铁砧系统",
+    "完整战斗与附魔平衡"
+  ]
+}

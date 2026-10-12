@@ -52,6 +52,9 @@ neoForge {
             if (project.providers.gradleProperty('miteMiningHungerSmoke').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.miningHungerSmoke', 'true'
             }
+            if (project.providers.gradleProperty('miteFlintStartSmoke').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.flintStartSmoke', 'true'
+            }
         }
         server {
             server()

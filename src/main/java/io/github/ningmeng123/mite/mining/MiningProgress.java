@@ -2,6 +2,8 @@ package io.github.ningmeng123.mite.mining;
 
 import io.github.ningmeng123.mite.rules.MiningRules;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
@@ -21,6 +23,10 @@ public final class MiningProgress {
         }
         if (state.is(Blocks.SAND) || state.is(Blocks.RED_SAND)) {
             return 0.4F;
+        }
+        // Original four log species use 1.2; modern vanilla logs/stems follow the same stage.
+        if (state.is(BlockTags.LOGS) && BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().equals("minecraft")) {
+            return 1.2F;
         }
         return raw;
     }

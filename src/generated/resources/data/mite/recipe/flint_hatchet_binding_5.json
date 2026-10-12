@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "mite:flint_hatchet",
+  "key": {
+    "B": [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "item": "mite:sinew"
+      }
+    ],
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    " SF",
+    " S ",
+    "B  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:flint_hatchet"
+  }
+}
