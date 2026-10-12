@@ -1,4 +1,5 @@
 {
+  "item.minecraft.wooden_sword": "木棒",
   "commands.mite.experience.level_too_high": "MITE 的最高经验等级为 %s，未更改目标玩家的经验。",
   "item.mite.flint_chip": "燧石碎片",
   "item.mite.sinew": "筋",

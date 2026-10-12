@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.Block;
 
 /** Explicit, reloadable compatibility boundaries for MITE rules. @author NingMeng123 */
 public final class MiteTags {
+    public static final TagKey<Block> WOODEN_CLUB_EFFICIENT =
+            TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "wooden_club_efficient"));
     public static final TagKey<Block> LOGS_REQUIRING_AXE =
             TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "logs_requiring_axe"));
     public static final TagKey<Item> BELOW_LOG_MINING_TIER =

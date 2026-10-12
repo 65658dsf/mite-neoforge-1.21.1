@@ -1,4 +1,5 @@
 {
+  "item.minecraft.wooden_sword": "Wooden Club",
   "commands.mite.experience.level_too_high": "MITE's maximum experience level is %s. No target's experience was changed.",
   "item.mite.flint_chip": "Flint Chip",
   "item.mite.sinew": "Sinew",

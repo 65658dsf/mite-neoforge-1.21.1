@@ -7,6 +7,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -21,5 +23,8 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
         tag(MiteTags.BELOW_LOG_MINING_TIER).add(Items.WOODEN_AXE);
+        tag(ItemTags.SWORDS).remove(ResourceLocation.withDefaultNamespace("wooden_sword"));
+        tag(ItemTags.DURABILITY_ENCHANTABLE).add(Items.WOODEN_SWORD);
+        tag(ItemTags.VANISHING_ENCHANTABLE).add(Items.WOODEN_SWORD);
     }
 }

@@ -15,8 +15,10 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.conditions.FalseCondition;
 
 /** R196 starter recipes, using ordinary recipes for every binding position. @author NingMeng123 */
 public final class MiteRecipeProvider extends RecipeProvider {
@@ -26,6 +28,20 @@ public final class MiteRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(RecipeOutput output) {
+        // Override the vanilla recipe IDs. RecipeProvider applies these conditions to both
+        // recipes and their recipe-book advancements; old registered item stacks stay valid.
+        RecipeOutput disabledWoodenTools = output.withConditions(FalseCondition.INSTANCE);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.WOODEN_AXE)
+                .pattern("XX").pattern("X#").pattern(" #")
+                .define('X', ItemTags.PLANKS).define('#', Items.STICK)
+                .unlockedBy("has_planks", has(ItemTags.PLANKS))
+                .save(disabledWoodenTools, ResourceLocation.withDefaultNamespace("wooden_axe"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.WOODEN_PICKAXE)
+                .pattern("XXX").pattern(" # ").pattern(" # ")
+                .define('X', ItemTags.PLANKS).define('#', Items.STICK)
+                .unlockedBy("has_planks", has(ItemTags.PLANKS))
+                .save(disabledWoodenTools, ResourceLocation.withDefaultNamespace("wooden_pickaxe"));
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.FLINT)
                 .pattern("CC").pattern("CC").define('C', MiteItems.FLINT_CHIP.get())
                 .unlockedBy("has_flint_chip", has(MiteItems.FLINT_CHIP.get()))

@@ -14,6 +14,8 @@ public final class MiteDataGenerators {
     public static void gatherData(GatherDataEvent event) {
         event.getGenerator().addProvider(event.includeServer(),
                 new MiteRecipeProvider(event.getGenerator().getPackOutput(), event.getLookupProvider()));
+        event.getGenerator().addProvider(event.includeServer(),
+                new MiteLootModifierProvider(event.getGenerator().getPackOutput(), event.getLookupProvider()));
         MiteBlockTagsProvider blockTags = new MiteBlockTagsProvider(event.getGenerator().getPackOutput(),
                 event.getLookupProvider(), event.getExistingFileHelper());
         event.getGenerator().addProvider(event.includeServer(), blockTags);

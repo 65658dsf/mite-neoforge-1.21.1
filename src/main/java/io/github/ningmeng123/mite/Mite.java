@@ -1,8 +1,10 @@
 package io.github.ningmeng123.mite;
 
 import com.mojang.logging.LogUtils;
+import io.github.ningmeng123.mite.item.WoodenClubBehavior;
 import io.github.ningmeng123.mite.registry.MiteAttachments;
 import io.github.ningmeng123.mite.registry.MiteItems;
+import io.github.ningmeng123.mite.registry.MiteLootModifiers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
@@ -20,6 +22,8 @@ public final class Mite {
     public Mite(IEventBus modBus) {
         MiteAttachments.register(modBus);
         MiteItems.register(modBus);
+        MiteLootModifiers.register(modBus);
+        modBus.addListener(WoodenClubBehavior::modifyComponents);
         LOGGER.info("MITE: Modern initialized for Minecraft 1.21.1");
     }
 }

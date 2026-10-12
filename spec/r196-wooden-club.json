@@ -1,0 +1,931 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "analysis_date": "2026-10-12",
+  "feature": "012 木棒与木制装备来源",
+  "status": "原始依据和已决现代规格；不声明构建或游戏验证已通过。",
+  "source": {
+    "archive": "MITE 1.6.4 R196.zip",
+    "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+    "decompiler": "CFR 0.152",
+    "line_basis": ".reference/r196/decompiled/*.java",
+    "runtime_inventory": "reference-data/runtime-registry.json",
+    "language_file": ".reference/r196/resources/assets/minecraft/lang/MITE.lang"
+  },
+  "target": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.259",
+    "reused_item_id": "minecraft:wooden_sword",
+    "chinese_display_name": "木棒",
+    "english_display_name": "Wooden Club",
+    "new_texture": true
+  },
+  "numeric_semantics": {
+    "arithmetic": "Java IEEE-754 float，保留乘法与转整数顺序。",
+    "integer_cast": "向零截断；(int)(H*25f)，不是((int)H)*25。",
+    "base_attack_assumptions": [
+      "满现代攻击冷却",
+      "无暴击",
+      "无效果/额外属性",
+      "无附魔附加伤害",
+      "无目标护甲或减伤"
+    ],
+    "durability_assumptions": [
+      "平均品质",
+      "无耐久附魔/诅咒",
+      "每次成功攻击各扣一次基础磨损"
+    ]
+  },
+  "rules": [
+    {
+      "id": "club_identity",
+      "evidence_status": "confirmed_static_runtime_and_bytecode",
+      "club": {
+        "symbol": "yc.clubWood",
+        "numeric_id": 1025,
+        "class": "ItemClub",
+        "parent_class": "ItemCudgel",
+        "english_name": "Wooden Club",
+        "max_stack": 1,
+        "average_quality_durability": 400,
+        "attack_modifier": 2.0,
+        "player_base_attack": 1.0,
+        "total_base_attack": 3.0,
+        "reach_bonus": 0.5,
+        "can_block": true,
+        "components_for_durability": 2
+      },
+      "cudgel_comparison": {
+        "symbol": "yc.cudgelWood",
+        "numeric_id": 1024,
+        "class": "ItemCudgel",
+        "english_name": "Wooden Cudgel",
+        "average_quality_durability": 200,
+        "attack_modifier": 1.0,
+        "total_base_attack": 2.0,
+        "reach_bonus": 0.25,
+        "can_block": false,
+        "components_for_durability": 1,
+        "implemented_this_feature": false
+      },
+      "chinese_name_provenance": "本次中文命名；发布包只有英文MITE.lang，未发现官方中文依据。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 235,
+          "end_line": 236
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemClub.java",
+          "start_line": 6,
+          "end_line": 28,
+          "bytecode": "getBaseDamageVsEntity调用父类后fconst_1/fadd；getNumComponentsForDurability为iconst_2；canBlock为iconst_1。"
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemCudgel.java",
+          "start_line": 6,
+          "end_line": 45,
+          "bytecode": "getBaseDamageVsEntity为fconst_1；getBaseHarvestEfficiency为fconst_2；两个基础磨损方法均ldc0.25f。"
+        },
+        {
+          "file": ".reference/r196/resources/assets/minecraft/lang/MITE.lang",
+          "start_line": 169,
+          "end_line": 170
+        }
+      ]
+    },
+    {
+      "id": "club_replaces_wood_sword_recipe",
+      "evidence_status": "confirmed_static_and_runtime",
+      "r196_shape": [
+        "P",
+        "P",
+        "S"
+      ],
+      "r196_ingredients": {
+        "P": {
+          "item_id": 5,
+          "subtype": 32767,
+          "count_per_slot": 1
+        },
+        "S": {
+          "item_id": 280,
+          "subtype": 0,
+          "count_per_slot": 1
+        }
+      },
+      "r196_output": {
+        "item_id": 1025,
+        "count": 1
+      },
+      "r196_runtime_order": 370,
+      "r196_difficulty": 185.0,
+      "r196_skillsets": [
+        128
+      ],
+      "r196_skill_name": "CARPENTRY",
+      "r196_bench_material": null,
+      "modern_shape": [
+        "P",
+        "P",
+        "S"
+      ],
+      "modern_ingredients": {
+        "P": "#minecraft:planks",
+        "S": "minecraft:stick"
+      },
+      "modern_output": {
+        "item": "minecraft:wooden_sword",
+        "count": 1
+      },
+      "modern_mixed_plank_types_allowed": true,
+      "fits_personal_2x2_grid": false,
+      "modern_notes": [
+        "使用现代木板范围是扩展；旧配方只有旧木板任意子类型。",
+        "宽1高3的几何要求仍需三行网格，bench_material=null不等于可在2×2制作。",
+        "制造职业、品质、耗时与经验系统不在本轮迁移。"
+      ],
+      "cudgel_other_recipe": {
+        "shape": [
+          "P",
+          "S"
+        ],
+        "runtime_order": 417,
+        "difficulty": 105.0,
+        "result_id": 1024,
+        "implemented_this_feature": false
+      },
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aam.java",
+          "start_line": 5,
+          "end_line": 16
+        },
+        {
+          "file": ".reference/r196/decompiled/CraftingResult.java",
+          "start_line": 11,
+          "end_line": 11
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "start_line": 105,
+          "end_line": 118
+        }
+      ]
+    },
+    {
+      "id": "wooden_tools_source_removal",
+      "evidence_status": "runtime_inventory_and_explicit_modern_scope",
+      "r196_absent_numeric_ids": {
+        "wooden_sword": 268,
+        "wooden_pickaxe": 270,
+        "wooden_axe": 271,
+        "wooden_hoe": 290
+      },
+      "r196_retained_wooden_shovel": {
+        "numeric_id": 269,
+        "symbol": "yc.u",
+        "runtime_recipe_order": 362
+      },
+      "modern_normal_sources_removed_for": [
+        "minecraft:wooden_pickaxe",
+        "minecraft:wooden_axe"
+      ],
+      "modern_removed_source_types": [
+        "ordinary_crafting_recipe",
+        "creative_inventory",
+        "creative_search",
+        "ordinary_loot"
+      ],
+      "modern_registered_ids_preserved": true,
+      "modern_existing_items_preserved": true,
+      "modern_command_items_preserved": true,
+      "modern_wooden_sword": "沿用注册ID，行为/名字/外观改为木棒。",
+      "modern_wooden_axe": "已有或命令给予物品继续受011低阶原木门槛。",
+      "out_of_scope_deletions": [
+        "minecraft:wooden_shovel",
+        "minecraft:wooden_hoe"
+      ],
+      "notes": [
+        "木铲有原作保留依据；木锄保留是本轮限定范围，不声称R196有木锄。",
+        "普通来源移除不等于删除注册、清空旧存档或全局禁止第三方数据包/命令产物。"
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 20,
+          "end_line": 42
+        },
+        {
+          "file": ".reference/r196/decompiled/aal.java",
+          "start_line": 5,
+          "end_line": 5
+        },
+        {
+          "file": ".reference/r196/decompiled/aam.java",
+          "start_line": 5,
+          "end_line": 5
+        }
+      ],
+      "runtime_source": "reference-data/runtime-registry.json: items中269存在、268/270/271/290不存在；crafting_recipes order362。"
+    },
+    {
+      "id": "club_stats",
+      "evidence_status": "confirmed_static_and_runtime",
+      "r196_durability_formula": "(int)(4.0f*2.0f*0.5f*100.0f)",
+      "average_quality_durability": 400,
+      "attack_modifier_formula": "(1.0f+1.0f)+0.0f",
+      "attack_modifier": 2.0,
+      "total_base_attack": 3.0,
+      "enchantability": 10,
+      "ordinary_effective_tool_speed": 2.0,
+      "material_harvest_level": 0,
+      "modern_attack_speed_per_second": 1.6,
+      "modern_attack_cooldown": "保留现代木剑冷却，不声称为R196攻击间隔。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 35,
+          "end_line": 70
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 209,
+          "end_line": 220
+        },
+        {
+          "file": ".reference/r196/decompiled/EnumEquipmentMaterial.java",
+          "start_line": 6,
+          "end_line": 6
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemClub.java",
+          "start_line": 17,
+          "end_line": 28
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemCudgel.java",
+          "start_line": 19,
+          "end_line": 25
+        },
+        {
+          "file": ".reference/r196/decompiled/akc.java",
+          "start_line": 351,
+          "end_line": 354
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 94,
+          "end_line": 96
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 590,
+          "end_line": 605
+        }
+      ]
+    },
+    {
+      "id": "club_scaled_wear",
+      "evidence_status": "confirmed_bytecode",
+      "base_block_decay": 0.25,
+      "base_attack_decay": 0.25,
+      "block_steps": [
+        "if (H==0.0f) return 0",
+        "decay=100.0f*0.25f",
+        "return max(max((int)(H*decay),(int)(decay/20.0f)),1)"
+      ],
+      "attack_formula": "max((int)(100.0f*0.25f),1)",
+      "attack_wear": 25,
+      "r196_block_entry_guards": [
+        "可损坏物品",
+        "非portable",
+        "非创造",
+        "H>0",
+        "工具对目标基础速度>1"
+      ],
+      "modern_hardness_input": "现代原始方块硬度；不把玻璃、冰、南瓜现代硬度改回旧数值。",
+      "modern_target_portable_audit": "对应旧cake/glass/pane/ice/pumpkin/litpumpkin均继承aqz.isPortable=false，无这些旧目标的额外便携免磨损遗漏。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ItemCudgel.java",
+          "start_line": 39,
+          "end_line": 45,
+          "bytecode": "两方法均直接返回0.25f。"
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 145,
+          "end_line": 180,
+          "bytecode": "block: 23 fmul得到decay，27 fmul后28 f2i；33 fdiv后34 f2i；35/39 Math.max。attack: 7 fmul、8 f2i、10 Math.max。"
+        },
+        {
+          "file": ".reference/r196/decompiled/aqz.java",
+          "start_line": 1687,
+          "end_line": 1688
+        }
+      ]
+    },
+    {
+      "id": "skeleton_blunt_bonus",
+      "evidence_status": "confirmed_bytecode_with_modern_mapping",
+      "r196_target_class": "tr (EntitySkeleton)",
+      "r196_item_condition": "held_item instanceof ItemCudgel || held_item instanceof ItemWarHammer",
+      "club_inherits_cudgel": true,
+      "r196_factor": 2.0,
+      "r196_order": [
+        "基础攻击",
+        "暴击",
+        "等级近战倍率（按其原始条件）",
+        "材料/目标条件，包括骷髅钝器倍数",
+        "附魔附加伤害",
+        "液体悬浮惩罚"
+      ],
+      "modern_targets": [
+        "minecraft:skeleton",
+        "minecraft:stray",
+        "minecraft:wither_skeleton",
+        "minecraft:bogged"
+      ],
+      "modern_excluded_examples": [
+        "minecraft:zombie",
+        "minecraft:husk",
+        "minecraft:drowned",
+        "minecraft:zombified_piglin"
+      ],
+      "modern_not_all_undead": true,
+      "modern_bonus_hook": "Item.getAttackDamageBonus(target, damage, source)",
+      "modern_return_for_matching_target": "damage作为额外伤害返回，在附魔伤害合并前加上同量伤害。",
+      "modern_mapping_note": "新版分离/新增的骷髅种类是明确现代映射，不宣称1.6.4中具有同样注册ID。",
+      "literal_total_without_other_modifiers": {
+        "ordinary_target": 3.0,
+        "matching_skeleton": 6.0,
+        "non_skeleton_undead": 3.0
+      },
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 1041,
+          "end_line": 1072,
+          "method": "calcRawMeleeDamageVs",
+          "bytecode": "191 instanceof tr；200 instanceof ItemCudgel；208 instanceof ItemWarHammer；214..217 fload/fconst_2/fmul；220..224之后才加附魔。"
+        }
+      ],
+      "class_mapping_source": "reference-data/class-index.json: class=tr, source_file=EntitySkeleton.java"
+    },
+    {
+      "id": "no_intrinsic_knockback_and_deferred_blocking_reach",
+      "evidence_status": "confirmed_static",
+      "r196_extra_intrinsic_knockback": 0,
+      "r196_knockback_sources": [
+        "普通击退附魔",
+        "冲刺"
+      ],
+      "r196_club_can_block": true,
+      "r196_club_reach_bonus": 0.5,
+      "r196_reach_context": [
+        "攻击使用无参getReachBonus",
+        "方块仅对有效工具目标使用getReachBonus(block,metadata)",
+        "交互另用getReachBonus(entity)，默认0"
+      ],
+      "modern_deferred": [
+        "旧右键格挡",
+        "额外触及距离与高差公式",
+        "新眩晕附魔",
+        "旧版完整战斗乘区迁移"
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 1088,
+          "end_line": 1093
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemClub.java",
+          "start_line": 8,
+          "end_line": 8
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemClub.java",
+          "start_line": 22,
+          "end_line": 23
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 185,
+          "end_line": 205
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 941,
+          "end_line": 953
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "start_line": 1971,
+          "end_line": 2007
+        }
+      ]
+    },
+    {
+      "id": "material_list_is_not_effectiveness",
+      "evidence_status": "confirmed_static_and_runtime",
+      "r196_material_list": [
+        "cake",
+        "coral",
+        "glass",
+        "ice",
+        "pumpkin"
+      ],
+      "r196_tool_tier": 0,
+      "r196_active_examples": [
+        {
+          "block_id": 20,
+          "name": "glass",
+          "class": "aol",
+          "hardness": 2.0,
+          "min_harvest_level": 1,
+          "effective_for_wood_club": false,
+          "portable": false
+        },
+        {
+          "block_id": 79,
+          "name": "ice",
+          "class": "aov",
+          "hardness": 1.0,
+          "min_harvest_level": 1,
+          "effective_for_wood_club": false,
+          "portable": false
+        },
+        {
+          "block_id": 86,
+          "name": "pumpkin",
+          "class": "apy",
+          "hardness": 0.6,
+          "min_harvest_level": 0,
+          "effective_for_wood_club": true,
+          "portable": false,
+          "block_wear": 15
+        },
+        {
+          "block_id": 91,
+          "name": "litpumpkin",
+          "class": "apy",
+          "hardness": 1.0,
+          "min_harvest_level": 0,
+          "effective_for_wood_club": true,
+          "portable": false,
+          "block_wear": 25
+        },
+        {
+          "block_id": 92,
+          "name": "cake",
+          "class": "anh",
+          "hardness": 0.5,
+          "min_harvest_level": 0,
+          "effective_for_wood_club": true,
+          "portable": false,
+          "block_wear": 12
+        },
+        {
+          "block_id": 102,
+          "name": "thinGlass",
+          "class": "aqy",
+          "hardness": 0.1,
+          "min_harvest_level": 0,
+          "effective_for_wood_club": true,
+          "portable": false,
+          "block_wear": 2
+        }
+      ],
+      "coral_status": "仅确认工具材质列表引用；未确认活跃旧方块映射，不据此加入现代珊瑚。",
+      "r196_not_effective_materials": [
+        "wood",
+        "web"
+      ],
+      "portable_inheritance_chains": [
+        "aol->aoq->aqz",
+        "aov->aoq->aqz",
+        "apy->anw->aqz",
+        "anh->aqz",
+        "aqy->aqz"
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ItemCudgel.java",
+          "start_line": 8,
+          "end_line": 8
+        },
+        {
+          "file": ".reference/r196/decompiled/akc.java",
+          "start_line": 636,
+          "end_line": 636
+        },
+        {
+          "file": ".reference/r196/decompiled/akc.java",
+          "start_line": 657,
+          "end_line": 667
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 61,
+          "end_line": 62
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 125,
+          "end_line": 138
+        },
+        {
+          "file": ".reference/r196/decompiled/aol.java",
+          "start_line": 4,
+          "end_line": 9
+        },
+        {
+          "file": ".reference/r196/decompiled/aov.java",
+          "start_line": 6,
+          "end_line": 12
+        },
+        {
+          "file": ".reference/r196/decompiled/aqy.java",
+          "start_line": 4,
+          "end_line": 18
+        },
+        {
+          "file": ".reference/r196/decompiled/anh.java",
+          "start_line": 4,
+          "end_line": 13
+        },
+        {
+          "file": ".reference/r196/decompiled/apy.java",
+          "start_line": 6,
+          "end_line": 13
+        },
+        {
+          "file": ".reference/r196/decompiled/aoq.java",
+          "start_line": 4,
+          "end_line": 12
+        },
+        {
+          "file": ".reference/r196/decompiled/anw.java",
+          "start_line": 4,
+          "end_line": 16
+        },
+        {
+          "file": ".reference/r196/decompiled/aqz.java",
+          "start_line": 1687,
+          "end_line": 1688
+        }
+      ],
+      "runtime_source": "reference-data/runtime-registry.json: blocks IDs20,79,86,91,92,102。"
+    },
+    {
+      "id": "modern_club_mining_targets",
+      "evidence_status": "explicit_modern_adaptation",
+      "default_explicit_targets": [
+        "minecraft:black_stained_glass_pane",
+        "minecraft:blue_stained_glass_pane",
+        "minecraft:brown_stained_glass_pane",
+        "minecraft:cake",
+        "minecraft:carved_pumpkin",
+        "minecraft:cyan_stained_glass_pane",
+        "minecraft:glass_pane",
+        "minecraft:gray_stained_glass_pane",
+        "minecraft:green_stained_glass_pane",
+        "minecraft:jack_o_lantern",
+        "minecraft:light_blue_stained_glass_pane",
+        "minecraft:light_gray_stained_glass_pane",
+        "minecraft:lime_stained_glass_pane",
+        "minecraft:magenta_stained_glass_pane",
+        "minecraft:orange_stained_glass_pane",
+        "minecraft:pink_stained_glass_pane",
+        "minecraft:pumpkin",
+        "minecraft:purple_stained_glass_pane",
+        "minecraft:red_stained_glass_pane",
+        "minecraft:white_stained_glass_pane",
+        "minecraft:yellow_stained_glass_pane"
+      ],
+      "default_target_count": 21,
+      "effective_speed": 2.0,
+      "default_speed": 1.0,
+      "raw_modern_hardness_preserved": true,
+      "modern_drops_preserved": true,
+      "modern_coral_included": false,
+      "axe_dig_ability": false,
+      "sword_web_special_mining": false,
+      "notes": [
+        "仅蛋糕、南瓜/南瓜灯及现代雕刻变体、玻璃板与16色染色玻璃板获得强度2。",
+        "原整玻璃与冰被R196 tier1挡住；现代在本轮只不赋予木棒高效，保留默认1，尚未移植全局最低采集等级禁采。",
+        "木棒不是原木工具，011门槛继续适用。"
+      ],
+      "explicitly_ineffective_groups": [
+        "whole_glass",
+        "tinted_glass",
+        "stained_glass_blocks",
+        "ice",
+        "packed_ice",
+        "blue_ice",
+        "frosted_ice"
+      ]
+    },
+    {
+      "id": "enchantment_eligibility",
+      "evidence_status": "confirmed_static_and_explicit_modern_scope",
+      "r196_enchantability": 10,
+      "r196_natural_allowed": [
+        "knockback",
+        "looting",
+        "unbreaking",
+        "stun"
+      ],
+      "r196_natural_denied": [
+        "sharpness",
+        "smite",
+        "bane_of_arthropods",
+        "fire_aspect",
+        "efficiency"
+      ],
+      "modern_allowed_eligibility": [
+        "minecraft:knockback",
+        "minecraft:looting",
+        "minecraft:unbreaking",
+        "minecraft:mending",
+        "minecraft:vanishing_curse"
+      ],
+      "modern_natural_denied": [
+        "minecraft:sharpness",
+        "minecraft:smite",
+        "minecraft:bane_of_arthropods",
+        "minecraft:fire_aspect",
+        "minecraft:sweeping_edge"
+      ],
+      "modern_removed_from_swords_tag": true,
+      "modern_hooks": [
+        "IItemExtension.supportsEnchantment",
+        "IItemExtension.isPrimaryItemFor"
+      ],
+      "modern_mending_and_vanishing_are_adaptations": true,
+      "modern_stun_added": false,
+      "old_or_command_enchantment_components_stripped": false,
+      "notes": [
+        "资格允许不保证附魔台产出宝藏附魔。",
+        "保留组件兼容不绕过/enchant自身的资格检查。",
+        "现代诅咒范围明确为消失诅咒，不新增绑定诅咒资格。"
+      ],
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EnumEquipmentMaterial.java",
+          "start_line": 6,
+          "end_line": 6
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 209,
+          "end_line": 210
+        },
+        {
+          "file": ".reference/r196/decompiled/abd.java",
+          "start_line": 21,
+          "end_line": 22
+        },
+        {
+          "file": ".reference/r196/decompiled/abe.java",
+          "start_line": 33,
+          "end_line": 35
+        },
+        {
+          "file": ".reference/r196/decompiled/aas.java",
+          "start_line": 16,
+          "end_line": 21
+        },
+        {
+          "file": ".reference/r196/decompiled/EnchantmentStun.java",
+          "start_line": 16,
+          "end_line": 17
+        },
+        {
+          "file": ".reference/r196/decompiled/aar.java",
+          "start_line": 73,
+          "end_line": 84
+        },
+        {
+          "file": ".reference/r196/decompiled/abc.java",
+          "start_line": 21,
+          "end_line": 22
+        },
+        {
+          "file": ".reference/r196/decompiled/aat.java",
+          "start_line": 16,
+          "end_line": 17
+        }
+      ]
+    },
+    {
+      "id": "repair",
+      "evidence_status": "confirmed_static_and_explicit_modern_scope",
+      "r196_repair_material": null,
+      "r196_reported_repair_cost": 4,
+      "r196_combination_exists": true,
+      "r196_combination_conditions": [
+        "两件同ID且各1个",
+        "两件均受损",
+        "同品质",
+        "未附魔",
+        "染色存在时两件颜色一致",
+        "另有制作品质/技能限制"
+      ],
+      "r196_remaining_durability": "min(max_damage,remaining1+remaining2)，没有额外5%奖励。",
+      "modern_material_repair": false,
+      "modern_combination_repair_preserved": true,
+      "invented_plank_repair_recipe": false,
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "start_line": 886,
+          "end_line": 909
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "start_line": 260,
+          "end_line": 261
+        },
+        {
+          "file": ".reference/r196/decompiled/aaf.java",
+          "start_line": 263,
+          "end_line": 320
+        }
+      ]
+    },
+    {
+      "id": "progression_scope",
+      "evidence_status": "explicit_scope_limit",
+      "wooden_pickaxe_removed_from_regular_sources": true,
+      "first_mineral_pickaxe_regular_route_complete": false,
+      "pending": "后续金属材料与首镐阶段；不宣称当前已打通完整生存成长流程。",
+      "other_not_implemented": [
+        "Cudgel独立物品",
+        "品质",
+        "职业制造条件",
+        "制作时间和经验成本",
+        "旧格挡/触及",
+        "新眩晕附魔",
+        "旧维修公式",
+        "全部矿物与全部战斗规则"
+      ]
+    }
+  ],
+  "acceptance_vectors": {
+    "status": "固定期望；实际通过状态由独立测试报告给出。",
+    "recipe": {
+      "pattern": [
+        "P",
+        "P",
+        "S"
+      ],
+      "planks": 2,
+      "sticks": 1,
+      "output_item": "minecraft:wooden_sword",
+      "output_count": 1,
+      "consume_per_occupied_slot": 1,
+      "fits_2x2": false
+    },
+    "ordinary_combat": {
+      "target_armor": 0,
+      "target_invulnerability_reset_between_hits": true,
+      "fully_charged": true,
+      "critical": false,
+      "damage": 3.0,
+      "wear": 25
+    },
+    "skeleton_combat": [
+      {
+        "entity": "minecraft:skeleton",
+        "damage_without_other_modifiers": 6.0
+      },
+      {
+        "entity": "minecraft:stray",
+        "damage_without_other_modifiers": 6.0
+      },
+      {
+        "entity": "minecraft:wither_skeleton",
+        "damage_without_other_modifiers": 6.0
+      },
+      {
+        "entity": "minecraft:bogged",
+        "damage_without_other_modifiers": 6.0
+      }
+    ],
+    "other_undead": [
+      {
+        "entity": "minecraft:zombie",
+        "damage_without_other_modifiers": 3.0
+      },
+      {
+        "entity": "minecraft:husk",
+        "damage_without_other_modifiers": 3.0
+      },
+      {
+        "entity": "minecraft:drowned",
+        "damage_without_other_modifiers": 3.0
+      },
+      {
+        "entity": "minecraft:zombified_piglin",
+        "damage_without_other_modifiers": 3.0
+      }
+    ],
+    "durability_sequence": [
+      {
+        "successful_hits": 1,
+        "damage_value": 25,
+        "broken": false
+      },
+      {
+        "successful_hits": 15,
+        "damage_value": 375,
+        "broken": false
+      },
+      {
+        "successful_hits": 16,
+        "broken": true
+      }
+    ],
+    "generic_effective_block_wear": [
+      {
+        "hardness": 0.0,
+        "wear": 0
+      },
+      {
+        "hardness": 0.001,
+        "wear": 1
+      },
+      {
+        "hardness": 0.04,
+        "wear": 1
+      },
+      {
+        "hardness": 0.1,
+        "wear": 2
+      },
+      {
+        "hardness": 0.3,
+        "wear": 7
+      },
+      {
+        "hardness": 0.5,
+        "wear": 12
+      },
+      {
+        "hardness": 0.6,
+        "wear": 15
+      },
+      {
+        "hardness": 1.0,
+        "wear": 25
+      },
+      {
+        "hardness": 2.0,
+        "wear": 50
+      }
+    ],
+    "enchantments": {
+      "allowed_eligibility": [
+        "minecraft:knockback",
+        "minecraft:looting",
+        "minecraft:unbreaking",
+        "minecraft:mending",
+        "minecraft:vanishing_curse"
+      ],
+      "natural_rejected": [
+        "minecraft:sharpness",
+        "minecraft:smite",
+        "minecraft:bane_of_arthropods",
+        "minecraft:fire_aspect",
+        "minecraft:sweeping_edge"
+      ],
+      "existing_or_directly_written_components_preserved": true
+    },
+    "source_and_compatibility_cases": [
+      "普通木镐/木斧配方、创造与搜索条目、普通战利品入口不再供应该物品",
+      "命令可解析木镐/木斧；已存在物品保存重载不被清除",
+      "wooden_sword旧注册ID可加载并呈现木棒",
+      "木铲/木锄本轮不额外删除",
+      "木棒无AXE_DIG与剑类蜘蛛网特殊强度",
+      "所有21默认高效目标和非目标各按标签判定",
+      "无材料维修；两件木棒现代合并修复仍存在",
+      "真实玩家攻击路径与耐久只发生一次，不拿挥空替代命中测试"
+    ],
+    "default_speed_negative_cases": {
+      "targets": [
+        "minecraft:glass",
+        "minecraft:tinted_glass",
+        "minecraft:white_stained_glass",
+        "minecraft:ice",
+        "minecraft:packed_ice",
+        "minecraft:blue_ice",
+        "minecraft:frosted_ice"
+      ],
+      "tool_speed": 1.0,
+      "global_r196_mining_tier_gate_implemented": false
+    }
+  }
+}
