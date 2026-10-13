@@ -1,0 +1,60 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "mite:onion",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "mite:onion_crop",
+                  "properties": {
+                    "blighted": "false",
+                    "dead": "false",
+                    "age": "0"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "mite:onion",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "mite:onion_crop",
+                  "properties": {
+                    "blighted": "false",
+                    "dead": "false",
+                    "age": "7"
+                  }
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 2
+                },
+                {
+                  "function": "minecraft:set_count",
+                  "count": {
+                    "type": "minecraft:binomial",
+                    "n": 1,
+                    "p": 0.25
+                  },
+                  "add": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

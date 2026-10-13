@@ -1,0 +1,44 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:cheese",
+    "count": 9
+  },
+  "manufacturing": {
+    "difficulty": 6400.0,
+    "required_bench": "",
+    "source_order": 511,
+    "output_contains_bowl": false,
+    "any_milk_buckets": true
+  },
+  "ingredients": [
+    {
+      "item": "mite:gold_milk_bucket"
+    },
+    {
+      "item": "mite:gold_milk_bucket"
+    },
+    {
+      "item": "mite:gold_milk_bucket"
+    },
+    {
+      "item": "mite:gold_milk_bucket"
+    },
+    {
+      "item": "mite:gold_milk_bucket"
+    },
+    {
+      "item": "mite:gold_milk_bucket"
+    },
+    {
+      "item": "mite:gold_milk_bucket"
+    },
+    {
+      "item": "mite:gold_milk_bucket"
+    },
+    {
+      "item": "mite:gold_milk_bucket"
+    }
+  ]
+}

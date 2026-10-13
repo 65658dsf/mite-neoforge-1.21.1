@@ -1,0 +1,24 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:melon_seeds",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 100.0,
+    "required_bench": "",
+    "source_order": 306,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "AA",
+    "AA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:melon_slice"
+    }
+  }
+}

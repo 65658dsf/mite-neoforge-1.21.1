@@ -1,0 +1,23 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:pumpkin_seeds",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 60.000004,
+    "required_bench": "",
+    "source_order": 478,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "A"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:pumpkin"
+    }
+  }
+}

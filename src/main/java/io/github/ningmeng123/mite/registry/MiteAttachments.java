@@ -4,6 +4,9 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.survival.DeathExperience;
 import io.github.ningmeng123.mite.survival.DeathOrbOwner;
 import io.github.ningmeng123.mite.survival.NutritionState;
+import io.github.ningmeng123.mite.survival.CowFoodState;
+import net.minecraft.world.entity.animal.Cow;
+import com.mojang.serialization.Codec;
 import java.util.UUID;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
@@ -36,6 +39,13 @@ public final class MiteAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<NutritionState>> NUTRITION =
             ATTACHMENTS.register("nutrition", () -> AttachmentType.builder(() -> NutritionState.INITIAL)
                     .serialize(NutritionState.CODEC).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CowFoodState>> COW_FOOD =
+            ATTACHMENTS.register("cow_food", () -> AttachmentType.builder(holder -> CowFoodState.initial(((Cow)holder).getRandom()))
+                    .serialize(CowFoodState.CODEC).sync(ByteBufCodecs.fromCodec(CowFoodState.CODEC)).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> COW_MANURE_COUNTDOWN =
+            ATTACHMENTS.register("cow_manure_countdown", () -> AttachmentType.builder(holder -> ((Cow)holder).getRandom().nextInt(24000))
+                    .serialize(Codec.intRange(0,36000)).build());
 
     public static void register(IEventBus modBus) {
         ATTACHMENTS.register(modBus);

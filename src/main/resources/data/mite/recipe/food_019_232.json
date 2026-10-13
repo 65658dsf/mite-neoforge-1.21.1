@@ -1,0 +1,24 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 2400.0,
+    "required_bench": "iron",
+    "source_order": 232,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "A A",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

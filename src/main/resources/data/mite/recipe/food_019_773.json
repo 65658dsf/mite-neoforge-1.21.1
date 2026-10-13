@@ -1,0 +1,23 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:enchanted_golden_apple",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 50.0,
+    "required_bench": "gold",
+    "source_order": 773,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:golden_apple"
+    },
+    {
+      "item": "minecraft:experience_bottle"
+    }
+  ]
+}

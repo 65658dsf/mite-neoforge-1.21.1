@@ -1,0 +1,24 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "mite:silver_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 1200.0,
+    "required_bench": "silver",
+    "source_order": 228,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "A A",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "mite:silver_ingot"
+    }
+  }
+}

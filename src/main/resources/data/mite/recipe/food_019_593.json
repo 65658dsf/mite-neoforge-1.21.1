@@ -1,0 +1,32 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:gold_milk_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "gold",
+    "source_order": 593,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:gold_bucket"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    }
+  ]
+}

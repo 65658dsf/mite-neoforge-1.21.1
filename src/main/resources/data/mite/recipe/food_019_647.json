@@ -1,0 +1,29 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:cake",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 175.0,
+    "required_bench": "",
+    "source_order": 647,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:flour"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:egg"
+    },
+    {
+      "item": "mite:silver_milk_bucket"
+    }
+  ]
+}

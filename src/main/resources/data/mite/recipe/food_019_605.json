@@ -1,0 +1,32 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:adamantium_milk_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "adamantium",
+    "source_order": 605,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:adamantium_bucket"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    }
+  ]
+}

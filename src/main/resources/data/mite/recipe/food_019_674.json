@@ -1,0 +1,29 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:dough",
+    "count": 3
+  },
+  "manufacturing": {
+    "difficulty": 100.0,
+    "required_bench": "",
+    "source_order": 674,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "mite:flour"
+    },
+    {
+      "item": "mite:flour"
+    },
+    {
+      "item": "mite:flour"
+    }
+  ]
+}

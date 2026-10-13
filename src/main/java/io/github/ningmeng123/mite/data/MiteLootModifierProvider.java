@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.data;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.loot.RemoveWoodenToolsLootModifier;
+import io.github.ningmeng123.mite.loot.NaturalFoodLootModifier;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -17,5 +18,6 @@ public final class MiteLootModifierProvider extends GlobalLootModifierProvider {
     @Override
     protected void start() {
         add("remove_wooden_tools", new RemoveWoodenToolsLootModifier(new LootItemCondition[0]));
+        add("natural_food_sources", new NaturalFoodLootModifier(new LootItemCondition[0]));
     }
 }

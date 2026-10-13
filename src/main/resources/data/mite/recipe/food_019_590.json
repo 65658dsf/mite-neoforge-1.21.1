@@ -1,0 +1,32 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:silver_milk_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "silver",
+    "source_order": 590,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:silver_bucket"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    }
+  ]
+}

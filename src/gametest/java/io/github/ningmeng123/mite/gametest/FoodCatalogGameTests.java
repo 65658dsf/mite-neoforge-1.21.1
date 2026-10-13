@@ -24,8 +24,10 @@ public final class FoodCatalogGameTests {
 
     @GameTest(template = "empty")
     public static void sourceFoodsCarryIndependentResourcesAndOpenTheServerQualifiedUsePath(GameTestHelper helper) {
-        helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size(), 33, "33 existing modern IDs preserve verified release food values");
+        helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size(), 64, "33 existing IDs and31 newly registered source foods preserve verified release values");
         helper.assertValueEqual(MiteFoodCatalog.modernProfiles().size(), 16, "15 modern foods and the explicit user wheat-seed adaptation have separate profiles");
+        helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size() + MiteFoodCatalog.modernProfiles().size(), 80,
+                "The complete current ingestion catalog has80 profiles including source zero-resource water bowl");
         verifyComponents(helper, MiteFoodCatalog.sourceProfiles());
         verifyComponents(helper, MiteFoodCatalog.modernProfiles());
         helper.assertValueEqual(profile(Items.BREAD), new FoodProfile(8, 2, false, false, false, 0, false, false),
@@ -93,6 +95,8 @@ public final class FoodCatalogGameTests {
         helper.assertValueEqual(new ItemStack(Items.MUSHROOM_STEW).getMaxStackSize(), 4, "Mushroom stew stacks4");
         helper.assertTrue(food(Items.MUSHROOM_STEW).usingConvertsTo().orElseThrow().is(Items.BOWL), "Stew consumes one unit and produces one bowl");
         helper.assertValueEqual(new ItemStack(Items.BOWL).getMaxStackSize(), 16, "Empty wooden bowls stack16");
+        helper.assertValueEqual(new ItemStack(Items.BUCKET).getMaxStackSize(), 8, "Native empty iron buckets match R196 stack8");
+        helper.assertValueEqual(new ItemStack(Items.WATER_BUCKET).getMaxStackSize(), 1, "Native filled iron water buckets remain stack1");
         helper.assertValueEqual(new ItemStack(Items.CAKE).getMaxStackSize(), 8, "Whole cake item stacks8");
         helper.assertFalse(new ItemStack(Items.CAKE).has(DataComponents.FOOD), "Cake item cannot be eaten from the hand");
         helper.assertTrue(profile(Items.CAKE) == null, "Cake's placed-block interaction has no handheld food profile");
@@ -128,7 +132,7 @@ public final class FoodCatalogGameTests {
             helper.assertTrue(food.canAlwaysEat(), "Native use delegates fullness decisions to authoritative dual resource rules: " + item);
             helper.assertValueEqual(food.nutrition(), profile.satiation(), "Native HUD metadata represents S, not modern saturation: " + item);
             helper.assertValueEqual(food.saturation(), item == Items.WHEAT_SEEDS ? 1F : 0F,
-                    "Only the explicit wheat-seed user override supplies native saturation: " + item);
+                    "Only the explicit wheat-seed override supplies native saturation: " + item);
             helper.assertValueEqual(food.eatDurationTicks(), 32, "Catalog use duration is32 ticks: " + item);
         });
     }

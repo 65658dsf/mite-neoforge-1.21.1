@@ -36,6 +36,10 @@ public final class Mite {
         EquipmentDurability.register(modBus);
         MiteTools.register(modBus);
         MiteWorkbenches.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteFoodPlants.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteFoodSources.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteFoods.register(modBus);
+        io.github.ningmeng123.mite.registry.FoodRecipeSerializers.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoodCatalog.register(modBus);
         io.github.ningmeng123.mite.registry.QualityRecipeSerializers.register(modBus);
         DisabledVanillaWorkbench.register(modBus);

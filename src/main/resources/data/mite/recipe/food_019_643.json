@@ -1,0 +1,29 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:cheese",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 6400.0,
+    "required_bench": "",
+    "source_order": 643,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    }
+  ]
+}

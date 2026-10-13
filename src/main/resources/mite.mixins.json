@@ -47,7 +47,15 @@
     "QualitySmithingMixin",
     "QualityMobEquipmentMixin",
     "QualitySpecialMobEquipmentMixin",
-    "QualityRepairConsumptionMixin"
+    "QualityRepairConsumptionMixin",
+    "FoodFireCookingMixin",
+    "FoodFarmlandFertilizationMixin",
+    "FoodCropFertilizationMixin",
+    "FoodChestCompostingMixin",
+    "FoodLeavesWindfallMixin",
+    "FoodFishingBaitMixin",
+    "FoodFurnaceResultExperienceMixin",
+    "FoodFurnaceExperienceMixin"
   ],
   "client": [
     "client.GuiFoodMixin",

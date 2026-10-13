@@ -1,6 +1,7 @@
 {
   "entries": [
-    "mite:remove_wooden_tools"
+    "mite:remove_wooden_tools",
+    "mite:natural_food_sources"
   ],
   "replace": false
 }

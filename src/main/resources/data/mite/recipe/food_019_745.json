@@ -1,0 +1,26 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:mashed_potato",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 75.0,
+    "required_bench": "",
+    "source_order": 745,
+    "output_contains_bowl": true,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:baked_potato"
+    },
+    {
+      "item": "mite:cheese"
+    },
+    {
+      "item": "mite:milk_bowl"
+    }
+  ]
+}

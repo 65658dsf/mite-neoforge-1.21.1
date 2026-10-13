@@ -94,6 +94,7 @@ public final class CraftingQuality {
     public static TimedCraftingRecipes.Rule rule(RecipeHolder<CraftingRecipe> recipe, ItemStack output,
             net.minecraft.world.item.crafting.CraftingInput input) {
         if (output.isEmpty()) return null;
+        if (recipe.value() instanceof FoodManufacturingRecipe food) return food.manufacturing().rule();
         if (EquipmentDurability.isManaged(output)) {
             if (recipe.value() instanceof LeatherMendingRecipe) return new TimedCraftingRecipes.Rule(
                     LeatherMendingRecipe.difficulty(input), null, -1);

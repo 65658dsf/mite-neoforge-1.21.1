@@ -1,0 +1,24 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "mite:adamantium_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 76800.0,
+    "required_bench": "adamantium",
+    "source_order": 236,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "A A",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "mite:adamantium_ingot"
+    }
+  }
+}

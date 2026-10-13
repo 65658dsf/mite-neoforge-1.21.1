@@ -1,0 +1,29 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:porridge",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 100.0,
+    "required_bench": "",
+    "source_order": 694,
+    "output_contains_bowl": true,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:wheat_seeds"
+    },
+    {
+      "item": "mite:blueberries"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "mite:water_bowl"
+    }
+  ]
+}

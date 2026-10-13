@@ -1,0 +1,29 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:pumpkin_pie",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 135.0,
+    "required_bench": "",
+    "source_order": 641,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:pumpkin"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:egg"
+    },
+    {
+      "item": "mite:flour"
+    }
+  ]
+}

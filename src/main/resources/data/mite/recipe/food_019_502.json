@@ -1,0 +1,23 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:sugar",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 800.0,
+    "required_bench": "",
+    "source_order": 502,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "A"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:sugar_cane"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "mite:mithril_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 19200.0,
+    "required_bench": "mithril",
+    "source_order": 234,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "A A",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "mite:mithril_ingot"
+    }
+  }
+}

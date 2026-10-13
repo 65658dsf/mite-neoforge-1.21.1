@@ -1,0 +1,32 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:silver_water_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "",
+    "source_order": 613,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:silver_bucket"
+    },
+    {
+      "item": "mite:water_bowl"
+    },
+    {
+      "item": "mite:water_bowl"
+    },
+    {
+      "item": "mite:water_bowl"
+    },
+    {
+      "item": "mite:water_bowl"
+    }
+  ]
+}

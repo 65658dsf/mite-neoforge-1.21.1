@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "mite:blueberry_bush",
+          "properties": {
+            "age": "3"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mite:blueberries"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:match_tool",
+          "predicate": {
+            "items": "#mite:shears"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "mite:blueberry_bush"
+        }
+      ]
+    }
+  ]
+}

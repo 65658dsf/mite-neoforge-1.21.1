@@ -1,0 +1,26 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:mushroom_stew",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "",
+    "source_order": 703,
+    "output_contains_bowl": true,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:brown_mushroom"
+    },
+    {
+      "item": "minecraft:red_mushroom"
+    },
+    {
+      "item": "mite:water_bowl"
+    }
+  ]
+}

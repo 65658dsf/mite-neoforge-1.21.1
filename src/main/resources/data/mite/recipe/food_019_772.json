@@ -1,0 +1,23 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:chocolate",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 50.0,
+    "required_bench": "",
+    "source_order": 772,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:cocoa_beans"
+    },
+    {
+      "item": "minecraft:sugar"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "mite:ancient_metal_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 4800.0,
+    "required_bench": "ancient_metal",
+    "source_order": 238,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "A A",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "mite:ancient_metal_ingot"
+    }
+  }
+}

@@ -9,7 +9,8 @@
     "Known source cake is a block interaction: CAKE_SLICE supplies 2/2 protein and sugar166; item cake stays nonedible.",
     "Modern ominous bottle FOOD is unused by OminousBottleItem.finishUsingItem and is removed.",
     "Unknown FOOD items use modern nutrition for both S/N with no micronutrient or sugar claim; custom drinks are included.",
-    "User override: wheat seeds retain original source1/0 as explicit_original_source_values, but effective S/N is0/0, micronutrient flags arefalse, original2000 extra fat is not applied, and native_saturation is1; omitted native_saturation defaults0."
+    "User override: wheat seeds retain original source1/0 as explicit_original_source_values, but effective S/N is0/0, micronutrient flags arefalse, original2000 extra fat is not applied, and explicit native_saturation is1. Omitted native_saturation defaults0.",
+    "019 expansion adds31 R196 ingestion profiles and14 nonfood materials/vessels, for45 new registered IDs; includes water_bowl S/N0/0. Existing wheat-seed user override and all modern adaptations stay unchanged."
   ],
   "foods": [
     {
@@ -913,6 +914,708 @@
       "use_ticks": 32,
       "effects": [],
       "remainder": "minecraft:bowl"
+    },
+    {
+      "id": "mite:cheese",
+      "source_kind": "r196",
+      "source_id": 1183,
+      "source_subtype": 0,
+      "satiation": 3,
+      "nutrition": 3,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:cheese",
+        "zip_entry": "assets/minecraft/textures/items/food/cheese.png",
+        "sha256": "12696e4fd2462e4ba53c5168ef72ac8635d20c2e17a34eda5d403618c36bc9a3"
+      }
+    },
+    {
+      "id": "mite:dough",
+      "source_kind": "r196",
+      "source_id": 1185,
+      "source_subtype": 0,
+      "satiation": 6,
+      "nutrition": 2,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:dough",
+        "zip_entry": "assets/minecraft/textures/items/food/dough.png",
+        "sha256": "75de37edad1ae41f54a681b52970b095f7c9506055b348ddf01334067e1e37e0"
+      }
+    },
+    {
+      "id": "mite:chocolate",
+      "source_kind": "r196",
+      "source_id": 1186,
+      "source_subtype": 0,
+      "satiation": 3,
+      "nutrition": 3,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 1000,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:chocolate",
+        "zip_entry": "assets/minecraft/textures/items/food/chocolate.png",
+        "sha256": "75dac90b6c851c93f53eb204adf6c8dea957121b7dcf38031c35e02b7511a3de"
+      }
+    },
+    {
+      "id": "mite:onion",
+      "source_kind": "r196",
+      "source_id": 1187,
+      "source_subtype": 0,
+      "satiation": 1,
+      "nutrition": 1,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:onion",
+        "zip_entry": "assets/minecraft/textures/items/food/onion.png",
+        "sha256": "47fdd67213b8aaec1203a05f63da0e54a680fa8a98a6c8003931fc54d399dc6e"
+      }
+    },
+    {
+      "id": "mite:orange",
+      "source_kind": "r196",
+      "source_id": 1218,
+      "source_subtype": 0,
+      "satiation": 2,
+      "nutrition": 1,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 1000,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:orange",
+        "zip_entry": "assets/minecraft/textures/items/food/orange.png",
+        "sha256": "a605205ce57250774aa8d3aec8896240df1419af869e7ef076f997aa02db734f"
+      }
+    },
+    {
+      "id": "mite:banana",
+      "source_kind": "r196",
+      "source_id": 1219,
+      "source_subtype": 0,
+      "satiation": 2,
+      "nutrition": 1,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 1000,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:banana",
+        "zip_entry": "assets/minecraft/textures/items/food/banana.png",
+        "sha256": "700ea5717cc1aa60ef0893a2ced68578813b724c0a53286e46923044c51b1c5a"
+      }
+    },
+    {
+      "id": "mite:blueberries",
+      "source_kind": "r196",
+      "source_id": 1225,
+      "source_subtype": 0,
+      "satiation": 1,
+      "nutrition": 1,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 1000,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:blueberries",
+        "zip_entry": "assets/minecraft/textures/items/food/blueberries.png",
+        "sha256": "8f22516c90ba2a35846355ff05f7ec41bcbd43dfe2690b27b9d21ea420ad02b0"
+      }
+    },
+    {
+      "id": "mite:raw_large_fish",
+      "source_kind": "r196",
+      "source_id": 1229,
+      "source_subtype": 0,
+      "satiation": 5,
+      "nutrition": 5,
+      "protein": true,
+      "fat": true,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:raw_large_fish",
+        "zip_entry": "assets/minecraft/textures/items/food/fish_salmon_raw.png",
+        "sha256": "f841d55cfd55f26e5508f42753357576d77e70ef10f04e81f1cabaf3c9c39b21"
+      }
+    },
+    {
+      "id": "mite:cooked_large_fish",
+      "source_kind": "r196",
+      "source_id": 1230,
+      "source_subtype": 0,
+      "satiation": 10,
+      "nutrition": 10,
+      "protein": true,
+      "fat": true,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:cooked_large_fish",
+        "zip_entry": "assets/minecraft/textures/items/food/fish_salmon_cooked.png",
+        "sha256": "dbe6e74aecc817c5c4adb9ad892d27fb783d0286769bd2a0b55790cebb66a1da"
+      }
+    },
+    {
+      "id": "mite:raw_worm",
+      "source_kind": "r196",
+      "source_id": 1280,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 1,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:raw_worm",
+        "zip_entry": "assets/minecraft/textures/items/food/worm_raw.png",
+        "sha256": "0dc52a2ae0d1c399902feb4436a05629380d26d6a1473fbd87cb741855bd465c"
+      }
+    },
+    {
+      "id": "mite:cooked_worm",
+      "source_kind": "r196",
+      "source_id": 1281,
+      "source_subtype": 0,
+      "satiation": 1,
+      "nutrition": 1,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 16,
+      "use_ticks": 32,
+      "effects": [],
+      "texture_source": {
+        "item": "mite:cooked_worm",
+        "zip_entry": "assets/minecraft/textures/items/food/worm_cooked.png",
+        "sha256": "7078b166e897f906d350730fbcd062cb27c552f8447104a9ddc05794c1110078"
+      }
+    },
+    {
+      "id": "mite:milk_bowl",
+      "source_kind": "r196",
+      "source_id": 1166,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 1,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": true,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:milk_bowl",
+        "zip_entry": "assets/minecraft/textures/items/bowls/bowl_milk.png",
+        "sha256": "95d1f18aaf7770bb707f9028bd4570ce543e59c1021311058a197f53cce8aa0b"
+      }
+    },
+    {
+      "id": "mite:water_bowl",
+      "source_kind": "r196",
+      "source_id": 1167,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 0,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:water_bowl",
+        "zip_entry": "assets/minecraft/textures/items/bowls/bowl_water.png",
+        "sha256": "6e9ac00d663cfe1d3add44a3a1511d765898fb88cbadae31b2b0ff7682e27e42"
+      }
+    },
+    {
+      "id": "mite:beef_stew",
+      "source_kind": "r196",
+      "source_id": 1188,
+      "source_subtype": 0,
+      "satiation": 16,
+      "nutrition": 16,
+      "protein": true,
+      "fat": false,
+      "plants": true,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:beef_stew",
+        "zip_entry": "assets/minecraft/textures/items/bowls/beef_stew.png",
+        "sha256": "d9b337769b467c949a10eb7579abda07b5e72b1f2df96f5e0854946098266198"
+      }
+    },
+    {
+      "id": "mite:chicken_soup",
+      "source_kind": "r196",
+      "source_id": 1189,
+      "source_subtype": 0,
+      "satiation": 10,
+      "nutrition": 10,
+      "protein": true,
+      "fat": false,
+      "plants": true,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:chicken_soup",
+        "zip_entry": "assets/minecraft/textures/items/bowls/chicken_soup.png",
+        "sha256": "ae62f0596a771a6bf64b35c9661b36ce930d91dda07c75283fd446d12539fa07"
+      }
+    },
+    {
+      "id": "mite:vegetable_soup",
+      "source_kind": "r196",
+      "source_id": 1190,
+      "source_subtype": 0,
+      "satiation": 6,
+      "nutrition": 6,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:vegetable_soup",
+        "zip_entry": "assets/minecraft/textures/items/bowls/vegetable_soup.png",
+        "sha256": "8a5eea82f44f8d8f92ccbd3020563f981c1c01e0d78637f9375cbccdbe069b0d"
+      }
+    },
+    {
+      "id": "mite:ice_cream",
+      "source_kind": "r196",
+      "source_id": 1206,
+      "source_subtype": 0,
+      "satiation": 5,
+      "nutrition": 4,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 1000,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:ice_cream",
+        "zip_entry": "assets/minecraft/textures/items/bowls/ice_cream.png",
+        "sha256": "d7d0f84e474369b23d79358ea6215da9bbf6b0cc5a84646f894de1d9ab813b58"
+      }
+    },
+    {
+      "id": "mite:salad",
+      "source_kind": "r196",
+      "source_id": 1209,
+      "source_subtype": 0,
+      "satiation": 1,
+      "nutrition": 1,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:salad",
+        "zip_entry": "assets/minecraft/textures/items/bowls/bowl_salad.png",
+        "sha256": "4314bcf3b171806011cce9c2f9cd6caf15724fb2f6c5971faedaed83ad235697"
+      }
+    },
+    {
+      "id": "mite:cream_of_mushroom_soup",
+      "source_kind": "r196",
+      "source_id": 1215,
+      "source_subtype": 0,
+      "satiation": 3,
+      "nutrition": 5,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:cream_of_mushroom_soup",
+        "zip_entry": "assets/minecraft/textures/items/bowls/cream_of_mushroom_soup.png",
+        "sha256": "1942a09b79112d17c4818c13ab8f8ff042d5c8878adb5fddd69ace8425b42a52"
+      }
+    },
+    {
+      "id": "mite:cream_of_vegetable_soup",
+      "source_kind": "r196",
+      "source_id": 1216,
+      "source_subtype": 0,
+      "satiation": 7,
+      "nutrition": 7,
+      "protein": true,
+      "fat": false,
+      "plants": true,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:cream_of_vegetable_soup",
+        "zip_entry": "assets/minecraft/textures/items/bowls/cream_of_vegetable_soup.png",
+        "sha256": "56bd4ba292df7f7faa29f37728d0a2226b3e2d131ccfef144df2d91cbc0f3129"
+      }
+    },
+    {
+      "id": "mite:pumpkin_soup",
+      "source_kind": "r196",
+      "source_id": 1217,
+      "source_subtype": 0,
+      "satiation": 1,
+      "nutrition": 2,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:pumpkin_soup",
+        "zip_entry": "assets/minecraft/textures/items/bowls/pumpkin_soup.png",
+        "sha256": "6a656f461c322d570b4d6c5977c8b027a9b4c56441637712ab5f180a8ca0bb55"
+      }
+    },
+    {
+      "id": "mite:mashed_potato",
+      "source_kind": "r196",
+      "source_id": 1223,
+      "source_subtype": 0,
+      "satiation": 12,
+      "nutrition": 8,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:mashed_potato",
+        "zip_entry": "assets/minecraft/textures/items/bowls/mashed_potato.png",
+        "sha256": "25ec4c87a111b3cac871e8e3285764af8457497772b9f59a979704ad4c0e6dd9"
+      }
+    },
+    {
+      "id": "mite:sorbet",
+      "source_kind": "r196",
+      "source_id": 1224,
+      "source_subtype": 0,
+      "satiation": 4,
+      "nutrition": 2,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 2000,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:sorbet",
+        "zip_entry": "assets/minecraft/textures/items/bowls/sorbet.png",
+        "sha256": "3f21586de120d6a1cbb41cf86ecadce167a1b4709aaac2272c35644802f9f3e4"
+      }
+    },
+    {
+      "id": "mite:porridge",
+      "source_kind": "r196",
+      "source_id": 1226,
+      "source_subtype": 0,
+      "satiation": 4,
+      "nutrition": 2,
+      "protein": false,
+      "fat": false,
+      "plants": true,
+      "sugar": 2000,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:porridge",
+        "zip_entry": "assets/minecraft/textures/items/bowls/porridge.png",
+        "sha256": "a95f1932edd032e5f34185f12dbe2dcc4375134c1d6778987ac346fef873b526"
+      }
+    },
+    {
+      "id": "mite:cereal",
+      "source_kind": "r196",
+      "source_id": 1227,
+      "source_subtype": 0,
+      "satiation": 4,
+      "nutrition": 2,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 1000,
+      "drink": false,
+      "always_edible": false,
+      "stack_limit": 4,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "minecraft:bowl",
+      "texture_source": {
+        "item": "mite:cereal",
+        "zip_entry": "assets/minecraft/textures/items/bowls/cereal.png",
+        "sha256": "2b195cca5f87be7a120cf5330c4eca1976c06d10cc0917ad6d05b2732d710fe7"
+      }
+    },
+    {
+      "id": "mite:copper_milk_bucket",
+      "source_kind": "r196",
+      "source_id": 1160,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 4,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": true,
+      "stack_limit": 1,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "mite:copper_bucket",
+      "texture_source": {
+        "item": "mite:copper_milk_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/copper/milk.png",
+        "sha256": "20cceef113012c2b686b22b310a42ae2a43711261c435b8517974119bc5cf296"
+      }
+    },
+    {
+      "id": "mite:silver_milk_bucket",
+      "source_kind": "r196",
+      "source_id": 1161,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 4,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": true,
+      "stack_limit": 1,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "mite:silver_bucket",
+      "texture_source": {
+        "item": "mite:silver_milk_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/silver/milk.png",
+        "sha256": "51f0b12ae0e74d9b71bba22853772a2de3a66207bb2966e08073620d75d6432f"
+      }
+    },
+    {
+      "id": "mite:gold_milk_bucket",
+      "source_kind": "r196",
+      "source_id": 1162,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 4,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": true,
+      "stack_limit": 1,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "mite:gold_bucket",
+      "texture_source": {
+        "item": "mite:gold_milk_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/gold/milk.png",
+        "sha256": "9012ca8238b5c2726754cb773b2f625cbf9cd208baaeac49529533431b19e2f3"
+      }
+    },
+    {
+      "id": "mite:mithril_milk_bucket",
+      "source_kind": "r196",
+      "source_id": 1163,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 4,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": true,
+      "stack_limit": 1,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "mite:mithril_bucket",
+      "texture_source": {
+        "item": "mite:mithril_milk_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/mithril/milk.png",
+        "sha256": "f836481079d416c71c4067e9c5f266f758aad37e05194f03c2007ef4410b8969"
+      }
+    },
+    {
+      "id": "mite:adamantium_milk_bucket",
+      "source_kind": "r196",
+      "source_id": 1164,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 4,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": true,
+      "stack_limit": 1,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "mite:adamantium_bucket",
+      "texture_source": {
+        "item": "mite:adamantium_milk_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/adamantium/milk.png",
+        "sha256": "9f75dbca3f4914d9a98ddbd0e8609aed9b95462c8e3d1a736c71a0aea2e3e4c3"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_milk_bucket",
+      "source_kind": "r196",
+      "source_id": 1165,
+      "source_subtype": 0,
+      "satiation": 0,
+      "nutrition": 4,
+      "protein": true,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": true,
+      "always_edible": true,
+      "stack_limit": 1,
+      "use_ticks": 32,
+      "effects": [],
+      "remainder": "mite:ancient_metal_bucket",
+      "texture_source": {
+        "item": "mite:ancient_metal_milk_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/ancient_metal/milk.png",
+        "sha256": "34b6feb452d2b083162bf7c87b6c85e2b74f4bf22e4e695c9425d0cb624f14c8"
+      }
     }
   ],
   "cake_slice": {
@@ -924,5 +1627,161 @@
     "sugar": 166,
     "drink": false,
     "always_edible": false
-  }
+  },
+  "non_food_items": [
+    {
+      "id": "mite:flour",
+      "source_id": 1184,
+      "stack_limit": 16,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:flour",
+        "zip_entry": "assets/minecraft/textures/items/food/flour.png",
+        "sha256": "84c1832b64e7d7b5f92f6200aea1eea4d99128aae6def57e03b501e11ed80fff"
+      }
+    },
+    {
+      "id": "mite:manure",
+      "source_id": 1191,
+      "stack_limit": 16,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:manure",
+        "zip_entry": "assets/minecraft/textures/items/manure.png",
+        "sha256": "81a61fc2c949b893d4bda9ed9bc7810000e6226c1950ad9262b5ada42ff26522"
+      }
+    },
+    {
+      "id": "mite:copper_bucket",
+      "source_id": 1142,
+      "stack_limit": 8,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:copper_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/copper/empty.png",
+        "sha256": "93f5cfd1684fc9e13717b839d9b95f4c21e08bfc2efaea0d17d300346fda28f6"
+      }
+    },
+    {
+      "id": "mite:silver_bucket",
+      "source_id": 1143,
+      "stack_limit": 8,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:silver_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/silver/empty.png",
+        "sha256": "7a771ee7b5a2dfcc31d2793ee14d1059ad40e2fb2fa7bdfef6d6f6b443e00f58"
+      }
+    },
+    {
+      "id": "mite:gold_bucket",
+      "source_id": 1144,
+      "stack_limit": 8,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:gold_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/gold/empty.png",
+        "sha256": "640d7dadb7767bafb376c50ced004285118f91e69822c3f94520e0f59243a203"
+      }
+    },
+    {
+      "id": "mite:mithril_bucket",
+      "source_id": 1145,
+      "stack_limit": 8,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:mithril_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/mithril/empty.png",
+        "sha256": "518d7fdd51f24dc8cc0168bd361075c09a31bb70a0ce0acc13240abc7e9ee67f"
+      }
+    },
+    {
+      "id": "mite:adamantium_bucket",
+      "source_id": 1146,
+      "stack_limit": 8,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:adamantium_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/adamantium/empty.png",
+        "sha256": "7a9a45a1430fdfaa31e05962f53e89631f1fcdc58f40853a04598b93c991a7ab"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_bucket",
+      "source_id": 1147,
+      "stack_limit": 8,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:ancient_metal_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/ancient_metal/empty.png",
+        "sha256": "780be23dc4501ffe74cc9c8d348166b29ae0e01827369f52d34e0af3057de69b"
+      }
+    },
+    {
+      "id": "mite:copper_water_bucket",
+      "source_id": 1148,
+      "stack_limit": 1,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:copper_water_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/copper/water.png",
+        "sha256": "feadec2b47ba818a7b1e6b2f11d859569b26628e008930d304ab4c8dc16d8c82"
+      }
+    },
+    {
+      "id": "mite:silver_water_bucket",
+      "source_id": 1149,
+      "stack_limit": 1,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:silver_water_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/silver/water.png",
+        "sha256": "9ac96363b5290602475d0f7a4be10808b750359ddcb46f76d2d372aeeaa1ca16"
+      }
+    },
+    {
+      "id": "mite:gold_water_bucket",
+      "source_id": 1150,
+      "stack_limit": 1,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:gold_water_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/gold/water.png",
+        "sha256": "da931a52760ab7aeb5dbaac1acfad81c3fa32190b0073a139e3ad881623f5744"
+      }
+    },
+    {
+      "id": "mite:mithril_water_bucket",
+      "source_id": 1151,
+      "stack_limit": 1,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:mithril_water_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/mithril/water.png",
+        "sha256": "6f4e572e3b86b48ff04faa239c679ca2aa9a84dcf7ae0579e181f662f217536e"
+      }
+    },
+    {
+      "id": "mite:adamantium_water_bucket",
+      "source_id": 1152,
+      "stack_limit": 1,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:adamantium_water_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/adamantium/water.png",
+        "sha256": "db1f83fdfc36259425bdab6c2e35d672f2ca97871fe2aa2e7a1791f8fbad969f"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_water_bucket",
+      "source_id": 1153,
+      "stack_limit": 1,
+      "note": "Registered processing material or fluid vessel; not a directly ingested FOOD profile.",
+      "texture_source": {
+        "item": "mite:ancient_metal_water_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/ancient_metal/water.png",
+        "sha256": "0c6533953cdeb52be83255fe472682f66c8356a251093ceb0245807a91931560"
+      }
+    }
+  ]
 }

@@ -1,0 +1,32 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:ancient_metal_milk_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "ancient_metal",
+    "source_order": 599,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:ancient_metal_bucket"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "mite:milk_bowl"
+    }
+  ]
+}

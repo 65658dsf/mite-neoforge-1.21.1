@@ -1,0 +1,26 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:water_bowl",
+    "count": 2
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "",
+    "source_order": 739,
+    "output_contains_bowl": true,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:mithril_water_bucket"
+    },
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "item": "minecraft:bowl"
+    }
+  ]
+}

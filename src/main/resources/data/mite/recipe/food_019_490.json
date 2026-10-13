@@ -1,0 +1,23 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:wheat_seeds",
+    "count": 2
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "",
+    "source_order": 490,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "A"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:wheat"
+    }
+  }
+}

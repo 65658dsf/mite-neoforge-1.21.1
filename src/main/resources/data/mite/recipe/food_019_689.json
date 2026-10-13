@@ -1,0 +1,29 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:vegetable_soup",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 100.0,
+    "required_bench": "",
+    "source_order": 689,
+    "output_contains_bowl": true,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:potato"
+    },
+    {
+      "item": "minecraft:carrot"
+    },
+    {
+      "item": "mite:onion"
+    },
+    {
+      "item": "mite:water_bowl"
+    }
+  ]
+}

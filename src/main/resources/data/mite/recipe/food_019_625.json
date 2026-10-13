@@ -1,0 +1,32 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:ancient_metal_water_bucket",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 25.0,
+    "required_bench": "",
+    "source_order": 625,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:ancient_metal_bucket"
+    },
+    {
+      "item": "mite:water_bowl"
+    },
+    {
+      "item": "mite:water_bowl"
+    },
+    {
+      "item": "mite:water_bowl"
+    },
+    {
+      "item": "mite:water_bowl"
+    }
+  ]
+}

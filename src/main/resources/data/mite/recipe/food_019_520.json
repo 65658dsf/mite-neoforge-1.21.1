@@ -1,0 +1,44 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "minecraft:cookie",
+    "count": 16
+  },
+  "manufacturing": {
+    "difficulty": 225.0,
+    "required_bench": "",
+    "source_order": 520,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:ancient_metal_water_bucket"
+    },
+    {
+      "item": "mite:flour"
+    },
+    {
+      "item": "mite:flour"
+    },
+    {
+      "item": "mite:flour"
+    },
+    {
+      "item": "mite:flour"
+    },
+    {
+      "item": "mite:chocolate"
+    },
+    {
+      "item": "mite:chocolate"
+    },
+    {
+      "item": "mite:chocolate"
+    },
+    {
+      "item": "mite:chocolate"
+    }
+  ]
+}

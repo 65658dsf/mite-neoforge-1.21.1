@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "item": "mite:dough"
+  },
+  "result": {
+    "id": "minecraft:bread",
+    "count": 1
+  },
+  "experience": 0.0,
+  "cookingtime": 200
+}

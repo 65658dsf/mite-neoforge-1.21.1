@@ -29,9 +29,13 @@ import org.jetbrains.annotations.Nullable;
 /** Runtime food data shared by consumption, preview and server qualification. @author NingMeng123 */
 public final class MiteFoodCatalog {
     public static final FoodProfile CAKE_SLICE = new FoodProfile(2, 2, true, false, false, 166, false, false);
-    private static final Map<Item, Entry> ENTRIES = load();
-    private static final Map<Item, FoodProfile> SOURCE_PROFILES = profiles(false);
-    private static final Map<Item, FoodProfile> MODERN_PROFILES = profiles(true);
+    // The mod constructor attaches listeners before DeferredRegister has produced the added items.
+    // Resolve registry keys only during ModifyDefaultComponentsEvent or the first gameplay access.
+    private static final class Catalog {
+        private static final Map<Item, Entry> ENTRIES = load();
+        private static final Map<Item, FoodProfile> SOURCE_PROFILES = profiles(false);
+        private static final Map<Item, FoodProfile> MODERN_PROFILES = profiles(true);
+    }
     private record Entry(FoodProfile profile, int stackLimit, int useTicks, float nativeSaturation, JsonArray effects,
                          @Nullable Item remainder, boolean modern) {}
 
@@ -42,14 +46,14 @@ public final class MiteFoodCatalog {
     }
 
     /** Explicit original-release mappings, including the modern split of golden apple subtypes. */
-    public static Map<Item, FoodProfile> sourceProfiles() { return SOURCE_PROFILES; }
+    public static Map<Item, FoodProfile> sourceProfiles() { return Catalog.SOURCE_PROFILES; }
     /** Explicit modern and user-requested adaptations; these are not unchanged R196 values. */
-    public static Map<Item, FoodProfile> modernProfiles() { return MODERN_PROFILES; }
+    public static Map<Item, FoodProfile> modernProfiles() { return Catalog.MODERN_PROFILES; }
 
     @Nullable
     public static FoodProfile profile(ItemStack stack) {
         if (stack.isEmpty()) return null;
-        Entry entry = ENTRIES.get(stack.getItem());
+        Entry entry = Catalog.ENTRIES.get(stack.getItem());
         if (entry != null) return entry.profile();
         FoodProperties food = stack.getFoodProperties(null);
         if (food == null) return null;
@@ -60,10 +64,11 @@ public final class MiteFoodCatalog {
     }
 
     private static void modifyDefaults(ModifyDefaultComponentsEvent event) {
-        ENTRIES.forEach((item, entry) -> event.modify(item, patch -> patch
+        Catalog.ENTRIES.forEach((item, entry) -> event.modify(item, patch -> patch
                 .set(DataComponents.MAX_STACK_SIZE, entry.stackLimit())
                 .set(DataComponents.FOOD, components(entry))));
         event.modify(Items.BOWL, patch -> patch.set(DataComponents.MAX_STACK_SIZE, 16));
+        event.modify(Items.BUCKET, patch -> patch.set(DataComponents.MAX_STACK_SIZE, 8));
         // Cake is eaten from its placed block; a handheld cake must not receive FOOD.
         event.modify(Items.CAKE, patch -> patch.set(DataComponents.MAX_STACK_SIZE, 8));
         // Its custom finish method never applies FOOD: this native component is misleading metadata.
@@ -84,8 +89,7 @@ public final class MiteFoodCatalog {
             builder.effect(() -> new MobEffectInstance(type, duration, amplifier), effect.get("probability").getAsFloat());
         }
         FoodProperties properties = builder.build();
-        // Native saturation is an absolute amount, not nutrition times a multiplier. In particular,
-        // the user's wheat-seed adaptation has S/N0/0 and no micronutrients, but supplies one saturation point.
+        // The explicit wheat-seed override carries one native saturation point; source N is separate.
         return new FoodProperties(properties.nutrition(), entry.nativeSaturation(), properties.canAlwaysEat(),
                 entry.useTicks() / 20F, properties.usingConvertsTo(), properties.effects());
     }
@@ -104,7 +108,7 @@ public final class MiteFoodCatalog {
 
     private static Map<Item, FoodProfile> profiles(boolean modern) {
         Map<Item, FoodProfile> result = new LinkedHashMap<>();
-        ENTRIES.forEach((item, entry) -> { if (entry.modern() == modern) result.put(item, entry.profile()); });
+        Catalog.ENTRIES.forEach((item, entry) -> { if (entry.modern() == modern) result.put(item, entry.profile()); });
         return Collections.unmodifiableMap(result);
     }
 
@@ -121,7 +125,8 @@ public final class MiteFoodCatalog {
                         food.get("protein").getAsBoolean(), food.get("fat").getAsBoolean(), food.get("plants").getAsBoolean(),
                         food.get("sugar").getAsInt(), food.get("drink").getAsBoolean(), food.get("always_edible").getAsBoolean());
                 Item remainder = food.has("remainder") ? item(food.get("remainder").getAsString()) : null;
-                float nativeSaturation = food.has("native_saturation") ? food.get("native_saturation").getAsFloat() : 0F;
+                float nativeSaturation = food.has("native_saturation")
+                        ? food.get("native_saturation").getAsFloat() : 0F;
                 String sourceKind = food.get("source_kind").getAsString();
                 if (!("r196".equals(sourceKind) || "modern_adaptation".equals(sourceKind) || "user_adaptation".equals(sourceKind)))
                     throw new IllegalArgumentException("Unknown food source kind: " + sourceKind);

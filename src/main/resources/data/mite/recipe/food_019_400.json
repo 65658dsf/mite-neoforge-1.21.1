@@ -1,0 +1,23 @@
+{
+  "type": "mite:food_shaped",
+  "category": "misc",
+  "result": {
+    "id": "mite:flour",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 75.0,
+    "required_bench": "",
+    "source_order": 400,
+    "output_contains_bowl": false,
+    "any_milk_buckets": false
+  },
+  "pattern": [
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:wheat"
+    }
+  }
+}

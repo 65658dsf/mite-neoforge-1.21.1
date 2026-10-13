@@ -1,0 +1,26 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:ice_cream",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 75.0,
+    "required_bench": "",
+    "source_order": 743,
+    "output_contains_bowl": true,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "mite:chocolate"
+    },
+    {
+      "item": "mite:milk_bowl"
+    },
+    {
+      "item": "minecraft:snowball"
+    }
+  ]
+}

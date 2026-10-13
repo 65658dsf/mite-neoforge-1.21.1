@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "item": "mite:raw_large_fish"
+  },
+  "result": {
+    "id": "mite:cooked_large_fish",
+    "count": 1
+  },
+  "experience": 4.0,
+  "cookingtime": 200
+}

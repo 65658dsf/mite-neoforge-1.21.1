@@ -1,0 +1,29 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "result": {
+    "id": "mite:cream_of_vegetable_soup",
+    "count": 1
+  },
+  "manufacturing": {
+    "difficulty": 100.0,
+    "required_bench": "",
+    "source_order": 692,
+    "output_contains_bowl": true,
+    "any_milk_buckets": false
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:potato"
+    },
+    {
+      "item": "minecraft:carrot"
+    },
+    {
+      "item": "mite:onion"
+    },
+    {
+      "item": "mite:milk_bowl"
+    }
+  ]
+}
