@@ -33,6 +33,7 @@ public final class Mite {
         MiteMaterials.register(modBus);
         MiteShards.register(modBus);
         MiteResourceBlocks.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteOreBlocks.register(modBus);
         io.github.ningmeng123.mite.registry.MiteWorldBlocks.register(modBus);
         io.github.ningmeng123.mite.registry.MiteWorldFeatures.register(modBus);
         io.github.ningmeng123.mite.worldgen.MiteWorldDimensions.register(modBus);

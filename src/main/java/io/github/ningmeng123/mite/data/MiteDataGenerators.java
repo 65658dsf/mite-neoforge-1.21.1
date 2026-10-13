@@ -18,6 +18,8 @@ public final class MiteDataGenerators {
         event.getGenerator().addProvider(true, new ToolAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new WorkbenchAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new WorldAssetsProvider(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(true, new OreAssetsProvider(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
+        event.getGenerator().addProvider(true, new OreWorldgenProvider(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(event.includeServer(),
                 new MiteLootModifierProvider(event.getGenerator().getPackOutput(), event.getLookupProvider()));
         MiteBlockTagsProvider blockTags = new MiteBlockTagsProvider(event.getGenerator().getPackOutput(),

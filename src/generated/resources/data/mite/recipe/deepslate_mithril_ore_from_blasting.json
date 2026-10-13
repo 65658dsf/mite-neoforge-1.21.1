@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.0,
+  "ingredient": {
+    "item": "mite:deepslate_mithril_ore"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:mithril_ingot"
+  }
+}

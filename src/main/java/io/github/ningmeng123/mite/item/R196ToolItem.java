@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.item;
 
 import io.github.ningmeng123.mite.registry.MiteTools.Definition;
 import io.github.ningmeng123.mite.registry.MiteTags;
+import io.github.ningmeng123.mite.registry.MiteOreBlocks;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolProfile;
@@ -93,6 +94,8 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
         if (level < 3) rules.add(new Tool.Rule(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOrCreateTag(
                 io.github.ningmeng123.mite.registry.MiteTags.RUNESTONES), Optional.of(1.0F), Optional.of(false)));
         // Known R196 mineral thresholds override modern tier names; modern additions use their existing tags below.
+        if (level < 4) deny(rules, List.of(MiteOreBlocks.ADAMANTIUM_ORE.get(), MiteOreBlocks.DEEPSLATE_ADAMANTIUM_ORE.get()));
+        if (level < 3) deny(rules, List.of(MiteOreBlocks.MITHRIL_ORE.get(), MiteOreBlocks.DEEPSLATE_MITHRIL_ORE.get()));
         if (level < 4) deny(rules, List.of(Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
                 Blocks.DIAMOND_BLOCK, Blocks.ANCIENT_DEBRIS, Blocks.NETHERITE_BLOCK));
         if (level < 3) deny(rules, List.of(Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN,

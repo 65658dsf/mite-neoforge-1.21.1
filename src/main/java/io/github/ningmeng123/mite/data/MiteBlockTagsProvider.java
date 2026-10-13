@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.registry.MiteTags;
 import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
+import io.github.ningmeng123.mite.registry.MiteOreBlocks;
 import net.minecraft.tags.BlockTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
@@ -21,6 +22,13 @@ public final class MiteBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(MiteOreBlocks.SILVER_ORE.get(), MiteOreBlocks.DEEPSLATE_SILVER_ORE.get(),
+                MiteOreBlocks.MITHRIL_ORE.get(), MiteOreBlocks.DEEPSLATE_MITHRIL_ORE.get(),
+                MiteOreBlocks.ADAMANTIUM_ORE.get(), MiteOreBlocks.DEEPSLATE_ADAMANTIUM_ORE.get(), MiteOreBlocks.INFESTED_NETHERRACK.get());
+        // Copper material is source level 2, iron 3 and mithril 4; the native names are modern compatibility only.
+        tag(BlockTags.NEEDS_STONE_TOOL).add(MiteOreBlocks.SILVER_ORE.get(), MiteOreBlocks.DEEPSLATE_SILVER_ORE.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(MiteOreBlocks.MITHRIL_ORE.get(), MiteOreBlocks.DEEPSLATE_MITHRIL_ORE.get());
+        tag(BlockTags.NEEDS_DIAMOND_TOOL).add(MiteOreBlocks.ADAMANTIUM_ORE.get(), MiteOreBlocks.DEEPSLATE_ADAMANTIUM_ORE.get());
         tag(BlockTags.WITHER_IMMUNE).add(io.github.ningmeng123.mite.registry.MiteWorldBlocks.MANTLE.get(),
                 io.github.ningmeng123.mite.registry.MiteWorldBlocks.CORE.get());
         tag(BlockTags.DRAGON_IMMUNE).add(io.github.ningmeng123.mite.registry.MiteWorldBlocks.MANTLE.get(),

@@ -62,7 +62,10 @@
     "MantleWaterFlowMixin",
     "MantleBucketMixin",
     "MantleFireContactMixin",
-    "EntityPortalCooldownMixin"
+    "EntityPortalCooldownMixin",
+    "OrePlacedStateMixin",
+    "OreExplosionContextMixin",
+    "OreHopperExperienceMixin"
   ],
   "client": [
     "client.GuiFoodMixin",

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "mite:r196_ore_bonus",
+              "suppress_placed": true
+            }
+          ],
+          "name": "mite:deepslate_mithril_ore"
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

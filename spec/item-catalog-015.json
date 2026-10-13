@@ -4471,12 +4471,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:nether_gold_ore",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "mechanism_status": "ores_023_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:nether_gold_ore"
+      },
+      "actual_modern_id": "minecraft:nether_gold_ore",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "actual_modern_id": "minecraft:nether_gold_ore",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteOreBlocks.java",
+        "loot_source": "src/main/java/io/github/ningmeng123/mite/data/OreAssetsProvider.java",
+        "phase": "023",
+        "semantics": "已注册或沿用原版矿石身份；源采集/掉落接入，生成和实测由023验收记录，不代表炉温或全部生物机制已完成。"
+      }
     },
     {
       "mcmod_id": 35744,
@@ -4510,12 +4525,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:copper_ore",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "mechanism_status": "ores_023_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:copper_ore"
+      },
+      "actual_modern_id": "minecraft:copper_ore",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "actual_modern_id": "minecraft:copper_ore",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteOreBlocks.java",
+        "loot_source": "src/main/java/io/github/ningmeng123/mite/data/OreAssetsProvider.java",
+        "phase": "023",
+        "semantics": "已注册或沿用原版矿石身份；源采集/掉落接入，生成和实测由023验收记录，不代表炉温或全部生物机制已完成。"
+      }
     },
     {
       "mcmod_id": 35784,
@@ -4549,12 +4579,31 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_ore",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "ores_023_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_ore"
+      },
+      "actual_modern_id": "mite:silver_ore",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "actual_modern_id": "mite:silver_ore",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteOreBlocks.java",
+        "loot_source": "src/main/java/io/github/ningmeng123/mite/data/OreAssetsProvider.java",
+        "phase": "023",
+        "semantics": "已注册或沿用原版矿石身份；源采集/掉落接入，生成和实测由023验收记录，不代表炉温或全部生物机制已完成。"
+      },
+      "modern_host_variants": [
+        "mite:silver_ore",
+        "mite:deepslate_silver_ore"
+      ]
     },
     {
       "mcmod_id": 36571,
@@ -4588,12 +4637,31 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_ore",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "ores_023_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_ore"
+      },
+      "actual_modern_id": "mite:mithril_ore",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "actual_modern_id": "mite:mithril_ore",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteOreBlocks.java",
+        "loot_source": "src/main/java/io/github/ningmeng123/mite/data/OreAssetsProvider.java",
+        "phase": "023",
+        "semantics": "已注册或沿用原版矿石身份；源采集/掉落接入，生成和实测由023验收记录，不代表炉温或全部生物机制已完成。"
+      },
+      "modern_host_variants": [
+        "mite:mithril_ore",
+        "mite:deepslate_mithril_ore"
+      ]
     },
     {
       "mcmod_id": 36575,
@@ -4627,12 +4695,31 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_ore",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "ores_023_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_ore"
+      },
+      "actual_modern_id": "mite:adamantium_ore",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "actual_modern_id": "mite:adamantium_ore",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteOreBlocks.java",
+        "loot_source": "src/main/java/io/github/ningmeng123/mite/data/OreAssetsProvider.java",
+        "phase": "023",
+        "semantics": "已注册或沿用原版矿石身份；源采集/掉落接入，生成和实测由023验收记录，不代表炉温或全部生物机制已完成。"
+      },
+      "modern_host_variants": [
+        "mite:adamantium_ore",
+        "mite:deepslate_adamantium_ore"
+      ]
     },
     {
       "mcmod_id": 29627,
@@ -18916,5 +19003,29 @@
       "semantics": "不补写每个场景、旧存档或双客户端联机的独立手测结果"
     },
     "semantics": "summary仍是015历史基线；不把4条目录叶项或32符号作为全量规则完成声明。"
+  },
+  "ore_registration_update": {
+    "date": "2026-10-13",
+    "author": "NingMeng123",
+    "added_leaf_entries": 5,
+    "new_metal_block_types": 6,
+    "new_infested_block_types": 1,
+    "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteOreBlocks.java",
+    "verification": "docs/testing/023-ores.md",
+    "delivery_confirmation": {
+      "date": "2026-10-13",
+      "source": "用户确认023当前交付正常并授权提交GitHub",
+      "semantics": "不补写每个场景、旧存档或双客户端联机的独立手测结果"
+    },
+    "new_block_ids": [
+      "mite:silver_ore",
+      "mite:deepslate_silver_ore",
+      "mite:mithril_ore",
+      "mite:deepslate_mithril_ore",
+      "mite:adamantium_ore",
+      "mite:deepslate_adamantium_ore",
+      "mite:infested_netherrack"
+    ],
+    "semantics": "仅定向更新目录的铜、下界金、银、秘银、艾德曼5项。深板岩3种和虫蚀下界岩为额外世界方块，不伪造MC百科叶页；summary保持015历史快照。炉温尚待制造体系阶段。"
   }
 }

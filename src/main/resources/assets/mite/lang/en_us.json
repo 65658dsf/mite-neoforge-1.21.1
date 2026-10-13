@@ -231,5 +231,12 @@
   "block.mite.mithril_runestone": "Mithril Runestone",
   "block.mite.adamantium_runestone": "Adamantium Runestone",
   "biome.mite.underworld": "Underworld",
-  "message.mite.underground_sleep_denied": "Creatures can dig through the ground here. You cannot sleep."
+  "message.mite.underground_sleep_denied": "Creatures can dig through the ground here. You cannot sleep.",
+  "block.mite.silver_ore": "Silver Ore",
+  "block.mite.deepslate_silver_ore": "Deepslate Silver Ore",
+  "block.mite.mithril_ore": "Mithril Ore",
+  "block.mite.deepslate_mithril_ore": "Deepslate Mithril Ore",
+  "block.mite.adamantium_ore": "Adamantium Ore",
+  "block.mite.deepslate_adamantium_ore": "Deepslate Adamantium Ore",
+  "block.mite.infested_netherrack": "Infested Netherrack"
 }

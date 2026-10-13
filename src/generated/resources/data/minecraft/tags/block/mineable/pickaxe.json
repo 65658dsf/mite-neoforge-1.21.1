@@ -1,5 +1,12 @@
 {
   "values": [
+    "mite:silver_ore",
+    "mite:deepslate_silver_ore",
+    "mite:mithril_ore",
+    "mite:deepslate_mithril_ore",
+    "mite:adamantium_ore",
+    "mite:deepslate_adamantium_ore",
+    "mite:infested_netherrack",
     "#mite:runestones"
   ]
 }

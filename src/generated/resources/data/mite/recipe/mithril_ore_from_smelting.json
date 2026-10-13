@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.0,
+  "ingredient": {
+    "item": "mite:mithril_ore"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:mithril_ingot"
+  }
+}

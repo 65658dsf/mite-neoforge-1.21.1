@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Existing source food banks, including loaded ones, cannot award hopper-produced XP later. @author NingMeng123 */
+/** Source recipe banks, including loaded ones, cannot award hopper-produced XP later. @author NingMeng123 */
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class FoodFurnaceExperienceMixin {
     /** Recipe reloads may remove a cooking recipe or reuse its old key for another recipe type. */
@@ -33,8 +33,8 @@ public abstract class FoodFurnaceExperienceMixin {
     private static float mite$excludeSourceFoodFromStoredRecipeExperience(AbstractCookingRecipe recipe,
             List<RecipeHolder<?>> recipes, ServerLevel level, Vec3 position,
             Object2IntMap.Entry<ResourceLocation> entry, RecipeHolder<?> holder) {
-        // Recipe-history entries still serve native recipe unlocking; only these nine outputs
-        // have their XP paid by the actual player withdrawal. Other foods and minerals retain vanilla.
+        // Recipe-history entries still serve native recipe unlocking; source foods/metals/gems
+        // have their XP paid by actual player withdrawal. Unmapped modern results retain vanilla.
         return SourceCookingExperience.isSourceRecipe(recipe, level.registryAccess()) ? 0F : recipe.getExperience();
     }
 }

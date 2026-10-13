@@ -2,6 +2,8 @@ package io.github.ningmeng123.mite.mining;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.rules.OreBlockRules;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +19,13 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 public final class ToolHarvestRules {
     private ToolHarvestRules() {}
     public static boolean isBlocked(Player player, BlockState state) {
+        if (!player.isCreative() && !player.isSpectator() && OreBlockRules.isManaged(state)) {
+            var definition = MiteTools.definition(player.getMainHandItem());
+            // Managed tools use source numerical levels. Modern/modded tools retain their explicit Tool rules.
+            if (definition != null) return definition.harvestLevel() < OreBlockRules.minimumHarvestLevel(state)
+                    || !(definition.family() == ToolFamily.PICKAXE || definition.family() == ToolFamily.WAR_HAMMER);
+            return !player.getMainHandItem().isCorrectToolForDrops(state);
+        }
         return !player.isCreative() && !player.isSpectator() && state.requiresCorrectToolForDrops()
                 && MiteTools.definition(player.getMainHandItem()) != null
                 && !player.getMainHandItem().isCorrectToolForDrops(state);

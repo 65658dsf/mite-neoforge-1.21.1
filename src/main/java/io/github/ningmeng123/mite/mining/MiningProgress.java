@@ -1,6 +1,8 @@
 package io.github.ningmeng123.mite.mining;
 
 import io.github.ningmeng123.mite.rules.MiningRules;
+import io.github.ningmeng123.mite.rules.OreBlockRules;
+import io.github.ningmeng123.mite.registry.MiteOreBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
@@ -18,6 +20,8 @@ public final class MiningProgress {
         if (raw < 0.0F) {
             return raw;
         }
+        if (OreBlockRules.isManaged(state)) return OreBlockRules.hardness(state, raw);
+        if (state.is(MiteOreBlocks.INFESTED_NETHERRACK.get())) return 0.75F;
         // R196's tallgrass (grass/fern) and deadbush registrations use .02, not modern zero.
         if (GrassMining.matches(state)) {
             return 0.02F;

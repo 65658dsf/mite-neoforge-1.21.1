@@ -15,6 +15,12 @@
 
 021已将两种符文石、地幔和地核共4条目录叶项标为“已添加”。两种符文包含各16个符号；地幔/地核是不可携带方块，没有注册可得物品。制造、门路由和边界行为已接入，用户于2026-10-13确认022修复后的当前交付正常，客户端验收见 [021手测](testing/021-underworld-portals.md) 和 [022修复](underworld-depth-022.md)。此确认不代表后续矿物/生物阶段已完成。
 
+## 当前矿石注册核对
+
+023已接入本目录列出的铜矿石、下界金矿石，并新增银矿石、秘银矿石、艾德曼矿石共5条目录叶项。铜、铁、金及煤、青金石、红石、钻石、绿宝石、下界石英继续沿用原版 ID，普通金属矿按 R196 掉矿石本体，新增银/秘银/艾德曼各有一个深板岩变体。另新增 R196 下界虫石对应的 `mite:infested_netherrack`，使用现代银鱼作为暂时的生物适配；这些额外世界方块不伪造百科叶页，不改变359项目录总数。
+
+“已添加”表示身份、采集门槛、源掉落及相关资源已接入；用户于2026-10-13确认023当前交付正常并授权提交，生成与客户端验收见 [023手测](testing/023-ores.md)。矿物熔炼确认了1矿块→1锭和200刻加工；完整炉温、燃料与炉种层级仍待后续制造阶段。新增深板岩变体暂用同种资源包矿石贴图，方块身份和底材生成范围分开。机器数据的 `ore_registration_update` 保存本次定向范围，历史 `summary` 保持不变。
+
 ## 当前工具注册核对
 
 2026-10-13 按 [MiteTools.define](../src/main/java/io/github/ningmeng123/mite/registry/MiteTools.java) 的 `legacyId → actual modern ID` 逐项核对，已将 **105 个目录工具叶条目**标为“已添加”。实际工具定义共 **107 项**，另外两项是目录未列出的原版铁剪刀 `minecraft:shears`（旧 359）和木锹 `minecraft:wooden_shovel`（旧 269）；不为它们伪造百科叶页或改变原 359 项目录总数。
@@ -179,11 +185,11 @@
 | 杂项 | [装满石头的秘银桶](https://www.mcmod.cn/item/39438.html) | yc.bucketMithrilStone / 1235:[0] | mite:mithril_bucket_stone | 待新增 |
 | 杂项 | [装满石头的艾德曼桶](https://www.mcmod.cn/item/39439.html) | yc.bucketAdamantiumStone / 1236:[0] | mite:adamantium_bucket_stone | 待新增 |
 | 资源 | [蓝莓丛](https://www.mcmod.cn/item/36572.html) | aqz.bush / 249:[0] | mite:blueberry_bush | 已添加 |
-| 资源 | [金矿石](https://www.mcmod.cn/item/823806.html) | aqz.L / 14:[2] | minecraft:nether_gold_ore | 原版已有，待适配 |
-| 资源 | [铜矿石](https://www.mcmod.cn/item/35744.html) | aqz.oreCopper / 200:[0] | minecraft:copper_ore | 原版已有，待适配 |
-| 资源 | [银矿石](https://www.mcmod.cn/item/35784.html) | aqz.oreSilver / 201:[0] | mite:silver_ore | 待新增 |
-| 资源 | [秘银矿石](https://www.mcmod.cn/item/36571.html) | aqz.oreMithril / 202:[0] | mite:mithril_ore | 待新增 |
-| 资源 | [艾德曼矿石](https://www.mcmod.cn/item/36575.html) | aqz.oreAdamantium / 203:[0] | mite:adamantium_ore | 待新增 |
+| 资源 | [金矿石](https://www.mcmod.cn/item/823806.html) | aqz.L / 14:[2] | minecraft:nether_gold_ore | 已添加 |
+| 资源 | [铜矿石](https://www.mcmod.cn/item/35744.html) | aqz.oreCopper / 200:[0] | minecraft:copper_ore | 已添加 |
+| 资源 | [银矿石](https://www.mcmod.cn/item/35784.html) | aqz.oreSilver / 201:[0] | mite:silver_ore | 已添加 |
+| 资源 | [秘银矿石](https://www.mcmod.cn/item/36571.html) | aqz.oreMithril / 202:[0] | mite:mithril_ore | 已添加 |
+| 资源 | [艾德曼矿石](https://www.mcmod.cn/item/36575.html) | aqz.oreAdamantium / 203:[0] | mite:adamantium_ore | 已添加 |
 | 材料 | [粪便](https://www.mcmod.cn/item/29627.html) | yc.manure / 1191:[0] | mite:manure | 已添加 |
 | 材料 | [皮革线](https://www.mcmod.cn/item/29678.html) | yc.sinew / 1174:[0] | mite:sinew | 已存在，部分机制已做 |
 | 材料 | [水碗](https://www.mcmod.cn/item/35535.html) | yc.bowlWater / 1167:[0] | mite:water_bowl | 已添加 |
