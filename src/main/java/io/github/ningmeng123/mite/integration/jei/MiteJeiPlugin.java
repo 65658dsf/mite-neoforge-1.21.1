@@ -18,13 +18,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 /** JEI discovers this optional client integration without any common-side linkage. @author NingMeng123 */
 @JeiPlugin
 public final class MiteJeiPlugin implements IModPlugin {
     private static final Map<String, RecipeType<FurnaceJeiRecipe>> TYPES = recipeTypes();
+    private static final Map<String, RecipeType<WorkbenchJeiRecipe>> WORKBENCH_TYPES = workbenchTypes();
     private List<FurnaceJeiRecipe> recipes = List.of();
+    private WorkbenchJeiRecipes.Index workbenchIndex = new WorkbenchJeiRecipes.Index(List.of(), List.of());
     private Level recipeLevel;
 
     private static Map<String, RecipeType<FurnaceJeiRecipe>> recipeTypes() {
@@ -33,6 +36,16 @@ public final class MiteJeiPlugin implements IModPlugin {
             ResourceLocation furnace = ResourceLocation.parse(id);
             result.put(id, RecipeType.create(Mite.MOD_ID,
                     "furnace_" + furnace.getNamespace() + "_" + furnace.getPath(), FurnaceJeiRecipe.class));
+        });
+        return Collections.unmodifiableMap(result);
+    }
+
+    private static Map<String, RecipeType<WorkbenchJeiRecipe>> workbenchTypes() {
+        Map<String, RecipeType<WorkbenchJeiRecipe>> result = new LinkedHashMap<>();
+        WorkbenchJeiRecipes.profiles().keySet().forEach(id -> {
+            ResourceLocation bench = ResourceLocation.parse(id);
+            result.put(id, RecipeType.create(Mite.MOD_ID,
+                    "workbench_" + bench.getNamespace() + "_" + bench.getPath(), WorkbenchJeiRecipe.class));
         });
         return Collections.unmodifiableMap(result);
     }
@@ -46,14 +59,27 @@ public final class MiteJeiPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         TYPES.forEach((id, type) -> registration.addRecipeCategories(
                 new FurnaceJeiCategory(type, furnace(id), registration.getJeiHelpers().getGuiHelper())));
+        WORKBENCH_TYPES.forEach((id, type) -> registration.addRecipeCategories(new WorkbenchJeiCategory(type,
+                id.equals(WorkbenchJeiRecipes.INVENTORY) ? new ItemStack(Items.CHEST) : furnace(id),
+                registration.getJeiHelpers().getGuiHelper(), id.equals(WorkbenchJeiRecipes.INVENTORY))));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         recipes = List.of();
+        workbenchIndex = new WorkbenchJeiRecipes.Index(List.of(), List.of());
         recipeLevel = null;
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
+        recipeLevel = level;
+        try {
+            var built = WorkbenchJeiRecipes.index(level);
+            WORKBENCH_TYPES.forEach((id, type) -> registration.addRecipes(type,
+                    built.recipes().stream().filter(recipe -> recipe.workstationId().equals(id)).toList()));
+            workbenchIndex = built;
+        } catch (RuntimeException failure) {
+            Mite.LOGGER.error("Unable to build MITE workbench recipes for JEI", failure);
+        }
         List<FurnaceJeiRecipe> built;
         try {
             built = List.copyOf(FurnaceJeiRecipes.build(level));
@@ -71,13 +97,19 @@ public final class MiteJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         TYPES.forEach((id, type) -> registration.addRecipeCatalysts(type, furnace(id)));
+        WORKBENCH_TYPES.forEach((id, type) -> {
+            if (!id.equals(WorkbenchJeiRecipes.INVENTORY)) registration.addRecipeCatalysts(type, furnace(id));
+        });
     }
 
     @Override
     public void onRuntimeAvailable(IJeiRuntime runtime) {
-        if (recipes.isEmpty() || recipeLevel == null || Minecraft.getInstance().level != recipeLevel) return;
+        if (recipeLevel == null || Minecraft.getInstance().level != recipeLevel) return;
         // A catalyst applies to a whole JEI category. The native category cannot express furnace tiers.
         var manager = runtime.getRecipeManager();
+        // Preserve JEI's dynamic repair/dye/map/firework extensions and other mods' custom recipe categories.
+        if (!workbenchIndex.originals().isEmpty()) manager.hideRecipes(RecipeTypes.CRAFTING, workbenchIndex.originals());
+        if (recipes.isEmpty()) return;
         manager.hideRecipeCategory(RecipeTypes.SMELTING);
         manager.hideRecipeCategory(RecipeTypes.BLASTING);
         manager.hideRecipeCategory(RecipeTypes.SMOKING);
@@ -87,6 +119,7 @@ public final class MiteJeiPlugin implements IModPlugin {
     @Override
     public void onRuntimeUnavailable() {
         recipes = List.of();
+        workbenchIndex = new WorkbenchJeiRecipes.Index(List.of(), List.of());
         recipeLevel = null;
     }
 

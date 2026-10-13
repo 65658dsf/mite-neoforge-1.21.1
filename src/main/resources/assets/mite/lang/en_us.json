@@ -262,5 +262,15 @@
   "jei.mite.furnace_cooking_time": "Cooking time: %s s",
   "jei.mite.furnace_clay_batch": "Fires 1 to 4 clay balls per batch; fewer inputs or limited output space produce the corresponding number of bricks",
   "jei.mite.furnace_clay_batch_short": "1 to 4 clay balls per batch",
-  "jei.mite.furnace_fuel_batch": "Shows fuel required for a full batch; short-burning or unstackable fuels must be replenished continuously"
+  "jei.mite.furnace_fuel_batch": "Shows fuel required for a full batch; short-burning or unstackable fuels must be replenished continuously",
+  "jei.mite.inventory_crafting": "Inventory crafting (2×2)",
+  "jei.mite.workbench_time_basis": "Baseline: level 0, default quality",
+  "jei.mite.workbench_time": "Manufacturing time: %s s",
+  "jei.mite.workbench_untimed": "Instant crafting",
+  "jei.mite.workbench_quality": "Default quality shown; select quality in the manufacturing screen to see the actual XP cost and duration",
+  "jei.mite.workbench_runestone": "Select the rune in the manufacturing screen",
+  "jei.mite.workbench_shapeless": "Shapeless recipe: ingredients may occupy any free slots",
+  "jei.mite.workbench_remainder": "Returns: %s × %s",
+  "jei.mite.workbench_mixed_milk": "Different milk bucket materials can be mixed",
+  "jei.mite.workbench_milk_remainder": "Each milk bucket returns an empty bucket of its own material"
 }

@@ -262,5 +262,15 @@
   "jei.mite.furnace_cooking_time": "烧制时间：%s 秒",
   "jei.mite.furnace_clay_batch": "每批可烧制1至4个粘土球；输入不足或输出空间有限时，产出相应数量的砖块",
   "jei.mite.furnace_clay_batch_short": "粘土球每批烧制1至4个",
-  "jei.mite.furnace_fuel_batch": "显示烧完一批所需的燃料数量；短时或不可堆叠燃料需连续补充"
+  "jei.mite.furnace_fuel_batch": "显示烧完一批所需的燃料数量；短时或不可堆叠燃料需连续补充",
+  "jei.mite.inventory_crafting": "背包合成（2×2）",
+  "jei.mite.workbench_time_basis": "基准：0级，默认品质",
+  "jei.mite.workbench_time": "制造时间：%s 秒",
+  "jei.mite.workbench_untimed": "即时合成",
+  "jei.mite.workbench_quality": "展示默认品质；实际品质、经验消耗和耗时在制造界面选择",
+  "jei.mite.workbench_runestone": "可在制造界面切换符文",
+  "jei.mite.workbench_shapeless": "无序配方：原料可放在任意空槽",
+  "jei.mite.workbench_remainder": "返还：%s 个 %s",
+  "jei.mite.workbench_mixed_milk": "不同材质的牛奶桶可混用",
+  "jei.mite.workbench_milk_remainder": "每个牛奶桶返还对应材质的空桶"
 }
