@@ -176,7 +176,7 @@ public final class FoodRecipeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void allNineFoodsCookFor200TicksWithSourceRewardsOnEveryRetainedDevice(GameTestHelper helper) {
+    public static void allNineFoodsKeepSourceRecipeDurationAndRewardsOnEveryRetainedDevice(GameTestHelper helper) {
         Item[] inputs = {Items.PORKCHOP, Items.COD, Items.BEEF, Items.CHICKEN, Items.POTATO, Items.MUTTON,
                 MiteFoods.get("dough"), MiteFoods.get("raw_large_fish"), MiteFoods.get("raw_worm")};
         Item[] outputs = {Items.COOKED_PORKCHOP, Items.COOKED_COD, Items.COOKED_BEEF, Items.COOKED_CHICKEN, Items.BAKED_POTATO,
@@ -191,7 +191,8 @@ public final class FoodRecipeGameTests {
                 helper.assertValueEqual(matching.size(), 1, "Each food has exactly one recipe for this retained cooking device");
                 AbstractCookingRecipe cooking = (AbstractCookingRecipe) matching.getFirst();
                 helper.assertTrue(cooking.getResultItem(helper.getLevel().registryAccess()).is(outputs[index]), "The cooked output matches the source mapping");
-                helper.assertValueEqual(cooking.getCookingTime(), 200, "Modern smokers and campfires cannot bypass the source cooking duration");
+                helper.assertValueEqual(cooking.getCookingTime(), type == RecipeType.SMOKING ? 100 : 200,
+                        "Declared recipe-book durations match the source200 ticks and the explicitly adapted modern smoker100 ticks");
                 helper.assertValueEqual(cooking.getExperience(), (float) rewards[index], "Recipe rewards retain the literal R196 output experience");
             }
         }
@@ -199,27 +200,32 @@ public final class FoodRecipeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void actualFurnaceAndSmokerProduceBreadOnlyOnThe200thCookingUpdate(GameTestHelper helper) {
+    public static void actualFurnaceAndSmokerProduceBreadOnlyAtTheirExplicitOperatingDuration(GameTestHelper helper) {
         BlockPos position = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos front = position.north();
         BlockState previous = helper.getLevel().getBlockState(position);
+        BlockState previousFront = helper.getLevel().getBlockState(front);
         try {
+            helper.getLevel().setBlockAndUpdate(front, Blocks.AIR.defaultBlockState());
             for (BlockState device : new BlockState[]{Blocks.FURNACE.defaultBlockState(), Blocks.SMOKER.defaultBlockState()}) {
                 if (helper.getLevel().getBlockEntity(position) instanceof AbstractFurnaceBlockEntity old) old.clearContent();
                 helper.getLevel().setBlockAndUpdate(position, device);
                 AbstractFurnaceBlockEntity furnace = (AbstractFurnaceBlockEntity) helper.getLevel().getBlockEntity(position);
                 furnace.setItem(0, new ItemStack(MiteFoods.get("dough")));
-                furnace.setItem(1, new ItemStack(Items.COAL));
-                for (int tick = 0; tick < 199; tick++)
+                furnace.setItem(1, new ItemStack(Items.CHARCOAL));
+                int duration = device.is(Blocks.SMOKER) ? 100 : 200;
+                for (int tick = 0; tick < duration - 1; tick++)
                     AbstractFurnaceBlockEntity.serverTick(helper.getLevel(), position, helper.getLevel().getBlockState(position), furnace);
-                helper.assertTrue(furnace.getItem(2).isEmpty(), "The actual furnace/smoker has no output on update199");
+                helper.assertTrue(furnace.getItem(2).isEmpty(), "The actual device has no output one tick before its explicit operating duration");
                 AbstractFurnaceBlockEntity.serverTick(helper.getLevel(), position, helper.getLevel().getBlockState(position), furnace);
-                helper.assertTrue(furnace.getItem(2).is(Items.BREAD), "The actual cooking logic produces bread on update200");
+                helper.assertTrue(furnace.getItem(2).is(Items.BREAD), "The actual cooking logic produces bread at exactly200 ordinary or100 adapted smoker ticks");
                 helper.assertValueEqual(furnace.getItem(2).getCount(), 1, "One dough produces exactly one bread");
                 helper.assertTrue(furnace.getItem(0).isEmpty(), "The completed recipe consumes exactly its one dough");
             }
         } finally {
             if (helper.getLevel().getBlockEntity(position) instanceof AbstractFurnaceBlockEntity furnace) furnace.clearContent();
             helper.getLevel().setBlockAndUpdate(position, previous);
+            helper.getLevel().setBlockAndUpdate(front, previousFront);
         }
         helper.succeed();
     }

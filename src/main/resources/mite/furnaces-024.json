@@ -1,0 +1,3970 @@
+{
+  "version": 1,
+  "author": "NingMeng123",
+  "source": "guarded R196 bytecode and explicit modern mappings",
+  "reference_archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "fuel": {
+    "minecraft:arrow": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:baked_potato": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:beef": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:birch_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:birch_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:blaze_rod": {
+      "ticks": 2400,
+      "heat": 4,
+      "large": false
+    },
+    "minecraft:bone": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:book": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:bookshelf": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bow": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:bowl": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:bread": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:brick": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:brown_mushroom": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:brown_mushroom_block": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:cactus": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:carrot_on_a_stick": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:charcoal": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:chest": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:chest_minecart": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:chicken": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:clay": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:clay_ball": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:coal": {
+      "ticks": 1600,
+      "heat": 2,
+      "large": false
+    },
+    "minecraft:coal_block": {
+      "ticks": 16000,
+      "heat": 2,
+      "large": true
+    },
+    "minecraft:coal_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:cobblestone": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:cobweb": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:cocoa_beans": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:cod": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:cooked_beef": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:cooked_chicken": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:cooked_cod": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:cooked_mutton": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:cooked_porkchop": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:copper_ingot": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:copper_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dandelion": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:daylight_detector": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dead_bush": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:diamond": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:diamond_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:dirt": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:emerald": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:emerald_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:enchanted_book": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:fern": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:filled_map": {
+      "ticks": 50,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:fishing_rod": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:flint": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:furnace": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:glass": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:gold_ingot": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:gold_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:golden_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:golden_hoe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:golden_pickaxe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:golden_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:golden_sword": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:grass_block": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:gravel": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:green_dye": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:iron_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:iron_hoe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:iron_ingot": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:iron_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:iron_pickaxe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:iron_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:iron_sword": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:item_frame": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:jukebox": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:jungle_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:ladder": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:lapis_lazuli": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:lapis_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:lava_bucket": {
+      "ticks": 3200,
+      "heat": 3,
+      "large": false
+    },
+    "minecraft:leather": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:lily_pad": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:map": {
+      "ticks": 50,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:melon": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:milk_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:mushroom_stew": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:mutton": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:nether_brick": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:nether_gold_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:nether_quartz_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:netherrack": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:note_block": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_boat": {
+      "ticks": 1200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:oak_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:oak_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:oak_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:oak_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:painting": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:paper": {
+      "ticks": 25,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:poppy": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:porkchop": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:potato": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:pumpkin": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:quartz": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:rail": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:red_mushroom": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:red_mushroom_block": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:redstone": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:redstone_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:redstone_torch": {
+      "ticks": 800,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:sand": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:sandstone": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:shears": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:short_grass": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:snow": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:spruce_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:spruce_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stick": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:stone": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:sugar": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:sugar_cane": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:terracotta": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:torch": {
+      "ticks": 800,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:trapped_chest": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:vine": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:water_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:white_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:wooden_shovel": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:wooden_sword": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:writable_book": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:written_book": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_battle_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:adamantium_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:adamantium_dagger": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_hoe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_ingot": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:adamantium_lava_bucket": {
+      "ticks": 3200,
+      "heat": 3,
+      "large": false
+    },
+    "mite:adamantium_mattock": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_milk_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:adamantium_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:adamantium_pickaxe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_runestone": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:adamantium_scythe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_shears": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:adamantium_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_sword": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_war_hammer": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:adamantium_water_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:ancient_metal_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_battle_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:ancient_metal_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:ancient_metal_dagger": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_hoe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_lava_bucket": {
+      "ticks": 3200,
+      "heat": 3,
+      "large": false
+    },
+    "mite:ancient_metal_mattock": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_milk_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:ancient_metal_pickaxe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_scythe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_shears": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:ancient_metal_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_sword": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_war_hammer": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ancient_metal_water_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:banana": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:beef_stew": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:blueberries": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:blueberry_bush": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:cereal": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:cheese": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:chicken_soup": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:chocolate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:clay_oven": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:cooked_large_fish": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:cooked_worm": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:copper_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_battle_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:copper_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:copper_dagger": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_hoe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_lava_bucket": {
+      "ticks": 3200,
+      "heat": 3,
+      "large": false
+    },
+    "mite:copper_mattock": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_milk_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:copper_pickaxe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_scythe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_shears": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:copper_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_sword": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_war_hammer": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:copper_water_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:core": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:cream_of_mushroom_soup": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:cream_of_vegetable_soup": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:dough": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:flint_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:flint_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:flint_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:flint_knife": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:flint_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:flour": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:gold_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:gold_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:gold_lava_bucket": {
+      "ticks": 3200,
+      "heat": 3,
+      "large": false
+    },
+    "mite:gold_milk_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:gold_water_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:golden_battle_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:golden_dagger": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:golden_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:golden_mattock": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:golden_scythe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:golden_shears": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:golden_war_hammer": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:ice_cream": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:iron_battle_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:iron_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:iron_dagger": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:iron_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:iron_mattock": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:iron_scythe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:iron_war_hammer": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:large_clay_oven": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:mantle": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:manure": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mashed_potato": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:milk_bowl": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:mithril_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_battle_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:mithril_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:mithril_dagger": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_hoe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_ingot": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:mithril_lava_bucket": {
+      "ticks": 3200,
+      "heat": 3,
+      "large": false
+    },
+    "mite:mithril_mattock": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_milk_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:mithril_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:mithril_pickaxe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_runestone": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:mithril_scythe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_shears": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:mithril_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_sword": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_war_hammer": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:mithril_water_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:netherrack_furnace": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:obsidian_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:obsidian_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:obsidian_furnace": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:obsidian_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:obsidian_knife": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:obsidian_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:onion": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:orange": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:porridge": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:pumpkin_soup": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:raw_large_fish": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:raw_worm": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:rusted_iron_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_battle_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_dagger": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_hoe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_mattock": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_pickaxe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_scythe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_shears": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:rusted_iron_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_sword": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:rusted_iron_war_hammer": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:salad": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:sandstone_furnace": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:silver_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_battle_axe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:silver_crafting_table": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "mite:silver_dagger": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_hatchet": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_hoe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_ingot": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:silver_lava_bucket": {
+      "ticks": 3200,
+      "heat": 3,
+      "large": false
+    },
+    "mite:silver_mattock": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_milk_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:silver_ore": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "mite:silver_pickaxe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_scythe": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_shears": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:silver_shovel": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_sword": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_war_hammer": {
+      "ticks": 100,
+      "heat": 1,
+      "large": false
+    },
+    "mite:silver_water_bucket": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:sorbet": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:vegetable_soup": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:water_bowl": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "mite:wooden_cudgel": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:oak_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:oak_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_oak_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_oak_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:spruce_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:spruce_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:spruce_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:spruce_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_spruce_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_spruce_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:birch_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:birch_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:birch_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:birch_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_birch_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_birch_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:jungle_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:jungle_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:jungle_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:jungle_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_jungle_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_jungle_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:acacia_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:acacia_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:acacia_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_acacia_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_acacia_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:acacia_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:dark_oak_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:dark_oak_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:dark_oak_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:dark_oak_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_dark_oak_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_dark_oak_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:dark_oak_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:mangrove_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:mangrove_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:mangrove_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:mangrove_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_mangrove_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_mangrove_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:mangrove_propagule": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:cherry_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:cherry_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:cherry_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:cherry_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_cherry_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_cherry_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cherry_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:bamboo_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:bamboo_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:bamboo_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false
+    },
+    "minecraft:bamboo_block": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:stripped_bamboo_block": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_mosaic": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_mosaic_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:bamboo_mosaic_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:orange_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:magenta_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:light_blue_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:yellow_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:lime_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:pink_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:gray_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:light_gray_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:cyan_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:purple_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:blue_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:brown_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:green_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:red_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:black_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true
+    },
+    "minecraft:crimson_planks": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crimson_slab": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crimson_stairs": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crimson_fence": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crimson_fence_gate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crimson_door": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crimson_trapdoor": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crimson_pressure_plate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:crimson_button": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:crimson_sign": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:crimson_hanging_sign": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:warped_planks": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:warped_slab": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:warped_stairs": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:warped_fence": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:warped_fence_gate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:warped_door": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:warped_trapdoor": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:warped_pressure_plate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true
+    },
+    "minecraft:warped_button": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:warped_sign": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    },
+    "minecraft:warped_hanging_sign": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false
+    }
+  },
+  "profiles": {
+    "mite:clay_oven": {
+      "max_heat": 1,
+      "accepts_large": false,
+      "cycle_ticks": 200
+    },
+    "mite:large_clay_oven": {
+      "max_heat": 1,
+      "accepts_large": true,
+      "cycle_ticks": 200
+    },
+    "mite:sandstone_furnace": {
+      "max_heat": 1,
+      "accepts_large": true,
+      "cycle_ticks": 200
+    },
+    "minecraft:furnace": {
+      "max_heat": 2,
+      "accepts_large": true,
+      "cycle_ticks": 200
+    },
+    "mite:obsidian_furnace": {
+      "max_heat": 3,
+      "accepts_large": true,
+      "cycle_ticks": 200
+    },
+    "mite:netherrack_furnace": {
+      "max_heat": 4,
+      "accepts_large": true,
+      "cycle_ticks": 200
+    },
+    "minecraft:smoker": {
+      "max_heat": 1,
+      "accepts_large": true,
+      "cycle_ticks": 100
+    },
+    "minecraft:blast_furnace": {
+      "max_heat": 2,
+      "accepts_large": true,
+      "cycle_ticks": 100
+    }
+  },
+  "required_heat": {
+    "minecraft:ancient_debris": 4,
+    "minecraft:beef": 1,
+    "minecraft:birch_log": 1,
+    "minecraft:cactus": 1,
+    "minecraft:chainmail_boots": 2,
+    "minecraft:chainmail_chestplate": 2,
+    "minecraft:chainmail_helmet": 2,
+    "minecraft:chainmail_leggings": 2,
+    "minecraft:chicken": 1,
+    "minecraft:clay": 1,
+    "minecraft:clay_ball": 1,
+    "minecraft:coal_ore": 1,
+    "minecraft:cod": 1,
+    "minecraft:copper_ore": 2,
+    "minecraft:deepslate_coal_ore": 1,
+    "minecraft:deepslate_copper_ore": 2,
+    "minecraft:deepslate_diamond_ore": 2,
+    "minecraft:deepslate_emerald_ore": 2,
+    "minecraft:deepslate_gold_ore": 2,
+    "minecraft:deepslate_iron_ore": 2,
+    "minecraft:deepslate_lapis_ore": 2,
+    "minecraft:deepslate_redstone_ore": 2,
+    "minecraft:diamond_ore": 2,
+    "minecraft:emerald_ore": 2,
+    "minecraft:gold_ore": 2,
+    "minecraft:golden_axe": 2,
+    "minecraft:golden_boots": 2,
+    "minecraft:golden_chestplate": 2,
+    "minecraft:golden_helmet": 2,
+    "minecraft:golden_hoe": 2,
+    "minecraft:golden_horse_armor": 2,
+    "minecraft:golden_leggings": 2,
+    "minecraft:golden_pickaxe": 2,
+    "minecraft:golden_shovel": 2,
+    "minecraft:golden_sword": 2,
+    "minecraft:iron_axe": 2,
+    "minecraft:iron_boots": 2,
+    "minecraft:iron_chestplate": 2,
+    "minecraft:iron_helmet": 2,
+    "minecraft:iron_hoe": 2,
+    "minecraft:iron_horse_armor": 2,
+    "minecraft:iron_leggings": 2,
+    "minecraft:iron_ore": 2,
+    "minecraft:iron_pickaxe": 2,
+    "minecraft:iron_shovel": 2,
+    "minecraft:iron_sword": 2,
+    "minecraft:jungle_log": 1,
+    "minecraft:lapis_ore": 2,
+    "minecraft:mutton": 1,
+    "minecraft:nether_gold_ore": 2,
+    "minecraft:nether_quartz_ore": 2,
+    "minecraft:netherrack": 1,
+    "minecraft:oak_log": 1,
+    "minecraft:porkchop": 1,
+    "minecraft:potato": 1,
+    "minecraft:raw_copper": 2,
+    "minecraft:raw_copper_block": 2,
+    "minecraft:raw_gold": 2,
+    "minecraft:raw_gold_block": 2,
+    "minecraft:raw_iron": 2,
+    "minecraft:raw_iron_block": 2,
+    "minecraft:red_sandstone": 2,
+    "minecraft:redstone_ore": 2,
+    "minecraft:sand": 1,
+    "minecraft:sandstone": 2,
+    "minecraft:spruce_log": 1,
+    "mite:adamantium_ore": 4,
+    "mite:deepslate_adamantium_ore": 4,
+    "mite:deepslate_mithril_ore": 3,
+    "mite:deepslate_silver_ore": 2,
+    "mite:dough": 1,
+    "mite:mithril_ore": 3,
+    "mite:raw_large_fish": 1,
+    "mite:raw_worm": 1,
+    "mite:silver_ore": 2
+  },
+  "large_items": [
+    "minecraft:acacia_door",
+    "minecraft:acacia_fence",
+    "minecraft:acacia_fence_gate",
+    "minecraft:acacia_log",
+    "minecraft:acacia_planks",
+    "minecraft:acacia_pressure_plate",
+    "minecraft:acacia_slab",
+    "minecraft:acacia_stairs",
+    "minecraft:acacia_trapdoor",
+    "minecraft:acacia_wood",
+    "minecraft:bamboo_block",
+    "minecraft:bamboo_door",
+    "minecraft:bamboo_fence",
+    "minecraft:bamboo_fence_gate",
+    "minecraft:bamboo_mosaic",
+    "minecraft:bamboo_mosaic_slab",
+    "minecraft:bamboo_mosaic_stairs",
+    "minecraft:bamboo_planks",
+    "minecraft:bamboo_pressure_plate",
+    "minecraft:bamboo_slab",
+    "minecraft:bamboo_stairs",
+    "minecraft:bamboo_trapdoor",
+    "minecraft:birch_door",
+    "minecraft:birch_fence",
+    "minecraft:birch_fence_gate",
+    "minecraft:birch_log",
+    "minecraft:birch_planks",
+    "minecraft:birch_pressure_plate",
+    "minecraft:birch_slab",
+    "minecraft:birch_stairs",
+    "minecraft:birch_trapdoor",
+    "minecraft:birch_wood",
+    "minecraft:black_bed",
+    "minecraft:blue_bed",
+    "minecraft:bookshelf",
+    "minecraft:brown_bed",
+    "minecraft:brown_mushroom_block",
+    "minecraft:cactus",
+    "minecraft:cherry_door",
+    "minecraft:cherry_fence",
+    "minecraft:cherry_fence_gate",
+    "minecraft:cherry_log",
+    "minecraft:cherry_planks",
+    "minecraft:cherry_pressure_plate",
+    "minecraft:cherry_slab",
+    "minecraft:cherry_stairs",
+    "minecraft:cherry_trapdoor",
+    "minecraft:cherry_wood",
+    "minecraft:chest",
+    "minecraft:clay",
+    "minecraft:coal_block",
+    "minecraft:coal_ore",
+    "minecraft:cobblestone",
+    "minecraft:cobweb",
+    "minecraft:copper_ore",
+    "minecraft:crafting_table",
+    "minecraft:crimson_door",
+    "minecraft:crimson_fence",
+    "minecraft:crimson_fence_gate",
+    "minecraft:crimson_planks",
+    "minecraft:crimson_pressure_plate",
+    "minecraft:crimson_slab",
+    "minecraft:crimson_stairs",
+    "minecraft:crimson_trapdoor",
+    "minecraft:cyan_bed",
+    "minecraft:dark_oak_door",
+    "minecraft:dark_oak_fence",
+    "minecraft:dark_oak_fence_gate",
+    "minecraft:dark_oak_log",
+    "minecraft:dark_oak_planks",
+    "minecraft:dark_oak_pressure_plate",
+    "minecraft:dark_oak_slab",
+    "minecraft:dark_oak_stairs",
+    "minecraft:dark_oak_trapdoor",
+    "minecraft:dark_oak_wood",
+    "minecraft:daylight_detector",
+    "minecraft:diamond_ore",
+    "minecraft:dirt",
+    "minecraft:emerald_ore",
+    "minecraft:furnace",
+    "minecraft:glass",
+    "minecraft:gold_ore",
+    "minecraft:grass_block",
+    "minecraft:gravel",
+    "minecraft:gray_bed",
+    "minecraft:green_bed",
+    "minecraft:iron_ore",
+    "minecraft:jukebox",
+    "minecraft:jungle_door",
+    "minecraft:jungle_fence",
+    "minecraft:jungle_fence_gate",
+    "minecraft:jungle_log",
+    "minecraft:jungle_planks",
+    "minecraft:jungle_pressure_plate",
+    "minecraft:jungle_slab",
+    "minecraft:jungle_stairs",
+    "minecraft:jungle_trapdoor",
+    "minecraft:jungle_wood",
+    "minecraft:ladder",
+    "minecraft:lapis_ore",
+    "minecraft:light_blue_bed",
+    "minecraft:light_gray_bed",
+    "minecraft:lime_bed",
+    "minecraft:magenta_bed",
+    "minecraft:mangrove_door",
+    "minecraft:mangrove_fence",
+    "minecraft:mangrove_fence_gate",
+    "minecraft:mangrove_log",
+    "minecraft:mangrove_planks",
+    "minecraft:mangrove_pressure_plate",
+    "minecraft:mangrove_slab",
+    "minecraft:mangrove_stairs",
+    "minecraft:mangrove_trapdoor",
+    "minecraft:mangrove_wood",
+    "minecraft:melon",
+    "minecraft:nether_gold_ore",
+    "minecraft:nether_quartz_ore",
+    "minecraft:netherrack",
+    "minecraft:note_block",
+    "minecraft:oak_boat",
+    "minecraft:oak_door",
+    "minecraft:oak_fence",
+    "minecraft:oak_fence_gate",
+    "minecraft:oak_log",
+    "minecraft:oak_planks",
+    "minecraft:oak_pressure_plate",
+    "minecraft:oak_slab",
+    "minecraft:oak_stairs",
+    "minecraft:oak_trapdoor",
+    "minecraft:oak_wood",
+    "minecraft:orange_bed",
+    "minecraft:pink_bed",
+    "minecraft:pumpkin",
+    "minecraft:purple_bed",
+    "minecraft:rail",
+    "minecraft:red_bed",
+    "minecraft:red_mushroom_block",
+    "minecraft:redstone_ore",
+    "minecraft:sand",
+    "minecraft:sandstone",
+    "minecraft:snow",
+    "minecraft:spruce_door",
+    "minecraft:spruce_fence",
+    "minecraft:spruce_fence_gate",
+    "minecraft:spruce_log",
+    "minecraft:spruce_planks",
+    "minecraft:spruce_pressure_plate",
+    "minecraft:spruce_slab",
+    "minecraft:spruce_stairs",
+    "minecraft:spruce_trapdoor",
+    "minecraft:spruce_wood",
+    "minecraft:stone",
+    "minecraft:stripped_acacia_log",
+    "minecraft:stripped_acacia_wood",
+    "minecraft:stripped_bamboo_block",
+    "minecraft:stripped_birch_log",
+    "minecraft:stripped_birch_wood",
+    "minecraft:stripped_cherry_log",
+    "minecraft:stripped_cherry_wood",
+    "minecraft:stripped_dark_oak_log",
+    "minecraft:stripped_dark_oak_wood",
+    "minecraft:stripped_jungle_log",
+    "minecraft:stripped_jungle_wood",
+    "minecraft:stripped_mangrove_log",
+    "minecraft:stripped_mangrove_wood",
+    "minecraft:stripped_oak_log",
+    "minecraft:stripped_oak_wood",
+    "minecraft:stripped_spruce_log",
+    "minecraft:stripped_spruce_wood",
+    "minecraft:terracotta",
+    "minecraft:trapped_chest",
+    "minecraft:warped_door",
+    "minecraft:warped_fence",
+    "minecraft:warped_fence_gate",
+    "minecraft:warped_planks",
+    "minecraft:warped_pressure_plate",
+    "minecraft:warped_slab",
+    "minecraft:warped_stairs",
+    "minecraft:warped_trapdoor",
+    "minecraft:white_bed",
+    "minecraft:yellow_bed",
+    "mite:adamantium_crafting_table",
+    "mite:adamantium_ore",
+    "mite:adamantium_runestone",
+    "mite:ancient_metal_crafting_table",
+    "mite:blueberry_bush",
+    "mite:clay_oven",
+    "mite:copper_crafting_table",
+    "mite:core",
+    "mite:flint_crafting_table",
+    "mite:gold_crafting_table",
+    "mite:iron_crafting_table",
+    "mite:large_clay_oven",
+    "mite:mantle",
+    "mite:mithril_crafting_table",
+    "mite:mithril_ore",
+    "mite:mithril_runestone",
+    "mite:netherrack_furnace",
+    "mite:obsidian_crafting_table",
+    "mite:obsidian_furnace",
+    "mite:sandstone_furnace",
+    "mite:silver_crafting_table",
+    "mite:silver_ore"
+  ],
+  "bucket_melting_chance": {
+    "copper": 0.16,
+    "silver": 0.16,
+    "gold": 0.2,
+    "iron": 0.08,
+    "ancient_metal": 0.04,
+    "mithril": 0.01,
+    "adamantium": 0.0
+  },
+  "modern_adapted_fuel": {
+    "minecraft:oak_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:oak_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_oak_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_oak_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:spruce_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden button"
+    },
+    "minecraft:spruce_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden door"
+    },
+    "minecraft:spruce_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden trapdoor"
+    },
+    "minecraft:spruce_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden fence"
+    },
+    "minecraft:spruce_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_pressure_plate"
+    },
+    "minecraft:spruce_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_fence_gate"
+    },
+    "minecraft:spruce_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign"
+    },
+    "minecraft:spruce_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:spruce_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_spruce_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_spruce_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:birch_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden button"
+    },
+    "minecraft:birch_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden door"
+    },
+    "minecraft:birch_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden trapdoor"
+    },
+    "minecraft:birch_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden fence"
+    },
+    "minecraft:birch_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_pressure_plate"
+    },
+    "minecraft:birch_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_fence_gate"
+    },
+    "minecraft:birch_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign"
+    },
+    "minecraft:birch_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:birch_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_birch_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_birch_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:jungle_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden button"
+    },
+    "minecraft:jungle_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden door"
+    },
+    "minecraft:jungle_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden trapdoor"
+    },
+    "minecraft:jungle_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden fence"
+    },
+    "minecraft:jungle_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_pressure_plate"
+    },
+    "minecraft:jungle_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_fence_gate"
+    },
+    "minecraft:jungle_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign"
+    },
+    "minecraft:jungle_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:jungle_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_jungle_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_jungle_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:acacia_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy planks"
+    },
+    "minecraft:acacia_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood slab"
+    },
+    "minecraft:acacia_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood stairs"
+    },
+    "minecraft:acacia_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden button"
+    },
+    "minecraft:acacia_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden door"
+    },
+    "minecraft:acacia_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden trapdoor"
+    },
+    "minecraft:acacia_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden fence"
+    },
+    "minecraft:acacia_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_pressure_plate"
+    },
+    "minecraft:acacia_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_fence_gate"
+    },
+    "minecraft:acacia_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign"
+    },
+    "minecraft:acacia_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:acacia_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:acacia_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_acacia_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_acacia_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:acacia_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy sapling"
+    },
+    "minecraft:dark_oak_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy planks"
+    },
+    "minecraft:dark_oak_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood slab"
+    },
+    "minecraft:dark_oak_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood stairs"
+    },
+    "minecraft:dark_oak_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden button"
+    },
+    "minecraft:dark_oak_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden door"
+    },
+    "minecraft:dark_oak_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden trapdoor"
+    },
+    "minecraft:dark_oak_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden fence"
+    },
+    "minecraft:dark_oak_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_pressure_plate"
+    },
+    "minecraft:dark_oak_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_fence_gate"
+    },
+    "minecraft:dark_oak_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign"
+    },
+    "minecraft:dark_oak_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:dark_oak_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:dark_oak_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_dark_oak_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_dark_oak_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:dark_oak_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy sapling"
+    },
+    "minecraft:mangrove_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy planks"
+    },
+    "minecraft:mangrove_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood slab"
+    },
+    "minecraft:mangrove_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood stairs"
+    },
+    "minecraft:mangrove_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden button"
+    },
+    "minecraft:mangrove_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden door"
+    },
+    "minecraft:mangrove_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden trapdoor"
+    },
+    "minecraft:mangrove_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden fence"
+    },
+    "minecraft:mangrove_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_pressure_plate"
+    },
+    "minecraft:mangrove_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_fence_gate"
+    },
+    "minecraft:mangrove_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign"
+    },
+    "minecraft:mangrove_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:mangrove_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:mangrove_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_mangrove_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_mangrove_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:mangrove_propagule": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy sapling"
+    },
+    "minecraft:cherry_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy planks"
+    },
+    "minecraft:cherry_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood slab"
+    },
+    "minecraft:cherry_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood stairs"
+    },
+    "minecraft:cherry_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden button"
+    },
+    "minecraft:cherry_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden door"
+    },
+    "minecraft:cherry_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden trapdoor"
+    },
+    "minecraft:cherry_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden fence"
+    },
+    "minecraft:cherry_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_pressure_plate"
+    },
+    "minecraft:cherry_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_fence_gate"
+    },
+    "minecraft:cherry_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign"
+    },
+    "minecraft:cherry_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:cherry_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:cherry_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_cherry_log": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:stripped_cherry_wood": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy log"
+    },
+    "minecraft:cherry_sapling": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy sapling"
+    },
+    "minecraft:bamboo_planks": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy planks"
+    },
+    "minecraft:bamboo_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood slab"
+    },
+    "minecraft:bamboo_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wood stairs"
+    },
+    "minecraft:bamboo_button": {
+      "ticks": 400,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden button"
+    },
+    "minecraft:bamboo_door": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden door"
+    },
+    "minecraft:bamboo_trapdoor": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden trapdoor"
+    },
+    "minecraft:bamboo_fence": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy wooden fence"
+    },
+    "minecraft:bamboo_pressure_plate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_pressure_plate"
+    },
+    "minecraft:bamboo_fence_gate": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_fence_gate"
+    },
+    "minecraft:bamboo_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign"
+    },
+    "minecraft:bamboo_hanging_sign": {
+      "ticks": 200,
+      "heat": 1,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "oak_sign; modern smaller hanging-sign item"
+    },
+    "minecraft:bamboo_block": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "compressed bamboo wood; modern log-family adaptation"
+    },
+    "minecraft:stripped_bamboo_block": {
+      "ticks": 1600,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "compressed bamboo wood; modern log-family adaptation"
+    },
+    "minecraft:bamboo_mosaic": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "modern bamboo mosaic inherits corresponding wood shape"
+    },
+    "minecraft:bamboo_mosaic_stairs": {
+      "ticks": 400,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "modern bamboo mosaic inherits corresponding wood shape"
+    },
+    "minecraft:bamboo_mosaic_slab": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "modern bamboo mosaic inherits corresponding wood shape"
+    },
+    "minecraft:orange_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:magenta_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:light_blue_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:yellow_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:lime_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:pink_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:gray_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:light_gray_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:cyan_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:purple_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:blue_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:brown_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:green_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:red_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:black_bed": {
+      "ticks": 200,
+      "heat": 1,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "legacy bed item"
+    },
+    "minecraft:crimson_planks": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_slab": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_stairs": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_fence": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_fence_gate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_door": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_trapdoor": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_pressure_plate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_button": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_sign": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:crimson_hanging_sign": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_planks": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_slab": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_stairs": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_fence": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_fence_gate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_door": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_trapdoor": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_pressure_plate": {
+      "ticks": 0,
+      "heat": 0,
+      "large": true,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_button": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_sign": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    },
+    "minecraft:warped_hanging_sign": {
+      "ticks": 0,
+      "heat": 0,
+      "large": false,
+      "provenance": "explicit_modern_adaptation",
+      "counterpart": "nonflammable modern Nether wood"
+    }
+  },
+  "modern_recycling_heat": {
+    "minecraft:iron_pickaxe": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_shovel": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_axe": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_hoe": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_sword": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_helmet": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_chestplate": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_leggings": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_boots": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:iron_horse_armor": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:chainmail_helmet": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:chainmail_chestplate": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:chainmail_leggings": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:chainmail_boots": {
+      "required_heat": 2,
+      "metal": "iron",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/iron_nugget_from_smelting.json",
+      "recipe_source_sha256": "2c4437515328e97f363da8491c64d476d1feb0d68e0ca4d4830fbce9b98536a9",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_pickaxe": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_shovel": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_axe": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_hoe": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_sword": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_helmet": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_chestplate": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_leggings": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_boots": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    },
+    "minecraft:golden_horse_armor": {
+      "required_heat": 2,
+      "metal": "gold",
+      "provenance": "explicit_modern_metal_recycling_adaptation",
+      "recipe_source": "data/minecraft/recipe/gold_nugget_from_smelting.json",
+      "recipe_source_sha256": "ad5d88e7e4d748b3df54a75991d971a886d4a89c23ed8924af3434dceb4e93a6",
+      "source_counterpart": "Original corresponding metal ore requires heat2; recycling recipe did not exist in R196."
+    }
+  }
+}

@@ -68,6 +68,8 @@ public final class MiteFoods {
                     .craftRemainder(get(metal + "_bucket")), metal, MiteBucketItem.Contents.WATER));
             add(metal + "_milk_bucket", () -> new MiteBucketItem(new Item.Properties().stacksTo(1)
                     .craftRemainder(get(metal + "_bucket")), metal, MiteBucketItem.Contents.MILK));
+            add(metal + "_lava_bucket", () -> new MiteBucketItem(new Item.Properties().stacksTo(1)
+                    .craftRemainder(get(metal + "_bucket")), metal, MiteBucketItem.Contents.LAVA));
         }
     }
 

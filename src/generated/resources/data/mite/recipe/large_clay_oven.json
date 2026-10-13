@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "minecraft:terracotta"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "M M",
+    "MMM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:large_clay_oven"
+  }
+}

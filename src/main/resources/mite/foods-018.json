@@ -11,7 +11,8 @@
     "Unknown FOOD items use modern nutrition for both S/N with no micronutrient or sugar claim; custom drinks are included.",
     "User override: wheat seeds retain original source1/0 as explicit_original_source_values, but effective S/N is0/0, micronutrient flags arefalse, original2000 extra fat is not applied, and explicit native_saturation is1.",
     "FOOD.nutrition exposes source S and FOOD.saturation exposes absolute source N for AppleSkin display compatibility. Omitted native_saturation defaults to profile nutrition, not a modern saturation multiplier or an extra reserve; actual consumption still ingests source S/N once. Only the existing explicit wheat-seed buffer is applied separately.",
-    "019 expansion adds31 R196 ingestion profiles and14 nonfood materials/vessels, for45 new registered IDs; includes water_bowl S/N0/0. Existing wheat-seed user override and all modern adaptations stay unchanged."
+    "019 expansion adds31 R196 ingestion profiles and14 nonfood materials/vessels, for45 new registered IDs; includes water_bowl S/N0/0. Existing wheat-seed user override and all modern adaptations stay unchanged.",
+    "024 expansion adds six source nonfood metal lava vessel peers, IDs1154..1159, to the existing019 registry; ingestion profiles remain unchanged, nonfood metadata entries now20, source newly registered food/material/vessel identities51."
   ],
   "saturation_policy": {
     "default": "profile_nutrition_absolute",
@@ -1790,6 +1791,198 @@
         "item": "mite:ancient_metal_water_bucket",
         "zip_entry": "assets/minecraft/textures/items/buckets/ancient_metal/water.png",
         "sha256": "0c6533953cdeb52be83255fe472682f66c8356a251093ceb0245807a91931560"
+      }
+    },
+    {
+      "id": "mite:copper_lava_bucket",
+      "source_kind": "r196",
+      "source_id": 1154,
+      "source_subtype": 0,
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "source_class": "wr",
+      "standard_volume": 4,
+      "stack_limit": 1,
+      "satiation": 0,
+      "nutrition": 0,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "use_ticks": 32,
+      "effects": [],
+      "crafting_component_difficulty": 25.0,
+      "note": "024 source lava fuel vessel, not an ingestible FOOD profile. Modern source fluid pickup/placement remains an explicit adaptation.",
+      "texture_source": {
+        "item": "mite:copper_lava_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/copper/lava.png",
+        "sha256": "e252a10eacfea6621f5f2fc048570397471cc7b83c581fba7ee63d712ed23be0"
+      }
+    },
+    {
+      "id": "mite:silver_lava_bucket",
+      "source_kind": "r196",
+      "source_id": 1155,
+      "source_subtype": 0,
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "source_class": "wr",
+      "standard_volume": 4,
+      "stack_limit": 1,
+      "satiation": 0,
+      "nutrition": 0,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "use_ticks": 32,
+      "effects": [],
+      "crafting_component_difficulty": 25.0,
+      "note": "024 source lava fuel vessel, not an ingestible FOOD profile. Modern source fluid pickup/placement remains an explicit adaptation.",
+      "texture_source": {
+        "item": "mite:silver_lava_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/silver/lava.png",
+        "sha256": "1a93457012a3da5f168c7e187b2a68110de4de91ad9353ff24c1c9415b41b97e"
+      }
+    },
+    {
+      "id": "mite:gold_lava_bucket",
+      "source_kind": "r196",
+      "source_id": 1156,
+      "source_subtype": 0,
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "source_class": "wr",
+      "standard_volume": 4,
+      "stack_limit": 1,
+      "satiation": 0,
+      "nutrition": 0,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "use_ticks": 32,
+      "effects": [],
+      "crafting_component_difficulty": 25.0,
+      "note": "024 source lava fuel vessel, not an ingestible FOOD profile. Modern source fluid pickup/placement remains an explicit adaptation.",
+      "texture_source": {
+        "item": "mite:gold_lava_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/gold/lava.png",
+        "sha256": "21decf4364c809a75a96af5a8f4ea15d10ae6c55323005c0e2c53f614692355f"
+      }
+    },
+    {
+      "id": "mite:mithril_lava_bucket",
+      "source_kind": "r196",
+      "source_id": 1157,
+      "source_subtype": 0,
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "source_class": "wr",
+      "standard_volume": 4,
+      "stack_limit": 1,
+      "satiation": 0,
+      "nutrition": 0,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "use_ticks": 32,
+      "effects": [],
+      "crafting_component_difficulty": 25.0,
+      "note": "024 source lava fuel vessel, not an ingestible FOOD profile. Modern source fluid pickup/placement remains an explicit adaptation.",
+      "texture_source": {
+        "item": "mite:mithril_lava_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/mithril/lava.png",
+        "sha256": "d7865179a8d3df454c64a29ac2108601732b8e5fa48353a4ac7eb397eb68bbd7"
+      }
+    },
+    {
+      "id": "mite:adamantium_lava_bucket",
+      "source_kind": "r196",
+      "source_id": 1158,
+      "source_subtype": 0,
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "source_class": "wr",
+      "standard_volume": 4,
+      "stack_limit": 1,
+      "satiation": 0,
+      "nutrition": 0,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "use_ticks": 32,
+      "effects": [],
+      "crafting_component_difficulty": 25.0,
+      "note": "024 source lava fuel vessel, not an ingestible FOOD profile. Modern source fluid pickup/placement remains an explicit adaptation.",
+      "texture_source": {
+        "item": "mite:adamantium_lava_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/adamantium/lava.png",
+        "sha256": "c403bc72089c39b2810947ee4322339a1c611fa166b519c642461e1916694e68"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_lava_bucket",
+      "source_kind": "r196",
+      "source_id": 1159,
+      "source_subtype": 0,
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "source_class": "wr",
+      "standard_volume": 4,
+      "stack_limit": 1,
+      "satiation": 0,
+      "nutrition": 0,
+      "protein": false,
+      "fat": false,
+      "plants": false,
+      "sugar": 0,
+      "drink": false,
+      "always_edible": false,
+      "use_ticks": 32,
+      "effects": [],
+      "crafting_component_difficulty": 25.0,
+      "note": "024 source lava fuel vessel, not an ingestible FOOD profile. Modern source fluid pickup/placement remains an explicit adaptation.",
+      "texture_source": {
+        "item": "mite:ancient_metal_lava_bucket",
+        "zip_entry": "assets/minecraft/textures/items/buckets/ancient_metal/lava.png",
+        "sha256": "ffb73594958d88dac0fba90c6f7f977e0130041cfb7f083368013332611b1075"
       }
     }
   ]

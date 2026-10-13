@@ -35,7 +35,7 @@ public final class FoodVessels {
     public static ItemStack empty(ItemStack stack) {
         if (stack.getItem() instanceof MiteBowlItem || stack.is(Items.MUSHROOM_STEW)) return new ItemStack(Items.BOWL);
         if (stack.getItem() instanceof MiteBucketItem bucket) return bucket.emptyStack();
-        if (stack.is(Items.WATER_BUCKET) || stack.is(Items.MILK_BUCKET)) return new ItemStack(Items.BUCKET);
+        if (stack.is(Items.WATER_BUCKET) || stack.is(Items.MILK_BUCKET) || stack.is(Items.LAVA_BUCKET)) return new ItemStack(Items.BUCKET);
         return ItemStack.EMPTY;
     }
 

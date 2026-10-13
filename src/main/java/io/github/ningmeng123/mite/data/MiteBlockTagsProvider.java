@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.registry.MiteTags;
 import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import io.github.ningmeng123.mite.registry.MiteOreBlocks;
+import io.github.ningmeng123.mite.registry.MiteFurnaces;
 import net.minecraft.tags.BlockTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
@@ -22,6 +23,12 @@ public final class MiteBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(MiteFurnaces.CLAY_OVEN.get(), MiteFurnaces.LARGE_CLAY_OVEN.get(),
+                MiteFurnaces.OBSIDIAN_FURNACE.get(), MiteFurnaces.NETHERRACK_FURNACE.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(MiteFurnaces.CLAY_OVEN.get(), MiteFurnaces.LARGE_CLAY_OVEN.get());
+        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(MiteFurnaces.CLAY_OVEN.get(), MiteFurnaces.SANDSTONE_FURNACE.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(MiteFurnaces.OBSIDIAN_FURNACE.get());
+        tag(BlockTags.NEEDS_STONE_TOOL).add(Blocks.FURNACE, MiteFurnaces.NETHERRACK_FURNACE.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(MiteOreBlocks.SILVER_ORE.get(), MiteOreBlocks.DEEPSLATE_SILVER_ORE.get(),
                 MiteOreBlocks.MITHRIL_ORE.get(), MiteOreBlocks.DEEPSLATE_MITHRIL_ORE.get(),
                 MiteOreBlocks.ADAMANTIUM_ORE.get(), MiteOreBlocks.DEEPSLATE_ADAMANTIUM_ORE.get(), MiteOreBlocks.INFESTED_NETHERRACK.get());

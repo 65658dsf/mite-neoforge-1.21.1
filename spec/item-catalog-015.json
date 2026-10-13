@@ -3895,13 +3895,26 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:copper_bucket_lava",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "proposed_modern_id": "mite:copper_lava_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_bucket_lava"
+      },
+      "actual_modern_id": "mite:copper_lava_bucket",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFoods.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 35788,
@@ -3934,13 +3947,26 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:silver_bucket_lava",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "proposed_modern_id": "mite:silver_lava_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_bucket_lava"
+      },
+      "actual_modern_id": "mite:silver_lava_bucket",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFoods.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 36126,
@@ -3973,13 +3999,26 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:golden_bucket_lava",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "proposed_modern_id": "mite:gold_lava_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_bucket_lava"
+      },
+      "actual_modern_id": "mite:gold_lava_bucket",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFoods.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 105070,
@@ -4012,13 +4051,26 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:ancient_metal_bucket_lava",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "proposed_modern_id": "mite:ancient_metal_lava_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_bucket_lava"
+      },
+      "actual_modern_id": "mite:ancient_metal_lava_bucket",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFoods.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 37912,
@@ -4051,13 +4103,26 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:mithril_bucket_lava",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "proposed_modern_id": "mite:mithril_lava_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_bucket_lava"
+      },
+      "actual_modern_id": "mite:mithril_lava_bucket",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFoods.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 37917,
@@ -4090,13 +4155,26 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:adamantium_bucket_lava",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "proposed_modern_id": "mite:adamantium_lava_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_bucket_lava"
+      },
+      "actual_modern_id": "mite:adamantium_lava_bucket",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFoods.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 39434,
@@ -5966,12 +6044,25 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:furnace",
-      "modern_id_is_proposal": true,
-      "current_registration": "existing_vanilla",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_vanilla_adapted",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:furnace"
+      },
+      "actual_modern_id": "minecraft:furnace",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 29625,
@@ -6006,12 +6097,25 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:clay_oven",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:clay_oven"
+      },
+      "actual_modern_id": "mite:clay_oven",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 33378,
@@ -6046,12 +6150,25 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:large_clay_oven",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:large_clay_oven"
+      },
+      "actual_modern_id": "mite:large_clay_oven",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 35543,
@@ -6086,12 +6203,25 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:sandstone_furnace",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:sandstone_furnace"
+      },
+      "actual_modern_id": "mite:sandstone_furnace",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 35621,
@@ -6126,12 +6256,25 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:obsidian_furnace",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:obsidian_furnace"
+      },
+      "actual_modern_id": "mite:obsidian_furnace",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 35623,
@@ -6166,12 +6309,25 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:netherrack_furnace",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "furnace_024_implemented_pending_validation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:netherrack_furnace"
+      },
+      "actual_modern_id": "mite:netherrack_furnace",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
+        "verification": "docs/testing/024-furnaces.md",
+        "batch": "024"
+      }
     },
     {
       "mcmod_id": 826855,
@@ -19030,5 +19186,18 @@
       "mite:infested_netherrack"
     ],
     "semantics": "仅定向更新目录的铜、下界金、银、秘银、艾德曼5项。深板岩3种和虫蚀下界岩为额外世界方块，不伪造MC百科叶页；summary保持015历史快照。炉温尚待制造体系阶段。"
+  },
+  "furnace_registration_update": {
+    "date": "2026-10-13",
+    "author": "NingMeng123",
+    "updated_leaf_entries": 12,
+    "new_furnace_blocks": 5,
+    "reused_vanilla_furnace": 1,
+    "new_metal_lava_buckets": 6,
+    "reused_vanilla_lava_bucket": "minecraft:lava_bucket",
+    "scope": "Six source furnace stages and all seven metal lava fuels; lit states use LIT, no duplicate carryable active-furnace items.",
+    "verification": "docs/testing/024-furnaces.md",
+    "manual_test_status": "pending_user_acceptance",
+    "history_semantics": "The original 015 summary and earlier batch snapshots are preserved; registration does not imply later fluid/experience placement, metallurgy or combat completion."
   }
 }

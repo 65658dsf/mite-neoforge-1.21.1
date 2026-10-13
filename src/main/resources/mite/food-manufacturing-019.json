@@ -15325,6 +15325,11 @@
       "output": "minecraft:cooked_porkchop",
       "experience": 3,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "minecraft:cooked_porkchop",
@@ -15337,6 +15342,11 @@
       "output": "minecraft:cooked_cod",
       "experience": 3,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "minecraft:cooked_cod",
@@ -15349,6 +15359,11 @@
       "output": "minecraft:cooked_beef",
       "experience": 4,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "minecraft:cooked_beef",
@@ -15361,6 +15376,11 @@
       "output": "minecraft:cooked_chicken",
       "experience": 3,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "minecraft:cooked_chicken",
@@ -15373,6 +15393,11 @@
       "output": "minecraft:baked_potato",
       "experience": 0,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "minecraft:baked_potato",
@@ -15385,6 +15410,11 @@
       "output": "minecraft:cooked_mutton",
       "experience": 2,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "minecraft:cooked_mutton",
@@ -15397,6 +15427,11 @@
       "output": "minecraft:bread",
       "experience": 0,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "mite:food_019_cook_1185_smelting",
@@ -15409,6 +15444,11 @@
       "output": "mite:cooked_large_fish",
       "experience": 4,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "mite:food_019_cook_1229_smelting",
@@ -15421,6 +15461,11 @@
       "output": "mite:cooked_worm",
       "experience": 0,
       "cooking_time": 200,
+      "modern_device_times": {
+        "smelting": 200,
+        "smoking": 100,
+        "campfire_cooking": 200
+      },
       "source_required_heat": 1,
       "recipe_ids": [
         "mite:food_019_cook_1280_smelting",
@@ -15430,9 +15475,9 @@
     }
   ],
   "modern_adaptations": [
-    "All modern furnaces and campfires satisfy this batch's source heat level1.",
-    "Smokers and campfires retain their functions with source200-tick food recipes.",
-    "Native recipe history remains for unlocking, but source food XP follows actual player withdrawals and cannot be banked by hoppers; other cooking/minerals retain native XP banking.",
+    "Source food recipes require heat1; furnace heat/fuel enforcement is provided by024.",
+    "Source furnaces and campfires use200-tick food recipes; modern smokers explicitly use100ticks in024.",
+    "Native recipe history remains for unlocking; source cooking XP follows actual player and hopper withdrawals, without a duplicate bank. Unmapped modern results retain native experience.",
     "Skills remain disabled like the default R196 mode; skillsets remain recorded as evidence."
   ]
 }

@@ -19,7 +19,15 @@
 
 023已接入本目录列出的铜矿石、下界金矿石，并新增银矿石、秘银矿石、艾德曼矿石共5条目录叶项。铜、铁、金及煤、青金石、红石、钻石、绿宝石、下界石英继续沿用原版 ID，普通金属矿按 R196 掉矿石本体，新增银/秘银/艾德曼各有一个深板岩变体。另新增 R196 下界虫石对应的 `mite:infested_netherrack`，使用现代银鱼作为暂时的生物适配；这些额外世界方块不伪造百科叶页，不改变359项目录总数。
 
-“已添加”表示身份、采集门槛、源掉落及相关资源已接入；用户于2026-10-13确认023当前交付正常并授权提交，生成与客户端验收见 [023手测](testing/023-ores.md)。矿物熔炼确认了1矿块→1锭和200刻加工；完整炉温、燃料与炉种层级仍待后续制造阶段。新增深板岩变体暂用同种资源包矿石贴图，方块身份和底材生成范围分开。机器数据的 `ore_registration_update` 保存本次定向范围，历史 `summary` 保持不变。
+“已添加”表示身份、采集门槛、源掉落及相关资源已接入；用户于2026-10-13确认023当前交付正常并授权提交，生成与客户端验收见 [023手测](testing/023-ores.md)。023确认了1矿块→1锭和200刻加工，炉温、燃料与炉种层级由下节024批次接入。新增深板岩变体暂用同种资源包矿石贴图，方块身份和底材生成范围分开。机器数据的 `ore_registration_update` 保存本次定向范围，历史 `summary` 保持不变。
+
+## 当前熔炉与岩浆桶注册核对
+
+024新增粘土熔炉、大粘土烤炉、沙石熔炉、黑曜石熔炉和地狱岩熔炉，圆石熔炉沿用 `minecraft:furnace`，以 `lit` 状态表示燃烧。六种炉和六种新增金属岩浆桶共12条目录叶项标为“已添加”；铁岩浆桶继续沿用 `minecraft:lava_bucket`，不为它伪造额外百科条目。所有炉可携带时最多堆叠1个，新增方块和岩浆桶使用原资源包贴图。
+
+六种源炉最高热级为粘土/大粘土/沙石1、圆石2、黑曜石3、地狱岩4；小粘土炉不接受大体积材料或燃料。炉温、燃料时间、批量加工和取出容器通过服务端规则校验；对应制造配方沿用本地R196的形状与难度。岩浆桶燃料为3200刻、热级3，消耗后保留对应金属空桶。装入岩浆时的熔毁概率也按材料复刻；本轮仍保留新版桶的液体源块取放方式，未实现旧版Ctrl放置扣100经验的液体系统。
+
+目录登记不等于用户已完成手测。024验收步骤见 [024炉温、燃料与熔炉测试](testing/024-furnaces.md)，当前等待用户确认后提交；JSON `furnace_registration_update` 保留本次限定范围，015历史数量及早期食品批次快照不改写。
 
 ## 当前工具注册核对
 
@@ -171,12 +179,12 @@
 | 杂项 | [装满水的远古金属桶](https://www.mcmod.cn/item/105517.html) | yc.bucketAncientMetalWater / 1153:[0] | mite:ancient_metal_water_bucket | 已添加 |
 | 杂项 | [装满水的秘银桶](https://www.mcmod.cn/item/37913.html) | yc.bucketMithrilWater / 1151:[0] | mite:mithril_water_bucket | 已添加 |
 | 杂项 | [装满水的艾德曼桶](https://www.mcmod.cn/item/37916.html) | yc.bucketAdamantiumWater / 1152:[0] | mite:adamantium_water_bucket | 已添加 |
-| 杂项 | [装满岩浆的铜桶](https://www.mcmod.cn/item/35749.html) | yc.bucketCopperLava / 1154:[0] | mite:copper_bucket_lava | 待新增 |
-| 杂项 | [装满岩浆的银桶](https://www.mcmod.cn/item/35788.html) | yc.bucketSilverLava / 1155:[0] | mite:silver_bucket_lava | 待新增 |
-| 杂项 | [装满岩浆的金桶](https://www.mcmod.cn/item/36126.html) | yc.bucketGoldLava / 1156:[0] | mite:golden_bucket_lava | 待新增 |
-| 杂项 | [装满岩浆的远古金属桶](https://www.mcmod.cn/item/105070.html) | yc.bucketAncientMetalLava / 1159:[0] | mite:ancient_metal_bucket_lava | 待新增 |
-| 杂项 | [装满岩浆的秘银桶](https://www.mcmod.cn/item/37912.html) | yc.bucketMithrilLava / 1157:[0] | mite:mithril_bucket_lava | 待新增 |
-| 杂项 | [装满岩浆的艾德曼桶](https://www.mcmod.cn/item/37917.html) | yc.bucketAdamantiumLava / 1158:[0] | mite:adamantium_bucket_lava | 待新增 |
+| 杂项 | [装满岩浆的铜桶](https://www.mcmod.cn/item/35749.html) | yc.bucketCopperLava / 1154:[0] | mite:copper_lava_bucket | 已添加 |
+| 杂项 | [装满岩浆的银桶](https://www.mcmod.cn/item/35788.html) | yc.bucketSilverLava / 1155:[0] | mite:silver_lava_bucket | 已添加 |
+| 杂项 | [装满岩浆的金桶](https://www.mcmod.cn/item/36126.html) | yc.bucketGoldLava / 1156:[0] | mite:gold_lava_bucket | 已添加 |
+| 杂项 | [装满岩浆的远古金属桶](https://www.mcmod.cn/item/105070.html) | yc.bucketAncientMetalLava / 1159:[0] | mite:ancient_metal_lava_bucket | 已添加 |
+| 杂项 | [装满岩浆的秘银桶](https://www.mcmod.cn/item/37912.html) | yc.bucketMithrilLava / 1157:[0] | mite:mithril_lava_bucket | 已添加 |
+| 杂项 | [装满岩浆的艾德曼桶](https://www.mcmod.cn/item/37917.html) | yc.bucketAdamantiumLava / 1158:[0] | mite:adamantium_lava_bucket | 已添加 |
 | 杂项 | [装满石头的铜桶](https://www.mcmod.cn/item/39434.html) | yc.bucketCopperStone / 1231:[0] | mite:copper_bucket_stone | 待新增 |
 | 杂项 | [装满石头的银桶](https://www.mcmod.cn/item/39435.html) | yc.bucketSilverStone / 1232:[0] | mite:silver_bucket_stone | 待新增 |
 | 杂项 | [装满石头的金桶](https://www.mcmod.cn/item/39436.html) | yc.bucketGoldStone / 1233:[0] | mite:golden_bucket_stone | 待新增 |
@@ -219,12 +227,12 @@
 | 材料 | [远古金属锁链](https://www.mcmod.cn/item/105067.html) | yc.chainAncientMetal / 1261:[0] | mite:ancient_metal_chain | 待新增 |
 | 材料 | [秘银锁链](https://www.mcmod.cn/item/36245.html) | yc.chainMithril / 1127:[0] | mite:mithril_chain | 待新增 |
 | 材料 | [艾德曼锁链](https://www.mcmod.cn/item/36243.html) | yc.chainAdamantium / 1128:[0] | mite:adamantium_chain | 待新增 |
-| 功能性方块 | [圆石熔炉](https://www.mcmod.cn/item/35616.html) | aqz.aG / 61:[0] | minecraft:furnace | 原版已有，待适配 |
-| 功能性方块 | [粘土熔炉](https://www.mcmod.cn/item/29625.html) | aqz.furnaceClayIdle / 218:[0] | mite:clay_oven | 待新增 |
-| 功能性方块 | [大粘土烤炉](https://www.mcmod.cn/item/33378.html) | aqz.furnaceHardenedClayIdle / 250:[0] | mite:large_clay_oven | 待新增 |
-| 功能性方块 | [沙石熔炉](https://www.mcmod.cn/item/35543.html) | aqz.furnaceSandstoneIdle / 220:[0] | mite:sandstone_furnace | 待新增 |
-| 功能性方块 | [黑曜石熔炉](https://www.mcmod.cn/item/35621.html) | aqz.furnaceObsidianIdle / 222:[0] | mite:obsidian_furnace | 待新增 |
-| 功能性方块 | [地狱岩熔炉](https://www.mcmod.cn/item/35623.html) | aqz.furnaceNetherrackIdle / 224:[0] | mite:netherrack_furnace | 待新增 |
+| 功能性方块 | [圆石熔炉](https://www.mcmod.cn/item/35616.html) | aqz.aG / 61:[0] | minecraft:furnace | 已添加 |
+| 功能性方块 | [粘土熔炉](https://www.mcmod.cn/item/29625.html) | aqz.furnaceClayIdle / 218:[0] | mite:clay_oven | 已添加 |
+| 功能性方块 | [大粘土烤炉](https://www.mcmod.cn/item/33378.html) | aqz.furnaceHardenedClayIdle / 250:[0] | mite:large_clay_oven | 已添加 |
+| 功能性方块 | [沙石熔炉](https://www.mcmod.cn/item/35543.html) | aqz.furnaceSandstoneIdle / 220:[0] | mite:sandstone_furnace | 已添加 |
+| 功能性方块 | [黑曜石熔炉](https://www.mcmod.cn/item/35621.html) | aqz.furnaceObsidianIdle / 222:[0] | mite:obsidian_furnace | 已添加 |
+| 功能性方块 | [地狱岩熔炉](https://www.mcmod.cn/item/35623.html) | aqz.furnaceNetherrackIdle / 224:[0] | mite:netherrack_furnace | 已添加 |
 | 功能性方块 | [铁砧](https://www.mcmod.cn/item/826855.html) | aqz.cm / 145:[0] | minecraft:anvil | 原版已有，待适配 |
 | 功能性方块 | [秘银符文石](https://www.mcmod.cn/item/823804.html) | aqz.runestoneMithril / 247:[0–15] | mite:mithril_runestone | 已添加 |
 | 功能性方块 | [艾德曼符文石](https://www.mcmod.cn/item/823805.html) | aqz.runestoneAdamantium / 198:[0–15] | mite:adamantium_runestone | 已添加 |

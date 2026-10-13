@@ -40,6 +40,7 @@ public final class Mite {
         EquipmentDurability.register(modBus);
         MiteTools.register(modBus);
         MiteWorkbenches.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteFurnaces.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoodPlants.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoodSources.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoods.register(modBus);

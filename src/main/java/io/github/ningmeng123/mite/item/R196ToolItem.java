@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.item;
 import io.github.ningmeng123.mite.registry.MiteTools.Definition;
 import io.github.ningmeng123.mite.registry.MiteTags;
 import io.github.ningmeng123.mite.registry.MiteOreBlocks;
+import io.github.ningmeng123.mite.registry.MiteFurnaces;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolProfile;
@@ -91,6 +92,8 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
     public static Tool tool(Definition definition) {
         List<Tool.Rule> rules = new ArrayList<>();
         int level = definition.harvestLevel();
+        // Furnace minerals use their source material threshold rather than vanilla tier names.
+        if (level < 3) deny(rules, List.of(MiteFurnaces.OBSIDIAN_FURNACE.get()));
         if (level < 3) rules.add(new Tool.Rule(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOrCreateTag(
                 io.github.ningmeng123.mite.registry.MiteTags.RUNESTONES), Optional.of(1.0F), Optional.of(false)));
         // Known R196 mineral thresholds override modern tier names; modern additions use their existing tags below.
@@ -101,6 +104,9 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
         if (level < 3) deny(rules, List.of(Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN,
                 Blocks.EMERALD_ORE, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.EMERALD_BLOCK,
                 Blocks.IRON_BLOCK, Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL));
+        if (definition.family() == ToolFamily.PICKAXE || definition.family() == ToolFamily.WAR_HAMMER)
+            // Source clay materials do not require a minimum harvest level.
+            rules.add(Tool.Rule.minesAndDrops(List.of(MiteFurnaces.CLAY_OVEN.get(), MiteFurnaces.LARGE_CLAY_OVEN.get()), definition.speed()));
         if (level < 2 && (definition.family() == ToolFamily.PICKAXE || definition.family() == ToolFamily.WAR_HAMMER))
             rules.add(new Tool.Rule(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOrCreateTag(BlockTags.MINEABLE_WITH_PICKAXE),
                 Optional.of(1.0F), Optional.of(false)));
@@ -113,6 +119,7 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
                             Blocks.JACK_O_LANTERN, Blocks.MELON), speed));
             }
             case AXE, HATCHET, BATTLE_AXE -> {
+                rules.add(Tool.Rule.minesAndDrops(List.of(MiteFurnaces.SANDSTONE_FURNACE.get()), speed * 0.5F));
                 rules.add(Tool.Rule.minesAndDrops(SANDSTONE, speed * 0.5F));
                 rules.add(Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_AXE, speed));
                 rules.add(Tool.Rule.minesAndDrops(List.of(Blocks.CACTUS, Blocks.CLAY, Blocks.GLASS, Blocks.GLASS_PANE,

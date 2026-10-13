@@ -1,5 +1,7 @@
 {
   "values": [
+    "mite:clay_oven",
+    "mite:large_clay_oven",
     "mite:flint_crafting_table",
     "mite:obsidian_crafting_table",
     "mite:copper_crafting_table",

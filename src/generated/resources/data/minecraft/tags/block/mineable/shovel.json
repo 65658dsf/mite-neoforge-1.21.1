@@ -1,5 +1,7 @@
 {
   "values": [
+    "mite:clay_oven",
+    "mite:sandstone_furnace",
     "mite:nether_gravel"
   ]
 }

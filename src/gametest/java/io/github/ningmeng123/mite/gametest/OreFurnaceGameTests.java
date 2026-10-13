@@ -31,6 +31,7 @@ import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -164,16 +165,18 @@ public final class OreFurnaceGameTests {
         final GameTestHelper helper;
         final ServerPlayer player;
         final EmbeddedChannel channel;
-        final BlockPos furnacePosition, hopperPosition;
-        final BlockState oldFurnace, oldHopper;
+        final BlockPos furnacePosition, hopperPosition, frontPosition;
+        final BlockState oldFurnace, oldHopper, oldFront;
         final AABB area;
         final Set<UUID> oldOrbs = new HashSet<>(), oldItems = new HashSet<>();
-        FurnaceBlockEntity furnace;
+        AbstractFurnaceBlockEntity furnace;
         FurnaceMenu menu;
         Fixture(GameTestHelper helper) {
             this.helper = helper;
             furnacePosition = helper.absolutePos(new BlockPos(1, 2, 1)); hopperPosition = furnacePosition.below();
+            frontPosition = furnacePosition.north();
             oldFurnace = helper.getLevel().getBlockState(furnacePosition); oldHopper = helper.getLevel().getBlockState(hopperPosition);
+            oldFront = helper.getLevel().getBlockState(frontPosition);
             area = new AABB(furnacePosition).inflate(5);
             helper.getLevel().getEntitiesOfClass(ExperienceOrb.class, area).forEach(orb -> oldOrbs.add(orb.getUUID()));
             helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).forEach(drop -> oldItems.add(drop.getUUID()));
@@ -182,13 +185,27 @@ public final class OreFurnaceGameTests {
             Connection connection = new Connection(PacketFlow.SERVERBOUND); channel = new EmbeddedChannel(connection);
             new ServerGamePacketListenerImpl(player.server, connection, player, cookie) { @Override public void send(Packet<?> packet) {} };
             player.moveTo(helper.absolutePos(new BlockPos(1, 3, 2)).getCenter()); player.getInventory().clearContent();
+            // This XP fixture is against the template wall; open the source furnace's actual front.
+            helper.getLevel().setBlockAndUpdate(frontPosition, Blocks.AIR.defaultBlockState());
             helper.getLevel().setBlockAndUpdate(furnacePosition, Blocks.FURNACE.defaultBlockState());
             furnace = (FurnaceBlockEntity) helper.getLevel().getBlockEntity(furnacePosition); open();
         }
         void open() { menu = new FurnaceMenu(73, player.getInventory(), furnace, new SimpleContainerData(4)); player.containerMenu = menu; }
         void cook(Item input, int amount, int expected) {
             helper.assertTrue(furnace.getItem(2).isEmpty(), "The furnace starts with no earlier unclaimed outputs");
-            furnace.setItem(0, new ItemStack(input, amount)); furnace.setItem(1, new ItemStack(Items.COAL, 8));
+            // The withdrawal assertions stay unchanged; the fixture now supplies the real source ore's furnace/fuel tier.
+            String path = BuiltInRegistries.ITEM.getKey(input).getPath();
+            String furnaceId = path.contains("adamantium") ? "mite:netherrack_furnace"
+                    : path.contains("mithril") ? "mite:obsidian_furnace" : "minecraft:furnace";
+            var targetBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(furnaceId));
+            if (!helper.getLevel().getBlockState(furnacePosition).is(targetBlock)) {
+                furnace.clearContent();
+                helper.getLevel().setBlockAndUpdate(furnacePosition, targetBlock.defaultBlockState());
+                furnace = (AbstractFurnaceBlockEntity) helper.getLevel().getBlockEntity(furnacePosition); open();
+            }
+            furnace.setItem(0, new ItemStack(input, amount));
+            furnace.setItem(1, new ItemStack(path.contains("adamantium") ? Items.BLAZE_ROD
+                    : path.contains("mithril") ? Items.LAVA_BUCKET : Items.COAL, path.contains("mithril") ? 1 : 8));
             for (int tick = 0; tick < amount * 200; tick++)
                 AbstractFurnaceBlockEntity.serverTick(helper.getLevel(), furnacePosition, helper.getLevel().getBlockState(furnacePosition), furnace);
             helper.assertValueEqual(furnace.getItem(2).getCount(), expected, "The real source-duration furnace produces the specified output quantity");
@@ -199,7 +216,8 @@ public final class OreFurnaceGameTests {
                     .mapToInt(orb -> orb.getValue() * Math.max(1, orb.saveWithoutId(new CompoundTag()).getInt("Count"))).sum();
         }
         void reload(CompoundTag saved) {
-            furnace = new FurnaceBlockEntity(furnacePosition, helper.getLevel().getBlockState(furnacePosition));
+            var state = helper.getLevel().getBlockState(furnacePosition);
+            furnace = (AbstractFurnaceBlockEntity) ((BaseEntityBlock) state.getBlock()).newBlockEntity(furnacePosition, state);
             furnace.loadWithComponents(saved, helper.getLevel().registryAccess()); helper.getLevel().setBlockEntity(furnace); open();
         }
         @Override public void close() {
@@ -208,6 +226,7 @@ public final class OreFurnaceGameTests {
                 furnace.clearContent();
                 if (helper.getLevel().getBlockEntity(hopperPosition) instanceof HopperBlockEntity hopper) hopper.clearContent();
                 helper.getLevel().setBlockAndUpdate(furnacePosition, oldFurnace); helper.getLevel().setBlockAndUpdate(hopperPosition, oldHopper);
+                helper.getLevel().setBlockAndUpdate(frontPosition, oldFront);
                 helper.getLevel().getEntitiesOfClass(ExperienceOrb.class, area).stream().filter(orb -> !oldOrbs.contains(orb.getUUID())).forEach(ExperienceOrb::discard);
                 helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).stream().filter(drop -> !oldItems.contains(drop.getUUID())).forEach(ItemEntity::discard);
             } finally { channel.finishAndReleaseAll(); }

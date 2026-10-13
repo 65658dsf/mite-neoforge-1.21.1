@@ -148,6 +148,7 @@ def main() -> None:
         output_id = modern_id(source["output"])
         xp = items[source["output"]["item_id"]]["scalars"]["yc.xp_reward"]
         entry = {"input": input_id, "output": output_id, "experience": xp, "cooking_time": 200,
+                 "modern_device_times": {"smelting": 200, "smoking": 100, "campfire_cooking": 200},
                  "source_required_heat": source["required_heat"], "recipe_ids": []}
         for method, suffix in [("smelting", ""), ("smoking", "_from_smoking"), ("campfire_cooking", "_from_campfire_cooking")]:
             # Existing native recipe IDs are overridden, so their former time/XP cannot bypass this data.
@@ -156,7 +157,7 @@ def main() -> None:
             name = output_id.split(":")[1] + suffix if native else "food_019_cook_" + str(source["input_item_id"]) + "_" + method
             write(RESOURCES / "data" / namespace / "recipe" / (name + ".json"), {
                 "type": "minecraft:" + method, "category": "food", "ingredient": {"item": input_id},
-                "result": {"id": output_id, "count": 1}, "experience": float(xp), "cookingtime": 200,
+                "result": {"id": output_id, "count": 1}, "experience": float(xp), "cookingtime": 100 if method == "smoking" else 200,
             })
             entry["recipe_ids"].append(namespace + ":" + name)
         cooking.append(entry)
@@ -165,9 +166,9 @@ def main() -> None:
         "original_food_recipe_count": 202, "dependency_recipe_count": 52,
         "excluded_stone_bucket_dismantling_orders": list(range(887, 894)),
         "recipes": evidence, "cooking": cooking,
-        "modern_adaptations": ["All modern furnaces and campfires satisfy this batch's source heat level1.",
-            "Smokers and campfires retain their functions with source200-tick food recipes.",
-            "Native recipe history remains for unlocking, but source food XP follows actual player withdrawals and cannot be banked by hoppers; other cooking/minerals retain native XP banking.",
+        "modern_adaptations": ["Source food recipes require heat1; furnace heat/fuel enforcement is provided by024.",
+            "Source furnaces and campfires use200-tick food recipes; modern smokers explicitly use100ticks in024.",
+            "Native recipe history remains for unlocking; source cooking XP follows actual player and hopper withdrawals, without a duplicate bank. Unmapped modern results retain native experience.",
             "Skills remain disabled like the default R196 mode; skillsets remain recorded as evidence."]
     })
     print(f"Generated {len(recipes)} crafting recipes, {len(furnace)} source cooking recipes across 3 devices, {len(disabled)} disabled conflicts")

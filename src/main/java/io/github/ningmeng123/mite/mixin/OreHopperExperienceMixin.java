@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.ningmeng123.mite.rules.OreCookingExperienceRules;
+import io.github.ningmeng123.mite.rules.FoodCookingExperienceRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,14 +28,16 @@ public abstract class OreHopperExperienceMixin {
                 || !(level.getBlockEntity(hopperPos.above()) instanceof AbstractFurnaceBlockEntity furnace)) return original.call(world, hopper);
         ItemStack before = furnace.getItem(2);
         String id = before.isEmpty() ? "" : BuiltInRegistries.ITEM.getKey(before.getItem()).toString();
-        if (OreCookingExperienceRules.rewardPerItem(id) <= 0) return original.call(world, hopper);
+        if (OreCookingExperienceRules.rewardPerItem(id) <= 0 && FoodCookingExperienceRules.rewardPerItem(id) <= 0)
+            return original.call(world, hopper);
         var item = before.getItem();
         int count = before.getCount();
         // The outer transfer method covers NeoForge's item-handler capability path as well as vanilla inventories.
         boolean transferred = original.call(world, hopper);
         ItemStack after = furnace.getItem(2);
         int removed = count - (after.is(item) ? after.getCount() : 0);
-        int reward = OreCookingExperienceRules.rewardForTaken(id, removed);
+        int reward = FoodCookingExperienceRules.rewardPerItem(id) >= 0 ? FoodCookingExperienceRules.rewardForTaken(id, removed)
+                : OreCookingExperienceRules.rewardForTaken(id, removed);
         if (!transferred || reward <= 0) return transferred;
         var state = level.getBlockState(furnace.getBlockPos());
         Direction facing = state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)

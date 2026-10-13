@@ -36,6 +36,7 @@ public abstract class OrePlacedStateMixin {
     @Inject(method = "getExplosionResistance", at = @At("RETURN"), cancellable = true)
     private void mite$sourceOreResistance(CallbackInfoReturnable<Float> cir) {
         BlockState state = ((Block)(Object)this).defaultBlockState();
+        if ((Object)this == net.minecraft.world.level.block.Blocks.FURNACE) { cir.setReturnValue(2F); return; }
         if (OreBlockRules.isManaged(state)) cir.setReturnValue(OreBlockRules.hardness(state, cir.getReturnValue()));
     }
 }

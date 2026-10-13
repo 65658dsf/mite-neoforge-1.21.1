@@ -1,5 +1,9 @@
 {
   "values": [
+    "mite:clay_oven",
+    "mite:large_clay_oven",
+    "mite:obsidian_furnace",
+    "mite:netherrack_furnace",
     "mite:silver_ore",
     "mite:deepslate_silver_ore",
     "mite:mithril_ore",

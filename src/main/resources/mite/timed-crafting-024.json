@@ -1,0 +1,12 @@
+{
+  "author": "NingMeng123",
+  "source": "reference-data/runtime-registry.json crafting_recipes; RecipesMITE.java:43-47; aak.java:7",
+  "recipes": {
+    "mite:clay_oven": {"difficulty": 320.0, "required_bench": null, "source_order": 310},
+    "mite:large_clay_oven": {"difficulty": 1440.0, "required_bench": null, "source_order": 92},
+    "mite:sandstone_furnace": {"difficulty": 640.0, "required_bench": null, "source_order": 93},
+    "mite:obsidian_furnace": {"difficulty": 1920.0001, "required_bench": null, "source_order": 94},
+    "mite:netherrack_furnace": {"difficulty": 1280.0, "required_bench": null, "source_order": 95},
+    "minecraft:furnace": {"difficulty": 1600.0, "required_bench": null, "source_order": 104}
+  }
+}

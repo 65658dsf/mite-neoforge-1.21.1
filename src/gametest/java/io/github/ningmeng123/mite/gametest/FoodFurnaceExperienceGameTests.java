@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.survival.PlayerFoodEvents;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.recipebook.ServerPlaceRecipe;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -27,6 +29,10 @@ import net.minecraft.world.inventory.SmokerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -79,7 +85,7 @@ public final class FoodFurnaceExperienceGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void hopperFoodHistorySurvivesSavingWithoutBecomingClaimableExperience(GameTestHelper helper) {
+    public static void successfulHopperFoodWithdrawalsPaySourceExperienceWithoutSavingADuplicateBalance(GameTestHelper helper) {
         try (Fixture f = new Fixture(helper, false)) {
             f.cook(Items.BEEF, 5);
             helper.getLevel().setBlockAndUpdate(f.hopperPosition, Blocks.HOPPER.defaultBlockState());
@@ -91,14 +97,14 @@ public final class FoodFurnaceExperienceGameTests {
             for (int slot = 0; slot < hopper.getContainerSize(); slot++)
                 if (hopper.getItem(slot).is(Items.COOKED_BEEF)) collected += hopper.getItem(slot).getCount();
             helper.assertValueEqual(collected, 5, "Exactly five cooked foods reached the hopper");
-            helper.assertValueEqual(f.xp(), 0, "Automated withdrawal produces no player food experience");
+            helper.assertValueEqual(f.xp(), 20, "Source asi awards four XP for each of the five successfully extracted cooked beef");
             CompoundTag saved = f.furnace.saveWithoutMetadata(helper.getLevel().registryAccess());
             helper.assertValueEqual(saved.getCompound("RecipesUsed").getInt("minecraft:cooked_beef"), 5,
                     "Native recipe history remains available for unlocking, but it is not a food XP balance");
             f.reload(saved);
             f.cook(Items.BEEF, 1);
             f.take(1);
-            helper.assertValueEqual(f.xp(), 4, "After saving and reloading only the newly taken beef pays XP; the five hopper foods never pay retroactively");
+            helper.assertValueEqual(f.xp(), 24, "After saving and reloading the new manual beef adds four; already paid hopper food cannot pay a second history reward");
         }
         helper.succeed();
     }
@@ -137,6 +143,86 @@ public final class FoodFurnaceExperienceGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty")
+    public static void allNineSourceCookedFoodHopperRewardsUseActuallyTransferredQuantities(GameTestHelper helper) {
+        record Cooking(Item input, Item output, int experience) {}
+        for (Cooking source : List.of(new Cooking(Items.PORKCHOP, Items.COOKED_PORKCHOP, 3),
+                new Cooking(Items.COD, Items.COOKED_COD, 3), new Cooking(Items.BEEF, Items.COOKED_BEEF, 4),
+                new Cooking(Items.CHICKEN, Items.COOKED_CHICKEN, 3), new Cooking(Items.MUTTON, Items.COOKED_MUTTON, 2),
+                new Cooking(Items.POTATO, Items.BAKED_POTATO, 0), new Cooking(MiteFoods.get("dough"), Items.BREAD, 0),
+                new Cooking(MiteFoods.get("raw_large_fish"), MiteFoods.get("cooked_large_fish"), 4),
+                new Cooking(MiteFoods.get("raw_worm"), MiteFoods.get("cooked_worm"), 0))) {
+            try (Fixture f = new Fixture(helper, false)) {
+                f.cook(source.input(), 3);
+                helper.getLevel().setBlockAndUpdate(f.hopperPosition, Blocks.HOPPER.defaultBlockState());
+                HopperBlockEntity hopper = (HopperBlockEntity) helper.getLevel().getBlockEntity(f.hopperPosition);
+                for (int tick = 0; tick < 40; tick++)
+                    HopperBlockEntity.pushItemsTick(helper.getLevel(), f.hopperPosition,
+                            helper.getLevel().getBlockState(f.hopperPosition), hopper);
+                helper.assertTrue(f.furnace.getItem(2).isEmpty(), "The actual hopper transfers all three source cooked foods");
+                int transferred = 0;
+                for (int slot = 0; slot < hopper.getContainerSize(); slot++)
+                    if (hopper.getItem(slot).is(source.output())) transferred += hopper.getItem(slot).getCount();
+                helper.assertValueEqual(transferred, 3, "Three actual source food results reach the hopper without duplication");
+                helper.assertValueEqual(f.xp(), source.experience() * 3,
+                        "Successful source asi extraction uses the independently read per-item food reward");
+                f.furnace.awardUsedRecipesAndPopExperience(f.player);
+                helper.assertValueEqual(f.xp(), source.experience() * 3, "Native recipe history cannot duplicate already paid source food transfer rewards");
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void nativeRecipeBookClearingACompletedFoodPaysOnlyTheActuallyInsertedQuantity(GameTestHelper helper) {
+        try (Fixture f = new Fixture(helper, false)) {
+            f.cook(Items.BEEF, 1); f.furnace.setItem(1, ItemStack.EMPTY);
+            var recipe = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING,
+                    new SingleRecipeInput(new ItemStack(Items.PORKCHOP)), helper.getLevel()).orElseThrow();
+            f.player.awardRecipes(List.of(recipe));
+            new ServerPlaceRecipe<SingleRecipeInput, AbstractCookingRecipe>(f.menu).recipeClicked(f.player,
+                    new RecipeHolder<AbstractCookingRecipe>(recipe.id(), recipe.value()), false);
+            helper.assertValueEqual(f.player.getInventory().countItem(Items.COOKED_BEEF), 1,
+                    "The real recipe-book clear-grid action transfers the completed beef to inventory");
+            helper.assertTrue(f.furnace.getItem(2).isEmpty(), "The actual clear-grid action empties the result slot");
+            helper.assertValueEqual(f.xp(), 4, "Clearing an actual completed source beef through the recipe book pays its one-item reward");
+            f.furnace.awardUsedRecipesAndPopExperience(f.player);
+            helper.assertValueEqual(f.xp(), 4, "Recipe-book transfer rewards cannot later become duplicate recipe-history rewards");
+        }
+        try (Fixture f = new Fixture(helper, false)) {
+            f.cook(Items.BEEF, 3); f.furnace.setItem(1, ItemStack.EMPTY);
+            for (int slot = 0; slot < 36; slot++) {
+                ItemStack full = new ItemStack(Items.COBBLESTONE);
+                full.setCount(full.getMaxStackSize()); f.player.getInventory().setItem(slot, full);
+            }
+            int maximum = new ItemStack(Items.COOKED_BEEF).getMaxStackSize();
+            f.player.getInventory().setItem(0, new ItemStack(Items.COOKED_BEEF, maximum - 1));
+            var recipe = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING,
+                    new SingleRecipeInput(new ItemStack(Items.PORKCHOP)), helper.getLevel()).orElseThrow();
+            f.player.awardRecipes(List.of(recipe));
+            new ServerPlaceRecipe<SingleRecipeInput, AbstractCookingRecipe>(f.menu).recipeClicked(f.player,
+                    new RecipeHolder<AbstractCookingRecipe>(recipe.id(), recipe.value()), false);
+            helper.assertValueEqual(f.player.getInventory().countItem(Items.COOKED_BEEF), maximum - 1,
+                    "An actual recipe-book click atomically refuses clearing when all three source results cannot fit");
+            helper.assertValueEqual(f.furnace.getItem(2).getCount(), 3, "A rejected real recipe-book clear preserves all completed source foods");
+            helper.assertValueEqual(f.xp(), 0, "The rejected native recipe-book action has no successful transfer reward");
+            class ClearGridProbe extends ServerPlaceRecipe<SingleRecipeInput, AbstractCookingRecipe> {
+                ClearGridProbe() { super(f.menu); }
+                void clearDirectly() { inventory = f.player.getInventory(); clearGrid(); }
+            }
+            // Exercise the underlying transfer hook as well, independent of the public preflight guard.
+            new ClearGridProbe().clearDirectly();
+            helper.assertValueEqual(f.player.getInventory().countItem(Items.COOKED_BEEF), maximum,
+                    "The underlying partial clear-grid transfer inserts only the one available item");
+            helper.assertValueEqual(f.xp(), 4, "The partial recipe-book transfer rewards only the one inserted source result");
+            helper.assertValueEqual(f.droppedFood(Items.COOKED_BEEF) + f.furnace.getItem(2).getCount(), 2,
+                    "Uninserted native clear-grid leftovers are conserved rather than destroyed or duplicated");
+            f.furnace.awardUsedRecipesAndPopExperience(f.player);
+            helper.assertValueEqual(f.xp(), 4, "Claiming native history cannot pay either the already inserted food or the two uninserted leftovers");
+        }
+        helper.succeed();
+    }
+
     private static final class Fixture implements AutoCloseable {
         private final GameTestHelper helper;
         private final boolean smoker;
@@ -144,8 +230,10 @@ public final class FoodFurnaceExperienceGameTests {
         private final EmbeddedChannel channel;
         private final BlockPos furnacePosition;
         private final BlockPos hopperPosition;
+        private final BlockPos frontPosition;
         private final BlockState previousFurnace;
         private final BlockState previousHopper;
+        private final BlockState previousFront;
         private final AABB area;
         private final Set<UUID> oldOrbs = new HashSet<>();
         private final Set<UUID> oldItems = new HashSet<>();
@@ -157,8 +245,10 @@ public final class FoodFurnaceExperienceGameTests {
             this.smoker = smoker;
             furnacePosition = helper.absolutePos(new BlockPos(1, 2, 1));
             hopperPosition = furnacePosition.below();
+            frontPosition = furnacePosition.north();
             previousFurnace = helper.getLevel().getBlockState(furnacePosition);
             previousHopper = helper.getLevel().getBlockState(hopperPosition);
+            previousFront = helper.getLevel().getBlockState(frontPosition);
             area = new AABB(furnacePosition).inflate(5D);
             for (ExperienceOrb orb : helper.getLevel().getEntitiesOfClass(ExperienceOrb.class, area)) oldOrbs.add(orb.getUUID());
             for (ItemEntity item : helper.getLevel().getEntitiesOfClass(ItemEntity.class, area)) oldItems.add(item.getUUID());
@@ -173,6 +263,8 @@ public final class FoodFurnaceExperienceGameTests {
             };
             player.moveTo(helper.absolutePos(new BlockPos(1, 3, 2)).getCenter());
             player.getInventory().clearContent();
+            // This fixture sits against the template wall; source furnaces need a real open front.
+            helper.getLevel().setBlockAndUpdate(frontPosition, Blocks.AIR.defaultBlockState());
             helper.getLevel().setBlockAndUpdate(furnacePosition, smoker ? Blocks.SMOKER.defaultBlockState() : Blocks.FURNACE.defaultBlockState());
             furnace = (AbstractFurnaceBlockEntity) helper.getLevel().getBlockEntity(furnacePosition);
             openMenu();
@@ -185,7 +277,7 @@ public final class FoodFurnaceExperienceGameTests {
         private void cook(Item raw, int amount) {
             helper.assertTrue(furnace.getItem(2).isEmpty(), "Cooking starts with no unclaimed previous output");
             furnace.setItem(0, new ItemStack(raw, amount));
-            furnace.setItem(1, new ItemStack(Items.COAL, 8));
+            furnace.setItem(1, new ItemStack(smoker ? Items.CHARCOAL : Items.COAL, 8));
             for (int tick = 0; tick < amount * 200; tick++)
                 AbstractFurnaceBlockEntity.serverTick(helper.getLevel(), furnacePosition, helper.getLevel().getBlockState(furnacePosition), furnace);
             helper.assertValueEqual(furnace.getItem(2).getCount(), amount, "Actual two-hundred-tick recipes produced the requested source quantity");
@@ -226,6 +318,7 @@ public final class FoodFurnaceExperienceGameTests {
                 if (helper.getLevel().getBlockEntity(hopperPosition) instanceof HopperBlockEntity hopper) hopper.clearContent();
                 helper.getLevel().setBlockAndUpdate(furnacePosition, previousFurnace);
                 helper.getLevel().setBlockAndUpdate(hopperPosition, previousHopper);
+                helper.getLevel().setBlockAndUpdate(frontPosition, previousFront);
                 helper.getLevel().getEntitiesOfClass(ExperienceOrb.class, area).stream()
                         .filter(orb -> !oldOrbs.contains(orb.getUUID())).forEach(ExperienceOrb::discard);
                 helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).stream()

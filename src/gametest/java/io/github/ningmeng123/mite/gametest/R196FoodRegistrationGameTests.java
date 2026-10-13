@@ -88,14 +88,21 @@ public final class R196FoodRegistrationGameTests {
             food("adamantium_milk_bucket", 1164, 1, 0, 4, "P", 0, true, true, "mite:adamantium_bucket"),
             nonFood("ancient_metal_bucket", 1147, 8),
             nonFood("ancient_metal_water_bucket", 1153, 1),
-            food("ancient_metal_milk_bucket", 1165, 1, 0, 4, "P", 0, true, true, "mite:ancient_metal_bucket")
+            food("ancient_metal_milk_bucket", 1165, 1, 0, 4, "P", 0, true, true, "mite:ancient_metal_bucket"),
+            // Source lava vessel peers enter the furnace/fuel batch, rather than gaining FOOD.
+            nonFood("copper_lava_bucket", 1154, 1),
+            nonFood("silver_lava_bucket", 1155, 1),
+            nonFood("gold_lava_bucket", 1156, 1),
+            nonFood("mithril_lava_bucket", 1157, 1),
+            nonFood("adamantium_lava_bucket", 1158, 1),
+            nonFood("ancient_metal_lava_bucket", 1159, 1)
     );
 
     private R196FoodRegistrationGameTests() {}
 
     @GameTest(template = "empty")
-    public static void allFortyFiveSourceItemsAreRegisteredWithIndependentStackAndEdibilityExpectations(GameTestHelper helper) {
-        helper.assertValueEqual(EXPECTED.size(), 45, "The literal source fixture contains45 new food/material/vessel IDs");
+    public static void allFiftyOneSourceItemsAreRegisteredWithIndependentStackAndEdibilityExpectations(GameTestHelper helper) {
+        helper.assertValueEqual(EXPECTED.size(), 51, "The literal source fixture contains51 new food/material/vessel IDs, including six lava peers");
         Set<String> names = new HashSet<>();
         for (Expected expected : EXPECTED) {
             helper.assertTrue(names.add(expected.path()), "The fixture cannot hide duplicate source registrations");
@@ -108,7 +115,7 @@ public final class R196FoodRegistrationGameTests {
             if (expected.profile() == null)
                 helper.assertTrue(MiteFoodCatalog.profile(stack) == null, "Flour/manure/empty and water buckets are not silently edible: " + expected.id());
         }
-        helper.assertValueEqual(MiteFoods.entries().keySet(), names, "Registered new item set exactly matches all45 independent expected IDs");
+        helper.assertValueEqual(MiteFoods.entries().keySet(), names, "Registered new item set exactly matches all51 independent expected IDs");
         helper.succeed();
     }
 
@@ -162,7 +169,7 @@ public final class R196FoodRegistrationGameTests {
             throw new IllegalStateException("Cannot read the production food resource", exception);
         }
         helper.assertValueEqual(foodRows.size(), 80, "Current production catalog has80 ingestion profiles");
-        helper.assertValueEqual(nonFoodRows.size(), 14, "Source materials and noningestible fluid vessels have14 explicit metadata entries");
+        helper.assertValueEqual(nonFoodRows.size(), 20, "Source materials and noningestible fluid vessels include six lava peers among20 explicit metadata entries");
         for (Expected expected : EXPECTED) {
             JsonObject row = (expected.profile() != null ? foodRows : nonFoodRows).get(expected.id().toString());
             helper.assertTrue(row != null, "Source resource records the actual ID: " + expected.id());

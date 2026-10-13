@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "minecraft:netherrack"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "M M",
+    "MMM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:netherrack_furnace"
+  }
+}

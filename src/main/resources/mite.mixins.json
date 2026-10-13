@@ -65,7 +65,15 @@
     "EntityPortalCooldownMixin",
     "OrePlacedStateMixin",
     "OreExplosionContextMixin",
-    "OreHopperExperienceMixin"
+    "OreHopperExperienceMixin",
+    "FurnaceThermalMixin",
+    "FurnaceThermalMenuMixin",
+    "FurnaceFrontMixin",
+    "FurnaceExplosionMixin",
+    "LavaBucketFillMixin",
+    "FurnaceHardnessMixin",
+    "FurnaceRecipeBookMixin",
+    "FurnaceCampfireHeatMixin"
   ],
   "client": [
     "client.GuiFoodMixin",
