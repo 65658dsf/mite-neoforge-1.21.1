@@ -24,7 +24,7 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-/** Compact controls occupy unused space below the result, clear of recipe book and JEI. @author NingMeng123 */
+/** Controls sit below the result, clear of the inventory nutrition button and recipe book. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT)
 public final class CraftingQualityOverlay {
     private static final int WIDTH = 46;
@@ -33,10 +33,15 @@ public final class CraftingQualityOverlay {
     private CraftingQualityOverlay() {}
 
     private record View(AbstractContainerScreen<?> screen, CraftingQualityPayload state) {
-        int x() { return screen.getGuiLeft() + 126; }
-        int y() { return screen.getGuiTop() + 59; }
+        boolean inventory() { return screen.getMenu() instanceof InventoryMenu; }
+        int x() { return screen.getGuiLeft() + (inventory() ? 136 : 126); }
+        int y() { return screen.getGuiTop() + (inventory() ? 49 : 59); }
+        int width() { return inventory() ? 36 : WIDTH; }
+        int height() { return inventory() ? 11 : HEIGHT; }
+        int arrowWidth() { return inventory() ? 8 : ARROW_WIDTH; }
+        int textOffset() { return inventory() ? 1 : 3; }
         boolean hovered(double mouseX, double mouseY) {
-            return mouseX >= x() && mouseX < x() + WIDTH && mouseY >= y() && mouseY < y() + HEIGHT;
+            return mouseX >= x() && mouseX < x() + width() && mouseY >= y() && mouseY < y() + height();
         }
         boolean canSelect() { return !state.crafting() && state.minQuality() < state.maxQuality(); }
     }
@@ -63,20 +68,24 @@ public final class CraftingQualityOverlay {
         var font = Minecraft.getInstance().font;
         int x = view.x();
         int y = view.y();
+        int width = view.width();
+        int height = view.height();
+        int arrowWidth = view.arrowWidth();
+        int textY = y + view.textOffset();
         int arrowColor = view.canSelect() ? 0xFFFFFF : 0x777777;
         int textColor = view.state().affordable() ? 0xF1D38A : 0xFF7777;
-        graphics.fill(x, y, x + WIDTH, y + HEIGHT, 0xFF373737);
-        graphics.fill(x + ARROW_WIDTH, y + 1, x + WIDTH - ARROW_WIDTH, y + HEIGHT - 1, 0xFF171717);
+        graphics.fill(x, y, x + width, y + height, 0xFF373737);
+        graphics.fill(x + arrowWidth, y + 1, x + width - arrowWidth, y + height - 1, 0xFF171717);
         if (view.canSelect() && view.hovered(event.getMouseX(), event.getMouseY())) {
-            if (event.getMouseX() < x + ARROW_WIDTH) graphics.fill(x, y, x + ARROW_WIDTH, y + HEIGHT, 0xFF616161);
-            if (event.getMouseX() >= x + WIDTH - ARROW_WIDTH) graphics.fill(x + WIDTH - ARROW_WIDTH, y, x + WIDTH, y + HEIGHT, 0xFF616161);
+            if (event.getMouseX() < x + arrowWidth) graphics.fill(x, y, x + arrowWidth, y + height, 0xFF616161);
+            if (event.getMouseX() >= x + width - arrowWidth) graphics.fill(x + width - arrowWidth, y, x + width, y + height, 0xFF616161);
         }
-        graphics.drawCenteredString(font, "<", x + ARROW_WIDTH / 2, y + 3, arrowColor);
-        graphics.drawCenteredString(font, ">", x + WIDTH - ARROW_WIDTH / 2, y + 3, arrowColor);
+        graphics.drawCenteredString(font, "<", x + arrowWidth / 2, textY, arrowColor);
+        graphics.drawCenteredString(font, ">", x + width - arrowWidth / 2, textY, arrowColor);
         String label = qualityName(view.state().quality()).getString();
-        int labelWidth = WIDTH - ARROW_WIDTH * 2 - 2;
+        int labelWidth = width - arrowWidth * 2 - 2;
         if (font.width(label) > labelWidth) label = font.plainSubstrByWidth(label, labelWidth - font.width("…")) + "…";
-        graphics.drawCenteredString(font, label, x + WIDTH / 2, y + 3, textColor);
+        graphics.drawCenteredString(font, label, x + width / 2, textY, textColor);
         if (view.hovered(event.getMouseX(), event.getMouseY())) {
             graphics.renderComponentTooltip(font, tooltip(view.state()), event.getMouseX(), event.getMouseY());
         }
@@ -111,8 +120,8 @@ public final class CraftingQualityOverlay {
         // Consume only our small control strip, never a result-slot or JEI click.
         event.setCanceled(true);
         if (!view.canSelect()) return;
-        int direction = event.getMouseX() < view.x() + ARROW_WIDTH ? -1
-                : event.getMouseX() >= view.x() + WIDTH - ARROW_WIDTH ? 1 : 0;
+        int direction = event.getMouseX() < view.x() + view.arrowWidth() ? -1
+                : event.getMouseX() >= view.x() + view.width() - view.arrowWidth() ? 1 : 0;
         if (direction == 0) return;
         PacketDistributor.sendToServer(new SelectCraftingQualityPayload(view.state().containerId(), direction));
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));

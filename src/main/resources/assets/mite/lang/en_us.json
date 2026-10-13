@@ -166,5 +166,15 @@
   "tooltip.mite.food_sources": "Nutrient sources: %s",
   "tooltip.mite.food_sugar": "Sugar resistance buildup +%s",
   "tooltip.mite.egg_throw": "Use to eat; Ctrl + use to throw",
-  "tooltip.mite.food_native_saturation": "Vanilla saturation +%s"
+  "tooltip.mite.food_native_saturation": "Vanilla saturation +%s",
+  "screen.mite.nutrition.title": "Nutrition Status",
+  "screen.mite.nutrition.open": "View Nutrition Status",
+  "screen.mite.nutrition.waiting": "Waiting for server synchronization…",
+  "screen.mite.nutrition.return_hint": "Press Esc or %s to return to inventory",
+  "screen.mite.nutrition.value": "%s: %s/%s (%s%%)",
+  "screen.mite.nutrition.nutrition": "Nutrition",
+  "screen.mite.nutrition.protein": "Protein",
+  "screen.mite.nutrition.fat": "Fat",
+  "screen.mite.nutrition.plants": "Plant Nutrients",
+  "screen.mite.nutrition.resistance": "Sugar Resistance"
 }

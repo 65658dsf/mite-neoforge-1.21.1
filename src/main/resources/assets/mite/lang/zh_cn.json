@@ -166,5 +166,15 @@
   "tooltip.mite.food_sources": "营养来源：%s",
   "tooltip.mite.food_sugar": "糖抵抗积累 +%s",
   "tooltip.mite.egg_throw": "右键食用；Ctrl + 右键投掷",
-  "tooltip.mite.food_native_saturation": "原版饱和度 +%s"
+  "tooltip.mite.food_native_saturation": "原版饱和度 +%s",
+  "screen.mite.nutrition.title": "营养状态",
+  "screen.mite.nutrition.open": "查看营养状态",
+  "screen.mite.nutrition.waiting": "正在等待服务器同步……",
+  "screen.mite.nutrition.return_hint": "按 Esc 或 %s 返回背包",
+  "screen.mite.nutrition.value": "%s：%s/%s (%s%%)",
+  "screen.mite.nutrition.nutrition": "营养",
+  "screen.mite.nutrition.protein": "蛋白质",
+  "screen.mite.nutrition.fat": "脂肪",
+  "screen.mite.nutrition.plants": "植物营养",
+  "screen.mite.nutrition.resistance": "糖抵抗"
 }
