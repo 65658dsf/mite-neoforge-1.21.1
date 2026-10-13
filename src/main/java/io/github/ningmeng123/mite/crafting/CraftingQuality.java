@@ -53,7 +53,7 @@ public final class CraftingQuality {
         TimedCraftingRecipes.Rule rule = rule(recipe, raw, grid);
         if (rule == null || raw.isEmpty()) return null;
         if (!EquipmentDurability.isManaged(raw)) {
-            return new Result(rule, raw, null, null, false, false, true, 0, 1);
+            return new Result(rule, RunestoneCrafting.apply(player, menu, grid, recipe.id(), raw), null, null, false, false, true, 0, 1);
         }
         boolean repair = recipe.value() instanceof RepairItemRecipe || recipe.value() instanceof LeatherMendingRecipe;
         boolean fixed = repair || recipe.value() instanceof ArmorDyeRecipe;

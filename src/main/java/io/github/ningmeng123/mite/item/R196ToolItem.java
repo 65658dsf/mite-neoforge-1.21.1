@@ -90,6 +90,8 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
     public static Tool tool(Definition definition) {
         List<Tool.Rule> rules = new ArrayList<>();
         int level = definition.harvestLevel();
+        if (level < 3) rules.add(new Tool.Rule(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOrCreateTag(
+                io.github.ningmeng123.mite.registry.MiteTags.RUNESTONES), Optional.of(1.0F), Optional.of(false)));
         // Known R196 mineral thresholds override modern tier names; modern additions use their existing tags below.
         if (level < 4) deny(rules, List.of(Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
                 Blocks.DIAMOND_BLOCK, Blocks.ANCIENT_DEBRIS, Blocks.NETHERITE_BLOCK));

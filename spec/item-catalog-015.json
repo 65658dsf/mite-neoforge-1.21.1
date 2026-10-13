@@ -6172,14 +6172,29 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_runestone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "underworld_021_022_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "16个符文metadata属于同一目录叶项；需后续确定现代状态/数据组件表示，不得把仅注册一个默认物品当全变体完成。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_runestone"
+      },
+      "actual_modern_id": "mite:mithril_runestone",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "legacy_id": 247,
+        "actual_modern_id": "mite:mithril_runestone",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteWorldBlocks.java",
+        "semantics": "本次已注册的方块内容；符文包含0..15变体，地幔/地核没有可携带物品。注册不替代用户客户端验收。",
+        "phase": "021"
+      }
     },
     {
       "mcmod_id": 823805,
@@ -6228,14 +6243,29 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_runestone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "underworld_021_022_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "16个符文metadata属于同一目录叶项；需后续确定现代状态/数据组件表示，不得把仅注册一个默认物品当全变体完成。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_runestone"
+      },
+      "actual_modern_id": "mite:adamantium_runestone",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "legacy_id": 198,
+        "actual_modern_id": "mite:adamantium_runestone",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteWorldBlocks.java",
+        "semantics": "本次已注册的方块内容；符文包含0..15变体，地幔/地核没有可携带物品。注册不替代用户客户端验收。",
+        "phase": "021"
+      }
     },
     {
       "mcmod_id": 35675,
@@ -7098,14 +7128,29 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:mantle",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "underworld_021_022_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "R196 canBeCarried=false；列为方块内容，不能自动声称有正常可获取物品。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mantle"
+      },
+      "actual_modern_id": "mite:mantle",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "legacy_id": 95,
+        "actual_modern_id": "mite:mantle",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteWorldBlocks.java",
+        "semantics": "本次已注册的方块内容；符文包含0..15变体，地幔/地核没有可携带物品。注册不替代用户客户端验收。",
+        "phase": "021"
+      }
     },
     {
       "mcmod_id": 35563,
@@ -17014,14 +17059,29 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:core",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
-      "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
+      "mechanism_status": "underworld_021_022_user_confirmed_current_delivery",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "R196 canBeCarried=false；列为方块内容，不能自动声称有正常可获取物品。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:core"
+      },
+      "actual_modern_id": "mite:core",
+      "status_label": "已添加",
+      "registration_evidence": {
+        "legacy_id": 95,
+        "actual_modern_id": "mite:core",
+        "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteWorldBlocks.java",
+        "semantics": "本次已注册的方块内容；符文包含0..15变体，地幔/地核没有可携带物品。注册不替代用户客户端验收。",
+        "phase": "021"
+      }
     },
     {
       "mcmod_id": 35725,
@@ -18837,5 +18897,21 @@
       "remote_branch": "main",
       "semantics": "注册数量与历史mechanism_status保持不变；确认只覆盖本批当前交付，不补写逐项场景证据。"
     }
+  },
+  "world_registration_update": {
+    "date": "2026-10-13",
+    "author": "NingMeng123",
+    "added_leaf_entries": 4,
+    "runestone_symbols": 32,
+    "carryable_item_types": 2,
+    "noncarryable_block_types": 2,
+    "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteWorldBlocks.java",
+    "verification": "docs/testing/021-underworld-portals.md",
+    "delivery_confirmation": {
+      "date": "2026-10-13",
+      "source": "用户确认022修复后的当前交付正常并授权提交GitHub",
+      "semantics": "不补写每个场景、旧存档或双客户端联机的独立手测结果"
+    },
+    "semantics": "summary仍是015历史基线；不把4条目录叶项或32符号作为全量规则完成声明。"
   }
 }

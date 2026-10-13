@@ -1,0 +1,601 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "cases": [
+    {
+      "seed": "0",
+      "chunk_x": 0,
+      "chunk_z": 0,
+      "sha256": "99f3bf4de426a190b4441359b89b8f6c9bbf3119bf2634e82eca4e97c7b844ca",
+      "counts": {
+        "air": 4772,
+        "stone": 51097,
+        "bedrock": 9147,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 520
+      },
+      "mycelium_posts": [
+        {
+          "x": 5,
+          "z": -9,
+          "seed": "4971245752513619168"
+        },
+        {
+          "x": 40,
+          "z": 19,
+          "seed": "-3284115464674353568"
+        }
+      ]
+    },
+    {
+      "seed": "0",
+      "chunk_x": 1,
+      "chunk_z": -2,
+      "sha256": "f974e37997bc79e5c6765a3a18bd126adcc9016c55c7aee2f6e6a99e44c9d951",
+      "counts": {
+        "air": 4169,
+        "stone": 51496,
+        "bedrock": 9365,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 506
+      },
+      "mycelium_posts": [
+        {
+          "x": 5,
+          "z": -9,
+          "seed": "4971245752513619168"
+        }
+      ]
+    },
+    {
+      "seed": "0",
+      "chunk_x": -7,
+      "chunk_z": 11,
+      "sha256": "d4553feae0c6eb60116570f15e567f9b7b770be30d578d4765e67dfc8aeea0f9",
+      "counts": {
+        "air": 10702,
+        "stone": 47176,
+        "bedrock": 7149,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 509
+      },
+      "mycelium_posts": [
+        {
+          "x": -69,
+          "z": 177,
+          "seed": "-7135601399913449114"
+        }
+      ]
+    },
+    {
+      "seed": "0",
+      "chunk_x": 1024,
+      "chunk_z": -1024,
+      "sha256": "c803b09973429abab7f948691e7e36a9d609ee9f7e2ab07c7869b9fe9e48d2c2",
+      "counts": {
+        "air": 8127,
+        "stone": 50649,
+        "bedrock": 6241,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 519
+      },
+      "mycelium_posts": [
+        {
+          "x": 16388,
+          "z": -16344,
+          "seed": "-586043991766735214"
+        },
+        {
+          "x": 16414,
+          "z": -16399,
+          "seed": "7331450521781996474"
+        },
+        {
+          "x": 16410,
+          "z": -16348,
+          "seed": "-1702430819825042068"
+        },
+        {
+          "x": 16430,
+          "z": -16378,
+          "seed": "3203769913188010106"
+        }
+      ]
+    },
+    {
+      "seed": "0",
+      "chunk_x": -11,
+      "chunk_z": 1,
+      "sha256": "6ca9933a2752717d85e07640be138d752857896a06b9e56453c20ae76a0286df",
+      "counts": {
+        "air": 9178,
+        "stone": 40361,
+        "bedrock": 15475,
+        "water": 0,
+        "cobweb": 2,
+        "mantle": 520
+      },
+      "mycelium_posts": [
+        {
+          "x": -169,
+          "z": 58,
+          "seed": "5206325739012276506"
+        }
+      ]
+    },
+    {
+      "seed": "1",
+      "chunk_x": 0,
+      "chunk_z": 0,
+      "sha256": "e44a30d146fef98e884980585501317b1cfcd95aae75bb75baef01169f5b1fc1",
+      "counts": {
+        "air": 19830,
+        "stone": 37501,
+        "bedrock": 7491,
+        "water": 207,
+        "cobweb": 0,
+        "mantle": 507
+      },
+      "mycelium_posts": [
+        {
+          "x": 28,
+          "z": 0,
+          "seed": "-8681097683720274448"
+        }
+      ]
+    },
+    {
+      "seed": "1",
+      "chunk_x": 1,
+      "chunk_z": -2,
+      "sha256": "a9885cc572d9ec7407eac185075713c0f8744053d84851402e9061b9b4681cdd",
+      "counts": {
+        "air": 18055,
+        "stone": 40229,
+        "bedrock": 6287,
+        "water": 430,
+        "cobweb": 0,
+        "mantle": 535
+      },
+      "mycelium_posts": [
+        {
+          "x": 28,
+          "z": 0,
+          "seed": "-8681097683720274448"
+        }
+      ]
+    },
+    {
+      "seed": "1",
+      "chunk_x": -7,
+      "chunk_z": 11,
+      "sha256": "2603dd8eae222fd0d52099ab10bebe6fee3aaf1c3f89fce32d545fb852aea9dd",
+      "counts": {
+        "air": 18426,
+        "stone": 39204,
+        "bedrock": 7421,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 485
+      },
+      "mycelium_posts": [
+        {
+          "x": -103,
+          "z": 175,
+          "seed": "-4867323987611826366"
+        }
+      ]
+    },
+    {
+      "seed": "1",
+      "chunk_x": 1024,
+      "chunk_z": -1024,
+      "sha256": "3cf5f7a8282517d42823dafd97df132ebd790c2846355f4c12767704ce89a26a",
+      "counts": {
+        "air": 15041,
+        "stone": 43610,
+        "bedrock": 6046,
+        "water": 337,
+        "cobweb": 0,
+        "mantle": 502
+      },
+      "mycelium_posts": [
+        {
+          "x": 16368,
+          "z": -16402,
+          "seed": "8527283390372474288"
+        },
+        {
+          "x": 16383,
+          "z": -16378,
+          "seed": "-1580717773385755150"
+        },
+        {
+          "x": 16400,
+          "z": -16349,
+          "seed": "7004638313122831922"
+        }
+      ]
+    },
+    {
+      "seed": "1",
+      "chunk_x": -11,
+      "chunk_z": 1,
+      "sha256": "2471807a1c8939572a0f5e519960803052c11609781ef153f17ed5a5f9e8acee",
+      "counts": {
+        "air": 8560,
+        "stone": 52185,
+        "bedrock": 4289,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 502
+      },
+      "mycelium_posts": [
+        {
+          "x": -157,
+          "z": 59,
+          "seed": "2470644210141751902"
+        }
+      ]
+    },
+    {
+      "seed": "123456789",
+      "chunk_x": 0,
+      "chunk_z": 0,
+      "sha256": "1774211eb910379171c6036c6ef06a5860b5a8c53a948ee06c80bd9a9e2631ad",
+      "counts": {
+        "air": 12452,
+        "stone": 49911,
+        "bedrock": 2659,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 514
+      },
+      "mycelium_posts": [
+        {
+          "x": -27,
+          "z": 38,
+          "seed": "2043420417342900093"
+        },
+        {
+          "x": 32,
+          "z": 27,
+          "seed": "-5236198117469117296"
+        }
+      ]
+    },
+    {
+      "seed": "123456789",
+      "chunk_x": 1,
+      "chunk_z": -2,
+      "sha256": "7bc0ef9c7577af911b2a06807a0dfc65a10d880beec7429bc4cface52e5c2b78",
+      "counts": {
+        "air": 17784,
+        "stone": 43400,
+        "bedrock": 3831,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 521
+      },
+      "mycelium_posts": [
+        {
+          "x": 61,
+          "z": -60,
+          "seed": "-8274714561714710534"
+        }
+      ]
+    },
+    {
+      "seed": "123456789",
+      "chunk_x": -7,
+      "chunk_z": 11,
+      "sha256": "ea4dd9164dcd63f4d6ad07e6de7e51f64758dff03b6c6479bb5574fc7b6815f2",
+      "counts": {
+        "air": 16661,
+        "stone": 41268,
+        "bedrock": 7106,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 501
+      },
+      "mycelium_posts": [
+        {
+          "x": -132,
+          "z": 153,
+          "seed": "-375341948402806885"
+        },
+        {
+          "x": -107,
+          "z": 186,
+          "seed": "6335036091692311003"
+        }
+      ]
+    },
+    {
+      "seed": "123456789",
+      "chunk_x": 1024,
+      "chunk_z": -1024,
+      "sha256": "a188d35521fdea15f6b513a1894e812e99bdb28a610edd13ea39696c1d0c5e37",
+      "counts": {
+        "air": 19351,
+        "stone": 37652,
+        "bedrock": 8028,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 505
+      },
+      "mycelium_posts": []
+    },
+    {
+      "seed": "123456789",
+      "chunk_x": -11,
+      "chunk_z": 1,
+      "sha256": "9cdad4d3a4f12d92192f6ada1787a441c9870d654cef0802ab03dd8e9b2b36db",
+      "counts": {
+        "air": 19469,
+        "stone": 39002,
+        "bedrock": 6562,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 503
+      },
+      "mycelium_posts": []
+    },
+    {
+      "seed": "-987654321",
+      "chunk_x": 0,
+      "chunk_z": 0,
+      "sha256": "efef4abda8196e37a338f2e47d25542601fcc586c5aace276d70f514ab749793",
+      "counts": {
+        "air": 3746,
+        "stone": 52603,
+        "bedrock": 8660,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 527
+      },
+      "mycelium_posts": [
+        {
+          "x": -23,
+          "z": 4,
+          "seed": "1935062854022042941"
+        },
+        {
+          "x": -10,
+          "z": 23,
+          "seed": "-647643626154700003"
+        },
+        {
+          "x": 43,
+          "z": 6,
+          "seed": "-3461238738235448063"
+        }
+      ]
+    },
+    {
+      "seed": "-987654321",
+      "chunk_x": 1,
+      "chunk_z": -2,
+      "sha256": "0a7a756b3bb559c231e73750e092489ef5ed5ce2453a3f28dfdd631b74978ca3",
+      "counts": {
+        "air": 5268,
+        "stone": 53244,
+        "bedrock": 6516,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 508
+      },
+      "mycelium_posts": [
+        {
+          "x": 43,
+          "z": 6,
+          "seed": "-3461238738235448063"
+        }
+      ]
+    },
+    {
+      "seed": "-987654321",
+      "chunk_x": -7,
+      "chunk_z": 11,
+      "sha256": "41dfacad690495cef07ecc43628ea6cb6d8da7166f2a6c5d60c1e6f937244c7e",
+      "counts": {
+        "air": 0,
+        "stone": 58926,
+        "bedrock": 6098,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 512
+      },
+      "mycelium_posts": [
+        {
+          "x": -137,
+          "z": 205,
+          "seed": "5798389691978985690"
+        },
+        {
+          "x": -136,
+          "z": 213,
+          "seed": "-4658613426988160311"
+        },
+        {
+          "x": -121,
+          "z": 151,
+          "seed": "8150207540251723518"
+        },
+        {
+          "x": -102,
+          "z": 168,
+          "seed": "5567501060074980574"
+        },
+        {
+          "x": -73,
+          "z": 150,
+          "seed": "-5120390690796170543"
+        }
+      ]
+    },
+    {
+      "seed": "-987654321",
+      "chunk_x": 1024,
+      "chunk_z": -1024,
+      "sha256": "b2dac55f1d65ff5dc3733b26a2e3959f48df0402794bf5b1d694e8b9dcfe81a4",
+      "counts": {
+        "air": 12,
+        "stone": 57639,
+        "bedrock": 7358,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 527
+      },
+      "mycelium_posts": [
+        {
+          "x": 16394,
+          "z": -16349,
+          "seed": "7681878874784798973"
+        },
+        {
+          "x": 16400,
+          "z": -16401,
+          "seed": "2043955768315131186"
+        },
+        {
+          "x": 16407,
+          "z": -16398,
+          "seed": "-8413047350652014815"
+        },
+        {
+          "x": 16427,
+          "z": -16344,
+          "seed": "4983728078656053471"
+        }
+      ]
+    },
+    {
+      "seed": "-987654321",
+      "chunk_x": -11,
+      "chunk_z": 1,
+      "sha256": "f46a25aaa70c4d2a0a690856699ec5c28bd64fe6cf3a4b000a69610dba908fac",
+      "counts": {
+        "air": 5115,
+        "stone": 55596,
+        "bedrock": 4339,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 486
+      },
+      "mycelium_posts": [
+        {
+          "x": -179,
+          "z": 3,
+          "seed": "-3020927239043781165"
+        },
+        {
+          "x": -139,
+          "z": -6,
+          "seed": "-5834522351124529225"
+        },
+        {
+          "x": -135,
+          "z": 60,
+          "seed": "7677697394135541619"
+        }
+      ]
+    },
+    {
+      "seed": "9223372036854775807",
+      "chunk_x": 0,
+      "chunk_z": 0,
+      "sha256": "f86cf51363693b17c01db121a20816d356b5aad62d825959fad8e5a7b336b6eb",
+      "counts": {
+        "air": 8284,
+        "stone": 50279,
+        "bedrock": 6459,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 514
+      },
+      "mycelium_posts": [
+        {
+          "x": 39,
+          "z": 17,
+          "seed": "1013066582009642896"
+        }
+      ]
+    },
+    {
+      "seed": "9223372036854775807",
+      "chunk_x": 1,
+      "chunk_z": -2,
+      "sha256": "61f9d44672591196818ba3e9d36cdee082c5cffacda58931d3d08282e49dc2a0",
+      "counts": {
+        "air": 10422,
+        "stone": 45865,
+        "bedrock": 8745,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 504
+      },
+      "mycelium_posts": [
+        {
+          "x": 5,
+          "z": -36,
+          "seed": "9103060969814600030"
+        }
+      ]
+    },
+    {
+      "seed": "9223372036854775807",
+      "chunk_x": -7,
+      "chunk_z": 11,
+      "sha256": "56fb7c3fa1348b09f48749b13da255671ed488e76aad70b9dee73683aea96c84",
+      "counts": {
+        "air": 19920,
+        "stone": 43886,
+        "bedrock": 1148,
+        "water": 70,
+        "cobweb": 0,
+        "mantle": 512
+      },
+      "mycelium_posts": []
+    },
+    {
+      "seed": "9223372036854775807",
+      "chunk_x": 1024,
+      "chunk_z": -1024,
+      "sha256": "383964e7199903bd01832614cdc58783f5142b9d60fcbc528ac83d33b11fa271",
+      "counts": {
+        "air": 292,
+        "stone": 60803,
+        "bedrock": 3928,
+        "water": 0,
+        "cobweb": 0,
+        "mantle": 513
+      },
+      "mycelium_posts": []
+    },
+    {
+      "seed": "9223372036854775807",
+      "chunk_x": -11,
+      "chunk_z": 1,
+      "sha256": "99d1dc63342d877979fdd3391741562046b0d28771f81cc2bbba16d90dc9ce38",
+      "counts": {
+        "air": 18066,
+        "stone": 37547,
+        "bedrock": 9227,
+        "water": 188,
+        "cobweb": 0,
+        "mantle": 508
+      },
+      "mycelium_posts": []
+    }
+  ],
+  "mode": "guarded_reference_bytecode_terrain_only",
+  "game_main_invoked": false,
+  "block_order": "(local_x * 16 + local_z) * 256 + world_y",
+  "mantle_code": 255,
+  "helper_sha256": "d883ae461551b1b827743444327dd5082d7fb54eaccc190c6a8a918af915185c"
+}

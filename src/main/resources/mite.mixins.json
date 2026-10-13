@@ -55,7 +55,14 @@
     "FoodLeavesWindfallMixin",
     "FoodFishingBaitMixin",
     "FoodFurnaceResultExperienceMixin",
-    "FoodFurnaceExperienceMixin"
+    "FoodFurnaceExperienceMixin",
+    "PortalShapeMixin",
+    "BaseFireBlockPortalMixin",
+    "NetherPortalBlockMixin",
+    "MantleWaterFlowMixin",
+    "MantleBucketMixin",
+    "MantleFireContactMixin",
+    "EntityPortalCooldownMixin"
   ],
   "client": [
     "client.GuiFoodMixin",

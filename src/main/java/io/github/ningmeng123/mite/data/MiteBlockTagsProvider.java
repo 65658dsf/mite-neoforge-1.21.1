@@ -21,6 +21,15 @@ public final class MiteBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
+        tag(BlockTags.WITHER_IMMUNE).add(io.github.ningmeng123.mite.registry.MiteWorldBlocks.MANTLE.get(),
+                io.github.ningmeng123.mite.registry.MiteWorldBlocks.CORE.get());
+        tag(BlockTags.DRAGON_IMMUNE).add(io.github.ningmeng123.mite.registry.MiteWorldBlocks.MANTLE.get(),
+                io.github.ningmeng123.mite.registry.MiteWorldBlocks.CORE.get());
+        tag(MiteTags.RUNESTONES).add(io.github.ningmeng123.mite.registry.MiteWorldBlocks.MITHRIL_RUNESTONE.get(),
+                io.github.ningmeng123.mite.registry.MiteWorldBlocks.ADAMANTIUM_RUNESTONE.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).addTag(MiteTags.RUNESTONES);
+        tag(BlockTags.NEEDS_IRON_TOOL).addTag(MiteTags.RUNESTONES);
+        tag(MiteTags.UNDERWORLD_ORE_REPLACEABLES).add(Blocks.STONE, Blocks.DEEPSLATE);
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(MiteResourceBlocks.NETHER_GRAVEL.get());
         MiteWorkbenches.TABLES.values().forEach(block -> tag(BlockTags.MINEABLE_WITH_AXE).add(block.get()));
         // The R196 material match alone is insufficient: whole glass/ice require harvest tier 1.

@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rune=0": {
+      "model": "mite:block/mithril_runestone_0"
+    },
+    "rune=1": {
+      "model": "mite:block/mithril_runestone_1"
+    },
+    "rune=10": {
+      "model": "mite:block/mithril_runestone_10"
+    },
+    "rune=11": {
+      "model": "mite:block/mithril_runestone_11"
+    },
+    "rune=12": {
+      "model": "mite:block/mithril_runestone_12"
+    },
+    "rune=13": {
+      "model": "mite:block/mithril_runestone_13"
+    },
+    "rune=14": {
+      "model": "mite:block/mithril_runestone_14"
+    },
+    "rune=15": {
+      "model": "mite:block/mithril_runestone_15"
+    },
+    "rune=2": {
+      "model": "mite:block/mithril_runestone_2"
+    },
+    "rune=3": {
+      "model": "mite:block/mithril_runestone_3"
+    },
+    "rune=4": {
+      "model": "mite:block/mithril_runestone_4"
+    },
+    "rune=5": {
+      "model": "mite:block/mithril_runestone_5"
+    },
+    "rune=6": {
+      "model": "mite:block/mithril_runestone_6"
+    },
+    "rune=7": {
+      "model": "mite:block/mithril_runestone_7"
+    },
+    "rune=8": {
+      "model": "mite:block/mithril_runestone_8"
+    },
+    "rune=9": {
+      "model": "mite:block/mithril_runestone_9"
+    }
+  }
+}

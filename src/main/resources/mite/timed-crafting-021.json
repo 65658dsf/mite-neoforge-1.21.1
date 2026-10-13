@@ -1,0 +1,9 @@
+{
+  "author": "NingMeng123",
+  "source": "spec/underworld-021.json entry_recipes",
+  "recipes": {
+    "mite:mithril_runestone": {"difficulty": 3084.4443, "required_bench": "mithril", "source_order": 102},
+    "mite:adamantium_runestone": {"difficulty": 11617.777, "required_bench": "adamantium", "source_order": 103},
+    "minecraft:flint_and_steel": {"difficulty": 188.88889, "required_bench": "iron", "source_order": 361}
+  }
+}

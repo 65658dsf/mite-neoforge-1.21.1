@@ -61,7 +61,7 @@ public final class TimedCraftingController {
         ItemStack raw = recipe.get().value().assemble(grid.asCraftInput(), player.level().registryAccess());
         CraftingQuality.Result quality = CraftingQuality.resolve(player, menu, grid, recipe.get(), raw);
         if (quality == null) return null;
-        if (player instanceof ServerPlayer && quality.quality() != null) {
+        if (player instanceof ServerPlayer && (quality.quality() != null || raw.getItem() instanceof io.github.ningmeng123.mite.item.RunestoneItem)) {
             ItemStack display = WorkbenchRules.allows(menu, quality.stack())
                     && CraftingAccessRules.canCraft(grid, quality.stack()) ? quality.stack() : ItemStack.EMPTY;
             if (!ItemStack.matches(menu.getSlot(0).getItem(), display)) {
@@ -96,6 +96,11 @@ public final class TimedCraftingController {
     public static void selectQuality(ServerPlayer player, AbstractContainerMenu menu, int direction) {
         if (player.containerMenu != menu || direction != 1 && direction != -1 || !menu.stillValid(player)) return;
         Prepared prepared = prepare(player, menu);
+        if (prepared != null && RunestoneCrafting.select(player, menu, direction)) {
+            cancel(player);
+            prepare(player, menu);
+            return;
+        }
         if (prepared == null || prepared.quality().quality() == null || prepared.quality().fixed()) return;
         cancel(player);
         CraftingQuality.select(player, menu, prepared.quality(), direction);
@@ -105,6 +110,7 @@ public final class TimedCraftingController {
     public static void forget(ServerPlayer player) {
         cancel(player);
         CraftingQuality.clear(player);
+        RunestoneCrafting.clear(player);
         CraftingQualityPayload old = QUALITY_UPDATES.remove(player.getUUID());
         if (old != null) CraftingQualityPayload.send(player, old.containerId(), 0, 0, 0, 0, 0, false, false, false);
     }
@@ -117,6 +123,7 @@ public final class TimedCraftingController {
         var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
         if (server == null || !server.isSameThread()) return;
         CraftingQuality.inputsChanged(menu);
+        RunestoneCrafting.inputsChanged(menu);
         SESSIONS.entrySet().removeIf(entry -> {
             Session session = entry.getValue();
             if (session.prepared.menu() != menu || matches(session.inputs, session.prepared.grid())) return false;
@@ -237,6 +244,10 @@ public final class TimedCraftingController {
     public static int consumptionFor(CraftingContainer container, int vanillaCount) {
         Consumption consumption = COMPLETING_CONSUMPTION.get();
         return consumption != null && consumption.grid() == container ? consumption.amount() : vanillaCount;
+    }
+    public static boolean isCompletingGrid(CraftingContainer grid) {
+        Consumption consumption = COMPLETING_CONSUMPTION.get();
+        return consumption != null && consumption.grid() == grid;
     }
 
     private static void publishQuality(ServerPlayer player, Prepared prepared) {

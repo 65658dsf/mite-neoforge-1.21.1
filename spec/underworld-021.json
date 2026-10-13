@@ -1,0 +1,1249 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "original_author": "Avernite",
+  "source_version": "MITE 1.6.4 R196",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "purpose": "021 地底世界、地幔、地核和传送门的独立来源规格；这是证据数据，不自动代表所有规则已经实现。",
+  "evidence_status": "decompiled_and_runtime_registry_cross_checked",
+  "sources": [
+    {
+      "class": "aqz",
+      "source_file": "Block.java",
+      "class_sha256": "82096b99dd4ff878515b4fe1d67b76f7ec51b8fe366624c203382e39ec649ddc",
+      "decompiled_relative_path": ".reference/r196/decompiled/aqz.java"
+    },
+    {
+      "class": "BlockMantleOrCore",
+      "source_file": "BlockMantleOrCore.java",
+      "class_sha256": "3be499fc80a71ee75f9ccb89683ee1b9aea78bcd0fdf6d1432773ed2aa1d3e9e",
+      "decompiled_relative_path": ".reference/r196/decompiled/BlockMantleOrCore.java"
+    },
+    {
+      "class": "BlockRunestone",
+      "source_file": "BlockRunestone.java",
+      "class_sha256": "155170fcc0c69c006eb457a6eb2524165ea8f08b4457c3e494514d44f9b3c0a4",
+      "decompiled_relative_path": ".reference/r196/decompiled/BlockRunestone.java"
+    },
+    {
+      "class": "ItemRunestone",
+      "source_file": "ItemRunestone.java",
+      "class_sha256": "f1b789cd7997d815797bb7180b56b73d31b1626ad6754a2f5496855c638d1521",
+      "decompiled_relative_path": ".reference/r196/decompiled/ItemRunestone.java"
+    },
+    {
+      "class": "BiomeGenUnderworld",
+      "source_file": "BiomeGenUnderworld.java",
+      "class_sha256": "56487495e5f82984820dd5d1e32abbd669de02e5929b9dc720e580c99c1f4de8",
+      "decompiled_relative_path": ".reference/r196/decompiled/BiomeGenUnderworld.java"
+    },
+    {
+      "class": "ChunkProviderUnderworld",
+      "source_file": "ChunkProviderUnderworld.java",
+      "class_sha256": "7e7a7f6fc31ce092695bd6ff9105da754bffc7929440329d335ece9477b43db0",
+      "decompiled_relative_path": ".reference/r196/decompiled/ChunkProviderUnderworld.java"
+    },
+    {
+      "class": "WorldProviderUnderworld",
+      "source_file": "WorldProviderUnderworld.java",
+      "class_sha256": "85e65ed87d2f81f2bebc0a93baf94ddac9cb68bd3b6b6987ae235e5068d372ef",
+      "decompiled_relative_path": ".reference/r196/decompiled/WorldProviderUnderworld.java"
+    },
+    {
+      "class": "ChunkPostField",
+      "source_file": "ChunkPostField.java",
+      "class_sha256": "a4e2a884cb31539b2a7074d47ea1dd087a9b09c4d993ad3d71b813aaab8f293d",
+      "decompiled_relative_path": ".reference/r196/decompiled/ChunkPostField.java"
+    },
+    {
+      "class": "adr",
+      "source_file": "Chunk.java",
+      "class_sha256": "d873d429cde435b7688205e6b82b1439d75b369ffaca15d1b0670b32710fc74a",
+      "decompiled_relative_path": ".reference/r196/decompiled/adr.java"
+    },
+    {
+      "class": "aps",
+      "source_file": "BlockPortal.java",
+      "class_sha256": "0cb2cbaa7f3f07863a97c8559271ef2ddb41b66efe5ccc4199d6eda56b3e9520",
+      "decompiled_relative_path": ".reference/r196/decompiled/aps.java"
+    },
+    {
+      "class": "nn",
+      "source_file": "Entity.java",
+      "class_sha256": "dad35ad53c3c2cf6807d6fabdb582af6255f75046e075d6efbacf56f28e0b81e",
+      "decompiled_relative_path": ".reference/r196/decompiled/nn.java"
+    },
+    {
+      "class": "abw",
+      "source_file": "World.java",
+      "class_sha256": "0affe2c94d273750546e4d36d7d124072100f57b2dffba6d51619672f76dda36",
+      "decompiled_relative_path": ".reference/r196/decompiled/abw.java"
+    },
+    {
+      "class": "acj",
+      "source_file": "Teleporter.java",
+      "class_sha256": "cd2dd91f7743eaa644f28ad8f5e0738add9f4440d2698d75591f5c9837a3e145",
+      "decompiled_relative_path": ".reference/r196/decompiled/acj.java"
+    },
+    {
+      "class": "aep",
+      "source_file": "ChunkProviderHell.java",
+      "class_sha256": "e16214670f4cbb7aec22eada72ecffaa665888398c5a8c4bac59c08f78bac936",
+      "decompiled_relative_path": ".reference/r196/decompiled/aep.java"
+    },
+    {
+      "class": "acu",
+      "source_file": "BiomeDecorator.java",
+      "class_sha256": "aa549e66096550a1e14931f1555bdfa005f10a10cb82a8035606bec10162803d",
+      "decompiled_relative_path": ".reference/r196/decompiled/acu.java"
+    },
+    {
+      "class": "afq",
+      "source_file": "WorldGenMinable.java",
+      "class_sha256": "246a3bdc54b9b022980fd1703d9a056dd4515c00e9d8d5075f731498a3fa6ff1",
+      "decompiled_relative_path": ".reference/r196/decompiled/afq.java"
+    },
+    {
+      "class": "wd",
+      "source_file": "SlotCrafting.java",
+      "class_sha256": "8d696d80ccb044055a0e0f60372af0443b0e5b1d8f00b31d9390d2f04af4d8bf",
+      "decompiled_relative_path": ".reference/r196/decompiled/wd.java"
+    },
+    {
+      "class": "xw",
+      "source_file": "ItemFlintAndSteel.java",
+      "class_sha256": "638fe96e1562d4582223431b3dac1c8795269428fe5f8e7741177443198e0c66",
+      "decompiled_relative_path": ".reference/r196/decompiled/xw.java"
+    },
+    {
+      "class": "RecipeHelper",
+      "source_file": "RecipeHelper.java",
+      "class_sha256": "7bc8ccc8f101da9cd2eb3fc9b1015d12a7b13c6462d44b268bcd404c2716628b",
+      "decompiled_relative_path": ".reference/r196/decompiled/RecipeHelper.java"
+    },
+    {
+      "class": "afp",
+      "source_file": "WorldGenDungeons.java",
+      "class_sha256": "65d36b3d63b96d09f937ebbaba39eda401d08e9e903eb8cb26f1314e44ea27c3",
+      "decompiled_relative_path": ".reference/r196/decompiled/afp.java"
+    },
+    {
+      "class": "apq",
+      "source_file": "BlockObsidian.java",
+      "class_sha256": "9bb959fb39c76cac7d0c595a62578c9558adef8afafc9af6ee3340d2d013022b",
+      "decompiled_relative_path": ".reference/r196/decompiled/apq.java"
+    },
+    {
+      "class": "RecipesMITE",
+      "source_file": "RecipesMITE.java",
+      "class_sha256": "7698d68904d7aeeec605d2f963db9e86a06e451b4ab91470e72232838ac42d52",
+      "decompiled_relative_path": ".reference/r196/decompiled/RecipesMITE.java"
+    },
+    {
+      "class": "anb",
+      "source_file": "BlockBed.java",
+      "class_sha256": "a1ebca339bbb459706f47c8142c8aa87aff58fcf7255ff05fb478bd3d271a06f",
+      "decompiled_relative_path": ".reference/r196/decompiled/anb.java"
+    },
+    {
+      "class": "uf",
+      "source_file": "EntityPlayer.java",
+      "class_sha256": "6aadb6b6596d5328fe512a14f1714abb44b9d1dcc791d0b3abb2349140aeca19",
+      "decompiled_relative_path": ".reference/r196/decompiled/uf.java"
+    },
+    {
+      "class": "abg",
+      "source_file": "EnchantmentProtection.java",
+      "class_sha256": "3321b4d9a227ae405d1bda8a15af2acbe2fe85bc5b7246545d4585ba286479d2",
+      "decompiled_relative_path": ".reference/r196/decompiled/abg.java"
+    }
+  ],
+  "resource_pack_assets": [
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/core.png",
+      "sha256": "3cdc9bf41cb6d440351bdd414638d6cc8d43c56bf62b7e5328d2c8e8cc48e31e",
+      "dimensions": [
+        16,
+        320
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/core.png.mcmeta",
+      "sha256": "84a0ef2a3eef33b8d2cde7a87b5156909a302b2acc30ded568dcc7a92c6fb9bd"
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/mantle.png",
+      "sha256": "b93d274eb907d31e93e83606c564ee152b0c7ab1afecaf4627fae88686e06640",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/0.png",
+      "sha256": "682c48a56b66a43cdd6b35f5e808ff6735c91f79985be04b80a572482fcfb1f0",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/1.png",
+      "sha256": "de95292d54a9a31b2edd1f4ef06f1ab067ec4097d14b1d1568726e0d0c6ceed1",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/10.png",
+      "sha256": "0ebd24393a0760976be509697562f74fafbef4c37ab178fe1d4b56e4984fba9d",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/11.png",
+      "sha256": "de33554677f0665abf7dd1f1e5295b631023cea022160ed14c3353f79b6d195a",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/12.png",
+      "sha256": "0efcc805b689668655e22bd960437ec9af84ae474ce16f2502a16bbc00a3b016",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/13.png",
+      "sha256": "985c65e57ba52f40d617ee99831d90c73b0b4de3a1a824dcfb0760d283168f2f",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/14.png",
+      "sha256": "d7a4f30da2b337747dcb7de4f5c47415f8d2664aab6deddbe42a6d751e549935",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/15.png",
+      "sha256": "b297f3ce0487f88e537f945d8fecda2c27caade9737afa526e544057143b02cb",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/2.png",
+      "sha256": "e14fb00846bb82193af29b3a799b087d3f2b97183eacdfc1d8e9f5bd05226ce5",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/3.png",
+      "sha256": "51385ac7690b731a0e233df3fe4e59b268d1f9cb818a5a58e77255d3e53f7f50",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/4.png",
+      "sha256": "12625899064a170aea4618621d93f9904b74af8ed8bedc09f59b80bb1050787c",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/5.png",
+      "sha256": "d2ab291abb892ff4f6548fc7289fc60018f0f655394b55fddf55084f140305d7",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/6.png",
+      "sha256": "4a1f6736a1a58a01d550d1e7bdfa4b830604a8ed4c5546e5e3fddd6ec20bec0f",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/7.png",
+      "sha256": "328fc15ad32566b83827cacfa73f468663db92b0d6983412516a96328d7a807e",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/8.png",
+      "sha256": "b45b9c35494f138c52adf579de58e32b241796caf23b6bdaf73426c1c27bb4f7",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/adamantium/9.png",
+      "sha256": "b1041bcddd089311f59401aeadbdc8e758758316b75ad30310ace332f2c9cfca",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/0.png",
+      "sha256": "49078b3a19c19d03f24741698a263da90316a9a2e7810409a184ab597677adf5",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/1.png",
+      "sha256": "b3274a55e293a7314a13652197bef2ce19f9295cb7bfc2eaa1096f33c5bba1b5",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/10.png",
+      "sha256": "b4674f886adac6e97f44c2dad53ab232004aa95cce7ac65fca28b729b3d6e73d",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/11.png",
+      "sha256": "19fcb48022363c2e4f9ab3e5824f99a33b359f6c6be64e4ce6dde37c79a359d7",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/12.png",
+      "sha256": "0b22fb08e4d25211362fad255e39f3d92e8c045d276b386ca23f2c1ad993a302",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/13.png",
+      "sha256": "132b9f6d42bdd80e8fb085123811fa2c444d1e0a5270e11f72863970041890f6",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/14.png",
+      "sha256": "25585d51e8dcddbb62e07c4e81ce2851b97662c20215c742f2427ddef9e9e7cc",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/15.png",
+      "sha256": "2cdc82ab1bebf16bda47f87e44a6b28c84695d0179a4a9e9b049e86b88078992",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/2.png",
+      "sha256": "5dad20b4514d9f06e542bc93859fff698112c2e4cdfab28e5790224d136be74d",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/3.png",
+      "sha256": "7922c6e60c1ed15f44d5ce029b49215708d1cf54643977a1a112b648afe2cedb",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/4.png",
+      "sha256": "3f9983a05b6d1f5221b7433b60c455f366f874d5d24ee228bc1bfb4bcec32ad7",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/5.png",
+      "sha256": "9b6178897f491c72b9732bd8d8e010f20db839c584a8dd96435a3bd642d26d28",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/6.png",
+      "sha256": "79fc8d60cc85857e3784a10f15e5467326e4d5db373209af63d53f3d6b2364c4",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/7.png",
+      "sha256": "e7a59a452185aaa87205c71d106b33013c5ed050a6199bdc614ddb639449579f",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/8.png",
+      "sha256": "891a41d8495ddc4ddfea4047ad9eb999e64d5933579e633c2f7b082462d267c4",
+      "dimensions": [
+        16,
+        16
+      ]
+    },
+    {
+      "archive_entry": "assets/minecraft/textures/blocks/runestones/mithril/9.png",
+      "sha256": "26f8abdcb9a88fbb406cc0b96e1ba377d038c91853306913032c475dbb1c0120",
+      "dimensions": [
+        16,
+        16
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "legacy_id": 95,
+      "meaning": "mantle_or_core",
+      "hardness": -1.0,
+      "min_harvest_level": 100,
+      "max_stack_size": 4,
+      "subtype_count": 2,
+      "always_immutable": true,
+      "source_class": "BlockMantleOrCore"
+    },
+    {
+      "legacy_id": 247,
+      "meaning": "mithril_runestone",
+      "hardness": 2.4,
+      "min_harvest_level": 3,
+      "max_stack_size": 4,
+      "subtype_count": 16,
+      "always_immutable": false,
+      "source_class": "BlockRunestone"
+    },
+    {
+      "legacy_id": 198,
+      "meaning": "adamantium_runestone",
+      "hardness": 2.4,
+      "min_harvest_level": 3,
+      "max_stack_size": 4,
+      "subtype_count": 16,
+      "always_immutable": false,
+      "source_class": "BlockRunestone"
+    }
+  ],
+  "mantle_core": {
+    "source": [
+      "BlockMantleOrCore.java:8",
+      "aqz.java:648",
+      "aqz.java:2481",
+      "nn.java:621",
+      "nn.java:1066",
+      "aep.java:117",
+      "adr.java:133"
+    ],
+    "metadata": {
+      "mantle": 0,
+      "core": 1
+    },
+    "carriable": false,
+    "light_level": 13,
+    "random_ticks": true,
+    "explosion_registration_argument": 6000000.0,
+    "explosion_argument_has_effect": false,
+    "explosion_actual_resistance": -1.0,
+    "explosion_protection": "always_immutable_and_explicit_explosion_exclusion",
+    "piston_behavior": "unbreakable_immovable",
+    "underworld_floor_thickness_per_column_inclusive": [
+      1,
+      3
+    ],
+    "nether_bottom": "Y=0 is metadata 1 (core); no random lower thickness",
+    "nether_ceiling": "Y >= 127 - nextInt(5) is metadata 0 (mantle)",
+    "underworld_heat_max_bb_min_y": 3.0,
+    "nether_heat_max_bb_min_y": 1.0,
+    "nether_heat_min_bb_max_y": 123.0,
+    "contact_bb_inflate": 0.001,
+    "contact_accepts_both_metadata": true,
+    "direct_damage": 1,
+    "living_contact_damage_attempt_interval_ticks": 1,
+    "nonliving_contact_damage_attempt_interval_ticks": 10,
+    "on_fire_damage_interval_ticks": 20,
+    "fire_duration_ticks_unenchanted": 170,
+    "fire_duration_formula": "8 * 20 + 10; fire protection subtracts floor(duration * enchantment_level * 0.15)",
+    "fire_start_condition": "not wet, canCatchFire and ++fireTicks == 0; players initial fire resistance 10 ticks",
+    "water_flow_or_bucket_directly_above": "refuse placement and emit steam",
+    "non_bottom_placed_mantle_direct_damage": false
+  },
+  "runestones": {
+    "source": [
+      "BlockRunestone.java:6",
+      "BlockRunestone.java:19",
+      "RecipesMITE.java:58",
+      "wd.java:177",
+      "wd.java:270",
+      "aqz.java:1219"
+    ],
+    "magic_names": [
+      "Nul",
+      "Quas",
+      "Por",
+      "An",
+      "Nox",
+      "Flam",
+      "Vas",
+      "Des",
+      "Ort",
+      "Tym",
+      "Corp",
+      "Lor",
+      "Mani",
+      "Jux",
+      "Ylem",
+      "Sanct"
+    ],
+    "valid_metadata_inclusive": [
+      0,
+      15
+    ],
+    "rename_allowed": false,
+    "top_bottom_texture": "minecraft:obsidian",
+    "side_texture_template": "assets/minecraft/textures/blocks/runestones/{metal}/{metadata}.png",
+    "explosion_registration_argument": 20.0,
+    "explosion_argument_has_effect": false,
+    "explosion_actual_resistance": 2.4,
+    "exploded_drop": "inherits obsidian: 6 shardObsidian candidates, chance 0.5",
+    "crafting_selection": "right-click result slot cycles 0..15, wraps to 0, changes stack subtype before crafting; no placed-block cycling",
+    "crafting_skills_flag": "Masonry + FineArts; professions_suppressed true in actual default runtime"
+  },
+  "entry_recipes": [
+    {
+      "registration_order": 102,
+      "output": {
+        "item_id": 247,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "width": 3,
+      "height": 3,
+      "components": [
+        null,
+        {
+          "item_id": 959,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 959,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 49,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 959,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 959,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null
+      ],
+      "difficulty": 3084.4443,
+      "bench_material": "mithril",
+      "skills": [
+        1040
+      ],
+      "skills_enabled_by_default": false
+    },
+    {
+      "registration_order": 103,
+      "output": {
+        "item_id": 198,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "width": 3,
+      "height": 3,
+      "components": [
+        null,
+        {
+          "item_id": 960,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 960,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 49,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 960,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 960,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null
+      ],
+      "difficulty": 11617.777,
+      "bench_material": "adamantium",
+      "skills": [
+        1040
+      ],
+      "skills_enabled_by_default": false
+    },
+    {
+      "registration_order": 361,
+      "output": {
+        "item_id": 259,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "width": 2,
+      "height": 2,
+      "components": [
+        {
+          "item_id": 958,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        null,
+        {
+          "item_id": 318,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 188.88889,
+      "bench_material": "iron",
+      "skills": null,
+      "skills_enabled_by_default": false
+    }
+  ],
+  "dimension": {
+    "source": [
+      "WorldProviderUnderworld.java:10",
+      "WorldProviderUnderworld.java:21",
+      "ChunkProviderUnderworld.java:71",
+      "ChunkProviderUnderworld.java:128",
+      "adr.java:138"
+    ],
+    "legacy_id": -2,
+    "modern_key": "mite:underworld",
+    "min_y": 0,
+    "height": 256,
+    "local_terrain_height": 128,
+    "terrain_y_offset": 120,
+    "terrain_cache_world_y_inclusive": [
+      120,
+      247
+    ],
+    "terrain_density_solid": "stone",
+    "empty_lower_local_y_exclusive": 24,
+    "empty_lower_fluid": "water",
+    "water_world_y_inclusive": [
+      120,
+      143
+    ],
+    "lower_and_upper_uncached_solid": "stone except boundary and strata masks",
+    "bedrock_strata_centers": [
+      3,
+      32,
+      72,
+      96
+    ],
+    "ceiling_bedrock_condition": "Y > 255 - boundary_thickness (same mantle floor and bedrock ceiling thickness per column)",
+    "biome_replacement_called_but_skips_when_offset_nonzero": true,
+    "additional_nether_cave_carver_called": false,
+    "celestial_angle": 0.5,
+    "skylight": false,
+    "surface_spawn_allowed": false,
+    "biome_id": 26,
+    "biome_temperature": 1.0,
+    "rainfall": 0.0,
+    "fog_gray_formula": "abs(dayOfWorld % 32 - 16) * 0.004",
+    "day_formula": "(total_time + 6000) / 24000 + 1, integer division",
+    "overworld_terrain_policy": "Keep the modern 1.21.1 generator and full build height; no R196 overworld generator",
+    "boundary_thickness_inclusive": [
+      1,
+      3
+    ]
+  },
+  "portal": {
+    "source": [
+      "aps.java:87",
+      "aps.java:272",
+      "aps.java:304",
+      "aps.java:317",
+      "aps.java:353",
+      "aps.java:389",
+      "aps.java:476",
+      "acj.java:52",
+      "hn.java:320",
+      "abw.java:5699",
+      "nn.java:352",
+      "nn.java:1824",
+      "uf.java:428"
+    ],
+    "inner_width": 2,
+    "inner_height": 3,
+    "outer_width": 4,
+    "outer_height": 5,
+    "ordinary_corners_required": false,
+    "frame_material": "obsidian",
+    "activation_allowed_in_end": false,
+    "legacy_metadata_destinations": {
+      "0": "overworld",
+      "1": "underworld",
+      "2": "nether"
+    },
+    "runegate_bit": 8,
+    "bottom_touch_max_frame_base_y_legacy": 8,
+    "bottom_touch_requires_under_frame_block": true,
+    "bottom_types": {
+      "overworld": "bedrock",
+      "underworld": "mantle metadata 0",
+      "nether": "core metadata 1"
+    },
+    "ordinary_routes": [
+      {
+        "world": "overworld",
+        "touching_bottom": false,
+        "runegate": false,
+        "destination": "overworld_spawn"
+      },
+      {
+        "world": "overworld",
+        "touching_bottom": true,
+        "runegate": false,
+        "destination": "underworld"
+      },
+      {
+        "world": "underworld",
+        "touching_bottom": false,
+        "runegate": false,
+        "destination": "overworld"
+      },
+      {
+        "world": "underworld",
+        "touching_bottom": true,
+        "runegate": false,
+        "destination": "nether"
+      },
+      {
+        "world": "nether",
+        "touching_bottom": false,
+        "runegate": false,
+        "destination": "underworld"
+      },
+      {
+        "world": "nether",
+        "touching_bottom": true,
+        "runegate": false,
+        "destination": "underworld"
+      },
+      {
+        "world": "overworld",
+        "touching_bottom": false,
+        "runegate": true,
+        "destination": "overworld_rune_coordinates"
+      },
+      {
+        "world": "overworld",
+        "touching_bottom": true,
+        "runegate": true,
+        "destination": "overworld_rune_coordinates"
+      },
+      {
+        "world": "underworld",
+        "touching_bottom": false,
+        "runegate": true,
+        "destination": "underworld_rune_coordinates"
+      },
+      {
+        "world": "underworld",
+        "touching_bottom": true,
+        "runegate": true,
+        "destination": "underworld_rune_coordinates"
+      },
+      {
+        "world": "nether",
+        "touching_bottom": false,
+        "runegate": true,
+        "destination": "nether_rune_coordinates"
+      },
+      {
+        "world": "nether",
+        "touching_bottom": true,
+        "runegate": true,
+        "destination": "nether_rune_coordinates"
+      }
+    ],
+    "nether_coordinate_scale": 8.0,
+    "overworld_underworld_coordinate_scale": 1.0,
+    "ordinary_return_search_xz_radius": 128,
+    "ordinary_return_search_requires_reverse_destination": true,
+    "ordinary_return_search_excludes_runegates": true,
+    "missing_return_portal": "construct portal at destination with metadata directing to dimension travelled from",
+    "runegate_requires_four_same_metal_corners": true,
+    "runegate_same_dimension": true,
+    "runegate_entities": "server player only, no riding relation",
+    "spawn_portal_entities": "server player only, no riding relation",
+    "rune_seed_corner_order": [
+      "min_axis_min_y",
+      "max_axis_min_y",
+      "min_axis_max_y",
+      "max_axis_max_y"
+    ],
+    "rune_seed_shifts": [
+      0,
+      4,
+      8,
+      12
+    ],
+    "rune_seed_formula": "c0 + (c1 << 4) + (c2 << 8) + (c3 << 12)",
+    "rune_seed_zero_xz": [
+      0,
+      0
+    ],
+    "rune_random_seed": "java.util.Random(rune_seed), independent of world seed except biome retry and world radius",
+    "adamantium_radius_formula": "min(block_domain_radius / 2, 40000)",
+    "mithril_radius_divisor": 8,
+    "adamantium_excluded_inner_radius_fraction": 0.5,
+    "rune_ocean_retry_attempts": 4,
+    "unsafe_legacy_fallback": "remove two blocks at Y64/65; modern safety adaptation must be documented separately",
+    "portal_random_mob_spawns_enabled": false,
+    "disabled_spawn_evidence": "aps.updateTick chooses a candidate then unconditionally sets entity_class=null",
+    "ordinary_wait_ticks": {
+      "player_survival": 80,
+      "player_creative": 0,
+      "other_entity": 0
+    },
+    "ordinary_cooldown_ticks": {
+      "player": 10,
+      "other_entity": 900
+    },
+    "ordinary_cooldown_resets_while_touching": true,
+    "rune_and_spawn_gate_use_ordinary_wait": false,
+    "destination_recalculation_rule": "aps.updateType only updates metadata when runegate bit changes; ordinary reverse portal destinations persist"
+  },
+  "ecology_later": {
+    "source": [
+      "BiomeGenUnderworld.java:9",
+      "BiomeGenUnderworld.java:31",
+      "abw.java:253",
+      "ChunkProviderUnderworld.java:273",
+      "acu.java:189",
+      "acu.java:265",
+      "afp.java:9"
+    ],
+    "removed_spawn_classes": [
+      "tr",
+      "tw",
+      "EntityGhoul",
+      "EntityRevenant",
+      "EntityBoneLord"
+    ],
+    "added_spawn_classes": [
+      {
+        "class": "te",
+        "modern_equivalent": "minecraft:cave_spider",
+        "weight": 40,
+        "min": 1,
+        "max": 2
+      },
+      {
+        "class": "EntityLongdead",
+        "weight": 40,
+        "min": 1,
+        "max": 2
+      },
+      {
+        "class": "EntityAncientBoneLord",
+        "weight": 5,
+        "min": 1,
+        "max": 1
+      }
+    ],
+    "spawn_tables_are_candidates_not_final_spawn_eligibility": true,
+    "mycelium_post_radius": 24,
+    "mycelium_post_chance_per_chunk": 0.0625,
+    "mycelium_start_y_mixture": [
+      [
+        144,
+        159
+      ],
+      [
+        144,
+        215
+      ]
+    ],
+    "mycelium_search_height_inclusive": [
+      1,
+      5
+    ],
+    "mycelium_requires_solid_below_and_above_ground_and_air_above": true,
+    "mycelium_excludes_BlockFalling": true,
+    "huge_mushroom_attempt_chance": 0.0625,
+    "huge_mushroom_failed_fallback": "minecraft:brown_mushroom",
+    "dungeon_attempts_per_chunk": 16,
+    "dungeon_start_y_inclusive": [
+      140,
+      171
+    ],
+    "dungeon_contents": "ancient metal bucket, tools, armour, coins and records; complete list in afp.chest_contents_for_underworld",
+    "dungeon_spawn_class": {
+      "Longdead": 0.8333333333333334,
+      "LongdeadGuardian": 0.16666666666666666,
+      "source": "afp.java:112 pickMobSpawner"
+    },
+    "liquid_spring_attempts_per_chunk": 70,
+    "liquid_spring_local_y_formula": "nextInt(nextInt(120) + 8)",
+    "liquid_spring_y_offset": 120,
+    "liquid_springs_suppressed_near_naturally_occurring_mycelium": true
+  },
+  "ore_extension_later": {
+    "source": [
+      "acu.java:302",
+      "acu.java:316",
+      "acu.java:351",
+      "afq.java:87",
+      "afq.java:107",
+      "afq.java:114",
+      "afq.java:203"
+    ],
+    "world_height_inclusive": [
+      0,
+      255
+    ],
+    "do_not_add_terrain_offset_to_ore_origins": true,
+    "placement_frequency_acceptance_probability": 0.1,
+    "non_gravel_underworld_frequency_multiplier": 8,
+    "adamantium_extra_frequency_multiplier": 2,
+    "gravel_base_attempts_per_chunk": 300,
+    "gravel_requires_support": true,
+    "adamantium_origin_y_inclusive": [
+      0,
+      135
+    ],
+    "other_BlockOre_origin_mixture": [
+      {
+        "weight": 0.75,
+        "y_inclusive": [
+          0,
+          135
+        ]
+      },
+      {
+        "weight": 0.25,
+        "y_inclusive": [
+          0,
+          255
+        ]
+      }
+    ],
+    "non_BlockOre_origin_y_inclusive": [
+      0,
+      255
+    ],
+    "hook_policy": "own dimension biome feature list and stone replaceable tag; exclude mantle/core/bedrock from targets; retain modern overworld ores until separate ore migration"
+  },
+  "independent_fixtures": {
+    "fog": [
+      {
+        "day": 1,
+        "gray": 0.06
+      },
+      {
+        "day": 8,
+        "gray": 0.032
+      },
+      {
+        "day": 16,
+        "gray": 0.0
+      },
+      {
+        "day": 24,
+        "gray": 0.032
+      },
+      {
+        "day": 32,
+        "gray": 0.064
+      }
+    ],
+    "rune_seed": [
+      {
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "expected": 0
+      },
+      {
+        "corners": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "expected": 17185
+      },
+      {
+        "corners": [
+          15,
+          15,
+          15,
+          15
+        ],
+        "expected": 65535
+      }
+    ],
+    "heat_contact": [
+      {
+        "world": "underworld",
+        "min_y": 3.0,
+        "max_y": 4.8,
+        "contacts_mantle_or_core": true,
+        "is_fire_contact": true
+      },
+      {
+        "world": "underworld",
+        "min_y": 3.001,
+        "max_y": 4.801,
+        "contacts_mantle_or_core": true,
+        "is_fire_contact": false
+      },
+      {
+        "world": "underworld",
+        "min_y": 2.0,
+        "max_y": 3.8,
+        "contacts_mantle_or_core": false,
+        "is_fire_contact": false
+      },
+      {
+        "world": "nether",
+        "min_y": 1.0,
+        "max_y": 2.8,
+        "contacts_mantle_or_core": true,
+        "is_fire_contact": true
+      },
+      {
+        "world": "nether",
+        "min_y": 1.001,
+        "max_y": 2.801,
+        "contacts_mantle_or_core": true,
+        "is_fire_contact": false
+      },
+      {
+        "world": "nether",
+        "min_y": 121.2,
+        "max_y": 123.0,
+        "contacts_mantle_or_core": true,
+        "is_fire_contact": true
+      },
+      {
+        "world": "nether",
+        "min_y": 121.199,
+        "max_y": 122.999,
+        "contacts_mantle_or_core": true,
+        "is_fire_contact": false
+      },
+      {
+        "world": "overworld",
+        "min_y": 0.0,
+        "max_y": 1.8,
+        "contacts_mantle_or_core": true,
+        "is_fire_contact": false
+      }
+    ],
+    "bottom_touch": [
+      {
+        "frame_base_y": 8,
+        "bottom_block_present": true,
+        "expected": true
+      },
+      {
+        "frame_base_y": 9,
+        "bottom_block_present": true,
+        "expected": false
+      },
+      {
+        "frame_base_y": 8,
+        "bottom_block_present": false,
+        "expected": false
+      }
+    ],
+    "terrain_offset": [
+      {
+        "local_y": 0,
+        "world_y": 120
+      },
+      {
+        "local_y": 23,
+        "world_y": 143
+      },
+      {
+        "local_y": 24,
+        "world_y": 144
+      },
+      {
+        "local_y": 127,
+        "world_y": 247
+      }
+    ],
+    "lighting": [
+      {
+        "light_multiplier": 0.9,
+        "expected_integer_light": 13
+      }
+    ],
+    "rune_radius": [
+      {
+        "world_block_domain_radius": 64000,
+        "adamantium_radius": 32000,
+        "mithril_radius": 4000
+      },
+      {
+        "world_block_domain_radius": 128000,
+        "adamantium_radius": 40000,
+        "mithril_radius": 5000
+      }
+    ],
+    "rune_explosion": [
+      {
+        "seed": 196,
+        "next_float_values": [
+          0.7363426089286804,
+          0.6895079016685486,
+          0.06787264347076416,
+          0.5406703352928162,
+          0.419572114944458,
+          0.6779616475105286
+        ],
+        "below_half_count": 2
+      }
+    ]
+  },
+  "modern_adaptations_required": [
+    "Overworld bottom check uses minBuildHeight + 8 and actual bedrock contact, because modern overworld minY=-64.",
+    "Save separate namespaced underworld; do not reinterpret old saves or vanilla Nether as underworld.",
+    "Maintain modern Nether biomes and worldgen; add the core boundary as a source-informed adaptation and explicitly describe roof differences.",
+    "Destination creation must honour world border, valid height, collision clearance and immutable blocks; fail without consuming or duplicating entities if unsafe.",
+    "Do not label vanilla skeleton replacements as Longdead; document unimplemented MITE mobs, dungeons, mycelium or independent clocks if deferred."
+  ],
+  "validation_status": "source evidence only; tests and manual validation tracked by implementation documentation",
+  "resource_pack_archive_sha256": "4a9bb9f7ab5afee7c0e4e9f57f3b81ff185a0c619d29036b8c2f1ece7450e67a",
+  "underground_beds": {
+    "source": [
+      "anb.java:51",
+      "WorldProviderUnderworld.java:40"
+    ],
+    "underworld_can_sleep": false,
+    "nether_can_sleep": false,
+    "bed_detonates": false,
+    "source_fallback": "tile.bed.mobsDigging message, returns false; bed is preserved"
+  }
+}

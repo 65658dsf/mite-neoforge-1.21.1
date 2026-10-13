@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": [
+    "mite:nether_boundary"
+  ],
+  "step": "raw_generation"
+}

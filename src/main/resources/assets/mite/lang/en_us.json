@@ -225,5 +225,11 @@
   "itemGroup.mite.foods": "MITE Foods and Containers",
   "block.mite.onion_crop": "Onion Crop",
   "block.mite.blueberry_bush": "Blueberry Bush",
-  "message.mite.cow_milk_insufficient": "This cow has insufficient milk or has not matured."
+  "message.mite.cow_milk_insufficient": "This cow has insufficient milk or has not matured.",
+  "block.mite.mantle": "Mantle",
+  "block.mite.core": "Core",
+  "block.mite.mithril_runestone": "Mithril Runestone",
+  "block.mite.adamantium_runestone": "Adamantium Runestone",
+  "biome.mite.underworld": "Underworld",
+  "message.mite.underground_sleep_denied": "Creatures can dig through the ground here. You cannot sleep."
 }

@@ -20,6 +20,11 @@ public final class MiteAttachments {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENTS =
             DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Mite.MOD_ID);
 
+    /** New terrain layouts are identifiable without guessing from player-placed blocks. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> UNDERWORLD_LAYOUT_VERSION =
+            ATTACHMENTS.register("underworld_layout_version", () -> AttachmentType.builder(() -> 0)
+                    .serialize(Codec.intRange(0, Integer.MAX_VALUE)).build());
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<DeathExperience>> RESPAWN_EXPERIENCE =
             ATTACHMENTS.register("respawn_experience", () -> AttachmentType.builder(
                     () -> new DeathExperience(DeathExperience.CURRENT_VERSION, 0))

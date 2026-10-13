@@ -225,5 +225,11 @@
   "itemGroup.mite.foods": "MITE 食品与容器",
   "block.mite.onion_crop": "洋葱作物",
   "block.mite.blueberry_bush": "蓝莓灌木",
-  "message.mite.cow_milk_insufficient": "这头牛的牛奶储量不足，或尚未成年。"
+  "message.mite.cow_milk_insufficient": "这头牛的牛奶储量不足，或尚未成年。",
+  "block.mite.mantle": "地幔",
+  "block.mite.core": "地核",
+  "block.mite.mithril_runestone": "秘银符文石",
+  "block.mite.adamantium_runestone": "艾德曼符文石",
+  "biome.mite.underworld": "地底世界",
+  "message.mite.underground_sleep_denied": "这里的怪物会掘地袭来，无法入睡。"
 }

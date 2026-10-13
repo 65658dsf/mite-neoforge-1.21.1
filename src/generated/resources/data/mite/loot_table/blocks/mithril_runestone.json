@@ -1,0 +1,517 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "0"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "0"
+                },
+                "minecraft:custom_model_data": 0
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "1"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "1"
+                },
+                "minecraft:custom_model_data": 1
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "2"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "2"
+                },
+                "minecraft:custom_model_data": 2
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "3"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "3"
+                },
+                "minecraft:custom_model_data": 3
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "4"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "4"
+                },
+                "minecraft:custom_model_data": 4
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "5"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "5"
+                },
+                "minecraft:custom_model_data": 5
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "6"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "6"
+                },
+                "minecraft:custom_model_data": 6
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "7"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "7"
+                },
+                "minecraft:custom_model_data": 7
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "8"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "8"
+                },
+                "minecraft:custom_model_data": 8
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "9"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "9"
+                },
+                "minecraft:custom_model_data": 9
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "10"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "10"
+                },
+                "minecraft:custom_model_data": 10
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "11"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "11"
+                },
+                "minecraft:custom_model_data": 11
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "12"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "12"
+                },
+                "minecraft:custom_model_data": 12
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "13"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "13"
+                },
+                "minecraft:custom_model_data": 13
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "14"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "14"
+                },
+                "minecraft:custom_model_data": 14
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "conditions": [
+        {
+          "block": "mite:mithril_runestone",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "rune": "15"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:block_state": {
+                  "rune": "15"
+                },
+                "minecraft:custom_model_data": 15
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "mite:mithril_runestone"
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

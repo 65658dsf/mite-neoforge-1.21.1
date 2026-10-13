@@ -1,0 +1,101 @@
+{
+  "parent": "mite:block/mithril_runestone_0",
+  "overrides": [
+    {
+      "model": "mite:block/mithril_runestone_0",
+      "predicate": {
+        "custom_model_data": 0
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_1",
+      "predicate": {
+        "custom_model_data": 1
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_2",
+      "predicate": {
+        "custom_model_data": 2
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_3",
+      "predicate": {
+        "custom_model_data": 3
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_4",
+      "predicate": {
+        "custom_model_data": 4
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_5",
+      "predicate": {
+        "custom_model_data": 5
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_6",
+      "predicate": {
+        "custom_model_data": 6
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_7",
+      "predicate": {
+        "custom_model_data": 7
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_8",
+      "predicate": {
+        "custom_model_data": 8
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_9",
+      "predicate": {
+        "custom_model_data": 9
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_10",
+      "predicate": {
+        "custom_model_data": 10
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_11",
+      "predicate": {
+        "custom_model_data": 11
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_12",
+      "predicate": {
+        "custom_model_data": 12
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_13",
+      "predicate": {
+        "custom_model_data": 13
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_14",
+      "predicate": {
+        "custom_model_data": 14
+      }
+    },
+    {
+      "model": "mite:block/mithril_runestone_15",
+      "predicate": {
+        "custom_model_data": 15
+      }
+    }
+  ]
+}

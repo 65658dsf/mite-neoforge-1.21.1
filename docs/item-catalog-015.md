@@ -11,6 +11,10 @@
 - 015 历史快照中的 5 项部分实现为燧石碎片、筋、燧石短斧，以及沿用原版 ID 的木棒和燧石工作台。原版 ID 共建议复用 37 个，其中后两项包含在部分实现里。
 - 全目录 355 项有 R196 注册证据（含 8 项被排除的冲突内容），剩余 4 项仅在废弃分类，未匹配本地注册。主要映射锚点为 294 个物品、53 个方块注册引用；门另关联其放置方块，数量不等于新增 Java 类数。
 
+## 当前维度方块注册核对
+
+021已将两种符文石、地幔和地核共4条目录叶项标为“已添加”。两种符文包含各16个符号；地幔/地核是不可携带方块，没有注册可得物品。制造、门路由和边界行为已接入，用户于2026-10-13确认022修复后的当前交付正常，客户端验收见 [021手测](testing/021-underworld-portals.md) 和 [022修复](underworld-depth-022.md)。此确认不代表后续矿物/生物阶段已完成。
+
 ## 当前工具注册核对
 
 2026-10-13 按 [MiteTools.define](../src/main/java/io/github/ningmeng123/mite/registry/MiteTools.java) 的 `legacyId → actual modern ID` 逐项核对，已将 **105 个目录工具叶条目**标为“已添加”。实际工具定义共 **107 项**，另外两项是目录未列出的原版铁剪刀 `minecraft:shears`（旧 359）和木锹 `minecraft:wooden_shovel`（旧 269）；不为它们伪造百科叶页或改变原 359 项目录总数。
@@ -216,8 +220,8 @@
 | 功能性方块 | [黑曜石熔炉](https://www.mcmod.cn/item/35621.html) | aqz.furnaceObsidianIdle / 222:[0] | mite:obsidian_furnace | 待新增 |
 | 功能性方块 | [地狱岩熔炉](https://www.mcmod.cn/item/35623.html) | aqz.furnaceNetherrackIdle / 224:[0] | mite:netherrack_furnace | 待新增 |
 | 功能性方块 | [铁砧](https://www.mcmod.cn/item/826855.html) | aqz.cm / 145:[0] | minecraft:anvil | 原版已有，待适配 |
-| 功能性方块 | [秘银符文石](https://www.mcmod.cn/item/823804.html) | aqz.runestoneMithril / 247:[0–15] | mite:mithril_runestone | 待新增 |
-| 功能性方块 | [艾德曼符文石](https://www.mcmod.cn/item/823805.html) | aqz.runestoneAdamantium / 198:[0–15] | mite:adamantium_runestone | 待新增 |
+| 功能性方块 | [秘银符文石](https://www.mcmod.cn/item/823804.html) | aqz.runestoneMithril / 247:[0–15] | mite:mithril_runestone | 已添加 |
+| 功能性方块 | [艾德曼符文石](https://www.mcmod.cn/item/823805.html) | aqz.runestoneAdamantium / 198:[0–15] | mite:adamantium_runestone | 已添加 |
 | 功能性方块 | [绿宝石附魔台](https://www.mcmod.cn/item/35675.html) | aqz.enchantmentTableEmerald / 245:[0] | mite:emerald_enchanting_table | 待新增 |
 | 功能性方块 | [铜块](https://www.mcmod.cn/item/35745.html) | aqz.blockCopper / 204:[0] | minecraft:copper_block | 原版已有，待适配 |
 | 功能性方块 | [银块](https://www.mcmod.cn/item/35789.html) | aqz.blockSilver / 205:[0] | mite:silver_block | 待新增 |
@@ -239,7 +243,7 @@
 | 功能性方块 | [燧石工具台](https://www.mcmod.cn/item/68910.html) | aqz.aD / 58:[0,1,2,3] | minecraft:crafting_table | 已存在，部分机制已做 |
 | 功能性方块 | [铜工具台](https://www.mcmod.cn/item/68911.html) | aqz.aD / 58:[4] | mite:copper_workbench | 待新增 |
 | 功能性方块 | [银工具台](https://www.mcmod.cn/item/68912.html) | aqz.aD / 58:[5] | mite:silver_workbench | 待新增 |
-| 功能性方块 | [地幔](https://www.mcmod.cn/item/105512.html) | aqz.mantleOrCore / 95:[0] | mite:mantle | 待新增 |
+| 功能性方块 | [地幔](https://www.mcmod.cn/item/105512.html) | aqz.mantleOrCore / 95:[0] | mite:mantle | 已添加 |
 | 硬币 | [铜币](https://www.mcmod.cn/item/35563.html) | yc.coinCopper / 1220:[0] | mite:copper_coin | 待新增 |
 | 硬币 | [金币](https://www.mcmod.cn/item/35564.html) | yc.coinGold / 1222:[0] | mite:gold_coin | 待新增 |
 | 硬币 | [银币](https://www.mcmod.cn/item/35565.html) | yc.coinSilver / 1221:[0] | mite:silver_coin | 待新增 |
@@ -450,7 +454,7 @@
 | 装饰品 | [凋零灌木](https://www.mcmod.cn/item/37966.html) | aqz.ad / 32:[1] | mite:witherwood_bush | 待新增 |
 | 装饰品 | [地狱沙砾](https://www.mcmod.cn/item/37885.html) | aqz.K / 13:[2] | mite:nether_gravel | 待新增 |
 | 装饰品 | [远古金属块](https://www.mcmod.cn/item/53114.html) | aqz.blockAncientMetal / 252:[0] | mite:ancient_metal_block | 待新增 |
-| 装饰品 | [地核](https://www.mcmod.cn/item/105513.html) | aqz.mantleOrCore / 95:[1] | mite:core | 待新增 |
+| 装饰品 | [地核](https://www.mcmod.cn/item/105513.html) | aqz.mantleOrCore / 95:[1] | mite:core | 已添加 |
 | 已删除/未添加 | [铜小刀](https://www.mcmod.cn/item/35725.html) | yc.knifeCopper / 1050:[0] | mite:copper_knife | 排除：目录/R196冲突 |
 | 已删除/未添加 | [铁币](https://www.mcmod.cn/item/823724.html) | 未匹配 | 暂不建议 | 排除：废弃/未添加 |
 | 已删除/未添加 | [Mushroom Luminous](https://www.mcmod.cn/item/823813.html) | 未匹配 | 暂不建议 | 排除：废弃/未添加 |

@@ -9,6 +9,10 @@ import net.minecraft.world.level.block.Block;
 
 /** Explicit, reloadable compatibility boundaries for MITE rules. @author NingMeng123 */
 public final class MiteTags {
+    public static final TagKey<Block> RUNESTONES = TagKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "runestones"));
+    public static final TagKey<Block> UNDERWORLD_ORE_REPLACEABLES = TagKey.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "underworld_ore_replaceables"));
     public static final TagKey<Item> SHEARS =
             TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "shears"));
     public static final TagKey<Block> WOODEN_CLUB_EFFICIENT =

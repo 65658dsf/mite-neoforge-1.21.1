@@ -80,6 +80,9 @@ neoForge {
         gameTestServer {
             type = 'gameTestServer'
             gameDirectory = file('run-gametest')
+            if (project.providers.gradleProperty('miteGameTestDirectory').isPresent()) {
+                gameDirectory = file(project.providers.gradleProperty('miteGameTestDirectory').get())
+            }
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
         data {

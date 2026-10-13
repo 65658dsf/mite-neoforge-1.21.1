@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": {
+      "item": "mite:adamantium_nugget"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "pattern": [
+    " N ",
+    "NON",
+    " N "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:adamantium_runestone"
+  }
+}

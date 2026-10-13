@@ -36,6 +36,10 @@ public final class WorkbenchRules {
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
+        if (result.is(net.minecraft.world.item.Items.FLINT_AND_STEEL)) return materialCapacity("iron");
+        if (result.getItem() instanceof io.github.ningmeng123.mite.item.RunestoneItem item)
+            return item.getBlock() == io.github.ningmeng123.mite.registry.MiteWorldBlocks.MITHRIL_RUNESTONE.get()
+                    ? materialCapacity("mithril") : materialCapacity("adamantium");
         if (result.getItem() instanceof BlockItem item && item.getBlock() instanceof MaterialWorkbenchBlock bench) {
             // RecipeHelper excludes obsidian when finding the preceding metal workbench stage.
             return switch (bench.material()) {
