@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.mining.MiningProgress;
 import io.github.ningmeng123.mite.registry.MiteItems;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
+import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -97,6 +98,7 @@ public final class GrassMiningGameTests {
         for (int index = 0; index < levels.length; index++) {
             PlayerExperience.setLevels(player, levels[index]);
             player.getFoodData().setFoodLevel(food[index]);
+            ((DualFoodData) player.getFoodData()).mite$setNutrition(0);
             for (BlockState state : GRASS_STATES) {
                 assertProgress(helper, player, state, position, bits[index], additions[index],
                         "Grass level " + levels[index] + ", food " + food[index] + ": " + state);
@@ -246,6 +248,7 @@ public final class GrassMiningGameTests {
         player.setOnGround(true);
         PlayerExperience.setTotal(player, 0);
         player.getFoodData().setFoodLevel(1);
+        ((DualFoodData) player.getFoodData()).mite$setNutrition(0);
         player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         return player;
     }

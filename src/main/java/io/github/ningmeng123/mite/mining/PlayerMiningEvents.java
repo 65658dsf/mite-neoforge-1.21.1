@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.mining;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.rules.MiningRules;
+import io.github.ningmeng123.mite.survival.FoodConsumption;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,8 +22,7 @@ public final class PlayerMiningEvents {
             return;
         }
         // Modern tool/environment/event adjustments already produced this strength.
-        // Until dual-resource food is ported, the synchronized food bar supplies energy.
         event.setNewSpeed(MiningRules.adjustStrengthForSurvival(event.getNewSpeed(), player.experienceLevel,
-                player.getFoodData().getFoodLevel() > 0));
+                FoodConsumption.hasEnergy(player)));
     }
 }

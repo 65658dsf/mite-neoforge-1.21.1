@@ -277,8 +277,12 @@ public final class ToolEquipmentGameTests {
                 TimedCraftingController.damaged(player, 1F);
                 helper.assertValueEqual(TimedCraftingController.progress(player), 10, "One damage point rolls back exactly fifty ticks");
                 player.getFoodData().setFoodLevel(0);
+                ((io.github.ningmeng123.mite.survival.DualFoodData)player.getFoodData()).mite$setNutrition(1);
+                TimedCraftingController.tick(player);
+                helper.assertValueEqual(TimedCraftingController.progress(player),11,"Nutrition alone allows manufacture to advance");
+                ((io.github.ningmeng123.mite.survival.DualFoodData)player.getFoodData()).mite$setNutrition(0);
                 for (int i = 0; i < 40; i++) TimedCraftingController.tick(player);
-                helper.assertValueEqual(TimedCraftingController.progress(player), 10, "Empty food pauses and retains progress");
+                helper.assertValueEqual(TimedCraftingController.progress(player), 11, "Both empty food reserves pause and retain progress");
                 player.getFoodData().setFoodLevel(6);
                 menu.clicked(0, 1, ClickType.PICKUP, player);
                 helper.assertValueEqual(TimedCraftingController.progress(player), 0, "Right-click cancels this ordinary-quality session");

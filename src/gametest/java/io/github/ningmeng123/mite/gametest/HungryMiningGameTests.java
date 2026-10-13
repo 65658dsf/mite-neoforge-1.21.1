@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.survival.PlayerExperience;
+import io.github.ningmeng123.mite.survival.DualFoodData;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -54,6 +55,29 @@ public final class HungryMiningGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void nutritionAloneAvoidsTheFoodEnergyMiningPenalty(GameTestHelper helper) {
+        Player player = miner(helper, GameType.SURVIVAL, 0);
+        BlockPos position = helper.absolutePos(BlockPos.ZERO);
+        BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState();
+        DualFoodData nutrition = (DualFoodData) player.getFoodData();
+        nutrition.mite$setNutrition(1);
+        player.getFoodData().setFoodLevel(1);
+        player.getFoodData().setFoodLevel(0);
+        helper.assertValueEqual(nutrition.mite$getNutrition(), 1,
+                "Setting satiation to zero does not erase the separate nutrition reserve");
+        assertBits(helper, player.getDigSpeed(leaves, position), 0x3f800000,
+                "One nutrition point alone supplies full level-zero mining strength");
+        assertBits(helper, leaves.getDestroyProgress(player, helper.getLevel(), position), 0x3c200000,
+                "Nutrition-only food energy avoids the divide-by-five progress penalty");
+        nutrition.mite$setNutrition(0);
+        assertBits(helper, player.getDigSpeed(leaves, position), 0x3e4ccccd,
+                "Only clearing the remaining nutrition point divides mining strength by five");
+        assertBits(helper, leaves.getDestroyProgress(player, helper.getLevel(), position), 0x3b000000,
+                "Both reserves empty restores the independently recorded hungry progress");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void hungerComposesOnceWithLevelsToolsAirAndSavedFood(GameTestHelper helper) {
         Player player = miner(helper, GameType.SURVIVAL, 0);
         BlockPos position = helper.absolutePos(BlockPos.ZERO);
@@ -87,10 +111,13 @@ public final class HungryMiningGameTests {
         player.setOnGround(true);
         CompoundTag saved = player.saveWithoutId(new CompoundTag());
         helper.assertValueEqual(saved.getInt("foodLevel"), 0, "The entity save records an empty food bar");
+        helper.assertValueEqual(saved.getInt("mite_nutrition"), 0, "The hungry fixture also saves empty independent nutrition");
         Player restored = helper.makeMockPlayer(GameType.SURVIVAL);
         restored.load(saved);
         helper.assertValueEqual(restored.experienceLevel, 35, "The entity load restores the mining level");
         helper.assertValueEqual(restored.getFoodData().getFoodLevel(), 0, "Loading does not fill the empty bar");
+        helper.assertValueEqual(((DualFoodData) restored.getFoodData()).mite$getNutrition(), 0,
+                "Loading does not refill the independent nutrition reserve");
         assertBits(helper, restored.getDigSpeed(leaves, position), 0x3eae147b,
                 "Loaded food and experience immediately select hungry level-35 strength");
         assertBits(helper, leaves.getDestroyProgress(restored, helper.getLevel(), position), 0x3b599999,
@@ -160,6 +187,7 @@ public final class HungryMiningGameTests {
         player.setOnGround(true);
         player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         player.getFoodData().setFoodLevel(0);
+        ((DualFoodData) player.getFoodData()).mite$setNutrition(0);
         player.getFoodData().setSaturation(0.0F);
         return player;
     }

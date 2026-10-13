@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.survival.LeveledFoodData;
+import io.github.ningmeng123.mite.survival.DualFoodData;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -29,6 +30,7 @@ public final class FoodCapacityGameTests {
         player.experienceLevel = 0;
         food.setFoodLevel(6);
         food.setSaturation(4.0F);
+        helper.assertValueEqual(dual(helper, food).mite$getNutrition(), 6, "Nutrition starts full independently of native saturation");
 
         helper.assertFalse(food.needsFood(), "Level 0 food 6 must count as full");
         helper.assertFalse(player.canEat(false), "Ordinary food must be refused at the level 0 cap");
@@ -37,11 +39,13 @@ public final class FoodCapacityGameTests {
         player.experienceLevel = 5;
         food.tick(player);
         assertFood(helper, food, 6, 4.0F, "Level-up must not refill food or saturation");
+        helper.assertValueEqual(dual(helper, food).mite$getNutrition(), 6, "Level-up must not refill independent nutrition");
         helper.assertTrue(food.needsFood(), "Level 5 food 6 must be below the new cap 8");
         helper.assertTrue(player.canEat(false), "Ordinary food must be allowed below cap 8");
 
         food.eat(Foods.COOKED_BEEF);
         assertFood(helper, food, 8, 8.0F, "FoodProperties eating must cap both food and saturation");
+        helper.assertValueEqual(dual(helper, food).mite$getNutrition(), 8, "Foreign FoodProperties nutrition uses the same capacity");
         helper.assertFalse(food.needsFood(), "Level 5 food 8 must count as full");
         helper.assertFalse(player.canEat(false), "Ordinary food must be refused at cap 8");
 
@@ -49,10 +53,12 @@ public final class FoodCapacityGameTests {
         food.setSaturation(0.0F);
         food.eat(20, 1.0F);
         assertFood(helper, food, 8, 8.0F, "Integer eating used by cake/effects must share the cap");
+        helper.assertValueEqual(dual(helper, food).mite$getNutrition(), 8, "Integer eating also supplies independent nutrition");
 
         player.experienceLevel = 0;
         food.tick(player);
         assertFood(helper, food, 6, 6.0F, "Level-down must clamp existing food before metabolism");
+        helper.assertValueEqual(dual(helper, food).mite$getNutrition(), 6, "Level-down also limits independent nutrition");
         helper.assertFalse(food.needsFood(), "Clamped level 0 food must still count as full");
         helper.succeed();
     }
@@ -71,6 +77,7 @@ public final class FoodCapacityGameTests {
         loadedFood.readAdditionalSaveData(savedFood);
         helper.assertTrue(loadedPlayer.getFoodData() == loadedFood, "The getter must preserve the loaded instance");
         assertFood(helper, loadedFood, 20, 20.0F, "Binding during load must not prematurely clamp to level zero");
+        helper.assertValueEqual(dual(helper, loadedFood).mite$getNutrition(), 20, "Legacy food saves migrate nutrition from food level");
         loadedPlayer.experienceLevel = 35;
         loadedFood.tick(loadedPlayer);
         assertFood(helper, loadedFood, 20, 20.0F, "The first tick must use the restored experience level");
@@ -82,6 +89,7 @@ public final class FoodCapacityGameTests {
         reused.mite$bindPlayer(replacement);
         reused.mite$clampToLimit();
         assertFood(helper, loadedFood, 6, 6.0F, "A reused FoodData must adopt its replacement owner");
+        helper.assertValueEqual(dual(helper, loadedFood).mite$getNutrition(), 6, "Rebinding also limits the independent reserve");
         replacement.experienceLevel = 5;
         helper.assertTrue(loadedFood.needsFood(), "A rebound owner must supply subsequent level changes");
         loadedFood.setFoodLevel(20);
@@ -108,6 +116,7 @@ public final class FoodCapacityGameTests {
         food.setFoodLevel(-1);
         food.setSaturation(-1.0F);
         assertFood(helper, food, 0, 0.0F, "Server setters must reject negative food and saturation");
+        helper.assertValueEqual(dual(helper, food).mite$getNutrition(), 6, "Native food setters do not erase independent nutrition");
 
         MinecraftServer server = helper.getLevel().getServer();
         Difficulty previousDifficulty = helper.getLevel().getDifficulty();
@@ -138,6 +147,11 @@ public final class FoodCapacityGameTests {
     private static LeveledFoodData bridge(GameTestHelper helper, FoodData food) {
         helper.assertTrue(food instanceof LeveledFoodData, "FoodData mixin must be loaded in GameTest");
         return (LeveledFoodData) food;
+    }
+
+    private static DualFoodData dual(GameTestHelper helper, FoodData food) {
+        helper.assertTrue(food instanceof DualFoodData, "FoodData must expose the independent R196 nutrition reserve");
+        return (DualFoodData) food;
     }
 
     private static void assertFood(GameTestHelper helper, FoodData food, int expectedFood,

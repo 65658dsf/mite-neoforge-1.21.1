@@ -151,5 +151,14 @@
   "screen.mite.quality_select": "Use arrows or right-click an idle result to change quality",
   "screen.mite.quality_preview": "Higher qualities can be previewed without enough XP, but cannot be crafted",
   "screen.mite.quality_click_modes": "Left-click: one batch; Shift-click: continuous batches",
-  "screen.mite.quality_paid_single": "Paid-quality crafting stops after every batch"
+  "screen.mite.quality_paid_single": "Paid-quality crafting stops after every batch",
+  "tooltip.mite.food_values": "Satiation +%s, nutrition +%s",
+  "tooltip.mite.food_protein": "Protein",
+  "tooltip.mite.food_fat": "Fat",
+  "tooltip.mite.food_plants": "Plant nutrients",
+  "tooltip.mite.food_separator": ", ",
+  "tooltip.mite.food_sources": "Nutrient sources: %s",
+  "tooltip.mite.food_sugar": "Sugar resistance buildup +%s",
+  "tooltip.mite.egg_throw": "Use to eat; Ctrl + use to throw",
+  "tooltip.mite.food_native_saturation": "Vanilla saturation +%s"
 }

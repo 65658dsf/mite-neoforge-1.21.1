@@ -6,6 +6,13 @@
   "mixins": [
     "PlayerFoodMixin",
     "FoodDataMixin",
+    "CompleteFoodUseMixin",
+    "SpecialFoodFinishMixin",
+    "SuspiciousStewNutritionMixin",
+    "MilkNutritionMixin",
+    "FoodItemStackMixin",
+    "EggFoodMixin",
+    "CakeNutritionMixin",
     "PlayerExperienceMixin",
     "ServerPlayerExperienceMixin",
     "ExperienceCommandMixin",

@@ -409,7 +409,10 @@ public final class QualityCraftingGameTests {
             f.select(3);
             int period = f.period();
             Consumer<PlayerXpEvent.XpChange> hungry = event -> {
-                if (event.getEntity() == f.player && event.getAmount() < 0) f.player.getFoodData().setFoodLevel(0);
+                if (event.getEntity() == f.player && event.getAmount() < 0) {
+                    f.player.getFoodData().setFoodLevel(0);
+                    ((io.github.ningmeng123.mite.survival.DualFoodData)f.player.getFoodData()).mite$setNutrition(0);
+                }
             };
             NeoForge.EVENT_BUS.addListener(hungry);
             try {

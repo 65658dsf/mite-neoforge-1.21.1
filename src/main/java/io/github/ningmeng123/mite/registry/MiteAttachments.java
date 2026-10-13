@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.registry;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.survival.DeathExperience;
 import io.github.ningmeng123.mite.survival.DeathOrbOwner;
+import io.github.ningmeng123.mite.survival.NutritionState;
 import java.util.UUID;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
@@ -31,6 +32,10 @@ public final class MiteAttachments {
 
     private MiteAttachments() {
     }
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<NutritionState>> NUTRITION =
+            ATTACHMENTS.register("nutrition", () -> AttachmentType.builder(() -> NutritionState.INITIAL)
+                    .serialize(NutritionState.CODEC).copyOnDeath().build());
 
     public static void register(IEventBus modBus) {
         ATTACHMENTS.register(modBus);

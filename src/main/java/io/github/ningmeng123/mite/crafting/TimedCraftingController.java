@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.crafting;
 import io.github.ningmeng123.mite.network.CraftingProgressPayload;
 import io.github.ningmeng123.mite.network.CraftingQualityPayload;
 import io.github.ningmeng123.mite.rules.EquipmentQualityRules;
+import io.github.ningmeng123.mite.survival.FoodConsumption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,8 +178,7 @@ public final class TimedCraftingController {
             return;
         }
         int period = period(player, prepared);
-        // The current modern food model has one food reserve; dual R196 nutrition remains separate work.
-        if (player.getFoodData().getFoodLevel() <= 0) {
+        if (!FoodConsumption.hasEnergy(player)) {
             if (player.tickCount % 20 == 0) show(player, session.progress, period, true);
             return;
         }
@@ -198,7 +198,7 @@ public final class TimedCraftingController {
             publishQuality(player, checked);
             return;
         }
-        if (player.getFoodData().getFoodLevel() <= 0) {
+        if (!FoodConsumption.hasEnergy(player)) {
             session.progress = Math.min(session.progress, Math.max(period(player, checked) - 1, 0));
             show(player, session.progress, period(player, checked), true);
             return;

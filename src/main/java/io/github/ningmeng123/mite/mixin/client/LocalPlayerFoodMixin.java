@@ -2,14 +2,17 @@ package io.github.ningmeng123.mite.mixin.client;
 
 import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import io.github.ningmeng123.mite.survival.FoodConsumption;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /** R196 allows sprinting with food energy, including at level zero. @author NingMeng123 */
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerFoodMixin {
-    @ModifyConstant(method = "hasEnoughFoodToStartSprinting", constant = @Constant(floatValue = 6.0F), require = 1, allow = 1)
-    private float mite$sprintWhileFoodRemains(float original) {
-        return 0.0F;
+    @Inject(method = "hasEnoughFoodToStartSprinting", at=@At("HEAD"),cancellable=true)
+    private void mite$sprintWhileEnergyRemains(CallbackInfoReturnable<Boolean> cir) {
+        LocalPlayer player=(LocalPlayer)(Object)this;
+        cir.setReturnValue(player.getAbilities().mayfly || FoodConsumption.hasEnergy(player));
     }
 }
