@@ -9,9 +9,18 @@
     "Known source cake is a block interaction: CAKE_SLICE supplies 2/2 protein and sugar166; item cake stays nonedible.",
     "Modern ominous bottle FOOD is unused by OminousBottleItem.finishUsingItem and is removed.",
     "Unknown FOOD items use modern nutrition for both S/N with no micronutrient or sugar claim; custom drinks are included.",
-    "User override: wheat seeds retain original source1/0 as explicit_original_source_values, but effective S/N is0/0, micronutrient flags arefalse, original2000 extra fat is not applied, and explicit native_saturation is1. Omitted native_saturation defaults0.",
+    "User override: wheat seeds retain original source1/0 as explicit_original_source_values, but effective S/N is0/0, micronutrient flags arefalse, original2000 extra fat is not applied, and explicit native_saturation is1.",
+    "FOOD.nutrition exposes source S and FOOD.saturation exposes absolute source N for AppleSkin display compatibility. Omitted native_saturation defaults to profile nutrition, not a modern saturation multiplier or an extra reserve; actual consumption still ingests source S/N once. Only the existing explicit wheat-seed buffer is applied separately.",
     "019 expansion adds31 R196 ingestion profiles and14 nonfood materials/vessels, for45 new registered IDs; includes water_bowl S/N0/0. Existing wheat-seed user override and all modern adaptations stay unchanged."
   ],
+  "saturation_policy": {
+    "default": "profile_nutrition_absolute",
+    "purpose": "appleskin_display_compatibility",
+    "food_nutrition_metadata": "profile_satiation",
+    "food_saturation_metadata": "profile_nutrition_unless_explicit_native_saturation",
+    "actual_ingestion": "source_satiation_and_nutrition_once_without_extra_saturation_reserve",
+    "explicit_buffer_exception": "minecraft:wheat_seeds_native_saturation_1"
+  },
   "foods": [
     {
       "id": "minecraft:brown_mushroom",

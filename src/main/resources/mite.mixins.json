@@ -59,7 +59,11 @@
   ],
   "client": [
     "client.GuiFoodMixin",
-    "client.LocalPlayerFoodMixin"
+    "client.LocalPlayerFoodMixin",
+    "client.AppleSkinSaturationMixin",
+    "client.AppleSkinSaturationMixin$Draw",
+    "client.AppleSkinSaturationMixin$QueriedFoodResult",
+    "client.AppleSkinHealthMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -36,7 +36,7 @@ public final class MiteFoodCatalog {
         private static final Map<Item, FoodProfile> SOURCE_PROFILES = profiles(false);
         private static final Map<Item, FoodProfile> MODERN_PROFILES = profiles(true);
     }
-    private record Entry(FoodProfile profile, int stackLimit, int useTicks, float nativeSaturation, JsonArray effects,
+    private record Entry(FoodProfile profile, int stackLimit, int useTicks, float compatibilitySaturation, JsonArray effects,
                          @Nullable Item remainder, boolean modern) {}
 
     private MiteFoodCatalog() {}
@@ -89,8 +89,10 @@ public final class MiteFoodCatalog {
             builder.effect(() -> new MobEffectInstance(type, duration, amplifier), effect.get("probability").getAsFloat());
         }
         FoodProperties properties = builder.build();
-        // The explicit wheat-seed override carries one native saturation point; source N is separate.
-        return new FoodProperties(properties.nutrition(), entry.nativeSaturation(), properties.canAlwaysEat(),
+        // AppleSkin reads absolute FOOD.saturation: expose R196 N for its food preview, not a
+        // modern multiplier or a third reserve. Actual consumption ingests the profile once;
+        // only the explicit wheat-seed override also supplies its existing one-point buffer.
+        return new FoodProperties(properties.nutrition(), entry.compatibilitySaturation(), properties.canAlwaysEat(),
                 entry.useTicks() / 20F, properties.usingConvertsTo(), properties.effects());
     }
 
@@ -125,13 +127,13 @@ public final class MiteFoodCatalog {
                         food.get("protein").getAsBoolean(), food.get("fat").getAsBoolean(), food.get("plants").getAsBoolean(),
                         food.get("sugar").getAsInt(), food.get("drink").getAsBoolean(), food.get("always_edible").getAsBoolean());
                 Item remainder = food.has("remainder") ? item(food.get("remainder").getAsString()) : null;
-                float nativeSaturation = food.has("native_saturation")
-                        ? food.get("native_saturation").getAsFloat() : 0F;
+                float compatibilitySaturation = food.has("native_saturation")
+                        ? food.get("native_saturation").getAsFloat() : profile.nutrition();
                 String sourceKind = food.get("source_kind").getAsString();
                 if (!("r196".equals(sourceKind) || "modern_adaptation".equals(sourceKind) || "user_adaptation".equals(sourceKind)))
                     throw new IllegalArgumentException("Unknown food source kind: " + sourceKind);
                 Entry entry = new Entry(profile, food.get("stack_limit").getAsInt(), food.get("use_ticks").getAsInt(),
-                        nativeSaturation, food.getAsJsonArray("effects"), remainder, !"r196".equals(sourceKind));
+                        compatibilitySaturation, food.getAsJsonArray("effects"), remainder, !"r196".equals(sourceKind));
                 if (entries.put(item, entry) != null) throw new IllegalArgumentException("Duplicate food: " + food.get("id"));
             }
             return Collections.unmodifiableMap(entries);

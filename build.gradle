@@ -87,7 +87,15 @@ neoForge {
             programArguments.addAll '--mod', project.mod_id, '--all',
                     '--output', file('src/generated/resources').absolutePath,
                     '--existing', file('src/main/resources').absolutePath
-
+            if (project.providers.gradleProperty('miteAppleSkinAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.appleSkinAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                boolean emptyAuditMods = project.providers.gradleProperty('miteAppleSkinAuditNoMods').getOrElse('false').toBoolean()
+                if (emptyAuditMods) gameDirectory = file('build/verification/020-no-appleskin-run')
+                systemProperty 'mite.appleSkinAuditOutput', file(emptyAuditMods
+                        ? 'build/verification/appleskin-compatibility-audit-absent.json'
+                        : 'build/verification/appleskin-compatibility-audit.json').absolutePath
+            }
         }
         configureEach {
             systemProperty 'forge.logging.markers', 'REGISTRIES'

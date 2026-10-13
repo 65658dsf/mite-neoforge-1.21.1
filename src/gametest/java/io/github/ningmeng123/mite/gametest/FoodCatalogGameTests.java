@@ -131,8 +131,8 @@ public final class FoodCatalogGameTests {
             helper.assertTrue(food != null, "Mapped food has native component: " + item);
             helper.assertTrue(food.canAlwaysEat(), "Native use delegates fullness decisions to authoritative dual resource rules: " + item);
             helper.assertValueEqual(food.nutrition(), profile.satiation(), "Native HUD metadata represents S, not modern saturation: " + item);
-            helper.assertValueEqual(food.saturation(), item == Items.WHEAT_SEEDS ? 1F : 0F,
-                    "Only the explicit wheat-seed override supplies native saturation: " + item);
+            helper.assertValueEqual(food.saturation(), item == Items.WHEAT_SEEDS ? 1F : (float) profile.nutrition(),
+                    "AppleSkin saturation metadata displays absolute source N; wheat seeds retain their explicit one-point exception: " + item);
             helper.assertValueEqual(food.eatDurationTicks(), 32, "Catalog use duration is32 ticks: " + item);
         });
     }

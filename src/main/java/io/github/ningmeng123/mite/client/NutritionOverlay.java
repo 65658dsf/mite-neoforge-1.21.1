@@ -23,7 +23,7 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-/** Shows R196 nutrition separately from vanilla/AppleSkin saturation. @author NingMeng123 */
+/** Source nutrients and food values; AppleSkin's compatible saturation preview represents N. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT)
 public final class NutritionOverlay {
     private static final int WIDTH = 81;
@@ -93,28 +93,11 @@ public final class NutritionOverlay {
         if (state == null) return;
         var graphics = event.getGuiGraphics();
         int x = graphics.guiWidth() / 2 + 10;
-        // Reserve the extra four pixels before drawing: the thin bar must end above
-        // the already rendered icon row, rather than overlap its top edge.
-        int y = graphics.guiHeight() - minecraft.gui.rightHeight - 4;
-        int limit = Math.max(1, state.limit());
-        int nutrition = Math.clamp(state.nutrition(), 0, limit);
-        int color = nutrition == 0 ? 0xFF7777 : nutrition < limit / 2 ? 0xE6C971 : 0xAAD98C;
-        Component label = Component.translatable("hud.mite.nutrition", nutrition, limit);
-        graphics.drawString(minecraft.font, label, x + WIDTH - minecraft.font.width(label), y, color, true);
-        graphics.fill(x, y + 10, x + WIDTH, y + 12, 0xB0000000);
-        int filled = (int) ((long) WIDTH * nutrition / limit);
-        if (filled > 0) graphics.fill(x, y + 10, x + filled, y + 12, 0xFF000000 | color);
-        minecraft.gui.rightHeight += 14;
-
         List<Component> statuses = new ArrayList<>();
         if (minecraft.player.hasEffect(MobEffects.CONFUSION))
             statuses.add(Component.translatable("hud.mite.food_nausea"));
         if (state.protein() <= 0 || state.plants() <= 0)
             statuses.add(Component.translatable("hud.mite.malnourished"));
-        if (state.resistanceLevel() >= 0) {
-            String severity = state.resistanceLevel() >= 2 ? "severe" : state.resistanceLevel() == 1 ? "moderate" : "mild";
-            statuses.add(Component.translatable("hud.mite.sugar_resistance_" + severity));
-        }
         for (Component status : statuses) {
             int statusY = graphics.guiHeight() - minecraft.gui.rightHeight;
             graphics.drawString(minecraft.font, status, x + WIDTH - minecraft.font.width(status), statusY, 0xE6AA77, true);

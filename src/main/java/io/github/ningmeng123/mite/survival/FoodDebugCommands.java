@@ -66,7 +66,7 @@ public final class FoodDebugCommands {
     private static Component description(ServerPlayer p) {
         NutritionState n=NutritionState.get(p);
         return Component.literal(p.getScoreboardName()+"：饱食 "+p.getFoodData().getFoodLevel()+"，营养 "
-                +((DualFoodData)p.getFoodData()).mite$getNutrition()+"，原版饱和度 "+p.getFoodData().getSaturationLevel()
+                +((DualFoodData)p.getFoodData()).mite$getNutrition()+"，种子饱和缓冲 "+p.getFoodData().getSaturationLevel()
                 +"；蛋白 "+n.protein()+"，脂肪 "+n.fat()
                 +"，植物 "+n.plants()+"；糖抵抗 "+n.resistance()+"（阶段 "+n.resistanceLevel()+"）");
     }

@@ -126,8 +126,8 @@ public final class R196FoodRegistrationGameTests {
             helper.assertFalse(MiteFoodCatalog.modernProfiles().containsKey(stack.getItem()), "Source food cannot be relabelled as a guessed modern adaptation: " + expected.id());
             FoodProperties properties = stack.get(DataComponents.FOOD);
             helper.assertValueEqual(properties.nutrition(), expected.profile().satiation(), "Native hunger metadata uses S: " + expected.id());
-            helper.assertValueEqual(properties.saturation(), 0F,
-                    "Source food keeps nutrition separate from native saturation: " + expected.id());
+            helper.assertValueEqual(properties.saturation(), (float) expected.profile().nutrition(),
+                    "AppleSkin saturation metadata displays the source N absolute value: " + expected.id());
             helper.assertTrue(properties.canAlwaysEat(), "Native start delegates actual fullness qualification to the shared server rules: " + expected.id());
             helper.assertValueEqual(properties.eatDurationTicks(), 32, "FOOD use duration is32 ticks: " + expected.id());
             helper.assertValueEqual(stack.getUseDuration(player), 32, "Actual item-stack use duration is32 ticks: " + expected.id());

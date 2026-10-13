@@ -4,7 +4,9 @@
 
 ## 本批边界
 
-本批建立已存在于 Minecraft 1.21.1 的食品摄入目录，配合双饱食/营养状态底座。当前目录共 49 个物品 ID：33 个保留 R196 来源数值、16 个适配（15 个现代食品及 1 个用户指定的小麦种子规则）。未注册奶酪、面团、巧克力、洋葱、水碗或新增汤类；本批也不替换食品合成、熔炼配方或自然取得链。食品取得、加工、食用分属不同入口，目录覆盖不能算食品全类完成。
+018阶段建立已存在于 Minecraft 1.21.1 的食品摄入目录，配合双饱食/营养状态底座。018目录共 49 个物品 ID：33 个保留 R196 来源数值、16 个适配（15 个现代食品及 1 个用户指定的小麦种子规则）。018未注册奶酪、面团、巧克力、洋葱、水碗或新增汤类，也不替换食品合成、熔炼配方或自然取得链。019扩展后的80项目录和取得加工链见 [019说明](food-content-019.md)。食品取得、加工、食用分属不同入口，目录覆盖不能算食品全类完成。
+
+本文件保留018原食品数值和来源校验值。当前FOOD饱和度元数据及AppleSkin显示按 [020兼容规则](food-saturation-020.md)：普通食品用N绝对值作为预览，不新增真实饱和度储备；种子既有+1例外保留。018历史默认零saturation组件不是020当前行为。
 
 源数值使用本地发布包的 [注册快照](../reference-data/runtime-registry.json)，对应本地压缩包 SHA-256 `fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3`。完整旧食品、容器与加工证据见 [R196 食品目录证据](r196-food-catalog-evidence.md)。运行时统一读取 [foods-018.json](../src/main/resources/mite/foods-018.json)，不在 Java 另存第二份食品数值表。
 
@@ -61,13 +63,13 @@ S/N 为 satiation / nutrition。P/F/V 为蛋白 / 必需脂肪 / 植物营养素
 | --- | --- | ---: | --- | ---: | --- |
 | `minecraft:wheat_seeds` | 0/0 | 1 | 均不补 | 0 | `user_adaptation` |
 
-`native_saturation` 是绝对增量，直接构造 `FoodProperties` 的 saturation 字段；不是饥饿值乘倍率，因此 FOOD.nutrition=0 仍可携带 saturation=1。只有小麦种子显式设为 1，其余目录食品省略该字段时默认为 0。`sourceProfiles()` 有 33 项，`modernProfiles()` 有 16 项，后者包含这 1 项用户适配，不能宣称 34 项都仍按原值运行。
+`native_saturation` 是小麦种子用户例外的绝对缓冲增量，不是饥饿值乘倍率，因此 FOOD.nutrition=0 仍可携带 saturation=1。020中只有该种子把此值实际加入原生缓冲；其余目录食品的FOOD.saturation改为食品N的绝对预览值，但真实摄入仍只加既有N一次，不额外加原生缓冲。省略 `native_saturation` 仍表示没有独立缓冲覆盖，不再意味着FOOD.saturation显示为0。018阶段 `sourceProfiles()` 有33项、`modernProfiles()`有16项；019后来源项64、适配项仍16，后者包含种子，不能宣称80项均是未改动的R196原值。
 
-原版饱和度上限为当前 S。S=4、N=3、saturation=0 时吃一份小麦种子，得到 S4/N3/saturation1；P/F/V 不增加。S=0 时饱和度上限也是 0，吃种子无法补出饱和度，仍不增加 S/N。其他食品不会无故清空已有饱和度，但当 S 下降时仍按新上限钳位。
+种子原生缓冲上限为当前S。S=4、N=3、该缓冲=0时吃一份小麦种子，得到S4/N3/缓冲1；P/F/V不增加。S=0时种子缓冲上限也是0，吃种子无法补出缓冲，仍不增加S/N。其他食品不会无故清空已有种子缓冲，但当S下降时仍按新上限钳位。020的AppleSkin显示取N＋此缓冲，按等级上限显示；N本身不受S限制，奶S0/N4也能正确展示。显示值不是第三个可再次消耗的储备。
 
-正常代谢累积 exhaustion。exhaustion≥4 时每 tick 只处理一次，先扣 1 点原版饱和度；饱和度耗尽后恢复双资源原逻辑，按条件扣 S 或 N。这是用户新增的饱和度缓冲适配，不启用现代快速回血，也不把饱和度当成 N：N=0 的慢饥饿伤害、以 N 为依据的恢复仍独立生效。
+正常代谢累积exhaustion。exhaustion≥4时每tick只处理一次；若存在种子例外缓冲，先扣1缓冲，耗尽后按R196双资源原逻辑扣S或N。普通食品的FOOD.saturation=N只是020预览元数据，不进入该缓冲消费阶段。种子例外不启用现代快速回血：N=0的慢饥饿伤害、以N为依据的恢复仍独立生效。
 
-`/mite food status @s` 同时显示 S、N、原版饱和度、P/F/V 与糖抵抗。管理员可用 `/mite food set saturation @s <0..20浮点值>` 设置饱和度，实际结果按当前 S 钳位。
+`/mite food status @s` 同时显示S、N、原生缓冲、P/F/V与糖抵抗；020将原生字段名称改为“种子饱和缓冲”，它不是兼容叠层显示的N。管理员可用 `/mite food set saturation @s <0..20浮点值>` 设置缓冲，实际结果按当前S钳位。
 
 原版生命包只在生命、饱食或饱和度零/非零状态改变时发送，不能保证连续种子的 `1→2→3` 饱和度及时显示。本模组营养同步包单独携带饱和度 float，变化即同步、客户端写入原生 FoodData，设置命令也强制同步；面板仍不显示这个字段。同步协议版本为 2，存档版本不变。
 
@@ -101,7 +103,7 @@ S/N 为 satiation / nutrition。P/F/V 为蛋白 / 必需脂肪 / 植物营养素
 
 ## 默认组件与副作用
 
-默认 FOOD 组件的 nutrition 使用 S，时长 1.6 秒（32 tick）；原版 saturation 通常为 0，只有小麦种子用户适配设为 1。canAlwaysEat 统一为 true，用于让原版交互入口进入服务端双资源检查，**不代表所有食品允许满值食用**；真正的满值标志保留在 FoodProfile.alwaysEdible，服务端同时检查 S/N、微量营养、恶心和呼吸条件。其它模组食品的组件保持原样，profile 明确兼容。
+默认FOOD组件的nutrition使用S，时长1.6秒（32tick）；020起普通目录食品的saturation使用N绝对值作为兼容预览，小麦种子仍显式为1。真实食用走FoodProfile，只加S/N一次，除种子例外外不把该元数据加到原生缓冲。canAlwaysEat统一为true，用于让原版交互入口进入服务端双资源检查，**不代表所有食品允许满值食用**；真正的满值标志保留在FoodProfile.alwaysEdible，服务端同时检查S/N、微量营养、恶心和呼吸条件。其它模组食品的组件保持原样，profile明确兼容。
 
 注册组件完整替换 food.effects，避免旧效果叠加：
 
@@ -129,7 +131,7 @@ R196 `ni.u` 是 poison；生鸡肉和腐肉不保留现代 hunger。普通金苹
 
 ## 验证入口
 
-[FoodCatalogGameTests](../src/gametest/java/io/github/ningmeng123/mite/gametest/FoodCatalogGameTests.java) 提供 6 组游戏内测试，覆盖目录数量、R196 独立数值、全部 FOOD 组件、32 tick、除用户种子之外零 saturation、原副作用不重复、金苹果去除现代吸收、可食用材料、源堆叠区别、奶/碗/蛋糕区别、现代/用户适配与外部 FOOD fallback。概率和时长使用独立源固定值断言，不以读取实现的数据再计算期望代替验收。
+[FoodCatalogGameTests](../src/gametest/java/io/github/ningmeng123/mite/gametest/FoodCatalogGameTests.java)在018阶段提供6组游戏内测试，覆盖目录数量、R196独立数值、FOOD组件、32tick、当时除用户种子之外零saturation、原副作用不重复、金苹果去除现代吸收、可食用材料、源堆叠区别、奶/碗/蛋糕区别、现代/用户适配与外部FOOD fallback。020将组件saturation断言更新为N兼容预览及种子1例外；旧零值断言不代表当前规则。概率和时长依据独立源固定值，不能读取实现数据再计算期望代替验收；当前020验证结果另见其记录，不改018历史通过数量/哈希。
 
 背包配方书按钮右侧的饱和效果图标打开只读营养面板，只显示 N、P、F、V、糖抵抗五行及精确数值/整数百分比。Esc、背包键（默认 E）或“返回”恢复原背包与拖拽物品；品质条移至背包相对坐标 (136,49)，窄屏展开配方书时隐藏相关按钮，JEI 共存仍需人工核对。
 
