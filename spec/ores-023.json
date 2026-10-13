@@ -817,7 +817,7 @@
     "source_oracle": "generated_from_original_bytecode_under_read_only_guard",
     "modern_unit_and_gametest": "passed",
     "manual_client": "user_confirmed_current_delivery_on_2026_10_13",
-    "github_push": "authorized_by_user_on_2026_10_13",
+    "github_push": "passed_remote_main_verified",
     "date": "2026-10-13",
     "junit": {
       "tests": 615,
@@ -836,7 +836,11 @@
     "production_json_and_mcmeta_valid": 1076,
     "original_ore_texture_files_verified": 3,
     "test_classes_or_preset_in_jar": false,
-    "manual_confirmation_scope": "用户确认023当前交付正常并授权提交；不补写每个场景、双客户端联机或旧存档的独立通过记录"
+    "manual_confirmation_scope": "用户确认023当前交付正常并授权提交；不补写每个场景、双客户端联机或旧存档的独立通过记录",
+    "github_feature_commit": "c3d16cff548f4bbdc5e4c689084992c07f500f50",
+    "github_feature_url": "https://github.com/65658dsf/mite-neoforge-1.21.1/commit/c3d16cff548f4bbdc5e4c689084992c07f500f50",
+    "remote_branch": "main",
+    "staged_snapshot_build": "passed_with_615_junit_tests_and_identical_runtime_content_except_json_line_endings"
   },
   "source_oracle": {
     "author": "NingMeng123",
