@@ -20,7 +20,7 @@ public abstract class TimedCraftingClickMixin {
         if (player instanceof ServerPlayer serverPlayer) {
             if (type == ClickType.PICKUP && button == 1) TimedCraftingController.cancel(serverPlayer);
             else if ((type == ClickType.PICKUP || type == ClickType.QUICK_MOVE) && button == 0) {
-                TimedCraftingController.start(serverPlayer, menu);
+                TimedCraftingController.start(serverPlayer, menu, type == ClickType.QUICK_MOVE);
             }
             menu.broadcastChanges();
         }

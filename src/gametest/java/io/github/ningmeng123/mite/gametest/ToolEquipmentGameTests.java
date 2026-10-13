@@ -335,7 +335,6 @@ public final class ToolEquipmentGameTests {
                 helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 2, "N-1 ticks consume no workbench");
                 helper.assertValueEqual(fixture.count(Items.OAK_LOG), logsBefore, "No remainder exists before completion");
                 TimedCraftingController.tick(player);
-                TimedCraftingController.cancel(player); // Finish exactly one batch and retain the second input.
                 helper.assertTrue(menu.getSlot(1).getItem().is(table), "The remaining workbench still occupies the input slot");
                 helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "Only one of the two workbenches was consumed");
                 helper.assertValueEqual(player.getInventory().countItem(table) + fixture.count(table)
@@ -346,9 +345,9 @@ public final class ToolEquipmentGameTests {
                 helper.assertTrue(menu.getCarried().isEmpty(), "There is no additional cursor output");
                 helper.assertTrue(!TimedCraftingController.isCompletingIn(player.getInventory()), "The transaction marker is cleared after onTake");
                 for (int tick = 0; tick < period; tick++) TimedCraftingController.tick(player);
-                helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "A canceled second batch produces no extra output");
-                helper.assertValueEqual(fixture.count(Items.OAK_LOG), logsBefore + 1, "There is no extra returned log after cancellation");
-                helper.assertValueEqual(fixture.count(knife), knifeBefore + 1, "There is no extra knife after cancellation");
+                helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "A normal click stops after one batch without manual cancellation");
+                helper.assertValueEqual(fixture.count(Items.OAK_LOG), logsBefore + 1, "There is no extra returned log after the single batch");
+                helper.assertValueEqual(fixture.count(knife), knifeBefore + 1, "There is no extra knife after the single batch");
                 menu.getSlot(1).set(ItemStack.EMPTY);
             }
         }

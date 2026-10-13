@@ -34,11 +34,13 @@ public final class TimedCraftingController {
         final Prepared prepared;
         final List<ItemStack> inputs;
         final Level level;
+        final boolean continuous;
         int progress;
-        Session(Prepared prepared, Level level) {
+        Session(Prepared prepared, Level level, boolean continuous) {
             this.prepared = prepared;
             this.inputs = snapshot(prepared.grid());
             this.level = level;
+            this.continuous = continuous;
         }
     }
     private TimedCraftingController() {}
@@ -57,12 +59,17 @@ public final class TimedCraftingController {
     public static boolean isTimed(Player player, AbstractContainerMenu menu) { return prepare(player, menu) != null; }
 
     public static boolean start(ServerPlayer player, AbstractContainerMenu menu) {
+        return start(player, menu, false);
+    }
+
+    public static boolean start(ServerPlayer player, AbstractContainerMenu menu, boolean continuous) {
         Prepared prepared = prepare(player, menu);
         if (prepared == null || player.containerMenu != menu || !allowed(player, prepared)) return false;
         Session old = SESSIONS.get(player.getUUID());
+        // Repeated clicks neither queue batches nor change an already-running session's mode.
         if (old != null && old.prepared.menu() == menu && old.prepared.recipe().id().equals(prepared.recipe().id())
                 && matches(old.inputs, prepared.grid())) return true;
-        SESSIONS.put(player.getUUID(), new Session(prepared, player.level()));
+        SESSIONS.put(player.getUUID(), new Session(prepared, player.level(), continuous));
         show(player, 0, period(player, prepared), false);
         return true;
     }
@@ -155,8 +162,9 @@ public final class TimedCraftingController {
         giveOrDrop(player, crafted);
         prepared.menu().broadcastChanges();
         Prepared next = prepare(player, prepared.menu());
-        if (next != null && next.recipe().id().equals(prepared.recipe().id())) start(player, prepared.menu());
-        else show(player, period, period, false);
+        if (session.continuous && next != null && next.recipe().id().equals(prepared.recipe().id())) {
+            start(player, prepared.menu(), true);
+        } else show(player, period, period, false);
     }
 
     public static void damaged(ServerPlayer player, float damage) {
