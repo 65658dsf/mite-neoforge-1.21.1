@@ -1,0 +1,10 @@
+{
+  "type": "mite:workbench_dismantle",
+  "ingredient": {
+    "item": "mite:obsidian_crafting_table"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:obsidian_knife"
+  }
+}

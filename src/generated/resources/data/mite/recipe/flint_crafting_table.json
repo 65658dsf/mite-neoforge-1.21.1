@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "item": "mite:sinew"
+      }
+    ],
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "L": {
+      "tag": "minecraft:logs"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "FB",
+    "SL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:flint_crafting_table"
+  }
+}

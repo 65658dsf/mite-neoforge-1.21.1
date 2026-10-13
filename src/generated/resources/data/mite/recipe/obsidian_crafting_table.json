@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "item": "mite:sinew"
+      }
+    ],
+    "L": {
+      "tag": "minecraft:logs"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "OB",
+    "SL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:obsidian_crafting_table"
+  }
+}

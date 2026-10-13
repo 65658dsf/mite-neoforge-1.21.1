@@ -129,43 +129,51 @@ public final class FlintRecipeGameTests {
             grid.setItem(2, new ItemStack(MiteItems.SINEW.get(), 2));
             grid.setItem(3, new ItemStack(Items.STICK, 2));
             helper.assertTrue(menu.getSlot(0).getItem().is(MiteItems.FLINT_HATCHET.get()), "The real InventoryMenu computes a result");
-            ItemStack moved = menu.quickMoveStack(player, 0);
-            helper.assertTrue(moved.is(MiteItems.FLINT_HATCHET.get()) && moved.getCount() == 1, "Quick move returns exactly one crafted hatchet");
+            player.containerMenu = menu;
+            helper.assertTrue(menu.quickMoveStack(player, 0).isEmpty(), "A direct quick move cannot bypass the manufacturing clock");
+            TimedCraftingTestSupport.craftOne(helper, player, menu, net.minecraft.world.inventory.ClickType.PICKUP);
             helper.assertValueEqual(count(player.getInventory(), MiteItems.FLINT_HATCHET.get()), 1, "Exactly one output reaches inventory");
             for (int slot = 0; slot < 4; slot++) {
                 helper.assertValueEqual(grid.getItem(slot).getCount(), 1, "Exactly one input is consumed from slot " + slot);
             }
-            menu.quickMoveStack(player, 0);
+            TimedCraftingTestSupport.craftOne(helper, player, menu, net.minecraft.world.inventory.ClickType.QUICK_MOVE);
             helper.assertValueEqual(count(player.getInventory(), MiteItems.FLINT_HATCHET.get()), 2, "A second quick move creates only the second hatchet");
             helper.assertTrue(grid.isEmpty() && menu.getSlot(0).getItem().isEmpty(), "Exhausted ingredients leave no phantom result");
             helper.assertTrue(menu.quickMoveStack(player, 0).isEmpty(), "An extra quick move cannot duplicate the result");
 
             for (int slot = 0; slot < 4; slot++) grid.setItem(slot, new ItemStack(MiteItems.FLINT_CHIP.get(), 2));
-            menu.quickMoveStack(player, 0);
+            TimedCraftingTestSupport.craftOne(helper, player, menu, net.minecraft.world.inventory.ClickType.PICKUP);
             helper.assertValueEqual(count(player.getInventory(), Items.FLINT), 1, "Four occupied chip slots yield one flint");
             for (int slot = 0; slot < 4; slot++) {
                 helper.assertValueEqual(grid.getItem(slot).getCount(), 1, "Each chip slot consumes one, not the legacy recipe's stored stack count");
             }
             helper.succeed();
         } finally {
+            io.github.ningmeng123.mite.crafting.TimedCraftingController.cancel(player);
             helper.getLevel().getServer().getPlayerList().remove(player);
         }
     }
 
-    @GameTest(template = "empty", timeoutTicks = 40)
+    @GameTest(template = "empty", timeoutTicks = 1000)
     public static void redstoneCrafterConsumesRemoteBindingAndOutputsOneHatchet(GameTestHelper helper) {
         BlockPos crafterPos = new BlockPos(1, 1, 1);
         BlockPos chestPos = new BlockPos(2, 1, 1);
         helper.setBlock(crafterPos, Blocks.CRAFTER.defaultBlockState()
                 .setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
         helper.setBlock(chestPos, Blocks.CHEST);
+        helper.setBlock(crafterPos.south(), TimedCraftingTestSupport.flintTable());
         CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(crafterPos));
         crafter.setItem(0, new ItemStack(Items.FLINT, 2));
         crafter.setItem(1, new ItemStack(Items.STICK, 2));
         crafter.setItem(4, new ItemStack(Items.STICK, 2));
         crafter.setItem(8, new ItemStack(Items.STRING, 2));
         helper.pulseRedstone(new BlockPos(0, 1, 1), 5);
-        helper.runAfterDelay(9, () -> {
+        int period = io.github.ningmeng123.mite.crafting.TimedCraftingRules.period(175F, 0, .2F, false);
+        helper.runAfterDelay(period, () -> {
+            Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(chestPos));
+            helper.assertValueEqual(count(chest, MiteItems.FLINT_HATCHET.get()), 0, "The Crafter cannot dispense before the real manufacturing period completes");
+        });
+        helper.runAfterDelay(period + 9, () -> {
             Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(chestPos));
             helper.assertValueEqual(count(chest, MiteItems.FLINT_HATCHET.get()), 1, "A real redstone pulse creates one hatchet in the output chest");
             for (int slot = 0; slot < 9; slot++) {

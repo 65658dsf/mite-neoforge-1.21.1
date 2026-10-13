@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "mite:block/iron_crafting_table"
+    }
+  }
+}

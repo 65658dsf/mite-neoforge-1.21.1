@@ -1,0 +1,29 @@
+{
+  "values": [
+    "mite:obsidian_hatchet",
+    "mite:copper_hatchet",
+    "mite:silver_hatchet",
+    "mite:golden_hatchet",
+    "mite:rusted_iron_hatchet",
+    "mite:iron_hatchet",
+    "mite:ancient_metal_hatchet",
+    "mite:mithril_hatchet",
+    "mite:adamantium_hatchet",
+    "mite:flint_axe",
+    "mite:obsidian_axe",
+    "mite:copper_axe",
+    "mite:silver_axe",
+    "mite:rusted_iron_axe",
+    "mite:ancient_metal_axe",
+    "mite:mithril_axe",
+    "mite:adamantium_axe",
+    "mite:copper_battle_axe",
+    "mite:silver_battle_axe",
+    "mite:golden_battle_axe",
+    "mite:rusted_iron_battle_axe",
+    "mite:iron_battle_axe",
+    "mite:ancient_metal_battle_axe",
+    "mite:mithril_battle_axe",
+    "mite:adamantium_battle_axe"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "mite:ancient_metal_ingot"
+    }
+  },
+  "pattern": [
+    " A",
+    "A "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:ancient_metal_shears"
+  }
+}

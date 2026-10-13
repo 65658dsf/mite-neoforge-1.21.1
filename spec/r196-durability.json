@@ -1,0 +1,3279 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "title": "016 R196 装备耐久规则与现代适配",
+  "status": "implemented_subset_automated_and_user_validated_2026-10-13",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "runtime_source": "reference-data/runtime-registry.json",
+  "source_root": ".reference/r196/decompiled",
+  "activation": {
+    "quality_active": true,
+    "professions_default_enabled": false,
+    "proof": "xj/wh.hasQuality=true，yc.getMaxDamage(stack)调用ye.getQuality并实际乘品质；职业开关不门控品质。",
+    "default_quality": "min(item.getMaxQuality(), average)，锈铁默认poor，不是average。"
+  },
+  "materials": [
+    {
+      "name": "leather",
+      "durability_factor": 1.0,
+      "maximum_quality": "fine"
+    },
+    {
+      "name": "wood",
+      "durability_factor": 0.5,
+      "maximum_quality": "fine"
+    },
+    {
+      "name": "flint",
+      "durability_factor": 1.0,
+      "maximum_quality": "fine"
+    },
+    {
+      "name": "obsidian",
+      "durability_factor": 2.0,
+      "maximum_quality": "fine"
+    },
+    {
+      "name": "rusted_iron",
+      "durability_factor": 4.0,
+      "maximum_quality": "poor"
+    },
+    {
+      "name": "copper",
+      "durability_factor": 4.0,
+      "maximum_quality": "excellent"
+    },
+    {
+      "name": "silver",
+      "durability_factor": 4.0,
+      "maximum_quality": "excellent"
+    },
+    {
+      "name": "gold",
+      "durability_factor": 4.0,
+      "maximum_quality": "superb"
+    },
+    {
+      "name": "iron",
+      "durability_factor": 8.0,
+      "maximum_quality": "masterwork"
+    },
+    {
+      "name": "ancient_metal",
+      "durability_factor": 16.0,
+      "maximum_quality": "masterwork"
+    },
+    {
+      "name": "mithril",
+      "durability_factor": 64.0,
+      "maximum_quality": "legendary"
+    },
+    {
+      "name": "adamantium",
+      "durability_factor": 256.0,
+      "maximum_quality": "legendary"
+    },
+    {
+      "name": "diamond",
+      "durability_factor": 16.0,
+      "maximum_quality": "superb"
+    }
+  ],
+  "rules": [
+    {
+      "id": "durability.maximum.tool",
+      "formula_java": "(int)(4F * (float)components * material.durability * 100F)",
+      "sources": [
+        {
+          "file": "xj.java",
+          "lines": [
+            20,
+            40
+          ]
+        }
+      ],
+      "bytecode": "xj.getMultipliedDurability offsets9,17,20=fmul,21=f2i",
+      "components": {
+        "pickaxe": 3,
+        "axe": 3,
+        "battle_axe": 4,
+        "hatchet": 1,
+        "shovel": 1,
+        "mattock": 4,
+        "hoe": 2,
+        "sword": 2,
+        "dagger": 1,
+        "knife": 1,
+        "scythe": 2,
+        "shears": 2,
+        "club": 2,
+        "cudgel": 1,
+        "war_hammer": 5
+      }
+    },
+    {
+      "id": "durability.maximum.armor",
+      "formula_java": "float d=(float)components*material.durability; if(!chainmail)d*=2F; return (int)d;",
+      "components": {
+        "helmet": 5,
+        "chestplate": 8,
+        "leggings": 7,
+        "boots": 4
+      },
+      "sources": [
+        {
+          "file": "wh.java",
+          "lines": [
+            18,
+            40
+          ]
+        },
+        {
+          "file": "ItemHelmet.java",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        {
+          "file": "ItemCuirass.java",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        {
+          "file": "ItemLeggings.java",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        {
+          "file": "ItemBoots.java",
+          "lines": [
+            16,
+            18
+          ]
+        }
+      ]
+    },
+    {
+      "id": "durability.quality",
+      "formula_java": "max(Math.round((float)baseMaximum * quality.multiplier),1)",
+      "multipliers": {
+        "wretched": 0.5,
+        "poor": 0.75,
+        "average": 1,
+        "fine": 1.5,
+        "excellent": 2,
+        "superb": 2.5,
+        "masterwork": 3,
+        "legendary": 3.5
+      },
+      "default": "minimum of material maximum and average",
+      "command_boundary": "显式quality ordinal0..7读写；查询按材料上限夹取；保存与网络同步component mite:quality。",
+      "sources": [
+        {
+          "file": "yc.java",
+          "lines": [
+            590,
+            608
+          ]
+        },
+        {
+          "file": "yc.java",
+          "lines": [
+            1253,
+            1255
+          ]
+        },
+        {
+          "file": "ye.java",
+          "lines": [
+            927,
+            954
+          ]
+        },
+        {
+          "file": "EnumQuality.java",
+          "lines": [
+            6,
+            14
+          ]
+        }
+      ],
+      "bytecode": "yc.getMaxDamage(EnumQuality):67 fmul,68 Math.round(F),72 max"
+    },
+    {
+      "id": "durability.tool.block_wear",
+      "formula_java": "if(H==0F)return0; decay=100F*baseRate; return max(max((int)(H*decay),(int)(decay/20F)),1);",
+      "gates": [
+        "服务端；可损坏物品；方块非portable；非创造；H>0；该工具对该方块getStrVsBlock>1。",
+        "未达到采集级别使有效工具强度不成立时不发生工具磨损；不能仅看工具类别。"
+      ],
+      "rates": {
+        "pickaxe": "1",
+        "axe": "sandstone?1.875F:1F",
+        "battle_axe": "axeRate*1.25F",
+        "hatchet": "axeRate*4F/3F",
+        "shovel": "0.5F",
+        "mattock": "0.5F*0.8F",
+        "hoe": "2F",
+        "sword": "2F",
+        "dagger": "2F",
+        "knife": "cloth/plants/vine?2F/4F:2F/2F",
+        "scythe": "oldTallgrass/wheat?0.5F:2F",
+        "shears": "1F",
+        "club": "0.25F",
+        "cudgel": "0.25F",
+        "war_hammer": "1F*2F/3F"
+      },
+      "sources": [
+        {
+          "file": "xj.java",
+          "lines": [
+            149,
+            192
+          ]
+        },
+        {
+          "file": "ya.java",
+          "lines": [
+            33,
+            38
+          ]
+        },
+        {
+          "file": "ItemHatchet.java",
+          "lines": [
+            37,
+            45
+          ]
+        },
+        {
+          "file": "ItemBattleAxe.java",
+          "lines": [
+            32,
+            40
+          ]
+        },
+        {
+          "file": "ItemKnife.java",
+          "lines": [
+            23,
+            29
+          ]
+        },
+        {
+          "file": "ItemScythe.java",
+          "lines": [
+            29,
+            32
+          ]
+        }
+      ],
+      "modern": "沿用当前MiningProgress.effectiveHardness；刀的布/植物/藤蔓、镰刀草/小麦、砂岩家族明确映射到现代块集合；工具有效性由现代Tool组件提供。requiresCorrectToolForDrops目标还要求isCorrectToolForDrops，弱镐有速度加成而等级不足时不扣耐久；不宣称已完整封堵所有非法破坏。"
+    },
+    {
+      "id": "durability.tool.attack_wear",
+      "formula_java": "max((int)(100F*baseRate),1)",
+      "rates": {
+        "pickaxe": 100,
+        "axe": 100,
+        "battle_axe": 75,
+        "hatchet": 133,
+        "shovel": 100,
+        "mattock": 100,
+        "hoe": 200,
+        "sword": 50,
+        "dagger": 50,
+        "knife": 50,
+        "scythe_normal": 400,
+        "scythe_sharpness": 200,
+        "scythe_vampiric": 100,
+        "shears": 200,
+        "club": 25,
+        "cudgel": 25,
+        "war_hammer": 66
+      },
+      "sources": [
+        {
+          "file": "xj.java",
+          "lines": [
+            161,
+            177
+          ]
+        },
+        {
+          "file": "ItemScythe.java",
+          "lines": [
+            36,
+            43
+          ]
+        }
+      ],
+      "modern": "未注册吸血附魔，pure规则保留其优先级；运行时只识别现代锋利。"
+    },
+    {
+      "id": "durability.actions",
+      "tilling_points": 50,
+      "sheep_shearing_points": 50,
+      "sources": [
+        {
+          "file": "yb.java",
+          "lines": [
+            74,
+            80
+          ]
+        },
+        {
+          "file": "yx.java",
+          "lines": [
+            47,
+            63
+          ]
+        }
+      ],
+      "modern": "定点接管旧原版Hoe.useOn和Shears.interactLivingEntity；新工具回调调用同一hurt入口；现代剪刀封顶植物等useOn保留原行为。"
+    },
+    {
+      "id": "durability.unbreaking",
+      "levels": 5,
+      "formula_java": "chance=((float)level/5F)*0.75F; for each requested damage point: negate iff nextFloat()<chance;",
+      "fraction_bits": [
+        0,
+        1041865114,
+        1050253722,
+        1055286887,
+        1058642330,
+        1061158912
+      ],
+      "details": [
+        "I..V名义概率15/30/45/60/75%；III的float是0x3ee66667，高于0.45F。",
+        "原版每次tryDamageItem创建new Random，现代使用ServerLevel RandomSource；概率与独立抽点保留，不追求同随机序列。",
+        "现代额外将指令越界附魔夹0..5；原正常附魔范围是0..5。",
+        "只替换受管物品UNBREAKING的效果；其它现代或模组附魔效果继续执行，避免重复耐久附魔抽签。"
+      ],
+      "sources": [
+        {
+          "file": "ye.java",
+          "lines": [
+            256,
+            279
+          ]
+        },
+        {
+          "file": "aau.java",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        {
+          "file": "aaw.java",
+          "lines": [
+            40,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "id": "durability.armor.protection",
+      "player_factor": "max>1&&damage>=max-1?0:min(2F-(float)damage/(float)max*2F,1F)",
+      "nonplayer_factor_original": 0.5,
+      "material_protection": {
+        "leather": 2,
+        "rusted_iron": 6,
+        "copper": 7,
+        "silver": 7,
+        "gold": 6,
+        "iron": 8,
+        "ancient_metal": 8,
+        "mithril": 9,
+        "adamantium": 10
+      },
+      "chainmail": "materialProtection-2",
+      "piece_protection": "components*materialProtection/24F; 加 protection*(Protection附魔等级/4F)*0.5F；再乘磨损系数。",
+      "total_snap": "逐件float求和后ls.tryFitToNearestInteger(total,1e-4F)，用于耐久预算。",
+      "sources": [
+        {
+          "file": "wh.java",
+          "lines": [
+            43,
+            76
+          ]
+        },
+        {
+          "file": "wh.java",
+          "lines": [
+            202,
+            217
+          ]
+        },
+        {
+          "file": "wh.java",
+          "lines": [
+            273,
+            297
+          ]
+        },
+        {
+          "file": "ls.java",
+          "lines": [
+            207,
+            214
+          ]
+        }
+      ],
+      "modern": "旧防护值只用于耐久分配；实际减伤/韧性保留现代公式，ARMOR属性贡献乘磨损系数。属性事件没有owner，现代携带同样受管装备的生物也按装备状态缩放，未复制旧生物固定0.5。"
+    },
+    {
+      "id": "durability.armor.wear",
+      "budget": "amount=min(originalWornArmorProtection, incomingDamage); integerBudget=max((int)amount,1);",
+      "distribution": "每轮nextInt(4)选脚/腿/胸/头；若该槽有护甲且总计仅1件，分配全部剩余；否则nextInt(remaining)+1。空槽也消耗抽到的预算，不能把预算平均扣每件。",
+      "last_point": "耐久附魔之后，普通穿戴损耗最多减到maxDamage-1。酸/胃酸可破坏，皮革遇火可破坏；旧lava分支可破坏且金属损耗*10。equipment_decays_faster诅咒在耐久附魔前*2。",
+      "sources": [
+        {
+          "file": "Damage.java",
+          "lines": [
+            204,
+            209
+          ]
+        },
+        {
+          "file": "ud.java",
+          "lines": [
+            579,
+            610
+          ]
+        },
+        {
+          "file": "ye.java",
+          "lines": [
+            271,
+            315
+          ]
+        }
+      ],
+      "modern": "玩家hurtArmor实际路径调用；保留ArmorHurtEvent取消/修改和canBeHurtBy。旧酸/胃酸与装备腐坏诅咒尚无现代实现；现代火/岩浆例外、下界合金火免疫按对应现代伤害类型接入。"
+    },
+    {
+      "id": "durability.break_and_load",
+      "original": "工具damage>=max即损毁；穿戴物普通损耗保留1；旧NBT读档若damage>=max会夹回max-1；一般物品破损没有固定返还物。",
+      "sources": [
+        {
+          "file": "ye.java",
+          "lines": [
+            166,
+            175
+          ]
+        },
+        {
+          "file": "ye.java",
+          "lines": [
+            277,
+            279
+          ]
+        },
+        {
+          "file": "ye.java",
+          "lines": [
+            309,
+            343
+          ]
+        },
+        {
+          "file": "yc.java",
+          "lines": [
+            1450,
+            1452
+          ]
+        }
+      ],
+      "modern": "工具使用原版hurtAndBreak、统计、破损通知和物品组件；没有将所有无效现代NBT统一自动修成剩1。"
+    },
+    {
+      "id": "durability.combine_repair",
+      "formula": "newDamage=max(maximum-((maximum-firstDamage)+(maximum-secondDamage)),0)，没有5%奖励。",
+      "gates": [
+        "同物品且单件输入",
+        "两件都已损坏",
+        "品质相同",
+        "两件都无附魔（含诅咒）",
+        "染色状态一致且颜色相同"
+      ],
+      "sources": [
+        {
+          "file": "aaf.java",
+          "lines": [
+            263,
+            272
+          ]
+        },
+        {
+          "file": "aaf.java",
+          "lines": [
+            293,
+            322
+          ]
+        },
+        {
+          "file": "va.java",
+          "lines": [
+            62,
+            143
+          ]
+        }
+      ],
+      "modern": "仅受管装备收紧普通合并；保留同品质和染色组件，避免已调整MAX_DAMAGE再次乘品质。铁砧沿用现代修理/XP规则及原组件copy，完整R196材质维修数量、砧级别、制造时间与XP门槛另项。非受管装备普通维修保留现代。"
+    }
+  ],
+  "modern_mapping": {
+    "vanilla_tools": {
+      "stone": {
+        "material_factor": 1,
+        "status": "现代过渡映射，R196没有现代石工具族"
+      },
+      "diamond": {
+        "material_factor": 16,
+        "status": "复用旧diamond材料，但R196无该工具族"
+      },
+      "netherite": {
+        "material_factor": 32,
+        "status": "现代推导，保留现代能力/火免疫"
+      }
+    },
+    "vanilla_armor": {
+      "diamond": {
+        "material_factor": 16,
+        "wear_budget_protection": 9,
+        "status": "现代适配，旧wh无diamond防护分支"
+      },
+      "netherite": {
+        "material_factor": 32,
+        "wear_budget_protection": 10,
+        "status": "现代适配"
+      }
+    },
+    "unchanged_modern": [
+      "海龟壳最大耐久/耗损",
+      "盾",
+      "鞘翅",
+      "三叉戟",
+      "刷子",
+      "本批未接管的现代工具/模组装备"
+    ],
+    "portable": {
+      "implemented": "CraftingTableBlock及本模组MaterialWorkbenchBlock免工具磨损，对应arv.isPortable=true。",
+      "not_fully_mapped": [
+        "铁砧",
+        "旧容器基类及方向/悬挂方块实体基类",
+        "床",
+        "炼药锅",
+        "龙蛋",
+        "梯子",
+        "TNT",
+        "只对所有者portable的Strongbox"
+      ],
+      "source": "各isPortable覆盖；默认aqz及刷怪笼false。不是任意BlockEntity都可豁免。"
+    },
+    "quality_selection": "品质组件默认按原材料上限与average较低者；命令/保存/同步可用，制造品质选择UI与经验门槛尚未实现。"
+  },
+  "source_tool_inventory": [
+    {
+      "registry_id": 256,
+      "symbols": [
+        "yc.h"
+      ],
+      "class": "ItemShovel",
+      "material": "iron",
+      "base_durability": 3200,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/221",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 257,
+      "symbols": [
+        "yc.i"
+      ],
+      "class": "yn",
+      "material": "iron",
+      "base_durability": 9600,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 9600,
+      "runtime_pointer": "/items/222",
+      "family": "PICKAXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 258,
+      "symbols": [
+        "yc.j"
+      ],
+      "class": "ya",
+      "material": "iron",
+      "base_durability": 9600,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 9600,
+      "runtime_pointer": "/items/223",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 267,
+      "symbols": [
+        "yc.s"
+      ],
+      "class": "zl",
+      "material": "iron",
+      "base_durability": 6400,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/231",
+      "family": "SWORD",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 269,
+      "symbols": [
+        "yc.u"
+      ],
+      "class": "ItemShovel",
+      "material": "wood",
+      "base_durability": 200,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 200,
+      "runtime_pointer": "/items/232",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 283,
+      "symbols": [
+        "yc.I"
+      ],
+      "class": "zl",
+      "material": "gold",
+      "base_durability": 3200,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/236",
+      "family": "SWORD",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 284,
+      "symbols": [
+        "yc.J"
+      ],
+      "class": "ItemShovel",
+      "material": "gold",
+      "base_durability": 1600,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/237",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 285,
+      "symbols": [
+        "yc.K"
+      ],
+      "class": "yn",
+      "material": "gold",
+      "base_durability": 4800,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 4800,
+      "runtime_pointer": "/items/238",
+      "family": "PICKAXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 286,
+      "symbols": [
+        "yc.L"
+      ],
+      "class": "ya",
+      "material": "gold",
+      "base_durability": 4800,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 4800,
+      "runtime_pointer": "/items/239",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 292,
+      "symbols": [
+        "yc.R"
+      ],
+      "class": "yb",
+      "material": "iron",
+      "base_durability": 6400,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/243",
+      "family": "HOE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 294,
+      "symbols": [
+        "yc.T"
+      ],
+      "class": "yb",
+      "material": "gold",
+      "base_durability": 3200,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/244",
+      "family": "HOE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 359,
+      "symbols": [
+        "yc.bg"
+      ],
+      "class": "yx",
+      "material": "iron",
+      "base_durability": 6400,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/305",
+      "family": "SHEARS",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 967,
+      "symbols": [
+        "yc.pickaxeCopper"
+      ],
+      "class": "yn",
+      "material": "copper",
+      "base_durability": 4800,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 4800,
+      "runtime_pointer": "/items/370",
+      "family": "PICKAXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 968,
+      "symbols": [
+        "yc.pickaxeSilver"
+      ],
+      "class": "yn",
+      "material": "silver",
+      "base_durability": 4800,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 4800,
+      "runtime_pointer": "/items/371",
+      "family": "PICKAXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 969,
+      "symbols": [
+        "yc.pickaxeMithril"
+      ],
+      "class": "yn",
+      "material": "mithril",
+      "base_durability": 76800,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 76800,
+      "runtime_pointer": "/items/372",
+      "family": "PICKAXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 970,
+      "symbols": [
+        "yc.pickaxeAdamantium"
+      ],
+      "class": "yn",
+      "material": "adamantium",
+      "base_durability": 307200,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 307200,
+      "runtime_pointer": "/items/373",
+      "family": "PICKAXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 971,
+      "symbols": [
+        "yc.pickaxeRustedIron"
+      ],
+      "class": "yn",
+      "material": "rusted_iron",
+      "base_durability": 4800,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 3600,
+      "runtime_pointer": "/items/374",
+      "family": "PICKAXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 972,
+      "symbols": [
+        "yc.shovelFlint"
+      ],
+      "class": "ItemShovel",
+      "material": "flint",
+      "base_durability": 400,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 400,
+      "runtime_pointer": "/items/375",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 973,
+      "symbols": [
+        "yc.shovelCopper"
+      ],
+      "class": "ItemShovel",
+      "material": "copper",
+      "base_durability": 1600,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/376",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 974,
+      "symbols": [
+        "yc.shovelSilver"
+      ],
+      "class": "ItemShovel",
+      "material": "silver",
+      "base_durability": 1600,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/377",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 975,
+      "symbols": [
+        "yc.shovelMithril"
+      ],
+      "class": "ItemShovel",
+      "material": "mithril",
+      "base_durability": 25600,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 25600,
+      "runtime_pointer": "/items/378",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 976,
+      "symbols": [
+        "yc.shovelAdamantium"
+      ],
+      "class": "ItemShovel",
+      "material": "adamantium",
+      "base_durability": 102400,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 102400,
+      "runtime_pointer": "/items/379",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 977,
+      "symbols": [
+        "yc.shovelRustedIron"
+      ],
+      "class": "ItemShovel",
+      "material": "rusted_iron",
+      "base_durability": 1600,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 1200,
+      "runtime_pointer": "/items/380",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 978,
+      "symbols": [
+        "yc.hatchetFlint"
+      ],
+      "class": "ItemHatchet",
+      "material": "flint",
+      "base_durability": 400,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 400,
+      "runtime_pointer": "/items/381",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 979,
+      "symbols": [
+        "yc.axeFlint"
+      ],
+      "class": "ya",
+      "material": "flint",
+      "base_durability": 1200,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 1200,
+      "runtime_pointer": "/items/382",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 980,
+      "symbols": [
+        "yc.axeCopper"
+      ],
+      "class": "ya",
+      "material": "copper",
+      "base_durability": 4800,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 4800,
+      "runtime_pointer": "/items/383",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 981,
+      "symbols": [
+        "yc.axeSilver"
+      ],
+      "class": "ya",
+      "material": "silver",
+      "base_durability": 4800,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 4800,
+      "runtime_pointer": "/items/384",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 982,
+      "symbols": [
+        "yc.axeMithril"
+      ],
+      "class": "ya",
+      "material": "mithril",
+      "base_durability": 76800,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 76800,
+      "runtime_pointer": "/items/385",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 983,
+      "symbols": [
+        "yc.axeAdamantium"
+      ],
+      "class": "ya",
+      "material": "adamantium",
+      "base_durability": 307200,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 307200,
+      "runtime_pointer": "/items/386",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 984,
+      "symbols": [
+        "yc.axeRustedIron"
+      ],
+      "class": "ya",
+      "material": "rusted_iron",
+      "base_durability": 4800,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 3600,
+      "runtime_pointer": "/items/387",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 985,
+      "symbols": [
+        "yc.hoeCopper"
+      ],
+      "class": "yb",
+      "material": "copper",
+      "base_durability": 3200,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/388",
+      "family": "HOE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 986,
+      "symbols": [
+        "yc.hoeSilver"
+      ],
+      "class": "yb",
+      "material": "silver",
+      "base_durability": 3200,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/389",
+      "family": "HOE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 987,
+      "symbols": [
+        "yc.hoeMithril"
+      ],
+      "class": "yb",
+      "material": "mithril",
+      "base_durability": 51200,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 51200,
+      "runtime_pointer": "/items/390",
+      "family": "HOE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 988,
+      "symbols": [
+        "yc.hoeAdamantium"
+      ],
+      "class": "yb",
+      "material": "adamantium",
+      "base_durability": 204800,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 204800,
+      "runtime_pointer": "/items/391",
+      "family": "HOE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 989,
+      "symbols": [
+        "yc.hoeRustedIron"
+      ],
+      "class": "yb",
+      "material": "rusted_iron",
+      "base_durability": 3200,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 2400,
+      "runtime_pointer": "/items/392",
+      "family": "HOE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 990,
+      "symbols": [
+        "yc.warHammerCopper"
+      ],
+      "class": "ItemWarHammer",
+      "material": "copper",
+      "base_durability": 8000,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 8000,
+      "runtime_pointer": "/items/393",
+      "family": "WAR_HAMMER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 991,
+      "symbols": [
+        "yc.warHammerSilver"
+      ],
+      "class": "ItemWarHammer",
+      "material": "silver",
+      "base_durability": 8000,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 8000,
+      "runtime_pointer": "/items/394",
+      "family": "WAR_HAMMER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 992,
+      "symbols": [
+        "yc.warHammerGold"
+      ],
+      "class": "ItemWarHammer",
+      "material": "gold",
+      "base_durability": 8000,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 8000,
+      "runtime_pointer": "/items/395",
+      "family": "WAR_HAMMER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 993,
+      "symbols": [
+        "yc.warHammerIron"
+      ],
+      "class": "ItemWarHammer",
+      "material": "iron",
+      "base_durability": 16000,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 16000,
+      "runtime_pointer": "/items/396",
+      "family": "WAR_HAMMER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 994,
+      "symbols": [
+        "yc.warHammerMithril"
+      ],
+      "class": "ItemWarHammer",
+      "material": "mithril",
+      "base_durability": 128000,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 128000,
+      "runtime_pointer": "/items/397",
+      "family": "WAR_HAMMER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 995,
+      "symbols": [
+        "yc.warHammerAdamantium"
+      ],
+      "class": "ItemWarHammer",
+      "material": "adamantium",
+      "base_durability": 512000,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 512000,
+      "runtime_pointer": "/items/398",
+      "family": "WAR_HAMMER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 996,
+      "symbols": [
+        "yc.warHammerRustedIron"
+      ],
+      "class": "ItemWarHammer",
+      "material": "rusted_iron",
+      "base_durability": 8000,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 6000,
+      "runtime_pointer": "/items/399",
+      "family": "WAR_HAMMER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 997,
+      "symbols": [
+        "yc.mattockCopper"
+      ],
+      "class": "ItemMattock",
+      "material": "copper",
+      "base_durability": 6400,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/400",
+      "family": "MATTOCK",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 998,
+      "symbols": [
+        "yc.mattockSilver"
+      ],
+      "class": "ItemMattock",
+      "material": "silver",
+      "base_durability": 6400,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/401",
+      "family": "MATTOCK",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 999,
+      "symbols": [
+        "yc.mattockGold"
+      ],
+      "class": "ItemMattock",
+      "material": "gold",
+      "base_durability": 6400,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/402",
+      "family": "MATTOCK",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1000,
+      "symbols": [
+        "yc.mattockIron"
+      ],
+      "class": "ItemMattock",
+      "material": "iron",
+      "base_durability": 12800,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 12800,
+      "runtime_pointer": "/items/403",
+      "family": "MATTOCK",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1001,
+      "symbols": [
+        "yc.mattockMithril"
+      ],
+      "class": "ItemMattock",
+      "material": "mithril",
+      "base_durability": 102400,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 102400,
+      "runtime_pointer": "/items/404",
+      "family": "MATTOCK",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1002,
+      "symbols": [
+        "yc.mattockAdamantium"
+      ],
+      "class": "ItemMattock",
+      "material": "adamantium",
+      "base_durability": 409600,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 409600,
+      "runtime_pointer": "/items/405",
+      "family": "MATTOCK",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1003,
+      "symbols": [
+        "yc.mattockRustedIron"
+      ],
+      "class": "ItemMattock",
+      "material": "rusted_iron",
+      "base_durability": 6400,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 4800,
+      "runtime_pointer": "/items/406",
+      "family": "MATTOCK",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1004,
+      "symbols": [
+        "yc.battleAxeCopper"
+      ],
+      "class": "ItemBattleAxe",
+      "material": "copper",
+      "base_durability": 6400,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/407",
+      "family": "BATTLE_AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1005,
+      "symbols": [
+        "yc.battleAxeSilver"
+      ],
+      "class": "ItemBattleAxe",
+      "material": "silver",
+      "base_durability": 6400,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/408",
+      "family": "BATTLE_AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1006,
+      "symbols": [
+        "yc.battleAxeGold"
+      ],
+      "class": "ItemBattleAxe",
+      "material": "gold",
+      "base_durability": 6400,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/409",
+      "family": "BATTLE_AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1007,
+      "symbols": [
+        "yc.battleAxeIron"
+      ],
+      "class": "ItemBattleAxe",
+      "material": "iron",
+      "base_durability": 12800,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 12800,
+      "runtime_pointer": "/items/410",
+      "family": "BATTLE_AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1008,
+      "symbols": [
+        "yc.battleAxeMithril"
+      ],
+      "class": "ItemBattleAxe",
+      "material": "mithril",
+      "base_durability": 102400,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 102400,
+      "runtime_pointer": "/items/411",
+      "family": "BATTLE_AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1009,
+      "symbols": [
+        "yc.battleAxeAdamantium"
+      ],
+      "class": "ItemBattleAxe",
+      "material": "adamantium",
+      "base_durability": 409600,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 409600,
+      "runtime_pointer": "/items/412",
+      "family": "BATTLE_AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1010,
+      "symbols": [
+        "yc.battleAxeRustedIron"
+      ],
+      "class": "ItemBattleAxe",
+      "material": "rusted_iron",
+      "base_durability": 6400,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 4800,
+      "runtime_pointer": "/items/413",
+      "family": "BATTLE_AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1011,
+      "symbols": [
+        "yc.scytheCopper"
+      ],
+      "class": "ItemScythe",
+      "material": "copper",
+      "base_durability": 3200,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/414",
+      "family": "SCYTHE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1012,
+      "symbols": [
+        "yc.scytheSilver"
+      ],
+      "class": "ItemScythe",
+      "material": "silver",
+      "base_durability": 3200,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/415",
+      "family": "SCYTHE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1013,
+      "symbols": [
+        "yc.scytheGold"
+      ],
+      "class": "ItemScythe",
+      "material": "gold",
+      "base_durability": 3200,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/416",
+      "family": "SCYTHE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1014,
+      "symbols": [
+        "yc.scytheIron"
+      ],
+      "class": "ItemScythe",
+      "material": "iron",
+      "base_durability": 6400,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/417",
+      "family": "SCYTHE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1015,
+      "symbols": [
+        "yc.scytheMithril"
+      ],
+      "class": "ItemScythe",
+      "material": "mithril",
+      "base_durability": 51200,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 51200,
+      "runtime_pointer": "/items/418",
+      "family": "SCYTHE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1016,
+      "symbols": [
+        "yc.scytheAdamantium"
+      ],
+      "class": "ItemScythe",
+      "material": "adamantium",
+      "base_durability": 204800,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 204800,
+      "runtime_pointer": "/items/419",
+      "family": "SCYTHE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1017,
+      "symbols": [
+        "yc.scytheRustedIron"
+      ],
+      "class": "ItemScythe",
+      "material": "rusted_iron",
+      "base_durability": 3200,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 2400,
+      "runtime_pointer": "/items/420",
+      "family": "SCYTHE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1018,
+      "symbols": [
+        "yc.shearsCopper"
+      ],
+      "class": "yx",
+      "material": "copper",
+      "base_durability": 3200,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/421",
+      "family": "SHEARS",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1019,
+      "symbols": [
+        "yc.shearsSilver"
+      ],
+      "class": "yx",
+      "material": "silver",
+      "base_durability": 3200,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/422",
+      "family": "SHEARS",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1020,
+      "symbols": [
+        "yc.shearsGold"
+      ],
+      "class": "yx",
+      "material": "gold",
+      "base_durability": 3200,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/423",
+      "family": "SHEARS",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1021,
+      "symbols": [
+        "yc.shearsMithril"
+      ],
+      "class": "yx",
+      "material": "mithril",
+      "base_durability": 51200,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 51200,
+      "runtime_pointer": "/items/424",
+      "family": "SHEARS",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1022,
+      "symbols": [
+        "yc.shearsAdamantium"
+      ],
+      "class": "yx",
+      "material": "adamantium",
+      "base_durability": 204800,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 204800,
+      "runtime_pointer": "/items/425",
+      "family": "SHEARS",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1023,
+      "symbols": [
+        "yc.knifeFlint"
+      ],
+      "class": "ItemKnife",
+      "material": "flint",
+      "base_durability": 400,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 400,
+      "runtime_pointer": "/items/426",
+      "family": "KNIFE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1024,
+      "symbols": [
+        "yc.cudgelWood"
+      ],
+      "class": "ItemCudgel",
+      "material": "wood",
+      "base_durability": 200,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 200,
+      "runtime_pointer": "/items/427",
+      "family": "CUDGEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1025,
+      "symbols": [
+        "yc.clubWood"
+      ],
+      "class": "ItemClub",
+      "material": "wood",
+      "base_durability": 400,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 400,
+      "runtime_pointer": "/items/428",
+      "family": "CLUB",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1028,
+      "symbols": [
+        "yc.swordCopper"
+      ],
+      "class": "zl",
+      "material": "copper",
+      "base_durability": 3200,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/429",
+      "family": "SWORD",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1029,
+      "symbols": [
+        "yc.swordSilver"
+      ],
+      "class": "zl",
+      "material": "silver",
+      "base_durability": 3200,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/430",
+      "family": "SWORD",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1030,
+      "symbols": [
+        "yc.swordMithril"
+      ],
+      "class": "zl",
+      "material": "mithril",
+      "base_durability": 51200,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 51200,
+      "runtime_pointer": "/items/431",
+      "family": "SWORD",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1031,
+      "symbols": [
+        "yc.swordAdamantium"
+      ],
+      "class": "zl",
+      "material": "adamantium",
+      "base_durability": 204800,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 204800,
+      "runtime_pointer": "/items/432",
+      "family": "SWORD",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1032,
+      "symbols": [
+        "yc.swordRustedIron"
+      ],
+      "class": "zl",
+      "material": "rusted_iron",
+      "base_durability": 3200,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 2400,
+      "runtime_pointer": "/items/433",
+      "family": "SWORD",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1033,
+      "symbols": [
+        "yc.daggerCopper"
+      ],
+      "class": "ItemDagger",
+      "material": "copper",
+      "base_durability": 1600,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/434",
+      "family": "DAGGER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1034,
+      "symbols": [
+        "yc.daggerSilver"
+      ],
+      "class": "ItemDagger",
+      "material": "silver",
+      "base_durability": 1600,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/435",
+      "family": "DAGGER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1035,
+      "symbols": [
+        "yc.daggerGold"
+      ],
+      "class": "ItemDagger",
+      "material": "gold",
+      "base_durability": 1600,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/436",
+      "family": "DAGGER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1036,
+      "symbols": [
+        "yc.daggerIron"
+      ],
+      "class": "ItemDagger",
+      "material": "iron",
+      "base_durability": 3200,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/437",
+      "family": "DAGGER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1037,
+      "symbols": [
+        "yc.daggerMithril"
+      ],
+      "class": "ItemDagger",
+      "material": "mithril",
+      "base_durability": 25600,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 25600,
+      "runtime_pointer": "/items/438",
+      "family": "DAGGER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1038,
+      "symbols": [
+        "yc.daggerAdamantium"
+      ],
+      "class": "ItemDagger",
+      "material": "adamantium",
+      "base_durability": 102400,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 102400,
+      "runtime_pointer": "/items/439",
+      "family": "DAGGER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1039,
+      "symbols": [
+        "yc.daggerRustedIron"
+      ],
+      "class": "ItemDagger",
+      "material": "rusted_iron",
+      "base_durability": 1600,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 1200,
+      "runtime_pointer": "/items/440",
+      "family": "DAGGER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1050,
+      "symbols": [
+        "yc.knifeCopper"
+      ],
+      "class": "ItemKnife",
+      "material": "copper",
+      "base_durability": 1600,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/451",
+      "family": "KNIFE",
+      "included_tool_batch": false
+    },
+    {
+      "registry_id": 1051,
+      "symbols": [
+        "yc.knifeSilver"
+      ],
+      "class": "ItemKnife",
+      "material": "silver",
+      "base_durability": 1600,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/452",
+      "family": "KNIFE",
+      "included_tool_batch": false
+    },
+    {
+      "registry_id": 1052,
+      "symbols": [
+        "yc.knifeGold"
+      ],
+      "class": "ItemKnife",
+      "material": "gold",
+      "base_durability": 1600,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/453",
+      "family": "KNIFE",
+      "included_tool_batch": false
+    },
+    {
+      "registry_id": 1053,
+      "symbols": [
+        "yc.knifeIron"
+      ],
+      "class": "ItemKnife",
+      "material": "iron",
+      "base_durability": 3200,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/454",
+      "family": "KNIFE",
+      "included_tool_batch": false
+    },
+    {
+      "registry_id": 1054,
+      "symbols": [
+        "yc.knifeMithril"
+      ],
+      "class": "ItemKnife",
+      "material": "mithril",
+      "base_durability": 25600,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 25600,
+      "runtime_pointer": "/items/455",
+      "family": "KNIFE",
+      "included_tool_batch": false
+    },
+    {
+      "registry_id": 1055,
+      "symbols": [
+        "yc.knifeAdamantium"
+      ],
+      "class": "ItemKnife",
+      "material": "adamantium",
+      "base_durability": 102400,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 102400,
+      "runtime_pointer": "/items/456",
+      "family": "KNIFE",
+      "included_tool_batch": false
+    },
+    {
+      "registry_id": 1056,
+      "symbols": [
+        "yc.knifeRustedIron"
+      ],
+      "class": "ItemKnife",
+      "material": "rusted_iron",
+      "base_durability": 1600,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 1200,
+      "runtime_pointer": "/items/457",
+      "family": "KNIFE",
+      "included_tool_batch": false
+    },
+    {
+      "registry_id": 1057,
+      "symbols": [
+        "yc.knifeAncientMetal"
+      ],
+      "class": "ItemKnife",
+      "material": "ancient_metal",
+      "base_durability": 6400,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/458",
+      "family": "KNIFE",
+      "included_tool_batch": false
+    },
+    {
+      "registry_id": 1175,
+      "symbols": [
+        "yc.hatchetCopper"
+      ],
+      "class": "ItemHatchet",
+      "material": "copper",
+      "base_durability": 1600,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/555",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1176,
+      "symbols": [
+        "yc.hatchetSilver"
+      ],
+      "class": "ItemHatchet",
+      "material": "silver",
+      "base_durability": 1600,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/556",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1177,
+      "symbols": [
+        "yc.hatchetGold"
+      ],
+      "class": "ItemHatchet",
+      "material": "gold",
+      "base_durability": 1600,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 1600,
+      "runtime_pointer": "/items/557",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1178,
+      "symbols": [
+        "yc.hatchetIron"
+      ],
+      "class": "ItemHatchet",
+      "material": "iron",
+      "base_durability": 3200,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 3200,
+      "runtime_pointer": "/items/558",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1179,
+      "symbols": [
+        "yc.hatchetMithril"
+      ],
+      "class": "ItemHatchet",
+      "material": "mithril",
+      "base_durability": 25600,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 25600,
+      "runtime_pointer": "/items/559",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1180,
+      "symbols": [
+        "yc.hatchetAdamantium"
+      ],
+      "class": "ItemHatchet",
+      "material": "adamantium",
+      "base_durability": 102400,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 102400,
+      "runtime_pointer": "/items/560",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1181,
+      "symbols": [
+        "yc.hatchetRustedIron"
+      ],
+      "class": "ItemHatchet",
+      "material": "rusted_iron",
+      "base_durability": 1600,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 1200,
+      "runtime_pointer": "/items/561",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1182,
+      "symbols": [
+        "yc.shearsRustedIron"
+      ],
+      "class": "yx",
+      "material": "rusted_iron",
+      "base_durability": 3200,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 2400,
+      "runtime_pointer": "/items/562",
+      "family": "SHEARS",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1202,
+      "symbols": [
+        "yc.shovelObsidian"
+      ],
+      "class": "ItemShovel",
+      "material": "obsidian",
+      "base_durability": 800,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 800,
+      "runtime_pointer": "/items/582",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1203,
+      "symbols": [
+        "yc.knifeObsidian"
+      ],
+      "class": "ItemKnife",
+      "material": "obsidian",
+      "base_durability": 800,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 800,
+      "runtime_pointer": "/items/583",
+      "family": "KNIFE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1204,
+      "symbols": [
+        "yc.hatchetObsidian"
+      ],
+      "class": "ItemHatchet",
+      "material": "obsidian",
+      "base_durability": 800,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 800,
+      "runtime_pointer": "/items/584",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1205,
+      "symbols": [
+        "yc.axeObsidian"
+      ],
+      "class": "ya",
+      "material": "obsidian",
+      "base_durability": 2400,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 2400,
+      "runtime_pointer": "/items/585",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1239,
+      "symbols": [
+        "yc.pickaxeAncientMetal"
+      ],
+      "class": "yn",
+      "material": "ancient_metal",
+      "base_durability": 19200,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 19200,
+      "runtime_pointer": "/items/618",
+      "family": "PICKAXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1240,
+      "symbols": [
+        "yc.shovelAncientMetal"
+      ],
+      "class": "ItemShovel",
+      "material": "ancient_metal",
+      "base_durability": 6400,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/619",
+      "family": "SHOVEL",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1241,
+      "symbols": [
+        "yc.axeAncientMetal"
+      ],
+      "class": "ya",
+      "material": "ancient_metal",
+      "base_durability": 19200,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 19200,
+      "runtime_pointer": "/items/620",
+      "family": "AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1242,
+      "symbols": [
+        "yc.hoeAncientMetal"
+      ],
+      "class": "yb",
+      "material": "ancient_metal",
+      "base_durability": 12800,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 12800,
+      "runtime_pointer": "/items/621",
+      "family": "HOE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1243,
+      "symbols": [
+        "yc.warHammerAncientMetal"
+      ],
+      "class": "ItemWarHammer",
+      "material": "ancient_metal",
+      "base_durability": 32000,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 32000,
+      "runtime_pointer": "/items/622",
+      "family": "WAR_HAMMER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1244,
+      "symbols": [
+        "yc.mattockAncientMetal"
+      ],
+      "class": "ItemMattock",
+      "material": "ancient_metal",
+      "base_durability": 25600,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 25600,
+      "runtime_pointer": "/items/623",
+      "family": "MATTOCK",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1245,
+      "symbols": [
+        "yc.battleAxeAncientMetal"
+      ],
+      "class": "ItemBattleAxe",
+      "material": "ancient_metal",
+      "base_durability": 25600,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 25600,
+      "runtime_pointer": "/items/624",
+      "family": "BATTLE_AXE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1246,
+      "symbols": [
+        "yc.scytheAncientMetal"
+      ],
+      "class": "ItemScythe",
+      "material": "ancient_metal",
+      "base_durability": 12800,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 12800,
+      "runtime_pointer": "/items/625",
+      "family": "SCYTHE",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1247,
+      "symbols": [
+        "yc.shearsAncientMetal"
+      ],
+      "class": "yx",
+      "material": "ancient_metal",
+      "base_durability": 12800,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 12800,
+      "runtime_pointer": "/items/626",
+      "family": "SHEARS",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1248,
+      "symbols": [
+        "yc.swordAncientMetal"
+      ],
+      "class": "zl",
+      "material": "ancient_metal",
+      "base_durability": 12800,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 12800,
+      "runtime_pointer": "/items/627",
+      "family": "SWORD",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1249,
+      "symbols": [
+        "yc.daggerAncientMetal"
+      ],
+      "class": "ItemDagger",
+      "material": "ancient_metal",
+      "base_durability": 6400,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/628",
+      "family": "DAGGER",
+      "included_tool_batch": true
+    },
+    {
+      "registry_id": 1262,
+      "symbols": [
+        "yc.hatchetAncientMetal"
+      ],
+      "class": "ItemHatchet",
+      "material": "ancient_metal",
+      "base_durability": 6400,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 6400,
+      "runtime_pointer": "/items/641",
+      "family": "HATCHET",
+      "included_tool_batch": true
+    }
+  ],
+  "source_armor_inventory": [
+    {
+      "registry_id": 298,
+      "symbols": [
+        "yc.X"
+      ],
+      "class": "ItemHelmet",
+      "material": "leather",
+      "base_durability": 10,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 10,
+      "runtime_pointer": "/items/248",
+      "chainmail": false
+    },
+    {
+      "registry_id": 299,
+      "symbols": [
+        "yc.Y"
+      ],
+      "class": "ItemCuirass",
+      "material": "leather",
+      "base_durability": 16,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 16,
+      "runtime_pointer": "/items/249",
+      "chainmail": false
+    },
+    {
+      "registry_id": 300,
+      "symbols": [
+        "yc.Z"
+      ],
+      "class": "ItemLeggings",
+      "material": "leather",
+      "base_durability": 14,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 14,
+      "runtime_pointer": "/items/250",
+      "chainmail": false
+    },
+    {
+      "registry_id": 301,
+      "symbols": [
+        "yc.aa"
+      ],
+      "class": "ItemBoots",
+      "material": "leather",
+      "base_durability": 8,
+      "maximum_quality": "fine",
+      "default_quality": "average",
+      "default_stack_maximum": 8,
+      "runtime_pointer": "/items/251",
+      "chainmail": false
+    },
+    {
+      "registry_id": 302,
+      "symbols": [
+        "yc.helmetChainIron"
+      ],
+      "class": "ItemHelmet",
+      "material": "iron",
+      "base_durability": 40,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 40,
+      "runtime_pointer": "/items/252",
+      "chainmail": true
+    },
+    {
+      "registry_id": 303,
+      "symbols": [
+        "yc.plateChainIron"
+      ],
+      "class": "ItemCuirass",
+      "material": "iron",
+      "base_durability": 64,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 64,
+      "runtime_pointer": "/items/253",
+      "chainmail": true
+    },
+    {
+      "registry_id": 304,
+      "symbols": [
+        "yc.legsChainIron"
+      ],
+      "class": "ItemLeggings",
+      "material": "iron",
+      "base_durability": 56,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 56,
+      "runtime_pointer": "/items/254",
+      "chainmail": true
+    },
+    {
+      "registry_id": 305,
+      "symbols": [
+        "yc.bootsChainIron"
+      ],
+      "class": "ItemBoots",
+      "material": "iron",
+      "base_durability": 32,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 32,
+      "runtime_pointer": "/items/255",
+      "chainmail": true
+    },
+    {
+      "registry_id": 306,
+      "symbols": [
+        "yc.af"
+      ],
+      "class": "ItemHelmet",
+      "material": "iron",
+      "base_durability": 80,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 80,
+      "runtime_pointer": "/items/256",
+      "chainmail": false
+    },
+    {
+      "registry_id": 307,
+      "symbols": [
+        "yc.ag"
+      ],
+      "class": "ItemCuirass",
+      "material": "iron",
+      "base_durability": 128,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 128,
+      "runtime_pointer": "/items/257",
+      "chainmail": false
+    },
+    {
+      "registry_id": 308,
+      "symbols": [
+        "yc.ah"
+      ],
+      "class": "ItemLeggings",
+      "material": "iron",
+      "base_durability": 112,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 112,
+      "runtime_pointer": "/items/258",
+      "chainmail": false
+    },
+    {
+      "registry_id": 309,
+      "symbols": [
+        "yc.ai"
+      ],
+      "class": "ItemBoots",
+      "material": "iron",
+      "base_durability": 64,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 64,
+      "runtime_pointer": "/items/259",
+      "chainmail": false
+    },
+    {
+      "registry_id": 314,
+      "symbols": [
+        "yc.an"
+      ],
+      "class": "ItemHelmet",
+      "material": "gold",
+      "base_durability": 40,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 40,
+      "runtime_pointer": "/items/260",
+      "chainmail": false
+    },
+    {
+      "registry_id": 315,
+      "symbols": [
+        "yc.ao"
+      ],
+      "class": "ItemCuirass",
+      "material": "gold",
+      "base_durability": 64,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 64,
+      "runtime_pointer": "/items/261",
+      "chainmail": false
+    },
+    {
+      "registry_id": 316,
+      "symbols": [
+        "yc.ap"
+      ],
+      "class": "ItemLeggings",
+      "material": "gold",
+      "base_durability": 56,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 56,
+      "runtime_pointer": "/items/262",
+      "chainmail": false
+    },
+    {
+      "registry_id": 317,
+      "symbols": [
+        "yc.aq"
+      ],
+      "class": "ItemBoots",
+      "material": "gold",
+      "base_durability": 32,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 32,
+      "runtime_pointer": "/items/263",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1067,
+      "symbols": [
+        "yc.helmetCopper"
+      ],
+      "class": "ItemHelmet",
+      "material": "copper",
+      "base_durability": 40,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 40,
+      "runtime_pointer": "/items/459",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1068,
+      "symbols": [
+        "yc.helmetSilver"
+      ],
+      "class": "ItemHelmet",
+      "material": "silver",
+      "base_durability": 40,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 40,
+      "runtime_pointer": "/items/460",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1069,
+      "symbols": [
+        "yc.helmetMithril"
+      ],
+      "class": "ItemHelmet",
+      "material": "mithril",
+      "base_durability": 640,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 640,
+      "runtime_pointer": "/items/461",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1070,
+      "symbols": [
+        "yc.helmetAdamantium"
+      ],
+      "class": "ItemHelmet",
+      "material": "adamantium",
+      "base_durability": 2560,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 2560,
+      "runtime_pointer": "/items/462",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1071,
+      "symbols": [
+        "yc.helmetChainCopper"
+      ],
+      "class": "ItemHelmet",
+      "material": "copper",
+      "base_durability": 20,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 20,
+      "runtime_pointer": "/items/463",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1072,
+      "symbols": [
+        "yc.helmetChainSilver"
+      ],
+      "class": "ItemHelmet",
+      "material": "silver",
+      "base_durability": 20,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 20,
+      "runtime_pointer": "/items/464",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1073,
+      "symbols": [
+        "yc.helmetChainGold"
+      ],
+      "class": "ItemHelmet",
+      "material": "gold",
+      "base_durability": 20,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 20,
+      "runtime_pointer": "/items/465",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1074,
+      "symbols": [
+        "yc.helmetChainMithril"
+      ],
+      "class": "ItemHelmet",
+      "material": "mithril",
+      "base_durability": 320,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 320,
+      "runtime_pointer": "/items/466",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1075,
+      "symbols": [
+        "yc.helmetChainAdamantium"
+      ],
+      "class": "ItemHelmet",
+      "material": "adamantium",
+      "base_durability": 1280,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 1280,
+      "runtime_pointer": "/items/467",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1076,
+      "symbols": [
+        "yc.helmetRustedIron"
+      ],
+      "class": "ItemHelmet",
+      "material": "rusted_iron",
+      "base_durability": 40,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 30,
+      "runtime_pointer": "/items/468",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1077,
+      "symbols": [
+        "yc.helmetChainRustedIron"
+      ],
+      "class": "ItemHelmet",
+      "material": "rusted_iron",
+      "base_durability": 20,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 15,
+      "runtime_pointer": "/items/469",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1078,
+      "symbols": [
+        "yc.plateCopper"
+      ],
+      "class": "ItemCuirass",
+      "material": "copper",
+      "base_durability": 64,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 64,
+      "runtime_pointer": "/items/470",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1079,
+      "symbols": [
+        "yc.plateSilver"
+      ],
+      "class": "ItemCuirass",
+      "material": "silver",
+      "base_durability": 64,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 64,
+      "runtime_pointer": "/items/471",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1080,
+      "symbols": [
+        "yc.plateMithril"
+      ],
+      "class": "ItemCuirass",
+      "material": "mithril",
+      "base_durability": 1024,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 1024,
+      "runtime_pointer": "/items/472",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1081,
+      "symbols": [
+        "yc.plateAdamantium"
+      ],
+      "class": "ItemCuirass",
+      "material": "adamantium",
+      "base_durability": 4096,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 4096,
+      "runtime_pointer": "/items/473",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1082,
+      "symbols": [
+        "yc.plateChainCopper"
+      ],
+      "class": "ItemCuirass",
+      "material": "copper",
+      "base_durability": 32,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 32,
+      "runtime_pointer": "/items/474",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1083,
+      "symbols": [
+        "yc.plateChainSilver"
+      ],
+      "class": "ItemCuirass",
+      "material": "silver",
+      "base_durability": 32,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 32,
+      "runtime_pointer": "/items/475",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1084,
+      "symbols": [
+        "yc.plateChainGold"
+      ],
+      "class": "ItemCuirass",
+      "material": "gold",
+      "base_durability": 32,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 32,
+      "runtime_pointer": "/items/476",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1085,
+      "symbols": [
+        "yc.plateChainMithril"
+      ],
+      "class": "ItemCuirass",
+      "material": "mithril",
+      "base_durability": 512,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 512,
+      "runtime_pointer": "/items/477",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1086,
+      "symbols": [
+        "yc.plateChainAdamantium"
+      ],
+      "class": "ItemCuirass",
+      "material": "adamantium",
+      "base_durability": 2048,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 2048,
+      "runtime_pointer": "/items/478",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1087,
+      "symbols": [
+        "yc.plateRustedIron"
+      ],
+      "class": "ItemCuirass",
+      "material": "rusted_iron",
+      "base_durability": 64,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 48,
+      "runtime_pointer": "/items/479",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1088,
+      "symbols": [
+        "yc.plateChainRustedIron"
+      ],
+      "class": "ItemCuirass",
+      "material": "rusted_iron",
+      "base_durability": 32,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 24,
+      "runtime_pointer": "/items/480",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1089,
+      "symbols": [
+        "yc.legsCopper"
+      ],
+      "class": "ItemLeggings",
+      "material": "copper",
+      "base_durability": 56,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 56,
+      "runtime_pointer": "/items/481",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1090,
+      "symbols": [
+        "yc.legsSilver"
+      ],
+      "class": "ItemLeggings",
+      "material": "silver",
+      "base_durability": 56,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 56,
+      "runtime_pointer": "/items/482",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1091,
+      "symbols": [
+        "yc.legsMithril"
+      ],
+      "class": "ItemLeggings",
+      "material": "mithril",
+      "base_durability": 896,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 896,
+      "runtime_pointer": "/items/483",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1092,
+      "symbols": [
+        "yc.legsAdamantium"
+      ],
+      "class": "ItemLeggings",
+      "material": "adamantium",
+      "base_durability": 3584,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 3584,
+      "runtime_pointer": "/items/484",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1093,
+      "symbols": [
+        "yc.legsChainCopper"
+      ],
+      "class": "ItemLeggings",
+      "material": "copper",
+      "base_durability": 28,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 28,
+      "runtime_pointer": "/items/485",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1094,
+      "symbols": [
+        "yc.legsChainSilver"
+      ],
+      "class": "ItemLeggings",
+      "material": "silver",
+      "base_durability": 28,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 28,
+      "runtime_pointer": "/items/486",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1095,
+      "symbols": [
+        "yc.legsChainGold"
+      ],
+      "class": "ItemLeggings",
+      "material": "gold",
+      "base_durability": 28,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 28,
+      "runtime_pointer": "/items/487",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1096,
+      "symbols": [
+        "yc.legsChainMithril"
+      ],
+      "class": "ItemLeggings",
+      "material": "mithril",
+      "base_durability": 448,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 448,
+      "runtime_pointer": "/items/488",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1097,
+      "symbols": [
+        "yc.legsChainAdamantium"
+      ],
+      "class": "ItemLeggings",
+      "material": "adamantium",
+      "base_durability": 1792,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 1792,
+      "runtime_pointer": "/items/489",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1098,
+      "symbols": [
+        "yc.legsRustedIron"
+      ],
+      "class": "ItemLeggings",
+      "material": "rusted_iron",
+      "base_durability": 56,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 42,
+      "runtime_pointer": "/items/490",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1099,
+      "symbols": [
+        "yc.legsChainRustedIron"
+      ],
+      "class": "ItemLeggings",
+      "material": "rusted_iron",
+      "base_durability": 28,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 21,
+      "runtime_pointer": "/items/491",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1100,
+      "symbols": [
+        "yc.bootsCopper"
+      ],
+      "class": "ItemBoots",
+      "material": "copper",
+      "base_durability": 32,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 32,
+      "runtime_pointer": "/items/492",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1101,
+      "symbols": [
+        "yc.bootsSilver"
+      ],
+      "class": "ItemBoots",
+      "material": "silver",
+      "base_durability": 32,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 32,
+      "runtime_pointer": "/items/493",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1102,
+      "symbols": [
+        "yc.bootsMithril"
+      ],
+      "class": "ItemBoots",
+      "material": "mithril",
+      "base_durability": 512,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 512,
+      "runtime_pointer": "/items/494",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1103,
+      "symbols": [
+        "yc.bootsAdamantium"
+      ],
+      "class": "ItemBoots",
+      "material": "adamantium",
+      "base_durability": 2048,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 2048,
+      "runtime_pointer": "/items/495",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1104,
+      "symbols": [
+        "yc.bootsChainCopper"
+      ],
+      "class": "ItemBoots",
+      "material": "copper",
+      "base_durability": 16,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 16,
+      "runtime_pointer": "/items/496",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1105,
+      "symbols": [
+        "yc.bootsChainSilver"
+      ],
+      "class": "ItemBoots",
+      "material": "silver",
+      "base_durability": 16,
+      "maximum_quality": "excellent",
+      "default_quality": "average",
+      "default_stack_maximum": 16,
+      "runtime_pointer": "/items/497",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1106,
+      "symbols": [
+        "yc.bootsChainGold"
+      ],
+      "class": "ItemBoots",
+      "material": "gold",
+      "base_durability": 16,
+      "maximum_quality": "superb",
+      "default_quality": "average",
+      "default_stack_maximum": 16,
+      "runtime_pointer": "/items/498",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1107,
+      "symbols": [
+        "yc.bootsChainMithril"
+      ],
+      "class": "ItemBoots",
+      "material": "mithril",
+      "base_durability": 256,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 256,
+      "runtime_pointer": "/items/499",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1108,
+      "symbols": [
+        "yc.bootsChainAdamantium"
+      ],
+      "class": "ItemBoots",
+      "material": "adamantium",
+      "base_durability": 1024,
+      "maximum_quality": "legendary",
+      "default_quality": "average",
+      "default_stack_maximum": 1024,
+      "runtime_pointer": "/items/500",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1109,
+      "symbols": [
+        "yc.bootsRustedIron"
+      ],
+      "class": "ItemBoots",
+      "material": "rusted_iron",
+      "base_durability": 32,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 24,
+      "runtime_pointer": "/items/501",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1110,
+      "symbols": [
+        "yc.bootsChainRustedIron"
+      ],
+      "class": "ItemBoots",
+      "material": "rusted_iron",
+      "base_durability": 16,
+      "maximum_quality": "poor",
+      "default_quality": "poor",
+      "default_stack_maximum": 12,
+      "runtime_pointer": "/items/502",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1252,
+      "symbols": [
+        "yc.helmetAncientMetal"
+      ],
+      "class": "ItemHelmet",
+      "material": "ancient_metal",
+      "base_durability": 160,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 160,
+      "runtime_pointer": "/items/631",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1253,
+      "symbols": [
+        "yc.helmetChainAncientMetal"
+      ],
+      "class": "ItemHelmet",
+      "material": "ancient_metal",
+      "base_durability": 80,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 80,
+      "runtime_pointer": "/items/632",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1254,
+      "symbols": [
+        "yc.plateAncientMetal"
+      ],
+      "class": "ItemCuirass",
+      "material": "ancient_metal",
+      "base_durability": 256,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 256,
+      "runtime_pointer": "/items/633",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1255,
+      "symbols": [
+        "yc.plateChainAncientMetal"
+      ],
+      "class": "ItemCuirass",
+      "material": "ancient_metal",
+      "base_durability": 128,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 128,
+      "runtime_pointer": "/items/634",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1256,
+      "symbols": [
+        "yc.legsAncientMetal"
+      ],
+      "class": "ItemLeggings",
+      "material": "ancient_metal",
+      "base_durability": 224,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 224,
+      "runtime_pointer": "/items/635",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1257,
+      "symbols": [
+        "yc.legsChainAncientMetal"
+      ],
+      "class": "ItemLeggings",
+      "material": "ancient_metal",
+      "base_durability": 112,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 112,
+      "runtime_pointer": "/items/636",
+      "chainmail": true
+    },
+    {
+      "registry_id": 1258,
+      "symbols": [
+        "yc.bootsAncientMetal"
+      ],
+      "class": "ItemBoots",
+      "material": "ancient_metal",
+      "base_durability": 128,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 128,
+      "runtime_pointer": "/items/637",
+      "chainmail": false
+    },
+    {
+      "registry_id": 1259,
+      "symbols": [
+        "yc.bootsChainAncientMetal"
+      ],
+      "class": "ItemBoots",
+      "material": "ancient_metal",
+      "base_durability": 64,
+      "maximum_quality": "masterwork",
+      "default_quality": "average",
+      "default_stack_maximum": 64,
+      "runtime_pointer": "/items/638",
+      "chainmail": true
+    }
+  ],
+  "validation": {
+    "unit_test_file": "src/test/java/io/github/ningmeng123/mite/rules/EquipmentDurabilityRulesTest.java",
+    "gametest_file": "src/gametest/java/io/github/ningmeng123/mite/gametest/EquipmentDurabilityGameTests.java",
+    "execution": "本提取代理未构建/运行游戏；统一构建与实测由主线程另行记录。"
+  },
+  "not_completed": [
+    "整套R196战斗伤害/防御公式",
+    "旧生物固定护甲0.5行为",
+    "所有portable方块映射",
+    "旧酸/胃酸/腐坏诅咒",
+    "格挡消耗与旧附魔全系统",
+    "高级铁砧/材料维修/制造计时和品质选择",
+    "其余物品目录与所有装备新增注册"
+  ]
+}

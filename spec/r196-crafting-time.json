@@ -1,0 +1,1073 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "title": "R196 共享制造计时与校验证据",
+  "status": "evidence_only_not_implemented_not_game_tested",
+  "implementation_note": "本文件保留完整来源提取时的状态；016 已实现默认品质子集、服务端计时与工作台门槛，2026-10-13 经自动测试与用户验收。品质选择/经验费用、笨拙实际状态等仍未实现，具体范围见 docs/timed-crafting-016.md。",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_root": ".reference/r196/decompiled",
+  "scope": "背包/工具工作台共享制造，不把熔炉、铁砧、酿造或现代自动合成器套入同一旧版计时入口。",
+  "activation": {
+    "professions_suppressed_constant": true,
+    "dedicated_server_settings": "is.java 先读取 professions 默认 false，再无条件覆盖为 false。",
+    "world_override": "WorldInfoShared 仍从存档读取 are_skills_enabled；als 直接返回该字段；开发命令有开关路径。因此默认关闭不等于所有技能代码不可达。",
+    "quality_enabled": "yc 默认 hasQuality=false；xj 工具、wh 护甲、wp 的覆盖返回 true。品质不受 professions_suppressed 全局关闭。",
+    "timing_enabled": "MITEContainerCrafting 更新链未发现独立禁用计时配置；无创造模式免计时/免食物分支。",
+    "sources": [
+      {
+        "file": "atv.java",
+        "lines": [
+          156,
+          156
+        ]
+      },
+      {
+        "file": "is.java",
+        "lines": [
+          86,
+          87
+        ]
+      },
+      {
+        "file": "WorldInfoShared.java",
+        "lines": [
+          164,
+          164
+        ]
+      },
+      {
+        "file": "als.java",
+        "lines": [
+          296,
+          301
+        ]
+      },
+      {
+        "file": "aa.java",
+        "lines": [
+          144,
+          159
+        ]
+      },
+      {
+        "file": "yc.java",
+        "lines": [
+          1193,
+          1195
+        ]
+      },
+      {
+        "file": "xj.java",
+        "lines": [
+          241,
+          243
+        ]
+      },
+      {
+        "file": "wh.java",
+        "lines": [
+          231,
+          233
+        ]
+      },
+      {
+        "file": "wp.java",
+        "lines": [
+          169,
+          171
+        ]
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "crafting.recipe_difficulty",
+      "behavior": "每配方按组件 getCraftingDifficultyAsComponent 依次 float 相加，随后可被 setDifficulty/scaleDifficulty 覆盖；真实计时用整批 difficulty，不能除以输出数量。",
+      "details": [
+        "缺失组件难度尝试已知最低制造难度或锈铁同类铜材料比例；仍未知则报错并跳过该组件，不可把这种旧降级行为当现代完整数据。",
+        "高品质低品质输出不改变已存配方基础难度；品质在 CraftingResult 后续调整。",
+        "动态配方/修复可能自行生成 CraftingResult，必须保留具体 recipe 类型与消费数量。"
+      ],
+      "sources": [
+        {
+          "file": "RecipeHelper.java",
+          "lines": [
+            5,
+            54
+          ]
+        },
+        {
+          "file": "aai.java",
+          "lines": [
+            119,
+            131
+          ]
+        },
+        {
+          "file": "aaj.java",
+          "lines": [
+            69,
+            91
+          ]
+        },
+        {
+          "file": "aaf.java",
+          "lines": [
+            311,
+            351
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crafting.quality_difficulty",
+      "formula": "D = baseDifficulty; for i in [0, quality.ordinal - average.ordinal): D = float(D * 2F)",
+      "quality_ordinals": {
+        "wretched": 0,
+        "poor": 1,
+        "average": 2,
+        "fine": 3,
+        "excellent": 4,
+        "superb": 5,
+        "masterwork": 6,
+        "legendary": 7
+      },
+      "multipliers": {
+        "null": 1,
+        "wretched": 1,
+        "poor": 1,
+        "average": 1,
+        "fine": 2,
+        "excellent": 4,
+        "superb": 8,
+        "masterwork": 16,
+        "legendary": 32
+      },
+      "quality_override": "非空 override 优先于传入品质。差品质不减少难度。",
+      "sources": [
+        {
+          "file": "CraftingResult.java",
+          "lines": [
+            29,
+            46
+          ]
+        },
+        {
+          "file": "EnumQuality.java",
+          "lines": [
+            6,
+            14
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crafting.base_period",
+      "formula_java": "D < 25F ? 25 : D > 100F ? (int)Math.round(Math.pow((double)(D - 100F), (double)0.8F)) + 100 : Math.round(D)",
+      "unit": "游戏 tick，原说明每秒20 tick",
+      "arithmetic": [
+        "D 为 float；D-100 先 fsub，再 f2d。",
+        "幂指数是 0.8F 转 double，即 0.800000011920929，不是 double 字面 0.8。",
+        "高于100分支调用 Math.round(double)->long，然后 l2i 再加100；其余区间调用 Math.round(float)->int。"
+      ],
+      "sources": [
+        {
+          "file": "bex.java",
+          "lines": [
+            450,
+            458
+          ]
+        },
+        {
+          "file": "ReferenceFileWriter.java",
+          "lines": [
+            604,
+            607
+          ]
+        }
+      ],
+      "bytecode": {
+        "class": "bex",
+        "method": "calcUnmodifiedCraftingPeriod(float)",
+        "offsets": "23 fsub;24 f2d;25 ldc2_w 0.800000011920929;28 Math.pow;31 Math.round(D)J;34 l2i;37 iadd;40 Math.round(F)I"
+      }
+    },
+    {
+      "id": "crafting.adjusted_period",
+      "formula_java": "(int)Math.max((float)(U * (clumsiness ? 2 : 1)) / ((1F + ((float)level * 0.02F)) + benchModifier), 25F)",
+      "arithmetic": [
+        "诅咒先按 int 将未修正周期乘2。",
+        "分母两次 fadd，除法 fdiv，Math.max(float,float)，最后 f2i 截断，不是向上取整。",
+        "L*0.02F 没有制造职业门控；函数自身不夹等级，正常等级范围由经验系统控制。",
+        "没有当前生命比例、饥饿比例、药水急迫或工具效率倍率进入此 period。食物暂停和受伤回退另列。"
+      ],
+      "sources": [
+        {
+          "file": "bex.java",
+          "lines": [
+            497,
+            503
+          ]
+        },
+        {
+          "file": "uf.java",
+          "lines": [
+            558,
+            566
+          ]
+        }
+      ],
+      "bytecode": {
+        "class": "bex",
+        "method": "getCraftingPeriod(float)",
+        "offsets": "17 imul;29 i2f;38 fadd;40 fadd;41 fdiv;45 Math.max(FF);48 f2i"
+      }
+    },
+    {
+      "id": "crafting.bench_modifier",
+      "priority_order": [
+        {
+          "condition": "容器不是 vl 工具工作台",
+          "modifier": 0.0
+        },
+        {
+          "condition": "工具工作台，但 recipe.getMaterialToCheckToolBenchHardnessAgainst() 为 null",
+          "modifier": 0.2
+        },
+        {
+          "condition": "有材料门槛且台工具为 flint 或 obsidian",
+          "modifier": 0.2
+        },
+        {
+          "condition": "有材料门槛且台工具为 copper、silver 或 gold",
+          "modifier": 0.3
+        },
+        {
+          "condition": "有材料门槛且台工具为 iron (akc.f)",
+          "modifier": 0.4
+        },
+        {
+          "condition": "有材料门槛且台工具为 ancient_metal",
+          "modifier": 0.5
+        },
+        {
+          "condition": "有材料门槛且台工具为 mithril",
+          "modifier": 0.6
+        },
+        {
+          "condition": "有材料门槛且台工具为 adamantium",
+          "modifier": 0.7
+        }
+      ],
+      "details": [
+        "有工作台不代表固定取最高材料速度；无材料门槛配方在任何台均先返回0.2。",
+        "recipe为null（如合并修理）使用结果物品 getHardestMetalMaterial()。",
+        "材料资格比较 material.durability；不是方块破坏硬度。物理3x3大小限制独立存在。"
+      ],
+      "sources": [
+        {
+          "file": "bex.java",
+          "lines": [
+            460,
+            495
+          ]
+        },
+        {
+          "file": "awy.java",
+          "lines": [
+            168,
+            191
+          ]
+        },
+        {
+          "file": "vl.java",
+          "lines": [
+            87,
+            88
+          ]
+        },
+        {
+          "file": "RecipeHelper.java",
+          "lines": [
+            56,
+            85
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crafting.food_pause_and_damage",
+      "food_predicate": "getSatiation() + getNutrition() != 0",
+      "food_effect": "只有 crafting_proceed && hasFoodEnergy 才 ++crafting_ticks；能量0时保留已有tick，恢复后继续，不乘1/5且不按缺失比例调整。",
+      "damage_packet": "shortDamage = min(Math.round(float(amount * 10F)), 32767)",
+      "damage_effect": "crafting_ticks = max(crafting_ticks - shortDamage * 5, 0)",
+      "damage_amount_semantics": "amount 是 jv.onEntityDamaged 收到的伤害量；不是凭空假定攻击者的面板伤害。",
+      "health_effect": "没有独立低血量减速倍率；死亡关闭界面和受伤回退另行作用。",
+      "sources": [
+        {
+          "file": "uf.java",
+          "lines": [
+            1735,
+            1737
+          ]
+        },
+        {
+          "file": "MITEContainerCrafting.java",
+          "lines": [
+            79,
+            95
+          ]
+        },
+        {
+          "file": "jv.java",
+          "lines": [
+            818,
+            822
+          ]
+        },
+        {
+          "file": "bcw.java",
+          "lines": [
+            1141,
+            1142
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crafting.start_repeat_reset",
+      "behavior": [
+        "结果槽左键先 canPlayerCraftItem，通过后客户端 crafting_proceed=true；松鼠标不停止。",
+        "Shift 对结果槽排除普通批量 quick-move，仍走制造槽点击路径；不是跳过计时一次做完。",
+        "每周期到达后整批入背包，装不下走原入包或掉出逻辑，再消费每个输入的 consumption；不在开始时预先扣材料。",
+        "零品质经验成本继续自动下一批；正品质经验成本做一批就 crafting_proceed=false；ticks重置0。",
+        "食物0暂停，不清零；更换品质索引reset ticks。索引因条件变化被夹回时 onUpdate 进一步 clearCrafting。",
+        "结果物品栈不再等价、无可用输出、门槛失败、关闭容器会 clearCrafting；关闭还返还/掉出输入并清结果槽。",
+        "每客户端tick经 checkCraftingResultIndex->modifyStackForRightClicks->updatePlayerCrafting 重新计算period与XP成本；等级/诅咒/台metadata变化但品质索引不变时，旧ticks保留。"
+      ],
+      "sources": [
+        {
+          "file": "wd.java",
+          "lines": [
+            175,
+            188
+          ]
+        },
+        {
+          "file": "uy.java",
+          "lines": [
+            171,
+            193
+          ]
+        },
+        {
+          "file": "wd.java",
+          "lines": [
+            104,
+            134
+          ]
+        },
+        {
+          "file": "MITEContainerCrafting.java",
+          "lines": [
+            25,
+            45
+          ]
+        },
+        {
+          "file": "MITEContainerCrafting.java",
+          "lines": [
+            61,
+            96
+          ]
+        },
+        {
+          "file": "wd.java",
+          "lines": [
+            244,
+            287
+          ]
+        },
+        {
+          "file": "bex.java",
+          "lines": [
+            507,
+            518
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crafting.quality_and_xp_gate",
+      "minimum_quality_java": "clamp(average.ordinal + ((level - (clumsiness ? 20 : 0)) / 10), 0, average.ordinal)",
+      "negative_division": "Java int /10 向零截断；L=-9仍average，-10才poor，-20才wretched。",
+      "skill_effect": "技能启用且不满足任一适用skillset时，最低品质取上述结果与poor较低者，最高品质只返回最低品质。无品质结果或zw染色配方不满足技能时直接不能制造。",
+      "maximum_quality": "总经验<=0或不满足启用的技能时返回最低品质；否则从item.getMaxQuality往average以上倒序，选 getCraftingExperienceCost(qualityAdjustedDifficulty)<=totalXP 的最高品质，找不到则最低品质。",
+      "potential_xp_cost_java": "Math.round(qualityAdjustedDifficulty / 5F) * (clumsiness ? 2 : 1)",
+      "actual_xp_cost": "无品质、average或更低、或CraftingResult.is_experience_cost_exempt时为0；其余采用potential cost。",
+      "repair_exception": "aaf合并修理使用最低制造难度/2，标记XP成本豁免并覆盖原品质；筋维修使用50*消费筋数并保留原品质。不能混同普通新造。",
+      "coin_exception": "铸币通过ItemCoin.onCreated另扣面值*数量，拆币在wd回收面值；不是全部制造经验都只来自品质成本字段。",
+      "sources": [
+        {
+          "file": "uf.java",
+          "lines": [
+            2184,
+            2224
+          ]
+        },
+        {
+          "file": "wd.java",
+          "lines": [
+            143,
+            167
+          ]
+        },
+        {
+          "file": "wd.java",
+          "lines": [
+            279,
+            287
+          ]
+        },
+        {
+          "file": "aaf.java",
+          "lines": [
+            311,
+            351
+          ]
+        },
+        {
+          "file": "yc.java",
+          "lines": [
+            1237,
+            1255
+          ]
+        },
+        {
+          "file": "ItemCoin.java",
+          "lines": [
+            57,
+            58
+          ]
+        },
+        {
+          "file": "wd.java",
+          "lines": [
+            104,
+            134
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crafting.original_network_trust",
+      "authoritative_timer_in_r196": false,
+      "behavior": [
+        "uf.l_ 每玩家tick调用当前container.onUpdate；只有 world.I 客户端分支递增计时。",
+        "客户端本地消费/产出并锁定变化槽，然后发 Packet85SimpleSignal crafting_completed，携带客户端计算的整数经验成本。",
+        "ka处理完成信号只检查当前slot0 instanceof wd，直接取当前输出执行完成，再 player.s(-packet.integer)；没有重算时间/成本，也未重新调用canPlayerCraftItem。",
+        "服务端右键/更新路径会夹品质索引，不能说所有结果品质都由完成包直接指定。",
+        "材质门槛由GUI awy设置 crafting_result_shown_but_prevented；现代不得把GUI布尔量当安全校验。",
+        "base uf.clearCrafting/resetCraftingProgress 是空实现，实际计时字段在客户端 bex。未发现持久化制造ticks；关闭/重登不继续旧进度。"
+      ],
+      "sources": [
+        {
+          "file": "uf.java",
+          "lines": [
+            304,
+            311
+          ]
+        },
+        {
+          "file": "MITEContainerCrafting.java",
+          "lines": [
+            79,
+            96
+          ]
+        },
+        {
+          "file": "ka.java",
+          "lines": [
+            861,
+            867
+          ]
+        },
+        {
+          "file": "uf.java",
+          "lines": [
+            1958,
+            1962
+          ]
+        },
+        {
+          "file": "bex.java",
+          "lines": [
+            21,
+            26
+          ]
+        },
+        {
+          "file": "uy.java",
+          "lines": [
+            513,
+            541
+          ]
+        }
+      ],
+      "bytecode": [
+        {
+          "class": "MITEContainerCrafting",
+          "method": "onUpdate()",
+          "offsets": "122 world.I;125 ifeq323;240-246 increment client crafting_ticks"
+        },
+        {
+          "class": "ka",
+          "method": "handleSimpleSignal(Packet85SimpleSignal)",
+          "offsets": "72-129 crafting_completed;114 we.a(uf,ye);122 packet integer;125 ineg;126 jv.s"
+        }
+      ]
+    },
+    {
+      "id": "crafting.same_output_cache_boundary",
+      "behavior": "MITEContainerCrafting仅在结果栈不等价时更新wd.crafting_result；相同输出但不同配方/难度/消费量可能保留旧slot对象。结果等价比较不包含recipe identity、difficulty或consumption。",
+      "certainty": "已确认静态对象更新路径；未针对具体可达配方组合在旧客户端复现，不报告为已实测漏洞。",
+      "sources": [
+        {
+          "file": "MITEContainerCrafting.java",
+          "lines": [
+            25,
+            32
+          ]
+        },
+        {
+          "file": "CraftingResult.java",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        {
+          "file": "wd.java",
+          "lines": [
+            312,
+            329
+          ]
+        }
+      ]
+    }
+  ],
+  "literal_acceptance_vectors": {
+    "base_period": [
+      {
+        "difficulty": 0,
+        "unmodified_ticks": 25
+      },
+      {
+        "difficulty": 24.999998092651367,
+        "unmodified_ticks": 25
+      },
+      {
+        "difficulty": 25,
+        "unmodified_ticks": 25
+      },
+      {
+        "difficulty": 25.5,
+        "unmodified_ticks": 26
+      },
+      {
+        "difficulty": 99.5,
+        "unmodified_ticks": 100
+      },
+      {
+        "difficulty": 100,
+        "unmodified_ticks": 100
+      },
+      {
+        "difficulty": 100.00000762939453,
+        "unmodified_ticks": 100
+      },
+      {
+        "difficulty": 101,
+        "unmodified_ticks": 101
+      },
+      {
+        "difficulty": 175,
+        "unmodified_ticks": 132
+      },
+      {
+        "difficulty": 185,
+        "unmodified_ticks": 135
+      },
+      {
+        "difficulty": 270,
+        "unmodified_ticks": 161
+      },
+      {
+        "difficulty": 400,
+        "unmodified_ticks": 196
+      },
+      {
+        "difficulty": 800,
+        "unmodified_ticks": 289
+      },
+      {
+        "difficulty": 1600,
+        "unmodified_ticks": 447
+      },
+      {
+        "difficulty": 3600,
+        "unmodified_ticks": 784
+      },
+      {
+        "difficulty": 6400,
+        "unmodified_ticks": 1195
+      },
+      {
+        "difficulty": 25600,
+        "unmodified_ticks": 3451
+      }
+    ],
+    "adjusted_period": [
+      {
+        "difficulty": 25,
+        "level": 0,
+        "bench_modifier": 0,
+        "clumsiness": false,
+        "ticks": 25
+      },
+      {
+        "difficulty": 270,
+        "level": 0,
+        "bench_modifier": 0,
+        "clumsiness": false,
+        "ticks": 161
+      },
+      {
+        "difficulty": 270,
+        "level": 0,
+        "bench_modifier": 0.2,
+        "clumsiness": false,
+        "ticks": 134
+      },
+      {
+        "difficulty": 400,
+        "level": 0,
+        "bench_modifier": 0,
+        "clumsiness": false,
+        "ticks": 196
+      },
+      {
+        "difficulty": 400,
+        "level": 0,
+        "bench_modifier": 0.2,
+        "clumsiness": false,
+        "ticks": 163
+      },
+      {
+        "difficulty": 100,
+        "level": -40,
+        "bench_modifier": 0,
+        "clumsiness": false,
+        "ticks": 499
+      },
+      {
+        "difficulty": 100,
+        "level": -40,
+        "bench_modifier": 0.2,
+        "clumsiness": false,
+        "ticks": 249
+      },
+      {
+        "difficulty": 100,
+        "level": 35,
+        "bench_modifier": 0.2,
+        "clumsiness": false,
+        "ticks": 52
+      },
+      {
+        "difficulty": 100,
+        "level": 200,
+        "bench_modifier": 0.2,
+        "clumsiness": false,
+        "ticks": 25
+      },
+      {
+        "difficulty": 100,
+        "level": 0,
+        "bench_modifier": 0.2,
+        "clumsiness": true,
+        "ticks": 166
+      },
+      {
+        "difficulty": 100,
+        "level": 0,
+        "bench_modifier": 0.7,
+        "clumsiness": false,
+        "ticks": 58
+      },
+      {
+        "difficulty": 100,
+        "level": 0,
+        "bench_modifier": 0.2,
+        "clumsiness": false,
+        "ticks": 83
+      }
+    ],
+    "minimum_quality": [
+      {
+        "level": -40,
+        "clumsiness": false,
+        "skills_enabled": false,
+        "quality": "wretched"
+      },
+      {
+        "level": -20,
+        "clumsiness": false,
+        "skills_enabled": false,
+        "quality": "wretched"
+      },
+      {
+        "level": -19,
+        "clumsiness": false,
+        "skills_enabled": false,
+        "quality": "poor"
+      },
+      {
+        "level": -10,
+        "clumsiness": false,
+        "skills_enabled": false,
+        "quality": "poor"
+      },
+      {
+        "level": -9,
+        "clumsiness": false,
+        "skills_enabled": false,
+        "quality": "average"
+      },
+      {
+        "level": 0,
+        "clumsiness": false,
+        "skills_enabled": false,
+        "quality": "average"
+      },
+      {
+        "level": 200,
+        "clumsiness": false,
+        "skills_enabled": false,
+        "quality": "average"
+      },
+      {
+        "level": 0,
+        "clumsiness": true,
+        "skills_enabled": false,
+        "quality": "wretched"
+      },
+      {
+        "level": 10,
+        "clumsiness": true,
+        "skills_enabled": false,
+        "quality": "poor"
+      },
+      {
+        "level": 20,
+        "clumsiness": true,
+        "skills_enabled": false,
+        "quality": "average"
+      }
+    ],
+    "quality_cost": [
+      {
+        "base_difficulty": 400,
+        "quality": "average",
+        "adjusted_difficulty": 400,
+        "actual_cost": 0
+      },
+      {
+        "base_difficulty": 400,
+        "quality": "fine",
+        "adjusted_difficulty": 800,
+        "actual_cost": 160
+      },
+      {
+        "base_difficulty": 400,
+        "quality": "excellent",
+        "adjusted_difficulty": 1600,
+        "actual_cost": 320
+      },
+      {
+        "base_difficulty": 400,
+        "quality": "fine",
+        "clumsiness": true,
+        "adjusted_difficulty": 800,
+        "actual_cost": 320
+      }
+    ],
+    "damage": [
+      {
+        "progress_before": 150,
+        "damage_amount": 1,
+        "packet_short": 10,
+        "progress_after": 100
+      },
+      {
+        "progress_before": 30,
+        "damage_amount": 1,
+        "packet_short": 10,
+        "progress_after": 0
+      },
+      {
+        "progress_before": 20,
+        "damage_amount": 0.05,
+        "packet_short": 1,
+        "progress_after": 15
+      }
+    ],
+    "state_transitions": [
+      {
+        "case": "food_empty_pause",
+        "progress_before": 17,
+        "food_satiation": 0,
+        "food_nutrition": 0,
+        "observed_update_count": 40,
+        "expected_progress": 17
+      },
+      {
+        "case": "food_energy_one",
+        "progress_before": 17,
+        "food_satiation": 1,
+        "food_nutrition": 0,
+        "period": 100,
+        "observed_update_count": 1,
+        "expected_progress": 18
+      },
+      {
+        "case": "finish_zero_cost",
+        "progress_before": 99,
+        "period": 100,
+        "food_energy": 1,
+        "cost": 0,
+        "expected_batches": 1,
+        "expected_progress": 0,
+        "expected_proceed": true
+      },
+      {
+        "case": "finish_positive_cost",
+        "progress_before": 99,
+        "period": 100,
+        "food_energy": 1,
+        "cost": 160,
+        "expected_batches": 1,
+        "expected_progress": 0,
+        "expected_proceed": false
+      }
+    ]
+  },
+  "modern_requirements_not_implemented": [
+    "服务端持有进行中任务、周期、进度、配方ID/输入组件指纹、选择品质和费用；所有取出方式在服务端校验。",
+    "客户端只请求开始/取消/品质选择，不提交可直接信任的完成标志、经验扣款或产物。",
+    "真实完成时再次校验材料、消费数量、工作台、食物、技能开关、品质和余额，并原子消费/产出/扣费。",
+    "Shift、数字键、双击、配方书及其他容器转移不能绕过同一服务端校验。",
+    "重新匹配同输出不同配方必须校验完整身份，不能保留旧difficulty/consumption缓存。",
+    "缺失现代配方的difficulty和新材料参数须建立显式适配数据/证据缺口，不能默认instant并宣称完整复刻。",
+    "自动合成器无玩家等级/食物/品质选择：设备周期、技能与经验支付政策必须单独确定；R196不存在可直接照搬的现代Crafter规则。",
+    "现代单FoodData暂用foodLevel>0还是等待双资源系统，需要明确适配决策。",
+    "窗口关闭/输入改变/掉线/死亡/跨维度/多人同时操作/满背包/中途取消/服务器重启均需测试。"
+  ],
+  "evidence_gaps": [
+    "只完成静态、字节码及已有只读注册表提取；本次未启动旧版或新版游戏。",
+    "本文件不是已移植状态，未修改生产代码；自动化设备和现代新增配方仍需设计。",
+    "未将NaN、Infinity或整数溢出等损坏数据输入转成正常玩法规格，现代应显式约束有限非负difficulty。",
+    "所有配方入口、跨模组容器与特殊合成配方还需实现期逐项验证，不能只用公式单测代表制造全系统完成。"
+  ],
+  "runtime_recipe_examples": [
+    {
+      "name": "九铜粒→铜锭",
+      "runtime_recipe_order": 54,
+      "runtime_pointer": "/crafting_recipes/54",
+      "output": {
+        "item_id": 962,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 400.0,
+      "required_bench_material": null,
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 196,
+      "flint_workbench_ticks": 163,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    },
+    {
+      "name": "燧石短斧",
+      "runtime_recipe_order": 300,
+      "runtime_pointer": "/crafting_recipes/300",
+      "output": {
+        "item_id": 978,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 175.0,
+      "required_bench_material": null,
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 132,
+      "flint_workbench_ticks": 109,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    },
+    {
+      "name": "燧石工作台",
+      "runtime_recipe_order": 311,
+      "runtime_pointer": "/crafting_recipes/311",
+      "output": {
+        "item_id": 58,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 270.0,
+      "required_bench_material": null,
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 161,
+      "flint_workbench_ticks": 134,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    },
+    {
+      "name": "木棒",
+      "runtime_recipe_order": 370,
+      "runtime_pointer": "/crafting_recipes/370",
+      "output": {
+        "item_id": 1025,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 185.0,
+      "required_bench_material": null,
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 135,
+      "flint_workbench_ticks": 112,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    },
+    {
+      "name": "燧石→四碎片",
+      "runtime_recipe_order": 477,
+      "runtime_pointer": "/crafting_recipes/477",
+      "output": {
+        "item_id": 1121,
+        "count": 4,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 100.0,
+      "required_bench_material": null,
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 100,
+      "flint_workbench_ticks": 83,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    },
+    {
+      "name": "皮革→四筋",
+      "runtime_recipe_order": 491,
+      "runtime_pointer": "/crafting_recipes/491",
+      "output": {
+        "item_id": 1174,
+        "count": 4,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 50.0,
+      "required_bench_material": null,
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 50,
+      "flint_workbench_ticks": 41,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    },
+    {
+      "name": "原木→四木板",
+      "runtime_recipe_order": 503,
+      "runtime_pointer": "/crafting_recipes/503",
+      "output": {
+        "item_id": 5,
+        "count": 4,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 120.00001,
+      "required_bench_material": "wood",
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 111,
+      "flint_workbench_ticks": 92,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    },
+    {
+      "name": "铜锭→九铜粒",
+      "runtime_recipe_order": 837,
+      "runtime_pointer": "/crafting_recipes/837",
+      "output": {
+        "item_id": 956,
+        "count": 9,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 400.0,
+      "required_bench_material": null,
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 196,
+      "flint_workbench_ticks": 163,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    },
+    {
+      "name": "绿宝石→九碎片",
+      "runtime_recipe_order": 844,
+      "runtime_pointer": "/crafting_recipes/844",
+      "output": {
+        "item_id": 1117,
+        "count": 9,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "difficulty": 800.0,
+      "required_bench_material": null,
+      "level": 0,
+      "quality": "average_or_no_quality",
+      "no_clumsiness": true,
+      "inventory_formula_ticks": 289,
+      "flint_workbench_ticks": 240,
+      "note": "inventory_formula_ticks仅是公式向量；3x3形状或材料门槛不满足时背包不可实际制造。"
+    }
+  ]
+}

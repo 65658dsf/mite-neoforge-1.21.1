@@ -123,9 +123,9 @@ public final class FlintToolGameTests {
             BlockState stone = Blocks.STONE.defaultBlockState();
             helper.getLevel().setBlockAndUpdate(position, stone);
             helper.assertFalse(stone.canHarvestBlock(helper.getLevel(), position, player), "A flint hatchet cannot harvest stone drops");
-            helper.assertTrue(player.gameMode.destroyBlock(position), "Modern wrong-tool block removal remains possible");
-            helper.assertTrue(helper.getLevel().getBlockState(position).isAir(), "The stone was actually removed");
-            helper.assertValueEqual(fixture.countDrops(Items.COBBLESTONE), 0, "Wrong-tool stone removal produces no cobblestone");
+            helper.assertFalse(player.gameMode.destroyBlock(position), "R196 tool qualification rejects wrong-tool final removal");
+            helper.assertTrue(helper.getLevel().getBlockState(position).is(Blocks.STONE), "The rejected block stays in the world");
+            helper.assertValueEqual(fixture.countDrops(Items.COBBLESTONE), 0, "Rejected harvest produces no cobblestone");
             helper.assertValueEqual(hatchet.getDamageValue(), 0, "Ineffective mining does not spend hatchet durability");
 
             BlockState mushroom = Blocks.BROWN_MUSHROOM.defaultBlockState();

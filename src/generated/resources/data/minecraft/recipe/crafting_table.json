@@ -1,28 +1,19 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:false"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": [
-      {
-        "item": "minecraft:string"
-      },
-      {
-        "item": "mite:sinew"
-      }
-    ],
-    "F": {
-      "item": "minecraft:flint"
-    },
-    "L": {
-      "tag": "minecraft:logs"
-    },
-    "S": {
-      "item": "minecraft:stick"
+    "P": {
+      "tag": "minecraft:planks"
     }
   },
   "pattern": [
-    "FB",
-    "SL"
+    "PP",
+    "PP"
   ],
   "result": {
     "count": 1,

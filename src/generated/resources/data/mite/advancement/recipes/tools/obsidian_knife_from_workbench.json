@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_table": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:obsidian_crafting_table"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_table"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mite:obsidian_knife_from_workbench"
+    ]
+  }
+}

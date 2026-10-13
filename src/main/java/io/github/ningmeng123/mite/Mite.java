@@ -2,6 +2,8 @@ package io.github.ningmeng123.mite;
 
 import com.mojang.logging.LogUtils;
 import io.github.ningmeng123.mite.item.WoodenClubBehavior;
+import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.crafting.DisabledVanillaWorkbench;
 import io.github.ningmeng123.mite.mining.GrassMining;
 import io.github.ningmeng123.mite.registry.MiteAttachments;
 import io.github.ningmeng123.mite.registry.MiteItems;
@@ -9,6 +11,8 @@ import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteShards;
 import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.registry.MiteLootModifiers;
+import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
@@ -29,6 +33,10 @@ public final class Mite {
         MiteMaterials.register(modBus);
         MiteShards.register(modBus);
         MiteResourceBlocks.register(modBus);
+        EquipmentDurability.register(modBus);
+        MiteTools.register(modBus);
+        MiteWorkbenches.register(modBus);
+        DisabledVanillaWorkbench.register(modBus);
         MiteLootModifiers.register(modBus);
         modBus.addListener(WoodenClubBehavior::modifyComponents);
         modBus.addListener(GrassMining::modifyShears);

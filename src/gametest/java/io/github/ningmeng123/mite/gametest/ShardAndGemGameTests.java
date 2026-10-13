@@ -71,7 +71,7 @@ public final class ShardAndGemGameTests {
     public static void allFiveShardPairsUseRealMenusAndConserveEveryIngredient(GameTestHelper helper) {
         BlockPos table = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockState previous = helper.getLevel().getBlockState(table);
-        helper.getLevel().setBlockAndUpdate(table, Blocks.CRAFTING_TABLE.defaultBlockState());
+        helper.getLevel().setBlockAndUpdate(table, TimedCraftingTestSupport.flintTable().defaultBlockState());
         try (PlayerSession session = newServerPlayer(helper)) {
             ServerPlayer player = session.player();
             for (Item item : new Item[]{Items.FLINT, Items.QUARTZ, Items.LAPIS_LAZULI}) {
@@ -90,10 +90,11 @@ public final class ShardAndGemGameTests {
                 backpack.getCraftSlots().setItem(0, new ItemStack(pair.whole(), 2));
                 helper.assertTrue(backpack.getSlot(0).getItem().is(pair.shard()), "A real 2x2 menu can dismantle the whole item");
                 helper.assertValueEqual(backpack.getSlot(0).getItem().getCount(), 9, "One whole item previews exactly nine fragments");
-                backpack.quickMoveStack(player, 0);
+                helper.assertTrue(backpack.quickMoveStack(player, 0).isEmpty(), "Direct quick move cannot bypass the server manufacturing period");
+                TimedCraftingTestSupport.craftOne(helper, player, backpack, ClickType.PICKUP);
                 helper.assertValueEqual(backpack.getCraftSlots().getItem(0).getCount(), 1, "One menu transfer consumes one whole item");
                 helper.assertValueEqual(count(player.getInventory(), pair.shard()), 9, "Exactly nine fragments reached inventory");
-                backpack.clicked(0, 0, ClickType.QUICK_MOVE, player);
+                TimedCraftingTestSupport.craftOne(helper, player, backpack, ClickType.QUICK_MOVE);
                 helper.assertValueEqual(count(player.getInventory(), pair.shard()), 18, "A normal Shift click consumes the remaining whole item once");
                 helper.assertTrue(backpack.getCraftSlots().isEmpty() && backpack.getSlot(0).getItem().isEmpty(), "No phantom dismantling result remains");
 
@@ -114,11 +115,10 @@ public final class ShardAndGemGameTests {
                     helper.assertTrue(fragments.isEmpty(), "All eighteen dismantled fragments are now in the actual 3x3 grid");
                     helper.assertTrue(bench.getSlot(0).getItem().is(pair.whole()) && bench.getSlot(0).getItem().getCount() == 1,
                             "Nine occupied cells restore exactly the corresponding whole item, including glass pane and obsidian block");
-                    bench.clicked(0, 0, ClickType.PICKUP, player);
-                    helper.assertTrue(bench.getCarried().is(pair.whole()) && bench.getCarried().getCount() == 1, "Normal result pickup restores one whole item");
+                    TimedCraftingTestSupport.craftOne(helper, player, bench, ClickType.PICKUP);
+                    helper.assertTrue(bench.getCarried().isEmpty() && count(player.getInventory(), pair.whole()) == 1, "One completed manufacturing period restores one whole item");
                     for (int slot = 1; slot <= 9; slot++) helper.assertValueEqual(bench.getSlot(slot).getItem().getCount(), 1, "Each occupied cell consumes exactly one fragment");
-                    bench.clicked(37, 0, ClickType.PICKUP, player);
-                    bench.clicked(0, 0, ClickType.QUICK_MOVE, player);
+                    TimedCraftingTestSupport.craftOne(helper, player, bench, ClickType.QUICK_MOVE);
                     helper.assertValueEqual(count(player.getInventory(), pair.whole()), 2, "The complete round trip restores both original whole items");
                     helper.assertValueEqual(count(player.getInventory(), pair.shard()), 0, "No fragments are duplicated into inventory");
                     for (int slot = 0; slot <= 9; slot++) helper.assertTrue(bench.getSlot(slot).getItem().isEmpty(), "Exhausted packing has no remaining ingredient or output");

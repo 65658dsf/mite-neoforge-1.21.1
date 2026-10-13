@@ -1,6 +1,8 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.crafting.CraftingAccessRules;
+import io.github.ningmeng123.mite.crafting.WorkbenchRules;
+import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,6 +16,12 @@ public abstract class CraftingResultPickupMixin {
     @Inject(method = "mayPickup", at = @At("HEAD"), cancellable = true, require = 1, allow = 1)
     private void mite$checkInventoryResult(Player player, CallbackInfoReturnable<Boolean> cir) {
         Slot slot = (Slot) (Object) this;
+        if ((slot == player.inventoryMenu.getSlot(0)
+                || player.containerMenu instanceof CraftingMenu && slot == player.containerMenu.getSlot(0))
+                && !WorkbenchRules.allows(slot == player.inventoryMenu.getSlot(0) ? player.inventoryMenu : player.containerMenu, slot.getItem())) {
+            cir.setReturnValue(false);
+            return;
+        }
         if (slot == player.inventoryMenu.getSlot(0)
                 && !CraftingAccessRules.canCraft(player.inventoryMenu.getCraftSlots(), slot.getItem())) {
             cir.setReturnValue(false);

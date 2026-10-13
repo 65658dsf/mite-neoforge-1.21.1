@@ -2,5 +2,30 @@
   "remove": [
     "minecraft:wooden_sword"
   ],
-  "values": []
+  "values": [
+    "mite:copper_scythe",
+    "mite:silver_scythe",
+    "mite:golden_scythe",
+    "mite:rusted_iron_scythe",
+    "mite:iron_scythe",
+    "mite:ancient_metal_scythe",
+    "mite:mithril_scythe",
+    "mite:adamantium_scythe",
+    "mite:obsidian_knife",
+    "mite:flint_knife",
+    "mite:copper_dagger",
+    "mite:silver_dagger",
+    "mite:golden_dagger",
+    "mite:rusted_iron_dagger",
+    "mite:iron_dagger",
+    "mite:ancient_metal_dagger",
+    "mite:mithril_dagger",
+    "mite:adamantium_dagger",
+    "mite:copper_sword",
+    "mite:silver_sword",
+    "mite:rusted_iron_sword",
+    "mite:ancient_metal_sword",
+    "mite:mithril_sword",
+    "mite:adamantium_sword"
+  ]
 }

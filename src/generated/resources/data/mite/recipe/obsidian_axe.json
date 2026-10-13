@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "minecraft:obsidian"
+    },
+    "B": {
+      "item": "minecraft:stick"
+    },
+    "C": [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "item": "mite:sinew"
+      }
+    ]
+  },
+  "pattern": [
+    "AA",
+    "AB",
+    "CB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:obsidian_axe"
+  }
+}

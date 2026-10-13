@@ -9,7 +9,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 
-/** Modern models, block loot and the unchanged modern Nether gravel feature shape. @author NingMeng123 */
+/** Original material sprites, block loot and modern Nether gravel generation. @author NingMeng123 */
 public final class MaterialAssetsProvider implements DataProvider {
     private final Path output;
 
@@ -19,25 +19,18 @@ public final class MaterialAssetsProvider implements DataProvider {
     public CompletableFuture<?> run(CachedOutput cache) {
         List<CompletableFuture<?>> work = new ArrayList<>();
         for (String metal : List.of("copper", "silver", "ancient_metal", "mithril", "adamantium")) {
-            model(work, cache, metal + "_nugget", "minecraft:item/iron_nugget");
-            if (!metal.equals("copper")) model(work, cache, metal + "_ingot", "minecraft:item/iron_ingot");
+            model(work, cache, metal + "_nugget", metal.equals("copper")
+                    ? "minecraft:item/iron_nugget" : "mite:item/" + metal + "_nugget");
+            if (!metal.equals("copper")) model(work, cache, metal + "_ingot", "mite:item/" + metal + "_ingot");
         }
         for (String material : List.of("obsidian", "emerald", "diamond", "quartz", "glass")) {
-            // Reuse the project's already authored modern fragment silhouette; tint is applied at render time.
-            model(work, cache, material + "_shard", "mite:item/flint_chip");
+            model(work, cache, material + "_shard", "mite:item/" + material + "_shard");
         }
         save(work, cache, "assets/mite/blockstates/nether_gravel.json",
                 "{\"variants\":{\"\":{\"model\":\"mite:block/nether_gravel\"}}}");
         save(work, cache, "assets/mite/models/item/nether_gravel.json", "{\"parent\":\"mite:block/nether_gravel\"}");
         save(work, cache, "assets/mite/models/block/nether_gravel.json", """
-                {"parent":"minecraft:block/block","textures":{"all":"minecraft:block/gravel","particle":"#all"},
-                 "elements":[{"from":[0,0,0],"to":[16,16,16],"faces":{
-                   "down":{"texture":"#all","cullface":"down","tintindex":0},
-                   "up":{"texture":"#all","cullface":"up","tintindex":0},
-                   "north":{"texture":"#all","cullface":"north","tintindex":0},
-                   "south":{"texture":"#all","cullface":"south","tintindex":0},
-                   "west":{"texture":"#all","cullface":"west","tintindex":0},
-                   "east":{"texture":"#all","cullface":"east","tintindex":0}}}]}
+                {"parent":"minecraft:block/cube_all","textures":{"all":"mite:block/nether_gravel"}}
                 """);
         save(work, cache, "data/mite/loot_table/blocks/nether_gravel.json", """
                 {"type":"minecraft:block","pools":[{"rolls":1,"entries":[{"type":"minecraft:item","name":"mite:nether_gravel"}],

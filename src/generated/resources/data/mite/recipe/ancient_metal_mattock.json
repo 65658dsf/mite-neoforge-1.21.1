@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "mite:ancient_metal_ingot"
+    },
+    "B": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "AAA",
+    " BA",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:ancient_metal_mattock"
+  }
+}

@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_artifact": "neoforge-21.1.259-client-extra-aka-minecraft-resources.jar",
+  "source_artifact_sha256": "8e9cf6f4b6eafb1c6bf745a67a61dd1736f31865cad409e5b2bec918667dab5e",
+  "minecraft_version": "1.21.1",
+  "entries": [
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/acacia_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/acacia_leaves.json",
+      "source_sha256": "4c71789a4733e043153b392d66961d3fdf213b36bb4b478e5d5339a153d5fa48",
+      "output_sha256": "f2c6df6b465f1783a5f69325e580d73de9a431654d73060cb704c8ad20604702",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/azalea_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/azalea_leaves.json",
+      "source_sha256": "fecde0c5d41a0abe365053e89d6882e06a257dc7ec23da87051163be71593408",
+      "output_sha256": "b6de8a6072ba8d7675f9182729f28595f272ecd359f06abcad8ac5c2f186c2d0",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/birch_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/birch_leaves.json",
+      "source_sha256": "a123290998ffc4802cd4634efd6e6d9ae570c74023b257132f665eedb16d617d",
+      "output_sha256": "e797dfee08e7ce27d263d81905d6228fabea03f6b5be06b2eadbf6a20380d44b",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/cherry_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/cherry_leaves.json",
+      "source_sha256": "1bc7723558aada6822c11765a4055fd8c8d0e22866cd138a9319bb84452bf187",
+      "output_sha256": "b6cc8ef66b63cf3909cd2b5900693b0c80414ce4f272c452935dbf783ac5dc81",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/cobweb.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/cobweb.json",
+      "source_sha256": "67857611d3f8a3926e0c4d05954719c78705dba24746d820a7381f184034ab1e",
+      "output_sha256": "8c1fbf031585b4ba092c6eb5fae88fa1b2e528f3f188565265efadb6172f5a18",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/dark_oak_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/dark_oak_leaves.json",
+      "source_sha256": "72cd45319c3c3a71a2b10331115f2aa59969b037f146e5a1e4499b6958e0b32e",
+      "output_sha256": "ad808aefffb6e8525e7d32387eb2ccc95caefcf2d357c72dd5fe0f58422ac317",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items",
+        "$.pools[2].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/dead_bush.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/dead_bush.json",
+      "source_sha256": "37ce40742e25b5f63d52ee43dcc13f22f92389288d801534f671ce928fb18bf0",
+      "output_sha256": "628c87b014f1d536148f58d094f08b7de90336ac8dc223652ad973d561585723",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/fern.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/fern.json",
+      "source_sha256": "b65f53475a85fed601d8ef3be8481b3936e8c53f5e9a96446ae0b54f825faf5c",
+      "output_sha256": "7977931edbd3b7150cd5ba9213e504aff6852c5b29a3ed7d6e346c7d36f2a705",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/flowering_azalea_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/flowering_azalea_leaves.json",
+      "source_sha256": "c434c4ab4f004a93fb15bb1628383c8827773b8e7088eb2983644df75b313908",
+      "output_sha256": "b95162f06bffde50c8e690ed2d4f2893d3650b8eb56476491b47cb9a0c577fc9",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/glow_lichen.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/glow_lichen.json",
+      "source_sha256": "ec742e0fb8894f072c99d8f601ec59426ab8ec321d5ef7befb7da1adb676494d",
+      "output_sha256": "33041ba7577e48777a7cd4b8174eee62250c3cef65acf59003f325d2756053c7",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/hanging_roots.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/hanging_roots.json",
+      "source_sha256": "f7aafc1607b308602324564ddd466394731ee1637e4d813ad3fa55b3b7f6f444",
+      "output_sha256": "ccfd109620adc8fd073d48156d2ff2082226ec708b6a9e17e9c365b613f1ef75",
+      "changed_json_paths": [
+        "$.pools[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/jungle_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/jungle_leaves.json",
+      "source_sha256": "f3e3719ff38e522917355719d82acb808d24094c33a4e4be18fd56b6c1d9d00d",
+      "output_sha256": "a8816353d1181b95ab3299b0859faa7a24dcc63ba24d1454f919e7b85b78d80b",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/large_fern.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/large_fern.json",
+      "source_sha256": "8ad3dfcd38476197a73ddfae407bb1bfd8200b4f362e37dd91af5a61a015abfa",
+      "output_sha256": "c149bcebdb3d9e8936452259181b8b5fe3c891397e2a37c9c91591e54328f9e3",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].predicate.items",
+        "$.pools[1].entries[0].children[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/mangrove_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/mangrove_leaves.json",
+      "source_sha256": "8369c6268bbabd08be719d8decfb8117a542a3c2bfd96f3588b276e3d07665c1",
+      "output_sha256": "7c12c375b15e1df1f4ec5bbb187e1661b43e230231f9f3fbf12594a49e59222e",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/nether_sprouts.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/nether_sprouts.json",
+      "source_sha256": "a47714715cf2f165b48b884a47cc4628f4153bfe1c693655f8a824bab89cdd41",
+      "output_sha256": "7025a1d412fe910053db59f65a339da3d8173ab5dfeda625c3f0424afe8d0fcb",
+      "changed_json_paths": [
+        "$.pools[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/oak_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/oak_leaves.json",
+      "source_sha256": "4f0cf4479222e71d1bec0e310698fdc5672b9cef1f9f83a0eb0321648082f18c",
+      "output_sha256": "ef8c35f3dba795aeef22369df085cb8fd79adc3d882e919f313da849d64880fb",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items",
+        "$.pools[2].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/seagrass.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/seagrass.json",
+      "source_sha256": "327141e8bf8f337533ffd82b42121390d0f992fcfa90ebcfbc981b480c084797",
+      "output_sha256": "495cf3b320db11cd2b93867fff8a4959a1c0006be8fbbd714a90e158bbdfa16b",
+      "changed_json_paths": [
+        "$.pools[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/short_grass.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/short_grass.json",
+      "source_sha256": "42fb3dc22af8f27da0465428ea966a2b2a385e98247b08e955ad0f56f2cb3ec4",
+      "output_sha256": "974cafb7cbb35309bdf8e3cb759c122703f52249c3e4fa2a787ff26c8fb9030a",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/small_dripleaf.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/small_dripleaf.json",
+      "source_sha256": "28754fc615f2d65766af4bf363a7e9690ece03185e1b84b8f816e56511495081",
+      "output_sha256": "a6db9257eb05aee96904746c367075224d2221825601e42e80c29ae080d130b0",
+      "changed_json_paths": [
+        "$.pools[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/spruce_leaves.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/spruce_leaves.json",
+      "source_sha256": "3d094a14ce1666dc6a5f85f4bdf504b829114479d516887a09bddeb6f589f0e5",
+      "output_sha256": "0ace860cf6541037d19732747523b8b347dd5b08ab9d685810d8028c9b034cb0",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items",
+        "$.pools[1].conditions[0].term.terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/tall_grass.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/tall_grass.json",
+      "source_sha256": "dbbab7231ac03a16d1c4642c33a29d3e6733852ebebf7123f3a4825f521a6871",
+      "output_sha256": "45b2d09f9a7f4d0d3ef996c44589987a1bbfc7efd184156d97bb694f8de59e9c",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].predicate.items",
+        "$.pools[1].entries[0].children[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/tall_seagrass.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/tall_seagrass.json",
+      "source_sha256": "667dea152b244fd68318662de638f8d0a4a584f05d8891292ed9f44f851a2581",
+      "output_sha256": "9c6dd45b7c57d4189933b5ec0cf466c1d7af5d9196bb6aa0e7b06203a2c74fa1",
+      "changed_json_paths": [
+        "$.pools[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/twisting_vines.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/twisting_vines.json",
+      "source_sha256": "f03ad4782a0e7650aa56f8f1d2e297bb241ca939f26a84382df00e63fe26116a",
+      "output_sha256": "41a1d9dc72091ca8bcbe321fbf9ad69f0f05cdec63a5534cab38e1163a2880a7",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/twisting_vines_plant.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/twisting_vines_plant.json",
+      "source_sha256": "9be4d7291d9e35b6b3f5a8f70192a5e67c8f16203cc720150250560618345270",
+      "output_sha256": "7c98929787126cb15c2e11b2c287a1f08bea8d68a6c4d318bc37fe6fcc633881",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/vine.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/vine.json",
+      "source_sha256": "82963ce5ac1c948cc1b5b9c7a343ba5c838de3584d96a7afd7dd7115e0db4c3b",
+      "output_sha256": "179467083eeaeb1177d6a7364a013a79d4a732b703529e87471184d659e0010c",
+      "changed_json_paths": [
+        "$.pools[0].conditions[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/weeping_vines.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/weeping_vines.json",
+      "source_sha256": "ceb842cc02b1a412c08a3d6b199eefc805b659f3659802357a5b2e6d5326471d",
+      "output_sha256": "88c90fb5568b0b415f29c8be92dab8b94dbc8e16327f52b23030e0d673b0426b",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/loot_table/blocks/weeping_vines_plant.json",
+      "destination": "src/main/resources/data/minecraft/loot_table/blocks/weeping_vines_plant.json",
+      "source_sha256": "14f57f07adfee83f826f60cbf3b643c147d8b968fda505524687867fca8122bc",
+      "output_sha256": "bcd972f0b14d5dbafac2adb33d95b35dc00d8da617ff6595c92b78368a00927d",
+      "changed_json_paths": [
+        "$.pools[0].entries[0].children[0].conditions[0].terms[0].predicate.items"
+      ],
+      "before": "minecraft:shears",
+      "after": "#mite:shears"
+    },
+    {
+      "source_entry": "data/minecraft/enchantment/unbreaking.json",
+      "destination": "src/main/resources/data/minecraft/enchantment/unbreaking.json",
+      "source_sha256": "dc9d0674cbf7945eea245788a5e6c18401be89ff9ab985296f50f55f067d2e69",
+      "output_sha256": "a618208d7b845cd51448beb2c09a21ac42388c7c9279001c937a4f047fb9a0c7",
+      "changed_json_paths": [
+        "$.max_level"
+      ],
+      "before": 3,
+      "after": 5
+    }
+  ]
+}

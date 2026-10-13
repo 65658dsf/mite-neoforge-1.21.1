@@ -1,0 +1,10 @@
+{
+  "type": "mite:workbench_dismantle",
+  "ingredient": {
+    "item": "mite:flint_crafting_table"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:flint_knife"
+  }
+}

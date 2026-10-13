@@ -109,11 +109,10 @@ public final class MetalMaterialGameTests {
                         "The expected unpacking recipe was loaded");
                 helper.assertTrue(menu.getSlot(0).getItem().is(metal.nugget()) && menu.getSlot(0).getItem().getCount() == 9,
                         "A real 2x2 inventory result shows nine nuggets");
-                menu.clicked(0, 0, ClickType.PICKUP, player);
-                helper.assertTrue(menu.getCarried().is(metal.nugget()) && menu.getCarried().getCount() == 9, "Normal click takes exactly nine nuggets");
+                TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.PICKUP);
+                helper.assertTrue(menu.getCarried().isEmpty() && count(player.getInventory(), metal.nugget()) == 9, "The completed first manufacturing period delivers exactly nine nuggets");
                 helper.assertValueEqual(menu.getCraftSlots().getItem(0).getCount(), 1, "Normal click consumes exactly one ingot");
-                menu.clicked(36, 0, ClickType.PICKUP, player);
-                menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
+                TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
                 helper.assertValueEqual(count(player.getInventory(), metal.nugget()), 18, "Shift consumes the second ingot for exactly nine more nuggets");
                 helper.assertTrue(menu.getCraftSlots().isEmpty() && menu.getSlot(0).getItem().isEmpty(), "Both ingredients have been consumed once");
                 helper.assertValueEqual(player.totalExperience, initialExperience, "Material conversion has no XP cost or award");
@@ -126,7 +125,7 @@ public final class MetalMaterialGameTests {
     public static void allSevenNuggetsPackAtWorkbenchWithExactBulkConsumption(GameTestHelper helper) {
         BlockPos table = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockState old = helper.getLevel().getBlockState(table);
-        helper.getLevel().setBlockAndUpdate(table, Blocks.CRAFTING_TABLE.defaultBlockState());
+        helper.getLevel().setBlockAndUpdate(table, TimedCraftingTestSupport.flintTable().defaultBlockState());
         try (PlayerSession session = newServerPlayer(helper)) {
             ServerPlayer player = session.player();
             CraftingMenu menu = new CraftingMenu(1, player.getInventory(), ContainerLevelAccess.create(helper.getLevel(), table));
@@ -138,11 +137,10 @@ public final class MetalMaterialGameTests {
                     menu.setCarried(ItemStack.EMPTY);
                     for (int slot = 1; slot <= 9; slot++) menu.getSlot(slot).set(new ItemStack(metal.nugget(), 10));
                     helper.assertTrue(menu.getSlot(0).getItem().is(metal.ingot()), "Real workbench publishes the ingot");
-                    menu.clicked(0, 0, ClickType.PICKUP, player);
-                    helper.assertTrue(menu.getCarried().is(metal.ingot()) && menu.getCarried().getCount() == 1, "Normal packing makes one ingot");
+                    TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.PICKUP);
+                    helper.assertTrue(menu.getCarried().isEmpty() && count(player.getInventory(), metal.ingot()) == 1, "One complete timed batch packs one ingot");
                     for (int slot = 1; slot <= 9; slot++) helper.assertValueEqual(menu.getSlot(slot).getItem().getCount(), 9, "One nugget per grid cell was consumed");
-                    menu.clicked(37, 0, ClickType.PICKUP, player);
-                    menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
+                    TimedCraftingTestSupport.craftBatches(helper, player, menu, 9);
                     helper.assertValueEqual(count(player.getInventory(), metal.ingot()), 10, "Ninety nuggets pack into exactly ten ingots");
                     assertLegalStacks(helper, player.getInventory());
                     for (int slot = 0; slot <= 9; slot++) helper.assertTrue(menu.getSlot(slot).getItem().isEmpty(), "Bulk packing empties all ingredients and the result");
@@ -151,7 +149,7 @@ public final class MetalMaterialGameTests {
                     player.getInventory().clearContent();
                     menu.clearCraftingContent();
                     menu.getSlot(1).set(new ItemStack(block.block(), 2));
-                    menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
+                    TimedCraftingTestSupport.craftBatches(helper, player, menu, 2);
                     helper.assertValueEqual(count(player.getInventory(), block.ingot()), 18, "Workbench Shift fills multiple empty slots with both complete bulk batches");
                     helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Workbench bulk transfer consumes both blocks once");
                     assertLegalStacks(helper, player.getInventory());
@@ -183,13 +181,11 @@ public final class MetalMaterialGameTests {
                 helper.assertTrue(decoded instanceof BulkMaterialRecipe && decoded.getResultItem(helper.getLevel().registryAccess()).getCount() == 9,
                         "Actual registered recipe codec accepts nine ingots without a STRICT_CODEC load error");
                 menu.getCraftSlots().setItem(0, new ItemStack(block.block(), 2));
-                menu.clicked(0, 0, ClickType.PICKUP, player);
-                helper.assertTrue(menu.getCarried().is(block.ingot()) && menu.getCarried().getCount() == 9, "A complete nine-ingot craft is carried as one transient result");
-                menu.clicked(36, 0, ClickType.PICKUP, player);
-                helper.assertValueEqual(menu.getCarried().getCount(), 1, "The first inventory slot accepts eight, leaving one on the cursor");
-                menu.clicked(37, 0, ClickType.PICKUP, player);
-                helper.assertValueEqual(count(player.getInventory(), block.ingot()), 9, "Normal placement stores a legal eight-plus-one split");
-                menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
+                TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.PICKUP);
+                helper.assertTrue(menu.getCarried().isEmpty(), "Completed manufacture routes the whole result to inventory, never an oversized cursor");
+                helper.assertValueEqual(count(player.getInventory(), block.ingot()), 9, "Normal manufacture stores the legal eight-plus-one split");
+                assertLegalStacks(helper, player.getInventory());
+                TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
                 helper.assertValueEqual(count(player.getInventory(), block.ingot()), 18, "Shift keeps the full next nine-ingot batch in inventory");
                 helper.assertTrue(menu.getCraftSlots().isEmpty(), "Exactly two blocks have been consumed");
                 assertLegalStacks(helper, player.getInventory());
@@ -199,7 +195,7 @@ public final class MetalMaterialGameTests {
                 player.awardRecipes(List.of(recipe));
                 menu.handlePlacement(true, recipe, player);
                 helper.assertTrue(menu.getSlot(0).getItem().is(block.ingot()), "Recipe-book placement resolves the custom recipe");
-                menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
+                TimedCraftingTestSupport.craftBatches(helper, player, menu, 2);
                 helper.assertValueEqual(count(player.getInventory(), block.ingot()), 18, "Craft-all from empty inventory produces all eighteen ingots");
                 helper.assertValueEqual(count(player.getInventory(), block.block()), 0, "Recipe-book bulk conversion consumes exactly two blocks");
                 assertLegalStacks(helper, player.getInventory());
@@ -216,16 +212,22 @@ public final class MetalMaterialGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty", timeoutTicks = 40)
+    @GameTest(template = "empty", timeoutTicks = 2000)
     public static void actualCrafterBulkUnpackingSplitsNineWithoutDroppingAnIngot(GameTestHelper helper) {
         BlockPos crafterPos = new BlockPos(1, 1, 1);
         BlockPos chestPos = new BlockPos(2, 1, 1);
         helper.setBlock(crafterPos, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
         helper.setBlock(chestPos, Blocks.CHEST);
+        helper.setBlock(crafterPos.south(), TimedCraftingTestSupport.flintTable());
         CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(crafterPos));
         crafter.setItem(0, new ItemStack(Items.COPPER_BLOCK, 2));
         helper.pulseRedstone(new BlockPos(0, 1, 1), 5);
-        helper.runAfterDelay(9, () -> {
+        int period = io.github.ningmeng123.mite.crafting.TimedCraftingRules.period(3600F, 0, .2F, false);
+        helper.runAfterDelay(period, () -> {
+            Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(chestPos));
+            helper.assertValueEqual(count(chest, Items.COPPER_INGOT), 0, "The real Crafter does not publish a batch before its manufacturing period");
+        });
+        helper.runAfterDelay(period + 9, () -> {
             Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(chestPos));
             helper.assertValueEqual(count(chest, Items.COPPER_INGOT), 9, "One real Crafter pulse outputs all nine ingots");
             helper.assertValueEqual(crafter.getItem(0).getCount(), 1, "Automation consumes one block per pulse");
@@ -235,10 +237,10 @@ public final class MetalMaterialGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void bulkSwapsSplitHotbarAndOffhandAndConsumeExactlyOnceInBothMenus(GameTestHelper helper) {
+    public static void resultSwapsCannotBypassTimingAndCompletedBatchesSplitLegallyInBothMenus(GameTestHelper helper) {
         BlockPos table = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockState old = helper.getLevel().getBlockState(table);
-        helper.getLevel().setBlockAndUpdate(table, Blocks.CRAFTING_TABLE.defaultBlockState());
+        helper.getLevel().setBlockAndUpdate(table, TimedCraftingTestSupport.flintTable().defaultBlockState());
         try (PlayerSession session = newServerPlayer(helper)) {
             ServerPlayer player = session.player();
             for (boolean workbench : new boolean[]{false, true}) {
@@ -253,16 +255,17 @@ public final class MetalMaterialGameTests {
                             int craftedBefore = player.getStats().getValue(Stats.ITEM_CRAFTED.get(block.ingot()));
                             menu.getSlot(1).set(new ItemStack(block.block(), 2));
                             menu.clicked(0, target, ClickType.SWAP, player);
-                            helper.assertTrue(player.getInventory().getItem(target).is(block.ingot()), "A result swap fills the selected empty hotbar/offhand slot");
-                            helper.assertValueEqual(player.getInventory().getItem(target).getCount(), 8, "The target stores only its legal eight ingots");
-                            helper.assertValueEqual(count(player.getInventory(), block.ingot()), 9, "The ninth ingot enters another inventory slot");
-                            helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "One swap consumes one block, not one block per split");
+                            helper.assertValueEqual(count(player.getInventory(), block.ingot()), 0, "Hotbar/offhand result swaps cannot bypass manufacturing");
+                            helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 2, "Rejected instant swaps consume nothing");
+                            TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.PICKUP);
+                            helper.assertValueEqual(count(player.getInventory(), block.ingot()), 9, "One completed period preserves the entire nine-ingot batch");
+                            helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "One period consumes one block, not one block per split");
                             helper.assertValueEqual(player.getStats().getValue(Stats.ITEM_CRAFTED.get(block.ingot())) - craftedBefore, 9,
                                     "Craft statistics retain the whole batch count once");
                             assertLegalStacks(helper, player.getInventory());
                             menu.clicked(0, target, ClickType.SWAP, player);
-                            helper.assertValueEqual(count(player.getInventory(), block.ingot()), 9, "Occupied result-swap targets retain vanilla rejection");
-                            helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "Rejected occupied swaps do not consume another block");
+                            helper.assertValueEqual(count(player.getInventory(), block.ingot()), 9, "Repeated result swaps cannot take the next batch early");
+                            helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "Rejected swaps never consume the next block");
                         }
                     }
                 } finally {
@@ -278,10 +281,10 @@ public final class MetalMaterialGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void fullInventoryBulkTransfersKeepVanillaNoMoveAndBoundedRemainderDrops(GameTestHelper helper) {
+    public static void fullInventoryTimedTransfersConserveCompletedBatchesAndRejectInstantSwaps(GameTestHelper helper) {
         BlockPos table = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockState old = helper.getLevel().getBlockState(table);
-        helper.getLevel().setBlockAndUpdate(table, Blocks.CRAFTING_TABLE.defaultBlockState());
+        helper.getLevel().setBlockAndUpdate(table, TimedCraftingTestSupport.flintTable().defaultBlockState());
         try (PlayerSession session = newServerPlayer(helper)) {
             ServerPlayer player = session.player();
             for (boolean workbench : new boolean[]{false, true}) {
@@ -293,19 +296,19 @@ public final class MetalMaterialGameTests {
                     for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(Items.DIRT, 64));
                     menu.getSlot(1).set(new ItemStack(Items.COPPER_BLOCK, 2));
                     Set<UUID> existing = nearbyItems(helper, player).stream().map(ItemEntity::getUUID).collect(Collectors.toSet());
-                    menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
-                    helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 2, "Completely full inventory keeps both input blocks");
-                    helper.assertValueEqual(count(player.getInventory(), Items.COPPER_INGOT), 0, "A failed Shift never creates an output");
-                    helper.assertValueEqual(newCopperDrops(helper, player, existing), 0, "No-move Shift does not throw a free batch");
-
+                    TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
+                    helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "A completed full-inventory manufacturing period consumes one block");
+                    helper.assertValueEqual(count(player.getInventory(), Items.COPPER_INGOT), 0, "A full inventory has no illegal ingot stack");
+                    helper.assertValueEqual(newCopperDrops(helper, player, existing), 9, "Exactly the completed nine-ingot batch drops when no storage exists");
+                    discardNewItems(helper, player, existing);
                     player.getInventory().setItem(8, ItemStack.EMPTY);
-                    menu.clicked(0, 0, ClickType.QUICK_MOVE, player);
+                    TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
                     helper.assertValueEqual(count(player.getInventory(), Items.COPPER_INGOT), 8, "A single free slot receives eight ingots");
-                    helper.assertValueEqual(newCopperDrops(helper, player, existing), 1, "Only the one-ingot remainder is dropped when no storage remains");
-                    helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "Partial transfer crafts once; the next blocked batch stays unconsumed");
+                    helper.assertValueEqual(newCopperDrops(helper, player, existing), 1, "Only the one-ingot remainder drops");
+                    helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Each of the two completed periods consumes exactly one input");
+                    assertLegalStacks(helper, player.getInventory());
                     discardNewItems(helper, player, existing);
                     clearCrafting(menu);
-
                     for (int target : new int[]{0, 40}) {
                         player.getInventory().clearContent();
                         for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(Items.DIRT, 64));
@@ -313,11 +316,9 @@ public final class MetalMaterialGameTests {
                         menu.getSlot(1).set(new ItemStack(Items.COPPER_BLOCK));
                         existing = nearbyItems(helper, player).stream().map(ItemEntity::getUUID).collect(Collectors.toSet());
                         menu.clicked(0, target, ClickType.SWAP, player);
-                        helper.assertValueEqual(count(player.getInventory(), Items.COPPER_INGOT), 8, "A full-inventory swap stores eight in its selected destination");
-                        helper.assertValueEqual(newCopperDrops(helper, player, existing), 1, "A full-inventory swap drops exactly its one remainder");
-                        helper.assertTrue(menu.getSlot(1).getItem().isEmpty() && menu.getSlot(0).getItem().isEmpty(), "A full-inventory swap consumes its block exactly once");
-                        assertLegalStacks(helper, player.getInventory());
-                        discardNewItems(helper, player, existing);
+                        helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "Even with no space, an instantaneous result swap cannot consume the block");
+                        helper.assertValueEqual(newCopperDrops(helper, player, existing), 0, "Rejected swaps cannot create a free dropped batch");
+                        clearCrafting(menu);
                     }
                 } finally {
                     clearCrafting(menu);

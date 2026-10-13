@@ -111,9 +111,10 @@ public final class GrassMiningGameTests {
         BlockPos position = helper.absolutePos(new BlockPos(1, 2, 1));
         Item[] items = {Items.WOODEN_SWORD, Items.SHEARS, Items.IRON_SWORD, MiteItems.FLINT_HATCHET.get(),
                 Items.DIAMOND_AXE, Items.DIAMOND_HOE, Items.DIAMOND_SHOVEL};
-        float[] strengths = {1.0F, 8.0F, 1.5F, 2.5F, 8.0F, 1.0F, 1.0F};
-        int[] bits = {0x3dc80000, 0x3f800000, 0x3e160000, 0x3e7a0001, 0x3f800000, 0x3dc80000, 0x3dc80000};
-        int[] additions = {11, 1, 7, 5, 1, 11, 11};
+        // Iron sword: zl base efficiency 2 * xj iron multiplier 2 = 4; H=.02 gives bits 3ec80000 and three additions.
+        float[] strengths = {1.0F, 8.0F, 4.0F, 2.5F, 8.0F, 1.0F, 1.0F};
+        int[] bits = {0x3dc80000, 0x3f800000, 0x3ec80000, 0x3e7a0001, 0x3f800000, 0x3dc80000, 0x3dc80000};
+        int[] additions = {11, 1, 3, 5, 1, 11, 11};
         for (int index = 0; index < items.length; index++) {
             ItemStack tool = new ItemStack(items[index]);
             player.setItemSlot(EquipmentSlot.MAINHAND, tool);
@@ -125,12 +126,12 @@ public final class GrassMiningGameTests {
         }
         ItemStack shears = new ItemStack(Items.SHEARS);
         player.setItemSlot(EquipmentSlot.MAINHAND, shears);
-        helper.assertValueEqual(shears.getDestroySpeed(Blocks.OAK_LEAVES.defaultBlockState()), 15.0F, "Leaf shearing still has strength fifteen");
-        helper.assertValueEqual(shears.getDestroySpeed(Blocks.COBWEB.defaultBlockState()), 15.0F, "Cobweb shearing still has strength fifteen");
-        helper.assertValueEqual(shears.getDestroySpeed(Blocks.WHITE_WOOL.defaultBlockState()), 5.0F, "Wool still has strength five");
-        helper.assertValueEqual(shears.getDestroySpeed(Blocks.VINE.defaultBlockState()), 2.0F, "Vines still have strength two");
-        helper.assertValueEqual(shears.getDestroySpeed(Blocks.GLOW_LICHEN.defaultBlockState()), 2.0F, "Glow lichen still has strength two");
-        helper.assertValueEqual(shears.getDestroySpeed(Blocks.DANDELION.defaultBlockState()), 1.0F, "Other zero-hardness plants do not receive the new grass rule");
+        helper.assertValueEqual(shears.getDestroySpeed(Blocks.OAK_LEAVES.defaultBlockState()), 8.0F, "R196 shears base four times iron efficiency two applies to leaves");
+        helper.assertValueEqual(shears.getDestroySpeed(Blocks.COBWEB.defaultBlockState()), 8.0F, "The same source shearing efficiency applies to cobwebs");
+        helper.assertValueEqual(shears.getDestroySpeed(Blocks.WHITE_WOOL.defaultBlockState()), 8.0F, "Cloth is an effective R196 shear material");
+        helper.assertValueEqual(shears.getDestroySpeed(Blocks.VINE.defaultBlockState()), 8.0F, "Vines are an effective R196 shear material");
+        helper.assertValueEqual(shears.getDestroySpeed(Blocks.GLOW_LICHEN.defaultBlockState()), 8.0F, "Modern glow lichen explicitly follows the vine mapping");
+        helper.assertValueEqual(shears.getDestroySpeed(Blocks.DANDELION.defaultBlockState()), 8.0F, "Plants use R196 shear efficiency; zero hardness still prevents wear");
         player.getFoodData().setFoodLevel(0);
         for (BlockState state : GRASS_STATES) {
             assertProgress(helper, player, state, position, 0x3e200001, 7,
@@ -229,7 +230,8 @@ public final class GrassMiningGameTests {
                 helper.assertTrue(helper.getLevel().getBlockState(target).isAir(), "Fed level-zero shears retain actual instant grass harvesting");
                 helper.assertValueEqual(fixture.countDrops(drop) - before, state.hasProperty(DoublePlantBlock.HALF) ? 2 : 1,
                         "Modern shear loot yields exactly one single plant or two matching small plants from a double plant");
-                helper.assertValueEqual(shears.getDamageValue(), ++brokenWithShears, "The ordinary shear callback spends one durability per harvested target");
+                helper.assertValueEqual(shears.getDamageValue(), ++brokenWithShears * 5,
+                        "R196 shears spend max(trunc(.02*100),trunc(100/20)) = five per grass target");
                 if (state.hasProperty(DoublePlantBlock.HALF)) {
                     helper.assertTrue(helper.getLevel().getBlockState(base).isAir() && helper.getLevel().getBlockState(base.above()).isAir(),
                             "Instant shearing also removes both double-plant halves");

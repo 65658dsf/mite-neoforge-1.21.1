@@ -1,0 +1,13 @@
+{
+  "values": [
+    "mite:flint_crafting_table",
+    "mite:obsidian_crafting_table",
+    "mite:copper_crafting_table",
+    "mite:silver_crafting_table",
+    "mite:gold_crafting_table",
+    "mite:iron_crafting_table",
+    "mite:ancient_metal_crafting_table",
+    "mite:mithril_crafting_table",
+    "mite:adamantium_crafting_table"
+  ]
+}

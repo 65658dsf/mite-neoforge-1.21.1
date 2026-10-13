@@ -15,7 +15,7 @@ give @s mite:quartz_shard 18
 give @s mite:glass_shard 18
 give @s mite:nether_gravel 4
 give @s minecraft:gravel 4
-give @s minecraft:crafting_table
+give @s mite:flint_crafting_table
 give @s minecraft:copper_block
 give @s minecraft:waxed_copper_block
 give @s minecraft:iron_block

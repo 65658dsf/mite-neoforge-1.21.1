@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.data;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.registry.MiteItems;
+import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -30,14 +31,16 @@ public final class MiteRecipeProvider extends RecipeProvider {
     protected void buildRecipes(RecipeOutput output) {
         MaterialRecipes.addRecipes(output);
         ShardRecipes.addRecipes(output);
+        ToolRecipes.addRecipes(output);
+        WorkbenchRecipes.addRecipes(output);
         // R196's flint workbench uses a fixed 2x2 pattern (horizontal mirror allowed).
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Items.CRAFTING_TABLE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MiteWorkbenches.TABLES.get("flint").get())
                 .pattern("FB").pattern("SL")
                 .define('F', Items.FLINT)
                 .define('B', Ingredient.of(Items.STRING, MiteItems.SINEW.get()))
                 .define('S', Items.STICK).define('L', ItemTags.LOGS)
                 .unlockedBy("has_flint", has(Items.FLINT))
-                .save(output, ResourceLocation.withDefaultNamespace("crafting_table"));
+                .save(output, id("flint_crafting_table"));
 
         // Override the vanilla recipe IDs. RecipeProvider applies these conditions to both
         // recipes and their recipe-book advancements; old registered item stacks stay valid.

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "mite:mithril_ingot"
+    },
+    "B": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "A A",
+    "ABA",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:mithril_battle_axe"
+  }
+}

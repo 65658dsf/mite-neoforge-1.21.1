@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.data;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.registry.MiteTags;
 import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
+import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import net.minecraft.tags.BlockTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
@@ -21,6 +22,7 @@ public final class MiteBlockTagsProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(MiteResourceBlocks.NETHER_GRAVEL.get());
+        MiteWorkbenches.TABLES.values().forEach(block -> tag(BlockTags.MINEABLE_WITH_AXE).add(block.get()));
         // The R196 material match alone is insufficient: whole glass/ice require harvest tier 1.
         tag(MiteTags.WOODEN_CLUB_EFFICIENT).add(
                 Blocks.CAKE, Blocks.PUMPKIN, Blocks.CARVED_PUMPKIN, Blocks.JACK_O_LANTERN,

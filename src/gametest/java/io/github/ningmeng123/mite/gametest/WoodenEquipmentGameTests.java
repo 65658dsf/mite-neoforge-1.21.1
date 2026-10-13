@@ -212,10 +212,10 @@ public final class WoodenEquipmentGameTests {
                 prepareTarget(swordTarget);
                 player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
                 neighbor.invulnerableTime = 0;
-                assertAttackDamage(helper, player, swordTarget, 6.0F, "The ordinary iron sword retains its normal damage");
+                assertAttackDamage(helper, player, swordTarget, 9.0F, "R196 iron sword damage is player base one plus its source modifier eight");
                 helper.assertTrue(neighbor.getHealth() < neighbor.getMaxHealth(),
                         "The same fixture permits an ordinary sword to sweep, proving the club's negative check is meaningful");
-                helper.assertValueEqual(player.getMainHandItem().getDamageValue(), 1, "An ordinary sword still spends one durability per actual hit");
+                helper.assertValueEqual(player.getMainHandItem().getDamageValue(), 50, "R196 sword attack wear is 100 times the source rate 0.5, applied once");
             } finally {
                 swordTarget.discard();
             }
@@ -320,8 +320,10 @@ public final class WoodenEquipmentGameTests {
             helper.assertTrue(sword.is(ItemTags.SWORDS), "Ordinary swords retain their item tag");
             helper.assertTrue(sword.canPerformAction(ItemAbilities.SWORD_DIG) && sword.canPerformAction(ItemAbilities.SWORD_SWEEP),
                     "Ordinary swords retain digging and sweeping abilities");
-            helper.assertValueEqual(sword.getDestroySpeed(Blocks.COBWEB.defaultBlockState()), 15.0F, "Ordinary swords retain cobweb strength fifteen");
-            helper.assertValueEqual(sword.getMaxDamage(), item == Items.STONE_SWORD ? 131 : 250, "Ordinary sword durability defaults are unchanged");
+            helper.assertValueEqual(sword.getDestroySpeed(Blocks.COBWEB.defaultBlockState()), item == Items.STONE_SWORD ? 15.0F : 4.0F,
+                    "Modern stone retains speed fifteen; migrated iron sword uses R196 base efficiency two times iron efficiency two");
+            helper.assertValueEqual(sword.getMaxDamage(), item == Items.STONE_SWORD ? 800 : 6400,
+                    "Two-component swords use material factors one (modern stone) and eight (R196 iron)");
             helper.assertTrue(sword.supportsEnchantment(sharpness), "Ordinary swords still support Sharpness");
         }
         ItemStack iron = new ItemStack(Items.IRON_SWORD);

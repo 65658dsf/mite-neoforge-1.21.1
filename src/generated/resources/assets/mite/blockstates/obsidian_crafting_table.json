@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "mite:block/obsidian_crafting_table"
+    }
+  }
+}

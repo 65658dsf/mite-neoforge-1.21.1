@@ -1,0 +1,207 @@
+package io.github.ningmeng123.mite.crafting;
+
+import io.github.ningmeng123.mite.network.CraftingProgressPayload;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
+
+/** Server-owned manufacturing sessions; one tick and one real recipe consumption per batch. @author NingMeng123 */
+public final class TimedCraftingController {
+    private static final Map<UUID, Session> SESSIONS = new HashMap<>();
+    private static final ThreadLocal<Inventory> COMPLETING_INVENTORY = new ThreadLocal<>();
+    private record Prepared(AbstractContainerMenu menu, CraftingContainer grid,
+            RecipeHolder<CraftingRecipe> recipe, TimedCraftingRecipes.Rule rule, ItemStack result) {}
+    private static final class Session {
+        final Prepared prepared;
+        final List<ItemStack> inputs;
+        final Level level;
+        int progress;
+        Session(Prepared prepared, Level level) {
+            this.prepared = prepared;
+            this.inputs = snapshot(prepared.grid());
+            this.level = level;
+        }
+    }
+    private TimedCraftingController() {}
+
+    private static Prepared prepare(Player player, AbstractContainerMenu menu) {
+        if (!(menu instanceof CraftingMenu || menu instanceof InventoryMenu)
+                || !(menu.getSlot(1).container instanceof CraftingContainer grid)) return null;
+        var recipe = player.level().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid.asCraftInput(), player.level());
+        if (recipe.isEmpty()) return null;
+        TimedCraftingRecipes.Rule rule = TimedCraftingRecipes.get(recipe.get().id());
+        if (rule == null) return null;
+        return new Prepared(menu, grid, recipe.get(), rule,
+                recipe.get().value().assemble(grid.asCraftInput(), player.level().registryAccess()));
+    }
+
+    public static boolean isTimed(Player player, AbstractContainerMenu menu) { return prepare(player, menu) != null; }
+
+    public static boolean start(ServerPlayer player, AbstractContainerMenu menu) {
+        Prepared prepared = prepare(player, menu);
+        if (prepared == null || player.containerMenu != menu || !allowed(player, prepared)) return false;
+        Session old = SESSIONS.get(player.getUUID());
+        if (old != null && old.prepared.menu() == menu && old.prepared.recipe().id().equals(prepared.recipe().id())
+                && matches(old.inputs, prepared.grid())) return true;
+        SESSIONS.put(player.getUUID(), new Session(prepared, player.level()));
+        show(player, 0, period(player, prepared), false);
+        return true;
+    }
+
+    public static void cancel(ServerPlayer player) {
+        Session session = SESSIONS.remove(player.getUUID());
+        if (session != null) CraftingProgressPayload.send(player, session.prepared.menu().containerId, 0, 0, false, false);
+    }
+    public static void inputsChanged(AbstractContainerMenu menu) {
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server == null || !server.isSameThread()) return;
+        SESSIONS.entrySet().removeIf(entry -> {
+            Session session = entry.getValue();
+            if (session.prepared.menu() != menu || matches(session.inputs, session.prepared.grid())) return false;
+            ServerPlayer player = server.getPlayerList().getPlayer(entry.getKey());
+            if (player != null) CraftingProgressPayload.send(player, menu.containerId, 0, 0, false, false);
+            return true;
+        });
+    }
+    public static int progress(ServerPlayer player) {
+        Session session = SESSIONS.get(player.getUUID());
+        return session == null ? 0 : session.progress;
+    }
+    public static int period(ServerPlayer player, AbstractContainerMenu menu) {
+        Prepared prepared = prepare(player, menu);
+        return prepared == null ? 0 : period(player, prepared);
+    }
+    private static int period(ServerPlayer player, Prepared prepared) {
+        float capacity = prepared.menu() instanceof WorkbenchAccess access ? access.mite$workbenchCapacity() : 0F;
+        return TimedCraftingRules.period(prepared.rule().difficulty(), player.experienceLevel,
+                TimedCraftingRules.benchModifier(capacity, prepared.rule().requiredBench() != null), false);
+    }
+
+    private static boolean allowed(ServerPlayer player, Prepared prepared) {
+        float capacity = prepared.menu() instanceof WorkbenchAccess access ? access.mite$workbenchCapacity() : 0F;
+        if (!player.isAlive() || player.isSpectator() || !prepared.menu().stillValid(player)
+                || upperBodyInWeb(player)
+                || prepared.result().isEmpty() || !ItemStack.matches(prepared.result(), prepared.menu().getSlot(0).getItem())
+                || capacity < prepared.rule().requiredCapacity()
+                || !WorkbenchRules.allows(prepared.menu(), prepared.result())
+                || !CraftingAccessRules.canCraft(prepared.grid(), prepared.result())) return false;
+        for (int i = 0; i < prepared.grid().getContainerSize(); i++) {
+            if (prepared.grid().getItem(i).isDamaged()) return false;
+        }
+        return true;
+    }
+
+    private static boolean upperBodyInWeb(ServerPlayer player) {
+        AABB body = player.getBoundingBox();
+        double minimumY = player.getY() + 1.0;
+        if (body.maxY <= minimumY) return false;
+        AABB upper = new AABB(body.minX, minimumY, body.minZ, body.maxX, body.maxY, body.maxZ);
+        return BlockPos.betweenClosedStream(upper).anyMatch(pos -> player.level().getBlockState(pos).is(Blocks.COBWEB));
+    }
+
+    /** The production player-tick entry; GameTests invoke this same method N times, without bypasses. */
+    public static void tick(ServerPlayer player) {
+        Session session = SESSIONS.get(player.getUUID());
+        if (session == null) return;
+        Prepared prepared = prepare(player, session.prepared.menu());
+        if (player.containerMenu != session.prepared.menu() || player.level() != session.level || prepared == null
+                || !session.prepared.recipe().id().equals(prepared.recipe().id())
+                || !matches(session.inputs, prepared.grid()) || !allowed(player, prepared)) {
+            cancel(player);
+            return;
+        }
+        int period = period(player, prepared);
+        // The current modern food model has one food reserve; dual R196 nutrition remains separate work.
+        if (player.getFoodData().getFoodLevel() <= 0) {
+            if (player.tickCount % 20 == 0) show(player, session.progress, period, true);
+            return;
+        }
+        if (++session.progress < period) {
+            if (session.progress % 5 == 0) show(player, session.progress, period, false);
+            return;
+        }
+        cancel(player);
+        var slot = prepared.menu().getSlot(0);
+        ItemStack crafted = slot.remove(prepared.result().getCount());
+        // Scope the creative-overflow correction to this transaction's own inventory.
+        Inventory previous = COMPLETING_INVENTORY.get();
+        COMPLETING_INVENTORY.set(player.getInventory());
+        try {
+            // onTake uses the actual matched recipe and preserves its container-item remainders.
+            slot.onTake(player, crafted);
+        } finally {
+            if (previous == null) COMPLETING_INVENTORY.remove();
+            else COMPLETING_INVENTORY.set(previous);
+        }
+        giveOrDrop(player, crafted);
+        prepared.menu().broadcastChanges();
+        Prepared next = prepare(player, prepared.menu());
+        if (next != null && next.recipe().id().equals(prepared.recipe().id())) start(player, prepared.menu());
+        else show(player, period, period, false);
+    }
+
+    public static void damaged(ServerPlayer player, float damage) {
+        Session session = SESSIONS.get(player.getUUID());
+        if (session != null) session.progress = Math.max(0, session.progress - TimedCraftingRules.damageSetback(damage));
+    }
+
+    public static List<ItemStack> snapshot(Container container) {
+        List<ItemStack> items = new ArrayList<>();
+        for (int i = 0; i < container.getContainerSize(); i++) items.add(container.getItem(i).copy());
+        return items;
+    }
+    public static boolean matches(List<ItemStack> items, Container container) {
+        if (items.size() != container.getContainerSize()) return false;
+        for (int i = 0; i < items.size(); i++) if (!ItemStack.matches(items.get(i), container.getItem(i))) return false;
+        return true;
+    }
+    public static boolean isCompletingIn(Inventory inventory) {
+        return COMPLETING_INVENTORY.get() == inventory;
+    }
+
+    /** Mutates only the amount actually stored; false leaves a nonempty remainder for the caller to drop. */
+    public static boolean insertWithoutDiscard(Inventory inventory, ItemStack stack) {
+        // Inventory.add intentionally discards overflow in creative; exact manufacturing output must not.
+        for (int i = 0; i < inventory.items.size() && !stack.isEmpty(); i++) {
+            ItemStack existing = inventory.items.get(i);
+            if (!existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, stack)) {
+                int transfer = Math.min(stack.getCount(), existing.getMaxStackSize() - existing.getCount());
+                if (transfer > 0) { existing.grow(transfer); stack.shrink(transfer); }
+            }
+        }
+        for (int i = 0; i < inventory.items.size() && !stack.isEmpty(); i++) {
+            if (inventory.items.get(i).isEmpty()) inventory.setItem(i, stack.split(Math.min(stack.getCount(), stack.getMaxStackSize())));
+        }
+        inventory.setChanged();
+        return stack.isEmpty();
+    }
+
+    private static void giveOrDrop(ServerPlayer player, ItemStack stack) {
+        insertWithoutDiscard(player.getInventory(), stack);
+        while (!stack.isEmpty()) player.drop(stack.split(Math.min(stack.getCount(), stack.getMaxStackSize())), false);
+    }
+    private static void show(ServerPlayer player, int progress, int period, boolean hungry) {
+        CraftingProgressPayload.send(player, player.containerMenu.containerId, progress, period, hungry, true);
+        player.displayClientMessage(Component.literal(hungry ? "制造暂停：需要食物" : "制造 "
+                + Math.min(100, progress * 100 / Math.max(1, period)) + "% · 右键结果取消"), true);
+    }
+}

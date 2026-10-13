@@ -1,0 +1,825 @@
+{
+  "author": "NingMeng123",
+  "source": "reference-data/runtime-registry.json",
+  "quality": "average",
+  "recipes": {
+    "mite:obsidian_hatchet": {
+      "difficulty": 315.0,
+      "required_bench": null,
+      "source_order": 301
+    },
+    "mite:copper_hatchet": {
+      "difficulty": 450.0,
+      "required_bench": "copper",
+      "source_order": 286
+    },
+    "mite:silver_hatchet": {
+      "difficulty": 450.0,
+      "required_bench": "silver",
+      "source_order": 288
+    },
+    "mite:golden_hatchet": {
+      "difficulty": 450.0,
+      "required_bench": "gold",
+      "source_order": 296
+    },
+    "mite:iron_hatchet": {
+      "difficulty": 850.0,
+      "required_bench": "iron",
+      "source_order": 290
+    },
+    "mite:ancient_metal_hatchet": {
+      "difficulty": 1650.0,
+      "required_bench": "ancient_metal",
+      "source_order": 298
+    },
+    "mite:mithril_hatchet": {
+      "difficulty": 6450.0,
+      "required_bench": "mithril",
+      "source_order": 292
+    },
+    "mite:adamantium_hatchet": {
+      "difficulty": 25650.0,
+      "required_bench": "adamantium",
+      "source_order": 294
+    },
+    "minecraft:golden_axe": {
+      "difficulty": 1250.0,
+      "required_bench": "gold",
+      "source_order": 209
+    },
+    "minecraft:iron_axe": {
+      "difficulty": 2450.0,
+      "required_bench": "iron",
+      "source_order": 203
+    },
+    "mite:flint_axe": {
+      "difficulty": 375.0,
+      "required_bench": null,
+      "source_order": 214
+    },
+    "mite:obsidian_axe": {
+      "difficulty": 795.00006,
+      "required_bench": null,
+      "source_order": 216
+    },
+    "mite:copper_axe": {
+      "difficulty": 1250.0,
+      "required_bench": "copper",
+      "source_order": 199
+    },
+    "mite:silver_axe": {
+      "difficulty": 1250.0,
+      "required_bench": "silver",
+      "source_order": 201
+    },
+    "mite:ancient_metal_axe": {
+      "difficulty": 4850.0,
+      "required_bench": "ancient_metal",
+      "source_order": 211
+    },
+    "mite:mithril_axe": {
+      "difficulty": 19250.0,
+      "required_bench": "mithril",
+      "source_order": 205
+    },
+    "mite:adamantium_axe": {
+      "difficulty": 76850.0,
+      "required_bench": "adamantium",
+      "source_order": 207
+    },
+    "minecraft:golden_pickaxe": {
+      "difficulty": 1250.0,
+      "required_bench": "gold",
+      "source_order": 27
+    },
+    "minecraft:iron_pickaxe": {
+      "difficulty": 2450.0,
+      "required_bench": "iron",
+      "source_order": 12
+    },
+    "mite:copper_pickaxe": {
+      "difficulty": 1250.0,
+      "required_bench": "copper",
+      "source_order": 2
+    },
+    "mite:silver_pickaxe": {
+      "difficulty": 1250.0,
+      "required_bench": "silver",
+      "source_order": 7
+    },
+    "mite:ancient_metal_pickaxe": {
+      "difficulty": 4850.0,
+      "required_bench": "ancient_metal",
+      "source_order": 32
+    },
+    "mite:mithril_pickaxe": {
+      "difficulty": 19250.0,
+      "required_bench": "mithril",
+      "source_order": 17
+    },
+    "mite:adamantium_pickaxe": {
+      "difficulty": 76850.0,
+      "required_bench": "adamantium",
+      "source_order": 22
+    },
+    "minecraft:golden_shovel": {
+      "difficulty": 450.0,
+      "required_bench": "gold",
+      "source_order": 368
+    },
+    "minecraft:iron_shovel": {
+      "difficulty": 850.0,
+      "required_bench": "iron",
+      "source_order": 365
+    },
+    "mite:flint_shovel": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 213
+    },
+    "mite:obsidian_shovel": {
+      "difficulty": 315.0,
+      "required_bench": null,
+      "source_order": 215
+    },
+    "mite:copper_shovel": {
+      "difficulty": 450.0,
+      "required_bench": "copper",
+      "source_order": 363
+    },
+    "mite:silver_shovel": {
+      "difficulty": 450.0,
+      "required_bench": "silver",
+      "source_order": 364
+    },
+    "mite:ancient_metal_shovel": {
+      "difficulty": 1650.0,
+      "required_bench": "ancient_metal",
+      "source_order": 369
+    },
+    "mite:mithril_shovel": {
+      "difficulty": 6450.0,
+      "required_bench": "mithril",
+      "source_order": 366
+    },
+    "mite:adamantium_shovel": {
+      "difficulty": 25650.0,
+      "required_bench": "adamantium",
+      "source_order": 367
+    },
+    "minecraft:golden_hoe": {
+      "difficulty": 850.0,
+      "required_bench": "gold",
+      "source_order": 210
+    },
+    "minecraft:iron_hoe": {
+      "difficulty": 1650.0,
+      "required_bench": "iron",
+      "source_order": 204
+    },
+    "mite:copper_hoe": {
+      "difficulty": 850.0,
+      "required_bench": "copper",
+      "source_order": 200
+    },
+    "mite:silver_hoe": {
+      "difficulty": 850.0,
+      "required_bench": "silver",
+      "source_order": 202
+    },
+    "mite:ancient_metal_hoe": {
+      "difficulty": 3250.0,
+      "required_bench": "ancient_metal",
+      "source_order": 212
+    },
+    "mite:mithril_hoe": {
+      "difficulty": 12850.0,
+      "required_bench": "mithril",
+      "source_order": 206
+    },
+    "mite:adamantium_hoe": {
+      "difficulty": 51250.0,
+      "required_bench": "adamantium",
+      "source_order": 208
+    },
+    "mite:copper_mattock": {
+      "difficulty": 1650.0,
+      "required_bench": "copper",
+      "source_order": 3
+    },
+    "mite:silver_mattock": {
+      "difficulty": 1650.0,
+      "required_bench": "silver",
+      "source_order": 8
+    },
+    "mite:golden_mattock": {
+      "difficulty": 1650.0,
+      "required_bench": "gold",
+      "source_order": 28
+    },
+    "mite:iron_mattock": {
+      "difficulty": 3250.0,
+      "required_bench": "iron",
+      "source_order": 13
+    },
+    "mite:ancient_metal_mattock": {
+      "difficulty": 6450.0,
+      "required_bench": "ancient_metal",
+      "source_order": 33
+    },
+    "mite:mithril_mattock": {
+      "difficulty": 25650.0,
+      "required_bench": "mithril",
+      "source_order": 18
+    },
+    "mite:adamantium_mattock": {
+      "difficulty": 102450.0,
+      "required_bench": "adamantium",
+      "source_order": 23
+    },
+    "mite:copper_scythe": {
+      "difficulty": 875.0,
+      "required_bench": "copper",
+      "source_order": 6
+    },
+    "mite:silver_scythe": {
+      "difficulty": 875.0,
+      "required_bench": "silver",
+      "source_order": 11
+    },
+    "mite:golden_scythe": {
+      "difficulty": 875.0,
+      "required_bench": "gold",
+      "source_order": 31
+    },
+    "mite:iron_scythe": {
+      "difficulty": 1675.0,
+      "required_bench": "iron",
+      "source_order": 16
+    },
+    "mite:ancient_metal_scythe": {
+      "difficulty": 3275.0,
+      "required_bench": "ancient_metal",
+      "source_order": 36
+    },
+    "mite:mithril_scythe": {
+      "difficulty": 12875.0,
+      "required_bench": "mithril",
+      "source_order": 21
+    },
+    "mite:adamantium_scythe": {
+      "difficulty": 51275.0,
+      "required_bench": "adamantium",
+      "source_order": 26
+    },
+    "mite:copper_shears": {
+      "difficulty": 800.0,
+      "required_bench": "copper",
+      "source_order": 287
+    },
+    "mite:silver_shears": {
+      "difficulty": 800.0,
+      "required_bench": "silver",
+      "source_order": 289
+    },
+    "mite:golden_shears": {
+      "difficulty": 800.0,
+      "required_bench": "gold",
+      "source_order": 297
+    },
+    "mite:ancient_metal_shears": {
+      "difficulty": 3200.0,
+      "required_bench": "ancient_metal",
+      "source_order": 299
+    },
+    "mite:mithril_shears": {
+      "difficulty": 12800.0,
+      "required_bench": "mithril",
+      "source_order": 293
+    },
+    "mite:adamantium_shears": {
+      "difficulty": 51200.0,
+      "required_bench": "adamantium",
+      "source_order": 295
+    },
+    "mite:wooden_cudgel": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 417
+    },
+    "mite:obsidian_knife": {
+      "difficulty": 290.0,
+      "required_bench": null,
+      "source_order": 303
+    },
+    "mite:flint_knife": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 302
+    },
+    "mite:copper_dagger": {
+      "difficulty": 425.0,
+      "required_bench": "copper",
+      "source_order": 403
+    },
+    "mite:silver_dagger": {
+      "difficulty": 425.0,
+      "required_bench": "silver",
+      "source_order": 405
+    },
+    "mite:golden_dagger": {
+      "difficulty": 425.0,
+      "required_bench": "gold",
+      "source_order": 413
+    },
+    "mite:iron_dagger": {
+      "difficulty": 825.0,
+      "required_bench": "iron",
+      "source_order": 407
+    },
+    "mite:ancient_metal_dagger": {
+      "difficulty": 1625.0,
+      "required_bench": "ancient_metal",
+      "source_order": 415
+    },
+    "mite:mithril_dagger": {
+      "difficulty": 6425.0,
+      "required_bench": "mithril",
+      "source_order": 409
+    },
+    "mite:adamantium_dagger": {
+      "difficulty": 25625.0,
+      "required_bench": "adamantium",
+      "source_order": 411
+    },
+    "mite:copper_sword": {
+      "difficulty": 825.0,
+      "required_bench": "copper",
+      "source_order": 371
+    },
+    "minecraft:golden_sword": {
+      "difficulty": 825.0,
+      "required_bench": "gold",
+      "source_order": 376
+    },
+    "minecraft:iron_sword": {
+      "difficulty": 1625.0,
+      "required_bench": "iron",
+      "source_order": 373
+    },
+    "mite:silver_sword": {
+      "difficulty": 825.0,
+      "required_bench": "silver",
+      "source_order": 372
+    },
+    "mite:ancient_metal_sword": {
+      "difficulty": 3225.0,
+      "required_bench": "ancient_metal",
+      "source_order": 377
+    },
+    "mite:mithril_sword": {
+      "difficulty": 12825.0,
+      "required_bench": "mithril",
+      "source_order": 374
+    },
+    "mite:adamantium_sword": {
+      "difficulty": 51225.0,
+      "required_bench": "adamantium",
+      "source_order": 375
+    },
+    "mite:copper_battle_axe": {
+      "difficulty": 1650.0,
+      "required_bench": "copper",
+      "source_order": 4
+    },
+    "mite:silver_battle_axe": {
+      "difficulty": 1650.0,
+      "required_bench": "silver",
+      "source_order": 9
+    },
+    "mite:golden_battle_axe": {
+      "difficulty": 1650.0,
+      "required_bench": "gold",
+      "source_order": 29
+    },
+    "mite:iron_battle_axe": {
+      "difficulty": 3250.0,
+      "required_bench": "iron",
+      "source_order": 14
+    },
+    "mite:ancient_metal_battle_axe": {
+      "difficulty": 6450.0,
+      "required_bench": "ancient_metal",
+      "source_order": 34
+    },
+    "mite:mithril_battle_axe": {
+      "difficulty": 25650.0,
+      "required_bench": "mithril",
+      "source_order": 19
+    },
+    "mite:adamantium_battle_axe": {
+      "difficulty": 102450.0,
+      "required_bench": "adamantium",
+      "source_order": 24
+    },
+    "mite:copper_war_hammer": {
+      "difficulty": 2050.0,
+      "required_bench": "copper",
+      "source_order": 5
+    },
+    "mite:silver_war_hammer": {
+      "difficulty": 2050.0,
+      "required_bench": "silver",
+      "source_order": 10
+    },
+    "mite:golden_war_hammer": {
+      "difficulty": 2050.0,
+      "required_bench": "gold",
+      "source_order": 30
+    },
+    "mite:iron_war_hammer": {
+      "difficulty": 4050.0,
+      "required_bench": "iron",
+      "source_order": 15
+    },
+    "mite:ancient_metal_war_hammer": {
+      "difficulty": 8050.0,
+      "required_bench": "ancient_metal",
+      "source_order": 35
+    },
+    "mite:mithril_war_hammer": {
+      "difficulty": 32050.0,
+      "required_bench": "mithril",
+      "source_order": 20
+    },
+    "mite:adamantium_war_hammer": {
+      "difficulty": 128050.0,
+      "required_bench": "adamantium",
+      "source_order": 25
+    },
+    "minecraft:shears": {
+      "difficulty": 1600.0,
+      "required_bench": "iron",
+      "source_order": 291
+    },
+    "minecraft:wooden_shovel": {
+      "difficulty": 130.0,
+      "required_bench": null,
+      "source_order": 362
+    },
+    "mite:flint_knife_from_workbench": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 492
+    },
+    "mite:obsidian_knife_from_workbench": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 496
+    },
+    "mite:flint_hatchet": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_1": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_10": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_11": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_12": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_2": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_3": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_4": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_5": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_6": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_7": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_8": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_hatchet_binding_9": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 300
+    },
+    "mite:flint_crafting_table": {
+      "difficulty": 270.0,
+      "required_bench": null,
+      "source_order": 311
+    },
+    "mite:obsidian_crafting_table": {
+      "difficulty": 410.0,
+      "required_bench": null,
+      "source_order": 347
+    },
+    "mite:flint_crafting_table_from_knife": {
+      "difficulty": 270.0,
+      "required_bench": null,
+      "source_order": 419
+    },
+    "mite:obsidian_crafting_table_from_knife": {
+      "difficulty": 410.0,
+      "required_bench": null,
+      "source_order": 423
+    },
+    "minecraft:wooden_sword": {
+      "difficulty": 185.0,
+      "required_bench": null,
+      "source_order": 370
+    },
+    "mite:flint_from_chips": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 305
+    },
+    "mite:flint_chips_from_flint": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 477
+    },
+    "mite:sinew_from_leather": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 491
+    },
+    "mite:copper_crafting_table": {
+      "difficulty": 605.0,
+      "required_bench": "flint",
+      "source_order": 319
+    },
+    "mite:silver_crafting_table": {
+      "difficulty": 605.0,
+      "required_bench": "flint",
+      "source_order": 323
+    },
+    "mite:gold_crafting_table": {
+      "difficulty": 605.0,
+      "required_bench": "flint",
+      "source_order": 327
+    },
+    "mite:iron_crafting_table": {
+      "difficulty": 1005.0,
+      "required_bench": "copper",
+      "source_order": 331
+    },
+    "mite:ancient_metal_crafting_table": {
+      "difficulty": 1805.0,
+      "required_bench": "iron",
+      "source_order": 335
+    },
+    "mite:mithril_crafting_table": {
+      "difficulty": 6605.0,
+      "required_bench": "ancient_metal",
+      "source_order": 339
+    },
+    "mite:adamantium_crafting_table": {
+      "difficulty": 25805.0,
+      "required_bench": "mithril",
+      "source_order": 343
+    },
+    "mite:copper_ingot_from_nuggets": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 54
+    },
+    "mite:copper_nuggets_from_ingot": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 837
+    },
+    "mite:silver_ingot_from_nuggets": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 55
+    },
+    "mite:silver_nuggets_from_ingot": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 838
+    },
+    "minecraft:gold_ingot_from_nuggets": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 56
+    },
+    "minecraft:gold_nugget": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 839
+    },
+    "minecraft:iron_ingot_from_nuggets": {
+      "difficulty": 800.0,
+      "required_bench": null,
+      "source_order": 57
+    },
+    "minecraft:iron_nugget": {
+      "difficulty": 800.0,
+      "required_bench": null,
+      "source_order": 840
+    },
+    "mite:ancient_metal_ingot_from_nuggets": {
+      "difficulty": 1600.0,
+      "required_bench": null,
+      "source_order": 60
+    },
+    "mite:ancient_metal_nuggets_from_ingot": {
+      "difficulty": 1600.0,
+      "required_bench": null,
+      "source_order": 843
+    },
+    "mite:mithril_ingot_from_nuggets": {
+      "difficulty": 6400.0,
+      "required_bench": null,
+      "source_order": 58
+    },
+    "mite:mithril_nuggets_from_ingot": {
+      "difficulty": 6400.0,
+      "required_bench": null,
+      "source_order": 841
+    },
+    "mite:adamantium_ingot_from_nuggets": {
+      "difficulty": 25600.0,
+      "required_bench": null,
+      "source_order": 59
+    },
+    "mite:adamantium_nuggets_from_ingot": {
+      "difficulty": 25600.0,
+      "required_bench": null,
+      "source_order": 842
+    },
+    "mite:emerald_from_shards": {
+      "difficulty": 800.0,
+      "required_bench": null,
+      "source_order": 61
+    },
+    "mite:emerald_shards": {
+      "difficulty": 800.0,
+      "required_bench": null,
+      "source_order": 844
+    },
+    "mite:diamond_from_shards": {
+      "difficulty": 1600.0,
+      "required_bench": null,
+      "source_order": 62
+    },
+    "mite:diamond_shards": {
+      "difficulty": 1600.0,
+      "required_bench": null,
+      "source_order": 845
+    },
+    "mite:quartz_from_shards": {
+      "difficulty": 900.0,
+      "required_bench": null,
+      "source_order": 63
+    },
+    "mite:quartz_shards": {
+      "difficulty": 900.0,
+      "required_bench": null,
+      "source_order": 846
+    },
+    "mite:glass_pane_from_shards": {
+      "difficulty": 200.0,
+      "required_bench": null,
+      "source_order": 64
+    },
+    "mite:glass_shards": {
+      "difficulty": 10.0,
+      "required_bench": null,
+      "source_order": 847
+    },
+    "mite:obsidian_from_shards": {
+      "difficulty": 200.0,
+      "required_bench": null,
+      "source_order": 65
+    },
+    "mite:obsidian_shards": {
+      "difficulty": 240.00002,
+      "required_bench": null,
+      "source_order": 848
+    },
+    "minecraft:copper_ingot": {
+      "difficulty": 3600.0,
+      "required_bench": null,
+      "source_order": 463
+    },
+    "minecraft:copper_ingot_from_waxed_copper_block": {
+      "difficulty": 3600.0,
+      "required_bench": null,
+      "source_order": 463,
+      "adaptation": "Modern block identity; waxed copper uses copper block processing difficulty."
+    },
+    "minecraft:gold_ingot_from_gold_block": {
+      "difficulty": 3600.0,
+      "required_bench": null,
+      "source_order": 465
+    },
+    "minecraft:iron_ingot_from_iron_block": {
+      "difficulty": 7200.0,
+      "required_bench": null,
+      "source_order": 466
+    },
+    "minecraft:oak_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 503
+    },
+    "minecraft:spruce_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 504
+    },
+    "minecraft:birch_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 505
+    },
+    "minecraft:jungle_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 506
+    },
+    "minecraft:acacia_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 503,
+      "adaptation": "Modern wood species uses the R196 log-processing whole-batch difficulty; output quantity remains the modern recipe quantity, including two bamboo planks."
+    },
+    "minecraft:dark_oak_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 503,
+      "adaptation": "Modern wood species uses the R196 log-processing whole-batch difficulty; output quantity remains the modern recipe quantity, including two bamboo planks."
+    },
+    "minecraft:cherry_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 503,
+      "adaptation": "Modern wood species uses the R196 log-processing whole-batch difficulty; output quantity remains the modern recipe quantity, including two bamboo planks."
+    },
+    "minecraft:mangrove_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 503,
+      "adaptation": "Modern wood species uses the R196 log-processing whole-batch difficulty; output quantity remains the modern recipe quantity, including two bamboo planks."
+    },
+    "minecraft:crimson_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 503,
+      "adaptation": "Modern wood species uses the R196 log-processing whole-batch difficulty; output quantity remains the modern recipe quantity, including two bamboo planks."
+    },
+    "minecraft:warped_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 503,
+      "adaptation": "Modern wood species uses the R196 log-processing whole-batch difficulty; output quantity remains the modern recipe quantity, including two bamboo planks."
+    },
+    "minecraft:bamboo_planks": {
+      "difficulty": 120.00001,
+      "required_bench": "wood",
+      "source_order": 503,
+      "adaptation": "Modern wood species uses the R196 log-processing whole-batch difficulty; output quantity remains the modern recipe quantity, including two bamboo planks."
+    }
+  }
+}

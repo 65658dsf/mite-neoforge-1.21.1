@@ -1,0 +1,253 @@
+package io.github.ningmeng123.mite.item;
+
+import com.mojang.serialization.Codec;
+import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.mining.GrassMining;
+import io.github.ningmeng123.mite.mining.MiningProgress;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ArmorProfile;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolProfile;
+import java.util.EnumMap;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CraftingTableBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
+import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
+import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+/** Shared tool wear and scoped armor adaptation; authoritative changes use vanilla damage plumbing. @author NingMeng123 */
+@EventBusSubscriber(modid = Mite.MOD_ID)
+public final class EquipmentDurability {
+    public interface Profiled { ToolProfile durabilityProfile(); }
+
+    private static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Mite.MOD_ID);
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> QUALITY =
+            COMPONENTS.registerComponentType("quality", b -> b.persistent(Codec.intRange(0, 7))
+                    .networkSynchronized(ByteBufCodecs.VAR_INT));
+    private static final Map<Item, ToolProfile> TOOLS = new IdentityHashMap<>();
+    private static final Map<Item, ArmorProfile> ARMOR = new IdentityHashMap<>();
+    private static final EquipmentSlot[] ARMOR_SLOTS = {
+            EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
+    private static final ThreadLocal<WearContext> WEAR_CONTEXT = new ThreadLocal<>();
+    private record WearContext(ItemStack stack, boolean protectLastPoint) {}
+
+    private EquipmentDurability() {}
+
+    public static void register(IEventBus bus) {
+        COMPONENTS.register(bus);
+        registerArmorSet(1F, 2, false, Quality.FINE, Items.LEATHER_BOOTS, Items.LEATHER_LEGGINGS,
+                Items.LEATHER_CHESTPLATE, Items.LEATHER_HELMET);
+        registerArmorSet(8F, 8, true, Quality.MASTERWORK, Items.CHAINMAIL_BOOTS, Items.CHAINMAIL_LEGGINGS,
+                Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_HELMET);
+        registerArmorSet(8F, 8, false, Quality.MASTERWORK, Items.IRON_BOOTS, Items.IRON_LEGGINGS,
+                Items.IRON_CHESTPLATE, Items.IRON_HELMET);
+        registerArmorSet(4F, 6, false, Quality.SUPERB, Items.GOLDEN_BOOTS, Items.GOLDEN_LEGGINGS,
+                Items.GOLDEN_CHESTPLATE, Items.GOLDEN_HELMET);
+        // Explicit modern mappings: these equipment sets do not exist in R196.
+        registerArmorSet(16F, 9, false, Quality.SUPERB, Items.DIAMOND_BOOTS, Items.DIAMOND_LEGGINGS,
+                Items.DIAMOND_CHESTPLATE, Items.DIAMOND_HELMET);
+        registerArmorSet(32F, 10, false, Quality.LEGENDARY, Items.NETHERITE_BOOTS, Items.NETHERITE_LEGGINGS,
+                Items.NETHERITE_CHESTPLATE, Items.NETHERITE_HELMET);
+        bus.addListener(EquipmentDurability::modifyArmorDefaults);
+    }
+
+    public static void registerTool(Item item, ToolProfile profile) { TOOLS.put(item, profile); }
+    public static void registerArmor(Item item, ArmorProfile profile) { ARMOR.put(item, profile); }
+
+    private static void registerArmorSet(float material, int protection, boolean chain, Quality maximum, Item... items) {
+        int[] components = {4, 7, 8, 5};
+        for (int i = 0; i < items.length; i++)
+            registerArmor(items[i], new ArmorProfile(components[i], material, protection, chain, maximum));
+    }
+
+    private static void modifyArmorDefaults(ModifyDefaultComponentsEvent event) {
+        ARMOR.forEach((item, profile) -> event.modify(item, b -> b
+                .set(DataComponents.MAX_DAMAGE, EquipmentDurabilityRules.baseArmorDurability(profile))));
+    }
+
+    public static ToolProfile toolProfile(ItemStack stack) {
+        return stack.getItem() instanceof Profiled profiled ? profiled.durabilityProfile() : TOOLS.get(stack.getItem());
+    }
+
+    public static ArmorProfile armorProfile(ItemStack stack) { return ARMOR.get(stack.getItem()); }
+    public static boolean isManaged(ItemStack stack) { return toolProfile(stack) != null || armorProfile(stack) != null; }
+
+    public static Quality maximumQuality(ItemStack stack) {
+        ToolProfile tool = toolProfile(stack);
+        if (tool != null) return tool.maxQuality();
+        ArmorProfile armor = armorProfile(stack);
+        return armor == null ? Quality.AVERAGE : armor.maxQuality();
+    }
+
+    public static Quality quality(ItemStack stack) {
+        int ordinal = stack.getOrDefault(QUALITY.get(), Quality.AVERAGE.ordinal());
+        return Quality.fromOrdinal(Math.min(ordinal, maximumQuality(stack).ordinal()));
+    }
+
+    public static void setQuality(ItemStack stack, Quality quality) {
+        if (isManaged(stack)) stack.set(QUALITY.get(), Math.min(quality.ordinal(), maximumQuality(stack).ordinal()));
+    }
+
+    public static int qualityAdjustedMaximum(ItemStack stack, int base) {
+        return isManaged(stack) && base > 0 ? EquipmentDurabilityRules.maxDurability(base, quality(stack)) : base;
+    }
+
+    public static boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miner) {
+        ToolProfile profile = toolProfile(stack);
+        if (profile == null) return false;
+        if (level.isClientSide || !stack.isDamageableItem() || exempt(miner)) return true;
+        // R196 arv.isPortable=true; includes the explicitly implemented material workbenches.
+        if (state.getBlock() instanceof CraftingTableBlock) return true;
+        float hardness = MiningProgress.effectiveHardness(state, state.getDestroySpeed(level, pos));
+        if (!(hardness > 0F) || !(stack.getDestroySpeed(state) > 1F)
+                || state.requiresCorrectToolForDrops() && !stack.isCorrectToolForDrops(state)) return true;
+        boolean sandstone = state.is(Blocks.SANDSTONE) || state.is(Blocks.CUT_SANDSTONE)
+                || state.is(Blocks.CHISELED_SANDSTONE) || state.is(Blocks.SMOOTH_SANDSTONE)
+                || state.is(Blocks.RED_SANDSTONE) || state.is(Blocks.CUT_RED_SANDSTONE)
+                || state.is(Blocks.CHISELED_RED_SANDSTONE) || state.is(Blocks.SMOOTH_RED_SANDSTONE)
+                || state.is(Blocks.SANDSTONE_SLAB) || state.is(Blocks.RED_SANDSTONE_SLAB)
+                || state.is(Blocks.CUT_SANDSTONE_SLAB) || state.is(Blocks.CUT_RED_SANDSTONE_SLAB)
+                || state.is(Blocks.SMOOTH_SANDSTONE_SLAB) || state.is(Blocks.SMOOTH_RED_SANDSTONE_SLAB)
+                || state.is(Blocks.SANDSTONE_STAIRS) || state.is(Blocks.RED_SANDSTONE_STAIRS)
+                || state.is(Blocks.SMOOTH_SANDSTONE_STAIRS) || state.is(Blocks.SMOOTH_RED_SANDSTONE_STAIRS)
+                || state.is(Blocks.SANDSTONE_WALL) || state.is(Blocks.RED_SANDSTONE_WALL);
+        boolean specialPlant = profile.family() == ToolFamily.SCYTHE
+                ? GrassMining.matches(state) || state.is(Blocks.WHEAT)
+                : state.is(BlockTags.WOOL) || state.is(BlockTags.WOOL_CARPETS) || GrassMining.matches(state)
+                        || state.is(BlockTags.FLOWERS) || state.is(BlockTags.CROPS) || state.is(Blocks.VINE);
+        hurt(stack, EquipmentDurabilityRules.blockWear(hardness, profile, sandstone, specialPlant),
+                miner, EquipmentSlot.MAINHAND);
+        return true;
+    }
+
+    public static void postHurtEnemy(ItemStack stack, LivingEntity attacker) {
+        ToolProfile profile = toolProfile(stack);
+        if (profile == null || exempt(attacker)) return;
+        boolean sharpness = attacker.level().registryAccess().registry(Registries.ENCHANTMENT)
+                .flatMap(r -> r.getHolder(Enchantments.SHARPNESS)).map(stack::getEnchantmentLevel).orElse(0) > 0;
+        // R196 Vampiric has no registered modern counterpart yet.
+        hurt(stack, EquipmentDurabilityRules.attackWear(profile, false, sharpness), attacker, EquipmentSlot.MAINHAND);
+    }
+
+    public static void hurt(ItemStack stack, int amount, LivingEntity owner, EquipmentSlot slot) {
+        if (amount > 0 && !exempt(owner)) stack.hurtAndBreak(amount, owner, slot);
+    }
+
+    /** Called after enchantment effects, so last-point protection does not change their probability. */
+    public static int limitArmorWear(ItemStack stack, int amount, LivingEntity owner) {
+        if (armorProfile(stack) == null || owner == null) return amount;
+        WearContext context = WEAR_CONTEXT.get();
+        if (context != null && context.stack() == stack) {
+            return context.protectLastPoint()
+                    ? EquipmentDurabilityRules.preventDestruction(amount, stack.getDamageValue(), stack.getMaxDamage()) : amount;
+        }
+        for (EquipmentSlot slot : ARMOR_SLOTS) {
+            if (owner.getItemBySlot(slot) == stack)
+                return EquipmentDurabilityRules.preventDestruction(amount, stack.getDamageValue(), stack.getMaxDamage());
+        }
+        return amount;
+    }
+
+    /** Preserve NeoForge's cancellable armor event, with R196's budget and random slot allocation. */
+    public static boolean hurtArmor(Player player, DamageSource source, float incoming) {
+        boolean managed = false;
+        for (EquipmentSlot slot : ARMOR_SLOTS) managed |= armorProfile(player.getItemBySlot(slot)) != null;
+        if (!managed) return false;
+        if (!(player.level() instanceof ServerLevel) || exempt(player) || !(incoming > 0F)
+                || source.is(DamageTypeTags.BYPASSES_ARMOR)) return true;
+        float protection = 0F;
+        boolean[] occupied = new boolean[4];
+        for (int i = 0; i < 4; i++) {
+            ItemStack stack = player.getItemBySlot(ARMOR_SLOTS[i]);
+            ArmorProfile profile = armorProfile(stack);
+            occupied[i] = !stack.isEmpty() && stack.getItem() instanceof ArmorItem;
+            if (profile != null) {
+                int protectionLevel = player.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                        .getHolder(Enchantments.PROTECTION).map(stack::getEnchantmentLevel).orElse(0);
+                protection += EquipmentDurabilityRules.armorProtection(profile, stack.getDamageValue(), stack.getMaxDamage(), protectionLevel);
+            }
+        }
+        protection = EquipmentDurabilityRules.roundedArmorProtection(protection);
+        int[] wear = EquipmentDurabilityRules.distributeArmorWear(Math.min(protection, incoming),
+                occupied, player.getRandom()::nextInt);
+        EnumMap<EquipmentSlot, ArmorHurtEvent.ArmorEntry> entries = new EnumMap<>(EquipmentSlot.class);
+        for (int i = 0; i < 4; i++) {
+            ItemStack stack = player.getItemBySlot(ARMOR_SLOTS[i]);
+            if (stack.isEmpty()) continue;
+            int amount = armorProfile(stack) != null ? wear[i] : (int)Math.max(1F, incoming / 4F);
+            if (!(stack.getItem() instanceof ArmorItem) || !stack.canBeHurtBy(source)) amount = 0;
+            entries.put(ARMOR_SLOTS[i], new ArmorHurtEvent.ArmorEntry(stack, amount));
+        }
+        ArmorHurtEvent event = NeoForge.EVENT_BUS.post(new ArmorHurtEvent(entries, player, source));
+        if (event.isCanceled()) return true;
+        event.getArmorMap().forEach((slot, entry) -> {
+            ItemStack stack = entry.armorItemStack;
+            if (entry.newDamage <= 0F) return;
+            boolean lava = source.is(DamageTypes.LAVA);
+            boolean leather = stack.is(Items.LEATHER_BOOTS) || stack.is(Items.LEATHER_LEGGINGS)
+                    || stack.is(Items.LEATHER_CHESTPLATE) || stack.is(Items.LEATHER_HELMET);
+            boolean protect = !lava && !(leather && source.is(DamageTypeTags.IS_FIRE));
+            WearContext previous = WEAR_CONTEXT.get();
+            WEAR_CONTEXT.set(new WearContext(stack, protect));
+            try {
+                int amount = (int)entry.newDamage;
+                if (lava && !leather && armorProfile(stack) != null)
+                    amount = (int)Math.min((long)amount * 10L, Integer.MAX_VALUE);
+                hurt(stack, amount, player, slot);
+            } finally {
+                if (previous == null) WEAR_CONTEXT.remove(); else WEAR_CONTEXT.set(previous);
+            }
+        });
+        return true;
+    }
+
+    @SubscribeEvent
+    public static void wornArmorAttributes(ItemAttributeModifierEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (armorProfile(stack) == null) return;
+        float factor = EquipmentDurabilityRules.armorProtectionFactor(stack.getDamageValue(), stack.getMaxDamage(), true);
+        for (var entry : List.copyOf(event.getModifiers())) {
+            if (entry.attribute().equals(Attributes.ARMOR)) {
+                var modifier = entry.modifier();
+                event.replaceModifier(entry.attribute(), new AttributeModifier(modifier.id(),
+                        modifier.amount() * factor, modifier.operation()), entry.slot());
+            }
+        }
+    }
+
+    private static boolean exempt(LivingEntity owner) {
+        return owner instanceof Player player && (player.isCreative() || player.isSpectator());
+    }
+}
