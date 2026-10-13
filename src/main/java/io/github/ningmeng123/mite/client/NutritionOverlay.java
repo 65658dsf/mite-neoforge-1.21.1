@@ -8,19 +8,119 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.AttackIndicatorStatus;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 /** Shows R196 nutrition separately from vanilla/AppleSkin saturation. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT)
 public final class NutritionOverlay {
+    private static final int WIDTH = 81;
+    private static final int NUTRIENT_WIDTH = 120;
+    private static final int NUTRIENT_HEIGHT = 5;
     private NutritionOverlay() {}
+
+    @SubscribeEvent public static void besideHotbar(RenderGuiLayerEvent.Post event) {
+        if (!event.getName().equals(VanillaGuiLayers.HOTBAR)) return;
+        Minecraft minecraft = Minecraft.getInstance();
+        var state = visibleState(minecraft);
+        if (state == null) return;
+        var graphics = event.getGuiGraphics();
+        int center = graphics.guiWidth() / 2;
+        boolean rightHanded = minecraft.player.getMainArm() == HumanoidArm.RIGHT;
+        int leftOccupied = 0;
+        int rightOccupied = 0;
+        if (!minecraft.player.getOffhandItem().isEmpty()) {
+            if (rightHanded) leftOccupied = 29;
+            else rightOccupied = 29;
+        }
+        // Reserve this space even between attacks so the nutrient bars do not jump during cooldown.
+        if (minecraft.options.attackIndicator().get() == AttackIndicatorStatus.HOTBAR) {
+            if (rightHanded) rightOccupied = Math.max(rightOccupied, 24);
+            else leftOccupied = Math.max(leftOccupied, 24);
+        }
+        int leftEnd = center - 91 - leftOccupied - 10;
+        int rightStart = center + 91 + rightOccupied + 10;
+        int leftWidth = Math.min(NUTRIENT_WIDTH, Math.max(0, leftEnd - 4));
+        int rightWidth = Math.min(NUTRIENT_WIDTH, Math.max(0, graphics.guiWidth() - 4 - rightStart));
+        drawNutrient(graphics, minecraft, leftEnd - leftWidth, leftWidth, state.protein(), 0xFFB68A2C);
+        drawNutrient(graphics, minecraft, rightStart, rightWidth, state.plants(), 0xFF8EBC28);
+    }
+
+    private static NutritionPayload visibleState(Minecraft minecraft) {
+        var state = NutritionPayload.latest();
+        return minecraft.player == null || minecraft.gameMode == null || minecraft.options.hideGui
+                || !minecraft.gameMode.canHurtPlayer() || minecraft.player.isSpectator()
+                || state == null || state.entityId() != minecraft.player.getId() ? null : state;
+    }
+
+    private static void drawNutrient(GuiGraphics graphics, Minecraft minecraft, int x, int width, int value, int color) {
+        if (width <= 2) return;
+        int maximum = NutritionRules.MICRONUTRIENT_MAX;
+        int current = Math.clamp(value, 0, maximum);
+        int percent = (int) ((long) current * 100 / maximum);
+        int y = graphics.guiHeight() - NUTRIENT_HEIGHT;
+        graphics.fill(x, y, x + width, graphics.guiHeight(), 0xFF101010);
+        graphics.fill(x + 1, y + 1, x + width - 1, graphics.guiHeight() - 1, 0xFF292929);
+        int filled = (int) ((long) (width - 2) * current / maximum);
+        if (filled > 0) graphics.fill(x + 1, y + 1, x + 1 + filled, graphics.guiHeight() - 1, color);
+        String label = current + "/" + maximum + " (" + percent + "%)";
+        int textWidth = minecraft.font.width(label);
+        float scale = Math.min(1F, (width - 2F) / Math.max(1, textWidth));
+        // GUI coordinates already include the user's scale. Only shrink when the available side space needs it.
+        graphics.pose().pushPose();
+        graphics.pose().translate(x + 1, y - 3 - minecraft.font.lineHeight * scale, 0);
+        graphics.pose().scale(scale, scale, 1F);
+        graphics.drawString(minecraft.font, label, 0, 0, 0xFFFFFF, true);
+        graphics.pose().popPose();
+    }
+
+    @SubscribeEvent public static void afterAir(RenderGuiLayerEvent.Post event) {
+        if (!event.getName().equals(VanillaGuiLayers.AIR_LEVEL)) return;
+        Minecraft minecraft = Minecraft.getInstance();
+        var state = visibleState(minecraft);
+        if (state == null) return;
+        var graphics = event.getGuiGraphics();
+        int x = graphics.guiWidth() / 2 + 10;
+        // Reserve the extra four pixels before drawing: the thin bar must end above
+        // the already rendered icon row, rather than overlap its top edge.
+        int y = graphics.guiHeight() - minecraft.gui.rightHeight - 4;
+        int limit = Math.max(1, state.limit());
+        int nutrition = Math.clamp(state.nutrition(), 0, limit);
+        int color = nutrition == 0 ? 0xFF7777 : nutrition < limit / 2 ? 0xE6C971 : 0xAAD98C;
+        Component label = Component.translatable("hud.mite.nutrition", nutrition, limit);
+        graphics.drawString(minecraft.font, label, x + WIDTH - minecraft.font.width(label), y, color, true);
+        graphics.fill(x, y + 10, x + WIDTH, y + 12, 0xB0000000);
+        int filled = (int) ((long) WIDTH * nutrition / limit);
+        if (filled > 0) graphics.fill(x, y + 10, x + filled, y + 12, 0xFF000000 | color);
+        minecraft.gui.rightHeight += 14;
+
+        List<Component> statuses = new ArrayList<>();
+        if (minecraft.player.hasEffect(MobEffects.CONFUSION))
+            statuses.add(Component.translatable("hud.mite.food_nausea"));
+        if (state.protein() <= 0 || state.plants() <= 0)
+            statuses.add(Component.translatable("hud.mite.malnourished"));
+        if (state.resistanceLevel() >= 0) {
+            String severity = state.resistanceLevel() >= 2 ? "severe" : state.resistanceLevel() == 1 ? "moderate" : "mild";
+            statuses.add(Component.translatable("hud.mite.sugar_resistance_" + severity));
+        }
+        for (Component status : statuses) {
+            int statusY = graphics.guiHeight() - minecraft.gui.rightHeight;
+            graphics.drawString(minecraft.font, status, x + WIDTH - minecraft.font.width(status), statusY, 0xE6AA77, true);
+            minecraft.gui.rightHeight += 10;
+        }
+    }
 
     @SubscribeEvent public static void explainFood(ItemTooltipEvent event) {
         var profile = MiteFoodCatalog.profile(event.getItemStack());
