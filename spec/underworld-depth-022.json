@@ -222,7 +222,7 @@
     "automated_checks": "构建、353项JUnit与279项服务器GameTest通过；数量以最终验证日志为准",
     "manual_client": "user_confirmed_current_delivery_on_2026_10_13",
     "old_player_save_migration": "not_implemented",
-    "github_push": "authorized_by_user_on_2026_10_13",
+    "github_push": "passed_remote_main_verified",
     "build": "passed",
     "junit": {
       "tests": 353,
@@ -236,6 +236,10 @@
     },
     "client": "user_confirmed_current_delivery_on_2026_10_13",
     "manual_confirmation_scope": "用户确认当前交付正常并授权提交；不据此补写逐项场景、旧存档或双客户端联机结果",
-    "jar_sha256": "a639b5be819cb0108f7c0ac5e8d4c4938e5e7ed0fd7c55d2a1a704d573eeaf3f"
+    "jar_sha256": "a639b5be819cb0108f7c0ac5e8d4c4938e5e7ed0fd7c55d2a1a704d573eeaf3f",
+    "github_feature_commit": "7b9186d6cccd115d1727cef6bc95226296ef924d",
+    "github_feature_url": "https://github.com/65658dsf/mite-neoforge-1.21.1/commit/7b9186d6cccd115d1727cef6bc95226296ef924d",
+    "remote_branch": "main",
+    "staged_snapshot_build": "passed_with_353_junit_tests_and_identical_runtime_content_except_json_line_endings"
   }
 }

@@ -81,3 +81,5 @@ modernFirstY(sourceY) = ceil(sourceY × 384 / 256) − 64
 2026-10-13构建成功，353项JUnit与279项服务器GameTest全部通过，包含真实自然地幔的生存采掘、原生搭门/点火/往返及负高度区块与布局标记序列化。JAR SHA256：`a639b5be819cb0108f7c0ac5e8d4c4938e5e7ed0fd7c55d2a1a704d573eeaf3f`。记录见`build/verification/022-build.log`与`022-gametest.log`。
 
 2026-10-13用户反馈“现在正常了可以提交github了”，确认022修复后的当前交付正常并授权提交。此反馈作为本批客户端验收依据；未将验收矩阵中的每个场景、旧存档检查或双客户端联机补写为逐项手测通过。
+
+提交记录：[`7b9186d` — feat: 添加 R196 地底世界、地幔与符文传送体系](https://github.com/65658dsf/mite-neoforge-1.21.1/commit/7b9186d6cccd115d1727cef6bc95226296ef924d)，已推送到`main`并通过`git ls-remote`核对。暂存内容的独立构建与353项JUnit再次通过；发布代码和二进制材质与用户测试版本一致，JSON仅有Git检出换行差异。
