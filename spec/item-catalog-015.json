@@ -376,8 +376,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -442,8 +444,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -508,8 +512,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -574,8 +580,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -640,8 +648,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -706,8 +716,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -772,8 +784,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -838,8 +852,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -913,8 +929,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -979,8 +997,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1045,8 +1065,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1111,8 +1133,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1177,8 +1201,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1243,8 +1269,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1309,8 +1337,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1375,8 +1405,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1441,8 +1473,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1507,8 +1541,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1573,8 +1609,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1639,8 +1677,10 @@
         "batch": "018",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1705,8 +1745,10 @@
         "batch": "018",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1771,8 +1813,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1837,8 +1881,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1903,8 +1949,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -1969,8 +2017,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2035,8 +2085,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2101,8 +2153,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2167,8 +2221,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2236,8 +2292,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2305,8 +2363,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2371,8 +2431,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2437,8 +2499,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2503,8 +2567,10 @@
         "batch": "018",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -2569,8 +2635,10 @@
         "batch": "018",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3075,8 +3143,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3138,8 +3208,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3201,8 +3273,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3264,8 +3338,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3327,8 +3403,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3390,8 +3468,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3453,8 +3533,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3516,8 +3598,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3579,8 +3663,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3642,8 +3728,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3705,8 +3793,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -3768,8 +3858,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -4341,8 +4433,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "blueberry_bush_block_and_item",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -4599,8 +4693,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -4704,8 +4800,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "food_profile_and_ingestion",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -4767,8 +4865,10 @@
         "batch": "019",
         "implementation": "code_present_in_batch_scope",
         "scope": "nonfood_material_or_vessel",
-        "manual_test": "pending_user_acceptance",
-        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。"
+        "manual_test": "user_confirmed_current_delivery_after_020",
+        "semantics": "原mechanism_status保留015历史字段；本字段记录食品批次已接入的代码范围，最终自动验证与客户端手测以对应验收文档为准。",
+        "manual_confirmation_date": "2026-10-13",
+        "manual_confirmation_scope": "本批用户确认正常；未提供每个场景的独立手测记录，不等于全部关联机制或原R196旧版逐项验收。"
       }
     },
     {
@@ -18728,6 +18828,14 @@
     "counts_warning": "这些是本目录限定核对后的标签数量；192个非工具/非食品候选仍带历史待办标签，不代表全项目实时注册缺口。359个叶条目与015历史summary均未改变。",
     "mechanism_semantics": "已添加只说明实际注册或原版食品接入；原mechanism_status保留历史，food_runtime_status记录本批代码范围，018/019客户端手测均不可由本次目录维护推断通过。",
     "manual_test_status": "pending_user_acceptance",
-    "excluded_semantics": "原12个废弃/冲突叶项保持排除，包括8种金属小刀；未注册的岩浆/石头/黏土金属桶不因同材质空/水/奶桶存在而标已添加。"
+    "excluded_semantics": "原12个废弃/冲突叶项保持排除，包括8种金属小刀；未注册的岩浆/石头/黏土金属桶不因同材质空/水/奶桶存在而标已添加。",
+    "delivery_confirmation": {
+      "date": "2026-10-13",
+      "source": "用户确认没有问题并授权提交GitHub",
+      "feature_commit": "622226e8558af5af8aaae87b408ad9023ee6166a",
+      "display_fix_commit": "683e5efcb5421fdee51ffd46a33120e0d26ab9fe",
+      "remote_branch": "main",
+      "semantics": "注册数量与历史mechanism_status保持不变；确认只覆盖本批当前交付，不补写逐项场景证据。"
+    }
   }
 }

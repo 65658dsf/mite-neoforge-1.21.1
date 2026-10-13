@@ -103,4 +103,4 @@ N_after = min(C, N_before + food_N)
 
 当前 JAR：`build/libs/mite-0.1.0.jar`，SHA-256：`8fc2409025a19057ac41ada7904c8c122ec7d14dd397cfcceb5d011694f12fbb`。包含可选客户端兼容类，不含 GameTest、审计器或原始模组/参考 ZIP。数据和网络结构保持原样，无存档迁移；`/mite food status` 将独立原生字段标为“种子饱和缓冲”，与 N 显示区分。
 
-AppleSkin 实机叠层、预览、低等级图标范围与无 AppleSkin 客户端启动/食用目前待用户确认；未操作或重启用户客户端，尚未提交或推送。当前固定 AppleSkin 3.0.9 原生不为无 FOOD 的手持蛋糕做预测，本轮也未伪造蛋糕手持 FOOD；放置蛋糕的六片 S2/N2 规则保持独立。018/019 历史结果和哈希继续保留，不能作为 020 当前 JAR 证明。
+2026-10-13 用户确认修复“没有问题”并授权提交 GitHub，已以 [fix 提交](https://github.com/65658dsf/mite-neoforge-1.21.1/commit/683e5efcb5421fdee51ffd46a33120e0d26ab9fe) 推送到 main；本轮食品扩展另以 [feat 提交](https://github.com/65658dsf/mite-neoforge-1.21.1/commit/622226e8558af5af8aaae87b408ad9023ee6166a) 保存，开发署名均为 NingMeng123。分别导出暂存快照执行构建、JUnit 和 GameTest 源码编译：019 为242项、020为268项，均通过；保留此前实际241组服务端测试及两种无窗口审计结果。用户确认未逐条附带低等级、全部联机或无 AppleSkin 窗口场景的独立记录；不将无窗口数据加载写成真实客户端场景已逐项实测。助手未操作或重启用户客户端。当前固定 AppleSkin 3.0.9 原生不为无 FOOD 的手持蛋糕做预测，本轮也未伪造蛋糕手持 FOOD；放置蛋糕的六片 S2/N2 规则保持独立。018/019 历史结果和哈希继续保留，不能作为 020 当前 JAR 证明。

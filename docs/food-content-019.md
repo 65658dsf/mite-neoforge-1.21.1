@@ -138,6 +138,6 @@ S 为 R196 饱食值，N 为独立营养值；二者都按玩家等级上限钳�
 
 资源检查解析 913 份 JSON；45 张食品/容器图与用户 ZIP 对应条目逐字节一致，16 张植物图也匹配原包。JAR 含 254 条制造配方，不含 GameTest、物资函数、原始 ZIP 或反编译源码。`build/libs/mite-0.1.0.jar` SHA-256：`c725ab8085b496037240fb723d0594bf5aa38e18f9b53f7a194844013f6d6109`。蓝莓测试使用真实 FEATURES 区域与未照明 ProtoChunk，不代表已跑完自然新存档 Noise→Full 流程或验收天然密度。
 
-客户端模型、动作、JEI/Jade/AppleSkin 共存、鼠标操作、联机和用户存档的人工结果目前待用户确认，不声明已经实机验收。本轮未操作、重启或关闭用户客户端，尚未提交或推送。测试步骤见 [019 手动测试](manual-test-food-019.md)。
+2026-10-13，用户在 020 饱和显示修复后确认“没有问题提交github吧”，当前交付已按 [019 功能提交](https://github.com/65658dsf/mite-neoforge-1.21.1/commit/622226e8558af5af8aaae87b408ad9023ee6166a)、[020 修复提交](https://github.com/65658dsf/mite-neoforge-1.21.1/commit/683e5efcb5421fdee51ffd46a33120e0d26ab9fe) 推送到 main，并核对远程修复提交一致。该确认记录为本批用户手测通过；用户没有提供 A–H 每条、全部联机及无 AppleSkin 客户端场景的独立记录，不补写具体截图或断言。助手未操作、重启或关闭用户客户端。复现步骤见 [019 手动测试](manual-test-food-019.md)，当前饱和显示与 JAR 以 [020 说明](food-saturation-020.md) 为准。
 
 来源索引：[运行时注册快照](../reference-data/runtime-registry.json)、[旧食品证据](r196-food-catalog-evidence.md)、[制造计时证据](crafting-time-evidence.md)、[有效食品数据](../src/main/resources/mite/foods-018.json)、[食品制造数据](../src/main/resources/mite/food-manufacturing-019.json)。制造生成器为 `tools/generate_food_recipes.py`；源食品属性、`RecipesMITE`、`aaj`、`wd`、`vq`、`ye`、家畜/作物/钓鱼来源分别有独立证据记录。
