@@ -16,6 +16,11 @@ public abstract class CrafterEquipmentMixin {
     @ModifyExpressionValue(method = "dispenseFrom", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/item/crafting/CraftingRecipe;assemble(Lnet/minecraft/world/item/crafting/RecipeInput;Lnet/minecraft/core/HolderLookup$Provider;)Lnet/minecraft/world/item/ItemStack;"))
     private ItemStack mite$equipment(ItemStack result, BlockState state, ServerLevel level, BlockPos pos) {
+        boolean dyeing = level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.CrafterBlockEntity crafter
+                && CrafterBlock.getPotentialResults(level, crafter.asCraftInput())
+                        .map(recipe -> recipe.value() instanceof net.minecraft.world.item.crafting.ArmorDyeRecipe).orElse(false);
+        if (!dyeing) io.github.ningmeng123.mite.item.EquipmentDurability.setQuality(result,
+                io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality.AVERAGE);
         return WorkbenchRules.allowsCrafter(level, pos, result) ? result : ItemStack.EMPTY;
     }
 }

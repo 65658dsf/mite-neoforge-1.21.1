@@ -21,7 +21,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /**
  * Exercises the transformed vanilla XP APIs and their integer state in a server.
  * Expected thresholds are literal vectors from the R196 initializer bytecode;
- * the upper gameplay cap and proportional level spending are modern decisions.
+ * the extreme integer guard and proportional level spending are modern decisions.
  *
  * @author NingMeng123
  */
@@ -192,18 +192,20 @@ public final class ExperienceCurveGameTests {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.giveExperiencePoints(1);
         player.giveExperiencePoints(Integer.MAX_VALUE);
-        assertExperience(helper, player, 203000, 200, 0, 1, "Large point award stops at level 200 with an empty bar");
+        assertExperience(helper, player, 2147483647, 20722, 166397, 207240, "Large point award protects native int storage after continuing past 200");
         player.giveExperiencePoints(Integer.MAX_VALUE);
-        assertExperience(helper, player, 203000, 200, 0, 1, "Repeated capped award cannot wrap the total");
+        assertExperience(helper, player, 2147483647, 20722, 166397, 207240, "Repeated extreme award cannot wrap the total");
+        player.giveExperiencePoints(Integer.MIN_VALUE);
+        assertExperience(helper, player, -1, -1, 19, 20, "A large signed subtraction uses wide arithmetic instead of wrapping");
         player.giveExperiencePoints(Integer.MIN_VALUE);
         assertExperience(helper, player, -800, -40, 0, 20, "Large point subtraction clamps at the debt floor");
         player.giveExperienceLevels(Integer.MAX_VALUE);
-        assertExperience(helper, player, 203000, 200, 0, 1, "Large level addition stops at the gameplay cap");
+        assertExperience(helper, player, 2147483647, 20722, 166397, 207240, "Extreme level requests saturate XP storage without an invented 200 cap");
         player.giveExperienceLevels(Integer.MIN_VALUE);
         assertExperience(helper, player, -800, -40, 0, 20, "Large level subtraction cannot overflow");
         PlayerExperience.setLevels(player, Integer.MAX_VALUE);
         PlayerExperience.setPoints(player, Integer.MAX_VALUE);
-        assertExperience(helper, player, 203000, 200, 0, 1, "Set APIs cannot fill a nonexistent level 201 bar");
+        assertExperience(helper, player, 2147483647, 20722, 166397, 207240, "Point setters protect overflow in the partially representable final interval");
         PlayerExperience.setLevels(player, Integer.MIN_VALUE);
         assertExperience(helper, player, -800, -40, 0, 20, "Extreme negative target levels clamp all derived state");
         helper.succeed();
@@ -251,13 +253,80 @@ public final class ExperienceCurveGameTests {
             helper.assertValueEqual(execute(helper, source, "experience query @s points"), 1,
                     "The points query must not round a fractional bar down to zero");
 
-            assertCommandRejected(helper, source, "experience set @s 201 levels");
-            assertExperience(helper, player, 541, 9, 1, 110, "Rejected level 201 command leaves the player unchanged");
+            execute(helper, source, "experience set @s 201 levels");
+            assertExperience(helper, player, 205038, 201, 18, 2030, "Level 201 commands are allowed and retain the ordinary proportional setter behavior");
+            execute(helper, source, "experience set @s 0 points");
             execute(helper, source, "experience set @s 200 levels");
-            assertCommandRejected(helper, source, "experience set @s 1 points");
-            assertExperience(helper, player, 203000, 200, 0, 1, "Rejected capped point command leaves an empty bar");
+            execute(helper, source, "experience set @s 1 points");
+            assertExperience(helper, player, 203001, 200, 1, 2020, "Level 200 has a normal 2020-point interval");
+            helper.assertValueEqual(execute(helper, source, "experience query @s points"), 1,
+                    "A small bar fraction cannot round its exact point query down to zero");
+            execute(helper, source, "experience add @s 288839 points");
+            assertExperience(helper, player, 491840, 312, 440, 3140, "Commands can prepare a legendary adamantium pick balance above level 200");
+            execute(helper, source, "experience add @s 327680 points");
+            assertExperience(helper, player, 819520, 403, 1430, 4050, "Point additions continue upgrading on the same curve");
+            helper.assertValueEqual(execute(helper, source, "experience query @s points"), 1430,
+                    "Extended level balances remain exact independently of float progress");
+            execute(helper, source, "experience add @s -491840 points");
+            assertExperience(helper, player, 327680, 254, 1290, 2560, "A high quality's point cost can leave a spendable balance above level 200");
+            assertCommandRejected(helper, source, "experience set @s 20723 levels");
+            assertExperience(helper, player, 327680, 254, 1290, 2560, "An unrepresentable command request leaves the balance intact instead of falsely claiming success");
+            execute(helper, source, "experience set @s 20722 levels");
+            execute(helper, source, "experience set @s 166397 points");
+            assertExperience(helper, player, 2147483647, 20722, 166397, 207240, "The highest representable int balance remains a valid exact command target");
+            assertCommandRejected(helper, source, "experience set @s 166398 points");
+            assertExperience(helper, player, 2147483647, 20722, 166397, 207240, "A point setter cannot claim success for a clipped overflow request");
         } finally {
             helper.getLevel().getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void levelsContinueThrough200WithTheSameFractionAndNoSpecialInterval(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        PlayerExperience.setTotal(player, 203000);
+        player.giveExperiencePoints(2019);
+        assertExperience(helper, player, 205019, 200, 2019, 2020, "The last point of level 200 uses the continued curve");
+        player.giveExperiencePoints(1);
+        assertExperience(helper, player, 205020, 201, 0, 2030, "One more point reaches level 201");
+        player.giveExperienceLevels(-1);
+        assertExperience(helper, player, 203000, 200, 0, 2020, "Level spending crosses back through 200 normally");
+        PlayerExperience.setPoints(player, 1000);
+        player.giveExperienceLevels(1);
+        assertExperience(helper, player, 206024, 201, 1004, 2030, "Level additions use the established floor(1000*2030/2020) proportion");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void highQualityBalancesSurviveSavingAndPayExactCostsAboveLevel200(GameTestHelper helper) {
+        for (int[] entry : new int[][]{{491840, 312, 440, 3140}, {819520, 403, 1430, 4050}}) {
+            Player original = helper.makeMockPlayer(GameType.SURVIVAL);
+            original.giveExperiencePoints(entry[0]);
+            assertExperience(helper, original, entry[0], entry[1], entry[2], entry[3],
+                    "Point awards can accumulate enough for legendary adamantium tools");
+            original.giveExperienceLevels(0);
+            PlayerExperience.setLevels(original, entry[1]);
+            assertExperience(helper, original, entry[0], entry[1], entry[2], entry[3],
+                    "No-op level requests retain the complete extended-level balance");
+            CompoundTag saved = new CompoundTag();
+            original.addAdditionalSaveData(saved);
+            helper.assertValueEqual(saved.getInt(PlayerExperience.VERSION_TAG), 3, "The expanded-total schema is recorded as version three");
+            helper.assertValueEqual(saved.getInt("XpTotal"), entry[0], "NBT stores every point above the level-200 threshold");
+            // Versions one and two already used canonical integer totals; do not remigrate through float bars.
+            for (int version : new int[]{1, 2, 3}) {
+                saved.putInt(PlayerExperience.VERSION_TAG, version);
+                saved.putInt("XpLevel", 1);
+                saved.putFloat("XpP", .9F);
+                Player loaded = helper.makeMockPlayer(GameType.SURVIVAL);
+                loaded.readAdditionalSaveData(saved);
+                assertExperience(helper, loaded, entry[0], entry[1], entry[2], entry[3],
+                        "Canonical save version " + version + " ignores stale derived fields");
+                loaded.giveExperiencePoints(-entry[0]);
+                assertExperience(helper, loaded, 0, 0, 0, 20, "The exact legendary manufacturing price can be paid without truncating the original balance");
+                loaded.giveExperiencePoints(1);
+                assertExperience(helper, loaded, 1, 0, 1, 20, "A later reward cannot restore the pre-payment total");
+            }
         }
         helper.succeed();
     }

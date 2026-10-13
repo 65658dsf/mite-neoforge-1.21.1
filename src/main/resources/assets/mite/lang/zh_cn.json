@@ -18,7 +18,8 @@
   "block.minecraft.crafting_table": "原版工作台（已禁用）",
   "tooltip.mite.planks_require_workbench": "加工木板需要工作台或自动合成器",
   "item.minecraft.wooden_sword": "木棒",
-  "commands.mite.experience.level_too_high": "MITE 的最高经验等级为 %s，未更改目标玩家的经验。",
+  "commands.mite.experience.level_too_high": "该等级所需累计经验超出原生整数存储范围（可表示到 %s 级），未更改目标玩家的经验。",
+  "commands.mite.experience.points_overflow": "这些级内经验会使累计经验超出原生整数存储范围，未更改目标玩家的经验。",
   "item.mite.flint_chip": "燧石碎片",
   "item.mite.sinew": "筋",
   "item.mite.flint_hatchet": "燧石手斧",
@@ -140,5 +141,15 @@
   "screen.mite.crafting_progress": "制造 %s%% · 右键结果取消",
   "screen.mite.crafting_paused": "制造 %s%% · 饥饿暂停",
   "tooltip.mite.timed_crafting": "点击结果开始制造，完成后自动放入背包",
-  "message.mite.tool_tier_too_low": "该工具的种类或材料等级不足，无法采集此方块。"
+  "message.mite.tool_tier_too_low": "该工具的种类或材料等级不足，无法采集此方块。",
+  "screen.mite.quality_range": "可选品质：%s—%s",
+  "screen.mite.quality_cost": "本批消耗：%s 经验点",
+  "screen.mite.quality_time": "制造时间：%s 秒",
+  "screen.mite.quality_unaffordable": "制造条件不足：请检查经验、材料与工作台",
+  "screen.mite.quality_running": "制造中：右键结果槽取消后可切换品质",
+  "screen.mite.quality_fixed": "当前只能制造这一品质",
+  "screen.mite.quality_select": "点击箭头或空闲时右键结果槽切换品质",
+  "screen.mite.quality_preview": "经验不足时仍可预览高品质，但无法制作",
+  "screen.mite.quality_click_modes": "左键制作一批；Shift＋左键连续制作",
+  "screen.mite.quality_paid_single": "消耗经验的品质每次完成一批后停止"
 }

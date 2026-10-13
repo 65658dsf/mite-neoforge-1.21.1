@@ -171,8 +171,15 @@ public final class ShardAndGemGameTests {
             PlayerExperience.setTotal(player, 203000);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND, 2));
             use(player, InteractionHand.MAIN_HAND);
-            helper.assertValueEqual(player.totalExperience, 203000, "The total remains at the explicit maximum");
-            helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "A sacrifice at maximum experience still consumes one gem");
+            helper.assertValueEqual(player.totalExperience, 203500, "R196 level 200 is a threshold; sacrifices continue adding spendable points");
+            helper.assertValueEqual(player.experienceLevel, 200, "Additional total experience does not create level 201");
+            helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "A sacrifice at level 200 still consumes one gem");
+
+            PlayerExperience.setTotal(player, 2147483647);
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND, 2));
+            use(player, InteractionHand.MAIN_HAND);
+            helper.assertValueEqual(player.totalExperience, 2147483647, "Only the native integer storage boundary limits further accumulation");
+            helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "A sacrifice at the integer boundary still consumes its gem");
 
             player.setGameMode(GameType.CREATIVE);
             PlayerExperience.setTotal(player, 0);

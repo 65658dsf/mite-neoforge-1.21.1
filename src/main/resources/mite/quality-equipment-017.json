@@ -1,0 +1,948 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source": "yc.getLowestCraftingDifficultyToProduce; guarded runtime registry; explicit modern mappings",
+  "items": {
+    "mite:flint_hatchet": {
+      "lowest_difficulty": 175.0,
+      "legacy_id": 978,
+      "source_orders": [
+        300
+      ]
+    },
+    "mite:obsidian_hatchet": {
+      "lowest_difficulty": 315.0,
+      "legacy_id": 1204,
+      "source_orders": [
+        301
+      ]
+    },
+    "mite:copper_hatchet": {
+      "lowest_difficulty": 450.0,
+      "legacy_id": 1175,
+      "source_orders": [
+        286
+      ]
+    },
+    "mite:silver_hatchet": {
+      "lowest_difficulty": 450.0,
+      "legacy_id": 1176,
+      "source_orders": [
+        288
+      ]
+    },
+    "mite:golden_hatchet": {
+      "lowest_difficulty": 450.0,
+      "legacy_id": 1177,
+      "source_orders": [
+        296
+      ]
+    },
+    "mite:rusted_iron_hatchet": {
+      "lowest_difficulty": 450.0,
+      "legacy_id": 1181,
+      "source_orders": []
+    },
+    "mite:iron_hatchet": {
+      "lowest_difficulty": 850.0,
+      "legacy_id": 1178,
+      "source_orders": [
+        290
+      ]
+    },
+    "mite:ancient_metal_hatchet": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 1262,
+      "source_orders": [
+        298
+      ]
+    },
+    "mite:mithril_hatchet": {
+      "lowest_difficulty": 6450.0,
+      "legacy_id": 1179,
+      "source_orders": [
+        292
+      ]
+    },
+    "mite:adamantium_hatchet": {
+      "lowest_difficulty": 25650.0,
+      "legacy_id": 1180,
+      "source_orders": [
+        294
+      ]
+    },
+    "minecraft:golden_axe": {
+      "lowest_difficulty": 1250.0,
+      "legacy_id": 286,
+      "source_orders": [
+        209
+      ]
+    },
+    "minecraft:iron_axe": {
+      "lowest_difficulty": 2450.0,
+      "legacy_id": 258,
+      "source_orders": [
+        203
+      ]
+    },
+    "mite:flint_axe": {
+      "lowest_difficulty": 375.0,
+      "legacy_id": 979,
+      "source_orders": [
+        214
+      ]
+    },
+    "mite:obsidian_axe": {
+      "lowest_difficulty": 795.00006,
+      "legacy_id": 1205,
+      "source_orders": [
+        216
+      ]
+    },
+    "mite:copper_axe": {
+      "lowest_difficulty": 1250.0,
+      "legacy_id": 980,
+      "source_orders": [
+        199
+      ]
+    },
+    "mite:silver_axe": {
+      "lowest_difficulty": 1250.0,
+      "legacy_id": 981,
+      "source_orders": [
+        201
+      ]
+    },
+    "mite:rusted_iron_axe": {
+      "lowest_difficulty": 1250.0,
+      "legacy_id": 984,
+      "source_orders": []
+    },
+    "mite:ancient_metal_axe": {
+      "lowest_difficulty": 4850.0,
+      "legacy_id": 1241,
+      "source_orders": [
+        211
+      ]
+    },
+    "mite:mithril_axe": {
+      "lowest_difficulty": 19250.0,
+      "legacy_id": 982,
+      "source_orders": [
+        205
+      ]
+    },
+    "mite:adamantium_axe": {
+      "lowest_difficulty": 76850.0,
+      "legacy_id": 983,
+      "source_orders": [
+        207
+      ]
+    },
+    "minecraft:golden_pickaxe": {
+      "lowest_difficulty": 1250.0,
+      "legacy_id": 285,
+      "source_orders": [
+        27
+      ]
+    },
+    "minecraft:iron_pickaxe": {
+      "lowest_difficulty": 2450.0,
+      "legacy_id": 257,
+      "source_orders": [
+        12
+      ]
+    },
+    "mite:copper_pickaxe": {
+      "lowest_difficulty": 1250.0,
+      "legacy_id": 967,
+      "source_orders": [
+        2
+      ]
+    },
+    "mite:silver_pickaxe": {
+      "lowest_difficulty": 1250.0,
+      "legacy_id": 968,
+      "source_orders": [
+        7
+      ]
+    },
+    "mite:rusted_iron_pickaxe": {
+      "lowest_difficulty": 1250.0,
+      "legacy_id": 971,
+      "source_orders": []
+    },
+    "mite:ancient_metal_pickaxe": {
+      "lowest_difficulty": 4850.0,
+      "legacy_id": 1239,
+      "source_orders": [
+        32
+      ]
+    },
+    "mite:mithril_pickaxe": {
+      "lowest_difficulty": 19250.0,
+      "legacy_id": 969,
+      "source_orders": [
+        17
+      ]
+    },
+    "mite:adamantium_pickaxe": {
+      "lowest_difficulty": 76850.0,
+      "legacy_id": 970,
+      "source_orders": [
+        22
+      ]
+    },
+    "minecraft:golden_shovel": {
+      "lowest_difficulty": 450.0,
+      "legacy_id": 284,
+      "source_orders": [
+        368
+      ]
+    },
+    "minecraft:iron_shovel": {
+      "lowest_difficulty": 850.0,
+      "legacy_id": 256,
+      "source_orders": [
+        365
+      ]
+    },
+    "mite:flint_shovel": {
+      "lowest_difficulty": 175.0,
+      "legacy_id": 972,
+      "source_orders": [
+        213
+      ]
+    },
+    "mite:obsidian_shovel": {
+      "lowest_difficulty": 315.0,
+      "legacy_id": 1202,
+      "source_orders": [
+        215
+      ]
+    },
+    "mite:copper_shovel": {
+      "lowest_difficulty": 450.0,
+      "legacy_id": 973,
+      "source_orders": [
+        363
+      ]
+    },
+    "mite:silver_shovel": {
+      "lowest_difficulty": 450.0,
+      "legacy_id": 974,
+      "source_orders": [
+        364
+      ]
+    },
+    "mite:rusted_iron_shovel": {
+      "lowest_difficulty": 450.0,
+      "legacy_id": 977,
+      "source_orders": []
+    },
+    "mite:ancient_metal_shovel": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 1240,
+      "source_orders": [
+        369
+      ]
+    },
+    "mite:mithril_shovel": {
+      "lowest_difficulty": 6450.0,
+      "legacy_id": 975,
+      "source_orders": [
+        366
+      ]
+    },
+    "mite:adamantium_shovel": {
+      "lowest_difficulty": 25650.0,
+      "legacy_id": 976,
+      "source_orders": [
+        367
+      ]
+    },
+    "minecraft:golden_hoe": {
+      "lowest_difficulty": 850.0,
+      "legacy_id": 294,
+      "source_orders": [
+        210
+      ]
+    },
+    "minecraft:iron_hoe": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 292,
+      "source_orders": [
+        204
+      ]
+    },
+    "mite:copper_hoe": {
+      "lowest_difficulty": 850.0,
+      "legacy_id": 985,
+      "source_orders": [
+        200
+      ]
+    },
+    "mite:silver_hoe": {
+      "lowest_difficulty": 850.0,
+      "legacy_id": 986,
+      "source_orders": [
+        202
+      ]
+    },
+    "mite:rusted_iron_hoe": {
+      "lowest_difficulty": 850.0,
+      "legacy_id": 989,
+      "source_orders": []
+    },
+    "mite:ancient_metal_hoe": {
+      "lowest_difficulty": 3250.0,
+      "legacy_id": 1242,
+      "source_orders": [
+        212
+      ]
+    },
+    "mite:mithril_hoe": {
+      "lowest_difficulty": 12850.0,
+      "legacy_id": 987,
+      "source_orders": [
+        206
+      ]
+    },
+    "mite:adamantium_hoe": {
+      "lowest_difficulty": 51250.0,
+      "legacy_id": 988,
+      "source_orders": [
+        208
+      ]
+    },
+    "mite:copper_mattock": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 997,
+      "source_orders": [
+        3
+      ]
+    },
+    "mite:silver_mattock": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 998,
+      "source_orders": [
+        8
+      ]
+    },
+    "mite:golden_mattock": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 999,
+      "source_orders": [
+        28
+      ]
+    },
+    "mite:rusted_iron_mattock": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 1003,
+      "source_orders": []
+    },
+    "mite:iron_mattock": {
+      "lowest_difficulty": 3250.0,
+      "legacy_id": 1000,
+      "source_orders": [
+        13
+      ]
+    },
+    "mite:ancient_metal_mattock": {
+      "lowest_difficulty": 6450.0,
+      "legacy_id": 1244,
+      "source_orders": [
+        33
+      ]
+    },
+    "mite:mithril_mattock": {
+      "lowest_difficulty": 25650.0,
+      "legacy_id": 1001,
+      "source_orders": [
+        18
+      ]
+    },
+    "mite:adamantium_mattock": {
+      "lowest_difficulty": 102450.0,
+      "legacy_id": 1002,
+      "source_orders": [
+        23
+      ]
+    },
+    "mite:copper_scythe": {
+      "lowest_difficulty": 875.0,
+      "legacy_id": 1011,
+      "source_orders": [
+        6
+      ]
+    },
+    "mite:silver_scythe": {
+      "lowest_difficulty": 875.0,
+      "legacy_id": 1012,
+      "source_orders": [
+        11
+      ]
+    },
+    "mite:golden_scythe": {
+      "lowest_difficulty": 875.0,
+      "legacy_id": 1013,
+      "source_orders": [
+        31
+      ]
+    },
+    "mite:rusted_iron_scythe": {
+      "lowest_difficulty": 875.0,
+      "legacy_id": 1017,
+      "source_orders": []
+    },
+    "mite:iron_scythe": {
+      "lowest_difficulty": 1675.0,
+      "legacy_id": 1014,
+      "source_orders": [
+        16
+      ]
+    },
+    "mite:ancient_metal_scythe": {
+      "lowest_difficulty": 3275.0,
+      "legacy_id": 1246,
+      "source_orders": [
+        36
+      ]
+    },
+    "mite:mithril_scythe": {
+      "lowest_difficulty": 12875.0,
+      "legacy_id": 1015,
+      "source_orders": [
+        21
+      ]
+    },
+    "mite:adamantium_scythe": {
+      "lowest_difficulty": 51275.0,
+      "legacy_id": 1016,
+      "source_orders": [
+        26
+      ]
+    },
+    "mite:copper_shears": {
+      "lowest_difficulty": 800.0,
+      "legacy_id": 1018,
+      "source_orders": [
+        287
+      ]
+    },
+    "mite:silver_shears": {
+      "lowest_difficulty": 800.0,
+      "legacy_id": 1019,
+      "source_orders": [
+        289
+      ]
+    },
+    "mite:golden_shears": {
+      "lowest_difficulty": 800.0,
+      "legacy_id": 1020,
+      "source_orders": [
+        297
+      ]
+    },
+    "mite:rusted_iron_shears": {
+      "lowest_difficulty": 800.0,
+      "legacy_id": 1182,
+      "source_orders": []
+    },
+    "mite:ancient_metal_shears": {
+      "lowest_difficulty": 3200.0,
+      "legacy_id": 1247,
+      "source_orders": [
+        299
+      ]
+    },
+    "mite:mithril_shears": {
+      "lowest_difficulty": 12800.0,
+      "legacy_id": 1021,
+      "source_orders": [
+        293
+      ]
+    },
+    "mite:adamantium_shears": {
+      "lowest_difficulty": 51200.0,
+      "legacy_id": 1022,
+      "source_orders": [
+        295
+      ]
+    },
+    "mite:wooden_cudgel": {
+      "lowest_difficulty": 105.0,
+      "legacy_id": 1024,
+      "source_orders": [
+        417
+      ]
+    },
+    "minecraft:wooden_sword": {
+      "lowest_difficulty": 185.0,
+      "legacy_id": 1025,
+      "source_orders": [
+        370
+      ]
+    },
+    "mite:obsidian_knife": {
+      "lowest_difficulty": 290.0,
+      "legacy_id": 1203,
+      "source_orders": [
+        303
+      ]
+    },
+    "mite:flint_knife": {
+      "lowest_difficulty": 150.0,
+      "legacy_id": 1023,
+      "source_orders": [
+        302
+      ]
+    },
+    "mite:copper_dagger": {
+      "lowest_difficulty": 425.0,
+      "legacy_id": 1033,
+      "source_orders": [
+        403
+      ]
+    },
+    "mite:silver_dagger": {
+      "lowest_difficulty": 425.0,
+      "legacy_id": 1034,
+      "source_orders": [
+        405
+      ]
+    },
+    "mite:golden_dagger": {
+      "lowest_difficulty": 425.0,
+      "legacy_id": 1035,
+      "source_orders": [
+        413
+      ]
+    },
+    "mite:rusted_iron_dagger": {
+      "lowest_difficulty": 425.0,
+      "legacy_id": 1039,
+      "source_orders": []
+    },
+    "mite:iron_dagger": {
+      "lowest_difficulty": 825.0,
+      "legacy_id": 1036,
+      "source_orders": [
+        407
+      ]
+    },
+    "mite:ancient_metal_dagger": {
+      "lowest_difficulty": 1625.0,
+      "legacy_id": 1249,
+      "source_orders": [
+        415
+      ]
+    },
+    "mite:mithril_dagger": {
+      "lowest_difficulty": 6425.0,
+      "legacy_id": 1037,
+      "source_orders": [
+        409
+      ]
+    },
+    "mite:adamantium_dagger": {
+      "lowest_difficulty": 25625.0,
+      "legacy_id": 1038,
+      "source_orders": [
+        411
+      ]
+    },
+    "mite:copper_sword": {
+      "lowest_difficulty": 825.0,
+      "legacy_id": 1028,
+      "source_orders": [
+        371
+      ]
+    },
+    "minecraft:golden_sword": {
+      "lowest_difficulty": 825.0,
+      "legacy_id": 283,
+      "source_orders": [
+        376
+      ]
+    },
+    "minecraft:iron_sword": {
+      "lowest_difficulty": 1625.0,
+      "legacy_id": 267,
+      "source_orders": [
+        373
+      ]
+    },
+    "mite:silver_sword": {
+      "lowest_difficulty": 825.0,
+      "legacy_id": 1029,
+      "source_orders": [
+        372
+      ]
+    },
+    "mite:rusted_iron_sword": {
+      "lowest_difficulty": 825.0,
+      "legacy_id": 1032,
+      "source_orders": []
+    },
+    "mite:ancient_metal_sword": {
+      "lowest_difficulty": 3225.0,
+      "legacy_id": 1248,
+      "source_orders": [
+        377
+      ]
+    },
+    "mite:mithril_sword": {
+      "lowest_difficulty": 12825.0,
+      "legacy_id": 1030,
+      "source_orders": [
+        374
+      ]
+    },
+    "mite:adamantium_sword": {
+      "lowest_difficulty": 51225.0,
+      "legacy_id": 1031,
+      "source_orders": [
+        375
+      ]
+    },
+    "mite:copper_battle_axe": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 1004,
+      "source_orders": [
+        4
+      ]
+    },
+    "mite:silver_battle_axe": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 1005,
+      "source_orders": [
+        9
+      ]
+    },
+    "mite:golden_battle_axe": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 1006,
+      "source_orders": [
+        29
+      ]
+    },
+    "mite:rusted_iron_battle_axe": {
+      "lowest_difficulty": 1650.0,
+      "legacy_id": 1010,
+      "source_orders": []
+    },
+    "mite:iron_battle_axe": {
+      "lowest_difficulty": 3250.0,
+      "legacy_id": 1007,
+      "source_orders": [
+        14
+      ]
+    },
+    "mite:ancient_metal_battle_axe": {
+      "lowest_difficulty": 6450.0,
+      "legacy_id": 1245,
+      "source_orders": [
+        34
+      ]
+    },
+    "mite:mithril_battle_axe": {
+      "lowest_difficulty": 25650.0,
+      "legacy_id": 1008,
+      "source_orders": [
+        19
+      ]
+    },
+    "mite:adamantium_battle_axe": {
+      "lowest_difficulty": 102450.0,
+      "legacy_id": 1009,
+      "source_orders": [
+        24
+      ]
+    },
+    "mite:copper_war_hammer": {
+      "lowest_difficulty": 2050.0,
+      "legacy_id": 990,
+      "source_orders": [
+        5
+      ]
+    },
+    "mite:silver_war_hammer": {
+      "lowest_difficulty": 2050.0,
+      "legacy_id": 991,
+      "source_orders": [
+        10
+      ]
+    },
+    "mite:golden_war_hammer": {
+      "lowest_difficulty": 2050.0,
+      "legacy_id": 992,
+      "source_orders": [
+        30
+      ]
+    },
+    "mite:rusted_iron_war_hammer": {
+      "lowest_difficulty": 2050.0,
+      "legacy_id": 996,
+      "source_orders": []
+    },
+    "mite:iron_war_hammer": {
+      "lowest_difficulty": 4050.0,
+      "legacy_id": 993,
+      "source_orders": [
+        15
+      ]
+    },
+    "mite:ancient_metal_war_hammer": {
+      "lowest_difficulty": 8050.0,
+      "legacy_id": 1243,
+      "source_orders": [
+        35
+      ]
+    },
+    "mite:mithril_war_hammer": {
+      "lowest_difficulty": 32050.0,
+      "legacy_id": 994,
+      "source_orders": [
+        20
+      ]
+    },
+    "mite:adamantium_war_hammer": {
+      "lowest_difficulty": 128050.0,
+      "legacy_id": 995,
+      "source_orders": [
+        25
+      ]
+    },
+    "minecraft:shears": {
+      "lowest_difficulty": 1600.0,
+      "legacy_id": 359,
+      "source_orders": [
+        291
+      ]
+    },
+    "minecraft:wooden_shovel": {
+      "lowest_difficulty": 130.0,
+      "legacy_id": 269,
+      "source_orders": [
+        362
+      ]
+    },
+    "minecraft:leather_helmet": {
+      "lowest_difficulty": 500.0,
+      "legacy_id": 298,
+      "source_orders": [
+        240
+      ]
+    },
+    "minecraft:leather_chestplate": {
+      "lowest_difficulty": 800.0,
+      "legacy_id": 299,
+      "source_orders": [
+        107
+      ]
+    },
+    "minecraft:leather_leggings": {
+      "lowest_difficulty": 700.0,
+      "legacy_id": 300,
+      "source_orders": [
+        108
+      ]
+    },
+    "minecraft:leather_boots": {
+      "lowest_difficulty": 400.0,
+      "legacy_id": 301,
+      "source_orders": [
+        241
+      ]
+    },
+    "minecraft:chainmail_helmet": {
+      "lowest_difficulty": 1777.7777,
+      "legacy_id": 302,
+      "source_orders": [
+        250
+      ]
+    },
+    "minecraft:chainmail_chestplate": {
+      "lowest_difficulty": 2844.4443,
+      "legacy_id": 303,
+      "source_orders": [
+        117
+      ]
+    },
+    "minecraft:chainmail_leggings": {
+      "lowest_difficulty": 2488.8887,
+      "legacy_id": 304,
+      "source_orders": [
+        118
+      ]
+    },
+    "minecraft:chainmail_boots": {
+      "lowest_difficulty": 1422.2222,
+      "legacy_id": 305,
+      "source_orders": [
+        251
+      ]
+    },
+    "minecraft:iron_helmet": {
+      "lowest_difficulty": 4000.0,
+      "legacy_id": 306,
+      "source_orders": [
+        264
+      ]
+    },
+    "minecraft:iron_chestplate": {
+      "lowest_difficulty": 6400.0,
+      "legacy_id": 307,
+      "source_orders": [
+        131
+      ]
+    },
+    "minecraft:iron_leggings": {
+      "lowest_difficulty": 5600.0,
+      "legacy_id": 308,
+      "source_orders": [
+        132
+      ]
+    },
+    "minecraft:iron_boots": {
+      "lowest_difficulty": 3200.0,
+      "legacy_id": 309,
+      "source_orders": [
+        265
+      ]
+    },
+    "minecraft:golden_helmet": {
+      "lowest_difficulty": 2000.0,
+      "legacy_id": 314,
+      "source_orders": [
+        262
+      ]
+    },
+    "minecraft:golden_chestplate": {
+      "lowest_difficulty": 3200.0,
+      "legacy_id": 315,
+      "source_orders": [
+        129
+      ]
+    },
+    "minecraft:golden_leggings": {
+      "lowest_difficulty": 2800.0,
+      "legacy_id": 316,
+      "source_orders": [
+        130
+      ]
+    },
+    "minecraft:golden_boots": {
+      "lowest_difficulty": 1600.0,
+      "legacy_id": 317,
+      "source_orders": [
+        263
+      ]
+    },
+    "minecraft:bow": {
+      "lowest_difficulty": 150.0,
+      "legacy_id": 261,
+      "source_orders": [
+        37,
+        40
+      ]
+    },
+    "minecraft:stone_pickaxe": {
+      "lowest_difficulty": 350,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:stone_axe": {
+      "lowest_difficulty": 350,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:stone_shovel": {
+      "lowest_difficulty": 150,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:stone_hoe": {
+      "lowest_difficulty": 250,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:stone_sword": {
+      "lowest_difficulty": 225,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:diamond_pickaxe": {
+      "lowest_difficulty": 4850,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:diamond_axe": {
+      "lowest_difficulty": 4850,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:diamond_shovel": {
+      "lowest_difficulty": 1650,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:diamond_hoe": {
+      "lowest_difficulty": 3250,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:diamond_sword": {
+      "lowest_difficulty": 3225,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:netherite_pickaxe": {
+      "lowest_difficulty": 9650,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:netherite_axe": {
+      "lowest_difficulty": 9650,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:netherite_shovel": {
+      "lowest_difficulty": 3250,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:netherite_hoe": {
+      "lowest_difficulty": 6450,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:netherite_sword": {
+      "lowest_difficulty": 6425,
+      "modern_adaptation": "MITE material component difficulty 100*durability factor, plus 25 per stick; existing modern recipe shape retained"
+    },
+    "minecraft:diamond_helmet": {
+      "lowest_difficulty": 8000,
+      "modern_adaptation": "MITE metal armor formula with the previously declared modern material durability factor"
+    },
+    "minecraft:diamond_chestplate": {
+      "lowest_difficulty": 12800,
+      "modern_adaptation": "MITE metal armor formula with the previously declared modern material durability factor"
+    },
+    "minecraft:diamond_leggings": {
+      "lowest_difficulty": 11200,
+      "modern_adaptation": "MITE metal armor formula with the previously declared modern material durability factor"
+    },
+    "minecraft:diamond_boots": {
+      "lowest_difficulty": 6400,
+      "modern_adaptation": "MITE metal armor formula with the previously declared modern material durability factor"
+    },
+    "minecraft:netherite_helmet": {
+      "lowest_difficulty": 16000,
+      "modern_adaptation": "MITE metal armor formula with the previously declared modern material durability factor"
+    },
+    "minecraft:netherite_chestplate": {
+      "lowest_difficulty": 25600,
+      "modern_adaptation": "MITE metal armor formula with the previously declared modern material durability factor"
+    },
+    "minecraft:netherite_leggings": {
+      "lowest_difficulty": 22400,
+      "modern_adaptation": "MITE metal armor formula with the previously declared modern material durability factor"
+    },
+    "minecraft:netherite_boots": {
+      "lowest_difficulty": 12800,
+      "modern_adaptation": "MITE metal armor formula with the previously declared modern material durability factor"
+    },
+    "minecraft:wooden_hoe": {
+      "lowest_difficulty": 150,
+      "modern_adaptation": "two wood components at 50 and two sticks at 25; no R196 wooden hoe recipe"
+    }
+  }
+}

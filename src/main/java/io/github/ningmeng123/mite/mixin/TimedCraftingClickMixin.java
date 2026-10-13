@@ -18,7 +18,10 @@ public abstract class TimedCraftingClickMixin {
         AbstractContainerMenu menu = (AbstractContainerMenu)(Object)this;
         if (slot != 0 || !TimedCraftingController.isTimed(player, menu)) return;
         if (player instanceof ServerPlayer serverPlayer) {
-            if (type == ClickType.PICKUP && button == 1) TimedCraftingController.cancel(serverPlayer);
+            if (type == ClickType.PICKUP && button == 1) {
+                if (TimedCraftingController.isActive(serverPlayer)) TimedCraftingController.cancel(serverPlayer);
+                else TimedCraftingController.selectQuality(serverPlayer, menu, 1);
+            }
             else if ((type == ClickType.PICKUP || type == ClickType.QUICK_MOVE) && button == 0) {
                 TimedCraftingController.start(serverPlayer, menu, type == ClickType.QUICK_MOVE);
             }
@@ -29,6 +32,6 @@ public abstract class TimedCraftingClickMixin {
 
     @Inject(method = "removed", at = @At("HEAD"))
     private void mite$cancelOnClose(Player player, CallbackInfo ci) {
-        if (player instanceof ServerPlayer serverPlayer) TimedCraftingController.cancel(serverPlayer);
+        if (player instanceof ServerPlayer serverPlayer) TimedCraftingController.forget(serverPlayer);
     }
 }

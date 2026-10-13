@@ -47,7 +47,7 @@ public final class DeathExperienceGameTests {
         try {
             keep.set(false, helper.getLevel().getServer());
             loot.set(false, helper.getLevel().getServer());
-            int[][] cases = {{20, 0}, {19, -1}, {0, -20}, {-1, -21}, {-20, -40},
+            int[][] cases = {{819520, 0}, {491840, 0}, {20, 0}, {19, -1}, {0, -20}, {-1, -21}, {-20, -40},
                     {-779, -799}, {-780, -800}, {-799, -800}, {-800, -800}};
             for (int[] entry : cases) {
                 PlayerExperience.setTotal(player, entry[0]);
@@ -86,7 +86,7 @@ public final class DeathExperienceGameTests {
         try {
             keep.set(true, helper.getLevel().getServer());
             loot.set(true, helper.getLevel().getServer());
-            for (int total : new int[]{493, -1, -800}) {
+            for (int total : new int[]{819520, 491840, 493, -1, -800}) {
                 PlayerExperience.setTotal(player, total);
                 prepareDeathPosition(helper, player);
                 helper.assertValueEqual(player.getExperienceReward(helper.getLevel(), null), 0,
@@ -125,7 +125,7 @@ public final class DeathExperienceGameTests {
     public static void endReturnCopiesExperienceWithoutADeathPenalty(GameTestHelper helper) {
         ServerPlayer player = newPlayer(helper);
         try {
-            for (int total : new int[]{493, -1, -800}) {
+            for (int total : new int[]{819520, 491840, 493, -1, -800}) {
                 PlayerExperience.setTotal(player, total);
                 // A stale saved snapshot must neither charge an End return nor survive it.
                 player.setData(MiteAttachments.RESPAWN_EXPERIENCE,
@@ -244,7 +244,7 @@ public final class DeathExperienceGameTests {
         try {
             keep.set(false, helper.getLevel().getServer());
             loot.set(true, helper.getLevel().getServer());
-            int[][] cases = {{203000, 67666}, {493, 164}, {20, 6}, {19, 6}, {2, 0}, {0, 0}, {-1, 0}, {-800, 0}};
+            int[][] cases = {{819520, 273173}, {491840, 163946}, {203000, 67666}, {493, 164}, {20, 6}, {19, 6}, {2, 0}, {0, 0}, {-1, 0}, {-800, 0}};
             for (int[] entry : cases) {
                 PlayerExperience.setTotal(player, entry[0]);
                 prepareDeathPosition(helper, player);
@@ -325,6 +325,13 @@ public final class DeathExperienceGameTests {
         try {
             keep.set(false, helper.getLevel().getServer());
             loot.set(false, helper.getLevel().getServer());
+            PlayerExperience.setTotal(player, 491840);
+            player.doTick();
+            assertLatestPacket(helper, packets, 491840, 312, 440F / 3140F, "A legendary pick balance synchronizes its continued level and exact total");
+            packets.clear();
+            player.giveExperiencePoints(327680);
+            player.doTick();
+            assertLatestPacket(helper, packets, 819520, 403, 1430F / 4050F, "Growing past 200 uses the existing XP packet without truncation");
             PlayerExperience.setTotal(player, 0);
             player.doTick();
             packets.clear();
@@ -357,11 +364,12 @@ public final class DeathExperienceGameTests {
 
     @GameTest(template = "empty")
     public static void experiencePacketCodecRoundTripsNegativeValues(GameTestHelper helper) {
-        int[][] cases = {{-800, -40, 0}, {-799, -40, 1}, {-21, -2, 19}, {-20, -1, 0}, {-1, -1, 19}, {0, 0, 0}};
+        int[][] cases = {{-800, -40, 0, 20}, {-799, -40, 1, 20}, {-21, -2, 19, 20}, {-20, -1, 0, 20}, {-1, -1, 19, 20}, {0, 0, 0, 20},
+                {491840, 312, 440, 3140}, {819520, 403, 1430, 4050}, {2147483647, 20722, 166397, 207240}};
         for (int[] entry : cases) {
             FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
             try {
-                float progress = entry[2] / 20.0F;
+                float progress = (float)entry[2] / entry[3];
                 ClientboundSetExperiencePacket.STREAM_CODEC.encode(buffer,
                         new ClientboundSetExperiencePacket(progress, entry[0], entry[1]));
                 ClientboundSetExperiencePacket decoded = ClientboundSetExperiencePacket.STREAM_CODEC.decode(buffer);
@@ -482,6 +490,10 @@ public final class DeathExperienceGameTests {
             level = Math.floorDiv(expectedTotal, 20);
             points = Math.floorMod(expectedTotal, 20);
             width = 20;
+        } else if (expectedTotal == 819520 || expectedTotal == 491840) {
+            level = expectedTotal == 819520 ? 403 : 312;
+            points = expectedTotal == 819520 ? 1430 : 440;
+            width = expectedTotal == 819520 ? 4050 : 3140;
         } else if (expectedTotal == 493) {
             level = 8;
             points = 53;

@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "title": "017 R196 装备品质规则",
+  "status": "source_and_bytecode_verified_runtime_acceptance_tracked_separately",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_root": ".reference/r196/decompiled",
+  "implementation": "io.github.ningmeng123.mite.rules.EquipmentQualityRules",
+  "activation": {
+    "quality_default_enabled": true,
+    "quality_owner_classes": ["xj:241 tools", "wh:231 armor", "wp:169 bows"],
+    "generic_item_has_quality": false,
+    "professions_server_setting_forced_false": "is:86-87",
+    "modern_skills_and_clumsiness": "Pure-rule parameters exist; runtime must not pretend these unimplemented gameplay states are active."
+  },
+  "tiers": [
+    {"ordinal": 0, "id": "wretched", "zh_cn": "粗劣", "durability_multiplier": 0.5, "difficulty_multiplier": 1, "charge_quality_xp": false},
+    {"ordinal": 1, "id": "poor", "zh_cn": "劣质", "durability_multiplier": 0.75, "difficulty_multiplier": 1, "charge_quality_xp": false},
+    {"ordinal": 2, "id": "average", "zh_cn": "普通", "durability_multiplier": 1, "difficulty_multiplier": 1, "charge_quality_xp": false},
+    {"ordinal": 3, "id": "fine", "zh_cn": "优良", "durability_multiplier": 1.5, "difficulty_multiplier": 2, "charge_quality_xp": true},
+    {"ordinal": 4, "id": "excellent", "zh_cn": "优秀", "durability_multiplier": 2, "difficulty_multiplier": 4, "charge_quality_xp": true},
+    {"ordinal": 5, "id": "superb", "zh_cn": "精良", "durability_multiplier": 2.5, "difficulty_multiplier": 8, "charge_quality_xp": true},
+    {"ordinal": 6, "id": "masterwork", "zh_cn": "大师", "durability_multiplier": 3, "difficulty_multiplier": 16, "charge_quality_xp": true},
+    {"ordinal": 7, "id": "legendary", "zh_cn": "传奇", "durability_multiplier": 3.5, "difficulty_multiplier": 32, "charge_quality_xp": true}
+  ],
+  "material_maximum": {
+    "leather": "fine", "wood": "fine", "flint": "fine", "obsidian": "fine", "rusted_iron": "poor",
+    "copper": "excellent", "silver": "excellent", "gold": "superb", "iron": "masterwork",
+    "ancient_metal": "masterwork", "mithril": "legendary", "adamantium": "legendary",
+    "netherrack": "average", "glass": "average", "quartz": "fine", "emerald": "excellent", "diamond": "superb"
+  },
+  "rules": [
+    {
+      "id": "default_and_material_cap",
+      "source": ["EnumEquipmentMaterial:5-21", "yc:1237-1257", "ye:928-955"],
+      "formula": "default=min(materialMaximum,average); setQuality clamps values exceeding materialMaximum",
+      "multi_material": "If minimum material max quality is below average use minimum; otherwise use highest material max quality."
+    },
+    {
+      "id": "minimum",
+      "source": ["uf:2184-2196"],
+      "formula": "clamp(2 + javaTruncatingDivision(level-(clumsy?20:0),10),0,2)",
+      "skills": "Only when skills enabled and applicable skill missing: cap minimum at poor.",
+      "effective_stack": "Additionally capped by material maximum through ye.setQuality."
+    },
+    {
+      "id": "maximum",
+      "source": ["uf:2199-2216"],
+      "rule": "totalXp<=0 or missing enabled skill returns minimum; otherwise descend material maximum through fine and return first candidate whose rounded XP cost <= totalXp; none affordable returns minimum.",
+      "points_not_levels": true,
+      "inclusive_cost_boundary": true
+    },
+    {
+      "id": "difficulty",
+      "source": ["CraftingResult:29-46"],
+      "formula": "Dq=D*2^max(q.ordinal-2,0), implemented as float multiplication by 2 for each tier above average",
+      "null_quality": "D unchanged",
+      "override": "quality_override replaces selected quality"
+    },
+    {
+      "id": "experience",
+      "source": ["uf:2219-2225", "wd:279-287"],
+      "candidate_cost": "Math.round(Dq/5F)*(clumsy?2:1)",
+      "actual_cost": "0 when no quality, quality<=average, or exempt; candidate cost otherwise",
+      "round_then_multiply": true,
+      "server_responsibility": "Compute from trusted recipe/state, validate and debit only once per successful output. Never accept old client-computed XP cost."
+    },
+    {
+      "id": "time",
+      "source": ["bex:450-503"],
+      "base_period": "Dq<25 ? 25 : Dq>100 ? (int)Math.round(Math.pow((double)(Dq-100F),(double)0.8F))+100 : Math.round(Dq)",
+      "period": "(int)Math.max((float)(basePeriod*(clumsy?2:1))/((1F+level*.02F)+benchModifier),25F)",
+      "xp_exemption_does_not_exempt_quality_time": true
+    },
+    {
+      "id": "selection",
+      "source": ["wd:174-210", "wd:250-259", "wd:312-331", "MITEContainerCrafting:67-69"],
+      "initial": "minimum allowed quality",
+      "right_click": "advance one ordinal, wrap maximum to minimum",
+      "fixed_override": "cannot cycle",
+      "changed_selection": "reset manufacturing progress",
+      "invalidated_by_xp": "clamp to legal range and stop previous manufacturing"
+    },
+    {
+      "id": "paid_completion_stops_repeat",
+      "source": ["MITEContainerCrafting:85-97"],
+      "rule": "After one successful output, positive actual quality XP cost sets crafting_proceed=false; reset ticks for every completion.",
+      "modern_interaction": "Preserve accepted ordinary-left-click single and Shift-left-click repeat; paid quality stops after one even if Shift requested."
+    },
+    {
+      "id": "combine_repair",
+      "source": ["aaf:288-321"],
+      "eligibility_difficulty": "item lowest full manufacturing difficulty",
+      "requirement": "input quality <= player maximum quality computed with full difficulty",
+      "actual_base_difficulty": "lowest full manufacturing difficulty / 2F",
+      "quality_override": "input quality",
+      "xp_exempt": true,
+      "other_requirements": "same item, one each, both damaged, same quality, no enchantments, same dye if dyed"
+    },
+    {
+      "id": "leather_thread_repair",
+      "source": ["aaf:323-353"],
+      "eligibility_difficulty": "item lowest full manufacturing difficulty",
+      "actual_base_difficulty": "50 * consumed thread count",
+      "quality_override": "input quality",
+      "xp_exempt": true,
+      "status_note": "Caller must separately implement and verify the repair recipe, amount and consumption."
+    },
+    {
+      "id": "leather_dye",
+      "source": ["zw:45-60", "zw:100-101", "wd:164-168"],
+      "actual_base_difficulty": 100,
+      "quality_override": "input armor quality",
+      "xp_exempt": true,
+      "preserve_damage_and_components": true,
+      "damaged_input": "blocked by normal non-repair crafting restriction"
+    },
+    {
+      "id": "anvil_quality_eligibility",
+      "source": ["va:85-96"],
+      "rule": "For repair, quality must be within full manufacturing difficulty eligibility; anvil-specific costs remain separate."
+    },
+    {
+      "id": "mob_generated_equipment",
+      "source": ["ye:855-883", "og:838-839", "tn:152", "tr:215"],
+      "rule": "Mob randomization lowers unenchanted average-or-higher wood/leather one quality tier before damage; selected skeleton constructors force poor; natural held low-quality heavily damaged equipment participates in extra drop suppression.",
+      "status_note": "Equipment origin/loot chain must be tracked independently from player crafting implementation."
+    },
+    {
+      "id": "persistence_and_transfer",
+      "source": ["ye:122-123", "ye:169", "ye:366", "ye:451", "ey:182", "ey:199", "ank:214-215", "any:146-147", "aok:169-170", "aot:130-131", "vm:220-221"],
+      "rule": "Quality stored, synchronized, copied and compared; preserve through inventories, hoppers, furnace movement, relog and save reload."
+    }
+  ],
+  "test_vectors": {
+    "copper_pickaxe": {"base_difficulty": 1250, "maximum_material_quality": "excellent", "fine_xp": 500, "excellent_xp": 1000, "at_499": "average", "at_500": "fine", "at_999": "fine", "at_1000": "excellent"},
+    "iron_pickaxe": {"base_difficulty": 2450, "fine_xp": 980, "excellent_xp": 1960, "superb_xp": 3920, "masterwork_xp": 7840},
+    "negative_level_minima": [{"level": -20, "quality": "wretched"}, {"level": -19, "quality": "poor"}, {"level": -10, "quality": "poor"}, {"level": -9, "quality": "average"}, {"level": -1, "quality": "average"}],
+    "clumsy_minima": [{"level": 0, "quality": "wretched"}, {"level": 1, "quality": "poor"}, {"level": 10, "quality": "poor"}, {"level": 11, "quality": "average"}],
+    "time_d100_level0_bench02": {"average_ticks": 83, "fine_ticks": 116, "fine_clumsy_ticks": 233},
+    "rounding": {"adjusted_difficulty": 3, "clumsy": true, "expected_cost": 2}
+  },
+  "modern_adaptation_boundaries": [
+    "User-requested adaptation (2026-10-13): selection previews the full material-supported range regardless of XP; manufacture and repair retain source XP eligibility. XP loss stops a batch without downgrading the selected preview; regaining XP requires a new start action.",
+    "Automated crafter has no R196 counterpart: explicitly define operatorless quality/XP policy.",
+    "Modern-only item material and manufacture-difficulty mappings require separate evidence labels.",
+    "Full professions, clumsiness gameplay, anvil rules and mob equipment generation are not proven implemented by this pure rule dataset.",
+    "Use existing bytecode-verified ExperienceRules 5L^2+15L, not the misleading CFR preincrement expression."
+  ]
+}

@@ -33,9 +33,14 @@ public abstract class ExperienceCommandMixin {
     private static void mite$rejectOutOfRangeLevel(CommandSourceStack source, Collection<ServerPlayer> players,
                                                     int amount, @Coerce Object type,
                                                     CallbackInfoReturnable<Integer> cir) throws CommandSyntaxException {
-        if (((Enum<?>) type).name().equals("LEVELS") && amount > ExperienceRules.MAX_LEVEL) {
+        if (((Enum<?>) type).name().equals("LEVELS") && amount > ExperienceRules.MAX_REPRESENTABLE_LEVEL) {
             throw new SimpleCommandExceptionType(Component.translatable("commands.mite.experience.level_too_high",
-                    ExperienceRules.MAX_LEVEL)).create();
+                    ExperienceRules.MAX_REPRESENTABLE_LEVEL)).create();
+        }
+        if (((Enum<?>) type).name().equals("POINTS") && players.stream().anyMatch(player ->
+                (long)ExperienceRules.experienceRequiredForLevel(player.experienceLevel) + amount
+                        > ExperienceRules.MAX_TOTAL_EXPERIENCE)) {
+            throw new SimpleCommandExceptionType(Component.translatable("commands.mite.experience.points_overflow")).create();
         }
     }
 }

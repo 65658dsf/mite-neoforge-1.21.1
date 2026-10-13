@@ -25,6 +25,7 @@ public final class WorkbenchRules {
             case "rusted_iron", "copper", "silver", "gold" -> 4F;
             case "iron" -> 8F;
             case "ancient_metal", "diamond" -> 16F;
+            case "netherite" -> 32F;
             case "mithril" -> 64F;
             case "adamantium" -> 256F;
             default -> 0F;

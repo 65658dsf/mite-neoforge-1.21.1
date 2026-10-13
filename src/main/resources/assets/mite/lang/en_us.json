@@ -18,7 +18,8 @@
   "block.minecraft.crafting_table": "Crafting Table (Disabled)",
   "tooltip.mite.planks_require_workbench": "Plank processing requires a workbench or crafter",
   "item.minecraft.wooden_sword": "Wooden Club",
-  "commands.mite.experience.level_too_high": "MITE's maximum experience level is %s. No target's experience was changed.",
+  "commands.mite.experience.level_too_high": "The requested level requires more XP than vanilla integer storage can represent (through level %s). No target's experience was changed.",
+  "commands.mite.experience.points_overflow": "These points within the level would overflow vanilla's integer XP storage. No target's experience was changed.",
   "item.mite.flint_chip": "Flint Chip",
   "item.mite.sinew": "Sinew",
   "item.mite.flint_hatchet": "Flint Hatchet",
@@ -140,5 +141,15 @@
   "screen.mite.crafting_progress": "Crafting %s%% - right-click result to cancel",
   "screen.mite.crafting_paused": "Crafting %s%% - paused: food needed",
   "tooltip.mite.timed_crafting": "Click the result to craft; completed items enter your inventory",
-  "message.mite.tool_tier_too_low": "This tool type or material tier cannot harvest this block."
+  "message.mite.tool_tier_too_low": "This tool type or material tier cannot harvest this block.",
+  "screen.mite.quality_range": "Available quality: %s - %s",
+  "screen.mite.quality_cost": "Batch cost: %s XP points",
+  "screen.mite.quality_time": "Crafting time: %s seconds",
+  "screen.mite.quality_unaffordable": "Requirements not met: check XP, ingredients and workbench",
+  "screen.mite.quality_running": "Crafting: right-click the result to cancel before changing quality",
+  "screen.mite.quality_fixed": "Only this quality is currently available",
+  "screen.mite.quality_select": "Use arrows or right-click an idle result to change quality",
+  "screen.mite.quality_preview": "Higher qualities can be previewed without enough XP, but cannot be crafted",
+  "screen.mite.quality_click_modes": "Left-click: one batch; Shift-click: continuous batches",
+  "screen.mite.quality_paid_single": "Paid-quality crafting stops after every batch"
 }

@@ -93,6 +93,8 @@ public final class EquipmentDurability {
     }
 
     private static void modifyArmorDefaults(ModifyDefaultComponentsEvent event) {
+        // wp (R196 ItemBow) has quality but is not an xj mining/melee tool.
+        event.modify(Items.BOW, b -> b.set(DataComponents.MAX_DAMAGE, 32));
         ARMOR.forEach((item, profile) -> event.modify(item, b -> b
                 .set(DataComponents.MAX_DAMAGE, EquipmentDurabilityRules.baseArmorDurability(profile))));
     }
@@ -102,9 +104,10 @@ public final class EquipmentDurability {
     }
 
     public static ArmorProfile armorProfile(ItemStack stack) { return ARMOR.get(stack.getItem()); }
-    public static boolean isManaged(ItemStack stack) { return toolProfile(stack) != null || armorProfile(stack) != null; }
+    public static boolean isManaged(ItemStack stack) { return toolProfile(stack) != null || armorProfile(stack) != null || stack.is(Items.BOW); }
 
     public static Quality maximumQuality(ItemStack stack) {
+        if (stack.is(Items.BOW)) return Quality.FINE;
         ToolProfile tool = toolProfile(stack);
         if (tool != null) return tool.maxQuality();
         ArmorProfile armor = armorProfile(stack);

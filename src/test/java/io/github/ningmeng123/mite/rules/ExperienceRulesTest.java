@@ -64,7 +64,8 @@ class ExperienceRulesTest {
     @ParameterizedTest(name = "negative/out-of-range level {0} starts at {1} XP")
     @CsvSource({
             "-2147483648, -800", "-41, -800", "-40, -800", "-39, -780",
-            "-2, -40", "-1, -20", "201, 2147483647", "2147483647, 2147483647"
+            "-2, -40", "-1, -20", "201, 205020", "312, 491400", "403, 818090",
+            "20722, 2147317250", "20723, 2147483647", "2147483647, 2147483647"
     })
     void safelyResolvesThresholdsOutsideThePositiveTable(int level, int expected) {
         assertEquals(expected, ExperienceRules.experienceRequiredForLevel(level));
@@ -91,24 +92,26 @@ class ExperienceRulesTest {
     @CsvSource({
             "-2147483648, 20", "-41, 20", "-40, 20", "-1, 20",
             "0, 20", "1, 30", "4, 60", "5, 70", "9, 110", "10, 120",
-            "34, 360", "35, 370", "199, 2010", "200, 2147280647",
-            "201, 2147280647", "2147483647, 2147280647"
+            "34, 360", "35, 370", "199, 2010", "200, 2020",
+            "201, 2030", "312, 3140", "403, 4050", "20722, 207240", "2147483647, 2147483647"
     })
-    void givesFullLevelWidthIncludingTheOriginalUpperSentinel(int level, int expectedWidth) {
+    void continuesTheOriginalLevelWidthFormulaPast200(int level, int expectedWidth) {
         assertEquals(expectedWidth, ExperienceRules.experienceNeededForNextLevel(level));
     }
 
     @Test
-    void upperSentinelTerminatesAtLevel200WithoutWrappingOrCreatingLevel201() {
+    void continuedLevelsAndIntBoundaryTerminateWithoutWrapping() {
         assertTimeoutPreemptively(Duration.ofSeconds(2), () -> {
             assertEquals(199, ExperienceRules.levelForTotalExperience(202999));
             assertEquals(200, ExperienceRules.levelForTotalExperience(203000));
             assertEquals(200, ExperienceRules.levelForTotalExperience(203001));
             assertEquals(1, ExperienceRules.experienceWithinLevel(203001));
-            assertEquals(200, ExperienceRules.levelForTotalExperience(Integer.MAX_VALUE - 1));
-            assertEquals(200, ExperienceRules.levelForTotalExperience(Integer.MAX_VALUE));
-            assertEquals(2147280647, ExperienceRules.experienceWithinLevel(Integer.MAX_VALUE));
-            assertEquals(1.0f, ExperienceRules.progressForTotalExperience(Integer.MAX_VALUE));
+            assertEquals(200, ExperienceRules.levelForTotalExperience(205019));
+            assertEquals(201, ExperienceRules.levelForTotalExperience(205020));
+            assertEquals(20722, ExperienceRules.levelForTotalExperience(Integer.MAX_VALUE - 1));
+            assertEquals(20722, ExperienceRules.levelForTotalExperience(Integer.MAX_VALUE));
+            assertEquals(166397, ExperienceRules.experienceWithinLevel(Integer.MAX_VALUE));
+            assertEquals(166397F / 207240F, ExperienceRules.progressForTotalExperience(Integer.MAX_VALUE));
         });
     }
 
@@ -116,6 +119,7 @@ class ExperienceRulesTest {
     @CsvSource({
             "-9223372036854775808, -800", "-2147483648, -800", "-801, -800",
             "-800, -800", "-1, -1", "0, 0", "203000, 203000", "203001, 203001",
+            "491840, 491840", "819520, 819520", "2147483646, 2147483646",
             "2147483647, 2147483647", "2147483648, 2147483647",
             "9223372036854775807, 2147483647"
     })
@@ -129,11 +133,22 @@ class ExperienceRulesTest {
             "-799, -1, -800", "-800, -1, -800", "-800, 1, -799",
             "203000, 1, 203001", "2147483646, 1, 2147483647",
             "2147483647, 1, 2147483647", "2147483647, 2147483647, 2147483647",
+            "819520, -491840, 327680", "491840, -491840, 0", "819520, -819520, 0",
             "0, -2147483648, -800", "-800, -2147483648, -800",
             "-2147483648, -2147483648, -800", "2147483647, -2147483648, -1",
             "-2147483648, 2147483647, -1"
     })
     void addsOrSpendsExperienceWithoutIntOverflow(int total, int delta, int expected) {
         assertEquals(expected, ExperienceRules.addTotalExperience(total, delta));
+    }
+
+    @ParameterizedTest(name = "total {0}: continued level {1}, points {2}, width {3}")
+    @CsvSource({"203001, 200, 1, 2020", "205020, 201, 0, 2030", "491840, 312, 440, 3140",
+            "819520, 403, 1430, 4050", "2147483647, 20722, 166397, 207240"})
+    void level200DoesNotStopTheQuadraticCurve(int total, int level, int expectedPoints, int width) {
+        assertEquals(level, ExperienceRules.levelForTotalExperience(total));
+        assertEquals(expectedPoints, ExperienceRules.experienceWithinLevel(total));
+        assertEquals(width, ExperienceRules.experienceNeededForNextLevel(level));
+        assertEquals((float)expectedPoints / width, ExperienceRules.progressForTotalExperience(total));
     }
 }

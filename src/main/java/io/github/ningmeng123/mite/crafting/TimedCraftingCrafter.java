@@ -40,9 +40,13 @@ public final class TimedCraftingCrafter {
             return true;
         }
         if (recipe.isEmpty()) return false;
-        TimedCraftingRecipes.Rule rule = TimedCraftingRecipes.get(recipe.get().id());
-        if (rule == null) return false;
         ItemStack result = recipe.get().value().assemble(crafter.asCraftInput(), level.registryAccess());
+        TimedCraftingRecipes.Rule rule = CraftingQuality.rule(recipe.get(), result, crafter.asCraftInput());
+        if (rule == null) return false;
+        // No operator/XP account: automation only manufactures default quality, never selects a paid quality.
+        if (!(recipe.get().value() instanceof net.minecraft.world.item.crafting.ArmorDyeRecipe))
+            io.github.ningmeng123.mite.item.EquipmentDurability.setQuality(result,
+                    io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality.AVERAGE);
         // The Crafter itself is a basic flint-speed device for recipes with no bench requirement.
         float capacity = rule.requiredCapacity() <= 0F ? 1F : 0F;
         for (Direction direction : Direction.values()) capacity = Math.max(capacity,
@@ -62,7 +66,9 @@ public final class TimedCraftingCrafter {
             old.lastTick = level.getGameTime();
             old.progress++;
         }
-        int period = TimedCraftingRules.period(rule.difficulty(), 0,
+        int period = TimedCraftingRules.period(io.github.ningmeng123.mite.rules.EquipmentQualityRules.adjustedDifficulty(
+                rule.difficulty(), io.github.ningmeng123.mite.item.EquipmentDurability.isManaged(result)
+                        ? io.github.ningmeng123.mite.item.EquipmentDurability.quality(result) : null), 0,
                 TimedCraftingRules.benchModifier(capacity, rule.requiredBench() != null), false);
         if (old.progress >= period) {
             JOBS.remove(crafter);

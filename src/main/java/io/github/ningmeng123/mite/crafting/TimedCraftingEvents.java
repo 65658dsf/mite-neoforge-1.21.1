@@ -19,12 +19,12 @@ public final class TimedCraftingEvents {
         if (event.getEntity() instanceof ServerPlayer player) TimedCraftingController.damaged(player, event.getNewDamage());
     }
     @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) TimedCraftingController.cancel(player);
+        if (event.getEntity() instanceof ServerPlayer player) TimedCraftingController.forget(player);
     }
     @SubscribeEvent public static void dimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) TimedCraftingController.cancel(player);
+        if (event.getEntity() instanceof ServerPlayer player) TimedCraftingController.forget(player);
     }
     @SubscribeEvent public static void respawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) TimedCraftingController.cancel(player);
+        if (event.getEntity() instanceof ServerPlayer player) TimedCraftingController.forget(player);
     }
 }

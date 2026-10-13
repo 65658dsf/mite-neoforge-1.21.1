@@ -50,8 +50,7 @@ public abstract class PlayerExperienceMixin {
     @Inject(method = "getXpNeededForNextLevel", at = @At("HEAD"), cancellable = true)
     private void mite$useR196LevelWidth(CallbackInfoReturnable<Integer> cir) {
         int level = ((Player) (Object) this).experienceLevel;
-        cir.setReturnValue(level >= ExperienceRules.MAX_LEVEL
-                ? 1 : ExperienceRules.experienceNeededForNextLevel(level));
+        cir.setReturnValue(ExperienceRules.experienceNeededForNextLevel(level));
     }
 
     @ModifyExpressionValue(method = "onEnchantmentPerformed", at = @At(value = "FIELD",

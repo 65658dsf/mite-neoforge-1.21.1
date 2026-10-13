@@ -36,6 +36,7 @@ public final class Mite {
         EquipmentDurability.register(modBus);
         MiteTools.register(modBus);
         MiteWorkbenches.register(modBus);
+        io.github.ningmeng123.mite.registry.QualityRecipeSerializers.register(modBus);
         DisabledVanillaWorkbench.register(modBus);
         MiteLootModifiers.register(modBus);
         modBus.addListener(WoodenClubBehavior::modifyComponents);

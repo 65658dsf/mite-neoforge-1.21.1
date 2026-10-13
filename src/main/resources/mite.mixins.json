@@ -32,7 +32,15 @@
     "TimedCraftingPickupMixin",
     "TimedCraftingMenuMixin",
     "TimedCraftingCrafterMixin",
-    "TimedCraftingRemainderMixin"
+    "TimedCraftingRemainderMixin",
+    "QualityAnvilMixin",
+    "QualityGrindstoneMixin",
+    "QualityMaintenanceClickMixin",
+    "QualityCombinerQuickMoveMixin",
+    "QualitySmithingMixin",
+    "QualityMobEquipmentMixin",
+    "QualitySpecialMobEquipmentMixin",
+    "QualityRepairConsumptionMixin"
   ],
   "client": [
     "client.GuiFoodMixin",

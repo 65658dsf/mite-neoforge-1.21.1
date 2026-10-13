@@ -1,6 +1,8 @@
 package io.github.ningmeng123.mite.crafting;
 
 import io.github.ningmeng123.mite.network.CraftingProgressPayload;
+import io.github.ningmeng123.mite.network.CraftingQualityPayload;
+import io.github.ningmeng123.mite.rules.EquipmentQualityRules;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +30,12 @@ import net.minecraft.world.phys.AABB;
 public final class TimedCraftingController {
     private static final Map<UUID, Session> SESSIONS = new HashMap<>();
     private static final ThreadLocal<Inventory> COMPLETING_INVENTORY = new ThreadLocal<>();
+    private static final ThreadLocal<Consumption> COMPLETING_CONSUMPTION = new ThreadLocal<>();
+    private static final Map<UUID, CraftingQualityPayload> QUALITY_UPDATES = new HashMap<>();
+    private record Consumption(CraftingContainer grid, int amount) {}
     private record Prepared(AbstractContainerMenu menu, CraftingContainer grid,
-            RecipeHolder<CraftingRecipe> recipe, TimedCraftingRecipes.Rule rule, ItemStack result) {}
+            RecipeHolder<CraftingRecipe> recipe, TimedCraftingRecipes.Rule rule, ItemStack result,
+            CraftingQuality.Result quality) {}
     private static final class Session {
         final Prepared prepared;
         final List<ItemStack> inputs;
@@ -48,12 +54,21 @@ public final class TimedCraftingController {
     private static Prepared prepare(Player player, AbstractContainerMenu menu) {
         if (!(menu instanceof CraftingMenu || menu instanceof InventoryMenu)
                 || !(menu.getSlot(1).container instanceof CraftingContainer grid)) return null;
+        if (grid.isEmpty()) return null;
         var recipe = player.level().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid.asCraftInput(), player.level());
         if (recipe.isEmpty()) return null;
-        TimedCraftingRecipes.Rule rule = TimedCraftingRecipes.get(recipe.get().id());
-        if (rule == null) return null;
-        return new Prepared(menu, grid, recipe.get(), rule,
-                recipe.get().value().assemble(grid.asCraftInput(), player.level().registryAccess()));
+        ItemStack raw = recipe.get().value().assemble(grid.asCraftInput(), player.level().registryAccess());
+        CraftingQuality.Result quality = CraftingQuality.resolve(player, menu, grid, recipe.get(), raw);
+        if (quality == null) return null;
+        if (player instanceof ServerPlayer && quality.quality() != null) {
+            ItemStack display = WorkbenchRules.allows(menu, quality.stack())
+                    && CraftingAccessRules.canCraft(grid, quality.stack()) ? quality.stack() : ItemStack.EMPTY;
+            if (!ItemStack.matches(menu.getSlot(0).getItem(), display)) {
+                menu.getSlot(0).set(display.copy());
+                menu.broadcastChanges();
+            }
+        }
+        return new Prepared(menu, grid, recipe.get(), quality.rule(), quality.stack(), quality);
     }
 
     public static boolean isTimed(Player player, AbstractContainerMenu menu) { return prepare(player, menu) != null; }
@@ -71,7 +86,26 @@ public final class TimedCraftingController {
                 && matches(old.inputs, prepared.grid())) return true;
         SESSIONS.put(player.getUUID(), new Session(prepared, player.level(), continuous));
         show(player, 0, period(player, prepared), false);
+        publishQuality(player, prepared);
         return true;
+    }
+
+    public static boolean isActive(ServerPlayer player) { return SESSIONS.containsKey(player.getUUID()); }
+
+    public static void selectQuality(ServerPlayer player, AbstractContainerMenu menu, int direction) {
+        if (player.containerMenu != menu || direction != 1 && direction != -1 || !menu.stillValid(player)) return;
+        Prepared prepared = prepare(player, menu);
+        if (prepared == null || prepared.quality().quality() == null || prepared.quality().fixed()) return;
+        cancel(player);
+        CraftingQuality.select(player, menu, prepared.quality(), direction);
+        publishQuality(player, prepare(player, menu));
+    }
+
+    public static void forget(ServerPlayer player) {
+        cancel(player);
+        CraftingQuality.clear(player);
+        CraftingQualityPayload old = QUALITY_UPDATES.remove(player.getUUID());
+        if (old != null) CraftingQualityPayload.send(player, old.containerId(), 0, 0, 0, 0, 0, false, false, false);
     }
 
     public static void cancel(ServerPlayer player) {
@@ -81,6 +115,7 @@ public final class TimedCraftingController {
     public static void inputsChanged(AbstractContainerMenu menu) {
         var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
         if (server == null || !server.isSameThread()) return;
+        CraftingQuality.inputsChanged(menu);
         SESSIONS.entrySet().removeIf(entry -> {
             Session session = entry.getValue();
             if (session.prepared.menu() != menu || matches(session.inputs, session.prepared.grid())) return false;
@@ -99,7 +134,8 @@ public final class TimedCraftingController {
     }
     private static int period(ServerPlayer player, Prepared prepared) {
         float capacity = prepared.menu() instanceof WorkbenchAccess access ? access.mite$workbenchCapacity() : 0F;
-        return TimedCraftingRules.period(prepared.rule().difficulty(), player.experienceLevel,
+        return TimedCraftingRules.period(EquipmentQualityRules.adjustedDifficulty(prepared.rule().difficulty(),
+                prepared.quality().quality()), player.experienceLevel,
                 TimedCraftingRules.benchModifier(capacity, prepared.rule().requiredBench() != null), false);
     }
 
@@ -110,9 +146,12 @@ public final class TimedCraftingController {
                 || prepared.result().isEmpty() || !ItemStack.matches(prepared.result(), prepared.menu().getSlot(0).getItem())
                 || capacity < prepared.rule().requiredCapacity()
                 || !WorkbenchRules.allows(prepared.menu(), prepared.result())
-                || !CraftingAccessRules.canCraft(prepared.grid(), prepared.result())) return false;
+                || !CraftingAccessRules.canCraft(prepared.grid(), prepared.result())
+                || !CraftingQuality.canManufacture(player, prepared.quality())
+                || prepared.quality().cost() > 0 && player.totalExperience < prepared.quality().cost()
+                || prepared.quality().repair() && !CraftingQuality.canRepair(player, prepared.result())) return false;
         for (int i = 0; i < prepared.grid().getContainerSize(); i++) {
-            if (prepared.grid().getItem(i).isDamaged()) return false;
+            if (prepared.grid().getItem(i).isDamaged() && !prepared.quality().repair()) return false;
         }
         return true;
     }
@@ -127,9 +166,10 @@ public final class TimedCraftingController {
 
     /** The production player-tick entry; GameTests invoke this same method N times, without bypasses. */
     public static void tick(ServerPlayer player) {
+        Prepared prepared = prepare(player, player.containerMenu);
+        publishQuality(player, prepared);
         Session session = SESSIONS.get(player.getUUID());
         if (session == null) return;
-        Prepared prepared = prepare(player, session.prepared.menu());
         if (player.containerMenu != session.prepared.menu() || player.level() != session.level || prepared == null
                 || !session.prepared.recipe().id().equals(prepared.recipe().id())
                 || !matches(session.inputs, prepared.grid()) || !allowed(player, prepared)) {
@@ -146,25 +186,70 @@ public final class TimedCraftingController {
             if (session.progress % 5 == 0) show(player, session.progress, period, false);
             return;
         }
+        CraftingQuality.Payment payment = CraftingQuality.approvePayment(player, prepared.quality().cost());
+        // Event listeners may change XP, inputs, menus or quality. Recheck after approval before consuming anything.
+        Prepared checked = prepare(player, player.containerMenu);
+        if (payment == null || checked == null || SESSIONS.get(player.getUUID()) != session
+                || player.level() != session.level
+                || checked.menu() != prepared.menu() || !checked.recipe().id().equals(prepared.recipe().id())
+                || !matches(session.inputs, checked.grid()) || !ItemStack.matches(checked.result(), prepared.result())
+                || checked.quality().cost() != prepared.quality().cost() || !allowed(player, checked)) {
+            cancel(player);
+            publishQuality(player, checked);
+            return;
+        }
+        if (player.getFoodData().getFoodLevel() <= 0) {
+            session.progress = Math.min(session.progress, Math.max(period(player, checked) - 1, 0));
+            show(player, session.progress, period(player, checked), true);
+            return;
+        }
+        if (!CraftingQuality.pay(player, payment)) {
+            cancel(player);
+            return;
+        }
         cancel(player);
         var slot = prepared.menu().getSlot(0);
         ItemStack crafted = slot.remove(prepared.result().getCount());
         // Scope the creative-overflow correction to this transaction's own inventory.
         Inventory previous = COMPLETING_INVENTORY.get();
+        Consumption previousConsumption = COMPLETING_CONSUMPTION.get();
         COMPLETING_INVENTORY.set(player.getInventory());
+        COMPLETING_CONSUMPTION.set(new Consumption(prepared.grid(), prepared.quality().consumption()));
         try {
             // onTake uses the actual matched recipe and preserves its container-item remainders.
             slot.onTake(player, crafted);
         } finally {
             if (previous == null) COMPLETING_INVENTORY.remove();
             else COMPLETING_INVENTORY.set(previous);
+            if (previousConsumption == null) COMPLETING_CONSUMPTION.remove();
+            else COMPLETING_CONSUMPTION.set(previousConsumption);
         }
         giveOrDrop(player, crafted);
         prepared.menu().broadcastChanges();
         Prepared next = prepare(player, prepared.menu());
-        if (session.continuous && next != null && next.recipe().id().equals(prepared.recipe().id())) {
+        if (session.continuous && !EquipmentQualityRules.stopAfterCompletion(prepared.quality().cost())
+                && next != null && next.recipe().id().equals(prepared.recipe().id())) {
             start(player, prepared.menu(), true);
         } else show(player, period, period, false);
+        publishQuality(player, next);
+    }
+
+    public static int consumptionFor(CraftingContainer container, int vanillaCount) {
+        Consumption consumption = COMPLETING_CONSUMPTION.get();
+        return consumption != null && consumption.grid() == container ? consumption.amount() : vanillaCount;
+    }
+
+    private static void publishQuality(ServerPlayer player, Prepared prepared) {
+        boolean visible = prepared != null && prepared.quality().quality() != null;
+        CraftingQualityPayload update = visible
+                ? new CraftingQualityPayload(prepared.menu().containerId, prepared.quality().quality().ordinal(),
+                        prepared.quality().range().minimum().ordinal(), prepared.quality().range().maximum().ordinal(),
+                        prepared.quality().cost(), period(player, prepared), true, isActive(player), allowed(player, prepared))
+                : new CraftingQualityPayload(player.containerMenu.containerId, 0, 0, 0, 0, 0, false, false, false);
+        if (visible || QUALITY_UPDATES.containsKey(player.getUUID())) {
+            CraftingQualityPayload previous = QUALITY_UPDATES.put(player.getUUID(), update);
+            if (!update.equals(previous) || player.tickCount % 20 == 0) CraftingQualityPayload.send(player, update);
+        }
     }
 
     public static void damaged(ServerPlayer player, float damage) {

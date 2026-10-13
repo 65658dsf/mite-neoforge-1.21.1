@@ -5,9 +5,9 @@ public final class MiningRules {
     private MiningRules() {
     }
 
-    /** Preserves the original float arithmetic within the supported level range. */
+    /** Preserves R196 float arithmetic; the user's extended levels keep gaining the same bonus. */
     public static float speedMultiplierForLevel(int level) {
-        int boundedLevel = Math.max(ExperienceRules.MIN_LEVEL, Math.min(ExperienceRules.MAX_LEVEL, level));
+        int boundedLevel = Math.max(ExperienceRules.MIN_LEVEL, level);
         return 1.0F + boundedLevel * 0.02F;
     }
 
