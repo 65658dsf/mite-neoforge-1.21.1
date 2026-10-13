@@ -15,6 +15,10 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
     mavenCentral()
+    maven {
+        url = 'https://maven.blamejared.com'
+        content { includeGroup 'mezz.jei' }
+    }
 }
 
 sourceSets.main.resources {
@@ -115,6 +119,9 @@ neoForge {
 }
 
 dependencies {
+    // Optional client integration. JEI is supplied by the player's mods folder, never bundled.
+    compileOnly 'mezz.jei:jei-1.21.1-common-api:19.57.0.451'
+    compileOnly 'mezz.jei:jei-1.21.1-neoforge-api:19.57.0.451'
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'com.google.code.gson:gson:2.10.1'

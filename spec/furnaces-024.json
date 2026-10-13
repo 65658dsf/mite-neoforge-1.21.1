@@ -5138,7 +5138,7 @@
     "source_bytecode_export": "passed",
     "automated_checks": "passed",
     "client_manual": "user_confirmed_passed_2026-10-13",
-    "github": "authorized_by_user_pending_push",
+    "github": "user_authorized_two_separate_feature_commits",
     "junit_tests": 1071,
     "server_gametests": 329,
     "resource_json_checked": 1125,

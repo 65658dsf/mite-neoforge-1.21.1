@@ -257,5 +257,10 @@
   "tooltip.mite.furnace_max_heat": "Maximum furnace heat: %s",
   "tooltip.mite.bucket_melting": "Chance of melting when filled with lava: %s%%",
   "tooltip.mite.furnace_sand_batch": "4 per batch: heat 1 yields sandstone; heat 2+ yields glass",
-  "tooltip.mite.furnace_clay_batch": "Fires 1 to 4 clay balls together per batch"
+  "tooltip.mite.furnace_clay_batch": "Fires 1 to 4 clay balls together per batch",
+  "jei.mite.furnace_required_heat": "Required heat: %s",
+  "jei.mite.furnace_cooking_time": "Cooking time: %s s",
+  "jei.mite.furnace_clay_batch": "Fires 1 to 4 clay balls per batch; fewer inputs or limited output space produce the corresponding number of bricks",
+  "jei.mite.furnace_clay_batch_short": "1 to 4 clay balls per batch",
+  "jei.mite.furnace_fuel_batch": "Shows fuel required for a full batch; short-burning or unstackable fuels must be replenished continuously"
 }

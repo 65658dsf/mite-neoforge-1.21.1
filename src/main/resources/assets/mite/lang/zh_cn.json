@@ -257,5 +257,10 @@
   "tooltip.mite.furnace_max_heat": "最高炉温：%s",
   "tooltip.mite.bucket_melting": "装入岩浆时的熔毁概率：%s%%",
   "tooltip.mite.furnace_sand_batch": "每批需要4个：炉温1烧成砂石，炉温2及以上烧成玻璃",
-  "tooltip.mite.furnace_clay_batch": "每批同时烧制1至4个粘土球"
+  "tooltip.mite.furnace_clay_batch": "每批同时烧制1至4个粘土球",
+  "jei.mite.furnace_required_heat": "所需炉温：%s",
+  "jei.mite.furnace_cooking_time": "烧制时间：%s 秒",
+  "jei.mite.furnace_clay_batch": "每批可烧制1至4个粘土球；输入不足或输出空间有限时，产出相应数量的砖块",
+  "jei.mite.furnace_clay_batch_short": "粘土球每批烧制1至4个",
+  "jei.mite.furnace_fuel_batch": "显示烧完一批所需的燃料数量；短时或不可堆叠燃料需连续补充"
 }
