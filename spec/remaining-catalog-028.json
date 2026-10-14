@@ -1,0 +1,734 @@
+{
+  "author": "NingMeng123",
+  "count": 60,
+  "category_counts": {
+    "红石": 6,
+    "杂项": 12,
+    "材料": 18,
+    "硬币": 6,
+    "武器": 6,
+    "装饰品": 12
+  },
+  "entries": [
+    {
+      "name": "铜门",
+      "url": "https://www.mcmod.cn/item/35750.html",
+      "category": "红石",
+      "modern_id": "minecraft:copper_door",
+      "legacy_id": 1111,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "reuse_vanilla_pending_adaptation"
+    },
+    {
+      "name": "银门",
+      "url": "https://www.mcmod.cn/item/35780.html",
+      "category": "红石",
+      "modern_id": "mite:silver_door",
+      "legacy_id": 1112,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "金门",
+      "url": "https://www.mcmod.cn/item/35781.html",
+      "category": "红石",
+      "modern_id": "mite:golden_door",
+      "legacy_id": 1113,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "远古金属门",
+      "url": "https://www.mcmod.cn/item/105514.html",
+      "category": "红石",
+      "modern_id": "mite:ancient_metal_door",
+      "legacy_id": 1260,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "秘银门",
+      "url": "https://www.mcmod.cn/item/36576.html",
+      "category": "红石",
+      "modern_id": "mite:mithril_door",
+      "legacy_id": 1114,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "艾德曼门",
+      "url": "https://www.mcmod.cn/item/36577.html",
+      "category": "红石",
+      "modern_id": "mite:adamantium_door",
+      "legacy_id": 1115,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "祛魔之瓶",
+      "url": "https://www.mcmod.cn/item/35674.html",
+      "category": "杂项",
+      "modern_id": "mite:bottle_of_disenchanting",
+      "legacy_id": 1214,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "音乐唱片",
+      "url": "https://www.mcmod.cn/item/824163.html",
+      "category": "杂项",
+      "modern_id": "mite:music_disc_descent",
+      "legacy_id": 2277,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "音乐唱片",
+      "url": "https://www.mcmod.cn/item/824164.html",
+      "category": "杂项",
+      "modern_id": "mite:music_disc_legends",
+      "legacy_id": 2279,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "音乐唱片",
+      "url": "https://www.mcmod.cn/item/824165.html",
+      "category": "杂项",
+      "modern_id": "mite:music_disc_underworld",
+      "legacy_id": 2276,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "音乐唱片",
+      "url": "https://www.mcmod.cn/item/824166.html",
+      "category": "杂项",
+      "modern_id": "mite:music_disc_wanderer",
+      "legacy_id": 2278,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "装满石头的铜桶",
+      "url": "https://www.mcmod.cn/item/39434.html",
+      "category": "杂项",
+      "modern_id": "mite:copper_stone_bucket",
+      "legacy_id": 1231,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "装满石头的银桶",
+      "url": "https://www.mcmod.cn/item/39435.html",
+      "category": "杂项",
+      "modern_id": "mite:silver_stone_bucket",
+      "legacy_id": 1232,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "装满石头的金桶",
+      "url": "https://www.mcmod.cn/item/39436.html",
+      "category": "杂项",
+      "modern_id": "mite:gold_stone_bucket",
+      "legacy_id": 1233,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "装满石头的铁桶",
+      "url": "https://www.mcmod.cn/item/39437.html",
+      "category": "杂项",
+      "modern_id": "mite:iron_stone_bucket",
+      "legacy_id": 1234,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "装满石头的远古金属桶",
+      "url": "https://www.mcmod.cn/item/105516.html",
+      "category": "杂项",
+      "modern_id": "mite:ancient_metal_stone_bucket",
+      "legacy_id": 1237,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "装满石头的秘银桶",
+      "url": "https://www.mcmod.cn/item/39438.html",
+      "category": "杂项",
+      "modern_id": "mite:mithril_stone_bucket",
+      "legacy_id": 1235,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "装满石头的艾德曼桶",
+      "url": "https://www.mcmod.cn/item/39439.html",
+      "category": "杂项",
+      "modern_id": "mite:adamantium_stone_bucket",
+      "legacy_id": 1236,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "皮革线",
+      "url": "https://www.mcmod.cn/item/29678.html",
+      "category": "材料",
+      "modern_id": "mite:sinew",
+      "legacy_id": 1174,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "existing_partial"
+    },
+    {
+      "name": "燧石碎片",
+      "url": "https://www.mcmod.cn/item/29621.html",
+      "category": "材料",
+      "modern_id": "mite:flint_chip",
+      "legacy_id": 1121,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "existing_partial"
+    },
+    {
+      "name": "黑曜石碎片",
+      "url": "https://www.mcmod.cn/item/35568.html",
+      "category": "材料",
+      "modern_id": "mite:obsidian_shard",
+      "legacy_id": 1122,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "绿宝石碎片",
+      "url": "https://www.mcmod.cn/item/35569.html",
+      "category": "材料",
+      "modern_id": "mite:emerald_shard",
+      "legacy_id": 1117,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "钻石碎片",
+      "url": "https://www.mcmod.cn/item/35570.html",
+      "category": "材料",
+      "modern_id": "mite:diamond_shard",
+      "legacy_id": 1118,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "下界石英碎片",
+      "url": "https://www.mcmod.cn/item/37884.html",
+      "category": "材料",
+      "modern_id": "mite:quartz_shard",
+      "legacy_id": 1119,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "玻璃碎片",
+      "url": "https://www.mcmod.cn/item/37886.html",
+      "category": "材料",
+      "modern_id": "mite:glass_shard",
+      "legacy_id": 1120,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "铜粒",
+      "url": "https://www.mcmod.cn/item/29624.html",
+      "category": "材料",
+      "modern_id": "mite:copper_nugget",
+      "legacy_id": 956,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "银粒",
+      "url": "https://www.mcmod.cn/item/35566.html",
+      "category": "材料",
+      "modern_id": "mite:silver_nugget",
+      "legacy_id": 957,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "铁粒",
+      "url": "https://www.mcmod.cn/item/36246.html",
+      "category": "材料",
+      "modern_id": "minecraft:iron_nugget",
+      "legacy_id": 958,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "reuse_vanilla_pending_adaptation"
+    },
+    {
+      "name": "远古金属粒",
+      "url": "https://www.mcmod.cn/item/105066.html",
+      "category": "材料",
+      "modern_id": "mite:ancient_metal_nugget",
+      "legacy_id": 961,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "秘银粒",
+      "url": "https://www.mcmod.cn/item/35571.html",
+      "category": "材料",
+      "modern_id": "mite:mithril_nugget",
+      "legacy_id": 959,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "艾德曼粒",
+      "url": "https://www.mcmod.cn/item/35572.html",
+      "category": "材料",
+      "modern_id": "mite:adamantium_nugget",
+      "legacy_id": 960,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "铜锭",
+      "url": "https://www.mcmod.cn/item/29662.html",
+      "category": "材料",
+      "modern_id": "minecraft:copper_ingot",
+      "legacy_id": 962,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "reuse_vanilla_pending_adaptation"
+    },
+    {
+      "name": "银锭",
+      "url": "https://www.mcmod.cn/item/35783.html",
+      "category": "材料",
+      "modern_id": "mite:silver_ingot",
+      "legacy_id": 963,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "远古金属锭",
+      "url": "https://www.mcmod.cn/item/52208.html",
+      "category": "材料",
+      "modern_id": "mite:ancient_metal_ingot",
+      "legacy_id": 966,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "秘银锭",
+      "url": "https://www.mcmod.cn/item/36282.html",
+      "category": "材料",
+      "modern_id": "mite:mithril_ingot",
+      "legacy_id": 964,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "艾德曼锭",
+      "url": "https://www.mcmod.cn/item/36281.html",
+      "category": "材料",
+      "modern_id": "mite:adamantium_ingot",
+      "legacy_id": 965,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "铜币",
+      "url": "https://www.mcmod.cn/item/35563.html",
+      "category": "硬币",
+      "modern_id": "mite:copper_coin",
+      "legacy_id": 1220,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "金币",
+      "url": "https://www.mcmod.cn/item/35564.html",
+      "category": "硬币",
+      "modern_id": "mite:gold_coin",
+      "legacy_id": 1222,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "银币",
+      "url": "https://www.mcmod.cn/item/35565.html",
+      "category": "硬币",
+      "modern_id": "mite:silver_coin",
+      "legacy_id": 1221,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "远古金属币",
+      "url": "https://www.mcmod.cn/item/51526.html",
+      "category": "硬币",
+      "modern_id": "mite:ancient_metal_coin",
+      "legacy_id": 1277,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "秘银币",
+      "url": "https://www.mcmod.cn/item/35567.html",
+      "category": "硬币",
+      "modern_id": "mite:mithril_coin",
+      "legacy_id": 1278,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "艾德曼币",
+      "url": "https://www.mcmod.cn/item/51527.html",
+      "category": "硬币",
+      "modern_id": "mite:adamantium_coin",
+      "legacy_id": 1279,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "秘银弓",
+      "url": "https://www.mcmod.cn/item/37935.html",
+      "category": "武器",
+      "modern_id": "mite:mithril_bow",
+      "legacy_id": 1048,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "远古金属弓",
+      "url": "https://www.mcmod.cn/item/105519.html",
+      "category": "武器",
+      "modern_id": "mite:ancient_metal_bow",
+      "legacy_id": 1251,
+      "metadata": [
+        0
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "褐色粘液球",
+      "url": "https://www.mcmod.cn/item/52140.html",
+      "category": "武器",
+      "modern_id": "mite:ochre_jelly",
+      "legacy_id": 341,
+      "metadata": [
+        1
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "红色史莱姆球",
+      "url": "https://www.mcmod.cn/item/52141.html",
+      "category": "武器",
+      "modern_id": "mite:crimson_blob",
+      "legacy_id": 341,
+      "metadata": [
+        2
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "黑色史莱姆球",
+      "url": "https://www.mcmod.cn/item/52142.html",
+      "category": "武器",
+      "modern_id": "mite:black_pudding",
+      "legacy_id": 341,
+      "metadata": [
+        4
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "灰色史莱姆球",
+      "url": "https://www.mcmod.cn/item/110416.html",
+      "category": "武器",
+      "modern_id": "mite:grey_gelatinous_sphere",
+      "legacy_id": 341,
+      "metadata": [
+        3
+      ],
+      "source_kind": "item",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "铜栅栏",
+      "url": "https://www.mcmod.cn/item/823809.html",
+      "category": "装饰品",
+      "modern_id": "mite:copper_bars",
+      "legacy_id": 213,
+      "metadata": [
+        0
+      ],
+      "source_kind": "block",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "金栅栏",
+      "url": "https://www.mcmod.cn/item/823808.html",
+      "category": "装饰品",
+      "modern_id": "mite:golden_bars",
+      "legacy_id": 215,
+      "metadata": [
+        0
+      ],
+      "source_kind": "block",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "远古金属栅栏",
+      "url": "https://www.mcmod.cn/item/823810.html",
+      "category": "装饰品",
+      "modern_id": "mite:ancient_metal_bars",
+      "legacy_id": 199,
+      "metadata": [
+        0
+      ],
+      "source_kind": "block",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "秘银栅栏",
+      "url": "https://www.mcmod.cn/item/823807.html",
+      "category": "装饰品",
+      "modern_id": "mite:mithril_bars",
+      "legacy_id": 216,
+      "metadata": [
+        0
+      ],
+      "source_kind": "block",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "艾德曼栅栏",
+      "url": "https://www.mcmod.cn/item/823811.html",
+      "category": "装饰品",
+      "modern_id": "mite:adamantium_bars",
+      "legacy_id": 217,
+      "metadata": [
+        0
+      ],
+      "source_kind": "block",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "大丽花",
+      "url": "https://www.mcmod.cn/item/35648.html",
+      "category": "装饰品",
+      "modern_id": "mite:dahlia",
+      "legacy_id": 38,
+      "metadata": [
+        7
+      ],
+      "source_kind": "block",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "郁金香",
+      "url": "https://www.mcmod.cn/item/35649.html",
+      "category": "装饰品",
+      "modern_id": "minecraft:orange_tulip",
+      "legacy_id": 38,
+      "metadata": [
+        5
+      ],
+      "source_kind": "block",
+      "baseline_status": "reuse_vanilla_pending_adaptation"
+    },
+    {
+      "name": "绒球葱",
+      "url": "https://www.mcmod.cn/item/35650.html",
+      "category": "装饰品",
+      "modern_id": "minecraft:allium",
+      "legacy_id": 38,
+      "metadata": [
+        2
+      ],
+      "source_kind": "block",
+      "baseline_status": "reuse_vanilla_pending_adaptation"
+    },
+    {
+      "name": "滨菊",
+      "url": "https://www.mcmod.cn/item/35651.html",
+      "category": "装饰品",
+      "modern_id": "minecraft:oxeye_daisy",
+      "legacy_id": 38,
+      "metadata": [
+        8
+      ],
+      "source_kind": "block",
+      "baseline_status": "reuse_vanilla_pending_adaptation"
+    },
+    {
+      "name": "兰花",
+      "url": "https://www.mcmod.cn/item/35652.html",
+      "category": "装饰品",
+      "modern_id": "minecraft:blue_orchid",
+      "legacy_id": 38,
+      "metadata": [
+        1
+      ],
+      "source_kind": "block",
+      "baseline_status": "reuse_vanilla_pending_adaptation"
+    },
+    {
+      "name": "凋零灌木",
+      "url": "https://www.mcmod.cn/item/37966.html",
+      "category": "装饰品",
+      "modern_id": "mite:witherwood_bush",
+      "legacy_id": 32,
+      "metadata": [
+        1
+      ],
+      "source_kind": "block",
+      "baseline_status": "new_registration_pending"
+    },
+    {
+      "name": "地狱沙砾",
+      "url": "https://www.mcmod.cn/item/37885.html",
+      "category": "装饰品",
+      "modern_id": "mite:nether_gravel",
+      "legacy_id": 13,
+      "metadata": [
+        2
+      ],
+      "source_kind": "block",
+      "baseline_status": "new_registration_pending"
+    }
+  ]
+}

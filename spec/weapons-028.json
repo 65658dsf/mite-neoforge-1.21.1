@@ -1,0 +1,449 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "bows": [
+    {
+      "id": "mite:ancient_metal_bow",
+      "legacy_id": 1251,
+      "material": "ancient_metal",
+      "durability": 64,
+      "maximum_quality": "masterwork",
+      "enchantability": 40,
+      "velocity_multiplier": 1.1,
+      "difficulty": 1750.0,
+      "order": 39,
+      "pattern": [
+        " #X",
+        "#IX",
+        " #X"
+      ],
+      "ingredients": {
+        "#": "minecraft:stick",
+        "X": "minecraft:string",
+        "I": "mite:ancient_metal_ingot"
+      },
+      "source": {
+        "class": "wp",
+        "source_file": "ItemBow.java",
+        "class_sha256": "3b130d99843a7b97d86e3b0ca8633d052e3f383426f760a54ece1c4e9db7aa7d",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_bow",
+      "legacy_id": 1048,
+      "material": "mithril",
+      "durability": 128,
+      "maximum_quality": "legendary",
+      "enchantability": 100,
+      "velocity_multiplier": 1.25,
+      "difficulty": 6550.0,
+      "order": 38,
+      "pattern": [
+        " #X",
+        "#IX",
+        " #X"
+      ],
+      "ingredients": {
+        "#": "minecraft:stick",
+        "X": "minecraft:string",
+        "I": "mite:mithril_ingot"
+      },
+      "source": {
+        "class": "wp",
+        "source_file": "ItemBow.java",
+        "class_sha256": "3b130d99843a7b97d86e3b0ca8633d052e3f383426f760a54ece1c4e9db7aa7d",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "spheres": [
+    {
+      "id": "minecraft:slime_ball",
+      "legacy_id": 341,
+      "metadata": 0,
+      "source_color": "green",
+      "damage": 2,
+      "contact": "pepsin"
+    },
+    {
+      "id": "mite:ochre_jelly",
+      "legacy_id": 341,
+      "metadata": 1,
+      "source_color": "ochre",
+      "damage": 3,
+      "contact": "pepsin"
+    },
+    {
+      "id": "mite:crimson_blob",
+      "legacy_id": 341,
+      "metadata": 2,
+      "source_color": "crimson",
+      "damage": 4,
+      "contact": "pepsin"
+    },
+    {
+      "id": "mite:grey_gelatinous_sphere",
+      "legacy_id": 341,
+      "metadata": 3,
+      "source_color": "gray",
+      "damage": 4,
+      "contact": "acid"
+    },
+    {
+      "id": "mite:black_pudding",
+      "legacy_id": 341,
+      "metadata": 4,
+      "source_color": "black",
+      "damage": 5,
+      "contact": "acid"
+    }
+  ],
+  "textures": [
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/adamantium_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/adamantium_arrow_0.png",
+      "sha256": "836f6bd39c49c6c260bfa0cb99b6648f055aa8e6876c61688c28ef2b9748ed62"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/adamantium_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/adamantium_arrow_1.png",
+      "sha256": "ebad3698a8ce749d7794ab855c2c34b38f0bcd7ab01c6470b5ba0f99f888ca79"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/adamantium_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/adamantium_arrow_2.png",
+      "sha256": "39bfd31b6e772de516fbc741ff32373732665a3586352f0ead1b4757d225da4a"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/ancient_metal_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/ancient_metal_arrow_0.png",
+      "sha256": "67b302299d6725695a2877d7cea26115466dbf6b00fad9c57687432b45eeebd0"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/ancient_metal_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/ancient_metal_arrow_1.png",
+      "sha256": "d8577eff141e5586792d287a916b27b000a31dfed7da8d6e273bda9ffaa96e0c"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/ancient_metal_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/ancient_metal_arrow_2.png",
+      "sha256": "1b0eae0ad8f3ada829bdb972b35e187e85e47187d4982b48e747197dd3d152a1"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/copper_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/copper_arrow_0.png",
+      "sha256": "6bd75e99fc9bbd7b83254d34e7e7f9cf3564bcb38a16ea0067904af91aef919f"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/copper_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/copper_arrow_1.png",
+      "sha256": "c83d9fb59e1aca97c8c435a1ee8d54a20fb96830d935d755a35209a310938051"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/copper_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/copper_arrow_2.png",
+      "sha256": "ddee48b40be1cb7d07b231e2b96cebc1b7e1b21c2ae92cee0c86aa7150594ef5"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/flint_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/flint_arrow_0.png",
+      "sha256": "814b32f4903430f53e995de7c44ff985f82daaf645964e142f41f9aede5424a6"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/flint_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/flint_arrow_1.png",
+      "sha256": "972123b3dcf3c36e268b2aadc276972cf70b517725a06497b675f31ff80f57df"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/flint_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/flint_arrow_2.png",
+      "sha256": "f1033ff0e50d23da93764a398dd8122e17235c125c5483febc12efe744937cb6"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/gold_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/gold_arrow_0.png",
+      "sha256": "31d0e41ae9bd57310734c2b5a673fb38cd6541ebc9f0a8767c01c5d4b0eb23c8"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/gold_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/gold_arrow_1.png",
+      "sha256": "9f3e7805bf8e3374d4f77129a968277ff707b4f1439cd655452cb80e93c0438f"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/gold_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/gold_arrow_2.png",
+      "sha256": "292cd595ae651a9007540f87c99d0c26544865e47ab4a8423b79e97f089b05bc"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/iron_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/iron_arrow_0.png",
+      "sha256": "159c9f7aef7b70a3bbc5dcb35d17c2c4669a4f0c69b25d22b0b1d36b12c74b13"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/iron_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/iron_arrow_1.png",
+      "sha256": "b17f8904d7c486d625b630af4a44147eec2db97aa57027d62eb0582c340501a0"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/iron_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/iron_arrow_2.png",
+      "sha256": "cba6affecbe02e99ed17e089c5420feee394887197752f90311cde0d549f91af"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/mithril_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/mithril_arrow_0.png",
+      "sha256": "3463b0a470f0290751168071677d0c0490e4596f3e7c6bd53bcaae7a2119d5b0"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/mithril_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/mithril_arrow_1.png",
+      "sha256": "35608f0ed85897323e398819f45a95164fafa60e0d3f3169917dca708c2a21d7"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/mithril_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/mithril_arrow_2.png",
+      "sha256": "61547788620f6d1566446cdf0b85fe5e45766c095f80843601853348d35c5b6d"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/obsidian_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/obsidian_arrow_0.png",
+      "sha256": "c35385cde3905f052a241560b2068e9fdc1ba7eb792ddc16c92e979c5c7bc9ff"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/obsidian_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/obsidian_arrow_1.png",
+      "sha256": "37ed204853849330b0d2141869feef8661631c7cc04d29d541a7cb496625bc89"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/obsidian_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/obsidian_arrow_2.png",
+      "sha256": "3396c0e0874c61ea992ccbf36d8639b6d78a6b3feaa6743a7c6764d99b92a89c"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/rusted_iron_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/rusted_iron_arrow_0.png",
+      "sha256": "68ee435af8243f1f9562a53abd9861691fd263049e50e1c7b81a5b9d7e3ffebb"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/rusted_iron_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/rusted_iron_arrow_1.png",
+      "sha256": "619ff3cb4cb17dd86ff9d1fb3b83c925cbf513ed55cbb85c5379f81940bb1191"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/rusted_iron_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/rusted_iron_arrow_2.png",
+      "sha256": "c5e808f9f7574b196b10a8a0c01f106497aeec40a6fe2dadbb643e8e8f6a0f2d"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/silver_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/silver_arrow_0.png",
+      "sha256": "171b70b727d2d8e03388c61b8239be48301e22584bb834e98a614f37bd6a76c0"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/silver_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/silver_arrow_1.png",
+      "sha256": "d58a3623277ebb67ecc500df81c46bb1e51301e73682e82f22f20f26bcd1789f"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/silver_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/silver_arrow_2.png",
+      "sha256": "9c87ff80061ea93cdc38f0fd239bc02ba51f203b4ebec50421e0c3e995678882"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/ancient_metal/standby.png",
+      "target": "assets/mite/textures/item/bows/ancient_metal/standby.png",
+      "sha256": "abe106c572b279d620b1334b08753137e75b18f78d2f1f36e209570bfefd6869"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/adamantium_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/adamantium_arrow_0.png",
+      "sha256": "91528d959e96520dddc040365bc71402de4d3a35d34b39f278dd472b73a1311f"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/adamantium_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/adamantium_arrow_1.png",
+      "sha256": "8259a55de7f10d43c586dff3683dc9204c07979c82b20fac18b4def76b2af216"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/adamantium_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/adamantium_arrow_2.png",
+      "sha256": "f09d91a4ab968cf536e0a55ac050218c3993d7c295e1049c13b478c08dc6f14e"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/ancient_metal_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/ancient_metal_arrow_0.png",
+      "sha256": "56d00ac91c867b3232595d6171ab1d260ba13141ab82208529d9cb5b42f703e1"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/ancient_metal_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/ancient_metal_arrow_1.png",
+      "sha256": "7fdd0913e8ca1fe2d3e1437d1d30eb0fa8a40c03c47e933d7a3da73db9a7072f"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/ancient_metal_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/ancient_metal_arrow_2.png",
+      "sha256": "e4660f7009c70914bde9d1100f07db3edd22226d63758bd5f52e4dc6b9835700"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/copper_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/copper_arrow_0.png",
+      "sha256": "e9cbbe10da36e58bd27905f62a2a66cbec683a2513a86f0286d8883bb8c630ec"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/copper_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/copper_arrow_1.png",
+      "sha256": "2c8ffd952bde5651bfb9d00f3000daf8b11ee800a30228f632dc585cb63910cd"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/copper_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/copper_arrow_2.png",
+      "sha256": "c77a4e0110026a545e5b5950164bc3ff771d0ee77d3f92de103520ed83826ab3"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/flint_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/flint_arrow_0.png",
+      "sha256": "2bb2cca2caaf1cd1b6eb864f4d096291a4bab6dd40608538f62f83769f6e8d98"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/flint_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/flint_arrow_1.png",
+      "sha256": "8051267a097a720912c227c1d10ba66610250788d29ebcb154ea29f833cc8d51"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/flint_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/flint_arrow_2.png",
+      "sha256": "9c3c914d64c7517f6b7b9d886e2d90f6a4840b5f0809717c98b4d4533ff44fb7"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/gold_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/gold_arrow_0.png",
+      "sha256": "93398758da8f950f21c99c567ed997e7f4686f9ab6476e569e9e1d3bb277c4c8"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/gold_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/gold_arrow_1.png",
+      "sha256": "9ab383962a5a04e79a377cdfd00f630f602fe619e2a329caf2a0a91a1a2a59a4"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/gold_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/gold_arrow_2.png",
+      "sha256": "d513adefcc5ffc0ef2b334dbe38eaed270e8c1443968240ad37b8740f689c361"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/iron_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/iron_arrow_0.png",
+      "sha256": "808679f52254f685a9f00ecdcd838a73ac2bc39afac222dd4a3a4b2110399e46"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/iron_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/iron_arrow_1.png",
+      "sha256": "bcc06258f71302b665eb8fb4094e894acf304d5e250c627d6e932379eef03e4c"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/iron_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/iron_arrow_2.png",
+      "sha256": "3bdf02806f12750fe9a65ae4babd88891afcaff526f369da6fb1a5ab180f145b"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/mithril_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/mithril_arrow_0.png",
+      "sha256": "b7c3ab9dfd672820b68b883919c659aa484c398ad08a7d66cde4751a72c1b4bd"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/mithril_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/mithril_arrow_1.png",
+      "sha256": "3e0117f82cfebdf7a353ec6af2ec13b0fdad175143801ef65585ac2722dec1dd"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/mithril_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/mithril_arrow_2.png",
+      "sha256": "d36fb5096761e38386e082207901a5f0868601d3573c60ece414b8bd642b8c7b"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/obsidian_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/obsidian_arrow_0.png",
+      "sha256": "5b4b6ea6be22e27d7e92e0cc8bfa10526a69fb80e50d4de2dde7ecee9526e021"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/obsidian_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/obsidian_arrow_1.png",
+      "sha256": "b4e1a916a0cdc0a3c97ce4f317d9a1c129d71f845861a0a270a2a76a7fc34cf9"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/obsidian_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/obsidian_arrow_2.png",
+      "sha256": "5723720021a94dc7ff48365c703a997829098249be50aaa339af9d2813ac4b6e"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/rusted_iron_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/rusted_iron_arrow_0.png",
+      "sha256": "0d6781ba9ff795c8004f3dd40b9a4fc15a84d36cdcd0b2459a9eece15f17ce21"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/rusted_iron_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/rusted_iron_arrow_1.png",
+      "sha256": "b82436ce91ec65a5f767d304b35edff36237e044682132a63c7b80fb657a5a07"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/rusted_iron_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/rusted_iron_arrow_2.png",
+      "sha256": "9e00bf8860aca88e13d6ca781adc4f600ad76b96451d855837b03ec817a72037"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/silver_arrow_0.png",
+      "target": "assets/mite/textures/item/bows/mithril/silver_arrow_0.png",
+      "sha256": "7f4931cad515709e94b83fb0563c50d15e4ade24e873dc89a9c048c3c3d98024"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/silver_arrow_1.png",
+      "target": "assets/mite/textures/item/bows/mithril/silver_arrow_1.png",
+      "sha256": "3e62c4ef7673048f9f70ac73ea0e7f6ec40ea275672c6c5878bb0bec85ded6aa"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/silver_arrow_2.png",
+      "target": "assets/mite/textures/item/bows/mithril/silver_arrow_2.png",
+      "sha256": "55a909355762b69d5259e9ecb54cc052e34005093060406d01f3a6106720b0df"
+    },
+    {
+      "source": "assets/minecraft/textures/items/bows/mithril/standby.png",
+      "target": "assets/mite/textures/item/bows/mithril/standby.png",
+      "sha256": "0efe69072ed074a5830f5cb52d44cc28d2f19b8cca861b68ff6ad7f48280fe99"
+    },
+    {
+      "source": "assets/minecraft/textures/items/gelatinous_sphere/green.png",
+      "target": "assets/mite/textures/item/gelatinous_sphere/green.png",
+      "sha256": "3b2fcb5f37d4040be55590014f3ce16ef4aa3d4e826b27fb4632adc2cb886345"
+    },
+    {
+      "source": "assets/minecraft/textures/items/gelatinous_sphere/ochre.png",
+      "target": "assets/mite/textures/item/gelatinous_sphere/ochre.png",
+      "sha256": "0e20e99592a2ee50104d8b3c6fa2a814f7ecd9df934b3c4aa13b034a66970d08"
+    },
+    {
+      "source": "assets/minecraft/textures/items/gelatinous_sphere/crimson.png",
+      "target": "assets/mite/textures/item/gelatinous_sphere/crimson.png",
+      "sha256": "d34c0f636f0e1e57d09145ebf4f445713753beb6942a033b11934e94c61c63b2"
+    },
+    {
+      "source": "assets/minecraft/textures/items/gelatinous_sphere/gray.png",
+      "target": "assets/mite/textures/item/gelatinous_sphere/gray.png",
+      "sha256": "f207e4cb8099302ac9d5d26dc8edf231fd28ac4489386b10239cf2fbdf8c6d40"
+    },
+    {
+      "source": "assets/minecraft/textures/items/gelatinous_sphere/black.png",
+      "target": "assets/mite/textures/item/gelatinous_sphere/black.png",
+      "sha256": "c656bf34674a27f7bb35c59a3c024c92409582788d48185c4f1a70d08a720481"
+    }
+  ],
+  "source_behavior": {
+    "bow": "wp.java; uh.java:145-162; yc.java:1237-1254; aam.java:12-13",
+    "sphere": "ItemGelatinousSphere.java; EntityGelatinousSphere.java; uq.java:27-91; aqz.java:2139-2234",
+    "sphere_gravity": 0.07,
+    "sphere_launch_speed": 1.2,
+    "sphere_exhaustion": 0.25,
+    "source_skills_enabled": false,
+    "source_quickness_registered_modern": false,
+    "corrosion_snapshot": "spec/sphere-corrosion-028.json"
+  }
+}

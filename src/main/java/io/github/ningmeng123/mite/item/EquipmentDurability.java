@@ -54,6 +54,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class EquipmentDurability {
     public interface Profiled { ToolProfile durabilityProfile(); }
+    /** Quality-bearing source equipment that is neither a mining tool nor humanoid armor. */
+    public interface QualityProfiled { Quality maximumQuality(); }
 
     private static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Mite.MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> QUALITY =
@@ -120,9 +122,13 @@ public final class EquipmentDurability {
     }
 
     public static ArmorProfile armorProfile(ItemStack stack) { return ARMOR.get(stack.getItem()); }
-    public static boolean isManaged(ItemStack stack) { return toolProfile(stack) != null || armorProfile(stack) != null || stack.is(Items.BOW); }
+    public static boolean isManaged(ItemStack stack) {
+        return toolProfile(stack) != null || armorProfile(stack) != null || stack.is(Items.BOW)
+                || stack.getItem() instanceof QualityProfiled;
+    }
 
     public static Quality maximumQuality(ItemStack stack) {
+        if (stack.getItem() instanceof QualityProfiled profiled) return profiled.maximumQuality();
         if (stack.is(Items.BOW)) return Quality.FINE;
         ToolProfile tool = toolProfile(stack);
         if (tool != null) return tool.maxQuality();

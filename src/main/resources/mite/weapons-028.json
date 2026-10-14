@@ -1,0 +1,100 @@
+{
+  "bows": [
+    {
+      "id": "mite:ancient_metal_bow",
+      "legacy_id": 1251,
+      "material": "ancient_metal",
+      "durability": 64,
+      "maximum_quality": "masterwork",
+      "enchantability": 40,
+      "velocity_multiplier": 1.1,
+      "difficulty": 1750.0,
+      "order": 39,
+      "pattern": [
+        " #X",
+        "#IX",
+        " #X"
+      ],
+      "ingredients": {
+        "#": "minecraft:stick",
+        "X": "minecraft:string",
+        "I": "mite:ancient_metal_ingot"
+      },
+      "source": {
+        "class": "wp",
+        "source_file": "ItemBow.java",
+        "class_sha256": "3b130d99843a7b97d86e3b0ca8633d052e3f383426f760a54ece1c4e9db7aa7d",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_bow",
+      "legacy_id": 1048,
+      "material": "mithril",
+      "durability": 128,
+      "maximum_quality": "legendary",
+      "enchantability": 100,
+      "velocity_multiplier": 1.25,
+      "difficulty": 6550.0,
+      "order": 38,
+      "pattern": [
+        " #X",
+        "#IX",
+        " #X"
+      ],
+      "ingredients": {
+        "#": "minecraft:stick",
+        "X": "minecraft:string",
+        "I": "mite:mithril_ingot"
+      },
+      "source": {
+        "class": "wp",
+        "source_file": "ItemBow.java",
+        "class_sha256": "3b130d99843a7b97d86e3b0ca8633d052e3f383426f760a54ece1c4e9db7aa7d",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "spheres": [
+    {
+      "id": "minecraft:slime_ball",
+      "legacy_id": 341,
+      "metadata": 0,
+      "source_color": "green",
+      "damage": 2,
+      "contact": "pepsin"
+    },
+    {
+      "id": "mite:ochre_jelly",
+      "legacy_id": 341,
+      "metadata": 1,
+      "source_color": "ochre",
+      "damage": 3,
+      "contact": "pepsin"
+    },
+    {
+      "id": "mite:crimson_blob",
+      "legacy_id": 341,
+      "metadata": 2,
+      "source_color": "crimson",
+      "damage": 4,
+      "contact": "pepsin"
+    },
+    {
+      "id": "mite:grey_gelatinous_sphere",
+      "legacy_id": 341,
+      "metadata": 3,
+      "source_color": "gray",
+      "damage": 4,
+      "contact": "acid"
+    },
+    {
+      "id": "mite:black_pudding",
+      "legacy_id": 341,
+      "metadata": 4,
+      "source_color": "black",
+      "damage": 5,
+      "contact": "acid"
+    }
+  ]
+}

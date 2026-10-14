@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": {
+    "layer0": "mite:item/bows/ancient_metal/copper_arrow_0"
+  }
+}

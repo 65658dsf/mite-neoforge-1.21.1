@@ -56,7 +56,7 @@ public final class CraftingQuality {
         if (rule == null || raw.isEmpty()) return null;
         if (!EquipmentDurability.isManaged(raw)) {
             boolean repair = recipe.value() instanceof RepairItemRecipe && RangedRodRepair.applies(raw);
-            return new Result(rule, RunestoneCrafting.apply(player, menu, grid, recipe.id(), raw), null, null, repair, repair, true, 0, 1);
+            return new Result(rule, RunestoneCrafting.apply(player, menu, grid, recipe.id(), raw), null, null, repair, repair, true, CoinCrafting.cost(raw), 1);
         }
         boolean repair = recipe.value() instanceof RepairItemRecipe || recipe.value() instanceof LeatherMendingRecipe;
         boolean fixed = repair || recipe.value() instanceof ArmorDyeRecipe;
@@ -142,25 +142,41 @@ public final class CraftingQuality {
 
     /** Approval is side-effect free on our XP fields. Altered/cancelled costs must not grant free equipment. */
     public static Payment approvePayment(ServerPlayer player, int cost) {
+        return approveExperienceTransaction(player, cost, 0);
+    }
+
+    /** Minting costs and coin refunds are approved together before any item is consumed. */
+    public static Payment approveExperienceTransaction(ServerPlayer player, int cost, int refund) {
         int before = player.totalExperience;
-        if (cost < 0 || cost > 0 && before < cost) return null;
-        if (cost == 0) return new Payment(before, 0);
-        var pointEvent = new PlayerXpEvent.XpChange(player, -cost);
-        if (NeoForge.EVENT_BUS.post(pointEvent).isCanceled() || pointEvent.getAmount() != -cost) return null;
-        int newLevel = io.github.ningmeng123.mite.rules.ExperienceRules.levelForTotalExperience(before - cost);
+        if (cost < 0 || refund < 0 || cost > 0 && before < cost) return null;
+        long target = (long)before - cost + refund;
+        long change = (long)refund - cost;
+        if (target > Integer.MAX_VALUE || target < -800 || change > Integer.MAX_VALUE || change < -Integer.MAX_VALUE) return null;
+        if (change == 0) return new Payment(before, 0);
+        var pointEvent = new PlayerXpEvent.XpChange(player, (int)change);
+        if (NeoForge.EVENT_BUS.post(pointEvent).isCanceled() || pointEvent.getAmount() != change) return null;
+        int newLevel = io.github.ningmeng123.mite.rules.ExperienceRules.levelForTotalExperience((int)target);
         int delta = newLevel - player.experienceLevel;
         if (delta != 0) {
             var levelEvent = new PlayerXpEvent.LevelChange(player, delta);
             if (NeoForge.EVENT_BUS.post(levelEvent).isCanceled() || levelEvent.getLevels() != delta) return null;
         }
-        return player.totalExperience == before ? new Payment(before, cost) : null;
+        return player.totalExperience == before ? new Payment(before, (int)-change) : null;
     }
 
     public static boolean pay(ServerPlayer player, Payment payment) {
+        return pay(player, payment, false);
+    }
+
+    public static boolean pay(ServerPlayer player, Payment payment, boolean coinExchange) {
         if (payment == null || player.totalExperience != payment.before()) return false;
-        if (payment.cost() > 0) {
+        if (payment.cost() != 0) {
             PlayerExperience.setTotal(player, payment.before() - payment.cost());
-            player.increaseScore(-payment.cost());
+            // Source coin minting subtracts XP without subtracting score; redemption adds both.
+            if (!coinExchange || payment.cost() < 0) player.increaseScore(-payment.cost());
+            if (coinExchange && payment.cost() < 0)
+                player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP, net.minecraft.sounds.SoundSource.PLAYERS, .1F, 1F);
         }
         return true;
     }
@@ -168,7 +184,7 @@ public final class CraftingQuality {
     private static Map<ResourceLocation, Float> loadDifficulties() {
         try {
             Map<ResourceLocation, Float> values = new HashMap<>();
-            for (String resource : List.of("/mite/quality-equipment-017.json", "/mite/quality-equipment-027-armor.json")) {
+            for (String resource : List.of("/mite/quality-equipment-017.json", "/mite/quality-equipment-027-armor.json", "/mite/quality-equipment-028-weapons.json")) {
                 try (var reader = new InputStreamReader(Objects.requireNonNull(CraftingQuality.class.getResourceAsStream(resource)), StandardCharsets.UTF_8)) {
                     JsonParser.parseReader(reader).getAsJsonObject().getAsJsonObject("items").entrySet().forEach(entry ->
                             values.put(ResourceLocation.parse(entry.getKey()), entry.getValue().getAsJsonObject().get("lowest_difficulty").getAsFloat()));

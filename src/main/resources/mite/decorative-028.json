@@ -1,0 +1,416 @@
+{
+  "author": "NingMeng123",
+  "entries": [
+    {
+      "mcmod_id": 35750,
+      "name": "铜门",
+      "modern_id": "minecraft:copper_door",
+      "source_id": 1111,
+      "source_metadata": 0,
+      "source_class": "xk",
+      "hardness": 2.0,
+      "source_harvest": 2,
+      "max_stack": 1
+    },
+    {
+      "mcmod_id": 35780,
+      "name": "银门",
+      "modern_id": "mite:silver_door",
+      "source_id": 1112,
+      "source_metadata": 0,
+      "source_class": "xk",
+      "hardness": 2.0,
+      "source_harvest": 2,
+      "max_stack": 1
+    },
+    {
+      "mcmod_id": 35781,
+      "name": "金门",
+      "modern_id": "mite:golden_door",
+      "source_id": 1113,
+      "source_metadata": 0,
+      "source_class": "xk",
+      "hardness": 2.0,
+      "source_harvest": 2,
+      "max_stack": 1
+    },
+    {
+      "mcmod_id": 105514,
+      "name": "远古金属门",
+      "modern_id": "mite:ancient_metal_door",
+      "source_id": 1260,
+      "source_metadata": 0,
+      "source_class": "xk",
+      "hardness": 8.0,
+      "source_harvest": 3,
+      "max_stack": 1
+    },
+    {
+      "mcmod_id": 36576,
+      "name": "秘银门",
+      "modern_id": "mite:mithril_door",
+      "source_id": 1114,
+      "source_metadata": 0,
+      "source_class": "xk",
+      "hardness": 32.0,
+      "source_harvest": 4,
+      "max_stack": 1
+    },
+    {
+      "mcmod_id": 36577,
+      "name": "艾德曼门",
+      "modern_id": "mite:adamantium_door",
+      "source_id": 1115,
+      "source_metadata": 0,
+      "source_class": "xk",
+      "hardness": 128.0,
+      "source_harvest": 5,
+      "max_stack": 1
+    },
+    {
+      "mcmod_id": 823809,
+      "name": "铜栅栏",
+      "modern_id": "mite:copper_bars",
+      "source_id": 213,
+      "source_metadata": 0,
+      "source_class": "aqy",
+      "hardness": 1.6,
+      "source_harvest": 2,
+      "max_stack": 16
+    },
+    {
+      "mcmod_id": 823808,
+      "name": "金栅栏",
+      "modern_id": "mite:golden_bars",
+      "source_id": 215,
+      "source_metadata": 0,
+      "source_class": "aqy",
+      "hardness": 1.6,
+      "source_harvest": 2,
+      "max_stack": 16
+    },
+    {
+      "mcmod_id": 823810,
+      "name": "远古金属栅栏",
+      "modern_id": "mite:ancient_metal_bars",
+      "source_id": 199,
+      "source_metadata": 0,
+      "source_class": "aqy",
+      "hardness": 6.4,
+      "source_harvest": 3,
+      "max_stack": 16
+    },
+    {
+      "mcmod_id": 823807,
+      "name": "秘银栅栏",
+      "modern_id": "mite:mithril_bars",
+      "source_id": 216,
+      "source_metadata": 0,
+      "source_class": "aqy",
+      "hardness": 25.6,
+      "source_harvest": 4,
+      "max_stack": 16
+    },
+    {
+      "mcmod_id": 823811,
+      "name": "艾德曼栅栏",
+      "modern_id": "mite:adamantium_bars",
+      "source_id": 217,
+      "source_metadata": 0,
+      "source_class": "aqy",
+      "hardness": 102.4,
+      "source_harvest": 5,
+      "max_stack": 16
+    },
+    {
+      "mcmod_id": 35648,
+      "name": "大丽花",
+      "modern_id": "mite:dahlia",
+      "source_id": 38,
+      "source_metadata": 7,
+      "source_class": "BlockFlowerMulti",
+      "hardness": 0.0,
+      "source_harvest": 0,
+      "max_stack": 32
+    },
+    {
+      "mcmod_id": 35649,
+      "name": "郁金香",
+      "modern_id": "minecraft:orange_tulip",
+      "source_id": 38,
+      "source_metadata": 5,
+      "source_class": "BlockFlowerMulti",
+      "hardness": 0.0,
+      "source_harvest": 0,
+      "max_stack": 32
+    },
+    {
+      "mcmod_id": 35650,
+      "name": "绒球葱",
+      "modern_id": "minecraft:allium",
+      "source_id": 38,
+      "source_metadata": 2,
+      "source_class": "BlockFlowerMulti",
+      "hardness": 0.0,
+      "source_harvest": 0,
+      "max_stack": 32
+    },
+    {
+      "mcmod_id": 35651,
+      "name": "滨菊",
+      "modern_id": "minecraft:oxeye_daisy",
+      "source_id": 38,
+      "source_metadata": 8,
+      "source_class": "BlockFlowerMulti",
+      "hardness": 0.0,
+      "source_harvest": 0,
+      "max_stack": 32
+    },
+    {
+      "mcmod_id": 35652,
+      "name": "兰花",
+      "modern_id": "minecraft:blue_orchid",
+      "source_id": 38,
+      "source_metadata": 1,
+      "source_class": "BlockFlowerMulti",
+      "hardness": 0.0,
+      "source_harvest": 0,
+      "max_stack": 32
+    },
+    {
+      "mcmod_id": 37966,
+      "name": "凋零灌木",
+      "modern_id": "mite:witherwood_bush",
+      "source_id": 32,
+      "source_metadata": 1,
+      "source_class": "ant",
+      "hardness": 0.02,
+      "source_harvest": 0,
+      "max_stack": 32
+    },
+    {
+      "mcmod_id": 37885,
+      "name": "地狱沙砾",
+      "modern_id": "mite:nether_gravel",
+      "source_id": 13,
+      "source_metadata": 2,
+      "source_class": "aoo",
+      "hardness": 0.6,
+      "source_harvest": 0,
+      "max_stack": 4
+    }
+  ],
+  "recipes": [
+    {
+      "id": "minecraft:copper_door",
+      "output": "minecraft:copper_door",
+      "count": 1,
+      "pattern": [
+        "II",
+        "II",
+        "II"
+      ],
+      "ingredient": "minecraft:copper_ingot",
+      "source_order": 219,
+      "difficulty": 2400.0,
+      "required_bench": "copper"
+    },
+    {
+      "id": "mite:silver_door",
+      "output": "mite:silver_door",
+      "count": 1,
+      "pattern": [
+        "II",
+        "II",
+        "II"
+      ],
+      "ingredient": "mite:silver_ingot",
+      "source_order": 220,
+      "difficulty": 2400.0,
+      "required_bench": "silver"
+    },
+    {
+      "id": "mite:golden_door",
+      "output": "mite:golden_door",
+      "count": 1,
+      "pattern": [
+        "II",
+        "II",
+        "II"
+      ],
+      "ingredient": "minecraft:gold_ingot",
+      "source_order": 221,
+      "difficulty": 2400.0,
+      "required_bench": "gold"
+    },
+    {
+      "id": "mite:mithril_door",
+      "output": "mite:mithril_door",
+      "count": 1,
+      "pattern": [
+        "II",
+        "II",
+        "II"
+      ],
+      "ingredient": "mite:mithril_ingot",
+      "source_order": 223,
+      "difficulty": 38400.0,
+      "required_bench": "mithril"
+    },
+    {
+      "id": "mite:adamantium_door",
+      "output": "mite:adamantium_door",
+      "count": 1,
+      "pattern": [
+        "II",
+        "II",
+        "II"
+      ],
+      "ingredient": "mite:adamantium_ingot",
+      "source_order": 224,
+      "difficulty": 153600.0,
+      "required_bench": "adamantium"
+    },
+    {
+      "id": "mite:ancient_metal_door",
+      "output": "mite:ancient_metal_door",
+      "count": 1,
+      "pattern": [
+        "II",
+        "II",
+        "II"
+      ],
+      "ingredient": "mite:ancient_metal_ingot",
+      "source_order": 225,
+      "difficulty": 9600.0,
+      "required_bench": "ancient_metal"
+    },
+    {
+      "id": "mite:copper_bars",
+      "output": "mite:copper_bars",
+      "count": 16,
+      "pattern": [
+        "III",
+        "III"
+      ],
+      "ingredient": "minecraft:copper_ingot",
+      "source_order": 227,
+      "difficulty": 2400.0,
+      "required_bench": "copper"
+    },
+    {
+      "id": "mite:golden_bars",
+      "output": "mite:golden_bars",
+      "count": 16,
+      "pattern": [
+        "III",
+        "III"
+      ],
+      "ingredient": "minecraft:gold_ingot",
+      "source_order": 231,
+      "difficulty": 2400.0,
+      "required_bench": "gold"
+    },
+    {
+      "id": "mite:mithril_bars",
+      "output": "mite:mithril_bars",
+      "count": 16,
+      "pattern": [
+        "III",
+        "III"
+      ],
+      "ingredient": "mite:mithril_ingot",
+      "source_order": 235,
+      "difficulty": 38400.0,
+      "required_bench": "mithril"
+    },
+    {
+      "id": "mite:adamantium_bars",
+      "output": "mite:adamantium_bars",
+      "count": 16,
+      "pattern": [
+        "III",
+        "III"
+      ],
+      "ingredient": "mite:adamantium_ingot",
+      "source_order": 237,
+      "difficulty": 153600.0,
+      "required_bench": "adamantium"
+    },
+    {
+      "id": "mite:ancient_metal_bars",
+      "output": "mite:ancient_metal_bars",
+      "count": 16,
+      "pattern": [
+        "III",
+        "III"
+      ],
+      "ingredient": "mite:ancient_metal_ingot",
+      "source_order": 239,
+      "difficulty": 9600.0,
+      "required_bench": "ancient_metal"
+    },
+    {
+      "id": "minecraft:light_blue_dye_from_blue_orchid",
+      "output": "minecraft:light_blue_dye",
+      "count": 1,
+      "input": "minecraft:blue_orchid",
+      "source_order": 896,
+      "difficulty": 0.0,
+      "required_bench": null
+    },
+    {
+      "id": "minecraft:magenta_dye_from_allium",
+      "output": "minecraft:magenta_dye",
+      "count": 1,
+      "input": "minecraft:allium",
+      "source_order": 897,
+      "difficulty": 0.0,
+      "required_bench": null
+    },
+    {
+      "id": "minecraft:orange_dye_from_orange_tulip",
+      "output": "minecraft:orange_dye",
+      "count": 1,
+      "input": "minecraft:orange_tulip",
+      "source_order": 898,
+      "difficulty": 0.0,
+      "required_bench": null
+    },
+    {
+      "id": "mite:pink_dye_from_dahlia",
+      "output": "minecraft:pink_dye",
+      "count": 1,
+      "input": "mite:dahlia",
+      "source_order": 899,
+      "difficulty": 0.0,
+      "required_bench": null
+    },
+    {
+      "id": "minecraft:light_gray_dye_from_oxeye_daisy",
+      "output": "minecraft:light_gray_dye",
+      "count": 1,
+      "input": "minecraft:oxeye_daisy",
+      "source_order": 900,
+      "difficulty": 0.0,
+      "required_bench": null
+    }
+  ],
+  "modern_adapted_recipes": [
+    {
+      "id": "minecraft:copper_trapdoor",
+      "output": "minecraft:copper_trapdoor",
+      "count": 2,
+      "pattern": [
+        "III",
+        "I I",
+        " I "
+      ],
+      "ingredient": "minecraft:copper_ingot",
+      "difficulty": 2400.0,
+      "required_bench": "copper",
+      "source_order": -1,
+      "source": "modern adaptation; pinned MC 1.21.1 has 6 copper ingots, output 2, conflicting 3x2 shape; difficulty uses source six-ingot copper recipe order 227 as the declared cost benchmark"
+    }
+  ]
+}

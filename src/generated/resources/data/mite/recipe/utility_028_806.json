@@ -1,0 +1,15 @@
+{
+  "type": "mite:utility_shapeless",
+  "ingredients": [
+    {
+      "item": "mite:silver_coin"
+    },
+    {
+      "item": "mite:silver_coin"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "mite:silver_nugget"
+  }
+}

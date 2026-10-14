@@ -1,0 +1,367 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "items": [
+    {
+      "id": "mite:sinew",
+      "legacy_id": 1174,
+      "materials": [
+        "leather"
+      ],
+      "maximum_stack": 16,
+      "component_difficulty": 25.0,
+      "furnace_xp": 0,
+      "harmed_by_fire": true,
+      "harmed_by_lava": true,
+      "harmed_by_acid": true,
+      "harmed_by_pepsin": true,
+      "source": {
+        "class": "yc",
+        "source_file": "Item.java",
+        "class_sha256": "0122862cf18aa6f0a9298b7dea531dc201a9d9829bc192725bf4e647ae95eb3a",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:flint_chip",
+      "legacy_id": 1121,
+      "materials": [
+        "flint"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 25.0,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemShard",
+        "source_file": "ItemShard.java",
+        "class_sha256": "200783d23c6f35bc7dbe42e166ba97410312beb882a6706cc26f6abf55ca7dcc",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:obsidian_shard",
+      "legacy_id": 1122,
+      "materials": [
+        "obsidian"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 22.222221,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemShard",
+        "source_file": "ItemShard.java",
+        "class_sha256": "200783d23c6f35bc7dbe42e166ba97410312beb882a6706cc26f6abf55ca7dcc",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:emerald_shard",
+      "legacy_id": 1117,
+      "materials": [
+        "emerald"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 88.888885,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemShard",
+        "source_file": "ItemShard.java",
+        "class_sha256": "200783d23c6f35bc7dbe42e166ba97410312beb882a6706cc26f6abf55ca7dcc",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:diamond_shard",
+      "legacy_id": 1118,
+      "materials": [
+        "diamond"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 177.77777,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemShard",
+        "source_file": "ItemShard.java",
+        "class_sha256": "200783d23c6f35bc7dbe42e166ba97410312beb882a6706cc26f6abf55ca7dcc",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:quartz_shard",
+      "legacy_id": 1119,
+      "materials": [
+        "quartz"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 100.0,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemShard",
+        "source_file": "ItemShard.java",
+        "class_sha256": "200783d23c6f35bc7dbe42e166ba97410312beb882a6706cc26f6abf55ca7dcc",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:glass_shard",
+      "legacy_id": 1120,
+      "materials": [
+        "glass"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 22.222221,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemShard",
+        "source_file": "ItemShard.java",
+        "class_sha256": "200783d23c6f35bc7dbe42e166ba97410312beb882a6706cc26f6abf55ca7dcc",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_nugget",
+      "legacy_id": 956,
+      "materials": [
+        "copper"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 44.444443,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": true,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemNugget",
+        "source_file": "ItemNugget.java",
+        "class_sha256": "072ebdb06c09e9840653dcf8371be0887dfd570c4336531662d48983458d0eae",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_nugget",
+      "legacy_id": 957,
+      "materials": [
+        "silver"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 44.444443,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": true,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemNugget",
+        "source_file": "ItemNugget.java",
+        "class_sha256": "072ebdb06c09e9840653dcf8371be0887dfd570c4336531662d48983458d0eae",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:iron_nugget",
+      "legacy_id": 958,
+      "materials": [
+        "iron"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 88.888885,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": true,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemNugget",
+        "source_file": "ItemNugget.java",
+        "class_sha256": "072ebdb06c09e9840653dcf8371be0887dfd570c4336531662d48983458d0eae",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_nugget",
+      "legacy_id": 961,
+      "materials": [
+        "ancient_metal"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 177.77777,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": true,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemNugget",
+        "source_file": "ItemNugget.java",
+        "class_sha256": "072ebdb06c09e9840653dcf8371be0887dfd570c4336531662d48983458d0eae",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_nugget",
+      "legacy_id": 959,
+      "materials": [
+        "mithril"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 711.1111,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemNugget",
+        "source_file": "ItemNugget.java",
+        "class_sha256": "072ebdb06c09e9840653dcf8371be0887dfd570c4336531662d48983458d0eae",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_nugget",
+      "legacy_id": 960,
+      "materials": [
+        "adamantium"
+      ],
+      "maximum_stack": 64,
+      "component_difficulty": 2844.4443,
+      "furnace_xp": 0,
+      "harmed_by_fire": false,
+      "harmed_by_lava": false,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemNugget",
+        "source_file": "ItemNugget.java",
+        "class_sha256": "072ebdb06c09e9840653dcf8371be0887dfd570c4336531662d48983458d0eae",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:copper_ingot",
+      "legacy_id": 962,
+      "materials": [
+        "copper"
+      ],
+      "maximum_stack": 8,
+      "component_difficulty": 400.0,
+      "furnace_xp": 10,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": true,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemIngot",
+        "source_file": "ItemIngot.java",
+        "class_sha256": "a810b9e651662c5750dbd5dfd2d315374b1692244e2fbfff86a3680f66ed99fd",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_ingot",
+      "legacy_id": 963,
+      "materials": [
+        "silver"
+      ],
+      "maximum_stack": 8,
+      "component_difficulty": 400.0,
+      "furnace_xp": 15,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": true,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemIngot",
+        "source_file": "ItemIngot.java",
+        "class_sha256": "a810b9e651662c5750dbd5dfd2d315374b1692244e2fbfff86a3680f66ed99fd",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_ingot",
+      "legacy_id": 966,
+      "materials": [
+        "ancient_metal"
+      ],
+      "maximum_stack": 8,
+      "component_difficulty": 1600.0,
+      "furnace_xp": 20,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": true,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemIngot",
+        "source_file": "ItemIngot.java",
+        "class_sha256": "a810b9e651662c5750dbd5dfd2d315374b1692244e2fbfff86a3680f66ed99fd",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_ingot",
+      "legacy_id": 964,
+      "materials": [
+        "mithril"
+      ],
+      "maximum_stack": 8,
+      "component_difficulty": 6400.0,
+      "furnace_xp": 40,
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemIngot",
+        "source_file": "ItemIngot.java",
+        "class_sha256": "a810b9e651662c5750dbd5dfd2d315374b1692244e2fbfff86a3680f66ed99fd",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_ingot",
+      "legacy_id": 965,
+      "materials": [
+        "adamantium"
+      ],
+      "maximum_stack": 8,
+      "component_difficulty": 25600.0,
+      "furnace_xp": 100,
+      "harmed_by_fire": false,
+      "harmed_by_lava": false,
+      "harmed_by_acid": false,
+      "harmed_by_pepsin": false,
+      "source": {
+        "class": "ItemIngot",
+        "source_file": "ItemIngot.java",
+        "class_sha256": "a810b9e651662c5750dbd5dfd2d315374b1692244e2fbfff86a3680f66ed99fd",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "scope": "18 existing material identities; source conversion, drop and furnace mechanics already implemented. Fire/lava susceptibility is reconciled here."
+}

@@ -1,0 +1,3351 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_pack_sha256": "4a9bb9f7ab5afee7c0e4e9f57f3b81ff185a0c619d29036b8c2f1ece7450e67a",
+  "entries": [
+    {
+      "id": "mite:copper_coin",
+      "kind": "coin",
+      "legacy_id": 1220,
+      "symbol": "yc.coinCopper",
+      "source": {
+        "class": "ItemCoin",
+        "source_file": "ItemCoin.java",
+        "class_sha256": "522dcffa987c76b24b7fea6689c358e8f23fad57b17255b8461ab15c93b6cb0e",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 64,
+      "source_materials": [
+        "copper"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "copper",
+      "experience": 5
+    },
+    {
+      "id": "mite:silver_coin",
+      "kind": "coin",
+      "legacy_id": 1221,
+      "symbol": "yc.coinSilver",
+      "source": {
+        "class": "ItemCoin",
+        "source_file": "ItemCoin.java",
+        "class_sha256": "522dcffa987c76b24b7fea6689c358e8f23fad57b17255b8461ab15c93b6cb0e",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 64,
+      "source_materials": [
+        "silver"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "silver",
+      "experience": 25
+    },
+    {
+      "id": "mite:gold_coin",
+      "kind": "coin",
+      "legacy_id": 1222,
+      "symbol": "yc.coinGold",
+      "source": {
+        "class": "ItemCoin",
+        "source_file": "ItemCoin.java",
+        "class_sha256": "522dcffa987c76b24b7fea6689c358e8f23fad57b17255b8461ab15c93b6cb0e",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 64,
+      "source_materials": [
+        "gold"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "gold",
+      "experience": 100
+    },
+    {
+      "id": "mite:ancient_metal_coin",
+      "kind": "coin",
+      "legacy_id": 1277,
+      "symbol": "yc.coinAncientMetal",
+      "source": {
+        "class": "ItemCoin",
+        "source_file": "ItemCoin.java",
+        "class_sha256": "522dcffa987c76b24b7fea6689c358e8f23fad57b17255b8461ab15c93b6cb0e",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 64,
+      "source_materials": [
+        "ancient_metal"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "ancient_metal",
+      "experience": 500
+    },
+    {
+      "id": "mite:mithril_coin",
+      "kind": "coin",
+      "legacy_id": 1278,
+      "symbol": "yc.coinMithril",
+      "source": {
+        "class": "ItemCoin",
+        "source_file": "ItemCoin.java",
+        "class_sha256": "522dcffa987c76b24b7fea6689c358e8f23fad57b17255b8461ab15c93b6cb0e",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 64,
+      "source_materials": [
+        "mithril"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "mithril",
+      "experience": 2500
+    },
+    {
+      "id": "mite:adamantium_coin",
+      "kind": "coin",
+      "legacy_id": 1279,
+      "symbol": "yc.coinAdamantium",
+      "source": {
+        "class": "ItemCoin",
+        "source_file": "ItemCoin.java",
+        "class_sha256": "522dcffa987c76b24b7fea6689c358e8f23fad57b17255b8461ab15c93b6cb0e",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 64,
+      "source_materials": [
+        "adamantium"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": false,
+      "material": "adamantium",
+      "experience": 10000
+    },
+    {
+      "id": "mite:bottle_of_disenchanting",
+      "kind": "bottle",
+      "legacy_id": 1214,
+      "symbol": "yc.bottleOfDisenchanting",
+      "source": {
+        "class": "ItemBottleOfDisenchanting",
+        "source_file": "ItemBottleOfDisenchanting.java",
+        "class_sha256": "7e283103a3d9982b2ae74d579fb24708530634e2110e26ff10f8e6a58172ed43",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "glass"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "duration_ticks": 32,
+      "drinkable": true,
+      "throwable": false
+    },
+    {
+      "id": "mite:copper_stone_bucket",
+      "kind": "stone_bucket",
+      "legacy_id": 1231,
+      "symbol": "yc.bucketCopperStone",
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "copper",
+        "stone"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "copper",
+      "volume": 4
+    },
+    {
+      "id": "mite:silver_stone_bucket",
+      "kind": "stone_bucket",
+      "legacy_id": 1232,
+      "symbol": "yc.bucketSilverStone",
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "silver",
+        "stone"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "silver",
+      "volume": 4
+    },
+    {
+      "id": "mite:gold_stone_bucket",
+      "kind": "stone_bucket",
+      "legacy_id": 1233,
+      "symbol": "yc.bucketGoldStone",
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "gold",
+        "stone"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "gold",
+      "volume": 4
+    },
+    {
+      "id": "mite:iron_stone_bucket",
+      "kind": "stone_bucket",
+      "legacy_id": 1234,
+      "symbol": "yc.bucketIronStone",
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "iron",
+        "stone"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "iron",
+      "volume": 4
+    },
+    {
+      "id": "mite:ancient_metal_stone_bucket",
+      "kind": "stone_bucket",
+      "legacy_id": 1237,
+      "symbol": "yc.bucketAncientMetalStone",
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "ancient_metal",
+        "stone"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "ancient_metal",
+      "volume": 4
+    },
+    {
+      "id": "mite:mithril_stone_bucket",
+      "kind": "stone_bucket",
+      "legacy_id": 1235,
+      "symbol": "yc.bucketMithrilStone",
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "mithril",
+        "stone"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "mithril",
+      "volume": 4
+    },
+    {
+      "id": "mite:adamantium_stone_bucket",
+      "kind": "stone_bucket",
+      "legacy_id": 1236,
+      "symbol": "yc.bucketAdamantiumStone",
+      "source": {
+        "class": "wr",
+        "source_file": "ItemBucket.java",
+        "class_sha256": "5eb8e74673725b72f9bf5db5350dfa07dd2e06ca63f3d96350d8070dc3821167",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "adamantium",
+        "stone"
+      ],
+      "harmed_by_fire": false,
+      "harmed_by_lava": true,
+      "material": "adamantium",
+      "volume": 4
+    },
+    {
+      "id": "mite:music_disc_underworld",
+      "kind": "record",
+      "legacy_id": 2276,
+      "symbol": "yc.recordUnderworld",
+      "source": {
+        "class": "yr",
+        "source_file": "ItemRecord.java",
+        "class_sha256": "a1b862413356a3827b4146047879589b8fde09c7078880ff49a933db57d3a56b",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "vinyl"
+      ],
+      "harmed_by_fire": true,
+      "harmed_by_lava": true,
+      "title": "Underworld",
+      "composer": "The Fat Man",
+      "unique_signature": 101
+    },
+    {
+      "id": "mite:music_disc_descent",
+      "kind": "record",
+      "legacy_id": 2277,
+      "symbol": "yc.recordDescent",
+      "source": {
+        "class": "yr",
+        "source_file": "ItemRecord.java",
+        "class_sha256": "a1b862413356a3827b4146047879589b8fde09c7078880ff49a933db57d3a56b",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "vinyl"
+      ],
+      "harmed_by_fire": true,
+      "harmed_by_lava": true,
+      "title": "Descent",
+      "composer": "The Fat Man",
+      "unique_signature": 102
+    },
+    {
+      "id": "mite:music_disc_wanderer",
+      "kind": "record",
+      "legacy_id": 2278,
+      "symbol": "yc.recordWanderer",
+      "source": {
+        "class": "yr",
+        "source_file": "ItemRecord.java",
+        "class_sha256": "a1b862413356a3827b4146047879589b8fde09c7078880ff49a933db57d3a56b",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "vinyl"
+      ],
+      "harmed_by_fire": true,
+      "harmed_by_lava": true,
+      "title": "Wanderer",
+      "composer": "The Fat Man",
+      "unique_signature": 103
+    },
+    {
+      "id": "mite:music_disc_legends",
+      "kind": "record",
+      "legacy_id": 2279,
+      "symbol": "yc.recordLegends",
+      "source": {
+        "class": "yr",
+        "source_file": "ItemRecord.java",
+        "class_sha256": "a1b862413356a3827b4146047879589b8fde09c7078880ff49a933db57d3a56b",
+        "origin": "r196_overlay"
+      },
+      "max_stack": 1,
+      "source_materials": [
+        "vinyl"
+      ],
+      "harmed_by_fire": true,
+      "harmed_by_lava": true,
+      "title": "Legends",
+      "composer": "The Fat Man",
+      "unique_signature": 104
+    }
+  ],
+  "crafting_recipes": [
+    {
+      "id": "mite:utility_028_523",
+      "source_order": 523,
+      "output": "mite:copper_nugget",
+      "count": 9,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_524",
+      "source_order": 524,
+      "output": "mite:silver_nugget",
+      "count": 9,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_525",
+      "source_order": 525,
+      "output": "minecraft:gold_nugget",
+      "count": 9,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_526",
+      "source_order": 526,
+      "output": "mite:ancient_metal_nugget",
+      "count": 9,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_527",
+      "source_order": 527,
+      "output": "mite:mithril_nugget",
+      "count": 9,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_528",
+      "source_order": 528,
+      "output": "mite:adamantium_nugget",
+      "count": 9,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_538",
+      "source_order": 538,
+      "output": "mite:copper_nugget",
+      "count": 8,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_539",
+      "source_order": 539,
+      "output": "mite:silver_nugget",
+      "count": 8,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_540",
+      "source_order": 540,
+      "output": "minecraft:gold_nugget",
+      "count": 8,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_541",
+      "source_order": 541,
+      "output": "mite:ancient_metal_nugget",
+      "count": 8,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_542",
+      "source_order": 542,
+      "output": "mite:mithril_nugget",
+      "count": 8,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_543",
+      "source_order": 543,
+      "output": "mite:adamantium_nugget",
+      "count": 8,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_565",
+      "source_order": 565,
+      "output": "mite:copper_nugget",
+      "count": 7,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_566",
+      "source_order": 566,
+      "output": "mite:silver_nugget",
+      "count": 7,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_567",
+      "source_order": 567,
+      "output": "minecraft:gold_nugget",
+      "count": 7,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_568",
+      "source_order": 568,
+      "output": "mite:ancient_metal_nugget",
+      "count": 7,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_569",
+      "source_order": 569,
+      "output": "mite:mithril_nugget",
+      "count": 7,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_570",
+      "source_order": 570,
+      "output": "mite:adamantium_nugget",
+      "count": 7,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_579",
+      "source_order": 579,
+      "output": "mite:copper_nugget",
+      "count": 6,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_580",
+      "source_order": 580,
+      "output": "mite:silver_nugget",
+      "count": 6,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_581",
+      "source_order": 581,
+      "output": "minecraft:gold_nugget",
+      "count": 6,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_582",
+      "source_order": 582,
+      "output": "mite:ancient_metal_nugget",
+      "count": 6,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_583",
+      "source_order": 583,
+      "output": "mite:mithril_nugget",
+      "count": 6,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_584",
+      "source_order": 584,
+      "output": "mite:adamantium_nugget",
+      "count": 6,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_634",
+      "source_order": 634,
+      "output": "mite:copper_nugget",
+      "count": 5,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_635",
+      "source_order": 635,
+      "output": "mite:silver_nugget",
+      "count": 5,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_636",
+      "source_order": 636,
+      "output": "minecraft:gold_nugget",
+      "count": 5,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_637",
+      "source_order": 637,
+      "output": "mite:ancient_metal_nugget",
+      "count": 5,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_638",
+      "source_order": 638,
+      "output": "mite:mithril_nugget",
+      "count": 5,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_639",
+      "source_order": 639,
+      "output": "mite:adamantium_nugget",
+      "count": 5,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_695",
+      "source_order": 695,
+      "output": "mite:copper_nugget",
+      "count": 4,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_696",
+      "source_order": 696,
+      "output": "mite:silver_nugget",
+      "count": 4,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_697",
+      "source_order": 697,
+      "output": "minecraft:gold_nugget",
+      "count": 4,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_698",
+      "source_order": 698,
+      "output": "mite:ancient_metal_nugget",
+      "count": 4,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_699",
+      "source_order": 699,
+      "output": "mite:mithril_nugget",
+      "count": 4,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_700",
+      "source_order": 700,
+      "output": "mite:adamantium_nugget",
+      "count": 4,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_707",
+      "source_order": 707,
+      "output": "mite:bottle_of_disenchanting",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "minecraft:potion",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "minecraft:nether_wart",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "minecraft:coal",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 150.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_747",
+      "source_order": 747,
+      "output": "mite:copper_nugget",
+      "count": 3,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_748",
+      "source_order": 748,
+      "output": "mite:silver_nugget",
+      "count": 3,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_749",
+      "source_order": 749,
+      "output": "minecraft:gold_nugget",
+      "count": 3,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_750",
+      "source_order": 750,
+      "output": "mite:ancient_metal_nugget",
+      "count": 3,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_751",
+      "source_order": 751,
+      "output": "mite:mithril_nugget",
+      "count": 3,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_752",
+      "source_order": 752,
+      "output": "mite:adamantium_nugget",
+      "count": 3,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_805",
+      "source_order": 805,
+      "output": "mite:copper_nugget",
+      "count": 2,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_806",
+      "source_order": 806,
+      "output": "mite:silver_nugget",
+      "count": 2,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_807",
+      "source_order": 807,
+      "output": "minecraft:gold_nugget",
+      "count": 2,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_808",
+      "source_order": 808,
+      "output": "mite:ancient_metal_nugget",
+      "count": 2,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_809",
+      "source_order": 809,
+      "output": "mite:mithril_nugget",
+      "count": 2,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_810",
+      "source_order": 810,
+      "output": "mite:adamantium_nugget",
+      "count": 2,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        },
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_875",
+      "source_order": 875,
+      "output": "mite:copper_nugget",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:copper_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_876",
+      "source_order": 876,
+      "output": "mite:copper_coin",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:copper_nugget",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": "copper",
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_877",
+      "source_order": 877,
+      "output": "mite:silver_nugget",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:silver_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_878",
+      "source_order": 878,
+      "output": "mite:silver_coin",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:silver_nugget",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": "silver",
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_879",
+      "source_order": 879,
+      "output": "minecraft:gold_nugget",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:gold_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_880",
+      "source_order": 880,
+      "output": "mite:gold_coin",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "minecraft:gold_nugget",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": "gold",
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_881",
+      "source_order": 881,
+      "output": "mite:ancient_metal_nugget",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_882",
+      "source_order": 882,
+      "output": "mite:ancient_metal_coin",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_nugget",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": "ancient_metal",
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_883",
+      "source_order": 883,
+      "output": "mite:mithril_nugget",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:mithril_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_884",
+      "source_order": 884,
+      "output": "mite:mithril_coin",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:mithril_nugget",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": "mithril",
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_885",
+      "source_order": 885,
+      "output": "mite:adamantium_nugget",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:adamantium_coin",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 25.0,
+      "bench_material": null,
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_886",
+      "source_order": 886,
+      "output": "mite:adamantium_coin",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:adamantium_nugget",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": "adamantium",
+      "propagate_components": false,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_887",
+      "source_order": 887,
+      "output": "mite:copper_bucket",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:copper_stone_bucket",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": null,
+      "propagate_components": true,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_888",
+      "source_order": 888,
+      "output": "mite:silver_bucket",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:silver_stone_bucket",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": null,
+      "propagate_components": true,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_889",
+      "source_order": 889,
+      "output": "mite:gold_bucket",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:gold_stone_bucket",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": null,
+      "propagate_components": true,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_890",
+      "source_order": 890,
+      "output": "minecraft:bucket",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:iron_stone_bucket",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": null,
+      "propagate_components": true,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_891",
+      "source_order": 891,
+      "output": "mite:mithril_bucket",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:mithril_stone_bucket",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": null,
+      "propagate_components": true,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_892",
+      "source_order": 892,
+      "output": "mite:adamantium_bucket",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:adamantium_stone_bucket",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": null,
+      "propagate_components": true,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:utility_028_893",
+      "source_order": 893,
+      "output": "mite:ancient_metal_bucket",
+      "count": 1,
+      "inputs": [
+        {
+          "item": "mite:ancient_metal_stone_bucket",
+          "count": 1,
+          "subtype": 0
+        }
+      ],
+      "difficulty": 100.0,
+      "bench_material": null,
+      "propagate_components": true,
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "songs": [
+    {
+      "name": "underworld",
+      "length_in_seconds": 122.90612244897959,
+      "sample_length_source": "Ogg Vorbis final granule / sample rate",
+      "comparator_output": 1,
+      "comparator_adaptation": "New modern comparator output follows source unique-record ordering; R196 did not expose 1.21 jukebox_song data."
+    },
+    {
+      "name": "descent",
+      "length_in_seconds": 119.37959183673469,
+      "sample_length_source": "Ogg Vorbis final granule / sample rate",
+      "comparator_output": 2,
+      "comparator_adaptation": "New modern comparator output follows source unique-record ordering; R196 did not expose 1.21 jukebox_song data."
+    },
+    {
+      "name": "wanderer",
+      "length_in_seconds": 123.76816326530613,
+      "sample_length_source": "Ogg Vorbis final granule / sample rate",
+      "comparator_output": 3,
+      "comparator_adaptation": "New modern comparator output follows source unique-record ordering; R196 did not expose 1.21 jukebox_song data."
+    },
+    {
+      "name": "legends",
+      "length_in_seconds": 62.563265306122446,
+      "sample_length_source": "Ogg Vorbis final granule / sample rate",
+      "comparator_output": 4,
+      "comparator_adaptation": "New modern comparator output follows source unique-record ordering; R196 did not expose 1.21 jukebox_song data."
+    }
+  ],
+  "assets": [
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/coins/copper.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_coin.png",
+      "bytes": 253,
+      "sha256": "3a4f20e96fdb59eb6cd8c1f307c93d437ce262ffcaee6bc9e9eff51314d97fa9"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/coins/silver.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_coin.png",
+      "bytes": 282,
+      "sha256": "2f59d23315fccf57cbf361edfe8bd34e5b8751ec7a61b5d9e208a3d9c4e054ac"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/coins/gold.png",
+      "target": "src/main/resources/assets/mite/textures/item/gold_coin.png",
+      "bytes": 252,
+      "sha256": "f6117d571f297957ba4577f0c65f7cebeace55946b67d4cf56b379f597375823"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/coins/ancient_metal.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_coin.png",
+      "bytes": 264,
+      "sha256": "5cb896fa14d59417b13ca609fea1b8acbe5ad8c47ef613f197bee67daa3d0244"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/coins/mithril.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_coin.png",
+      "bytes": 286,
+      "sha256": "2cc3ff62a7879871857b9cec76a4c3a5cd0562d2ceaf859274544fc920ad1686"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/coins/adamantium.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_coin.png",
+      "bytes": 265,
+      "sha256": "69972a3e55ef85702da43846bc69a8cf00db0a98ae04affd0b0a900f297baeb2"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/bottle_of_disenchanting.png",
+      "target": "src/main/resources/assets/mite/textures/item/bottle_of_disenchanting.png",
+      "bytes": 252,
+      "sha256": "13da8533c60f5469660de21a5f4caa57d0fb8609f3dd99e60d314f790e2dae63"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/buckets/copper/stone.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_stone_bucket.png",
+      "bytes": 405,
+      "sha256": "f57f85931a9c102061481b69f717fdb820641a122b6acbcdffdc6b47fa7d9f92"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/buckets/silver/stone.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_stone_bucket.png",
+      "bytes": 393,
+      "sha256": "424da43f47713def8b1bdf3487f011b6042252eb95d8b35c1ede26826687c59b"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/buckets/gold/stone.png",
+      "target": "src/main/resources/assets/mite/textures/item/gold_stone_bucket.png",
+      "bytes": 405,
+      "sha256": "56815db9c46e7c92e4f10b9803caf7080351e178423a216945dafa471b98a7da"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/buckets/iron/stone.png",
+      "target": "src/main/resources/assets/mite/textures/item/iron_stone_bucket.png",
+      "bytes": 361,
+      "sha256": "b89018223160a7b245313ea6c906b5b4793fc9a4f3b0c7f45833a6921308ab4a"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/buckets/ancient_metal/stone.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_stone_bucket.png",
+      "bytes": 435,
+      "sha256": "ce99305252cad94ed48d332c40c51a190dce8acf836eaf99e597c2a12c3e5c14"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/buckets/mithril/stone.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_stone_bucket.png",
+      "bytes": 456,
+      "sha256": "508ce1093ae973dd5c6ec107e8c05d06784708e045fc7390174c76048989e2e1"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/buckets/adamantium/stone.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_stone_bucket.png",
+      "bytes": 444,
+      "sha256": "4186a56a3751799b114d98969bf635c9c814bd7f0b554bc6e804d99a94307695"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/records/record_underworld.png",
+      "target": "src/main/resources/assets/mite/textures/item/music_disc_underworld.png",
+      "bytes": 201,
+      "sha256": "13f40923d4e7453dd918c4868f9b3a4d38c35f447974b0ade9e34afa82e90364"
+    },
+    {
+      "kind": "sound",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/records/imported/underworld.ogg",
+      "target": "src/main/resources/assets/mite/sounds/records/underworld.ogg",
+      "bytes": 885442,
+      "sha256": "f3ae15ba3a7a19cbee7983bd58928c02e9686990fb386ce2e66edd9a84cf7f3d"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/records/record_descent.png",
+      "target": "src/main/resources/assets/mite/textures/item/music_disc_descent.png",
+      "bytes": 208,
+      "sha256": "f9895596b2dad7e39d6d280934d30416520f28e7fb428ec7713088c1fc2580b4"
+    },
+    {
+      "kind": "sound",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/records/imported/descent.ogg",
+      "target": "src/main/resources/assets/mite/sounds/records/descent.ogg",
+      "bytes": 812215,
+      "sha256": "81f7158775bbfa6f9f128c1cef0b576833ec0f2080b9a93757fb397151c89b09"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/records/record_wanderer.png",
+      "target": "src/main/resources/assets/mite/textures/item/music_disc_wanderer.png",
+      "bytes": 209,
+      "sha256": "2bbc2542e24ba13a54058d0baa221c9401246b494a2ae0a5318235a9e990656c"
+    },
+    {
+      "kind": "sound",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/records/imported/wanderer.ogg",
+      "target": "src/main/resources/assets/mite/sounds/records/wanderer.ogg",
+      "bytes": 901470,
+      "sha256": "ccfefe9f1f2dcf3631ad5ec22f135971ba8e2358bdb6df3b27d97700cf78e7fe"
+    },
+    {
+      "kind": "texture",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/textures/items/records/record_legends.png",
+      "target": "src/main/resources/assets/mite/textures/item/music_disc_legends.png",
+      "bytes": 205,
+      "sha256": "60f9ef14df78dd9fb914836fe0bb590a12f27524bcc866af62bb6f2c52991772"
+    },
+    {
+      "kind": "sound",
+      "archive": "MITE Resource Pack 1.6.4.zip",
+      "source": "assets/minecraft/records/imported/legends.ogg",
+      "target": "src/main/resources/assets/mite/sounds/records/legends.ogg",
+      "bytes": 466035,
+      "sha256": "5a4c4027e70ed030f3de6eb010f260f03b985dbb0214da3607ce71e89d358812"
+    }
+  ],
+  "source_loot": {
+    "source": "afp.java:9 / 91-94; mk.java:61-118; ye.java:1145; yr.java:86",
+    "modern_table": "minecraft:chests/simple_dungeon",
+    "dimension": "mite:underworld",
+    "minimum_rolls": 8,
+    "maximum_rolls": 8,
+    "source_total_weight": 74,
+    "enchantment_book_weight": 1,
+    "world_unique_records": true,
+    "maximum_records_per_chest": 1,
+    "maximum_attempts_per_roll": 4,
+    "unique_edgecase_source": "mk.generateChestContents bytecode offsets85/100 goto283 without clearing local9; the fourth duplicate draw can leak a prohibited record through offset289 ifnonnull297.",
+    "unique_edgecase_modern_fix": "Explicitly discard unavailable unique draws, including the final attempt; world uniqueness and one-record-per-chest are enforced rather than reproducing the confirmed duplicate bug.",
+    "entries": [
+      {
+        "item": "mite:ancient_metal_coin",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_underworld",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_descent",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_wanderer",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_legends",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      }
+    ]
+  },
+  "loot_pool_fragments": {
+    "dungeon_underworld": [
+      {
+        "item": "mite:ancient_metal_coin",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_underworld",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_descent",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_wanderer",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_legends",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      }
+    ],
+    "dungeon_surface": [
+      {
+        "item": "mite:copper_coin",
+        "minimum": 1,
+        "maximum": 4,
+        "weight": 10,
+        "minimum_overworld_day": 20
+      },
+      {
+        "item": "mite:silver_coin",
+        "minimum": 1,
+        "maximum": 2,
+        "weight": 2,
+        "minimum_overworld_day": 20
+      },
+      {
+        "item": "mite:gold_coin",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1,
+        "minimum_overworld_day": 20
+      }
+    ],
+    "desert": [
+      {
+        "item": "mite:copper_coin",
+        "minimum": 1,
+        "maximum": 20,
+        "weight": 15,
+        "minimum_overworld_day": 20
+      },
+      {
+        "item": "mite:silver_coin",
+        "minimum": 1,
+        "maximum": 10,
+        "weight": 10,
+        "minimum_overworld_day": 20
+      },
+      {
+        "item": "mite:gold_coin",
+        "minimum": 1,
+        "maximum": 3,
+        "weight": 5,
+        "minimum_overworld_day": 20
+      }
+    ]
+  },
+  "rules": {
+    "coins": {
+      "values": {
+        "copper": 5,
+        "silver": 25,
+        "gold": 100,
+        "ancient_metal": 500,
+        "mithril": 2500,
+        "adamantium": 10000
+      },
+      "enabled_by_default": true,
+      "enable_source": "als.java:304 returns true",
+      "mint_xp_cost": "value per result coin",
+      "redeem_xp_reward": "value per consumed grid coin",
+      "mint_difficulty": 100,
+      "redeem_difficulty": 25,
+      "right_click_redeems": false
+    },
+    "stone_buckets": {
+      "source": [
+        "jv.java:426-442",
+        "ss.java:239-249",
+        "RecipesMITE.java:112"
+      ],
+      "acquisition": "lava bucket in player main inventory converts when player eyes enter water; dropped lava bucket converts while submerged",
+      "smelting_recipe": false,
+      "dismantle_output": "matching empty bucket only",
+      "dismantle_difficulty": 100
+    },
+    "disenchanting": {
+      "source": [
+        "ItemBottleOfDisenchanting.java:13-35",
+        "va.java:119/186",
+        "vc.java:72-87",
+        "uf.java:1694-1708/1747-1768"
+      ],
+      "drink_ticks": 32,
+      "drink_output": "minecraft:glass_bottle",
+      "drink_clears": "all active effects and R196 player-world curses; not equipment enchantments",
+      "blocked_by_nausea": true,
+      "blocked_underwater": true,
+      "cannot_drink_curse_exempt": true,
+      "anvil_consumption": 1,
+      "anvil_xp": 0,
+      "anvil_wear": 0,
+      "anvil_empty_bottle": false,
+      "throwable": false
+    }
+  }
+}

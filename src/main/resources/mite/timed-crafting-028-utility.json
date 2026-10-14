@@ -1,0 +1,345 @@
+{
+  "author": "NingMeng123",
+  "recipes": {
+    "mite:utility_028_523": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 523
+    },
+    "mite:utility_028_524": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 524
+    },
+    "mite:utility_028_525": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 525
+    },
+    "mite:utility_028_526": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 526
+    },
+    "mite:utility_028_527": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 527
+    },
+    "mite:utility_028_528": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 528
+    },
+    "mite:utility_028_538": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 538
+    },
+    "mite:utility_028_539": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 539
+    },
+    "mite:utility_028_540": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 540
+    },
+    "mite:utility_028_541": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 541
+    },
+    "mite:utility_028_542": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 542
+    },
+    "mite:utility_028_543": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 543
+    },
+    "mite:utility_028_565": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 565
+    },
+    "mite:utility_028_566": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 566
+    },
+    "mite:utility_028_567": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 567
+    },
+    "mite:utility_028_568": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 568
+    },
+    "mite:utility_028_569": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 569
+    },
+    "mite:utility_028_570": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 570
+    },
+    "mite:utility_028_579": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 579
+    },
+    "mite:utility_028_580": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 580
+    },
+    "mite:utility_028_581": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 581
+    },
+    "mite:utility_028_582": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 582
+    },
+    "mite:utility_028_583": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 583
+    },
+    "mite:utility_028_584": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 584
+    },
+    "mite:utility_028_634": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 634
+    },
+    "mite:utility_028_635": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 635
+    },
+    "mite:utility_028_636": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 636
+    },
+    "mite:utility_028_637": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 637
+    },
+    "mite:utility_028_638": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 638
+    },
+    "mite:utility_028_639": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 639
+    },
+    "mite:utility_028_695": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 695
+    },
+    "mite:utility_028_696": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 696
+    },
+    "mite:utility_028_697": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 697
+    },
+    "mite:utility_028_698": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 698
+    },
+    "mite:utility_028_699": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 699
+    },
+    "mite:utility_028_700": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 700
+    },
+    "mite:utility_028_707": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 707
+    },
+    "mite:utility_028_747": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 747
+    },
+    "mite:utility_028_748": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 748
+    },
+    "mite:utility_028_749": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 749
+    },
+    "mite:utility_028_750": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 750
+    },
+    "mite:utility_028_751": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 751
+    },
+    "mite:utility_028_752": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 752
+    },
+    "mite:utility_028_805": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 805
+    },
+    "mite:utility_028_806": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 806
+    },
+    "mite:utility_028_807": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 807
+    },
+    "mite:utility_028_808": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 808
+    },
+    "mite:utility_028_809": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 809
+    },
+    "mite:utility_028_810": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 810
+    },
+    "mite:utility_028_875": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 875
+    },
+    "mite:utility_028_876": {
+      "difficulty": 100.0,
+      "required_bench": "copper",
+      "source_order": 876
+    },
+    "mite:utility_028_877": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 877
+    },
+    "mite:utility_028_878": {
+      "difficulty": 100.0,
+      "required_bench": "silver",
+      "source_order": 878
+    },
+    "mite:utility_028_879": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 879
+    },
+    "mite:utility_028_880": {
+      "difficulty": 100.0,
+      "required_bench": "gold",
+      "source_order": 880
+    },
+    "mite:utility_028_881": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 881
+    },
+    "mite:utility_028_882": {
+      "difficulty": 100.0,
+      "required_bench": "ancient_metal",
+      "source_order": 882
+    },
+    "mite:utility_028_883": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 883
+    },
+    "mite:utility_028_884": {
+      "difficulty": 100.0,
+      "required_bench": "mithril",
+      "source_order": 884
+    },
+    "mite:utility_028_885": {
+      "difficulty": 25.0,
+      "required_bench": null,
+      "source_order": 885
+    },
+    "mite:utility_028_886": {
+      "difficulty": 100.0,
+      "required_bench": "adamantium",
+      "source_order": 886
+    },
+    "mite:utility_028_887": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 887
+    },
+    "mite:utility_028_888": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 888
+    },
+    "mite:utility_028_889": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 889
+    },
+    "mite:utility_028_890": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 890
+    },
+    "mite:utility_028_891": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 891
+    },
+    "mite:utility_028_892": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 892
+    },
+    "mite:utility_028_893": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 893
+    }
+  }
+}

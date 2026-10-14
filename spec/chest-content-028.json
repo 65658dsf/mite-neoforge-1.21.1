@@ -1,0 +1,97 @@
+{
+  "author": "NingMeng123",
+  "source": "afp.java,avi.java,alb.java,mk.java; guarded release runtime registry",
+  "pools": {
+    "dungeon_underworld": [
+      {
+        "item": "mite:ancient_metal_bow",
+        "legacy_id": 1251,
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 2
+      },
+      {
+        "item": "mite:ancient_metal_coin",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_underworld",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_descent",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_wanderer",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      },
+      {
+        "item": "mite:music_disc_legends",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1
+      }
+    ],
+    "dungeon_surface": [
+      {
+        "item": "mite:copper_coin",
+        "minimum": 1,
+        "maximum": 4,
+        "weight": 10,
+        "minimum_overworld_day": 20
+      },
+      {
+        "item": "mite:silver_coin",
+        "minimum": 1,
+        "maximum": 2,
+        "weight": 2,
+        "minimum_overworld_day": 20
+      },
+      {
+        "item": "mite:gold_coin",
+        "minimum": 1,
+        "maximum": 1,
+        "weight": 1,
+        "minimum_overworld_day": 20
+      }
+    ],
+    "desert": [
+      {
+        "item": "mite:copper_coin",
+        "minimum": 1,
+        "maximum": 20,
+        "weight": 15,
+        "minimum_overworld_day": 20
+      },
+      {
+        "item": "mite:silver_coin",
+        "minimum": 1,
+        "maximum": 10,
+        "weight": 10,
+        "minimum_overworld_day": 20
+      },
+      {
+        "item": "mite:gold_coin",
+        "minimum": 1,
+        "maximum": 3,
+        "weight": 5,
+        "minimum_overworld_day": 20
+      }
+    ]
+  },
+  "modern_adaptations": [
+    "Retain source full denominators and source roll count; supplemental gear/coins/records share one draw sequence",
+    "Other modern non-source loot remains; source random slot overwrite is not emulated",
+    "Unique-record fourth-retry fallthrough is guarded to prevent duplicate signatures",
+    "Overworld source day is (modern gameTime + 6000) / 24000 + 1; no independent old clocks are introduced"
+  ]
+}

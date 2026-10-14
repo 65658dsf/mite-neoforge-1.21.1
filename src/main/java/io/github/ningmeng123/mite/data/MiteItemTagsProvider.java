@@ -23,6 +23,11 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
+        var ancientBow = io.github.ningmeng123.mite.registry.MiteWeaponContent.ANCIENT_METAL_BOW.get();
+        var mithrilBow = io.github.ningmeng123.mite.registry.MiteWeaponContent.MITHRIL_BOW.get();
+        tag(ItemTags.DURABILITY_ENCHANTABLE).add(ancientBow, mithrilBow);
+        tag(ItemTags.VANISHING_ENCHANTABLE).add(ancientBow, mithrilBow);
+        tag(ItemTags.SMALL_FLOWERS).add(io.github.ningmeng123.mite.registry.MiteDecorativeContent.DAHLIA.get().asItem());
         for (var definition : io.github.ningmeng123.mite.registry.MiteArmorContent.definitions()) {
             if (!definition.isNew() || definition.horse()) continue;
             var item = io.github.ningmeng123.mite.registry.MiteArmorContent.get(definition.id());

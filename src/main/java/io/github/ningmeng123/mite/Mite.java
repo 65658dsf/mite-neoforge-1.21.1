@@ -42,12 +42,15 @@ public final class Mite {
         io.github.ningmeng123.mite.registry.MiteArmorContent.register(modBus);
         io.github.ningmeng123.mite.registry.MiteRangedItems.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteDecorativeContent.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteWeaponContent.register(modBus);
         MiteTools.register(modBus);
         MiteWorkbenches.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFurnaces.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoodPlants.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoodSources.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoods.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteUtilityContent.register(modBus);
         io.github.ningmeng123.mite.registry.FoodRecipeSerializers.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoodCatalog.register(modBus);
         io.github.ningmeng123.mite.registry.QualityRecipeSerializers.register(modBus);

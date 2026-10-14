@@ -1,0 +1,8 @@
+{
+  "comparator_output": 1,
+  "description": {
+    "translate": "item.mite.music_disc_underworld.desc"
+  },
+  "length_in_seconds": 122.90612244897959,
+  "sound_event": "mite:record.underworld"
+}

@@ -1,0 +1,90 @@
+{
+  "author": "NingMeng123",
+  "recipes": {
+    "minecraft:copper_door": {
+      "difficulty": 2400.0,
+      "required_bench": "copper",
+      "source_order": 219
+    },
+    "mite:silver_door": {
+      "difficulty": 2400.0,
+      "required_bench": "silver",
+      "source_order": 220
+    },
+    "mite:golden_door": {
+      "difficulty": 2400.0,
+      "required_bench": "gold",
+      "source_order": 221
+    },
+    "mite:mithril_door": {
+      "difficulty": 38400.0,
+      "required_bench": "mithril",
+      "source_order": 223
+    },
+    "mite:adamantium_door": {
+      "difficulty": 153600.0,
+      "required_bench": "adamantium",
+      "source_order": 224
+    },
+    "mite:ancient_metal_door": {
+      "difficulty": 9600.0,
+      "required_bench": "ancient_metal",
+      "source_order": 225
+    },
+    "mite:copper_bars": {
+      "difficulty": 2400.0,
+      "required_bench": "copper",
+      "source_order": 227
+    },
+    "mite:golden_bars": {
+      "difficulty": 2400.0,
+      "required_bench": "gold",
+      "source_order": 231
+    },
+    "mite:mithril_bars": {
+      "difficulty": 38400.0,
+      "required_bench": "mithril",
+      "source_order": 235
+    },
+    "mite:adamantium_bars": {
+      "difficulty": 153600.0,
+      "required_bench": "adamantium",
+      "source_order": 237
+    },
+    "mite:ancient_metal_bars": {
+      "difficulty": 9600.0,
+      "required_bench": "ancient_metal",
+      "source_order": 239
+    },
+    "minecraft:light_blue_dye_from_blue_orchid": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 896
+    },
+    "minecraft:magenta_dye_from_allium": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 897
+    },
+    "minecraft:orange_dye_from_orange_tulip": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 898
+    },
+    "mite:pink_dye_from_dahlia": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 899
+    },
+    "minecraft:light_gray_dye_from_oxeye_daisy": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 900
+    },
+    "minecraft:copper_trapdoor": {
+      "difficulty": 2400.0,
+      "required_bench": "copper",
+      "source_order": -1
+    }
+  }
+}

@@ -52,7 +52,8 @@ public final class WorkbenchJeiRecipes {
         return recipe.getClass() == ShapedRecipe.class || recipe.getClass() == ShapelessRecipe.class
                 || recipe instanceof FoodShapedRecipe || recipe instanceof FoodShapelessRecipe
                 || recipe instanceof BulkMaterialRecipe || recipe instanceof WorkbenchDismantleRecipe
-                || recipe instanceof io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe;
+                || recipe instanceof io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe
+                || recipe instanceof io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe;
     }
 
     public static Index index(Level level) {
@@ -78,6 +79,15 @@ public final class WorkbenchJeiRecipes {
             for (var ingredient : recipe.getIngredients())
                 slots.add(mixedMilk ? milk : Arrays.stream(ingredient.getItems())
                         .filter(stack -> !stack.isEmpty()).map(ItemStack::copy).toList());
+            if (recipe instanceof io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe utility && utility.waterPotionOnly()) {
+                for (int i = 0; i < slots.size(); i++) slots.set(i, slots.get(i).stream().map(stack -> {
+                    if (!stack.is(net.minecraft.world.item.Items.POTION)) return stack;
+                    ItemStack water = stack.copy();
+                    water.set(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
+                            new net.minecraft.world.item.alchemy.PotionContents(net.minecraft.world.item.alchemy.Potions.WATER));
+                    return water;
+                }).toList());
+            }
             while (slots.size() < width * height) slots.add(List.of());
             // An unresolved nonempty tag is not a usable recipe page, but its native view is preserved.
             boolean unresolved = false;

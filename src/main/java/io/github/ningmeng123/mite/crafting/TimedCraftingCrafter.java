@@ -41,6 +41,10 @@ public final class TimedCraftingCrafter {
         }
         if (recipe.isEmpty()) return false;
         ItemStack result = recipe.get().value().assemble(crafter.asCraftInput(), level.registryAccess());
+        if (!CoinCrafting.automatedAllowed(crafter.asCraftInput(), result)) {
+            JOBS.remove(crafter);
+            return true;
+        }
         TimedCraftingRecipes.Rule rule = CraftingQuality.rule(recipe.get(), result, crafter.asCraftInput());
         if (rule == null) return false;
         // No operator/XP account: automation only manufactures default quality, never selects a paid quality.

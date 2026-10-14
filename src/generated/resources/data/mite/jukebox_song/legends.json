@@ -1,0 +1,8 @@
+{
+  "comparator_output": 4,
+  "description": {
+    "translate": "item.mite.music_disc_legends.desc"
+  },
+  "length_in_seconds": 62.563265306122446,
+  "sound_event": "mite:record.legends"
+}

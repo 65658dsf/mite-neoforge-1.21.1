@@ -91,7 +91,17 @@
     "VanillaAnvilEntityMixin",
     "EmeraldEnchantmentMenuMixin",
     "FunctionalFallingBlockMixin",
-    "FunctionalPlayerHarvestMixin"
+    "FunctionalPlayerHarvestMixin",
+    "MaterialItemDamageMixin",
+    "SourceBowLaunchMixin",
+    "GreenSphereItemMixin",
+    "DecorativeDoorMixin",
+    "DecorativeFlowerBiomeMixin",
+    "DecorativeFlowerShapeMixin",
+    "UtilityItemDamageMixin",
+    "StoneBucketDestructionMixin",
+    "UniqueRecordLifecycleMixin",
+    "WitherwoodFallCushionMixin"
   ],
   "client": [
     "client.GuiFoodMixin",

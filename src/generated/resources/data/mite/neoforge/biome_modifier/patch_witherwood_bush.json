@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": [
+    "mite:patch_witherwood_bush"
+  ],
+  "step": "vegetal_decoration"
+}

@@ -1,0 +1,13 @@
+{
+  "type": "mite:utility_shapeless",
+  "ingredients": [
+    {
+      "item": "mite:ancient_metal_stone_bucket"
+    }
+  ],
+  "propagate_components": true,
+  "result": {
+    "count": 1,
+    "id": "mite:ancient_metal_bucket"
+  }
+}

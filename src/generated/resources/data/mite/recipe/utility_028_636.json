@@ -1,0 +1,24 @@
+{
+  "type": "mite:utility_shapeless",
+  "ingredients": [
+    {
+      "item": "mite:gold_coin"
+    },
+    {
+      "item": "mite:gold_coin"
+    },
+    {
+      "item": "mite:gold_coin"
+    },
+    {
+      "item": "mite:gold_coin"
+    },
+    {
+      "item": "mite:gold_coin"
+    }
+  ],
+  "result": {
+    "count": 5,
+    "id": "minecraft:gold_nugget"
+  }
+}

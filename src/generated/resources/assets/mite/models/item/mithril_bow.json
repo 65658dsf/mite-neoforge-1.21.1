@@ -1,0 +1,248 @@
+{
+  "parent": "minecraft:item/bow",
+  "overrides": [
+    {
+      "model": "mite:item/mithril_bow_flint_0",
+      "predicate": {
+        "mite:arrow_material": 0,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_flint_1",
+      "predicate": {
+        "mite:arrow_material": 0,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_flint_2",
+      "predicate": {
+        "mite:arrow_material": 0,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_obsidian_0",
+      "predicate": {
+        "mite:arrow_material": 1,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_obsidian_1",
+      "predicate": {
+        "mite:arrow_material": 1,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_obsidian_2",
+      "predicate": {
+        "mite:arrow_material": 1,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_copper_0",
+      "predicate": {
+        "mite:arrow_material": 2,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_copper_1",
+      "predicate": {
+        "mite:arrow_material": 2,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_copper_2",
+      "predicate": {
+        "mite:arrow_material": 2,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_silver_0",
+      "predicate": {
+        "mite:arrow_material": 3,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_silver_1",
+      "predicate": {
+        "mite:arrow_material": 3,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_silver_2",
+      "predicate": {
+        "mite:arrow_material": 3,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_rusted_iron_0",
+      "predicate": {
+        "mite:arrow_material": 4,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_rusted_iron_1",
+      "predicate": {
+        "mite:arrow_material": 4,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_rusted_iron_2",
+      "predicate": {
+        "mite:arrow_material": 4,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_gold_0",
+      "predicate": {
+        "mite:arrow_material": 5,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_gold_1",
+      "predicate": {
+        "mite:arrow_material": 5,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_gold_2",
+      "predicate": {
+        "mite:arrow_material": 5,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_iron_0",
+      "predicate": {
+        "mite:arrow_material": 6,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_iron_1",
+      "predicate": {
+        "mite:arrow_material": 6,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_iron_2",
+      "predicate": {
+        "mite:arrow_material": 6,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_mithril_0",
+      "predicate": {
+        "mite:arrow_material": 7,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_mithril_1",
+      "predicate": {
+        "mite:arrow_material": 7,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_mithril_2",
+      "predicate": {
+        "mite:arrow_material": 7,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_adamantium_0",
+      "predicate": {
+        "mite:arrow_material": 8,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_adamantium_1",
+      "predicate": {
+        "mite:arrow_material": 8,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_adamantium_2",
+      "predicate": {
+        "mite:arrow_material": 8,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_ancient_metal_0",
+      "predicate": {
+        "mite:arrow_material": 9,
+        "pull": 0.0,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_ancient_metal_1",
+      "predicate": {
+        "mite:arrow_material": 9,
+        "pull": 0.65,
+        "pulling": 1
+      }
+    },
+    {
+      "model": "mite:item/mithril_bow_ancient_metal_2",
+      "predicate": {
+        "mite:arrow_material": 9,
+        "pull": 0.9,
+        "pulling": 1
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "mite:item/bows/mithril/standby"
+  }
+}

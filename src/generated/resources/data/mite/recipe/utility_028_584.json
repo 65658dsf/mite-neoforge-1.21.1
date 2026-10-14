@@ -1,0 +1,27 @@
+{
+  "type": "mite:utility_shapeless",
+  "ingredients": [
+    {
+      "item": "mite:adamantium_coin"
+    },
+    {
+      "item": "mite:adamantium_coin"
+    },
+    {
+      "item": "mite:adamantium_coin"
+    },
+    {
+      "item": "mite:adamantium_coin"
+    },
+    {
+      "item": "mite:adamantium_coin"
+    },
+    {
+      "item": "mite:adamantium_coin"
+    }
+  ],
+  "result": {
+    "count": 6,
+    "id": "mite:adamantium_nugget"
+  }
+}

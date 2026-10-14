@@ -1,0 +1,2435 @@
+{
+  "author": "NingMeng123",
+  "count": 347,
+  "entries": [
+    {
+      "name": "沙拉",
+      "category": "食物",
+      "modern_id": "mite:salad",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "蓝莓",
+      "category": "食物",
+      "modern_id": "mite:blueberries",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "蓝莓粥",
+      "category": "食物",
+      "modern_id": "mite:porridge",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "牛奶碗",
+      "category": "食物",
+      "modern_id": "mite:milk_bowl",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "麦片粥",
+      "category": "食物",
+      "modern_id": "mite:cereal",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "巧克力",
+      "category": "食物",
+      "modern_id": "mite:chocolate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "南瓜汤",
+      "category": "食物",
+      "modern_id": "mite:pumpkin_soup",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "奶油蘑菇汤",
+      "category": "食物",
+      "modern_id": "mite:cream_of_mushroom_soup",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "洋葱",
+      "category": "食物",
+      "modern_id": "mite:onion",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "蔬菜汤",
+      "category": "食物",
+      "modern_id": "mite:vegetable_soup",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "奶油蔬菜汤",
+      "category": "食物",
+      "modern_id": "mite:cream_of_vegetable_soup",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "鸡汤",
+      "category": "食物",
+      "modern_id": "mite:chicken_soup",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "牛肉羹",
+      "category": "食物",
+      "modern_id": "mite:beef_stew",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "橘子",
+      "category": "食物",
+      "modern_id": "mite:orange",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "果汁雪糕",
+      "category": "食物",
+      "modern_id": "mite:sorbet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "奶酪",
+      "category": "食物",
+      "modern_id": "mite:cheese",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "土豆泥",
+      "category": "食物",
+      "modern_id": "mite:mashed_potato",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "冰淇淋",
+      "category": "食物",
+      "modern_id": "mite:ice_cream",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "面团",
+      "category": "食物",
+      "modern_id": "mite:dough",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "生羊排",
+      "category": "食物",
+      "modern_id": "minecraft:mutton",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "熟羊排",
+      "category": "食物",
+      "modern_id": "minecraft:cooked_mutton",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "香蕉",
+      "category": "食物",
+      "modern_id": "mite:banana",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满牛奶的铜桶",
+      "category": "食物",
+      "modern_id": "mite:copper_milk_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满牛奶的银桶",
+      "category": "食物",
+      "modern_id": "mite:silver_milk_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满牛奶的金桶",
+      "category": "食物",
+      "modern_id": "mite:gold_milk_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满牛奶的远古金属桶",
+      "category": "食物",
+      "modern_id": "mite:ancient_metal_milk_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满牛奶的秘银桶",
+      "category": "食物",
+      "modern_id": "mite:mithril_milk_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满牛奶的艾德曼桶",
+      "category": "食物",
+      "modern_id": "mite:adamantium_milk_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "生鱼",
+      "category": "食物",
+      "modern_id": "mite:raw_large_fish",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "熟鱼",
+      "category": "食物",
+      "modern_id": "mite:cooked_large_fish",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "虫子",
+      "category": "食物",
+      "modern_id": "mite:raw_worm",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "熟虫子",
+      "category": "食物",
+      "modern_id": "mite:cooked_worm",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "红蘑菇",
+      "category": "食物",
+      "modern_id": "minecraft:red_mushroom",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "棕褐色蘑菇",
+      "category": "食物",
+      "modern_id": "minecraft:brown_mushroom",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "铜门",
+      "category": "红石",
+      "modern_id": "minecraft:copper_door",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银门",
+      "category": "红石",
+      "modern_id": "mite:silver_door",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金门",
+      "category": "红石",
+      "modern_id": "mite:golden_door",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属门",
+      "category": "红石",
+      "modern_id": "mite:ancient_metal_door",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银门",
+      "category": "红石",
+      "modern_id": "mite:mithril_door",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼门",
+      "category": "红石",
+      "modern_id": "mite:adamantium_door",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "祛魔之瓶",
+      "category": "杂项",
+      "modern_id": "mite:bottle_of_disenchanting",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "音乐唱片",
+      "category": "杂项",
+      "modern_id": "mite:music_disc_descent",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "音乐唱片",
+      "category": "杂项",
+      "modern_id": "mite:music_disc_legends",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "音乐唱片",
+      "category": "杂项",
+      "modern_id": "mite:music_disc_underworld",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "音乐唱片",
+      "category": "杂项",
+      "modern_id": "mite:music_disc_wanderer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜桶",
+      "category": "杂项",
+      "modern_id": "mite:copper_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银桶",
+      "category": "杂项",
+      "modern_id": "mite:silver_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金桶",
+      "category": "杂项",
+      "modern_id": "mite:gold_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属桶",
+      "category": "杂项",
+      "modern_id": "mite:ancient_metal_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银桶",
+      "category": "杂项",
+      "modern_id": "mite:mithril_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼桶",
+      "category": "杂项",
+      "modern_id": "mite:adamantium_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满水的铜桶",
+      "category": "杂项",
+      "modern_id": "mite:copper_water_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满水的银桶",
+      "category": "杂项",
+      "modern_id": "mite:silver_water_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满水的金桶",
+      "category": "杂项",
+      "modern_id": "mite:gold_water_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满水的远古金属桶",
+      "category": "杂项",
+      "modern_id": "mite:ancient_metal_water_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满水的秘银桶",
+      "category": "杂项",
+      "modern_id": "mite:mithril_water_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满水的艾德曼桶",
+      "category": "杂项",
+      "modern_id": "mite:adamantium_water_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满岩浆的铜桶",
+      "category": "杂项",
+      "modern_id": "mite:copper_lava_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满岩浆的银桶",
+      "category": "杂项",
+      "modern_id": "mite:silver_lava_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满岩浆的金桶",
+      "category": "杂项",
+      "modern_id": "mite:gold_lava_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满岩浆的远古金属桶",
+      "category": "杂项",
+      "modern_id": "mite:ancient_metal_lava_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满岩浆的秘银桶",
+      "category": "杂项",
+      "modern_id": "mite:mithril_lava_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满岩浆的艾德曼桶",
+      "category": "杂项",
+      "modern_id": "mite:adamantium_lava_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满石头的铜桶",
+      "category": "杂项",
+      "modern_id": "mite:copper_stone_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满石头的银桶",
+      "category": "杂项",
+      "modern_id": "mite:silver_stone_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满石头的金桶",
+      "category": "杂项",
+      "modern_id": "mite:gold_stone_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满石头的铁桶",
+      "category": "杂项",
+      "modern_id": "mite:iron_stone_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满石头的远古金属桶",
+      "category": "杂项",
+      "modern_id": "mite:ancient_metal_stone_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满石头的秘银桶",
+      "category": "杂项",
+      "modern_id": "mite:mithril_stone_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "装满石头的艾德曼桶",
+      "category": "杂项",
+      "modern_id": "mite:adamantium_stone_bucket",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "蓝莓丛",
+      "category": "资源",
+      "modern_id": "mite:blueberry_bush",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "金矿石",
+      "category": "资源",
+      "modern_id": "minecraft:nether_gold_ore",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "铜矿石",
+      "category": "资源",
+      "modern_id": "minecraft:copper_ore",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "银矿石",
+      "category": "资源",
+      "modern_id": "mite:silver_ore",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "秘银矿石",
+      "category": "资源",
+      "modern_id": "mite:mithril_ore",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼矿石",
+      "category": "资源",
+      "modern_id": "mite:adamantium_ore",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "粪便",
+      "category": "材料",
+      "modern_id": "mite:manure",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "皮革线",
+      "category": "材料",
+      "modern_id": "mite:sinew",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "水碗",
+      "category": "材料",
+      "modern_id": "mite:water_bowl",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "面粉",
+      "category": "材料",
+      "modern_id": "mite:flour",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "燧石碎片",
+      "category": "材料",
+      "modern_id": "mite:flint_chip",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "黑曜石碎片",
+      "category": "材料",
+      "modern_id": "mite:obsidian_shard",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "绿宝石碎片",
+      "category": "材料",
+      "modern_id": "mite:emerald_shard",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钻石碎片",
+      "category": "材料",
+      "modern_id": "mite:diamond_shard",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "下界石英碎片",
+      "category": "材料",
+      "modern_id": "mite:quartz_shard",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "玻璃碎片",
+      "category": "材料",
+      "modern_id": "mite:glass_shard",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜粒",
+      "category": "材料",
+      "modern_id": "mite:copper_nugget",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银粒",
+      "category": "材料",
+      "modern_id": "mite:silver_nugget",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁粒",
+      "category": "材料",
+      "modern_id": "minecraft:iron_nugget",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属粒",
+      "category": "材料",
+      "modern_id": "mite:ancient_metal_nugget",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银粒",
+      "category": "材料",
+      "modern_id": "mite:mithril_nugget",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼粒",
+      "category": "材料",
+      "modern_id": "mite:adamantium_nugget",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜锭",
+      "category": "材料",
+      "modern_id": "minecraft:copper_ingot",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银锭",
+      "category": "材料",
+      "modern_id": "mite:silver_ingot",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属锭",
+      "category": "材料",
+      "modern_id": "mite:ancient_metal_ingot",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银锭",
+      "category": "材料",
+      "modern_id": "mite:mithril_ingot",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼锭",
+      "category": "材料",
+      "modern_id": "mite:adamantium_ingot",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜锁链",
+      "category": "材料",
+      "modern_id": "mite:copper_chain",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银锁链",
+      "category": "材料",
+      "modern_id": "mite:silver_chain",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金锁链",
+      "category": "材料",
+      "modern_id": "mite:golden_chain",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁锁链",
+      "category": "材料",
+      "modern_id": "mite:rusted_iron_chain",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁锁链",
+      "category": "材料",
+      "modern_id": "minecraft:chain",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属锁链",
+      "category": "材料",
+      "modern_id": "mite:ancient_metal_chain",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银锁链",
+      "category": "材料",
+      "modern_id": "mite:mithril_chain",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼锁链",
+      "category": "材料",
+      "modern_id": "mite:adamantium_chain",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "圆石熔炉",
+      "category": "功能性方块",
+      "modern_id": "minecraft:furnace",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "粘土熔炉",
+      "category": "功能性方块",
+      "modern_id": "mite:clay_oven",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "大粘土烤炉",
+      "category": "功能性方块",
+      "modern_id": "mite:large_clay_oven",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "沙石熔炉",
+      "category": "功能性方块",
+      "modern_id": "mite:sandstone_furnace",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "黑曜石熔炉",
+      "category": "功能性方块",
+      "modern_id": "mite:obsidian_furnace",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "地狱岩熔炉",
+      "category": "功能性方块",
+      "modern_id": "mite:netherrack_furnace",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "铁砧",
+      "category": "功能性方块",
+      "modern_id": "minecraft:anvil",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "秘银符文石",
+      "category": "功能性方块",
+      "modern_id": "mite:mithril_runestone",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼符文石",
+      "category": "功能性方块",
+      "modern_id": "mite:adamantium_runestone",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "绿宝石附魔台",
+      "category": "功能性方块",
+      "modern_id": "mite:emerald_enchanting_table",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "铜块",
+      "category": "功能性方块",
+      "modern_id": "minecraft:copper_block",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "银块",
+      "category": "功能性方块",
+      "modern_id": "mite:silver_block",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "铜砧",
+      "category": "功能性方块",
+      "modern_id": "mite:copper_anvil",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "银砧",
+      "category": "功能性方块",
+      "modern_id": "mite:silver_anvil",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "金砧",
+      "category": "功能性方块",
+      "modern_id": "mite:golden_anvil",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "远古金属砧",
+      "category": "功能性方块",
+      "modern_id": "mite:ancient_metal_anvil",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "秘银砧",
+      "category": "功能性方块",
+      "modern_id": "mite:mithril_anvil",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼砧",
+      "category": "功能性方块",
+      "modern_id": "mite:adamantium_anvil",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼块",
+      "category": "功能性方块",
+      "modern_id": "mite:adamantium_block",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "秘银块",
+      "category": "功能性方块",
+      "modern_id": "mite:mithril_block",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "铜箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:copper_strongbox",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "银箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:silver_strongbox",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "金箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:golden_strongbox",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "铁箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:iron_strongbox",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "远古金属箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:ancient_metal_strongbox",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "秘银箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:mithril_strongbox",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:adamantium_strongbox",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "燧石工具台",
+      "category": "功能性方块",
+      "modern_id": "mite:flint_crafting_table",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "铜工具台",
+      "category": "功能性方块",
+      "modern_id": "mite:copper_crafting_table",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "银工具台",
+      "category": "功能性方块",
+      "modern_id": "mite:silver_crafting_table",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "地幔",
+      "category": "功能性方块",
+      "modern_id": "mite:mantle",
+      "source_kind": "block",
+      "block_only": true
+    },
+    {
+      "name": "铜币",
+      "category": "硬币",
+      "modern_id": "mite:copper_coin",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金币",
+      "category": "硬币",
+      "modern_id": "mite:gold_coin",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银币",
+      "category": "硬币",
+      "modern_id": "mite:silver_coin",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属币",
+      "category": "硬币",
+      "modern_id": "mite:ancient_metal_coin",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银币",
+      "category": "硬币",
+      "modern_id": "mite:mithril_coin",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼币",
+      "category": "硬币",
+      "modern_id": "mite:adamantium_coin",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "燧石手斧",
+      "category": "手斧",
+      "modern_id": "mite:flint_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "黑曜石手斧",
+      "category": "手斧",
+      "modern_id": "mite:obsidian_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜手斧",
+      "category": "手斧",
+      "modern_id": "mite:copper_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银手斧",
+      "category": "手斧",
+      "modern_id": "mite:silver_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金手斧",
+      "category": "手斧",
+      "modern_id": "mite:golden_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁手斧",
+      "category": "手斧",
+      "modern_id": "mite:rusted_iron_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁手斧",
+      "category": "手斧",
+      "modern_id": "mite:iron_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属手斧",
+      "category": "手斧",
+      "modern_id": "mite:ancient_metal_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银手斧",
+      "category": "手斧",
+      "modern_id": "mite:mithril_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼手斧",
+      "category": "手斧",
+      "modern_id": "mite:adamantium_hatchet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金斧",
+      "category": "斧",
+      "modern_id": "minecraft:golden_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁斧",
+      "category": "斧",
+      "modern_id": "minecraft:iron_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "燧石斧",
+      "category": "斧",
+      "modern_id": "mite:flint_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "黑曜石斧",
+      "category": "斧",
+      "modern_id": "mite:obsidian_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜斧",
+      "category": "斧",
+      "modern_id": "mite:copper_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银斧",
+      "category": "斧",
+      "modern_id": "mite:silver_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁斧",
+      "category": "斧",
+      "modern_id": "mite:rusted_iron_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属斧",
+      "category": "斧",
+      "modern_id": "mite:ancient_metal_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银斧",
+      "category": "斧",
+      "modern_id": "mite:mithril_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼斧",
+      "category": "斧",
+      "modern_id": "mite:adamantium_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金镐",
+      "category": "镐",
+      "modern_id": "minecraft:golden_pickaxe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁镐",
+      "category": "镐",
+      "modern_id": "minecraft:iron_pickaxe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜镐",
+      "category": "镐",
+      "modern_id": "mite:copper_pickaxe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银镐",
+      "category": "镐",
+      "modern_id": "mite:silver_pickaxe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁镐",
+      "category": "镐",
+      "modern_id": "mite:rusted_iron_pickaxe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属镐",
+      "category": "镐",
+      "modern_id": "mite:ancient_metal_pickaxe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银镐",
+      "category": "镐",
+      "modern_id": "mite:mithril_pickaxe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼镐",
+      "category": "镐",
+      "modern_id": "mite:adamantium_pickaxe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金锹",
+      "category": "锹",
+      "modern_id": "minecraft:golden_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁锹",
+      "category": "锹",
+      "modern_id": "minecraft:iron_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "燧石锹",
+      "category": "锹",
+      "modern_id": "mite:flint_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "黑曜石锹",
+      "category": "锹",
+      "modern_id": "mite:obsidian_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜锹",
+      "category": "锹",
+      "modern_id": "mite:copper_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银锹",
+      "category": "锹",
+      "modern_id": "mite:silver_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁锹",
+      "category": "锹",
+      "modern_id": "mite:rusted_iron_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属锹",
+      "category": "锹",
+      "modern_id": "mite:ancient_metal_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银锹",
+      "category": "锹",
+      "modern_id": "mite:mithril_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼锹",
+      "category": "锹",
+      "modern_id": "mite:adamantium_shovel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金锄",
+      "category": "锄",
+      "modern_id": "minecraft:golden_hoe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁锄",
+      "category": "锄",
+      "modern_id": "minecraft:iron_hoe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜锄",
+      "category": "锄",
+      "modern_id": "mite:copper_hoe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银锄",
+      "category": "锄",
+      "modern_id": "mite:silver_hoe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁锄",
+      "category": "锄",
+      "modern_id": "mite:rusted_iron_hoe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属锄",
+      "category": "锄",
+      "modern_id": "mite:ancient_metal_hoe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银锄",
+      "category": "锄",
+      "modern_id": "mite:mithril_hoe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼锄",
+      "category": "锄",
+      "modern_id": "mite:adamantium_hoe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜鹤嘴锄",
+      "category": "鹤嘴锄",
+      "modern_id": "mite:copper_mattock",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银鹤嘴锄",
+      "category": "鹤嘴锄",
+      "modern_id": "mite:silver_mattock",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金鹤嘴锄",
+      "category": "鹤嘴锄",
+      "modern_id": "mite:golden_mattock",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁鹤嘴锄",
+      "category": "鹤嘴锄",
+      "modern_id": "mite:rusted_iron_mattock",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁鹤嘴锄",
+      "category": "鹤嘴锄",
+      "modern_id": "mite:iron_mattock",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属鹤嘴锄",
+      "category": "鹤嘴锄",
+      "modern_id": "mite:ancient_metal_mattock",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银鹤嘴锄",
+      "category": "鹤嘴锄",
+      "modern_id": "mite:mithril_mattock",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼鹤嘴锄",
+      "category": "鹤嘴锄",
+      "modern_id": "mite:adamantium_mattock",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜镰刀",
+      "category": "镰刀",
+      "modern_id": "mite:copper_scythe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银镰刀",
+      "category": "镰刀",
+      "modern_id": "mite:silver_scythe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金镰刀",
+      "category": "镰刀",
+      "modern_id": "mite:golden_scythe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁镰刀",
+      "category": "镰刀",
+      "modern_id": "mite:rusted_iron_scythe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁镰刀",
+      "category": "镰刀",
+      "modern_id": "mite:iron_scythe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属镰刀",
+      "category": "镰刀",
+      "modern_id": "mite:ancient_metal_scythe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银镰刀",
+      "category": "镰刀",
+      "modern_id": "mite:mithril_scythe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼镰刀",
+      "category": "镰刀",
+      "modern_id": "mite:adamantium_scythe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜剪刀",
+      "category": "剪刀",
+      "modern_id": "mite:copper_shears",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银剪刀",
+      "category": "剪刀",
+      "modern_id": "mite:silver_shears",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金剪刀",
+      "category": "剪刀",
+      "modern_id": "mite:golden_shears",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁剪刀",
+      "category": "剪刀",
+      "modern_id": "mite:rusted_iron_shears",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属剪刀",
+      "category": "剪刀",
+      "modern_id": "mite:ancient_metal_shears",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银剪刀",
+      "category": "剪刀",
+      "modern_id": "mite:mithril_shears",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼剪刀",
+      "category": "剪刀",
+      "modern_id": "mite:adamantium_shears",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[燧石钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_flint_hook",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[黑曜石钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_obsidian_hook",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[铜钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_copper_hook",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[银钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_silver_hook",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[金钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_gold_hook",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[铁钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "minecraft:fishing_rod",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[远古金属钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_ancient_metal_hook",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[秘银钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_mithril_hook",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "钓鱼竿[艾德曼钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_adamantium_hook",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "短木棒",
+      "category": "武器",
+      "modern_id": "mite:wooden_cudgel",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "木棒",
+      "category": "武器",
+      "modern_id": "minecraft:wooden_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "黑曜石小刀",
+      "category": "武器",
+      "modern_id": "mite:obsidian_knife",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "燧石小刀",
+      "category": "武器",
+      "modern_id": "mite:flint_knife",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银弓",
+      "category": "武器",
+      "modern_id": "mite:mithril_bow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属弓",
+      "category": "武器",
+      "modern_id": "mite:ancient_metal_bow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "褐色粘液球",
+      "category": "武器",
+      "modern_id": "mite:ochre_jelly",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "红色史莱姆球",
+      "category": "武器",
+      "modern_id": "mite:crimson_blob",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "黑色史莱姆球",
+      "category": "武器",
+      "modern_id": "mite:black_pudding",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "灰色史莱姆球",
+      "category": "武器",
+      "modern_id": "mite:grey_gelatinous_sphere",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜短剑",
+      "category": "短剑",
+      "modern_id": "mite:copper_dagger",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银短剑",
+      "category": "短剑",
+      "modern_id": "mite:silver_dagger",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金短剑",
+      "category": "短剑",
+      "modern_id": "mite:golden_dagger",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁短剑",
+      "category": "短剑",
+      "modern_id": "mite:rusted_iron_dagger",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁短剑",
+      "category": "短剑",
+      "modern_id": "mite:iron_dagger",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属短剑",
+      "category": "短剑",
+      "modern_id": "mite:ancient_metal_dagger",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银短剑",
+      "category": "短剑",
+      "modern_id": "mite:mithril_dagger",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼短剑",
+      "category": "短剑",
+      "modern_id": "mite:adamantium_dagger",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜剑",
+      "category": "剑",
+      "modern_id": "mite:copper_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金剑",
+      "category": "剑",
+      "modern_id": "minecraft:golden_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁剑",
+      "category": "剑",
+      "modern_id": "minecraft:iron_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银剑",
+      "category": "剑",
+      "modern_id": "mite:silver_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁剑",
+      "category": "剑",
+      "modern_id": "mite:rusted_iron_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属剑",
+      "category": "剑",
+      "modern_id": "mite:ancient_metal_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银剑",
+      "category": "剑",
+      "modern_id": "mite:mithril_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼剑",
+      "category": "剑",
+      "modern_id": "mite:adamantium_sword",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜战斧",
+      "category": "战斧",
+      "modern_id": "mite:copper_battle_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银战斧",
+      "category": "战斧",
+      "modern_id": "mite:silver_battle_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金战斧",
+      "category": "战斧",
+      "modern_id": "mite:golden_battle_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁战斧",
+      "category": "战斧",
+      "modern_id": "mite:rusted_iron_battle_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁战斧",
+      "category": "战斧",
+      "modern_id": "mite:iron_battle_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属战斧",
+      "category": "战斧",
+      "modern_id": "mite:ancient_metal_battle_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银战斧",
+      "category": "战斧",
+      "modern_id": "mite:mithril_battle_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼战斧",
+      "category": "战斧",
+      "modern_id": "mite:adamantium_battle_axe",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜战锤",
+      "category": "战锤",
+      "modern_id": "mite:copper_war_hammer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银战锤",
+      "category": "战锤",
+      "modern_id": "mite:silver_war_hammer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金战锤",
+      "category": "战锤",
+      "modern_id": "mite:golden_war_hammer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁战锤",
+      "category": "战锤",
+      "modern_id": "mite:rusted_iron_war_hammer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁战锤",
+      "category": "战锤",
+      "modern_id": "mite:iron_war_hammer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属战锤",
+      "category": "战锤",
+      "modern_id": "mite:ancient_metal_war_hammer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银战锤",
+      "category": "战锤",
+      "modern_id": "mite:mithril_war_hammer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼战锤",
+      "category": "战锤",
+      "modern_id": "mite:adamantium_war_hammer",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "燧石箭",
+      "category": "箭",
+      "modern_id": "minecraft:arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "黑曜石箭",
+      "category": "箭",
+      "modern_id": "mite:obsidian_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜箭",
+      "category": "箭",
+      "modern_id": "mite:copper_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银箭",
+      "category": "箭",
+      "modern_id": "mite:silver_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金箭",
+      "category": "箭",
+      "modern_id": "mite:golden_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁箭",
+      "category": "箭",
+      "modern_id": "mite:rusted_iron_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铁箭",
+      "category": "箭",
+      "modern_id": "mite:iron_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属箭",
+      "category": "箭",
+      "modern_id": "mite:ancient_metal_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银箭",
+      "category": "箭",
+      "modern_id": "mite:mithril_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼箭",
+      "category": "箭",
+      "modern_id": "mite:adamantium_arrow",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜马铠",
+      "category": "装备",
+      "modern_id": "mite:copper_horse_armor",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银马铠",
+      "category": "装备",
+      "modern_id": "mite:silver_horse_armor",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属马铠",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_horse_armor",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银马铠",
+      "category": "装备",
+      "modern_id": "mite:mithril_horse_armor",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼马铠",
+      "category": "装备",
+      "modern_id": "mite:adamantium_horse_armor",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜头盔",
+      "category": "装备",
+      "modern_id": "mite:copper_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜胸甲",
+      "category": "装备",
+      "modern_id": "mite:copper_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜护腿",
+      "category": "装备",
+      "modern_id": "mite:copper_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜靴子",
+      "category": "装备",
+      "modern_id": "mite:copper_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:copper_chain_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:copper_chain_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:copper_chain_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:copper_chain_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银头盔",
+      "category": "装备",
+      "modern_id": "mite:silver_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银胸甲",
+      "category": "装备",
+      "modern_id": "mite:silver_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银护腿",
+      "category": "装备",
+      "modern_id": "mite:silver_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银靴子",
+      "category": "装备",
+      "modern_id": "mite:silver_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:silver_chain_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:silver_chain_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:silver_chain_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "银锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:silver_chain_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金头盔",
+      "category": "装备",
+      "modern_id": "minecraft:golden_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金胸甲",
+      "category": "装备",
+      "modern_id": "minecraft:golden_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金护腿",
+      "category": "装备",
+      "modern_id": "minecraft:golden_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金靴子",
+      "category": "装备",
+      "modern_id": "minecraft:golden_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:golden_chain_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:golden_chain_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:golden_chain_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "金锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:golden_chain_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁头盔",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁胸甲",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁护腿",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁靴子",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chain_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chain_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chain_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "锈铁锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chain_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属头盔",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属胸甲",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属护腿",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属靴子",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chainmail_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chainmail_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chainmail_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "远古金属锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chainmail_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银头盔",
+      "category": "装备",
+      "modern_id": "mite:mithril_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银胸甲",
+      "category": "装备",
+      "modern_id": "mite:mithril_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银护腿",
+      "category": "装备",
+      "modern_id": "mite:mithril_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银靴子",
+      "category": "装备",
+      "modern_id": "mite:mithril_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:mithril_chain_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:mithril_chain_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:mithril_chain_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "秘银锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:mithril_chain_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼头盔",
+      "category": "装备",
+      "modern_id": "mite:adamantium_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼胸甲",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼护腿",
+      "category": "装备",
+      "modern_id": "mite:adamantium_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼靴子",
+      "category": "装备",
+      "modern_id": "mite:adamantium_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chain_helmet",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chain_chestplate",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chain_leggings",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chain_boots",
+      "source_kind": "item",
+      "block_only": false
+    },
+    {
+      "name": "铜栅栏",
+      "category": "装饰品",
+      "modern_id": "mite:copper_bars",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "金栅栏",
+      "category": "装饰品",
+      "modern_id": "mite:golden_bars",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "远古金属栅栏",
+      "category": "装饰品",
+      "modern_id": "mite:ancient_metal_bars",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "秘银栅栏",
+      "category": "装饰品",
+      "modern_id": "mite:mithril_bars",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "艾德曼栅栏",
+      "category": "装饰品",
+      "modern_id": "mite:adamantium_bars",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "大丽花",
+      "category": "装饰品",
+      "modern_id": "mite:dahlia",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "郁金香",
+      "category": "装饰品",
+      "modern_id": "minecraft:orange_tulip",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "绒球葱",
+      "category": "装饰品",
+      "modern_id": "minecraft:allium",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "滨菊",
+      "category": "装饰品",
+      "modern_id": "minecraft:oxeye_daisy",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "兰花",
+      "category": "装饰品",
+      "modern_id": "minecraft:blue_orchid",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "凋零灌木",
+      "category": "装饰品",
+      "modern_id": "mite:witherwood_bush",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "地狱沙砾",
+      "category": "装饰品",
+      "modern_id": "mite:nether_gravel",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "远古金属块",
+      "category": "装饰品",
+      "modern_id": "mite:ancient_metal_block",
+      "source_kind": "block",
+      "block_only": false
+    },
+    {
+      "name": "地核",
+      "category": "装饰品",
+      "modern_id": "mite:core",
+      "source_kind": "block",
+      "block_only": true
+    }
+  ]
+}

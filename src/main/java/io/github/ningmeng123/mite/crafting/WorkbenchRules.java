@@ -36,6 +36,17 @@ public final class WorkbenchRules {
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
+        if (result.getItem() instanceof io.github.ningmeng123.mite.item.R196ReinforcedBowItem bow)
+            return materialCapacity(bow.material());
+        if (result.getItem() instanceof io.github.ningmeng123.mite.item.R196CoinItem coin)
+            return materialCapacity(coin.material());
+        String decorative = io.github.ningmeng123.mite.registry.MiteDecorativeContent.material(result);
+        if (decorative != null) return materialCapacity(decorative);
+        if (result.getItem() instanceof BlockItem copper && (copper.getBlock() == Blocks.COPPER_TRAPDOOR
+                || copper.getBlock() == Blocks.EXPOSED_COPPER_TRAPDOOR || copper.getBlock() == Blocks.WEATHERED_COPPER_TRAPDOOR
+                || copper.getBlock() == Blocks.OXIDIZED_COPPER_TRAPDOOR || copper.getBlock() == Blocks.WAXED_COPPER_TRAPDOOR
+                || copper.getBlock() == Blocks.WAXED_EXPOSED_COPPER_TRAPDOOR || copper.getBlock() == Blocks.WAXED_WEATHERED_COPPER_TRAPDOOR
+                || copper.getBlock() == Blocks.WAXED_OXIDIZED_COPPER_TRAPDOOR)) return materialCapacity("copper");
         var arrow = io.github.ningmeng123.mite.registry.MiteRangedItems.arrowMaterial(result);
         var rod = io.github.ningmeng123.mite.registry.MiteRangedItems.rodMaterial(result);
         var carrotRod = io.github.ningmeng123.mite.registry.MiteRangedItems.carrotRodMaterial(result);

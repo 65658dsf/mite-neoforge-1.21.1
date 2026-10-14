@@ -26,7 +26,9 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 public final class ArmorStructureLootModifier extends LootModifier {
     public static final MapCodec<ArmorStructureLootModifier> CODEC = RecordCodecBuilder.mapCodec(
             instance -> codecStart(instance).apply(instance, ArmorStructureLootModifier::new));
-    public record Entry(String item, int minimum, int maximum, int weight) {}
+    public record Entry(String item, int minimum, int maximum, int weight, int minimumOverworldDay) {
+        public Entry(String item, int minimum, int maximum, int weight) { this(item, minimum, maximum, weight, 0); }
+    }
     public record Pool(String modernTable, int minimumRolls, int maximumRolls, int sourceTotalWeight, List<Entry> entries) {
         public Pool { entries = List.copyOf(entries); }
         public Entry select(int draw) {
@@ -54,8 +56,27 @@ public final class ArmorStructureLootModifier extends LootModifier {
         loot.removeIf(ArmorStructureLootModifier::replacedGear);
         var random = context.getRandom();
         int rolls = pool.minimumRolls() + random.nextInt(pool.maximumRolls() - pool.minimumRolls() + 1);
+        var unique = io.github.ningmeng123.mite.utility.UniqueMusicSavedData.get(context.getLevel());
+        ItemStack reservedRecord = ItemStack.EMPTY;
+        long sourceDay = (context.getLevel().getServer().overworld().getGameTime() + 6000L) / 24000L + 1L;
         for (int roll = 0; roll < rolls; roll++) {
-            Entry entry = pool.select(random.nextInt(pool.sourceTotalWeight()));
+            Entry entry = null;
+            for (int attempt = 0; attempt < 4; attempt++) {
+                entry = pool.select(random.nextInt(pool.sourceTotalWeight()));
+                if (entry == null) break;
+                var item = MiteArmorContent.get(entry.item());
+                if (item instanceof io.github.ningmeng123.mite.item.R196RecordItem record) {
+                    if (reservedRecord.isEmpty() && !unique.has(record.recordName())) reservedRecord = new ItemStack(item);
+                    entry = null;
+                    continue;
+                }
+                if (context.getLevel().dimension().equals(net.minecraft.world.level.Level.OVERWORLD)
+                        && sourceDay < entry.minimumOverworldDay()) {
+                    entry = null;
+                    continue;
+                }
+                break;
+            }
             if (entry == null) continue; // Full source non-equipment weight remains an empty gear outcome.
             ItemStack stack = new ItemStack(MiteArmorContent.get(entry.item()), entry.minimum() + random.nextInt(entry.maximum() - entry.minimum() + 1));
             if (stack.isDamageableItem()) {
@@ -66,6 +87,8 @@ public final class ArmorStructureLootModifier extends LootModifier {
             }
             loot.add(stack);
         }
+        if (!reservedRecord.isEmpty() && unique.mark(((io.github.ningmeng123.mite.item.R196RecordItem)reservedRecord.getItem()).recordName()))
+            loot.add(reservedRecord);
         return loot;
     }
     private static boolean replacedGear(ItemStack stack) {
@@ -90,6 +113,21 @@ public final class ArmorStructureLootModifier extends LootModifier {
                 pools.put(pair.getKey(), new Pool(data.get("modern_table").getAsString(), data.get("minimum_rolls").getAsInt(),
                         data.get("maximum_rolls").getAsInt(), data.get("source_total_weight").getAsInt(), entries));
             });
+            try (var extraReader = new InputStreamReader(Objects.requireNonNull(ArmorStructureLootModifier.class.getResourceAsStream(
+                    "/mite/chest-content-028.json")), StandardCharsets.UTF_8)) {
+                JsonParser.parseReader(extraReader).getAsJsonObject().getAsJsonObject("pools").entrySet().forEach(pair -> {
+                    Pool original = Objects.requireNonNull(pools.get(pair.getKey()));
+                    List<Entry> entries = new ArrayList<>(original.entries());
+                    pair.getValue().getAsJsonArray().forEach(value -> {
+                        var entry = value.getAsJsonObject();
+                        entries.add(new Entry(entry.get("item").getAsString(), entry.get("minimum").getAsInt(),
+                                entry.get("maximum").getAsInt(), entry.get("weight").getAsInt(),
+                                entry.has("minimum_overworld_day") ? entry.get("minimum_overworld_day").getAsInt() : 0));
+                    });
+                    pools.put(pair.getKey(), new Pool(original.modernTable(), original.minimumRolls(), original.maximumRolls(),
+                            original.sourceTotalWeight(), entries));
+                });
+            }
             return java.util.Collections.unmodifiableMap(pools);
         } catch (Exception exception) { throw new IllegalStateException("Cannot load R196 armor loot source weights", exception); }
     }

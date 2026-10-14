@@ -2674,12 +2674,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:copper_door",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:copper_door"
+      },
+      "actual_modern_id": "minecraft:copper_door",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35780,
@@ -2714,12 +2729,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:silver_door",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_door"
+      },
+      "actual_modern_id": "mite:silver_door",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35781,
@@ -2754,12 +2784,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:golden_door",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_door"
+      },
+      "actual_modern_id": "mite:golden_door",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 105514,
@@ -2794,12 +2839,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:ancient_metal_door",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_door"
+      },
+      "actual_modern_id": "mite:ancient_metal_door",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 36576,
@@ -2834,12 +2894,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:mithril_door",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_door"
+      },
+      "actual_modern_id": "mite:mithril_door",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 36577,
@@ -2874,12 +2949,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:adamantium_door",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_door"
+      },
+      "actual_modern_id": "mite:adamantium_door",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35674,
@@ -2913,12 +3003,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:bottle_of_disenchanting",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:bottle_of_disenchanting"
+      },
+      "actual_modern_id": "mite:bottle_of_disenchanting",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 824163,
@@ -2952,14 +3057,29 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:music_disc_descent",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "目录重名；已用各页正文唱片名称和yc.java463–466确定对应。没有复制音频或歌词。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:music_disc_descent"
+      },
+      "actual_modern_id": "mite:music_disc_descent",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 824164,
@@ -2993,14 +3113,29 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:music_disc_legends",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "目录重名；已用各页正文唱片名称和yc.java463–466确定对应。没有复制音频或歌词。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:music_disc_legends"
+      },
+      "actual_modern_id": "mite:music_disc_legends",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 824165,
@@ -3034,14 +3169,29 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:music_disc_underworld",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "目录重名；已用各页正文唱片名称和yc.java463–466确定对应。没有复制音频或歌词。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:music_disc_underworld"
+      },
+      "actual_modern_id": "mite:music_disc_underworld",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 824166,
@@ -3075,14 +3225,29 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:music_disc_wanderer",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "目录重名；已用各页正文唱片名称和yc.java463–466确定对应。没有复制音频或歌词。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:music_disc_wanderer"
+      },
+      "actual_modern_id": "mite:music_disc_wanderer",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35747,
@@ -4207,13 +4372,28 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:copper_bucket_stone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:copper_stone_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_bucket_stone"
+      },
+      "actual_modern_id": "mite:copper_stone_bucket",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 39435,
@@ -4246,13 +4426,28 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:silver_bucket_stone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:silver_stone_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_bucket_stone"
+      },
+      "actual_modern_id": "mite:silver_stone_bucket",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 39436,
@@ -4285,13 +4480,28 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:golden_bucket_stone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:gold_stone_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_bucket_stone"
+      },
+      "actual_modern_id": "mite:gold_stone_bucket",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 39437,
@@ -4324,13 +4534,28 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:iron_bucket_stone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:iron_stone_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:iron_bucket_stone"
+      },
+      "actual_modern_id": "mite:iron_stone_bucket",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 105516,
@@ -4363,13 +4588,28 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:ancient_metal_bucket_stone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:ancient_metal_stone_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_bucket_stone"
+      },
+      "actual_modern_id": "mite:ancient_metal_stone_bucket",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 39438,
@@ -4402,13 +4642,28 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:mithril_bucket_stone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:mithril_stone_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_bucket_stone"
+      },
+      "actual_modern_id": "mite:mithril_stone_bucket",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 39439,
@@ -4441,13 +4696,28 @@
         ]
       },
       "match_basis": "unique_source_symbol_or_language_name",
-      "proposed_modern_id": "mite:adamantium_bucket_stone",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:adamantium_stone_bucket",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_bucket_stone"
+      },
+      "actual_modern_id": "mite:adamantium_stone_bucket",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 36572,
@@ -4896,12 +5166,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:sinew",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_mite",
       "mechanism_status": "partial_implemented",
-      "status": "existing_partial",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_mite",
+        "status": "existing_partial",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:sinew"
+      },
+      "actual_modern_id": "mite:sinew",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35535,
@@ -5068,12 +5353,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:flint_chip",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_mite",
       "mechanism_status": "partial_implemented",
-      "status": "existing_partial",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_mite",
+        "status": "existing_partial",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:flint_chip"
+      },
+      "actual_modern_id": "mite:flint_chip",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35568,
@@ -5107,12 +5407,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:obsidian_shard",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:obsidian_shard"
+      },
+      "actual_modern_id": "mite:obsidian_shard",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35569,
@@ -5146,12 +5461,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:emerald_shard",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:emerald_shard"
+      },
+      "actual_modern_id": "mite:emerald_shard",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35570,
@@ -5185,12 +5515,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:diamond_shard",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:diamond_shard"
+      },
+      "actual_modern_id": "mite:diamond_shard",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 37884,
@@ -5224,12 +5569,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:quartz_shard",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:quartz_shard"
+      },
+      "actual_modern_id": "mite:quartz_shard",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 37886,
@@ -5263,12 +5623,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:glass_shard",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:glass_shard"
+      },
+      "actual_modern_id": "mite:glass_shard",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 29624,
@@ -5302,12 +5677,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_nugget",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_nugget"
+      },
+      "actual_modern_id": "mite:copper_nugget",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35566,
@@ -5341,12 +5731,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_nugget",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_nugget"
+      },
+      "actual_modern_id": "mite:silver_nugget",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 36246,
@@ -5380,12 +5785,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:iron_nugget",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:iron_nugget"
+      },
+      "actual_modern_id": "minecraft:iron_nugget",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 105066,
@@ -5419,12 +5839,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_nugget",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_nugget"
+      },
+      "actual_modern_id": "mite:ancient_metal_nugget",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35571,
@@ -5458,12 +5893,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_nugget",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_nugget"
+      },
+      "actual_modern_id": "mite:mithril_nugget",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35572,
@@ -5497,12 +5947,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_nugget",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_nugget"
+      },
+      "actual_modern_id": "mite:adamantium_nugget",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 29662,
@@ -5536,12 +6001,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:copper_ingot",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:copper_ingot"
+      },
+      "actual_modern_id": "minecraft:copper_ingot",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35783,
@@ -5575,12 +6055,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_ingot",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_ingot"
+      },
+      "actual_modern_id": "mite:silver_ingot",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 52208,
@@ -5614,12 +6109,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:ancient_metal_ingot",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_ingot"
+      },
+      "actual_modern_id": "mite:ancient_metal_ingot",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 36282,
@@ -5653,12 +6163,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_ingot",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_ingot"
+      },
+      "actual_modern_id": "mite:mithril_ingot",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 36281,
@@ -5692,12 +6217,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_ingot",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_ingot"
+      },
+      "actual_modern_id": "mite:adamantium_ingot",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": true,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35708,
@@ -8057,12 +8597,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_coin",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_coin"
+      },
+      "actual_modern_id": "mite:copper_coin",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35564,
@@ -8096,12 +8651,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:gold_coin",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:gold_coin"
+      },
+      "actual_modern_id": "mite:gold_coin",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35565,
@@ -8135,12 +8705,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_coin",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_coin"
+      },
+      "actual_modern_id": "mite:silver_coin",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 51526,
@@ -8174,12 +8759,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_coin",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_coin"
+      },
+      "actual_modern_id": "mite:ancient_metal_coin",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35567,
@@ -8213,12 +8813,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_coin",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_coin"
+      },
+      "actual_modern_id": "mite:mithril_coin",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 51527,
@@ -8252,12 +8867,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_coin",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_coin"
+      },
+      "actual_modern_id": "mite:adamantium_coin",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 29622,
@@ -12819,12 +13449,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_bow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_bow"
+      },
+      "actual_modern_id": "mite:mithril_bow",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 105519,
@@ -12858,12 +13503,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_bow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_bow"
+      },
+      "actual_modern_id": "mite:ancient_metal_bow",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 52140,
@@ -12897,12 +13557,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:ochre_jelly",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ochre_jelly"
+      },
+      "actual_modern_id": "mite:ochre_jelly",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 52141,
@@ -12936,12 +13611,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:crimson_blob",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:crimson_blob"
+      },
+      "actual_modern_id": "mite:crimson_blob",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 52142,
@@ -12975,12 +13665,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:black_pudding",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:black_pudding"
+      },
+      "actual_modern_id": "mite:black_pudding",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 110416,
@@ -13014,12 +13719,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:grey_gelatinous_sphere",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:grey_gelatinous_sphere"
+      },
+      "actual_modern_id": "mite:grey_gelatinous_sphere",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35726,
@@ -18860,12 +19580,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_bars",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_bars"
+      },
+      "actual_modern_id": "mite:copper_bars",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 823808,
@@ -18899,12 +19634,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_bars",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_bars"
+      },
+      "actual_modern_id": "mite:golden_bars",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 823810,
@@ -18938,12 +19688,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_bars",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_bars"
+      },
+      "actual_modern_id": "mite:ancient_metal_bars",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 823807,
@@ -18977,12 +19742,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_bars",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_bars"
+      },
+      "actual_modern_id": "mite:mithril_bars",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 823811,
@@ -19016,12 +19796,27 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_bars",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_bars"
+      },
+      "actual_modern_id": "mite:adamantium_bars",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35648,
@@ -19055,12 +19850,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:dahlia",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:dahlia"
+      },
+      "actual_modern_id": "mite:dahlia",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35649,
@@ -19094,14 +19904,29 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:orange_tulip",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "旧flowers贴图仅用于只读核对花色：tulip橙色、orchid蓝色；建议复用现代对应花ID，不复制旧材质。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:orange_tulip"
+      },
+      "actual_modern_id": "minecraft:orange_tulip",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35650,
@@ -19135,12 +19960,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:allium",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:allium"
+      },
+      "actual_modern_id": "minecraft:allium",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35651,
@@ -19174,12 +20014,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:oxeye_daisy",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:oxeye_daisy"
+      },
+      "actual_modern_id": "minecraft:oxeye_daisy",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 35652,
@@ -19213,14 +20068,29 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:blue_orchid",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "旧flowers贴图仅用于只读核对花色：tulip橙色、orchid蓝色；建议复用现代对应花ID，不复制旧材质。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:blue_orchid"
+      },
+      "actual_modern_id": "minecraft:blue_orchid",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 37966,
@@ -19254,12 +20124,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:witherwood_bush",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:witherwood_bush"
+      },
+      "actual_modern_id": "mite:witherwood_bush",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 37885,
@@ -19293,12 +20178,27 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:nether_gravel",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:nether_gravel"
+      },
+      "actual_modern_id": "mite:nether_gravel",
+      "status_label": "已添加",
+      "catalog_028_runtime_status": {
+        "batch": "028",
+        "existing_material_reconciled": false,
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/028-remaining-content.md"
+      }
     },
     {
       "mcmod_id": 53114,
@@ -21310,5 +22210,35 @@
     "validation": "automatic_passed",
     "client_manual": "user_confirmed",
     "scope": "箭、装备、钓鱼竿、功能性方块；另补8种链材料与远古金属块，关联胡萝卜钓竿不伪造百科叶项。"
+  },
+  "remaining_registration_update_028": {
+    "author": "NingMeng123",
+    "scope_leaves": 60,
+    "existing_material_leaves": 18,
+    "new_items": 36,
+    "new_blocks": 13,
+    "category_counts": {
+      "红石": 6,
+      "杂项": 12,
+      "材料": 18,
+      "硬币": 6,
+      "武器": 6,
+      "装饰品": 12
+    },
+    "default_included_total": 347,
+    "excluded_leaves": 12,
+    "current_labels": {
+      "added": 347,
+      "excluded_conflict": 8,
+      "excluded_deleted_or_not_added": 4
+    },
+    "automatic_validation": "passed",
+    "client_manual": "user_confirmed",
+    "semantics": "All included identities now exist. This is not a claim that all R196 monsters, curses, structures, world progression or global mechanisms are complete.",
+    "user_acceptance": {
+      "date": "2026-10-14",
+      "feedback": "好的没有问题提交git吧",
+      "scope": "用户确认本批当前交付正常并授权提交；未提供逐项、联机与长期测试记录。"
+    }
   }
 }

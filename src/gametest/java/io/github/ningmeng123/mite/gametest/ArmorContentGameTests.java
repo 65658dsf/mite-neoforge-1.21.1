@@ -272,14 +272,16 @@ public final class ArmorContentGameTests {
         }
         helper.assertTrue(copperFound, "Registered loot modifier makes source copper barding survive into real dungeon output");
         var surface = ArmorStructureLootModifier.pools().get("dungeon_surface");
-        int copperOutcomes = 0, emptyOutcomes = 0;
+        int copperOutcomes = 0, coinOutcomes = 0, emptyOutcomes = 0;
         for (int draw = 0; draw < 156; draw++) {
             var entry = surface.select(draw);
             if (entry == null) emptyOutcomes++;
             else if (entry.item().equals("mite:copper_horse_armor")) copperOutcomes++;
+            else if (entry.item().endsWith("_coin")) coinOutcomes++;
         }
         helper.assertValueEqual(copperOutcomes, 5, "Exactly five of the source 156 weighted outcomes are copper horse armor");
-        helper.assertValueEqual(emptyOutcomes, 148, "Non-equipment source probability remains empty in the gear overlay");
+        helper.assertValueEqual(coinOutcomes, 13, "Source surface coin weights are 10 copper, 2 silver and 1 gold");
+        helper.assertValueEqual(emptyOutcomes, 135, "New source coins consume thirteen previously unrepresented outcomes without renormalizing gear");
         helper.succeed();
     }
 

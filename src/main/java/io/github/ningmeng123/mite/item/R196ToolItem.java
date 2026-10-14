@@ -49,6 +49,11 @@ import net.neoforged.neoforge.common.ItemAbility;
 public final class R196ToolItem extends Item implements EquipmentDurability.Profiled {
     private static final List<Block> GRASSES = List.of(Blocks.SHORT_GRASS, Blocks.FERN,
             Blocks.TALL_GRASS, Blocks.LARGE_FERN, Blocks.DEAD_BUSH);
+    private static List<Block> sourceGrasses() {
+        List<Block> plants = new ArrayList<>(GRASSES);
+        plants.add(io.github.ningmeng123.mite.registry.MiteDecorativeContent.WITHERWOOD_BUSH.get());
+        return plants;
+    }
     private static final List<Block> SANDSTONE = List.of(Blocks.SANDSTONE, Blocks.CUT_SANDSTONE,
             Blocks.SMOOTH_SANDSTONE, Blocks.CHISELED_SANDSTONE, Blocks.RED_SANDSTONE,
             Blocks.CUT_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE, Blocks.CHISELED_RED_SANDSTONE,
@@ -140,14 +145,14 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
                 rules.add(Tool.Rule.minesAndDrops(BlockTags.WOOL, speed));
                 rules.add(Tool.Rule.minesAndDrops(BlockTags.FLOWERS, speed));
                 rules.add(Tool.Rule.minesAndDrops(BlockTags.SAPLINGS, speed));
-                rules.add(Tool.Rule.minesAndDrops(GRASSES, speed));
+                rules.add(Tool.Rule.minesAndDrops(sourceGrasses(), speed));
                 rules.add(Tool.Rule.minesAndDrops(List.of(Blocks.COBWEB, Blocks.VINE, Blocks.GLOW_LICHEN,
                         Blocks.TRIPWIRE, Blocks.SUGAR_CANE, Blocks.HANGING_ROOTS), speed));
                 if (definition.family() != ToolFamily.SHEARS)
                     rules.add(Tool.Rule.minesAndDrops(List.of(Blocks.PUMPKIN, Blocks.CARVED_PUMPKIN, Blocks.MELON), speed));
             }
             case SCYTHE -> {
-                rules.add(Tool.Rule.minesAndDrops(GRASSES, speed));
+                rules.add(Tool.Rule.minesAndDrops(sourceGrasses(), speed));
                 rules.add(Tool.Rule.minesAndDrops(BlockTags.CROPS, speed));
             }
             // Both wooden blunt tools have harvest level zero; whole glass/ice require one.
@@ -228,7 +233,7 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
         // so do not let offhand shears charge an unrelated main-hand tool or produce its ordinary drops.
         if (context.getHand() != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
         if (!(state.is(BlockTags.LEAVES) || state.is(BlockTags.WOOL) || state.is(Blocks.COBWEB)
-                || GRASSES.contains(state.getBlock()) || state.is(Blocks.VINE))) return InteractionResult.PASS;
+                || io.github.ningmeng123.mite.mining.GrassMining.matches(state) || state.is(Blocks.VINE))) return InteractionResult.PASS;
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             // The same final event, permission and loot path as a normal player harvest.
             if (!serverPlayer.gameMode.destroyBlock(pos)) return InteractionResult.FAIL;

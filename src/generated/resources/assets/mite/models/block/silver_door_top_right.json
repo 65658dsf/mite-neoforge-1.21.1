@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/door_top_right",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "bottom": "mite:block/door_silver_lower",
+    "top": "mite:block/door_silver_upper"
+  }
+}

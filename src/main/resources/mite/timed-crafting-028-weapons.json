@@ -1,0 +1,15 @@
+{
+  "author": "NingMeng123",
+  "recipes": {
+    "mite:ancient_metal_bow": {
+      "difficulty": 1750.0,
+      "required_bench": "ancient_metal",
+      "source_order": 39
+    },
+    "mite:mithril_bow": {
+      "difficulty": 6550.0,
+      "required_bench": "mithril",
+      "source_order": 38
+    }
+  }
+}

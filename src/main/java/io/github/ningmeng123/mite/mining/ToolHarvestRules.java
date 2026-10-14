@@ -20,6 +20,12 @@ public final class ToolHarvestRules {
     private ToolHarvestRules() {}
     public static boolean isBlocked(Player player, BlockState state) {
         if (state.getBlock() instanceof net.minecraft.world.level.block.AnvilBlock) return false;
+        int decorative = io.github.ningmeng123.mite.registry.MiteDecorativeContent.requiredHarvest(state.getBlock());
+        if (decorative > 0 && !player.isCreative() && !player.isSpectator()) {
+            var tool = MiteTools.definition(player.getMainHandItem());
+            return tool == null ? !player.getMainHandItem().isCorrectToolForDrops(state)
+                    : tool.harvestLevel() < decorative || tool.family() != ToolFamily.PICKAXE && tool.family() != ToolFamily.WAR_HAMMER;
+        }
         String storage = io.github.ningmeng123.mite.registry.MiteMetalBlocks.material(state);
         if (storage != null && !player.isCreative() && !player.isSpectator()) {
             var definition = MiteTools.definition(player.getMainHandItem());

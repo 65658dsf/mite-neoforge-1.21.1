@@ -1,0 +1,8 @@
+{
+  "comparator_output": 3,
+  "description": {
+    "translate": "item.mite.music_disc_wanderer.desc"
+  },
+  "length_in_seconds": 123.76816326530613,
+  "sound_event": "mite:record.wanderer"
+}

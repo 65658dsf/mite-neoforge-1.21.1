@@ -1,0 +1,21 @@
+{
+  "type": "mite:utility_shapeless",
+  "ingredients": [
+    {
+      "item": "mite:ancient_metal_coin"
+    },
+    {
+      "item": "mite:ancient_metal_coin"
+    },
+    {
+      "item": "mite:ancient_metal_coin"
+    },
+    {
+      "item": "mite:ancient_metal_coin"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "mite:ancient_metal_nugget"
+  }
+}

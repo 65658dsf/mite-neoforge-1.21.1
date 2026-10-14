@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.crafting.FoodShapedRecipe;
 import io.github.ningmeng123.mite.crafting.FoodShapelessRecipe;
 import io.github.ningmeng123.mite.crafting.TimedCraftingController;
 import io.github.ningmeng123.mite.crafting.WorkbenchDismantleRecipe;
+import io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe;
 import io.github.ningmeng123.mite.integration.jei.WorkbenchJeiRecipe;
 import io.github.ningmeng123.mite.integration.jei.WorkbenchJeiRecipes;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
@@ -35,6 +37,8 @@ import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.ArmorDyeRecipe;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -167,10 +171,13 @@ public final class WorkbenchJeiRecipesGameTests {
     @GameTest(template = "empty")
     public static void foodMetadataAndMixedMilkBucketsAreRepresentedByActualManufacturingRules(GameTestHelper helper) {
         var pages = WorkbenchJeiRecipes.build(helper.getLevel());
-        assertWorkstations(helper, pages, "mite:copper_bucket", METAL_TABLES);
-        assertWorkstations(helper, pages, "mite:ancient_metal_bucket", Set.of("mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table"));
-        assertWorkstations(helper, pages, "minecraft:golden_apple", METAL_TABLES);
-        for (var copper : matching(pages, "mite:copper_bucket")) {
+        // The same empty-vessel output also has the new source stone-bucket dismantling
+        // recipe. Its D100/no-metal rule must not be mistaken for this D1200 manufacture.
+        var foodPages = pages.stream().filter(page -> page.source().value() instanceof FoodManufacturingRecipe).toList();
+        assertWorkstations(helper, foodPages, "mite:copper_bucket", METAL_TABLES);
+        assertWorkstations(helper, foodPages, "mite:ancient_metal_bucket", Set.of("mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table"));
+        assertWorkstations(helper, foodPages, "minecraft:golden_apple", METAL_TABLES);
+        for (var copper : matching(foodPages, "mite:copper_bucket")) {
             helper.assertValueEqual(copper.rule().difficulty(), 1200F, "Food serializer metadata also retains metal-vessel crafting difficulty");
             helper.assertValueEqual(copper.requiredCapacity(), 4F, "Metal-vessel recipes cannot bypass a lower-capacity bench");
         }
@@ -200,6 +207,104 @@ public final class WorkbenchJeiRecipesGameTests {
         helper.assertTrue(mixed.source().value().matches(mixedInput, helper.getLevel()), "A page's independently chosen different metals can be mixed in the true custom rule");
         helper.assertTrue(ItemStack.matches(mixed.source().value().assemble(mixedInput, helper.getLevel().registryAccess()), mixed.output()),
                 "Mixed metal vessels keep the five-cheese batch output");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void stoneBucketDismantlingKeepsItsOwnSourceGateAndReturnsNoDuplicateContainer(GameTestHelper helper) {
+        var pages = WorkbenchJeiRecipes.build(helper.getLevel()).stream()
+                .filter(page -> page.source().value() instanceof UtilityShapelessRecipe).toList();
+        var allProfiles = new java.util.HashSet<>(ALL_TABLES); allProfiles.add("minecraft:inventory");
+        for (String metal : List.of("copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium")) {
+            Item stone = item("mite:" + metal + "_stone_bucket");
+            Item empty = item(metal.equals("iron") ? "minecraft:bucket" : "mite:" + metal + "_bucket");
+            var conversions = pages.stream().filter(page -> page.output().is(empty)
+                    && page.inputs().stream().flatMap(List::stream).anyMatch(stack -> stack.is(stone))).toList();
+            helper.assertValueEqual(conversions.size(), 10, "Source stone bucket dismantles at inventory and all nine material benches");
+            helper.assertTrue(conversions.stream().map(WorkbenchJeiRecipe::workstationId).collect(Collectors.toSet()).equals(allProfiles),
+                    "Returning a high-metal vessel is not newly forging that metal: " + metal);
+            for (var conversion : conversions) {
+                helper.assertValueEqual(conversion.rule().difficulty(), 100F, "RecipesMITE source dismantling difficulty is D100");
+                helper.assertValueEqual(conversion.requiredCapacity(), 0F, "RecipesMITE source dismantling has no metal workbench requirement");
+                helper.assertValueEqual(conversion.output().getCount(), 1, "The result is exactly one source empty vessel");
+                helper.assertTrue(conversion.inputs().size() == 1 && conversion.remainders().isEmpty(),
+                        "The viewer exposes one consumed stone vessel and never a duplicated second empty bucket");
+                var input = CraftingInput.of(1, 1, List.of(new ItemStack(stone)));
+                helper.assertTrue(conversion.source().value().matches(input, helper.getLevel())
+                        && conversion.source().value().assemble(input, helper.getLevel().registryAccess()).is(empty),
+                        "Every stone-vessel page is backed by its real source recipe");
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void utilityCoinPagesKeepMintMaterialGatesAndIndependentOneThroughNineRedeemBatches(GameTestHelper helper) {
+        var pages = WorkbenchJeiRecipes.build(helper.getLevel()).stream()
+                .filter(page -> page.source().value() instanceof UtilityShapelessRecipe).toList();
+        var withInventory = new java.util.HashSet<>(ALL_TABLES); withInventory.add("minecraft:inventory");
+        Map<String, Set<String>> mintStations = Map.of(
+                "copper", METAL_TABLES, "silver", METAL_TABLES, "gold", METAL_TABLES,
+                "ancient_metal", Set.of("mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table"),
+                "mithril", Set.of("mite:mithril_crafting_table", "mite:adamantium_crafting_table"),
+                "adamantium", Set.of("mite:adamantium_crafting_table"));
+        for (String metal : List.of("copper", "silver", "gold", "ancient_metal", "mithril", "adamantium")) {
+            Item coin = item("mite:" + metal + "_coin"); Item nugget = item(metal.equals("gold") ? "minecraft:gold_nugget" : "mite:" + metal + "_nugget");
+            assertWorkstations(helper, pages, "mite:" + metal + "_coin", mintStations.get(metal));
+            for (var mint : matching(pages, "mite:" + metal + "_coin")) {
+                helper.assertValueEqual(mint.rule().difficulty(), 100F, "Each source mint batch retains D100");
+                helper.assertTrue(mint.inputs().size() == 1 && mint.inputs().getFirst().stream().allMatch(stack -> stack.is(nugget)),
+                        "Source mint consumes one same-metal nugget");
+                helper.assertValueEqual(mint.output().getCount(), 1, "Source mint creates one stored-XP coin");
+            }
+            for (int quantity = 1; quantity <= 9; quantity++) {
+                final int batch = quantity;
+                var redeems = pages.stream().filter(page -> page.output().is(nugget) && page.output().getCount() == batch
+                        && page.inputs().stream().flatMap(List::stream).anyMatch(stack -> stack.is(coin))).toList();
+                Set<String> expected = quantity <= 4 ? withInventory : ALL_TABLES;
+                helper.assertTrue(redeems.stream().map(WorkbenchJeiRecipe::workstationId).collect(Collectors.toSet()).equals(expected),
+                        "Source redemption gate follows physical occupied cells, independently of mint metal: " + metal + " / " + quantity);
+                helper.assertValueEqual(redeems.size(), expected.size(), "Each source coin quantity has one page per executable workstation");
+                for (var redeem : redeems) {
+                    helper.assertValueEqual(redeem.rule().difficulty(), 25F, "Source coin redemption retains whole-batch D25");
+                    helper.assertValueEqual(redeem.requiredCapacity(), 0F, "Source coin redemption needs no metal workbench");
+                    helper.assertValueEqual(redeem.inputs().stream().filter(slot -> !slot.isEmpty()).count(), (long)batch,
+                            "Each consumed coin occupies a separate source grid cell");
+                    helper.assertTrue(redeem.remainders().isEmpty(), "Redeeming coin produces no extra container or currency remainder");
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void disenchantingBottlePagesShowOnlyWaterPotionWithoutMutatingTheDeclaredIngredient(GameTestHelper helper) {
+        var source = helper.getLevel().getRecipeManager().byKey(ResourceLocation.parse("mite:utility_028_707")).orElseThrow();
+        var recipe = (UtilityShapelessRecipe)source.value();
+        var declaredPotion = recipe.getIngredients().stream().flatMap(ingredient -> java.util.Arrays.stream(ingredient.getItems()))
+                .filter(stack -> stack.is(Items.POTION)).findFirst().orElseThrow();
+        ItemStack before = declaredPotion.copy();
+        var pages = WorkbenchJeiRecipes.build(helper.getLevel()).stream().filter(page -> page.source().id().equals(source.id())).toList();
+        var allProfiles = new java.util.HashSet<>(ALL_TABLES); allProfiles.add("minecraft:inventory");
+        helper.assertTrue(recipe.waterPotionOnly(), "The source bottle recipe is the subtype-sensitive utility recipe");
+        helper.assertValueEqual(pages.size(), 10, "Source water/wart/coal recipe appears at inventory and nine material benches");
+        helper.assertTrue(pages.stream().map(WorkbenchJeiRecipe::workstationId).collect(Collectors.toSet()).equals(allProfiles),
+                "Three shapeless source ingredients require neither high-metal forging nor a three-wide pattern");
+        for (var page : pages) {
+            helper.assertValueEqual(page.rule().difficulty(), 150F, "Source disenchanting bottle batch has D150");
+            helper.assertValueEqual(page.requiredCapacity(), 0F, "Source bottle has no metal bench requirement");
+            var shownPotions = page.inputs().stream().flatMap(List::stream).filter(stack -> stack.is(Items.POTION)).toList();
+            helper.assertValueEqual(shownPotions.size(), 1, "The viewer displays exactly one source water potion alternative");
+            helper.assertTrue(shownPotions.stream().allMatch(stack -> stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER)),
+                    "Displayed potion alternatives are water, never unspecified contents or poison");
+            CraftingInput input = CraftingInput.of(page.width(), page.height(), page.inputs().stream()
+                    .map(slot -> slot.isEmpty() ? ItemStack.EMPTY : slot.getFirst().copy()).toList());
+            helper.assertTrue(recipe.matches(input, helper.getLevel()), "The precise displayed water bottle matches the real source recipe");
+            helper.assertTrue(recipe.assemble(input, helper.getLevel().registryAccess()).is(item("mite:bottle_of_disenchanting")),
+                    "Executing the displayed source ingredients produces the actual bottle");
+            helper.assertTrue(page.remainders().isEmpty(), "The source recipe does not duplicate its input water bottle container");
+        }
+        helper.assertTrue(ItemStack.matches(before, declaredPotion), "JEI's water display never rewrites the recipe manager ingredient template");
         helper.succeed();
     }
 
@@ -318,7 +423,8 @@ public final class WorkbenchJeiRecipesGameTests {
         var loaded = helper.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
         Set<Class<?>> supported = Set.of(ShapedRecipe.class, ShapelessRecipe.class, FoodShapedRecipe.class,
                 FoodShapelessRecipe.class, BulkMaterialRecipe.class, WorkbenchDismantleRecipe.class,
-                io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe.class);
+                io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe.class,
+                io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe.class);
         for (Class<?> type : supported) {
             CraftingRecipe actual = loaded.stream().map(RecipeHolder::value).filter(recipe -> recipe.getClass() == type).findFirst().orElseThrow();
             helper.assertTrue(WorkbenchJeiRecipes.supports(actual), "The viewer supports each explicitly integrated recipe class actually loaded by the server");

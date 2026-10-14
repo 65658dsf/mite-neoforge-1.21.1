@@ -1,0 +1,33 @@
+{
+  "type": "mite:utility_shapeless",
+  "ingredients": [
+    {
+      "item": "mite:mithril_coin"
+    },
+    {
+      "item": "mite:mithril_coin"
+    },
+    {
+      "item": "mite:mithril_coin"
+    },
+    {
+      "item": "mite:mithril_coin"
+    },
+    {
+      "item": "mite:mithril_coin"
+    },
+    {
+      "item": "mite:mithril_coin"
+    },
+    {
+      "item": "mite:mithril_coin"
+    },
+    {
+      "item": "mite:mithril_coin"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "mite:mithril_nugget"
+  }
+}

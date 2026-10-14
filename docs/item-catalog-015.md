@@ -87,6 +87,14 @@
 
 具体说明与用户手测步骤见 [027 四类内容验收](testing/027-content-categories.md)。用户已确认本批测试没有问题并授权提交；不补写未反馈的逐项、联机或长期运行结果；本批自动验证状态存于 JSON 的 `category_registration_update_027`，历史summary不覆盖。
 
+## 028 剩余目录条目核对
+
+本批补齐最后60个待办标签：红石6、杂项12、材料18、硬币6、武器6、装饰品12。其中18种材料及地狱沙砾已由此前批次注册，本次核对其实际身份并修正状态；四种原版花和原版铜门继续复用。实际新增36个物品、13个世界方块（包括无携带物品的盆栽大丽花），新增86条来源配方，另补投掷球实体与唱片声音/歌曲数据。
+
+当前347个默认目录叶项均有实际映射并标“已添加”；12个废弃/冲突项仍排除，总叶数仍359。机器可读实时核对为 `remaining_registration_update_028`，历史summary和早期mechanism_status不覆写。材料18、函数方块和其他既有条目的来源机制范围仍按各自批次证据说明，不能由注册状态推导所有旧机制已完成。
+
+石桶统一实际命名 `mite:<metal>_stone_bucket`，金属名为 `gold`，不同于旧建议的 `<metal>_bucket_stone`/`golden_bucket_stone`。完整范围、原版与现代适配及手测见 [028 剩余内容](testing/028-remaining-content.md)。R196玩家诅咒、专属怪物及其掉落、完整结构生成和成长仍属后续系统；已提供物品不冒称这些系统已完成。2026-10-14用户确认当前交付正常并授权提交GitHub，逐项截图、联机及长期测试未另行记录。
+
 ## 身份与现代适配边界
 
 尚未更新行的 `proposed_modern_id` 是后续注册建议，采用小写下划线；已添加工具/食品行另有 `actual_modern_id`，并将 `modern_id_is_proposal` 设为 false。食品行原 015 建议保存在 `registration_baseline_015`。已有 Minecraft 1.21.1 等价内容优先复用 ID。复用不表示耐久、营养、制造成本或其他 MITE 行为已经实现。第三方数据包、现代配方与存档兼容仍需各功能单独验证。
@@ -166,17 +174,17 @@
 | 食物 | [熟虫子](https://www.mcmod.cn/item/105548.html) | yc.wormCooked / 1281:[0] | mite:cooked_worm | 已添加 |
 | 食物 | [红蘑菇](https://www.mcmod.cn/item/289335.html) | aqz.al / 40:[0] | minecraft:red_mushroom | 已添加 |
 | 食物 | [棕褐色蘑菇](https://www.mcmod.cn/item/289336.html) | aqz.ak / 39:[0] | minecraft:brown_mushroom | 已添加 |
-| 红石 | [铜门](https://www.mcmod.cn/item/35750.html) | yc.doorCopper / 1111:[0] | minecraft:copper_door | 原版已有，待适配 |
-| 红石 | [银门](https://www.mcmod.cn/item/35780.html) | yc.doorSilver / 1112:[0] | mite:silver_door | 待新增 |
-| 红石 | [金门](https://www.mcmod.cn/item/35781.html) | yc.doorGold / 1113:[0] | mite:golden_door | 待新增 |
-| 红石 | [远古金属门](https://www.mcmod.cn/item/105514.html) | yc.doorAncientMetal / 1260:[0] | mite:ancient_metal_door | 待新增 |
-| 红石 | [秘银门](https://www.mcmod.cn/item/36576.html) | yc.doorMithril / 1114:[0] | mite:mithril_door | 待新增 |
-| 红石 | [艾德曼门](https://www.mcmod.cn/item/36577.html) | yc.doorAdamantium / 1115:[0] | mite:adamantium_door | 待新增 |
-| 杂项 | [祛魔之瓶](https://www.mcmod.cn/item/35674.html) | yc.bottleOfDisenchanting / 1214:[0] | mite:bottle_of_disenchanting | 待新增 |
-| 杂项 | [音乐唱片](https://www.mcmod.cn/item/824163.html) | yc.recordDescent / 2277:[0] | mite:music_disc_descent | 待新增 |
-| 杂项 | [音乐唱片](https://www.mcmod.cn/item/824164.html) | yc.recordLegends / 2279:[0] | mite:music_disc_legends | 待新增 |
-| 杂项 | [音乐唱片](https://www.mcmod.cn/item/824165.html) | yc.recordUnderworld / 2276:[0] | mite:music_disc_underworld | 待新增 |
-| 杂项 | [音乐唱片](https://www.mcmod.cn/item/824166.html) | yc.recordWanderer / 2278:[0] | mite:music_disc_wanderer | 待新增 |
+| 红石 | [铜门](https://www.mcmod.cn/item/35750.html) | yc.doorCopper / 1111:[0] | minecraft:copper_door | 已添加 |
+| 红石 | [银门](https://www.mcmod.cn/item/35780.html) | yc.doorSilver / 1112:[0] | mite:silver_door | 已添加 |
+| 红石 | [金门](https://www.mcmod.cn/item/35781.html) | yc.doorGold / 1113:[0] | mite:golden_door | 已添加 |
+| 红石 | [远古金属门](https://www.mcmod.cn/item/105514.html) | yc.doorAncientMetal / 1260:[0] | mite:ancient_metal_door | 已添加 |
+| 红石 | [秘银门](https://www.mcmod.cn/item/36576.html) | yc.doorMithril / 1114:[0] | mite:mithril_door | 已添加 |
+| 红石 | [艾德曼门](https://www.mcmod.cn/item/36577.html) | yc.doorAdamantium / 1115:[0] | mite:adamantium_door | 已添加 |
+| 杂项 | [祛魔之瓶](https://www.mcmod.cn/item/35674.html) | yc.bottleOfDisenchanting / 1214:[0] | mite:bottle_of_disenchanting | 已添加 |
+| 杂项 | [音乐唱片](https://www.mcmod.cn/item/824163.html) | yc.recordDescent / 2277:[0] | mite:music_disc_descent | 已添加 |
+| 杂项 | [音乐唱片](https://www.mcmod.cn/item/824164.html) | yc.recordLegends / 2279:[0] | mite:music_disc_legends | 已添加 |
+| 杂项 | [音乐唱片](https://www.mcmod.cn/item/824165.html) | yc.recordUnderworld / 2276:[0] | mite:music_disc_underworld | 已添加 |
+| 杂项 | [音乐唱片](https://www.mcmod.cn/item/824166.html) | yc.recordWanderer / 2278:[0] | mite:music_disc_wanderer | 已添加 |
 | 杂项 | [铜桶](https://www.mcmod.cn/item/35747.html) | yc.bucketCopperEmpty / 1142:[0] | mite:copper_bucket | 已添加 |
 | 杂项 | [银桶](https://www.mcmod.cn/item/35785.html) | yc.bucketSilverEmpty / 1143:[0] | mite:silver_bucket | 已添加 |
 | 杂项 | [金桶](https://www.mcmod.cn/item/36125.html) | yc.bucketGoldEmpty / 1144:[0] | mite:gold_bucket | 已添加 |
@@ -195,13 +203,13 @@
 | 杂项 | [装满岩浆的远古金属桶](https://www.mcmod.cn/item/105070.html) | yc.bucketAncientMetalLava / 1159:[0] | mite:ancient_metal_lava_bucket | 已添加 |
 | 杂项 | [装满岩浆的秘银桶](https://www.mcmod.cn/item/37912.html) | yc.bucketMithrilLava / 1157:[0] | mite:mithril_lava_bucket | 已添加 |
 | 杂项 | [装满岩浆的艾德曼桶](https://www.mcmod.cn/item/37917.html) | yc.bucketAdamantiumLava / 1158:[0] | mite:adamantium_lava_bucket | 已添加 |
-| 杂项 | [装满石头的铜桶](https://www.mcmod.cn/item/39434.html) | yc.bucketCopperStone / 1231:[0] | mite:copper_bucket_stone | 待新增 |
-| 杂项 | [装满石头的银桶](https://www.mcmod.cn/item/39435.html) | yc.bucketSilverStone / 1232:[0] | mite:silver_bucket_stone | 待新增 |
-| 杂项 | [装满石头的金桶](https://www.mcmod.cn/item/39436.html) | yc.bucketGoldStone / 1233:[0] | mite:golden_bucket_stone | 待新增 |
-| 杂项 | [装满石头的铁桶](https://www.mcmod.cn/item/39437.html) | yc.bucketIronStone / 1234:[0] | mite:iron_bucket_stone | 待新增 |
-| 杂项 | [装满石头的远古金属桶](https://www.mcmod.cn/item/105516.html) | yc.bucketAncientMetalStone / 1237:[0] | mite:ancient_metal_bucket_stone | 待新增 |
-| 杂项 | [装满石头的秘银桶](https://www.mcmod.cn/item/39438.html) | yc.bucketMithrilStone / 1235:[0] | mite:mithril_bucket_stone | 待新增 |
-| 杂项 | [装满石头的艾德曼桶](https://www.mcmod.cn/item/39439.html) | yc.bucketAdamantiumStone / 1236:[0] | mite:adamantium_bucket_stone | 待新增 |
+| 杂项 | [装满石头的铜桶](https://www.mcmod.cn/item/39434.html) | yc.bucketCopperStone / 1231:[0] | mite:copper_stone_bucket | 已添加 |
+| 杂项 | [装满石头的银桶](https://www.mcmod.cn/item/39435.html) | yc.bucketSilverStone / 1232:[0] | mite:silver_stone_bucket | 已添加 |
+| 杂项 | [装满石头的金桶](https://www.mcmod.cn/item/39436.html) | yc.bucketGoldStone / 1233:[0] | mite:gold_stone_bucket | 已添加 |
+| 杂项 | [装满石头的铁桶](https://www.mcmod.cn/item/39437.html) | yc.bucketIronStone / 1234:[0] | mite:iron_stone_bucket | 已添加 |
+| 杂项 | [装满石头的远古金属桶](https://www.mcmod.cn/item/105516.html) | yc.bucketAncientMetalStone / 1237:[0] | mite:ancient_metal_stone_bucket | 已添加 |
+| 杂项 | [装满石头的秘银桶](https://www.mcmod.cn/item/39438.html) | yc.bucketMithrilStone / 1235:[0] | mite:mithril_stone_bucket | 已添加 |
+| 杂项 | [装满石头的艾德曼桶](https://www.mcmod.cn/item/39439.html) | yc.bucketAdamantiumStone / 1236:[0] | mite:adamantium_stone_bucket | 已添加 |
 | 资源 | [蓝莓丛](https://www.mcmod.cn/item/36572.html) | aqz.bush / 249:[0] | mite:blueberry_bush | 已添加 |
 | 资源 | [金矿石](https://www.mcmod.cn/item/823806.html) | aqz.L / 14:[2] | minecraft:nether_gold_ore | 已添加 |
 | 资源 | [铜矿石](https://www.mcmod.cn/item/35744.html) | aqz.oreCopper / 200:[0] | minecraft:copper_ore | 已添加 |
@@ -209,26 +217,26 @@
 | 资源 | [秘银矿石](https://www.mcmod.cn/item/36571.html) | aqz.oreMithril / 202:[0] | mite:mithril_ore | 已添加 |
 | 资源 | [艾德曼矿石](https://www.mcmod.cn/item/36575.html) | aqz.oreAdamantium / 203:[0] | mite:adamantium_ore | 已添加 |
 | 材料 | [粪便](https://www.mcmod.cn/item/29627.html) | yc.manure / 1191:[0] | mite:manure | 已添加 |
-| 材料 | [皮革线](https://www.mcmod.cn/item/29678.html) | yc.sinew / 1174:[0] | mite:sinew | 已存在，部分机制已做 |
+| 材料 | [皮革线](https://www.mcmod.cn/item/29678.html) | yc.sinew / 1174:[0] | mite:sinew | 已添加 |
 | 材料 | [水碗](https://www.mcmod.cn/item/35535.html) | yc.bowlWater / 1167:[0] | mite:water_bowl | 已添加 |
 | 材料 | [面粉](https://www.mcmod.cn/item/35559.html) | yc.flour / 1184:[0] | mite:flour | 已添加 |
-| 材料 | [燧石碎片](https://www.mcmod.cn/item/29621.html) | yc.chipFlint / 1121:[0] | mite:flint_chip | 已存在，部分机制已做 |
-| 材料 | [黑曜石碎片](https://www.mcmod.cn/item/35568.html) | yc.shardObsidian / 1122:[0] | mite:obsidian_shard | 待新增 |
-| 材料 | [绿宝石碎片](https://www.mcmod.cn/item/35569.html) | yc.shardEmerald / 1117:[0] | mite:emerald_shard | 待新增 |
-| 材料 | [钻石碎片](https://www.mcmod.cn/item/35570.html) | yc.shardDiamond / 1118:[0] | mite:diamond_shard | 待新增 |
-| 材料 | [下界石英碎片](https://www.mcmod.cn/item/37884.html) | yc.shardNetherQuartz / 1119:[0] | mite:quartz_shard | 待新增 |
-| 材料 | [玻璃碎片](https://www.mcmod.cn/item/37886.html) | yc.shardGlass / 1120:[0] | mite:glass_shard | 待新增 |
-| 材料 | [铜粒](https://www.mcmod.cn/item/29624.html) | yc.copperNugget / 956:[0] | mite:copper_nugget | 待新增 |
-| 材料 | [银粒](https://www.mcmod.cn/item/35566.html) | yc.silverNugget / 957:[0] | mite:silver_nugget | 待新增 |
-| 材料 | [铁粒](https://www.mcmod.cn/item/36246.html) | yc.ironNugget / 958:[0] | minecraft:iron_nugget | 原版已有，待适配 |
-| 材料 | [远古金属粒](https://www.mcmod.cn/item/105066.html) | yc.ancientMetalNugget / 961:[0] | mite:ancient_metal_nugget | 待新增 |
-| 材料 | [秘银粒](https://www.mcmod.cn/item/35571.html) | yc.mithrilNugget / 959:[0] | mite:mithril_nugget | 待新增 |
-| 材料 | [艾德曼粒](https://www.mcmod.cn/item/35572.html) | yc.adamantiumNugget / 960:[0] | mite:adamantium_nugget | 待新增 |
-| 材料 | [铜锭](https://www.mcmod.cn/item/29662.html) | yc.ingotCopper / 962:[0] | minecraft:copper_ingot | 原版已有，待适配 |
-| 材料 | [银锭](https://www.mcmod.cn/item/35783.html) | yc.ingotSilver / 963:[0] | mite:silver_ingot | 待新增 |
-| 材料 | [远古金属锭](https://www.mcmod.cn/item/52208.html) | yc.ingotAncientMetal / 966:[0] | mite:ancient_metal_ingot | 待新增 |
-| 材料 | [秘银锭](https://www.mcmod.cn/item/36282.html) | yc.ingotMithril / 964:[0] | mite:mithril_ingot | 待新增 |
-| 材料 | [艾德曼锭](https://www.mcmod.cn/item/36281.html) | yc.ingotAdamantium / 965:[0] | mite:adamantium_ingot | 待新增 |
+| 材料 | [燧石碎片](https://www.mcmod.cn/item/29621.html) | yc.chipFlint / 1121:[0] | mite:flint_chip | 已添加 |
+| 材料 | [黑曜石碎片](https://www.mcmod.cn/item/35568.html) | yc.shardObsidian / 1122:[0] | mite:obsidian_shard | 已添加 |
+| 材料 | [绿宝石碎片](https://www.mcmod.cn/item/35569.html) | yc.shardEmerald / 1117:[0] | mite:emerald_shard | 已添加 |
+| 材料 | [钻石碎片](https://www.mcmod.cn/item/35570.html) | yc.shardDiamond / 1118:[0] | mite:diamond_shard | 已添加 |
+| 材料 | [下界石英碎片](https://www.mcmod.cn/item/37884.html) | yc.shardNetherQuartz / 1119:[0] | mite:quartz_shard | 已添加 |
+| 材料 | [玻璃碎片](https://www.mcmod.cn/item/37886.html) | yc.shardGlass / 1120:[0] | mite:glass_shard | 已添加 |
+| 材料 | [铜粒](https://www.mcmod.cn/item/29624.html) | yc.copperNugget / 956:[0] | mite:copper_nugget | 已添加 |
+| 材料 | [银粒](https://www.mcmod.cn/item/35566.html) | yc.silverNugget / 957:[0] | mite:silver_nugget | 已添加 |
+| 材料 | [铁粒](https://www.mcmod.cn/item/36246.html) | yc.ironNugget / 958:[0] | minecraft:iron_nugget | 已添加 |
+| 材料 | [远古金属粒](https://www.mcmod.cn/item/105066.html) | yc.ancientMetalNugget / 961:[0] | mite:ancient_metal_nugget | 已添加 |
+| 材料 | [秘银粒](https://www.mcmod.cn/item/35571.html) | yc.mithrilNugget / 959:[0] | mite:mithril_nugget | 已添加 |
+| 材料 | [艾德曼粒](https://www.mcmod.cn/item/35572.html) | yc.adamantiumNugget / 960:[0] | mite:adamantium_nugget | 已添加 |
+| 材料 | [铜锭](https://www.mcmod.cn/item/29662.html) | yc.ingotCopper / 962:[0] | minecraft:copper_ingot | 已添加 |
+| 材料 | [银锭](https://www.mcmod.cn/item/35783.html) | yc.ingotSilver / 963:[0] | mite:silver_ingot | 已添加 |
+| 材料 | [远古金属锭](https://www.mcmod.cn/item/52208.html) | yc.ingotAncientMetal / 966:[0] | mite:ancient_metal_ingot | 已添加 |
+| 材料 | [秘银锭](https://www.mcmod.cn/item/36282.html) | yc.ingotMithril / 964:[0] | mite:mithril_ingot | 已添加 |
+| 材料 | [艾德曼锭](https://www.mcmod.cn/item/36281.html) | yc.ingotAdamantium / 965:[0] | mite:adamantium_ingot | 已添加 |
 | 材料 | [铜锁链](https://www.mcmod.cn/item/35708.html) | yc.chainCopper / 1123:[0] | mite:copper_chain | 已添加 |
 | 材料 | [银锁链](https://www.mcmod.cn/item/35782.html) | yc.chainSilver / 1124:[0] | mite:silver_chain | 已添加 |
 | 材料 | [金锁链](https://www.mcmod.cn/item/36109.html) | yc.chainGold / 1125:[0] | mite:golden_chain | 已添加 |
@@ -268,12 +276,12 @@
 | 功能性方块 | [铜工具台](https://www.mcmod.cn/item/68911.html) | aqz.aD / 58:[4] | mite:copper_crafting_table | 已添加 |
 | 功能性方块 | [银工具台](https://www.mcmod.cn/item/68912.html) | aqz.aD / 58:[5] | mite:silver_crafting_table | 已添加 |
 | 功能性方块 | [地幔](https://www.mcmod.cn/item/105512.html) | aqz.mantleOrCore / 95:[0] | mite:mantle | 已添加 |
-| 硬币 | [铜币](https://www.mcmod.cn/item/35563.html) | yc.coinCopper / 1220:[0] | mite:copper_coin | 待新增 |
-| 硬币 | [金币](https://www.mcmod.cn/item/35564.html) | yc.coinGold / 1222:[0] | mite:gold_coin | 待新增 |
-| 硬币 | [银币](https://www.mcmod.cn/item/35565.html) | yc.coinSilver / 1221:[0] | mite:silver_coin | 待新增 |
-| 硬币 | [远古金属币](https://www.mcmod.cn/item/51526.html) | yc.coinAncientMetal / 1277:[0] | mite:ancient_metal_coin | 待新增 |
-| 硬币 | [秘银币](https://www.mcmod.cn/item/35567.html) | yc.coinMithril / 1278:[0] | mite:mithril_coin | 待新增 |
-| 硬币 | [艾德曼币](https://www.mcmod.cn/item/51527.html) | yc.coinAdamantium / 1279:[0] | mite:adamantium_coin | 待新增 |
+| 硬币 | [铜币](https://www.mcmod.cn/item/35563.html) | yc.coinCopper / 1220:[0] | mite:copper_coin | 已添加 |
+| 硬币 | [金币](https://www.mcmod.cn/item/35564.html) | yc.coinGold / 1222:[0] | mite:gold_coin | 已添加 |
+| 硬币 | [银币](https://www.mcmod.cn/item/35565.html) | yc.coinSilver / 1221:[0] | mite:silver_coin | 已添加 |
+| 硬币 | [远古金属币](https://www.mcmod.cn/item/51526.html) | yc.coinAncientMetal / 1277:[0] | mite:ancient_metal_coin | 已添加 |
+| 硬币 | [秘银币](https://www.mcmod.cn/item/35567.html) | yc.coinMithril / 1278:[0] | mite:mithril_coin | 已添加 |
+| 硬币 | [艾德曼币](https://www.mcmod.cn/item/51527.html) | yc.coinAdamantium / 1279:[0] | mite:adamantium_coin | 已添加 |
 | 手斧 | [燧石手斧](https://www.mcmod.cn/item/29622.html) | yc.hatchetFlint / 978:[0] | mite:flint_hatchet | 已添加 |
 | 手斧 | [黑曜石手斧](https://www.mcmod.cn/item/36256.html) | yc.hatchetObsidian / 1204:[0] | mite:obsidian_hatchet | 已添加 |
 | 手斧 | [铜手斧](https://www.mcmod.cn/item/35706.html) | yc.hatchetCopper / 1175:[0] | mite:copper_hatchet | 已添加 |
@@ -356,12 +364,12 @@
 | 武器 | [木棒](https://www.mcmod.cn/item/35667.html) | yc.clubWood / 1025:[0] | minecraft:wooden_sword | 已添加 |
 | 武器 | [黑曜石小刀](https://www.mcmod.cn/item/36254.html) | yc.knifeObsidian / 1203:[0] | mite:obsidian_knife | 已添加 |
 | 武器 | [燧石小刀](https://www.mcmod.cn/item/35665.html) | yc.knifeFlint / 1023:[0] | mite:flint_knife | 已添加 |
-| 武器 | [秘银弓](https://www.mcmod.cn/item/37935.html) | yc.bowMithril / 1048:[0] | mite:mithril_bow | 待新增 |
-| 武器 | [远古金属弓](https://www.mcmod.cn/item/105519.html) | yc.bowAncientMetal / 1251:[0] | mite:ancient_metal_bow | 待新增 |
-| 武器 | [褐色粘液球](https://www.mcmod.cn/item/52140.html) | yc.aO / 341:[1] | mite:ochre_jelly | 待新增 |
-| 武器 | [红色史莱姆球](https://www.mcmod.cn/item/52141.html) | yc.aO / 341:[2] | mite:crimson_blob | 待新增 |
-| 武器 | [黑色史莱姆球](https://www.mcmod.cn/item/52142.html) | yc.aO / 341:[4] | mite:black_pudding | 待新增 |
-| 武器 | [灰色史莱姆球](https://www.mcmod.cn/item/110416.html) | yc.aO / 341:[3] | mite:grey_gelatinous_sphere | 待新增 |
+| 武器 | [秘银弓](https://www.mcmod.cn/item/37935.html) | yc.bowMithril / 1048:[0] | mite:mithril_bow | 已添加 |
+| 武器 | [远古金属弓](https://www.mcmod.cn/item/105519.html) | yc.bowAncientMetal / 1251:[0] | mite:ancient_metal_bow | 已添加 |
+| 武器 | [褐色粘液球](https://www.mcmod.cn/item/52140.html) | yc.aO / 341:[1] | mite:ochre_jelly | 已添加 |
+| 武器 | [红色史莱姆球](https://www.mcmod.cn/item/52141.html) | yc.aO / 341:[2] | mite:crimson_blob | 已添加 |
+| 武器 | [黑色史莱姆球](https://www.mcmod.cn/item/52142.html) | yc.aO / 341:[4] | mite:black_pudding | 已添加 |
+| 武器 | [灰色史莱姆球](https://www.mcmod.cn/item/110416.html) | yc.aO / 341:[3] | mite:grey_gelatinous_sphere | 已添加 |
 | 短剑 | [铜短剑](https://www.mcmod.cn/item/35726.html) | yc.daggerCopper / 1033:[0] | mite:copper_dagger | 已添加 |
 | 短剑 | [银短剑](https://www.mcmod.cn/item/35799.html) | yc.daggerSilver / 1034:[0] | mite:silver_dagger | 已添加 |
 | 短剑 | [金短剑](https://www.mcmod.cn/item/36117.html) | yc.daggerGold / 1035:[0] | mite:golden_dagger | 已添加 |
@@ -465,18 +473,18 @@
 | 装备 | [艾德曼锁链胸甲](https://www.mcmod.cn/item/37965.html) | yc.plateChainAdamantium / 1086:[0] | mite:adamantium_chain_chestplate | 已添加 |
 | 装备 | [艾德曼锁链护腿](https://www.mcmod.cn/item/37964.html) | yc.legsChainAdamantium / 1097:[0] | mite:adamantium_chain_leggings | 已添加 |
 | 装备 | [艾德曼锁链靴子](https://www.mcmod.cn/item/37962.html) | yc.bootsChainAdamantium / 1108:[0] | mite:adamantium_chain_boots | 已添加 |
-| 装饰品 | [铜栅栏](https://www.mcmod.cn/item/823809.html) | aqz.fenceCopper / 213:[0] | mite:copper_bars | 待新增 |
-| 装饰品 | [金栅栏](https://www.mcmod.cn/item/823808.html) | aqz.fenceGold / 215:[0] | mite:golden_bars | 待新增 |
-| 装饰品 | [远古金属栅栏](https://www.mcmod.cn/item/823810.html) | aqz.fenceAncientMetal / 199:[0] | mite:ancient_metal_bars | 待新增 |
-| 装饰品 | [秘银栅栏](https://www.mcmod.cn/item/823807.html) | aqz.fenceMithril / 216:[0] | mite:mithril_bars | 待新增 |
-| 装饰品 | [艾德曼栅栏](https://www.mcmod.cn/item/823811.html) | aqz.fenceAdamantium / 217:[0] | mite:adamantium_bars | 待新增 |
-| 装饰品 | [大丽花](https://www.mcmod.cn/item/35648.html) | aqz.aj / 38:[7] | mite:dahlia | 待新增 |
-| 装饰品 | [郁金香](https://www.mcmod.cn/item/35649.html) | aqz.aj / 38:[5] | minecraft:orange_tulip | 原版已有，待适配 |
-| 装饰品 | [绒球葱](https://www.mcmod.cn/item/35650.html) | aqz.aj / 38:[2] | minecraft:allium | 原版已有，待适配 |
-| 装饰品 | [滨菊](https://www.mcmod.cn/item/35651.html) | aqz.aj / 38:[8] | minecraft:oxeye_daisy | 原版已有，待适配 |
-| 装饰品 | [兰花](https://www.mcmod.cn/item/35652.html) | aqz.aj / 38:[1] | minecraft:blue_orchid | 原版已有，待适配 |
-| 装饰品 | [凋零灌木](https://www.mcmod.cn/item/37966.html) | aqz.ad / 32:[1] | mite:witherwood_bush | 待新增 |
-| 装饰品 | [地狱沙砾](https://www.mcmod.cn/item/37885.html) | aqz.K / 13:[2] | mite:nether_gravel | 待新增 |
+| 装饰品 | [铜栅栏](https://www.mcmod.cn/item/823809.html) | aqz.fenceCopper / 213:[0] | mite:copper_bars | 已添加 |
+| 装饰品 | [金栅栏](https://www.mcmod.cn/item/823808.html) | aqz.fenceGold / 215:[0] | mite:golden_bars | 已添加 |
+| 装饰品 | [远古金属栅栏](https://www.mcmod.cn/item/823810.html) | aqz.fenceAncientMetal / 199:[0] | mite:ancient_metal_bars | 已添加 |
+| 装饰品 | [秘银栅栏](https://www.mcmod.cn/item/823807.html) | aqz.fenceMithril / 216:[0] | mite:mithril_bars | 已添加 |
+| 装饰品 | [艾德曼栅栏](https://www.mcmod.cn/item/823811.html) | aqz.fenceAdamantium / 217:[0] | mite:adamantium_bars | 已添加 |
+| 装饰品 | [大丽花](https://www.mcmod.cn/item/35648.html) | aqz.aj / 38:[7] | mite:dahlia | 已添加 |
+| 装饰品 | [郁金香](https://www.mcmod.cn/item/35649.html) | aqz.aj / 38:[5] | minecraft:orange_tulip | 已添加 |
+| 装饰品 | [绒球葱](https://www.mcmod.cn/item/35650.html) | aqz.aj / 38:[2] | minecraft:allium | 已添加 |
+| 装饰品 | [滨菊](https://www.mcmod.cn/item/35651.html) | aqz.aj / 38:[8] | minecraft:oxeye_daisy | 已添加 |
+| 装饰品 | [兰花](https://www.mcmod.cn/item/35652.html) | aqz.aj / 38:[1] | minecraft:blue_orchid | 已添加 |
+| 装饰品 | [凋零灌木](https://www.mcmod.cn/item/37966.html) | aqz.ad / 32:[1] | mite:witherwood_bush | 已添加 |
+| 装饰品 | [地狱沙砾](https://www.mcmod.cn/item/37885.html) | aqz.K / 13:[2] | mite:nether_gravel | 已添加 |
 | 装饰品 | [远古金属块](https://www.mcmod.cn/item/53114.html) | aqz.blockAncientMetal / 252:[0] | mite:ancient_metal_block | 已添加 |
 | 装饰品 | [地核](https://www.mcmod.cn/item/105513.html) | aqz.mantleOrCore / 95:[1] | mite:core | 已添加 |
 | 已删除/未添加 | [铜小刀](https://www.mcmod.cn/item/35725.html) | yc.knifeCopper / 1050:[0] | mite:copper_knife | 排除：目录/R196冲突 |

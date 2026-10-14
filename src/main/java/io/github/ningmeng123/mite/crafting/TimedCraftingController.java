@@ -193,14 +193,16 @@ public final class TimedCraftingController {
             if (session.progress % 5 == 0) show(player, session.progress, period, false);
             return;
         }
-        CraftingQuality.Payment payment = CraftingQuality.approvePayment(player, prepared.quality().cost());
+        int refund = CoinCrafting.refund(prepared.grid(), prepared.quality().consumption());
+        CraftingQuality.Payment payment = CraftingQuality.approveExperienceTransaction(player, prepared.quality().cost(), refund);
         // Event listeners may change XP, inputs, menus or quality. Recheck after approval before consuming anything.
         Prepared checked = prepare(player, player.containerMenu);
         if (payment == null || checked == null || SESSIONS.get(player.getUUID()) != session
                 || player.level() != session.level
                 || checked.menu() != prepared.menu() || !checked.recipe().id().equals(prepared.recipe().id())
                 || !matches(session.inputs, checked.grid()) || !ItemStack.matches(checked.result(), prepared.result())
-                || checked.quality().cost() != prepared.quality().cost() || !allowed(player, checked)) {
+                || checked.quality().cost() != prepared.quality().cost()
+                || CoinCrafting.refund(checked.grid(), checked.quality().consumption()) != refund || !allowed(player, checked)) {
             cancel(player);
             publishQuality(player, checked);
             return;
@@ -210,7 +212,7 @@ public final class TimedCraftingController {
             show(player, session.progress, period(player, checked), true);
             return;
         }
-        if (!CraftingQuality.pay(player, payment)) {
+        if (!CraftingQuality.pay(player, payment, refund > 0 || prepared.quality().quality() == null && prepared.quality().cost() > 0)) {
             cancel(player);
             return;
         }
@@ -234,7 +236,7 @@ public final class TimedCraftingController {
         giveOrDrop(player, crafted);
         prepared.menu().broadcastChanges();
         Prepared next = prepare(player, prepared.menu());
-        if (session.continuous && !EquipmentQualityRules.stopAfterCompletion(prepared.quality().cost())
+        if (session.continuous && !EquipmentQualityRules.stopAfterCompletion(prepared.quality().quality() == null ? 0 : prepared.quality().cost())
                 && next != null && next.recipe().id().equals(prepared.recipe().id())) {
             start(player, prepared.menu(), true);
         } else show(player, period, period, false);

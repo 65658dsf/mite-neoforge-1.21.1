@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "mite:patch_dahlia"
+  ],
+  "step": "vegetal_decoration"
+}

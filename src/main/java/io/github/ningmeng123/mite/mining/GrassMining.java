@@ -18,7 +18,7 @@ public final class GrassMining {
     private GrassMining() {}
 
     public static boolean matches(BlockState state) {
-        return PLANTS.contains(state.getBlock());
+        return PLANTS.contains(state.getBlock()) || state.getBlock() == io.github.ningmeng123.mite.registry.MiteDecorativeContent.WITHERWOOD_BUSH.get();
     }
 
     public static void modifyShears(ModifyDefaultComponentsEvent event) {
@@ -26,7 +26,9 @@ public final class GrassMining {
         Tool original = Items.SHEARS.components().get(DataComponents.TOOL);
         if (original == null) return;
         List<Tool.Rule> rules = new ArrayList<>(original.rules());
-        rules.addFirst(Tool.Rule.overrideSpeed(PLANTS, 8.0F));
+        List<Block> plants = new ArrayList<>(PLANTS);
+        plants.add(io.github.ningmeng123.mite.registry.MiteDecorativeContent.WITHERWOOD_BUSH.get());
+        rules.addFirst(Tool.Rule.overrideSpeed(plants, 8.0F));
         event.modify(Items.SHEARS, builder -> builder.set(DataComponents.TOOL,
                 new Tool(rules, original.defaultMiningSpeed(), original.damagePerBlock())));
     }

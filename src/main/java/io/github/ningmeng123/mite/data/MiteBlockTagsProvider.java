@@ -23,6 +23,24 @@ public final class MiteBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
+        var decorative = io.github.ningmeng123.mite.registry.MiteDecorativeContent.DOORS;
+        decorative.values().forEach(block -> {
+            tag(BlockTags.DOORS).add(block.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+            tag(BlockTags.NEEDS_STONE_TOOL).add(block.get());
+        });
+        io.github.ningmeng123.mite.registry.MiteDecorativeContent.BARS.values().forEach(block -> {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+            tag(BlockTags.NEEDS_STONE_TOOL).add(block.get());
+        });
+        for (var block : net.minecraft.core.registries.BuiltInRegistries.BLOCK) {
+            if (!io.github.ningmeng123.mite.registry.MiteDecorativeContent.isCopperDoor(block)) continue;
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block);
+            tag(BlockTags.NEEDS_STONE_TOOL).add(block);
+            tag(BlockTags.MOB_INTERACTABLE_DOORS).remove(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block));
+        }
+        tag(BlockTags.SMALL_FLOWERS).add(io.github.ningmeng123.mite.registry.MiteDecorativeContent.DAHLIA.get());
+        tag(BlockTags.FLOWER_POTS).add(io.github.ningmeng123.mite.registry.MiteDecorativeContent.POTTED_DAHLIA.get());
         io.github.ningmeng123.mite.registry.MiteMetalBlocks.STORAGE.forEach((material, block) -> {
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
             if (material.equals("silver")) tag(BlockTags.NEEDS_IRON_TOOL).add(block.get());

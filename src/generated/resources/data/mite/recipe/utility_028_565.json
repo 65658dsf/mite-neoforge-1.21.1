@@ -1,0 +1,30 @@
+{
+  "type": "mite:utility_shapeless",
+  "ingredients": [
+    {
+      "item": "mite:copper_coin"
+    },
+    {
+      "item": "mite:copper_coin"
+    },
+    {
+      "item": "mite:copper_coin"
+    },
+    {
+      "item": "mite:copper_coin"
+    },
+    {
+      "item": "mite:copper_coin"
+    },
+    {
+      "item": "mite:copper_coin"
+    },
+    {
+      "item": "mite:copper_coin"
+    }
+  ],
+  "result": {
+    "count": 7,
+    "id": "mite:copper_nugget"
+  }
+}

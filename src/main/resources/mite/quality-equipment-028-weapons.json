@@ -1,0 +1,11 @@
+{
+  "author": "NingMeng123",
+  "items": {
+    "mite:ancient_metal_bow": {
+      "lowest_difficulty": 1750.0
+    },
+    "mite:mithril_bow": {
+      "lowest_difficulty": 6550.0
+    }
+  }
+}
