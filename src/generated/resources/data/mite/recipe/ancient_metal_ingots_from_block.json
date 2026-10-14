@@ -1,0 +1,11 @@
+{
+  "type": "mite:bulk_material",
+  "group": "ancient_metal_ingot",
+  "ingredient": {
+    "item": "mite:ancient_metal_block"
+  },
+  "result": {
+    "count": 9,
+    "id": "mite:ancient_metal_ingot"
+  }
+}

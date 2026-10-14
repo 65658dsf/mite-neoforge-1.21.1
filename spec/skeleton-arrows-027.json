@@ -1,0 +1,15 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source": "tr.java:141,169-184,250",
+  "scope": "Ordinary minecraft:skeleton only; modern stray/bogged/wither skeleton remain unchanged",
+  "ammunition": "mite:rusted_iron_arrow",
+  "arrow_count": "nextInt(2 + looting); if positive and not recently player-hit, subtract nextInt(count + 1)",
+  "bone_count": "nextInt(3); if positive and not recently player-hit, subtract nextInt(count + 1); no looting increase",
+  "modern_adaptations": [
+    "Native bow spawning/weapon hooks remain, using the source ammunition item and common source impact rules",
+    "Only the ordinary skeleton entity loot table's plain arrow and bone outcomes are replaced; other loot and equipment remain",
+    "Modern attacker enchantment API supplies Looting, LAST_DAMAGE_PLAYER supplies player-hit state, entity RNG performs the source draws",
+    "Global loot modifier joins native death capture and LivingDropsEvent cancellation; no extra out-of-event item spawning"
+  ]
+}

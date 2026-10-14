@@ -1,0 +1,17 @@
+{
+  "values": [
+    "mite:copper_helmet",
+    "mite:silver_helmet",
+    "mite:mithril_helmet",
+    "mite:adamantium_helmet",
+    "mite:copper_chain_helmet",
+    "mite:silver_chain_helmet",
+    "mite:golden_chain_helmet",
+    "mite:mithril_chain_helmet",
+    "mite:adamantium_chain_helmet",
+    "mite:rusted_iron_helmet",
+    "mite:rusted_iron_chain_helmet",
+    "mite:ancient_metal_helmet",
+    "mite:ancient_metal_chainmail_helmet"
+  ]
+}

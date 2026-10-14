@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "item": "mite:mithril_chain"
+    }
+  },
+  "pattern": [
+    "M"
+  ],
+  "result": {
+    "count": 4,
+    "id": "mite:mithril_nugget"
+  }
+}

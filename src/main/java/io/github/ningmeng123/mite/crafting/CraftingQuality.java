@@ -38,6 +38,8 @@ public final class CraftingQuality {
     private CraftingQuality() {}
 
     public static float lowestDifficulty(ItemStack stack) {
+        float ranged = RangedRodRepair.lowestDifficulty(stack);
+        if (ranged >= 0F) return ranged;
         return DIFFICULTIES.getOrDefault(BuiltInRegistries.ITEM.getKey(stack.getItem()), -1F);
     }
 
@@ -53,7 +55,8 @@ public final class CraftingQuality {
         TimedCraftingRecipes.Rule rule = rule(recipe, raw, grid);
         if (rule == null || raw.isEmpty()) return null;
         if (!EquipmentDurability.isManaged(raw)) {
-            return new Result(rule, RunestoneCrafting.apply(player, menu, grid, recipe.id(), raw), null, null, false, false, true, 0, 1);
+            boolean repair = recipe.value() instanceof RepairItemRecipe && RangedRodRepair.applies(raw);
+            return new Result(rule, RunestoneCrafting.apply(player, menu, grid, recipe.id(), raw), null, null, repair, repair, true, 0, 1);
         }
         boolean repair = recipe.value() instanceof RepairItemRecipe || recipe.value() instanceof LeatherMendingRecipe;
         boolean fixed = repair || recipe.value() instanceof ArmorDyeRecipe;
@@ -95,6 +98,7 @@ public final class CraftingQuality {
             net.minecraft.world.item.crafting.CraftingInput input) {
         if (output.isEmpty()) return null;
         if (recipe.value() instanceof FoodManufacturingRecipe food) return food.manufacturing().rule();
+        if (recipe.value() instanceof RepairItemRecipe && RangedRodRepair.applies(output)) return RangedRodRepair.rule(output);
         if (EquipmentDurability.isManaged(output)) {
             if (recipe.value() instanceof LeatherMendingRecipe) return new TimedCraftingRecipes.Rule(
                     LeatherMendingRecipe.difficulty(input), null, -1);
@@ -162,11 +166,14 @@ public final class CraftingQuality {
     }
 
     private static Map<ResourceLocation, Float> loadDifficulties() {
-        try (var reader = new InputStreamReader(Objects.requireNonNull(CraftingQuality.class.getResourceAsStream(
-                "/mite/quality-equipment-017.json")), StandardCharsets.UTF_8)) {
+        try {
             Map<ResourceLocation, Float> values = new HashMap<>();
-            JsonParser.parseReader(reader).getAsJsonObject().getAsJsonObject("items").entrySet().forEach(entry ->
-                    values.put(ResourceLocation.parse(entry.getKey()), entry.getValue().getAsJsonObject().get("lowest_difficulty").getAsFloat()));
+            for (String resource : List.of("/mite/quality-equipment-017.json", "/mite/quality-equipment-027-armor.json")) {
+                try (var reader = new InputStreamReader(Objects.requireNonNull(CraftingQuality.class.getResourceAsStream(resource)), StandardCharsets.UTF_8)) {
+                    JsonParser.parseReader(reader).getAsJsonObject().getAsJsonObject("items").entrySet().forEach(entry ->
+                            values.put(ResourceLocation.parse(entry.getKey()), entry.getValue().getAsJsonObject().get("lowest_difficulty").getAsFloat()));
+                }
+            }
             return Map.copyOf(values);
         } catch (Exception exception) {
             throw new IllegalStateException("Cannot load quality manufacturing evidence", exception);

@@ -1,5 +1,10 @@
 {
   "values": [
+    "mite:ancient_metal_block",
+    "mite:mithril_block",
+    "mite:adamantium_block",
+    "mite:mithril_strongbox",
+    "mite:adamantium_strongbox",
     "mite:adamantium_ore",
     "mite:deepslate_adamantium_ore"
   ]

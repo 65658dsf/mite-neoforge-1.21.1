@@ -133,7 +133,7 @@ public final class EquipmentDurabilityRules {
     public static float armorProtection(ArmorProfile profile, int damage, int maximum, int protectionLevel) {
         int material = profile.materialProtection() - (profile.chainmail() ? 2 : 0);
         float protection = (float)(profile.components() * Math.max(material, 0)) / 24F;
-        if (protectionLevel > 0) protection += protection * ((float)Math.clamp(protectionLevel, 0, 4) / 4F) * 0.5F;
+        if (protectionLevel > 0) protection += protection * ((float)protectionLevel / 4F) * 0.5F;
         return protection * armorProtectionFactor(damage, maximum, true);
     }
 

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "mite:ancient_metal_arrow"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:ancient_metal_nugget"
+  }
+}

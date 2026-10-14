@@ -36,6 +36,12 @@ public final class WorkbenchRules {
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
+        var arrow = io.github.ningmeng123.mite.registry.MiteRangedItems.arrowMaterial(result);
+        var rod = io.github.ningmeng123.mite.registry.MiteRangedItems.rodMaterial(result);
+        var carrotRod = io.github.ningmeng123.mite.registry.MiteRangedItems.carrotRodMaterial(result);
+        var ranged = arrow != null ? arrow : rod != null ? rod : carrotRod;
+        if (ranged != null) return ranged == io.github.ningmeng123.mite.rules.R196RangedRules.Material.FLINT
+                || ranged == io.github.ningmeng123.mite.rules.R196RangedRules.Material.OBSIDIAN ? 0F : materialCapacity(ranged.id);
         if (result.is(net.minecraft.world.item.Items.FLINT_AND_STEEL)) return materialCapacity("iron");
         if (result.getItem() instanceof io.github.ningmeng123.mite.item.RunestoneItem item)
             return item.getBlock() == io.github.ningmeng123.mite.registry.MiteWorldBlocks.MITHRIL_RUNESTONE.get()

@@ -23,6 +23,28 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
+        for (var definition : io.github.ningmeng123.mite.registry.MiteArmorContent.definitions()) {
+            if (!definition.isNew() || definition.horse()) continue;
+            var item = io.github.ningmeng123.mite.registry.MiteArmorContent.get(definition.id());
+            tag(ItemTags.ARMOR_ENCHANTABLE).add(item);
+            tag(ItemTags.DURABILITY_ENCHANTABLE).add(item);
+            tag(ItemTags.VANISHING_ENCHANTABLE).add(item);
+            tag(ItemTags.TRIMMABLE_ARMOR).add(item);
+            switch (definition.type()) {
+                case HELMET -> tag(ItemTags.HEAD_ARMOR_ENCHANTABLE).add(item);
+                case CHESTPLATE -> tag(ItemTags.CHEST_ARMOR_ENCHANTABLE).add(item);
+                case LEGGINGS -> tag(ItemTags.LEG_ARMOR_ENCHANTABLE).add(item);
+                case BOOTS -> tag(ItemTags.FOOT_ARMOR_ENCHANTABLE).add(item);
+                default -> { }
+            }
+        }
+        for (var material : io.github.ningmeng123.mite.registry.MiteRangedItems.rods()) {
+            if (material == io.github.ningmeng123.mite.rules.R196RangedRules.Material.IRON) continue;
+            tag(ItemTags.DURABILITY_ENCHANTABLE).add(io.github.ningmeng123.mite.registry.MiteRangedItems.rod(material),
+                    io.github.ningmeng123.mite.registry.MiteRangedItems.carrotRod(material));
+            tag(ItemTags.VANISHING_ENCHANTABLE).add(io.github.ningmeng123.mite.registry.MiteRangedItems.rod(material),
+                    io.github.ningmeng123.mite.registry.MiteRangedItems.carrotRod(material));
+        }
         tag(MiteTags.BELOW_LOG_MINING_TIER).add(Items.WOODEN_AXE);
         tag(ItemTags.SWORDS).remove(ResourceLocation.withDefaultNamespace("wooden_sword"));
         tag(ItemTags.DURABILITY_ENCHANTABLE).add(Items.WOODEN_SWORD);

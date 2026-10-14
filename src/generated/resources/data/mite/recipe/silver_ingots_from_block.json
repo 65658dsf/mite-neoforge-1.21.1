@@ -1,0 +1,11 @@
+{
+  "type": "mite:bulk_material",
+  "group": "silver_ingot",
+  "ingredient": {
+    "item": "mite:silver_block"
+  },
+  "result": {
+    "count": 9,
+    "id": "mite:silver_ingot"
+  }
+}

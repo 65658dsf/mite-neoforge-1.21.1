@@ -19,5 +19,7 @@ public final class MiteLootModifierProvider extends GlobalLootModifierProvider {
     protected void start() {
         add("remove_wooden_tools", new RemoveWoodenToolsLootModifier(new LootItemCondition[0]));
         add("natural_food_sources", new NaturalFoodLootModifier(new LootItemCondition[0]));
+        add("armor_structure_loot", new io.github.ningmeng123.mite.loot.ArmorStructureLootModifier(new LootItemCondition[0]));
+        add("skeleton_arrows", new io.github.ningmeng123.mite.loot.SkeletonArrowLootModifier(new LootItemCondition[0]));
     }
 }

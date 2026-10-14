@@ -1,0 +1,2760 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source": "reference-data/runtime-registry.json plus amv,va,vc,BlockStrongbox,TileEntityStrongbox,ary,vm,aaw",
+  "activation": {
+    "professions_suppressed": true,
+    "in_dev_mode": false,
+    "allow_new_sand_physics": false
+  },
+  "recipes": [
+    {
+      "order": 69,
+      "class": "aai",
+      "output": {
+        "item_id": 239,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 3200.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "copper",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "copper",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 239,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 3200.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 70,
+      "class": "aai",
+      "output": {
+        "item_id": 240,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 3200.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "silver",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "silver",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 240,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 3200.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 71,
+      "class": "aai",
+      "output": {
+        "item_id": 241,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 3200.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "gold",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 50,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "superb",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "gold",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 241,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 3200.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 72,
+      "class": "aai",
+      "output": {
+        "item_id": 242,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 6400.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "iron",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 8.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "iron",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 242,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 6400.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 73,
+      "class": "aai",
+      "output": {
+        "item_id": 243,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 51200.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "mithril",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 64.0,
+          "akc.enchantability": 100,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 4,
+          "akc.mobility_flag": 0,
+          "akc.name": "mithril",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 243,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 51200.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 74,
+      "class": "aai",
+      "output": {
+        "item_id": 244,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 204800.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "adamantium",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 256.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": false,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 5,
+          "akc.mobility_flag": 0,
+          "akc.name": "adamantium",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 244,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 204800.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 75,
+      "class": "aai",
+      "output": {
+        "item_id": 255,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 12800.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "ancient_metal",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 16.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "ancient_metal",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 255,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 12800.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 96,
+      "class": "aai",
+      "output": {
+        "item_id": 229,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 204,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 204,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 204,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 962,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 12400.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "copper",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "copper",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 229,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 12400.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 97,
+      "class": "aai",
+      "output": {
+        "item_id": 230,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 205,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 205,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 205,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 963,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 12400.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "silver",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "silver",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 230,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 12400.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 98,
+      "class": "aai",
+      "output": {
+        "item_id": 231,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 41,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 41,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 41,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 266,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 12400.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "gold",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 50,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "superb",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "gold",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 231,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 12400.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 99,
+      "class": "aai",
+      "output": {
+        "item_id": 232,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 206,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 206,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 206,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 964,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 198400.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "mithril",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 64.0,
+          "akc.enchantability": 100,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 4,
+          "akc.mobility_flag": 0,
+          "akc.name": "mithril",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 232,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 198400.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 100,
+      "class": "aai",
+      "output": {
+        "item_id": 233,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 207,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 207,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 207,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 965,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 793600.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "adamantium",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 256.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": false,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 5,
+          "akc.mobility_flag": 0,
+          "akc.name": "adamantium",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 233,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 793600.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 101,
+      "class": "aai",
+      "output": {
+        "item_id": 254,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 252,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 252,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 252,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 966,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 49600.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "ancient_metal",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 16.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "ancient_metal",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 254,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 49600.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 195,
+      "class": "aai",
+      "output": {
+        "item_id": 245,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        {
+          "item_id": 340,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 388,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 49,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 388,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 49,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 49,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 49,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 2735.0,
+      "skillsets": [
+        1040
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 245,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 2735.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 196,
+      "class": "aai",
+      "output": {
+        "item_id": 145,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 42,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 42,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 42,
+          "count": 1,
+          "subtype": 32767,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 265,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 24800.0,
+      "skillsets": [
+        256
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "iron",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 8.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "iron",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 145,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 24800.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "id": 145,
+      "class": "amv",
+      "symbols": [
+        "aqz.cm"
+      ],
+      "scalars": {
+        "amv.b": 0,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "anvilIron",
+        "aqz.cF": 145,
+        "aqz.cG": 9.6,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": false,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": true,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 1,
+        "aqz.min_harvest_level": 0,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 3,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "amv",
+        "source_file": "BlockAnvil.java",
+        "class_sha256": "dfbc54ea6ca01ade202d64f7f75391a7ecca9cd9e6385caee3cca7a45c75ba1c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 229,
+      "class": "amv",
+      "symbols": [
+        "aqz.anvilCopper"
+      ],
+      "scalars": {
+        "amv.b": 0,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "anvilCopper",
+        "aqz.cF": 229,
+        "aqz.cG": 4.8,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": false,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": true,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 1,
+        "aqz.min_harvest_level": 0,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 3,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "amv",
+        "source_file": "BlockAnvil.java",
+        "class_sha256": "dfbc54ea6ca01ade202d64f7f75391a7ecca9cd9e6385caee3cca7a45c75ba1c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 230,
+      "class": "amv",
+      "symbols": [
+        "aqz.anvilSilver"
+      ],
+      "scalars": {
+        "amv.b": 0,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "anvilSilver",
+        "aqz.cF": 230,
+        "aqz.cG": 4.8,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": false,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": true,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 1,
+        "aqz.min_harvest_level": 0,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 3,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "amv",
+        "source_file": "BlockAnvil.java",
+        "class_sha256": "dfbc54ea6ca01ade202d64f7f75391a7ecca9cd9e6385caee3cca7a45c75ba1c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 231,
+      "class": "amv",
+      "symbols": [
+        "aqz.anvilGold"
+      ],
+      "scalars": {
+        "amv.b": 0,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "anvilGold",
+        "aqz.cF": 231,
+        "aqz.cG": 4.8,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": false,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": true,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 1,
+        "aqz.min_harvest_level": 0,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 3,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "amv",
+        "source_file": "BlockAnvil.java",
+        "class_sha256": "dfbc54ea6ca01ade202d64f7f75391a7ecca9cd9e6385caee3cca7a45c75ba1c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 232,
+      "class": "amv",
+      "symbols": [
+        "aqz.anvilMithril"
+      ],
+      "scalars": {
+        "amv.b": 0,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "anvilMithril",
+        "aqz.cF": 232,
+        "aqz.cG": 76.8,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": false,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": true,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 1,
+        "aqz.min_harvest_level": 0,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 3,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "amv",
+        "source_file": "BlockAnvil.java",
+        "class_sha256": "dfbc54ea6ca01ade202d64f7f75391a7ecca9cd9e6385caee3cca7a45c75ba1c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 233,
+      "class": "amv",
+      "symbols": [
+        "aqz.anvilAdamantium"
+      ],
+      "scalars": {
+        "amv.b": 0,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "anvilAdamantium",
+        "aqz.cF": 233,
+        "aqz.cG": 307.2,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": false,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": true,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 1,
+        "aqz.min_harvest_level": 0,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 3,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "amv",
+        "source_file": "BlockAnvil.java",
+        "class_sha256": "dfbc54ea6ca01ade202d64f7f75391a7ecca9cd9e6385caee3cca7a45c75ba1c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 239,
+      "class": "BlockStrongbox",
+      "symbols": [
+        "aqz.chestCopper"
+      ],
+      "scalars": {
+        "ank.chest_type": "strongbox",
+        "anw.are_maps_ready": true,
+        "anw.can_face_down": false,
+        "anw.can_face_up": false,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "chestCopper",
+        "aqz.cF": 239,
+        "aqz.cG": 4.8,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": true,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": false,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 4,
+        "aqz.min_harvest_level": 3,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 1,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "BlockStrongbox",
+        "source_file": "BlockStrongbox.java",
+        "class_sha256": "42df94f545fac64d1a7c9be2b1e7bf2c6b105b88275f09f984996c10e37634ac",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 240,
+      "class": "BlockStrongbox",
+      "symbols": [
+        "aqz.chestSilver"
+      ],
+      "scalars": {
+        "ank.chest_type": "strongbox",
+        "anw.are_maps_ready": true,
+        "anw.can_face_down": false,
+        "anw.can_face_up": false,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "chestSilver",
+        "aqz.cF": 240,
+        "aqz.cG": 4.8,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": true,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": false,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 4,
+        "aqz.min_harvest_level": 3,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 1,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "BlockStrongbox",
+        "source_file": "BlockStrongbox.java",
+        "class_sha256": "42df94f545fac64d1a7c9be2b1e7bf2c6b105b88275f09f984996c10e37634ac",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 241,
+      "class": "BlockStrongbox",
+      "symbols": [
+        "aqz.chestGold"
+      ],
+      "scalars": {
+        "ank.chest_type": "strongbox",
+        "anw.are_maps_ready": true,
+        "anw.can_face_down": false,
+        "anw.can_face_up": false,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "chestGold",
+        "aqz.cF": 241,
+        "aqz.cG": 4.8,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": true,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": false,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 4,
+        "aqz.min_harvest_level": 3,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 1,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "BlockStrongbox",
+        "source_file": "BlockStrongbox.java",
+        "class_sha256": "42df94f545fac64d1a7c9be2b1e7bf2c6b105b88275f09f984996c10e37634ac",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 242,
+      "class": "BlockStrongbox",
+      "symbols": [
+        "aqz.chestIron"
+      ],
+      "scalars": {
+        "ank.chest_type": "strongbox",
+        "anw.are_maps_ready": true,
+        "anw.can_face_down": false,
+        "anw.can_face_up": false,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "chestIron",
+        "aqz.cF": 242,
+        "aqz.cG": 9.6,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": true,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": false,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 4,
+        "aqz.min_harvest_level": 4,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 1,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "BlockStrongbox",
+        "source_file": "BlockStrongbox.java",
+        "class_sha256": "42df94f545fac64d1a7c9be2b1e7bf2c6b105b88275f09f984996c10e37634ac",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 243,
+      "class": "BlockStrongbox",
+      "symbols": [
+        "aqz.chestMithril"
+      ],
+      "scalars": {
+        "ank.chest_type": "strongbox",
+        "anw.are_maps_ready": true,
+        "anw.can_face_down": false,
+        "anw.can_face_up": false,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "chestMithril",
+        "aqz.cF": 243,
+        "aqz.cG": 76.8,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": true,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": false,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 4,
+        "aqz.min_harvest_level": 5,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 1,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "BlockStrongbox",
+        "source_file": "BlockStrongbox.java",
+        "class_sha256": "42df94f545fac64d1a7c9be2b1e7bf2c6b105b88275f09f984996c10e37634ac",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 244,
+      "class": "BlockStrongbox",
+      "symbols": [
+        "aqz.chestAdamantium"
+      ],
+      "scalars": {
+        "ank.chest_type": "strongbox",
+        "anw.are_maps_ready": true,
+        "anw.can_face_down": false,
+        "anw.can_face_up": false,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "chestAdamantium",
+        "aqz.cF": 244,
+        "aqz.cG": 307.2,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": true,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": false,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 4,
+        "aqz.min_harvest_level": 6,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 1,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "BlockStrongbox",
+        "source_file": "BlockStrongbox.java",
+        "class_sha256": "42df94f545fac64d1a7c9be2b1e7bf2c6b105b88275f09f984996c10e37634ac",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 245,
+      "class": "aoc",
+      "symbols": [
+        "aqz.enchantmentTableEmerald"
+      ],
+      "scalars": {
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "enchantmentTable",
+        "aqz.cF": 245,
+        "aqz.cG": 2.4,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": false,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": "emerald_enchanting_table",
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": false,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 4,
+        "aqz.min_harvest_level": 2,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": false,
+        "aqz.num_item_subtypes": 1,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "aoc",
+        "source_file": "BlockEnchantmentTable.java",
+        "class_sha256": "beed59402823f9fe6bcadb065b78ec1cc2b589795673d7377b958ff8b5b09c82",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 254,
+      "class": "amv",
+      "symbols": [
+        "aqz.anvilAncientMetal"
+      ],
+      "scalars": {
+        "amv.b": 0,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "anvilAncientMetal",
+        "aqz.cF": 254,
+        "aqz.cG": 19.2,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": false,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": true,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 1,
+        "aqz.min_harvest_level": 0,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 3,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "amv",
+        "source_file": "BlockAnvil.java",
+        "class_sha256": "dfbc54ea6ca01ade202d64f7f75391a7ecca9cd9e6385caee3cca7a45c75ba1c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": 255,
+      "class": "BlockStrongbox",
+      "symbols": [
+        "aqz.chestAncientMetal"
+      ],
+      "scalars": {
+        "ank.chest_type": "strongbox",
+        "anw.are_maps_ready": true,
+        "anw.can_face_down": false,
+        "anw.can_face_up": false,
+        "aqz.always_blocks_fluids": true,
+        "aqz.always_blocks_precipitation": true,
+        "aqz.b": "chestAncientMetal",
+        "aqz.cF": 255,
+        "aqz.cG": 19.2,
+        "aqz.cI": true,
+        "aqz.cJ": true,
+        "aqz.cK": true,
+        "aqz.cT": 1.0,
+        "aqz.cV": 0.6,
+        "aqz.connects_with_fence": false,
+        "aqz.cushioning": 0.0,
+        "aqz.f": null,
+        "aqz.has_grass_top_icon": false,
+        "aqz.has_item_subtypes": false,
+        "aqz.is_always_immutable": false,
+        "aqz.is_always_legal": true,
+        "aqz.is_always_opaque_standard_form_cube": false,
+        "aqz.is_always_solid": true,
+        "aqz.is_always_solid_opaque_standard_form_cube": false,
+        "aqz.is_always_solid_standard_form_cube": false,
+        "aqz.is_always_standard_form_cube": false,
+        "aqz.is_being_placed": false,
+        "aqz.is_never_opaque_standard_form_cube": true,
+        "aqz.is_never_solid": false,
+        "aqz.is_never_solid_opaque_standard_form_cube": true,
+        "aqz.is_never_solid_standard_form_cube": true,
+        "aqz.is_never_standard_form_cube": true,
+        "aqz.is_normal_cube": false,
+        "aqz.is_tree_leaves": false,
+        "aqz.max_stack_size": 4,
+        "aqz.min_harvest_level": 4,
+        "aqz.never_blocks_fluids": false,
+        "aqz.never_blocks_precipitation": false,
+        "aqz.never_hides_adjacent_faces": true,
+        "aqz.num_item_subtypes": 1,
+        "aqz.uses_new_sand_physics": false
+      },
+      "source": {
+        "class": "BlockStrongbox",
+        "source_file": "BlockStrongbox.java",
+        "class_sha256": "42df94f545fac64d1a7c9be2b1e7bf2c6b105b88275f09f984996c10e37634ac",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "rule_facts": {
+    "anvil_base_per_ingot": 1600,
+    "anvil_ingots": 31,
+    "anvil_stage_thresholds": [
+      0.5,
+      0.8,
+      1
+    ],
+    "repair_cost_tool": "components*2",
+    "repair_cost_chain": "nonchain components*2, restored max*2/cost",
+    "repair_cost_fishing_rod": 1,
+    "repair_wear_tool": 1,
+    "repair_wear_armor": 200,
+    "repair_wear_metal_bow": 200,
+    "repair_wear_fishing_rod": 22,
+    "repair_xp": 0,
+    "combine_wear": 0,
+    "strongbox_slots": 27,
+    "strongbox_double": false,
+    "strongbox_stack": 4,
+    "strongbox_open": "owner or creative",
+    "strongbox_self_drop": "noncreative owner only",
+    "strongbox_contents_drop": "ordinary chest on removal",
+    "emerald_energy_per_shelf_plus_base": 2,
+    "diamond_energy_per_shelf_plus_base": 4,
+    "bookshelf_cap": 24,
+    "enchantability_increment_bands": [
+      1,
+      0.5,
+      0.25,
+      0
+    ]
+  },
+  "modern_adaptations": [
+    "owner UUID replaces mutable source player name; display name retained",
+    "modern native enchanting table menu, lapis and payment retained; emerald energy uses source formula",
+    "native diamond table retains 1.21.1 enchanting formula",
+    "anvil rename and enchanted-book operations retain modern compatibility costs; source material/combine repairs are zero-XP",
+    "source skills disabled by default",
+    "native iron damaged IDs retained; added anvil wear uses damage_stage property"
+  ],
+  "validation": {
+    "automatic": "passed",
+    "verified_on": "2026-10-14",
+    "batch_total_junit": 1108,
+    "batch_total_gametest": 419,
+    "client_manual": "user_confirmed",
+    "evidence": "docs/testing/027-content-categories.md",
+    "user_confirmation_date": "2026-10-14",
+    "acceptance_scope": "User confirmed the batch works and authorized commit; no unreported per-case or multiplayer result is inferred."
+  }
+}

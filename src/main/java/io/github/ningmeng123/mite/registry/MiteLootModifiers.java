@@ -16,6 +16,8 @@ public final class MiteLootModifiers {
 
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<RemoveWoodenToolsLootModifier>> REMOVE_WOODEN_TOOLS =
             SERIALIZERS.register("remove_wooden_tools", () -> RemoveWoodenToolsLootModifier.CODEC);
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<io.github.ningmeng123.mite.loot.SkeletonArrowLootModifier>> SKELETON_ARROWS =
+            SERIALIZERS.register("skeleton_arrows", () -> io.github.ningmeng123.mite.loot.SkeletonArrowLootModifier.CODEC);
 
     private MiteLootModifiers() {
     }

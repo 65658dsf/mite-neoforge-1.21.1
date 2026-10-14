@@ -31,6 +31,7 @@ public final class Mite {
         MiteAttachments.register(modBus);
         MiteItems.register(modBus);
         MiteMaterials.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteMetalBlocks.register(modBus);
         MiteShards.register(modBus);
         MiteResourceBlocks.register(modBus);
         io.github.ningmeng123.mite.registry.MiteOreBlocks.register(modBus);
@@ -38,6 +39,9 @@ public final class Mite {
         io.github.ningmeng123.mite.registry.MiteWorldFeatures.register(modBus);
         io.github.ningmeng123.mite.worldgen.MiteWorldDimensions.register(modBus);
         EquipmentDurability.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteArmorContent.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteRangedItems.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.register(modBus);
         MiteTools.register(modBus);
         MiteWorkbenches.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFurnaces.register(modBus);

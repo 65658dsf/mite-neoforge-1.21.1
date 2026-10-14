@@ -1,0 +1,5 @@
+{
+  "type": "mite:rod_conversion",
+  "attach_carrot": false,
+  "material": "iron"
+}

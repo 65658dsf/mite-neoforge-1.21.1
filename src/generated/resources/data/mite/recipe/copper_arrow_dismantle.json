@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "mite:copper_arrow"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:copper_nugget"
+  }
+}

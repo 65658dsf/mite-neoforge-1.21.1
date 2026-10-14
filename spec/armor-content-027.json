@@ -1,0 +1,4284 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source": "guarded R196 runtime registry; wh, EnumEquipmentMaterial, ItemHorseArmor, ItemChain, zx, RecipesMITE",
+  "items": [
+    {
+      "id": "minecraft:chainmail_helmet",
+      "legacy_id": 302,
+      "material": "iron",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 8,
+      "material_protection": 8,
+      "enchantability": 30,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 40,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1777.7777,
+      "source_orders": [
+        250
+      ],
+      "source_sprite": "chainmail_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=302",
+      "catalog_leaf": false
+    },
+    {
+      "id": "minecraft:chainmail_chestplate",
+      "legacy_id": 303,
+      "material": "iron",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 8,
+      "material_protection": 8,
+      "enchantability": 30,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 64,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2844.4443,
+      "source_orders": [
+        117
+      ],
+      "source_sprite": "chainmail_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=303",
+      "catalog_leaf": false
+    },
+    {
+      "id": "minecraft:chainmail_leggings",
+      "legacy_id": 304,
+      "material": "iron",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 8,
+      "material_protection": 8,
+      "enchantability": 30,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 56,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2488.8887,
+      "source_orders": [
+        118
+      ],
+      "source_sprite": "chainmail_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=304",
+      "catalog_leaf": false
+    },
+    {
+      "id": "minecraft:chainmail_boots",
+      "legacy_id": 305,
+      "material": "iron",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 8,
+      "material_protection": 8,
+      "enchantability": 30,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 32,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1422.2222,
+      "source_orders": [
+        251
+      ],
+      "source_sprite": "chainmail_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=305",
+      "catalog_leaf": false
+    },
+    {
+      "id": "minecraft:golden_helmet",
+      "legacy_id": 314,
+      "material": "gold",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 50,
+      "maximum_quality": "SUPERB",
+      "horse_protection": 3,
+      "base_durability": 40,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2000.0,
+      "source_orders": [
+        262
+      ],
+      "source_sprite": "armor/gold_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=314",
+      "catalog_leaf": true
+    },
+    {
+      "id": "minecraft:golden_chestplate",
+      "legacy_id": 315,
+      "material": "gold",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 50,
+      "maximum_quality": "SUPERB",
+      "horse_protection": 3,
+      "base_durability": 64,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 3200.0,
+      "source_orders": [
+        129
+      ],
+      "source_sprite": "armor/gold_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=315",
+      "catalog_leaf": true
+    },
+    {
+      "id": "minecraft:golden_leggings",
+      "legacy_id": 316,
+      "material": "gold",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 50,
+      "maximum_quality": "SUPERB",
+      "horse_protection": 3,
+      "base_durability": 56,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2800.0,
+      "source_orders": [
+        130
+      ],
+      "source_sprite": "armor/gold_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=316",
+      "catalog_leaf": true
+    },
+    {
+      "id": "minecraft:golden_boots",
+      "legacy_id": 317,
+      "material": "gold",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 50,
+      "maximum_quality": "SUPERB",
+      "horse_protection": 3,
+      "base_durability": 32,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1600.0,
+      "source_orders": [
+        263
+      ],
+      "source_sprite": "armor/gold_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=317",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_helmet",
+      "legacy_id": 1067,
+      "material": "copper",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 40,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2000.0,
+      "source_orders": [
+        258
+      ],
+      "source_sprite": "armor/copper_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1067",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_helmet",
+      "legacy_id": 1068,
+      "material": "silver",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 40,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2000.0,
+      "source_orders": [
+        260
+      ],
+      "source_sprite": "armor/silver_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1068",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_helmet",
+      "legacy_id": 1069,
+      "material": "mithril",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 640,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 32000.0,
+      "source_orders": [
+        266
+      ],
+      "source_sprite": "armor/mithril_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1069",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_helmet",
+      "legacy_id": 1070,
+      "material": "adamantium",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 2560,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 128000.0,
+      "source_orders": [
+        268
+      ],
+      "source_sprite": "armor/adamantium_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1070",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_chain_helmet",
+      "legacy_id": 1071,
+      "material": "copper",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 20,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 888.88885,
+      "source_orders": [
+        242
+      ],
+      "source_sprite": "armor/copper_chainmail_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1071",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_chain_helmet",
+      "legacy_id": 1072,
+      "material": "silver",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 20,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 888.88885,
+      "source_orders": [
+        244
+      ],
+      "source_sprite": "armor/silver_chainmail_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1072",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:golden_chain_helmet",
+      "legacy_id": 1073,
+      "material": "gold",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 50,
+      "maximum_quality": "SUPERB",
+      "horse_protection": 3,
+      "base_durability": 20,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 888.88885,
+      "source_orders": [
+        246
+      ],
+      "source_sprite": "armor/gold_chainmail_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1073",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_chain_helmet",
+      "legacy_id": 1074,
+      "material": "mithril",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 320,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 14222.222,
+      "source_orders": [
+        252
+      ],
+      "source_sprite": "armor/mithril_chainmail_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1074",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_chain_helmet",
+      "legacy_id": 1075,
+      "material": "adamantium",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 1280,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 56888.887,
+      "source_orders": [
+        254
+      ],
+      "source_sprite": "armor/adamantium_chainmail_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1075",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:rusted_iron_helmet",
+      "legacy_id": 1076,
+      "material": "rusted_iron",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 0,
+      "maximum_quality": "POOR",
+      "horse_protection": 0,
+      "base_durability": 40,
+      "default_quality": "POOR",
+      "lowest_difficulty": 2000.0,
+      "source_orders": [],
+      "source_sprite": "armor/rusted_iron_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1076",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:rusted_iron_chain_helmet",
+      "legacy_id": 1077,
+      "material": "rusted_iron",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 0,
+      "maximum_quality": "POOR",
+      "horse_protection": 0,
+      "base_durability": 20,
+      "default_quality": "POOR",
+      "lowest_difficulty": 888.88885,
+      "source_orders": [
+        248
+      ],
+      "source_sprite": "armor/rusted_iron_chainmail_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1077",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_chestplate",
+      "legacy_id": 1078,
+      "material": "copper",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 64,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 3200.0,
+      "source_orders": [
+        125
+      ],
+      "source_sprite": "armor/copper_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1078",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_chestplate",
+      "legacy_id": 1079,
+      "material": "silver",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 64,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 3200.0,
+      "source_orders": [
+        127
+      ],
+      "source_sprite": "armor/silver_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1079",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_chestplate",
+      "legacy_id": 1080,
+      "material": "mithril",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 1024,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 51200.0,
+      "source_orders": [
+        133
+      ],
+      "source_sprite": "armor/mithril_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1080",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_chestplate",
+      "legacy_id": 1081,
+      "material": "adamantium",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 4096,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 204800.0,
+      "source_orders": [
+        135
+      ],
+      "source_sprite": "armor/adamantium_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1081",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_chain_chestplate",
+      "legacy_id": 1082,
+      "material": "copper",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 32,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1422.2222,
+      "source_orders": [
+        109
+      ],
+      "source_sprite": "armor/copper_chainmail_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1082",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_chain_chestplate",
+      "legacy_id": 1083,
+      "material": "silver",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 32,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1422.2222,
+      "source_orders": [
+        111
+      ],
+      "source_sprite": "armor/silver_chainmail_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1083",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:golden_chain_chestplate",
+      "legacy_id": 1084,
+      "material": "gold",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 50,
+      "maximum_quality": "SUPERB",
+      "horse_protection": 3,
+      "base_durability": 32,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1422.2222,
+      "source_orders": [
+        113
+      ],
+      "source_sprite": "armor/gold_chainmail_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1084",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_chain_chestplate",
+      "legacy_id": 1085,
+      "material": "mithril",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 512,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 22755.555,
+      "source_orders": [
+        119
+      ],
+      "source_sprite": "armor/mithril_chainmail_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1085",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_chain_chestplate",
+      "legacy_id": 1086,
+      "material": "adamantium",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 2048,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 91022.22,
+      "source_orders": [
+        121
+      ],
+      "source_sprite": "armor/adamantium_chainmail_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1086",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:rusted_iron_chestplate",
+      "legacy_id": 1087,
+      "material": "rusted_iron",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 0,
+      "maximum_quality": "POOR",
+      "horse_protection": 0,
+      "base_durability": 64,
+      "default_quality": "POOR",
+      "lowest_difficulty": 3200.0,
+      "source_orders": [],
+      "source_sprite": "armor/rusted_iron_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1087",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:rusted_iron_chain_chestplate",
+      "legacy_id": 1088,
+      "material": "rusted_iron",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 0,
+      "maximum_quality": "POOR",
+      "horse_protection": 0,
+      "base_durability": 32,
+      "default_quality": "POOR",
+      "lowest_difficulty": 1422.2222,
+      "source_orders": [
+        115
+      ],
+      "source_sprite": "armor/rusted_iron_chainmail_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1088",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_leggings",
+      "legacy_id": 1089,
+      "material": "copper",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 56,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2800.0,
+      "source_orders": [
+        126
+      ],
+      "source_sprite": "armor/copper_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1089",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_leggings",
+      "legacy_id": 1090,
+      "material": "silver",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 56,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2800.0,
+      "source_orders": [
+        128
+      ],
+      "source_sprite": "armor/silver_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1090",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_leggings",
+      "legacy_id": 1091,
+      "material": "mithril",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 896,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 44800.0,
+      "source_orders": [
+        134
+      ],
+      "source_sprite": "armor/mithril_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1091",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_leggings",
+      "legacy_id": 1092,
+      "material": "adamantium",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 3584,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 179200.0,
+      "source_orders": [
+        136
+      ],
+      "source_sprite": "armor/adamantium_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1092",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_chain_leggings",
+      "legacy_id": 1093,
+      "material": "copper",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 28,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1244.4443,
+      "source_orders": [
+        110
+      ],
+      "source_sprite": "armor/copper_chainmail_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1093",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_chain_leggings",
+      "legacy_id": 1094,
+      "material": "silver",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 28,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1244.4443,
+      "source_orders": [
+        112
+      ],
+      "source_sprite": "armor/silver_chainmail_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1094",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:golden_chain_leggings",
+      "legacy_id": 1095,
+      "material": "gold",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 50,
+      "maximum_quality": "SUPERB",
+      "horse_protection": 3,
+      "base_durability": 28,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1244.4443,
+      "source_orders": [
+        114
+      ],
+      "source_sprite": "armor/gold_chainmail_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1095",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_chain_leggings",
+      "legacy_id": 1096,
+      "material": "mithril",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 448,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 19911.11,
+      "source_orders": [
+        120
+      ],
+      "source_sprite": "armor/mithril_chainmail_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1096",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_chain_leggings",
+      "legacy_id": 1097,
+      "material": "adamantium",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 1792,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 79644.44,
+      "source_orders": [
+        122
+      ],
+      "source_sprite": "armor/adamantium_chainmail_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1097",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:rusted_iron_leggings",
+      "legacy_id": 1098,
+      "material": "rusted_iron",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 0,
+      "maximum_quality": "POOR",
+      "horse_protection": 0,
+      "base_durability": 56,
+      "default_quality": "POOR",
+      "lowest_difficulty": 2800.0,
+      "source_orders": [],
+      "source_sprite": "armor/rusted_iron_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1098",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:rusted_iron_chain_leggings",
+      "legacy_id": 1099,
+      "material": "rusted_iron",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 0,
+      "maximum_quality": "POOR",
+      "horse_protection": 0,
+      "base_durability": 28,
+      "default_quality": "POOR",
+      "lowest_difficulty": 1244.4443,
+      "source_orders": [
+        116
+      ],
+      "source_sprite": "armor/rusted_iron_chainmail_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1099",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_boots",
+      "legacy_id": 1100,
+      "material": "copper",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 32,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1600.0,
+      "source_orders": [
+        259
+      ],
+      "source_sprite": "armor/copper_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1100",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_boots",
+      "legacy_id": 1101,
+      "material": "silver",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 32,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 1600.0,
+      "source_orders": [
+        261
+      ],
+      "source_sprite": "armor/silver_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1101",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_boots",
+      "legacy_id": 1102,
+      "material": "mithril",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 512,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 25600.0,
+      "source_orders": [
+        267
+      ],
+      "source_sprite": "armor/mithril_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1102",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_boots",
+      "legacy_id": 1103,
+      "material": "adamantium",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 2048,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 102400.0,
+      "source_orders": [
+        269
+      ],
+      "source_sprite": "armor/adamantium_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1103",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_chain_boots",
+      "legacy_id": 1104,
+      "material": "copper",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 16,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 711.1111,
+      "source_orders": [
+        243
+      ],
+      "source_sprite": "armor/copper_chainmail_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1104",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_chain_boots",
+      "legacy_id": 1105,
+      "material": "silver",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 16,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 711.1111,
+      "source_orders": [
+        245
+      ],
+      "source_sprite": "armor/silver_chainmail_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1105",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:golden_chain_boots",
+      "legacy_id": 1106,
+      "material": "gold",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 50,
+      "maximum_quality": "SUPERB",
+      "horse_protection": 3,
+      "base_durability": 16,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 711.1111,
+      "source_orders": [
+        247
+      ],
+      "source_sprite": "armor/gold_chainmail_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1106",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_chain_boots",
+      "legacy_id": 1107,
+      "material": "mithril",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 256,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 11377.777,
+      "source_orders": [
+        253
+      ],
+      "source_sprite": "armor/mithril_chainmail_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1107",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_chain_boots",
+      "legacy_id": 1108,
+      "material": "adamantium",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 1024,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 45511.11,
+      "source_orders": [
+        255
+      ],
+      "source_sprite": "armor/adamantium_chainmail_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1108",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:rusted_iron_boots",
+      "legacy_id": 1109,
+      "material": "rusted_iron",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 0,
+      "maximum_quality": "POOR",
+      "horse_protection": 0,
+      "base_durability": 32,
+      "default_quality": "POOR",
+      "lowest_difficulty": 1600.0,
+      "source_orders": [],
+      "source_sprite": "armor/rusted_iron_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1109",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:rusted_iron_chain_boots",
+      "legacy_id": 1110,
+      "material": "rusted_iron",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 4,
+      "material_protection": 6,
+      "enchantability": 0,
+      "maximum_quality": "POOR",
+      "horse_protection": 0,
+      "base_durability": 16,
+      "default_quality": "POOR",
+      "lowest_difficulty": 711.1111,
+      "source_orders": [
+        249
+      ],
+      "source_sprite": "armor/rusted_iron_chainmail_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1110",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:copper_horse_armor",
+      "legacy_id": 1130,
+      "material": "copper",
+      "slot": "body",
+      "components": 0,
+      "chainmail": false,
+      "horse": true,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 0,
+      "default_quality": null,
+      "lowest_difficulty": -1,
+      "source_orders": [],
+      "source_sprite": "armor/horse/copper",
+      "source": {
+        "class": "ItemHorseArmor",
+        "source_file": "ItemHorseArmor.java",
+        "class_sha256": "614ff4cd88570ef0952b9e48005a664263edf8d2f1fb22aadff0eb2646ad503c",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1130",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:silver_horse_armor",
+      "legacy_id": 1131,
+      "material": "silver",
+      "slot": "body",
+      "components": 0,
+      "chainmail": false,
+      "horse": true,
+      "material_durability": 4,
+      "material_protection": 7,
+      "enchantability": 30,
+      "maximum_quality": "EXCELLENT",
+      "horse_protection": 4,
+      "base_durability": 0,
+      "default_quality": null,
+      "lowest_difficulty": -1,
+      "source_orders": [],
+      "source_sprite": "armor/horse/silver",
+      "source": {
+        "class": "ItemHorseArmor",
+        "source_file": "ItemHorseArmor.java",
+        "class_sha256": "614ff4cd88570ef0952b9e48005a664263edf8d2f1fb22aadff0eb2646ad503c",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1131",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:mithril_horse_armor",
+      "legacy_id": 1132,
+      "material": "mithril",
+      "slot": "body",
+      "components": 0,
+      "chainmail": false,
+      "horse": true,
+      "material_durability": 64,
+      "material_protection": 9,
+      "enchantability": 100,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 6,
+      "base_durability": 0,
+      "default_quality": null,
+      "lowest_difficulty": -1,
+      "source_orders": [],
+      "source_sprite": "armor/horse/mithril",
+      "source": {
+        "class": "ItemHorseArmor",
+        "source_file": "ItemHorseArmor.java",
+        "class_sha256": "614ff4cd88570ef0952b9e48005a664263edf8d2f1fb22aadff0eb2646ad503c",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1132",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:adamantium_horse_armor",
+      "legacy_id": 1133,
+      "material": "adamantium",
+      "slot": "body",
+      "components": 0,
+      "chainmail": false,
+      "horse": true,
+      "material_durability": 256,
+      "material_protection": 10,
+      "enchantability": 40,
+      "maximum_quality": "LEGENDARY",
+      "horse_protection": 7,
+      "base_durability": 0,
+      "default_quality": null,
+      "lowest_difficulty": -1,
+      "source_orders": [],
+      "source_sprite": "armor/horse/adamantium",
+      "source": {
+        "class": "ItemHorseArmor",
+        "source_file": "ItemHorseArmor.java",
+        "class_sha256": "614ff4cd88570ef0952b9e48005a664263edf8d2f1fb22aadff0eb2646ad503c",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1133",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_horse_armor",
+      "legacy_id": 1134,
+      "material": "ancient_metal",
+      "slot": "body",
+      "components": 0,
+      "chainmail": false,
+      "horse": true,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 0,
+      "default_quality": null,
+      "lowest_difficulty": -1,
+      "source_orders": [],
+      "source_sprite": "armor/horse/ancient_metal",
+      "source": {
+        "class": "ItemHorseArmor",
+        "source_file": "ItemHorseArmor.java",
+        "class_sha256": "614ff4cd88570ef0952b9e48005a664263edf8d2f1fb22aadff0eb2646ad503c",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1134",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_helmet",
+      "legacy_id": 1252,
+      "material": "ancient_metal",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 160,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 8000.0,
+      "source_orders": [
+        270
+      ],
+      "source_sprite": "armor/ancient_metal_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1252",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_chainmail_helmet",
+      "legacy_id": 1253,
+      "material": "ancient_metal",
+      "slot": "helmet",
+      "components": 5,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 80,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 3555.5554,
+      "source_orders": [
+        256
+      ],
+      "source_sprite": "armor/ancient_metal_chainmail_helmet",
+      "source": {
+        "class": "ItemHelmet",
+        "source_file": "ItemHelmet.java",
+        "class_sha256": "f866141e5265f741f3f8be8e07c9e6c86f9ec4aa9147afac51b5c4064fe5740e",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1253",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_chestplate",
+      "legacy_id": 1254,
+      "material": "ancient_metal",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 256,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 12800.0,
+      "source_orders": [
+        137
+      ],
+      "source_sprite": "armor/ancient_metal_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1254",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_chainmail_chestplate",
+      "legacy_id": 1255,
+      "material": "ancient_metal",
+      "slot": "chestplate",
+      "components": 8,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 128,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 5688.8887,
+      "source_orders": [
+        123
+      ],
+      "source_sprite": "armor/ancient_metal_chainmail_chestplate",
+      "source": {
+        "class": "ItemCuirass",
+        "source_file": "ItemCuirass.java",
+        "class_sha256": "111ff7031433b9e4ca2306e5b4ff0558397c15400ad88d41f69b00dd9b92e199",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1255",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_leggings",
+      "legacy_id": 1256,
+      "material": "ancient_metal",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 224,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 11200.0,
+      "source_orders": [
+        138
+      ],
+      "source_sprite": "armor/ancient_metal_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1256",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_chainmail_leggings",
+      "legacy_id": 1257,
+      "material": "ancient_metal",
+      "slot": "leggings",
+      "components": 7,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 112,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 4977.7773,
+      "source_orders": [
+        124
+      ],
+      "source_sprite": "armor/ancient_metal_chainmail_leggings",
+      "source": {
+        "class": "ItemLeggings",
+        "source_file": "ItemLeggings.java",
+        "class_sha256": "5322127bc7354266ab842620bdfc672eecca3c7f0a363629de8a2a5c5881f813",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1257",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_boots",
+      "legacy_id": 1258,
+      "material": "ancient_metal",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": false,
+      "horse": false,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 128,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 6400.0,
+      "source_orders": [
+        271
+      ],
+      "source_sprite": "armor/ancient_metal_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1258",
+      "catalog_leaf": true
+    },
+    {
+      "id": "mite:ancient_metal_chainmail_boots",
+      "legacy_id": 1259,
+      "material": "ancient_metal",
+      "slot": "boots",
+      "components": 4,
+      "chainmail": true,
+      "horse": false,
+      "material_durability": 16,
+      "material_protection": 8,
+      "enchantability": 40,
+      "maximum_quality": "MASTERWORK",
+      "horse_protection": 5,
+      "base_durability": 64,
+      "default_quality": "AVERAGE",
+      "lowest_difficulty": 2844.4443,
+      "source_orders": [
+        257
+      ],
+      "source_sprite": "armor/ancient_metal_chainmail_boots",
+      "source": {
+        "class": "ItemBoots",
+        "source_file": "ItemBoots.java",
+        "class_sha256": "5b242a2fbff0724b663e21c92bcaa6202ebc2fee30edc68a3d250a4cdcf4deb7",
+        "origin": "r196_overlay"
+      },
+      "source_pointer": "/items/id=1259",
+      "catalog_leaf": true
+    }
+  ],
+  "chains": [
+    {
+      "id": "mite:copper_chain",
+      "legacy_id": 1123,
+      "material": "copper",
+      "maximum_stack": 8,
+      "source_sprite": "chains/copper",
+      "source": {
+        "class": "ItemChain",
+        "source_file": "ItemChain.java",
+        "class_sha256": "6136ae61f698d43a9a74e4825de0744ab7a2fed69a8e620a38bcac43dd76679c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_chain",
+      "legacy_id": 1124,
+      "material": "silver",
+      "maximum_stack": 8,
+      "source_sprite": "chains/silver",
+      "source": {
+        "class": "ItemChain",
+        "source_file": "ItemChain.java",
+        "class_sha256": "6136ae61f698d43a9a74e4825de0744ab7a2fed69a8e620a38bcac43dd76679c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:golden_chain",
+      "legacy_id": 1125,
+      "material": "gold",
+      "maximum_stack": 8,
+      "source_sprite": "chains/gold",
+      "source": {
+        "class": "ItemChain",
+        "source_file": "ItemChain.java",
+        "class_sha256": "6136ae61f698d43a9a74e4825de0744ab7a2fed69a8e620a38bcac43dd76679c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:chain",
+      "legacy_id": 1126,
+      "material": "iron",
+      "maximum_stack": 8,
+      "source_sprite": "chains/iron",
+      "source": {
+        "class": "ItemChain",
+        "source_file": "ItemChain.java",
+        "class_sha256": "6136ae61f698d43a9a74e4825de0744ab7a2fed69a8e620a38bcac43dd76679c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_chain",
+      "legacy_id": 1127,
+      "material": "mithril",
+      "maximum_stack": 8,
+      "source_sprite": "chains/mithril",
+      "source": {
+        "class": "ItemChain",
+        "source_file": "ItemChain.java",
+        "class_sha256": "6136ae61f698d43a9a74e4825de0744ab7a2fed69a8e620a38bcac43dd76679c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_chain",
+      "legacy_id": 1128,
+      "material": "adamantium",
+      "maximum_stack": 8,
+      "source_sprite": "chains/adamantium",
+      "source": {
+        "class": "ItemChain",
+        "source_file": "ItemChain.java",
+        "class_sha256": "6136ae61f698d43a9a74e4825de0744ab7a2fed69a8e620a38bcac43dd76679c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:rusted_iron_chain",
+      "legacy_id": 1129,
+      "material": "rusted_iron",
+      "maximum_stack": 8,
+      "source_sprite": "chains/rusted_iron",
+      "source": {
+        "class": "ItemChain",
+        "source_file": "ItemChain.java",
+        "class_sha256": "6136ae61f698d43a9a74e4825de0744ab7a2fed69a8e620a38bcac43dd76679c",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_chain",
+      "legacy_id": 1261,
+      "material": "ancient_metal",
+      "maximum_stack": 8,
+      "source_sprite": "chains/ancient_metal",
+      "source": {
+        "class": "ItemChain",
+        "source_file": "ItemChain.java",
+        "class_sha256": "6136ae61f698d43a9a74e4825de0744ab7a2fed69a8e620a38bcac43dd76679c",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "id": "mite:copper_chain",
+      "output": "mite:copper_chain",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        null,
+        "mite:copper_nugget",
+        null,
+        "mite:copper_nugget",
+        null,
+        "mite:copper_nugget",
+        null,
+        "mite:copper_nugget",
+        null
+      ],
+      "difficulty": 177.77777,
+      "required_bench": "copper",
+      "source_order": 76,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_chain",
+      "output": "mite:silver_chain",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        null,
+        "mite:silver_nugget",
+        null,
+        "mite:silver_nugget",
+        null,
+        "mite:silver_nugget",
+        null,
+        "mite:silver_nugget",
+        null
+      ],
+      "difficulty": 177.77777,
+      "required_bench": "silver",
+      "source_order": 77,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:golden_chain",
+      "output": "mite:golden_chain",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        null,
+        "minecraft:gold_nugget",
+        null,
+        "minecraft:gold_nugget",
+        null,
+        "minecraft:gold_nugget",
+        null,
+        "minecraft:gold_nugget",
+        null
+      ],
+      "difficulty": 177.77777,
+      "required_bench": "gold",
+      "source_order": 78,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:chain",
+      "output": "minecraft:chain",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        null,
+        "minecraft:iron_nugget",
+        null,
+        "minecraft:iron_nugget",
+        null,
+        "minecraft:iron_nugget",
+        null,
+        "minecraft:iron_nugget",
+        null
+      ],
+      "difficulty": 355.55554,
+      "required_bench": "iron",
+      "source_order": 79,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_chain",
+      "output": "mite:mithril_chain",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        null,
+        "mite:mithril_nugget",
+        null,
+        "mite:mithril_nugget",
+        null,
+        "mite:mithril_nugget",
+        null,
+        "mite:mithril_nugget",
+        null
+      ],
+      "difficulty": 2844.4443,
+      "required_bench": "mithril",
+      "source_order": 80,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_chain",
+      "output": "mite:adamantium_chain",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        null,
+        "mite:adamantium_nugget",
+        null,
+        "mite:adamantium_nugget",
+        null,
+        "mite:adamantium_nugget",
+        null,
+        "mite:adamantium_nugget",
+        null
+      ],
+      "difficulty": 11377.777,
+      "required_bench": "adamantium",
+      "source_order": 81,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_chain",
+      "output": "mite:ancient_metal_chain",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        null,
+        "mite:ancient_metal_nugget",
+        null,
+        "mite:ancient_metal_nugget",
+        null,
+        "mite:ancient_metal_nugget",
+        null,
+        "mite:ancient_metal_nugget",
+        null
+      ],
+      "difficulty": 711.1111,
+      "required_bench": "ancient_metal",
+      "source_order": 82,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_chain_chestplate",
+      "output": "mite:copper_chain_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:copper_chain",
+        null,
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain"
+      ],
+      "difficulty": 1422.2222,
+      "required_bench": "copper",
+      "source_order": 109,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_chain_leggings",
+      "output": "mite:copper_chain_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain",
+        null,
+        "mite:copper_chain",
+        "mite:copper_chain",
+        null,
+        "mite:copper_chain"
+      ],
+      "difficulty": 1244.4443,
+      "required_bench": "copper",
+      "source_order": 110,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_chain_chestplate",
+      "output": "mite:silver_chain_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:silver_chain",
+        null,
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain"
+      ],
+      "difficulty": 1422.2222,
+      "required_bench": "silver",
+      "source_order": 111,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_chain_leggings",
+      "output": "mite:silver_chain_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain",
+        null,
+        "mite:silver_chain",
+        "mite:silver_chain",
+        null,
+        "mite:silver_chain"
+      ],
+      "difficulty": 1244.4443,
+      "required_bench": "silver",
+      "source_order": 112,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:golden_chain_chestplate",
+      "output": "mite:golden_chain_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:golden_chain",
+        null,
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain"
+      ],
+      "difficulty": 1422.2222,
+      "required_bench": "gold",
+      "source_order": 113,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:golden_chain_leggings",
+      "output": "mite:golden_chain_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain",
+        null,
+        "mite:golden_chain",
+        "mite:golden_chain",
+        null,
+        "mite:golden_chain"
+      ],
+      "difficulty": 1244.4443,
+      "required_bench": "gold",
+      "source_order": 114,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:rusted_iron_chain_chestplate",
+      "output": "mite:rusted_iron_chain_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:rusted_iron_chain",
+        null,
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain"
+      ],
+      "difficulty": 1422.2222,
+      "required_bench": "rusted_iron",
+      "source_order": 115,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:rusted_iron_chain_leggings",
+      "output": "mite:rusted_iron_chain_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        null,
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        null,
+        "mite:rusted_iron_chain"
+      ],
+      "difficulty": 1244.4443,
+      "required_bench": "rusted_iron",
+      "source_order": 116,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:chainmail_chestplate",
+      "output": "minecraft:chainmail_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "minecraft:chain",
+        null,
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain"
+      ],
+      "difficulty": 2844.4443,
+      "required_bench": "iron",
+      "source_order": 117,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:chainmail_leggings",
+      "output": "minecraft:chainmail_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain",
+        null,
+        "minecraft:chain",
+        "minecraft:chain",
+        null,
+        "minecraft:chain"
+      ],
+      "difficulty": 2488.8887,
+      "required_bench": "iron",
+      "source_order": 118,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_chain_chestplate",
+      "output": "mite:mithril_chain_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:mithril_chain",
+        null,
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain"
+      ],
+      "difficulty": 22755.555,
+      "required_bench": "mithril",
+      "source_order": 119,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_chain_leggings",
+      "output": "mite:mithril_chain_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        null,
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        null,
+        "mite:mithril_chain"
+      ],
+      "difficulty": 19911.11,
+      "required_bench": "mithril",
+      "source_order": 120,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_chain_chestplate",
+      "output": "mite:adamantium_chain_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:adamantium_chain",
+        null,
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain"
+      ],
+      "difficulty": 91022.22,
+      "required_bench": "adamantium",
+      "source_order": 121,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_chain_leggings",
+      "output": "mite:adamantium_chain_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        null,
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        null,
+        "mite:adamantium_chain"
+      ],
+      "difficulty": 79644.44,
+      "required_bench": "adamantium",
+      "source_order": 122,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_chainmail_chestplate",
+      "output": "mite:ancient_metal_chainmail_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:ancient_metal_chain",
+        null,
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain"
+      ],
+      "difficulty": 5688.8887,
+      "required_bench": "ancient_metal",
+      "source_order": 123,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_chainmail_leggings",
+      "output": "mite:ancient_metal_chainmail_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        null,
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        null,
+        "mite:ancient_metal_chain"
+      ],
+      "difficulty": 4977.7773,
+      "required_bench": "ancient_metal",
+      "source_order": 124,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_chestplate",
+      "output": "mite:copper_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "minecraft:copper_ingot",
+        null,
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot"
+      ],
+      "difficulty": 3200.0,
+      "required_bench": "copper",
+      "source_order": 125,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_leggings",
+      "output": "mite:copper_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        null,
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        null,
+        "minecraft:copper_ingot"
+      ],
+      "difficulty": 2800.0,
+      "required_bench": "copper",
+      "source_order": 126,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_chestplate",
+      "output": "mite:silver_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:silver_ingot",
+        null,
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot"
+      ],
+      "difficulty": 3200.0,
+      "required_bench": "silver",
+      "source_order": 127,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_leggings",
+      "output": "mite:silver_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        null,
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        null,
+        "mite:silver_ingot"
+      ],
+      "difficulty": 2800.0,
+      "required_bench": "silver",
+      "source_order": 128,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:golden_chestplate",
+      "output": "minecraft:golden_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "minecraft:gold_ingot",
+        null,
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot"
+      ],
+      "difficulty": 3200.0,
+      "required_bench": "gold",
+      "source_order": 129,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:golden_leggings",
+      "output": "minecraft:golden_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        null,
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        null,
+        "minecraft:gold_ingot"
+      ],
+      "difficulty": 2800.0,
+      "required_bench": "gold",
+      "source_order": 130,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_chestplate",
+      "output": "mite:mithril_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:mithril_ingot",
+        null,
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot"
+      ],
+      "difficulty": 51200.0,
+      "required_bench": "mithril",
+      "source_order": 133,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_leggings",
+      "output": "mite:mithril_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        null,
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        null,
+        "mite:mithril_ingot"
+      ],
+      "difficulty": 44800.0,
+      "required_bench": "mithril",
+      "source_order": 134,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_chestplate",
+      "output": "mite:adamantium_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:adamantium_ingot",
+        null,
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot"
+      ],
+      "difficulty": 204800.0,
+      "required_bench": "adamantium",
+      "source_order": 135,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_leggings",
+      "output": "mite:adamantium_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        null,
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        null,
+        "mite:adamantium_ingot"
+      ],
+      "difficulty": 179200.0,
+      "required_bench": "adamantium",
+      "source_order": 136,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_chestplate",
+      "output": "mite:ancient_metal_chestplate",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:ancient_metal_ingot",
+        null,
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot"
+      ],
+      "difficulty": 12800.0,
+      "required_bench": "ancient_metal",
+      "source_order": 137,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_leggings",
+      "output": "mite:ancient_metal_leggings",
+      "count": 1,
+      "width": 3,
+      "height": 3,
+      "ingredients": [
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        null,
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        null,
+        "mite:ancient_metal_ingot"
+      ],
+      "difficulty": 11200.0,
+      "required_bench": "ancient_metal",
+      "source_order": 138,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_chain_helmet",
+      "output": "mite:copper_chain_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain",
+        "mite:copper_chain",
+        null,
+        "mite:copper_chain"
+      ],
+      "difficulty": 888.88885,
+      "required_bench": "copper",
+      "source_order": 242,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_chain_boots",
+      "output": "mite:copper_chain_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:copper_chain",
+        null,
+        "mite:copper_chain",
+        "mite:copper_chain",
+        null,
+        "mite:copper_chain"
+      ],
+      "difficulty": 711.1111,
+      "required_bench": "copper",
+      "source_order": 243,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_chain_helmet",
+      "output": "mite:silver_chain_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain",
+        "mite:silver_chain",
+        null,
+        "mite:silver_chain"
+      ],
+      "difficulty": 888.88885,
+      "required_bench": "silver",
+      "source_order": 244,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_chain_boots",
+      "output": "mite:silver_chain_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:silver_chain",
+        null,
+        "mite:silver_chain",
+        "mite:silver_chain",
+        null,
+        "mite:silver_chain"
+      ],
+      "difficulty": 711.1111,
+      "required_bench": "silver",
+      "source_order": 245,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:golden_chain_helmet",
+      "output": "mite:golden_chain_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain",
+        "mite:golden_chain",
+        null,
+        "mite:golden_chain"
+      ],
+      "difficulty": 888.88885,
+      "required_bench": "gold",
+      "source_order": 246,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:golden_chain_boots",
+      "output": "mite:golden_chain_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:golden_chain",
+        null,
+        "mite:golden_chain",
+        "mite:golden_chain",
+        null,
+        "mite:golden_chain"
+      ],
+      "difficulty": 711.1111,
+      "required_bench": "gold",
+      "source_order": 247,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:rusted_iron_chain_helmet",
+      "output": "mite:rusted_iron_chain_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        null,
+        "mite:rusted_iron_chain"
+      ],
+      "difficulty": 888.88885,
+      "required_bench": "rusted_iron",
+      "source_order": 248,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:rusted_iron_chain_boots",
+      "output": "mite:rusted_iron_chain_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:rusted_iron_chain",
+        null,
+        "mite:rusted_iron_chain",
+        "mite:rusted_iron_chain",
+        null,
+        "mite:rusted_iron_chain"
+      ],
+      "difficulty": 711.1111,
+      "required_bench": "rusted_iron",
+      "source_order": 249,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:chainmail_helmet",
+      "output": "minecraft:chainmail_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain",
+        "minecraft:chain",
+        null,
+        "minecraft:chain"
+      ],
+      "difficulty": 1777.7777,
+      "required_bench": "iron",
+      "source_order": 250,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:chainmail_boots",
+      "output": "minecraft:chainmail_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "minecraft:chain",
+        null,
+        "minecraft:chain",
+        "minecraft:chain",
+        null,
+        "minecraft:chain"
+      ],
+      "difficulty": 1422.2222,
+      "required_bench": "iron",
+      "source_order": 251,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_chain_helmet",
+      "output": "mite:mithril_chain_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        null,
+        "mite:mithril_chain"
+      ],
+      "difficulty": 14222.222,
+      "required_bench": "mithril",
+      "source_order": 252,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_chain_boots",
+      "output": "mite:mithril_chain_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:mithril_chain",
+        null,
+        "mite:mithril_chain",
+        "mite:mithril_chain",
+        null,
+        "mite:mithril_chain"
+      ],
+      "difficulty": 11377.777,
+      "required_bench": "mithril",
+      "source_order": 253,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_chain_helmet",
+      "output": "mite:adamantium_chain_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        null,
+        "mite:adamantium_chain"
+      ],
+      "difficulty": 56888.887,
+      "required_bench": "adamantium",
+      "source_order": 254,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_chain_boots",
+      "output": "mite:adamantium_chain_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:adamantium_chain",
+        null,
+        "mite:adamantium_chain",
+        "mite:adamantium_chain",
+        null,
+        "mite:adamantium_chain"
+      ],
+      "difficulty": 45511.11,
+      "required_bench": "adamantium",
+      "source_order": 255,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_chainmail_helmet",
+      "output": "mite:ancient_metal_chainmail_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        null,
+        "mite:ancient_metal_chain"
+      ],
+      "difficulty": 3555.5554,
+      "required_bench": "ancient_metal",
+      "source_order": 256,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_chainmail_boots",
+      "output": "mite:ancient_metal_chainmail_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:ancient_metal_chain",
+        null,
+        "mite:ancient_metal_chain",
+        "mite:ancient_metal_chain",
+        null,
+        "mite:ancient_metal_chain"
+      ],
+      "difficulty": 2844.4443,
+      "required_bench": "ancient_metal",
+      "source_order": 257,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_helmet",
+      "output": "mite:copper_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        null,
+        "minecraft:copper_ingot"
+      ],
+      "difficulty": 2000.0,
+      "required_bench": "copper",
+      "source_order": 258,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_boots",
+      "output": "mite:copper_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "minecraft:copper_ingot",
+        null,
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        null,
+        "minecraft:copper_ingot"
+      ],
+      "difficulty": 1600.0,
+      "required_bench": "copper",
+      "source_order": 259,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_helmet",
+      "output": "mite:silver_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        null,
+        "mite:silver_ingot"
+      ],
+      "difficulty": 2000.0,
+      "required_bench": "silver",
+      "source_order": 260,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_boots",
+      "output": "mite:silver_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:silver_ingot",
+        null,
+        "mite:silver_ingot",
+        "mite:silver_ingot",
+        null,
+        "mite:silver_ingot"
+      ],
+      "difficulty": 1600.0,
+      "required_bench": "silver",
+      "source_order": 261,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:golden_helmet",
+      "output": "minecraft:golden_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        null,
+        "minecraft:gold_ingot"
+      ],
+      "difficulty": 2000.0,
+      "required_bench": "gold",
+      "source_order": 262,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "minecraft:golden_boots",
+      "output": "minecraft:golden_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "minecraft:gold_ingot",
+        null,
+        "minecraft:gold_ingot",
+        "minecraft:gold_ingot",
+        null,
+        "minecraft:gold_ingot"
+      ],
+      "difficulty": 1600.0,
+      "required_bench": "gold",
+      "source_order": 263,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_helmet",
+      "output": "mite:mithril_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        null,
+        "mite:mithril_ingot"
+      ],
+      "difficulty": 32000.0,
+      "required_bench": "mithril",
+      "source_order": 266,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_boots",
+      "output": "mite:mithril_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:mithril_ingot",
+        null,
+        "mite:mithril_ingot",
+        "mite:mithril_ingot",
+        null,
+        "mite:mithril_ingot"
+      ],
+      "difficulty": 25600.0,
+      "required_bench": "mithril",
+      "source_order": 267,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_helmet",
+      "output": "mite:adamantium_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        null,
+        "mite:adamantium_ingot"
+      ],
+      "difficulty": 128000.0,
+      "required_bench": "adamantium",
+      "source_order": 268,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_boots",
+      "output": "mite:adamantium_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:adamantium_ingot",
+        null,
+        "mite:adamantium_ingot",
+        "mite:adamantium_ingot",
+        null,
+        "mite:adamantium_ingot"
+      ],
+      "difficulty": 102400.0,
+      "required_bench": "adamantium",
+      "source_order": 269,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_helmet",
+      "output": "mite:ancient_metal_helmet",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        null,
+        "mite:ancient_metal_ingot"
+      ],
+      "difficulty": 8000.0,
+      "required_bench": "ancient_metal",
+      "source_order": 270,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_boots",
+      "output": "mite:ancient_metal_boots",
+      "count": 1,
+      "width": 3,
+      "height": 2,
+      "ingredients": [
+        "mite:ancient_metal_ingot",
+        null,
+        "mite:ancient_metal_ingot",
+        "mite:ancient_metal_ingot",
+        null,
+        "mite:ancient_metal_ingot"
+      ],
+      "difficulty": 6400.0,
+      "required_bench": "ancient_metal",
+      "source_order": 271,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:copper_chain_to_nuggets",
+      "output": "mite:copper_nugget",
+      "count": 4,
+      "width": 1,
+      "height": 1,
+      "ingredients": [
+        "mite:copper_chain"
+      ],
+      "difficulty": 177.77777,
+      "required_bench": null,
+      "source_order": 483,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:silver_chain_to_nuggets",
+      "output": "mite:silver_nugget",
+      "count": 4,
+      "width": 1,
+      "height": 1,
+      "ingredients": [
+        "mite:silver_chain"
+      ],
+      "difficulty": 177.77777,
+      "required_bench": null,
+      "source_order": 484,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:golden_chain_to_nuggets",
+      "output": "minecraft:gold_nugget",
+      "count": 4,
+      "width": 1,
+      "height": 1,
+      "ingredients": [
+        "mite:golden_chain"
+      ],
+      "difficulty": 177.77777,
+      "required_bench": null,
+      "source_order": 485,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:chain_to_nuggets",
+      "output": "minecraft:iron_nugget",
+      "count": 4,
+      "width": 1,
+      "height": 1,
+      "ingredients": [
+        "minecraft:chain"
+      ],
+      "difficulty": 355.55554,
+      "required_bench": null,
+      "source_order": 486,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:mithril_chain_to_nuggets",
+      "output": "mite:mithril_nugget",
+      "count": 4,
+      "width": 1,
+      "height": 1,
+      "ingredients": [
+        "mite:mithril_chain"
+      ],
+      "difficulty": 2844.4443,
+      "required_bench": null,
+      "source_order": 487,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:adamantium_chain_to_nuggets",
+      "output": "mite:adamantium_nugget",
+      "count": 4,
+      "width": 1,
+      "height": 1,
+      "ingredients": [
+        "mite:adamantium_chain"
+      ],
+      "difficulty": 11377.777,
+      "required_bench": null,
+      "source_order": 488,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "id": "mite:ancient_metal_chain_to_nuggets",
+      "output": "mite:ancient_metal_nugget",
+      "count": 4,
+      "width": 1,
+      "height": 1,
+      "ingredients": [
+        "mite:ancient_metal_chain"
+      ],
+      "difficulty": 711.1111,
+      "required_bench": null,
+      "source_order": 489,
+      "source_class": "aai",
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "texture_manifest": [
+    {
+      "source": "assets/minecraft/textures/items/armor/copper_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_helmet.png",
+      "sha256": "d7545a1cfdf0db88cd61d8fd86a550a01b22e86dd27adc2854273c5eba9567ff"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/silver_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_helmet.png",
+      "sha256": "212736f53a1ca67bda3e5dcfe4b8cb77ac8f4b36a5923d032b14cc679eaecac7"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/mithril_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_helmet.png",
+      "sha256": "15ae8f6d430c63c89d6484c4f644845d4400721b7a945bdd4aced018d398f9a6"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/adamantium_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_helmet.png",
+      "sha256": "edff0e2a8f5e712aab6ef423b34f8343e258bb7dc6e9cb7170b0d2451e19d220"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/copper_chainmail_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_chain_helmet.png",
+      "sha256": "c42dd543c6b04ef781128be1386186eb571102cf4ee312dd70711f81c0941140"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/silver_chainmail_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_chain_helmet.png",
+      "sha256": "dda30c0074be39057ae10e405733a45406dba96fc045fae49b224c6e398f4d00"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/gold_chainmail_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/golden_chain_helmet.png",
+      "sha256": "d39ac5b03de2fac86d7835ed849f320989d0f5d0aaacb235ebeabb3f9f80d058"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/mithril_chainmail_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_chain_helmet.png",
+      "sha256": "33a0bfc709c7c5d374ddc95aad5b5cd384a33c27222c222637802ace96bd4eb3"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/adamantium_chainmail_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_chain_helmet.png",
+      "sha256": "a5d80d3c49f0caba83087fbf6744e7cfa912d531aac9d11af8b26fc4ca9eaba3"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/rusted_iron_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_helmet.png",
+      "sha256": "deb211d6cd07c6b108523dcd650a868f6e0779364d7ba39c0f39d44f6858066c"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/rusted_iron_chainmail_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_chain_helmet.png",
+      "sha256": "bed6a3f87868deef74a818a3416bb255595d15975cb1bb52ed35af122514a414"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/copper_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_chestplate.png",
+      "sha256": "e029ed416a963bf31eb9e62edc0c6d0c2d05f3e91bb08857b4d69f5d7cc0c1f8"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/silver_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_chestplate.png",
+      "sha256": "86f15c39431c342c17878e289a9ba03f154bce9a134b4e236c5bc38b3980e7d4"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/mithril_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_chestplate.png",
+      "sha256": "26773a5715cd61f4ff08d4317a9e0139d19b661357fc2e60d2e2d45ff4f12933"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/adamantium_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_chestplate.png",
+      "sha256": "3f71c7e3225f4cf5905a2d445c17aaec9094e118d1f31b0a8c9f94c06ba52733"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/copper_chainmail_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_chain_chestplate.png",
+      "sha256": "bef3a5215cb26680b34848c415be1c5abd3ea13c61d15017b446604ebff66739"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/silver_chainmail_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_chain_chestplate.png",
+      "sha256": "67c24588fe99d8bf6007800a3c0554ace70dcf27c0d3aa0d3643a08de9b3e141"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/gold_chainmail_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/golden_chain_chestplate.png",
+      "sha256": "bd9734e6942df1ddf7a9d65ac57fd37ddd475305e01f3f0643431862cbd02435"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/mithril_chainmail_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_chain_chestplate.png",
+      "sha256": "d1522c941a4529d4eed6c463e069bf6e2a816131ad79adebcd670d86e083828f"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/adamantium_chainmail_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_chain_chestplate.png",
+      "sha256": "cac70138361fdbfd92ed2f00ba0902ff8218ea25ed1a14ddb1d4aa18e1dafe23"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/rusted_iron_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_chestplate.png",
+      "sha256": "dbc04c73fb9cad8e3da44216dc4e6f941276f927922e7fe691c333151fa5efd9"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/rusted_iron_chainmail_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_chain_chestplate.png",
+      "sha256": "e64137e231941a84fec187a5cfe02971dcea096328fc5cbf66bf44d9780a345c"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/copper_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_leggings.png",
+      "sha256": "9eea82433fb5798239c360e7d4c7574d8cc77aaedd629af14b4af51bda807542"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/silver_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_leggings.png",
+      "sha256": "5439794794dfe5141034a1d0e32cb1e199e9ef30d121d2aa479ce1327cde3c56"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/mithril_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_leggings.png",
+      "sha256": "ed9a4547c3a182e2e35bfa38ef81eda1f005990628143cd2197aa172b75202a4"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/adamantium_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_leggings.png",
+      "sha256": "5a6d9ce5cdb62a7666849de656d5f9900d4db5840660b9f48d9c41ba17c037ce"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/copper_chainmail_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_chain_leggings.png",
+      "sha256": "92124d2b6e443b44a1017e2b71c36de110f272b89711001852be523bf4b74ce9"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/silver_chainmail_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_chain_leggings.png",
+      "sha256": "fd9483875bff4dcef46e3e31e0d92088ee10b2e925928f35d84ed26e4f9ed2a0"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/gold_chainmail_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/golden_chain_leggings.png",
+      "sha256": "07a4120b2ab1716c5e4f63c78d161b6393687e78114b66882bc051763b8d9d5a"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/mithril_chainmail_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_chain_leggings.png",
+      "sha256": "70f3f288b0e3785fef461da159efd87d1fba670803c1a6cafe36c2b5ca60a632"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/adamantium_chainmail_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_chain_leggings.png",
+      "sha256": "851229ca8461ff5bf8ec796b34ba3d576db4be1ac6eecce677b57ef782f6f3a0"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/rusted_iron_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_leggings.png",
+      "sha256": "e7f2c97d05201a6142e767d00f0b72ec145394bec2520e6a40bf483ae9051f91"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/rusted_iron_chainmail_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_chain_leggings.png",
+      "sha256": "b7e7ed81f23bfea1ae725cc1b4a83fd5709228dbc9ee56b8718c787cff46c485"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/copper_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_boots.png",
+      "sha256": "626866cc866dd04c7236985c1e4c4f4f5c9660e4103e17dee9c525eb82725412"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/silver_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_boots.png",
+      "sha256": "69c16920e5b6c7ae9e758462ec8232ba44722b9a3d4dd0b136952afa061782bf"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/mithril_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_boots.png",
+      "sha256": "f4a13c6cb3613a77cb2fd9a632f3d6758670c8f8a9a5df74733e8dd77181253b"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/adamantium_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_boots.png",
+      "sha256": "13cb2d0cb8882a8621fa3bc7cbee65ea83d8dc90e0b4ae6438d9e0787906fd2b"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/copper_chainmail_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_chain_boots.png",
+      "sha256": "23eb79043c86cac03be032d976951ae2c8e4071a5f1abc5eaa6aa458f6819505"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/silver_chainmail_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_chain_boots.png",
+      "sha256": "334492a5be1683ea13a90870c6610e84081fbc18fab65b68cc84ec5e27c3d74a"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/gold_chainmail_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/golden_chain_boots.png",
+      "sha256": "538269ddc5b20534ea00a99dcf5c4d1c7092754fe2e3607ad2f71ea11bb937d4"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/mithril_chainmail_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_chain_boots.png",
+      "sha256": "9de19819fe03f193d359572d905c3b2e330046b750db49e6be107acd2b912390"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/adamantium_chainmail_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_chain_boots.png",
+      "sha256": "b061ad00f226a7c25cb05be5617b005fc9c2bbba7523baa168e8354a53a0e6f8"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/rusted_iron_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_boots.png",
+      "sha256": "f53c838bb091dce123e601b559084ca51512083b944fe920572781da9dfbe45d"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/rusted_iron_chainmail_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_chain_boots.png",
+      "sha256": "83e6c21c6adcf1759e0c927e35f7f1956bac14bc9f8d6d604c183cac7406fa4d"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/horse/copper.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_horse_armor.png",
+      "sha256": "1440001868c402af41c740f643bfb90e822373b1025c879889038d94386afa06"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/horse/silver.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_horse_armor.png",
+      "sha256": "742d7f5a2cd41f5ab8fd55db3bbfa128156cc315bbaa5e1d52e3c3750e4fbea1"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/horse/mithril.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_horse_armor.png",
+      "sha256": "1e867db16f52fa8e9530bc73708b8811569668f467d644d55bb3b20e685f4d6c"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/horse/adamantium.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_horse_armor.png",
+      "sha256": "35870a38d9ed876d6a488f22b7c41690e66414919504aa603a6a99f075da65fa"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/horse/ancient_metal.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_horse_armor.png",
+      "sha256": "0222395e929c3b1c14554a29d041a745dd4a4db6022da1cb86f88eaf12a72581"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/ancient_metal_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_helmet.png",
+      "sha256": "f96c2aeca393cdcf4b8bac08458765118f41788bdbdcbc831d209de0220d500a"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/ancient_metal_chainmail_helmet.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_chainmail_helmet.png",
+      "sha256": "b0fb70f69602109ed7540b87920328b09e03e3ea08fb8aec25483f958fae21f9"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/ancient_metal_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_chestplate.png",
+      "sha256": "78312036e96c90ed28875e45b0a46e35d991411b75a800c395709cc200a10f2a"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/ancient_metal_chainmail_chestplate.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_chainmail_chestplate.png",
+      "sha256": "0712cad2955ed9aeb3409696c2b993268f490aa92bca9b346fcffb91c02b04ba"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/ancient_metal_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_leggings.png",
+      "sha256": "2713ae8eaf33023b98f5687fc88bf027075b0131ef3c064ae7fede7f9cee3941"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/ancient_metal_chainmail_leggings.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_chainmail_leggings.png",
+      "sha256": "3e8c7676f9bfe5f9cb6aabfab94f08ad09bc0e1e7c05bed304a9077508d36882"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/ancient_metal_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_boots.png",
+      "sha256": "307749b2a392b05616083e586354f5d3f9c2885cec9c873eff62075caa3bb5d4"
+    },
+    {
+      "source": "assets/minecraft/textures/items/armor/ancient_metal_chainmail_boots.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_chainmail_boots.png",
+      "sha256": "894c35c4b8e27b5c5f9e4c52ab5d39a9dc862403f480009eca12061b6f897c30"
+    },
+    {
+      "source": "assets/minecraft/textures/items/chains/copper.png",
+      "target": "src/main/resources/assets/mite/textures/item/copper_chain.png",
+      "sha256": "db869b3651cd9502b38d98609f2f8b52c6618ae9ecb239a31bcab74b1c9b31d2"
+    },
+    {
+      "source": "assets/minecraft/textures/items/chains/silver.png",
+      "target": "src/main/resources/assets/mite/textures/item/silver_chain.png",
+      "sha256": "24e69ef68b477d853e841444fe8196f18a9aefbd6dd32bc888e99410496e2a3e"
+    },
+    {
+      "source": "assets/minecraft/textures/items/chains/gold.png",
+      "target": "src/main/resources/assets/mite/textures/item/golden_chain.png",
+      "sha256": "4df08446c11028aaad06678f1dca398fbfbca593f057b3ffa25e9350eebe7a72"
+    },
+    {
+      "source": "assets/minecraft/textures/items/chains/mithril.png",
+      "target": "src/main/resources/assets/mite/textures/item/mithril_chain.png",
+      "sha256": "ba9165101241b408ec1e16dc9cbe71ecd1742e4b4b18737e4a6a307d09198f3c"
+    },
+    {
+      "source": "assets/minecraft/textures/items/chains/adamantium.png",
+      "target": "src/main/resources/assets/mite/textures/item/adamantium_chain.png",
+      "sha256": "69d9ffc3485097282690a1335a9f941dba8f946ed63924bc0dd1e6360604d1f8"
+    },
+    {
+      "source": "assets/minecraft/textures/items/chains/rusted_iron.png",
+      "target": "src/main/resources/assets/mite/textures/item/rusted_iron_chain.png",
+      "sha256": "d609b8a2bfc7f4fc029520750b46adb29e819864af13b6540878adcfd282b83b"
+    },
+    {
+      "source": "assets/minecraft/textures/items/chains/ancient_metal.png",
+      "target": "src/main/resources/assets/mite/textures/item/ancient_metal_chain.png",
+      "sha256": "a2110bbb05707c6912618771aa0cbd87c9332790d1f2c4ba3cb13fc81c04d732"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/copper_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/copper_layer_1.png",
+      "sha256": "3db958b13b3c4c29087872bc7df334759baaabfa5f3be72c89696e2567266247"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/copper_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/copper_layer_2.png",
+      "sha256": "2f974d1e32408a273d7412a03d1d925fb94595fcf0ea5d3ba4ea85af7520515a"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/copper_chainmail_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/copper_chainmail_layer_1.png",
+      "sha256": "f3a0527f3bc04b51e1deb1b4ce8ebc7ba9464cab6569de9afacec32d1bbe49bf"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/copper_chainmail_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/copper_chainmail_layer_2.png",
+      "sha256": "7baad8af6d68d40454f9c209a2bc3322a09ec71f5ecc0fcd9341914652b5a195"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/silver_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/silver_layer_1.png",
+      "sha256": "0813d297e07fdf9ef7fe2172a1a771718bb87cefd10f025f050a3c740d274393"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/silver_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/silver_layer_2.png",
+      "sha256": "205861ff8eb3a5b5e4371bdadc271c31d519899e8a8b518cb374bbc79ab30d08"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/silver_chainmail_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/silver_chainmail_layer_1.png",
+      "sha256": "fc445d58d0ceb49919c6537da3c50a5f8d1211cf694ff72b8bfa7b2885617a55"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/silver_chainmail_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/silver_chainmail_layer_2.png",
+      "sha256": "2414df3da059848a4bb64890d3b35bc589be69883dcadf13a96181c0381638f3"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/gold_chainmail_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/gold_chainmail_layer_1.png",
+      "sha256": "ca79b48354d82a74cc19a4e877bf4f0febfb98e5b7a7ecb301702f540d3b742c"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/gold_chainmail_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/gold_chainmail_layer_2.png",
+      "sha256": "c52d6df9a3da72f77b72780dc6ed6f3548acb6d199cf59f71335858306da64ab"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/rusted_iron_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/rusted_iron_layer_1.png",
+      "sha256": "85f91dc91feef8a3dcf3c51cb3a120c07b7e02f7a1249b97ae21858e930508eb"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/rusted_iron_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/rusted_iron_layer_2.png",
+      "sha256": "a5b8a7c13e348b0b71f9ed562bba2d8ec9224657639dc1c8d24f470a37135da3"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/rusted_iron_chainmail_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/rusted_iron_chainmail_layer_1.png",
+      "sha256": "0e7da0bb60a99a1e8e425e2c754fda0f08c5632d79d1329cbe53f923753d0bc8"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/rusted_iron_chainmail_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/rusted_iron_chainmail_layer_2.png",
+      "sha256": "947fab9fc80148b91c848ad19a9cf2859f149e0ae692b962e6199a439e385aeb"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/ancient_metal_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/ancient_metal_layer_1.png",
+      "sha256": "8e41f0284826ad9639b14008e00fdb0d0cb9e78b9a6cdf2d45168cc7d62233ab"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/ancient_metal_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/ancient_metal_layer_2.png",
+      "sha256": "32e8cad2f7e6b7ebd3af91b2caf025dfc98d3e488d4347e1828a151a165ab9de"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/ancient_metal_chainmail_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/ancient_metal_chainmail_layer_1.png",
+      "sha256": "754ffb462bfb05a04b43c7d12f27e4b039eb56ae970e7ebdf58b7f8678412d39"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/ancient_metal_chainmail_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/ancient_metal_chainmail_layer_2.png",
+      "sha256": "8ec9babf2a8c0b73e4588d0a7576e6719d890ef2e50b68785e19217bfbfa063f"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/mithril_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/mithril_layer_1.png",
+      "sha256": "acebcfb7848db5ecbba84dadf75bdfe6e98cd870cba3af1859cb22863d3db43b"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/mithril_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/mithril_layer_2.png",
+      "sha256": "5e92fff618216350a0a36f9f1e1f1aeca1ad015450552a9eecacc7a5a3b0d5f7"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/mithril_chainmail_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/mithril_chainmail_layer_1.png",
+      "sha256": "fa4752c8b9d958e2c441d1f69906e027a39f3d0f87075dbffafad634c87260cf"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/mithril_chainmail_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/mithril_chainmail_layer_2.png",
+      "sha256": "2fcbb7933d700e6349be9135f3115519b12a9fb6f00058f727dc090fd783a5ce"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/adamantium_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/adamantium_layer_1.png",
+      "sha256": "62d31771f5429aea0a8bf3ea957c48e75b3acd4a6cfc8c151c8cd654fd1b0b68"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/adamantium_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/adamantium_layer_2.png",
+      "sha256": "228dcf987c62102056f71566379c3a3a7d536df8ceda02541c602f73572ed094"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/adamantium_chainmail_layer_1.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/adamantium_chainmail_layer_1.png",
+      "sha256": "285d8af1c3344ce423be0f3315805af7d4d713d05f0718186b3aee1a752287a1"
+    },
+    {
+      "source": "assets/minecraft/textures/models/armor/adamantium_chainmail_layer_2.png",
+      "target": "src/main/resources/assets/mite/textures/models/armor/adamantium_chainmail_layer_2.png",
+      "sha256": "8dda77342441c185433be7e6ef4c72d2f7239b09096727e08921e4c06ef0ba44"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/horse/armor/horse_armor_copper.png",
+      "target": "src/main/resources/assets/mite/textures/entity/horse/armor/horse_armor_copper.png",
+      "sha256": "9c89202b043107b3b5007f4e862873532a6104666cfaf385d67409a0dcf413e2"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/horse/armor/horse_armor_silver.png",
+      "target": "src/main/resources/assets/mite/textures/entity/horse/armor/horse_armor_silver.png",
+      "sha256": "aaeabf648b88c7e2cd271bd85494af49b2a6626e537f1c539d5dd9e143cac8bf"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/horse/armor/horse_armor_mithril.png",
+      "target": "src/main/resources/assets/mite/textures/entity/horse/armor/horse_armor_mithril.png",
+      "sha256": "a67a7bd5f29d5be569168696ab6fd358aaa90c2879582d4a63089b66ede5add4"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/horse/armor/horse_armor_adamantium.png",
+      "target": "src/main/resources/assets/mite/textures/entity/horse/armor/horse_armor_adamantium.png",
+      "sha256": "71b9deed823a7c7112027c5e951ee74a36d0025bc2d2e52ca7ae6f285a1b1dcc"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/horse/armor/horse_armor_ancient_metal.png",
+      "target": "src/main/resources/assets/mite/textures/entity/horse/armor/horse_armor_ancient_metal.png",
+      "sha256": "5ee0f48e53b3f17d67dddbead063a8218bccde9b52d0f2f5107a207a7e86aa52"
+    }
+  ],
+  "limits": [
+    "Source flat defense restored for players whose equipped armor is entirely source-profiled; bare players, unprofiled mixed armor and non-player combat retain native damage mitigation. Modern damage tags explicitly map source distinctions.",
+    "Mithril/adamantium horse armor has no source manufacturing recipe or confirmed survival loot entry; creative-only source availability retained.",
+    "Professions suppressed in the reference default runtime; blacksmithing labels do not enable a skill gate."
+  ]
+}

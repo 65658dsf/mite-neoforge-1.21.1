@@ -1,0 +1,11 @@
+{
+  "type": "mite:bulk_material",
+  "group": "mithril_ingot",
+  "ingredient": {
+    "item": "mite:mithril_block"
+  },
+  "result": {
+    "count": 9,
+    "id": "mite:mithril_ingot"
+  }
+}

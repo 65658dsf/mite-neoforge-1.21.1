@@ -1,5 +1,12 @@
 {
   "values": [
+    "mite:silver_block",
+    "minecraft:copper_block",
+    "mite:copper_strongbox",
+    "mite:silver_strongbox",
+    "mite:golden_strongbox",
+    "mite:iron_strongbox",
+    "mite:ancient_metal_strongbox",
     "mite:obsidian_furnace",
     "mite:mithril_ore",
     "mite:deepslate_mithril_ore",

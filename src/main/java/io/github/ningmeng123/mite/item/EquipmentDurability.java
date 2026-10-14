@@ -24,6 +24,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -32,6 +33,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -47,7 +50,7 @@ import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Shared tool wear and scoped armor adaptation; authoritative changes use vanilla damage plumbing. @author NingMeng123 */
+/** Shared source tool/armor profiles; authoritative wear retains native event and damage plumbing. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class EquipmentDurability {
     public interface Profiled { ToolProfile durabilityProfile(); }
@@ -96,7 +99,20 @@ public final class EquipmentDurability {
         // wp (R196 ItemBow) has quality but is not an xj mining/melee tool.
         event.modify(Items.BOW, b -> b.set(DataComponents.MAX_DAMAGE, 32));
         ARMOR.forEach((item, profile) -> event.modify(item, b -> b
-                .set(DataComponents.MAX_DAMAGE, EquipmentDurabilityRules.baseArmorDurability(profile))));
+                .set(DataComponents.MAX_DAMAGE, EquipmentDurabilityRules.baseArmorDurability(profile))
+                .set(DataComponents.ATTRIBUTE_MODIFIERS, armorAttributes(item, profile))));
+    }
+
+    private static ItemAttributeModifiers armorAttributes(Item item, ArmorProfile profile) {
+        if (!(item instanceof ArmorItem armor)) return item.getDefaultAttributeModifiers();
+        var builder = ItemAttributeModifiers.builder();
+        // Modern knockback resistance is retained; armor toughness is superseded by source flat defense.
+        for (var entry : item.getDefaultAttributeModifiers().modifiers())
+            if (!entry.attribute().equals(Attributes.ARMOR) && !entry.attribute().equals(Attributes.ARMOR_TOUGHNESS))
+                builder.add(entry.attribute(), entry.modifier(), entry.slot());
+        float amount = EquipmentDurabilityRules.armorProtection(profile, 0, EquipmentDurabilityRules.baseArmorDurability(profile));
+        return builder.add(Attributes.ARMOR, new AttributeModifier(ResourceLocation.withDefaultNamespace("armor." + armor.getType().getName()),
+                amount, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.bySlot(armor.getEquipmentSlot())).build();
     }
 
     public static ToolProfile toolProfile(ItemStack stack) {
@@ -133,6 +149,7 @@ public final class EquipmentDurability {
         if (level.isClientSide || !stack.isDamageableItem() || exempt(miner)) return true;
         // R196 arv.isPortable=true; includes the explicitly implemented material workbenches.
         if (state.getBlock() instanceof CraftingTableBlock) return true;
+        if (miner instanceof Player player && io.github.ningmeng123.mite.mining.FunctionalBlockMining.portable(player, state, level, pos)) return true;
         float hardness = MiningProgress.effectiveHardness(state, state.getDestroySpeed(level, pos));
         if (!(hardness > 0F) || !(stack.getDestroySpeed(state) > 1F)
                 || state.requiresCorrectToolForDrops() && !stack.isCorrectToolForDrops(state)) return true;
@@ -187,15 +204,13 @@ public final class EquipmentDurability {
     public static boolean hurtArmor(Player player, DamageSource source, float incoming) {
         boolean managed = false;
         for (EquipmentSlot slot : ARMOR_SLOTS) managed |= armorProfile(player.getItemBySlot(slot)) != null;
-        if (!managed) return false;
+        if (!managed || !SourceArmorDefense.canHandle(player)) return false;
         if (!(player.level() instanceof ServerLevel) || exempt(player) || !(incoming > 0F)
                 || source.is(DamageTypeTags.BYPASSES_ARMOR)) return true;
         float protection = 0F;
-        boolean[] occupied = new boolean[4];
         for (int i = 0; i < 4; i++) {
             ItemStack stack = player.getItemBySlot(ARMOR_SLOTS[i]);
             ArmorProfile profile = armorProfile(stack);
-            occupied[i] = !stack.isEmpty() && stack.getItem() instanceof ArmorItem;
             if (profile != null) {
                 int protectionLevel = player.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                         .getHolder(Enchantments.PROTECTION).map(stack::getEnchantmentLevel).orElse(0);
@@ -203,13 +218,24 @@ public final class EquipmentDurability {
             }
         }
         protection = EquipmentDurabilityRules.roundedArmorProtection(protection);
-        int[] wear = EquipmentDurabilityRules.distributeArmorWear(Math.min(protection, incoming),
+        return hurtArmorSourceBudget(player, source, Math.min(protection, incoming));
+    }
+
+    /** Source defense has already been snapshotted; zero mundane protection still makes ud's minimum wear attempt. */
+    public static boolean hurtArmorSourceBudget(Player player, DamageSource source, float budget) {
+        if (!(player.level() instanceof ServerLevel) || exempt(player) || !SourceArmorDefense.canHandle(player)) return true;
+        boolean[] occupied = new boolean[4];
+        for (int i = 0; i < 4; i++) {
+            ItemStack stack = player.getItemBySlot(ARMOR_SLOTS[i]);
+            occupied[i] = !stack.isEmpty() && stack.getItem() instanceof ArmorItem;
+        }
+        int[] wear = EquipmentDurabilityRules.distributeArmorWear(budget,
                 occupied, player.getRandom()::nextInt);
         EnumMap<EquipmentSlot, ArmorHurtEvent.ArmorEntry> entries = new EnumMap<>(EquipmentSlot.class);
         for (int i = 0; i < 4; i++) {
             ItemStack stack = player.getItemBySlot(ARMOR_SLOTS[i]);
             if (stack.isEmpty()) continue;
-            int amount = armorProfile(stack) != null ? wear[i] : (int)Math.max(1F, incoming / 4F);
+            int amount = armorProfile(stack) != null ? wear[i] : (int)Math.max(1F, budget / 4F);
             if (!(stack.getItem() instanceof ArmorItem) || !stack.canBeHurtBy(source)) amount = 0;
             entries.put(ARMOR_SLOTS[i], new ArmorHurtEvent.ArmorEntry(stack, amount));
         }
@@ -241,11 +267,14 @@ public final class EquipmentDurability {
         ItemStack stack = event.getItemStack();
         if (armorProfile(stack) == null) return;
         float factor = EquipmentDurabilityRules.armorProtectionFactor(stack.getDamageValue(), stack.getMaxDamage(), true);
+        int protectionLevel = stack.getTagEnchantments().entrySet().stream()
+                .filter(entry -> entry.getKey().is(Enchantments.PROTECTION)).mapToInt(entry -> entry.getIntValue()).max().orElse(0);
+        float enchantmentFactor = 1F + (float)protectionLevel / 4F * .5F;
         for (var entry : List.copyOf(event.getModifiers())) {
             if (entry.attribute().equals(Attributes.ARMOR)) {
                 var modifier = entry.modifier();
                 event.replaceModifier(entry.attribute(), new AttributeModifier(modifier.id(),
-                        modifier.amount() * factor, modifier.operation()), entry.slot());
+                        modifier.amount() * factor * enchantmentFactor, modifier.operation()), entry.slot());
             }
         }
     }

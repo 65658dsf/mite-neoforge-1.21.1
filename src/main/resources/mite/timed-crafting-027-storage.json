@@ -1,0 +1,56 @@
+{
+  "author": "NingMeng123",
+  "source": "reference-data/runtime-registry.json",
+  "recipes": {
+    "minecraft:copper_block": {
+      "difficulty": 3600.0,
+      "required_bench": "copper",
+      "source_order": 41
+    },
+    "mite:silver_block": {
+      "difficulty": 3600.0,
+      "required_bench": "silver",
+      "source_order": 42
+    },
+    "mite:mithril_block": {
+      "difficulty": 57600.0,
+      "required_bench": "mithril",
+      "source_order": 45
+    },
+    "mite:adamantium_block": {
+      "difficulty": 230400.0,
+      "required_bench": "adamantium",
+      "source_order": 46
+    },
+    "mite:ancient_metal_block": {
+      "difficulty": 14400.0,
+      "required_bench": "ancient_metal",
+      "source_order": 47
+    },
+    "minecraft:copper_ingot": {
+      "difficulty": 3600.0,
+      "required_bench": null,
+      "source_order": 463
+    },
+    "mite:silver_ingots_from_block": {
+      "difficulty": 3600.0,
+      "required_bench": null,
+      "source_order": 464
+    },
+    "mite:mithril_ingots_from_block": {
+      "difficulty": 57600.0,
+      "required_bench": null,
+      "source_order": 467
+    },
+    "mite:adamantium_ingots_from_block": {
+      "difficulty": 230400.0,
+      "required_bench": null,
+      "source_order": 468
+    },
+    "mite:ancient_metal_ingots_from_block": {
+      "difficulty": 14400.0,
+      "required_bench": null,
+      "source_order": 469
+    }
+  }
+}

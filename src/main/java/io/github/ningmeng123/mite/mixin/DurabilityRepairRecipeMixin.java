@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
+import io.github.ningmeng123.mite.crafting.RangedRodRepair;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
@@ -29,7 +30,25 @@ public abstract class DurabilityRepairRecipeMixin {
             return;
         }
         ItemStack output = cir.getReturnValue();
-        if (output.isEmpty() || !EquipmentDurability.isManaged(output)) return;
+        if (output.isEmpty()) return;
+        if (RangedRodRepair.applies(output)) {
+            ItemStack first = ItemStack.EMPTY;
+            for (ItemStack source : input.items()) {
+                if (source.isEmpty()) continue;
+                if (first.isEmpty()) first = source;
+                else {
+                    // aaf creates a new item, copies only dyed color, and does not propagate arbitrary NBT.
+                    ItemStack result = new ItemStack(first.getItem());
+                    result.setDamageValue(EquipmentDurabilityRules.combinedRepairDamage(first.getDamageValue(), source.getDamageValue(), first.getMaxDamage()));
+                    var color = first.get(DataComponents.DYED_COLOR);
+                    if (color != null) result.set(DataComponents.DYED_COLOR, color);
+                    cir.setReturnValue(result);
+                    return;
+                }
+            }
+            return;
+        }
+        if (!EquipmentDurability.isManaged(output)) return;
         ItemStack first = ItemStack.EMPTY;
         for (ItemStack source : input.items()) {
             if (source.isEmpty()) continue;
@@ -52,9 +71,10 @@ public abstract class DurabilityRepairRecipeMixin {
         for (ItemStack stack : input.items()) {
             if (stack.isEmpty()) continue;
             if (first.isEmpty()) first = stack;
-            else if (EquipmentDurability.isManaged(first) && EquipmentDurability.isManaged(stack)) {
+            else if (EquipmentDurability.isManaged(first) && EquipmentDurability.isManaged(stack)
+                    || RangedRodRepair.applies(first) && RangedRodRepair.applies(stack)) {
                 if (!first.isDamaged() || !stack.isDamaged() || first.isEnchanted() || stack.isEnchanted()
-                        || EquipmentDurability.quality(first) != EquipmentDurability.quality(stack)) return true;
+                        || EquipmentDurability.isManaged(first) && EquipmentDurability.quality(first) != EquipmentDurability.quality(stack)) return true;
                 var firstColor = first.get(DataComponents.DYED_COLOR);
                 var secondColor = stack.get(DataComponents.DYED_COLOR);
                 if ((firstColor == null) != (secondColor == null)

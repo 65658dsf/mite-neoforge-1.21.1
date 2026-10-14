@@ -56,7 +56,7 @@ public final class EquipmentQuality {
         ItemStack result = menu.getSlot(2).getItem();
         if (first.isEmpty() || !EquipmentDurability.isManaged(first)) return true;
         if (isManagedCombine(first, second)) {
-            if (!sameQuality(first, second) || !sameColor(first, second)) return false;
+            if (!sameQuality(first, second) || !(menu instanceof AnvilMenu) && !sameColor(first, second)) return false;
         }
         // Renaming, applying an enchanted book and single-item disenchanting do not repair wear.
         return result.isEmpty() || !result.is(first.getItem()) || result.getDamageValue() >= first.getDamageValue()

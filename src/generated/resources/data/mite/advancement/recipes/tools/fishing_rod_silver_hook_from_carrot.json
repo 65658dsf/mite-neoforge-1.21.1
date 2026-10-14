@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_input": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:carrot_on_a_stick_silver_hook"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_input"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mite:fishing_rod_silver_hook_from_carrot"
+    ]
+  }
+}

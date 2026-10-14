@@ -1,0 +1,901 @@
+{
+  "author": "NingMeng123",
+  "count": 111,
+  "category_counts": {
+    "功能性方块": 31,
+    "钓鱼竿": 9,
+    "箭": 10,
+    "装备": 61
+  },
+  "scope": "User-requested four categories only. Dependencies are documented separately.",
+  "entries": [
+    {
+      "name": "圆石熔炉",
+      "category": "功能性方块",
+      "modern_id": "minecraft:furnace",
+      "legacy_id": 61,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "粘土熔炉",
+      "category": "功能性方块",
+      "modern_id": "mite:clay_oven",
+      "legacy_id": 218,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "大粘土烤炉",
+      "category": "功能性方块",
+      "modern_id": "mite:large_clay_oven",
+      "legacy_id": 250,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "沙石熔炉",
+      "category": "功能性方块",
+      "modern_id": "mite:sandstone_furnace",
+      "legacy_id": 220,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "黑曜石熔炉",
+      "category": "功能性方块",
+      "modern_id": "mite:obsidian_furnace",
+      "legacy_id": 222,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "地狱岩熔炉",
+      "category": "功能性方块",
+      "modern_id": "mite:netherrack_furnace",
+      "legacy_id": 224,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "铁砧",
+      "category": "功能性方块",
+      "modern_id": "minecraft:anvil",
+      "legacy_id": 145,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "秘银符文石",
+      "category": "功能性方块",
+      "modern_id": "mite:mithril_runestone",
+      "legacy_id": 247,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "艾德曼符文石",
+      "category": "功能性方块",
+      "modern_id": "mite:adamantium_runestone",
+      "legacy_id": 198,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "绿宝石附魔台",
+      "category": "功能性方块",
+      "modern_id": "mite:emerald_enchanting_table",
+      "legacy_id": 245,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "铜块",
+      "category": "功能性方块",
+      "modern_id": "minecraft:copper_block",
+      "legacy_id": 204,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "银块",
+      "category": "功能性方块",
+      "modern_id": "mite:silver_block",
+      "legacy_id": 205,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "铜砧",
+      "category": "功能性方块",
+      "modern_id": "mite:copper_anvil",
+      "legacy_id": 229,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "银砧",
+      "category": "功能性方块",
+      "modern_id": "mite:silver_anvil",
+      "legacy_id": 230,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "金砧",
+      "category": "功能性方块",
+      "modern_id": "mite:golden_anvil",
+      "legacy_id": 231,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "远古金属砧",
+      "category": "功能性方块",
+      "modern_id": "mite:ancient_metal_anvil",
+      "legacy_id": 254,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "秘银砧",
+      "category": "功能性方块",
+      "modern_id": "mite:mithril_anvil",
+      "legacy_id": 232,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "艾德曼砧",
+      "category": "功能性方块",
+      "modern_id": "mite:adamantium_anvil",
+      "legacy_id": 233,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "艾德曼块",
+      "category": "功能性方块",
+      "modern_id": "mite:adamantium_block",
+      "legacy_id": 207,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "秘银块",
+      "category": "功能性方块",
+      "modern_id": "mite:mithril_block",
+      "legacy_id": 206,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "铜箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:copper_strongbox",
+      "legacy_id": 239,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "银箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:silver_strongbox",
+      "legacy_id": 240,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "金箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:golden_strongbox",
+      "legacy_id": 241,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "铁箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:iron_strongbox",
+      "legacy_id": 242,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "远古金属箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:ancient_metal_strongbox",
+      "legacy_id": 255,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "秘银箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:mithril_strongbox",
+      "legacy_id": 243,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "艾德曼箱子",
+      "category": "功能性方块",
+      "modern_id": "mite:adamantium_strongbox",
+      "legacy_id": 244,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "燧石工具台",
+      "category": "功能性方块",
+      "modern_id": "mite:flint_crafting_table",
+      "legacy_id": 58,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "铜工具台",
+      "category": "功能性方块",
+      "modern_id": "mite:copper_crafting_table",
+      "legacy_id": 58,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "银工具台",
+      "category": "功能性方块",
+      "modern_id": "mite:silver_crafting_table",
+      "legacy_id": 58,
+      "block_only": false,
+      "source_kind": "block"
+    },
+    {
+      "name": "地幔",
+      "category": "功能性方块",
+      "modern_id": "mite:mantle",
+      "legacy_id": 95,
+      "block_only": true,
+      "source_kind": "block"
+    },
+    {
+      "name": "钓鱼竿[燧石钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_flint_hook",
+      "legacy_id": 1207,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "钓鱼竿[黑曜石钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_obsidian_hook",
+      "legacy_id": 1212,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "钓鱼竿[铜钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_copper_hook",
+      "legacy_id": 1192,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "钓鱼竿[银钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_silver_hook",
+      "legacy_id": 1193,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "钓鱼竿[金钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_gold_hook",
+      "legacy_id": 1194,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "钓鱼竿[铁钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "minecraft:fishing_rod",
+      "legacy_id": 346,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "钓鱼竿[远古金属钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_ancient_metal_hook",
+      "legacy_id": 1263,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "钓鱼竿[秘银钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_mithril_hook",
+      "legacy_id": 1195,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "钓鱼竿[艾德曼钓钩]",
+      "category": "钓鱼竿",
+      "modern_id": "mite:fishing_rod_adamantium_hook",
+      "legacy_id": 1196,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "燧石箭",
+      "category": "箭",
+      "modern_id": "minecraft:arrow",
+      "legacy_id": 1040,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "黑曜石箭",
+      "category": "箭",
+      "modern_id": "mite:obsidian_arrow",
+      "legacy_id": 1049,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜箭",
+      "category": "箭",
+      "modern_id": "mite:copper_arrow",
+      "legacy_id": 1041,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银箭",
+      "category": "箭",
+      "modern_id": "mite:silver_arrow",
+      "legacy_id": 1042,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金箭",
+      "category": "箭",
+      "modern_id": "mite:golden_arrow",
+      "legacy_id": 1043,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁箭",
+      "category": "箭",
+      "modern_id": "mite:rusted_iron_arrow",
+      "legacy_id": 1047,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铁箭",
+      "category": "箭",
+      "modern_id": "mite:iron_arrow",
+      "legacy_id": 1044,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属箭",
+      "category": "箭",
+      "modern_id": "mite:ancient_metal_arrow",
+      "legacy_id": 1250,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银箭",
+      "category": "箭",
+      "modern_id": "mite:mithril_arrow",
+      "legacy_id": 1045,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼箭",
+      "category": "箭",
+      "modern_id": "mite:adamantium_arrow",
+      "legacy_id": 1046,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜马铠",
+      "category": "装备",
+      "modern_id": "mite:copper_horse_armor",
+      "legacy_id": 1130,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银马铠",
+      "category": "装备",
+      "modern_id": "mite:silver_horse_armor",
+      "legacy_id": 1131,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属马铠",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_horse_armor",
+      "legacy_id": 1134,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银马铠",
+      "category": "装备",
+      "modern_id": "mite:mithril_horse_armor",
+      "legacy_id": 1132,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼马铠",
+      "category": "装备",
+      "modern_id": "mite:adamantium_horse_armor",
+      "legacy_id": 1133,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜头盔",
+      "category": "装备",
+      "modern_id": "mite:copper_helmet",
+      "legacy_id": 1067,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜胸甲",
+      "category": "装备",
+      "modern_id": "mite:copper_chestplate",
+      "legacy_id": 1078,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜护腿",
+      "category": "装备",
+      "modern_id": "mite:copper_leggings",
+      "legacy_id": 1089,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜靴子",
+      "category": "装备",
+      "modern_id": "mite:copper_boots",
+      "legacy_id": 1100,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:copper_chain_helmet",
+      "legacy_id": 1071,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:copper_chain_chestplate",
+      "legacy_id": 1082,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:copper_chain_leggings",
+      "legacy_id": 1093,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "铜锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:copper_chain_boots",
+      "legacy_id": 1104,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银头盔",
+      "category": "装备",
+      "modern_id": "mite:silver_helmet",
+      "legacy_id": 1068,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银胸甲",
+      "category": "装备",
+      "modern_id": "mite:silver_chestplate",
+      "legacy_id": 1079,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银护腿",
+      "category": "装备",
+      "modern_id": "mite:silver_leggings",
+      "legacy_id": 1090,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银靴子",
+      "category": "装备",
+      "modern_id": "mite:silver_boots",
+      "legacy_id": 1101,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:silver_chain_helmet",
+      "legacy_id": 1072,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:silver_chain_chestplate",
+      "legacy_id": 1083,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:silver_chain_leggings",
+      "legacy_id": 1094,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "银锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:silver_chain_boots",
+      "legacy_id": 1105,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金头盔",
+      "category": "装备",
+      "modern_id": "minecraft:golden_helmet",
+      "legacy_id": 314,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金胸甲",
+      "category": "装备",
+      "modern_id": "minecraft:golden_chestplate",
+      "legacy_id": 315,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金护腿",
+      "category": "装备",
+      "modern_id": "minecraft:golden_leggings",
+      "legacy_id": 316,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金靴子",
+      "category": "装备",
+      "modern_id": "minecraft:golden_boots",
+      "legacy_id": 317,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:golden_chain_helmet",
+      "legacy_id": 1073,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:golden_chain_chestplate",
+      "legacy_id": 1084,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:golden_chain_leggings",
+      "legacy_id": 1095,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "金锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:golden_chain_boots",
+      "legacy_id": 1106,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁头盔",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_helmet",
+      "legacy_id": 1076,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁胸甲",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chestplate",
+      "legacy_id": 1087,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁护腿",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_leggings",
+      "legacy_id": 1098,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁靴子",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_boots",
+      "legacy_id": 1109,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chain_helmet",
+      "legacy_id": 1077,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chain_chestplate",
+      "legacy_id": 1088,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chain_leggings",
+      "legacy_id": 1099,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "锈铁锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:rusted_iron_chain_boots",
+      "legacy_id": 1110,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属头盔",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_helmet",
+      "legacy_id": 1252,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属胸甲",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chestplate",
+      "legacy_id": 1254,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属护腿",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_leggings",
+      "legacy_id": 1256,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属靴子",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_boots",
+      "legacy_id": 1258,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chainmail_helmet",
+      "legacy_id": 1253,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chainmail_chestplate",
+      "legacy_id": 1255,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chainmail_leggings",
+      "legacy_id": 1257,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "远古金属锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:ancient_metal_chainmail_boots",
+      "legacy_id": 1259,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银头盔",
+      "category": "装备",
+      "modern_id": "mite:mithril_helmet",
+      "legacy_id": 1069,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银胸甲",
+      "category": "装备",
+      "modern_id": "mite:mithril_chestplate",
+      "legacy_id": 1080,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银护腿",
+      "category": "装备",
+      "modern_id": "mite:mithril_leggings",
+      "legacy_id": 1091,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银靴子",
+      "category": "装备",
+      "modern_id": "mite:mithril_boots",
+      "legacy_id": 1102,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:mithril_chain_helmet",
+      "legacy_id": 1074,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:mithril_chain_chestplate",
+      "legacy_id": 1085,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:mithril_chain_leggings",
+      "legacy_id": 1096,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "秘银锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:mithril_chain_boots",
+      "legacy_id": 1107,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼头盔",
+      "category": "装备",
+      "modern_id": "mite:adamantium_helmet",
+      "legacy_id": 1070,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼胸甲",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chestplate",
+      "legacy_id": 1081,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼护腿",
+      "category": "装备",
+      "modern_id": "mite:adamantium_leggings",
+      "legacy_id": 1092,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼靴子",
+      "category": "装备",
+      "modern_id": "mite:adamantium_boots",
+      "legacy_id": 1103,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼锁链头盔",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chain_helmet",
+      "legacy_id": 1075,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼锁链胸甲",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chain_chestplate",
+      "legacy_id": 1086,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼锁链护腿",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chain_leggings",
+      "legacy_id": 1097,
+      "block_only": false,
+      "source_kind": "item"
+    },
+    {
+      "name": "艾德曼锁链靴子",
+      "category": "装备",
+      "modern_id": "mite:adamantium_chain_boots",
+      "legacy_id": 1108,
+      "block_only": false,
+      "source_kind": "item"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "facing=east,damage_stage=0": {
+      "model": "mite:block/mithril_anvil_0",
+      "y": 90
+    },
+    "facing=east,damage_stage=1": {
+      "model": "mite:block/mithril_anvil_1",
+      "y": 90
+    },
+    "facing=east,damage_stage=2": {
+      "model": "mite:block/mithril_anvil_2",
+      "y": 90
+    },
+    "facing=north,damage_stage=0": {
+      "model": "mite:block/mithril_anvil_0",
+      "y": 0
+    },
+    "facing=north,damage_stage=1": {
+      "model": "mite:block/mithril_anvil_1",
+      "y": 0
+    },
+    "facing=north,damage_stage=2": {
+      "model": "mite:block/mithril_anvil_2",
+      "y": 0
+    },
+    "facing=south,damage_stage=0": {
+      "model": "mite:block/mithril_anvil_0",
+      "y": 180
+    },
+    "facing=south,damage_stage=1": {
+      "model": "mite:block/mithril_anvil_1",
+      "y": 180
+    },
+    "facing=south,damage_stage=2": {
+      "model": "mite:block/mithril_anvil_2",
+      "y": 180
+    },
+    "facing=west,damage_stage=0": {
+      "model": "mite:block/mithril_anvil_0",
+      "y": 270
+    },
+    "facing=west,damage_stage=1": {
+      "model": "mite:block/mithril_anvil_1",
+      "y": 270
+    },
+    "facing=west,damage_stage=2": {
+      "model": "mite:block/mithril_anvil_2",
+      "y": 270
+    }
+  }
+}

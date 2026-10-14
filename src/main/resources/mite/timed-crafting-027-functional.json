@@ -1,0 +1,81 @@
+{
+  "author": "NingMeng123",
+  "source": "source runtime recipes",
+  "recipes": {
+    "mite:copper_strongbox": {
+      "difficulty": 3200.0,
+      "required_bench": "copper",
+      "source_order": 69
+    },
+    "mite:silver_strongbox": {
+      "difficulty": 3200.0,
+      "required_bench": "silver",
+      "source_order": 70
+    },
+    "mite:golden_strongbox": {
+      "difficulty": 3200.0,
+      "required_bench": "gold",
+      "source_order": 71
+    },
+    "mite:iron_strongbox": {
+      "difficulty": 6400.0,
+      "required_bench": "iron",
+      "source_order": 72
+    },
+    "mite:mithril_strongbox": {
+      "difficulty": 51200.0,
+      "required_bench": "mithril",
+      "source_order": 73
+    },
+    "mite:adamantium_strongbox": {
+      "difficulty": 204800.0,
+      "required_bench": "adamantium",
+      "source_order": 74
+    },
+    "mite:ancient_metal_strongbox": {
+      "difficulty": 12800.0,
+      "required_bench": "ancient_metal",
+      "source_order": 75
+    },
+    "mite:copper_anvil": {
+      "difficulty": 12400.0,
+      "required_bench": "copper",
+      "source_order": 96
+    },
+    "mite:silver_anvil": {
+      "difficulty": 12400.0,
+      "required_bench": "silver",
+      "source_order": 97
+    },
+    "mite:golden_anvil": {
+      "difficulty": 12400.0,
+      "required_bench": "gold",
+      "source_order": 98
+    },
+    "mite:mithril_anvil": {
+      "difficulty": 198400.0,
+      "required_bench": "mithril",
+      "source_order": 99
+    },
+    "mite:adamantium_anvil": {
+      "difficulty": 793600.0,
+      "required_bench": "adamantium",
+      "source_order": 100
+    },
+    "mite:ancient_metal_anvil": {
+      "difficulty": 49600.0,
+      "required_bench": "ancient_metal",
+      "source_order": 101
+    },
+    "mite:emerald_enchanting_table": {
+      "difficulty": 2735.0,
+      "required_bench": null,
+      "source_order": 195
+    },
+    "minecraft:anvil": {
+      "difficulty": 24800.0,
+      "required_bench": "iron",
+      "source_order": 196
+    }
+  }
+}

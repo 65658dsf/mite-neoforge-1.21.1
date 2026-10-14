@@ -23,6 +23,22 @@ public final class MiteBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
+        io.github.ningmeng123.mite.registry.MiteMetalBlocks.STORAGE.forEach((material, block) -> {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+            if (material.equals("silver")) tag(BlockTags.NEEDS_IRON_TOOL).add(block.get());
+            else tag(BlockTags.NEEDS_DIAMOND_TOOL).add(block.get());
+        });
+        tag(BlockTags.NEEDS_IRON_TOOL).add(Blocks.COPPER_BLOCK);
+        io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.ANVILS.values().forEach(block -> {
+            tag(BlockTags.ANVIL).add(block.get());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+        });
+        io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.STRONGBOXES.forEach((material, block) -> {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
+            if (material.equals("mithril") || material.equals("adamantium")) tag(BlockTags.NEEDS_DIAMOND_TOOL).add(block.get());
+            else tag(BlockTags.NEEDS_IRON_TOOL).add(block.get());
+        });
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(MiteFurnaces.CLAY_OVEN.get(), MiteFurnaces.LARGE_CLAY_OVEN.get(),
                 MiteFurnaces.OBSIDIAN_FURNACE.get(), MiteFurnaces.NETHERRACK_FURNACE.get());
         tag(BlockTags.MINEABLE_WITH_AXE).add(MiteFurnaces.CLAY_OVEN.get(), MiteFurnaces.LARGE_CLAY_OVEN.get());

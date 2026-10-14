@@ -46,6 +46,19 @@ public final class TimedCraftingRecipes {
                             value.get("source_order").getAsInt()));
                 });
             }
+            for (String resource : java.util.List.of("/mite/timed-crafting-027-armor.json",
+                    "/mite/timed-crafting-027-ranged.json", "/mite/timed-crafting-027-functional.json",
+                    "/mite/timed-crafting-027-storage.json")) {
+                try (var reader027 = new InputStreamReader(Objects.requireNonNull(
+                        TimedCraftingRecipes.class.getResourceAsStream(resource)), StandardCharsets.UTF_8)) {
+                    JsonParser.parseReader(reader027).getAsJsonObject().getAsJsonObject("recipes").entrySet().forEach(entry -> {
+                        JsonObject value = entry.getValue().getAsJsonObject();
+                        rules.put(ResourceLocation.parse(entry.getKey()), new Rule(value.get("difficulty").getAsFloat(),
+                                value.get("required_bench").isJsonNull() ? null : value.get("required_bench").getAsString(),
+                                value.get("source_order").getAsInt()));
+                    });
+                }
+            }
             return Map.copyOf(rules);
         } catch (Exception exception) {
             throw new IllegalStateException("Cannot load R196 timed crafting evidence", exception);

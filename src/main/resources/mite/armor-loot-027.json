@@ -1,0 +1,348 @@
+{
+  "author": "NingMeng123",
+  "pools": {
+    "dungeon_surface": {
+      "source_class": "afp",
+      "source_field": "a",
+      "modern_table": "minecraft:chests/simple_dungeon",
+      "minimum_rolls": 8,
+      "maximum_rolls": 8,
+      "source_total_weight": 156,
+      "enchantment_book_weight_included": 1,
+      "entries": [
+        {
+          "item": "minecraft:golden_horse_armor",
+          "legacy_id": 418,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 2
+        },
+        {
+          "item": "mite:copper_horse_armor",
+          "legacy_id": 1130,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "minecraft:iron_horse_armor",
+          "legacy_id": 417,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "dungeon_underworld": {
+      "source_class": "afp",
+      "source_field": "chest_contents_for_underworld",
+      "modern_table": "minecraft:chests/simple_dungeon",
+      "minimum_rolls": 8,
+      "maximum_rolls": 8,
+      "source_total_weight": 74,
+      "enchantment_book_weight_included": 1,
+      "entries": [
+        {
+          "item": "mite:ancient_metal_horse_armor",
+          "legacy_id": 1134,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        },
+        {
+          "item": "mite:ancient_metal_chainmail_boots",
+          "legacy_id": 1259,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 2
+        },
+        {
+          "item": "mite:ancient_metal_chainmail_leggings",
+          "legacy_id": 1257,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 2
+        },
+        {
+          "item": "mite:ancient_metal_chainmail_chestplate",
+          "legacy_id": 1255,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 2
+        },
+        {
+          "item": "mite:ancient_metal_chainmail_helmet",
+          "legacy_id": 1253,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 2
+        }
+      ]
+    },
+    "mineshaft": {
+      "source_class": "agh",
+      "source_field": "a",
+      "modern_table": "minecraft:chests/abandoned_mineshaft",
+      "minimum_rolls": 3,
+      "maximum_rolls": 6,
+      "source_total_weight": 169,
+      "enchantment_book_weight_included": 1,
+      "entries": [
+        {
+          "item": "mite:rusted_iron_chain",
+          "legacy_id": 1129,
+          "minimum": 1,
+          "maximum": 5,
+          "weight": 5
+        },
+        {
+          "item": "minecraft:leather_boots",
+          "legacy_id": 301,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "village": {
+      "source_class": "ahw",
+      "source_field": "a",
+      "modern_table": "minecraft:chests/village/village_weaponsmith",
+      "minimum_rolls": 2,
+      "maximum_rolls": 3,
+      "source_total_weight": 190,
+      "enchantment_book_weight_included": 1,
+      "entries": [
+        {
+          "item": "mite:copper_chain_chestplate",
+          "legacy_id": 1082,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "mite:copper_chain_helmet",
+          "legacy_id": 1071,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "mite:copper_chain_leggings",
+          "legacy_id": 1093,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "mite:copper_chain_boots",
+          "legacy_id": 1104,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "minecraft:chainmail_chestplate",
+          "legacy_id": 303,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        },
+        {
+          "item": "minecraft:chainmail_helmet",
+          "legacy_id": 302,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        },
+        {
+          "item": "minecraft:chainmail_leggings",
+          "legacy_id": 304,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        },
+        {
+          "item": "minecraft:chainmail_boots",
+          "legacy_id": 305,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        },
+        {
+          "item": "mite:copper_chestplate",
+          "legacy_id": 1078,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "mite:copper_helmet",
+          "legacy_id": 1067,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "mite:copper_leggings",
+          "legacy_id": 1089,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "mite:copper_boots",
+          "legacy_id": 1100,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "minecraft:iron_chestplate",
+          "legacy_id": 307,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        },
+        {
+          "item": "minecraft:iron_helmet",
+          "legacy_id": 306,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        },
+        {
+          "item": "minecraft:iron_leggings",
+          "legacy_id": 308,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        },
+        {
+          "item": "minecraft:iron_boots",
+          "legacy_id": 309,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        },
+        {
+          "item": "mite:copper_horse_armor",
+          "legacy_id": 1130,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        },
+        {
+          "item": "minecraft:iron_horse_armor",
+          "legacy_id": 417,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "desert": {
+      "source_class": "ahl",
+      "source_field": "i",
+      "modern_table": "minecraft:chests/desert_pyramid",
+      "minimum_rolls": 2,
+      "maximum_rolls": 6,
+      "source_total_weight": 68,
+      "enchantment_book_weight_included": 1,
+      "entries": [
+        {
+          "item": "minecraft:iron_horse_armor",
+          "legacy_id": 417,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        },
+        {
+          "item": "mite:silver_horse_armor",
+          "legacy_id": 1131,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        },
+        {
+          "item": "minecraft:golden_horse_armor",
+          "legacy_id": 418,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "jungle": {
+      "source_class": "ahm",
+      "source_field": "l",
+      "modern_table": "minecraft:chests/jungle_temple",
+      "minimum_rolls": 2,
+      "maximum_rolls": 6,
+      "source_total_weight": 63,
+      "enchantment_book_weight_included": 1,
+      "entries": [
+        {
+          "item": "minecraft:iron_horse_armor",
+          "legacy_id": 417,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        },
+        {
+          "item": "mite:silver_horse_armor",
+          "legacy_id": 1131,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        },
+        {
+          "item": "minecraft:golden_horse_armor",
+          "legacy_id": 418,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "nether": {
+      "source_class": "ahc",
+      "source_field": "a",
+      "modern_table": "minecraft:chests/nether_bridge",
+      "minimum_rolls": 2,
+      "maximum_rolls": 5,
+      "source_total_weight": 66,
+      "enchantment_book_weight_included": 0,
+      "entries": [
+        {
+          "item": "minecraft:golden_chestplate",
+          "legacy_id": 315,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "minecraft:golden_horse_armor",
+          "legacy_id": 418,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 8
+        },
+        {
+          "item": "mite:copper_horse_armor",
+          "legacy_id": 1130,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 5
+        },
+        {
+          "item": "minecraft:iron_horse_armor",
+          "legacy_id": 417,
+          "minimum": 1,
+          "maximum": 1,
+          "weight": 3
+        }
+      ]
+    }
+  }
+}

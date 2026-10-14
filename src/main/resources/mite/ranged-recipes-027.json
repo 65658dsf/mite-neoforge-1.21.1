@@ -1,0 +1,545 @@
+{
+  "author": "NingMeng123",
+  "recipes": [
+    {
+      "id": "mite:fishing_rod_flint_hook",
+      "kind": "shaped",
+      "output": "mite:fishing_rod_flint_hook",
+      "count": 1,
+      "source_order": 83,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "mite:flint_chip"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "mite:fishing_rod_obsidian_hook",
+      "kind": "shaped",
+      "output": "mite:fishing_rod_obsidian_hook",
+      "count": 1,
+      "source_order": 84,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "mite:obsidian_shard"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "mite:fishing_rod_copper_hook",
+      "kind": "shaped",
+      "output": "mite:fishing_rod_copper_hook",
+      "count": 1,
+      "source_order": 85,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "mite:copper_nugget"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "mite:fishing_rod_silver_hook",
+      "kind": "shaped",
+      "output": "mite:fishing_rod_silver_hook",
+      "count": 1,
+      "source_order": 86,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "mite:silver_nugget"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "mite:fishing_rod_gold_hook",
+      "kind": "shaped",
+      "output": "mite:fishing_rod_gold_hook",
+      "count": 1,
+      "source_order": 87,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "minecraft:gold_nugget"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "minecraft:fishing_rod",
+      "kind": "shaped",
+      "output": "minecraft:fishing_rod",
+      "count": 1,
+      "source_order": 88,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "minecraft:iron_nugget"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "mite:fishing_rod_mithril_hook",
+      "kind": "shaped",
+      "output": "mite:fishing_rod_mithril_hook",
+      "count": 1,
+      "source_order": 89,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "mite:mithril_nugget"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "mite:fishing_rod_adamantium_hook",
+      "kind": "shaped",
+      "output": "mite:fishing_rod_adamantium_hook",
+      "count": 1,
+      "source_order": 90,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "mite:adamantium_nugget"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "mite:fishing_rod_ancient_metal_hook",
+      "kind": "shaped",
+      "output": "mite:fishing_rod_ancient_metal_hook",
+      "count": 1,
+      "source_order": 91,
+      "key": {
+        "A": "minecraft:stick",
+        "B": "minecraft:string",
+        "C": "mite:ancient_metal_nugget"
+      },
+      "pattern": [
+        "  A",
+        " AB",
+        "ACB"
+      ]
+    },
+    {
+      "id": "minecraft:arrow",
+      "kind": "shaped",
+      "output": "minecraft:arrow",
+      "count": 1,
+      "source_order": 378,
+      "key": {
+        "A": "mite:flint_chip",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:obsidian_arrow",
+      "kind": "shaped",
+      "output": "mite:obsidian_arrow",
+      "count": 1,
+      "source_order": 379,
+      "key": {
+        "A": "mite:obsidian_shard",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:copper_arrow",
+      "kind": "shaped",
+      "output": "mite:copper_arrow",
+      "count": 1,
+      "source_order": 380,
+      "key": {
+        "A": "mite:copper_nugget",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:silver_arrow",
+      "kind": "shaped",
+      "output": "mite:silver_arrow",
+      "count": 1,
+      "source_order": 381,
+      "key": {
+        "A": "mite:silver_nugget",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:golden_arrow",
+      "kind": "shaped",
+      "output": "mite:golden_arrow",
+      "count": 1,
+      "source_order": 382,
+      "key": {
+        "A": "minecraft:gold_nugget",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:iron_arrow",
+      "kind": "shaped",
+      "output": "mite:iron_arrow",
+      "count": 1,
+      "source_order": 383,
+      "key": {
+        "A": "minecraft:iron_nugget",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:mithril_arrow",
+      "kind": "shaped",
+      "output": "mite:mithril_arrow",
+      "count": 1,
+      "source_order": 384,
+      "key": {
+        "A": "mite:mithril_nugget",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:adamantium_arrow",
+      "kind": "shaped",
+      "output": "mite:adamantium_arrow",
+      "count": 1,
+      "source_order": 385,
+      "key": {
+        "A": "mite:adamantium_nugget",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:ancient_metal_arrow",
+      "kind": "shaped",
+      "output": "mite:ancient_metal_arrow",
+      "count": 1,
+      "source_order": 386,
+      "key": {
+        "A": "mite:ancient_metal_nugget",
+        "B": "minecraft:stick",
+        "C": "minecraft:feather"
+      },
+      "pattern": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "id": "mite:carrot_on_a_stick_flint_hook",
+      "kind": "rod_conversion",
+      "output": "mite:carrot_on_a_stick_flint_hook",
+      "count": 1,
+      "source_order": 763,
+      "material": "flint",
+      "attach_carrot": true
+    },
+    {
+      "id": "mite:carrot_on_a_stick_obsidian_hook",
+      "kind": "rod_conversion",
+      "output": "mite:carrot_on_a_stick_obsidian_hook",
+      "count": 1,
+      "source_order": 764,
+      "material": "obsidian",
+      "attach_carrot": true
+    },
+    {
+      "id": "mite:carrot_on_a_stick_copper_hook",
+      "kind": "rod_conversion",
+      "output": "mite:carrot_on_a_stick_copper_hook",
+      "count": 1,
+      "source_order": 765,
+      "material": "copper",
+      "attach_carrot": true
+    },
+    {
+      "id": "mite:carrot_on_a_stick_silver_hook",
+      "kind": "rod_conversion",
+      "output": "mite:carrot_on_a_stick_silver_hook",
+      "count": 1,
+      "source_order": 766,
+      "material": "silver",
+      "attach_carrot": true
+    },
+    {
+      "id": "mite:carrot_on_a_stick_gold_hook",
+      "kind": "rod_conversion",
+      "output": "mite:carrot_on_a_stick_gold_hook",
+      "count": 1,
+      "source_order": 767,
+      "material": "gold",
+      "attach_carrot": true
+    },
+    {
+      "id": "minecraft:carrot_on_a_stick",
+      "kind": "rod_conversion",
+      "output": "minecraft:carrot_on_a_stick",
+      "count": 1,
+      "source_order": 768,
+      "material": "iron",
+      "attach_carrot": true
+    },
+    {
+      "id": "mite:carrot_on_a_stick_mithril_hook",
+      "kind": "rod_conversion",
+      "output": "mite:carrot_on_a_stick_mithril_hook",
+      "count": 1,
+      "source_order": 769,
+      "material": "mithril",
+      "attach_carrot": true
+    },
+    {
+      "id": "mite:carrot_on_a_stick_adamantium_hook",
+      "kind": "rod_conversion",
+      "output": "mite:carrot_on_a_stick_adamantium_hook",
+      "count": 1,
+      "source_order": 770,
+      "material": "adamantium",
+      "attach_carrot": true
+    },
+    {
+      "id": "mite:carrot_on_a_stick_ancient_metal_hook",
+      "kind": "rod_conversion",
+      "output": "mite:carrot_on_a_stick_ancient_metal_hook",
+      "count": 1,
+      "source_order": 771,
+      "material": "ancient_metal",
+      "attach_carrot": true
+    },
+    {
+      "id": "mite:flint_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "mite:flint_chip",
+      "count": 1,
+      "source_order": 850,
+      "input": "minecraft:arrow"
+    },
+    {
+      "id": "mite:obsidian_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "mite:obsidian_shard",
+      "count": 1,
+      "source_order": 851,
+      "input": "mite:obsidian_arrow"
+    },
+    {
+      "id": "mite:copper_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "mite:copper_nugget",
+      "count": 1,
+      "source_order": 852,
+      "input": "mite:copper_arrow"
+    },
+    {
+      "id": "mite:silver_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "mite:silver_nugget",
+      "count": 1,
+      "source_order": 853,
+      "input": "mite:silver_arrow"
+    },
+    {
+      "id": "mite:golden_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "minecraft:gold_nugget",
+      "count": 1,
+      "source_order": 854,
+      "input": "mite:golden_arrow"
+    },
+    {
+      "id": "mite:iron_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "minecraft:iron_nugget",
+      "count": 1,
+      "source_order": 855,
+      "input": "mite:iron_arrow"
+    },
+    {
+      "id": "mite:mithril_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "mite:mithril_nugget",
+      "count": 1,
+      "source_order": 856,
+      "input": "mite:mithril_arrow"
+    },
+    {
+      "id": "mite:adamantium_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "mite:adamantium_nugget",
+      "count": 1,
+      "source_order": 857,
+      "input": "mite:adamantium_arrow"
+    },
+    {
+      "id": "mite:ancient_metal_arrow_dismantle",
+      "kind": "shapeless",
+      "output": "mite:ancient_metal_nugget",
+      "count": 1,
+      "source_order": 858,
+      "input": "mite:ancient_metal_arrow"
+    },
+    {
+      "id": "mite:fishing_rod_flint_hook_from_carrot",
+      "kind": "rod_conversion",
+      "output": "mite:fishing_rod_flint_hook",
+      "count": 1,
+      "source_order": 859,
+      "material": "flint",
+      "attach_carrot": false
+    },
+    {
+      "id": "mite:fishing_rod_obsidian_hook_from_carrot",
+      "kind": "rod_conversion",
+      "output": "mite:fishing_rod_obsidian_hook",
+      "count": 1,
+      "source_order": 860,
+      "material": "obsidian",
+      "attach_carrot": false
+    },
+    {
+      "id": "mite:fishing_rod_copper_hook_from_carrot",
+      "kind": "rod_conversion",
+      "output": "mite:fishing_rod_copper_hook",
+      "count": 1,
+      "source_order": 861,
+      "material": "copper",
+      "attach_carrot": false
+    },
+    {
+      "id": "mite:fishing_rod_silver_hook_from_carrot",
+      "kind": "rod_conversion",
+      "output": "mite:fishing_rod_silver_hook",
+      "count": 1,
+      "source_order": 862,
+      "material": "silver",
+      "attach_carrot": false
+    },
+    {
+      "id": "mite:fishing_rod_gold_hook_from_carrot",
+      "kind": "rod_conversion",
+      "output": "mite:fishing_rod_gold_hook",
+      "count": 1,
+      "source_order": 863,
+      "material": "gold",
+      "attach_carrot": false
+    },
+    {
+      "id": "mite:fishing_rod_from_carrot",
+      "kind": "rod_conversion",
+      "output": "minecraft:fishing_rod",
+      "count": 1,
+      "source_order": 864,
+      "material": "iron",
+      "attach_carrot": false
+    },
+    {
+      "id": "mite:fishing_rod_mithril_hook_from_carrot",
+      "kind": "rod_conversion",
+      "output": "mite:fishing_rod_mithril_hook",
+      "count": 1,
+      "source_order": 865,
+      "material": "mithril",
+      "attach_carrot": false
+    },
+    {
+      "id": "mite:fishing_rod_adamantium_hook_from_carrot",
+      "kind": "rod_conversion",
+      "output": "mite:fishing_rod_adamantium_hook",
+      "count": 1,
+      "source_order": 866,
+      "material": "adamantium",
+      "attach_carrot": false
+    },
+    {
+      "id": "mite:fishing_rod_ancient_metal_hook_from_carrot",
+      "kind": "rod_conversion",
+      "output": "mite:fishing_rod_ancient_metal_hook",
+      "count": 1,
+      "source_order": 867,
+      "material": "ancient_metal",
+      "attach_carrot": false
+    }
+  ]
+}

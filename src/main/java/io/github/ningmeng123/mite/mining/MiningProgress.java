@@ -23,6 +23,8 @@ public final class MiningProgress {
         if (OreBlockRules.isManaged(state)) return OreBlockRules.hardness(state, raw);
         if (state.is(MiteOreBlocks.INFESTED_NETHERRACK.get())) return 0.75F;
         if (state.is(Blocks.FURNACE)) return 2F;
+        if (state.is(Blocks.COPPER_BLOCK)) return 4.8F;
+        raw = FunctionalBlockMining.hardness(state, raw);
         // R196's tallgrass (grass/fern) and deadbush registrations use .02, not modern zero.
         if (GrassMining.matches(state)) {
             return 0.02F;
@@ -45,7 +47,8 @@ public final class MiningProgress {
         if (rawHardness < 0.0F) {
             return 0.0F;
         }
-        if (LogHarvestRules.isBlocked(player, state) || ToolHarvestRules.isBlocked(player, state)) {
+        boolean portable = FunctionalBlockMining.portable(player, state, level, pos);
+        if (!portable && (LogHarvestRules.isBlocked(player, state) || ToolHarvestRules.isBlocked(player, state))) {
             return 0.0F;
         }
         // This already includes modern tool/environment factors and our BreakSpeed level factor.
@@ -55,6 +58,7 @@ public final class MiningProgress {
             // a canceled BreakSpeed event (or zero speed) must still prevent progress.
             return 0.0F;
         }
+        strength = FunctionalBlockMining.portableStrength(player, state, level, pos, strength);
         return MiningRules.destroyProgress(strength, effectiveHardness(state, rawHardness));
     }
 }

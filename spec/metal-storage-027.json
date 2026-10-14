@@ -1,0 +1,104 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "blocks": [
+    {
+      "legacy_id": 204,
+      "modern_id": "minecraft:copper_block",
+      "source_class": "aph",
+      "hardness": 4.8,
+      "minimum_harvest": 3,
+      "maximum_stack": 4
+    },
+    {
+      "legacy_id": 205,
+      "modern_id": "mite:silver_block",
+      "source_class": "aph",
+      "hardness": 4.8,
+      "minimum_harvest": 3,
+      "maximum_stack": 4
+    },
+    {
+      "legacy_id": 206,
+      "modern_id": "mite:mithril_block",
+      "source_class": "aph",
+      "hardness": 76.8,
+      "minimum_harvest": 5,
+      "maximum_stack": 4
+    },
+    {
+      "legacy_id": 207,
+      "modern_id": "mite:adamantium_block",
+      "source_class": "aph",
+      "hardness": 307.2,
+      "minimum_harvest": 6,
+      "maximum_stack": 4
+    },
+    {
+      "legacy_id": 252,
+      "modern_id": "mite:ancient_metal_block",
+      "source_class": "aph",
+      "hardness": 19.2,
+      "minimum_harvest": 4,
+      "maximum_stack": 4
+    }
+  ],
+  "recipes": {
+    "minecraft:copper_block": {
+      "difficulty": 3600.0,
+      "required_bench": "copper",
+      "source_order": 41
+    },
+    "mite:silver_block": {
+      "difficulty": 3600.0,
+      "required_bench": "silver",
+      "source_order": 42
+    },
+    "mite:mithril_block": {
+      "difficulty": 57600.0,
+      "required_bench": "mithril",
+      "source_order": 45
+    },
+    "mite:adamantium_block": {
+      "difficulty": 230400.0,
+      "required_bench": "adamantium",
+      "source_order": 46
+    },
+    "mite:ancient_metal_block": {
+      "difficulty": 14400.0,
+      "required_bench": "ancient_metal",
+      "source_order": 47
+    },
+    "minecraft:copper_ingot": {
+      "difficulty": 3600.0,
+      "required_bench": null,
+      "source_order": 463
+    },
+    "mite:silver_ingots_from_block": {
+      "difficulty": 3600.0,
+      "required_bench": null,
+      "source_order": 464
+    },
+    "mite:mithril_ingots_from_block": {
+      "difficulty": 57600.0,
+      "required_bench": null,
+      "source_order": 467
+    },
+    "mite:adamantium_ingots_from_block": {
+      "difficulty": 230400.0,
+      "required_bench": null,
+      "source_order": 468
+    },
+    "mite:ancient_metal_ingots_from_block": {
+      "difficulty": 14400.0,
+      "required_bench": null,
+      "source_order": 469
+    }
+  },
+  "source_files": [
+    "aph.java:6-13",
+    "aqz.java:2428-2431,2476",
+    "xj.java:61-62,125-130"
+  ],
+  "modern_adaptation": "Native/modded tools continue using declared tool tags. Source managed tools use numeric source harvest thresholds; copper weathering and waxing are retained separately."
+}

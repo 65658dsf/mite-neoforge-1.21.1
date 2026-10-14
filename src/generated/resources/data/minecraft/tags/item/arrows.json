@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "mite:obsidian_arrow",
+    "mite:copper_arrow",
+    "mite:silver_arrow",
+    "mite:rusted_iron_arrow",
+    "mite:golden_arrow",
+    "mite:iron_arrow",
+    "mite:ancient_metal_arrow",
+    "mite:mithril_arrow",
+    "mite:adamantium_arrow"
+  ]
+}

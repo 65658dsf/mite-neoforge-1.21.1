@@ -1,7 +1,9 @@
 {
   "entries": [
     "mite:remove_wooden_tools",
-    "mite:natural_food_sources"
+    "mite:natural_food_sources",
+    "mite:armor_structure_loot",
+    "mite:skeleton_arrows"
   ],
   "replace": false
 }

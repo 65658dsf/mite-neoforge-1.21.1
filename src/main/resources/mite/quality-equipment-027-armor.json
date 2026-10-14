@@ -1,0 +1,417 @@
+{
+  "author": "NingMeng123",
+  "items": {
+    "minecraft:chainmail_helmet": {
+      "lowest_difficulty": 1777.7777,
+      "legacy_id": 302,
+      "source_orders": [
+        250
+      ]
+    },
+    "minecraft:chainmail_chestplate": {
+      "lowest_difficulty": 2844.4443,
+      "legacy_id": 303,
+      "source_orders": [
+        117
+      ]
+    },
+    "minecraft:chainmail_leggings": {
+      "lowest_difficulty": 2488.8887,
+      "legacy_id": 304,
+      "source_orders": [
+        118
+      ]
+    },
+    "minecraft:chainmail_boots": {
+      "lowest_difficulty": 1422.2222,
+      "legacy_id": 305,
+      "source_orders": [
+        251
+      ]
+    },
+    "minecraft:golden_helmet": {
+      "lowest_difficulty": 2000.0,
+      "legacy_id": 314,
+      "source_orders": [
+        262
+      ]
+    },
+    "minecraft:golden_chestplate": {
+      "lowest_difficulty": 3200.0,
+      "legacy_id": 315,
+      "source_orders": [
+        129
+      ]
+    },
+    "minecraft:golden_leggings": {
+      "lowest_difficulty": 2800.0,
+      "legacy_id": 316,
+      "source_orders": [
+        130
+      ]
+    },
+    "minecraft:golden_boots": {
+      "lowest_difficulty": 1600.0,
+      "legacy_id": 317,
+      "source_orders": [
+        263
+      ]
+    },
+    "mite:copper_helmet": {
+      "lowest_difficulty": 2000.0,
+      "legacy_id": 1067,
+      "source_orders": [
+        258
+      ]
+    },
+    "mite:silver_helmet": {
+      "lowest_difficulty": 2000.0,
+      "legacy_id": 1068,
+      "source_orders": [
+        260
+      ]
+    },
+    "mite:mithril_helmet": {
+      "lowest_difficulty": 32000.0,
+      "legacy_id": 1069,
+      "source_orders": [
+        266
+      ]
+    },
+    "mite:adamantium_helmet": {
+      "lowest_difficulty": 128000.0,
+      "legacy_id": 1070,
+      "source_orders": [
+        268
+      ]
+    },
+    "mite:copper_chain_helmet": {
+      "lowest_difficulty": 888.88885,
+      "legacy_id": 1071,
+      "source_orders": [
+        242
+      ]
+    },
+    "mite:silver_chain_helmet": {
+      "lowest_difficulty": 888.88885,
+      "legacy_id": 1072,
+      "source_orders": [
+        244
+      ]
+    },
+    "mite:golden_chain_helmet": {
+      "lowest_difficulty": 888.88885,
+      "legacy_id": 1073,
+      "source_orders": [
+        246
+      ]
+    },
+    "mite:mithril_chain_helmet": {
+      "lowest_difficulty": 14222.222,
+      "legacy_id": 1074,
+      "source_orders": [
+        252
+      ]
+    },
+    "mite:adamantium_chain_helmet": {
+      "lowest_difficulty": 56888.887,
+      "legacy_id": 1075,
+      "source_orders": [
+        254
+      ]
+    },
+    "mite:rusted_iron_helmet": {
+      "lowest_difficulty": 2000.0,
+      "legacy_id": 1076,
+      "source_orders": []
+    },
+    "mite:rusted_iron_chain_helmet": {
+      "lowest_difficulty": 888.88885,
+      "legacy_id": 1077,
+      "source_orders": [
+        248
+      ]
+    },
+    "mite:copper_chestplate": {
+      "lowest_difficulty": 3200.0,
+      "legacy_id": 1078,
+      "source_orders": [
+        125
+      ]
+    },
+    "mite:silver_chestplate": {
+      "lowest_difficulty": 3200.0,
+      "legacy_id": 1079,
+      "source_orders": [
+        127
+      ]
+    },
+    "mite:mithril_chestplate": {
+      "lowest_difficulty": 51200.0,
+      "legacy_id": 1080,
+      "source_orders": [
+        133
+      ]
+    },
+    "mite:adamantium_chestplate": {
+      "lowest_difficulty": 204800.0,
+      "legacy_id": 1081,
+      "source_orders": [
+        135
+      ]
+    },
+    "mite:copper_chain_chestplate": {
+      "lowest_difficulty": 1422.2222,
+      "legacy_id": 1082,
+      "source_orders": [
+        109
+      ]
+    },
+    "mite:silver_chain_chestplate": {
+      "lowest_difficulty": 1422.2222,
+      "legacy_id": 1083,
+      "source_orders": [
+        111
+      ]
+    },
+    "mite:golden_chain_chestplate": {
+      "lowest_difficulty": 1422.2222,
+      "legacy_id": 1084,
+      "source_orders": [
+        113
+      ]
+    },
+    "mite:mithril_chain_chestplate": {
+      "lowest_difficulty": 22755.555,
+      "legacy_id": 1085,
+      "source_orders": [
+        119
+      ]
+    },
+    "mite:adamantium_chain_chestplate": {
+      "lowest_difficulty": 91022.22,
+      "legacy_id": 1086,
+      "source_orders": [
+        121
+      ]
+    },
+    "mite:rusted_iron_chestplate": {
+      "lowest_difficulty": 3200.0,
+      "legacy_id": 1087,
+      "source_orders": []
+    },
+    "mite:rusted_iron_chain_chestplate": {
+      "lowest_difficulty": 1422.2222,
+      "legacy_id": 1088,
+      "source_orders": [
+        115
+      ]
+    },
+    "mite:copper_leggings": {
+      "lowest_difficulty": 2800.0,
+      "legacy_id": 1089,
+      "source_orders": [
+        126
+      ]
+    },
+    "mite:silver_leggings": {
+      "lowest_difficulty": 2800.0,
+      "legacy_id": 1090,
+      "source_orders": [
+        128
+      ]
+    },
+    "mite:mithril_leggings": {
+      "lowest_difficulty": 44800.0,
+      "legacy_id": 1091,
+      "source_orders": [
+        134
+      ]
+    },
+    "mite:adamantium_leggings": {
+      "lowest_difficulty": 179200.0,
+      "legacy_id": 1092,
+      "source_orders": [
+        136
+      ]
+    },
+    "mite:copper_chain_leggings": {
+      "lowest_difficulty": 1244.4443,
+      "legacy_id": 1093,
+      "source_orders": [
+        110
+      ]
+    },
+    "mite:silver_chain_leggings": {
+      "lowest_difficulty": 1244.4443,
+      "legacy_id": 1094,
+      "source_orders": [
+        112
+      ]
+    },
+    "mite:golden_chain_leggings": {
+      "lowest_difficulty": 1244.4443,
+      "legacy_id": 1095,
+      "source_orders": [
+        114
+      ]
+    },
+    "mite:mithril_chain_leggings": {
+      "lowest_difficulty": 19911.11,
+      "legacy_id": 1096,
+      "source_orders": [
+        120
+      ]
+    },
+    "mite:adamantium_chain_leggings": {
+      "lowest_difficulty": 79644.44,
+      "legacy_id": 1097,
+      "source_orders": [
+        122
+      ]
+    },
+    "mite:rusted_iron_leggings": {
+      "lowest_difficulty": 2800.0,
+      "legacy_id": 1098,
+      "source_orders": []
+    },
+    "mite:rusted_iron_chain_leggings": {
+      "lowest_difficulty": 1244.4443,
+      "legacy_id": 1099,
+      "source_orders": [
+        116
+      ]
+    },
+    "mite:copper_boots": {
+      "lowest_difficulty": 1600.0,
+      "legacy_id": 1100,
+      "source_orders": [
+        259
+      ]
+    },
+    "mite:silver_boots": {
+      "lowest_difficulty": 1600.0,
+      "legacy_id": 1101,
+      "source_orders": [
+        261
+      ]
+    },
+    "mite:mithril_boots": {
+      "lowest_difficulty": 25600.0,
+      "legacy_id": 1102,
+      "source_orders": [
+        267
+      ]
+    },
+    "mite:adamantium_boots": {
+      "lowest_difficulty": 102400.0,
+      "legacy_id": 1103,
+      "source_orders": [
+        269
+      ]
+    },
+    "mite:copper_chain_boots": {
+      "lowest_difficulty": 711.1111,
+      "legacy_id": 1104,
+      "source_orders": [
+        243
+      ]
+    },
+    "mite:silver_chain_boots": {
+      "lowest_difficulty": 711.1111,
+      "legacy_id": 1105,
+      "source_orders": [
+        245
+      ]
+    },
+    "mite:golden_chain_boots": {
+      "lowest_difficulty": 711.1111,
+      "legacy_id": 1106,
+      "source_orders": [
+        247
+      ]
+    },
+    "mite:mithril_chain_boots": {
+      "lowest_difficulty": 11377.777,
+      "legacy_id": 1107,
+      "source_orders": [
+        253
+      ]
+    },
+    "mite:adamantium_chain_boots": {
+      "lowest_difficulty": 45511.11,
+      "legacy_id": 1108,
+      "source_orders": [
+        255
+      ]
+    },
+    "mite:rusted_iron_boots": {
+      "lowest_difficulty": 1600.0,
+      "legacy_id": 1109,
+      "source_orders": []
+    },
+    "mite:rusted_iron_chain_boots": {
+      "lowest_difficulty": 711.1111,
+      "legacy_id": 1110,
+      "source_orders": [
+        249
+      ]
+    },
+    "mite:ancient_metal_helmet": {
+      "lowest_difficulty": 8000.0,
+      "legacy_id": 1252,
+      "source_orders": [
+        270
+      ]
+    },
+    "mite:ancient_metal_chainmail_helmet": {
+      "lowest_difficulty": 3555.5554,
+      "legacy_id": 1253,
+      "source_orders": [
+        256
+      ]
+    },
+    "mite:ancient_metal_chestplate": {
+      "lowest_difficulty": 12800.0,
+      "legacy_id": 1254,
+      "source_orders": [
+        137
+      ]
+    },
+    "mite:ancient_metal_chainmail_chestplate": {
+      "lowest_difficulty": 5688.8887,
+      "legacy_id": 1255,
+      "source_orders": [
+        123
+      ]
+    },
+    "mite:ancient_metal_leggings": {
+      "lowest_difficulty": 11200.0,
+      "legacy_id": 1256,
+      "source_orders": [
+        138
+      ]
+    },
+    "mite:ancient_metal_chainmail_leggings": {
+      "lowest_difficulty": 4977.7773,
+      "legacy_id": 1257,
+      "source_orders": [
+        124
+      ]
+    },
+    "mite:ancient_metal_boots": {
+      "lowest_difficulty": 6400.0,
+      "legacy_id": 1258,
+      "source_orders": [
+        271
+      ]
+    },
+    "mite:ancient_metal_chainmail_boots": {
+      "lowest_difficulty": 2844.4443,
+      "legacy_id": 1259,
+      "source_orders": [
+        257
+      ]
+    }
+  }
+}

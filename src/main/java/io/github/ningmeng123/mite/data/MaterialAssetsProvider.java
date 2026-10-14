@@ -18,6 +18,13 @@ public final class MaterialAssetsProvider implements DataProvider {
     @Override
     public CompletableFuture<?> run(CachedOutput cache) {
         List<CompletableFuture<?>> work = new ArrayList<>();
+        for (String metal : io.github.ningmeng123.mite.registry.MiteMetalBlocks.STORAGE.keySet()) {
+            String name = metal + "_block";
+            save(work, cache, "assets/mite/blockstates/" + name + ".json", "{\"variants\":{\"\":{\"model\":\"mite:block/" + name + "\"}}}");
+            save(work, cache, "assets/mite/models/block/" + name + ".json", "{\"parent\":\"minecraft:block/cube_all\",\"textures\":{\"all\":\"mite:block/" + name + "\"}}");
+            save(work, cache, "assets/mite/models/item/" + name + ".json", "{\"parent\":\"mite:block/" + name + "\"}");
+            save(work, cache, "data/mite/loot_table/blocks/" + name + ".json", "{\"type\":\"minecraft:block\",\"pools\":[{\"rolls\":1,\"entries\":[{\"type\":\"minecraft:item\",\"name\":\"mite:" + name + "\"}],\"conditions\":[{\"condition\":\"minecraft:survives_explosion\"}]}]}");
+        }
         for (String metal : List.of("copper", "silver", "ancient_metal", "mithril", "adamantium")) {
             model(work, cache, metal + "_nugget", metal.equals("copper")
                     ? "minecraft:item/iron_nugget" : "mite:item/" + metal + "_nugget");

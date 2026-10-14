@@ -73,7 +73,25 @@
     "LavaBucketFillMixin",
     "FurnaceHardnessMixin",
     "FurnaceRecipeBookMixin",
-    "FurnaceCampfireHeatMixin"
+    "FurnaceCampfireHeatMixin",
+    "SourceMobArmorMixin",
+    "SilverArmorPoisonMixin",
+    "MobEffectDurationAccessor",
+    "SourceArmorDamageMixin",
+    "SourceArmorDefenseMixin",
+    "SourceArmorDefenseScopeMixin",
+    "RangedArrowMixin",
+    "SkeletonMaterialArrowMixin",
+    "RangedFishingRodMixin",
+    "RangedCarrotRodMixin",
+    "RangedPigControlMixin",
+    "RangedUnbreakingMixin",
+    "RangedFishingHookEnvironmentMixin",
+    "FunctionalAnvilMixin",
+    "VanillaAnvilEntityMixin",
+    "EmeraldEnchantmentMenuMixin",
+    "FunctionalFallingBlockMixin",
+    "FunctionalPlayerHarvestMixin"
   ],
   "client": [
     "client.GuiFoodMixin",
@@ -81,7 +99,8 @@
     "client.AppleSkinSaturationMixin",
     "client.AppleSkinSaturationMixin$Draw",
     "client.AppleSkinSaturationMixin$QueriedFoodResult",
-    "client.AppleSkinHealthMixin"
+    "client.AppleSkinHealthMixin",
+    "client.HorseArmorUvMixin"
   ],
   "injectors": {
     "defaultRequire": 1

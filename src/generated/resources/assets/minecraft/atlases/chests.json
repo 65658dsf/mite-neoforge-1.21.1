@@ -1,0 +1,32 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "mite:entity/chest/copper_single"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "mite:entity/chest/silver_single"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "mite:entity/chest/gold_single"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "mite:entity/chest/iron_single"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "mite:entity/chest/ancient_metal_single"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "mite:entity/chest/mithril_single"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "mite:entity/chest/adamantium_single"
+    }
+  ]
+}

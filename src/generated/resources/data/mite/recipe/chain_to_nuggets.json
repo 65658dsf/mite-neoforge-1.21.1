@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "item": "minecraft:chain"
+    }
+  },
+  "pattern": [
+    "M"
+  ],
+  "result": {
+    "count": 4,
+    "id": "minecraft:iron_nugget"
+  }
+}

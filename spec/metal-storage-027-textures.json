@@ -1,0 +1,25 @@
+{
+  "author": "NingMeng123",
+  "textures": [
+    {
+      "source": "assets/minecraft/textures/blocks/silver_block.png",
+      "target": "src/main/resources/assets/mite/textures/block/silver_block.png",
+      "sha256": "eab324c30fb294c0bcbc604f4657109b607bbf74325b66659874c1a9d0dfb496"
+    },
+    {
+      "source": "assets/minecraft/textures/blocks/ancient_metal_block.png",
+      "target": "src/main/resources/assets/mite/textures/block/ancient_metal_block.png",
+      "sha256": "84cce1059b26d2710db86a78ca297ea742b840eeea51274d09347af1a05868ad"
+    },
+    {
+      "source": "assets/minecraft/textures/blocks/mithril_block.png",
+      "target": "src/main/resources/assets/mite/textures/block/mithril_block.png",
+      "sha256": "c571de353fd78b0d0b54c5e7e30f33539a5b91ce228727ccecbf07974155eb91"
+    },
+    {
+      "source": "assets/minecraft/textures/blocks/adamantium_block.png",
+      "target": "src/main/resources/assets/mite/textures/block/adamantium_block.png",
+      "sha256": "9955d99fb1126ce904da93d8210b81856f9aa201f3ebf122de31323571fadaf5"
+    }
+  ]
+}

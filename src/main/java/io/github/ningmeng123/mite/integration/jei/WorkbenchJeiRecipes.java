@@ -51,7 +51,8 @@ public final class WorkbenchJeiRecipes {
         // Unknown subclasses can change matching/assembly and have their own JEI extensions.
         return recipe.getClass() == ShapedRecipe.class || recipe.getClass() == ShapelessRecipe.class
                 || recipe instanceof FoodShapedRecipe || recipe instanceof FoodShapelessRecipe
-                || recipe instanceof BulkMaterialRecipe || recipe instanceof WorkbenchDismantleRecipe;
+                || recipe instanceof BulkMaterialRecipe || recipe instanceof WorkbenchDismantleRecipe
+                || recipe instanceof io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe;
     }
 
     public static Index index(Level level) {

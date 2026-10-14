@@ -20,7 +20,8 @@ public abstract class FoodChestCompostingMixin {
     @Inject(method = "getTicker", at = @At("RETURN"), cancellable = true)
     private <T extends BlockEntity> void mite$serverComposting(Level level, BlockState state, BlockEntityType<T> type,
             CallbackInfoReturnable<BlockEntityTicker<T>> cir) {
-        if (level.isClientSide || type != BlockEntityType.CHEST && type != BlockEntityType.TRAPPED_CHEST) return;
+        if (level.isClientSide || type != BlockEntityType.CHEST && type != BlockEntityType.TRAPPED_CHEST
+                && type != io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.STRONGBOX_ENTITY.get()) return;
         BlockEntityTicker<T> previous = cir.getReturnValue();
         cir.setReturnValue((world, pos, blockState, entity) -> {
             if (previous != null) previous.tick(world, pos, blockState, entity);

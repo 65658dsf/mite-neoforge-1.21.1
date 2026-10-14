@@ -1,0 +1,230 @@
+{
+  "author": "NingMeng123",
+  "recipes": {
+    "mite:fishing_rod_flint_hook": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 83
+    },
+    "mite:fishing_rod_obsidian_hook": {
+      "difficulty": 147.22223,
+      "required_bench": null,
+      "source_order": 84
+    },
+    "mite:fishing_rod_copper_hook": {
+      "difficulty": 169.44444,
+      "required_bench": "copper",
+      "source_order": 85
+    },
+    "mite:fishing_rod_silver_hook": {
+      "difficulty": 169.44444,
+      "required_bench": "silver",
+      "source_order": 86
+    },
+    "mite:fishing_rod_gold_hook": {
+      "difficulty": 169.44444,
+      "required_bench": "gold",
+      "source_order": 87
+    },
+    "minecraft:fishing_rod": {
+      "difficulty": 213.88889,
+      "required_bench": "iron",
+      "source_order": 88
+    },
+    "mite:fishing_rod_mithril_hook": {
+      "difficulty": 836.1111,
+      "required_bench": "mithril",
+      "source_order": 89
+    },
+    "mite:fishing_rod_adamantium_hook": {
+      "difficulty": 2969.4443,
+      "required_bench": "adamantium",
+      "source_order": 90
+    },
+    "mite:fishing_rod_ancient_metal_hook": {
+      "difficulty": 302.77777,
+      "required_bench": "ancient_metal",
+      "source_order": 91
+    },
+    "minecraft:arrow": {
+      "difficulty": 75.0,
+      "required_bench": null,
+      "source_order": 378
+    },
+    "mite:obsidian_arrow": {
+      "difficulty": 72.22222,
+      "required_bench": null,
+      "source_order": 379
+    },
+    "mite:copper_arrow": {
+      "difficulty": 94.44444,
+      "required_bench": "copper",
+      "source_order": 380
+    },
+    "mite:silver_arrow": {
+      "difficulty": 94.44444,
+      "required_bench": "silver",
+      "source_order": 381
+    },
+    "mite:golden_arrow": {
+      "difficulty": 94.44444,
+      "required_bench": "gold",
+      "source_order": 382
+    },
+    "mite:iron_arrow": {
+      "difficulty": 138.88889,
+      "required_bench": "iron",
+      "source_order": 383
+    },
+    "mite:mithril_arrow": {
+      "difficulty": 761.1111,
+      "required_bench": "mithril",
+      "source_order": 384
+    },
+    "mite:adamantium_arrow": {
+      "difficulty": 2894.4443,
+      "required_bench": "adamantium",
+      "source_order": 385
+    },
+    "mite:ancient_metal_arrow": {
+      "difficulty": 227.77777,
+      "required_bench": "ancient_metal",
+      "source_order": 386
+    },
+    "mite:carrot_on_a_stick_flint_hook": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 763
+    },
+    "mite:carrot_on_a_stick_obsidian_hook": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 764
+    },
+    "mite:carrot_on_a_stick_copper_hook": {
+      "difficulty": 40.0,
+      "required_bench": "copper",
+      "source_order": 765
+    },
+    "mite:carrot_on_a_stick_silver_hook": {
+      "difficulty": 40.0,
+      "required_bench": "silver",
+      "source_order": 766
+    },
+    "mite:carrot_on_a_stick_gold_hook": {
+      "difficulty": 40.0,
+      "required_bench": "gold",
+      "source_order": 767
+    },
+    "minecraft:carrot_on_a_stick": {
+      "difficulty": 40.0,
+      "required_bench": "iron",
+      "source_order": 768
+    },
+    "mite:carrot_on_a_stick_mithril_hook": {
+      "difficulty": 40.0,
+      "required_bench": "mithril",
+      "source_order": 769
+    },
+    "mite:carrot_on_a_stick_adamantium_hook": {
+      "difficulty": 40.0,
+      "required_bench": "adamantium",
+      "source_order": 770
+    },
+    "mite:carrot_on_a_stick_ancient_metal_hook": {
+      "difficulty": 40.0,
+      "required_bench": "ancient_metal",
+      "source_order": 771
+    },
+    "mite:flint_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 850
+    },
+    "mite:obsidian_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 851
+    },
+    "mite:copper_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 852
+    },
+    "mite:silver_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 853
+    },
+    "mite:golden_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 854
+    },
+    "mite:iron_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 855
+    },
+    "mite:mithril_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 856
+    },
+    "mite:adamantium_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 857
+    },
+    "mite:ancient_metal_arrow_dismantle": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 858
+    },
+    "mite:fishing_rod_flint_hook_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 859
+    },
+    "mite:fishing_rod_obsidian_hook_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 860
+    },
+    "mite:fishing_rod_copper_hook_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": "copper",
+      "source_order": 861
+    },
+    "mite:fishing_rod_silver_hook_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": "silver",
+      "source_order": 862
+    },
+    "mite:fishing_rod_gold_hook_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": "gold",
+      "source_order": 863
+    },
+    "mite:fishing_rod_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": "iron",
+      "source_order": 864
+    },
+    "mite:fishing_rod_mithril_hook_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": "mithril",
+      "source_order": 865
+    },
+    "mite:fishing_rod_adamantium_hook_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": "adamantium",
+      "source_order": 866
+    },
+    "mite:fishing_rod_ancient_metal_hook_from_carrot": {
+      "difficulty": 40.0,
+      "required_bench": "ancient_metal",
+      "source_order": 867
+    }
+  }
+}

@@ -18,6 +18,9 @@ public final class MiteDataGenerators {
         event.getGenerator().addProvider(true, new ToolAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new WorkbenchAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new FurnaceAssetsProvider(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(true, new ArmorAssetsProvider(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(true, new RangedAssetsProvider(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(true, new FunctionalAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new WorldAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new OreAssetsProvider(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(true, new OreWorldgenProvider(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));

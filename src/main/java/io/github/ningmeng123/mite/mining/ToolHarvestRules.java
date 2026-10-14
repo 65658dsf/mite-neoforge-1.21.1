@@ -19,6 +19,14 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 public final class ToolHarvestRules {
     private ToolHarvestRules() {}
     public static boolean isBlocked(Player player, BlockState state) {
+        if (state.getBlock() instanceof net.minecraft.world.level.block.AnvilBlock) return false;
+        String storage = io.github.ningmeng123.mite.registry.MiteMetalBlocks.material(state);
+        if (storage != null && !player.isCreative() && !player.isSpectator()) {
+            var definition = MiteTools.definition(player.getMainHandItem());
+            if (definition != null) return definition.harvestLevel() < io.github.ningmeng123.mite.registry.MiteMetalBlocks.requiredHarvest(storage)
+                    || definition.family() != ToolFamily.PICKAXE && definition.family() != ToolFamily.WAR_HAMMER;
+            return !player.getMainHandItem().isCorrectToolForDrops(state);
+        }
         if (!player.isCreative() && !player.isSpectator() && OreBlockRules.isManaged(state)) {
             var definition = MiteTools.definition(player.getMainHandItem());
             // Managed tools use source numerical levels. Modern/modded tools retain their explicit Tool rules.
@@ -32,13 +40,15 @@ public final class ToolHarvestRules {
     }
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void harvest(BlockEvent.BreakEvent event) {
-        if (!event.isCanceled() && isBlocked(event.getPlayer(), event.getState())) event.setCanceled(true);
+        if (!event.isCanceled() && !FunctionalBlockMining.portable(event.getPlayer(), event.getState(), event.getLevel(), event.getPos())
+                && isBlocked(event.getPlayer(), event.getState())) event.setCanceled(true);
     }
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void hint(PlayerInteractEvent.LeftClickBlock event) {
         if (!event.isCanceled() && event.getAction() == PlayerInteractEvent.LeftClickBlock.Action.START
                 && event.getEntity() instanceof ServerPlayer player && player.canInteractWithBlock(event.getPos(), 1.0)
                 && player.serverLevel().hasChunkAt(event.getPos())
+                && !FunctionalBlockMining.portable(player, player.serverLevel().getBlockState(event.getPos()), player.serverLevel(), event.getPos())
                 && isBlocked(player, player.serverLevel().getBlockState(event.getPos()))) {
             player.displayClientMessage(Component.translatable("message.mite.tool_tier_too_low"), true);
         }

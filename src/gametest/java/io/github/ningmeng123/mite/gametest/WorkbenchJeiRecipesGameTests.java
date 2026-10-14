@@ -317,10 +317,11 @@ public final class WorkbenchJeiRecipesGameTests {
     public static void unknownRecipeSubclassesAndDynamicRecipesKeepTheirOwnJeiExtensions(GameTestHelper helper) {
         var loaded = helper.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
         Set<Class<?>> supported = Set.of(ShapedRecipe.class, ShapelessRecipe.class, FoodShapedRecipe.class,
-                FoodShapelessRecipe.class, BulkMaterialRecipe.class, WorkbenchDismantleRecipe.class);
+                FoodShapelessRecipe.class, BulkMaterialRecipe.class, WorkbenchDismantleRecipe.class,
+                io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe.class);
         for (Class<?> type : supported) {
             CraftingRecipe actual = loaded.stream().map(RecipeHolder::value).filter(recipe -> recipe.getClass() == type).findFirst().orElseThrow();
-            helper.assertTrue(WorkbenchJeiRecipes.supports(actual), "The viewer supports each of the six known static recipe classes actually loaded by the server");
+            helper.assertTrue(WorkbenchJeiRecipes.supports(actual), "The viewer supports each explicitly integrated recipe class actually loaded by the server");
         }
         ShapedRecipe shaped = (ShapedRecipe) loaded.stream().filter(holder -> holder.id().equals(ResourceLocation.parse("mite:copper_pickaxe")))
                 .findFirst().orElseThrow().value();
@@ -356,7 +357,7 @@ public final class WorkbenchJeiRecipesGameTests {
                 "Repair and dye results depend on input data and remain in JEI's existing dynamic recipe handling");
         helper.assertTrue(WorkbenchJeiRecipes.index(helper.getLevel()).originals().stream()
                 .allMatch(holder -> supported.contains(holder.value().getClass())),
-                "Only the six supported static recipe classes are hidden for replacement; dynamic and third-party recipes stay intact");
+                "Only explicitly integrated recipe classes are hidden for replacement; dynamic and third-party recipes stay intact");
         helper.succeed();
     }
 

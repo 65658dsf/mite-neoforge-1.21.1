@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/enchanting_table",
+  "textures": {
+    "bottom": "minecraft:block/enchanting_table_bottom",
+    "particle": "mite:block/emerald_enchanting_table_side",
+    "side": "mite:block/emerald_enchanting_table_side",
+    "top": "mite:block/emerald_enchanting_table_top"
+  }
+}

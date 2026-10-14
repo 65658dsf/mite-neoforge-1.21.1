@@ -126,10 +126,10 @@ public final class EquipmentDurabilityGameTests {
             player.setItemSlot(EquipmentSlot.CHEST, chest);
             player.doTick();
             helper.assertValueEqual(chest.getMaxDamage(), 128, "Iron chestplate has the original maximum");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6.0, "Modern base armor is preserved");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), (double)(8F / 3F), "Source chest protection is eight components of material eight divided by 24");
             chest.setDamageValue(96);
             player.doTick();
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 3.0, "Equipment change refreshes half protection");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), (double)(4F / 3F), "Equipment change refreshes half source protection");
             chest.setDamageValue(127);
             player.doTick();
             helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 0.0, "One remaining durability gives zero protection");
@@ -138,7 +138,7 @@ public final class EquipmentDurabilityGameTests {
             helper.assertValueEqual(chest.getDamageValue(), 127, "The last point is not consumed");
             chest.setDamageValue(0);
             player.doTick();
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6.0, "Repair refreshes protection without unequipping");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), (double)(8F / 3F), "Repair refreshes source protection without unequipping");
         }
         helper.succeed();
     }
@@ -156,7 +156,7 @@ public final class EquipmentDurabilityGameTests {
             helper.assertFalse(player.damageSources().cactus().is(DamageTypeTags.BYPASSES_ARMOR),
                     "The damage fixture must enter armor absorption");
             float healthBefore = player.getHealth();
-            helper.assertTrue(player.hurt(player.damageSources().cactus(), 8F), "Damage traverses the real player path");
+            helper.assertTrue(player.hurt(player.damageSources().cactus(), 9F), "Hit exceeds eight defense so the source RNG block path cannot obscure the health assertion");
             helper.assertTrue(player.getHealth() < healthBefore, "The real hit also reduces player health");
             int totalWear = 0;
             for (ItemStack piece : pieces) totalWear += piece.getDamageValue();

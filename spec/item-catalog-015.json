@@ -5731,12 +5731,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_chain",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_chain"
+      },
+      "actual_modern_id": "mite:copper_chain",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35782,
@@ -5770,12 +5788,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_chain",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_chain"
+      },
+      "actual_modern_id": "mite:silver_chain",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36109,
@@ -5809,12 +5845,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_chain",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_chain"
+      },
+      "actual_modern_id": "mite:golden_chain",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36248,
@@ -5848,12 +5902,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_chain",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_chain"
+      },
+      "actual_modern_id": "mite:rusted_iron_chain",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36247,
@@ -5887,12 +5959,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:chain",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:chain"
+      },
+      "actual_modern_id": "minecraft:chain",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 105067,
@@ -5926,12 +6016,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_chain",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_chain"
+      },
+      "actual_modern_id": "mite:ancient_metal_chain",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36245,
@@ -5965,12 +6073,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_chain",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_chain"
+      },
+      "actual_modern_id": "mite:mithril_chain",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36243,
@@ -6004,12 +6130,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_chain",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_chain"
+      },
+      "actual_modern_id": "mite:adamantium_chain",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35616,
@@ -6045,7 +6189,7 @@
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:furnace",
       "modern_id_is_proposal": false,
-      "current_registration": "existing_vanilla_adapted",
+      "current_registration": "existing_vanilla",
       "mechanism_status": "furnace_024_implemented_pending_validation",
       "status": "added",
       "conflicts": [],
@@ -6062,6 +6206,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
         "verification": "docs/testing/024-furnaces.md",
         "batch": "024"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -6115,6 +6269,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
         "verification": "docs/testing/024-furnaces.md",
         "batch": "024"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -6168,6 +6332,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
         "verification": "docs/testing/024-furnaces.md",
         "batch": "024"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -6221,6 +6395,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
         "verification": "docs/testing/024-furnaces.md",
         "batch": "024"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -6274,6 +6458,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
         "verification": "docs/testing/024-furnaces.md",
         "batch": "024"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -6327,6 +6521,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteFurnaces.java",
         "verification": "docs/testing/024-furnaces.md",
         "batch": "024"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -6361,12 +6565,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:anvil",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:anvil"
+      },
+      "actual_modern_id": "minecraft:anvil",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 823804,
@@ -6437,6 +6659,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteWorldBlocks.java",
         "semantics": "本次已注册的方块内容；符文包含0..15变体，地幔/地核没有可携带物品。注册不替代用户客户端验收。",
         "phase": "021"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -6508,6 +6740,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteWorldBlocks.java",
         "semantics": "本次已注册的方块内容；符文包含0..15变体，地幔/地核没有可携带物品。注册不替代用户客户端验收。",
         "phase": "021"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -6542,12 +6784,30 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:emerald_enchanting_table",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:emerald_enchanting_table"
+      },
+      "actual_modern_id": "mite:emerald_enchanting_table",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35745,
@@ -6581,12 +6841,30 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "minecraft:copper_block",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:copper_block"
+      },
+      "actual_modern_id": "minecraft:copper_block",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35789,
@@ -6620,12 +6898,30 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:silver_block",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_block"
+      },
+      "actual_modern_id": "mite:silver_block",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36171,
@@ -6659,12 +6955,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_anvil",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_anvil"
+      },
+      "actual_modern_id": "mite:copper_anvil",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36172,
@@ -6698,12 +7012,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_anvil",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_anvil"
+      },
+      "actual_modern_id": "mite:silver_anvil",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36173,
@@ -6737,12 +7069,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_anvil",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_anvil"
+      },
+      "actual_modern_id": "mite:golden_anvil",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 678209,
@@ -6776,12 +7126,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_anvil",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_anvil"
+      },
+      "actual_modern_id": "mite:ancient_metal_anvil",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36174,
@@ -6815,12 +7183,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_anvil",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_anvil"
+      },
+      "actual_modern_id": "mite:mithril_anvil",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37883,
@@ -6854,12 +7240,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_anvil",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_anvil"
+      },
+      "actual_modern_id": "mite:adamantium_anvil",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36239,
@@ -6893,12 +7297,30 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:adamantium_block",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_block"
+      },
+      "actual_modern_id": "mite:adamantium_block",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37882,
@@ -6932,12 +7354,30 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:mithril_block",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_block"
+      },
+      "actual_modern_id": "mite:mithril_block",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37919,
@@ -6971,12 +7411,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_strongbox",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_strongbox"
+      },
+      "actual_modern_id": "mite:copper_strongbox",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37920,
@@ -7010,12 +7468,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_strongbox",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_strongbox"
+      },
+      "actual_modern_id": "mite:silver_strongbox",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37921,
@@ -7049,12 +7525,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_strongbox",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_strongbox"
+      },
+      "actual_modern_id": "mite:golden_strongbox",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37922,
@@ -7088,12 +7582,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:iron_strongbox",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:iron_strongbox"
+      },
+      "actual_modern_id": "mite:iron_strongbox",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 105515,
@@ -7127,12 +7639,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_strongbox",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_strongbox"
+      },
+      "actual_modern_id": "mite:ancient_metal_strongbox",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37923,
@@ -7166,12 +7696,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_strongbox",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_strongbox"
+      },
+      "actual_modern_id": "mite:mithril_strongbox",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37924,
@@ -7205,12 +7753,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_strongbox",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_strongbox"
+      },
+      "actual_modern_id": "mite:adamantium_strongbox",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 68910,
@@ -7246,15 +7812,33 @@
         ]
       },
       "match_basis": "explicit_registry_and_subtype_review",
-      "proposed_modern_id": "minecraft:crafting_table",
-      "modern_id_is_proposal": true,
-      "current_registration": "existing_vanilla",
+      "proposed_modern_id": "mite:flint_crafting_table",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "partial_implemented",
-      "status": "existing_partial",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "R196四原木外观台meta0–3合并为当前minecraft:crafting_table；高级台仍独立待实现。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "existing_partial",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:crafting_table"
+      },
+      "actual_modern_id": "mite:flint_crafting_table",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 68911,
@@ -7287,15 +7871,33 @@
         ]
       },
       "match_basis": "explicit_registry_and_subtype_review",
-      "proposed_modern_id": "mite:copper_workbench",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:copper_crafting_table",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "源为同一ID58的工具材质子类型；现代建议独立方块ID。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_workbench"
+      },
+      "actual_modern_id": "mite:copper_crafting_table",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 68912,
@@ -7328,15 +7930,33 @@
         ]
       },
       "match_basis": "explicit_registry_and_subtype_review",
-      "proposed_modern_id": "mite:silver_workbench",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "proposed_modern_id": "mite:silver_crafting_table",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
       "notes": [
         "源为同一ID58的工具材质子类型；现代建议独立方块ID。"
-      ]
+      ],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_workbench"
+      },
+      "actual_modern_id": "mite:silver_crafting_table",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 105512,
@@ -7393,6 +8013,16 @@
         "source": "src/main/java/io/github/ningmeng123/mite/registry/MiteWorldBlocks.java",
         "semantics": "本次已注册的方块内容；符文包含0..15变体，地幔/地核没有可携带物品。注册不替代用户客户端验收。",
         "phase": "021"
+      },
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
       }
     },
     {
@@ -11456,12 +12086,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:fishing_rod_flint_hook",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:fishing_rod_flint_hook"
+      },
+      "actual_modern_id": "mite:fishing_rod_flint_hook",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36249,
@@ -11495,12 +12143,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:fishing_rod_obsidian_hook",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:fishing_rod_obsidian_hook"
+      },
+      "actual_modern_id": "mite:fishing_rod_obsidian_hook",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35700,
@@ -11534,12 +12200,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:fishing_rod_copper_hook",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:fishing_rod_copper_hook"
+      },
+      "actual_modern_id": "mite:fishing_rod_copper_hook",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35803,
@@ -11573,12 +12257,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:fishing_rod_silver_hook",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:fishing_rod_silver_hook"
+      },
+      "actual_modern_id": "mite:fishing_rod_silver_hook",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36124,
@@ -11612,12 +12314,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:fishing_rod_gold_hook",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:fishing_rod_gold_hook"
+      },
+      "actual_modern_id": "mite:fishing_rod_gold_hook",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36251,
@@ -11651,12 +12371,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:fishing_rod",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:fishing_rod"
+      },
+      "actual_modern_id": "minecraft:fishing_rod",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 105065,
@@ -11690,12 +12428,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:fishing_rod_ancient_metal_hook",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:fishing_rod_ancient_metal_hook"
+      },
+      "actual_modern_id": "mite:fishing_rod_ancient_metal_hook",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36250,
@@ -11729,12 +12485,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:fishing_rod_mithril_hook",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:fishing_rod_mithril_hook"
+      },
+      "actual_modern_id": "mite:fishing_rod_mithril_hook",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36242,
@@ -11768,12 +12542,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:fishing_rod_adamantium_hook",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:fishing_rod_adamantium_hook"
+      },
+      "actual_modern_id": "mite:fishing_rod_adamantium_hook",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35666,
@@ -14021,12 +14813,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:arrow",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:arrow"
+      },
+      "actual_modern_id": "minecraft:arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36258,
@@ -14060,12 +14870,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:obsidian_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:obsidian_arrow"
+      },
+      "actual_modern_id": "mite:obsidian_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35699,
@@ -14099,12 +14927,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_arrow"
+      },
+      "actual_modern_id": "mite:copper_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35804,
@@ -14138,12 +14984,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_arrow"
+      },
+      "actual_modern_id": "mite:silver_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36111,
@@ -14177,12 +15041,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_arrow"
+      },
+      "actual_modern_id": "mite:golden_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36585,
@@ -14216,12 +15098,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_arrow"
+      },
+      "actual_modern_id": "mite:rusted_iron_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37607,
@@ -14255,12 +15155,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:iron_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:iron_arrow"
+      },
+      "actual_modern_id": "mite:iron_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 61594,
@@ -14294,12 +15212,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_arrow"
+      },
+      "actual_modern_id": "mite:ancient_metal_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37909,
@@ -14333,12 +15269,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_arrow"
+      },
+      "actual_modern_id": "mite:mithril_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37910,
@@ -14372,12 +15326,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_arrow",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_arrow"
+      },
+      "actual_modern_id": "mite:adamantium_arrow",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 30998,
@@ -14411,12 +15383,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_horse_armor",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_horse_armor"
+      },
+      "actual_modern_id": "mite:copper_horse_armor",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 31000,
@@ -14450,12 +15440,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_horse_armor",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_horse_armor"
+      },
+      "actual_modern_id": "mite:silver_horse_armor",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 105511,
@@ -14489,12 +15497,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_horse_armor",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_horse_armor"
+      },
+      "actual_modern_id": "mite:ancient_metal_horse_armor",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 30999,
@@ -14528,12 +15554,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_horse_armor",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_horse_armor"
+      },
+      "actual_modern_id": "mite:mithril_horse_armor",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 31001,
@@ -14567,12 +15611,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_horse_armor",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_horse_armor"
+      },
+      "actual_modern_id": "mite:adamantium_horse_armor",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35715,
@@ -14606,12 +15668,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_helmet"
+      },
+      "actual_modern_id": "mite:copper_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35710,
@@ -14645,12 +15725,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_chestplate"
+      },
+      "actual_modern_id": "mite:copper_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35709,
@@ -14684,12 +15782,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_leggings"
+      },
+      "actual_modern_id": "mite:copper_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35707,
@@ -14723,12 +15839,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_boots"
+      },
+      "actual_modern_id": "mite:copper_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35712,
@@ -14762,12 +15896,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_chain_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_chain_helmet"
+      },
+      "actual_modern_id": "mite:copper_chain_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35714,
@@ -14801,12 +15953,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_chain_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_chain_chestplate"
+      },
+      "actual_modern_id": "mite:copper_chain_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35713,
@@ -14840,12 +16010,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_chain_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_chain_leggings"
+      },
+      "actual_modern_id": "mite:copper_chain_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35711,
@@ -14879,12 +16067,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:copper_chain_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:copper_chain_boots"
+      },
+      "actual_modern_id": "mite:copper_chain_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 31002,
@@ -14918,12 +16124,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_helmet"
+      },
+      "actual_modern_id": "mite:silver_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 31003,
@@ -14957,12 +16181,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_chestplate"
+      },
+      "actual_modern_id": "mite:silver_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 31004,
@@ -14996,12 +16238,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_leggings"
+      },
+      "actual_modern_id": "mite:silver_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 31005,
@@ -15035,12 +16295,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_boots"
+      },
+      "actual_modern_id": "mite:silver_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35813,
@@ -15074,12 +16352,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_chain_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_chain_helmet"
+      },
+      "actual_modern_id": "mite:silver_chain_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35809,
@@ -15113,12 +16409,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_chain_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_chain_chestplate"
+      },
+      "actual_modern_id": "mite:silver_chain_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35810,
@@ -15152,12 +16466,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_chain_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_chain_leggings"
+      },
+      "actual_modern_id": "mite:silver_chain_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 35814,
@@ -15191,12 +16523,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:silver_chain_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:silver_chain_boots"
+      },
+      "actual_modern_id": "mite:silver_chain_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 823814,
@@ -15230,12 +16580,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:golden_helmet",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:golden_helmet"
+      },
+      "actual_modern_id": "minecraft:golden_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 823815,
@@ -15269,12 +16637,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:golden_chestplate",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:golden_chestplate"
+      },
+      "actual_modern_id": "minecraft:golden_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 823816,
@@ -15308,12 +16694,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:golden_leggings",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:golden_leggings"
+      },
+      "actual_modern_id": "minecraft:golden_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 823817,
@@ -15347,12 +16751,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "minecraft:golden_boots",
-      "modern_id_is_proposal": true,
+      "modern_id_is_proposal": false,
       "current_registration": "existing_vanilla",
       "mechanism_status": "not_audited_or_pending",
-      "status": "reuse_vanilla_pending_adaptation",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "existing_vanilla",
+        "status": "reuse_vanilla_pending_adaptation",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "minecraft:golden_boots"
+      },
+      "actual_modern_id": "minecraft:golden_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36119,
@@ -15386,12 +16808,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_chain_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_chain_helmet"
+      },
+      "actual_modern_id": "mite:golden_chain_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36120,
@@ -15425,12 +16865,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_chain_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_chain_chestplate"
+      },
+      "actual_modern_id": "mite:golden_chain_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36121,
@@ -15464,12 +16922,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_chain_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_chain_leggings"
+      },
+      "actual_modern_id": "mite:golden_chain_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36122,
@@ -15503,12 +16979,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:golden_chain_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:golden_chain_boots"
+      },
+      "actual_modern_id": "mite:golden_chain_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37908,
@@ -15542,12 +17036,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_helmet"
+      },
+      "actual_modern_id": "mite:rusted_iron_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37906,
@@ -15581,12 +17093,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_chestplate"
+      },
+      "actual_modern_id": "mite:rusted_iron_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37904,
@@ -15620,12 +17150,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_leggings"
+      },
+      "actual_modern_id": "mite:rusted_iron_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37902,
@@ -15659,12 +17207,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_boots"
+      },
+      "actual_modern_id": "mite:rusted_iron_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37907,
@@ -15698,12 +17264,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_chain_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_chain_helmet"
+      },
+      "actual_modern_id": "mite:rusted_iron_chain_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37905,
@@ -15737,12 +17321,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_chain_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_chain_chestplate"
+      },
+      "actual_modern_id": "mite:rusted_iron_chain_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37903,
@@ -15776,12 +17378,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_chain_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_chain_leggings"
+      },
+      "actual_modern_id": "mite:rusted_iron_chain_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 36586,
@@ -15815,12 +17435,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:rusted_iron_chain_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:rusted_iron_chain_boots"
+      },
+      "actual_modern_id": "mite:rusted_iron_chain_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 439682,
@@ -15854,12 +17492,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_helmet"
+      },
+      "actual_modern_id": "mite:ancient_metal_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 439683,
@@ -15893,12 +17549,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_chestplate"
+      },
+      "actual_modern_id": "mite:ancient_metal_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 439684,
@@ -15932,12 +17606,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_leggings"
+      },
+      "actual_modern_id": "mite:ancient_metal_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 439685,
@@ -15971,12 +17663,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_boots"
+      },
+      "actual_modern_id": "mite:ancient_metal_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 61595,
@@ -16010,12 +17720,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_chainmail_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_chainmail_helmet"
+      },
+      "actual_modern_id": "mite:ancient_metal_chainmail_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 61596,
@@ -16049,12 +17777,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_chainmail_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_chainmail_chestplate"
+      },
+      "actual_modern_id": "mite:ancient_metal_chainmail_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 61597,
@@ -16088,12 +17834,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_chainmail_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_chainmail_leggings"
+      },
+      "actual_modern_id": "mite:ancient_metal_chainmail_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 105068,
@@ -16127,12 +17891,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:ancient_metal_chainmail_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_chainmail_boots"
+      },
+      "actual_modern_id": "mite:ancient_metal_chainmail_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37954,
@@ -16166,12 +17948,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_helmet"
+      },
+      "actual_modern_id": "mite:mithril_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37957,
@@ -16205,12 +18005,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_chestplate"
+      },
+      "actual_modern_id": "mite:mithril_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37955,
@@ -16244,12 +18062,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_leggings"
+      },
+      "actual_modern_id": "mite:mithril_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37956,
@@ -16283,12 +18119,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_boots"
+      },
+      "actual_modern_id": "mite:mithril_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37959,
@@ -16322,12 +18176,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_chain_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_chain_helmet"
+      },
+      "actual_modern_id": "mite:mithril_chain_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37961,
@@ -16361,12 +18233,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_chain_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_chain_chestplate"
+      },
+      "actual_modern_id": "mite:mithril_chain_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37960,
@@ -16400,12 +18290,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_chain_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_chain_leggings"
+      },
+      "actual_modern_id": "mite:mithril_chain_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37958,
@@ -16439,12 +18347,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:mithril_chain_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:mithril_chain_boots"
+      },
+      "actual_modern_id": "mite:mithril_chain_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37950,
@@ -16478,12 +18404,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_helmet"
+      },
+      "actual_modern_id": "mite:adamantium_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37953,
@@ -16517,12 +18461,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_chestplate"
+      },
+      "actual_modern_id": "mite:adamantium_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37952,
@@ -16556,12 +18518,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_leggings"
+      },
+      "actual_modern_id": "mite:adamantium_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37951,
@@ -16595,12 +18575,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_boots"
+      },
+      "actual_modern_id": "mite:adamantium_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37963,
@@ -16634,12 +18632,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_chain_helmet",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_chain_helmet"
+      },
+      "actual_modern_id": "mite:adamantium_chain_helmet",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37965,
@@ -16673,12 +18689,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_chain_chestplate",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_chain_chestplate"
+      },
+      "actual_modern_id": "mite:adamantium_chain_chestplate",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37964,
@@ -16712,12 +18746,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_chain_leggings",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_chain_leggings"
+      },
+      "actual_modern_id": "mite:adamantium_chain_leggings",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 37962,
@@ -16751,12 +18803,30 @@
       },
       "match_basis": "unique_source_symbol_or_language_name",
       "proposed_modern_id": "mite:adamantium_chain_boots",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:adamantium_chain_boots"
+      },
+      "actual_modern_id": "mite:adamantium_chain_boots",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": true,
+        "necessary_dependency": false,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 823809,
@@ -17262,12 +19332,30 @@
       },
       "match_basis": "explicit_registry_and_subtype_review",
       "proposed_modern_id": "mite:ancient_metal_block",
-      "modern_id_is_proposal": true,
-      "current_registration": "absent",
+      "modern_id_is_proposal": false,
+      "current_registration": "existing_mite",
       "mechanism_status": "not_audited_or_pending",
-      "status": "new_registration_pending",
+      "status": "added",
       "conflicts": [],
-      "notes": []
+      "notes": [],
+      "registration_baseline_015": {
+        "current_registration": "absent",
+        "status": "new_registration_pending",
+        "modern_id_is_proposal": true,
+        "proposed_modern_id": "mite:ancient_metal_block"
+      },
+      "actual_modern_id": "mite:ancient_metal_block",
+      "status_label": "已添加",
+      "catalog_027_runtime_status": {
+        "batch": "027",
+        "requested_category": false,
+        "necessary_dependency": true,
+        "registration": "verified_data_generation",
+        "automatic_tests": "passed",
+        "client_manual": "user_confirmed",
+        "evidence": "docs/testing/027-content-categories.md",
+        "semantics": "已添加表示实际身份和本批代码接入；原mechanism_status与015历史summary保留，适配和未完成机制见对应来源文档。"
+      }
     },
     {
       "mcmod_id": 105513,
@@ -19199,5 +21287,28 @@
     "verification": "docs/testing/024-furnaces.md",
     "manual_test_status": "pending_user_acceptance",
     "history_semantics": "The original 015 summary and earlier batch snapshots are preserved; registration does not imply later fluid/experience placement, metallurgy or combat completion."
+  },
+  "category_registration_update_027": {
+    "author": "NingMeng123",
+    "requested_leaves": 111,
+    "category_counts": {
+      "功能性方块": 31,
+      "钓鱼竿": 9,
+      "箭": 10,
+      "装备": 61
+    },
+    "dependency_leaves": 9,
+    "updated_leaves": 120,
+    "current_labels": {
+      "added": 287,
+      "reuse_vanilla_pending_adaptation": 7,
+      "new_registration_pending": 51,
+      "existing_partial": 2,
+      "excluded_conflict": 8,
+      "excluded_deleted_or_not_added": 4
+    },
+    "validation": "automatic_passed",
+    "client_manual": "user_confirmed",
+    "scope": "箭、装备、钓鱼竿、功能性方块；另补8种链材料与远古金属块，关联胡萝卜钓竿不伪造百科叶项。"
   }
 }

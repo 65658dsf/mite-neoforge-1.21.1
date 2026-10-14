@@ -1,0 +1,17 @@
+{
+  "parent": "mite:block/adamantium_anvil_0",
+  "overrides": [
+    {
+      "model": "mite:block/adamantium_anvil_1",
+      "predicate": {
+        "mite:anvil_stage": 1
+      }
+    },
+    {
+      "model": "mite:block/adamantium_anvil_2",
+      "predicate": {
+        "mite:anvil_stage": 2
+      }
+    }
+  ]
+}

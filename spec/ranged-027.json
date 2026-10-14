@@ -1,0 +1,3598 @@
+{
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "resource_pack_sha256": "4a9bb9f7ab5afee7c0e4e9f57f3b81ff185a0c619d29036b8c2f1ece7450e67a",
+  "source_locations": [
+    "ItemArrow.java:33-81",
+    "akc.java:351-389",
+    "xv.java:13-22",
+    "ul.java:128-164,290-318,395-440",
+    "uh.java:310-340",
+    "of.java:1152-1161",
+    "ws.java:14-22,102-140"
+  ],
+  "materials": [
+    {
+      "material": "flint",
+      "arrow_id": "minecraft:arrow",
+      "legacy_arrow": 1040,
+      "arrow_damage": 1.0,
+      "recovery": 0.3,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "mite:fishing_rod_flint_hook",
+      "legacy_rod": 1207,
+      "rod_durability": 3,
+      "rod_enchantability": 0,
+      "rod_has_quality": false,
+      "carrot_rod_id": "mite:carrot_on_a_stick_flint_hook",
+      "legacy_carrot_rod": 1208,
+      "rod_lowest_difficulty": 150.0,
+      "carrot_rod_lowest_difficulty": 40.0
+    },
+    {
+      "material": "obsidian",
+      "arrow_id": "mite:obsidian_arrow",
+      "legacy_arrow": 1049,
+      "arrow_damage": 1.5,
+      "recovery": 0.4,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "mite:fishing_rod_obsidian_hook",
+      "legacy_rod": 1212,
+      "rod_durability": 4,
+      "rod_enchantability": 0,
+      "rod_has_quality": false,
+      "carrot_rod_id": "mite:carrot_on_a_stick_obsidian_hook",
+      "legacy_carrot_rod": 1213,
+      "rod_lowest_difficulty": 147.22223,
+      "carrot_rod_lowest_difficulty": 40.0
+    },
+    {
+      "material": "copper",
+      "arrow_id": "mite:copper_arrow",
+      "legacy_arrow": 1041,
+      "arrow_damage": 2.0,
+      "recovery": 0.6,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "mite:fishing_rod_copper_hook",
+      "legacy_rod": 1192,
+      "rod_durability": 8,
+      "rod_enchantability": 30,
+      "rod_has_quality": false,
+      "carrot_rod_id": "mite:carrot_on_a_stick_copper_hook",
+      "legacy_carrot_rod": 1197,
+      "rod_lowest_difficulty": 169.44444,
+      "carrot_rod_lowest_difficulty": 40.0
+    },
+    {
+      "material": "silver",
+      "arrow_id": "mite:silver_arrow",
+      "legacy_arrow": 1042,
+      "arrow_damage": 2.0,
+      "recovery": 0.6,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "mite:fishing_rod_silver_hook",
+      "legacy_rod": 1193,
+      "rod_durability": 8,
+      "rod_enchantability": 30,
+      "rod_has_quality": false,
+      "carrot_rod_id": "mite:carrot_on_a_stick_silver_hook",
+      "legacy_carrot_rod": 1198,
+      "rod_lowest_difficulty": 169.44444,
+      "carrot_rod_lowest_difficulty": 40.0
+    },
+    {
+      "material": "rusted_iron",
+      "arrow_id": "mite:rusted_iron_arrow",
+      "legacy_arrow": 1047,
+      "arrow_damage": 1.5,
+      "recovery": 0.5,
+      "arrow_stack": 16,
+      "craftable_arrow": false,
+      "rod_id": null,
+      "legacy_rod": null,
+      "rod_durability": null,
+      "rod_enchantability": 0,
+      "rod_has_quality": false,
+      "carrot_rod_id": null,
+      "legacy_carrot_rod": null,
+      "rod_lowest_difficulty": null,
+      "carrot_rod_lowest_difficulty": null
+    },
+    {
+      "material": "gold",
+      "arrow_id": "mite:golden_arrow",
+      "legacy_arrow": 1043,
+      "arrow_damage": 1.5,
+      "recovery": 0.5,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "mite:fishing_rod_gold_hook",
+      "legacy_rod": 1194,
+      "rod_durability": 8,
+      "rod_enchantability": 50,
+      "rod_has_quality": false,
+      "carrot_rod_id": "mite:carrot_on_a_stick_gold_hook",
+      "legacy_carrot_rod": 1199,
+      "rod_lowest_difficulty": 169.44444,
+      "carrot_rod_lowest_difficulty": 40.0
+    },
+    {
+      "material": "iron",
+      "arrow_id": "mite:iron_arrow",
+      "legacy_arrow": 1044,
+      "arrow_damage": 2.5,
+      "recovery": 0.7,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "minecraft:fishing_rod",
+      "legacy_rod": 346,
+      "rod_durability": 16,
+      "rod_enchantability": 30,
+      "rod_has_quality": false,
+      "carrot_rod_id": "minecraft:carrot_on_a_stick",
+      "legacy_carrot_rod": 398,
+      "rod_lowest_difficulty": 213.88889,
+      "carrot_rod_lowest_difficulty": 40.0
+    },
+    {
+      "material": "ancient_metal",
+      "arrow_id": "mite:ancient_metal_arrow",
+      "legacy_arrow": 1250,
+      "arrow_damage": 2.5,
+      "recovery": 0.8,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "mite:fishing_rod_ancient_metal_hook",
+      "legacy_rod": 1263,
+      "rod_durability": 32,
+      "rod_enchantability": 40,
+      "rod_has_quality": false,
+      "carrot_rod_id": "mite:carrot_on_a_stick_ancient_metal_hook",
+      "legacy_carrot_rod": 1264,
+      "rod_lowest_difficulty": 302.77777,
+      "carrot_rod_lowest_difficulty": 40.0
+    },
+    {
+      "material": "mithril",
+      "arrow_id": "mite:mithril_arrow",
+      "legacy_arrow": 1045,
+      "arrow_damage": 3.0,
+      "recovery": 0.8,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "mite:fishing_rod_mithril_hook",
+      "legacy_rod": 1195,
+      "rod_durability": 128,
+      "rod_enchantability": 100,
+      "rod_has_quality": false,
+      "carrot_rod_id": "mite:carrot_on_a_stick_mithril_hook",
+      "legacy_carrot_rod": 1200,
+      "rod_lowest_difficulty": 836.1111,
+      "carrot_rod_lowest_difficulty": 40.0
+    },
+    {
+      "material": "adamantium",
+      "arrow_id": "mite:adamantium_arrow",
+      "legacy_arrow": 1046,
+      "arrow_damage": 3.5,
+      "recovery": 0.9,
+      "arrow_stack": 16,
+      "craftable_arrow": true,
+      "rod_id": "mite:fishing_rod_adamantium_hook",
+      "legacy_rod": 1196,
+      "rod_durability": 512,
+      "rod_enchantability": 40,
+      "rod_has_quality": false,
+      "carrot_rod_id": "mite:carrot_on_a_stick_adamantium_hook",
+      "legacy_carrot_rod": 1201,
+      "rod_lowest_difficulty": 2969.4443,
+      "carrot_rod_lowest_difficulty": 40.0
+    }
+  ],
+  "registered_recipes": [
+    {
+      "order": 83,
+      "class": "aai",
+      "output": {
+        "item_id": 1207,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 1121,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 150.0,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1207,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 150.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 84,
+      "class": "aai",
+      "output": {
+        "item_id": 1212,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 1122,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 147.22223,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1212,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 147.22223,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 85,
+      "class": "aai",
+      "output": {
+        "item_id": 1192,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 956,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 169.44444,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "copper",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "copper",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1192,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 169.44444,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 86,
+      "class": "aai",
+      "output": {
+        "item_id": 1193,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 957,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 169.44444,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "silver",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "silver",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1193,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 169.44444,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 87,
+      "class": "aai",
+      "output": {
+        "item_id": 1194,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 371,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 169.44444,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "gold",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 50,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "superb",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "gold",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1194,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 169.44444,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 88,
+      "class": "aai",
+      "output": {
+        "item_id": 346,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 958,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 213.88889,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "iron",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 8.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "iron",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 346,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 213.88889,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 89,
+      "class": "aai",
+      "output": {
+        "item_id": 1195,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 959,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 836.1111,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "mithril",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 64.0,
+          "akc.enchantability": 100,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 4,
+          "akc.mobility_flag": 0,
+          "akc.name": "mithril",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1195,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 836.1111,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 90,
+      "class": "aai",
+      "output": {
+        "item_id": 1196,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 960,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 2969.4443,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "adamantium",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 256.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": false,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 5,
+          "akc.mobility_flag": 0,
+          "akc.name": "adamantium",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1196,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 2969.4443,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 91,
+      "class": "aai",
+      "output": {
+        "item_id": 1263,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        null,
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        null,
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 961,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 287,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 302.77777,
+      "skillsets": [
+        4096
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "ancient_metal",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 16.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "ancient_metal",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1263,
+        "aai.b": 3,
+        "aai.c": 3,
+        "aai.difficulty": 302.77777,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 3,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 378,
+      "class": "aai",
+      "output": {
+        "item_id": 1040,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1121,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 75.0,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1040,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 75.0,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 379,
+      "class": "aai",
+      "output": {
+        "item_id": 1049,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1122,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 72.22222,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1049,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 72.22222,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 380,
+      "class": "aai",
+      "output": {
+        "item_id": 1041,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 956,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 94.44444,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "copper",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "copper",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1041,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 94.44444,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 381,
+      "class": "aai",
+      "output": {
+        "item_id": 1042,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 957,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 94.44444,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "silver",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "silver",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1042,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 94.44444,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 382,
+      "class": "aai",
+      "output": {
+        "item_id": 1043,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 371,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 94.44444,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "gold",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 50,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "superb",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "gold",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1043,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 94.44444,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 383,
+      "class": "aai",
+      "output": {
+        "item_id": 1044,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 958,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 138.88889,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "iron",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 8.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "iron",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1044,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 138.88889,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 384,
+      "class": "aai",
+      "output": {
+        "item_id": 1045,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 959,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 761.1111,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "mithril",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 64.0,
+          "akc.enchantability": 100,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 4,
+          "akc.mobility_flag": 0,
+          "akc.name": "mithril",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1045,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 761.1111,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 385,
+      "class": "aai",
+      "output": {
+        "item_id": 1046,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 960,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 2894.4443,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "adamantium",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 256.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": false,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 5,
+          "akc.mobility_flag": 0,
+          "akc.name": "adamantium",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1046,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 2894.4443,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 386,
+      "class": "aai",
+      "output": {
+        "item_id": 1250,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 961,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 280,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 288,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 227.77777,
+      "skillsets": [
+        2
+      ],
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "ancient_metal",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 16.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "ancient_metal",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aai.a": 1250,
+        "aai.b": 1,
+        "aai.c": 3,
+        "aai.difficulty": 227.77777,
+        "aai.f": false,
+        "aai.include_in_lowest_crafting_difficulty_determination": true
+      },
+      "width": 1,
+      "height": 3,
+      "source": {
+        "class": "aai",
+        "source_file": "ShapedRecipes.java",
+        "class_sha256": "173d73df30919e7c16572e03731a0b55c7bbf4468eb72d7197b6c88795b881fa",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 763,
+      "class": "aaj",
+      "output": {
+        "item_id": 1208,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1207,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 764,
+      "class": "aaj",
+      "output": {
+        "item_id": 1213,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1212,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 765,
+      "class": "aaj",
+      "output": {
+        "item_id": 1197,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1192,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "copper",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "copper",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 766,
+      "class": "aaj",
+      "output": {
+        "item_id": 1198,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1193,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "silver",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "silver",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 767,
+      "class": "aaj",
+      "output": {
+        "item_id": 1199,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1194,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "gold",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 50,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "superb",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "gold",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 768,
+      "class": "aaj",
+      "output": {
+        "item_id": 398,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 346,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "iron",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 8.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "iron",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 769,
+      "class": "aaj",
+      "output": {
+        "item_id": 1200,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1195,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "mithril",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 64.0,
+          "akc.enchantability": 100,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 4,
+          "akc.mobility_flag": 0,
+          "akc.name": "mithril",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 770,
+      "class": "aaj",
+      "output": {
+        "item_id": 1201,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1196,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "adamantium",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 256.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": false,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 5,
+          "akc.mobility_flag": 0,
+          "akc.name": "adamantium",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 771,
+      "class": "aaj",
+      "output": {
+        "item_id": 1264,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1263,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        },
+        {
+          "item_id": 391,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": true,
+      "bench_material": {
+        "name": "ancient_metal",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 16.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "ancient_metal",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": true,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 850,
+      "class": "aaj",
+      "output": {
+        "item_id": 1121,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1040,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 851,
+      "class": "aaj",
+      "output": {
+        "item_id": 1122,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1049,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 852,
+      "class": "aaj",
+      "output": {
+        "item_id": 956,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1041,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 853,
+      "class": "aaj",
+      "output": {
+        "item_id": 957,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1042,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 854,
+      "class": "aaj",
+      "output": {
+        "item_id": 371,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1043,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 855,
+      "class": "aaj",
+      "output": {
+        "item_id": 958,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1044,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 856,
+      "class": "aaj",
+      "output": {
+        "item_id": 959,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1045,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 857,
+      "class": "aaj",
+      "output": {
+        "item_id": 960,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1046,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 858,
+      "class": "aaj",
+      "output": {
+        "item_id": 961,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1250,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": false
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 859,
+      "class": "aaj",
+      "output": {
+        "item_id": 1207,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1208,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 860,
+      "class": "aaj",
+      "output": {
+        "item_id": 1212,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1213,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": null,
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 861,
+      "class": "aaj",
+      "output": {
+        "item_id": 1192,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1197,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": {
+        "name": "copper",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "copper",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 862,
+      "class": "aaj",
+      "output": {
+        "item_id": 1193,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1198,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": {
+        "name": "silver",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "excellent",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "silver",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 863,
+      "class": "aaj",
+      "output": {
+        "item_id": 1194,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1199,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": {
+        "name": "gold",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 4.0,
+          "akc.enchantability": 50,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "superb",
+          "akc.min_harvest_level": 2,
+          "akc.mobility_flag": 0,
+          "akc.name": "gold",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 864,
+      "class": "aaj",
+      "output": {
+        "item_id": 346,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 398,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": {
+        "name": "iron",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 8.0,
+          "akc.enchantability": 30,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "iron",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 865,
+      "class": "aaj",
+      "output": {
+        "item_id": 1195,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1200,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": {
+        "name": "mithril",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 64.0,
+          "akc.enchantability": 100,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 4,
+          "akc.mobility_flag": 0,
+          "akc.name": "mithril",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 866,
+      "class": "aaj",
+      "output": {
+        "item_id": 1196,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1201,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": {
+        "name": "adamantium",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 256.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": false,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": false,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "legendary",
+          "akc.min_harvest_level": 5,
+          "akc.mobility_flag": 0,
+          "akc.name": "adamantium",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    },
+    {
+      "order": 867,
+      "class": "aaj",
+      "output": {
+        "item_id": 1263,
+        "count": 1,
+        "subtype": 0,
+        "damage": 0,
+        "quality": null,
+        "has_nbt": false
+      },
+      "components": [
+        {
+          "item_id": 1264,
+          "count": 1,
+          "subtype": 0,
+          "damage": 0,
+          "quality": null,
+          "has_nbt": false
+        }
+      ],
+      "difficulty": 40.0,
+      "skillsets": null,
+      "include_in_lowest_difficulty": false,
+      "bench_material": {
+        "name": "ancient_metal",
+        "scalars": {
+          "akc.can_burn_as_fuel_source": false,
+          "akc.can_catch_fire": false,
+          "akc.can_douse_fire": false,
+          "akc.dissolves_in_water": false,
+          "akc.durability": 16.0,
+          "akc.enchantability": 40,
+          "akc.full_block_hardness": 0.0,
+          "akc.is_adventure_mode_exempt": false,
+          "akc.is_crystal": false,
+          "akc.is_drinkable": false,
+          "akc.is_edible": false,
+          "akc.is_harmed_by_acid": true,
+          "akc.is_harmed_by_fire": false,
+          "akc.is_harmed_by_lava": true,
+          "akc.is_harmed_by_pepsin": false,
+          "akc.is_liquid": false,
+          "akc.is_metal": true,
+          "akc.is_replaceable": false,
+          "akc.is_rocky_mineral": false,
+          "akc.is_translucent": false,
+          "akc.max_quality": "masterwork",
+          "akc.min_harvest_level": 3,
+          "akc.mobility_flag": 0,
+          "akc.name": "ancient_metal",
+          "akc.requires_tool": true
+        }
+      },
+      "dynamic": false,
+      "scalars": {
+        "aaj.difficulty": 40.0,
+        "aaj.include_in_lowest_crafting_difficulty_determination": false,
+        "aaj.propagate_tag_compound": true
+      },
+      "source": {
+        "class": "aaj",
+        "source_file": "ShapelessRecipes.java",
+        "class_sha256": "8ba4fd58d8390b20684ba2913f7900fa745136517bdafa4d83499eeea5a89931",
+        "origin": "r196_overlay"
+      }
+    }
+  ],
+  "activation_flags": {
+    "professions_suppressed": true,
+    "in_dev_mode": false,
+    "allow_new_sand_physics": false
+  },
+  "two_item_repair": {
+    "source": "aaf.java:294-324;awy.java:171",
+    "difficulty": "lowest_difficulty/2",
+    "experience_cost_exempt": true,
+    "requires_both_damaged": true,
+    "requires_unenchanted": true,
+    "modern_five_percent_bonus": false,
+    "copies_arbitrary_nbt": false,
+    "copies_matching_dyed_color": true,
+    "bench": "hardest metal on output"
+  },
+  "adaptation": {
+    "modern_fishing_loot": "Preserved modern loot events/tables; source bite probability and costs restored",
+    "fishing_fortune": "Luck of the Sea supplies source 9/10 per level probability multiplier while preserving modern loot luck",
+    "modern_piercing": "Modern Piercing retains its projectile; no source contained-arrow recovery roll for piercing missiles, preventing duplicate returns",
+    "arrow_enchantments": "Native weapon enchantment damage is preserved before source speed/fractional impact/critical multiplication",
+    "waterlogged": "Full water fluid states count as fish habitat in modern world; physical collision ray remains required"
+  },
+  "textures": [
+    {
+      "source": "assets/minecraft/textures/items/arrows/flint_arrow.png",
+      "target": "assets/mite/textures/item/arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/flint.png",
+      "target": "assets/mite/textures/entity/arrows/flint.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/flint_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod_flint_hook.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/obsidian_arrow.png",
+      "target": "assets/mite/textures/item/obsidian_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/obsidian.png",
+      "target": "assets/mite/textures/entity/arrows/obsidian.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/obsidian_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod_obsidian_hook.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/copper_arrow.png",
+      "target": "assets/mite/textures/item/copper_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/copper.png",
+      "target": "assets/mite/textures/entity/arrows/copper.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/copper_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod_copper_hook.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/silver_arrow.png",
+      "target": "assets/mite/textures/item/silver_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/silver.png",
+      "target": "assets/mite/textures/entity/arrows/silver.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/silver_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod_silver_hook.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/rusted_iron_arrow.png",
+      "target": "assets/mite/textures/item/rusted_iron_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/rusted_iron.png",
+      "target": "assets/mite/textures/entity/arrows/rusted_iron.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/gold_arrow.png",
+      "target": "assets/mite/textures/item/golden_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/gold.png",
+      "target": "assets/mite/textures/entity/arrows/gold.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/gold_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod_gold_hook.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/iron_arrow.png",
+      "target": "assets/mite/textures/item/iron_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/iron.png",
+      "target": "assets/mite/textures/entity/arrows/iron.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/iron_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/ancient_metal_arrow.png",
+      "target": "assets/mite/textures/item/ancient_metal_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/ancient_metal.png",
+      "target": "assets/mite/textures/entity/arrows/ancient_metal.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/ancient_metal_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod_ancient_metal_hook.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/mithril_arrow.png",
+      "target": "assets/mite/textures/item/mithril_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/mithril.png",
+      "target": "assets/mite/textures/entity/arrows/mithril.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/mithril_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod_mithril_hook.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/arrows/adamantium_arrow.png",
+      "target": "assets/mite/textures/item/adamantium_arrow.png"
+    },
+    {
+      "source": "assets/minecraft/textures/entity/arrows/adamantium.png",
+      "target": "assets/mite/textures/entity/arrows/adamantium.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rods/adamantium_uncast.png",
+      "target": "assets/mite/textures/item/fishing_rod_adamantium_hook.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/fishing_rod_cast.png",
+      "target": "assets/mite/textures/item/fishing_rod_cast.png"
+    },
+    {
+      "source": "assets/minecraft/textures/items/carrot_on_a_stick.png",
+      "target": "assets/mite/textures/item/carrot_on_a_stick.png"
+    }
+  ]
+}

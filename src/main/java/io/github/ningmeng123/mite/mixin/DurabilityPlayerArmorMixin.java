@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** R196 player armor allocation while retaining modern armor mitigation and event cancellation. @author NingMeng123 */
+/** Source allocation for native fallback callers; managed player damage uses the source defense transaction. @author NingMeng123 */
 @Mixin(Player.class)
 public abstract class DurabilityPlayerArmorMixin {
     @Inject(method = "hurtArmor", at = @At("HEAD"), cancellable = true)

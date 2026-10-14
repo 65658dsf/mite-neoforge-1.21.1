@@ -1,0 +1,11 @@
+{
+  "type": "mite:bulk_material",
+  "group": "adamantium_ingot",
+  "ingredient": {
+    "item": "mite:adamantium_block"
+  },
+  "result": {
+    "count": 9,
+    "id": "mite:adamantium_ingot"
+  }
+}

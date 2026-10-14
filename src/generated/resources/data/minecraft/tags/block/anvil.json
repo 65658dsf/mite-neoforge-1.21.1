@@ -1,0 +1,10 @@
+{
+  "values": [
+    "mite:copper_anvil",
+    "mite:silver_anvil",
+    "mite:golden_anvil",
+    "mite:ancient_metal_anvil",
+    "mite:mithril_anvil",
+    "mite:adamantium_anvil"
+  ]
+}

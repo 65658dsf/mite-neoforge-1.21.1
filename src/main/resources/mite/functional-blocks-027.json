@@ -1,0 +1,287 @@
+{
+  "author": "NingMeng123",
+  "recipes": [
+    {
+      "id": "mite:copper_strongbox",
+      "pattern": [
+        "AAA",
+        "A A",
+        "AAA"
+      ],
+      "key": {
+        "A": {
+          "item": "minecraft:copper_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:copper_strongbox",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:silver_strongbox",
+      "pattern": [
+        "AAA",
+        "A A",
+        "AAA"
+      ],
+      "key": {
+        "A": {
+          "item": "mite:silver_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:silver_strongbox",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:golden_strongbox",
+      "pattern": [
+        "AAA",
+        "A A",
+        "AAA"
+      ],
+      "key": {
+        "A": {
+          "item": "minecraft:gold_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:golden_strongbox",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:iron_strongbox",
+      "pattern": [
+        "AAA",
+        "A A",
+        "AAA"
+      ],
+      "key": {
+        "A": {
+          "item": "minecraft:iron_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:iron_strongbox",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:mithril_strongbox",
+      "pattern": [
+        "AAA",
+        "A A",
+        "AAA"
+      ],
+      "key": {
+        "A": {
+          "item": "mite:mithril_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:mithril_strongbox",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:adamantium_strongbox",
+      "pattern": [
+        "AAA",
+        "A A",
+        "AAA"
+      ],
+      "key": {
+        "A": {
+          "item": "mite:adamantium_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:adamantium_strongbox",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:ancient_metal_strongbox",
+      "pattern": [
+        "AAA",
+        "A A",
+        "AAA"
+      ],
+      "key": {
+        "A": {
+          "item": "mite:ancient_metal_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:ancient_metal_strongbox",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:copper_anvil",
+      "pattern": [
+        "AAA",
+        " B ",
+        "BBB"
+      ],
+      "key": {
+        "A": {
+          "item": "minecraft:copper_block"
+        },
+        "B": {
+          "item": "minecraft:copper_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:copper_anvil",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:silver_anvil",
+      "pattern": [
+        "AAA",
+        " B ",
+        "BBB"
+      ],
+      "key": {
+        "A": {
+          "item": "mite:silver_block"
+        },
+        "B": {
+          "item": "mite:silver_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:silver_anvil",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:golden_anvil",
+      "pattern": [
+        "AAA",
+        " B ",
+        "BBB"
+      ],
+      "key": {
+        "A": {
+          "item": "minecraft:gold_block"
+        },
+        "B": {
+          "item": "minecraft:gold_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:golden_anvil",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:mithril_anvil",
+      "pattern": [
+        "AAA",
+        " B ",
+        "BBB"
+      ],
+      "key": {
+        "A": {
+          "item": "mite:mithril_block"
+        },
+        "B": {
+          "item": "mite:mithril_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:mithril_anvil",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:adamantium_anvil",
+      "pattern": [
+        "AAA",
+        " B ",
+        "BBB"
+      ],
+      "key": {
+        "A": {
+          "item": "mite:adamantium_block"
+        },
+        "B": {
+          "item": "mite:adamantium_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:adamantium_anvil",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:ancient_metal_anvil",
+      "pattern": [
+        "AAA",
+        " B ",
+        "BBB"
+      ],
+      "key": {
+        "A": {
+          "item": "mite:ancient_metal_block"
+        },
+        "B": {
+          "item": "mite:ancient_metal_ingot"
+        }
+      },
+      "result": {
+        "id": "mite:ancient_metal_anvil",
+        "count": 1
+      }
+    },
+    {
+      "id": "mite:emerald_enchanting_table",
+      "pattern": [
+        " A ",
+        "BCB",
+        "CCC"
+      ],
+      "key": {
+        "A": {
+          "item": "minecraft:book"
+        },
+        "B": {
+          "item": "minecraft:emerald"
+        },
+        "C": {
+          "item": "minecraft:obsidian"
+        }
+      },
+      "result": {
+        "id": "mite:emerald_enchanting_table",
+        "count": 1
+      }
+    },
+    {
+      "id": "minecraft:anvil",
+      "pattern": [
+        "AAA",
+        " B ",
+        "BBB"
+      ],
+      "key": {
+        "A": {
+          "item": "minecraft:iron_block"
+        },
+        "B": {
+          "item": "minecraft:iron_ingot"
+        }
+      },
+      "result": {
+        "id": "minecraft:anvil",
+        "count": 1
+      }
+    }
+  ]
+}
