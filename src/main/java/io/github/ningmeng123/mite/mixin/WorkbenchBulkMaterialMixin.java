@@ -24,6 +24,7 @@ public abstract class WorkbenchBulkMaterialMixin {
                 moved |= original.call(menu, stack, start, end, reverse);
                 if (stack.getCount() >= before) break;
             }
+            if (moved) while (!stack.isEmpty()) player.drop(stack.split(Math.min(stack.getCount(), stack.getMaxStackSize())), false);
         }
         return moved;
     }

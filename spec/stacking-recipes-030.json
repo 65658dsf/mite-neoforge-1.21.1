@@ -1,0 +1,2407 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.259",
+  "purpose": "现代配方单次产物可以跨越多堆；只更换宽松结果编解码器，保留原配方、产量与解锁 ID。",
+  "source_artifact": "build/moddev/artifacts/neoforge-21.1.259-client-extra-aka-minecraft-resources.jar",
+  "source_artifact_sha256": "8e9cf6f4b6eafb1c6bf745a67a61dd1736f31865cad409e5b2bec918667dab5e",
+  "stacking_map": "spec/stacking-map-030.json",
+  "stacking_map_sha256": "9d4b15a94309e13f8347c05be10b6dbdec434639c18b24ffaed52f7c63221d79",
+  "rerun_semantics": "已生成 mite:stacking_shaped/mite:stacking_shapeless 不视作其他覆盖；重跑不减少本批条目。其他覆盖优先保留。",
+  "summary": {
+    "native_recipe_count": 1290,
+    "native_over_limit_results": 71,
+    "adapted_recipe_count": 66,
+    "adapted_type_counts": {
+      "mite:stacking_shaped": 46,
+      "mite:stacking_shapeless": 20
+    },
+    "existing_override_count": 5,
+    "unsupported_recipe_count": 0
+  },
+  "entries": [
+    {
+      "id": "minecraft:acacia_door",
+      "source_entry": "data/minecraft/recipe/acacia_door.json",
+      "source_entry_sha256": "c35c7fcdd481ca3f58ca1b4892bdfcfa88539b7f2354e455f823d3fb8879ac9f",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:acacia_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:acacia_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:acacia_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:bamboo_door",
+      "source_entry": "data/minecraft/recipe/bamboo_door.json",
+      "source_entry_sha256": "247c137af08c59e642910485a98ad2aa4f817a0e4654b82f8fa8360f72dcd893",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:bamboo_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:bamboo_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:bamboo_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:birch_door",
+      "source_entry": "data/minecraft/recipe/birch_door.json",
+      "source_entry_sha256": "d47e7ef0a7b40d543a62eb55154d3d65efed81b352639a77a8138fa7349b1394",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:birch_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:birch_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:birch_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:black_concrete_powder",
+      "source_entry": "data/minecraft/recipe/black_concrete_powder.json",
+      "source_entry_sha256": "fd308e05ca4747465732e8643044fff8e348851b5976575a009e943f5260b6d3",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:black_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:black_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:black_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:black_stained_glass",
+      "source_entry": "data/minecraft/recipe/black_stained_glass.json",
+      "source_entry_sha256": "1c614441ee188f1c76847d75875ddc99cbaed65909c878e21ba3f5108798d959",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:black_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:black_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:black_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:black_terracotta",
+      "source_entry": "data/minecraft/recipe/black_terracotta.json",
+      "source_entry_sha256": "e7f6678ac2815347156a119a74beca61cc738bdb8740f3c88dfba1252ecc321c",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:black_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:black_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:black_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:blue_concrete_powder",
+      "source_entry": "data/minecraft/recipe/blue_concrete_powder.json",
+      "source_entry_sha256": "3a2b39e54750a11d6e7b0f5013f81525bd9d4560ddad28f715836cc6bbc2c76a",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:blue_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:blue_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:blue_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:blue_stained_glass",
+      "source_entry": "data/minecraft/recipe/blue_stained_glass.json",
+      "source_entry_sha256": "baecb1622966a9e8e76f3ec66598cb45f793254b333d515c5d70c8990a254dfb",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:blue_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:blue_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:blue_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:blue_terracotta",
+      "source_entry": "data/minecraft/recipe/blue_terracotta.json",
+      "source_entry_sha256": "26b33520589b7bb0b2500e731249b203f01986a9e046fb004791376495e0c0dc",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:blue_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:blue_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:blue_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:brown_concrete_powder",
+      "source_entry": "data/minecraft/recipe/brown_concrete_powder.json",
+      "source_entry_sha256": "b3b571f86a8c3647fdc8ddaf1a9dd875e3723998d610ebce3ea0f4d49ae72e55",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:brown_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:brown_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:brown_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:brown_stained_glass",
+      "source_entry": "data/minecraft/recipe/brown_stained_glass.json",
+      "source_entry_sha256": "ee0e11aae3828803a6c238fd33129daceec66a4dfa43326cfdcfa75d17970946",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:brown_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:brown_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:brown_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:brown_terracotta",
+      "source_entry": "data/minecraft/recipe/brown_terracotta.json",
+      "source_entry_sha256": "0c9355567ac332c7c4b30f48f2b155273544e033599b4e89da7278616f48b7f8",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:brown_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:brown_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:brown_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:cherry_door",
+      "source_entry": "data/minecraft/recipe/cherry_door.json",
+      "source_entry_sha256": "72f5dc027df95000ff07164574a2097b0928422cdef6a2a355fe46d0c0fee58f",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:cherry_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:cherry_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:cherry_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:crimson_door",
+      "source_entry": "data/minecraft/recipe/crimson_door.json",
+      "source_entry_sha256": "ff7da7bf081276459d08be1b110aea4d9f3513f6c54920a101ee2e9bfb2a91de",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:crimson_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:crimson_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:crimson_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:cyan_concrete_powder",
+      "source_entry": "data/minecraft/recipe/cyan_concrete_powder.json",
+      "source_entry_sha256": "27208a40c325a8525caff091df8aeef56e0d91f198f47ee7f7391b545f2ad415",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:cyan_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:cyan_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:cyan_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:cyan_stained_glass",
+      "source_entry": "data/minecraft/recipe/cyan_stained_glass.json",
+      "source_entry_sha256": "53aa16a97e013a7148bf147020ef04055522b021f75f1ee2202d63411d9a5210",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:cyan_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:cyan_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:cyan_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:cyan_terracotta",
+      "source_entry": "data/minecraft/recipe/cyan_terracotta.json",
+      "source_entry_sha256": "dd8476b14d6288ce53308203860a3ab718ce7a42746b875b84c0d84fda469748",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:cyan_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:cyan_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:cyan_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:dark_oak_door",
+      "source_entry": "data/minecraft/recipe/dark_oak_door.json",
+      "source_entry_sha256": "b51de12b535008b657ab572aec620b83856e99c49d4bbbdb2a352114f207419b",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:dark_oak_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:dark_oak_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:dark_oak_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:gray_concrete_powder",
+      "source_entry": "data/minecraft/recipe/gray_concrete_powder.json",
+      "source_entry_sha256": "bdcf2669cbb47db91330b099e7a9105b3a9fbc5f31f9782a45a2494cca37c68b",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:gray_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:gray_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:gray_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:gray_stained_glass",
+      "source_entry": "data/minecraft/recipe/gray_stained_glass.json",
+      "source_entry_sha256": "8a4421d67ab6501f06c80d29bb73de3e66a5a37ce1e038317986e221c07d1764",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:gray_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:gray_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:gray_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:gray_terracotta",
+      "source_entry": "data/minecraft/recipe/gray_terracotta.json",
+      "source_entry_sha256": "87415e0f31d943a8945d88bd86bfb588544c2e7a5da006af462c3e262ea366cf",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:gray_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:gray_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:gray_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:green_concrete_powder",
+      "source_entry": "data/minecraft/recipe/green_concrete_powder.json",
+      "source_entry_sha256": "942fbe8a40af3547d2cb25e67850284daada9b880ee17abc93bac63431dc3e94",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:green_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:green_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:green_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:green_stained_glass",
+      "source_entry": "data/minecraft/recipe/green_stained_glass.json",
+      "source_entry_sha256": "a269d2d7170cf3810f700c0c5cb19872744f695ebb31fbf448d4f77ea3c9b67e",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:green_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:green_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:green_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:green_terracotta",
+      "source_entry": "data/minecraft/recipe/green_terracotta.json",
+      "source_entry_sha256": "07b09e656aa7e60d18bbb972f1c30748589f131983d27f41548410acb86a6376",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:green_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:green_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:green_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:iron_door",
+      "source_entry": "data/minecraft/recipe/iron_door.json",
+      "source_entry_sha256": "a592434674ed666d7743dd05db59ecb20f4739c1603fa074c4f6981fed6c947d",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:iron_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "key": {
+          "#": {
+            "item": "minecraft:iron_ingot"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:iron_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:jungle_door",
+      "source_entry": "data/minecraft/recipe/jungle_door.json",
+      "source_entry_sha256": "6a60c4ed74ed925f7cb6571b4a5ba8d65065bb8ae09a8b0ff8c12fcf17236a76",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:jungle_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:jungle_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:jungle_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:light_blue_concrete_powder",
+      "source_entry": "data/minecraft/recipe/light_blue_concrete_powder.json",
+      "source_entry_sha256": "a71d3932d635f904da6b21d64c74828db710ee4a0b309b44a28530af0dd396fe",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:light_blue_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:light_blue_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:light_blue_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:light_blue_stained_glass",
+      "source_entry": "data/minecraft/recipe/light_blue_stained_glass.json",
+      "source_entry_sha256": "121e110f3e6e63eef3bea308030795e1b99baed9bbb0b6c4c30f707bdbcbb844",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:light_blue_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:light_blue_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:light_blue_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:light_blue_terracotta",
+      "source_entry": "data/minecraft/recipe/light_blue_terracotta.json",
+      "source_entry_sha256": "e073c126e0280f55851761badf5cf2d97412dc12c7182dd9edcf956eda929dce",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:light_blue_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:light_blue_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:light_blue_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:light_gray_concrete_powder",
+      "source_entry": "data/minecraft/recipe/light_gray_concrete_powder.json",
+      "source_entry_sha256": "c13424a005078a5a70c971ca3470e0a9cc2056fe59e9248b6890c8e16a05014e",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:light_gray_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:light_gray_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:light_gray_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:light_gray_stained_glass",
+      "source_entry": "data/minecraft/recipe/light_gray_stained_glass.json",
+      "source_entry_sha256": "1336e3ae28ce914b0f08e4e3f223b3e88676ddca60444a2818af779d39733ac2",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:light_gray_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:light_gray_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:light_gray_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:light_gray_terracotta",
+      "source_entry": "data/minecraft/recipe/light_gray_terracotta.json",
+      "source_entry_sha256": "944513f5a4a2095ffda140e3040e34ba3e9e33d6f020185199ef5a32e2f42e9c",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:light_gray_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:light_gray_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:light_gray_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:lime_concrete_powder",
+      "source_entry": "data/minecraft/recipe/lime_concrete_powder.json",
+      "source_entry_sha256": "70ae8fd4d9a764b8e41a647410517b2a8f246f0a372e7122df01da43d15eed34",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:lime_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:lime_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:lime_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:lime_stained_glass",
+      "source_entry": "data/minecraft/recipe/lime_stained_glass.json",
+      "source_entry_sha256": "c10c07e1c74c0aeaedcfd1397338dcdf05abfc1ecdc5db5db9bf6220feeedfff",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:lime_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:lime_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:lime_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:lime_terracotta",
+      "source_entry": "data/minecraft/recipe/lime_terracotta.json",
+      "source_entry_sha256": "a044f3d3fcd9269367bc71499d9e32679fcdaa73303f49429deccfd24f45f9d7",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:lime_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:lime_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:lime_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:magenta_concrete_powder",
+      "source_entry": "data/minecraft/recipe/magenta_concrete_powder.json",
+      "source_entry_sha256": "155df239455e40f01595633a76abd585870263002b967b17834d318e8c251264",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:magenta_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:magenta_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:magenta_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:magenta_stained_glass",
+      "source_entry": "data/minecraft/recipe/magenta_stained_glass.json",
+      "source_entry_sha256": "b5fa6f46e4422697a9a84d477a949155d198a81f08a9bb04742ad78f707c2f94",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:magenta_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:magenta_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:magenta_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:magenta_terracotta",
+      "source_entry": "data/minecraft/recipe/magenta_terracotta.json",
+      "source_entry_sha256": "276de58d50c6d95dc85d352eaef4c921691e310cbc21918ce309c1a7b6543f37",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:magenta_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:magenta_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:magenta_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:mangrove_door",
+      "source_entry": "data/minecraft/recipe/mangrove_door.json",
+      "source_entry_sha256": "15cfa1b924e7e3c2751a5591fd84ece310421b3ceec7a5fe59072e0cbff35dc2",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:mangrove_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:mangrove_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:mangrove_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:netherite_ingot_from_netherite_block",
+      "source_entry": "data/minecraft/recipe/netherite_ingot_from_netherite_block.json",
+      "source_entry_sha256": "72df87ef32f1b7d36d3f67b895261d4be66b9c0bf248121438cfe8ff6ea2cc2d",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:netherite_ingot",
+      "output_count": 9,
+      "maximum_stack": 8,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "group": "netherite_ingot",
+        "ingredients": [
+          {
+            "item": "minecraft:netherite_block"
+          }
+        ],
+        "result": {
+          "count": 9,
+          "id": "minecraft:netherite_ingot"
+        }
+      }
+    },
+    {
+      "id": "minecraft:oak_door",
+      "source_entry": "data/minecraft/recipe/oak_door.json",
+      "source_entry_sha256": "690e573c0779775f0334f0f9931e5105f70f4c0f0dfca2268c707188538ba7e2",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:oak_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:oak_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:oak_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:orange_concrete_powder",
+      "source_entry": "data/minecraft/recipe/orange_concrete_powder.json",
+      "source_entry_sha256": "42c366ea4f767bd3779b97027361ce3271544468bcb25a36ab5c0c86d85e2d54",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:orange_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:orange_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:orange_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:orange_stained_glass",
+      "source_entry": "data/minecraft/recipe/orange_stained_glass.json",
+      "source_entry_sha256": "c71ae13df1bea7a90d93cec46d15d2e4336550144fa36c891dd94265f63be90d",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:orange_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:orange_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:orange_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:orange_terracotta",
+      "source_entry": "data/minecraft/recipe/orange_terracotta.json",
+      "source_entry_sha256": "2bbf15a111e7afe1db027364d34bbf855a41aff2b08e71ac65da101269a7d41b",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:orange_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:orange_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:orange_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:pink_concrete_powder",
+      "source_entry": "data/minecraft/recipe/pink_concrete_powder.json",
+      "source_entry_sha256": "09fff64a250f093a7ee9910dfd5687b3a212dfcf3262f71124ab4ecb96c8cb8d",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:pink_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:pink_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:pink_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:pink_stained_glass",
+      "source_entry": "data/minecraft/recipe/pink_stained_glass.json",
+      "source_entry_sha256": "d030d06e0fb872d9fb3b67b1ff7a5f691b5931ec8ed0290d7ada5842a438da16",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:pink_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:pink_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:pink_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:pink_terracotta",
+      "source_entry": "data/minecraft/recipe/pink_terracotta.json",
+      "source_entry_sha256": "afbd8f5abc491d1734fe928d35cfda99b1713c99cff17eeb3dbd0bc29205f288",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:pink_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:pink_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:pink_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:purple_concrete_powder",
+      "source_entry": "data/minecraft/recipe/purple_concrete_powder.json",
+      "source_entry_sha256": "d5999aeb8e4e0dc11b31c00480b0ca377c73767a29dfde0b882beab119a769da",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:purple_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:purple_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:purple_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:purple_stained_glass",
+      "source_entry": "data/minecraft/recipe/purple_stained_glass.json",
+      "source_entry_sha256": "e78cb1ed92b0915705791dd2edec68b0544321d57ff9cae60674b0d0890f0dd6",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:purple_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:purple_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:purple_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:purple_terracotta",
+      "source_entry": "data/minecraft/recipe/purple_terracotta.json",
+      "source_entry_sha256": "c9d9f0425947467a626e013af561a6f6603aebd0b339e124f505ec454ace21cd",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:purple_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:purple_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:purple_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:rail",
+      "source_entry": "data/minecraft/recipe/rail.json",
+      "source_entry_sha256": "d8b6e062e337338fa27491600c12967048d7ee5619962833e2cd6eda59a6c78e",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:rail",
+      "output_count": 16,
+      "maximum_stack": 8,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "#": {
+            "item": "minecraft:stick"
+          },
+          "X": {
+            "item": "minecraft:iron_ingot"
+          }
+        },
+        "pattern": [
+          "X X",
+          "X#X",
+          "X X"
+        ],
+        "result": {
+          "count": 16,
+          "id": "minecraft:rail"
+        }
+      }
+    },
+    {
+      "id": "minecraft:raw_copper",
+      "source_entry": "data/minecraft/recipe/raw_copper.json",
+      "source_entry_sha256": "ad5ef9603c887e44ae2423e8e1812b3650f744f3119643b527761a6d7fc71b22",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:raw_copper",
+      "output_count": 9,
+      "maximum_stack": 8,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "minecraft:raw_copper_block"
+          }
+        ],
+        "result": {
+          "count": 9,
+          "id": "minecraft:raw_copper"
+        }
+      }
+    },
+    {
+      "id": "minecraft:raw_gold",
+      "source_entry": "data/minecraft/recipe/raw_gold.json",
+      "source_entry_sha256": "cca43d43ef03c315f67ffaf74a569dbcb1a594c2077c86097ff6a7b26e4664f8",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:raw_gold",
+      "output_count": 9,
+      "maximum_stack": 8,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "minecraft:raw_gold_block"
+          }
+        ],
+        "result": {
+          "count": 9,
+          "id": "minecraft:raw_gold"
+        }
+      }
+    },
+    {
+      "id": "minecraft:raw_iron",
+      "source_entry": "data/minecraft/recipe/raw_iron.json",
+      "source_entry_sha256": "a6c87d4b4c43944ea42f6e62d58a1982f348e834bdc1931d4cb56abbbc4bd8e4",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:raw_iron",
+      "output_count": 9,
+      "maximum_stack": 8,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "minecraft:raw_iron_block"
+          }
+        ],
+        "result": {
+          "count": 9,
+          "id": "minecraft:raw_iron"
+        }
+      }
+    },
+    {
+      "id": "minecraft:red_concrete_powder",
+      "source_entry": "data/minecraft/recipe/red_concrete_powder.json",
+      "source_entry_sha256": "98633837a5efbf3a2ef413a7448800d7008a605bd29903ff927044d6bc35a730",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:red_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:red_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:red_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:red_stained_glass",
+      "source_entry": "data/minecraft/recipe/red_stained_glass.json",
+      "source_entry_sha256": "62c4fc3f11760adfb3f27cbbe38fdd1ab6aa0bb06502c5a2332cda2955890322",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:red_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:red_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:red_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:red_terracotta",
+      "source_entry": "data/minecraft/recipe/red_terracotta.json",
+      "source_entry_sha256": "caa8f0b96990d47fdbfafad6a59228814c90d7bbdeda1c24354e38c88974717a",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:red_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:red_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:red_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:scaffolding",
+      "source_entry": "data/minecraft/recipe/scaffolding.json",
+      "source_entry_sha256": "0923d3ff906935eba61eef5d79e153c9b22995269243bf5f1966f94b307bb4bd",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:scaffolding",
+      "output_count": 6,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "I": {
+            "item": "minecraft:bamboo"
+          },
+          "~": {
+            "item": "minecraft:string"
+          }
+        },
+        "pattern": [
+          "I~I",
+          "I I",
+          "I I"
+        ],
+        "result": {
+          "count": 6,
+          "id": "minecraft:scaffolding"
+        }
+      }
+    },
+    {
+      "id": "minecraft:spruce_door",
+      "source_entry": "data/minecraft/recipe/spruce_door.json",
+      "source_entry_sha256": "d974a08b639509a97fd87cce2561f37f72bf122f196b69630199c861453cdab3",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:spruce_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:spruce_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:spruce_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:warped_door",
+      "source_entry": "data/minecraft/recipe/warped_door.json",
+      "source_entry_sha256": "c595e3347758fc8d201ca7d2bc4328f855ee915e6ca7f3c0f784d87c1247816e",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:warped_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "group": "wooden_door",
+        "key": {
+          "#": {
+            "item": "minecraft:warped_planks"
+          }
+        },
+        "pattern": [
+          "##",
+          "##",
+          "##"
+        ],
+        "result": {
+          "count": 3,
+          "id": "minecraft:warped_door"
+        }
+      }
+    },
+    {
+      "id": "minecraft:white_concrete_powder",
+      "source_entry": "data/minecraft/recipe/white_concrete_powder.json",
+      "source_entry_sha256": "08c55aea6906195a4b2c7f3196ba52362cdc24e31a5d3f2e15ff39c91ec7890c",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:white_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:white_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:white_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:white_stained_glass",
+      "source_entry": "data/minecraft/recipe/white_stained_glass.json",
+      "source_entry_sha256": "01e055029e0e9e8f46c639d67c01e4f24674e384569ffdc39f7d2c4312cedd1a",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:white_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:white_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:white_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:white_terracotta",
+      "source_entry": "data/minecraft/recipe/white_terracotta.json",
+      "source_entry_sha256": "51da1b97b324679dcb9c84a171d986c601052bdfb16204323de0a3a352eb048c",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:white_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:white_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:white_terracotta"
+        }
+      }
+    },
+    {
+      "id": "minecraft:yellow_concrete_powder",
+      "source_entry": "data/minecraft/recipe/yellow_concrete_powder.json",
+      "source_entry_sha256": "ecf0af617ed74659d294561bbd5dcb9d536d0363fafeca836c0d429514a272d0",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:yellow_concrete_powder",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shapeless",
+      "original_json": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "building",
+        "group": "concrete_powder",
+        "ingredients": [
+          {
+            "item": "minecraft:yellow_dye"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:sand"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          },
+          {
+            "item": "minecraft:gravel"
+          }
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:yellow_concrete_powder"
+        }
+      }
+    },
+    {
+      "id": "minecraft:yellow_stained_glass",
+      "source_entry": "data/minecraft/recipe/yellow_stained_glass.json",
+      "source_entry_sha256": "8f49dcda3f7ecd2fc863a236d26a245692e94d06e6967b4a29156a84d3a3e71a",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:yellow_stained_glass",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_glass",
+        "key": {
+          "#": {
+            "item": "minecraft:glass"
+          },
+          "X": {
+            "item": "minecraft:yellow_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:yellow_stained_glass"
+        }
+      }
+    },
+    {
+      "id": "minecraft:yellow_terracotta",
+      "source_entry": "data/minecraft/recipe/yellow_terracotta.json",
+      "source_entry_sha256": "a851e961275a52d6437f7115c8b06f442660ffdfa278e67dca25d83b57e2e464",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:yellow_terracotta",
+      "output_count": 8,
+      "maximum_stack": 4,
+      "adapted_type": "mite:stacking_shaped",
+      "original_json": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "group": "stained_terracotta",
+        "key": {
+          "#": {
+            "item": "minecraft:terracotta"
+          },
+          "X": {
+            "item": "minecraft:yellow_dye"
+          }
+        },
+        "pattern": [
+          "###",
+          "#X#",
+          "###"
+        ],
+        "result": {
+          "count": 8,
+          "id": "minecraft:yellow_terracotta"
+        }
+      }
+    }
+  ],
+  "existing_overrides": [
+    {
+      "id": "minecraft:copper_door",
+      "source_entry": "data/minecraft/recipe/copper_door.json",
+      "source_entry_sha256": "be299e7d2b3a203de7ed4744a828334a6d5b16c372de3c03e9c941199f932ba1",
+      "original_type": "minecraft:crafting_shaped",
+      "output_item": "minecraft:copper_door",
+      "output_count": 3,
+      "maximum_stack": 1,
+      "disposition": "existing_mite_override_preserved",
+      "overrides": [
+        {
+          "path": "src/generated/resources/data/minecraft/recipe/copper_door.json",
+          "type": "minecraft:crafting_shaped",
+          "sha256": "890ff82b4743055725db2e3282bfbdb13fea3a6a798a3d8a2029705d536fc022"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:copper_ingot",
+      "source_entry": "data/minecraft/recipe/copper_ingot.json",
+      "source_entry_sha256": "55da242d336bb00ce755f9547e8b8aa4a658c20a0b4d58bea45f1769248a300d",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:copper_ingot",
+      "output_count": 9,
+      "maximum_stack": 8,
+      "disposition": "existing_mite_override_preserved",
+      "overrides": [
+        {
+          "path": "src/generated/resources/data/minecraft/recipe/copper_ingot.json",
+          "type": "mite:bulk_material",
+          "sha256": "37e4c8793e977f1a1725839d9ccb0495388b2e68c62552b78af1ceb233c70044"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:copper_ingot_from_waxed_copper_block",
+      "source_entry": "data/minecraft/recipe/copper_ingot_from_waxed_copper_block.json",
+      "source_entry_sha256": "9e7189385811cfcf0ac10e89ba05e2a7a0b6cbbd6ed6e92eba3bb1418b9ecc80",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:copper_ingot",
+      "output_count": 9,
+      "maximum_stack": 8,
+      "disposition": "existing_mite_override_preserved",
+      "overrides": [
+        {
+          "path": "src/generated/resources/data/minecraft/recipe/copper_ingot_from_waxed_copper_block.json",
+          "type": "mite:bulk_material",
+          "sha256": "3cc26036ebf796b57f43f6ecdce2e89a7cb6cc11d429eefcba21dc37786c1023"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:gold_ingot_from_gold_block",
+      "source_entry": "data/minecraft/recipe/gold_ingot_from_gold_block.json",
+      "source_entry_sha256": "f5e5283fb51795ce5e0ff60261ddd64aa7e416bd3a96a6856a29d3d6547ba803",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:gold_ingot",
+      "output_count": 9,
+      "maximum_stack": 8,
+      "disposition": "existing_mite_override_preserved",
+      "overrides": [
+        {
+          "path": "src/generated/resources/data/minecraft/recipe/gold_ingot_from_gold_block.json",
+          "type": "mite:bulk_material",
+          "sha256": "d8787c7963ab35a8c34194e46b543ab3bebe292c14757421a747bc82e456f8eb"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:iron_ingot_from_iron_block",
+      "source_entry": "data/minecraft/recipe/iron_ingot_from_iron_block.json",
+      "source_entry_sha256": "c85622298dbc212fa88cfe18b8acaef85acc003a6265dc1ea522ece7e8fad480",
+      "original_type": "minecraft:crafting_shapeless",
+      "output_item": "minecraft:iron_ingot",
+      "output_count": 9,
+      "maximum_stack": 8,
+      "disposition": "existing_mite_override_preserved",
+      "overrides": [
+        {
+          "path": "src/generated/resources/data/minecraft/recipe/iron_ingot_from_iron_block.json",
+          "type": "mite:bulk_material",
+          "sha256": "81607ecbfd986426c7a0271b0ba625b4074d769e748c81825d52dcd23e20ca5c"
+        }
+      ]
+    }
+  ],
+  "unsupported": []
+}

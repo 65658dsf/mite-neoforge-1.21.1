@@ -593,12 +593,32 @@ public final class FurnaceThermalGameTests {
     }
     private static void checkFuelBatches(GameTestHelper helper, String furnace, Item fuel, int batches) {
         try (Fixture f = new Fixture(helper, furnace)) {
-            // Cactus and green dye allow a seventeenth unfunded item; source meat stacks cap at sixteen.
-            f.input(Items.CACTUS, batches + 1); f.fuel(fuel, 1); f.tick(batches * 200);
-            helper.assertValueEqual(f.furnace.getItem(2).getCount(), batches, "The source fuel supports exactly the independently extracted number of full ordinary batches");
+            // Each source cactus stack now holds four. Supply and collect legal
+            // batches without spending extra game ticks between completed cycles.
+            f.fuel(fuel, 1);
+            int collected = 0;
+            for (int batch = 0; batch < batches; batch++) {
+                f.input(Items.CACTUS, 1);
+                f.tick(199);
+                helper.assertTrue(f.furnace.getItem(2).isEmpty(), "Each ordinary source batch still needs the full two hundred cooking ticks");
+                helper.assertValueEqual(f.furnace.getItem(0).getCount(), 1, "A legal single cactus remains until its complete source cycle");
+                f.tick(1);
+                ItemStack extracted = f.furnace.removeItem(2, 1);
+                helper.assertTrue(extracted.is(Items.GREEN_DYE) && extracted.getCount() == 1,
+                        "Each completed real source cycle yields one legally extracted green dye");
+                collected += extracted.getCount();
+                helper.assertTrue(f.furnace.getItem(0).isEmpty() && f.furnace.getItem(2).isEmpty(),
+                        "Completed inputs are consumed once and collecting output leaves room for the next legal batch");
+                helper.assertValueEqual(f.saved().getInt("BurnTime"), (batches - batch - 1) * 200 + 1,
+                        "Source coal1600, lava3200 and blaze2400 keep their independently extracted remaining fuel duration");
+            }
+            helper.assertValueEqual(collected, batches, "The source fuel supports exactly the independently extracted eight, sixteen or twelve full ordinary batches");
+            f.input(Items.CACTUS, 1);
             f.tick(200);
-            helper.assertValueEqual(f.furnace.getItem(2).getCount(), batches, "The exhausted source fuel cannot fund an extra batch");
+            helper.assertTrue(f.furnace.getItem(2).isEmpty(), "The exhausted source fuel cannot fund an extra batch");
             helper.assertValueEqual(f.furnace.getItem(0).getCount(), 1, "The unfunded next input is preserved");
+            helper.assertValueEqual(f.saved().getInt("BurnTime"), 0, "The single original fuel is exhausted without any refill");
+            helper.assertValueEqual(f.saved().getInt("CookTime"), 0, "The unfunded next batch cannot retain cooking progress");
         }
     }
     private static Item item(String id) {

@@ -90,8 +90,8 @@ public final class MetalMaterialGameTests {
             helper.assertTrue(helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                     CraftingInput.of(3, 3, mixed), helper.getLevel()).isEmpty(), "Mixed metals cannot satisfy the shaped packing recipe");
         }
-        helper.assertValueEqual(new ItemStack(Items.RAW_COPPER).getMaxStackSize(), 64, "Raw copper is outside the ingot-only component patch");
-        helper.assertValueEqual(new ItemStack(Items.NETHERITE_INGOT).getMaxStackSize(), 64, "Modern netherite is outside this seven-metal batch");
+        helper.assertValueEqual(new ItemStack(Items.RAW_COPPER).getMaxStackSize(), 8, "Modern raw copper follows the explicit source-metal family stack adaptation");
+        helper.assertValueEqual(new ItemStack(Items.NETHERITE_INGOT).getMaxStackSize(), 8, "Modern netherite follows the explicit source-ingot family stack adaptation");
         helper.succeed();
     }
 
@@ -293,7 +293,7 @@ public final class MetalMaterialGameTests {
                 player.containerMenu = menu;
                 try {
                     player.getInventory().clearContent();
-                    for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(Items.DIRT, 64));
+                    for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(Items.DIRT, 4));
                     menu.getSlot(1).set(new ItemStack(Items.COPPER_BLOCK, 2));
                     Set<UUID> existing = nearbyItems(helper, player).stream().map(ItemEntity::getUUID).collect(Collectors.toSet());
                     TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
@@ -311,7 +311,7 @@ public final class MetalMaterialGameTests {
                     clearCrafting(menu);
                     for (int target : new int[]{0, 40}) {
                         player.getInventory().clearContent();
-                        for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(Items.DIRT, 64));
+                        for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(Items.DIRT, 4));
                         player.getInventory().setItem(target, ItemStack.EMPTY);
                         menu.getSlot(1).set(new ItemStack(Items.COPPER_BLOCK));
                         existing = nearbyItems(helper, player).stream().map(ItemEntity::getUUID).collect(Collectors.toSet());

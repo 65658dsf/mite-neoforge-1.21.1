@@ -191,8 +191,8 @@ public final class FurnaceJeiRecipesGameTests {
                     "Every displayed clay batch returns the same number of bricks");
         }
         try (Fixture f = new Fixture(helper, "mite:clay_oven")) {
-            f.set(Items.CLAY_BALL, 4, Items.CHARCOAL, 1); f.furnace.setItem(2, new ItemStack(Items.BRICK, 63)); f.tick(200);
-            helper.assertValueEqual(f.furnace.getItem(2).getCount(), 64, "A partially full actual output slot can receive only one more brick");
+            f.set(Items.CLAY_BALL, 4, Items.CHARCOAL, 1); f.furnace.setItem(2, new ItemStack(Items.BRICK, 7)); f.tick(200);
+            helper.assertValueEqual(f.furnace.getItem(2).getCount(), 8, "A source-limit eight-brick output slot can receive only one more brick");
             helper.assertValueEqual(f.furnace.getItem(0).getCount(), 3, "The real engine preserves clay that cannot fit, even though a full batch viewer page shows four");
         }
         helper.succeed();

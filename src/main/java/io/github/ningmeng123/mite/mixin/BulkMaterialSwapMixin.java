@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.crafting.BulkMaterialTransfers;
+import io.github.ningmeng123.mite.crafting.TimedCraftingController;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -27,9 +28,8 @@ public abstract class BulkMaterialSwapMixin {
         int firstCount = Math.min(result.getCount(), result.getMaxStackSize());
         original.call(inventory, targetSlot, result.copyWithCount(firstCount));
         ItemStack remainder = result.copyWithCount(result.getCount() - firstCount);
-        // Inventory.add discards excess in creative mode. Check capacity first so the batch stays conserved in every mode.
-        boolean hasSpace = inventory.getFreeSlot() >= 0 || inventory.getSlotWithRemainingSpace(remainder) >= 0;
-        if ((!hasSpace || !inventory.add(remainder)) && !remainder.isEmpty()) player.drop(remainder, false);
-        // Leave the original result/count untouched so vanilla's one onTake consumes one block and records nine crafted items.
+        TimedCraftingController.insertWithoutDiscard(inventory, remainder);
+        while (!remainder.isEmpty()) player.drop(remainder.split(Math.min(remainder.getCount(), remainder.getMaxStackSize())), false);
+        // Keep the complete result/count for vanilla's one onTake and its actual batch statistics.
     }
 }

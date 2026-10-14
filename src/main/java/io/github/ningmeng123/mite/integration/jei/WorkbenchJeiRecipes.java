@@ -53,7 +53,9 @@ public final class WorkbenchJeiRecipes {
                 || recipe instanceof FoodShapedRecipe || recipe instanceof FoodShapelessRecipe
                 || recipe instanceof BulkMaterialRecipe || recipe instanceof WorkbenchDismantleRecipe
                 || recipe instanceof io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe
-                || recipe instanceof io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe;
+                || recipe instanceof io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe
+                || recipe instanceof io.github.ningmeng123.mite.crafting.StackBatchShapedRecipe
+                || recipe instanceof io.github.ningmeng123.mite.crafting.StackBatchShapelessRecipe;
     }
 
     public static Index index(Level level) {

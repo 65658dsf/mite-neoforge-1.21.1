@@ -24,6 +24,8 @@ public abstract class InventoryBulkMaterialMixin {
                 moved |= original.call(menu, stack, start, end, reverse);
                 if (stack.getCount() >= before) break;
             }
+            // A partial successful transfer still crafts the whole batch. Keep overflow legal before onTake.
+            if (moved) while (!stack.isEmpty()) player.drop(stack.split(Math.min(stack.getCount(), stack.getMaxStackSize())), false);
         }
         // If no more space exists, vanilla retains its normal no-move or remainder-drop behavior.
         return moved;

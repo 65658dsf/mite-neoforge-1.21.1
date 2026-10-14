@@ -101,7 +101,18 @@
     "UtilityItemDamageMixin",
     "StoneBucketDestructionMixin",
     "UniqueRecordLifecycleMixin",
-    "WitherwoodFallCushionMixin"
+    "WitherwoodFallCushionMixin",
+    "SourceStackLimitMixin",
+    "SlotStackSafetyMixin",
+    "HopperStackTransferMixin",
+    "StackBatchPickupMixin",
+    "LegacyDispenserStackMixin",
+    "LegacyDropperStackMixin",
+    "LegacyCapabilityStackMixin",
+    "LegacySwapStackMixin",
+    "MerchantBatchContainerMixin",
+    "MerchantBatchClickMixin",
+    "MerchantBatchQuickMoveMixin"
   ],
   "client": [
     "client.GuiFoodMixin",

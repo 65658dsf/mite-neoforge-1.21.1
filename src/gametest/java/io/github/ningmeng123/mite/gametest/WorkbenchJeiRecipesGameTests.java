@@ -424,7 +424,9 @@ public final class WorkbenchJeiRecipesGameTests {
         Set<Class<?>> supported = Set.of(ShapedRecipe.class, ShapelessRecipe.class, FoodShapedRecipe.class,
                 FoodShapelessRecipe.class, BulkMaterialRecipe.class, WorkbenchDismantleRecipe.class,
                 io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe.class,
-                io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe.class);
+                io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe.class,
+                io.github.ningmeng123.mite.crafting.StackBatchShapedRecipe.class,
+                io.github.ningmeng123.mite.crafting.StackBatchShapelessRecipe.class);
         for (Class<?> type : supported) {
             CraftingRecipe actual = loaded.stream().map(RecipeHolder::value).filter(recipe -> recipe.getClass() == type).findFirst().orElseThrow();
             helper.assertTrue(WorkbenchJeiRecipes.supports(actual), "The viewer supports each explicitly integrated recipe class actually loaded by the server");

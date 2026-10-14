@@ -58,6 +58,8 @@ public final class Mite {
         MiteLootModifiers.register(modBus);
         modBus.addListener(WoodenClubBehavior::modifyComponents);
         modBus.addListener(GrassMining::modifyShears);
+        io.github.ningmeng123.mite.registry.MiteItemStacking.register(modBus);
+        io.github.ningmeng123.mite.registry.StackingRecipeSerializers.register(modBus);
         LOGGER.info("MITE: Modern initialized for Minecraft 1.21.1");
     }
 }
