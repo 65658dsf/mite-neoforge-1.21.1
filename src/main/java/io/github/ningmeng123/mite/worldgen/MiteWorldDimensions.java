@@ -24,6 +24,5 @@ public final class MiteWorldDimensions {
     private MiteWorldDimensions() {}
     public static void register(IEventBus bus) {
         GENERATORS.register(bus);
-        bus.addListener(R196UnderworldSpawns::registerSpawnPlacements);
     }
 }

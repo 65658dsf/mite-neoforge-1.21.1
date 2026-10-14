@@ -65,16 +65,20 @@ public final class ArrowRecovery {
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public static void drop(LivingDropsEvent event) {
         LivingEntity entity = event.getEntity();
+        boolean sourceMob = entity instanceof io.github.ningmeng123.mite.entity.R196Mob
+                || io.github.ningmeng123.mite.rules.R196VanillaMobRules.managed(entity.getType());
+        boolean mayReturn = !sourceMob || !entity.isBaby()
+                && entity.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBLOOT);
         Impact impact = IMPACT.get();
         if (impact != null && impact.target == entity && !impact.deathDropsProcessed) {
             impact.deathDropsProcessed = true;
-            if (impact.arrow.getRandom().nextFloat() < impact.material.recovery)
+            if (mayReturn && impact.arrow.getRandom().nextFloat() < impact.material.recovery)
                 event.getDrops().add(new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), impact.arrow.getPickupItemStackOrigin().copyWithCount(1)));
         }
         if (entity.hasData(CONTAINED)) {
             List<String> arrows = entity.getData(CONTAINED);
             entity.removeData(CONTAINED);
-            for (String id : arrows) {
+            if (mayReturn) for (String id : arrows) {
                 ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)));
                 if (!stack.isEmpty()) event.getDrops().add(new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), stack));
             }

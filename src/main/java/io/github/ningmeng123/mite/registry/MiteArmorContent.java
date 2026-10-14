@@ -24,6 +24,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.IEventBus;
@@ -86,6 +87,14 @@ public final class MiteArmorContent {
         return DEFINITIONS.stream().filter(d -> d.id().equals(id)).findFirst().orElse(null);
     }
     public static Item get(String id) { return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)); }
+    /** ItemHorseArmor.getProtection; native iron/gold are outside the added-item definition list. */
+    public static int horseProtection(ItemStack stack) {
+        if (stack.is(Items.GOLDEN_HORSE_ARMOR)) return 3;
+        if (stack.is(Items.IRON_HORSE_ARMOR)) return 5;
+        Definition source=definition(stack.getItem());
+        if (source!=null && source.horse()) return source.horseProtection();
+        return stack.getItem() instanceof AnimalArmorItem modern ? modern.getMaterial().value().getDefense(ArmorItem.Type.BODY) : 0;
+    }
     public static Item chain(String material) {
         return get(CHAINS.stream().filter(d -> d.material().equals(material)).findFirst().orElseThrow().id());
     }
@@ -127,6 +136,14 @@ public final class MiteArmorContent {
     private static void modifyDefaults(ModifyDefaultComponentsEvent event) {
         // The retained BlockItem still places modern chains. Source chains are eight-stack metal components.
         event.modify(Items.CHAIN, builder -> builder.set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, 8));
+        // R196 gold barding is three, while modern gold is seven. Keep displayed attributes and damage in agreement.
+        var gold=net.minecraft.world.item.component.ItemAttributeModifiers.builder();
+        for (var entry:Items.GOLDEN_HORSE_ARMOR.getDefaultAttributeModifiers().modifiers()) {
+            var modifier=entry.modifier();
+            gold.add(entry.attribute(),entry.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR)
+                    ? new net.minecraft.world.entity.ai.attributes.AttributeModifier(modifier.id(),3D,modifier.operation()) : modifier,entry.slot());
+        }
+        event.modify(Items.GOLDEN_HORSE_ARMOR,builder->builder.set(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS,gold.build()));
     }
     private static void creative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey().equals(CreativeModeTabs.COMBAT))

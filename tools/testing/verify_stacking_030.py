@@ -69,7 +69,7 @@ def main():
     source = read("spec/stacking-source-030.json")
     rows = mapping["mappedItems"]
     identities = {row["modern_id"] for row in rows}
-    check(len(rows) == len(identities) == 1661, "Expected 1661 distinct carried item limits")
+    check(len(rows) == len(identities) == 1691, "Expected 1691 distinct carried item limits including 031 eggs and host")
     check(all(row["modern_id"].startswith(("minecraft:", "mite:")) and 1 <= row["max_stack_size"] <= 64 for row in rows),
           "Invalid namespace or limit in source stacking table")
     check(not mapping["gaps"] and not mapping["conflicts"], "Unconfirmed identity gaps or conflicting limits in source table")

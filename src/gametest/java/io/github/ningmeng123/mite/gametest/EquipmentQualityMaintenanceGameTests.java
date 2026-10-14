@@ -221,7 +221,9 @@ public final class EquipmentQualityMaintenanceGameTests {
                 "The original wither-skeleton poor-quality override applies");
         TestZombifiedPiglin piglin = new TestZombifiedPiglin(helper.getLevel());
         piglin.makeEquipment();
-        helper.assertTrue(piglin.getMainHandItem().is(Items.GOLDEN_SWORD), "Modern zombified piglin weapon type is retained");
+        helper.assertTrue(piglin.getMainHandItem().is(Items.GOLDEN_SWORD) || piglin.getMainHandItem().is(Items.GOLDEN_PICKAXE)
+                || net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(piglin.getMainHandItem().getItem()).toString().equals("mite:golden_battle_axe"),
+                "R196 pigman chooses sword twice, battle axe or pickaxe, with the same poor quality");
         helper.assertValueEqual(EquipmentDurability.quality(piglin.getMainHandItem()), Quality.POOR,
                 "The original zombie-pigman poor-quality override applies");
         wither.discard();

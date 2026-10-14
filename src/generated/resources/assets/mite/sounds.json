@@ -1,4 +1,140 @@
 {
+  "imported.mob.demonspider.death": {
+    "sounds": [
+      "mite:imported/mob/demonspider/death"
+    ]
+  },
+  "imported.mob.demonspider.hurt": {
+    "sounds": [
+      "mite:imported/mob/demonspider/hurt1",
+      "mite:imported/mob/demonspider/hurt2"
+    ]
+  },
+  "imported.mob.demonspider.say": {
+    "sounds": [
+      "mite:imported/mob/demonspider/say1",
+      "mite:imported/mob/demonspider/say2",
+      "mite:imported/mob/demonspider/say3"
+    ]
+  },
+  "imported.mob.ghoul.death": {
+    "sounds": [
+      "mite:imported/mob/ghoul/death"
+    ]
+  },
+  "imported.mob.ghoul.hurt": {
+    "sounds": [
+      "mite:imported/mob/ghoul/hurt1",
+      "mite:imported/mob/ghoul/hurt2"
+    ]
+  },
+  "imported.mob.ghoul.say": {
+    "sounds": [
+      "mite:imported/mob/ghoul/say1",
+      "mite:imported/mob/ghoul/say2"
+    ]
+  },
+  "imported.mob.hellhound.breath": {
+    "sounds": [
+      "mite:imported/mob/hellhound/breath"
+    ]
+  },
+  "imported.mob.hellhound.death": {
+    "sounds": [
+      "mite:imported/mob/hellhound/death"
+    ]
+  },
+  "imported.mob.hellhound.hurt": {
+    "sounds": [
+      "mite:imported/mob/hellhound/hurt1",
+      "mite:imported/mob/hellhound/hurt2"
+    ]
+  },
+  "imported.mob.hellhound.say": {
+    "sounds": [
+      "mite:imported/mob/hellhound/say1",
+      "mite:imported/mob/hellhound/say2",
+      "mite:imported/mob/hellhound/say3"
+    ]
+  },
+  "imported.mob.invisiblestalker.death": {
+    "sounds": [
+      "mite:imported/mob/invisiblestalker/death"
+    ]
+  },
+  "imported.mob.invisiblestalker.hurt": {
+    "sounds": [
+      "mite:imported/mob/invisiblestalker/hurt1",
+      "mite:imported/mob/invisiblestalker/hurt2"
+    ]
+  },
+  "imported.mob.invisiblestalker.say": {
+    "sounds": [
+      "mite:imported/mob/invisiblestalker/say1",
+      "mite:imported/mob/invisiblestalker/say2",
+      "mite:imported/mob/invisiblestalker/say3"
+    ]
+  },
+  "imported.mob.shadow.death": {
+    "sounds": [
+      "mite:imported/mob/shadow/death1",
+      "mite:imported/mob/shadow/death2"
+    ]
+  },
+  "imported.mob.shadow.hurt": {
+    "sounds": [
+      "mite:imported/mob/shadow/hurt1",
+      "mite:imported/mob/shadow/hurt2"
+    ]
+  },
+  "imported.mob.shadow.say": {
+    "sounds": [
+      "mite:imported/mob/shadow/say1",
+      "mite:imported/mob/shadow/say2",
+      "mite:imported/mob/shadow/say3"
+    ]
+  },
+  "imported.mob.wight.death": {
+    "sounds": [
+      "mite:imported/mob/wight/death"
+    ]
+  },
+  "imported.mob.wight.hurt": {
+    "sounds": [
+      "mite:imported/mob/wight/hurt1",
+      "mite:imported/mob/wight/hurt2"
+    ]
+  },
+  "imported.mob.wight.say": {
+    "sounds": [
+      "mite:imported/mob/wight/say1",
+      "mite:imported/mob/wight/say2"
+    ]
+  },
+  "imported.mob.witch.cackle": {
+    "sounds": [
+      "mite:imported/mob/witch/cackle1",
+      "mite:imported/mob/witch/cackle2",
+      "mite:imported/mob/witch/cackle3"
+    ]
+  },
+  "imported.mob.witch.death": {
+    "sounds": [
+      "mite:imported/mob/witch/death"
+    ]
+  },
+  "imported.mob.witch.hurt": {
+    "sounds": [
+      "mite:imported/mob/witch/hurt"
+    ]
+  },
+  "imported.mob.wolf.howl": {
+    "sounds": [
+      "mite:imported/mob/wolf/howl1",
+      "mite:imported/mob/wolf/howl2",
+      "mite:imported/mob/wolf/howl3"
+    ]
+  },
   "record.descent": {
     "sounds": [
       {

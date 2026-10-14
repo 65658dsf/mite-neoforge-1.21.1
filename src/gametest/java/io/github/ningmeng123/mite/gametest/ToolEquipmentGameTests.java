@@ -178,6 +178,7 @@ public final class ToolEquipmentGameTests {
     @GameTest(template = "empty")
     public static void actualSilverAndBluntAttacksUseTargetBonusesAndSingleWear(GameTestHelper helper) {
         Skeleton target = helper.spawn(EntityType.SKELETON, new BlockPos(1, 2, 1));
+        target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20); // Independent combat-vector fixture, not the source six-health spawn baseline.
         target.setNoAi(true);
         target.setNoGravity(true);
         target.getAttribute(Attributes.ARMOR).setBaseValue(0);

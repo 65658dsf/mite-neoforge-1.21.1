@@ -361,6 +361,9 @@ public final class WoodenEquipmentGameTests {
     }
 
     private static void prepareTarget(Mob target) {
+        // Combat-vector fixture must survive the largest hit; source ordinary skeletons now have only six health.
+        target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100);
+        target.setHealth(100);
         target.setNoAi(true);
         target.setNoGravity(true);
         for (EquipmentSlot slot : EquipmentSlot.values()) target.setItemSlot(slot, ItemStack.EMPTY);

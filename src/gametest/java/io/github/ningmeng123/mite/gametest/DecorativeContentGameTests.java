@@ -282,12 +282,12 @@ public final class DecorativeContentGameTests {
         var cushioned = helper.spawnWithNoFreeWill(EntityType.COW, SITE);
         cushioned.moveTo(pos.getX() + .5, pos.getY(), pos.getZ() + .5);
         cushioned.causeFallDamage(8F, .5F, cushioned.damageSources().fall());
-        helper.assertTrue(Math.abs(cushioned.getHealth() - 6.4F) < .0001F, "Source bush formula preserves damage 3.6 instead of rounding");
+        helper.assertTrue(Math.abs(cushioned.getHealth() - 16.4F) < .0001F, "Source twenty-health cow loses precisely 3.6 instead of rounded damage");
         helper.getLevel().removeBlock(pos, false);
         var ordinary = helper.spawnWithNoFreeWill(EntityType.COW, SITE);
         ordinary.moveTo(pos.getX() + .5, pos.getY(), pos.getZ() + .5);
         ordinary.causeFallDamage(8F, .5F, ordinary.damageSources().fall());
-        helper.assertValueEqual(ordinary.getHealth(), 7F, "Ordinary ground retains native ceil((8-3)*.5)=3");
+        helper.assertValueEqual(ordinary.getHealth(), 17F, "Source twenty-health cow retains native ceil((8-3)*.5)=3");
         helper.succeed();
     }
     @GameTest(template = "ranged_027")
@@ -296,12 +296,12 @@ public final class DecorativeContentGameTests {
         helper.setBlock(SITE.below(), MiteResourceBlocks.NETHER_GRAVEL.get()); helper.setBlock(SITE, MiteDecorativeContent.WITHERWOOD_BUSH.get());
         var cow = helper.spawnWithNoFreeWill(EntityType.COW, SITE); cow.moveTo(pos.getX() + .5, pos.getY(), pos.getZ() + .5);
         cow.causeFallDamage(3.7F, 1F, cow.damageSources().fall());
-        helper.assertValueEqual(cow.getHealth(), 10F, "Source sub-one-point damage does not invoke hurt or healing");
+        helper.assertValueEqual(cow.getHealth(), 20F, "Source sub-one-point damage does not invoke hurt or healing");
         java.util.function.Consumer<net.neoforged.neoforge.event.entity.living.LivingFallEvent> cancel = event -> { if (event.getEntity() == cow) event.setCanceled(true); };
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.neoforged.neoforge.event.entity.living.LivingFallEvent.class, cancel);
         try {
             cow.causeFallDamage(8F, 1F, cow.damageSources().fall());
-            helper.assertValueEqual(cow.getHealth(), 10F, "Canceled fall event prevents source cushion path too");
+            helper.assertValueEqual(cow.getHealth(), 20F, "Canceled fall event prevents source cushion path too");
         } finally { net.neoforged.neoforge.common.NeoForge.EVENT_BUS.unregister(cancel); }
         helper.succeed();
     }

@@ -16,6 +16,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -97,7 +98,7 @@ public final class SourceArmorDefense {
                 source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS), fire, source.is(DamageTypeTags.IS_FALL),
                 source.is(DamageTypeTags.IS_EXPLOSION), source.is(DamageTypeTags.IS_PROJECTILE));
     }
-    public static List<Piece> pieces(Player player) {
+    public static List<Piece> pieces(LivingEntity player) {
         List<Piece> pieces = new ArrayList<>();
         for (EquipmentSlot slot : SLOTS) {
             ItemStack stack = player.getItemBySlot(slot);
@@ -109,7 +110,7 @@ public final class SourceArmorDefense {
         }
         return List.copyOf(pieces);
     }
-    private static int level(Player player, ItemStack stack, ResourceKey<Enchantment> enchantment) {
+    private static int level(LivingEntity player, ItemStack stack, ResourceKey<Enchantment> enchantment) {
         return player.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(enchantment)
                 .map(stack::getEnchantmentLevel).orElse(0);
     }

@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "mite:demon_spider",
+    "mite:wood_spider",
+    "mite:black_widow_spider",
+    "mite:netherspawn",
+    "mite:copperspine",
+    "mite:hoary_silverfish",
+    "mite:phase_spider"
+  ]
+}

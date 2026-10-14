@@ -1,0 +1,2879 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "native_living_count": 29,
+  "source_archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_input_sha256": "f862335a6ca4f2d0f18ca1a598b864a3647ea39b146591dac58c06a74f1b4439",
+  "entities": [
+    {
+      "legacy_id": 50,
+      "source_class": "tf",
+      "modern_id": "minecraft:creeper",
+      "hierarchy": [
+        "tf",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "og nextInt(3)+positive looting nextInt(looting+1); nonrecent reduce uniformly; each getter is gunpowder when recent or nextInt(3)==0. Skeleton kills separately draw one of legacy discs2256..2267.",
+      "evidence": [
+        {
+          "class": "tf",
+          "method": "a",
+          "source_file": "tf.java",
+          "start_line": 53,
+          "end_line": 57,
+          "body_sha256": "0ac77458f5b41ba5f0a3db4e2e7b5a87ace770d0ad27349d8e09c505d05a90d6"
+        },
+        {
+          "class": "tf",
+          "method": "a",
+          "source_file": "tf.java",
+          "start_line": 70,
+          "end_line": 79,
+          "body_sha256": "087d586b9a48dd69b627dc7e9e0fcda491c6085f8b3dc274f9ce6983c578f18f"
+        },
+        {
+          "class": "tf",
+          "method": "a",
+          "source_file": "tf.java",
+          "start_line": 135,
+          "end_line": 141,
+          "body_sha256": "77ff93899d7a854b1a4ab8ce1ce34a69f89a613fc59b8bc433cec7922f46661f"
+        },
+        {
+          "class": "tf",
+          "method": "a",
+          "source_file": "tf.java",
+          "start_line": 146,
+          "end_line": 149,
+          "body_sha256": "22be820b744da6e18317aa2c4a4e695ffa5d77963e3cafda532d3ccd11610b5b"
+        },
+        {
+          "class": "tf",
+          "method": "s",
+          "source_file": "tf.java",
+          "start_line": 152,
+          "end_line": 154,
+          "body_sha256": "f5f4d0ecda3fd1b1c3d2129c773585a6b73f1928bec9c4df29293156553de0b2"
+        },
+        {
+          "class": "tf",
+          "method": "a",
+          "source_file": "tf.java",
+          "start_line": 159,
+          "end_line": 162,
+          "body_sha256": "7ec8986290a32e86f1b6b353f2a4e55366fad606af8a5e9d318f72e51adfa86b"
+        },
+        {
+          "class": "tf",
+          "method": "a",
+          "source_file": "tf.java",
+          "start_line": 165,
+          "end_line": 168,
+          "body_sha256": "c1c25b87518b1455c6a1612fcd634b042548c088469bc58e406b0caf549cc3fd"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 51,
+      "source_class": "tr",
+      "modern_id": "minecraft:skeleton",
+      "hierarchy": [
+        "tr",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "type1 coal=nextInt(3+looting)-1, nonrecent reduction; recent and not massive rare nextInt(200)<5+2*looting gives skull1. type0 rusty arrows=nextInt(2+looting), nonrecent reduction. type2 no arrows. All types bones=nextInt(3), nonrecent reduction.",
+      "evidence": [
+        {
+          "class": "tr",
+          "method": "a",
+          "source_file": "tr.java",
+          "start_line": 41,
+          "end_line": 45,
+          "body_sha256": "f1cb47883218b91114186262b717ea5cfb7ae564380cbb11d4d3f23de84cc59f"
+        },
+        {
+          "class": "tr",
+          "method": "a",
+          "source_file": "tr.java",
+          "start_line": 85,
+          "end_line": 87,
+          "body_sha256": "53b8a0efa147a6d208e99141f196878f8744adccb960bcc3ca8857939c352f7b"
+        },
+        {
+          "class": "tr",
+          "method": "a",
+          "source_file": "tr.java",
+          "start_line": 127,
+          "end_line": 137,
+          "body_sha256": "bc006572fa7dcedad3ed90827d7fc66e45625cfc72bbc61dc916d383ffff5c26"
+        },
+        {
+          "class": "tr",
+          "method": "s",
+          "source_file": "tr.java",
+          "start_line": 140,
+          "end_line": 142,
+          "body_sha256": "6407455ef22ef4f296b4d7cae76b1123c3ed843824e1bb98a1d6e81d81ee246b"
+        },
+        {
+          "class": "tr",
+          "method": "dropFewItems",
+          "source_file": "tr.java",
+          "start_line": 145,
+          "end_line": 178,
+          "body_sha256": "e0f447644ba33d42744027b136cd4a605c36582450652b64e735a73cc39cc1f8"
+        },
+        {
+          "class": "tr",
+          "method": "a",
+          "source_file": "tr.java",
+          "start_line": 207,
+          "end_line": 234,
+          "body_sha256": "1f06f1850fc1c672768f72b0350cd5ea88438d827a700ae07d84472b76878578"
+        },
+        {
+          "class": "tr",
+          "method": "a",
+          "source_file": "tr.java",
+          "start_line": 249,
+          "end_line": 266,
+          "body_sha256": "281fc6a89c2a5c5bedbcb8c76c66f8a5357bb494c3190bd430bd2aa84adcf0a3"
+        },
+        {
+          "class": "tr",
+          "method": "a",
+          "source_file": "tr.java",
+          "start_line": 271,
+          "end_line": 279,
+          "body_sha256": "79a13f0a60964ce3e24a23c9fec474b76c0b2d8be3dc201267b0fdde66d10738"
+        },
+        {
+          "class": "tr",
+          "method": "a",
+          "source_file": "tr.java",
+          "start_line": 282,
+          "end_line": 289,
+          "body_sha256": "27e74d2bf2ee08085169eb61d2b7458e026dff28a5f1844ec4d25990e955b9ea"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 52,
+      "source_class": "tt",
+      "modern_id": "minecraft:spider",
+      "hierarchy": [
+        "tt",
+        "EntityArachnid",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Recent only: emit each remaining saved num_webs string and consume stock; eye if nextInt(3)==0 OR nextInt(1+butchering)>0.",
+      "evidence": [
+        {
+          "class": "tt",
+          "method": "a",
+          "source_file": "tt.java",
+          "start_line": 26,
+          "end_line": 44,
+          "body_sha256": "64b0603677991ddcc799624c6f2107dd8138795356d88acea1b7a1b1e0149fd0"
+        },
+        {
+          "class": "EntityArachnid",
+          "method": "s",
+          "source_file": "EntityArachnid.java",
+          "start_line": 186,
+          "end_line": 188,
+          "body_sha256": "ccbd0964e842826e3f2b73c2ca69807288ed18d5db031ee13ee0c45678ff2746"
+        },
+        {
+          "class": "EntityArachnid",
+          "method": "dropFewItems",
+          "source_file": "EntityArachnid.java",
+          "start_line": 191,
+          "end_line": 200,
+          "body_sha256": "a7871e4b89201490b519d5513e078d989e5286b851f942d3e55508398094b85d"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 53,
+      "source_class": "tk",
+      "modern_id": "minecraft:giant",
+      "hierarchy": [
+        "tk",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Inherited og few-item RNG still draws counts, but s() returns0: no materials.",
+      "evidence": [
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 54,
+      "source_class": "tw",
+      "modern_id": "minecraft:zombie",
+      "hierarchy": [
+        "tw",
+        "EntityAnimalWatcher",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Flesh one with nextFloat<recent?.5:.25. Recent/nonmassive rare nextInt(200)<5+2*looting then uniformly copper/silver/gold/iron nugget.",
+      "evidence": [
+        {
+          "class": "tw",
+          "method": "a",
+          "source_file": "tw.java",
+          "start_line": 48,
+          "end_line": 53,
+          "body_sha256": "78cbf5bdc137269af1f16393e0c14aaffce2bae7115bbc3550da89a45909158f"
+        },
+        {
+          "class": "tw",
+          "method": "a",
+          "source_file": "tw.java",
+          "start_line": 64,
+          "end_line": 71,
+          "body_sha256": "22ef6d8349b50decb525524cbb984d7d70439df1dd56a2cd244633a5e4dcf5b3"
+        },
+        {
+          "class": "tw",
+          "method": "a",
+          "source_file": "tw.java",
+          "start_line": 133,
+          "end_line": 135,
+          "body_sha256": "7678584f0b21c2876820890e09939ca7006d32a6576d2861452abb1f97c9c0ac"
+        },
+        {
+          "class": "tw",
+          "method": "s",
+          "source_file": "tw.java",
+          "start_line": 138,
+          "end_line": 140,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "tw",
+          "method": "dropFewItems",
+          "source_file": "tw.java",
+          "start_line": 143,
+          "end_line": 153,
+          "body_sha256": "314b0e583fc42a1f30c73a8beabc5288927a13546b2d0988aa3ab8728cda98c9"
+        },
+        {
+          "class": "tw",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "tw.java",
+          "start_line": 161,
+          "end_line": 163,
+          "body_sha256": "6c72a2f13853162bc26a4b66f191c716eee8c2af529f3bf58d2cc36deec68ed0"
+        },
+        {
+          "class": "tw",
+          "method": "a",
+          "source_file": "tw.java",
+          "start_line": 216,
+          "end_line": 228,
+          "body_sha256": "88803a1c0029f74f83b8131a510b3aabf8d79c52648a05579258d6ed018e345c"
+        },
+        {
+          "class": "tw",
+          "method": "a",
+          "source_file": "tw.java",
+          "start_line": 231,
+          "end_line": 254,
+          "body_sha256": "7a37d22aab3187809a206d7a9b72a7a2f3d04dead581b269a1a99f6fc9e09756"
+        },
+        {
+          "class": "tw",
+          "method": "a",
+          "source_file": "tw.java",
+          "start_line": 257,
+          "end_line": 285,
+          "body_sha256": "f3a9c119a8f87ccc633bbaaf1d4b53a4542da605901f0afbd3930cabfd18fdcf"
+        },
+        {
+          "class": "tw",
+          "method": "a",
+          "source_file": "tw.java",
+          "start_line": 286,
+          "end_line": 293,
+          "body_sha256": "0ebc5293e8c27c4c830d639d30d0701e2b899730a40063d2802e0ff132b8e2f9"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 55,
+      "source_class": "ts",
+      "modern_id": "minecraft:slime",
+      "hierarchy": [
+        "ts",
+        "EntityGelatinousCube",
+        "EntityCubic",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Existing cube source family helper; size1 nextInt(3)+positive looting extra, nonrecent reduction. Size>1 no material ball; separate source splitting.",
+      "evidence": [
+        {
+          "class": "EntityGelatinousCube",
+          "method": "s",
+          "source_file": "EntityGelatinousCube.java",
+          "start_line": 396,
+          "end_line": 398,
+          "body_sha256": "aa73d782c78f8c4b478c3f482f5730a39d8e6b66e2c2602517e0e4274f723a65"
+        },
+        {
+          "class": "EntityCubic",
+          "method": "s",
+          "source_file": "EntityCubic.java",
+          "start_line": 361,
+          "end_line": 363,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 56,
+      "source_class": "tj",
+      "modern_id": "minecraft:ghast",
+      "hierarchy": [
+        "tj",
+        "ob",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Tears nextInt(2), minimum1 on responsible-player reflected fireball. Gunpowder nextInt(3). No looting addition.",
+      "evidence": [
+        {
+          "class": "tj",
+          "method": "a",
+          "source_file": "tj.java",
+          "start_line": 42,
+          "end_line": 45,
+          "body_sha256": "2f99af9b8a40cf5d960f183b47ae28205ecc533b57fd89db95713e72698e9ba9"
+        },
+        {
+          "class": "tj",
+          "method": "a",
+          "source_file": "tj.java",
+          "start_line": 125,
+          "end_line": 140,
+          "body_sha256": "c8c12d6d9632f9d77acd2902b25308f217e0b19e2fee045f1d47d6f3b20d11d3"
+        },
+        {
+          "class": "tj",
+          "method": "s",
+          "source_file": "tj.java",
+          "start_line": 158,
+          "end_line": 160,
+          "body_sha256": "8746c25646c9b779ff43eaaf1381a97e9031a2231c8b53415a09f1d496f46afc"
+        },
+        {
+          "class": "tj",
+          "method": "dropFewItems",
+          "source_file": "tj.java",
+          "start_line": 163,
+          "end_line": 176,
+          "body_sha256": "cc3f8a8c9565727c091d8c0f9225a55aec52639c186c22014179ab466ba8f7c0"
+        },
+        {
+          "class": "tj",
+          "method": "a",
+          "source_file": "tj.java",
+          "start_line": 200,
+          "end_line": 205,
+          "body_sha256": "3300b752ffbac166c415e500e21ac698c79b49528b216051ac34d8820cd94426"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 57,
+      "source_class": "tn",
+      "modern_id": "minecraft:zombified_piglin",
+      "hierarchy": [
+        "tn",
+        "tw",
+        "EntityAnimalWatcher",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Flesh one at .5/.25; nuggets nextInt(2+looting); recent/nonmassive rare nextInt(200)<5+2*looting gives gold ingot.",
+      "evidence": [
+        {
+          "class": "tn",
+          "method": "a",
+          "source_file": "tn.java",
+          "start_line": 60,
+          "end_line": 63,
+          "body_sha256": "40b711353324266407a247f12b45537c657fd32d5e6bd0026b5621f6163b1b0b"
+        },
+        {
+          "class": "tn",
+          "method": "dropFewItems",
+          "source_file": "tn.java",
+          "start_line": 129,
+          "end_line": 142,
+          "body_sha256": "a6572ecc55bbda7e12ecd9c65c507c54684398a1a246be554afc8c3f7056bff9"
+        },
+        {
+          "class": "tn",
+          "method": "s",
+          "source_file": "tn.java",
+          "start_line": 145,
+          "end_line": 147,
+          "body_sha256": "9b2cde0c008eeeb16920f4c731bc5ea2706798f291be413a348e80974cc62608"
+        },
+        {
+          "class": "tn",
+          "method": "a",
+          "source_file": "tn.java",
+          "start_line": 156,
+          "end_line": 160,
+          "body_sha256": "e4f0be6ed9e4fbc943b2fb138896b2a984c96f32620236f6287727443187a80a"
+        },
+        {
+          "class": "tw",
+          "method": "s",
+          "source_file": "tw.java",
+          "start_line": 138,
+          "end_line": 140,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "tw",
+          "method": "dropFewItems",
+          "source_file": "tw.java",
+          "start_line": 143,
+          "end_line": 153,
+          "body_sha256": "314b0e583fc42a1f30c73a8beabc5288927a13546b2d0988aa3ab8728cda98c9"
+        },
+        {
+          "class": "tw",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "tw.java",
+          "start_line": 161,
+          "end_line": 163,
+          "body_sha256": "6c72a2f13853162bc26a4b66f191c716eee8c2af529f3bf58d2cc36deec68ed0"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 58,
+      "source_class": "tg",
+      "modern_id": "minecraft:enderman",
+      "hierarchy": [
+        "tg",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Pearls nextInt(2+looting), including nonrecent kills; no additional nonrecent reduction.",
+      "evidence": [
+        {
+          "class": "tg",
+          "method": "a",
+          "source_file": "tg.java",
+          "start_line": 33,
+          "end_line": 38,
+          "body_sha256": "1ca11e33e120299f13ab1b5bd5273ca4ae302c20a352278b8dac6ec431d8bb58"
+        },
+        {
+          "class": "tg",
+          "method": "a",
+          "source_file": "tg.java",
+          "start_line": 48,
+          "end_line": 52,
+          "body_sha256": "80aa77b9e2be644cfb90e0a610f22d361347c17c537128b3349ad61eb615c933"
+        },
+        {
+          "class": "tg",
+          "method": "s",
+          "source_file": "tg.java",
+          "start_line": 333,
+          "end_line": 335,
+          "body_sha256": "50809e61211d946d4eaf80a89fdd6e1abca93e4798683562c63c0bfe968f86c1"
+        },
+        {
+          "class": "tg",
+          "method": "dropFewItems",
+          "source_file": "tg.java",
+          "start_line": 338,
+          "end_line": 346,
+          "body_sha256": "a5d5e210ee9702134e4678225e830394d9530e54b9d1851556da3e2bb644a56b"
+        },
+        {
+          "class": "tg",
+          "method": "a",
+          "source_file": "tg.java",
+          "start_line": 347,
+          "end_line": 350,
+          "body_sha256": "72049c0405f8fbb15356e1b4b4369dc7b118115f68a7770a21a27c0320f83ebf"
+        },
+        {
+          "class": "tg",
+          "method": "a",
+          "source_file": "tg.java",
+          "start_line": 386,
+          "end_line": 389,
+          "body_sha256": "a7d9206c040742590097a661fb59b5826c68461ad799103fa31671292829537a"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 59,
+      "source_class": "te",
+      "modern_id": "minecraft:cave_spider",
+      "hierarchy": [
+        "te",
+        "EntityArachnid",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "EntityArachnid same death algorithm as spider; initial saved webs nextInt(4) without ordinary-spider subtraction.",
+      "evidence": [
+        {
+          "class": "EntityArachnid",
+          "method": "s",
+          "source_file": "EntityArachnid.java",
+          "start_line": 186,
+          "end_line": 188,
+          "body_sha256": "ccbd0964e842826e3f2b73c2ca69807288ed18d5db031ee13ee0c45678ff2746"
+        },
+        {
+          "class": "EntityArachnid",
+          "method": "dropFewItems",
+          "source_file": "EntityArachnid.java",
+          "start_line": 191,
+          "end_line": 200,
+          "body_sha256": "a7871e4b89201490b519d5513e078d989e5286b851f942d3e55508398094b85d"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 60,
+      "source_class": "tq",
+      "modern_id": "minecraft:silverfish",
+      "hierarchy": [
+        "tq",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Inherited og few-item counts but zero item getter: no materials.",
+      "evidence": [
+        {
+          "class": "tq",
+          "method": "a",
+          "source_file": "tq.java",
+          "start_line": 75,
+          "end_line": 80,
+          "body_sha256": "78b3f5d998042287c1f966252b7f336da574160a47a8b66854b156eb1dc811a3"
+        },
+        {
+          "class": "tq",
+          "method": "a",
+          "source_file": "tq.java",
+          "start_line": 99,
+          "end_line": 101,
+          "body_sha256": "7ff0bf88777535686248846c7e339a7fbd02a63df8999d16f220ef81728b103e"
+        },
+        {
+          "class": "tq",
+          "method": "s",
+          "source_file": "tq.java",
+          "start_line": 104,
+          "end_line": 106,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "tq",
+          "method": "a",
+          "source_file": "tq.java",
+          "start_line": 171,
+          "end_line": 173,
+          "body_sha256": "9d3ecb66ee275c00747a15e83b7c1b2e4669d72d82cd9e910c017af9e7399f3a"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 61,
+      "source_class": "td",
+      "modern_id": "minecraft:blaze",
+      "hierarchy": [
+        "td",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Only recent player hit: rods nextInt(2+looting).",
+      "evidence": [
+        {
+          "class": "td",
+          "method": "a",
+          "source_file": "td.java",
+          "start_line": 21,
+          "end_line": 24,
+          "body_sha256": "18cb65da7eb8c1a013626862b5ce17872a6971db6aabd278b456e2a8d29fc1ad"
+        },
+        {
+          "class": "td",
+          "method": "a",
+          "source_file": "td.java",
+          "start_line": 79,
+          "end_line": 116,
+          "body_sha256": "1ba206d7233c986eff8601d2345ad132c643cd64468e4162aae87805a34f9e55"
+        },
+        {
+          "class": "td",
+          "method": "s",
+          "source_file": "td.java",
+          "start_line": 123,
+          "end_line": 125,
+          "body_sha256": "a4cd6d6dea1b5a2caa8b501fe504ba349333e46bf005bd0e0ab2cb5b761a8409"
+        },
+        {
+          "class": "td",
+          "method": "dropFewItems",
+          "source_file": "td.java",
+          "start_line": 133,
+          "end_line": 140,
+          "body_sha256": "f88e6dd2c1bd29503be825c94ded0c784acbb748a590d8061ac34731c30548b6"
+        },
+        {
+          "class": "td",
+          "method": "a",
+          "source_file": "td.java",
+          "start_line": 145,
+          "end_line": 150,
+          "body_sha256": "a2101d1001536fb3841992b808902dbe3dc3ba2e57007e2bf8c90a059c7a39d5"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 62,
+      "source_class": "tl",
+      "modern_id": "minecraft:magma_cube",
+      "hierarchy": [
+        "tl",
+        "EntityCubic",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Existing cube helper; size>1 and recent: cream=nextInt(4+looting)-2. No second new helper invocation.",
+      "evidence": [
+        {
+          "class": "tl",
+          "method": "s",
+          "source_file": "tl.java",
+          "start_line": 61,
+          "end_line": 63,
+          "body_sha256": "7e80cb8ce6233cef132d21e49a1e46d92b7bfa19df5dcfae44170809aef0fedd"
+        },
+        {
+          "class": "tl",
+          "method": "dropFewItems",
+          "source_file": "tl.java",
+          "start_line": 66,
+          "end_line": 74,
+          "body_sha256": "048ea793a574e6a2a2ee8715fe872b08b6205727a6c6694f2e8bd0dee76ffc81"
+        },
+        {
+          "class": "EntityCubic",
+          "method": "s",
+          "source_file": "EntityCubic.java",
+          "start_line": 361,
+          "end_line": 363,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 63,
+      "source_class": "sk",
+      "modern_id": "minecraft:ender_dragon",
+      "hierarchy": [
+        "sk",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "No source item rewards; independent source dragon XP death sequence remains existing implementation.",
+      "evidence": [
+        {
+          "class": "sk",
+          "method": "a",
+          "source_file": "sk.java",
+          "start_line": 50,
+          "end_line": 52,
+          "body_sha256": "25ec4f064c147bdb0ac09d754ea29d5890bde5bedab392e63ebd581e777b2e30"
+        },
+        {
+          "class": "sk",
+          "method": "a",
+          "source_file": "sk.java",
+          "start_line": 282,
+          "end_line": 293,
+          "body_sha256": "517241ccee0240d134a4376544679765c0f27c4689a66ca3a23aa6a00ed4f671"
+        },
+        {
+          "class": "sk",
+          "method": "a",
+          "source_file": "sk.java",
+          "start_line": 326,
+          "end_line": 356,
+          "body_sha256": "adf948746915a617a74aba5db47de451babef5cf59cc7d50e31a64d4063daa73"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 64,
+      "source_class": "sm",
+      "modern_id": "minecraft:wither",
+      "hierarchy": [
+        "sm",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "One nether star through few-items (global massive-fall10% still applies), modern extended item lifetime retained.",
+      "evidence": [
+        {
+          "class": "sm",
+          "method": "a",
+          "source_file": "sm.java",
+          "start_line": 34,
+          "end_line": 40,
+          "body_sha256": "09c34465b45e31340177d9dfa6092f9afda9977df4f9576c6becb41f94507cc5"
+        },
+        {
+          "class": "sm",
+          "method": "a",
+          "source_file": "sm.java",
+          "start_line": 49,
+          "end_line": 52,
+          "body_sha256": "74df963ad67085c55eb7bb78e7e622001a8ad363642681afc95b6f1075705393"
+        },
+        {
+          "class": "sm",
+          "method": "s",
+          "source_file": "sm.java",
+          "start_line": 259,
+          "end_line": 262,
+          "body_sha256": "eec3b82b22895005b255208d8bbf918a4edf0f1d108a472fccab456411c7b881"
+        },
+        {
+          "class": "sm",
+          "method": "a",
+          "source_file": "sm.java",
+          "start_line": 283,
+          "end_line": 286,
+          "body_sha256": "e31d0c5672a28bd12533aaa6eae4cbb1ebe1547c230877622eff757b340df032"
+        },
+        {
+          "class": "sm",
+          "method": "a",
+          "source_file": "sm.java",
+          "start_line": 287,
+          "end_line": 304,
+          "body_sha256": "4b074466e7f0bdf5bc4f999379390e2c9eddbb5b05291dcd9b1aa21a006feb45"
+        },
+        {
+          "class": "sm",
+          "method": "a",
+          "source_file": "sm.java",
+          "start_line": 307,
+          "end_line": 309,
+          "body_sha256": "40ab08ef3edd69dbf92b0eebc8b369d83365c818b97d54e9726159b53581ae3e"
+        },
+        {
+          "class": "sm",
+          "method": "dropFewItems",
+          "source_file": "sm.java",
+          "start_line": 335,
+          "end_line": 337,
+          "body_sha256": "37d3323978edf0785d23627811f516f672a3e36dd08e6a38a00ed537632289fb"
+        },
+        {
+          "class": "sm",
+          "method": "a",
+          "source_file": "sm.java",
+          "start_line": 374,
+          "end_line": 377,
+          "body_sha256": "8b36076bb4ca79d89df28806aca9252bcfd824cc069f1905b7c50b63d0f2772f"
+        },
+        {
+          "class": "sm",
+          "method": "a",
+          "source_file": "sm.java",
+          "start_line": 409,
+          "end_line": 411,
+          "body_sha256": "818ea70989d86ff3da690b77fda114f3176f773ed74762b95862126975a55f83"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 65,
+      "source_class": "ro",
+      "modern_id": "minecraft:bat",
+      "hierarchy": [
+        "ro",
+        "rn",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Inherited og default zero getter: no material rewards.",
+      "evidence": [
+        {
+          "class": "ro",
+          "method": "a",
+          "source_file": "ro.java",
+          "start_line": 23,
+          "end_line": 27,
+          "body_sha256": "286e0385745ec8fe2630e6dd82da4503d06355b7eefbb9363b488e63089f868d"
+        },
+        {
+          "class": "ro",
+          "method": "a",
+          "source_file": "ro.java",
+          "start_line": 115,
+          "end_line": 127,
+          "body_sha256": "b16de7616de0b566a06f280f4e50ef2ea6b2bbc2f0458117eabb1557d287416f"
+        },
+        {
+          "class": "ro",
+          "method": "a",
+          "source_file": "ro.java",
+          "start_line": 276,
+          "end_line": 277,
+          "body_sha256": "261fcb608dd850cdd046e3d93c836e6db9b3cc299c877a07e8fba666a972c23f"
+        },
+        {
+          "class": "ro",
+          "method": "a",
+          "source_file": "ro.java",
+          "start_line": 298,
+          "end_line": 302,
+          "body_sha256": "b470f266419013839e45acb7e147d221fe20336ef5de1a34ad3a244df305ab22"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 66,
+      "source_class": "tv",
+      "modern_id": "minecraft:witch",
+      "hierarchy": [
+        "tv",
+        "tm",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "nextInt(5+looting)+1 independent picks from 18 slots; duplicate stick weight. Potion slot uniformly six source yp/zp metadata; red flower subtype2.",
+      "evidence": [
+        {
+          "class": "tv",
+          "method": "a",
+          "source_file": "tv.java",
+          "start_line": 38,
+          "end_line": 41,
+          "body_sha256": "f5b27e2d5f08c9eea1dff3a86c5849e4e3dd0a8d2f553f04b122482dc32f4046"
+        },
+        {
+          "class": "tv",
+          "method": "a",
+          "source_file": "tv.java",
+          "start_line": 74,
+          "end_line": 77,
+          "body_sha256": "68e5eb57c1c265ea28188c8c3f556ffe17821c0f54da3b7715bf27b868b192db"
+        },
+        {
+          "class": "tv",
+          "method": "dropFewItems",
+          "source_file": "tv.java",
+          "start_line": 192,
+          "end_line": 222,
+          "body_sha256": "4a59eccedfa7c44d0dc022b5d3acc73e5b4be95e743a34614f39c70cd177eabd"
+        },
+        {
+          "class": "tv",
+          "method": "a",
+          "source_file": "tv.java",
+          "start_line": 225,
+          "end_line": 254,
+          "body_sha256": "a3b586ab9e3b75efad7698a0b4b1eb0c745e62992874778566f7ec39d83f8211"
+        },
+        {
+          "class": "tv",
+          "method": "a",
+          "source_file": "tv.java",
+          "start_line": 271,
+          "end_line": 277,
+          "body_sha256": "24d7d4a70679ae2754d1a496cd5c4530684e4727cf374ab38d1532a86b8283df"
+        },
+        {
+          "class": "tv",
+          "method": "a",
+          "source_file": "tv.java",
+          "start_line": 294,
+          "end_line": 299,
+          "body_sha256": "7ee353da8ffc641b25b097ac3359d408e79d81a999a4356e274eb2b3bae606da"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 90,
+      "source_class": "ry",
+      "modern_id": "minecraft:pig",
+      "hierarchy": [
+        "ry",
+        "EntityLivestock",
+        "rp",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "If isWell: nextInt(3)+1+nextInt(1+butchering) pork; source burning branch cooked. Installed saddle returned by one modern inventory path.",
+      "evidence": [
+        {
+          "class": "ry",
+          "method": "a",
+          "source_file": "ry.java",
+          "start_line": 56,
+          "end_line": 59,
+          "body_sha256": "2f99af9b8a40cf5d960f183b47ae28205ecc533b57fd89db95713e72698e9ba9"
+        },
+        {
+          "class": "ry",
+          "method": "a",
+          "source_file": "ry.java",
+          "start_line": 68,
+          "end_line": 71,
+          "body_sha256": "9d19a69dd8f6ed418ed7d6d073e1cdf72fef6194a8d813a28c47890d138c9b94"
+        },
+        {
+          "class": "ry",
+          "method": "a",
+          "source_file": "ry.java",
+          "start_line": 89,
+          "end_line": 91,
+          "body_sha256": "9426bfb15718cc7e395ecc42ebdb27ef3e9981f1d91c3c12f3acca90d75dbeda"
+        },
+        {
+          "class": "ry",
+          "method": "s",
+          "source_file": "ry.java",
+          "start_line": 108,
+          "end_line": 110,
+          "body_sha256": "ac0f8deb086bd0e8c94b289aea48a6a236d213604908b075cb9ec8534da4dfd3"
+        },
+        {
+          "class": "ry",
+          "method": "dropFewItems",
+          "source_file": "ry.java",
+          "start_line": 113,
+          "end_line": 123,
+          "body_sha256": "d2b8cd86843d0cbcf31946d337a0321dc67e1ecc93723c64b420d15afc2208dd"
+        },
+        {
+          "class": "ry",
+          "method": "a",
+          "source_file": "ry.java",
+          "start_line": 138,
+          "end_line": 145,
+          "body_sha256": "27af0a5e080f403ed479b3c69adde353b9839af6fef4161c1634ac3bb289b106"
+        },
+        {
+          "class": "ry",
+          "method": "a",
+          "source_file": "ry.java",
+          "start_line": 179,
+          "end_line": 181,
+          "body_sha256": "d074c3d0e174e811e765110a72071019af3626078d11ab9db1b5089987d9a272"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 91,
+      "source_class": "rz",
+      "modern_id": "minecraft:sheep",
+      "hierarchy": [
+        "rz",
+        "EntityLivestock",
+        "rp",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Unsheared/nonburning nextInt(2)==0 gives color wool; healthy meat=max(1,nextInt(2)+nextInt(1+butchering)); independently nextInt(2)==0 leather. Burning cooked meat and no wool.",
+      "evidence": [
+        {
+          "class": "rz",
+          "method": "a",
+          "source_file": "rz.java",
+          "start_line": 77,
+          "end_line": 80,
+          "body_sha256": "18cb65da7eb8c1a013626862b5ce17872a6971db6aabd278b456e2a8d29fc1ad"
+        },
+        {
+          "class": "rz",
+          "method": "dropFewItems",
+          "source_file": "rz.java",
+          "start_line": 83,
+          "end_line": 99,
+          "body_sha256": "54ac2c3d21b3c8e2c56c3aaca87c3589fac6f259ee29d4199041dc77a885a3c3"
+        },
+        {
+          "class": "rz",
+          "method": "s",
+          "source_file": "rz.java",
+          "start_line": 102,
+          "end_line": 104,
+          "body_sha256": "7bb41c2f6a545fed1722eb86497db83ec99797808541edeb42dec191b9a89e08"
+        },
+        {
+          "class": "rz",
+          "method": "a",
+          "source_file": "rz.java",
+          "start_line": 135,
+          "end_line": 139,
+          "body_sha256": "0ec1e817b979ae6dc0b7a82360fb63cbc90b3db56ff8e0524ae026c463da8a9a"
+        },
+        {
+          "class": "rz",
+          "method": "a",
+          "source_file": "rz.java",
+          "start_line": 157,
+          "end_line": 159,
+          "body_sha256": "eb9aee24b6dd61ad2c06f3f0c466bdd23ab61e7dc9f6697fa97819b2b8bc4ce6"
+        },
+        {
+          "class": "rz",
+          "method": "a",
+          "source_file": "rz.java",
+          "start_line": 182,
+          "end_line": 186,
+          "body_sha256": "4d7a145336114d2726bb7633aad12cd6d4d13e6866f4176fff58000c04a075a5"
+        },
+        {
+          "class": "rz",
+          "method": "a",
+          "source_file": "rz.java",
+          "start_line": 206,
+          "end_line": 210,
+          "body_sha256": "4a64204d2892909d20ed46ce6a6ea09a617d391ed382aa3f8cc35f2fe8527536"
+        },
+        {
+          "class": "rz",
+          "method": "a",
+          "source_file": "rz.java",
+          "start_line": 211,
+          "end_line": 222,
+          "body_sha256": "06a8454cdb104735e42e90d71fea558fe53bd5f20c422bc7a0daf89f91c6d87a"
+        },
+        {
+          "class": "rz",
+          "method": "a",
+          "source_file": "rz.java",
+          "start_line": 229,
+          "end_line": 231,
+          "body_sha256": "d074c3d0e174e811e765110a72071019af3626078d11ab9db1b5089987d9a272"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 92,
+      "source_class": "rr",
+      "modern_id": "minecraft:cow",
+      "hierarchy": [
+        "rr",
+        "EntityLivestock",
+        "rp",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Leather nextInt(3)+1. Healthy meat nextInt(3)+1+nextInt(1+butchering); if meat1, nextInt(2)==0 increments. Burning cooked beef.",
+      "evidence": [
+        {
+          "class": "rr",
+          "method": "a",
+          "source_file": "rr.java",
+          "start_line": 24,
+          "end_line": 27,
+          "body_sha256": "963240eac6ac614b4cfb34c31ec0a482505dcc4587e76a75bddff361a60ccfeb"
+        },
+        {
+          "class": "rr",
+          "method": "a",
+          "source_file": "rr.java",
+          "start_line": 54,
+          "end_line": 57,
+          "body_sha256": "c9aaff1e77c986d66614af8ae5ba3a694ebce3b6def9b442827f6d34ff3b15b1"
+        },
+        {
+          "class": "rr",
+          "method": "a",
+          "source_file": "rr.java",
+          "start_line": 75,
+          "end_line": 77,
+          "body_sha256": "51d15bad95287471c60c95a3d068eed71cd8b01cd6b0b1a4845d060a850b25d7"
+        },
+        {
+          "class": "rr",
+          "method": "s",
+          "source_file": "rr.java",
+          "start_line": 94,
+          "end_line": 96,
+          "body_sha256": "53e573eb205404240e6b10c301776b3d7a9f1550a9cdd502c09e331ce89189b9"
+        },
+        {
+          "class": "rr",
+          "method": "dropFewItems",
+          "source_file": "rr.java",
+          "start_line": 99,
+          "end_line": 114,
+          "body_sha256": "880242c5090827211146810937f821f402f3fca2d542716f1ea4f6a026e74995"
+        },
+        {
+          "class": "rr",
+          "method": "a",
+          "source_file": "rr.java",
+          "start_line": 121,
+          "end_line": 123,
+          "body_sha256": "d074c3d0e174e811e765110a72071019af3626078d11ab9db1b5089987d9a272"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 93,
+      "source_class": "rq",
+      "modern_id": "minecraft:chicken",
+      "hierarchy": [
+        "rq",
+        "EntityLivestock",
+        "rp",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Burning gives healthy cooked chicken only; otherwise remaining saved feathers plus healthy raw chicken, exactly one meat.",
+      "evidence": [
+        {
+          "class": "rq",
+          "method": "a",
+          "source_file": "rq.java",
+          "start_line": 50,
+          "end_line": 54,
+          "body_sha256": "16a18280f86d6d848d7f4473c27161f0cc9a2d28dd0e01462e79712d5e164481"
+        },
+        {
+          "class": "rq",
+          "method": "a",
+          "source_file": "rq.java",
+          "start_line": 114,
+          "end_line": 116,
+          "body_sha256": "a6525051d33d1d4faedddb4606a19c890fa8df5bfd26b8e5e19d3ca88e3b8ce5"
+        },
+        {
+          "class": "rq",
+          "method": "s",
+          "source_file": "rq.java",
+          "start_line": 119,
+          "end_line": 121,
+          "body_sha256": "0dca7974211575087799a8c2e2027bdf363eafece979b712b9ee058fb3f17255"
+        },
+        {
+          "class": "rq",
+          "method": "dropFewItems",
+          "source_file": "rq.java",
+          "start_line": 124,
+          "end_line": 137,
+          "body_sha256": "17177967544c85673aaa97238aad7a052aa8296bb1f71021de45cee011da480d"
+        },
+        {
+          "class": "rq",
+          "method": "a",
+          "source_file": "rq.java",
+          "start_line": 149,
+          "end_line": 151,
+          "body_sha256": "d074c3d0e174e811e765110a72071019af3626078d11ab9db1b5089987d9a272"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 94,
+      "source_class": "sc",
+      "modern_id": "minecraft:squid",
+      "hierarchy": [
+        "sc",
+        "se",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Recent only one ink sack subtype0; environment none.",
+      "evidence": [
+        {
+          "class": "sc",
+          "method": "s",
+          "source_file": "sc.java",
+          "start_line": 55,
+          "end_line": 57,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "sc",
+          "method": "dropFewItems",
+          "source_file": "sc.java",
+          "start_line": 65,
+          "end_line": 69,
+          "body_sha256": "b5ae7f5b37c2af051ff1d957aa57037a7a77b202d9e78827cdae94d61e5f26ed"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 95,
+      "source_class": "sf",
+      "modern_id": "minecraft:wolf",
+      "hierarchy": [
+        "sf",
+        "oq",
+        "rp",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Exactly one leather, independent of recent-player flag.",
+      "evidence": [
+        {
+          "class": "sf",
+          "method": "a",
+          "source_file": "sf.java",
+          "start_line": 61,
+          "end_line": 68,
+          "body_sha256": "fa31eff757fb81af3816ac096ce70266e19cac8f97663adf6c9cf3a66c243624"
+        },
+        {
+          "class": "sf",
+          "method": "a",
+          "source_file": "sf.java",
+          "start_line": 96,
+          "end_line": 98,
+          "body_sha256": "1fbee5ad39f3cc0c4fa23acebf2807eb3e92520c769914457b113b35e90463fb"
+        },
+        {
+          "class": "sf",
+          "method": "a",
+          "source_file": "sf.java",
+          "start_line": 110,
+          "end_line": 118,
+          "body_sha256": "f44a1757912fc69e69b0fa8fdcccafacd404f3c6945f75c2c2d3a604bf14bbd0"
+        },
+        {
+          "class": "sf",
+          "method": "s",
+          "source_file": "sf.java",
+          "start_line": 161,
+          "end_line": 163,
+          "body_sha256": "9f619f9ea10621608f2400e53ffced9f9d2ea02279bef6b88caa940fc76a0b03"
+        },
+        {
+          "class": "sf",
+          "method": "dropFewItems",
+          "source_file": "sf.java",
+          "start_line": 166,
+          "end_line": 168,
+          "body_sha256": "51df224c36f46e110c942a1ffc85c86469771e70eb2d294ed3be354ab87be8e1"
+        },
+        {
+          "class": "sf",
+          "method": "a",
+          "source_file": "sf.java",
+          "start_line": 508,
+          "end_line": 517,
+          "body_sha256": "f748ef3e47df4aac17f579384a55549ac9b32c9b7a6fdc9242f52a5fcd6a164a"
+        },
+        {
+          "class": "sf",
+          "method": "a",
+          "source_file": "sf.java",
+          "start_line": 529,
+          "end_line": 538,
+          "body_sha256": "2b3c94be85de77fd591e4726e23350ab28230991913370143f2fd565f51fa640"
+        },
+        {
+          "class": "sf",
+          "method": "a",
+          "source_file": "sf.java",
+          "start_line": 541,
+          "end_line": 543,
+          "body_sha256": "d074c3d0e174e811e765110a72071019af3626078d11ab9db1b5089987d9a272"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 96,
+      "source_class": "rw",
+      "modern_id": "minecraft:mooshroom",
+      "hierarchy": [
+        "rw",
+        "rr",
+        "EntityLivestock",
+        "rp",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Inherited rr cow death algorithm including isWell and leather.",
+      "evidence": [
+        {
+          "class": "rw",
+          "method": "a",
+          "source_file": "rw.java",
+          "start_line": 21,
+          "end_line": 23,
+          "body_sha256": "fe205a3c739a41c9371824737a05669aef065da616ef8524fc72392c46ba5f0a"
+        },
+        {
+          "class": "rr",
+          "method": "s",
+          "source_file": "rr.java",
+          "start_line": 94,
+          "end_line": 96,
+          "body_sha256": "53e573eb205404240e6b10c301776b3d7a9f1550a9cdd502c09e331ce89189b9"
+        },
+        {
+          "class": "rr",
+          "method": "dropFewItems",
+          "source_file": "rr.java",
+          "start_line": 99,
+          "end_line": 114,
+          "body_sha256": "880242c5090827211146810937f821f402f3fca2d542716f1ea4f6a026e74995"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 97,
+      "source_class": "sb",
+      "modern_id": "minecraft:snow_golem",
+      "hierarchy": [
+        "sb",
+        "rv",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Snowballs nextInt(8+4*looting).",
+      "evidence": [
+        {
+          "class": "sb",
+          "method": "s",
+          "source_file": "sb.java",
+          "start_line": 62,
+          "end_line": 64,
+          "body_sha256": "e3fd2c50db2dccf8ea94c05a8840e3c84895f876df1e134cf718d6219db7f41b"
+        },
+        {
+          "class": "sb",
+          "method": "dropFewItems",
+          "source_file": "sb.java",
+          "start_line": 67,
+          "end_line": 72,
+          "body_sha256": "c938553dedad2415a39af64a6f57bf16777f299b9d17e88b90b45fc1f3e6eb9f"
+        },
+        {
+          "class": "sb",
+          "method": "a",
+          "source_file": "sb.java",
+          "start_line": 75,
+          "end_line": 84,
+          "body_sha256": "729a5d9b01ff69f29cec162b5a7e79303dd721052ab41f6f19cd748ccb850600"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 98,
+      "source_class": "rx",
+      "modern_id": "minecraft:ocelot",
+      "hierarchy": [
+        "rx",
+        "oq",
+        "rp",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "rx empty override: no materials and no few-item count draws, including source tame cat subtype.",
+      "evidence": [
+        {
+          "class": "rx",
+          "method": "a",
+          "source_file": "rx.java",
+          "start_line": 31,
+          "end_line": 34,
+          "body_sha256": "cac52d6c055b833407794728566f5aca99ed2fed95063960368be61e7b09a95c"
+        },
+        {
+          "class": "rx",
+          "method": "a",
+          "source_file": "rx.java",
+          "start_line": 82,
+          "end_line": 85,
+          "body_sha256": "85662fb50dffde1b3b59a3ed36607c3215a6a27390f991e42a34f77e158a0280"
+        },
+        {
+          "class": "rx",
+          "method": "s",
+          "source_file": "rx.java",
+          "start_line": 108,
+          "end_line": 110,
+          "body_sha256": "53e573eb205404240e6b10c301776b3d7a9f1550a9cdd502c09e331ce89189b9"
+        },
+        {
+          "class": "rx",
+          "method": "dropFewItems",
+          "source_file": "rx.java",
+          "start_line": 131,
+          "end_line": 132,
+          "body_sha256": "772790684b0b76c4d9bed993edf2a10d479700591b5bb49e709380747372d71e"
+        },
+        {
+          "class": "rx",
+          "method": "a",
+          "source_file": "rx.java",
+          "start_line": 197,
+          "end_line": 209,
+          "body_sha256": "3621975260e15caebc2a28f2cff709ce4fb7ecc174acf46217eca669c0f5381a"
+        },
+        {
+          "class": "rx",
+          "method": "a",
+          "source_file": "rx.java",
+          "start_line": 245,
+          "end_line": 256,
+          "body_sha256": "de92bf5f0bf48946ef25a20b68a09df4e8dc6ac42ca399592f56462ee6fba89d"
+        },
+        {
+          "class": "rx",
+          "method": "a",
+          "source_file": "rx.java",
+          "start_line": 259,
+          "end_line": 261,
+          "body_sha256": "d074c3d0e174e811e765110a72071019af3626078d11ab9db1b5089987d9a272"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 99,
+      "source_class": "sd",
+      "modern_id": "minecraft:iron_golem",
+      "hierarchy": [
+        "sd",
+        "rv",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Red flower subtype0 nextInt(3). Recent/nonmassive only: iron nuggets3+nextInt(3+looting), never native iron ingots.",
+      "evidence": [
+        {
+          "class": "sd",
+          "method": "a",
+          "source_file": "sd.java",
+          "start_line": 29,
+          "end_line": 32,
+          "body_sha256": "2f99af9b8a40cf5d960f183b47ae28205ecc533b57fd89db95713e72698e9ba9"
+        },
+        {
+          "class": "sd",
+          "method": "a",
+          "source_file": "sd.java",
+          "start_line": 93,
+          "end_line": 95,
+          "body_sha256": "30ad1f73cb145e229f8eb5b1a8a8af5957f35ca5504a3e9493ac0324c649208e"
+        },
+        {
+          "class": "sd",
+          "method": "a",
+          "source_file": "sd.java",
+          "start_line": 104,
+          "end_line": 107,
+          "body_sha256": "278fdf93ab90958ebb5c44b653ec2a290b2de02028493f6b15018ab7806aee89"
+        },
+        {
+          "class": "sd",
+          "method": "a",
+          "source_file": "sd.java",
+          "start_line": 143,
+          "end_line": 147,
+          "body_sha256": "a225340fe273f2ff18914723ebc8394908136f714110c11b546027e465ea1c60"
+        },
+        {
+          "class": "sd",
+          "method": "a",
+          "source_file": "sd.java",
+          "start_line": 165,
+          "end_line": 167,
+          "body_sha256": "44c77cd549fcbbf1ecf7b0eb0406b75045e1c74da32e5aa127d09ba6faee2557"
+        },
+        {
+          "class": "sd",
+          "method": "dropFewItems",
+          "source_file": "sd.java",
+          "start_line": 170,
+          "end_line": 182,
+          "body_sha256": "2b9a7184f9084170cbe80445c80f797b6d213a5867553d1374ba3d9c57cd422b"
+        },
+        {
+          "class": "sd",
+          "method": "a",
+          "source_file": "sd.java",
+          "start_line": 202,
+          "end_line": 207,
+          "body_sha256": "05a9cb3953ec3a4fcdc0e3a94f726030f31ad34a63b5805b08adb4b7e272da79"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 100,
+      "source_class": "rs",
+      "modern_id": "minecraft:horse",
+      "hierarchy": [
+        "rs",
+        "rp",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Skins1+nextInt(3), s() calls nextInt(4) every skin (skeleton bone, zombie 75% flesh, live leather). Live horse meat1+nextInt(1+butchering)+horseType0 nextInt(2), raw/cooked beef.",
+      "evidence": [
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 63,
+          "end_line": 72,
+          "body_sha256": "2a24088bd9b9cd8bec2872b9f73c1b3a6c635e6cef74c8108404aa62a2d376f6"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 185,
+          "end_line": 191,
+          "body_sha256": "6b7df4cee25ac8a1114e6cf7655170f8f86f00c21914f24376d448b1ddd15d9d"
+        },
+        {
+          "class": "rs",
+          "method": "s",
+          "source_file": "rs.java",
+          "start_line": 281,
+          "end_line": 284,
+          "body_sha256": "c939cf90e8a94094b2e791d06ab254b0fb8e5659801a4517aba8e79ace386b63"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 427,
+          "end_line": 439,
+          "body_sha256": "421a5c47667af822fa85be7f79880e54311a5372cde465ed5dbb4e68e74b467e"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 446,
+          "end_line": 458,
+          "body_sha256": "8f127c25347d95987ef87e409eb476eb5db823829eed5ff637c2981aab6ca218"
+        },
+        {
+          "class": "rs",
+          "method": "s",
+          "source_file": "rs.java",
+          "start_line": 472,
+          "end_line": 476,
+          "body_sha256": "6b827bf726881394a08e825f8e8732435ce2d1088da843214e1990433ee0381f"
+        },
+        {
+          "class": "rs",
+          "method": "dropFewItems",
+          "source_file": "rs.java",
+          "start_line": 479,
+          "end_line": 495,
+          "body_sha256": "253426ebca31d8743c4cf977cdb653db05f7496fbd8b39b42de55221b966995d"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 529,
+          "end_line": 552,
+          "body_sha256": "3a508b458264745c875e8cdba7be2ac87cd7905143458211f17b1d30c6f86393"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 804,
+          "end_line": 809,
+          "body_sha256": "885c3e74737e1dcdd0efc01a178fe6a134cf7e3ec3cc807f0dc5361355150f94"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 992,
+          "end_line": 1001,
+          "body_sha256": "65b7c93d6e01962020fddc3a16e6cfeae0af3fb93e6d9d97fae6c773be21e108"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 1107,
+          "end_line": 1149,
+          "body_sha256": "68c0db925bb2f11f1c63d808870ac8e6e417f0f5039e20933889039b8356c380"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 1152,
+          "end_line": 1166,
+          "body_sha256": "2f79b6a0d38b1b50062ffc6f3b6fe84cbf1c953da72f53bcb87dfac9aa222dc3"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 1169,
+          "end_line": 1195,
+          "body_sha256": "24de47789567181b9de4808c5a4e9284a1d97cf703852636a5eca5edda3d2102"
+        },
+        {
+          "class": "rs",
+          "method": "a",
+          "source_file": "rs.java",
+          "start_line": 1198,
+          "end_line": 1240,
+          "body_sha256": "5da8da6138c0d4a85021eb04bc703e075255934e55567ab8aaef5e75f22b2e2f"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    },
+    {
+      "legacy_id": 120,
+      "source_class": "ub",
+      "modern_id": "minecraft:villager",
+      "hierarchy": [
+        "ub",
+        "nk",
+        "on",
+        "og",
+        "of",
+        "nn",
+        "java.lang.Object"
+      ],
+      "algorithm": "Inherited og zero getter: no death materials; carried modern inventory recovery not silently deleted.",
+      "evidence": [
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 124,
+          "end_line": 127,
+          "body_sha256": "181861f93b3646de151bb04b4afcc525ea28c405290a634dcda2edfc55d77264"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 140,
+          "end_line": 160,
+          "body_sha256": "cfea554ad7959f8f074ed4ee44934331b6c8f35d5797610ba57a9880981ee425"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 225,
+          "end_line": 240,
+          "body_sha256": "2e3158cda5466434f3b08706dbedd009055fc787437f3836192030f91af56b4b"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 257,
+          "end_line": 269,
+          "body_sha256": "d80636ccdd67944b82df48e69e1c97e68b1739fcdfd3a4f001db202ad71eab63"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 410,
+          "end_line": 411,
+          "body_sha256": "5d23637e92f66ba10c75b3854c76d006ccd631df8831f7f864fcebc3b1819640"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 412,
+          "end_line": 417,
+          "body_sha256": "5f2fabf75b16e8e2c240fc00ea9581689d365bd4231b5a938b7b532fa5a306c7"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 418,
+          "end_line": 421,
+          "body_sha256": "5b49144781c2ca4d6b097524dab6a9d2d03ead4a4b23ab3313d9fe4414f7f435"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 478,
+          "end_line": 482,
+          "body_sha256": "f67dcf4be68f97a43036f78cd20deb15e71fe5dcbaa6c995dca74ed542f4bb15"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 500,
+          "end_line": 502,
+          "body_sha256": "d074c3d0e174e811e765110a72071019af3626078d11ab9db1b5089987d9a272"
+        },
+        {
+          "class": "ub",
+          "method": "a",
+          "source_file": "ub.java",
+          "start_line": 515,
+          "end_line": 517,
+          "body_sha256": "ce070251af922902cf159a65fccea07e361a7fbe9a978f45731d64a5ef83fa52"
+        },
+        {
+          "class": "og",
+          "method": "s",
+          "source_file": "og.java",
+          "start_line": 223,
+          "end_line": 226,
+          "body_sha256": "6e093ac595ef6b0217971be1f1e01c7774f2846853408f25e67e03ad775a2ccc"
+        },
+        {
+          "class": "og",
+          "method": "dropFewItems",
+          "source_file": "og.java",
+          "start_line": 233,
+          "end_line": 251,
+          "body_sha256": "cd03162afd3adfa535b05e6639bda7a797bb7d86cd1e837e63ed727a15d7821d"
+        },
+        {
+          "class": "of",
+          "method": "getBaseChanceOfRareDrop",
+          "source_file": "of.java",
+          "start_line": 751,
+          "end_line": 754,
+          "body_sha256": "12d9f233677507803585d00ab7433ea949f8222447870067ee3d2cb16090745f"
+        },
+        {
+          "class": "of",
+          "method": "dropFewItems",
+          "source_file": "of.java",
+          "start_line": 837,
+          "end_line": 839,
+          "body_sha256": "c42aef551590222869ae22dbc42e36d5b10a20ddbdeca3035d5bb9eff132ee2a"
+        }
+      ]
+    }
+  ],
+  "witch_potion_oracle": {
+    "author": "NingMeng123",
+    "guard_checks_passed": [
+      "write_file",
+      "process",
+      "network",
+      "native_load",
+      "thread_create",
+      "disable_guard",
+      "unrelated_read"
+    ],
+    "world_created": false,
+    "potions": [
+      {
+        "subtype": 8227,
+        "splash": false,
+        "effects": [
+          {
+            "id": 12,
+            "duration": 3600,
+            "amplifier": 0
+          }
+        ]
+      },
+      {
+        "subtype": 8261,
+        "splash": false,
+        "effects": [
+          {
+            "id": 6,
+            "duration": 1,
+            "amplifier": 0
+          }
+        ]
+      },
+      {
+        "subtype": 16388,
+        "splash": true,
+        "effects": [
+          {
+            "id": 19,
+            "duration": 676,
+            "amplifier": 0
+          }
+        ]
+      },
+      {
+        "subtype": 16424,
+        "splash": true,
+        "effects": [
+          {
+            "id": 18,
+            "duration": 1351,
+            "amplifier": 0
+          }
+        ]
+      },
+      {
+        "subtype": 16426,
+        "splash": true,
+        "effects": [
+          {
+            "id": 2,
+            "duration": 1351,
+            "amplifier": 0
+          }
+        ]
+      },
+      {
+        "subtype": 16460,
+        "splash": true,
+        "effects": [
+          {
+            "id": 7,
+            "duration": 1,
+            "amplifier": 0
+          }
+        ]
+      }
+    ]
+  },
+  "source_shared": {
+    "baby_material_loot": false,
+    "massive_fall_material_chance": 0.1,
+    "massive_fall_rare_loot": false,
+    "held_recent_drop": "exact existing stack; source poor/worn penalty remains",
+    "ordinary_equipment_chance": "og forced/picked-up, recent, looting and massive-fall branches via R196MobEquipment",
+    "livestock_well": "min(food,water,freedom)>=.25",
+    "livestock_initial_needs": ".8+nextFloat*.2",
+    "chicken_maximum_feathers": "nextInt(2)+1; if2 and nextInt(2)==0 decrement",
+    "spider_initial_webs": "nextInt(4), ordinary positive minus1; cave unchanged"
+  },
+  "modern_adaptations": [
+    "Source subtype identities use modern split entity IDs, including zombie villager, wither skeleton, cat and horse variants.",
+    "Source drops are captured by NeoForge's native cancellable LivingDropsEvent; no additive source loot modifier runs a second time.",
+    "Modern installed saddles, cargo and charged-creeper heads stay available; pig saddle recovery is outside the old few-items fall suppression.",
+    "Source creeper records retain the twelve original discs but now participate in cancellable doMobLoot death transaction.",
+    "Native modern species without an actual R196 identity keep their native loot tables. Cubic deaths reuse the prior source cube helper.",
+    "Existing attachment-based contained-arrow recovery remains the single stored-arrow drop path."
+  ],
+  "remaining_gaps": [
+    "Livestock needs are initialized, persisted and read by actual meat gates; full food/water/freedom metabolism and ecology remain the agriculture system.",
+    "mite:butchering is queried when registered; current absent enchantment yields0, rather than substituting modern Looting.",
+    "Chicken saved feather depletion is supported; full source nonfatal feather shedding/regrowth remains animal behavior work."
+  ]
+}

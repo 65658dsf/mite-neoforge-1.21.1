@@ -39,6 +39,7 @@ public final class UtilityAssetsProvider implements DataProvider {
                 sounds.add("record." + name, event);
             }
         } catch (Exception failure) { throw new IllegalStateException("Cannot generate source record metadata", failure); }
+        MobAssetsProvider.soundDefinitions().entrySet().forEach(entry -> sounds.add(entry.getKey(), entry.getValue()));
         work.add(DataProvider.saveStable(cache, sounds, output.resolve("assets/mite/sounds.json")));
         return CompletableFuture.allOf(work.toArray(CompletableFuture[]::new));
     }

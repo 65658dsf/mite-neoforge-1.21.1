@@ -91,6 +91,9 @@ neoForge {
         }
         data {
             data()
+            if (project.providers.gradleProperty('miteDataDirectory').isPresent()) {
+                gameDirectory = file(project.providers.gradleProperty('miteDataDirectory').get())
+            }
             programArguments.addAll '--mod', project.mod_id, '--all',
                     '--output', file('src/generated/resources').absolutePath,
                     '--existing', file('src/main/resources').absolutePath

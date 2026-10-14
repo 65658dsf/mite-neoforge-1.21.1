@@ -68,7 +68,10 @@ class StackingMappingTests(unittest.TestCase):
 
     def test_source_specific_variants_have_truthful_identity_and_disposition(self):
         self.assertIn({"legacy_id": 24, "subtype": 3, "disposition": "source_sacred_sandstone_no_current_identity"}, self.map["subtype_exclusions"])
-        self.assertIn({"legacy_id": 97, "subtype": 4, "disposition": "source_copperspine_host_variant_no_current_identity"}, self.map["subtype_exclusions"])
+        self.assertEqual(4, self.rows["mite:copperspine_stone"]["source_items"][0]["subtype"])
+        for row in read("spec/mobs-source-031.json")["entities"]:
+            if (row.get("modern_id") or "").startswith("mite:"):
+                self.assertEqual(16, self.rows[row["modern_id"] + "_spawn_egg"]["max_stack_size"])
         self.assertEqual(3, self.rows["mite:infested_netherrack"]["source_items"][0]["subtype"])
         self.assertEqual(8, self.rows["mite:ancient_metal_crafting_table"]["source_items"][0]["subtype"])
         self.assertEqual({11, 12, 13, 14}, {x["subtype"] for x in self.rows["mite:obsidian_crafting_table"]["source_items"]})

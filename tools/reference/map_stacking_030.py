@@ -223,7 +223,7 @@ def main():
         38: {0: "minecraft:poppy", 1: "minecraft:blue_orchid", 2: "minecraft:allium", 5: "minecraft:orange_tulip", 7: "mite:dahlia", 8: "minecraft:oxeye_daisy"},
         44: {0: "minecraft:smooth_stone_slab", 1: "minecraft:sandstone_slab", 3: "minecraft:cobblestone_slab", 4: "minecraft:brick_slab", 5: "minecraft:stone_brick_slab", 6: "minecraft:nether_brick_slab", 7: "minecraft:quartz_slab"},
         58: {**{x: "mite:flint_crafting_table" for x in range(4)}, 4: "mite:copper_crafting_table", 5: "mite:silver_crafting_table", 6: "mite:gold_crafting_table", 7: "mite:iron_crafting_table", 8: "mite:ancient_metal_crafting_table", 9: "mite:mithril_crafting_table", 10: "mite:adamantium_crafting_table", **{x: "mite:obsidian_crafting_table" for x in range(11, 15)}},
-        97: {0: "minecraft:infested_stone", 1: "minecraft:infested_cobblestone", 2: "minecraft:infested_stone_bricks", 3: "mite:infested_netherrack"},
+        97: {0: "minecraft:infested_stone", 1: "minecraft:infested_cobblestone", 2: "minecraft:infested_stone_bricks", 3: "mite:infested_netherrack", 4: "mite:copperspine_stone"},
         98: {0: "minecraft:stone_bricks", 1: "minecraft:mossy_stone_bricks", 2: "minecraft:cracked_stone_bricks", 3: "minecraft:chiseled_stone_bricks"},
         139: {0: "minecraft:cobblestone_wall", 1: "minecraft:mossy_cobblestone_wall"},
         145: {0: "minecraft:anvil", 1: "minecraft:chipped_anvil", 2: "minecraft:damaged_anvil"},
@@ -254,6 +254,9 @@ def main():
     }
     for meta, name in old_spawn_entities.items():
         add("minecraft:" + name + "_spawn_egg", 383, meta, evidence="runtime entity ID and source spawn-egg metadata identity")
+    for entity in read("spec/mobs-source-031.json")["entities"]:
+        if (entity.get("modern_id") or "").startswith("mite:") and entity.get("spawn_egg"):
+            add(entity["modern_id"] + "_spawn_egg", 383, entity["legacy_id"], evidence="031 guarded R196 registered mob egg identity")
     for subtype in probed[373]["subtype_limits"]:
         meta = subtype["subtype"]
         add("minecraft:splash_potion" if meta & 16384 else "minecraft:potion", 373, meta,
@@ -433,14 +436,11 @@ def main():
         raise ValueError(f"Unresolved mapping conflicts: {len(conflicts)}")
     subtype_exclusions = [
         {"legacy_id": 24, "subtype": 3, "disposition": "source_sacred_sandstone_no_current_identity"},
-        {"legacy_id": 97, "subtype": 4, "disposition": "source_copperspine_host_variant_no_current_identity"},
-        *[{"legacy_id": 383, "subtype": subtype["subtype"], "disposition": "source_monster_spawn_egg_entity_not_yet_registered"}
-          for subtype in probed[383]["subtype_limits"] if subtype["subtype"] >= 512],
     ]
     document = {
         "schema_version": 1, "author": "NingMeng123", "source_version": "MITE 1.6.4 R196",
         "archive_sha256": runtime["archive_sha256"], "source_probe": "spec/stacking-source-030.json",
-        "input_sha256": {name: sha(name) for name in ["spec/stacking-source-030.json", "reference-data/runtime-registry.json", "spec/item-catalog-015.json", "spec/stacking-modern-items-030.json", "spec/r196-tools-016.json", "spec/ranged-027.json", "src/main/resources/mite/foods-018.json"]},
+        "input_sha256": {name: sha(name) for name in ["spec/stacking-source-030.json", "reference-data/runtime-registry.json", "spec/item-catalog-015.json", "spec/stacking-modern-items-030.json", "spec/r196-tools-016.json", "spec/ranged-027.json", "src/main/resources/mite/foods-018.json", "spec/mobs-source-031.json"]},
         "semantics": [
             "source mappings are actual item identities; metadata is carried subtype, never block orientation.",
             "modern_adaptation rows use explicit source-family values, not claims of R196 registry existence.",

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "mite:melt",
+    "mite:water",
+    "mite:sunlight",
+    "mite:acid",
+    "mite:pepsin"
+  ]
+}

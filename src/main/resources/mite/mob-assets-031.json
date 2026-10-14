@@ -1,0 +1,694 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_pack_sha256": "4a9bb9f7ab5afee7c0e4e9f57f3b81ff185a0c619d29036b8c2f1ece7450e67a",
+  "png_count": 44,
+  "ogg_count": 44,
+  "files": [
+    {
+      "source": "assets/minecraft/textures/entity/bat/nightwing.png",
+      "destination": "assets/mite/textures/entity/bat/nightwing.png",
+      "sha256": "01c7264ba518d4624b984925777bbc653c87c113156588a8d421a50b60649a42",
+      "bytes": 1194
+    },
+    {
+      "source": "assets/minecraft/textures/entity/bat/vampire.png",
+      "destination": "assets/mite/textures/entity/bat/vampire.png",
+      "sha256": "e759fae758542d426f9d85705b7d3efd1af066c8de42332b3eb64f0bf0baba73",
+      "bytes": 2012
+    },
+    {
+      "source": "assets/minecraft/textures/entity/creeper/creeper_armor.png",
+      "destination": "assets/mite/textures/entity/creeper/creeper_armor.png",
+      "sha256": "68701aea43ac6ac7822047daab32c4c46df305834a73ff5838a9917e7939a2b6",
+      "bytes": 1948
+    },
+    {
+      "source": "assets/minecraft/textures/entity/creeper/infernal_creeper.png",
+      "destination": "assets/mite/textures/entity/creeper/infernal_creeper.png",
+      "sha256": "3a2bc8d752d765c2f353727b9e1a13a959dea5c70e8f28a6940ed93049a3dd3d",
+      "bytes": 2855
+    },
+    {
+      "source": "assets/minecraft/textures/entity/dire_wolf/angry.png",
+      "destination": "assets/mite/textures/entity/dire_wolf/angry.png",
+      "sha256": "4450a22863f16e5226693b888f7c5c18efa058009dbeb66f403fe9b0dc8bd13f",
+      "bytes": 1757
+    },
+    {
+      "source": "assets/minecraft/textures/entity/dire_wolf/collar.png",
+      "destination": "assets/mite/textures/entity/dire_wolf/collar.png",
+      "sha256": "28e0a677756f72b1ac0f49b484c880105804b4babb30f8d2b9e86b899d3fa7d7",
+      "bytes": 4308
+    },
+    {
+      "source": "assets/minecraft/textures/entity/dire_wolf/neutral.png",
+      "destination": "assets/mite/textures/entity/dire_wolf/neutral.png",
+      "sha256": "b334b214b64d043d4397c780b7a4ea0e65314a0266facb0b55d335f182be4e33",
+      "bytes": 2860
+    },
+    {
+      "source": "assets/minecraft/textures/entity/dire_wolf/tame.png",
+      "destination": "assets/mite/textures/entity/dire_wolf/tame.png",
+      "sha256": "5435a75ae08cfeff835eabdc387dc6e781654d8650bf0afedd43bf3421de3466",
+      "bytes": 2870
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/clay/earth_elemental_clay.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/clay/earth_elemental_clay.png",
+      "sha256": "a8abef268bfb20fa4b9a2dc250e7c9ea892e7e14c62a55d3129aeb609aadefb4",
+      "bytes": 882
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/clay/earth_elemental_clay_hardened.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/clay/earth_elemental_clay_hardened.png",
+      "sha256": "9f2b26ca78802499db1b4c4bb5fb2759edd71191d70973957bc2992a4f27ddbc",
+      "bytes": 838
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/earth_elemental_glow.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/earth_elemental_glow.png",
+      "sha256": "f9ed0c9824ebf12b40f0ec2098c81a3552778358f20e7f785be8034040afd571",
+      "bytes": 134
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/earth_elemental_magma_glow.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/earth_elemental_magma_glow.png",
+      "sha256": "cb7be527ff82d0f94c658ae24ede24d513f17f020ece2d13242d64f770dad37e",
+      "bytes": 458
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/end_stone/earth_elemental_end_stone.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/end_stone/earth_elemental_end_stone.png",
+      "sha256": "ec31899009b97b0466af40b09a6ee6f4de9e7e55f488d2a967fd1b5d0d55b90a",
+      "bytes": 677
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/end_stone/earth_elemental_end_stone_magma.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/end_stone/earth_elemental_end_stone_magma.png",
+      "sha256": "ff8456e85ce68e6e711c2beafbbe9937d302b398da0c36b2a9ea05c067c6b193",
+      "bytes": 603
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/netherrack/earth_elemental_netherrack.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/netherrack/earth_elemental_netherrack.png",
+      "sha256": "f479347ea3f64814eb170dde54c5c839c2f885fc126e3040b9635148458085bb",
+      "bytes": 1020
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/netherrack/earth_elemental_netherrack_magma.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/netherrack/earth_elemental_netherrack_magma.png",
+      "sha256": "164ef620c3f801d393233a0f0268a6a6ebbe43ed9d735cc410aba9deaf815765",
+      "bytes": 835
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/obsidian/earth_elemental_obsidian.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/obsidian/earth_elemental_obsidian.png",
+      "sha256": "0195d8462c1dcb61023cf97f016b53bbe51f25f53b2a3605ef0d6d93e97ba5ed",
+      "bytes": 838
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/obsidian/earth_elemental_obsidian_magma.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/obsidian/earth_elemental_obsidian_magma.png",
+      "sha256": "b2a340c66feaba5c68d1a878f10319c4ff84ea96fb90963847ef111f94d0916d",
+      "bytes": 725
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/stone/earth_elemental_stone.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/stone/earth_elemental_stone.png",
+      "sha256": "0922158f618a5a2adde967eec1f7a1a86ddee5f508101d9f24b6ad9358c16757",
+      "bytes": 857
+    },
+    {
+      "source": "assets/minecraft/textures/entity/earth_elemental/stone/earth_elemental_stone_magma.png",
+      "destination": "assets/mite/textures/entity/earth_elemental/stone/earth_elemental_stone_magma.png",
+      "sha256": "c3179e09f3caf9e04246540b7349f9744dd1dd5f590c5e24a373d7662e02c8f4",
+      "bytes": 724
+    },
+    {
+      "source": "assets/minecraft/textures/entity/fire_elemental.png",
+      "destination": "assets/mite/textures/entity/fire_elemental.png",
+      "sha256": "d28c616bea287540382ba8320135614eeb776869fc2d12c9b63e3734a35ba124",
+      "bytes": 108
+    },
+    {
+      "source": "assets/minecraft/textures/entity/ghoul.png",
+      "destination": "assets/mite/textures/entity/ghoul.png",
+      "sha256": "577fade54bb4a0334f3badcd43ab5bf4b3fb7a1d842df9e48f5e553efa96b37d",
+      "bytes": 1103
+    },
+    {
+      "source": "assets/minecraft/textures/entity/hellhound/hellhound.png",
+      "destination": "assets/mite/textures/entity/hellhound/hellhound.png",
+      "sha256": "74ce66972d7e4bc79b2208e77329dfd3a7dc5314b3814faa6cd901613dcd824e",
+      "bytes": 909
+    },
+    {
+      "source": "assets/minecraft/textures/entity/shadow.png",
+      "destination": "assets/mite/textures/entity/shadow.png",
+      "sha256": "d07a20726bf457c2e7197b3ef30edd6355541f9a77f38af9d61871a308e520f6",
+      "bytes": 1017
+    },
+    {
+      "source": "assets/minecraft/textures/entity/silverfish/copperspine.png",
+      "destination": "assets/mite/textures/entity/silverfish/copperspine.png",
+      "sha256": "2930504ce64af7c28c8d1ad1c8690f08e6ee0bae03a05815bbaa43abee1b320c",
+      "bytes": 902
+    },
+    {
+      "source": "assets/minecraft/textures/entity/silverfish/hoary.png",
+      "destination": "assets/mite/textures/entity/silverfish/hoary.png",
+      "sha256": "a180679dc9eb0c80efc981fd37350a8f38f93ae9d3067ca07624888f1b748fc6",
+      "bytes": 1648
+    },
+    {
+      "source": "assets/minecraft/textures/entity/silverfish/netherspawn.png",
+      "destination": "assets/mite/textures/entity/silverfish/netherspawn.png",
+      "sha256": "4f997afd0760ab86b02eb1e28e9aa7b5ce23ed7fe1856bce11329c5f0464d717",
+      "bytes": 932
+    },
+    {
+      "source": "assets/minecraft/textures/entity/skeleton/bone_lord.png",
+      "destination": "assets/mite/textures/entity/skeleton/bone_lord.png",
+      "sha256": "b2d66eb15dfc84bc7fec2f8de7331ff09c30be4b5bcb4dfc5f95936b5f52dd49",
+      "bytes": 696
+    },
+    {
+      "source": "assets/minecraft/textures/entity/skeleton/longdead.png",
+      "destination": "assets/mite/textures/entity/skeleton/longdead.png",
+      "sha256": "38344ec5ba0bb815a2f15339e1fbae9b630d8ba483ec533703f39e50ac91c901",
+      "bytes": 2019
+    },
+    {
+      "source": "assets/minecraft/textures/entity/skeleton/longdead_guardian.png",
+      "destination": "assets/mite/textures/entity/skeleton/longdead_guardian.png",
+      "sha256": "9eff021d34f44864d1bc122adb00d50dc63ca46d44f91d4909816841a5c5140b",
+      "bytes": 2515
+    },
+    {
+      "source": "assets/minecraft/textures/entity/slime/blob.png",
+      "destination": "assets/mite/textures/entity/slime/blob.png",
+      "sha256": "563ee23ff4abe98ec5e9a0e16c71dded5f9c718778709bf7aac43a2c7f41b4eb",
+      "bytes": 794
+    },
+    {
+      "source": "assets/minecraft/textures/entity/slime/jelly.png",
+      "destination": "assets/mite/textures/entity/slime/jelly.png",
+      "sha256": "503e73fe88e8d87ee7f9f254174002a2f01a9302ea95a146a2a673c29c9ed13d",
+      "bytes": 831
+    },
+    {
+      "source": "assets/minecraft/textures/entity/slime/ooze.png",
+      "destination": "assets/mite/textures/entity/slime/ooze.png",
+      "sha256": "c38c91cf5fb814c924138e358d6f55aade2b787fd640309be3f55a481048e974",
+      "bytes": 776
+    },
+    {
+      "source": "assets/minecraft/textures/entity/slime/pudding.png",
+      "destination": "assets/mite/textures/entity/slime/pudding.png",
+      "sha256": "80c3f9133aa514a355a53c48f06eb82884dc775c9c873628c7cf01afe473b63f",
+      "bytes": 684
+    },
+    {
+      "source": "assets/minecraft/textures/entity/spider/black_widow.png",
+      "destination": "assets/mite/textures/entity/spider/black_widow.png",
+      "sha256": "31262c3286e2724036e7a817fa62f5233a83de4e773796cec2dcc50d00d2b08a",
+      "bytes": 1716
+    },
+    {
+      "source": "assets/minecraft/textures/entity/spider/black_widow_glow.png",
+      "destination": "assets/mite/textures/entity/spider/black_widow_glow.png",
+      "sha256": "fb16879b0f5fde12ad850a2258f06ae1f02b27e94b080bef913ee646a0fd8213",
+      "bytes": 218
+    },
+    {
+      "source": "assets/minecraft/textures/entity/spider/demon_spider.png",
+      "destination": "assets/mite/textures/entity/spider/demon_spider.png",
+      "sha256": "a7cb200a33e06f5da7f3348b6dd2d97bab9197a2d96cc6d8b5ce12494284323e",
+      "bytes": 2308
+    },
+    {
+      "source": "assets/minecraft/textures/entity/spider/demon_spider_glow.png",
+      "destination": "assets/mite/textures/entity/spider/demon_spider_glow.png",
+      "sha256": "fb16879b0f5fde12ad850a2258f06ae1f02b27e94b080bef913ee646a0fd8213",
+      "bytes": 218
+    },
+    {
+      "source": "assets/minecraft/textures/entity/spider/phase_spider.png",
+      "destination": "assets/mite/textures/entity/spider/phase_spider.png",
+      "sha256": "da81b7f7da35c8916c7899ef43bb2ee84fcc1c75fb7076798b96bc59dfe6a074",
+      "bytes": 3449
+    },
+    {
+      "source": "assets/minecraft/textures/entity/spider/phase_spider_glow.png",
+      "destination": "assets/mite/textures/entity/spider/phase_spider_glow.png",
+      "sha256": "99afdde041d0ee84ad441d6c35a4ea14d8695b8e201d6130697723fc3e39198f",
+      "bytes": 235
+    },
+    {
+      "source": "assets/minecraft/textures/entity/spider/wood_spider.png",
+      "destination": "assets/mite/textures/entity/spider/wood_spider.png",
+      "sha256": "fef96025edd81c0291bf085ad8fd1e7e3846667d3789686ccab6709920f92aef",
+      "bytes": 2343
+    },
+    {
+      "source": "assets/minecraft/textures/entity/spider/wood_spider_glow.png",
+      "destination": "assets/mite/textures/entity/spider/wood_spider_glow.png",
+      "sha256": "fb16879b0f5fde12ad850a2258f06ae1f02b27e94b080bef913ee646a0fd8213",
+      "bytes": 218
+    },
+    {
+      "source": "assets/minecraft/textures/entity/wight.png",
+      "destination": "assets/mite/textures/entity/wight.png",
+      "sha256": "1cfadcf74736b7f5304a79a45f5a3cb23f79aed80be014a8c6b05766d00a4720",
+      "bytes": 1054
+    },
+    {
+      "source": "assets/minecraft/textures/entity/zombie/revenant.png",
+      "destination": "assets/mite/textures/entity/zombie/revenant.png",
+      "sha256": "23ebc3fd2ba891247444e267a4df52cb59859c159713005bb6e2aa6c7ea05c8b",
+      "bytes": 1643
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/demonspider/death.ogg",
+      "destination": "assets/mite/sounds/imported/mob/demonspider/death.ogg",
+      "sha256": "b8d8958e095f2378b14612e8998ec191a250794c9684f78adfc4982aa08b4b66",
+      "bytes": 31248
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/demonspider/hurt1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/demonspider/hurt1.ogg",
+      "sha256": "2aa4947bece3aefe02d8bd5702b2bcb6c7fe957d08f6ebe2de76fea7bac00dd4",
+      "bytes": 21820
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/demonspider/hurt2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/demonspider/hurt2.ogg",
+      "sha256": "4efede401f6fdec0cd8081cb972b1e5c4bad2e622369592f683933021ca44e4f",
+      "bytes": 19271
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/demonspider/say1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/demonspider/say1.ogg",
+      "sha256": "4356004530c0185c91bc0a94dd99b13d60252f779fec044190871708f2a3cb2e",
+      "bytes": 28144
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/demonspider/say2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/demonspider/say2.ogg",
+      "sha256": "fe5c42956df80862f46f63a0098beaf60cdc76d0207b3b2b89d3b6127b2dd257",
+      "bytes": 13088
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/demonspider/say3.ogg",
+      "destination": "assets/mite/sounds/imported/mob/demonspider/say3.ogg",
+      "sha256": "9c3a0f8893648d5c99a6aa62c7fb0eef67faf3731503d6cfca92ab1dc742f4c7",
+      "bytes": 37861
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/ghoul/death.ogg",
+      "destination": "assets/mite/sounds/imported/mob/ghoul/death.ogg",
+      "sha256": "fadad932e5b6ccfc95363b4fb450e704329ba8e7efc3c2361bfdb163f5413812",
+      "bytes": 25381
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/ghoul/hurt1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/ghoul/hurt1.ogg",
+      "sha256": "d425008578a22ed2f606c0991fc6bb0a18c66d660356aebf9266def81200377e",
+      "bytes": 12679
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/ghoul/hurt2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/ghoul/hurt2.ogg",
+      "sha256": "7193ba8fa1cfb135336febf583682450b07bae7624ba39c44ab3ba4caf9bed67",
+      "bytes": 19167
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/ghoul/say1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/ghoul/say1.ogg",
+      "sha256": "e037182fdbe076e63b8c13524b85aadacdf36baf9ff9bce99f230b29853be7d4",
+      "bytes": 23549
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/ghoul/say2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/ghoul/say2.ogg",
+      "sha256": "44b0f855da7644e4b660ff2c9c72ad77fd4c3b18dd0113fe33006f52ac709eec",
+      "bytes": 20617
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/hellhound/breath.ogg",
+      "destination": "assets/mite/sounds/imported/mob/hellhound/breath.ogg",
+      "sha256": "5f585be2bd291d581d01573bdbf2105aaa710518aac845a5bcdc3aedca3bc1ee",
+      "bytes": 8889
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/hellhound/death.ogg",
+      "destination": "assets/mite/sounds/imported/mob/hellhound/death.ogg",
+      "sha256": "e71799fecdf26b0ee928fa3b0cb5aa9a96cab61a7d0365195ed4e7fcb92f3b30",
+      "bytes": 20535
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/hellhound/hurt1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/hellhound/hurt1.ogg",
+      "sha256": "7868cb73d27dcb371df85f392e2b18c3c35ab81ac94076d3fbd23f1b38813c8d",
+      "bytes": 12418
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/hellhound/hurt2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/hellhound/hurt2.ogg",
+      "sha256": "e82e228656dd5332e6f6249959b6a2a051d3d7a9e84d5d60d343956c8a02abf4",
+      "bytes": 11311
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/hellhound/say1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/hellhound/say1.ogg",
+      "sha256": "5c68136042aa4f7dc1a097f111c0ca07bd753c0ffca0307b5ed16ebbe37ad138",
+      "bytes": 9571
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/hellhound/say2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/hellhound/say2.ogg",
+      "sha256": "cca49355aeb7a56b37c27c9fb9ff339089468c8d4c3b595ad37b243b2a367d98",
+      "bytes": 10439
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/hellhound/say3.ogg",
+      "destination": "assets/mite/sounds/imported/mob/hellhound/say3.ogg",
+      "sha256": "5f585be2bd291d581d01573bdbf2105aaa710518aac845a5bcdc3aedca3bc1ee",
+      "bytes": 8889
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/invisiblestalker/death.ogg",
+      "destination": "assets/mite/sounds/imported/mob/invisiblestalker/death.ogg",
+      "sha256": "56f31d5f0cb1eaf2e9af060ed0cd7c210b4ef9a6ce11f6d812709d0ec250d717",
+      "bytes": 22856
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/invisiblestalker/hurt1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/invisiblestalker/hurt1.ogg",
+      "sha256": "e1b491362390b8acfa3ba25c825b06a7e0a120faaa029dfab6b559a9d36247db",
+      "bytes": 10334
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/invisiblestalker/hurt2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/invisiblestalker/hurt2.ogg",
+      "sha256": "0f641875ea15e6a2e371a4c146cf673608ddcfc1fc4071ab790cd385112321ea",
+      "bytes": 12454
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/invisiblestalker/say1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/invisiblestalker/say1.ogg",
+      "sha256": "e3f72f366d7c6e8e56998c7a8d1ef5f621323ef415ae9fe5178a8b3523fe02ff",
+      "bytes": 21898
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/invisiblestalker/say2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/invisiblestalker/say2.ogg",
+      "sha256": "60fa0bd69f0df86b2ef278d09ba8d288e68fa190c113e9becf74105487ef83cc",
+      "bytes": 24063
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/invisiblestalker/say3.ogg",
+      "destination": "assets/mite/sounds/imported/mob/invisiblestalker/say3.ogg",
+      "sha256": "9753b54b27c797fcb34468c1e1fba0d091ecaeb7068abb35df636437c688d98e",
+      "bytes": 19365
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/shadow/death1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/shadow/death1.ogg",
+      "sha256": "6370ff8c3b644137eea79808ba45baa147088c22f29c43d59142c0750f03e5ce",
+      "bytes": 24422
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/shadow/death2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/shadow/death2.ogg",
+      "sha256": "683a67483e9e253a26d537b48b8212d030c9a4e4db37fc4e324eb78ff044b387",
+      "bytes": 23163
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/shadow/hurt1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/shadow/hurt1.ogg",
+      "sha256": "8744c5dc94a74ab5399a9d95acfcffb6278f8622eedd41c48ab6be923dd8272a",
+      "bytes": 21360
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/shadow/hurt2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/shadow/hurt2.ogg",
+      "sha256": "1610147f5ef5721d9034145ca2ebdd59a6e1a7245f58fa347f3fb415473974b4",
+      "bytes": 25261
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/shadow/say1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/shadow/say1.ogg",
+      "sha256": "79d8634dedc9a805aa3c3e3a73cb67ce590add93bbbfa4685648aa21ca174c30",
+      "bytes": 29217
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/shadow/say2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/shadow/say2.ogg",
+      "sha256": "a119d693e85f59818b0b8397fc06c2cbba3b1249994defc106d911ce9f9e8c0b",
+      "bytes": 23410
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/shadow/say3.ogg",
+      "destination": "assets/mite/sounds/imported/mob/shadow/say3.ogg",
+      "sha256": "6dff8e352ffafcf26ddce9dc99a95bbd5f1f538dc0e56c37e16af9d89eb359f9",
+      "bytes": 31891
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/wight/death.ogg",
+      "destination": "assets/mite/sounds/imported/mob/wight/death.ogg",
+      "sha256": "862df6be735029e65cb28d2798ed05bd6e6977cf847d087b782cd3cdb968aab6",
+      "bytes": 15473
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/wight/hurt1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/wight/hurt1.ogg",
+      "sha256": "fc7d10edd431a48fd0a6461467216807d59f8de00be42a744b9e5b6020bf1e0d",
+      "bytes": 7725
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/wight/hurt2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/wight/hurt2.ogg",
+      "sha256": "656eb84fe088d0354432f26d413f42986856a63c381f306f796a9d9931210423",
+      "bytes": 12984
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/wight/say1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/wight/say1.ogg",
+      "sha256": "eb7be7f6a5abd93f1a01cc7ed2375f6edfc1b94702c62b965a8aa41fa1b5cc8d",
+      "bytes": 12232
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/wight/say2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/wight/say2.ogg",
+      "sha256": "f7a0d55aa4f8e510283db6c0fbb323244e998186ea01bd7dd270ff1cd2db0f48",
+      "bytes": 11461
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/witch/cackle1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/witch/cackle1.ogg",
+      "sha256": "30ec0eb00bfd95b2e975729a6ecbe54f7e9257d5bfe3cd6c746f72d980903fc6",
+      "bytes": 32018
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/witch/cackle2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/witch/cackle2.ogg",
+      "sha256": "325b8baf9e9c01afe58f5db8ebcaf7a7a97bfd16c8720aea3c36052e34dc5cbb",
+      "bytes": 37719
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/witch/cackle3.ogg",
+      "destination": "assets/mite/sounds/imported/mob/witch/cackle3.ogg",
+      "sha256": "f8c4eaca178e1859a5203177c8f7c7f350c8766cecee5a47743e69807c62ab07",
+      "bytes": 40677
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/witch/death.ogg",
+      "destination": "assets/mite/sounds/imported/mob/witch/death.ogg",
+      "sha256": "1f7ab83d11af4e329777d1f747b475ca3a323643d8506cdfa691de7c60c3f0e3",
+      "bytes": 27804
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/witch/hurt.ogg",
+      "destination": "assets/mite/sounds/imported/mob/witch/hurt.ogg",
+      "sha256": "898e2c5f82b77d844a47a76244fab3c64f40292c060452aceb4c63376ec94804",
+      "bytes": 12956
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/wolf/howl1.ogg",
+      "destination": "assets/mite/sounds/imported/mob/wolf/howl1.ogg",
+      "sha256": "0493630e4a15db0f4cf2d17ed3c6042d5ebb79c3581cdb509dce544da0fcc21e",
+      "bytes": 30765
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/wolf/howl2.ogg",
+      "destination": "assets/mite/sounds/imported/mob/wolf/howl2.ogg",
+      "sha256": "0d350bbd8417c837c8dce56c850cc96072876064f5e239274722fb8a6c8302e5",
+      "bytes": 31014
+    },
+    {
+      "source": "assets/minecraft/sound/imported/mob/wolf/howl3.ogg",
+      "destination": "assets/mite/sounds/imported/mob/wolf/howl3.ogg",
+      "sha256": "7934dcf12d0510632b244300f443e9ea09774796d98f3624f4a96d88d42ea41e",
+      "bytes": 28324
+    }
+  ],
+  "sounds": {
+    "imported.mob.demonspider.death": {
+      "sounds": [
+        "mite:imported/mob/demonspider/death"
+      ]
+    },
+    "imported.mob.demonspider.hurt": {
+      "sounds": [
+        "mite:imported/mob/demonspider/hurt1",
+        "mite:imported/mob/demonspider/hurt2"
+      ]
+    },
+    "imported.mob.demonspider.say": {
+      "sounds": [
+        "mite:imported/mob/demonspider/say1",
+        "mite:imported/mob/demonspider/say2",
+        "mite:imported/mob/demonspider/say3"
+      ]
+    },
+    "imported.mob.ghoul.death": {
+      "sounds": [
+        "mite:imported/mob/ghoul/death"
+      ]
+    },
+    "imported.mob.ghoul.hurt": {
+      "sounds": [
+        "mite:imported/mob/ghoul/hurt1",
+        "mite:imported/mob/ghoul/hurt2"
+      ]
+    },
+    "imported.mob.ghoul.say": {
+      "sounds": [
+        "mite:imported/mob/ghoul/say1",
+        "mite:imported/mob/ghoul/say2"
+      ]
+    },
+    "imported.mob.hellhound.breath": {
+      "sounds": [
+        "mite:imported/mob/hellhound/breath"
+      ]
+    },
+    "imported.mob.hellhound.death": {
+      "sounds": [
+        "mite:imported/mob/hellhound/death"
+      ]
+    },
+    "imported.mob.hellhound.hurt": {
+      "sounds": [
+        "mite:imported/mob/hellhound/hurt1",
+        "mite:imported/mob/hellhound/hurt2"
+      ]
+    },
+    "imported.mob.hellhound.say": {
+      "sounds": [
+        "mite:imported/mob/hellhound/say1",
+        "mite:imported/mob/hellhound/say2",
+        "mite:imported/mob/hellhound/say3"
+      ]
+    },
+    "imported.mob.invisiblestalker.death": {
+      "sounds": [
+        "mite:imported/mob/invisiblestalker/death"
+      ]
+    },
+    "imported.mob.invisiblestalker.hurt": {
+      "sounds": [
+        "mite:imported/mob/invisiblestalker/hurt1",
+        "mite:imported/mob/invisiblestalker/hurt2"
+      ]
+    },
+    "imported.mob.invisiblestalker.say": {
+      "sounds": [
+        "mite:imported/mob/invisiblestalker/say1",
+        "mite:imported/mob/invisiblestalker/say2",
+        "mite:imported/mob/invisiblestalker/say3"
+      ]
+    },
+    "imported.mob.shadow.death": {
+      "sounds": [
+        "mite:imported/mob/shadow/death1",
+        "mite:imported/mob/shadow/death2"
+      ]
+    },
+    "imported.mob.shadow.hurt": {
+      "sounds": [
+        "mite:imported/mob/shadow/hurt1",
+        "mite:imported/mob/shadow/hurt2"
+      ]
+    },
+    "imported.mob.shadow.say": {
+      "sounds": [
+        "mite:imported/mob/shadow/say1",
+        "mite:imported/mob/shadow/say2",
+        "mite:imported/mob/shadow/say3"
+      ]
+    },
+    "imported.mob.wight.death": {
+      "sounds": [
+        "mite:imported/mob/wight/death"
+      ]
+    },
+    "imported.mob.wight.hurt": {
+      "sounds": [
+        "mite:imported/mob/wight/hurt1",
+        "mite:imported/mob/wight/hurt2"
+      ]
+    },
+    "imported.mob.wight.say": {
+      "sounds": [
+        "mite:imported/mob/wight/say1",
+        "mite:imported/mob/wight/say2"
+      ]
+    },
+    "imported.mob.witch.cackle": {
+      "sounds": [
+        "mite:imported/mob/witch/cackle1",
+        "mite:imported/mob/witch/cackle2",
+        "mite:imported/mob/witch/cackle3"
+      ]
+    },
+    "imported.mob.witch.death": {
+      "sounds": [
+        "mite:imported/mob/witch/death"
+      ]
+    },
+    "imported.mob.witch.hurt": {
+      "sounds": [
+        "mite:imported/mob/witch/hurt"
+      ]
+    },
+    "imported.mob.wolf.howl": {
+      "sounds": [
+        "mite:imported/mob/wolf/howl1",
+        "mite:imported/mob/wolf/howl2",
+        "mite:imported/mob/wolf/howl3"
+      ]
+    }
+  },
+  "source_meat_items": [
+    "minecraft:beef",
+    "minecraft:chicken",
+    "minecraft:cod",
+    "minecraft:cooked_beef",
+    "minecraft:cooked_chicken",
+    "minecraft:cooked_cod",
+    "minecraft:cooked_mutton",
+    "minecraft:cooked_porkchop",
+    "minecraft:cooked_salmon",
+    "minecraft:mutton",
+    "minecraft:porkchop",
+    "minecraft:rotten_flesh",
+    "minecraft:salmon",
+    "mite:cooked_large_fish",
+    "mite:cooked_worm",
+    "mite:raw_large_fish",
+    "mite:raw_worm"
+  ]
+}

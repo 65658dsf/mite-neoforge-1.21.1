@@ -1,0 +1,10814 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source": "spec/mobs-source-031.json items_corrosion; spec/stacking-map-030.json source identity rows only",
+  "items": [
+    {
+      "item": "minecraft:activator_rail",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        157
+      ]
+    },
+    {
+      "item": "minecraft:allium",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        38
+      ]
+    },
+    {
+      "item": "minecraft:anvil",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        145
+      ]
+    },
+    {
+      "item": "minecraft:apple",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        260
+      ]
+    },
+    {
+      "item": "minecraft:arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1040
+      ]
+    },
+    {
+      "item": "minecraft:baked_potato",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        393
+      ]
+    },
+    {
+      "item": "minecraft:bat_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:beacon",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        138
+      ]
+    },
+    {
+      "item": "minecraft:bedrock",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        7
+      ]
+    },
+    {
+      "item": "minecraft:beef",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        363
+      ]
+    },
+    {
+      "item": "minecraft:birch_leaves",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        18
+      ]
+    },
+    {
+      "item": "minecraft:birch_log",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        17
+      ]
+    },
+    {
+      "item": "minecraft:birch_planks",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        5
+      ]
+    },
+    {
+      "item": "minecraft:birch_sapling",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        6
+      ]
+    },
+    {
+      "item": "minecraft:birch_slab",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        126
+      ]
+    },
+    {
+      "item": "minecraft:birch_stairs",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        135
+      ]
+    },
+    {
+      "item": "minecraft:black_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:black_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:black_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:blaze_powder",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        377
+      ]
+    },
+    {
+      "item": "minecraft:blaze_rod",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        369
+      ]
+    },
+    {
+      "item": "minecraft:blaze_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:blue_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:blue_orchid",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        38
+      ]
+    },
+    {
+      "item": "minecraft:blue_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:blue_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:bone",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        352
+      ]
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:book",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        340
+      ]
+    },
+    {
+      "item": "minecraft:bookshelf",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        47
+      ]
+    },
+    {
+      "item": "minecraft:bow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        261
+      ]
+    },
+    {
+      "item": "minecraft:bowl",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        281
+      ]
+    },
+    {
+      "item": "minecraft:bread",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        297
+      ]
+    },
+    {
+      "item": "minecraft:brewing_stand",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        379
+      ]
+    },
+    {
+      "item": "minecraft:brick",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        336
+      ]
+    },
+    {
+      "item": "minecraft:brick_slab",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        44
+      ]
+    },
+    {
+      "item": "minecraft:brick_stairs",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        108
+      ]
+    },
+    {
+      "item": "minecraft:bricks",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        45
+      ]
+    },
+    {
+      "item": "minecraft:brown_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:brown_mushroom",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        39
+      ]
+    },
+    {
+      "item": "minecraft:brown_mushroom_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        99
+      ]
+    },
+    {
+      "item": "minecraft:brown_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:brown_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        325
+      ]
+    },
+    {
+      "item": "minecraft:cactus",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        81
+      ]
+    },
+    {
+      "item": "minecraft:cake",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        354
+      ]
+    },
+    {
+      "item": "minecraft:carrot",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        391
+      ]
+    },
+    {
+      "item": "minecraft:carrot_on_a_stick",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        398
+      ]
+    },
+    {
+      "item": "minecraft:carved_pumpkin",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        86
+      ]
+    },
+    {
+      "item": "minecraft:cauldron",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        380
+      ]
+    },
+    {
+      "item": "minecraft:cave_spider_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:chain",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1126
+      ]
+    },
+    {
+      "item": "minecraft:chainmail_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        305
+      ]
+    },
+    {
+      "item": "minecraft:chainmail_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        303
+      ]
+    },
+    {
+      "item": "minecraft:chainmail_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        302
+      ]
+    },
+    {
+      "item": "minecraft:chainmail_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        304
+      ]
+    },
+    {
+      "item": "minecraft:charcoal",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        263
+      ]
+    },
+    {
+      "item": "minecraft:chest",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        54
+      ]
+    },
+    {
+      "item": "minecraft:chest_minecart",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        342
+      ]
+    },
+    {
+      "item": "minecraft:chicken",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        365
+      ]
+    },
+    {
+      "item": "minecraft:chicken_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:chipped_anvil",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        145
+      ]
+    },
+    {
+      "item": "minecraft:chiseled_quartz_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        155
+      ]
+    },
+    {
+      "item": "minecraft:chiseled_sandstone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        24
+      ]
+    },
+    {
+      "item": "minecraft:chiseled_stone_bricks",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        98
+      ]
+    },
+    {
+      "item": "minecraft:clay",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        82
+      ]
+    },
+    {
+      "item": "minecraft:clay_ball",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        337
+      ]
+    },
+    {
+      "item": "minecraft:clock",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        347
+      ]
+    },
+    {
+      "item": "minecraft:coal",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        263
+      ]
+    },
+    {
+      "item": "minecraft:coal_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        173
+      ]
+    },
+    {
+      "item": "minecraft:cobblestone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        4
+      ]
+    },
+    {
+      "item": "minecraft:cobblestone_slab",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        44
+      ]
+    },
+    {
+      "item": "minecraft:cobblestone_stairs",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        67
+      ]
+    },
+    {
+      "item": "minecraft:cobblestone_wall",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        139
+      ]
+    },
+    {
+      "item": "minecraft:cobweb",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        30
+      ]
+    },
+    {
+      "item": "minecraft:cocoa_beans",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:cod",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        349
+      ]
+    },
+    {
+      "item": "minecraft:command_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        137
+      ]
+    },
+    {
+      "item": "minecraft:comparator",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        404
+      ]
+    },
+    {
+      "item": "minecraft:compass",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        345
+      ]
+    },
+    {
+      "item": "minecraft:cooked_beef",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        364
+      ]
+    },
+    {
+      "item": "minecraft:cooked_chicken",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        366
+      ]
+    },
+    {
+      "item": "minecraft:cooked_cod",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        350
+      ]
+    },
+    {
+      "item": "minecraft:cooked_mutton",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1173
+      ]
+    },
+    {
+      "item": "minecraft:cooked_porkchop",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        320
+      ]
+    },
+    {
+      "item": "minecraft:cooked_salmon",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1230
+      ]
+    },
+    {
+      "item": "minecraft:cookie",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        357
+      ]
+    },
+    {
+      "item": "minecraft:copper_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        204
+      ]
+    },
+    {
+      "item": "minecraft:copper_door",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1111
+      ]
+    },
+    {
+      "item": "minecraft:copper_ingot",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        962
+      ]
+    },
+    {
+      "item": "minecraft:copper_ore",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        200
+      ]
+    },
+    {
+      "item": "minecraft:cow_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:cracked_stone_bricks",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        98
+      ]
+    },
+    {
+      "item": "minecraft:creeper_head",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        397
+      ]
+    },
+    {
+      "item": "minecraft:creeper_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:cut_sandstone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        24
+      ]
+    },
+    {
+      "item": "minecraft:cyan_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:cyan_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:cyan_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:cyan_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:damaged_anvil",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        145
+      ]
+    },
+    {
+      "item": "minecraft:dandelion",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        37
+      ]
+    },
+    {
+      "item": "minecraft:daylight_detector",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        151
+      ]
+    },
+    {
+      "item": "minecraft:dead_bush",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        32
+      ]
+    },
+    {
+      "item": "minecraft:detector_rail",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        28
+      ]
+    },
+    {
+      "item": "minecraft:diamond",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        264
+      ]
+    },
+    {
+      "item": "minecraft:diamond_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        57
+      ]
+    },
+    {
+      "item": "minecraft:diamond_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        56
+      ]
+    },
+    {
+      "item": "minecraft:dirt",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        3
+      ]
+    },
+    {
+      "item": "minecraft:dispenser",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        23
+      ]
+    },
+    {
+      "item": "minecraft:dragon_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        122
+      ]
+    },
+    {
+      "item": "minecraft:dropper",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        158
+      ]
+    },
+    {
+      "item": "minecraft:egg",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        344
+      ]
+    },
+    {
+      "item": "minecraft:emerald",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        388
+      ]
+    },
+    {
+      "item": "minecraft:emerald_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        133
+      ]
+    },
+    {
+      "item": "minecraft:emerald_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        129
+      ]
+    },
+    {
+      "item": "minecraft:enchanted_book",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        403
+      ]
+    },
+    {
+      "item": "minecraft:enchanted_golden_apple",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        322
+      ]
+    },
+    {
+      "item": "minecraft:enchanting_table",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        116
+      ]
+    },
+    {
+      "item": "minecraft:end_portal_frame",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        120
+      ]
+    },
+    {
+      "item": "minecraft:end_stone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        121
+      ]
+    },
+    {
+      "item": "minecraft:ender_chest",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        130
+      ]
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        381
+      ]
+    },
+    {
+      "item": "minecraft:ender_pearl",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        368
+      ]
+    },
+    {
+      "item": "minecraft:enderman_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:experience_bottle",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        384
+      ]
+    },
+    {
+      "item": "minecraft:farmland",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        60
+      ]
+    },
+    {
+      "item": "minecraft:feather",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        288
+      ]
+    },
+    {
+      "item": "minecraft:fermented_spider_eye",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        376
+      ]
+    },
+    {
+      "item": "minecraft:fern",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        31
+      ]
+    },
+    {
+      "item": "minecraft:filled_map",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        358
+      ]
+    },
+    {
+      "item": "minecraft:fire_charge",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        385
+      ]
+    },
+    {
+      "item": "minecraft:firework_rocket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        401
+      ]
+    },
+    {
+      "item": "minecraft:firework_star",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        402
+      ]
+    },
+    {
+      "item": "minecraft:fishing_rod",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        346
+      ]
+    },
+    {
+      "item": "minecraft:flint",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        318
+      ]
+    },
+    {
+      "item": "minecraft:flint_and_steel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        259
+      ]
+    },
+    {
+      "item": "minecraft:flower_pot",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        390
+      ]
+    },
+    {
+      "item": "minecraft:furnace",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        61
+      ]
+    },
+    {
+      "item": "minecraft:furnace_minecart",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        343
+      ]
+    },
+    {
+      "item": "minecraft:ghast_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:ghast_tear",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        370
+      ]
+    },
+    {
+      "item": "minecraft:glass",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        20
+      ]
+    },
+    {
+      "item": "minecraft:glass_bottle",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        374
+      ]
+    },
+    {
+      "item": "minecraft:glass_pane",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        102
+      ]
+    },
+    {
+      "item": "minecraft:glistering_melon_slice",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        382
+      ]
+    },
+    {
+      "item": "minecraft:glowstone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        89
+      ]
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        348
+      ]
+    },
+    {
+      "item": "minecraft:gold_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        41
+      ]
+    },
+    {
+      "item": "minecraft:gold_ingot",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        266
+      ]
+    },
+    {
+      "item": "minecraft:gold_nugget",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        371
+      ]
+    },
+    {
+      "item": "minecraft:gold_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        14
+      ]
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        322
+      ]
+    },
+    {
+      "item": "minecraft:golden_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        286
+      ]
+    },
+    {
+      "item": "minecraft:golden_boots",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        317
+      ]
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        396
+      ]
+    },
+    {
+      "item": "minecraft:golden_chestplate",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        315
+      ]
+    },
+    {
+      "item": "minecraft:golden_helmet",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        314
+      ]
+    },
+    {
+      "item": "minecraft:golden_hoe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        294
+      ]
+    },
+    {
+      "item": "minecraft:golden_horse_armor",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        418
+      ]
+    },
+    {
+      "item": "minecraft:golden_leggings",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        316
+      ]
+    },
+    {
+      "item": "minecraft:golden_pickaxe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        285
+      ]
+    },
+    {
+      "item": "minecraft:golden_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        284
+      ]
+    },
+    {
+      "item": "minecraft:golden_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        283
+      ]
+    },
+    {
+      "item": "minecraft:grass_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2
+      ]
+    },
+    {
+      "item": "minecraft:gravel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        13
+      ]
+    },
+    {
+      "item": "minecraft:gray_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:gray_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:gray_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:gray_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:green_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:green_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:green_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:green_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        289
+      ]
+    },
+    {
+      "item": "minecraft:hay_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        170
+      ]
+    },
+    {
+      "item": "minecraft:heavy_weighted_pressure_plate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        148
+      ]
+    },
+    {
+      "item": "minecraft:hopper",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        154
+      ]
+    },
+    {
+      "item": "minecraft:hopper_minecart",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        408
+      ]
+    },
+    {
+      "item": "minecraft:horse_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:ice",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        79
+      ]
+    },
+    {
+      "item": "minecraft:infested_cobblestone",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        97
+      ]
+    },
+    {
+      "item": "minecraft:infested_stone",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        97
+      ]
+    },
+    {
+      "item": "minecraft:infested_stone_bricks",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        97
+      ]
+    },
+    {
+      "item": "minecraft:ink_sac",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:iron_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        258
+      ]
+    },
+    {
+      "item": "minecraft:iron_bars",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        101
+      ]
+    },
+    {
+      "item": "minecraft:iron_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        42
+      ]
+    },
+    {
+      "item": "minecraft:iron_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        309
+      ]
+    },
+    {
+      "item": "minecraft:iron_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        307
+      ]
+    },
+    {
+      "item": "minecraft:iron_door",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        330
+      ]
+    },
+    {
+      "item": "minecraft:iron_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        306
+      ]
+    },
+    {
+      "item": "minecraft:iron_hoe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        292
+      ]
+    },
+    {
+      "item": "minecraft:iron_horse_armor",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        417
+      ]
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        265
+      ]
+    },
+    {
+      "item": "minecraft:iron_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        308
+      ]
+    },
+    {
+      "item": "minecraft:iron_nugget",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        958
+      ]
+    },
+    {
+      "item": "minecraft:iron_pickaxe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        257
+      ]
+    },
+    {
+      "item": "minecraft:iron_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        256
+      ]
+    },
+    {
+      "item": "minecraft:iron_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        267
+      ]
+    },
+    {
+      "item": "minecraft:item_frame",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        389
+      ]
+    },
+    {
+      "item": "minecraft:jack_o_lantern",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        91
+      ]
+    },
+    {
+      "item": "minecraft:jukebox",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        84
+      ]
+    },
+    {
+      "item": "minecraft:jungle_leaves",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        18
+      ]
+    },
+    {
+      "item": "minecraft:jungle_log",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        17
+      ]
+    },
+    {
+      "item": "minecraft:jungle_planks",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        5
+      ]
+    },
+    {
+      "item": "minecraft:jungle_sapling",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        6
+      ]
+    },
+    {
+      "item": "minecraft:jungle_slab",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        126
+      ]
+    },
+    {
+      "item": "minecraft:jungle_stairs",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        136
+      ]
+    },
+    {
+      "item": "minecraft:ladder",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        65
+      ]
+    },
+    {
+      "item": "minecraft:lapis_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        22
+      ]
+    },
+    {
+      "item": "minecraft:lapis_lazuli",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:lapis_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        21
+      ]
+    },
+    {
+      "item": "minecraft:lava_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        327
+      ]
+    },
+    {
+      "item": "minecraft:lead",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        420
+      ]
+    },
+    {
+      "item": "minecraft:leather",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        334
+      ]
+    },
+    {
+      "item": "minecraft:leather_boots",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        301
+      ]
+    },
+    {
+      "item": "minecraft:leather_chestplate",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        299
+      ]
+    },
+    {
+      "item": "minecraft:leather_helmet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        298
+      ]
+    },
+    {
+      "item": "minecraft:leather_leggings",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        300
+      ]
+    },
+    {
+      "item": "minecraft:lever",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        69
+      ]
+    },
+    {
+      "item": "minecraft:light_blue_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:light_blue_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:light_blue_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:light_blue_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:light_gray_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:light_gray_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:light_gray_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:light_gray_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:light_weighted_pressure_plate",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        147
+      ]
+    },
+    {
+      "item": "minecraft:lily_pad",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        111
+      ]
+    },
+    {
+      "item": "minecraft:lime_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:lime_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:lime_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:lime_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:magenta_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:magenta_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:magenta_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:magenta_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:magma_cream",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        378
+      ]
+    },
+    {
+      "item": "minecraft:magma_cube_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:map",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        395
+      ]
+    },
+    {
+      "item": "minecraft:melon",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        103
+      ]
+    },
+    {
+      "item": "minecraft:melon_seeds",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        362
+      ]
+    },
+    {
+      "item": "minecraft:melon_slice",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        360
+      ]
+    },
+    {
+      "item": "minecraft:milk_bucket",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        335
+      ]
+    },
+    {
+      "item": "minecraft:minecart",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        328
+      ]
+    },
+    {
+      "item": "minecraft:mooshroom_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:mossy_cobblestone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        48
+      ]
+    },
+    {
+      "item": "minecraft:mossy_cobblestone_wall",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        139
+      ]
+    },
+    {
+      "item": "minecraft:mossy_stone_bricks",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        98
+      ]
+    },
+    {
+      "item": "minecraft:mushroom_stew",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        282
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_11",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2266
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_13",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2256
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_blocks",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2258
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_cat",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2257
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_chirp",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2259
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_far",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2260
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_mall",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2261
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_mellohi",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2262
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_stal",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2263
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_strad",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2264
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_wait",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2267
+      ]
+    },
+    {
+      "item": "minecraft:music_disc_ward",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2265
+      ]
+    },
+    {
+      "item": "minecraft:mutton",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1172
+      ]
+    },
+    {
+      "item": "minecraft:mycelium",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        110
+      ]
+    },
+    {
+      "item": "minecraft:name_tag",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        421
+      ]
+    },
+    {
+      "item": "minecraft:nether_brick",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        405
+      ]
+    },
+    {
+      "item": "minecraft:nether_brick_fence",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        113
+      ]
+    },
+    {
+      "item": "minecraft:nether_brick_slab",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        44
+      ]
+    },
+    {
+      "item": "minecraft:nether_brick_stairs",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        114
+      ]
+    },
+    {
+      "item": "minecraft:nether_bricks",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        112
+      ]
+    },
+    {
+      "item": "minecraft:nether_gold_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        14
+      ]
+    },
+    {
+      "item": "minecraft:nether_quartz_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        153
+      ]
+    },
+    {
+      "item": "minecraft:nether_star",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        399
+      ]
+    },
+    {
+      "item": "minecraft:nether_wart",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        372
+      ]
+    },
+    {
+      "item": "minecraft:netherrack",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        87
+      ]
+    },
+    {
+      "item": "minecraft:note_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        25
+      ]
+    },
+    {
+      "item": "minecraft:oak_boat",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        333
+      ]
+    },
+    {
+      "item": "minecraft:oak_button",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        143
+      ]
+    },
+    {
+      "item": "minecraft:oak_door",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        324
+      ]
+    },
+    {
+      "item": "minecraft:oak_fence",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        85
+      ]
+    },
+    {
+      "item": "minecraft:oak_fence_gate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        107
+      ]
+    },
+    {
+      "item": "minecraft:oak_leaves",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        18
+      ]
+    },
+    {
+      "item": "minecraft:oak_log",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        17
+      ]
+    },
+    {
+      "item": "minecraft:oak_planks",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        5
+      ]
+    },
+    {
+      "item": "minecraft:oak_pressure_plate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        72
+      ]
+    },
+    {
+      "item": "minecraft:oak_sapling",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        6
+      ]
+    },
+    {
+      "item": "minecraft:oak_sign",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        323
+      ]
+    },
+    {
+      "item": "minecraft:oak_slab",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        126
+      ]
+    },
+    {
+      "item": "minecraft:oak_stairs",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        53
+      ]
+    },
+    {
+      "item": "minecraft:oak_trapdoor",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        96
+      ]
+    },
+    {
+      "item": "minecraft:obsidian",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        49
+      ]
+    },
+    {
+      "item": "minecraft:ocelot_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:orange_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:orange_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:orange_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:orange_tulip",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        38
+      ]
+    },
+    {
+      "item": "minecraft:orange_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:oxeye_daisy",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        38
+      ]
+    },
+    {
+      "item": "minecraft:painting",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        321
+      ]
+    },
+    {
+      "item": "minecraft:paper",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        339
+      ]
+    },
+    {
+      "item": "minecraft:pig_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:pink_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:pink_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:pink_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:pink_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:piston",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        33
+      ]
+    },
+    {
+      "item": "minecraft:player_head",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        397
+      ]
+    },
+    {
+      "item": "minecraft:poisonous_potato",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        394
+      ]
+    },
+    {
+      "item": "minecraft:poppy",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        38
+      ]
+    },
+    {
+      "item": "minecraft:porkchop",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        319
+      ]
+    },
+    {
+      "item": "minecraft:potato",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        392
+      ]
+    },
+    {
+      "item": "minecraft:potion",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        373
+      ]
+    },
+    {
+      "item": "minecraft:powered_rail",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        27
+      ]
+    },
+    {
+      "item": "minecraft:pumpkin_pie",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        400
+      ]
+    },
+    {
+      "item": "minecraft:pumpkin_seeds",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        361
+      ]
+    },
+    {
+      "item": "minecraft:purple_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:purple_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:purple_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:purple_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:quartz",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        406
+      ]
+    },
+    {
+      "item": "minecraft:quartz_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        155
+      ]
+    },
+    {
+      "item": "minecraft:quartz_pillar",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        155
+      ]
+    },
+    {
+      "item": "minecraft:quartz_slab",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        44
+      ]
+    },
+    {
+      "item": "minecraft:quartz_stairs",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        156
+      ]
+    },
+    {
+      "item": "minecraft:rail",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        66
+      ]
+    },
+    {
+      "item": "minecraft:red_bed",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        355
+      ]
+    },
+    {
+      "item": "minecraft:red_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:red_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:red_mushroom",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        40
+      ]
+    },
+    {
+      "item": "minecraft:red_mushroom_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        100
+      ]
+    },
+    {
+      "item": "minecraft:red_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:red_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:redstone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        331
+      ]
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        152
+      ]
+    },
+    {
+      "item": "minecraft:redstone_lamp",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        123
+      ]
+    },
+    {
+      "item": "minecraft:redstone_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        73
+      ]
+    },
+    {
+      "item": "minecraft:redstone_torch",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        76
+      ]
+    },
+    {
+      "item": "minecraft:repeater",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        356
+      ]
+    },
+    {
+      "item": "minecraft:rotten_flesh",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        367
+      ]
+    },
+    {
+      "item": "minecraft:saddle",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        329
+      ]
+    },
+    {
+      "item": "minecraft:salmon",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1229
+      ]
+    },
+    {
+      "item": "minecraft:sand",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        12
+      ]
+    },
+    {
+      "item": "minecraft:sandstone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        24
+      ]
+    },
+    {
+      "item": "minecraft:sandstone_slab",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        44
+      ]
+    },
+    {
+      "item": "minecraft:sandstone_stairs",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        128
+      ]
+    },
+    {
+      "item": "minecraft:shears",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        359
+      ]
+    },
+    {
+      "item": "minecraft:sheep_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:short_grass",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        31
+      ]
+    },
+    {
+      "item": "minecraft:silverfish_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:skeleton_skull",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        397
+      ]
+    },
+    {
+      "item": "minecraft:skeleton_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:slime_ball",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        341
+      ]
+    },
+    {
+      "item": "minecraft:slime_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:smooth_stone_slab",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        44
+      ]
+    },
+    {
+      "item": "minecraft:snow",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        78
+      ]
+    },
+    {
+      "item": "minecraft:snow_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        80
+      ]
+    },
+    {
+      "item": "minecraft:snowball",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        332
+      ]
+    },
+    {
+      "item": "minecraft:soul_sand",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        88
+      ]
+    },
+    {
+      "item": "minecraft:spawner",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        52
+      ]
+    },
+    {
+      "item": "minecraft:spider_eye",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        375
+      ]
+    },
+    {
+      "item": "minecraft:spider_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:splash_potion",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        373
+      ]
+    },
+    {
+      "item": "minecraft:sponge",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        19
+      ]
+    },
+    {
+      "item": "minecraft:spruce_leaves",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        18
+      ]
+    },
+    {
+      "item": "minecraft:spruce_log",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        17
+      ]
+    },
+    {
+      "item": "minecraft:spruce_planks",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        5
+      ]
+    },
+    {
+      "item": "minecraft:spruce_sapling",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        6
+      ]
+    },
+    {
+      "item": "minecraft:spruce_slab",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        126
+      ]
+    },
+    {
+      "item": "minecraft:spruce_stairs",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        134
+      ]
+    },
+    {
+      "item": "minecraft:squid_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:stick",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        280
+      ]
+    },
+    {
+      "item": "minecraft:sticky_piston",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        29
+      ]
+    },
+    {
+      "item": "minecraft:stone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1
+      ]
+    },
+    {
+      "item": "minecraft:stone_brick_slab",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        44
+      ]
+    },
+    {
+      "item": "minecraft:stone_brick_stairs",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        109
+      ]
+    },
+    {
+      "item": "minecraft:stone_bricks",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        98
+      ]
+    },
+    {
+      "item": "minecraft:stone_button",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        77
+      ]
+    },
+    {
+      "item": "minecraft:stone_pressure_plate",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        70
+      ]
+    },
+    {
+      "item": "minecraft:string",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        287
+      ]
+    },
+    {
+      "item": "minecraft:sugar",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        353
+      ]
+    },
+    {
+      "item": "minecraft:sugar_cane",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        338
+      ]
+    },
+    {
+      "item": "minecraft:terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        172
+      ]
+    },
+    {
+      "item": "minecraft:tnt",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        46
+      ]
+    },
+    {
+      "item": "minecraft:tnt_minecart",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        407
+      ]
+    },
+    {
+      "item": "minecraft:torch",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        50
+      ]
+    },
+    {
+      "item": "minecraft:trapped_chest",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        146
+      ]
+    },
+    {
+      "item": "minecraft:tripwire_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        131
+      ]
+    },
+    {
+      "item": "minecraft:villager_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:vine",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        106
+      ]
+    },
+    {
+      "item": "minecraft:water_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        326
+      ]
+    },
+    {
+      "item": "minecraft:wheat",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        296
+      ]
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        295
+      ]
+    },
+    {
+      "item": "minecraft:white_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:white_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:white_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:witch_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:wither_skeleton_skull",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        397
+      ]
+    },
+    {
+      "item": "minecraft:wolf_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:wooden_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        269
+      ]
+    },
+    {
+      "item": "minecraft:wooden_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1025
+      ]
+    },
+    {
+      "item": "minecraft:writable_book",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        386
+      ]
+    },
+    {
+      "item": "minecraft:written_book",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        387
+      ]
+    },
+    {
+      "item": "minecraft:yellow_carpet",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        171
+      ]
+    },
+    {
+      "item": "minecraft:yellow_dye",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        351
+      ]
+    },
+    {
+      "item": "minecraft:yellow_terracotta",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        159
+      ]
+    },
+    {
+      "item": "minecraft:yellow_wool",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        35
+      ]
+    },
+    {
+      "item": "minecraft:zombie_head",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        397
+      ]
+    },
+    {
+      "item": "minecraft:zombie_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "minecraft:zombified_piglin_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:adamantium_anvil",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        233
+      ]
+    },
+    {
+      "item": "mite:adamantium_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1046
+      ]
+    },
+    {
+      "item": "mite:adamantium_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        983
+      ]
+    },
+    {
+      "item": "mite:adamantium_bars",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        217
+      ]
+    },
+    {
+      "item": "mite:adamantium_battle_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1009
+      ]
+    },
+    {
+      "item": "mite:adamantium_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        207
+      ]
+    },
+    {
+      "item": "mite:adamantium_boots",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1103
+      ]
+    },
+    {
+      "item": "mite:adamantium_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1146
+      ]
+    },
+    {
+      "item": "mite:adamantium_chain",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1128
+      ]
+    },
+    {
+      "item": "mite:adamantium_chain_boots",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1108
+      ]
+    },
+    {
+      "item": "mite:adamantium_chain_chestplate",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1086
+      ]
+    },
+    {
+      "item": "mite:adamantium_chain_helmet",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1075
+      ]
+    },
+    {
+      "item": "mite:adamantium_chain_leggings",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1097
+      ]
+    },
+    {
+      "item": "mite:adamantium_chestplate",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1081
+      ]
+    },
+    {
+      "item": "mite:adamantium_coin",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1279
+      ]
+    },
+    {
+      "item": "mite:adamantium_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:adamantium_dagger",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1038
+      ]
+    },
+    {
+      "item": "mite:adamantium_door",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1115
+      ]
+    },
+    {
+      "item": "mite:adamantium_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1180
+      ]
+    },
+    {
+      "item": "mite:adamantium_helmet",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1070
+      ]
+    },
+    {
+      "item": "mite:adamantium_hoe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        988
+      ]
+    },
+    {
+      "item": "mite:adamantium_horse_armor",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1133
+      ]
+    },
+    {
+      "item": "mite:adamantium_ingot",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        965
+      ]
+    },
+    {
+      "item": "mite:adamantium_lava_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1158
+      ]
+    },
+    {
+      "item": "mite:adamantium_leggings",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1092
+      ]
+    },
+    {
+      "item": "mite:adamantium_mattock",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1002
+      ]
+    },
+    {
+      "item": "mite:adamantium_milk_bucket",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1164
+      ]
+    },
+    {
+      "item": "mite:adamantium_nugget",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        960
+      ]
+    },
+    {
+      "item": "mite:adamantium_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        203
+      ]
+    },
+    {
+      "item": "mite:adamantium_pickaxe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        970
+      ]
+    },
+    {
+      "item": "mite:adamantium_runestone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        198
+      ]
+    },
+    {
+      "item": "mite:adamantium_scythe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1016
+      ]
+    },
+    {
+      "item": "mite:adamantium_shears",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1022
+      ]
+    },
+    {
+      "item": "mite:adamantium_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        976
+      ]
+    },
+    {
+      "item": "mite:adamantium_stone_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1236
+      ]
+    },
+    {
+      "item": "mite:adamantium_strongbox",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        244
+      ]
+    },
+    {
+      "item": "mite:adamantium_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1031
+      ]
+    },
+    {
+      "item": "mite:adamantium_war_hammer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        995
+      ]
+    },
+    {
+      "item": "mite:adamantium_water_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1152
+      ]
+    },
+    {
+      "item": "mite:ancient_bone_lord_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_anvil",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        254
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1250
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1241
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_bars",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        199
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_battle_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1245
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        252
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1258
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_bow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1251
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1147
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_chain",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1261
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_chainmail_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1259
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_chainmail_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1255
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_chainmail_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1253
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_chainmail_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1257
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1254
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_coin",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1277
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_dagger",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1249
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_door",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1260
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1262
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1252
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_hoe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1242
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_horse_armor",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1134
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_ingot",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        966
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_lava_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1159
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1256
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_mattock",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1244
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_milk_bucket",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1165
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_nugget",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        961
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_pickaxe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1239
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_scythe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1246
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_shears",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1247
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1240
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_stone_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1237
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_strongbox",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        255
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1248
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_war_hammer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1243
+      ]
+    },
+    {
+      "item": "mite:ancient_metal_water_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1153
+      ]
+    },
+    {
+      "item": "mite:banana",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1219
+      ]
+    },
+    {
+      "item": "mite:beef_stew",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1188
+      ]
+    },
+    {
+      "item": "mite:black_pudding",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        341
+      ]
+    },
+    {
+      "item": "mite:black_widow_spider_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:blob_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:blueberries",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1225
+      ]
+    },
+    {
+      "item": "mite:blueberry_bush",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        249
+      ]
+    },
+    {
+      "item": "mite:bone_lord_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:bottle_of_disenchanting",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1214
+      ]
+    },
+    {
+      "item": "mite:carrot_on_a_stick_adamantium_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1201
+      ]
+    },
+    {
+      "item": "mite:carrot_on_a_stick_ancient_metal_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1264
+      ]
+    },
+    {
+      "item": "mite:carrot_on_a_stick_copper_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1197
+      ]
+    },
+    {
+      "item": "mite:carrot_on_a_stick_flint_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1208
+      ]
+    },
+    {
+      "item": "mite:carrot_on_a_stick_gold_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1199
+      ]
+    },
+    {
+      "item": "mite:carrot_on_a_stick_mithril_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1200
+      ]
+    },
+    {
+      "item": "mite:carrot_on_a_stick_obsidian_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1213
+      ]
+    },
+    {
+      "item": "mite:carrot_on_a_stick_silver_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1198
+      ]
+    },
+    {
+      "item": "mite:cereal",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1227
+      ]
+    },
+    {
+      "item": "mite:cheese",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1183
+      ]
+    },
+    {
+      "item": "mite:chicken_soup",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1189
+      ]
+    },
+    {
+      "item": "mite:chocolate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1186
+      ]
+    },
+    {
+      "item": "mite:clay_golem_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:clay_oven",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        218
+      ]
+    },
+    {
+      "item": "mite:cooked_large_fish",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1230
+      ]
+    },
+    {
+      "item": "mite:cooked_worm",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1281
+      ]
+    },
+    {
+      "item": "mite:copper_anvil",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        229
+      ]
+    },
+    {
+      "item": "mite:copper_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1041
+      ]
+    },
+    {
+      "item": "mite:copper_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        980
+      ]
+    },
+    {
+      "item": "mite:copper_bars",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        213
+      ]
+    },
+    {
+      "item": "mite:copper_battle_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1004
+      ]
+    },
+    {
+      "item": "mite:copper_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1100
+      ]
+    },
+    {
+      "item": "mite:copper_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1142
+      ]
+    },
+    {
+      "item": "mite:copper_chain",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1123
+      ]
+    },
+    {
+      "item": "mite:copper_chain_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1104
+      ]
+    },
+    {
+      "item": "mite:copper_chain_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1082
+      ]
+    },
+    {
+      "item": "mite:copper_chain_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1071
+      ]
+    },
+    {
+      "item": "mite:copper_chain_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1093
+      ]
+    },
+    {
+      "item": "mite:copper_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1078
+      ]
+    },
+    {
+      "item": "mite:copper_coin",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1220
+      ]
+    },
+    {
+      "item": "mite:copper_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:copper_dagger",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1033
+      ]
+    },
+    {
+      "item": "mite:copper_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1175
+      ]
+    },
+    {
+      "item": "mite:copper_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1067
+      ]
+    },
+    {
+      "item": "mite:copper_hoe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        985
+      ]
+    },
+    {
+      "item": "mite:copper_horse_armor",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1130
+      ]
+    },
+    {
+      "item": "mite:copper_lava_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1154
+      ]
+    },
+    {
+      "item": "mite:copper_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1089
+      ]
+    },
+    {
+      "item": "mite:copper_mattock",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        997
+      ]
+    },
+    {
+      "item": "mite:copper_milk_bucket",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1160
+      ]
+    },
+    {
+      "item": "mite:copper_nugget",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        956
+      ]
+    },
+    {
+      "item": "mite:copper_pickaxe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        967
+      ]
+    },
+    {
+      "item": "mite:copper_scythe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1011
+      ]
+    },
+    {
+      "item": "mite:copper_shears",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1018
+      ]
+    },
+    {
+      "item": "mite:copper_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        973
+      ]
+    },
+    {
+      "item": "mite:copper_stone_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1231
+      ]
+    },
+    {
+      "item": "mite:copper_strongbox",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        239
+      ]
+    },
+    {
+      "item": "mite:copper_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1028
+      ]
+    },
+    {
+      "item": "mite:copper_war_hammer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        990
+      ]
+    },
+    {
+      "item": "mite:copper_water_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1148
+      ]
+    },
+    {
+      "item": "mite:copperspine_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:copperspine_stone",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        97
+      ]
+    },
+    {
+      "item": "mite:cream_of_mushroom_soup",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1215
+      ]
+    },
+    {
+      "item": "mite:cream_of_vegetable_soup",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1216
+      ]
+    },
+    {
+      "item": "mite:crimson_blob",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        341
+      ]
+    },
+    {
+      "item": "mite:dahlia",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        38
+      ]
+    },
+    {
+      "item": "mite:demon_spider_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:diamond_shard",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1118
+      ]
+    },
+    {
+      "item": "mite:dire_wolf_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:dough",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1185
+      ]
+    },
+    {
+      "item": "mite:earth_elemental_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:emerald_enchanting_table",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        245
+      ]
+    },
+    {
+      "item": "mite:emerald_shard",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1117
+      ]
+    },
+    {
+      "item": "mite:fire_elemental_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:fishing_rod_adamantium_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1196
+      ]
+    },
+    {
+      "item": "mite:fishing_rod_ancient_metal_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1263
+      ]
+    },
+    {
+      "item": "mite:fishing_rod_copper_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1192
+      ]
+    },
+    {
+      "item": "mite:fishing_rod_flint_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1207
+      ]
+    },
+    {
+      "item": "mite:fishing_rod_gold_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1194
+      ]
+    },
+    {
+      "item": "mite:fishing_rod_mithril_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1195
+      ]
+    },
+    {
+      "item": "mite:fishing_rod_obsidian_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1212
+      ]
+    },
+    {
+      "item": "mite:fishing_rod_silver_hook",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1193
+      ]
+    },
+    {
+      "item": "mite:flint_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        979
+      ]
+    },
+    {
+      "item": "mite:flint_chip",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1121
+      ]
+    },
+    {
+      "item": "mite:flint_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:flint_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        978
+      ]
+    },
+    {
+      "item": "mite:flint_knife",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1023
+      ]
+    },
+    {
+      "item": "mite:flint_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        972
+      ]
+    },
+    {
+      "item": "mite:flour",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1184
+      ]
+    },
+    {
+      "item": "mite:ghoul_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:giant_vampire_bat_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:glass_shard",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1120
+      ]
+    },
+    {
+      "item": "mite:gold_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1144
+      ]
+    },
+    {
+      "item": "mite:gold_coin",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1222
+      ]
+    },
+    {
+      "item": "mite:gold_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:gold_lava_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1156
+      ]
+    },
+    {
+      "item": "mite:gold_milk_bucket",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1162
+      ]
+    },
+    {
+      "item": "mite:gold_stone_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1233
+      ]
+    },
+    {
+      "item": "mite:gold_water_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1150
+      ]
+    },
+    {
+      "item": "mite:golden_anvil",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        231
+      ]
+    },
+    {
+      "item": "mite:golden_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1043
+      ]
+    },
+    {
+      "item": "mite:golden_bars",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        215
+      ]
+    },
+    {
+      "item": "mite:golden_battle_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1006
+      ]
+    },
+    {
+      "item": "mite:golden_chain",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1125
+      ]
+    },
+    {
+      "item": "mite:golden_chain_boots",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1106
+      ]
+    },
+    {
+      "item": "mite:golden_chain_chestplate",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1084
+      ]
+    },
+    {
+      "item": "mite:golden_chain_helmet",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1073
+      ]
+    },
+    {
+      "item": "mite:golden_chain_leggings",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1095
+      ]
+    },
+    {
+      "item": "mite:golden_dagger",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1035
+      ]
+    },
+    {
+      "item": "mite:golden_door",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1113
+      ]
+    },
+    {
+      "item": "mite:golden_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1177
+      ]
+    },
+    {
+      "item": "mite:golden_mattock",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        999
+      ]
+    },
+    {
+      "item": "mite:golden_scythe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1013
+      ]
+    },
+    {
+      "item": "mite:golden_shears",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1020
+      ]
+    },
+    {
+      "item": "mite:golden_strongbox",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        241
+      ]
+    },
+    {
+      "item": "mite:golden_war_hammer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        992
+      ]
+    },
+    {
+      "item": "mite:grey_gelatinous_sphere",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        341
+      ]
+    },
+    {
+      "item": "mite:hellhound_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:hoary_silverfish_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:ice_cream",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1206
+      ]
+    },
+    {
+      "item": "mite:infernal_creeper_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:infested_netherrack",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        97
+      ]
+    },
+    {
+      "item": "mite:invisible_stalker_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:iron_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1044
+      ]
+    },
+    {
+      "item": "mite:iron_battle_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1007
+      ]
+    },
+    {
+      "item": "mite:iron_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:iron_dagger",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1036
+      ]
+    },
+    {
+      "item": "mite:iron_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1178
+      ]
+    },
+    {
+      "item": "mite:iron_mattock",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1000
+      ]
+    },
+    {
+      "item": "mite:iron_scythe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1014
+      ]
+    },
+    {
+      "item": "mite:iron_stone_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1234
+      ]
+    },
+    {
+      "item": "mite:iron_strongbox",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        242
+      ]
+    },
+    {
+      "item": "mite:iron_war_hammer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        993
+      ]
+    },
+    {
+      "item": "mite:jelly_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:large_clay_oven",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        250
+      ]
+    },
+    {
+      "item": "mite:longdead_guardian_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:longdead_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:manure",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1191
+      ]
+    },
+    {
+      "item": "mite:mashed_potato",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1223
+      ]
+    },
+    {
+      "item": "mite:milk_bowl",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1166
+      ]
+    },
+    {
+      "item": "mite:mithril_anvil",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        232
+      ]
+    },
+    {
+      "item": "mite:mithril_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1045
+      ]
+    },
+    {
+      "item": "mite:mithril_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        982
+      ]
+    },
+    {
+      "item": "mite:mithril_bars",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        216
+      ]
+    },
+    {
+      "item": "mite:mithril_battle_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1008
+      ]
+    },
+    {
+      "item": "mite:mithril_block",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        206
+      ]
+    },
+    {
+      "item": "mite:mithril_boots",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1102
+      ]
+    },
+    {
+      "item": "mite:mithril_bow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1048
+      ]
+    },
+    {
+      "item": "mite:mithril_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1145
+      ]
+    },
+    {
+      "item": "mite:mithril_chain",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1127
+      ]
+    },
+    {
+      "item": "mite:mithril_chain_boots",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1107
+      ]
+    },
+    {
+      "item": "mite:mithril_chain_chestplate",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1085
+      ]
+    },
+    {
+      "item": "mite:mithril_chain_helmet",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1074
+      ]
+    },
+    {
+      "item": "mite:mithril_chain_leggings",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1096
+      ]
+    },
+    {
+      "item": "mite:mithril_chestplate",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1080
+      ]
+    },
+    {
+      "item": "mite:mithril_coin",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1278
+      ]
+    },
+    {
+      "item": "mite:mithril_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:mithril_dagger",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1037
+      ]
+    },
+    {
+      "item": "mite:mithril_door",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1114
+      ]
+    },
+    {
+      "item": "mite:mithril_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1179
+      ]
+    },
+    {
+      "item": "mite:mithril_helmet",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1069
+      ]
+    },
+    {
+      "item": "mite:mithril_hoe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        987
+      ]
+    },
+    {
+      "item": "mite:mithril_horse_armor",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1132
+      ]
+    },
+    {
+      "item": "mite:mithril_ingot",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        964
+      ]
+    },
+    {
+      "item": "mite:mithril_lava_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1157
+      ]
+    },
+    {
+      "item": "mite:mithril_leggings",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1091
+      ]
+    },
+    {
+      "item": "mite:mithril_mattock",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1001
+      ]
+    },
+    {
+      "item": "mite:mithril_milk_bucket",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1163
+      ]
+    },
+    {
+      "item": "mite:mithril_nugget",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        959
+      ]
+    },
+    {
+      "item": "mite:mithril_ore",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        202
+      ]
+    },
+    {
+      "item": "mite:mithril_pickaxe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        969
+      ]
+    },
+    {
+      "item": "mite:mithril_runestone",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        247
+      ]
+    },
+    {
+      "item": "mite:mithril_scythe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1015
+      ]
+    },
+    {
+      "item": "mite:mithril_shears",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1021
+      ]
+    },
+    {
+      "item": "mite:mithril_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        975
+      ]
+    },
+    {
+      "item": "mite:mithril_stone_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1235
+      ]
+    },
+    {
+      "item": "mite:mithril_strongbox",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        243
+      ]
+    },
+    {
+      "item": "mite:mithril_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1030
+      ]
+    },
+    {
+      "item": "mite:mithril_war_hammer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        994
+      ]
+    },
+    {
+      "item": "mite:mithril_water_bucket",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1151
+      ]
+    },
+    {
+      "item": "mite:music_disc_descent",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2277
+      ]
+    },
+    {
+      "item": "mite:music_disc_legends",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2279
+      ]
+    },
+    {
+      "item": "mite:music_disc_underworld",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2276
+      ]
+    },
+    {
+      "item": "mite:music_disc_wanderer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        2278
+      ]
+    },
+    {
+      "item": "mite:nether_gravel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        13
+      ]
+    },
+    {
+      "item": "mite:netherrack_furnace",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        224
+      ]
+    },
+    {
+      "item": "mite:netherspawn_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:nightwing_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:obsidian_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1049
+      ]
+    },
+    {
+      "item": "mite:obsidian_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1205
+      ]
+    },
+    {
+      "item": "mite:obsidian_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:obsidian_furnace",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        222
+      ]
+    },
+    {
+      "item": "mite:obsidian_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1204
+      ]
+    },
+    {
+      "item": "mite:obsidian_knife",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1203
+      ]
+    },
+    {
+      "item": "mite:obsidian_shard",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1122
+      ]
+    },
+    {
+      "item": "mite:obsidian_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1202
+      ]
+    },
+    {
+      "item": "mite:ochre_jelly",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        341
+      ]
+    },
+    {
+      "item": "mite:onion",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1187
+      ]
+    },
+    {
+      "item": "mite:ooze_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:orange",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1218
+      ]
+    },
+    {
+      "item": "mite:phase_spider_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:porridge",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1226
+      ]
+    },
+    {
+      "item": "mite:pudding_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:pumpkin_soup",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1217
+      ]
+    },
+    {
+      "item": "mite:quartz_shard",
+      "pepsin": false,
+      "acid": false,
+      "source_ids": [
+        1119
+      ]
+    },
+    {
+      "item": "mite:raw_large_fish",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1229
+      ]
+    },
+    {
+      "item": "mite:raw_worm",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1280
+      ]
+    },
+    {
+      "item": "mite:revenant_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1047
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        984
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_battle_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1010
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1109
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_chain",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1129
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_chain_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1110
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_chain_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1088
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_chain_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1077
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_chain_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1099
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1087
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_dagger",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1039
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1181
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1076
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_hoe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        989
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1098
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_mattock",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1003
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_pickaxe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        971
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_scythe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1017
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_shears",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1182
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        977
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1032
+      ]
+    },
+    {
+      "item": "mite:rusted_iron_war_hammer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        996
+      ]
+    },
+    {
+      "item": "mite:salad",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1209
+      ]
+    },
+    {
+      "item": "mite:sandstone_furnace",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        220
+      ]
+    },
+    {
+      "item": "mite:shadow_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:silver_anvil",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        230
+      ]
+    },
+    {
+      "item": "mite:silver_arrow",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1042
+      ]
+    },
+    {
+      "item": "mite:silver_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        981
+      ]
+    },
+    {
+      "item": "mite:silver_battle_axe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1005
+      ]
+    },
+    {
+      "item": "mite:silver_block",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        205
+      ]
+    },
+    {
+      "item": "mite:silver_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1101
+      ]
+    },
+    {
+      "item": "mite:silver_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1143
+      ]
+    },
+    {
+      "item": "mite:silver_chain",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1124
+      ]
+    },
+    {
+      "item": "mite:silver_chain_boots",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1105
+      ]
+    },
+    {
+      "item": "mite:silver_chain_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1083
+      ]
+    },
+    {
+      "item": "mite:silver_chain_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1072
+      ]
+    },
+    {
+      "item": "mite:silver_chain_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1094
+      ]
+    },
+    {
+      "item": "mite:silver_chestplate",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1079
+      ]
+    },
+    {
+      "item": "mite:silver_coin",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1221
+      ]
+    },
+    {
+      "item": "mite:silver_crafting_table",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        58
+      ]
+    },
+    {
+      "item": "mite:silver_dagger",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1034
+      ]
+    },
+    {
+      "item": "mite:silver_door",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1112
+      ]
+    },
+    {
+      "item": "mite:silver_hatchet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1176
+      ]
+    },
+    {
+      "item": "mite:silver_helmet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1068
+      ]
+    },
+    {
+      "item": "mite:silver_hoe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        986
+      ]
+    },
+    {
+      "item": "mite:silver_horse_armor",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1131
+      ]
+    },
+    {
+      "item": "mite:silver_ingot",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        963
+      ]
+    },
+    {
+      "item": "mite:silver_lava_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1155
+      ]
+    },
+    {
+      "item": "mite:silver_leggings",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1090
+      ]
+    },
+    {
+      "item": "mite:silver_mattock",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        998
+      ]
+    },
+    {
+      "item": "mite:silver_milk_bucket",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1161
+      ]
+    },
+    {
+      "item": "mite:silver_nugget",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        957
+      ]
+    },
+    {
+      "item": "mite:silver_ore",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        201
+      ]
+    },
+    {
+      "item": "mite:silver_pickaxe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        968
+      ]
+    },
+    {
+      "item": "mite:silver_scythe",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1012
+      ]
+    },
+    {
+      "item": "mite:silver_shears",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1019
+      ]
+    },
+    {
+      "item": "mite:silver_shovel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        974
+      ]
+    },
+    {
+      "item": "mite:silver_stone_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1232
+      ]
+    },
+    {
+      "item": "mite:silver_strongbox",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        240
+      ]
+    },
+    {
+      "item": "mite:silver_sword",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1029
+      ]
+    },
+    {
+      "item": "mite:silver_war_hammer",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        991
+      ]
+    },
+    {
+      "item": "mite:silver_water_bucket",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1149
+      ]
+    },
+    {
+      "item": "mite:sinew",
+      "pepsin": true,
+      "acid": true,
+      "source_ids": [
+        1174
+      ]
+    },
+    {
+      "item": "mite:sorbet",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1224
+      ]
+    },
+    {
+      "item": "mite:vampire_bat_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:vegetable_soup",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1190
+      ]
+    },
+    {
+      "item": "mite:water_bowl",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1167
+      ]
+    },
+    {
+      "item": "mite:wight_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:witherwood_bush",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        32
+      ]
+    },
+    {
+      "item": "mite:wood_spider_spawn_egg",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        383
+      ]
+    },
+    {
+      "item": "mite:wooden_cudgel",
+      "pepsin": false,
+      "acid": true,
+      "source_ids": [
+        1024
+      ]
+    }
+  ],
+  "legacy_flags": [
+    {
+      "legacy_id": 1,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 2,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 3,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 4,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 5,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 6,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 7,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 8,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 9,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 10,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 11,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 12,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 13,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 14,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 15,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 16,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 17,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 18,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 19,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 20,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 21,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 22,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 23,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 24,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 25,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 26,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 27,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 28,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 29,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 30,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 31,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 32,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 33,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 34,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 35,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 36,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 37,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 38,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 39,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 40,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 41,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 42,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 43,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 44,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 45,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 46,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 47,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 48,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 49,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 50,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 51,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 52,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 53,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 54,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 55,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 56,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 57,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 58,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 59,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 60,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 61,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 62,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 63,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 64,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 65,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 66,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 67,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 68,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 69,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 70,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 71,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 72,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 73,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 74,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 75,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 76,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 77,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 78,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 79,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 80,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 81,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 82,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 83,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 84,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 85,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 86,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 87,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 88,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 89,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 90,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 91,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 92,
+      "pepsin": true,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 93,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 94,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 95,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 96,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 97,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 98,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 99,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 100,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 101,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 102,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 103,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 104,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 105,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 106,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 107,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 108,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 109,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 110,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 111,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 112,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 113,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 114,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 115,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 116,
+      "pepsin": true,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 117,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 118,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 119,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 120,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 121,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 122,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 123,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 124,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 125,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 126,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 127,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 128,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 129,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 130,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 131,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 132,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 133,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 134,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 135,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 136,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 137,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 138,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 139,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 140,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 141,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 142,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 143,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 144,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 145,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 146,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 147,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 148,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 149,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 150,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 151,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 152,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 153,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 154,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 155,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 156,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 157,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 158,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 159,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 170,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 171,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 172,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 173,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 198,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 199,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 200,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 201,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 202,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 203,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 204,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 205,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 206,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 207,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 208,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 209,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 210,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 211,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 212,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 213,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 214,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 215,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 216,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 217,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 218,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 219,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 220,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 221,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 222,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 223,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 224,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 225,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 226,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 227,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 228,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 229,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 230,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 231,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 232,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 233,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 234,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 235,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 236,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 237,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 238,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 239,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 240,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 241,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 242,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 243,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 244,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 245,
+      "pepsin": true,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 246,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 247,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 248,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 249,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 250,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 251,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 252,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 253,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 254,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 255,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 256,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 257,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 258,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 259,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 260,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 261,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 263,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 264,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 265,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 266,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 267,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 269,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 280,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 281,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 282,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 283,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 284,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 285,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 286,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 287,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 288,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 289,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 292,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 294,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 295,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 296,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 297,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 298,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 299,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 300,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 301,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 302,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 303,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 304,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 305,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 306,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 307,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 308,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 309,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 314,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 315,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 316,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 317,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 318,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 319,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 320,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 321,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 322,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 323,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 324,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 325,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 326,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 327,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 328,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 329,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 330,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 331,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 332,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 333,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 334,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 335,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 336,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 337,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 338,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 339,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 340,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 341,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 342,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 343,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 344,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 345,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 346,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 347,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 348,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 349,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 350,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 351,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 352,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 353,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 354,
+      "pepsin": true,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 355,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 356,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 357,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 358,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 359,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 360,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 361,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 362,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 363,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 364,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 365,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 366,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 367,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 368,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 369,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 370,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 371,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 372,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 373,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 374,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 375,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 376,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 377,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 378,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 379,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 380,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 381,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 382,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 383,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 384,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 385,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 386,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 387,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 388,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 389,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 390,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 391,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 392,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 393,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 394,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 395,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 396,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 397,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 398,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 399,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 400,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 401,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 402,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 403,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 404,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 405,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 406,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 407,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 408,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 417,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 418,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 420,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 421,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 956,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 957,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 958,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 959,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 960,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 961,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 962,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 963,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 964,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 965,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 966,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 967,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 968,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 969,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 970,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 971,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 972,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 973,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 974,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 975,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 976,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 977,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 978,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 979,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 980,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 981,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 982,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 983,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 984,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 985,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 986,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 987,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 988,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 989,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 990,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 991,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 992,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 993,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 994,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 995,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 996,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 997,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 998,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 999,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1000,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1001,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1002,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1003,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1004,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1005,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1006,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1007,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1008,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1009,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1010,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1011,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1012,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1013,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1014,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1015,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1016,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1017,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1018,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1019,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1020,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1021,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1022,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1023,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1024,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1025,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1028,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1029,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1030,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1031,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1032,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1033,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1034,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1035,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1036,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1037,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1038,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1039,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1040,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1041,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1042,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1043,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1044,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1045,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1046,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1047,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1048,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1049,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1050,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1051,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1052,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1053,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1054,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1055,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1056,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1057,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1067,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1068,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1069,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1070,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1071,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1072,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1073,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1074,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1075,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1076,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1077,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1078,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1079,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1080,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1081,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1082,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1083,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1084,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1085,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1086,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1087,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1088,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1089,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1090,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1091,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1092,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1093,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1094,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1095,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1096,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1097,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1098,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1099,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1100,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1101,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1102,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1103,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1104,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1105,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1106,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1107,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1108,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1109,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1110,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1111,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1112,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1113,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1114,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1115,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1117,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1118,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1119,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1120,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1121,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1122,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1123,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1124,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1125,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1126,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1127,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1128,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1129,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1130,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1131,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1132,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1133,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1134,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1142,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1143,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1144,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1145,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1146,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1147,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1148,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1149,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1150,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1151,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1152,
+      "pepsin": false,
+      "acid": false,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1153,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1154,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1155,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1156,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1157,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1158,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1159,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1160,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1161,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1162,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1163,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1164,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1165,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1166,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1167,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1172,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1173,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1174,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1175,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1176,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1177,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1178,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1179,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1180,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1181,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1182,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1183,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1184,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1185,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1186,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1187,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1188,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1189,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1190,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1191,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1192,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1193,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1194,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1195,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1196,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1197,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1198,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1199,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1200,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1201,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1202,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1203,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1204,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1205,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1206,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1207,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1208,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1209,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1210,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1211,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1212,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1213,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1214,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1215,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1216,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1217,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1218,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1219,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1220,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1221,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1222,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1223,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1224,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1225,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1226,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1227,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1228,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1229,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1230,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1231,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1232,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1233,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1234,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1235,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1236,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1237,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1239,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1240,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1241,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1242,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1243,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1244,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1245,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1246,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1247,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1248,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1249,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1250,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1251,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1252,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1253,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1254,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1255,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1256,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1257,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1258,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1259,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1260,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1261,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1262,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1263,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1264,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1276,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1277,
+      "pepsin": false,
+      "acid": true,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1278,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": true
+    },
+    {
+      "legacy_id": 1279,
+      "pepsin": false,
+      "acid": false,
+      "fire": false,
+      "lava": false
+    },
+    {
+      "legacy_id": 1280,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1281,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 1282,
+      "pepsin": true,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2256,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2257,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2258,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2259,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2260,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2261,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2262,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2263,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2264,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2265,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2266,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2267,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2276,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2277,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2278,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    },
+    {
+      "legacy_id": 2279,
+      "pepsin": false,
+      "acid": true,
+      "fire": true,
+      "lava": true
+    }
+  ]
+}
