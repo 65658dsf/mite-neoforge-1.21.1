@@ -19,8 +19,19 @@ public record CowFoodState(int version, int milk, float food, float water, float
     public static CowFoodState initial(RandomSource random) {
         return new CowFoodState(1,100,.8F+random.nextFloat()*.2F,.8F+random.nextFloat()*.2F,.8F+random.nextFloat()*.2F);
     }
-    public static CowFoodState get(Cow cow) { return cow.getData(MiteAttachments.COW_FOOD); }
-    public static void set(Cow cow, CowFoodState state) { cow.setData(MiteAttachments.COW_FOOD,state); }
+    public static CowFoodState get(Cow cow) {
+        if(cow.level().isClientSide) return cow.getData(MiteAttachments.COW_FOOD);
+        var source=io.github.ningmeng123.mite.entity.animal.Livestock032.state(cow);
+        return new CowFoodState(1,source.getInt("milk"),source.getFloat("food"),source.getFloat("water"),source.getFloat("freedom"));
+    }
+    public static void set(Cow cow, CowFoodState state) {
+        cow.setData(MiteAttachments.COW_FOOD,state);
+        if(!cow.level().isClientSide) {
+            var source=io.github.ningmeng123.mite.entity.animal.Livestock032.state(cow);
+            source.putInt("milk",state.milk()); source.putFloat("food",state.food()); source.putFloat("water",state.water()); source.putFloat("freedom",state.freedom());
+            io.github.ningmeng123.mite.entity.animal.Livestock032.save(cow,source);
+        }
+    }
     public boolean well() { return Math.min(food,Math.min(water,freedom))>=.25F; }
     public boolean thirsty() { return water<.5F; }
     public CowFoodState milk(int amount) { return new CowFoodState(1,Math.clamp(amount,0,100),food,water,freedom); }

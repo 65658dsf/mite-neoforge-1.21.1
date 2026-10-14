@@ -3,6 +3,8 @@
 build/
 src/generated/resources/.cache/
 out/
+/bin/
+.eclipse/
 run/
 run-*/
 logs/

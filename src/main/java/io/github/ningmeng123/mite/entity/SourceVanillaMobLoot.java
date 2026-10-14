@@ -47,7 +47,12 @@ public final class SourceVanillaMobLoot {
         if (!managed(mob) || mob.level().isClientSide) return;
         var state=mob.getPersistentData().getCompound(STATE);
         EntityType<?> type=mob.getType(); var random=mob.getRandom();
-        if (livestock(type) && !state.contains("food")) { state.putFloat("food",.8F+random.nextFloat()*.2F); state.putFloat("water",.8F+random.nextFloat()*.2F); state.putFloat("freedom",.8F+random.nextFloat()*.2F); }
+        if (livestock(type) && !state.contains("food")) {
+            if(mob instanceof net.minecraft.world.entity.animal.Cow cow && cow.hasData(io.github.ningmeng123.mite.registry.MiteAttachments.COW_FOOD)) {
+                var previous=cow.getData(io.github.ningmeng123.mite.registry.MiteAttachments.COW_FOOD);
+                state.putFloat("food",previous.food());state.putFloat("water",previous.water());state.putFloat("freedom",previous.freedom());
+            } else { state.putFloat("food",.8F+random.nextFloat()*.2F); state.putFloat("water",.8F+random.nextFloat()*.2F); state.putFloat("freedom",.8F+random.nextFloat()*.2F); }
+        }
         if (type==EntityType.CHICKEN && !state.contains("feathers")) { int maximum=random.nextInt(2)+1; if (maximum>1 && random.nextInt(2)==0) --maximum; state.putInt("maximum_feathers",maximum); state.putInt("feathers",maximum); }
         if ((type==EntityType.SPIDER || type==EntityType.CAVE_SPIDER) && !state.contains("webs")) { int stock=random.nextInt(4); if (stock>0 && type!=EntityType.CAVE_SPIDER) --stock; state.putInt("webs",stock); }
         if (!state.isEmpty()) mob.getPersistentData().put(STATE,state);
@@ -55,7 +60,7 @@ public final class SourceVanillaMobLoot {
     public static boolean livestock(EntityType<?> type) { return type==EntityType.COW || type==EntityType.MOOSHROOM || type==EntityType.PIG || type==EntityType.SHEEP || type==EntityType.CHICKEN; }
     /** The independent agriculture system can update the same saved source variables without changing loot formulas. */
     public static void setLivestockNeeds(Mob mob,float food,float water,float freedom) {
-        initialize(mob); var state=mob.getPersistentData().getCompound(STATE); state.putFloat("food",Mth.clamp(food,0F,1F)); state.putFloat("water",Mth.clamp(water,0F,1F)); state.putFloat("freedom",Mth.clamp(freedom,0F,1F)); mob.getPersistentData().put(STATE,state);
+        io.github.ningmeng123.mite.entity.animal.Livestock032.needs(mob,new io.github.ningmeng123.mite.entity.animal.LivestockRules032.Needs(food,water,freedom));
     }
     public static boolean well(Mob mob) { initialize(mob); var s=mob.getPersistentData().getCompound(STATE); return Math.min(s.getFloat("food"),Math.min(s.getFloat("water"),s.getFloat("freedom")))>=.25F; }
     public static int feathers(Mob mob) { initialize(mob); return mob.getPersistentData().getCompound(STATE).getInt("feathers"); }

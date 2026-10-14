@@ -34,6 +34,11 @@ public final class CowFoodEvents {
         ItemStack stack=event.getItemStack();
         var player=event.getEntity();
         CowFoodState state=CowFoodState.get(cow);
+        if(stack.is(Items.BOWL) && cow instanceof MushroomCow mushroomCow) {
+            // Modern mushroom/suspicious stew uses the same source production budget; the native method preserves flower effects.
+            var result=mushroomCow.mobInteract(player,event.getHand());
+            event.setCanceled(true); event.setCancellationResult(result); return;
+        }
         if(FoodVessels.water(stack) && state.thirsty()) {
             int volume=stack.is(MiteFoods.WATER_BOWL.get())?1:4;
             if(!cow.level().isClientSide) {
@@ -43,17 +48,9 @@ public final class CowFoodEvents {
             accept(event);
             return;
         }
-        if(stack.is(Items.WHEAT) && state.food()<.5F) {
-            if(!cow.level().isClientSide) {
-                CowFoodState.set(cow,state.feed());
-                stack.consume(1,player);
-            }
-            accept(event);
-            return;
-        }
         int volume;
         ItemStack result;
-        if(stack.is(Items.BOWL) && !(cow instanceof MushroomCow)) {
+        if(stack.is(Items.BOWL)) {
             volume=1;
             result=new ItemStack(MiteFoods.MILK_BOWL.get());
         } else if(stack.is(Items.BUCKET)) {
@@ -82,59 +79,4 @@ public final class CowFoodEvents {
         event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide));
     }
 
-    @SubscribeEvent public static void tick(EntityTickEvent.Post event) {
-        if(!(event.getEntity() instanceof Cow cow) || cow.level().isClientSide || !cow.isAlive()) return;
-        CowFoodState state=CowFoodState.get(cow);
-        if(cow.tickCount%100==0 && cow.getRandom().nextInt(10)>0) {
-            boolean nearFood=nearFood(cow);
-            boolean nearWater=nearWater(cow);
-            boolean crowded=!cow.level().canSeeSky(cow.blockPosition())
-                    || cow.level().getEntitiesOfClass(Mob.class,cow.getBoundingBox().inflate(2D,.5D,2D)).size()>2;
-            state=state.update(nearFood,nearWater,cow.level().isRainingAt(cow.blockPosition()),crowded,cow.isBaby());
-            CowFoodState.set(cow,state);
-        }
-        if(!cow.isBaby() && state.food()>=.05F) {
-            int timer=cow.getData(MiteAttachments.COW_MANURE_COUNTDOWN)-1;
-            if(timer<=0) {
-                cow.spawnAtLocation(MiteFoods.MANURE.get());
-                timer=12000+cow.getRandom().nextInt(24000);
-            }
-            cow.setData(MiteAttachments.COW_MANURE_COUNTDOWN,timer);
-        }
-    }
-
-    private static boolean nearFood(Cow cow) {
-        BlockPos origin=cow.blockPosition();
-        int height=(int)cow.getBbHeight();
-        for(int dx=-1;dx<=1;dx++)for(int dy=-1;dy<=height;dy++)for(int dz=-1;dz<=1;dz++) {
-            BlockPos pos=origin.offset(dx,dy,dz);
-            var state=cow.level().getBlockState(pos);
-            if(state.is(Blocks.SHORT_GRASS)||state.is(Blocks.TALL_GRASS)||state.is(Blocks.DANDELION)) {
-                if(cow.getRandom().nextFloat()<.01F) cow.level().destroyBlock(pos,false);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean nearWater(Cow cow) {
-        BlockPos origin=cow.blockPosition();
-        int height=(int)cow.getBbHeight();
-        for(int dx=-1;dx<=1;dx++)for(int dy=-1;dy<=height;dy++)for(int dz=-1;dz<=1;dz++) {
-            BlockPos pos=origin.offset(dx,dy,dz);
-            var state=cow.level().getBlockState(pos);
-            boolean water=state.getFluidState().is(FluidTags.WATER)||state.is(Blocks.SNOW)||state.is(Blocks.SNOW_BLOCK)
-                    ||state.is(Blocks.WATER_CAULDRON)&&state.getValue(LayeredCauldronBlock.LEVEL)>0&&pos.getY()+1<cow.getEyeY();
-            if(water&&!cow.level().getBlockState(pos.above()).isFaceSturdy(cow.level(),pos.above(),Direction.DOWN)) return true;
-        }
-        return false;
-    }
-
-    @SubscribeEvent public static void born(BabyEntitySpawnEvent event) {
-        if(event.getChild() instanceof Cow child && event.getParentA() instanceof Cow a && event.getParentB() instanceof Cow b) {
-            CowFoodState first=CowFoodState.get(a),second=CowFoodState.get(b);
-            CowFoodState.set(child,new CowFoodState(1,100,Math.min(first.food(),second.food()),Math.min(first.water(),second.water()),
-                    Math.min(first.freedom(),second.freedom())));
-        }
-    }
 }

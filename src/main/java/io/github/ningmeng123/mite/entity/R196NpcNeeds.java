@@ -42,9 +42,11 @@ public final class R196NpcNeeds {
     private static boolean managed(Mob mob) { return mob instanceof R196Mob || io.github.ningmeng123.mite.worldgen.R196MobSpawning.sourceClass(mob) != null; }
     public static boolean food(Mob mob, ItemStack stack) {
         if (mob.isBaby() || !mob.isAlive() || stack.isEmpty() || mob instanceof R196Wolf wolf && wolf.miteKind() == MobKind.HELLHOUND) return false;
-        if (mob instanceof TamableAnimal pet && pet.isTame() && (pet.isInSittingPose() || pet.getHealth() > pet.getMaxHealth() * .5F)) return false;
+        if (mob instanceof TamableAnimal pet && pet.isTame() && pet.getHealth() > pet.getMaxHealth() * .5F) return false;
         if (mob instanceof R196Undead ghoul) return ghoul.miteKind() == MobKind.GHOUL && meat(stack);
         if (mob instanceof Zombie) return meat(stack);
+        if (io.github.ningmeng123.mite.entity.animal.Livestock032.sourceLivestock(mob)) return io.github.ningmeng123.mite.entity.animal.Livestock032.shouldEat(mob,stack);
+        if (io.github.ningmeng123.mite.entity.animal.R196AnimalAi032.managed(mob)) return io.github.ningmeng123.mite.entity.animal.NativeAnimalSpecial032.shouldEat(mob,stack);
         if (mob instanceof Animal animal) return animal.isFood(stack);
         return mob instanceof Villager && stack.is(Items.BREAD);
     }
@@ -57,10 +59,16 @@ public final class R196NpcNeeds {
         boolean repair = repair(mob, item.getItem());
         if (!repair && !food(mob, item.getItem())) return false;
         boolean undead = mob.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD);
-        if (repair || !undead) mob.heal(mob.getMaxHealth() * .5F);
+        if (!repair && io.github.ningmeng123.mite.entity.animal.Livestock032.sourceLivestock(mob))
+            io.github.ningmeng123.mite.entity.animal.Livestock032.onFoodEaten(mob,item.getItem());
+        else if (!repair && io.github.ningmeng123.mite.entity.animal.R196AnimalAi032.managed(mob))
+            io.github.ningmeng123.mite.entity.animal.NativeAnimalSpecial032.onFoodEaten(mob,item.getItem());
+        else if (repair || !undead) mob.heal(mob.getMaxHealth() * .5F);
         ItemStack remaining = item.getItem().copy(); remaining.shrink(1);
         if (remaining.isEmpty()) item.discard(); else { item.setItem(remaining); ((io.github.ningmeng123.mite.mixin.SourceItemAgeAccess)item).mite$setAge(-18000); }
         mob.getPersistentData().putInt(COOLDOWN, 400); mob.setNoActionTime(-2400);
+        if(io.github.ningmeng123.mite.entity.animal.SourceAnimalDespawn032.managed(mob))
+            io.github.ningmeng123.mite.entity.animal.SourceAnimalDespawn032.refresh(mob,-2400);
         mob.playSound(SoundEvents.ITEM_PICKUP, .2F, ((mob.getRandom().nextFloat() - mob.getRandom().nextFloat()) * .7F + 1F) * 2F);
         return true;
     }
@@ -68,7 +76,8 @@ public final class R196NpcNeeds {
         if (event.getLevel().isClientSide || !(event.getEntity() instanceof PathfinderMob mob) || !managed(mob)) return;
         if (mob.goalSelector.getAvailableGoals().stream().noneMatch(g -> g.getGoal() instanceof R196DiggerGoal) && R196DiggerGoal.watcher(mob))
             mob.goalSelector.addGoal(1, new R196DiggerGoal(mob));
-        if (mob.goalSelector.getAvailableGoals().stream().noneMatch(g -> g.getGoal() instanceof SeekItem)) mob.goalSelector.addGoal(1, new SeekItem(mob));
+        if (!io.github.ningmeng123.mite.entity.animal.R196AnimalAi032.managed(mob)
+                && mob.goalSelector.getAvailableGoals().stream().noneMatch(g -> g.getGoal() instanceof SeekItem)) mob.goalSelector.addGoal(1, new SeekItem(mob));
     }
     @SubscribeEvent public static void tick(EntityTickEvent.Post event) {
         if (event.getEntity().level().isClientSide || !(event.getEntity() instanceof Mob mob) || !managed(mob) || !mob.isAlive()) return;

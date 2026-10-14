@@ -31,7 +31,9 @@ public final class R196Wolf extends Wolf implements R196Mob {
         super(type, level); this.kind = kind; xpReward = R196MobRules.entry(kind).experience();
         if (kind == MobKind.HELLHOUND) {
             goalSelector.removeAllGoals(goal -> true); targetSelector.removeAllGoals(goal -> true);
-            goalSelector.addGoal(1, new FloatGoal(this)); goalSelector.addGoal(3, new MeleeAttackGoal(this, 1, true));
+            goalSelector.addGoal(1, new FloatGoal(this));
+            goalSelector.addGoal(2, new io.github.ningmeng123.mite.entity.animal.SourcePetGoals032.Leap(this,.4F));
+            goalSelector.addGoal(3, new MeleeAttackGoal(this, 1, true));
             goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1));
             goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8)); goalSelector.addGoal(7, new RandomLookAroundGoal(this));
             targetSelector.addGoal(1, new HurtByTargetGoal(this)); targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
@@ -42,8 +44,13 @@ public final class R196Wolf extends Wolf implements R196Mob {
     @Override public MobKind miteKind() { return kind; }
     @Override protected int getBaseExperienceReward() { return xpReward; }
     @Override protected void applyTamingSideEffects() {
+        float previousHealth=getHealth(),previousMaximum=getMaxHealth();
         super.applyTamingSideEffects();
-        if (kind == MobKind.DIRE_WOLF) { getAttribute(Attributes.MAX_HEALTH).setBaseValue(isTame() ? 24 : 16); getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(5); }
+        if (kind == MobKind.DIRE_WOLF) {
+            getAttribute(Attributes.MAX_HEALTH).setBaseValue(isTame() ? 24 : 16); getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(5);
+            getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(isTame()?32:16);
+            setHealth(Math.min(getMaxHealth(),previousHealth+Math.max(0,getMaxHealth()-previousMaximum)));
+        }
     }
     @Override public boolean isInvulnerableTo(DamageSource source) {
         return kind == MobKind.HELLHOUND && source.is(DamageTypeTags.IS_FIRE) || super.isInvulnerableTo(source);
@@ -63,26 +70,14 @@ public final class R196Wolf extends Wolf implements R196Mob {
     }
     @Override public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (kind == MobKind.HELLHOUND) return InteractionResult.PASS;
-        ItemStack item = player.getItemInHand(hand);
-        if (!isTame() && item.is(Items.BONE)) {
-            if (level().isClientSide) return InteractionResult.SUCCESS;
-            item.consume(1, player);
-            float roll = random.nextFloat();
-            int outcome = tamingOutcome(roll, roll >= .4F && roll <= .95F ? random.nextFloat() : 0F, player.experienceLevel);
-            if (outcome > 0 && !net.neoforged.neoforge.event.EventHooks.onAnimalTame(this, player)) {
-                tame(player); getNavigation().stop(); setTarget(null); setOrderedToSit(true); setHealth(getMaxHealth()); level().broadcastEntityEvent(this, (byte)7);
-            } else {
-                if (outcome < 0) { setTarget(player); setPersistentAngerTarget(player.getUUID()); startPersistentAngerTimer(); }
-                level().broadcastEntityEvent(this, (byte)6);
-            }
-            return InteractionResult.CONSUME;
-        }
+        var source=io.github.ningmeng123.mite.entity.animal.NativeAnimalSpecial032.wolfInteract(this,player,hand);
+        if(source!=null) return source;
         return super.mobInteract(player, hand);
     }
     @Override public void tick() {
         super.tick();
-        if (!level().isClientSide && kind == MobKind.DIRE_WOLF && !isBaby() && !isTame() && !isAngry()
-                && !io.github.ningmeng123.mite.rules.R196SpawnRules.moon(level().getDayTime(), level().dimension().equals(Level.OVERWORLD)).blue() && random.nextFloat() < .004F) {
+        if (!level().isClientSide && kind == MobKind.DIRE_WOLF && !isBaby() && !isTame() && !isInLove()
+                && !io.github.ningmeng123.mite.entity.animal.SourceAquatic032.blueNight(level()) && random.nextFloat() < .004F) {
             Player prey = level().getNearestPlayer(this, 4);
             if (prey != null && !prey.isCreative() && !prey.isSpectator()) { setTarget(prey); setPersistentAngerTarget(prey.getUUID()); startPersistentAngerTimer(); }
         }
