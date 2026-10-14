@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "batch": "029",
+  "classification": "user_requested_modern_adaptation",
+  "request": "应该先消耗饱和度再消耗饱食度",
+  "source": {
+    "r196_consumption": "ux.java:45-58 spends satiation unless it is empty or nutrition-only hunger is due; this is not strict nutrition-first",
+    "r196_starvation": "ux.java:64-73 originally uses nutrition==0",
+    "compatibility": "020 AppleSkin saturation overlay displays existing nutrition plus wheat-seed native saturation buffer"
+  },
+  "consumption": {
+    "priority": [
+      "native_seed_buffer",
+      "nutrition",
+      "satiation"
+    ],
+    "exhaustion_per_unit": 4.0,
+    "maximum_deductions_per_tick": 1,
+    "last_nutrition_unit_also_spends_satiation": false,
+    "ordinary_food_adds_second_native_buffer": false,
+    "legacy_nutrition_only_hunger_affects_priority": false
+  },
+  "starvation": {
+    "requires_satiation_zero": true,
+    "requires_nutrition_zero": true,
+    "source_progress_per_tick": 0.002,
+    "source_float_boundary_and_difficulty_limits_retained": true
+  },
+  "regeneration": {
+    "requires_nutrition_positive": true,
+    "source_slow_formula_retained": true,
+    "native_fast_healing_enabled": false
+  },
+  "save_version": 1,
+  "sync_protocol_version": 2,
+  "legacy_nutrition_hunger_key_retained": "mite_nutrition_hunger",
+  "acceptance": "docs/testing/029-food-consumption-order.md",
+  "client_manual": "user_confirmed",
+  "automatic_validation": {
+    "status": "passed",
+    "junit_tests": 1132,
+    "gametests": 480,
+    "new_consumption_order_gametests": 9,
+    "resource_audit": "passed",
+    "jar_sha256": "9f6fdcd4f917818545e0590cb2083d1ea432734ea5d3bdc6eb7c9185638eff46"
+  },
+  "user_acceptance": {
+    "date": "2026-10-14",
+    "feedback": "没有问题了去提交吧",
+    "scope": "用户确认本次交付测试正常并授权提交；未另行提供逐项、联机或长期运行记录。"
+  }
+}

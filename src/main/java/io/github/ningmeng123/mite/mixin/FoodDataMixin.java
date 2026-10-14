@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Source-order dual reserves and metabolism; saturation is not the nutrition reserve. @author NingMeng123 */
+/** Source food values and metabolism with the requested saturation-before-satiation order. @author NingMeng123 */
 @Mixin(FoodData.class)
 public abstract class FoodDataMixin implements DualFoodData {
     @Shadow private int foodLevel;
@@ -32,6 +32,7 @@ public abstract class FoodDataMixin implements DualFoodData {
     @Shadow private float exhaustionLevel;
     @Unique private Player mite$player;
     @Unique private int mite$nutrition = 20;
+    // Retained for version-one saves; it no longer selects which food reserve to spend.
     @Unique private float mite$nutritionHunger;
     @Unique private float mite$healProgress;
     @Unique private float mite$starveProgress;
@@ -115,27 +116,31 @@ public abstract class FoodDataMixin implements DualFoodData {
                     player.level().getBiome(pos).value().getBaseTemperature(),state.malnourished());
             exhaustionLevel = Math.min(exhaustionLevel + .002F*multiplier,40F);
         }
-        if(!player.isCreative()) mite$nutritionHunger += .002F*.25F;
         if (exhaustionLevel >= 4F) {
             exhaustionLevel -= 4F;
             if (saturationLevel>0F) {
                 // Modern saturation absorbs exhaustion, without enabling modern fast healing.
                 saturationLevel=Math.max(0F,saturationLevel-1F);
-            } else if (foodLevel>0 || mite$nutrition>0) {
-                if (foodLevel<1 || mite$nutritionHunger+.001F>=4F && mite$nutrition>0) {
-                    mite$nutrition--;
-                    mite$nutritionHunger=0F;
-                } else foodLevel--;
+            } else if (mite$nutrition>0) {
+                // AppleSkin displays this existing reserve as saturation; do not add another copy.
+                mite$nutrition--;
+                mite$nutritionHunger=0F;
+            } else if (foodLevel>0) {
+                foodLevel--;
             }
         }
         if (mite$nutrition==0) {
             mite$healProgress=0F;
-            mite$starveProgress += .002F;
-            if (mite$starveProgress>=1F) {
-                if (NutritionRules.starvationCanDamage(player.getHealth(),player.level().getDifficulty().getId()))
-                    player.hurt(player.damageSources().starve(),1F);
-                mite$starveProgress-=1F;
-                mite$nutritionHunger=0F;
+            if (foodLevel>0) {
+                mite$starveProgress=0F;
+            } else {
+                mite$starveProgress += .002F;
+                if (mite$starveProgress>=1F) {
+                    if (NutritionRules.starvationCanDamage(player.getHealth(),player.level().getDifficulty().getId()))
+                        player.hurt(player.damageSources().starve(),1F);
+                    mite$starveProgress-=1F;
+                    mite$nutritionHunger=0F;
+                }
             }
         } else {
             mite$starveProgress=0F;
