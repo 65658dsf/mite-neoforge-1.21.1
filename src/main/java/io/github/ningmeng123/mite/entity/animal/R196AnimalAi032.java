@@ -84,8 +84,7 @@ public final class R196AnimalAi032 {
         if(candidate instanceof Wolf wolf && (wolf.getType()==EntityType.WOLF || wolf instanceof R196Wolf))
             return !wolf.isBaby() && !wolf.isTame() && prey instanceof Animal;
         if(candidate instanceof R196Bat bat) return trueAnimal && bat.preysUpon(prey);
-        if(candidate.getType()==EntityType.SQUID) return trueAnimal && !io.github.ningmeng123.mite.rules.R196SpawnRules.moon(
-                candidate.level().getDayTime(),candidate.level().dimension().equals(net.minecraft.world.level.Level.OVERWORLD)).blue();
+        if(candidate.getType()==EntityType.SQUID) return trueAnimal && !SourceAquatic032.blueNight(candidate.level());
         if(candidate.getType()==EntityType.ZOMBIE || candidate instanceof R196Mob source
                 && (source.miteKind()==MobKind.REVENANT || source.miteKind()==MobKind.GHOUL)) return prey instanceof Animal;
         if(candidate.getType()==EntityType.SILVERFISH || candidate instanceof R196Mob source

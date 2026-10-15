@@ -72,6 +72,7 @@ public final class OnionCropBlock extends CropBlock {
             }
             return;
         }
+        if (io.github.ningmeng123.mite.world.LunarCropEffects.infectOnRandomTick(level,pos,state,random)) return;
         int light = level.getMaxLocalRawBrightness(pos.above());
         float temperature = level.getBiome(pos).value().getBaseTemperature();
         float delta = temperature < 1F ? 1F - temperature : Math.max(0F, temperature - 1.2F);

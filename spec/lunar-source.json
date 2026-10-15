@@ -1,0 +1,1347 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "baseline_commit": "11d9169c05303a31c44b01bf64c868df7e4c5a12",
+  "status": "Independent source audit; implementation acceptance belongs to lunar feature verification.",
+  "legacy_game_executed": false,
+  "methodology": [
+    "Searched all CFR Java for named blood, blue, harvest, moon-dog, full/new, brightness, ascension and lowercase moon fields.",
+    "Inspected each actual caller plus phase array consumer EntityCubic; checked inheritance for anr crops and source server V overrides.",
+    "Checked abw/anr/is/bkz javap -c -p for calendar, weather and integrated/dedicated split; no archived method body is exported.",
+    "Method hashes use source declaration through matching closing brace, CRLF/LF normalized by Python UTF-8 text read, final newline removed. Class hashes use exact original bytes."
+  ],
+  "counts": {
+    "rules": 22,
+    "classes": 26,
+    "methods": 80,
+    "assets": 2
+  },
+  "rules": [
+    {
+      "id": "calendar.phase",
+      "references": [
+        "aei:103",
+        "abw:1944",
+        "abw:1948",
+        "abw:1961",
+        "abw:1965"
+      ],
+      "formula": "(unadjusted_tick / 24000 + 1) % 8",
+      "full_phase": 0,
+      "new_phase": 4,
+      "phase_brightness": [
+        1,
+        0.75,
+        0.5,
+        0.25,
+        0,
+        0.25,
+        0.5,
+        0.75
+      ],
+      "notes": "R196 total clock and modern day clock are adapted explicitly; default modern sky phase is one day earlier."
+    },
+    {
+      "id": "calendar.day_and_night",
+      "references": [
+        "abw:1394",
+        "abw:1398",
+        "abw:1414",
+        "abw:1426",
+        "abw:1431"
+      ],
+      "adjusted_local": "(unadjusted_local+6000)%24000",
+      "day_condition": "adjusted_local>5000 && adjusted_local<19000",
+      "night_unadjusted_inclusive": [
+        13000,
+        23000
+      ],
+      "boundary_cases": [
+        {
+          "local": 12999,
+          "night": false
+        },
+        {
+          "local": 13000,
+          "night": true
+        },
+        {
+          "local": 23000,
+          "night": true
+        },
+        {
+          "local": 23001,
+          "night": false
+        }
+      ]
+    },
+    {
+      "id": "calendar.events",
+      "references": [
+        "abw:1978",
+        "abw:1985",
+        "abw:1995",
+        "abw:2002",
+        "abw:2012",
+        "abw:2019",
+        "abw:2023",
+        "abw:2030",
+        "abw:4258",
+        "abw:4266",
+        "abw:4270",
+        "abw:5572",
+        "abw:5605"
+      ],
+      "day_index": "unadjusted_tick/24000+1",
+      "blood": "D%32==0 && D%128!=0",
+      "blue": "D%128==0",
+      "harvest": "blood(unadjusted_tick+192000)",
+      "moon_dog": "blue(unadjusted_tick+192000)",
+      "first_days": {
+        "blood": [
+          32,
+          64,
+          96,
+          160
+        ],
+        "blue": [
+          128,
+          256
+        ],
+        "harvest": [
+          24,
+          56,
+          88,
+          152
+        ],
+        "moon_dog": [
+          120,
+          248
+        ]
+      },
+      "dimension": "Blood/blue instance checks require Overworld. Moon flags are only updated in Overworld. Harvest/moon-dog direct wrappers have no explicit dimension guard; actual effects use flags/Overworld paths.",
+      "date_label_exception": "getDayOfWorld=(unadjusted_tick+6000)/24000+1; not the same day boundary used by special lunar predicates."
+    },
+    {
+      "id": "light.moon_ascension",
+      "references": [
+        "abw:1969"
+      ],
+      "formula": "adjusted<=5000 ? 1-adjusted/5000 : adjusted>=19000 ? (adjusted-19000)/5000 : 0"
+    },
+    {
+      "id": "light.brightness",
+      "references": [
+        "abw:1952",
+        "bfe:523"
+      ],
+      "multipliers": {
+        "blood": 0.6,
+        "harvest": 1,
+        "blue": 1.1,
+        "ordinary": "phase_brightness*.5+.75"
+      },
+      "rain_formula": "brightness>.75 ? brightness*(1-rain)+.75*rain : brightness",
+      "sky_component_formula": "sky*lerp(1,moon_brightness,clamp(ascension,0,.2)*5)",
+      "affects": "Client light-map contribution, not stored block sky light or base phase fraction."
+    },
+    {
+      "id": "light.tint",
+      "references": [
+        "bfe:523"
+      ],
+      "common": "C=clamp(ascension,0,.2)*(sky_light/15)*clamp(1-2*block_light/15,0,1)",
+      "night_multipliers": {
+        "blood": [
+          "1+5*C",
+          "1+2*C",
+          "1"
+        ],
+        "harvest": [
+          "1+2.4*C",
+          "1+1.6*C",
+          "1-.8*C"
+        ],
+        "blue": [
+          "1",
+          "1+.5*C",
+          "1+1.25*C"
+        ]
+      },
+      "output_clamp": [
+        0,
+        1
+      ],
+      "moon_dog_tint": false
+    },
+    {
+      "id": "visual.moon",
+      "references": [
+        "bfl:652"
+      ],
+      "moon_rgb": {
+        "blood": [
+          0.6,
+          0.2,
+          0.1
+        ],
+        "harvest": [
+          1,
+          0.8,
+          0.45
+        ],
+        "blue": [
+          0.66,
+          0.74,
+          1
+        ],
+        "ordinary": [
+          1,
+          1,
+          1
+        ]
+      },
+      "moon_half_width": 20,
+      "phase_atlas": "R196 phase index into existing 4x2 atlas",
+      "sun_tint": "white"
+    },
+    {
+      "id": "visual.halos",
+      "references": [
+        "bfl:652"
+      ],
+      "blood_blue": {
+        "texture": "textures/environment/halo_256.png",
+        "half_width": 160,
+        "base_alpha": ".25*(1-rain)",
+        "blood_rgb": [
+          0.6,
+          0.2,
+          0.1
+        ],
+        "blue_rgb": [
+          0.33,
+          0.37,
+          0.8
+        ],
+        "celestial_angle_fade": [
+          0.77,
+          0.785
+        ]
+      },
+      "moon_dog": {
+        "texture": "textures/environment/ring_128.png",
+        "half_width": 80,
+        "base_alpha": ".5*(1-rain)",
+        "rgb": [
+          0.4975,
+          0.6275,
+          0.85
+        ],
+        "fade_in": [
+          0.18,
+          0.28
+        ],
+        "fade_out": [
+          0.6,
+          0.785
+        ]
+      },
+      "adaptation": "Clamp legacy negative halo alpha to zero."
+    },
+    {
+      "id": "weather.schedule",
+      "references": [
+        "abw:5314",
+        "abw:5338",
+        "abw:5370",
+        "abw:5382",
+        "abw:5452",
+        "abw:5459",
+        "WeatherEvent:29",
+        "WeatherEvent:48",
+        "WeatherEvent:67",
+        "WeatherEvent:79"
+      ],
+      "day_origin": "(day-1)*24000-6000",
+      "no_weather_before_day": 2,
+      "candidate_seed": "worldCreationTime + dimensionId*938473 + day; skip one Random.nextInt()",
+      "candidate_attempts": "up to 3, continue only while random.nextInt(4)<=0",
+      "candidate_start": "day_origin+random.nextInt(24000)",
+      "candidate_duration": "random.nextInt(12000)+6000",
+      "reject_if": [
+        "harvest(start,true)",
+        "harvest(end,true)",
+        "harvest(start+6000,true)",
+        "harvest(end-6000,true)",
+        "blood(start,false)",
+        "blood(end,false)",
+        "blue(start,false)",
+        "blue(end,false)"
+      ],
+      "forced_blood_event": {
+        "start": "day_origin+6000",
+        "duration": 13000,
+        "storm": "entire forced event",
+        "interval": "left-closed/right-open"
+      },
+      "merge_gap_padding": 6000,
+      "notes": "Forced event is local [0,13000), not all blood-moon night; nearby events can merge, and ordinary weather/event behavior is distinct from lunar forced event."
+    },
+    {
+      "id": "weather.biomes",
+      "references": [
+        "abw:4354",
+        "abw:4362",
+        "abw:4373",
+        "abw:4387",
+        "acq:187",
+        "bdd:187",
+        "bfe:956",
+        "bfe:1036",
+        "tm:166",
+        "nn:1225"
+      ],
+      "blood_period": "24 hours, Overworld only",
+      "precipitation": "Zero-rainfall biomes accept precipitation/overcast/wetness/rendering under blood flag; freezing biomes retain snow behavior.",
+      "lightning_biome": "!snowEnabled && (rainEnabled || blood)",
+      "brightness": "Desert ignore-rain-and-thunder BLV exception is disabled during blood period."
+    },
+    {
+      "id": "weather.lightning",
+      "references": [
+        "js:775"
+      ],
+      "attempt_denominator": {
+        "blood": 20000,
+        "ordinary": 100000
+      },
+      "scope": "Per active chunk update; still requires precipitation, thunder and an eligible strike location."
+    },
+    {
+      "id": "sleep.blood",
+      "references": [
+        "js:158",
+        "abw:1406"
+      ],
+      "denied": "Blood period, all 24 hours, not merely night",
+      "existing_sleepers": "wakeAllPlayersGently",
+      "source_sleep_start_adjusted": 21000,
+      "notes": "Normal sleep time, all-player rules and tournament restriction are separate behavior."
+    },
+    {
+      "id": "mobs.frenzy",
+      "references": [
+        "tm:40",
+        "tm:229",
+        "tg:406"
+      ],
+      "enabled": "Blood night; source tm subclasses except explicit overrides such as tg Enderman false",
+      "melee_bonus": ".5 * unmodified base attack damage",
+      "nonstack": "Bone Lord independent frenzy and blood frenzy combine with OR, not two multipliers."
+    },
+    {
+      "id": "spawning.density_and_outdoors",
+      "references": [
+        "aci:20",
+        "aci:94",
+        "aci:334"
+      ],
+      "minimum_density": {
+        "ordinary": 8,
+        "full_night": 10,
+        "blood_night": 12
+      },
+      "outdoor_night_keep_denominator": {
+        "ordinary": 4,
+        "new": 6,
+        "full": 3,
+        "blood": 2,
+        "blue": 54
+      },
+      "blue_eye_saved_sky_check": "Overworld blue night and stored sky light at eye position>0 rejects candidate",
+      "random_rate_floor": "During blood period or thunder, calculated rate modifier below1 becomes1."
+    },
+    {
+      "id": "spawning.depth",
+      "references": [
+        "js:466"
+      ],
+      "enabled": "Blood night in Overworld",
+      "release_depth_limits": [
+        "EntityGhoul",
+        "EntityVampireBat",
+        "EntityRevenant",
+        "EntityNightwing",
+        "EntityBoneLord"
+      ],
+      "conditional_release": {
+        "EntityWight": "freezing biome",
+        "EntityShadow": "desert biome"
+      },
+      "notes": "No blanket surface unlock for all deep monsters."
+    },
+    {
+      "id": "spawning.animals",
+      "references": [
+        "aci:244",
+        "aci:330",
+        "aci:363"
+      ],
+      "enabled": "Blue night",
+      "interval": 400,
+      "light_check": false,
+      "retains": [
+        "animal cap",
+        "spawn point/player distance",
+        "ground",
+        "collision",
+        "ordinary biome list"
+      ]
+    },
+    {
+      "id": "spawning.cubic",
+      "references": [
+        "EntityCubic:366"
+      ],
+      "scope": "Swamp branch above50 below70",
+      "probability": "randomFloat<.5 && randomFloat<phase_brightness && light<=random.nextInt(8)",
+      "brightness": "Base phase fraction, not special moon light-map multiplier"
+    },
+    {
+      "id": "animals.wolves",
+      "references": [
+        "sf:185",
+        "sf:354",
+        "rp:252",
+        "rp:256",
+        "rp:267",
+        "EntityDireWolf:19",
+        "EntityDireWolf:37"
+      ],
+      "blood": "Untamed wolves marked hostile to players during blood night",
+      "blue": [
+        "Dire wolf extra random player aggression and extra growl disabled",
+        "Negative taming result does not start that retaliation"
+      ],
+      "dire_extra_guard": "Adult, untamed, not in love (bY is inherited rp.bp>0); no extra !isAngry condition in source",
+      "retains": [
+        "Existing revenge/target state",
+        "Unsuccessful taming consumes bone and applies cooldown",
+        "No guarantee of taming success",
+        "Other normal wolf ambient sounds"
+      ]
+    },
+    {
+      "id": "animals.squid",
+      "references": [
+        "sc:160",
+        "sc:195"
+      ],
+      "enabled": "Blue night",
+      "prey_selection": false,
+      "existing_prey": "Cleared along legacy AI update path",
+      "exception": "Independent contact-with-player behavior has no blue-moon check."
+    },
+    {
+      "id": "crops.blood_blight",
+      "references": [
+        "anr:13",
+        "anr:61",
+        "abw:5300",
+        "is:449",
+        "bkz:124"
+      ],
+      "source_crops": [
+        "wheat/anr",
+        "carrot/ani",
+        "potato/apt",
+        "onion/BlockOnion"
+      ],
+      "enabled": "Blood night; healthy live crops; follows drought and preexisting blight handling",
+      "probability_per_random_tick": 0.25,
+      "mature_random_ticks": true,
+      "server_condition": "!MinecraftServer.isDedicatedServer (source V method): integrated only",
+      "exposure": "!hasStandardFormOpaqueBlockAbove || isOutdoors",
+      "result": "Set blighted bit and return from randomTick",
+      "modern_scope": "Modern new crops require an explicit adaptation; do not assume every plant class is source anr."
+    },
+    {
+      "id": "crops.blight_progress",
+      "references": [
+        "anr:61",
+        "anr:123",
+        "anr:284",
+        "apt:31"
+      ],
+      "dead_chance_per_random_tick": "1/64",
+      "mature_dies": "decrement growth once",
+      "spread": "If not dead and !random.nextBoolean(), choose [-1,1]^3; nonzero coordinate infects living healthy anr",
+      "bonemeal": "Cure live blighted crop; no resurrection or instant growth",
+      "drops": {
+        "ordinary_blighted": 0,
+        "potato_blighted": "poisonous potato"
+      },
+      "harvest_moon_crop_bonus": false,
+      "notes": "No enabled harvest-moon growth or yield bonus found across all named moon callers."
+    },
+    {
+      "id": "fishing.blue",
+      "references": [
+        "ul:126"
+      ],
+      "enabled": "Blue night; still requires full water, air above and clear physical path to random neighboring water sample",
+      "base_denominator_blue": 600,
+      "base_denominator_ordinary": "factor=(float)min(abs(adjusted-5500),abs(adjusted-17500))/600.0F; clamp((int)(600.0F*factor),600,2400)",
+      "modifier_order": [
+        "rain /2",
+        "skills enabled and no FISHING skill *2",
+        "fortune each level *9/10 (integer truncation)",
+        "hotbar raw worm *.5 (integer truncation)"
+      ],
+      "notes": "Does not raise every fishing loot tier or guarantee a bite."
+    }
+  ],
+  "class_index": [
+    {
+      "class": "abw",
+      "class_sha256": "0affe2c94d273750546e4d36d7d124072100f57b2dffba6d51619672f76dda36",
+      "decompiled_file": ".reference/r196/decompiled/abw.java",
+      "decompiled_sha256": "e57ec879d581af94a11f2e2d6fd0daf5921dc2f37a813a41d04aef853ab2f6d0"
+    },
+    {
+      "class": "aei",
+      "class_sha256": "853eadb39c50cd694c4d299f4e116728fb0b04210281aa068fa3dbafe0bea5b7",
+      "decompiled_file": ".reference/r196/decompiled/aei.java",
+      "decompiled_sha256": "7623931d83ed034189ccdb1801970236bdb14ca618ad178ed07c6676e10307ce"
+    },
+    {
+      "class": "aci",
+      "class_sha256": "a54c8430d9d7f72973eacb0c7c425009ab412af108540579c84ffbb8f79eb1da",
+      "decompiled_file": ".reference/r196/decompiled/aci.java",
+      "decompiled_sha256": "a2e86df1d3295e92b74e62dfb6936fb58d619d0d9c9f62bb79968809264183de"
+    },
+    {
+      "class": "js",
+      "class_sha256": "8d12f0f279cb14a5ada750ffba465fb6c3706d389326d8981ee5224a6b672fdc",
+      "decompiled_file": ".reference/r196/decompiled/js.java",
+      "decompiled_sha256": "4efda5d7a3ef3fa0462b69b51ae2a0851780ab8b37e2f73bf52814ad24ecb349"
+    },
+    {
+      "class": "WeatherEvent",
+      "class_sha256": "42fb46e09748df2ce2d67410ec1ad48c34bea861e22ac9115f2824635de9da16",
+      "decompiled_file": ".reference/r196/decompiled/WeatherEvent.java",
+      "decompiled_sha256": "f4765564cccbe94e5bac3ca7c569a83bd434c95207357e81b4634d9955389490"
+    },
+    {
+      "class": "acq",
+      "class_sha256": "3fe58a21a3bd1c35e25303a7b2713c5d0b1c4ac863d0ac3497b5f7d9d25d1f95",
+      "decompiled_file": ".reference/r196/decompiled/acq.java",
+      "decompiled_sha256": "483ca3cb15c1fce9a1061325814ed2ad11483bfa44783cc15e9e80419a02d15d"
+    },
+    {
+      "class": "anr",
+      "class_sha256": "c14d5a916d50662ad8b61af1d6063de1a7078bac2434e0c522791e1f4ad86727",
+      "decompiled_file": ".reference/r196/decompiled/anr.java",
+      "decompiled_sha256": "673a258f233d08540a8e51bb6361299861f19531b0789d96d296369703bad82d"
+    },
+    {
+      "class": "apt",
+      "class_sha256": "ca61f435a66578c9d6b2b7805e6c54e3bfa6e0096cb6b230b3eb028d411711e3",
+      "decompiled_file": ".reference/r196/decompiled/apt.java",
+      "decompiled_sha256": "d0f3b028c4b9ad6e8022a645fd009d75c59a335964cda4565d196cee4b31c42a"
+    },
+    {
+      "class": "bfe",
+      "class_sha256": "9a2520587702b38f8c3ed2d4e3cfbefa6ad33899f7b7073a0625a09a230b1985",
+      "decompiled_file": ".reference/r196/decompiled/bfe.java",
+      "decompiled_sha256": "b4744bf1d493b3f980ead201a74305d90f848fc004a79b83023ba04778823c4d"
+    },
+    {
+      "class": "bfl",
+      "class_sha256": "9a24e37d07a64008e091d2897b9b8388344faa5885391389b82f1684748fd3d5",
+      "decompiled_file": ".reference/r196/decompiled/bfl.java",
+      "decompiled_sha256": "b634242bf1704ca6387cc0aba888f2d568c0b7bc02476b0394d4bf41156814fe"
+    },
+    {
+      "class": "bdd",
+      "class_sha256": "47e22ed479467d749e28866700545b799b61105ec23e624b9c1214e932cc0905",
+      "decompiled_file": ".reference/r196/decompiled/bdd.java",
+      "decompiled_sha256": "ea9b8e10a24067a30468cd2b076f40fd4b5adab2768c55fa3cf039fdbafd9e0f"
+    },
+    {
+      "class": "sf",
+      "class_sha256": "1ec064a3f4eea90d142c9eee4431ba92c1ab62d4ab60773d74a177818a69cd47",
+      "decompiled_file": ".reference/r196/decompiled/sf.java",
+      "decompiled_sha256": "8e02ec1da83057bcc7ad786645466880a548e4197eaa8818748addef4356a2b9"
+    },
+    {
+      "class": "rp",
+      "class_sha256": "50e43d35178d7fb88192a2d1b8b8d089f1bb5a1ade9873659a8e4917e9037828",
+      "decompiled_file": ".reference/r196/decompiled/rp.java",
+      "decompiled_sha256": "556155b843a098110403537ab523b560bda2ee1f9e391774b026693c49e17017"
+    },
+    {
+      "class": "EntityDireWolf",
+      "class_sha256": "22b029e265ea6fe00f551b11068b06ce9f57d13d35bc2491decc353d1255453e",
+      "decompiled_file": ".reference/r196/decompiled/EntityDireWolf.java",
+      "decompiled_sha256": "b1425bea9d13acd1915afe68e0f2a8f77e80a1a2b766485a389e6431d70a960f"
+    },
+    {
+      "class": "sc",
+      "class_sha256": "3f23b41e0e46f228530bd4ddba9ed38d18a5edf5ed910b84cc774e9dd3275c03",
+      "decompiled_file": ".reference/r196/decompiled/sc.java",
+      "decompiled_sha256": "26c259af19d2e941b7277c690c3dd31adec5407d6436a07762db5760fae327f2"
+    },
+    {
+      "class": "ul",
+      "class_sha256": "76fa79bfd03d7b66ad6d2ee1b479a1d3d813ebc5e56e449ddfb263d317c7cca6",
+      "decompiled_file": ".reference/r196/decompiled/ul.java",
+      "decompiled_sha256": "bb171fc35e635c0fbe760ede998f933d71d882de0d79bdf9e13393a4baabe1a1"
+    },
+    {
+      "class": "tm",
+      "class_sha256": "fd1a79bd2ecb1fc69f59398f1741a551b733b3bc0e534ad65635b516943c93f0",
+      "decompiled_file": ".reference/r196/decompiled/tm.java",
+      "decompiled_sha256": "e22950fca180d12b3a64966af44bf6f9c07e857fcefe2765643fbd064ab67285"
+    },
+    {
+      "class": "tg",
+      "class_sha256": "7b4338c282bd1a38ab860ab4ad9612a86210582304e1026ac3f1bb0aa7154938",
+      "decompiled_file": ".reference/r196/decompiled/tg.java",
+      "decompiled_sha256": "b56e7fcc64ab63b6abc6a066bc6bb906f22ad4541b09a287118978fe043f01df"
+    },
+    {
+      "class": "nn",
+      "class_sha256": "dad35ad53c3c2cf6807d6fabdb582af6255f75046e075d6efbacf56f28e0b81e",
+      "decompiled_file": ".reference/r196/decompiled/nn.java",
+      "decompiled_sha256": "8eef572658c250437c15343693cb21c6fecc33197907e7f8aff9f7e90ce2a354"
+    },
+    {
+      "class": "EntityCubic",
+      "class_sha256": "8e910c2b7b65f8bff22373fc3fe622ee9ccc51e022c703d3d98c4b9bc13deed9",
+      "decompiled_file": ".reference/r196/decompiled/EntityCubic.java",
+      "decompiled_sha256": "89134dcf87d06cd1d0ea69559326854bf7bc21f9e253b3137ce84f9f809ab470"
+    },
+    {
+      "class": "is",
+      "class_sha256": "e45c333b00c5960db79f476a8631cac2c602d0286c81b3b3baee1a9d602bf7f7",
+      "decompiled_file": ".reference/r196/decompiled/is.java",
+      "decompiled_sha256": "549a6f92650c45a3498c44ccf7aa21216ab5f325950f0f35d742b6984d2a6e33"
+    },
+    {
+      "class": "bkz",
+      "class_sha256": "3bc0c92c5dd264dcb53b802dfe078be027373e6d04bb489cdfde6fbd973a96eb",
+      "decompiled_file": ".reference/r196/decompiled/bkz.java",
+      "decompiled_sha256": "8e553145cab1915eb94119c4e4293becc7bdaf9ccc60becf85797e3abe2eab1f"
+    },
+    {
+      "class": "BlockCropsDead",
+      "class_sha256": "3d328377ccd57363fa213437057b2c755e0aabd3f92fb1b3625e6ee9f4b33bf0",
+      "decompiled_file": ".reference/r196/decompiled/BlockCropsDead.java",
+      "decompiled_sha256": "0f2d5558cadaef529f0e77b91f1c21cbc840306aaf475c9a17692b8674a482e2"
+    },
+    {
+      "class": "ani",
+      "class_sha256": "a76749de1eab7e3867351b08f085b62c62336881f6aa35995f3d245a4b814731",
+      "decompiled_file": ".reference/r196/decompiled/ani.java",
+      "decompiled_sha256": "6c37240f1264b44ae5914381d371bbff1bbd0b7b9b55d783e1602c5e6ecc90cc"
+    },
+    {
+      "class": "BlockOnion",
+      "class_sha256": "ce150ec7344ad0d24921fcbd31813a2a938780af0fd04e553bef340cfe3035a4",
+      "decompiled_file": ".reference/r196/decompiled/BlockOnion.java",
+      "decompiled_sha256": "52c8dadb724c40ecb327ddb158734b4442eda63eea0851e85c36925ad655bcbb"
+    },
+    {
+      "class": "net/minecraft/server/MinecraftServer",
+      "class_sha256": "3da0f40bc719f178872f9b2b81322e2fa2d98df1540a68faf891920da116800b",
+      "decompiled_file": ".reference/r196/decompiled/net/minecraft/server/MinecraftServer.java",
+      "decompiled_sha256": "f917fa33ead1b6bbd2867104e0f9b3c8caa4931353ba56fb3ae01bd9ec290c73"
+    }
+  ],
+  "method_index": [
+    {
+      "id": "abw:1394",
+      "class": "abw",
+      "signature": "public static final int getTimeOfSunrise()",
+      "line": 1394,
+      "end_line": 1396,
+      "method_sha256": "2566ff2675efecfcc82f03e2b819a1870c35b0aeadfd3f8ca64dd31d753cc801"
+    },
+    {
+      "id": "abw:1398",
+      "class": "abw",
+      "signature": "public static final int getTimeOfSunset()",
+      "line": 1398,
+      "end_line": 1400,
+      "method_sha256": "9efe1123faf13c905ac7d55c29a54212d6aa9de43fafea7004cef794c9d31187"
+    },
+    {
+      "id": "abw:1406",
+      "class": "abw",
+      "signature": "public static final int getTimeOfSleeping()",
+      "line": 1406,
+      "end_line": 1408,
+      "method_sha256": "05286e00864c584fb86bc8af08bcacba42c07e283bb4740f7f6b4f133ddc7df6"
+    },
+    {
+      "id": "abw:1414",
+      "class": "abw",
+      "signature": "public static int getAdjustedTimeOfDay(int unadjusted_time_of_day)",
+      "line": 1414,
+      "end_line": 1416,
+      "method_sha256": "0dcb9c2e573ba9760760f0c5616e734755c3ad3c5ab374599a2b1a0b06d25853"
+    },
+    {
+      "id": "abw:1426",
+      "class": "abw",
+      "signature": "public static boolean isDaytime(long unadjusted_tick)",
+      "line": 1426,
+      "end_line": 1429,
+      "method_sha256": "ee96b07a892d1dd9b77cdc476a1e24f82bb7c1dd3993f8b99ffb014b1712356e"
+    },
+    {
+      "id": "abw:1431",
+      "class": "abw",
+      "signature": "public boolean v()",
+      "line": 1431,
+      "end_line": 1434,
+      "method_sha256": "40daa9d8a703710d9fe23bed674c0a7567f91e7439b04490061b5aa387f7c616"
+    },
+    {
+      "id": "abw:1944",
+      "class": "abw",
+      "signature": "public int w()",
+      "line": 1944,
+      "end_line": 1946,
+      "method_sha256": "8aa334accb8e530c24841ce57eb60930b5553d4867c689b3eff2b684a5e456e9"
+    },
+    {
+      "id": "abw:1948",
+      "class": "abw",
+      "signature": "public float x()",
+      "line": 1948,
+      "end_line": 1950,
+      "method_sha256": "09f106fddf7a03f2b3aadc70d322b3e6329896a867b14e03f5a0d532c8ba1ed1"
+    },
+    {
+      "id": "abw:1952",
+      "class": "abw",
+      "signature": "public final float getMoonBrightness(float partial_tick, boolean include_weather)",
+      "line": 1952,
+      "end_line": 1959,
+      "method_sha256": "5c166c1d0d04bb463652f783804c73ccb5d6107d87ab3564582735f5796ed5ba"
+    },
+    {
+      "id": "abw:1961",
+      "class": "abw",
+      "signature": "public final boolean isFullMoon()",
+      "line": 1961,
+      "end_line": 1963,
+      "method_sha256": "f5f66ce37df7c3e3b9466e71ac343c9803a917a30ae3ccc5d34fb0ccdfda7138"
+    },
+    {
+      "id": "abw:1965",
+      "class": "abw",
+      "signature": "public final boolean isNewMoon()",
+      "line": 1965,
+      "end_line": 1967,
+      "method_sha256": "2d4a01c2f2694bfad1b4fac97ab0a83ea4cd29af34d252ac5f30168517748e09"
+    },
+    {
+      "id": "abw:1969",
+      "class": "abw",
+      "signature": "public final float getMoonAscensionFactor()",
+      "line": 1969,
+      "end_line": 1976,
+      "method_sha256": "87c6d491a5ad494fa5a5e64a6ead84a0b5fdece37b66b58a5735176e00108e3a"
+    },
+    {
+      "id": "abw:1978",
+      "class": "abw",
+      "signature": "public static final boolean isBloodMoon(long unadjusted_tick, boolean exclusively_at_night)",
+      "line": 1978,
+      "end_line": 1983,
+      "method_sha256": "38488fcd304305295b65f8d2916941e50d0ed06cd7aa56cfbd5d3d763b2737cc"
+    },
+    {
+      "id": "abw:1985",
+      "class": "abw",
+      "signature": "public final boolean isBloodMoon(boolean exclusively_at_night)",
+      "line": 1985,
+      "end_line": 1993,
+      "method_sha256": "3bc4372483e4375c671d7b902488dbc527db76b7f488832f45b7e3081e856854"
+    },
+    {
+      "id": "abw:1995",
+      "class": "abw",
+      "signature": "public static final boolean isBlueMoon(long unadjusted_tick, boolean exclusively_at_night)",
+      "line": 1995,
+      "end_line": 2000,
+      "method_sha256": "bd82dea52cf71d2ae1289c2f1ee99589c9afb13c7be09bab367ad653f4c9837a"
+    },
+    {
+      "id": "abw:2002",
+      "class": "abw",
+      "signature": "public final boolean isBlueMoon(boolean exclusively_at_night)",
+      "line": 2002,
+      "end_line": 2010,
+      "method_sha256": "14889ed79ac322a68e914512bbda4e1e8c4c389657553971783da6657d37fe21"
+    },
+    {
+      "id": "abw:2012",
+      "class": "abw",
+      "signature": "public static final boolean isHarvestMoon(long unadjusted_tick, boolean exclusively_at_night)",
+      "line": 2012,
+      "end_line": 2017,
+      "method_sha256": "76ca40d8fc3fd9d3c1cda58cf524ea891a568fbddade8357e1dd0850c6aacc82"
+    },
+    {
+      "id": "abw:2019",
+      "class": "abw",
+      "signature": "public final boolean isHarvestMoon(boolean exclusively_at_night)",
+      "line": 2019,
+      "end_line": 2021,
+      "method_sha256": "dd683ed4ed99f0f9b4cc8789dcfd33c5dfbe3fe5d09149de56fafb5ac0cd7cf3"
+    },
+    {
+      "id": "abw:2023",
+      "class": "abw",
+      "signature": "public static final boolean isMoonDog(long unadjusted_tick, boolean exclusively_at_night)",
+      "line": 2023,
+      "end_line": 2028,
+      "method_sha256": "fafb1903e2a5c4bb244ee875b885e99c2132777c4846771af955097aa5a0d03f"
+    },
+    {
+      "id": "abw:2030",
+      "class": "abw",
+      "signature": "public final boolean isMoonDog(boolean exclusively_at_night)",
+      "line": 2030,
+      "end_line": 2032,
+      "method_sha256": "6eb2ecb63f999e4df35a458314835451fe69ae1feb0059baa5e7bb7ac5110c45"
+    },
+    {
+      "id": "abw:4258",
+      "class": "abw",
+      "signature": "public static final long getTotalWorldTimeAtStartOfDay(int day)",
+      "line": 4258,
+      "end_line": 4260,
+      "method_sha256": "a07cbed88ba95ee15adac721b32c23d491ebbc92fb5281d2433de3dfb886178b"
+    },
+    {
+      "id": "abw:4266",
+      "class": "abw",
+      "signature": "public static final long getAdjustedTotalWorldTime(long unadjusted_tick)",
+      "line": 4266,
+      "end_line": 4268,
+      "method_sha256": "ce99ab042fbf4386cb24d4d6b08ffd9338ae3064f4f8ad4ce96f5f61915a7c45"
+    },
+    {
+      "id": "abw:4270",
+      "class": "abw",
+      "signature": "public static final int getDayOfWorld(long unadjusted_tick)",
+      "line": 4270,
+      "end_line": 4272,
+      "method_sha256": "7189403f1d72486b1fd7dde1a31c4834a0540744695da3a609d44137714bff4b"
+    },
+    {
+      "id": "abw:4354",
+      "class": "abw",
+      "signature": "public final boolean isPrecipitatingAt(int x, int y2, int z2)",
+      "line": 4354,
+      "end_line": 4356,
+      "method_sha256": "2a42620d34963a396b1d297715c636aa0491087389963fd84de29ec0868ac048"
+    },
+    {
+      "id": "abw:4362",
+      "class": "abw",
+      "signature": "public final boolean isInRain(int x, int y2, int z2)",
+      "line": 4362,
+      "end_line": 4371,
+      "method_sha256": "a2883308525c0bc2a983964ba317f4cadee91179757065f9b189276f268eac10"
+    },
+    {
+      "id": "abw:4373",
+      "class": "abw",
+      "signature": "public boolean F(int par1, int par2, int par3)",
+      "line": 4373,
+      "end_line": 4385,
+      "method_sha256": "46b03090bc29fc02a79e7d64917c4052aa471d69735be72a6eed3937a04d9cdd"
+    },
+    {
+      "id": "abw:4387",
+      "class": "abw",
+      "signature": "public boolean isSkyOvercast(int x, int z2)",
+      "line": 4387,
+      "end_line": 4393,
+      "method_sha256": "417bcb830f861e6286f91c4b256288e603ffabd3aa8f896b7529da966e8f2f15"
+    },
+    {
+      "id": "abw:5300",
+      "class": "abw",
+      "signature": "public final boolean hasStandardFormOpaqueBlockAbove(int x, int y2, int z2)",
+      "line": 5300,
+      "end_line": 5307,
+      "method_sha256": "30a726ce9ddb2f6286eb982de13c77a855576da3c2fbf375bff704c8f8b54ec1"
+    },
+    {
+      "id": "abw:5314",
+      "class": "abw",
+      "signature": "public final List generateWeatherEvents(int day)",
+      "line": 5314,
+      "end_line": 5336,
+      "method_sha256": "7255f61ff05b13ce5bd712547b9ae47e2fe4362c67bdf882372200a92eb5f34c"
+    },
+    {
+      "id": "abw:5338",
+      "class": "abw",
+      "signature": "public final List generateWeatherEvents(int from_day, int to_day)",
+      "line": 5338,
+      "end_line": 5344,
+      "method_sha256": "af553018a39ed4dfab1b58754a226de85f70ec21dae258f80b818d72eaf12d7c"
+    },
+    {
+      "id": "abw:5370",
+      "class": "abw",
+      "signature": "public static List addRandomWindAndStormsToWeatherEvents(List events)",
+      "line": 5370,
+      "end_line": 5376,
+      "method_sha256": "878abb8b82c4bffa8d79059180f16ec681535bb1f571692fe3f8aa9442e45238"
+    },
+    {
+      "id": "abw:5382",
+      "class": "abw",
+      "signature": "public final List getWeatherEventsForToday()",
+      "line": 5382,
+      "end_line": 5392,
+      "method_sha256": "59f7e806d203885f4accb27a766fc510ab65774c240a654ca60d4a80f036c840"
+    },
+    {
+      "id": "abw:5452",
+      "class": "abw",
+      "signature": "public final boolean isPrecipitating(boolean based_on_rain_strength)",
+      "line": 5452,
+      "end_line": 5457,
+      "method_sha256": "a24c886cd08ffccdba3b56fe1b428607cdfe346a34a8dd2a8d1d43ae4357d4b6"
+    },
+    {
+      "id": "abw:5459",
+      "class": "abw",
+      "signature": "public final boolean isThundering(boolean based_on_thunder_strength)",
+      "line": 5459,
+      "end_line": 5464,
+      "method_sha256": "3d081b7f6293a013782b7c91079706441f1e91b5107ac4f6bf559d1f0e39fd10"
+    },
+    {
+      "id": "abw:5572",
+      "class": "abw",
+      "signature": "public final void updateTickFlags()",
+      "line": 5572,
+      "end_line": 5583,
+      "method_sha256": "c1bd2ad47a2b601fcc27b9d54811922f5aeba345a0987be33baa36bf98128481"
+    },
+    {
+      "id": "abw:5605",
+      "class": "abw",
+      "signature": "public final void updateMoonFlags(long total_world_time)",
+      "line": 5605,
+      "end_line": 5623,
+      "method_sha256": "710ec4c728970d81de28a70c636569314ee1dda1b00628094958cfca46b4dbd2"
+    },
+    {
+      "id": "aei:103",
+      "class": "aei",
+      "signature": "public int a(long par1)",
+      "line": 103,
+      "end_line": 105,
+      "method_sha256": "8f9d754a4010398b3811f25e7d6e11331e6ecb3a534a87c8155edec209113e11"
+    },
+    {
+      "id": "aci:20",
+      "class": "aci",
+      "signature": "private void setEligibleChunksForSpawning(js world, boolean for_hostile_mobs)",
+      "line": 20,
+      "end_line": 65,
+      "method_sha256": "0fcaba93cccefdc09d08af318e2e6ce0743ac76a6cba99f1fb2d37d82d33bd78"
+    },
+    {
+      "id": "aci:94",
+      "class": "aci",
+      "signature": "public int trySpawningHostileMobs(js world, boolean deep_only)",
+      "line": 94,
+      "end_line": 242,
+      "method_sha256": "efc2599712c11f135769dca35d3b1c1f78cd8bbfd28b2ff7b3a4a8a5c03fdefe"
+    },
+    {
+      "id": "aci:244",
+      "class": "aci",
+      "signature": "public int trySpawningPeacefulMobs(js world, oh creature_type)",
+      "line": 244,
+      "end_line": 328,
+      "method_sha256": "b7e221204b91da48730c7ac8ee1635f13237726494876c2a34671f77d0ba752d"
+    },
+    {
+      "id": "aci:330",
+      "class": "aci",
+      "signature": "private boolean isBlueMoonAnimalSpawningPeriod(abw world)",
+      "line": 330,
+      "end_line": 332,
+      "method_sha256": "d739f270f3bda1428fb576fecee661bddbdbea17cd66da188b5f819740f0a075"
+    },
+    {
+      "id": "aci:334",
+      "class": "aci",
+      "signature": "public float calcEffectiveHostileMobSpawningRateModifier(js world)",
+      "line": 334,
+      "end_line": 361,
+      "method_sha256": "463d8fd0fc77164fc818c56c609072ba64b9d1c2415ff4430c142e005aea9bbd"
+    },
+    {
+      "id": "aci:363",
+      "class": "aci",
+      "signature": "public void performRandomLivingEntitySpawning(js world)",
+      "line": 363,
+      "end_line": 399,
+      "method_sha256": "04c663651e1fe5cb46ddcef9f9b111676a0eaef9a49ace4d4329b83ceee56358"
+    },
+    {
+      "id": "js:158",
+      "class": "js",
+      "signature": "public void b()",
+      "line": 158,
+      "end_line": 230,
+      "method_sha256": "173e208348206bb6d3279d9b7e3853eb38731bbb01542e79ff8b6c330f18b33c"
+    },
+    {
+      "id": "js:466",
+      "class": "js",
+      "signature": "public Class getSuitableCreature(oh creature_type, int x2, int y2, int z2)",
+      "line": 466,
+      "end_line": 573,
+      "method_sha256": "0791821306f3b4b79261032e94cfbe4330baee6426cca6fb317842d1ffea5e1f"
+    },
+    {
+      "id": "js:775",
+      "class": "js",
+      "signature": "protected void g()",
+      "line": 775,
+      "end_line": 850,
+      "method_sha256": "1a27474f36c6faeb392caa3b9fc868e02618819c9ab4b228763346dbfc6afdaf"
+    },
+    {
+      "id": "WeatherEvent:29",
+      "class": "WeatherEvent",
+      "signature": "public void randomizeType()",
+      "line": 29,
+      "end_line": 37,
+      "method_sha256": "a49a3e756539d140a2679fa14a8e03ae49c3e04150b42854c82fbd0dba5f9b35"
+    },
+    {
+      "id": "WeatherEvent:48",
+      "class": "WeatherEvent",
+      "signature": "public void addStorm()",
+      "line": 48,
+      "end_line": 61,
+      "method_sha256": "1d8d7dae1165ec1bf8830c9942d7b23975eada782fc2f8906eeadf54a54968c9"
+    },
+    {
+      "id": "WeatherEvent:63",
+      "class": "WeatherEvent",
+      "signature": "public boolean hasStorm()",
+      "line": 63,
+      "end_line": 65,
+      "method_sha256": "987af015c2af8dd2c8a77e7088869a48b40aea3086533e4707a07738a2bef3b4"
+    },
+    {
+      "id": "WeatherEvent:67",
+      "class": "WeatherEvent",
+      "signature": "public boolean isOccurringAt(long unadjusted_tick)",
+      "line": 67,
+      "end_line": 69,
+      "method_sha256": "78b134fd26616f1c003b592d51558e85494fddec8329854f7306f7bec46be50f"
+    },
+    {
+      "id": "WeatherEvent:79",
+      "class": "WeatherEvent",
+      "signature": "public boolean isStormingAt(long unadjusted_tick)",
+      "line": 79,
+      "end_line": 81,
+      "method_sha256": "c7ffb8835306a64ca749580a4a8e3b39bcd90b696846d4a218650ce489eb6f99"
+    },
+    {
+      "id": "acq:187",
+      "class": "acq",
+      "signature": "public boolean canSpawnLightningBolt(boolean is_blood_moon)",
+      "line": 187,
+      "end_line": 189,
+      "method_sha256": "f917e36b8caf30b1da4f3fb33c4527eba1449af9cdc919e06ef394b17025b772"
+    },
+    {
+      "id": "anr:13",
+      "class": "anr",
+      "signature": "protected anr(int block_id, int num_growth_stages)",
+      "line": 13,
+      "end_line": 24,
+      "method_sha256": "b09608f1eab0b127ba0503eadff6d32ed35ec92cd20754e6c826155d3e48809c"
+    },
+    {
+      "id": "anr:61",
+      "class": "anr",
+      "signature": "public boolean updateTick(abw world, int x, int y2, int z2, Random rand)",
+      "line": 61,
+      "end_line": 115,
+      "method_sha256": "07c35bd9a5e15eab6800c4e44831c729275881bfe8305c24d8de388591f91678"
+    },
+    {
+      "id": "anr:123",
+      "class": "anr",
+      "signature": "public boolean fertilize(abw world, int x, int y2, int z2, ye item_stack)",
+      "line": 123,
+      "end_line": 130,
+      "method_sha256": "7b56bed782f1e89eef24b761b7a58f52cab80863fa916bf75270b8c5e8c5963f"
+    },
+    {
+      "id": "anr:284",
+      "class": "anr",
+      "signature": "public int dropBlockAsEntityItem(BlockBreakInfo info)",
+      "line": 284,
+      "end_line": 310,
+      "method_sha256": "3f5a50016e8fc40457209e88f1e3ac103ac02d068480ad9cefb8011461c03228"
+    },
+    {
+      "id": "apt:31",
+      "class": "apt",
+      "signature": "public int dropBlockAsEntityItem(BlockBreakInfo info)",
+      "line": 31,
+      "end_line": 40,
+      "method_sha256": "20816edcac0d1e68e51c544993e7a83dbf375d609134aa110f1709e9325b804f"
+    },
+    {
+      "id": "bfe:523",
+      "class": "bfe",
+      "signature": "private void h(float par1)",
+      "line": 523,
+      "end_line": 651,
+      "method_sha256": "2b73bb4564ca647b9abae260f535e555d2591efbf64df67e7ccc81acb24d4995"
+    },
+    {
+      "id": "bfe:956",
+      "class": "bfe",
+      "signature": "private void g()",
+      "line": 956,
+      "end_line": 1034,
+      "method_sha256": "cc93a1f2184e1496d89feace4040eec18eb249525d62bf14413dac9cbb46f389"
+    },
+    {
+      "id": "bfe:1036",
+      "class": "bfe",
+      "signature": "protected void d(float par1)",
+      "line": 1036,
+      "end_line": 1253,
+      "method_sha256": "8930aeaeceb7071816b853a3ca6235c4a57b496467d98df9e4e71ad4a65c1629"
+    },
+    {
+      "id": "bfl:652",
+      "class": "bfl",
+      "signature": "public void a(float par1)",
+      "line": 652,
+      "end_line": 906,
+      "method_sha256": "6870eed7f625639675b0324bc5c3dcf7cf3555490f21abc34521da35ebc91c56"
+    },
+    {
+      "id": "bdd:187",
+      "class": "bdd",
+      "signature": "public void setRainStrengthForRenderViewEntity()",
+      "line": 187,
+      "end_line": 219,
+      "method_sha256": "742b5105a36e9e0449d6ddd390e7c7c39b27d64db73414d95e45aa09378f9bb4"
+    },
+    {
+      "id": "sf:185",
+      "class": "sf",
+      "signature": "public void l_()",
+      "line": 185,
+      "end_line": 241,
+      "method_sha256": "e65f955e6b32cd93757ded728b142d99d37ceba931f28affb934017878da50e2"
+    },
+    {
+      "id": "sf:354",
+      "class": "sf",
+      "signature": "public boolean onEntityRightClicked(uf player, ye item_stack)",
+      "line": 354,
+      "end_line": 429,
+      "method_sha256": "470b7dc9538689c0e58c7d4b374f8f1e6c3b2bb5184d582e49a72c410b03c985"
+    },
+    {
+      "id": "rp:252",
+      "class": "rp",
+      "signature": "public static int getMaxInLove()",
+      "line": 252,
+      "end_line": 254,
+      "method_sha256": "d3120086d0b043a6494c9f5df198f93919eed0af80d58f62a33347caf4776a84"
+    },
+    {
+      "id": "rp:256",
+      "class": "rp",
+      "signature": "public void bX()",
+      "line": 256,
+      "end_line": 265,
+      "method_sha256": "261296cca2f2b2d034ecea108c6887123060d3d22bc07ed4e77fbae790893e2d"
+    },
+    {
+      "id": "rp:267",
+      "class": "rp",
+      "signature": "public boolean bY()",
+      "line": 267,
+      "end_line": 269,
+      "method_sha256": "ea6ba9ed6868357f09d18f514013dda7b31191a04c633cdfacc958aa972e7d42"
+    },
+    {
+      "id": "EntityDireWolf:19",
+      "class": "EntityDireWolf",
+      "signature": "protected String r()",
+      "line": 19,
+      "end_line": 24,
+      "method_sha256": "2625bcb0b3071bd4a5b6508284bc63b4f17b6b310342cc61624bf92508485a81"
+    },
+    {
+      "id": "EntityDireWolf:37",
+      "class": "EntityDireWolf",
+      "signature": "public void l_()",
+      "line": 37,
+      "end_line": 43,
+      "method_sha256": "a523b133cadedb6566828e0af87017aa00c93727e0ee7b5d99141991b14231ef"
+    },
+    {
+      "id": "sc:160",
+      "class": "sc",
+      "signature": "protected boolean preysUpon(nn entity)",
+      "line": 160,
+      "end_line": 175,
+      "method_sha256": "9f3782d3eabfa383f9ad522643f539624bb586682be34f7fbdeaa76293d06b84"
+    },
+    {
+      "id": "sc:195",
+      "class": "sc",
+      "signature": "protected void bl()",
+      "line": 195,
+      "end_line": 232,
+      "method_sha256": "992b0fcb9f40a07f1db2ff3cbc76ac1e0773a23a691755bde8628158f1f8c0e0"
+    },
+    {
+      "id": "ul:126",
+      "class": "ul",
+      "signature": "private boolean checkForBite()",
+      "line": 126,
+      "end_line": 162,
+      "method_sha256": "d565693517f5f26d12bfcfe936dea142455899ff394f5b28efa12f1915ba4147"
+    },
+    {
+      "id": "tm:40",
+      "class": "tm",
+      "signature": "public static EntityDamageResult attackEntityAsMob(og attacker, nn target)",
+      "line": 40,
+      "end_line": 91,
+      "method_sha256": "634ab46b3e36548ba59d5218e90965576fc1e75c444b479eb0d4bb8f1670633d"
+    },
+    {
+      "id": "tm:166",
+      "class": "tm",
+      "signature": "public static boolean isValidLightLevel(og entity_living)",
+      "line": 166,
+      "end_line": 192,
+      "method_sha256": "676e83afd07c29218fa638d99bdf026d8ec2c9b5f91255464b518d831bed5060"
+    },
+    {
+      "id": "tm:229",
+      "class": "tm",
+      "signature": "public boolean isFrenzied()",
+      "line": 229,
+      "end_line": 231,
+      "method_sha256": "c2db929324c7a538fa21bf59a357429f31c56792c3644f66c11f5c9942f99dba"
+    },
+    {
+      "id": "tg:406",
+      "class": "tg",
+      "signature": "public boolean isFrenzied()",
+      "line": 406,
+      "end_line": 408,
+      "method_sha256": "5b76b1d3cbdefb333d7e6c36e20106a3243254f09988d02c64f99d752f72169f"
+    },
+    {
+      "id": "nn:1225",
+      "class": "nn",
+      "signature": "public float d(float par1)",
+      "line": 1225,
+      "end_line": 1237,
+      "method_sha256": "91147e80b93a69d8d9f5be128d508200ab460ec8b0ec1bfb98e0b8d692a7988b"
+    },
+    {
+      "id": "EntityCubic:366",
+      "class": "EntityCubic",
+      "signature": "public boolean getCanSpawnHere(boolean perform_light_check)",
+      "line": 366,
+      "end_line": 387,
+      "method_sha256": "73daff699a97ccd258e6de26cf9353163d8b8af40a897d1e4ecab8202b2b24b0"
+    },
+    {
+      "id": "is:449",
+      "class": "is",
+      "signature": "public boolean V()",
+      "line": 449,
+      "end_line": 451,
+      "method_sha256": "42f964a1fb574b1e7bcff1ad4a6b2f2620cdc0edcbe31b149d86083ebfe798c1"
+    },
+    {
+      "id": "bkz:124",
+      "class": "bkz",
+      "signature": "public boolean V()",
+      "line": 124,
+      "end_line": 126,
+      "method_sha256": "dd67d820a585e3f0ba417257c2a5d7d626d3c11324bc67490bf9e47017cd5baf"
+    }
+  ],
+  "assets": [
+    {
+      "source": ".reference/r196/resources/assets/minecraft/textures/environment/halo_256.png",
+      "sha256": "a56b03b076b6abe6624814dafa0ed04101d3ed192806db428d3128c4a8643095"
+    },
+    {
+      "source": ".reference/r196/resources/assets/minecraft/textures/environment/ring_128.png",
+      "sha256": "65cad5ba4deba74e862d6d0a4215f2602840f061c75f86252dc9ce4f003022d5"
+    }
+  ],
+  "baseline_coverage": {
+    "present": [
+      "Spawn phase/calendar",
+      "Hostile spawn density/outdoor/depth rules",
+      "Blood night monster frenzy",
+      "Blood hostile wild wolf",
+      "Blue animal spawning",
+      "Blue squid prey and dire wolf random-attack suppression",
+      "Blue taming failure retaliation suppression"
+    ],
+    "missing_or_inconsistent": [
+      "Sky default phase offset",
+      "Harvest and moon-dog calendar entry points",
+      "Moon surface/halo/ring rendering",
+      "Moon light-map brightness/tint",
+      "Lunar weather scheduler and desert blood precipitation/lightning",
+      "Blood sleep restriction",
+      "Blood crop blight",
+      "Fishing blue check used local>=12000 rather than full source night interval",
+      "Dire wolf source extra growl is absent",
+      "Livestock predator check skips squid during blue period all24 hours instead of blue night only"
+    ],
+    "adaptations_requiring_documentation": [
+      "Clock mapping from source total-time to modern mutable day-time",
+      "Nonnegative long time / overflow policy",
+      "Source integrated-only blood crop blight vs desired multiplayer parity",
+      "Modern extra crops",
+      "Shader light map limitations",
+      "Keep modern game rules and NeoForge weather hooks"
+    ]
+  }
+}

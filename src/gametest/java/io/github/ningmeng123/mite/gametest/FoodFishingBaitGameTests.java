@@ -194,6 +194,28 @@ public final class FoodFishingBaitGameTests {
         }
         helper.succeed();
     }
+    @GameTest(template="ranged_027")
+    public static void blueMoonBitesUseTheSourceDuskBoundaryInsteadOfVanillaNight(GameTestHelper helper) {
+        long old=helper.getLevel().getDayTime();
+        try(Fixture f=new Fixture(helper)) {
+            for(BlockPos p:BlockPos.betweenClosed(new BlockPos(1,1,1),new BlockPos(7,4,7))) helper.setBlock(p,Blocks.WATER);
+            for(BlockPos p:BlockPos.betweenClosed(new BlockPos(1,5,1),new BlockPos(7,5,7))) helper.setBlock(p,Blocks.AIR);
+            FishingHook hook=new FishingHook(f.player,helper.getLevel(),0,0);f.hook=hook;
+            BlockPos water=helper.absolutePos(new BlockPos(4,4,4));hook.moveTo(water.getX()+.5D,water.getY()+.21D,water.getZ()+.5D);
+            // Source float multiplication truncates 1498.9998779296875, rather than exact rational 1499.
+            int[] times={12999,13000,18000,23000,23001};int[] sourceDenominators={1498,600,600,600,600};
+            for(int i=0;i<times.length;i++) {
+                helper.getLevel().setDayTime(127L*24000+times[i]);
+                int denominator=sourceDenominators[i]/(helper.getLevel().isRainingAt(water.above())?2:1);
+                for(int seed=0;seed<2048;seed++) {
+                    RandomSource oracle=RandomSource.create(seed);oracle.nextInt(7);oracle.nextInt(4);oracle.nextInt(7);
+                    int window=oracle.nextInt(denominator)==0?oracle.nextInt(30)+30:0;
+                    set(hook,"nibble",0);hook.getRandom().setSeed(seed);tickCatching(hook,water);
+                    helper.assertValueEqual(get(hook,"nibble"),window,"Actual blue-date fishing at source boundary "+times[i]+" seed "+seed);
+                }
+            }
+        } finally {helper.getLevel().setDayTime(old);}helper.succeed();
+    }
     private static void set(FishingHook hook, String name, int value) {
         try { Field field = FishingHook.class.getDeclaredField(name); field.setAccessible(true); field.setInt(hook, value); }
         catch (ReflectiveOperationException error) { throw new IllegalStateException("Pinned fishing field missing: " + name, error); }

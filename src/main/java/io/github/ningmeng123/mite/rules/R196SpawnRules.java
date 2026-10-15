@@ -28,14 +28,12 @@ public final class R196SpawnRules {
     }
 
     public static boolean daytime(int timeOfDay) {
-        int adjusted = Math.floorMod(timeOfDay + 6000, 24000);
-        return adjusted > 5000 && adjusted < 19000;
+        return LunarCalendar.daytime(timeOfDay);
     }
 
     public static Moon moon(long unadjustedTotalTime, boolean overworld) {
-        long day = Math.max(0, unadjustedTotalTime) / 24000L + 1L;
-        boolean blue = overworld && day % 128 == 0;
-        return new Moon((int)(day % 8), overworld && day % 32 == 0 && !blue, blue);
+        var state=LunarCalendar.state(unadjustedTotalTime,overworld);
+        return new Moon(state.phase(),state.bloodPeriod(),state.bluePeriod());
     }
 
     public static int density(int sourceFootY, boolean overworld, boolean day, Moon moon, float strongholdProximity) {

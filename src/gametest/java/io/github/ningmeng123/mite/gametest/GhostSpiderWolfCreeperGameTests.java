@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,6 +14,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.phys.Vec3;
@@ -96,20 +99,48 @@ public final class GhostSpiderWolfCreeperGameTests {
     @GameTest(template="empty") public static void hellhoundCannotBurnInLava(GameTestHelper h) { R196Wolf e=(R196Wolf)mob(h,MobKind.HELLHOUND); float health=e.getHealth(); e.lavaHurt(); h.assertTrue(e.getHealth()==health && !e.isOnFire(),"Source immunity also prevents burn side state"); h.succeed(); }
     @GameTest(template="empty") public static void infernalRetainsOrdinaryBodyAndNaturalDefense(GameTestHelper h) { var e=mob(h,MobKind.INFERNAL_CREEPER); near(h,e.getBbWidth(),.6,"Source static scale1"); near(h,e.getBbHeight(),1.8,"Explosion doubling never doubles body"); near(h,((R196Mob)e).naturalDefense(e.damageSources().generic()),2,"Source natural defense+2"); h.succeed(); }
     private static void explode(Creeper e) throws Exception { Method method=Creeper.class.getDeclaredMethod("explodeCreeper"); method.setAccessible(true); method.invoke(e); }
-    private static Cow blastTarget(GameTestHelper h,Creeper e,double distance) {
-        e.moveTo(e.getX(),h.absolutePos(new BlockPos(2,10,2)).getY(),e.getZ(),0,0);
-        Cow c=EntityType.COW.create(h.getLevel());c.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100);c.setHealth(100);
+    private static final TicketType<Integer> BLAST_TICKET=TicketType.<Integer>create("mite_blast_test",Comparator.naturalOrder(),200);
+    @FunctionalInterface private interface BlastCheck { void run(Creeper creeper,Cow target) throws Exception; }
+    private static void blastTarget(GameTestHelper h,double distance,int arena,BlastCheck check) {
+        // A FULL block chunk alone does not make its persistent entity sections accessible.
+        // Wait for real ENTITY_TICKING tickets before adding either fixture at its final position.
+        var level=h.getLevel(); BlockPos anchor=h.absolutePos(new BlockPos(2,0,2));
+        Creeper e=(Creeper)MiteMobs.type(MobKind.INFERNAL_CREEPER).create(level);
+        e.moveTo(anchor.getX()+.5,120+arena*32,anchor.getZ()+.5,0,0);e.setNoAi(true);e.setNoGravity(true);
+        Cow c=EntityType.COW.create(level);c.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100);c.setHealth(100);
         c.moveTo(e.getX()+distance,e.getY(),e.getZ(),0,0);c.setNoAi(true);c.setNoGravity(true);
-        // The blast arena extends outside the one-block template; register at the final loaded position.
-        h.getLevel().getChunkAt(c.blockPosition());h.getLevel().addFreshEntity(c);
-        h.assertTrue(h.getLevel().getEntities(e,e.getBoundingBox().inflate(10)).contains(c),"Blast fixture is indexed in the actual living-entity query before exploding");
-        h.assertTrue(net.minecraft.world.level.Explosion.getSeenPercent(e.position().add(0,e.getBbHeight()*.25,0),c)>0F,"Blast fixture has positive real exposure");
-        return c;
+        // Separate heights prevent concurrently waiting blast tests from damaging each other's cows.
+        List<ChunkPos> chunks=java.util.stream.Stream.of(new ChunkPos(e.blockPosition()),new ChunkPos(c.blockPosition())).distinct().toList();
+        int ticketKey=e.getId();
+        for(ChunkPos chunk:chunks) level.getChunkSource().addRegionTicket(BLAST_TICKET,chunk,2,ticketKey);
+        Runnable cleanup=()->{
+            e.discard();c.discard();
+            for(ChunkPos chunk:chunks) level.getChunkSource().removeRegionTicket(BLAST_TICKET,chunk,2,ticketKey);
+        };
+        // A sequence timeout must not leave the out-of-template entities or tickets behind.
+        h.runAfterDelay(199,cleanup);
+        h.startSequence().thenWaitUntil(()->{
+            h.assertTrue(level.isPositionEntityTicking(e.blockPosition()) && level.isPositionEntityTicking(c.blockPosition()),"Both blast fixture chunks reach real entity-ticking status");
+        }).thenExecute(()->{
+            try {
+                h.assertTrue(level.addFreshEntity(e),"The source creeper enters the native entity lifecycle");
+                h.assertTrue(level.addFreshEntity(c),"The target cow enters the native entity lifecycle");
+            } catch(RuntimeException | Error failure) { cleanup.run();throw failure; }
+        }).thenWaitUntil(()->{
+            h.assertTrue(level.getEntities(e,e.getBoundingBox().inflate(10)).contains(c),"Blast fixture is indexed in the actual living-entity query before exploding");
+        }).thenExecute(()->{
+            try {
+                near(h,c.getHealth(),100,"Waiting for native indexing must not pre-damage the blast target");
+                h.assertTrue(net.minecraft.world.level.Explosion.getSeenPercent(e.position().add(0,e.getBbHeight()*.25,0),c)>0F,"Blast fixture has positive real exposure");
+                check.run(e,c);
+            } catch(Exception failure) { throw new IllegalStateException(failure); }
+            finally { cleanup.run(); }
+        }).thenSucceed();
     }
-    @GameTest(template="empty") public static void infernalRealExplosionHitsFourBlocks(GameTestHelper h) throws Exception { var e=(Creeper)mob(h,MobKind.INFERNAL_CREEPER); Cow c=blastTarget(h,e,4); explode(e); h.assertTrue(c.getHealth()<100,"Source living radius8.8 is not clipped to native block radius2.86"); h.succeed(); }
-    @GameTest(template="empty") public static void infernalRealExplosionHitsEightBlocks(GameTestHelper h) throws Exception { var e=(Creeper)mob(h,MobKind.INFERNAL_CREEPER); Cow c=blastTarget(h,e,8); explode(e); h.assertTrue(c.getHealth()<100,"Real living query and normalized distance both use source radius"); h.succeed(); }
-    @GameTest(template="empty") public static void infernalRealExplosionDamageIsLinear(GameTestHelper h) throws Exception { var e=(Creeper)mob(h,MobKind.INFERNAL_CREEPER); Cow c=blastTarget(h,e,4); double distance=Math.sqrt(16+Math.pow(e.getBbHeight()*.25,2)); double expected=(8.8-distance)*4*.6666667; explode(e); near(h,100-c.getHealth(),expected,"Independent abr formula, actual unarmored health loss"); h.succeed(); }
-    @GameTest(template="empty") public static void infernalRealExplosionDoesNotHitOutsideLivingRadius(GameTestHelper h) throws Exception { var e=(Creeper)mob(h,MobKind.INFERNAL_CREEPER); Cow c=blastTarget(h,e,9); explode(e); near(h,c.getHealth(),100,"Outside source living radius8.8"); h.succeed(); }
+    @GameTest(template="empty",timeoutTicks=200) public static void infernalRealExplosionHitsFourBlocks(GameTestHelper h) { blastTarget(h,4,0,(e,c)->{ explode(e);h.assertTrue(c.getHealth()<100,"Source living radius8.8 is not clipped to native block radius2.86"); }); }
+    @GameTest(template="empty",timeoutTicks=200) public static void infernalRealExplosionHitsEightBlocks(GameTestHelper h) { blastTarget(h,8,1,(e,c)->{ explode(e);h.assertTrue(c.getHealth()<100,"Real living query and normalized distance both use source radius"); }); }
+    @GameTest(template="empty",timeoutTicks=200) public static void infernalRealExplosionDamageIsLinear(GameTestHelper h) { blastTarget(h,4,2,(e,c)->{ double distance=Math.sqrt(16+Math.pow(e.getBbHeight()*.25,2));double expected=(8.8-distance)*4*.6666667;explode(e);near(h,100-c.getHealth(),expected,"Independent abr formula, actual unarmored health loss"); }); }
+    @GameTest(template="empty",timeoutTicks=200) public static void infernalRealExplosionDoesNotHitOutsideLivingRadius(GameTestHelper h) { blastTarget(h,9,3,(e,c)->{ explode(e);near(h,c.getHealth(),100,"Outside source living radius8.8"); }); }
     @GameTest(template="empty") public static void sourceDiggerHasElevenStagesAfterInitialDelay(GameTestHelper h) {
         R196Elemental e=(R196Elemental)mob(h,MobKind.EARTH_ELEMENTAL); BlockPos pos=e.blockPosition().east(); h.getLevel().setBlockAndUpdate(pos,Blocks.DIRT.defaultBlockState());
         CompoundTag saved=new CompoundTag(); saved.putLong("position",pos.asLong()); saved.putInt("progress",-1); saved.putInt("cooldown",40); e.getPersistentData().put("mite_digging_031",saved);

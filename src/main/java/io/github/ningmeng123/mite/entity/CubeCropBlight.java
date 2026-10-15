@@ -13,11 +13,15 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
-/** Only cube-induced source blight is enabled here; broader climate and blood-moon blight is separate. @author NingMeng123 */
+/** Shared crop disease lifecycle; cubes and source blood-moon exposure use the same saved block state. @author NingMeng123 */
 @EventBusSubscriber(modid=Mite.MOD_ID)
 public final class CubeCropBlight {
     // Native BooleanProperty enumerates true first; CropBlock.any() must instead yield healthy new crops.
@@ -41,7 +45,8 @@ public final class CubeCropBlight {
         level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK,Blocks.DEAD_BUSH.defaultBlockState()),pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5,6,.25,.3,.25,.01);
     }
     public static boolean randomTick(ServerLevel level,BlockPos pos,BlockState state,RandomSource random) {
-        if (!blighted(state) && !dead(state)) return false;
+        if (!blighted(state) && !dead(state))
+            return io.github.ningmeng123.mite.world.LunarCropEffects.infectOnRandomTick(level,pos,state,random);
         particles(level,pos);
         if (dead(state)) return true;
         if (random.nextInt(64)==0) {
@@ -61,6 +66,14 @@ public final class CubeCropBlight {
         if (blighted(state) && !dead(state)) level.setBlockAndUpdate(pos,state.setValue(state.getBlock() instanceof OnionCropBlock ? OnionCropBlock.BLIGHTED : BLIGHTED,false));
     }
     @SubscribeEvent public static void drops(BlockDropsEvent event) {
-        if (blighted(event.getState()) || dead(event.getState())) { event.getDrops().clear(); event.setDroppedExperience(0); }
+        BlockState state=event.getState();
+        if (blighted(state) || dead(state)) {
+            event.getDrops().clear(); event.setDroppedExperience(0);
+            // apt bypasses the mature yield and fortune path: one poisonous potato, unless the crop is dead.
+            if (state.is(Blocks.POTATOES) && !dead(state) && event.getLevel().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+                BlockPos pos=event.getPos();
+                event.getDrops().add(new ItemEntity(event.getLevel(),pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5,new ItemStack(Items.POISONOUS_POTATO)));
+            }
+        }
     }
 }

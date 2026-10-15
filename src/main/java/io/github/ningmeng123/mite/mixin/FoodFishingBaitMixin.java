@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.registry.MiteRangedItems;
 import io.github.ningmeng123.mite.rules.R196RangedRules;
+import io.github.ningmeng123.mite.rules.LunarCalendar;
 import io.github.ningmeng123.mite.ranged.FishingHookView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -71,8 +72,7 @@ public abstract class FoodFishingBaitMixin {
         Vec3 from = Vec3.atCenterOf(pos), to = Vec3.atCenterOf(candidate);
         if (level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, hook)).getType() != HitResult.Type.MISS) return;
         long time = level.getDayTime();
-        boolean blueMoon = level.dimension() == Level.OVERWORLD && (time / 24000L + 1L) % 128L == 0L
-                && Math.floorMod(time, 24000L) >= 12000L;
+        boolean blueMoon=LunarCalendar.state(time,level.dimension().equals(Level.OVERWORLD)).blueNight();
         // Modern Luck of the Sea also supplies R196 Fishing Fortune's 9/10-per-level factor.
         int chance = R196RangedRules.biteChanceDenominator(time, blueMoon, level.isRainingAt(pos.above()), luck, mite$baitSlot() >= 0);
         if (random.nextInt(chance) != 0) return;

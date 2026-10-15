@@ -498,5 +498,11 @@
   "death.attack.mite.sunlight": "%1$s因阳光死亡",
   "death.attack.mite.acid": "%1$s因强酸死亡",
   "death.attack.mite.pepsin": "%1$s因消化液死亡",
-  "death.attack.mite.melt": "%1$s因融化死亡"
+  "death.attack.mite.melt": "%1$s因融化死亡",
+  "message.mite.blood_moon_sleep_denied": "血月期间无法入睡",
+  "lunar.mite.announcement": "今天是第%1$s天，%2$s",
+  "lunar.mite.harvest": "丰收之月",
+  "lunar.mite.blood": "血月",
+  "lunar.mite.blue": "蓝月",
+  "lunar.mite.moon_dog": "月晕"
 }

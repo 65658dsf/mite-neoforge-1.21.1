@@ -90,7 +90,16 @@ public final class R196Wolf extends Wolf implements R196Mob {
         if (source.is(DamageTypeTags.IS_FALL) && amount >= getMaxHealth() * .5F) getPersistentData().putBoolean("mite_massive_fall_031", true);
         return super.hurt(source, amount);
     }
-    @Override protected SoundEvent getAmbientSound() { return kind == MobKind.HELLHOUND ? io.github.ningmeng123.mite.registry.MiteMobSounds.get(kind, "say") : super.getAmbientSound(); }
+    @Override protected SoundEvent getAmbientSound() {
+        if(kind==MobKind.HELLHOUND) return io.github.ningmeng123.mite.registry.MiteMobSounds.get(kind,"say");
+        if(kind==MobKind.DIRE_WOLF && !isBaby() && !isTame() && !isInLove()
+                && !io.github.ningmeng123.mite.entity.animal.SourceAquatic032.blueNight(level())) {
+            boolean nearby=level().players().stream().anyMatch(player -> player.isAlive() && !player.isCreative()
+                    && !player.isSpectator() && !player.getAbilities().invulnerable && distanceToSqr(player)<16D);
+            if(nearby || random.nextFloat()<.1F) return SoundEvents.WOLF_GROWL;
+        }
+        return super.getAmbientSound();
+    }
     @Override protected SoundEvent getHurtSound(DamageSource source) { return kind == MobKind.HELLHOUND ? io.github.ningmeng123.mite.registry.MiteMobSounds.get(kind, "hurt") : super.getHurtSound(source); }
     @Override protected SoundEvent getDeathSound() { return kind == MobKind.HELLHOUND ? io.github.ningmeng123.mite.registry.MiteMobSounds.get(kind, "death") : super.getDeathSound(); }
     @Override protected float getSoundVolume() { return kind == MobKind.DIRE_WOLF ? super.getSoundVolume() * 1.5F : super.getSoundVolume(); }

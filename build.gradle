@@ -91,6 +91,11 @@ neoForge {
         }
         data {
             data()
+            if (project.providers.gradleProperty('miteLunarVisualAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.lunarVisualAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.lunarVisualAuditOutput', file('build/verification/lunar-visual-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteDataDirectory').isPresent()) {
                 gameDirectory = file(project.providers.gradleProperty('miteDataDirectory').get())
             }
