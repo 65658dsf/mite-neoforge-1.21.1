@@ -561,5 +561,10 @@
   "message.mite.metal_door.redstone": "金属门需要红石信号开启，请使用按钮、拉杆或压力板",
   "tooltip.mite.metal_door.frame": "放置要求：铰链侧有两格高的坚实侧框",
   "tooltip.mite.metal_door.redstone": "开启方式：按钮、拉杆、压力板等红石信号",
-  "tooltip.mite.copper_door.manual": "开启方式：直接右键或使用红石信号"
+  "tooltip.mite.copper_door.manual": "开启方式：直接右键或使用红石信号",
+  "commands.mite.clearblocks.queued": "已安排清理：%s×%s×%s（X、Z、Y），中心 %s %s %s，目标：%s。可用 /mite clearblocks cancel 取消。",
+  "commands.mite.clearblocks.success": "清理完成，已清除 %s 个%s。",
+  "commands.mite.clearblocks.running": "你已有清理任务，请等待完成或使用 /mite clearblocks cancel 取消。",
+  "commands.mite.clearblocks.cancelled": "已取消清理，已清除 %s 个方块。",
+  "commands.mite.clearblocks.idle": "你没有进行中的清理任务。"
 }

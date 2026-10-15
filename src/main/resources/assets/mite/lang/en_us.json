@@ -561,5 +561,10 @@
   "message.mite.metal_door.redstone": "Metal doors require redstone: use a button, lever or pressure plate.",
   "tooltip.mite.metal_door.frame": "Placement: a two-block-high solid frame on the hinge side",
   "tooltip.mite.metal_door.redstone": "Opening: redstone from a button, lever or pressure plate",
-  "tooltip.mite.copper_door.manual": "Opening: right-click or use redstone"
+  "tooltip.mite.copper_door.manual": "Opening: right-click or use redstone",
+  "commands.mite.clearblocks.queued": "Queued: %s x %s x %s (X, Z, Y), centred at %s %s %s, targeting %s. Use /mite clearblocks cancel to cancel.",
+  "commands.mite.clearblocks.success": "Clearing complete: removed %s blocks of %s.",
+  "commands.mite.clearblocks.running": "You already have a clearing task. Wait for completion or use /mite clearblocks cancel.",
+  "commands.mite.clearblocks.cancelled": "Clearing cancelled after removing %s blocks.",
+  "commands.mite.clearblocks.idle": "You have no pending clearing task."
 }
