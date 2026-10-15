@@ -172,7 +172,20 @@
     "CactusTrapRemovalMixin",
     "LunarLevelTimeMixin",
     "LunarServerLevelMixin",
-    "LunarPrecipitationMixin"
+    "LunarPrecipitationMixin",
+    "CropSoilMixin",
+    "StemLifecycleMixin",
+    "AttachedStemLifecycleMixin",
+    "SugarCaneGrowthMixin",
+    "CactusGrowthLimitMixin",
+    "CocoaGrowthMixin",
+    "NetherWartGrowthMixin",
+    "MushroomLifecycleMixin",
+    "MyceliumLifecycleMixin",
+    "BeetrootCropStateMixin",
+    "CropFruitExplosionMixin",
+    "CropSnowfallMixin",
+    "CropFloodMixin"
   ],
   "client": [
     "client.GuiFoodMixin",

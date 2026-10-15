@@ -65,9 +65,9 @@ public final class BlueberryBushBlock extends SweetBerryBushBlock {
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
-    @Override public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
-        level.setBlock(pos, state.setValue(AGE, Math.min(3, state.getValue(AGE) + 1 + random.nextInt(2))), 2);
-    }
+    // BlockBush.fertilize is dormant: R196's xl.tryFertilize dispatches only to grass/anr.
+    @Override public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) { return false; }
+    @Override public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {}
     @Override public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return new ItemStack(MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get());
     }

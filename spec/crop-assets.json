@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "resource_pack": "MITE Resource Pack 1.6.4.zip",
+  "resource_pack_sha256": "4a9bb9f7ab5afee7c0e4e9f57f3b81ff185a0c619d29036b8c2f1ece7450e67a",
+  "provider": "io.github.ningmeng123.mite.data.CropAssetsProvider",
+  "copied_textures": [
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/blighted/0.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_blighted_0.png",
+      "sha256": "55fc87a360c641b4bbb88fc12ad6a312d366deeb6c58142b8029c21ff6d8dd9a",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/blighted/1.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_blighted_1.png",
+      "sha256": "58f39cd07d23b81d5830b64868b2eab6153418cf93715c059c7206714aef0898",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/blighted/2.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_blighted_2.png",
+      "sha256": "eb2690ebf2c216e164957fe59c654f9c790206601d886d4ea2d94a71cc4664f5",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/blighted/3.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_blighted_3.png",
+      "sha256": "987ce49053433b7b4d543c6dc2621bf5a411f84c810392a768a5582e2ea872a6",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/blighted/4.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_blighted_4.png",
+      "sha256": "197451557ccc9604f9222035cb2ffd175ede1d9cdb6063cc5afd121f491c3fb3",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/blighted/5.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_blighted_5.png",
+      "sha256": "2667d373ab0edd690b8d4b228c844e1b41b7e60aaea213694d5a5a8b2082904a",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/blighted/6.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_blighted_6.png",
+      "sha256": "7f9b27bc40cc2a48a21749a47c9543488a62fadeeefb125f62cea18219d382c9",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/blighted/7.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_blighted_7.png",
+      "sha256": "31d3b84eb6128625260857a8e0c649c049e77094bbc6dbb394991663b50daf41",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/dead/0.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_dead_0.png",
+      "sha256": "8f8f5b3b9433cb51c33de0c49690edc628c17c5aa021caeebbbfdaecc42eae5e",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/dead/1.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_dead_1.png",
+      "sha256": "2f036324b4ad063a48aefcc1ded14fe033a72585981f03b1c3a0af94e1653606",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/dead/2.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_dead_2.png",
+      "sha256": "df2c015dfee0c170c32e7a61954dd61de8c943db41abc2a212896e97bb3ea655",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/dead/3.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_dead_3.png",
+      "sha256": "17de8b2cf817845808006bff385204ba72626e7b7127b4acf092e2be2d18f441",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/dead/4.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_dead_4.png",
+      "sha256": "8b2a245d1dc9d6c18951158e048d049e8b4ab15e6881d10713315693d1ce0b5d",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/dead/5.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_dead_5.png",
+      "sha256": "0625089a40afa972e6caaa147fa232446c6ad0c249b568680f70b00fd972035f",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/wheat/dead/6.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_wheat_dead_6.png",
+      "sha256": "d03ca2dc9cc81e7943f3dbc058b4a6cc7a0dd238a282026b00b11bdbb98a7a9b",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/carrots/blighted/0.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_carrots_blighted_0.png",
+      "sha256": "7d682197d9a4898c65d82aab918b7ea17127bda5297a62b58b26c04f3e617ced",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/carrots/blighted/1.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_carrots_blighted_1.png",
+      "sha256": "c21d87c85f8a708981e709fdc1a5f8227cda2df28b92e5acd3fb9e000a057b37",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/carrots/blighted/2.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_carrots_blighted_2.png",
+      "sha256": "cf93228fd11c93ec8bdcf6a125372ecf4529934ec99578ea97ed0066f8d38844",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/carrots/blighted/3.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_carrots_blighted_3.png",
+      "sha256": "bf79f9607f780c763abac8635e71d873d43b62ddd167822a4959ab8e6f1c3cf9",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/carrots/dead/0.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_carrots_dead_0.png",
+      "sha256": "879171c0a0739e4cea983939d3a606e83356fe8692d19e066c824e4d1d69be43",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/carrots/dead/1.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_carrots_dead_1.png",
+      "sha256": "4d8bb38aeb5cfc7235daf3010a89a5452382379c307e382efc6963bd710be2af",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/carrots/dead/2.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_carrots_dead_2.png",
+      "sha256": "f19c4eafe74c6a93ce6e153606309f6caaf218a9da9e0e2dd1cd23b450adf6df",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/potatoes/blighted/0.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_potatoes_blighted_0.png",
+      "sha256": "90396fd6de907648909a0ca0be834df77851fcc56f7b03988d4ab05b5fb40060",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/potatoes/blighted/1.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_potatoes_blighted_1.png",
+      "sha256": "8c80212ec2369e052e3d8b17f410afbc993f810b49788c2f60b1254675b88c2e",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/potatoes/blighted/2.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_potatoes_blighted_2.png",
+      "sha256": "fc7a755ebad9a9b7a52317a209c16008b9fe7933fe9faf08282b057340019fdb",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/potatoes/blighted/3.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_potatoes_blighted_3.png",
+      "sha256": "66aa988b4c0c1e96ce6459ad4a132312bfd348a8b80117949e5a6e07be31bc23",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/potatoes/dead/0.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_potatoes_dead_0.png",
+      "sha256": "879171c0a0739e4cea983939d3a606e83356fe8692d19e066c824e4d1d69be43",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/potatoes/dead/1.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_potatoes_dead_1.png",
+      "sha256": "4d8bb38aeb5cfc7235daf3010a89a5452382379c307e382efc6963bd710be2af",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/crops/potatoes/dead/2.png",
+      "destination": "src/main/resources/assets/mite/textures/block/crop_potatoes_dead_2.png",
+      "sha256": "f19c4eafe74c6a93ce6e153606309f6caaf218a9da9e0e2dd1cd23b450adf6df",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/farmland_dry_fertilized.png",
+      "destination": "src/main/resources/assets/mite/textures/block/farmland_dry_fertilized.png",
+      "sha256": "f6c18bd79e243497a077211d5af8a4c118fb6d4a178c18da020cf71e494b7c3a",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    },
+    {
+      "source_member": "assets/minecraft/textures/blocks/farmland_wet_fertilized.png",
+      "destination": "src/main/resources/assets/mite/textures/block/farmland_wet_fertilized.png",
+      "sha256": "9017fe5a604a03aadda00e101f04efbf4132b6e544285bad775fcf0c95cf8790",
+      "size": [
+        16,
+        16
+      ],
+      "copied_unchanged": true
+    }
+  ],
+  "counts": {
+    "copied_textures": 31,
+    "crop_blockstates": 4,
+    "crop_disease_models": 29,
+    "fertilized_farmland_models": 2,
+    "farmland_blockstates": 1,
+    "crop_loot_tables": 4,
+    "enchantments": 2,
+    "item_tags": 1,
+    "enchantment_tags": 4,
+    "fruit_loot_tables": 1,
+    "block_tags": 1,
+    "fruit_explosion_loot_tables": 2
+  },
+  "modern_adaptations": [
+    {
+      "id": "healthy_textures",
+      "decision": "Keep Minecraft1.21.1 native healthy wheat/carrot/potato/beetroot block models and textures; copy only source disease/death sprites."
+    },
+    {
+      "id": "beetroot_disease_visuals",
+      "decision": "R196 has no beetroot crop; retain modern age0..3 healthy stages, use source carrots blighted frames0..3 and dead frames0..2, dead age3 clamps to2."
+    },
+    {
+      "id": "fertilized_farmland",
+      "decision": "Use source top sprites for fertilized dry/wet soil, modern native dirt sides and template_farmland shape. Native unamended model names remain and wetness>0 selects moist source semantics."
+    },
+    {
+      "id": "agricultural_enchantment_cost",
+      "decision": "Source has only minimum effective budgets1/11/21/31/41. Modern max_cost constant2147483647 represents absent upper bound; Enchantment.Cost.CODEC uses Codec.INT. Anvil cost2 and slotmainhand are explicit modern repair/equipment adaptations."
+    },
+    {
+      "id": "modern_hoes",
+      "decision": "Agricultural supported_items includes source HOE/MATTOCK/SCYTHE families and all six native modern hoes; no exclusive_set is added."
+    },
+    {
+      "id": "beetroot_loot",
+      "decision": "Keep native nonmature seed and mature beetroot plus1+Binomial(3,.5714286) seeds without Fortune enrichment; disease/dead loot is empty."
+    },
+    {
+      "id": "onion_resources",
+      "decision": "Existing source onion models, sprites, stateproperty names and2+Bernoulli(.25) loot JSON already implement source visual/base-yield mapping; reuse without generating a duplicate main/generated resource path."
+    },
+    {
+      "id": "melon_loot",
+      "decision": "Source normal melon gives exactly4slices without Fortune; Silk Touch keeps whole melon. Dedicated fruit destruction context overrides explosion yields with source1melon seed and is not encoded as random loot decay."
+    },
+    {
+      "id": "farmland_snow_support",
+      "decision": "Append nativefarmland to minecraft:snow_layer_can_survive_on to compensate for modern15/16collision; R196aof provides a full cube collision and source snowfall may replace crops on it. Native precipitation/climate/accumulation checks remain authoritative."
+    }
+  ],
+  "coverage": [
+    "All source wheat8blighted/7dead, carrot4blighted/3dead and potato4blighted/3dead PNGs copied byte-for-byte.",
+    "Modern blockstate mappings explicitly cover all age×blighted×dead combinations including unreachable dead mature ages safely.",
+    "Enchantment distribution tag names checked against official local1.21.1 client data: in_enchanting_table,tradeable,on_random_loot,non_treasure.",
+    "Loot JSON controls base item/count; root server crop harvest context controls cause-of-destruction eligibility and adds effective Harvesting extra units."
+  ],
+  "blockstate_mappings": {
+    "wheat": {
+      "max_age": 7,
+      "healthy_models": [
+        "minecraft:block/wheat_stage0",
+        "minecraft:block/wheat_stage1",
+        "minecraft:block/wheat_stage2",
+        "minecraft:block/wheat_stage3",
+        "minecraft:block/wheat_stage4",
+        "minecraft:block/wheat_stage5",
+        "minecraft:block/wheat_stage6",
+        "minecraft:block/wheat_stage7"
+      ],
+      "blighted_models": [
+        "mite:block/crop_wheat_blighted_0",
+        "mite:block/crop_wheat_blighted_1",
+        "mite:block/crop_wheat_blighted_2",
+        "mite:block/crop_wheat_blighted_3",
+        "mite:block/crop_wheat_blighted_4",
+        "mite:block/crop_wheat_blighted_5",
+        "mite:block/crop_wheat_blighted_6",
+        "mite:block/crop_wheat_blighted_7"
+      ],
+      "dead_models": [
+        "mite:block/crop_wheat_dead_0",
+        "mite:block/crop_wheat_dead_1",
+        "mite:block/crop_wheat_dead_2",
+        "mite:block/crop_wheat_dead_3",
+        "mite:block/crop_wheat_dead_4",
+        "mite:block/crop_wheat_dead_5",
+        "mite:block/crop_wheat_dead_6",
+        "mite:block/crop_wheat_dead_6"
+      ]
+    },
+    "carrots": {
+      "max_age": 7,
+      "healthy_models": [
+        "minecraft:block/carrots_stage0",
+        "minecraft:block/carrots_stage0",
+        "minecraft:block/carrots_stage1",
+        "minecraft:block/carrots_stage1",
+        "minecraft:block/carrots_stage2",
+        "minecraft:block/carrots_stage2",
+        "minecraft:block/carrots_stage2",
+        "minecraft:block/carrots_stage3"
+      ],
+      "blighted_models": [
+        "mite:block/crop_carrots_blighted_0",
+        "mite:block/crop_carrots_blighted_0",
+        "mite:block/crop_carrots_blighted_1",
+        "mite:block/crop_carrots_blighted_1",
+        "mite:block/crop_carrots_blighted_2",
+        "mite:block/crop_carrots_blighted_2",
+        "mite:block/crop_carrots_blighted_2",
+        "mite:block/crop_carrots_blighted_3"
+      ],
+      "dead_models": [
+        "mite:block/crop_carrots_dead_0",
+        "mite:block/crop_carrots_dead_0",
+        "mite:block/crop_carrots_dead_1",
+        "mite:block/crop_carrots_dead_1",
+        "mite:block/crop_carrots_dead_2",
+        "mite:block/crop_carrots_dead_2",
+        "mite:block/crop_carrots_dead_2",
+        "mite:block/crop_carrots_dead_2"
+      ]
+    },
+    "potatoes": {
+      "max_age": 7,
+      "healthy_models": [
+        "minecraft:block/potatoes_stage0",
+        "minecraft:block/potatoes_stage0",
+        "minecraft:block/potatoes_stage1",
+        "minecraft:block/potatoes_stage1",
+        "minecraft:block/potatoes_stage2",
+        "minecraft:block/potatoes_stage2",
+        "minecraft:block/potatoes_stage2",
+        "minecraft:block/potatoes_stage3"
+      ],
+      "blighted_models": [
+        "mite:block/crop_potatoes_blighted_0",
+        "mite:block/crop_potatoes_blighted_0",
+        "mite:block/crop_potatoes_blighted_1",
+        "mite:block/crop_potatoes_blighted_1",
+        "mite:block/crop_potatoes_blighted_2",
+        "mite:block/crop_potatoes_blighted_2",
+        "mite:block/crop_potatoes_blighted_2",
+        "mite:block/crop_potatoes_blighted_3"
+      ],
+      "dead_models": [
+        "mite:block/crop_potatoes_dead_0",
+        "mite:block/crop_potatoes_dead_0",
+        "mite:block/crop_potatoes_dead_1",
+        "mite:block/crop_potatoes_dead_1",
+        "mite:block/crop_potatoes_dead_2",
+        "mite:block/crop_potatoes_dead_2",
+        "mite:block/crop_potatoes_dead_2",
+        "mite:block/crop_potatoes_dead_2"
+      ]
+    },
+    "beetroots": {
+      "max_age": 3,
+      "healthy_models": [
+        "minecraft:block/beetroots_stage0",
+        "minecraft:block/beetroots_stage1",
+        "minecraft:block/beetroots_stage2",
+        "minecraft:block/beetroots_stage3"
+      ],
+      "blighted_models": [
+        "mite:block/crop_carrots_blighted_0",
+        "mite:block/crop_carrots_blighted_1",
+        "mite:block/crop_carrots_blighted_2",
+        "mite:block/crop_carrots_blighted_3"
+      ],
+      "dead_models": [
+        "mite:block/crop_carrots_dead_0",
+        "mite:block/crop_carrots_dead_1",
+        "mite:block/crop_carrots_dead_2",
+        "mite:block/crop_carrots_dead_2"
+      ]
+    }
+  },
+  "enchantment_data": {
+    "ids": [
+      "mite:harvesting",
+      "mite:fertility"
+    ],
+    "max_level": 5,
+    "weight": 25,
+    "min_cost": {
+      "base": 1,
+      "per_level_above_first": 10
+    },
+    "max_cost": {
+      "base": 2147483647,
+      "per_level_above_first": 0
+    },
+    "anvil_cost": 2,
+    "slots": [
+      "mainhand"
+    ],
+    "supported_items": "#mite:agricultural_tools",
+    "source_max_cost_exists": false
+  }
+}

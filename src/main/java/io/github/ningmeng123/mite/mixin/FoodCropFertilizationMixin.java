@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
+import io.github.ningmeng123.mite.survival.CropLifecycle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -25,7 +26,7 @@ public abstract class FoodCropFertilizationMixin {
     private void mite$fertilizerWear(BlockState before, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
         BlockState after = level.getBlockState(pos);
         CropBlock crop = (CropBlock) (Object) this;
-        if (after.is(before.getBlock()) && crop.getAge(after) > crop.getAge(before))
+        if (!CropLifecycle.managed(before) && after.is(before.getBlock()) && crop.getAge(after) > crop.getAge(before))
             FoodAgriculture.onCropGrowth(level, pos.below(), random);
     }
 }

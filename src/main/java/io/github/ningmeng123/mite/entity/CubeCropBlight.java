@@ -35,6 +35,7 @@ public final class CubeCropBlight {
     public static boolean blighted(BlockState state) { return state.getBlock() instanceof OnionCropBlock ? state.getValue(OnionCropBlock.BLIGHTED) : state.hasProperty(BLIGHTED) && state.getValue(BLIGHTED); }
     public static boolean dead(BlockState state) { return state.getBlock() instanceof OnionCropBlock ? state.getValue(OnionCropBlock.DEAD) : state.hasProperty(DEAD) && state.getValue(DEAD); }
     public static boolean infect(ServerLevel level,BlockPos pos) {
+        if (!level.hasChunkAt(pos)) return false;
         BlockState state=level.getBlockState(pos);
         if (!(state.getBlock() instanceof CropBlock) || blighted(state) || dead(state)) return false;
         level.setBlockAndUpdate(pos,state.setValue(state.getBlock() instanceof OnionCropBlock ? OnionCropBlock.BLIGHTED : BLIGHTED,true));
@@ -50,9 +51,7 @@ public final class CubeCropBlight {
         particles(level,pos);
         if (dead(state)) return true;
         if (random.nextInt(64)==0) {
-            CropBlock crop=(CropBlock)state.getBlock();
-            int age=crop.getAge(state);
-            BlockState dead=crop.getStateForAge(crop.isMaxAge(state) ? Math.max(0,age-1) : age).setValue(BLIGHTED,true).setValue(DEAD,true);
+            BlockState dead=io.github.ningmeng123.mite.survival.CropLifecycle.deadState(state,true);
             level.setBlockAndUpdate(pos,dead);
             return true;
         }
@@ -67,6 +66,9 @@ public final class CubeCropBlight {
     }
     @SubscribeEvent public static void drops(BlockDropsEvent event) {
         BlockState state=event.getState();
+        // Managed crops already select source loot before global loot modifiers and drop events.
+        if(io.github.ningmeng123.mite.survival.CropLifecycle.managed(state)
+                ||io.github.ningmeng123.mite.survival.SpecialPlantGrowth.managedStem(state))return;
         if (blighted(state) || dead(state)) {
             event.getDrops().clear(); event.setDroppedExperience(0);
             // apt bypasses the mature yield and fortune path: one poisonous potato, unless the crop is dead.

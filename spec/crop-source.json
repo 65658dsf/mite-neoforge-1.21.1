@@ -1,0 +1,2338 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "baseline_commit": "52dc38309f8cea754fc626e8f5a9b5f69aef36df",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "status": "Independent source extraction; implementation and manual visual acceptance are separate.",
+  "legacy_game_executed": false,
+  "methodology": [
+    "Read active crop inheritance, registered blocks, item callers and final common drop spawn path, not only tooltip or declaration.",
+    "Checked anr javap bytecode against decompiler for tick order and growth formula. Full original byte hashes identify exact source inputs.",
+    "Method source hashes include declaration through closing brace; UTF-8 LF normalized by Python read_text, no trailing newline; line ranges are one-based."
+  ],
+  "counts": {
+    "rules": 41,
+    "classes": 34,
+    "methods": 186
+  },
+  "rules": [
+    {
+      "id": "crops.registry",
+      "references": [
+        "aqz:<clinit>",
+        "anr:getGrowthBits",
+        "anr:getMaxGrowth"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Wheat59, carrots141, potatoes142 and onions234 are live anr crops. Dead235..238 are separate nonrandom blocks. All live internal ages are 0..7 with disease bit8.",
+      "acceptance": "Place each species, verify seven successful growth steps and mature age7; dead blocks never tick.",
+      "input": "crop species and metadata",
+      "output": "live/dead species and age"
+    },
+    {
+      "id": "crops.render_stages",
+      "references": [
+        "ani:getGrowthStage",
+        "apt:getGrowthStage",
+        "BlockOnion:getGrowthStage",
+        "BlockCropsDead:<init>"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Wheat has8 live visual stages; carrot/potato map ages0..7 to0,0,1,1,2,2,2,3. Onion maps to0,1,1,2,2,3,3,4. Dead mature disease regresses7→6 before selecting reduced dead texture stages.",
+      "acceptance": "Ages6 and7 of a root vegetable must use different mature flags despite shared earlier display frames."
+    },
+    {
+      "id": "crops.placement",
+      "references": [
+        "anr:isLegalOn",
+        "BlockPlant:isLegalAt",
+        "yv:onItemRightClick",
+        "yw:onItemRightClick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Plant only on farmland; source placement requires top face and empty neighbor. Living and dead crop survival uses farmland plus open sky or unattenuated local brightness8..15.",
+      "acceptance": "A roofed light7 planting fails; light8 succeeds; open-sky nighttime planting succeeds."
+    },
+    {
+      "id": "crops.skill_gate",
+      "references": [
+        "is:<init>",
+        "is:areSkillsEnabledInSettingsFile",
+        "yv:onItemRightClick",
+        "yw:onItemRightClick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Optional farming profession is checked only when world skills are enabled. Dedicated constructor reads professions then forces false. No skill or player-level term exists in anr growth.",
+      "acceptance": "Default R196 does not restrict normal crop planting by level or FARMING skill.",
+      "mode": "Skill-enabled historical worlds may reject non-farmer planting; not a default enabled crop rule."
+    },
+    {
+      "id": "crops.illegal_removal",
+      "references": [
+        "aqz:updateTick",
+        "aqz:onNeighborBlockChange",
+        "aqz:checkIfNotLegal",
+        "BlockPlant:onNotLegal",
+        "aqz:onNotLegal"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Random tick and neighbor changes first validate support/light. If invalid and no player within16, remove silently; otherwise invoke was_not_legal drop path then remove.",
+      "acceptance": "Removing support drops no mature wheat; an intermediate potato can yield poison only where the inherited invalidation path actually requests drops."
+    },
+    {
+      "id": "crops.light_channels",
+      "references": [
+        "abw:m",
+        "abw:n",
+        "abw:b",
+        "BlockPlant:isLightLevelSuitable",
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Survival reads unattenuated sky/block local light at crop (chunk light with sky subtraction0). Growth and natural blight read neighbor-aware local light at crop+Y1 with current sky subtraction.",
+      "acceptance": "Open-sky night survives while growth stops; covered darkness may invalidate the plant."
+    },
+    {
+      "id": "crops.tick_order",
+      "references": [
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Order: parent legality; compute growth; dry-condition branch; diseased progression; blood moon exposure; climate disease draw; light and growth draw; fertilizer-loss draw only after successful growth. Mature plants still tick and can become diseased.",
+      "acceptance": "A mature irrigated crop must still make disease draws; drought takes priority over pre-existing disease."
+    },
+    {
+      "id": "growth.temperature",
+      "references": [
+        "anr:getLowestOptimalTemperature",
+        "anr:getHighestOptimalTemperature",
+        "BlockGrowingPlant:getTemperatureTolerance",
+        "BlockGrowingPlant:getTemperatureGrowthRateModifier"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Biome base temperature optimal0.8..1.2 inclusive, tolerance1.0. Factor=max(1-distance(T,[0.8,1.2]),0). Uses biome.F directly, no altitude coordinate or calendar season.",
+      "acceptance": "AtT0 factor0.2; T0.8/1.2 factor1; T2.2 factor0."
+    },
+    {
+      "id": "growth.humidity",
+      "references": [
+        "anr:getHumidityGrowthRateModifier",
+        "acq:e"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Crop humidity growth factor is1, even in humid biomes. High humidity is downfallG>0.85, strict.",
+      "acceptance": "G0.85 is not humid; G0.8501 is humid, but ordinary crop growth remains unchanged."
+    },
+    {
+      "id": "growth.global_rate",
+      "references": [
+        "BlockGrowingPlant:getGlobalGrowthRateModifierFromMITE"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "All growing plants inherit global multiplier0.25 unless a subtype overrides it.",
+      "acceptance": "A baseline crop soil factor10 becomes2.5 before isolation penalty."
+    },
+    {
+      "id": "growth.farmland",
+      "references": [
+        "anr:k",
+        "aof:getWetness",
+        "aof:isFertilized"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Own farmland wetness0 forces growth0. Otherwise start1 plus3x3 farmland contributions: raw metadata>0 contributes3, raw0 contributes1, others0; eight off-center contributions divide4. This tests raw metadata, so dry fertilized neighbor metadata8 contributes3.",
+      "acceptance": "Wet3x3 soil gives10; isolated wet soil gives4; own dry fertilized farmland still yields0."
+    },
+    {
+      "id": "growth.crowding",
+      "references": [
+        "anr:k"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "If any same-species diagonal crop exists OR same species is present on both X and Z axes, halve soil factor once.",
+      "acceptance": "A pure straight row is not halved; an L-shaped three-crop arrangement is halved."
+    },
+    {
+      "id": "growth.fertilizer",
+      "references": [
+        "anr:k",
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Own fertilized farmland multiplies growth1.5. Only after a successful age increment draw nextInt256; zero clears fertilizer when farmland is still fertilized.",
+      "acceptance": "No fertilizer loss draw after failed growth, maturity, disease or darkness."
+    },
+    {
+      "id": "growth.proximity",
+      "references": [
+        "BlockGrowingPlant:getProximityGrowthRateModifier"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Count cardinal same-species neighbors:0→0.5;>=2→1.0; exactly1→1.0 when that neighbor connects another same-species crop beyond the center, otherwise0.75.",
+      "acceptance": "A lone crop grows at half; an isolated pair at0.75; connected three-crop row reaches1.0 proximity."
+    },
+    {
+      "id": "growth.probability",
+      "references": [
+        "anr:updateTick",
+        "BlockGrowingPlant:isLightLevelSuitableForGrowth"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Healthy nonmature growth requires light15 and growthRate>0. nextInt((int)(25/growthRate)+1)==0 increments age once. Other light values never grow.",
+      "acceptance": "Atgrowth2.5 usebound11; light14 never advances; mature age7 never increments."
+    },
+    {
+      "id": "disease.climate",
+      "references": [
+        "anr:chanceOfBlightPerRandomTick",
+        "apt:chanceOfBlightPerRandomTick",
+        "anr:getBlightChanceModifierForBiome",
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Healthy crops draw nextFloat against B*max((1-distance(T,[1.0,1.2]))*(highHumidity?1.5:1),0)*(1-light/16). B0.0005, potatoes0.001. Temperature interval differs from growth optimum.",
+      "acceptance": "AtT1.0/light15/nohumidity wheat threshold0.00003125; potato0.0000625. AtT0 no climate disease."
+    },
+    {
+      "id": "disease.blood_moon",
+      "references": [
+        "anr:updateTick",
+        "is:V",
+        "bkz:V"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "After drought and existing disease, blood night draws float<0.25 before checking !isDedicatedServer and overhead exposure. Only integrated mode gains this additional exposure infection.",
+      "acceptance": "Dedicated mode retains ordinary climate disease but skips blood extra; opaque fully sheltered crops avoid extra exposure.",
+      "integration": "Already implemented by lunar feature; reuse instead of adding a second blood-moon draw."
+    },
+    {
+      "id": "disease.death",
+      "references": [
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Already blighted crop first draws nextInt64;0 dies immediately. Preserve age except mature7 becomes6. Dead blocks reject fertilizer and have no loot.",
+      "acceptance": "Infected mature carrot dies as age6 and never yields normal carrots."
+    },
+    {
+      "id": "disease.spread",
+      "references": [
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Survivor nextBoolean true returns;false draws dx,dy,dz in that order from nextInt3-1. Noncenter loaded target must be any living uninfected anr, including another species.",
+      "acceptance": "An infected wheat may infect a carrot at offset1,1,-1; dead targets and unloaded positions are rejected."
+    },
+    {
+      "id": "disease.cure",
+      "references": [
+        "anr:fertilize",
+        "BlockCropsDead:fertilize",
+        "xl:tryFertilize"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Bone meal only clears blight on living blighted crops. Healthy or dead anr rejects it; no age increase. Source direct bone-meal item path targets crops or grass, not bare farmland.",
+      "acceptance": "Curing mature diseased wheat preserves age7; applying to healthy seedling consumes no bone meal."
+    },
+    {
+      "id": "fertilizer.stem_unreachable",
+      "references": [
+        "xl:tryFertilize",
+        "aof:fertilize",
+        "aqq:fertilizeStem"
+      ],
+      "enabled": "Method exists in archive but normal R196 item interaction cannot reach this bone-meal path; preserve disabled behavior rather than enabling it by migration.",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "The aof.fertilize dye branch and aqq.fertilizeStem contain a nominal2..5age increase for live growing stems. The actual white-dye right-click route xl.tryFertilize dispatches only grass or anr; it never calls aof.fertilize or aqq.fertilizeStem. Other aof.fertilize callers pass manure or water items, not bone meal.",
+      "acceptance": "Default bone meal on farmland does not cure its crop, and direct bone meal on melon/pumpkin stem does not grow it or consume the item."
+    },
+    {
+      "id": "drought.trigger",
+      "references": [
+        "anr:updateTick",
+        "aof:m"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "When computed growth is0 and no irrigation source is within the source soil scan, draw nextFloat<0.05. Otherwise skip this branch. This includes extreme temperature with no nearby water, even when stored wetness remains.",
+      "acceptance": "Dry crop beside actual water is not killed by drought branch, even before farmland rehydrates."
+    },
+    {
+      "id": "drought.outcome",
+      "references": [
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Successful drought on mature crop requests drought loot then removes; immature crop becomes dead matching age. Branch returns regardless of successful death draw.",
+      "acceptance": "An immature dry crop cannot grow or make climate-disease draw on the same tick."
+    },
+    {
+      "id": "harvest.reasons",
+      "references": [
+        "anr:dropBlockAsEntityItem",
+        "BlockBreakInfo:wasHarvestedByPlayer",
+        "BlockBreakInfo:wasSelfDropped"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Ordinary crop loot requires player harvest, drought, snowfall, or self_dropped reason. Illegal support loss, flood, trample, explosion and generic destruction are excluded. Mature self-drop is separately excluded.",
+      "acceptance": "Mature wheat harvested by player gives1 wheat, while flooding or support invalidation gives0."
+    },
+    {
+      "id": "harvest.stages",
+      "references": [
+        "anr:dropBlockAsEntityItem"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Healthy age0 yields1 planting item; ages1..6 yield0; mature non-self-drop yields species mature output only. Wheat does not also yield planting seeds at maturity.",
+      "acceptance": "A planted wheat seed is recoverable immediately; a grown mature wheat gives1 wheat and0 extra seeds."
+    },
+    {
+      "id": "harvest.roots",
+      "references": [
+        "ani:getMatureYield",
+        "apt:getMatureYield",
+        "BlockOnion:getMatureYield"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Mature carrot, potato and onion independently select3 items with25% probability, otherwise2. Legacy yield draw is Math.random rather than world RNG.",
+      "acceptance": "Across fixed modern adapted RNG cases both2 and3 outputs must be reachable; no fortune multiplication.",
+      "modern_adaptation": "Use authoritative server RandomSource for reproducible tests; distribution remains75%2 /25%3."
+    },
+    {
+      "id": "harvest.poisonous_potato",
+      "references": [
+        "apt:dropBlockAsEntityItem",
+        "aqz:dropBlockAsEntityItem"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Any blighted live potato or healthy potato age1..6 bypasses ordinary crop reason filter and requests1 poisonous potato. Dead potato overrides all loot to0. Final common plant-material explosion filter sets chance0.",
+      "acceptance": "Intermediate potato player break yields1 poison; exploded potato yields0; mature healthy potato yields normal2/3."
+    },
+    {
+      "id": "harvest.enchantment",
+      "references": [
+        "anr:dropBlockAsEntityItem",
+        "aaw:getEnchantmentLevelFraction",
+        "aau:getNumLevels",
+        "EnchantmentHarvesting:canEnchantItem",
+        "aqz:dropBlockAsEntityItem"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Only effective source tool and harvesting enchantment add per-unit independent bonus0.5*(level/5). Base unit always drops, then each gets one extra with that probability. Native Fortune is not referenced.",
+      "acceptance": "HarvestingV maximum is50% chance per unit of one extra, not guaranteed doubled yield; Fortune-only tool retains base distribution."
+    },
+    {
+      "id": "harvest.fertility_tools",
+      "references": [
+        "yb:onBlockDestroyed",
+        "ItemMattock:onBlockDestroyed",
+        "ItemScythe:onBlockDestroyed"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Fertility(level/5 probability) can refertilize soil after effective hoe or mattock harvests mature nondead crop. Scythe path restricts exactanr class (wheat), not all subclasses.",
+      "acceptance": "Verify maturity and tool effectiveness before applying farmland fertility; do not infer all root crops support scythe fertility."
+    },
+    {
+      "id": "enchantment.agriculture",
+      "references": [
+        "aau:<clinit>",
+        "yq:<clinit>",
+        "aau:getNumLevels",
+        "aau:getMinEnchantmentLevelsCost",
+        "aau:a",
+        "EnchantmentHarvesting:canEnchantItem",
+        "EnchantmentFertility:canEnchantItem",
+        "aaw:b"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Harvesting93 and Fertility82 both Uncommon weight25, difficulty10, maxLevel5. Min effective budget1+10*(level-1); no source max-cost bound. Both accept hoes, mattocks and scythes, permit other distinct enchantments, and enter normal table/book candidate pools.",
+      "acceptance": "Modern data includes5 levels and correct three tool families; unrelated tool cannot gain either via normal application.",
+      "modern_adaptation": "NeoForge enchantment weight allows1..1024, so25 is directly representable. Modern max_cost is an engine budget interval absent from source and must be recorded as an adaptation rather than claimed as source data."
+    },
+    {
+      "id": "harvest.explosion",
+      "references": [
+        "aqz:dropBlockAsEntityItem",
+        "akc:<clinit>"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Common final item spawn function sets exploded plants/vines/cactus/cake material chance0. Therefore potato override does not allow explosion loot.",
+      "acceptance": "Both immature and infected potatoes produce no items from explosion."
+    },
+    {
+      "id": "weather.snowfall",
+      "references": [
+        "js:placeSnowfallAt",
+        "anr:dropBlockAsEntityItem",
+        "apt:dropBlockAsEntityItem"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Before replacing anr/aqq with snowfall layer, server requests snowfall loot. Healthy age0 planting item and mature yield can drop; intermediate ordinary crops0; intermediate/blighted potato poison1.",
+      "acceptance": "Actual snow replacement must preserve cause-specific crop output and remove the crop."
+    },
+    {
+      "id": "harvest.trampling",
+      "references": [
+        "BlockPlant:onTrampledBy",
+        "BlockPlant:dropsAsSelfWhenTrampled",
+        "aof:a"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Trampling reason itself is not self_dropped. BlockPlant suppresses loot call for cow(rr), otherwise requests trampled drop handling. Ordinary anr reason filter returns0; potato override can give poison except when call suppressed. Farmland trampling first destroys plant, then wet/fertilized soil resists becoming dirt.",
+      "acceptance": "A cow trample does not produce poison potato; wet farmland may survive a damaging fall while its crop is destroyed."
+    },
+    {
+      "id": "soil.irrigation",
+      "references": [
+        "aof:m",
+        "aof:water"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Search water material inX/Z±4 andsoilY..Y+1. Also search ice/snow/crafted_snow inX/Z±1 andsoilY..Y+1. Found source fills farmland wetness7.",
+      "acceptance": "Water four horizontal blocks away is valid; five away invalid; adjacent source ice qualifies."
+    },
+    {
+      "id": "soil.drying",
+      "references": [
+        "aof:chanceOfDrying",
+        "aof:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "No nearby source: rain atabove soil increments wetness1 up to7. Otherwise draw nextFloat against max(T-0.15-(highHumidity?0.5:0),0); successful draw decreases wetness1 or permits dry unoccupied dirt reversion.",
+      "acceptance": "AtT0.8/nohumidity drying threshold0.65; highhumidity0.15; nearby water bypasses drying draw."
+    },
+    {
+      "id": "soil.fertilizer_item",
+      "references": [
+        "aof:fertilize",
+        "ItemManure:tryFertilizeBlock"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Manure sets farmland fertilized bit8 once without wetness change; clicking crop or stem redirects to soil; no repeated consumption on already fertilized soil.",
+      "acceptance": "Manure on dry soil keepswetness0; it improves future irrigated growth but does not directly age the crop."
+    },
+    {
+      "id": "soil.watering_item",
+      "references": [
+        "aof:fertilize"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "Water bowl or water bottle hydrates targeted farmland; water-containing bucket affects3x3 farmland. Nether provider evaporates water without hydrating. Resource/container conversion handled by item caller.",
+      "acceptance": "Dry farmland may be watered without placing water block; do not lose container after invalid full-moisture use."
+    },
+    {
+      "id": "modern.beetroot",
+      "references": [
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "R196 has no beetroot. Explicit modern adaptation retains AGE_3/maxAge3 and original beetroot item IDs while applying agreed common food-crop climate/disease/soil constraints.",
+      "acceptance": "Mark adaptation separately; do not claim beetroot has legacy8internal stages.",
+      "modern_adaptation": true
+    },
+    {
+      "id": "modern.third_party",
+      "references": [
+        "anr:updateTick"
+      ],
+      "enabled": "R196 active registered crop behavior unless explicitly conditioned below",
+      "responsibility": {
+        "server": "Authoritative placement, state changes, growth, disease and drop selection",
+        "client": "Render synchronized block states and item feedback; no independent crop progression"
+      },
+      "formula_or_behavior": "R196 has no torchflower or third-party CropBlock registry contents. The food-crop climate/harvest override must be scoped to known food crops; existing generic disease-state compatibility may remain.",
+      "acceptance": "A third-party or torchflower crop keeps its own stage/growth/drop rules outside the explicitly adopted disease overlay.",
+      "modern_adaptation": true
+    },
+    {
+      "id": "blueberry.registered_growth_baseline",
+      "references": [
+        "aqz:<clinit>",
+        "BlockBush:<init>",
+        "BlockBush:getBerryGrowth",
+        "BlockBush:getMaxBerryGrowth",
+        "BlockBush:isBiomeSuitable",
+        "BlockBush:canBePlacedAt",
+        "BlockBush:getGrowthRate",
+        "BlockBush:updateTick",
+        "BlockGrowingPlant:getGlobalGrowthRateModifierFromMITE"
+      ],
+      "enabled": "Active registered source block249; normal random-tick growth is reachable.",
+      "responsibility": {
+        "server": "Placement validation and authoritative random berry-age progression",
+        "client": "Render synchronized berry age0..3; no independent progression"
+      },
+      "formula_or_behavior": "BlockBush is a final BlockGrowingPlant subtype, not an anr crop. Source BLUEBERRY subtype0 has berry age(metadata>>2)0..3. Natural placement restricts exact Forest/ForestHills and open sky. Nonmature random growth requires inherited light15 and nextFloat < 0.1*temperatureFactor*humidityFactor*0.25; its optimum is both source forest base temperatures0.7, humidityFactor1.0. Mature bushes stop progressing until berries are picked.",
+      "acceptance": "At source-optimal temperature0.7 and light15, threshold0.025 advances one berry age. At light14 no random growth occurs. Max berry age is3, not ordinary crop age7."
+    },
+    {
+      "id": "fertilizer.blueberry_unreachable",
+      "references": [
+        "BlockBush:<init>",
+        "BlockBush:fertilize",
+        "BlockBush:getBerryGrowth",
+        "BlockBush:incrementBerryGrowth",
+        "xl:tryFertilize",
+        "aof:fertilize"
+      ],
+      "enabled": "The archived fertilize method exists but the default white-dye item dispatch cannot reach it.",
+      "responsibility": {
+        "server": "Reject default bone-meal interaction without berry-age change or consumption",
+        "client": "Do not advertise an unavailable bonemeal target"
+      },
+      "formula_or_behavior": "BlockBush.fertilize nominally accepts white dye and adds1..2 berry ages when unripe, but BlockBush extends BlockGrowingPlant rather than anr. xl.tryFertilize dispatches only grass or anr, so neither direct blueberry interaction nor the aof soil branch reaches BlockBush.fertilize. Searches of the archived callers find no active BlockBush.fertilize invocation. This is distinct from the reachable natural berry growth rule.",
+      "acceptance": "Actual bone meal right-click on an unripe blueberry bush does not consume the item, add berry age or emit successful fertilizer feedback; natural random growth still works under its own conditions."
+    }
+  ],
+  "classes": [
+    {
+      "class": "anr",
+      "source": ".reference/r196/decompiled/anr.java",
+      "source_sha256": "673a258f233d08540a8e51bb6361299861f19531b0789d96d296369703bad82d",
+      "class_sha256": "c14d5a916d50662ad8b61af1d6063de1a7078bac2434e0c522791e1f4ad86727"
+    },
+    {
+      "class": "BlockGrowingPlant",
+      "source": ".reference/r196/decompiled/BlockGrowingPlant.java",
+      "source_sha256": "fb0489588c4d3edfd2c38ac5eba3f6efb292e70ec0736a696e672be89dc7ad3d",
+      "class_sha256": "e8ecb6711ebc7ffa43eaa7d4dc511f5601a70eb5df87584f8f92f3e0a7cb2063"
+    },
+    {
+      "class": "BlockPlant",
+      "source": ".reference/r196/decompiled/BlockPlant.java",
+      "source_sha256": "9b0274c82c7caa0916ca67686899373041af1818d1285c3f59f2b287d87cd7ec",
+      "class_sha256": "bb36c98434303f7eac78c4904ab4e470db4c830cb26de2bbf78ee77d58a98194"
+    },
+    {
+      "class": "ani",
+      "source": ".reference/r196/decompiled/ani.java",
+      "source_sha256": "6c37240f1264b44ae5914381d371bbff1bbd0b7b9b55d783e1602c5e6ecc90cc",
+      "class_sha256": "a76749de1eab7e3867351b08f085b62c62336881f6aa35995f3d245a4b814731"
+    },
+    {
+      "class": "apt",
+      "source": ".reference/r196/decompiled/apt.java",
+      "source_sha256": "d0f3b028c4b9ad6e8022a645fd009d75c59a335964cda4565d196cee4b31c42a",
+      "class_sha256": "ca61f435a66578c9d6b2b7805e6c54e3bfa6e0096cb6b230b3eb028d411711e3"
+    },
+    {
+      "class": "BlockOnion",
+      "source": ".reference/r196/decompiled/BlockOnion.java",
+      "source_sha256": "52c8dadb724c40ecb327ddb158734b4442eda63eea0851e85c36925ad655bcbb",
+      "class_sha256": "ce150ec7344ad0d24921fcbd31813a2a938780af0fd04e553bef340cfe3035a4"
+    },
+    {
+      "class": "BlockCropsDead",
+      "source": ".reference/r196/decompiled/BlockCropsDead.java",
+      "source_sha256": "0f2d5558cadaef529f0e77b91f1c21cbc840306aaf475c9a17692b8674a482e2",
+      "class_sha256": "3d328377ccd57363fa213437057b2c755e0aabd3f92fb1b3625e6ee9f4b33bf0"
+    },
+    {
+      "class": "BlockCarrotDead",
+      "source": ".reference/r196/decompiled/BlockCarrotDead.java",
+      "source_sha256": "b1589122cd3af640b183db28400de4e397720c32fdb177c370d9454db4a321a8",
+      "class_sha256": "0e8548fa395499055317e7c6a47c8e5171b985eb48683f702666ca9f51063e46"
+    },
+    {
+      "class": "BlockPotatoDead",
+      "source": ".reference/r196/decompiled/BlockPotatoDead.java",
+      "source_sha256": "3ac9642bd2d6863e9d7fcfaf1a884b9c704c133906e6a0e0bf150a54750d480a",
+      "class_sha256": "6483063b22ae172e1dd39ff42f42fc55d3e13b5783bf77108b9a01e61cc2b7e2"
+    },
+    {
+      "class": "BlockOnionDead",
+      "source": ".reference/r196/decompiled/BlockOnionDead.java",
+      "source_sha256": "4371f8ddc6589fb1b3da4290d3ce4644c5ca8ad9e721261aa4f598a2c3a03b60",
+      "class_sha256": "e41d0c2da259a7ac24b87fbd764fd08e93daba53971e910e10a2b1da01940f28"
+    },
+    {
+      "class": "aof",
+      "source": ".reference/r196/decompiled/aof.java",
+      "source_sha256": "740f38657982a76e69a35afc50fb5c589c35898b03a607b9c6da9c5ee3a90a58",
+      "class_sha256": "07118a5087f839ed3c158cb6dcd8c278bc5a8e346a4518fee3b9953719cf4e63"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "source": ".reference/r196/decompiled/BlockBreakInfo.java",
+      "source_sha256": "582f0ed5a5ac2aa23d3a80b445469397866fb98635ea46a996e73fa0ce418fff",
+      "class_sha256": "8178dae7298f8361b50ff6e11079bfe8f68ddeeff5d41eb171b3dc0acaffd6c8"
+    },
+    {
+      "class": "aqz",
+      "source": ".reference/r196/decompiled/aqz.java",
+      "source_sha256": "b2699357f32d4fc6c44c094fa87eb615f1be0d652a1c0ed3bbc3a0273e9f4d11",
+      "class_sha256": "82096b99dd4ff878515b4fe1d67b76f7ec51b8fe366624c203382e39ec649ddc"
+    },
+    {
+      "class": "abw",
+      "source": ".reference/r196/decompiled/abw.java",
+      "source_sha256": "e57ec879d581af94a11f2e2d6fd0daf5921dc2f37a813a41d04aef853ab2f6d0",
+      "class_sha256": "0affe2c94d273750546e4d36d7d124072100f57b2dffba6d51619672f76dda36"
+    },
+    {
+      "class": "acq",
+      "source": ".reference/r196/decompiled/acq.java",
+      "source_sha256": "483ca3cb15c1fce9a1061325814ed2ad11483bfa44783cc15e9e80419a02d15d",
+      "class_sha256": "3fe58a21a3bd1c35e25303a7b2713c5d0b1c4ac863d0ac3497b5f7d9d25d1f95"
+    },
+    {
+      "class": "yv",
+      "source": ".reference/r196/decompiled/yv.java",
+      "source_sha256": "25a932ee595a45a731251f30d274b9c203c37370c5598f6e187432ea7aa2e0dd",
+      "class_sha256": "92d0770d2e4379a7390d65a4020869995c9c996de6c014dfe62a72acb51a680a"
+    },
+    {
+      "class": "yw",
+      "source": ".reference/r196/decompiled/yw.java",
+      "source_sha256": "f26f0e76b77975e32a42fc929d43e82be155b79d84f1f26c5a40d8528ca11d96",
+      "class_sha256": "ef05efb7288490020aa943051a34f805b8a6af4dd3d19886ca18a907ac1092e2"
+    },
+    {
+      "class": "xl",
+      "source": ".reference/r196/decompiled/xl.java",
+      "source_sha256": "afd09766f75b9ef1c4bc77bba0c9911cc746f1227bc36f06a5ee693cf3d8ea9f",
+      "class_sha256": "afaa9faaec41712c428c87076ac2e9741906ec0366e1bc14a3e85b076cc9631c"
+    },
+    {
+      "class": "ItemManure",
+      "source": ".reference/r196/decompiled/ItemManure.java",
+      "source_sha256": "30ff84cf26a08eb7197534a9d1efea7a85307effbf0769411de6151fa76e1bc8",
+      "class_sha256": "d933cd2dddc2ba4d48bbd093b172d5c8ea9642962c2d40c3928cc487af80339d"
+    },
+    {
+      "class": "is",
+      "source": ".reference/r196/decompiled/is.java",
+      "source_sha256": "549a6f92650c45a3498c44ccf7aa21216ab5f325950f0f35d742b6984d2a6e33",
+      "class_sha256": "e45c333b00c5960db79f476a8631cac2c602d0286c81b3b3baee1a9d602bf7f7"
+    },
+    {
+      "class": "bkz",
+      "source": ".reference/r196/decompiled/bkz.java",
+      "source_sha256": "8e553145cab1915eb94119c4e4293becc7bdaf9ccc60becf85797e3abe2eab1f",
+      "class_sha256": "3bc0c92c5dd264dcb53b802dfe078be027373e6d04bb489cdfde6fbd973a96eb"
+    },
+    {
+      "class": "aaw",
+      "source": ".reference/r196/decompiled/aaw.java",
+      "source_sha256": "f6e9e20d88593fa6b6142f8386f99dceb04bf0e2cc65ee8892c16dce5971873e",
+      "class_sha256": "1a0878ad1606baa60b4dd73038dfd3bda62db75ff8bd3a0e0e7a76a5a37d6d74"
+    },
+    {
+      "class": "aau",
+      "source": ".reference/r196/decompiled/aau.java",
+      "source_sha256": "d2588724c18b8ba101b4d5b510b8ced09f3f6866f09355404c9fd82a6a1f2181",
+      "class_sha256": "072d7bec6d8409258490dafa60dda1c4fcaa0e1e957b874d5ac654df928b65fd"
+    },
+    {
+      "class": "EnchantmentHarvesting",
+      "source": ".reference/r196/decompiled/EnchantmentHarvesting.java",
+      "source_sha256": "575778d782a1f992a218de036ee69083e1bc94591bb8513b6b7cc4be6d20a78a",
+      "class_sha256": "fe8205d2eb067a6998edc5d8b40cbb5bfa9e82a76d756557a567820b45e0b8f3"
+    },
+    {
+      "class": "EnchantmentFertility",
+      "source": ".reference/r196/decompiled/EnchantmentFertility.java",
+      "source_sha256": "a0a51a1f1ba74f04d63ceda73ea0707f7677b5acdc648c0e32579238abd34c4e",
+      "class_sha256": "5db9c37755f232ce2b3a1f5c53082c0e72ab0eff6608fd40c7a91e6fcf66f733"
+    },
+    {
+      "class": "yq",
+      "source": ".reference/r196/decompiled/yq.java",
+      "source_sha256": "c8197d8a6858d3d5f71d1b93b1cbb52886d5f64568e25c8caab99ec0d57e716b",
+      "class_sha256": "fc4c3ee9cf32946166556f11723db18b1092964146f78844aa14fea1a8f58a04"
+    },
+    {
+      "class": "yb",
+      "source": ".reference/r196/decompiled/yb.java",
+      "source_sha256": "9377112d8cd5b4f0269e42d8e79c2869483af312352f7441efb8d00e151df8e5",
+      "class_sha256": "56fbe68090ba94777d0224b9e56001d7a95390b93cc03569909d050793b5d7c7"
+    },
+    {
+      "class": "ItemScythe",
+      "source": ".reference/r196/decompiled/ItemScythe.java",
+      "source_sha256": "73d1081116dadc4311bb69ac7866d679a20630c0dbb0110dc1b7d768d4e41a16",
+      "class_sha256": "14590ba7e2d3ae96bcc905ee0970a8ba8fb43317731ba7105a2756b470fd8a4f"
+    },
+    {
+      "class": "ItemMattock",
+      "source": ".reference/r196/decompiled/ItemMattock.java",
+      "source_sha256": "65e5ab6aaea9e380e478a6f3e9215b6d9c9e9a5e307bfebcb0150035463514ff",
+      "class_sha256": "1beeb162b136b00ae2a01f2a9c3cbb406d877ddf476bde43c70db7094b91c21d"
+    },
+    {
+      "class": "js",
+      "source": ".reference/r196/decompiled/js.java",
+      "source_sha256": "4efda5d7a3ef3fa0462b69b51ae2a0851780ab8b37e2f73bf52814ad24ecb349",
+      "class_sha256": "8d12f0f279cb14a5ada750ffba465fb6c3706d389326d8981ee5224a6b672fdc"
+    },
+    {
+      "class": "akc",
+      "source": ".reference/r196/decompiled/akc.java",
+      "source_sha256": "2974cfc831d76bf37d1ebd3a7e93a1397bd152890d22cadb32f4165c272aec45",
+      "class_sha256": "907062ca4d5abc78fa5cf4c0d4ba5dc96f516740f46656359230219a67747c4f"
+    },
+    {
+      "class": "Skill",
+      "source": ".reference/r196/decompiled/Skill.java",
+      "source_sha256": "f65d282c58a85d249eab5513fd6226a93bcf8d7f38f350d5ab9c54f4f4a389d6",
+      "class_sha256": "d783ac4fec652c3369d50e48fdc785fd2b1259e1a7f9eabf15390440e9f4d4b0"
+    },
+    {
+      "class": "aqq",
+      "source": ".reference/r196/decompiled/aqq.java",
+      "source_sha256": "9d2596e4d2c346bffea7e64b1bd45f5e33d5e695a5a1a44d0d3f67c6e16e3db1",
+      "class_sha256": "a4967a732fe068028ce631a8c584bdad910bab2068fe6cc7cb8e89ea9c5eadfb"
+    },
+    {
+      "class": "BlockBush",
+      "source": ".reference/r196/decompiled/BlockBush.java",
+      "source_sha256": "30cd551236d253aff24b609bc62d4c78e92778d86a2f52ef545f5a57ef12fa47",
+      "class_sha256": "722ce9bba2a6ab3a0da17db5ac446c5cc873edf6fcf27fc97df665ac081d30dc"
+    }
+  ],
+  "methods": [
+    {
+      "class": "anr",
+      "member": "anr",
+      "declaration": "protected anr(int block_id, int num_growth_stages)",
+      "line": 13,
+      "end_line": 24,
+      "normalized_source_sha256": "b09608f1eab0b127ba0503eadff6d32ed35ec92cd20754e6c826155d3e48809c"
+    },
+    {
+      "class": "anr",
+      "member": "getLowestOptimalTemperature",
+      "declaration": "public float getLowestOptimalTemperature()",
+      "line": 37,
+      "end_line": 39,
+      "normalized_source_sha256": "8239b7ebc4bbdec4d219b6004568e7bb29021595aee2a58f38f296ba418c4c4d"
+    },
+    {
+      "class": "anr",
+      "member": "getHighestOptimalTemperature",
+      "declaration": "public float getHighestOptimalTemperature()",
+      "line": 42,
+      "end_line": 44,
+      "normalized_source_sha256": "e6493016bb4e1dec525aff42170633e3cf40e4cd88a656d8cd83d87cf79da576"
+    },
+    {
+      "class": "anr",
+      "member": "getHumidityGrowthRateModifier",
+      "declaration": "public float getHumidityGrowthRateModifier(boolean high_humidity)",
+      "line": 47,
+      "end_line": 49,
+      "normalized_source_sha256": "d8f53a55534c1f346b45144dd3ce61d54605943769cf44f699eba8173643d5ee"
+    },
+    {
+      "class": "anr",
+      "member": "isLegalOn",
+      "declaration": "public boolean isLegalOn(int metadata, aqz block_below, int block_below_metadata)",
+      "line": 52,
+      "end_line": 54,
+      "normalized_source_sha256": "46e0fcb76fb2e008a42dc6020d847aeb7e0abe1ea0931e160336c0ab12676c40"
+    },
+    {
+      "class": "anr",
+      "member": "updateTick",
+      "declaration": "public boolean updateTick(abw world, int x, int y2, int z2, Random rand)",
+      "line": 61,
+      "end_line": 115,
+      "normalized_source_sha256": "07c35bd9a5e15eab6800c4e44831c729275881bfe8305c24d8de388591f91678"
+    },
+    {
+      "class": "anr",
+      "member": "getBlightChanceModifierForBiome",
+      "declaration": "public static float getBlightChanceModifierForBiome(acq biome)",
+      "line": 117,
+      "end_line": 121,
+      "normalized_source_sha256": "9f9324b1739659babe62cd08d862ad12c83d45ab4b2bebc385d967464ba5a2b4"
+    },
+    {
+      "class": "anr",
+      "member": "fertilize",
+      "declaration": "public boolean fertilize(abw world, int x, int y2, int z2, ye item_stack)",
+      "line": 123,
+      "end_line": 130,
+      "normalized_source_sha256": "7b56bed782f1e89eef24b761b7a58f52cab80863fa916bf75270b8c5e8c5963f"
+    },
+    {
+      "class": "anr",
+      "member": "k",
+      "declaration": "public float k(abw par1World, int par2, int par3, int par4)",
+      "line": 132,
+      "end_line": 177,
+      "normalized_source_sha256": "5fa232e47f0dabfccd8f9305447a6af07c2cc07a54e6047dfb5f726d224b7c19"
+    },
+    {
+      "class": "anr",
+      "member": "j",
+      "declaration": "protected int j()",
+      "line": 189,
+      "end_line": 191,
+      "normalized_source_sha256": "e30b52da5dcba80355a890d06f3f5e00156757b1af69325fb334ab131d634a0b"
+    },
+    {
+      "class": "anr",
+      "member": "k",
+      "declaration": "protected int k()",
+      "line": 193,
+      "end_line": 195,
+      "normalized_source_sha256": "1bc1df0bbf102dfbdda6c694cc3c7579acb58608a51b877cf0a8b34ef49724d9"
+    },
+    {
+      "class": "anr",
+      "member": "getMatureYield",
+      "declaration": "protected int getMatureYield()",
+      "line": 197,
+      "end_line": 199,
+      "normalized_source_sha256": "adce7d6e5aac67c7d480d5594764def9d50106189b81cbd958baadf9ab7413a4"
+    },
+    {
+      "class": "anr",
+      "member": "getBlockHardness",
+      "declaration": "public float getBlockHardness(int metadata)",
+      "line": 220,
+      "end_line": 222,
+      "normalized_source_sha256": "38e3acd283ed527d97c35560549ca19791bada247e79cb3cb84f71603834a9ce"
+    },
+    {
+      "class": "anr",
+      "member": "chanceOfBlightPerRandomTick",
+      "declaration": "public float chanceOfBlightPerRandomTick()",
+      "line": 224,
+      "end_line": 226,
+      "normalized_source_sha256": "da59c79ab37336f635e6b8f9200340d38dcf1ae3cb052b44da9f7fb13b04868e"
+    },
+    {
+      "class": "anr",
+      "member": "getGrowthBits",
+      "declaration": "public int getGrowthBits()",
+      "line": 232,
+      "end_line": 234,
+      "normalized_source_sha256": "828a75140b994f6466ac218385528fe2e76148617e751a8906b732048126c441"
+    },
+    {
+      "class": "anr",
+      "member": "getMaxGrowth",
+      "declaration": "public int getMaxGrowth()",
+      "line": 236,
+      "end_line": 238,
+      "normalized_source_sha256": "951a47e129563cb32d7680d619679bf75aa2bcc1957c7b69b908f0a6acaabf26"
+    },
+    {
+      "class": "anr",
+      "member": "getGrowth",
+      "declaration": "public int getGrowth(int metadata)",
+      "line": 240,
+      "end_line": 242,
+      "normalized_source_sha256": "b8f157844be7f374c0310562ff8613040152dee3d1a20d4d41315921a70626c6"
+    },
+    {
+      "class": "anr",
+      "member": "incrementGrowth",
+      "declaration": "public int incrementGrowth(int metadata)",
+      "line": 244,
+      "end_line": 249,
+      "normalized_source_sha256": "f29387b733257c120fa5efadb743b399a30c1afec46e25b695572567a5e6f770"
+    },
+    {
+      "class": "anr",
+      "member": "getGrowthStage",
+      "declaration": "public int getGrowthStage(int metadata)",
+      "line": 251,
+      "end_line": 253,
+      "normalized_source_sha256": "70ad9e716b3e5f6fbc7f368555fc46561d950c74fb4fd9b993485f25d275ca53"
+    },
+    {
+      "class": "anr",
+      "member": "isMature",
+      "declaration": "public boolean isMature(int metadata)",
+      "line": 255,
+      "end_line": 257,
+      "normalized_source_sha256": "ea718ff865e346070ecaf0e8ac3337cabb36b636a66b9f17c75175daa5b06ed7"
+    },
+    {
+      "class": "anr",
+      "member": "isBlighted",
+      "declaration": "public boolean isBlighted(int metadata)",
+      "line": 259,
+      "end_line": 261,
+      "normalized_source_sha256": "bf7d5e906202ba47e057882ea0ce4fc776f4b70b4a4bd28e3be556d93b4aa2c2"
+    },
+    {
+      "class": "anr",
+      "member": "setBlighted",
+      "declaration": "public int setBlighted(int metadata, boolean blighted)",
+      "line": 263,
+      "end_line": 266,
+      "normalized_source_sha256": "c8cf898d80e814e8a41ca543d73a8a71b338cc3fd518162b31ef3696ca347a40"
+    },
+    {
+      "class": "anr",
+      "member": "setBlighted",
+      "declaration": "public final void setBlighted(abw world, int x, int y2, int z2, boolean is_blighted)",
+      "line": 268,
+      "end_line": 276,
+      "normalized_source_sha256": "33825fd740253e479cb415c119b00fccd030e5b0ead672863c3bd5deaf9d22c9"
+    },
+    {
+      "class": "anr",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public int dropBlockAsEntityItem(BlockBreakInfo info)",
+      "line": 284,
+      "end_line": 310,
+      "normalized_source_sha256": "3f5a50016e8fc40457209e88f1e3ac103ac02d068480ad9cefb8011461c03228"
+    },
+    {
+      "class": "anr",
+      "member": "isDead",
+      "declaration": "public boolean isDead()",
+      "line": 312,
+      "end_line": 314,
+      "normalized_source_sha256": "afe86f04e3ab8532f39646edd92a30304e105887103fe4c756a5bf7e895386ec"
+    },
+    {
+      "class": "BlockGrowingPlant",
+      "member": "getTemperatureTolerance",
+      "declaration": "public float getTemperatureTolerance()",
+      "line": 15,
+      "end_line": 17,
+      "normalized_source_sha256": "a9b1e28a55cf931e84ef1777583a350857fc77a1326219e65dc4f53f4868090c"
+    },
+    {
+      "class": "BlockGrowingPlant",
+      "member": "getGlobalGrowthRateModifierFromMITE",
+      "declaration": "public float getGlobalGrowthRateModifierFromMITE()",
+      "line": 19,
+      "end_line": 21,
+      "normalized_source_sha256": "c28d3cde370b8b8fb6e155ebef8b86867c0ae2120afec3f0b700ad16a094bd8e"
+    },
+    {
+      "class": "BlockGrowingPlant",
+      "member": "getTemperatureGrowthRateModifier",
+      "declaration": "public float getTemperatureGrowthRateModifier(float temperature)",
+      "line": 23,
+      "end_line": 33,
+      "normalized_source_sha256": "3a41c5f1bcab9fd2572b1bb8db5a359d53f998dbf12ccc1fe019ddc4758e78fc"
+    },
+    {
+      "class": "BlockGrowingPlant",
+      "member": "getProximityGrowthRateModifier",
+      "declaration": "public float getProximityGrowthRateModifier(abw world, int x, int y, int z2)",
+      "line": 37,
+      "end_line": 75,
+      "normalized_source_sha256": "dbd69557bf35ad7f0932ce6f51e47ecd567f8b316eb0509a92300fdc07dbb3a9"
+    },
+    {
+      "class": "BlockGrowingPlant",
+      "member": "getMinAllowedLightValueForGrowth",
+      "declaration": "public int getMinAllowedLightValueForGrowth()",
+      "line": 77,
+      "end_line": 79,
+      "normalized_source_sha256": "713d23fb971cdbce77867a1fc852ac3c9b74832468ef8764e76c6e2342c2e960"
+    },
+    {
+      "class": "BlockGrowingPlant",
+      "member": "getMaxAllowedLightValueForGrowth",
+      "declaration": "public int getMaxAllowedLightValueForGrowth()",
+      "line": 81,
+      "end_line": 83,
+      "normalized_source_sha256": "7bf59523b040848fbfa402040f5c4b490343af3c1d4973d2e963d1396904c52c"
+    },
+    {
+      "class": "BlockGrowingPlant",
+      "member": "isLightLevelSuitableForGrowth",
+      "declaration": "public boolean isLightLevelSuitableForGrowth(int block_light_value)",
+      "line": 85,
+      "end_line": 87,
+      "normalized_source_sha256": "c2a4dc604767c0fb1e56746ce488550c85041a5942089cdc100454890261ea43"
+    },
+    {
+      "class": "BlockPlant",
+      "member": "ignoresLightCheckIfUnderOpenSky",
+      "declaration": "public boolean ignoresLightCheckIfUnderOpenSky()",
+      "line": 23,
+      "end_line": 25,
+      "normalized_source_sha256": "5412cdeef58cec9caf233ffaa7bdcf59adbf0642028f13600b17cce04715dbbb"
+    },
+    {
+      "class": "BlockPlant",
+      "member": "getMinAllowedLightValue",
+      "declaration": "public int getMinAllowedLightValue()",
+      "line": 27,
+      "end_line": 29,
+      "normalized_source_sha256": "33fd59db8f737a7069c6e3397836a4677697e6d324c514e2984615df5aa69b7d"
+    },
+    {
+      "class": "BlockPlant",
+      "member": "getMaxAllowedLightValue",
+      "declaration": "public int getMaxAllowedLightValue()",
+      "line": 31,
+      "end_line": 33,
+      "normalized_source_sha256": "3877658c3d54ca6178a2405c64a5faca43087bba20da8724914e951551aae70c"
+    },
+    {
+      "class": "BlockPlant",
+      "member": "isLightLevelSuitable",
+      "declaration": "public final boolean isLightLevelSuitable(abw world, int x, int y, int z2)",
+      "line": 35,
+      "end_line": 43,
+      "normalized_source_sha256": "ed58c983b390231efb4c8b99c7aaa6b91b8e928f94a08c008eff844683e72089"
+    },
+    {
+      "class": "BlockPlant",
+      "member": "isLegalAt",
+      "declaration": "public boolean isLegalAt(abw world, int x, int y, int z2, int metadata)",
+      "line": 46,
+      "end_line": 48,
+      "normalized_source_sha256": "93ddef5005258e5b05613f2cedc3119576185ad5942f877c6ec9411fa227af21"
+    },
+    {
+      "class": "BlockPlant",
+      "member": "onNotLegal",
+      "declaration": "public boolean onNotLegal(abw world, int x, int y, int z2, int metadata)",
+      "line": 56,
+      "end_line": 62,
+      "normalized_source_sha256": "d83f59bf77ca8e333fb267ed775f0e93b114c1808251908346d879ee18948b19"
+    },
+    {
+      "class": "BlockPlant",
+      "member": "dropsAsSelfWhenTrampled",
+      "declaration": "public boolean dropsAsSelfWhenTrampled(nn entity)",
+      "line": 69,
+      "end_line": 71,
+      "normalized_source_sha256": "c05bb1faa227fde5d562c06c9743fc3b6264caffee6d290cba4f725dd9e036d9"
+    },
+    {
+      "class": "BlockPlant",
+      "member": "onTrampledBy",
+      "declaration": "public void onTrampledBy(abw world, int x, int y, int z2, nn entity)",
+      "line": 74,
+      "end_line": 76,
+      "normalized_source_sha256": "a8f40cbbe753eb02d8557f826b8b70b50d56c623be298ea343db15e6a0a1f7f1"
+    },
+    {
+      "class": "ani",
+      "member": "j",
+      "declaration": "protected int j()",
+      "line": 11,
+      "end_line": 13,
+      "normalized_source_sha256": "1adf92647fd1df4c533a2b1cbae57ef012d45f0789cc1e3c4b5b430178cfb450"
+    },
+    {
+      "class": "ani",
+      "member": "k",
+      "declaration": "protected int k()",
+      "line": 16,
+      "end_line": 18,
+      "normalized_source_sha256": "3780b0b8bd87d450bd77eee067e6de4850d509841cc648be3ff2fcfc6d95edc7"
+    },
+    {
+      "class": "ani",
+      "member": "getDeadCropBlockId",
+      "declaration": "protected int getDeadCropBlockId()",
+      "line": 21,
+      "end_line": 23,
+      "normalized_source_sha256": "05c8a2affb93395d20055e3237a9bcb429bdab7fc8e2d08db22735e184d22530"
+    },
+    {
+      "class": "ani",
+      "member": "getMatureYield",
+      "declaration": "protected int getMatureYield()",
+      "line": 26,
+      "end_line": 28,
+      "normalized_source_sha256": "40055945d3d7f76e70901b2535e980147071d5c0176d76ad1158a6c5a142a87c"
+    },
+    {
+      "class": "ani",
+      "member": "getGrowthStage",
+      "declaration": "public int getGrowthStage(int metadata)",
+      "line": 31,
+      "end_line": 37,
+      "normalized_source_sha256": "3bdb2cd46accc6a355183d38cf283ce624ec1342e9d4850c4de1d564048dad7a"
+    },
+    {
+      "class": "apt",
+      "member": "j",
+      "declaration": "protected int j()",
+      "line": 11,
+      "end_line": 13,
+      "normalized_source_sha256": "a3ce7c8d7d3d1e9a690f8c985172358ed3b9f32166889b4f4fbe63abdbdc7abe"
+    },
+    {
+      "class": "apt",
+      "member": "k",
+      "declaration": "protected int k()",
+      "line": 16,
+      "end_line": 18,
+      "normalized_source_sha256": "4ea08c5e06188d500a4c4ca9383dc4da78ffa8c243767b65079cfac6b8cb4479"
+    },
+    {
+      "class": "apt",
+      "member": "getDeadCropBlockId",
+      "declaration": "protected int getDeadCropBlockId()",
+      "line": 21,
+      "end_line": 23,
+      "normalized_source_sha256": "7fc66cbcda51240743df1a2873d08d17a467033d10fab56efbb5f676e040bb93"
+    },
+    {
+      "class": "apt",
+      "member": "getMatureYield",
+      "declaration": "protected int getMatureYield()",
+      "line": 26,
+      "end_line": 28,
+      "normalized_source_sha256": "40055945d3d7f76e70901b2535e980147071d5c0176d76ad1158a6c5a142a87c"
+    },
+    {
+      "class": "apt",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public int dropBlockAsEntityItem(BlockBreakInfo info)",
+      "line": 31,
+      "end_line": 40,
+      "normalized_source_sha256": "20816edcac0d1e68e51c544993e7a83dbf375d609134aa110f1709e9325b804f"
+    },
+    {
+      "class": "apt",
+      "member": "chanceOfBlightPerRandomTick",
+      "declaration": "public float chanceOfBlightPerRandomTick()",
+      "line": 43,
+      "end_line": 45,
+      "normalized_source_sha256": "98781bbaf803f47d6f0ddb4dda768e8e98ddae553e8b2dbb03885ddf069bb5c8"
+    },
+    {
+      "class": "apt",
+      "member": "getGrowthStage",
+      "declaration": "public int getGrowthStage(int metadata)",
+      "line": 48,
+      "end_line": 54,
+      "normalized_source_sha256": "3bdb2cd46accc6a355183d38cf283ce624ec1342e9d4850c4de1d564048dad7a"
+    },
+    {
+      "class": "BlockOnion",
+      "member": "j",
+      "declaration": "protected int j()",
+      "line": 11,
+      "end_line": 13,
+      "normalized_source_sha256": "f564adfa0ebc7dc38eb9871a751acbec1165870315345a3482a5a0f6e17251cb"
+    },
+    {
+      "class": "BlockOnion",
+      "member": "k",
+      "declaration": "protected int k()",
+      "line": 16,
+      "end_line": 18,
+      "normalized_source_sha256": "466c701fb0d8dd2b13adfd69d72c135ef9844284357acfcbb75d7b71ef54b757"
+    },
+    {
+      "class": "BlockOnion",
+      "member": "getDeadCropBlockId",
+      "declaration": "protected int getDeadCropBlockId()",
+      "line": 21,
+      "end_line": 23,
+      "normalized_source_sha256": "05cd7392a30960fda8021ff5d045b45b373a69b8849d1a871e675d107da37cd2"
+    },
+    {
+      "class": "BlockOnion",
+      "member": "getMatureYield",
+      "declaration": "protected int getMatureYield()",
+      "line": 26,
+      "end_line": 28,
+      "normalized_source_sha256": "40055945d3d7f76e70901b2535e980147071d5c0176d76ad1158a6c5a142a87c"
+    },
+    {
+      "class": "BlockOnion",
+      "member": "getGrowthStage",
+      "declaration": "public int getGrowthStage(int metadata)",
+      "line": 31,
+      "end_line": 40,
+      "normalized_source_sha256": "518045edb0efd232031efcfcc3d13dfbc42e90c1c2f6b65124f028dee636071c"
+    },
+    {
+      "class": "BlockCropsDead",
+      "member": "BlockCropsDead",
+      "declaration": "protected BlockCropsDead(int block_id, int num_growth_stages)",
+      "line": 6,
+      "end_line": 9,
+      "normalized_source_sha256": "8af2bb94bf7d019750f3b313fae232b1c7259ffe6073b50f1fdc2235776b4aef"
+    },
+    {
+      "class": "BlockCropsDead",
+      "member": "isValidMetadata",
+      "declaration": "public boolean isValidMetadata(int metadata)",
+      "line": 17,
+      "end_line": 19,
+      "normalized_source_sha256": "308b1bbf8a12822aedde0730b23cad09a7abcef5b139a4495b94606120bff909"
+    },
+    {
+      "class": "BlockCropsDead",
+      "member": "fertilize",
+      "declaration": "public boolean fertilize(abw world, int x, int y, int z2, ye item_stack)",
+      "line": 22,
+      "end_line": 24,
+      "normalized_source_sha256": "d6e295d0a66d721ad623e010f13317a3f12dcc6d59c70387e054d188f3952dd9"
+    },
+    {
+      "class": "BlockCropsDead",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public int dropBlockAsEntityItem(BlockBreakInfo info)",
+      "line": 40,
+      "end_line": 42,
+      "normalized_source_sha256": "d0297d9c4661af0a7ecb25493c21638af68fa830cbf6586449aeec5abbda3af9"
+    },
+    {
+      "class": "BlockCropsDead",
+      "member": "isDead",
+      "declaration": "public boolean isDead()",
+      "line": 45,
+      "end_line": 47,
+      "normalized_source_sha256": "23bbad446a0e38917043bd631351a07f995f337c4fccee9134356860689a41f6"
+    },
+    {
+      "class": "BlockCarrotDead",
+      "member": "getGrowthStage",
+      "declaration": "public int getGrowthStage(int metadata)",
+      "line": 11,
+      "end_line": 17,
+      "normalized_source_sha256": "3bdb2cd46accc6a355183d38cf283ce624ec1342e9d4850c4de1d564048dad7a"
+    },
+    {
+      "class": "BlockPotatoDead",
+      "member": "getGrowthStage",
+      "declaration": "public int getGrowthStage(int metadata)",
+      "line": 11,
+      "end_line": 17,
+      "normalized_source_sha256": "3bdb2cd46accc6a355183d38cf283ce624ec1342e9d4850c4de1d564048dad7a"
+    },
+    {
+      "class": "BlockOnionDead",
+      "member": "getGrowthStage",
+      "declaration": "public int getGrowthStage(int metadata)",
+      "line": 11,
+      "end_line": 20,
+      "normalized_source_sha256": "518045edb0efd232031efcfcc3d13dfbc42e90c1c2f6b65124f028dee636071c"
+    },
+    {
+      "class": "aof",
+      "member": "a",
+      "declaration": "public ms a(int side, int metadata)",
+      "line": 34,
+      "end_line": 39,
+      "normalized_source_sha256": "a8b32d0132b382a7e60438ae07acbc96160b57c808899bb68e9b4cea8d6bb2de"
+    },
+    {
+      "class": "aof",
+      "member": "chanceOfDrying",
+      "declaration": "public float chanceOfDrying(abw world, int x, int z2)",
+      "line": 41,
+      "end_line": 48,
+      "normalized_source_sha256": "5408a5ac88f10d6e09ac4f59221e7fa3d1fab6547dec286282c2d6d79d7ccb54"
+    },
+    {
+      "class": "aof",
+      "member": "updateTick",
+      "declaration": "public boolean updateTick(abw world, int x, int y2, int z2, Random rand)",
+      "line": 51,
+      "end_line": 76,
+      "normalized_source_sha256": "c6818810cbd0aae5c6fd6926235449914aff05bb9b0bb2d3a4430807a325dee9"
+    },
+    {
+      "class": "aof",
+      "member": "a",
+      "declaration": "public void a(abw par1World, int par2, int par3, int par4, nn par5Entity, float par6)",
+      "line": 79,
+      "end_line": 98,
+      "normalized_source_sha256": "36d33e6097b1e2614ae7de5af20c87fec5f44428913840b819553d953e102b03"
+    },
+    {
+      "class": "aof",
+      "member": "k",
+      "declaration": "private boolean k(abw par1World, int par2, int par3, int par4)",
+      "line": 100,
+      "end_line": 110,
+      "normalized_source_sha256": "9cb0e3af635337d7e5f18408b3ba3c93bb15739478f404919378c0c7f0207348"
+    },
+    {
+      "class": "aof",
+      "member": "m",
+      "declaration": "public static boolean m(abw par1World, int par2, int par3, int par4)",
+      "line": 112,
+      "end_line": 131,
+      "normalized_source_sha256": "85daac39d5d6435b425d734d325df5ae5c98b8dd1e87df78bb50e87b8d847bcc"
+    },
+    {
+      "class": "aof",
+      "member": "isLegalAt",
+      "declaration": "public boolean isLegalAt(abw world, int x, int y2, int z2, int metadata)",
+      "line": 134,
+      "end_line": 140,
+      "normalized_source_sha256": "482c149145732a55fe12636b8d818f7bbf8f256a3693ef1d9eeb089bd14ebc65"
+    },
+    {
+      "class": "aof",
+      "member": "onNotLegal",
+      "declaration": "public boolean onNotLegal(abw world, int x, int y2, int z2, int metadata)",
+      "line": 143,
+      "end_line": 145,
+      "normalized_source_sha256": "c28b219072d1473718bc2bdb14f5552939db957cad51738b5e9ab1c59686d0f5"
+    },
+    {
+      "class": "aof",
+      "member": "a",
+      "declaration": "public void a(mt par1IconRegister)",
+      "line": 163,
+      "end_line": 169,
+      "normalized_source_sha256": "60df1908d2986675a45a41744418e1b9af8c882edd3f9afa13febddcaf6eed11"
+    },
+    {
+      "class": "aof",
+      "member": "getWetnessBits",
+      "declaration": "public static int getWetnessBits()",
+      "line": 171,
+      "end_line": 173,
+      "normalized_source_sha256": "53cf7dc1aea8106cf45d8dc554418d678ca771aa4520041c8018354187f5abc3"
+    },
+    {
+      "class": "aof",
+      "member": "getWetness",
+      "declaration": "public static int getWetness(int metadata)",
+      "line": 175,
+      "end_line": 177,
+      "normalized_source_sha256": "2e83dd591742954ef2f27db88c2b08f506fd05f1d7709332b07e4689bd8e1711"
+    },
+    {
+      "class": "aof",
+      "member": "setWetness",
+      "declaration": "public static int setWetness(int metadata, int wetness)",
+      "line": 179,
+      "end_line": 181,
+      "normalized_source_sha256": "b1827d854b2155b0b282c8b0d33c9525c9f56948e13b3a5ce99bfaaf022c6638"
+    },
+    {
+      "class": "aof",
+      "member": "getFertilizedBit",
+      "declaration": "public static int getFertilizedBit()",
+      "line": 183,
+      "end_line": 185,
+      "normalized_source_sha256": "037e2c76a5d148b3d5ebca7bee0f4d0149f415ac82ba1cdbccab52df1419b567"
+    },
+    {
+      "class": "aof",
+      "member": "isFertilized",
+      "declaration": "public static boolean isFertilized(int metadata)",
+      "line": 187,
+      "end_line": 189,
+      "normalized_source_sha256": "13ea06592869c1e97d54dec7ce9b4dba268951f2951836a3a508958e2cad3cb0"
+    },
+    {
+      "class": "aof",
+      "member": "setFertilized",
+      "declaration": "public static int setFertilized(int metadata, boolean fertilized)",
+      "line": 191,
+      "end_line": 193,
+      "normalized_source_sha256": "7d1396c055f0670a24d6f2daa174e813365a5ba05c02b9c0425f5bc47eb35371"
+    },
+    {
+      "class": "aof",
+      "member": "setFertilized",
+      "declaration": "public static void setFertilized(abw world, int x, int y2, int z2, boolean fertilized)",
+      "line": 195,
+      "end_line": 200,
+      "normalized_source_sha256": "e66464fbd3c2f8000a0e4c49fbde7c146960efeeed7e4bf3bf613647a483e0fd"
+    },
+    {
+      "class": "aof",
+      "member": "water",
+      "declaration": "public static boolean water(abw world, int x, int y2, int z2)",
+      "line": 202,
+      "end_line": 211,
+      "normalized_source_sha256": "2c827d7f9a186fa883ff0631b4fea916b77d6b07fe432de44de5f3faeacd2277"
+    },
+    {
+      "class": "aof",
+      "member": "fertilize",
+      "declaration": "public static boolean fertilize(abw world, int x, int y2, int z2, ye item_stack, uf player)",
+      "line": 213,
+      "end_line": 272,
+      "normalized_source_sha256": "e6e6a2579177972562fc7c95f568f45cf2048b6c0ddd2447530eebbc9a7b0a43"
+    },
+    {
+      "class": "aof",
+      "member": "a",
+      "declaration": "public void a(abw world, int x, int y2, int z2)",
+      "line": 275,
+      "end_line": 279,
+      "normalized_source_sha256": "7faad6367d069dc0e84faf4537bf1e15adf5f6f75224d45e740a5c34a9f7404e"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "setWasNotLegal",
+      "declaration": "public BlockBreakInfo setWasNotLegal()",
+      "line": 73,
+      "end_line": 76,
+      "normalized_source_sha256": "5458e84f7ed592de7619ea0309b93133d2c56c380ce4325deb2a7e8f038cd3ed"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "setFlooded",
+      "declaration": "public BlockBreakInfo setFlooded(apc flooding_block)",
+      "line": 89,
+      "end_line": 93,
+      "normalized_source_sha256": "80d523ef4d6d4c6745441509ef97038963c0b15f77a4e4288e1a5bc97b114c2b"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "setHarvestedBy",
+      "declaration": "public BlockBreakInfo setHarvestedBy(of harvesting_entity)",
+      "line": 95,
+      "end_line": 106,
+      "normalized_source_sha256": "c1b74097985daf34381d57dffcb5d7d99e59698c0dee68d9258d13437735a759"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "setTrampledBy",
+      "declaration": "public BlockBreakInfo setTrampledBy(nn trampling_entity)",
+      "line": 118,
+      "end_line": 122,
+      "normalized_source_sha256": "197d561ade4abe9e879ca797e60014326d7f6765f1bc1b1bc5d2856fc184772f"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "setExploded",
+      "declaration": "public BlockBreakInfo setExploded(abr explosion)",
+      "line": 124,
+      "end_line": 128,
+      "normalized_source_sha256": "2c4950eaf28ddcbb86a922b95473c8cc3c23ebc4fab5cca0959abdad6e4b0e94"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "setDroppedSelf",
+      "declaration": "public BlockBreakInfo setDroppedSelf()",
+      "line": 130,
+      "end_line": 133,
+      "normalized_source_sha256": "be3114868ba02f27da30cabeca1062aad0b2eb6ef4d15a5b6781f50f8c7e168c"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "setDrought",
+      "declaration": "public BlockBreakInfo setDrought()",
+      "line": 159,
+      "end_line": 162,
+      "normalized_source_sha256": "376f851eecdb584f42aca711ba280c0f8ebb97b8096ac955484d2aae5d3434ec"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "setSnowedUpon",
+      "declaration": "public BlockBreakInfo setSnowedUpon()",
+      "line": 164,
+      "end_line": 167,
+      "normalized_source_sha256": "8b4b7889dd8293a0f6086e175593f9c47aa69bff026b232cac8f6411b7aad3da"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "wasHarvestedByPlayer",
+      "declaration": "public boolean wasHarvestedByPlayer()",
+      "line": 205,
+      "end_line": 207,
+      "normalized_source_sha256": "cbc970e70bfcdcc437731b776c10d0dc2d4743dde333790cf68a0bf80f1e9594"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "wasTrampled",
+      "declaration": "public boolean wasTrampled()",
+      "line": 221,
+      "end_line": 223,
+      "normalized_source_sha256": "349e93790ace9007fe79a5b931c7eb15c9dfa1f4b7aa07d83b72f373f5440d47"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "wasExploded",
+      "declaration": "public boolean wasExploded()",
+      "line": 225,
+      "end_line": 227,
+      "normalized_source_sha256": "3565ece64299624f630dbfd4f56e6bcd212448ac268d8c318e0b914814120164"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "wasSelfDropped",
+      "declaration": "public boolean wasSelfDropped()",
+      "line": 229,
+      "end_line": 231,
+      "normalized_source_sha256": "bb00766d2228f0dad089a3acea8a7a88cadb1a2d343e9c0a7a3f044b076b8709"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "wasDrought",
+      "declaration": "public boolean wasDrought()",
+      "line": 249,
+      "end_line": 251,
+      "normalized_source_sha256": "78f6aed0bc8ca1cc1823ed467b83c501e9e86286f4268b2fc5678d691daf20e5"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "wasSnowedUpon",
+      "declaration": "public boolean wasSnowedUpon()",
+      "line": 253,
+      "end_line": 255,
+      "normalized_source_sha256": "6cb6c7a41d1c484118d2543bd6c8e2fe0f62abafdfd75c6c38fe1d744b5effea"
+    },
+    {
+      "class": "BlockBreakInfo",
+      "member": "getHarvesterItemStack",
+      "declaration": "public ye getHarvesterItemStack()",
+      "line": 265,
+      "end_line": 267,
+      "normalized_source_sha256": "22ab9a6ea17afb8126518d72e68c20f94d603576d7ef7af63485b5fb7578acf4"
+    },
+    {
+      "class": "aqz",
+      "member": "onNotLegal",
+      "declaration": "public boolean onNotLegal(abw world, int x, int y2, int z2, int metadata)",
+      "line": 938,
+      "end_line": 945,
+      "normalized_source_sha256": "d185232e918860ea7229ab85fdafde038498362a73c5e9ff1d501184dc5428f2"
+    },
+    {
+      "class": "aqz",
+      "member": "checkIfNotLegal",
+      "declaration": "public final boolean checkIfNotLegal(abw world, int x, int y2, int z2)",
+      "line": 947,
+      "end_line": 956,
+      "normalized_source_sha256": "af031c2d79b828c5b1067b2fc4c51109b01cda8ef107e6d3f37d06f8c1041291"
+    },
+    {
+      "class": "aqz",
+      "member": "updateTick",
+      "declaration": "public boolean updateTick(abw world, int x, int y2, int z2, Random random)",
+      "line": 958,
+      "end_line": 960,
+      "normalized_source_sha256": "aec727aa5fc61cdedb2221d970ab6b31c05a6f96d7582a391d18d65660da7eab"
+    },
+    {
+      "class": "aqz",
+      "member": "onNeighborBlockChange",
+      "declaration": "public boolean onNeighborBlockChange(abw world, int x, int y2, int z2, int neighbor_block_id)",
+      "line": 965,
+      "end_line": 974,
+      "normalized_source_sha256": "6c7a34bb67f5da0ca4f05b9ba6b252d410ffb7836d3226be0de5134dd034e943"
+    },
+    {
+      "class": "aqz",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public static int dropBlockAsEntityItem(aqz block, BlockBreakInfo info)",
+      "line": 1006,
+      "end_line": 1008,
+      "normalized_source_sha256": "33925e35a9efddfd89b1e3458b584a39967762fc3af42d92dc8e0f13120f225d"
+    },
+    {
+      "class": "aqz",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public int dropBlockAsEntityItem(BlockBreakInfo info)",
+      "line": 1010,
+      "end_line": 1051,
+      "normalized_source_sha256": "73cf48f167ef7557b4c3fd02730380180cd2317b2d901cff3cc8642d203b58dd"
+    },
+    {
+      "class": "aqz",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public final int dropBlockAsEntityItem(BlockBreakInfo info, aqz block)",
+      "line": 1053,
+      "end_line": 1061,
+      "normalized_source_sha256": "b2a62044a1d45fc302d21723aad80c243343e67f9d68be2ed65f58bee6e4e4f3"
+    },
+    {
+      "class": "aqz",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public final int dropBlockAsEntityItem(BlockBreakInfo info, yc item)",
+      "line": 1063,
+      "end_line": 1071,
+      "normalized_source_sha256": "e843649ad35a8ed23762690233a74c011d74821be23dc85e706d239714972930"
+    },
+    {
+      "class": "aqz",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public final int dropBlockAsEntityItem(BlockBreakInfo info, int id_dropped)",
+      "line": 1073,
+      "end_line": 1081,
+      "normalized_source_sha256": "2f28e057eb459003ad94f31af51c7bfc78baee6f8ca88f50bddaea2b31ae5b7b"
+    },
+    {
+      "class": "aqz",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public final int dropBlockAsEntityItem(BlockBreakInfo info, ye item_stack)",
+      "line": 1083,
+      "end_line": 1097,
+      "normalized_source_sha256": "59997a19a84ec7ecad3e567b7ce77098b1e7eeebfaa6074a593f7a607cff954d"
+    },
+    {
+      "class": "aqz",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public final int dropBlockAsEntityItem(BlockBreakInfo info, int id_dropped, int subtype)",
+      "line": 1099,
+      "end_line": 1104,
+      "normalized_source_sha256": "f59239c0aa0264a0b42c4d757b9246eb2ed69850f568db7a1c162eaa29f33af4"
+    },
+    {
+      "class": "aqz",
+      "member": "dropBlockAsEntityItem",
+      "declaration": "public final int dropBlockAsEntityItem(BlockBreakInfo info, int id_dropped, int subtype, int quantity, float chance)",
+      "line": 1106,
+      "end_line": 1168,
+      "normalized_source_sha256": "f487da735d9639403e8386abe084cc56904f0c92bf6ead2ccaa6814838bf895d"
+    },
+    {
+      "class": "aqz",
+      "member": "isLegalAt",
+      "declaration": "public boolean isLegalAt(abw world, int x, int y2, int z2, int metadata)",
+      "line": 1320,
+      "end_line": 1325,
+      "normalized_source_sha256": "bb6b81a33f3164eb51b799b8d901991e456cbf901fd2960e565db35faa65be39"
+    },
+    {
+      "class": "aqz",
+      "member": "<clinit>",
+      "declaration": "static initializer",
+      "line": 2239,
+      "end_line": 2574,
+      "normalized_source_sha256": "0fe16e74bc2d02b42b513d914c3f9701d2f25393267ee93a8f58d59aa33619ff"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public int b(int par1, int par2)",
+      "line": 270,
+      "end_line": 276,
+      "normalized_source_sha256": "344ab4259537c3ec57d6c10997a3028927bb0db68b6a69b6f3503e4adbf40419"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public final boolean b(int par1, int par2, int par3, int par4)",
+      "line": 813,
+      "end_line": 815,
+      "normalized_source_sha256": "0ea702001aea2915b171cbf34f1060ea538c6f82be1dfda17f7878e86c3652f3"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public final boolean b(int par1, int par2, int par3, int par4, int par5)",
+      "line": 963,
+      "end_line": 991,
+      "normalized_source_sha256": "b5c6294ed1f1e1a78c86102eaa29e28be5e8752746e17c0970e0f6b17129771f"
+    },
+    {
+      "class": "abw",
+      "member": "m",
+      "declaration": "public int m(int par1, int par2, int par3)",
+      "line": 1146,
+      "end_line": 1154,
+      "normalized_source_sha256": "64538207786d6d34f2de6d4a3fbb29af6b95891a7a52ba77594bb74b4c4f2483"
+    },
+    {
+      "class": "abw",
+      "member": "n",
+      "declaration": "public final int n(int par1, int par2, int par3)",
+      "line": 1156,
+      "end_line": 1158,
+      "normalized_source_sha256": "9242ef7a386159702987e98ba02360e6c925e81d1208bffabb6d528d8394c9df"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public int b(int par1, int par2, int par3, boolean par4)",
+      "line": 1160,
+      "end_line": 1191,
+      "normalized_source_sha256": "271e64a0ca5bfb89d5089ef5908f381194d7741b171bbb235753217b6ab83de0"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public final int b(ach par1EnumSkyBlock, int par2, int par3, int par4)",
+      "line": 1239,
+      "end_line": 1255,
+      "normalized_source_sha256": "3c648d49e15cf90b90eef41aea4ff5b7dc7b94aed77cd5d436b84588e125edc8"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public void b(ach par1EnumSkyBlock, int par2, int par3, int par4, int par5)",
+      "line": 1293,
+      "end_line": 1301,
+      "normalized_source_sha256": "5a1ad36f7aeacea2614a11d6481774372c626310f52e40909c504fbf0df07c33"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "protected void b(nn par1Entity)",
+      "line": 1682,
+      "end_line": 1686,
+      "normalized_source_sha256": "42e9af4115b27ddaf2a0be634cecc5a6786b751c72270cc569a2f2421c20e5b1"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public void b(acb par1IWorldAccess)",
+      "line": 1720,
+      "end_line": 1722,
+      "normalized_source_sha256": "151c670b8720ec476d2e42ed294b317a6b288b259c5a4ad4ae0004c519659a64"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public float b(float par1)",
+      "line": 1859,
+      "end_line": 1872,
+      "normalized_source_sha256": "3745420ba25413c9049f1d38ce26f47d9c10f5144e37dd8e1a48b0744d4c8519"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public void b(int par1, int par2, int par3, int par4, int par5, int par6)",
+      "line": 2131,
+      "end_line": 2132,
+      "normalized_source_sha256": "d145f0efb4304a8defa68e4554e03a6e2330ff613069972db3c1e0db26b4e75c"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public boolean b(asx par1AxisAlignedBB)",
+      "line": 2353,
+      "end_line": 2355,
+      "normalized_source_sha256": "1b0c7425a61765b2aa87013dfcad959f43e3bf09a1beb5cf9485b0e9a1cc1995"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public boolean b(asx par1AxisAlignedBB, akc par2Material)",
+      "line": 2556,
+      "end_line": 2579,
+      "normalized_source_sha256": "84da4b1c92e2f05db45ca4b9b0c9941026a16eec90e5275bfc4f6f22b8c36de8"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public void b()",
+      "line": 2819,
+      "end_line": 2834,
+      "normalized_source_sha256": "019f0e8e35666e8b415345a181c5f1842cee8d835faaef49954b7dfb26ce4d7b"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public List b(nn par1Entity, asx par2AxisAlignedBB)",
+      "line": 3714,
+      "end_line": 3716,
+      "normalized_source_sha256": "adff3d85d8a24a72e9b546ac9ef5ba334b321fd297628b4b4c84ea7841e2d107"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public void b(int par1, int par2, int par3, asp par4TileEntity)",
+      "line": 3786,
+      "end_line": 3790,
+      "normalized_source_sha256": "bb08369942629043a19eaac9689471cac717d8af10e2c37575b00c3db8b99b90"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public void b(List par1List)",
+      "line": 3872,
+      "end_line": 3874,
+      "normalized_source_sha256": "4d49974e09d40e1521dbb2819d9d535af39386d250f15df90c9e26f5c43622a7"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public int b(String par1Str)",
+      "line": 4416,
+      "end_line": 4418,
+      "normalized_source_sha256": "e25ea37a6ecd949b99b9544b74ace8e8239d7bdfb2523027568390e4a8bb8629"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public aco b(String par1Str, int par2, int par3, int par4)",
+      "line": 4473,
+      "end_line": 4475,
+      "normalized_source_sha256": "2bdfe2d5f7f769b5f1ee7eca61016a113f403ca90c573816b5978746ba408321"
+    },
+    {
+      "class": "abw",
+      "member": "m",
+      "declaration": "public void m(int par1, int par2, int par3, int par4)",
+      "line": 4526,
+      "end_line": 4543,
+      "normalized_source_sha256": "d9559dca4a639b0bfc465c9229c66af1587c09c5ff391a3ff2455250c5e143b9"
+    },
+    {
+      "class": "abw",
+      "member": "b",
+      "declaration": "public float b(double par1, double par3, double par5)",
+      "line": 4549,
+      "end_line": 4551,
+      "normalized_source_sha256": "409113401bd2ef50683e4db464c52bee6b934bda85438a0c34131bd74b8ea96b"
+    },
+    {
+      "class": "acq",
+      "member": "e",
+      "declaration": "public boolean e()",
+      "line": 191,
+      "end_line": 193,
+      "normalized_source_sha256": "027d7834acff88b00beb7cc51a71c0d40e34df0f2399e0b4ef049f59a6b51ea5"
+    },
+    {
+      "class": "yv",
+      "member": "onItemRightClick",
+      "declaration": "public boolean onItemRightClick(uf player, float partial_tick, boolean ctrl_is_down)",
+      "line": 17,
+      "end_line": 33,
+      "normalized_source_sha256": "9ed2fbe5171d7f54edcd693d1de21173e25facc4b8c8845cb3d18cc2551bb377"
+    },
+    {
+      "class": "yv",
+      "member": "hasIngestionPriority",
+      "declaration": "public boolean hasIngestionPriority(ye item_stack, boolean ctrl_is_down)",
+      "line": 36,
+      "end_line": 38,
+      "normalized_source_sha256": "530e8a99834d57b2fa76db3ebeff8bf075e834b4df9d95f170a72f9fd76bc276"
+    },
+    {
+      "class": "yw",
+      "member": "onItemRightClick",
+      "declaration": "public boolean onItemRightClick(uf player, float partial_tick, boolean ctrl_is_down)",
+      "line": 20,
+      "end_line": 36,
+      "normalized_source_sha256": "1ada5d3671bc2aacaa40d0ad74c3d9f9ad5a619a37c9c3a3c6d08cf6dc9c92f2"
+    },
+    {
+      "class": "yw",
+      "member": "hasIngestionPriority",
+      "declaration": "public boolean hasIngestionPriority(ye item_stack, boolean ctrl_is_down)",
+      "line": 39,
+      "end_line": 41,
+      "normalized_source_sha256": "530e8a99834d57b2fa76db3ebeff8bf075e834b4df9d95f170a72f9fd76bc276"
+    },
+    {
+      "class": "xl",
+      "member": "tryFertilize",
+      "declaration": "public static boolean tryFertilize(ye item_stack, abw world, int x2, int y2, int z2, EnumFace face)",
+      "line": 113,
+      "end_line": 125,
+      "normalized_source_sha256": "8462d1386ff13bdebe2bf27b0e413cb80baa52f30122fa2e4abdd10648d13d6b"
+    },
+    {
+      "class": "ItemManure",
+      "member": "tryFertilizeBlock",
+      "declaration": "private boolean tryFertilizeBlock(abw world, int x, int y, int z2, EnumFace face, ye item_stack, uf player)",
+      "line": 15,
+      "end_line": 64,
+      "normalized_source_sha256": "c8993d7a9c08690d46201315dce8cd4ebe14d802f333f65570db9e103c6aecf1"
+    },
+    {
+      "class": "ItemManure",
+      "member": "onItemRightClick",
+      "declaration": "public boolean onItemRightClick(uf player, float partial_tick, boolean ctrl_is_down)",
+      "line": 67,
+      "end_line": 78,
+      "normalized_source_sha256": "6603f04412153eaa0db63465280adc2f3b2d0e8a915fe125ef2761008315516f"
+    },
+    {
+      "class": "is",
+      "member": "is",
+      "declaration": "public is(File par1File)",
+      "line": 50,
+      "end_line": 58,
+      "normalized_source_sha256": "601c842e3a8183d47d99131c516da0ad268a14ce4a8306edcaf73cbf64e44f70"
+    },
+    {
+      "class": "is",
+      "member": "V",
+      "declaration": "public boolean V()",
+      "line": 449,
+      "end_line": 451,
+      "normalized_source_sha256": "42f964a1fb574b1e7bcff1ad4a6b2f2620cdc0edcbe31b149d86083ebfe798c1"
+    },
+    {
+      "class": "is",
+      "member": "areSkillsEnabled",
+      "declaration": "public boolean areSkillsEnabled()",
+      "line": 554,
+      "end_line": 556,
+      "normalized_source_sha256": "008ca0167853c7be4fe30cf7ed975e4b7b99c0d06e8a850d0b6d23120a44965b"
+    },
+    {
+      "class": "is",
+      "member": "areSkillsEnabledInSettingsFile",
+      "declaration": "public static boolean areSkillsEnabledInSettingsFile()",
+      "line": 894,
+      "end_line": 896,
+      "normalized_source_sha256": "fabff631cddeaedf2a8b34782d9ad7bdba15587339cd0c20a40653d3d9a03b8b"
+    },
+    {
+      "class": "is",
+      "member": "<clinit>",
+      "declaration": "static initializer",
+      "line": 898,
+      "end_line": 907,
+      "normalized_source_sha256": "6730e1ca545a67918fb4babc7f32a0c3dd09a990f1475341cc265cccced10b3d"
+    },
+    {
+      "class": "bkz",
+      "member": "V",
+      "declaration": "public boolean V()",
+      "line": 124,
+      "end_line": 126,
+      "normalized_source_sha256": "dd67d820a585e3f0ba417257c2a5d7d626d3c11324bc67490bf9e47017cd5baf"
+    },
+    {
+      "class": "aaw",
+      "member": "getEnchantmentLevelFraction",
+      "declaration": "public static float getEnchantmentLevelFraction(aau enchantment, ye item_stack)",
+      "line": 40,
+      "end_line": 45,
+      "normalized_source_sha256": "d5bf98394fddce9e5f22d517b22c7ee416d223556315e9993802280507e05b6b"
+    },
+    {
+      "class": "aaw",
+      "member": "b",
+      "declaration": "public static int b(of par0EntityLivingBase, of par1EntityLivingBase)",
+      "line": 136,
+      "end_line": 138,
+      "normalized_source_sha256": "b7575a1e2425bab3633b3c05e1277fdcb50dd6b5cfa51a9ef237cd68e1a1d6e0"
+    },
+    {
+      "class": "aaw",
+      "member": "b",
+      "declaration": "public static int b(of par0EntityLivingBase)",
+      "line": 144,
+      "end_line": 146,
+      "normalized_source_sha256": "1410341632700c683618b62c9266296b2bf8d4434e88be82d9d55e36fc1dc75c"
+    },
+    {
+      "class": "aaw",
+      "member": "removeEnchantmentsFromMapThatConflict",
+      "declaration": "private static void removeEnchantmentsFromMapThatConflict(Map map, ArrayList enchantments)",
+      "line": 225,
+      "end_line": 236,
+      "normalized_source_sha256": "1c08eadc88952af2e5247a0693da3a2146600630df66189a5d140a9a4aeb8f57"
+    },
+    {
+      "class": "aaw",
+      "member": "b",
+      "declaration": "public static List b(Random random, ye item_stack, int enchantment_levels)",
+      "line": 238,
+      "end_line": 275,
+      "normalized_source_sha256": "50179bfece46a5ab638787abe0e373b37b8ad2da55e688227684265d5e83f406"
+    },
+    {
+      "class": "aaw",
+      "member": "b",
+      "declaration": "private static Map b(int enchantment_levels, ye item_stack)",
+      "line": 277,
+      "end_line": 296,
+      "normalized_source_sha256": "604736063bd85c949278b27971db96f27da29709ef94edf35849264790a2cf74"
+    },
+    {
+      "class": "aau",
+      "member": "aau",
+      "declaration": "protected aau(int id2, yq rarity, int difficulty)",
+      "line": 52,
+      "end_line": 61,
+      "normalized_source_sha256": "ca4f051a762442614b0366e30714d8f8d1e55c805576fda0ff71a35f83dfd42d"
+    },
+    {
+      "class": "aau",
+      "member": "getNumLevels",
+      "declaration": "public int getNumLevels()",
+      "line": 67,
+      "end_line": 69,
+      "normalized_source_sha256": "2a67bb2e3ff87f5ed95f5b05ebd22439b4a84efbd910ec15fa5340f7876e395a"
+    },
+    {
+      "class": "aau",
+      "member": "a",
+      "declaration": "public boolean a(aau par1Enchantment)",
+      "line": 75,
+      "end_line": 77,
+      "normalized_source_sha256": "0604168896e60f83fdf4bed516619b810edfcb9e9875061314e0d32f1dcca538"
+    },
+    {
+      "class": "aau",
+      "member": "a",
+      "declaration": "public final String a()",
+      "line": 79,
+      "end_line": 81,
+      "normalized_source_sha256": "115fd5535dddb599a2c4e525149d03422154235b471911e0af786764dd3fb65e"
+    },
+    {
+      "class": "aau",
+      "member": "getMinEnchantmentLevelsCost",
+      "declaration": "public int getMinEnchantmentLevelsCost(int level)",
+      "line": 124,
+      "end_line": 139,
+      "normalized_source_sha256": "f3ef1c3eb1cd080c7fd05d8d7a5e18affb8ca02101445ae57622ae591974862c"
+    },
+    {
+      "class": "aau",
+      "member": "getMinEnchantmentLevelsCost",
+      "declaration": "public int getMinEnchantmentLevelsCost()",
+      "line": 141,
+      "end_line": 143,
+      "normalized_source_sha256": "5407b3a79d275ebe1eb8e70be370d5ef48fe0a89f061037e0b5df9b0157775e3"
+    },
+    {
+      "class": "aau",
+      "member": "<clinit>",
+      "declaration": "static initializer",
+      "line": 153,
+      "end_line": 198,
+      "normalized_source_sha256": "5c2dd87239f10249601eee26d69ddaa50f21116268779644a70ee017e343b694"
+    },
+    {
+      "class": "EnchantmentHarvesting",
+      "member": "canEnchantItem",
+      "declaration": "public boolean canEnchantItem(yc item)",
+      "line": 16,
+      "end_line": 18,
+      "normalized_source_sha256": "26105aebcfee338393858654a613438e30f741a596f6d2cdcf03bfaf860fdb52"
+    },
+    {
+      "class": "EnchantmentFertility",
+      "member": "canEnchantItem",
+      "declaration": "public boolean canEnchantItem(yc item)",
+      "line": 16,
+      "end_line": 18,
+      "normalized_source_sha256": "e8ae26f71df49aa3cf424dcda1fd68d4b8419eaa728e00168b792fde6c62a265"
+    },
+    {
+      "class": "yb",
+      "member": "tryTillSoil",
+      "declaration": "public static boolean tryTillSoil(abw world, int x2, int y2, int z2, EnumFace face, uf player, ye item_stack)",
+      "line": 47,
+      "end_line": 74,
+      "normalized_source_sha256": "a1c31b2689c9526f4bb86d726ea5dab192c3b77e52113c7614c061fcc0dc957f"
+    },
+    {
+      "class": "yb",
+      "member": "onBlockDestroyed",
+      "declaration": "public boolean onBlockDestroyed(BlockBreakInfo info)",
+      "line": 89,
+      "end_line": 96,
+      "normalized_source_sha256": "9d17f6a02682e71b5e9889a9a30221b991de81f78df24550361d182f2417573c"
+    },
+    {
+      "class": "ItemScythe",
+      "member": "onBlockDestroyed",
+      "declaration": "public boolean onBlockDestroyed(BlockBreakInfo info)",
+      "line": 44,
+      "end_line": 51,
+      "normalized_source_sha256": "08ba4b792dea69925505d0db9aefda0345ee3710cd1c52bbe88a3f256118c088"
+    },
+    {
+      "class": "ItemMattock",
+      "member": "onBlockDestroyed",
+      "declaration": "public boolean onBlockDestroyed(BlockBreakInfo info)",
+      "line": 48,
+      "end_line": 55,
+      "normalized_source_sha256": "9d17f6a02682e71b5e9889a9a30221b991de81f78df24550361d182f2417573c"
+    },
+    {
+      "class": "js",
+      "member": "placeSnowfallAt",
+      "declaration": "public boolean placeSnowfallAt(int x2, int y2, int z2)",
+      "line": 766,
+      "end_line": 772,
+      "normalized_source_sha256": "0ec83fa434f64da785e41e9e861cb334c92942ea96438fcf29702dc05c092ac3"
+    },
+    {
+      "class": "akc",
+      "member": "<clinit>",
+      "declaration": "static initializer",
+      "line": 620,
+      "end_line": 715,
+      "normalized_source_sha256": "2898f712e50b861d967b499cc6f60cde418970b905757a39fa8b48ac9374ec32"
+    },
+    {
+      "class": "Skill",
+      "member": "<clinit>",
+      "declaration": "static initializer",
+      "line": 111,
+      "end_line": 125,
+      "normalized_source_sha256": "f95c6bb6cd72170480b5f967f043506744e86950524b1d2a23b63cc66a610163"
+    },
+    {
+      "class": "aqq",
+      "member": "fertilizeStem",
+      "declaration": "public boolean fertilizeStem(abw world, int x, int y2, int z2, ye item_stack)",
+      "line": 125,
+      "end_line": 144,
+      "normalized_source_sha256": "7396350a283a4c274e937a47f04158f6d7763f44f08a1baf965e311cbf935779"
+    },
+    {
+      "class": "BlockBush",
+      "member": "BlockBush",
+      "declaration": "protected BlockBush(int id2)",
+      "line": 12,
+      "end_line": 17,
+      "normalized_source_sha256": "11bb2103fd6d3f99e881e8d95046ac561a564c8d63d5f17d82836d3d5a6149d9"
+    },
+    {
+      "class": "BlockBush",
+      "member": "getMaxBerryGrowth",
+      "declaration": "public static int getMaxBerryGrowth()",
+      "line": 54,
+      "end_line": 56,
+      "normalized_source_sha256": "02def6c260e44aea31d427120b0ef30b77fae11c8c01d928e2b87a85d98a46a9"
+    },
+    {
+      "class": "BlockBush",
+      "member": "hasBerries",
+      "declaration": "public static boolean hasBerries(int metadata)",
+      "line": 58,
+      "end_line": 60,
+      "normalized_source_sha256": "467dcbabbb2850a31d0b50d6fe8a4177812e519e1115cda5289915b3fc3421b0"
+    },
+    {
+      "class": "BlockBush",
+      "member": "setBerryGrowth",
+      "declaration": "public static int setBerryGrowth(int metadata, int growth)",
+      "line": 62,
+      "end_line": 64,
+      "normalized_source_sha256": "592e40dd6db14f5b16f37686fd5da1a8b30dcc26e9b9ab1fe9822ff18813ff3f"
+    },
+    {
+      "class": "BlockBush",
+      "member": "getBerryGrowth",
+      "declaration": "public static int getBerryGrowth(int metadata)",
+      "line": 66,
+      "end_line": 68,
+      "normalized_source_sha256": "dc22c7ea40d05e6934fe58afd8b9d0663194df7f78873711b6b27888606c4456"
+    },
+    {
+      "class": "BlockBush",
+      "member": "incrementBerryGrowth",
+      "declaration": "public static int incrementBerryGrowth(int metadata)",
+      "line": 70,
+      "end_line": 72,
+      "normalized_source_sha256": "819c96c5e393131d4b3294bf4e4d443108cc86f90f8175bb717aca17805431be"
+    },
+    {
+      "class": "BlockBush",
+      "member": "isBiomeSuitable",
+      "declaration": "public boolean isBiomeSuitable(acq biome, int metadata)",
+      "line": 97,
+      "end_line": 99,
+      "normalized_source_sha256": "5f6ea4bcec1886589c5132e5f029d478e5d6c83a646bc63d5e75c9bcc56ba998"
+    },
+    {
+      "class": "BlockBush",
+      "member": "canBePlacedAt",
+      "declaration": "public boolean canBePlacedAt(abw world, int x, int y, int z2, int metadata)",
+      "line": 102,
+      "end_line": 104,
+      "normalized_source_sha256": "63e68e8a311921374d2f5b3a138e49849f6214203fc758ba95629a403ae9103d"
+    },
+    {
+      "class": "BlockBush",
+      "member": "fertilize",
+      "declaration": "public boolean fertilize(abw world, int x, int y, int z2, ye item_stack)",
+      "line": 124,
+      "end_line": 141,
+      "normalized_source_sha256": "d8734f7ead572df3fe65bce43af4d740f8b1e34b28de6032eeeaba2b72316e99"
+    },
+    {
+      "class": "BlockBush",
+      "member": "getGrowthRate",
+      "declaration": "public float getGrowthRate(abw world, int x, int y, int z2)",
+      "line": 162,
+      "end_line": 168,
+      "normalized_source_sha256": "f502149399125dd46494127b1b6423689d4ceb9df352ebbd53d41513361c7934"
+    },
+    {
+      "class": "BlockBush",
+      "member": "updateTick",
+      "declaration": "public boolean updateTick(abw world, int x, int y, int z2, Random rand)",
+      "line": 171,
+      "end_line": 190,
+      "normalized_source_sha256": "512045f99737a1017449cf58edb5e39479d3d93a14fd325ab5ce9523c70174a7"
+    },
+    {
+      "class": "BlockBush",
+      "member": "getLowestOptimalTemperature",
+      "declaration": "public float getLowestOptimalTemperature()",
+      "line": 193,
+      "end_line": 195,
+      "normalized_source_sha256": "751da5273c04539fbae185dc341745d3d4301aa8f27298006fa5e7c39e94c2ac"
+    },
+    {
+      "class": "BlockBush",
+      "member": "getHighestOptimalTemperature",
+      "declaration": "public float getHighestOptimalTemperature()",
+      "line": 198,
+      "end_line": 200,
+      "normalized_source_sha256": "b2103ff8de8962477e4d270bc869ea4f02908426e7bdde798eb75e936dff9335"
+    },
+    {
+      "class": "BlockBush",
+      "member": "getHumidityGrowthRateModifier",
+      "declaration": "public float getHumidityGrowthRateModifier(boolean high_humidity)",
+      "line": 203,
+      "end_line": 205,
+      "normalized_source_sha256": "d8f53a55534c1f346b45144dd3ce61d54605943769cf44f699eba8173643d5ee"
+    }
+  ],
+  "evidence_limits": [
+    "Biome base temperature and downfall values are source-native; modern biome climate field access and modern height range require explicit adaptation.",
+    "This crop audit does not certify full stems/cactus/sugar cane/cocoa/mushrooms lifecycle equivalence; separate subsystem evidence is required.",
+    "All source randomness sequence descriptions refer to java.util.Random inputs, except root yield and enchantment fertility use Math.random."
+  ]
+}

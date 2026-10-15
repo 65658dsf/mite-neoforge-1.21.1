@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "age=0,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/potatoes_stage0"
+    },
+    "age=0,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_0"
+    },
+    "age=0,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_potatoes_blighted_0"
+    },
+    "age=0,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_0"
+    },
+    "age=1,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/potatoes_stage0"
+    },
+    "age=1,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_0"
+    },
+    "age=1,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_potatoes_blighted_0"
+    },
+    "age=1,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_0"
+    },
+    "age=2,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/potatoes_stage1"
+    },
+    "age=2,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_1"
+    },
+    "age=2,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_potatoes_blighted_1"
+    },
+    "age=2,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_1"
+    },
+    "age=3,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/potatoes_stage1"
+    },
+    "age=3,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_1"
+    },
+    "age=3,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_potatoes_blighted_1"
+    },
+    "age=3,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_1"
+    },
+    "age=4,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/potatoes_stage2"
+    },
+    "age=4,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_2"
+    },
+    "age=4,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_potatoes_blighted_2"
+    },
+    "age=4,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_2"
+    },
+    "age=5,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/potatoes_stage2"
+    },
+    "age=5,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_2"
+    },
+    "age=5,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_potatoes_blighted_2"
+    },
+    "age=5,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_2"
+    },
+    "age=6,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/potatoes_stage2"
+    },
+    "age=6,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_2"
+    },
+    "age=6,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_potatoes_blighted_2"
+    },
+    "age=6,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_2"
+    },
+    "age=7,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/potatoes_stage3"
+    },
+    "age=7,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_2"
+    },
+    "age=7,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_potatoes_blighted_3"
+    },
+    "age=7,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_potatoes_dead_2"
+    }
+  }
+}

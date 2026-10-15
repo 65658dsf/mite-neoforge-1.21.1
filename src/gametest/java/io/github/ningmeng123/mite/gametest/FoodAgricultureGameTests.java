@@ -50,6 +50,7 @@ public final class FoodAgricultureGameTests {
     @GameTest(template = "empty")
     public static void onionsReturnTheirSeedOnlyAtAgeZeroAndTwoOrThreeOnlyWhenHealthyAndMature(GameTestHelper helper) {
         var crop = MiteFoodPlants.ONIONS.get();
+        // Inspect the data table independently of player/cause eligibility; actual harvest paths are tested below.
         for (int age = 0; age < 8; age++) {
             var state = crop.defaultBlockState().setValue(CropBlock.AGE, age);
             var drops = drops(helper, state, ItemStack.EMPTY, 196L);
@@ -285,8 +286,8 @@ public final class FoodAgricultureGameTests {
                 level.setBlock(pos, state, 2);
                 level.destroyBlock(pos.below(), false, player);
                 helper.assertTrue(level.getBlockState(pos).isAir(), "Breaking actual supporting soil invokes native plant self-removal");
-                helper.assertValueEqual(collectNewOnions(helper, area, originalDrops), crop.getAge(state) == 0 ? 1 : 0,
-                        "A seed self-drop returns one bulb; a mature self-drop must not become a harvest");
+                helper.assertValueEqual(collectNewOnions(helper, area, originalDrops), 0,
+                        "Source was_not_legal support loss returns neither a planting bulb nor mature produce");
             }
             level.setBlock(pos.below(), soil.setValue(FarmBlock.MOISTURE, 0), 2);
             level.setBlock(pos, mature, 2);

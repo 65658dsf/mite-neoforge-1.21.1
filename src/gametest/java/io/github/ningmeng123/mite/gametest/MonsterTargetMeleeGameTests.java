@@ -245,16 +245,30 @@ public final class MonsterTargetMeleeGameTests {
     public static void targetUuidDoesNotResolveOutsideSourceNearbyBounds(GameTestHelper h) {
         var zombie = mob(h, EntityType.ZOMBIE, 0, 0, 0);
         var target = mob(h, EntityType.VILLAGER, 33, 0, 0);
-        var memory = (SourceMonsterTargetMemory)zombie; memory.mite$pendingTarget(target.getUUID()); zombie.tickCount = 10;
-        SourceMonsterTargeting.restorePendingTarget(zombie);
-        h.assertTrue(zombie.getTarget() == null && memory.mite$pendingTarget() != null, "UUID lookup is restricted to bbox+32,+8,+32, not all loaded world entities");
-        target.setPos(zombie.getX(), zombie.getY() + 11, zombie.getZ()); zombie.tickCount = 20;
-        SourceMonsterTargeting.restorePendingTarget(zombie);
-        h.assertTrue(zombie.getTarget() == null, "A target beyond the vertical nearby box also stays unresolved");
-        target.setPos(zombie.getX() + 3, zombie.getY(), zombie.getZ()); zombie.tickCount = 30;
-        SourceMonsterTargeting.restorePendingTarget(zombie);
-        h.assertTrue(zombie.getTarget() == target, "A still-pending target can later reenter the nearby bounds");
-        zombie.discard(); target.discard(); h.succeed();
+        try {
+            var bounds = zombie.getBoundingBox().inflate(32, 8, 32);
+            var memory = (SourceMonsterTargetMemory)zombie; memory.mite$pendingTarget(target.getUUID()); zombie.tickCount = 10;
+            h.assertFalse(bounds.intersects(target.getBoundingBox()), "The horizontal fixture is geometrically outside the source nearby box");
+            SourceMonsterTargeting.restorePendingTarget(zombie);
+            h.assertTrue(zombie.getTarget() == null && memory.mite$pendingTarget() != null, "UUID lookup is restricted to bbox+32,+8,+32, not all loaded world entities");
+            target.setPos(zombie.getX(), zombie.getY() + 11, zombie.getZ()); zombie.tickCount = 20;
+            h.assertFalse(bounds.intersects(target.getBoundingBox()), "The vertical fixture is geometrically outside the source nearby box");
+            SourceMonsterTargeting.restorePendingTarget(zombie);
+            h.assertTrue(zombie.getTarget() == null, "A target beyond the vertical nearby box also stays unresolved");
+            // The test grid may put the owner at local X15.5. A fixed +3 crosses into a freshly
+            // loaded chunk whose entity section is still hidden from native nearby queries.
+            double nearbyX = (zombie.blockPosition().getX() & ~15) + 8.5D;
+            target.setPos(nearbyX, zombie.getY(), zombie.getZ()); zombie.tickCount = 30;
+            h.assertTrue(target.chunkPosition().equals(zombie.chunkPosition()), "The positive fixture stays inside its already accessible owner chunk");
+            h.assertTrue(h.getLevel().getEntity(target.getUUID()) == target && bounds.intersects(target.getBoundingBox()),
+                    "The live pending UUID has returned to a visible entity section inside the source nearby bounds");
+            h.assertTrue(h.getLevel().getEntitiesOfClass(LivingEntity.class, bounds, entity -> entity == target).contains(target),
+                    "The native nearby entity query can actually observe the positive-control target before AI restoration");
+            SourceMonsterTargeting.restorePendingTarget(zombie);
+            h.assertTrue(zombie.getTarget() == target && memory.mite$pendingTarget() == null,
+                    "A still-pending target can later reenter the nearby bounds");
+        } finally { zombie.discard(); target.discard(); }
+        h.succeed();
     }
 
     @GameTest(template = "empty")

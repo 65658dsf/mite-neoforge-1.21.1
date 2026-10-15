@@ -235,6 +235,7 @@ public final class FoodFurnaceExperienceGameTests {
         private final BlockState previousHopper;
         private final BlockState previousFront;
         private final AABB area;
+        private final SpawnedEntityCapture spawned;
         private final Set<UUID> oldOrbs = new HashSet<>();
         private final Set<UUID> oldItems = new HashSet<>();
         private AbstractFurnaceBlockEntity furnace;
@@ -250,6 +251,7 @@ public final class FoodFurnaceExperienceGameTests {
             previousHopper = helper.getLevel().getBlockState(hopperPosition);
             previousFront = helper.getLevel().getBlockState(frontPosition);
             area = new AABB(furnacePosition).inflate(5D);
+            spawned = new SpawnedEntityCapture(helper.getLevel(), entity -> (entity instanceof ExperienceOrb || entity instanceof ItemEntity) && entity.getBoundingBox().intersects(area));
             for (ExperienceOrb orb : helper.getLevel().getEntitiesOfClass(ExperienceOrb.class, area)) oldOrbs.add(orb.getUUID());
             for (ItemEntity item : helper.getLevel().getEntitiesOfClass(ItemEntity.class, area)) oldItems.add(item.getUUID());
             CommonListenerCookie cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "mite-food-xp"), false);
@@ -285,13 +287,13 @@ public final class FoodFurnaceExperienceGameTests {
         private ItemStack take(int amount) { return menu.getSlot(2).safeTake(amount, amount, player); }
         private int droppedFood(Item food) {
             int total = 0;
-            for (ItemEntity item : helper.getLevel().getEntitiesOfClass(ItemEntity.class, area))
+            for (ItemEntity item : spawned.live(ItemEntity.class))
                 if (!oldItems.contains(item.getUUID()) && item.getItem().is(food)) total += item.getItem().getCount();
             return total;
         }
         private int xp() {
             int total = 0;
-            for (ExperienceOrb orb : helper.getLevel().getEntitiesOfClass(ExperienceOrb.class, area)) {
+            for (ExperienceOrb orb : spawned.live(ExperienceOrb.class)) {
                 if (oldOrbs.contains(orb.getUUID())) continue;
                 // Native XP award may merge equal-valued orbs. Saved Count is its actual persisted
                 // multiplicity, so this check remains deterministic without accessing private fields.
@@ -323,7 +325,7 @@ public final class FoodFurnaceExperienceGameTests {
                         .filter(orb -> !oldOrbs.contains(orb.getUUID())).forEach(ExperienceOrb::discard);
                 helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).stream()
                         .filter(item -> !oldItems.contains(item.getUUID())).forEach(ItemEntity::discard);
-            } finally { channel.finishAndReleaseAll(); }
+            } finally { spawned.close(); channel.finishAndReleaseAll(); }
         }
     }
 }

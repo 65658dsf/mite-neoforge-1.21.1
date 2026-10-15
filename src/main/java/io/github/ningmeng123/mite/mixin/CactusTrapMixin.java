@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.entity.ai.ConspicuousCactus;
+import io.github.ningmeng123.mite.survival.SpecialPlantGrowth;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -28,6 +29,7 @@ public abstract class CactusTrapMixin {
     }
     @Inject(method="randomTick",at=@At("HEAD"),cancellable=true)
     private void mite$trapDecay(BlockState state,ServerLevel level,BlockPos pos,RandomSource random,CallbackInfo ci) {
-        if(ConspicuousCactus.randomDecay(level,pos)) ci.cancel();
+        SpecialPlantGrowth.cactusTick(level,pos,state,random);
+        ci.cancel();
     }
 }

@@ -20,6 +20,12 @@ public final class MiningProgress {
         if (raw < 0.0F) {
             return raw;
         }
+        if (io.github.ningmeng123.mite.survival.CropLifecycle.managed(state)) {
+            var crop=(net.minecraft.world.level.block.CropBlock)state.getBlock();
+            boolean initial=crop.getAge(state)==0 && (!io.github.ningmeng123.mite.entity.CubeCropBlight.blighted(state)
+                    ||io.github.ningmeng123.mite.entity.CubeCropBlight.dead(state));
+            return initial?0F:crop.isMaxAge(state)?.04F:.02F;
+        }
         if (OreBlockRules.isManaged(state)) return OreBlockRules.hardness(state, raw);
         if (state.is(MiteOreBlocks.INFESTED_NETHERRACK.get())) return 0.75F;
         if (state.is(Blocks.FURNACE)) return 2F;

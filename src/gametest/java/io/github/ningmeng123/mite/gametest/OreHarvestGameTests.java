@@ -287,17 +287,20 @@ public final class OreHarvestGameTests {
         private final BlockState previous;
         private final boolean oldDrops;
         private final AABB area;
+        private final SpawnedEntityCapture spawned;
         private final Set<UUID> existing = new HashSet<>();
         DropFixture(GameTestHelper helper, BlockPos pos) {
             this.helper = helper; this.pos = pos; previous = helper.getLevel().getBlockState(pos); area = new AABB(pos).inflate(1.5);
+            spawned = new SpawnedEntityCapture(helper.getLevel(), entity -> entity instanceof ItemEntity && entity.getBoundingBox().intersects(area));
             helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).forEach(entity -> existing.add(entity.getUUID()));
             oldDrops = helper.getLevel().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(true, helper.getLevel().getServer());
         }
-        List<ItemEntity> drops() { return helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).stream().filter(entity -> !existing.contains(entity.getUUID())).toList(); }
+        List<ItemEntity> drops() { return spawned.live(ItemEntity.class); }
         void clearDrops() { drops().forEach(ItemEntity::discard); }
         @Override public void close() {
             clearDrops(); helper.getLevel().setBlockAndUpdate(pos, previous);
+            spawned.close();
             helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(oldDrops, helper.getLevel().getServer());
         }
     }

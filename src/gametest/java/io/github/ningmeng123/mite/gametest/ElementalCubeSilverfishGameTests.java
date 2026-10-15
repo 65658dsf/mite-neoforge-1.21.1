@@ -13,7 +13,6 @@ import io.github.ningmeng123.mite.mixin.ItemCorrosionAccess;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.registry.MiteUtilityContent;
 import io.github.ningmeng123.mite.registry.MiteWeaponContent;
-import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -37,8 +36,9 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
-import net.neoforged.neoforge.event.level.BlockDropsEvent;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -90,7 +90,39 @@ public final class ElementalCubeSilverfishGameTests {
     @GameTest(template="empty") public static void burningCubeDeathDoesNotSplit(GameTestHelper h) { R196Cube e=cube(h,MobKind.JELLY,4); e.setRemainingFireTicks(40); e.setHealth(0); e.remove(Entity.RemovalReason.KILLED); h.assertTrue(h.getLevel().getEntitiesOfClass(R196Cube.class,e.getBoundingBox().inflate(3),x->x!=e).isEmpty(),"Source burning removal bypasses split"); h.succeed(); }
     @GameTest(template="empty") public static void deadCubeSplitsSameKind(GameTestHelper h) { R196Cube e=cube(h,MobKind.BLOB,4); e.setHealth(0); e.remove(Entity.RemovalReason.KILLED); var children=h.getLevel().getEntitiesOfClass(R196Cube.class,e.getBoundingBox().inflate(3),x->x!=e); h.assertTrue(children.size()>=2 && children.size()<=4,"Source2..4split count"); h.assertTrue(children.stream().allMatch(c->c.miteKind()==MobKind.BLOB && c.getSize()==2),"Children keep class and half size"); h.succeed(); }
     @GameTest(template="empty") public static void cropBlightStateCuresAndReplants(GameTestHelper h) { BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); h.getLevel().setBlockAndUpdate(pos,Blocks.WHEAT.defaultBlockState()); h.assertTrue(CubeCropBlight.infect(h.getLevel(),pos),"Crop becomes blighted"); var state=h.getLevel().getBlockState(pos); h.assertTrue(CubeCropBlight.blighted(state),"Native saved/synced state holds disease"); CubeCropBlight.cure(h.getLevel(),pos,state); h.assertTrue(!CubeCropBlight.blighted(h.getLevel().getBlockState(pos)),"Bone-meal disease cure doesn't grow"); h.getLevel().setBlockAndUpdate(pos,state); h.getLevel().removeBlock(pos,false); h.getLevel().setBlockAndUpdate(pos,Blocks.WHEAT.defaultBlockState()); h.assertTrue(!CubeCropBlight.blighted(h.getLevel().getBlockState(pos)),"Fresh replant never inherits old disease"); h.succeed(); }
-    @GameTest(template="empty") public static void blightedCropHasNoDrops(GameTestHelper h) { var state=Blocks.WHEAT.defaultBlockState().setValue(CubeCropBlight.BLIGHTED,true); BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); var drops=new ArrayList<ItemEntity>(); drops.add(new ItemEntity(h.getLevel(),0,0,0,new ItemStack(Items.WHEAT))); BlockDropsEvent event=new BlockDropsEvent(h.getLevel(),pos,state,null,drops,null,ItemStack.EMPTY); CubeCropBlight.drops(event); h.assertTrue(drops.isEmpty(),"Blighted harvest cannot create source-excluded produce"); h.succeed(); }
+    @GameTest(template="empty") public static void blightedCropHasNoDrops(GameTestHelper h) {
+        var level=h.getLevel(); BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); var area=new AABB(pos).inflate(2);
+        var original=level.getBlockState(pos); var originalSoil=level.getBlockState(pos.below());
+        var originalItems=level.getEntitiesOfClass(ItemEntity.class,area).stream().map(ItemEntity::getId).collect(java.util.stream.Collectors.toSet());
+        boolean originalDrops=level.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS); var player=player(h);
+        try {
+            level.getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(true,level.getServer());
+            level.setBlock(pos.below(),Blocks.FARMLAND.defaultBlockState(),2);
+            var healthy=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,7);
+            level.setBlock(pos,healthy,2); Block.dropResources(healthy,level,pos,null,player,ItemStack.EMPTY);
+            h.assertValueEqual(collectNewCropDrops(h,area,originalItems,Items.WHEAT),1,"A real healthy mature player drop is the positive source control");
+            var blighted=healthy.setValue(CubeCropBlight.BLIGHTED,true);
+            level.setBlock(pos,blighted,2); Block.dropResources(blighted,level,pos,null,player,ItemStack.EMPTY);
+            h.assertTrue(level.getEntitiesOfClass(ItemEntity.class,area).stream().allMatch(drop->originalItems.contains(drop.getId())),
+                    "Blighted wheat produces no items through the real loot and event path");
+            h.assertValueEqual(collectNewCropDrops(h,area,originalItems,Items.WHEAT),0,"Blighted wheat is excluded by the actual managed getDrops and native event pipeline");
+            var potato=Blocks.POTATOES.defaultBlockState().setValue(CropBlock.AGE,7).setValue(CubeCropBlight.BLIGHTED,true);
+            level.setBlock(pos,potato,2); Block.dropResources(potato,level,pos,null,player,ItemStack.EMPTY);
+            h.assertValueEqual(collectNewCropDrops(h,area,originalItems,Items.POISONOUS_POTATO),1,"The actual source potato override is retained exactly once rather than revived by the old disease event");
+        } finally {
+            collectNewCropDrops(h,area,originalItems,Items.WHEAT);
+            level.setBlock(pos,original,2); level.setBlock(pos.below(),originalSoil,2);
+            level.getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(originalDrops,level.getServer());
+        }
+        h.succeed();
+    }
+    private static int collectNewCropDrops(GameTestHelper h,AABB area,java.util.Set<Integer> original,net.minecraft.world.item.Item item) {
+        int count=0;
+        for(var drop:h.getLevel().getEntitiesOfClass(ItemEntity.class,area)) if(!original.contains(drop.getId())) {
+            if(drop.getItem().is(item))count+=drop.getItem().getCount(); drop.discard();
+        }
+        return count;
+    }
     @GameTest(template="empty") public static void silverfishSubtypeEffects(GameTestHelper h) { for (MobKind kind:List.of(MobKind.COPPERSPINE,MobKind.HOARY_SILVERFISH)) { R196Silverfish fish=(R196Silverfish)mob(h,kind); Cow target=cow(h); fish.doHurtTarget(target); var effect=target.getEffect(kind==MobKind.COPPERSPINE ? MobEffects.POISON : MobEffects.MOVEMENT_SLOWDOWN); h.assertTrue(effect!=null && effect.getDuration()==(kind==MobKind.COPPERSPINE ? 480 : 50) && effect.getAmplifier()==(kind==MobKind.COPPERSPINE ? 0 : 5),"Source effects applied only after health loss"); } h.succeed(); }
     @GameTest(template="empty") public static void netherspawnFireLavaSeparation(GameTestHelper h) { R196Silverfish fish=(R196Silverfish)mob(h,MobKind.NETHERSPAWN); h.assertTrue(fish.isInvulnerableTo(fish.damageSources().inFire()),"Source fire immune"); h.assertTrue(!fish.isInvulnerableTo(fish.damageSources().lava()),"Source did not override lava susceptibility"); h.succeed(); }
     @GameTest(template="empty") public static void silverfishRecruitRestoresHostWithoutGrief(GameTestHelper h) { R196Silverfish fish=(R196Silverfish)mob(h,MobKind.COPPERSPINE); BlockPos pos=fish.blockPosition().offset(1,0,0); h.getLevel().setBlockAndUpdate(pos,Blocks.INFESTED_STONE.defaultBlockState()); boolean previous=h.getLevel().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING); h.getLevel().getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(false,h.getLevel().getServer()); try { fish.recruit(); h.assertTrue(h.getLevel().getBlockState(pos).is(Blocks.STONE),"mobGriefing=false restores stone"); h.assertTrue(h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.monster.Silverfish.class,fish.getBoundingBox().inflate(2),e->e!=fish).size()==1,"Recruit still releases exactlyone inhabitant"); } finally { h.getLevel().getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(previous,h.getLevel().getServer()); } h.succeed(); }

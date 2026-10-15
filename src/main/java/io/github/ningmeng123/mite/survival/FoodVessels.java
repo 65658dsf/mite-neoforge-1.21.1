@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.item.MiteBucketItem;
 import io.github.ningmeng123.mite.registry.MiteFoods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
@@ -14,6 +15,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -33,6 +36,7 @@ public final class FoodVessels {
     private FoodVessels() {}
 
     public static ItemStack empty(ItemStack stack) {
+        if (waterBottle(stack)) return new ItemStack(Items.GLASS_BOTTLE);
         if (stack.getItem() instanceof MiteBowlItem || stack.is(Items.MUSHROOM_STEW)) return new ItemStack(Items.BOWL);
         if (stack.getItem() instanceof MiteBucketItem bucket) return bucket.emptyStack();
         if (stack.is(Items.WATER_BUCKET) || stack.is(Items.MILK_BUCKET) || stack.is(Items.LAVA_BUCKET)) return new ItemStack(Items.BUCKET);
@@ -40,8 +44,12 @@ public final class FoodVessels {
     }
 
     public static boolean water(ItemStack stack) {
-        return stack.is(MiteFoods.WATER_BOWL.get()) || stack.is(Items.WATER_BUCKET)
+        return waterBottle(stack) || stack.is(MiteFoods.WATER_BOWL.get()) || stack.is(Items.WATER_BUCKET)
                 || stack.getItem() instanceof MiteBucketItem bucket && bucket.contents() == MiteBucketItem.Contents.WATER;
+    }
+
+    public static boolean waterBottle(ItemStack stack) {
+        return stack.is(Items.POTION) && stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER);
     }
 
     public static boolean canDouse(ItemStack stack) {
@@ -72,18 +80,25 @@ public final class FoodVessels {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!water(stack)) return InteractionResult.PASS;
-        BlockPos soil = level.getBlockState(pos).is(Blocks.FARMLAND) ? pos : pos.below();
+        var clicked = level.getBlockState(pos);
+        BlockPos soil = clicked.is(Blocks.FARMLAND) ? pos : FoodAgriculture.soilPlant(clicked) ? pos.below() : null;
+        if (soil == null) return InteractionResult.PASS;
         if (!level.getBlockState(soil).is(Blocks.FARMLAND)) return InteractionResult.PASS;
         if (soil.equals(pos) && context.getClickedFace() != Direction.UP) return InteractionResult.PASS;
-        int radius = stack.is(MiteFoods.WATER_BOWL.get()) ? 0 : 1;
+        if (!level.mayInteract(player, soil) || !player.mayUseItemAt(soil, Direction.UP, stack)) return InteractionResult.FAIL;
+        int radius = stack.is(MiteFoods.WATER_BOWL.get()) || waterBottle(stack) ? 0 : 1;
         // wr.onItemRightClick stops here when farmland is already fully wet. Do not
         // fall through into modern bucket placement and flood the crop above it.
-        if (!waterFarmland(level, soil, radius)) return InteractionResult.FAIL;
+        if (!waterFarmland(level, soil, radius, player, stack)) return InteractionResult.FAIL;
         if (!level.isClientSide) convertHeld(player, context.getHand(), empty(stack));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     public static boolean waterFarmland(Level level, BlockPos center, int radius) {
+        return waterFarmland(level, center, radius, null, ItemStack.EMPTY);
+    }
+
+    private static boolean waterFarmland(Level level, BlockPos center, int radius, Player player, ItemStack stack) {
         if (level.dimensionType().ultraWarm()) {
             if (!level.isClientSide) level.playSound(null, center, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1F, 1F);
             return true;
@@ -91,6 +106,8 @@ public final class FoodVessels {
         boolean changed = false;
         for (int dx = -radius; dx <= radius; dx++) for (int dz = -radius; dz <= radius; dz++) {
             BlockPos pos = center.offset(dx, 0, dz);
+            if (!level.hasChunkAt(pos) || player != null && (!level.mayInteract(player, pos)
+                    || !player.mayUseItemAt(pos, Direction.UP, stack))) continue;
             var state = level.getBlockState(pos);
             if (state.is(Blocks.FARMLAND) && state.getValue(FarmBlock.MOISTURE) < 7) {
                 if (!level.isClientSide) level.setBlock(pos, state.setValue(FarmBlock.MOISTURE, 7), 3);
@@ -108,7 +125,7 @@ public final class FoodVessels {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void useBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getUseItem().isFalse()) return;
+        if (event.isCanceled() || event.getUseItem().isFalse()) return;
         ItemStack held = event.getItemStack();
         if (!canDouse(held)) return;
         var context = new UseOnContext(event.getEntity(), event.getHand(), event.getHitVec());

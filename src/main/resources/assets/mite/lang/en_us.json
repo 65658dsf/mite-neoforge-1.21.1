@@ -504,5 +504,7 @@
   "lunar.mite.harvest": "Harvest Moon",
   "lunar.mite.blood": "Blood Moon",
   "lunar.mite.blue": "Blue Moon",
-  "lunar.mite.moon_dog": "Moon Dog"
+  "lunar.mite.moon_dog": "Moon Dog",
+  "enchantment.mite.harvesting": "Harvesting",
+  "enchantment.mite.fertility": "Fertility"
 }

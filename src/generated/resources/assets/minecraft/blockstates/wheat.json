@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "age=0,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/wheat_stage0"
+    },
+    "age=0,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_0"
+    },
+    "age=0,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_wheat_blighted_0"
+    },
+    "age=0,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_0"
+    },
+    "age=1,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/wheat_stage1"
+    },
+    "age=1,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_1"
+    },
+    "age=1,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_wheat_blighted_1"
+    },
+    "age=1,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_1"
+    },
+    "age=2,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/wheat_stage2"
+    },
+    "age=2,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_2"
+    },
+    "age=2,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_wheat_blighted_2"
+    },
+    "age=2,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_2"
+    },
+    "age=3,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/wheat_stage3"
+    },
+    "age=3,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_3"
+    },
+    "age=3,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_wheat_blighted_3"
+    },
+    "age=3,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_3"
+    },
+    "age=4,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/wheat_stage4"
+    },
+    "age=4,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_4"
+    },
+    "age=4,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_wheat_blighted_4"
+    },
+    "age=4,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_4"
+    },
+    "age=5,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/wheat_stage5"
+    },
+    "age=5,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_5"
+    },
+    "age=5,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_wheat_blighted_5"
+    },
+    "age=5,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_5"
+    },
+    "age=6,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/wheat_stage6"
+    },
+    "age=6,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_6"
+    },
+    "age=6,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_wheat_blighted_6"
+    },
+    "age=6,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_6"
+    },
+    "age=7,mite_blighted=false,mite_dead=false": {
+      "model": "minecraft:block/wheat_stage7"
+    },
+    "age=7,mite_blighted=false,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_6"
+    },
+    "age=7,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/crop_wheat_blighted_7"
+    },
+    "age=7,mite_blighted=true,mite_dead=true": {
+      "model": "mite:block/crop_wheat_dead_6"
+    }
+  }
+}

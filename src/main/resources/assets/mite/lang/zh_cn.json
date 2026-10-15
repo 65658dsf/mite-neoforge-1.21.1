@@ -504,5 +504,7 @@
   "lunar.mite.harvest": "丰收之月",
   "lunar.mite.blood": "血月",
   "lunar.mite.blue": "蓝月",
-  "lunar.mite.moon_dog": "月晕"
+  "lunar.mite.moon_dog": "月晕",
+  "enchantment.mite.harvesting": "丰收",
+  "enchantment.mite.fertility": "肥沃"
 }

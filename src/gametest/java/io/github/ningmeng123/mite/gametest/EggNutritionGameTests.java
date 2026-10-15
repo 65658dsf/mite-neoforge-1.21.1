@@ -180,6 +180,7 @@ public final class EggNutritionGameTests {
         private final GameTestHelper helper;
         private final ServerPlayer player;
         private final EmbeddedChannel channel;
+        private final SpawnedEntityCapture spawned;
 
         private Fixture(GameTestHelper helper) {
             this.helper = helper;
@@ -190,6 +191,7 @@ public final class EggNutritionGameTests {
             helper.getLevel().getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
             player.setGameMode(GameType.SURVIVAL);
             player.moveTo(helper.absolutePos(new BlockPos(1, 2, 2)).getCenter());
+            spawned=new SpawnedEntityCapture(helper.getLevel(), entity -> entity instanceof ThrownEgg egg && egg.getOwner()==player);
             player.setNoGravity(true);
             player.setOnGround(true);
             player.removeAllEffects();
@@ -214,7 +216,7 @@ public final class EggNutritionGameTests {
         }
 
         private List<ThrownEgg> eggs() {
-            return helper.getLevel().getEntitiesOfClass(ThrownEgg.class, player.getBoundingBox().inflate(8D), egg -> egg.getOwner() == player);
+            return spawned.live(ThrownEgg.class).stream().filter(egg -> egg.getOwner()==player).toList();
         }
 
         private void assertThrown(int count) {
@@ -232,7 +234,7 @@ public final class EggNutritionGameTests {
                 player.getInventory().clearContent();
                 player.server.getPlayerList().remove(player);
             } finally {
-                channel.finishAndReleaseAll();
+                spawned.close(); channel.finishAndReleaseAll();
             }
         }
     }

@@ -79,12 +79,22 @@ public final class LunarWeatherSleepGameTests {
     @GameTest(template = "empty")
     public static void actualDesertRainRespectsTheRoofAndReachesNativeCauldronPrecipitation(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        BlockPos pos = new BlockPos(helper.absolutePos(BlockPos.ZERO).getX(), 300, helper.absolutePos(BlockPos.ZERO).getZ());
-        level.getChunkAt(pos);
-        var originalBiome = level.getBiome(pos);
+        BlockPos reference = helper.absolutePos(BlockPos.ZERO);
+        BlockPos pos = new BlockPos((reference.getX() & ~15) + 8, 296, (reference.getZ() & ~15) + 8);
+        var chunk = level.getChunkAt(pos);
+        var section = chunk.getSection(chunk.getSectionIndex(pos.getY()));
+        var originalBiomes = section.getBiomes();
+        int quartX = net.minecraft.core.QuartPos.fromBlock(chunk.getPos().getMinBlockX());
+        int quartY = net.minecraft.core.QuartPos.fromBlock(pos.getY()) & ~3;
+        int quartZ = net.minecraft.core.QuartPos.fromBlock(chunk.getPos().getMinBlockZ());
+        var sampler = level.getChunkSource().randomState().sampler();
         var original = level.getBlockState(pos); var originalRoof = level.getBlockState(pos.above(2));
         try (WeatherSnapshot saved = new WeatherSnapshot(level)) {
-            FillBiomeCommand.fill(level, pos, pos.above(2), level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.DESERT));
+            // Native biome lookup fuzzes the sample into adjacent quart cells. Cover and restore the
+            // entire isolated section instead of relying on one cell at an arbitrary test-grid edge.
+            var desert = level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.DESERT);
+            section.fillBiomesFromNoise((x,y,z,climate) -> desert, sampler, quartX, quartY, quartZ);
+            helper.assertTrue(level.getBiome(pos.above()).is(Biomes.DESERT), "Every fuzzy precipitation sample is the intended dry biome");
             level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 2);
             level.setBlock(pos.above(2), Blocks.AIR.defaultBlockState(), 2);
             level.setDayTime(31L * 24000L + 6000L);
@@ -104,8 +114,7 @@ public final class LunarWeatherSleepGameTests {
         } catch (Exception failure) { throw new IllegalStateException(failure); }
         finally {
             level.setBlock(pos, original, 2); level.setBlock(pos.above(2), originalRoof, 2);
-            try { FillBiomeCommand.fill(level, pos, pos.above(2), originalBiome); }
-            catch (Exception failure) { throw new IllegalStateException(failure); }
+            section.fillBiomesFromNoise((x,y,z,climate) -> originalBiomes.get(x & 3,y & 3,z & 3), sampler, quartX, quartY, quartZ);
         }
         helper.succeed();
     }
