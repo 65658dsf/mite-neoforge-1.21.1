@@ -21,7 +21,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class BloodMoonEquipment {
     public static final String DATA_KEY = "mite:blood_moon_equipment";
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
     private static final EquipmentSlot[] SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private static final String[] SUFFIXES = {"helmet", "chestplate", "leggings", "boots"};
     private static final String[] TOOL_PREFIXES = {"mite:rusted_iron_", "mite:rusted_iron_", "minecraft:golden_",
@@ -39,8 +39,10 @@ public final class BloodMoonEquipment {
     }
 
     public static boolean progressionActive(Mob mob) {
-        return handles(mob) && mob.level() instanceof ServerLevel level
-                && BloodMoonEquipmentRules.bloodMoons(BloodMoonInvasion.highestDay(level)) >= 2L;
+        if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return false;
+        long day = BloodMoonInvasion.highestDay(level);
+        return bloodDate(mob) ? BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(day)) >= 0
+                : BloodMoonEquipmentRules.ordinaryActive(day);
     }
 
     /** True means this armor roll was handled, including an intentionally empty result. */
@@ -48,43 +50,77 @@ public final class BloodMoonEquipment {
         if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return false;
         var data = mob.getPersistentData();
         if (data.contains(DATA_KEY)) return true;
-        long count = BloodMoonEquipmentRules.bloodMoons(BloodMoonInvasion.highestDay(level));
-        int stage = BloodMoonEquipmentRules.stage(count);
-        if (stage < 0) return false;
+        long day = BloodMoonInvasion.highestDay(level);
+        boolean blood = bloodDate(mob);
+        double progress;
+        if (blood) {
+            int bloodStage = BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(day));
+            if (bloodStage < 0) return false;
+            progress = bloodStage;
+        } else {
+            if (!BloodMoonEquipmentRules.ordinaryActive(day)) return false;
+            progress = BloodMoonEquipmentRules.ordinaryProgress(day);
+        }
+        int stage = (int)Math.floor(progress);
         var result = new CompoundTag();
         result.putInt("version", VERSION); result.putInt("stage", stage); result.putInt("tier", -1);
+        result.putLong("highest_day", day); result.putDouble("progress", progress);
         data.put(DATA_KEY, result);
-        boolean blood = bloodDate(mob);
         result.putBoolean("blood_date", blood);
-        if (mob.getRandom().nextDouble() >= BloodMoonEquipmentRules.armorChance(stage, blood)) return true;
-        int tier = BloodMoonEquipmentRules.selectTier(stage, blood, mob.getRandom().nextDouble());
+        int[] tiers = {-1, -1, -1, -1};
+        result.putIntArray("armor_tiers", tiers);
+        if (blood) {
+            int filled = 0;
+            for (int index = 0; index < SLOTS.length; index++) if (mob.getItemBySlot(SLOTS[index]).isEmpty()) {
+                if (mob.getRandom().nextDouble() >= BloodMoonEquipmentRules.armorChance(stage, true)) continue;
+                int tier = BloodMoonEquipmentRules.selectTier(stage, true, mob.getRandom().nextDouble());
+                mob.setItemSlot(SLOTS[index], R196MobEquipment.generated(mob,
+                        BloodMoonEquipmentRules.PREFIXES.get(tier) + SUFFIXES[index], true));
+                tiers[index] = tier;
+                filled |= 1 << index;
+            }
+            result.putIntArray("armor_tiers", tiers); result.putInt("filled_slots", filled);
+            return true;
+        }
+        double armorChance = BloodMoonEquipmentRules.ordinaryArmorChance(progress);
+        if (mob.getRandom().nextDouble() >= armorChance) return true;
+        int tier = selectTier(progress, blood, mob.getRandom().nextDouble());
         result.putInt("tier", tier);
         int filled = 0;
         for (int index = 0; index < SLOTS.length; index++) if (mob.getItemBySlot(SLOTS[index]).isEmpty()) {
             mob.setItemSlot(SLOTS[index], R196MobEquipment.generated(mob,
                     BloodMoonEquipmentRules.PREFIXES.get(tier) + SUFFIXES[index], true));
+            tiers[index] = tier;
             filled |= 1 << index;
         }
-        result.putInt("filled_slots", filled);
+        result.putIntArray("armor_tiers", tiers); result.putInt("filled_slots", filled);
         return true;
     }
 
     /** Called after spawn initialization so native weapons and explicitly supplied equipment keep their exact stacks. */
     private static void populateHeld(Mob mob) {
         CompoundTag equipment = mob.getPersistentData().getCompound(DATA_KEY);
-        // Version 1 records predate held-tool progression, including their saved empty decisions.
+        // Earlier versions keep their old completed/empty decisions; only fresh v3 rolls may fill a hand.
         if (equipment.getInt("version") != VERSION || equipment.contains("held")) return;
         CompoundTag held = heldResult(equipment, "decided");
         int stage = equipment.getInt("stage");
         if (stage < 0 || !(mob instanceof Zombie || mob instanceof R196Undead)) return;
         if (!mob.getMainHandItem().isEmpty()) { held.putBoolean("preserved", true); return; }
         boolean blood = equipment.getBoolean("blood_date");
-        if (mob.getRandom().nextDouble() >= BloodMoonEquipmentRules.heldChance(stage, blood)) return;
+        double progress = equipment.getDouble("progress");
+        double heldChance = blood ? BloodMoonEquipmentRules.heldChance(stage, true)
+                : BloodMoonEquipmentRules.ordinaryHeldChance(progress);
+        if (mob.getRandom().nextDouble() >= heldChance) return;
         int tier = armorTier(mob);
-        if (tier < 0) tier = BloodMoonEquipmentRules.selectTier(stage, blood, mob.getRandom().nextDouble());
+        if (tier < 0) tier = selectTier(progress, blood, mob.getRandom().nextDouble());
         int tool = mob.getRandom().nextInt(TOOLS.length);
         mob.setItemSlot(EquipmentSlot.MAINHAND, R196MobEquipment.generated(mob, TOOL_PREFIXES[tier] + TOOLS[tool], true));
         held.putInt("tier", tier); held.putInt("tool", tool); held.putBoolean("generated", true);
+    }
+
+    private static int selectTier(double progress, boolean blood, double draw) {
+        return blood ? BloodMoonEquipmentRules.selectTier((int)progress, true, draw)
+                : BloodMoonEquipmentRules.selectOrdinaryTier(progress, draw);
     }
 
     /** Prefer armor created by this spawn roll, then recognized explicitly supplied armor. */
@@ -138,6 +174,8 @@ public final class BloodMoonEquipment {
         if (mob.getPersistentData().contains(DATA_KEY)) return;
         var existing = new CompoundTag();
         existing.putInt("version", VERSION); existing.putInt("stage", -1); existing.putInt("tier", -1);
+        existing.putDouble("progress", -1D);
+        if (mob.level() instanceof ServerLevel level) existing.putLong("highest_day", BloodMoonInvasion.highestDay(level));
         existing.putBoolean(reason, true); mob.getPersistentData().put(DATA_KEY, existing);
     }
 }

@@ -40,12 +40,12 @@
 
 - `/time set 1518000`：第 64 天，第二次血月白昼，启用皮革主档。成功穿甲的怪物可抽到更高材质，极少数可达艾德曼；正常也会有不穿甲的结果。
 - `/time set 6000`：调回普通日，已经解锁的皮革主档保留，但穿甲与升档概率降低。
-- `/time set 17646000`：第 736 天，第 18 次实际血月，主档达到艾德曼；新怪物仍可能穿较低材质套装，低阶概率不再清零。调回普通日、保存重进后进度保持。
-- 从第二次血月起，普通日总穿甲率为 50%～90%，血月为 80%～96%。空手近战人形怪物另有 40%～80%／70%～94% 概率补充剑、镐、铲或斧，四种等权；有随机护甲时沿用材质，皮革与锁链使用锈铁工具。
+- `/time set 2286000`：第 96 天第三次血月，主档已升为锁链；之后每次血月升一档。`/time set 9966000` 到第 416 天第十次血月，主档达到艾德曼。血月四个护甲部位独立抽取是否穿戴和材质，可以缺件、混搭，低阶概率保留。
+- 普通日按世界最高到达天数平滑成长，第 64 天启用，第 128 天后逐日增加，第 1152 天封顶，穿甲率 50%～90%、空手补工具率 40%～80%，不再按血月次数跳档。血月每部位穿戴率为 80%～96%、空手补工具率 70%～94%；工具四类等权，混搭时优先参考本次生成的第一件护甲，皮革与锁链使用锈铁工具。
 - 检查来源自带主手、显式装备、普通骷髅弓与溺尸三叉戟保持。未穿甲怪物也可以持械。旧版本已生成怪物不补发工具，新结果保存重进或跨维度不重抽。
 - 保存前后检查同一怪物，已穿甲和未穿甲的结果都不重抽。已有明确指定的护甲不覆盖；固定套装的特殊怪不被此规则降级，蜘蛛和苦力怕不增加隐形护甲。
 
-全部阶段、普通／血月两套穿甲率、空手补工具率与各材质实际概率见 [装备概率表](blood-moon-equipment.md)。少量刷怪不能可靠估计稀有概率，精确分布由数值和生成路径测试验证。
+普通日历进度、每次血月档位、逐部位穿戴率、空手补工具率与各材质实际概率见 [装备概率表](blood-moon-equipment.md)。少量刷怪不能可靠估计稀有概率，精确分布由数值和生成路径测试验证。
 
 测试加速可用 `/tick rate 100`，结束恢复 `/tick rate 20`。同时恢复原来的游戏模式、时间和游戏规则。
 
@@ -58,3 +58,5 @@
 首批测试存档为全新 `build/verification/monster-expansion-verified-run`，日志为 `build/verification/monster-expansion-full-test.log`，汇总为 `build/verification/monster-expansion-completion.json`，已提交为 `15f7cfe`。后续装备概率与手持修正使用独立验证记录，避免将旧构建结果当作修正后的验证。
 
 装备修正后 **1,311 项 GameTest、1,328 项 JUnit 全部通过**，新增 6 项 GameTest、2 项 JUnit；覆盖九档材质与四类工具的实际注册物品、磨损、同甲材质、无甲持械、旧版数据和空结果保存。测试存档为全新 `build/verification/equipment-revision-verified-run`，日志为 `build/verification/equipment-revision-full-test.log`，汇总为 `build/verification/equipment-revision-completion.json`。`build/libs/mite-0.1.0.jar` 的 SHA-256 为 `5fb2d3fce4580b75e272f3c8526a9bdfba2c732a2c656b142d4f493eac8bf760`。本次未自动操作客户端，用户已确认实机测试通过。
+
+普通日历成长、每次血月升级与血月独立护甲修正后，**1,324 项 GameTest、1,333 项 JUnit 全部通过**；本批新增 9 项 GameTest、5 项 JUnit，覆盖逐日概率上限、实际混搭与缺件、显式槽跳过随机抽取、连续进度、每次血月档位及 v1/v2/v3 保存兼容。使用全新 `build/verification/ordinary-equipment-verified-run`，日志为 `ordinary-equipment-full-test.log`，汇总为 `ordinary-equipment-completion.json`。本轮 JAR 的 SHA-256 为 `4df198ae484406fb95af77358a5d7eaf91beb97de0cee700f9c9bc8aaf7f270c`，包含之前的夜间停雨雷暴修正；未操作客户端，等待用户手动验收。
