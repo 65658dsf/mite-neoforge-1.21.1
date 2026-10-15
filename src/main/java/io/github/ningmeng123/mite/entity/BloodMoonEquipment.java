@@ -4,6 +4,8 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
 import io.github.ningmeng123.mite.rules.LunarCalendar;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
@@ -19,8 +21,12 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class BloodMoonEquipment {
     public static final String DATA_KEY = "mite:blood_moon_equipment";
+    private static final int VERSION = 2;
     private static final EquipmentSlot[] SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private static final String[] SUFFIXES = {"helmet", "chestplate", "leggings", "boots"};
+    private static final String[] TOOL_PREFIXES = {"mite:rusted_iron_", "mite:rusted_iron_", "minecraft:golden_",
+            "mite:copper_", "mite:silver_", "minecraft:iron_", "mite:ancient_metal_", "mite:mithril_", "mite:adamantium_"};
+    private static final String[] TOOLS = {"sword", "pickaxe", "shovel", "axe"};
     private BloodMoonEquipment() {}
 
     public static boolean handles(Mob mob) {
@@ -45,8 +51,8 @@ public final class BloodMoonEquipment {
         long count = BloodMoonEquipmentRules.bloodMoons(BloodMoonInvasion.highestDay(level));
         int stage = BloodMoonEquipmentRules.stage(count);
         if (stage < 0) return false;
-        var result = new net.minecraft.nbt.CompoundTag();
-        result.putInt("version", 1); result.putInt("stage", stage); result.putInt("tier", -1);
+        var result = new CompoundTag();
+        result.putInt("version", VERSION); result.putInt("stage", stage); result.putInt("tier", -1);
         data.put(DATA_KEY, result);
         boolean blood = bloodDate(mob);
         result.putBoolean("blood_date", blood);
@@ -61,6 +67,43 @@ public final class BloodMoonEquipment {
         }
         result.putInt("filled_slots", filled);
         return true;
+    }
+
+    /** Called after spawn initialization so native weapons and explicitly supplied equipment keep their exact stacks. */
+    private static void populateHeld(Mob mob) {
+        CompoundTag equipment = mob.getPersistentData().getCompound(DATA_KEY);
+        // Version 1 records predate held-tool progression, including their saved empty decisions.
+        if (equipment.getInt("version") != VERSION || equipment.contains("held")) return;
+        CompoundTag held = heldResult(equipment, "decided");
+        int stage = equipment.getInt("stage");
+        if (stage < 0 || !(mob instanceof Zombie || mob instanceof R196Undead)) return;
+        if (!mob.getMainHandItem().isEmpty()) { held.putBoolean("preserved", true); return; }
+        boolean blood = equipment.getBoolean("blood_date");
+        if (mob.getRandom().nextDouble() >= BloodMoonEquipmentRules.heldChance(stage, blood)) return;
+        int tier = armorTier(mob);
+        if (tier < 0) tier = BloodMoonEquipmentRules.selectTier(stage, blood, mob.getRandom().nextDouble());
+        int tool = mob.getRandom().nextInt(TOOLS.length);
+        mob.setItemSlot(EquipmentSlot.MAINHAND, R196MobEquipment.generated(mob, TOOL_PREFIXES[tier] + TOOLS[tool], true));
+        held.putInt("tier", tier); held.putInt("tool", tool); held.putBoolean("generated", true);
+    }
+
+    /** Prefer armor created by this spawn roll, then recognized explicitly supplied armor. */
+    private static int armorTier(Mob mob) {
+        int generated = mob.getPersistentData().getCompound(DATA_KEY).getInt("filled_slots");
+        for (int pass = 0; pass < 2; pass++) for (int slot = 0; slot < SLOTS.length; slot++) {
+            if (pass == 0 && (generated & (1 << slot)) == 0) continue;
+            String id = BuiltInRegistries.ITEM.getKey(mob.getItemBySlot(SLOTS[slot]).getItem()).toString();
+            for (int tier = 0; tier < BloodMoonEquipmentRules.PREFIXES.size(); tier++)
+                if (id.equals(BloodMoonEquipmentRules.PREFIXES.get(tier) + SUFFIXES[slot])) return tier;
+            if (id.equals("mite:rusted_iron_chain_" + SUFFIXES[slot]) || id.equals("mite:rusted_iron_" + SUFFIXES[slot])) return 1;
+            if (id.equals("mite:copper_chain_" + SUFFIXES[slot])) return 3;
+        }
+        return -1;
+    }
+
+    private static CompoundTag heldResult(CompoundTag equipment, String reason) {
+        var held = new CompoundTag(); held.putInt("version", 1); held.putInt("tier", -1); held.putInt("tool", -1);
+        held.putBoolean(reason, true); equipment.put("held", held); return held;
     }
 
     public static double legacyChance(Mob mob, double sourceChance) {
@@ -83,15 +126,18 @@ public final class BloodMoonEquipment {
             // Mark untouched old entities as already decided, without changing any equipment.
             // The marker also prevents an upgrade if that old entity later crosses dimensions.
             markLegacyEntity(mob, "existing_entity");
+            CompoundTag equipment = mob.getPersistentData().getCompound(DATA_KEY);
+            if (equipment.getInt("version") == VERSION && !equipment.contains("held")) heldResult(equipment, "existing_entity");
             return;
         }
         if (!populate(mob)) markLegacyEntity(mob, "legacy_finalized");
+        populateHeld(mob);
     }
 
     private static void markLegacyEntity(Mob mob, String reason) {
         if (mob.getPersistentData().contains(DATA_KEY)) return;
-        var existing = new net.minecraft.nbt.CompoundTag();
-        existing.putInt("version", 1); existing.putInt("stage", -1); existing.putInt("tier", -1);
+        var existing = new CompoundTag();
+        existing.putInt("version", VERSION); existing.putInt("stage", -1); existing.putInt("tier", -1);
         existing.putBoolean(reason, true); mob.getPersistentData().put(DATA_KEY, existing);
     }
 }

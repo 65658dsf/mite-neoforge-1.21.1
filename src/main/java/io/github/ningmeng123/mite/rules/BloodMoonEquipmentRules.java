@@ -21,26 +21,39 @@ public final class BloodMoonEquipmentRules {
 
     public static double armorChance(int stage, boolean bloodDate) {
         checkStage(stage);
-        return (bloodDate ? 70 + 3 * stage : 20 + 8 * stage) / 100D;
+        return (bloodDate ? 80 + 2 * stage : 50 + 5 * stage) / 100D;
+    }
+
+    public static double heldChance(int stage, boolean bloodDate) {
+        checkStage(stage);
+        return (bloodDate ? 70 + 3 * stage : 40 + 5 * stage) / 100D;
     }
 
     public static double tierChance(int stage, int tier, boolean bloodDate) {
         checkStage(stage);
-        if (tier < stage || tier > HIGHEST_TIER) return 0D;
-        double rate = bloodDate ? .4D : .25D;
-        return Math.pow(rate, tier - stage) * (tier == HIGHEST_TIER ? 1D : 1D - rate);
+        if (tier < 0 || tier > HIGHEST_TIER) return 0D;
+        double total = 0D;
+        for (int candidate = 0; candidate <= HIGHEST_TIER; candidate++)
+            total += materialWeight(stage, candidate, bloodDate);
+        return materialWeight(stage, tier, bloodDate) / total;
     }
 
-    /** One conditional material draw, with the highest tier absorbing the geometric tail. */
+    /** The stage is the most likely material; lower and higher materials both remain possible. */
     public static int selectTier(int stage, boolean bloodDate, double draw) {
         checkStage(stage);
         if (!(draw >= 0D && draw < 1D)) throw new IllegalArgumentException("Material draw must be in [0,1)");
         double cumulative = 0D;
-        for (int tier = stage; tier < HIGHEST_TIER; tier++) {
+        for (int tier = 0; tier < HIGHEST_TIER; tier++) {
             cumulative += tierChance(stage, tier, bloodDate);
             if (draw < cumulative) return tier;
         }
         return HIGHEST_TIER;
+    }
+
+    private static double materialWeight(int stage, int tier, boolean bloodDate) {
+        double lower = bloodDate ? .35D : .5D;
+        double upper = bloodDate ? .4D : .25D;
+        return tier < stage ? Math.pow(lower, stage - tier) : Math.pow(upper, tier - stage);
     }
 
     private static void checkStage(int stage) {

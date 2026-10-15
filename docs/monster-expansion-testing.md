@@ -38,17 +38,21 @@
 
 - `/time set 1518000`：第 64 天，第二次血月白昼，启用皮革主档。成功穿甲的怪物可抽到更高材质，极少数可达艾德曼；正常也会有不穿甲的结果。
 - `/time set 6000`：调回普通日，已经解锁的皮革主档保留，但穿甲与升档概率降低。
-- `/time set 17646000`：第 736 天，第 18 次实际血月，主档达到艾德曼；成功穿甲的普通目标怪应为同材质套装。调回普通日、保存重进后进度保持。
+- `/time set 17646000`：第 736 天，第 18 次实际血月，主档达到艾德曼；新怪物仍可能穿较低材质套装，低阶概率不再清零。调回普通日、保存重进后进度保持。
+- 从第二次血月起，普通日总穿甲率为 50%～90%，血月为 80%～96%。空手近战人形怪物另有 40%～80%／70%～94% 概率补充剑、镐、铲或斧，四种等权；有随机护甲时沿用材质，皮革与锁链使用锈铁工具。
+- 检查来源自带主手、显式装备、普通骷髅弓与溺尸三叉戟保持。未穿甲怪物也可以持械。旧版本已生成怪物不补发工具，新结果保存重进或跨维度不重抽。
 - 保存前后检查同一怪物，已穿甲和未穿甲的结果都不重抽。已有明确指定的护甲不覆盖；固定套装的特殊怪不被此规则降级，蜘蛛和苦力怕不增加隐形护甲。
 
-全部阶段、普通／血月两套穿甲率与材质条件概率见 [装备概率表](blood-moon-equipment.md)。少量刷怪不能可靠估计稀有概率，精确分布由数值和生成路径测试验证。
+全部阶段、普通／血月两套穿甲率、空手补工具率与各材质实际概率见 [装备概率表](blood-moon-equipment.md)。少量刷怪不能可靠估计稀有概率，精确分布由数值和生成路径测试验证。
 
 测试加速可用 `/tick rate 100`，结束恢复 `/tick rate 20`。同时恢复原来的游戏模式、时间和游戏规则。
 
 ## 自动验证结果
 
-最终构建中 **1,305 项 GameTest、1,326 项 JUnit 全部通过**，本批新增 25 项 GameTest、15 项 JUnit。真实毁田行走使用独立批次与原生实体 ticking ticket，固定覆盖首帧仅更新运行中任务的 AI 奇偶分支，保留原生导航、实际位置推进、40 tick 工作和无额外掉落断言。
+首批扩展的验证记录为 **1,305 项 GameTest、1,326 项 JUnit 全部通过**，新增 25 项 GameTest、15 项 JUnit。真实毁田行走使用独立批次与原生实体 ticking ticket，固定覆盖首帧仅更新运行中任务的 AI 奇偶分支，保留原生导航、实际位置推进、40 tick 工作和无额外掉落断言。
 
-客户端月相／血红天空和难度界面代码审计通过，未打开或操作客户端；视觉和实机交互待用户手动验收。JAR 内 2,241 份 JSON、253 个 Mixin 注册、890 个生产类均已检查，测试类没有被打包。先前未提交文件中有 70 个保持字节不变；另 3 个共享文件仅扩展了装备入口、注册和测试夹具，原难度实现和装备断言保留。
+客户端月相／血红天空和难度界面代码审计通过；视觉和实机交互由用户手动验收。JAR 内 2,241 份 JSON、253 个 Mixin 注册、890 个生产类均已检查，测试类没有被打包。先前未提交文件中有 70 个保持字节不变；另 3 个共享文件仅扩展了装备入口、注册和测试夹具，原难度实现和装备断言保留。
 
-最终测试存档为全新 `build/verification/monster-expansion-verified-run`，日志为 `build/verification/monster-expansion-full-test.log`，汇总为 `build/verification/monster-expansion-completion.json`。产物为 `build/libs/mite-0.1.0.jar`，SHA-256：`638e2aa418746d2e8bcb0b87f0618c81c596fb62b912bb44f0a2bb3d60a424bf`。本批尚未提交 GitHub。
+首批测试存档为全新 `build/verification/monster-expansion-verified-run`，日志为 `build/verification/monster-expansion-full-test.log`，汇总为 `build/verification/monster-expansion-completion.json`，已提交为 `15f7cfe`。后续装备概率与手持修正使用独立验证记录，避免将旧构建结果当作修正后的验证。
+
+装备修正后 **1,311 项 GameTest、1,328 项 JUnit 全部通过**，新增 6 项 GameTest、2 项 JUnit；覆盖九档材质与四类工具的实际注册物品、磨损、同甲材质、无甲持械、旧版数据和空结果保存。测试存档为全新 `build/verification/equipment-revision-verified-run`，日志为 `build/verification/equipment-revision-full-test.log`，汇总为 `build/verification/equipment-revision-completion.json`。`build/libs/mite-0.1.0.jar` 的 SHA-256 为 `5fb2d3fce4580b75e272f3c8526a9bdfba2c732a2c656b142d4f493eac8bf760`。本次未自动操作客户端，用户已确认实机测试通过。
