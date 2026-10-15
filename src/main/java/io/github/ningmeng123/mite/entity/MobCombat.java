@@ -85,7 +85,8 @@ public final class MobCombat {
         }
         // Damage.applyArmorCalculations only grants uf (players) the 20% full-block roll.
         // NPCs always retain the source one-point floor, even when protection exceeds the hit.
-        return flags.absolute() || incoming <= 0F ? incoming : Math.max(incoming - defense.total() - natural, 1F);
+        return flags.absolute() || incoming <= 0F ? incoming : Math.max(incoming - Math.max(defense.total() + natural
+                - io.github.ningmeng123.mite.enchantment.R196Enchantments.level(weapon(source), entity.level(), "piercing"), 0F), 1F);
     }
     public static boolean managedDefense(LivingEntity entity) {
         return entity instanceof R196Mob || io.github.ningmeng123.mite.rules.R196VanillaMobRules.managed(entity.getType()) || entity.getType() == net.minecraft.world.entity.EntityType.SLIME

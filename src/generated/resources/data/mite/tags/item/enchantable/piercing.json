@@ -1,0 +1,25 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:wooden_pickaxe",
+    "minecraft:stone_pickaxe",
+    "minecraft:golden_pickaxe",
+    "minecraft:iron_pickaxe",
+    "minecraft:diamond_pickaxe",
+    "minecraft:netherite_pickaxe",
+    "mite:copper_pickaxe",
+    "mite:silver_pickaxe",
+    "mite:rusted_iron_pickaxe",
+    "mite:ancient_metal_pickaxe",
+    "mite:mithril_pickaxe",
+    "mite:adamantium_pickaxe",
+    "mite:copper_battle_axe",
+    "mite:silver_battle_axe",
+    "mite:golden_battle_axe",
+    "mite:rusted_iron_battle_axe",
+    "mite:iron_battle_axe",
+    "mite:ancient_metal_battle_axe",
+    "mite:mithril_battle_axe",
+    "mite:adamantium_battle_axe"
+  ]
+}

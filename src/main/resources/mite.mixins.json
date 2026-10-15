@@ -199,9 +199,26 @@
     "BeetrootCropStateMixin",
     "CropFruitExplosionMixin",
     "CropSnowfallMixin",
-    "CropFloodMixin"
+    "CropFloodMixin",
+    "NativeFireProtectionMixin",
+    "SourceEnchantmentPlayerMeleeMixin",
+    "SourceEnchantmentMobMeleeMixin",
+    "SourceEnchantmentMobPickupMixin",
+    "SourceEnchantmentMovementMixin",
+    "SourceEnchantmentEffectsMixin",
+    "EnchantedBowPullMixin",
+    "TreeFellingMixin",
+    "EnduranceMiningMixin",
+    "EnduranceBlockMiningMixin",
+    "EnduranceMeleeMixin",
+    "EnduranceItemUseMixin",
+
+    "ExperienceBottleExperienceMixin",
+    "R196RandomEnchantmentsMixin"
   ],
   "client": [
+    "EnchantmentScreenMixin",
+    "client.EnchantedBowFovMixin",
     "client.GuiFoodMixin",
     "client.LocalPlayerFoodMixin",
     "client.AppleSkinSaturationMixin",

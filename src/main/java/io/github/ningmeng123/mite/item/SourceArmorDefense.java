@@ -75,8 +75,8 @@ public final class SourceArmorDefense {
             EquipmentDurability.hurtArmorSourceBudget(player, source,
                     Math.min(EquipmentDurabilityRules.roundedArmorProtection(defense.armor()), incoming));
         // Preserve modern ARMOR_EFFECTIVENESS data functions (including Breach), by changing only the representation
-        // of the source mundane contribution. No source piercing enchantment has been registered; crossbow
-        // piercing remains entity penetration. Do not cap the ratio at one: source excess-defense RNG needs it.
+        // of the source mundane contribution. MITE piercing subtracts flat defense after wear;
+        // modern crossbow piercing remains projectile penetration.
         float mundane = defense.armor();
         ItemStack weapon = source.getWeaponItem();
         if (!flags.absolute() && incoming > 0F && weapon != null && player.level() instanceof ServerLevel level) {
@@ -85,7 +85,7 @@ public final class SourceArmorDefense {
             // A no-op function must preserve the exact source float, including random-block equality boundaries.
             if (Float.compare(modified, ratio) != 0) mundane = Math.max(modified, 0F) * incoming;
         }
-        return SourceArmorDefenseRules.damage(incoming, mundane + defense.special() + defense.potions(), 0F, flags.absolute(), player.getRandom()::nextFloat);
+        return SourceArmorDefenseRules.damage(incoming, mundane + defense.special() + defense.potions(), io.github.ningmeng123.mite.enchantment.R196Enchantments.level(weapon, player.level(), "piercing"), flags.absolute(), player.getRandom()::nextFloat);
     }
     public static Source flags(DamageSource source) {
         boolean absolute = source.is(DamageTypes.IN_WALL) || source.is(DamageTypes.FELL_OUT_OF_WORLD)

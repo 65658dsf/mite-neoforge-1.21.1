@@ -1,0 +1,31 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.minecraft.flame"
+  },
+  "effects": {
+    "minecraft:projectile_spawned": [
+      {
+        "effect": {
+          "type": "minecraft:ignite",
+          "duration": 100.5
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 51,
+    "per_level_above_first": 0
+  },
+  "primary_items": "#mite:enchantable/native_compat/flame",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#mite:enchantable/native_compat/flame",
+  "weight": 5
+}

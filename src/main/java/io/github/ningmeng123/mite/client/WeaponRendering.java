@@ -23,9 +23,11 @@ public final class WeaponRendering {
     }
     @SubscribeEvent public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            ItemProperties.register(net.minecraft.world.item.Items.BOW, ResourceLocation.withDefaultNamespace("pull"), (stack, world, living, seed) ->
+                    living != null && living.getUseItem() == stack ? io.github.ningmeng123.mite.enchantment.RangedEnchantments.pull(stack, living.level(), living.getTicksUsingItem()) : 0F);
             for (var bow : java.util.List.of(MiteWeaponContent.ANCIENT_METAL_BOW.get(), MiteWeaponContent.MITHRIL_BOW.get())) {
                 ItemProperties.register(bow, ResourceLocation.withDefaultNamespace("pull"), (stack, world, living, seed) ->
-                        living != null && living.getUseItem() == stack ? Math.min(living.getTicksUsingItem() / 20F, 1F) : 0F);
+                        living != null && living.getUseItem() == stack ? io.github.ningmeng123.mite.enchantment.RangedEnchantments.pull(stack, living.level(), living.getTicksUsingItem()) : 0F);
                 ItemProperties.register(bow, ResourceLocation.withDefaultNamespace("pulling"), (stack, world, living, seed) ->
                         living != null && living.isUsingItem() && living.getUseItem() == stack && living.getTicksUsingItem() > 0 ? 1F : 0F);
                 ItemProperties.register(bow, ResourceLocation.parse("mite:arrow_material"), (stack, world, living, seed) -> {

@@ -1,0 +1,170 @@
+package io.github.ningmeng123.mite.enchantment;
+
+import io.github.ningmeng123.mite.registry.MiteArmorContent;
+import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
+import java.util.List;
+import java.util.Set;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.AnimalArmorItem;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SwordItem;
+
+/** Independently audited source identities and exact-class item rules. @author NingMeng123 */
+public final class R196EnchantmentCatalog {
+    public record Definition(int legacyId, String id, String resourceId, int weight, int difficulty, int maxLevel) {
+        public int minCost(int level) {
+            if (level < 1 || level > maxLevel) throw new IllegalArgumentException("Invalid source enchantment level: " + id + " " + level);
+            return Math.max(difficulty - 10, 0) + difficulty * ((maxLevel == 1 ? 3 : level) - 1) + 1;
+        }
+
+        public boolean supported(ItemStack stack) { return R196EnchantmentCatalog.supported(id, stack); }
+    }
+
+    private static final List<Definition> DEFINITIONS = List.of(
+            nativeEntry(0, "protection", 100, 10, 4),
+            nativeEntry(1, "fire_protection", 25, 10, 4),
+            nativeEntry(2, "feather_falling", 25, 10, 4),
+            nativeEntry(3, "blast_protection", 25, 10, 4),
+            nativeEntry(4, "projectile_protection", 25, 10, 4),
+            nativeEntry(5, "respiration", 5, 10, 3),
+            nativeEntry(6, "aqua_affinity", 5, 10, 1),
+            nativeEntry(7, "thorns", 5, 20, 3),
+            nativeEntry(16, "sharpness", 100, 10, 5),
+            nativeEntry(17, "smite", 25, 10, 5),
+            nativeEntry(18, "bane_of_arthropods", 25, 10, 5),
+            nativeEntry(19, "knockback", 25, 10, 2),
+            nativeEntry(20, "fire_aspect", 5, 20, 2),
+            nativeEntry(21, "looting", 25, 10, 3),
+            nativeEntry(32, "efficiency", 100, 10, 5),
+            nativeEntry(33, "silk_touch", 5, 10, 1),
+            nativeEntry(34, "unbreaking", 25, 10, 5),
+            nativeEntry(35, "fortune", 5, 10, 3),
+            nativeEntry(48, "power", 100, 10, 5),
+            nativeEntry(49, "punch", 25, 10, 2),
+            nativeEntry(50, "flame", 5, 20, 1),
+            miteEntry(51, "arrow_recovery", 25, 10, 5),
+            miteEntry(80, "stun", 25, 15, 5),
+            miteEntry(81, "fishing_fortune", 100, 10, 5),
+            miteEntry(82, "fertility", 25, 10, 5),
+            miteEntry(83, "tree_felling", 25, 10, 5),
+            miteEntry(84, "vampiric", 1, 20, 5),
+            miteEntry(85, "speed", 5, 10, 5),
+            miteEntry(86, "regeneration", 5, 20, 5),
+            miteEntry(87, "free_action", 25, 10, 4),
+            miteEntry(88, "quickness", 25, 10, 5),
+            miteEntry(89, "true_flight", 100, 10, 5),
+            miteEntry(90, "poison", 5, 10, 5),
+            miteEntry(91, "disarming", 5, 10, 5),
+            miteEntry(92, "piercing", 5, 10, 5),
+            miteEntry(93, "harvesting", 25, 10, 5),
+            miteEntry(94, "butchering", 25, 10, 3),
+            miteEntry(95, "endurance", 25, 10, 4));
+    private static final Set<String> DAMAGE = Set.of("sharpness", "smite", "bane_of_arthropods");
+    private static final Set<String> PROTECTION = Set.of("protection", "fire_protection", "blast_protection", "projectile_protection");
+
+    private R196EnchantmentCatalog() {}
+
+    private static Definition nativeEntry(int legacyId, String id, int weight, int difficulty, int levels) {
+        return new Definition(legacyId, id, "minecraft:" + id, weight, difficulty, levels);
+    }
+
+    private static Definition miteEntry(int legacyId, String id, int weight, int difficulty, int levels) {
+        return new Definition(legacyId, id, "mite:" + id, weight, difficulty, levels);
+    }
+
+    public static List<Definition> definitions() { return DEFINITIONS; }
+
+    /** Namespaced IDs are matched exactly, so minecraft:piercing is never confused with the source enchantment. */
+    public static Definition definition(String id) {
+        if (id == null) return null;
+        return DEFINITIONS.stream().filter(d -> id.indexOf(':') >= 0 ? d.resourceId().equals(id) : d.id().equals(id)).findFirst().orElse(null);
+    }
+
+    public static boolean compatible(String left, String right) {
+        Definition first = definition(left), second = definition(right);
+        if (first == null || second == null) return !java.util.Objects.equals(left, right);
+        String a = first.id(), b = second.id();
+        if (a.equals(b) || DAMAGE.contains(a) && DAMAGE.contains(b) || PROTECTION.contains(a) && PROTECTION.contains(b)) return false;
+        return !(a.equals("silk_touch") && (b.equals("fortune") || b.equals("looting"))
+                || b.equals("silk_touch") && (a.equals("fortune") || a.equals("looting")));
+    }
+
+    public static boolean supported(String id, ItemStack stack) {
+        Definition definition = definition(id);
+        if (definition == null || stack.isEmpty()) return false;
+        ToolFamily family = family(stack);
+        boolean armor = stack.getItem() instanceof ArmorItem && !(stack.getItem() instanceof AnimalArmorItem);
+        ArmorItem.Type type = armor ? ((ArmorItem)stack.getItem()).getType() : null;
+        boolean sword = family == ToolFamily.SWORD || family == ToolFamily.DAGGER || family == ToolFamily.KNIFE;
+        boolean cudgel = family == ToolFamily.CUDGEL || family == ToolFamily.CLUB;
+        return switch (definition.id()) {
+            case "protection", "fire_protection" -> armor;
+            case "feather_falling", "speed" -> type == ArmorItem.Type.BOOTS;
+            case "blast_protection", "projectile_protection" -> (type == ArmorItem.Type.CHESTPLATE || type == ArmorItem.Type.LEGGINGS) && solidMetal(stack);
+            case "respiration", "aqua_affinity" -> type == ArmorItem.Type.HELMET;
+            case "thorns", "regeneration", "endurance" -> type == ArmorItem.Type.CHESTPLATE;
+            case "free_action" -> type == ArmorItem.Type.LEGGINGS;
+            case "sharpness" -> sword || family == ToolFamily.BATTLE_AXE || family == ToolFamily.SCYTHE;
+            case "smite" -> family == ToolFamily.WAR_HAMMER;
+            case "bane_of_arthropods", "fire_aspect" -> sword;
+            case "knockback", "stun" -> cudgel || family == ToolFamily.WAR_HAMMER;
+            case "looting" -> cudgel || sword;
+            case "efficiency" -> in(family, ToolFamily.PICKAXE, ToolFamily.AXE, ToolFamily.HATCHET, ToolFamily.BATTLE_AXE, ToolFamily.SHOVEL, ToolFamily.MATTOCK, ToolFamily.HOE);
+            case "silk_touch" -> in(family, ToolFamily.PICKAXE, ToolFamily.SHOVEL, ToolFamily.SHEARS, ToolFamily.KNIFE, ToolFamily.DAGGER);
+            case "unbreaking" -> armor ? solidMetal(stack) : cudgel || in(family, ToolFamily.PICKAXE, ToolFamily.WAR_HAMMER, ToolFamily.AXE,
+                    ToolFamily.HATCHET, ToolFamily.BATTLE_AXE, ToolFamily.SHOVEL, ToolFamily.MATTOCK, ToolFamily.HOE)
+                    || stack.getItem() instanceof FishingRodItem || stack.getItem() instanceof BowItem;
+            case "fortune" -> family == ToolFamily.PICKAXE || family == ToolFamily.SHOVEL;
+            case "power", "punch", "flame", "arrow_recovery", "quickness", "true_flight", "poison" -> stack.getItem() instanceof BowItem;
+            case "fishing_fortune" -> stack.getItem() instanceof FishingRodItem;
+            case "fertility", "harvesting" -> in(family, ToolFamily.HOE, ToolFamily.MATTOCK, ToolFamily.SCYTHE);
+            case "tree_felling" -> family == ToolFamily.AXE || family == ToolFamily.BATTLE_AXE;
+            case "vampiric" -> (sword || family == ToolFamily.SCYTHE) && !vampiricExcludedMaterial(stack);
+            case "disarming" -> family == ToolFamily.SWORD;
+            case "piercing" -> family == ToolFamily.PICKAXE || family == ToolFamily.BATTLE_AXE;
+            case "butchering" -> family == ToolFamily.KNIFE || family == ToolFamily.DAGGER;
+            default -> false;
+        };
+    }
+
+    public static ToolFamily family(ItemStack stack) {
+        MiteTools.Definition source = MiteTools.definition(stack);
+        if (source != null) return source.family();
+        if (stack.getItem() instanceof PickaxeItem) return ToolFamily.PICKAXE;
+        if (stack.getItem() instanceof AxeItem) return ToolFamily.AXE;
+        if (stack.getItem() instanceof ShovelItem) return ToolFamily.SHOVEL;
+        if (stack.getItem() instanceof HoeItem) return ToolFamily.HOE;
+        if (stack.getItem() instanceof SwordItem) return ToolFamily.SWORD;
+        if (stack.getItem() instanceof ShearsItem) return ToolFamily.SHEARS;
+        return null;
+    }
+
+    private static boolean in(ToolFamily actual, ToolFamily... allowed) {
+        for (ToolFamily family : allowed) if (family == actual) return true;
+        return false;
+    }
+
+    public static boolean solidMetal(ItemStack stack) {
+        if (!(stack.getItem() instanceof ArmorItem) || stack.getItem() instanceof AnimalArmorItem) return false;
+        MiteArmorContent.Definition definition = MiteArmorContent.definition(stack.getItem());
+        if (definition != null) return !definition.horse() && !definition.chainmail() && !definition.material().equals("leather");
+        String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+        // Diamond/netherite are explicit modern equipment mappings, sharing source solid-armor semantics.
+        return id.startsWith("minecraft:iron_") || id.startsWith("minecraft:golden_")
+                || id.startsWith("minecraft:diamond_") || id.startsWith("minecraft:netherite_");
+    }
+
+    private static boolean vampiricExcludedMaterial(ItemStack stack) {
+        MiteTools.Definition source = MiteTools.definition(stack);
+        return source != null && (source.material().equals("silver") || source.material().equals("mithril"));
+    }
+}

@@ -1,0 +1,33 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:wooden_hoe",
+    "minecraft:stone_hoe",
+    "minecraft:golden_hoe",
+    "minecraft:iron_hoe",
+    "minecraft:diamond_hoe",
+    "minecraft:netherite_hoe",
+    "mite:copper_hoe",
+    "mite:silver_hoe",
+    "mite:rusted_iron_hoe",
+    "mite:ancient_metal_hoe",
+    "mite:mithril_hoe",
+    "mite:adamantium_hoe",
+    "mite:copper_mattock",
+    "mite:silver_mattock",
+    "mite:golden_mattock",
+    "mite:rusted_iron_mattock",
+    "mite:iron_mattock",
+    "mite:ancient_metal_mattock",
+    "mite:mithril_mattock",
+    "mite:adamantium_mattock",
+    "mite:copper_scythe",
+    "mite:silver_scythe",
+    "mite:golden_scythe",
+    "mite:rusted_iron_scythe",
+    "mite:iron_scythe",
+    "mite:ancient_metal_scythe",
+    "mite:mithril_scythe",
+    "mite:adamantium_scythe"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.minecraft.looting"
+  },
+  "effects": {
+    "minecraft:equipment_drops": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 0.01,
+            "per_level_above_first": 0.01
+          }
+        },
+        "enchanted": "attacker",
+        "requirements": {
+          "condition": "minecraft:entity_properties",
+          "entity": "attacker",
+          "predicate": {
+            "type": "minecraft:player"
+          }
+        }
+      }
+    ]
+  },
+  "exclusive_set": [
+    "minecraft:silk_touch"
+  ],
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#mite:enchantable/native_compat/looting",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#mite:enchantable/native_compat/looting",
+  "weight": 25
+}

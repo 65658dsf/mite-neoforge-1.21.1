@@ -62,17 +62,29 @@ public abstract class RangedArrowMixin implements MaterialArrowView {
     private int mite$criticalUsesSourceFloat(RandomSource random, int bound) {
         return MiteRangedItems.arrowMaterial(mite$self().getPickupItemStackOrigin()) == null ? random.nextInt(bound) : 0;
     }
+    @org.spongepowered.asm.mixin.injection.ModifyArg(method = "onHitEntity", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;igniteForSeconds(F)V"), index = 0)
+    private float mite$sourceFlamingHit(float seconds) {
+        var weapon = mite$self().getWeaponItem();
+        return weapon != null && weapon.getItem() instanceof net.minecraft.world.item.BowItem ? seconds + .5F : seconds;
+    }
     @Redirect(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
     private boolean mite$sourceImpact(Entity target, DamageSource source, float modernDamage) {
         AbstractArrow arrow = mite$self();
         var material = MiteRangedItems.arrowMaterial(arrow.getPickupItemStackOrigin());
-        if (material == null) return target.hurt(source, modernDamage);
+
         float speed = (float)arrow.getDeltaMovement().length();
-        float damage = R196RangedRules.impactDamage(material, speed, mite$preCriticalDamage,
+        float damage = material == null ? modernDamage : R196RangedRules.impactDamage(material, speed, mite$preCriticalDamage,
                 target.getType().is(EntityTypeTags.UNDEAD), target instanceof AbstractSkeleton,
                 arrow.getOwner() instanceof AbstractSkeleton, arrow.getOwner() == null,
                 arrow.getWeaponItem() != null && arrow.getWeaponItem().isEnchanted(), arrow.isCritArrow(),
                 arrow.isCritArrow() ? arrow.getRandom().nextFloat() : 0F);
-        return damage > 0F && ArrowRecovery.hurt(arrow, target, source, damage);
+        if (!(damage > 0F)) return false;
+        var snapshot = target instanceof LivingEntity living
+                ? new io.github.ningmeng123.mite.enchantment.SourceEnchantmentCombat.HarmSnapshot(living) : null;
+        boolean success = ArrowRecovery.hurt(arrow, target, source, damage);
+        if (snapshot != null && snapshot.negativelyAffected((LivingEntity)target))
+            io.github.ningmeng123.mite.enchantment.RangedEnchantments.afterHit(arrow, target);
+        return success;
     }
 }

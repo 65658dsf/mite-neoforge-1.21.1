@@ -18,7 +18,8 @@ public final class SourceBowLaunch {
         ItemStack launcher = projectile instanceof AbstractArrow arrow ? arrow.getWeaponItem() : shooter.getUseItem();
         if (launcher == null || !(launcher.is(Items.BOW) || launcher.getItem() instanceof R196ReinforcedBowItem)) return false;
         String material = launcher.getItem() instanceof R196ReinforcedBowItem bow ? bow.material() : "wood";
-        float spread = shooter instanceof Player player ? R196WeaponRules.inaccuracy(player.experienceLevel,
+        float spread = shooter instanceof Player player ? R196WeaponRules.inaccuracy((int)Math.min((long)player.experienceLevel + Math.round(8F *
+                io.github.ningmeng123.mite.enchantment.R196Enchantments.level(launcher, player.level(), "true_flight")), Integer.MAX_VALUE),
                 shooter.isInWaterOrBubble() || shooter.isInLava()) : 1F;
         if (shooter instanceof Player) {
             speed *= R196WeaponRules.velocityMultiplier(material);

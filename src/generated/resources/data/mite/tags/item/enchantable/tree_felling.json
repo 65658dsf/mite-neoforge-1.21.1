@@ -1,0 +1,27 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:wooden_axe",
+    "minecraft:stone_axe",
+    "minecraft:golden_axe",
+    "minecraft:iron_axe",
+    "minecraft:diamond_axe",
+    "minecraft:netherite_axe",
+    "mite:flint_axe",
+    "mite:obsidian_axe",
+    "mite:copper_axe",
+    "mite:silver_axe",
+    "mite:rusted_iron_axe",
+    "mite:ancient_metal_axe",
+    "mite:mithril_axe",
+    "mite:adamantium_axe",
+    "mite:copper_battle_axe",
+    "mite:silver_battle_axe",
+    "mite:golden_battle_axe",
+    "mite:rusted_iron_battle_axe",
+    "mite:iron_battle_axe",
+    "mite:ancient_metal_battle_axe",
+    "mite:mithril_battle_axe",
+    "mite:adamantium_battle_axe"
+  ]
+}

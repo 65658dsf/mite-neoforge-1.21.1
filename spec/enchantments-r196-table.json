@@ -1,0 +1,586 @@
+{
+  "author": "NingMeng123",
+  "schema_version": 1,
+  "source_version": "MITE 1.6.4 R196",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "status": "implementation_written_pending_integration_tests",
+  "scope": [
+    "enchanting_table",
+    "bookshelves",
+    "random_selection",
+    "enchanted_books",
+    "anvil_enchantment_transfer",
+    "experience_payment"
+  ],
+  "sources": [
+    {
+      "class": "vm",
+      "original_source": "ContainerEnchantment.java",
+      "class_sha256": "ba4da3fe3b7a02cabd97f284723db581162bde235d3975b4e11d5d5e104b7a16",
+      "decompiled_path": ".reference/r196/decompiled/vm.java",
+      "decompiled_sha256": "f9e198ac6b3be6b35da3e69282143b28c83cebff7182558300b72a891880ff2c"
+    },
+    {
+      "class": "aaw",
+      "original_source": "EnchantmentHelper.java",
+      "class_sha256": "1a0878ad1606baa60b4dd73038dfd3bda62db75ff8bd3a0e0e7a76a5a37d6d74",
+      "decompiled_path": ".reference/r196/decompiled/aaw.java",
+      "decompiled_sha256": "f6e9e20d88593fa6b6142f8386f99dceb04bf0e2cc65ee8892c16dce5971873e"
+    },
+    {
+      "class": "aau",
+      "original_source": "Enchantment.java",
+      "class_sha256": "072d7bec6d8409258490dafa60dda1c4fcaa0e1e957b874d5ac654df928b65fd",
+      "decompiled_path": ".reference/r196/decompiled/aau.java",
+      "decompiled_sha256": "d2588724c18b8ba101b4d5b510b8ced09f3f6866f09355404c9fd82a6a1f2181"
+    },
+    {
+      "class": "aoc",
+      "original_source": "BlockEnchantmentTable.java",
+      "class_sha256": "beed59402823f9fe6bcadb065b78ec1cc2b589795673d7377b958ff8b5b09c82",
+      "decompiled_path": ".reference/r196/decompiled/aoc.java",
+      "decompiled_sha256": "59d7d21c9d885d50cc53376ab1e5834d32f9b388a0bea729c5215ffb1d745833"
+    },
+    {
+      "class": "axr",
+      "original_source": "GuiEnchantment.java",
+      "class_sha256": "635ab0ddfa979759d273514a7e7086de26b9f28c88856d208850e9f41b7b1b8b",
+      "decompiled_path": ".reference/r196/decompiled/axr.java",
+      "decompiled_sha256": "f03481ed097e4a5d36dc2a4f22a22e53032ddc9dc62e6affd3d7d5f40d95841c"
+    },
+    {
+      "class": "xo",
+      "original_source": "ItemEnchantedBook.java",
+      "class_sha256": "6bb6f6de48a64b6a15cd75370629bf3644d1fab97c5ef65246d5acd11bf9309d",
+      "decompiled_path": ".reference/r196/decompiled/xo.java",
+      "decompiled_sha256": "c40f7fd27f7acb56f3755875e3053a380a2beebf0837d867ab2f6f9e5d794ccb"
+    },
+    {
+      "class": "va",
+      "original_source": "ContainerRepair.java",
+      "class_sha256": "f823c8d3c025a27e15608ea217021925d732eed33ec3cc9c2e31f5c1ec549892",
+      "decompiled_path": ".reference/r196/decompiled/va.java",
+      "decompiled_sha256": "a54d70588864448269c62f6eb8b0e5ef250509f8a5557e413fbb194f2c554c39"
+    },
+    {
+      "class": "vc",
+      "original_source": "ContainerRepairINNER2.java",
+      "class_sha256": "8e3b4dbf15f6a4dfe09832c0015c796b6ec8e67078df6b1b12255882a800324f",
+      "decompiled_path": ".reference/r196/decompiled/vc.java",
+      "decompiled_sha256": "bce6647ed98b2f8a527dfbf3a0314c1e6b832c477b1e65f46b4102eabdb0c11d"
+    },
+    {
+      "class": "ye",
+      "original_source": "ItemStack.java",
+      "class_sha256": "a9c67bbf0201ada036663c4f8e88e51b8aa41ba17b219b59cbf56173d44fac65",
+      "decompiled_path": ".reference/r196/decompiled/ye.java",
+      "decompiled_sha256": "da5c8e10fe4f85a6bb57e4816f3fee483675ba092905a72b698b2c01beb0cc42"
+    },
+    {
+      "class": "wn",
+      "original_source": "ItemBook.java",
+      "class_sha256": "f9704174ba2f9383847593a9af9e3a42157d84e64f352d99ac9bd3625681bf0b",
+      "decompiled_path": ".reference/r196/decompiled/wn.java",
+      "decompiled_sha256": "426c2998df6266dd0659ba6b80a696cc823c8fdab68ae0c3468dae730d425739"
+    },
+    {
+      "class": "is",
+      "original_source": "DedicatedServer.java",
+      "class_sha256": "e45c333b00c5960db79f476a8631cac2c602d0286c81b3b3baee1a9d602bf7f7",
+      "decompiled_path": ".reference/r196/decompiled/is.java",
+      "decompiled_sha256": "549a6f92650c45a3498c44ccf7aa21216ab5f325950f0f35d742b6984d2a6e33"
+    },
+    {
+      "class": "abw",
+      "original_source": "World.java",
+      "class_sha256": "0affe2c94d273750546e4d36d7d124072100f57b2dffba6d51619672f76dda36",
+      "decompiled_path": ".reference/r196/decompiled/abw.java",
+      "decompiled_sha256": "e57ec879d581af94a11f2e2d6fd0daf5921dc2f37a813a41d04aef853ab2f6d0"
+    },
+    {
+      "class": "uf",
+      "original_source": "EntityPlayer.java",
+      "class_sha256": "6aadb6b6596d5328fe512a14f1714abb44b9d1dcc791d0b3abb2349140aeca19",
+      "decompiled_path": ".reference/r196/decompiled/uf.java",
+      "decompiled_sha256": "ad6abab4a99efce4b5dc3f2b64faf77e0e49a8a866317c52b696e348cb347351"
+    },
+    {
+      "class": "yq",
+      "original_source": "EnumRarity.java",
+      "class_sha256": "fc4c3ee9cf32946166556f11723db18b1092964146f78844aa14fea1a8f58a04",
+      "decompiled_path": ".reference/r196/decompiled/yq.java",
+      "decompiled_sha256": "c8197d8a6858d3d5f71d1b93b1cbb52886d5f64568e25c8caab99ec0d57e716b"
+    },
+    {
+      "class": "abb",
+      "original_source": "EnchantmentData.java",
+      "class_sha256": "9605d66e53b50ca524a0057ed9cbeb987ba13077bd87299e7160c1cecaec9468",
+      "decompiled_path": ".reference/r196/decompiled/abb.java",
+      "decompiled_sha256": "89c52d6abe51f3dbd6eadfedc6a37e72d18aa72d36f133dd5e283eddc224d4ba"
+    },
+    {
+      "class": "vo",
+      "original_source": "SlotEnchantment.java",
+      "class_sha256": "3e980721f14e5a2e611c5013af3ea6f04033542da4e7ae453402a1a2ada9482d",
+      "decompiled_path": ".reference/r196/decompiled/vo.java",
+      "decompiled_sha256": "2c9a5090cc0cec3a31d6a56041d1a9472b2fe116f8eb93339f54b015c464ad89"
+    },
+    {
+      "class": "SlotRepairOrEnchantConsumable",
+      "original_source": "SlotRepairOrEnchantConsumable.java",
+      "class_sha256": "bf10f21edade542f4fd2a98e0d843a5d55ec4eab6df4f39a0c96658eca5c4b2e",
+      "decompiled_path": ".reference/r196/decompiled/SlotRepairOrEnchantConsumable.java",
+      "decompiled_sha256": "2689f3c6d648cc27ba0fb4347de6d053749d13b5ede63fead946a4eca4270e3c"
+    },
+    {
+      "class": "EnumEquipmentMaterial",
+      "original_source": "EnumEquipmentMaterial.java",
+      "class_sha256": "56034e3eb6a54fbc7fb22ce553ad8e1b443d524188f102c29a4a787743d5783d",
+      "decompiled_path": ".reference/r196/decompiled/EnumEquipmentMaterial.java",
+      "decompiled_sha256": "2f3f473c1cb1b69deb244d2e9940812d813d2a629abf1291913d9706f2d408e9"
+    },
+    {
+      "class": "xv",
+      "original_source": "ItemFishingRod.java",
+      "class_sha256": "2f17903ade79f155f1999bf88db5c52224097b4bcc7608bf90791a889cbb4422",
+      "decompiled_path": ".reference/r196/decompiled/xv.java",
+      "decompiled_sha256": "982be56dab4ddc4beb213203e74f456eb985b25b2db60816424c41e4cc031ce6"
+    },
+    {
+      "class": "wp",
+      "original_source": "ItemBow.java",
+      "class_sha256": "3b130d99843a7b97d86e3b0ca8633d052e3f383426f760a54ece1c4e9db7aa7d",
+      "decompiled_path": ".reference/r196/decompiled/wp.java",
+      "decompiled_sha256": "f0a846c06a84c690175cf334b518a5a68a0787582fe262ad894571da8e5766ba"
+    },
+    {
+      "class": "yc",
+      "original_source": "Item.java",
+      "class_sha256": "0122862cf18aa6f0a9298b7dea531dc201a9d9829bc192725bf4e647ae95eb3a",
+      "decompiled_path": ".reference/r196/decompiled/yc.java",
+      "decompiled_sha256": "593c8a751ded83b56717d0d6572b1cd446bbf8b64335f9dc4ab836997aeaf280"
+    },
+    {
+      "class": "ut",
+      "original_source": "EntityExpBottle.java",
+      "class_sha256": "657c7718172330da8dea3dc22c77ea92d679733b29abd6ff3798b300c65ce160",
+      "decompiled_path": ".reference/r196/decompiled/ut.java",
+      "decompiled_sha256": "63e7ebbff724144067124676e1a1c72a67b108c2c91fa5413209386de5657a39"
+    },
+    {
+      "class": "xr",
+      "original_source": "ItemExpBottle.java",
+      "class_sha256": "fb45130f10bd5566d4a28e7c5a54e179977940638ffd86117fd4ef5a213c26a8",
+      "decompiled_path": ".reference/r196/decompiled/xr.java",
+      "decompiled_sha256": "ecb5ef2a13be8725416a7333f9c410a573faba5f991c9f03b613001ca69346bd"
+    }
+  ],
+  "activation": {
+    "default_professions_enabled": false,
+    "server_source": {
+      "path": ".reference/r196/decompiled/is.java",
+      "lines": [
+        86,
+        87
+      ],
+      "behavior": "Reads professions default false, then forcibly assigns false; do not enable a profession gate merely because Skill.ENCHANTING exists."
+    },
+    "conditional_client_gate": {
+      "path": ".reference/r196/decompiled/axr.java",
+      "lines": [
+        47,
+        52,
+        149,
+        152
+      ],
+      "behavior": "When world skills flag is enabled, client prevents clicks without Skill.ENCHANTING. ContainerEnchantment itself has no skill test."
+    },
+    "all_registered_enchantments_candidate_enabled": true,
+    "candidate_source": {
+      "path": ".reference/r196/decompiled/aaw.java",
+      "lines": [
+        277,
+        297
+      ],
+      "behavior": "Iterates every non-null aau entry; creative-tab visibility does not filter table selection. Books bypass canEnchantItem while ordinary items must pass."
+    },
+    "random_algorithm_path": {
+      "table": "vm.a(player,slot) -> aaw.b(Random,ItemStack,energy)",
+      "world_random_helper": "aaw.a(Random,ItemStack,energy) -> enchantability compression -> aaw.b; unlike the table, the helper attaches ALL returned enchantments even to a book."
+    }
+  },
+  "input_and_activation": {
+    "source": [
+      "ye.java:764-778",
+      "vo.java:14-16",
+      "aoc.java:49-60",
+      "vm.java:193-196"
+    ],
+    "ordinary_item": "Maximum stack size must equal 1, item must be damageable, enchantability positive, and actual ench tag absent.",
+    "exceptions": [
+      "normal book",
+      "water bottle",
+      "unenchanted golden apple"
+    ],
+    "normal_book_enchantability": 30,
+    "book_source": "wn.java:16-18",
+    "already_enchanted_rejected": true,
+    "lapis_slot_or_consumption": false,
+    "table_opening": "Block directly above table must be air or passable (non-solid and non-liquid).",
+    "usable_distance_squared_maximum": 64
+  },
+  "bookshelves": {
+    "source": "vm.java:62-117; abw.java:4581-4597",
+    "type": "minecraft:bookshelf only; no arbitrary enchantment-power tag in R196",
+    "layers": [
+      0,
+      1
+    ],
+    "distance": "perimeter of a 5x5 square, excluding four corners: 12 positions each layer; max 24",
+    "coordinates": [
+      [
+        -2,
+        -1
+      ],
+      [
+        -2,
+        0
+      ],
+      [
+        -2,
+        1
+      ],
+      [
+        -1,
+        -2
+      ],
+      [
+        -1,
+        2
+      ],
+      [
+        0,
+        -2
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        -2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        -1
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ]
+    ],
+    "paths": "Each cardinal near cell (0,+/-1) or (+/-1,0) permits corresponding center outer shelf. Corner-adjacent outer shelves are permitted if the associated near diagonal is passable AND at least one adjacent cardinal near cell is passable. A shelf counts once even if two routes are open.",
+    "upper_layer_gate": "dy=1 evaluated only when center above table (0,1,0) is passable. Same-layer path cells determine each layer independently.",
+    "passable_predicate": "Air OR non-solid block excluding liquids; unavailable chunk is false. Do not automatically use modern enchantment_power_transmitter tag without documenting adaptation.",
+    "calculation_cap": 24
+  },
+  "offered_energy": {
+    "source": [
+      "vm.java:240-259",
+      "aaw.java:205-223"
+    ],
+    "special_conversion_energy": 2,
+    "raw_power_formula": "(1 + min(accessible_bookshelves,24)) * multiplier",
+    "table_multiplier": {
+      "emerald": 2,
+      "diamond": 4
+    },
+    "compress_formula": "Let E=item enchantability, P=raw power. E<1 => 0; P<=E => P; else Math.round(E + 0.5*min(P-E,E) + 0.25*min(max(P-2E,0),E)). Values above 3E contribute nothing.",
+    "slot_formula": "Math.max(Math.round(compressedPower * fraction),1), fraction=(slot+1)/3F + (slot<2 ? (nextFloat()-0.5F)*0.2F : 0)",
+    "slot_indices": [
+      0,
+      1,
+      2
+    ],
+    "random_rng": "java.util.Random with float arithmetic and Java Math.round semantics",
+    "no_double_compression": "ContainerEnchantment invokes b(Random,stack,offeredEnergy) directly; only mob/loot-style a(Random,stack,energy) compresses before selection.",
+    "recalculation": "Enchantable input inventory changes regenerate offered values and cosmetic runic seed. No modern persistent three-option preview/clue contract exists in R196."
+  },
+  "experience_payment": {
+    "source": [
+      "aau.java:99-101",
+      "vm.java:142-180",
+      "axr.java:125-141",
+      "uf.java:1622-1669"
+    ],
+    "formula": "experience_points = offered_energy * 100",
+    "eligibility": "Offered energy >0 AND input non-null AND (total experience bJ >= cost OR creative).",
+    "deduction": "Server calls player.s(-cost) only on a non-null generated enchantment list, or on fixed water/apple conversion. No result => no payment.",
+    "ui_number": "Shows experience point cost, not enchantment energy or player level.",
+    "creative_historical_behavior": "Creative bypasses eligibility but still calls signed XP deduction; total lower bound -800. Retaining modern creative free enchanting would be an explicit adaptation.",
+    "modern_safe_transaction_requirement": "Actual final deduction must use the existing canonical total-points system, preserve quality/components, reject insufficient points server side, and not publish output if a mod cancels payment.",
+    "score": "Source uf.addExperience only adds score on positive gains; enchanting reduces canonical XP points without subtracting accumulated score."
+  },
+  "random_selection": {
+    "source": [
+      "aaw.java:225-297",
+      "aau.java:63-76",
+      "aau.java:124-143",
+      "yq.java:5-9",
+      "abb.java:9-12"
+    ],
+    "energy_jitter": "remaining=max(1, (int)(offeredEnergy * (1F + (nextFloat()-0.5F)*0.5F))) => [0.75,1.25) factor, integer truncate.",
+    "candidate_levels": "For each allowed enchantment choose the highest level with minimumEnergy(level)<=remaining. There is no maximum-energy window exclusion.",
+    "minimum_energy_formula": "max(difficulty-10,0) + difficulty*(level-1) + 1",
+    "single_level_special_case": "Non-levelled enchantments are level 1 in output but the minimum cost uses synthetic level 3: max(difficulty-10,0)+2*difficulty+1.",
+    "weight_by_rarity": {
+      "common": 100,
+      "uncommon": 25,
+      "rare": 5,
+      "epic": 1
+    },
+    "weighted_item": "Each candidate enchantment appears once, weighted by rarity regardless of chosen level.",
+    "compatibility": "Before each draw remove every candidate rejected by ANY already-selected enchantment compatibility method; self duplicates are incompatible.",
+    "first_two_level_randomization": "For selected index 0 or 1, when candidate count>1, enchantment has multiple levels, and nextInt(2)==0, replace highest permitted level L with nextInt(L)+1.",
+    "remaining_after_draw": "remaining -= selected minimumEnergy(actualLevel); remaining -=5.",
+    "continuation": "Continue only if remaining>=5 and numberSelected<=2; maximum 3 selected enchantments.",
+    "ordering": "After selection, random shuffle by sampling unused indices; outputs have no fixed enchantment order.",
+    "book_table_result": "Table chooses nextInt(resultList.size()) and attaches only that single entry to an enchanted book. A book is NOT weighted again by rarity at this final step.",
+    "no_vanilla_halving": "R196 does not use modern modified enchantability random additions or repeated level-halving/50-chance additional enchantment rules."
+  },
+  "special_conversions": [
+    {
+      "input": "water bottle",
+      "output": "experience bottle",
+      "energy": 2,
+      "experience_points": 200,
+      "source": "vm.java:147-152",
+      "stored_experience_on_throw": 200,
+      "stored_experience_source": "ut.java:34-43; xr.java:6-7; aau.java:99-101"
+    },
+    {
+      "input": "unenchanted golden apple",
+      "output": "enchanted golden apple",
+      "energy": 2,
+      "experience_points": 200,
+      "source": "vm.java:153-157"
+    }
+  ],
+  "enchanted_book_storage": {
+    "source": "xo.java:41-65, 89-96",
+    "storage": "StoredEnchantments entries; same ID replaces only if incoming level is greater, never adds levels or upgrades equal-level duplicates.",
+    "table_count": 1,
+    "generated_book_from_random_loot": "xo random loot chooses uniformly from the full aau.c registered list, then uniformly level 1..maxLevel. That is a different path from table rarity weighting."
+  },
+  "anvil_transfer": {
+    "source": [
+      "va.java:100-127",
+      "va.java:157-210",
+      "vc.java:23-29",
+      "vc.java:32-79",
+      "SlotRepairOrEnchantConsumable.java:14-28"
+    ],
+    "eligibility": "First stack must satisfy isEnchantable AND not have actual enchantments; second must be enchanted book with non-null StoredEnchantments and at least one valid enchantment for first item.",
+    "already_enchanted_target": "Rejected; cannot add, upgrade, or merge enchantments on an already enchanted item by book.",
+    "book_plus_book": "Rejected: enchanted book is not an enchantable normal book.",
+    "same_item_merge": "Second enchanted equipment is rejected as a repair combination; first may retain its enchantments while combining with unenchanted damaged donor.",
+    "transfer": "Copy first item; for each book enchantment valid on target, apply min(maxLevel,max(existingLevel,incomingLevel)) (equal-level branch increments, but normal entry requires target unenchanted so equal nonzero levels are unreachable).",
+    "conflicts": "Transfer loop does not call compatibility! A deliberately supplied multi-enchantment conflicting book transfers every entry valid for the target. Ordinary table books contain only one entry. Preserve modern compatibility rules only as an explicit modern adaptation.",
+    "invalid_entries": "Skipped; consume the whole book after taking output if at least one valid entry exists.",
+    "experience_points": 0,
+    "prior_work_penalty": false,
+    "too_expensive_cap": false,
+    "book_count_consumed": "Entire second slot emptied (normally max stack 1).",
+    "anvil_wear_from_book": 0,
+    "metal_capacity_gate": "Material capacity checks are only in the repair path, not book transfer.",
+    "disenchanting": "Actual enchanted item+bottle of disenchanting removes enchant tags, consumes bottle, no XP and no wear; already implemented by UtilityDisenchanting."
+  },
+  "current_implementation_gaps": [
+    {
+      "path": "src/main/java/io/github/ningmeng123/mite/mixin/EmeraldEnchantmentMenuMixin.java",
+      "finding": "Only replaces modern cost calculation for emerald table. Normal diamond table, modern bookshelf scan, random enchantment selection, player-level payment, lapis, modern preview and book multi-selection remain modern."
+    },
+    {
+      "path": "src/main/java/io/github/ningmeng123/mite/rules/FunctionalBlockRules.java",
+      "finding": "Power/compression/formula implemented and unit tested, but no actual 24-shelf source scan, source book enchantability 30, source payment/selection."
+    },
+    {
+      "path": "src/main/java/io/github/ningmeng123/mite/crafting/MaterialAnvilRules.java",
+      "finding": "Source repair/disenchant plans implemented; any StoredEnchantments second item returns null and falls through to modern anvil behavior."
+    },
+    {
+      "path": "src/main/java/io/github/ningmeng123/mite/mixin/FunctionalAnvilMixin.java",
+      "finding": "Zero XP/no wear path implemented only for source repair/disenchant; modern enchanting cost and book upgrades still active."
+    },
+    {
+      "path": "src/main/java/io/github/ningmeng123/mite/survival/PlayerExperience.java",
+      "finding": "Canonical point totals and extended level formula available; enchanting must spend points via canonical API without multiplying/removing player levels."
+    }
+  ],
+  "modern_adaptation_decisions_required": [
+    "R196 has no lapis slot/cost. Keep visible modern lapis slot with zero use, remove slot with a custom screen, or retain lapis as explicit modern cost; do not claim retained lapis is R196.",
+    "Retain all modern enchantment types per overall project plan, but define their minimum-energy/difficulty and treasure access explicitly. R196 rarity categories are weights100/25/5/1; do not silently copy modern1/2/5/10 weights.",
+    "Modern compatibility may be retained for post-1.6.4 enchantments; distinguish it from source table conflicts and source book-transfer lack of conflict validation.",
+    "Choose and document modern creative zero-cost behavior instead of historical XP deduction if desired.",
+    "Modern screen displays levels/lapis and clues by default; source displays points and runic phrases. A custom screen or matching tooltip must prevent presenting wrong level cost.",
+    "Modern power transmitter tags and fractional bookshelf bonuses have no R196 equivalent; document mapping for additional mods instead of assuming exact equivalence.",
+    "Modern Java registry iteration differs from old HashMap<Integer,abb>; preserve probabilities and invariants, not same seed producing identical enchantment order."
+  ],
+  "acceptance_cases": [
+    {
+      "id": "shelf_cap_24",
+      "setup": "24 accessible native bookshelves, plus extras",
+      "expected": "All 24 included; extras do not increase energy; diamond raw100, emerald raw50."
+    },
+    {
+      "id": "upper_path_and_gate",
+      "setup": "Place upper shelves then block center above table / block only one diagonal route",
+      "expected": "Upper gate blocks all upper shelves; diagonal shelf remains accessible via alternate open cardinal route."
+    },
+    {
+      "id": "shelf_torch_vs_water",
+      "setup": "Path cell torch vs water vs solid block",
+      "expected": "Non-solid non-liquid path passes; liquid and solid fail."
+    },
+    {
+      "id": "book30",
+      "setup": "book,24 shelves,upper option",
+      "expected": "Emerald40 energy/4000XP; diamond53 energy/5300XP."
+    },
+    {
+      "id": "compression_bands",
+      "setup": "enchantability30, power30/50/60/90/1000",
+      "expected": [
+        30,
+        40,
+        45,
+        53,
+        53
+      ]
+    },
+    {
+      "id": "low_enchantability",
+      "setup": "enchantability10,24 shelves,diamond upper option",
+      "expected": "18 energy/1800XP; source power saturates at17.5 rounded18."
+    },
+    {
+      "id": "points_not_levels",
+      "setup": "Offer energy40; canonical XP3999/4000",
+      "expected": "3999 cannot take;4000 can and becomes0, regardless displayed level."
+    },
+    {
+      "id": "book_single",
+      "setup": "Many seeded high-energy table book results",
+      "expected": "Exactly one stored enchantment on each nonempty output; no multiple stored entries."
+    },
+    {
+      "id": "max_three",
+      "setup": "High-energy tool enchantment draws",
+      "expected": "1..3 unique pairwise compatible results; level within source max; no more3."
+    },
+    {
+      "id": "null_list",
+      "setup": "Input with positive enchantability but no candidate at selected energy",
+      "expected": "No output modification,XP/lapis not consumed."
+    },
+    {
+      "id": "fixed_conversion",
+      "setup": "Water bottle / golden apple; any shelves and table tier",
+      "expected": "Every option energy2 and200XP; convert to experience bottle / enchanted golden apple."
+    },
+    {
+      "id": "book_transfer",
+      "setup": "Unenchanted valid target+one valid book,zeroXP",
+      "expected": "Book consumed, enchant copied,quality/name/damage retained,noXP/noanvilwear."
+    },
+    {
+      "id": "reject_upgrade",
+      "setup": "Already enchanted target+book; enchanted book+book",
+      "expected": "No source transfer output."
+    },
+    {
+      "id": "invalid_book",
+      "setup": "Book contains only enchants invalid for target",
+      "expected": "No transfer;no book consumption."
+    },
+    {
+      "id": "reload_and_sync",
+      "setup": "Dedicated server,menu reopen,reload,click with stale offer/insufficient XP",
+      "expected": "Server authoritative;no duplicate items,XPdesync,qualityloss,or stale client affordability bypass."
+    }
+  ],
+  "uncertainties": [
+    {
+      "id": "creative_deduction_policy",
+      "type": "modern_adaptation",
+      "status": "needs explicit implementation decision",
+      "evidence": "Original source unambiguously deducts XP even in creative."
+    },
+    {
+      "id": "invalid_registry_book",
+      "type": "historical_malformed_input",
+      "status": "not a normal survival path",
+      "evidence": "Source dereferences aau.b[index] without null protection; modern implementation must safely reject unknown entries rather than emulate crashes."
+    },
+    {
+      "id": "future_mods_passable",
+      "type": "modern_adaptation",
+      "status": "needs target implementation contract",
+      "evidence": "R196 non-solid predicate and modern collision/power-transmitter tag semantics differ."
+    }
+  ],
+  "implementation": {
+    "author": "NingMeng123",
+    "table": "R196EnchantmentTable + EmeraldEnchantmentMenuMixin",
+    "book_transfer": "R196BookAnvil via MaterialAnvilRules",
+    "client": "EnchantmentScreenMixin; shared mode DataSlot index10; modern book animation retained",
+    "random_loot_and_mobs": "R196RandomEnchantmentsMixin on EnchantmentHelper.selectEnchantment",
+    "source_material_enchantability": {
+      "normal_book": 30,
+      "native_wood_bow": 10,
+      "native_iron_hook_rod": 30,
+      "flint_and_obsidian_hook_rods": 10,
+      "armor": "MiteArmorContent audited source definition, including retained native armor IDs"
+    },
+    "tests": "R196EnchantmentTableGameTests15 + R196ExperienceBottleGameTests2; updated FunctionalBlockGameTests; full1156GameTests passed.",
+    "modern_adaptations": {
+      "lapis": "User override (2026-10-15): both table tiers require and consume native 1/2/3 lapis for choices0/1/2 in survival. Creative bypasses materials and XP. This deliberately differs from R196 no-lapis source behavior.",
+      "screen": "Native panel/book animation/lapis slot and native choice icons retained. Buttons show exact XP point cost and require both points and lapis; hover contains exactly energy/current XP/required XP, including creative.",
+      "creative": "Source result selection still applies but no XP or material charge.",
+      "passable": "Modern state.blocksMotion and empty fluid state map source non-solid, non-liquid predicate.",
+      "modern_equipment": "Crossbow,trident,mace,shield,elytra excluded from source equipment classifier; native table and merge paths retained.",
+      "modern_enchantments": "Source table/general source loot pools contain only the38 registered source definitions. Explicit modern-only book pools retain vanilla selection; native enchant_randomly, trades and pre-enchanted loot remain available. Pure modern book transfers use native anvil fees/upgrades; a source-enchanted target cannot bypass the source once-only restriction with a modern book.",
+      "mixed_books": "If source entry does not apply to target but a modern entry does, preserve native modern cost. Valid source-source multiple stored entries transfer without historical conflict checking. Any pair involving modern entry must satisfy modern compatibility.",
+      "seed": "R196 algorithm probabilities and constraints retained; registry/collection iteration differs, so no old seed-result identity promised.",
+      "actual_loot_book_pool": "Default native enchant_randomly and villager TRADEABLE pools currently append17MITE entries to the original modern pool (uniform mixed pool; can include modern Infinity). They are explicitly modern acquisition routes, not an exact38-only R196 structure/trade book pool. Table and general source level-based pools strictly use38registered source definitions and never include Infinity.",
+      "book_entrypoint_distinction": "Table vm selects one entry from aaw.b; world helper aaw.a adds all up-to3 entries even to a normal book. Real R196 structure books (afp:91,agi:212,etc) call xo.b / xo.a and uniformly choose1enchantment,uniform level. R196 villagers ub:325-330 also choose1, while actual aaw.a callers og:974 and ub:344 provide equipment, not books. Modern level-based books retain the general helper behavior as an adaptation."
+    },
+    "experience_bottle": "ExperienceBottleExperienceMixin changes only native ExperienceOrb.award amount to200; native NeoForge ProjectileImpactEvent cancellation, splash,orb split/merge,discard retained.",
+    "offer_refresh": "Lapis changes do not reroll energy/seed for the same input and bookshelf/table access state. Server payment revalidates input, energy and lapis contents after cancellable XP approval, before either cost is committed."
+  },
+  "source_material_rule_evidence": [
+    "EnumEquipmentMaterial.java:5-21",
+    "yc.java:1039-1047",
+    "wp.java:16-24,117-119",
+    "xv.java:16-24,130-132"
+  ],
+  "bytecode_cross_check": "build/verification/enchantments-r196-table-bytecode.txt (javap-c-p vm/aaw/va from pinned reference-classes.jar; no CFR-only ambiguity found in energy,draw-count,point-payment or once-only transfer branch)",
+  "port_verification": {
+    "author": "NingMeng123",
+    "status": "automated_checks_passed_user_accepted",
+    "report": "build/verification/enchantments-completion.json",
+    "source_data_checks": 9432,
+    "junit": 1226,
+    "gametest": 1156,
+    "lapis_revision_log": "build/verification/enchantments-lapis-gametest.log",
+    "user_acceptance": "User confirmed the latest three-line tooltip and lapis cost revision and authorized GitHub submission."
+  }
+}

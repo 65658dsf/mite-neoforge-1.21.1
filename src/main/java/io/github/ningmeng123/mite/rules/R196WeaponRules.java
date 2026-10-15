@@ -11,7 +11,7 @@ public final class R196WeaponRules {
     public static float velocityMultiplier(String material) {
         return material.equals("mithril") ? 1.25F : material.equals("ancient_metal") ? 1.1F : 1F;
     }
-    /** Skills are suppressed in the confirmed R196 runtime; True Flight is not registered here yet. */
+    /** Skills are suppressed in the confirmed R196 runtime; caller includes True Flight virtual levels. */
     public static float inaccuracy(int level, boolean inLiquid) {
         float wander = level < 0 ? 5F + (float)level * -.5F
                 : (float)(.5 + 4.5 / Math.pow(.8F + (float)((long)level + 1) / 5F, 2));

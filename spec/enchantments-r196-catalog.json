@@ -1,0 +1,6695 @@
+{
+  "author": "NingMeng123",
+  "schema_version": 1,
+  "scope": "MITE Minecraft1.6.4 R196 实际注册附魔、支持性、成本与兼容目录；效果调用由独立审计补充。",
+  "archive": {
+    "path": "MITE 1.6.4 R196.zip",
+    "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3"
+  },
+  "registered_count": 38,
+  "registered_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    32,
+    33,
+    34,
+    35,
+    48,
+    49,
+    50,
+    51,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95
+  ],
+  "rarity_weights": {
+    "common": 100,
+    "uncommon": 25,
+    "rare": 5,
+    "epic": 1
+  },
+  "source_index": {
+    "abg": {
+      "path": ".reference/r196/decompiled/abg.java",
+      "source_file_attribute": "EnchantmentProtection.java",
+      "decompiled_sha256": "23cc66746f6ba0e1060b60d9e153bbcd40b764775e2e649beaac06b9f8c4d713",
+      "class_sha256": "3321b4d9a227ae405d1bda8a15af2acbe2fe85bc5b7246545d4585ba286479d2",
+      "archive_entry": "abg.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aau": {
+      "path": ".reference/r196/decompiled/aau.java",
+      "source_file_attribute": "Enchantment.java",
+      "decompiled_sha256": "d2588724c18b8ba101b4d5b510b8ced09f3f6866f09355404c9fd82a6a1f2181",
+      "class_sha256": "072d7bec6d8409258490dafa60dda1c4fcaa0e1e957b874d5ac654df928b65fd",
+      "archive_entry": "aau.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "yq": {
+      "path": ".reference/r196/decompiled/yq.java",
+      "source_file_attribute": "EnumRarity.java",
+      "decompiled_sha256": "c8197d8a6858d3d5f71d1b93b1cbb52886d5f64568e25c8caab99ec0d57e716b",
+      "class_sha256": "fc4c3ee9cf32946166556f11723db18b1092964146f78844aa14fea1a8f58a04",
+      "archive_entry": "yq.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "xo": {
+      "path": ".reference/r196/decompiled/xo.java",
+      "source_file_attribute": "ItemEnchantedBook.java",
+      "decompiled_sha256": "c40f7fd27f7acb56f3755875e3053a380a2beebf0837d867ab2f6f9e5d794ccb",
+      "class_sha256": "6bb6f6de48a64b6a15cd75370629bf3644d1fab97c5ef65246d5acd11bf9309d",
+      "archive_entry": "xo.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "abf": {
+      "path": ".reference/r196/decompiled/abf.java",
+      "source_file_attribute": "EnchantmentOxygen.java",
+      "decompiled_sha256": "b991af23e19c557b63057cd5dfeb8eb20cd84518fa9578e9ade45ae2e8780d93",
+      "class_sha256": "4dfdda999dafa00a5886d46cf7ed52a197633f02d9c69872242f93cad4fa8626",
+      "archive_entry": "abf.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "abj": {
+      "path": ".reference/r196/decompiled/abj.java",
+      "source_file_attribute": "EnchantmentWaterWorker.java",
+      "decompiled_sha256": "e168e6c8a91bf44a41125a7144b789a10824b9c89ee28dbd857d621fb2df2e62",
+      "class_sha256": "8ac6127625e7d1c9df58dcc943cfef57790aed6e1f5fdfabf32a8a1932db3c58",
+      "archive_entry": "abj.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "abh": {
+      "path": ".reference/r196/decompiled/abh.java",
+      "source_file_attribute": "EnchantmentThorns.java",
+      "decompiled_sha256": "2dd5b81421290b845f219b1e00e8d585340f6fdf9fff76033ffc327e5b7e014a",
+      "class_sha256": "d6faf9b3fa42a52afaf39e130457eca87da8f649cebc47a49bd0f95459fc8d1d",
+      "archive_entry": "abh.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aar": {
+      "path": ".reference/r196/decompiled/aar.java",
+      "source_file_attribute": "EnchantmentDamage.java",
+      "decompiled_sha256": "37cc6aa8ce882b28fc53b0e04e47587a152cc93ef937300dba282297de58bf42",
+      "class_sha256": "694ff2206fa14811804a6676c371c170909a1c055f7e385e80fed0636a4741ea",
+      "archive_entry": "aar.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "abd": {
+      "path": ".reference/r196/decompiled/abd.java",
+      "source_file_attribute": "EnchantmentKnockback.java",
+      "decompiled_sha256": "252a1d9e0d161551ac3af0c353bd01d82db7bc517629561974447804af49ea5b",
+      "class_sha256": "ab4196eba5ade8944a0d1ac659fd3b74fa8bcb5839d8d5c78b7ce7853b184e0f",
+      "archive_entry": "abd.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "abc": {
+      "path": ".reference/r196/decompiled/abc.java",
+      "source_file_attribute": "EnchantmentFireAspect.java",
+      "decompiled_sha256": "385d9fc28c8309b6cb3bee9ba95c7ccbceaa74131311a48926648fd1a7b59201",
+      "class_sha256": "98eda2920ae2e1197edfdef739de6a8521c8a69c8203d5b425f09d1fbd3747d1",
+      "archive_entry": "abc.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "abe": {
+      "path": ".reference/r196/decompiled/abe.java",
+      "source_file_attribute": "EnchantmentLootBonus.java",
+      "decompiled_sha256": "f84b5785d48237c13b716c6ef185ab87f288580e4810f9281967bd080ec2d579",
+      "class_sha256": "67720f370d15b334f4ad18e3ba60996d8a1a9ed01ae5bc13424288b58f831d68",
+      "archive_entry": "abe.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aat": {
+      "path": ".reference/r196/decompiled/aat.java",
+      "source_file_attribute": "EnchantmentDigging.java",
+      "decompiled_sha256": "e208a381e58cd04c118729ed94887d99c478600984cad1b5ac5e30183c663b1e",
+      "class_sha256": "0422772e4f167f7ce98f4e3f7b0e08327d302c8f0834594c6badadb45b1a7769",
+      "archive_entry": "aat.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "abi": {
+      "path": ".reference/r196/decompiled/abi.java",
+      "source_file_attribute": "EnchantmentUntouching.java",
+      "decompiled_sha256": "06ae04d8d72a4884a4627e4cc6d16513a75ae6270b028a245ea1e627e64e6e8a",
+      "class_sha256": "ef740d5f7bd4279d6fdecd8fae7023edef5a05bacc4a817cdfaa702f54ab9968",
+      "archive_entry": "abi.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aas": {
+      "path": ".reference/r196/decompiled/aas.java",
+      "source_file_attribute": "EnchantmentDurability.java",
+      "decompiled_sha256": "6b2fb4d45ae253c5cb2803ed90cc5a1aba4d0515116195db41b7ec672fb544a6",
+      "class_sha256": "919e8a5ac09086c8626347628f61e01cdb1b78dc76f65fdb7829c27bba4ff4e7",
+      "archive_entry": "aas.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aan": {
+      "path": ".reference/r196/decompiled/aan.java",
+      "source_file_attribute": "EnchantmentArrowDamage.java",
+      "decompiled_sha256": "38b237a9da2a3bf211b576407dfc642ccad5c2d7549913d5ad6335e6bfb97d62",
+      "class_sha256": "8f0219e7c3b0f56996385de3d3a410ec7ff4477abbbc731011db337dd53dde25",
+      "archive_entry": "aan.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aaq": {
+      "path": ".reference/r196/decompiled/aaq.java",
+      "source_file_attribute": "EnchantmentArrowKnockback.java",
+      "decompiled_sha256": "467135672d2b7f62b14ef95e08713d87c8e3d91e11c781b816a5078481fa36cd",
+      "class_sha256": "4a4674a97bfa4e4f670c2e1ac2171720410d8ccb65fc5b28a468e2962bfb818f",
+      "archive_entry": "aaq.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aao": {
+      "path": ".reference/r196/decompiled/aao.java",
+      "source_file_attribute": "EnchantmentArrowFire.java",
+      "decompiled_sha256": "75a947a5e32eb836e202e58d3a01229339cb1130297864af7549ff8ee7b99a53",
+      "class_sha256": "5ca37ef65ab4abd0ad382295893e3de8227dc2c21cd5bf6799dff7f73fef4787",
+      "archive_entry": "aao.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentArrowRecovery": {
+      "path": ".reference/r196/decompiled/EnchantmentArrowRecovery.java",
+      "source_file_attribute": "EnchantmentArrowRecovery.java",
+      "decompiled_sha256": "c28b61f87f4d85a84f2e334fd451578a212641120b2efb6f46ea20c059a9b263",
+      "class_sha256": "29ed31ebb18c9c5fe1b05b690d5c6a26a215286f8c399395a6d27d2348645a45",
+      "archive_entry": "EnchantmentArrowRecovery.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentStun": {
+      "path": ".reference/r196/decompiled/EnchantmentStun.java",
+      "source_file_attribute": "EnchantmentStun.java",
+      "decompiled_sha256": "23a4a23c8d9cfe27e97f3d3fdebc3c6f287771ff766e78dd9b056fc769bb6c1d",
+      "class_sha256": "7a9b8de80b56878d660f111e2e962dba8abba6512546ffec3f6a59e5bba1cd40",
+      "archive_entry": "EnchantmentStun.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentFishingFortune": {
+      "path": ".reference/r196/decompiled/EnchantmentFishingFortune.java",
+      "source_file_attribute": "EnchantmentFishingFortune.java",
+      "decompiled_sha256": "d4d003a364c3d326dd2c330ab028bb78737e0f162f11b0c520fb03c07fab828e",
+      "class_sha256": "6fa3b27c6766e8fbeb4eee054649cae9debccae82da4a433c9b2268eccc59f4f",
+      "archive_entry": "EnchantmentFishingFortune.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentFertility": {
+      "path": ".reference/r196/decompiled/EnchantmentFertility.java",
+      "source_file_attribute": "EnchantmentFertility.java",
+      "decompiled_sha256": "a0a51a1f1ba74f04d63ceda73ea0707f7677b5acdc648c0e32579238abd34c4e",
+      "class_sha256": "5db9c37755f232ce2b3a1f5c53082c0e72ab0eff6608fd40c7a91e6fcf66f733",
+      "archive_entry": "EnchantmentFertility.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentTreeFelling": {
+      "path": ".reference/r196/decompiled/EnchantmentTreeFelling.java",
+      "source_file_attribute": "EnchantmentTreeFelling.java",
+      "decompiled_sha256": "4f0ffc0eb36f3a834373b410a362ef057d202bc0ed9bff19b485f041cf6e05b1",
+      "class_sha256": "2e9282269b7a32887d78e96d497400263de2f88e239d6106d04372a7d6294bea",
+      "archive_entry": "EnchantmentTreeFelling.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentVampiric": {
+      "path": ".reference/r196/decompiled/EnchantmentVampiric.java",
+      "source_file_attribute": "EnchantmentVampiric.java",
+      "decompiled_sha256": "28bae3445b6cd63cb2651b466dfb6d8102e6b364e6359d57962676e241c53226",
+      "class_sha256": "a6fdef5af62b6587aaea4d6870da878b846cda01fbcca855b071dc7d0157e5ef",
+      "archive_entry": "EnchantmentVampiric.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentSpeed": {
+      "path": ".reference/r196/decompiled/EnchantmentSpeed.java",
+      "source_file_attribute": "EnchantmentSpeed.java",
+      "decompiled_sha256": "e167d249fee76c8bd6337cafb390cbd59e41a78fbff0710038065a33caa06149",
+      "class_sha256": "b170634fabf284e2e7eccca806abce65ed8998ebfe423a8f79984b30c285bddd",
+      "archive_entry": "EnchantmentSpeed.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentRegeneration": {
+      "path": ".reference/r196/decompiled/EnchantmentRegeneration.java",
+      "source_file_attribute": "EnchantmentRegeneration.java",
+      "decompiled_sha256": "3b2a80a051bacbe1bfc8b698bb776d73fe1059993f66611a9cec0d327cc5e805",
+      "class_sha256": "6786dd42196405c0e19284b78026186cc635ab0af7c727df58327ede4f02ff8b",
+      "archive_entry": "EnchantmentRegeneration.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentFreeAction": {
+      "path": ".reference/r196/decompiled/EnchantmentFreeAction.java",
+      "source_file_attribute": "EnchantmentFreeAction.java",
+      "decompiled_sha256": "2ecb13b71f63e7734cd2e8828cf6f6927c9bcbad6d7495b7824b8f17dc0e077b",
+      "class_sha256": "ab89d6cf7ba78399490c903df407b4a7c0aa11ef4fb77f6f2fcc18ab40e01aac",
+      "archive_entry": "EnchantmentFreeAction.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentQuickness": {
+      "path": ".reference/r196/decompiled/EnchantmentQuickness.java",
+      "source_file_attribute": "EnchantmentQuickness.java",
+      "decompiled_sha256": "3fc4717de6b96e4aa062f7a343d3a682e675c760765c3b927f093314732248d8",
+      "class_sha256": "23ec5adfdb63d98700aa0d6d80bebb3b0f3ddad9dd2c5c74ee334f07b4c0d5dc",
+      "archive_entry": "EnchantmentQuickness.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentTrueFlight": {
+      "path": ".reference/r196/decompiled/EnchantmentTrueFlight.java",
+      "source_file_attribute": "EnchantmentTrueFlight.java",
+      "decompiled_sha256": "0db42d4038c7dac427402d995dee148ced1f19c13f48a60d34763e123dc0ce14",
+      "class_sha256": "390654cb312e5384d79c116c3ebc6ae731e4ef880b875bb58dc2da896b1a8b74",
+      "archive_entry": "EnchantmentTrueFlight.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentPoison": {
+      "path": ".reference/r196/decompiled/EnchantmentPoison.java",
+      "source_file_attribute": "EnchantmentPoison.java",
+      "decompiled_sha256": "3b0edad09f12d67fb74298b023805c1f8a1e591f8f5502081b0cd8e3671e2839",
+      "class_sha256": "e4f9fb206d053ea7a7c31cc07746af4b8a105e58a7e083ff7e48511b4cb0c4f2",
+      "archive_entry": "EnchantmentPoison.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentDisarming": {
+      "path": ".reference/r196/decompiled/EnchantmentDisarming.java",
+      "source_file_attribute": "EnchantmentDisarming.java",
+      "decompiled_sha256": "4a024e22d065c93924816cab3d5985cc1b0e7af62fe5dd59d62a6fea3d67926b",
+      "class_sha256": "799b93b64904d539fbbc7b78fa46a7a016e298a933ed9c2123cebfbd64119239",
+      "archive_entry": "EnchantmentDisarming.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentPiercing": {
+      "path": ".reference/r196/decompiled/EnchantmentPiercing.java",
+      "source_file_attribute": "EnchantmentPiercing.java",
+      "decompiled_sha256": "504b8c2fd2a867e1140a9ef1f072a7c7f2c01b51aa5d22742a926b33160767c8",
+      "class_sha256": "155d70d78ac6741e9807e2e87fbd610ff2d83b187991b3da43d281de7f3f2893",
+      "archive_entry": "EnchantmentPiercing.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentHarvesting": {
+      "path": ".reference/r196/decompiled/EnchantmentHarvesting.java",
+      "source_file_attribute": "EnchantmentHarvesting.java",
+      "decompiled_sha256": "575778d782a1f992a218de036ee69083e1bc94591bb8513b6b7cc4be6d20a78a",
+      "class_sha256": "fe8205d2eb067a6998edc5d8b40cbb5bfa9e82a76d756557a567820b45e0b8f3",
+      "archive_entry": "EnchantmentHarvesting.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentButchering": {
+      "path": ".reference/r196/decompiled/EnchantmentButchering.java",
+      "source_file_attribute": "EnchantmentButchering.java",
+      "decompiled_sha256": "e6562e5b119097adc163c9431d1f90311b36386bae7a02668b75990212a793af",
+      "class_sha256": "8873c8877a4c9ba9927db215d484c5967852ea69dc27e0ec8f20508aab2669b3",
+      "archive_entry": "EnchantmentButchering.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "EnchantmentEndurance": {
+      "path": ".reference/r196/decompiled/EnchantmentEndurance.java",
+      "source_file_attribute": "EnchantmentEndurance.java",
+      "decompiled_sha256": "306fe261d202a5d1cfb736dced0259ab4d29c0ef3b3aabb10a79bfbc42c8b3b7",
+      "class_sha256": "87d08c30a965f05a94f1aa4659593522e163466e7ece2d8fd051eadc07ad6d1d",
+      "archive_entry": "EnchantmentEndurance.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "wp": {
+      "path": ".reference/r196/decompiled/wp.java",
+      "source_file_attribute": "ItemBow.java",
+      "decompiled_sha256": "f0a846c06a84c690175cf334b518a5a68a0787582fe262ad894571da8e5766ba",
+      "class_sha256": "3b130d99843a7b97d86e3b0ca8633d052e3f383426f760a54ece1c4e9db7aa7d",
+      "archive_entry": "wp.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "zl": {
+      "path": ".reference/r196/decompiled/zl.java",
+      "source_file_attribute": "ItemSword.java",
+      "decompiled_sha256": "6d05065de49d2b4686161f9e8f4ca1fcca0433d986638f8d7a2c458a5451a183",
+      "class_sha256": "05444f40cf6ff6f66fc309b5b94b9f7ae5dd0750df54b82d76b4ba0ef5c8f0f6",
+      "archive_entry": "zl.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "yn": {
+      "path": ".reference/r196/decompiled/yn.java",
+      "source_file_attribute": "ItemPickaxe.java",
+      "decompiled_sha256": "832b87001cf1378c765e2168cc3720fb235460f5c403d12bcbfc5acfe3fa8bd4",
+      "class_sha256": "963fcef62c1fb4a143e678a626ecbc40d50e6dc4fd30f7761b064205a0239e36",
+      "archive_entry": "yn.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ya": {
+      "path": ".reference/r196/decompiled/ya.java",
+      "source_file_attribute": "ItemAxe.java",
+      "decompiled_sha256": "7549c1e4b1f8b1fcd20031060ad0469a95886b087c4aad97c353ca99d6246ffd",
+      "class_sha256": "7629aab55c9aa5e60f8aad747e08822f388fa17e59cf29262deb4a50a5ca13bf",
+      "archive_entry": "ya.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "yb": {
+      "path": ".reference/r196/decompiled/yb.java",
+      "source_file_attribute": "ItemHoe.java",
+      "decompiled_sha256": "9377112d8cd5b4f0269e42d8e79c2869483af312352f7441efb8d00e151df8e5",
+      "class_sha256": "56fbe68090ba94777d0224b9e56001d7a95390b93cc03569909d050793b5d7c7",
+      "archive_entry": "yb.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "yx": {
+      "path": ".reference/r196/decompiled/yx.java",
+      "source_file_attribute": "ItemShears.java",
+      "decompiled_sha256": "eda45fa8ee4d8c9fd628384f21afb3c5a1adf1a43ed8e8d56589899749981f57",
+      "class_sha256": "8dab5b5e7816a337ed5cead626f4068035bceba325263cd9e95edd6eff3b051f",
+      "archive_entry": "yx.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "xv": {
+      "path": ".reference/r196/decompiled/xv.java",
+      "source_file_attribute": "ItemFishingRod.java",
+      "decompiled_sha256": "982be56dab4ddc4beb213203e74f456eb985b25b2db60816424c41e4cc031ce6",
+      "class_sha256": "2f17903ade79f155f1999bf88db5c52224097b4bcc7608bf90791a889cbb4422",
+      "archive_entry": "xv.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemDagger": {
+      "path": ".reference/r196/decompiled/ItemDagger.java",
+      "source_file_attribute": "ItemDagger.java",
+      "decompiled_sha256": "9e7b747f783a6dddb4f5d1ee7ed1bfcfa9bbc5fbdc0c97197a97e5c4e6e6ba35",
+      "class_sha256": "87a8c4ceeae584a26cb5d4ad2d0406ff0e2e9bc4254790c03a758a68947f8507",
+      "archive_entry": "ItemDagger.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemKnife": {
+      "path": ".reference/r196/decompiled/ItemKnife.java",
+      "source_file_attribute": "ItemKnife.java",
+      "decompiled_sha256": "ea74348202fd0fd911f97fa42e4d3f32aac584f24ab759745a760b8f7c665001",
+      "class_sha256": "ec202ad317dd22b57db7149b77f1b0e79848deb9e0fd45b6c53867706f15083a",
+      "archive_entry": "ItemKnife.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemBattleAxe": {
+      "path": ".reference/r196/decompiled/ItemBattleAxe.java",
+      "source_file_attribute": "ItemBattleAxe.java",
+      "decompiled_sha256": "1273d39c83cb6d4f85e967ba08c139fcf3e56953a15be8e09a64c0ca251d1ffa",
+      "class_sha256": "b7232c91ce45e4c795add303a1931885cbd9a46b64997706fe404c31406bac94",
+      "archive_entry": "ItemBattleAxe.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemMattock": {
+      "path": ".reference/r196/decompiled/ItemMattock.java",
+      "source_file_attribute": "ItemMattock.java",
+      "decompiled_sha256": "65e5ab6aaea9e380e478a6f3e9215b6d9c9e9a5e307bfebcb0150035463514ff",
+      "class_sha256": "1beeb162b136b00ae2a01f2a9c3cbb406d877ddf476bde43c70db7094b91c21d",
+      "archive_entry": "ItemMattock.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemScythe": {
+      "path": ".reference/r196/decompiled/ItemScythe.java",
+      "source_file_attribute": "ItemScythe.java",
+      "decompiled_sha256": "73d1081116dadc4311bb69ac7866d679a20630c0dbb0110dc1b7d768d4e41a16",
+      "class_sha256": "14590ba7e2d3ae96bcc905ee0970a8ba8fb43317731ba7105a2756b470fd8a4f",
+      "archive_entry": "ItemScythe.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemHatchet": {
+      "path": ".reference/r196/decompiled/ItemHatchet.java",
+      "source_file_attribute": "ItemHatchet.java",
+      "decompiled_sha256": "38f2beeb8e90bcf9976a259c9bc3f9d61424ad608ba21c86c317ac093870eef2",
+      "class_sha256": "5d7a13796fef1948111eec73d9e43c561dfca1569ee3d570714f7227053ab4f2",
+      "archive_entry": "ItemHatchet.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemWarHammer": {
+      "path": ".reference/r196/decompiled/ItemWarHammer.java",
+      "source_file_attribute": "ItemWarHammer.java",
+      "decompiled_sha256": "cde15dcda1d757d0901cd9d1b0220c4df98d684b2f6965b098aa5b4b64358905",
+      "class_sha256": "4644d10c671658dd30ee72c0080c522abc22327535a5a79483ef0338558531bc",
+      "archive_entry": "ItemWarHammer.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemShovel": {
+      "path": ".reference/r196/decompiled/ItemShovel.java",
+      "source_file_attribute": "ItemShovel.java",
+      "decompiled_sha256": "a9af5d2c0bce4dbecfcecadf8f87cf02221244461801e53b789f5f25aa00e4c7",
+      "class_sha256": "4590fd62c87b953f79695c1f1bafe2dbc5b3c9d70a5ac2e998ea82c3b2a5eec4",
+      "archive_entry": "ItemShovel.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ItemCudgel": {
+      "path": ".reference/r196/decompiled/ItemCudgel.java",
+      "source_file_attribute": "ItemCudgel.java",
+      "decompiled_sha256": "62e667a0f2c2cfd2a9357cf1b5b98919344ed5f2a4e7497733c410c4971a2fa0",
+      "class_sha256": "b4ea0db221feb71ec824020ac2e829bc522cdd846a10a47c8d69eb0d7a226083",
+      "archive_entry": "ItemCudgel.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "wh": {
+      "path": ".reference/r196/decompiled/wh.java",
+      "source_file_attribute": "ItemArmor.java",
+      "decompiled_sha256": "76cd690fff781c50c12c83119abbe8bd8a10d2608088aac9f1d9e664e85c6d58",
+      "class_sha256": "a3d9db8959d4a927a21b24e05d2b3f561c7f398cee0150acf4a22716d1b8a6d4",
+      "archive_entry": "wh.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "yc": {
+      "path": ".reference/r196/decompiled/yc.java",
+      "source_file_attribute": "Item.java",
+      "decompiled_sha256": "593c8a751ded83b56717d0d6572b1cd446bbf8b64335f9dc4ab836997aeaf280",
+      "class_sha256": "0122862cf18aa6f0a9298b7dea531dc201a9d9829bc192725bf4e647ae95eb3a",
+      "archive_entry": "yc.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "ye": {
+      "path": ".reference/r196/decompiled/ye.java",
+      "source_file_attribute": "ItemStack.java",
+      "decompiled_sha256": "da5c8e10fe4f85a6bb57e4816f3fee483675ba092905a72b698b2c01beb0cc42",
+      "class_sha256": "a9c67bbf0201ada036663c4f8e88e51b8aa41ba17b219b59cbf56173d44fac65",
+      "archive_entry": "ye.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aaw": {
+      "path": ".reference/r196/decompiled/aaw.java",
+      "source_file_attribute": "EnchantmentHelper.java",
+      "decompiled_sha256": "f6e9e20d88593fa6b6142f8386f99dceb04bf0e2cc65ee8892c16dce5971873e",
+      "class_sha256": "1a0878ad1606baa60b4dd73038dfd3bda62db75ff8bd3a0e0e7a76a5a37d6d74",
+      "archive_entry": "aaw.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "akc": {
+      "path": ".reference/r196/decompiled/akc.java",
+      "source_file_attribute": "Material.java",
+      "decompiled_sha256": "2974cfc831d76bf37d1ebd3a7e93a1397bd152890d22cadb32f4165c272aec45",
+      "class_sha256": "907062ca4d5abc78fa5cf4c0d4ba5dc96f516740f46656359230219a67747c4f",
+      "archive_entry": "akc.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "aap": {
+      "path": ".reference/r196/decompiled/aap.java",
+      "source_file_attribute": "EnchantmentArrowInfinite.java",
+      "decompiled_sha256": "d4aa8f690127487024af123bdfa488d7e17cfa3b74ba8ae34f9c65d92e6f8d84",
+      "class_sha256": "5755c4821085757c87ce47cd11418bfa941ae6354be29e523f4a98c4122a8758",
+      "archive_entry": "aap.class",
+      "line_number_note": "1-based CFR 0.152 decompiled line numbers; class SHA-256 is authoritative binary identity"
+    },
+    "r196_MITE.lang": {
+      "path": ".reference/r196/resources/assets/minecraft/lang/MITE.lang",
+      "sha256": "ff6cf0957c2157adc8b6a9ced1406a5ef55a1ff4e4e6be9c9b30b70555a90470"
+    },
+    "vanilla_1.6.4_en_US.lang": {
+      "archive": ".reference/downloads/minecraft-1.6.4-client.jar",
+      "archive_sha256": "f4513e51c766cdd1d32ca8acd0835d7e16e2851ebea3f2a3b4ce5ae696baf3ae",
+      "entry": "assets/minecraft/lang/en_US.lang",
+      "entry_sha256": "9f92c7828d49fb4e4af1b310a84c8f955112eb115a3007a04b99fba078c84e26"
+    },
+    "runtime_registry": {
+      "path": "reference-data/runtime-registry.json",
+      "sha256": "4a2990b4972402bd659654375918bd374b19f7dde14b327893adb9733d544712",
+      "mode": "guarded_registration_only",
+      "activation_flags": {
+        "professions_suppressed": true,
+        "in_dev_mode": false,
+        "allow_new_sand_physics": false
+      },
+      "note": "既有受控离线反射提取，未启动游戏；本catalog交叉核对其38个记录与静态注册。"
+    },
+    "runtime_validation": {
+      "path": "reference-data/runtime-validation.json",
+      "sha256": "a0360f631eccfc226c8a72e8adfd2114cb025d9bbc8d95ea64fea2355212c739"
+    },
+    "class_details": {
+      "path": ".reference/r196/class-details.json",
+      "sha256": "03662867d488731c101a96384087051c0ccb1d345c7552e1bd6710e771326875"
+    },
+    "zd": {
+      "path": ".reference/r196/decompiled/zd.java",
+      "source_file_attribute": "ItemSnowball.java",
+      "decompiled_sha256": "5b188d360e1d018099b85361190ec15445ca0cf4dc16a5e8e05f27612299ebe6",
+      "class_sha256": "3fab47384ded113d5b405c14de19fbb644962ca157579df2cafe87ab91d735c3",
+      "archive_entry": "zd.class",
+      "line_number_note": "1-based CFR0.152 line numbers"
+    }
+  },
+  "shared_rules": {
+    "level_cost": {
+      "multi_level_formula": "max(difficulty-10,0) + difficulty*(level-1) + 1",
+      "single_level_formula": "max(difficulty-10,0) + difficulty*2 + 1",
+      "experience_points_formula": "enchantment_levels * 100",
+      "no_max_cost_in_table_selection": true,
+      "selection_evidence": {
+        "source": "aaw",
+        "lines": [
+          277,
+          296
+        ]
+      },
+      "cost_evidence": {
+        "source": "aau",
+        "lines": [
+          124,
+          139
+        ]
+      },
+      "xp_evidence": {
+        "source": "aau",
+        "lines": [
+          99,
+          101
+        ]
+      }
+    },
+    "unused_inverse_level_method": {
+      "name": "aau.getLevelFromEnchantmentLevels(int)",
+      "evidence": {
+        "source": "aau",
+        "lines": [
+          113,
+          122
+        ]
+      },
+      "call_sites_in_1186_decompiled_classes": 0,
+      "formula_multilevel": "if E <= d-10 return0; level=(E+d-1)/d integer division; return level iff1<=level<=max",
+      "formula_single_level": "return1 iff2*d+1<=E<=3*d else0",
+      "warning": "无调用。不要把这个方法的区间上界套给附魔台；difficulty20的单级火矢台前置51，而这个无调用方法会从41起返回1。"
+    },
+    "item_enchantability": {
+      "stack_gates_evidence": {
+        "source": "ye",
+        "lines": [
+          764,
+          778
+        ]
+      },
+      "material_evidence": {
+        "source": "yc",
+        "lines": [
+          1039,
+          1047
+        ]
+      },
+      "formula": "大多数工具/盔甲/弓取材料集合最大enchantability；钓竿明确取鱼钩材质。",
+      "wood_enchantability": 10,
+      "flint_enchantability": 0,
+      "note": "匹配附魔类别不等于能在附魔台直接附魔；磨损/已附魔/堆叠门槛按ye.isEnchantable检查。"
+    },
+    "compatibility_note": "R196公开函数a(aau)存在方向性：抢夺排斥精准采集，精准采集仅显式排斥时运；目录保留有向事实，pairwise字段按任一方向拒绝合并供现代统一校验参考。",
+    "ordinary_book_candidate_rule": {
+      "predicate": "item == yc.aN bypasses canEnchantItem",
+      "evidence": {
+        "source": "aaw",
+        "lines": [
+          277,
+          296
+        ]
+      }
+    },
+    "max_random_enchantments_per_item": 3,
+    "randomization_evidence": {
+      "source": "aaw",
+      "lines": [
+        238,
+        275
+      ]
+    },
+    "protection_duration_and_impulse": {
+      "fire_duration_formula": "ticks - ceil(float(ticks) * float(maxEquippedLevel) * 0.15f)",
+      "blast_impulse_formula": "impulse - floor(impulse * double(float(maxEquippedLevel) * 0.15f))",
+      "source": {
+        "source": "abg",
+        "lines": [
+          144,
+          160
+        ]
+      },
+      "modern_external_attribute_boundary": "现代/第三方burning_time、explosion_knockback_resistance继续先作用于时长/向量，随后应用R196最高等级的整数舍入扣减。R196无这些外部属性，因此此顺序为现代兼容边界。",
+      "small_impulse_note": "R196使用floor扣减，普通爆炸中小于1的冲量常不再被进一步减少，不能擅自改成线性百分比。"
+    },
+    "endurance_actions": {
+      "modifier": "1 - 0.2f * maximum worn Endurance level",
+      "max_level": 4,
+      "affected": [
+        {
+          "action": "mining",
+          "base_exhaustion": 0.01,
+          "source": "bdc.java:152,191",
+          "modern_boundary": "客户端原请求改为服务端挖掘首请求及持续进度tick收费；不信任客户端上报费用。"
+        },
+        {
+          "action": "bow_draw_tick",
+          "base_exhaustion": 0.01,
+          "source": "jv.java:554-556"
+        },
+        {
+          "action": "allowed_melee_attempt",
+          "base_exhaustion": 0.3,
+          "source": "uf.java:1158-1160"
+        },
+        {
+          "action": "successful_block_placement",
+          "base_exhaustion": "min(block hardness,20)",
+          "source": "uf.java:2409-2411"
+        },
+        {
+          "action": "successful_till",
+          "base_exhaustion": "previous block hardness /2",
+          "source": "yb.java:67"
+        },
+        {
+          "action": "brick_throw",
+          "base_exhaustion": 0.25,
+          "source": "ItemBrick.java:20",
+          "implementation_boundary": "当前未实现EntityBrick，通用throwing收费API预留；本次不以雪球实体伪造完整砖投射物。"
+        },
+        {
+          "action": "gelatinous_sphere_throw",
+          "base_exhaustion": 0.25,
+          "source": "ItemGelatinousSphere.java:59"
+        }
+      ],
+      "excluded": [
+        "movement",
+        "jumping",
+        "swimming",
+        "metabolism",
+        "healing",
+        "all other calls to Player.causeFoodExhaustion",
+        "snowball_throw: zd.java:14-27 没有饥饿消费"
+      ],
+      "modern_fee_replacements": [
+        "移除原版成功近战的额外0.1；按允许的attempt0.3收费。",
+        "移除原版完成方块破坏的额外0.005；改源持续挖掘费用。"
+      ],
+      "cancellation": "放置及锄地在CommonHooks.onPlaceItemIntoWorld完成事件与快照回滚后才收费。",
+      "source_misidentification_correction": "zh.java:37是creative+ctrl测试投掷蛛网，且费用位于内层!creative不可达分支；不是雪球，不能计入默认Endurance动作。"
+    }
+  },
+  "enchantments": [
+    {
+      "id": 0,
+      "symbol": "aau.d",
+      "class": "abg",
+      "original_source_file": "EnchantmentProtection.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.protect.all",
+      "original_display_name_en_us": "Protection",
+      "proposed_display_name_zh_cn": "保护",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:protection",
+      "rarity": "common",
+      "weight": 100,
+      "difficulty": 10,
+      "max_level": 4,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wh",
+        "description_zh_cn": "所有盔甲，包括皮革和锁链甲",
+        "runtime_registered_item_ids_matching_predicate": [
+          298,
+          299,
+          300,
+          301,
+          302,
+          303,
+          304,
+          305,
+          306,
+          307,
+          308,
+          309,
+          314,
+          315,
+          316,
+          317,
+          1067,
+          1068,
+          1069,
+          1070,
+          1071,
+          1072,
+          1073,
+          1074,
+          1075,
+          1076,
+          1077,
+          1078,
+          1079,
+          1080,
+          1081,
+          1082,
+          1083,
+          1084,
+          1085,
+          1086,
+          1087,
+          1088,
+          1089,
+          1090,
+          1091,
+          1092,
+          1093,
+          1094,
+          1095,
+          1096,
+          1097,
+          1098,
+          1099,
+          1100,
+          1101,
+          1102,
+          1103,
+          1104,
+          1105,
+          1106,
+          1107,
+          1108,
+          1109,
+          1110,
+          1252,
+          1253,
+          1254,
+          1255,
+          1256,
+          1257,
+          1258,
+          1259
+        ],
+        "matching_item_count": 68,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          1,
+          3,
+          4
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          1,
+          3,
+          4
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            154
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              154
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            154
+          ]
+        },
+        "max_level": {
+          "source": "abg",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abg",
+          "lines": [
+            141,
+            163
+          ]
+        },
+        "creative_tabs": {
+          "source": "abg",
+          "lines": [
+            166,
+            168
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 981
+        },
+        "compatibility": {
+          "source": "abg",
+          "lines": [
+            116,
+            122
+          ]
+        }
+      }
+    },
+    {
+      "id": 1,
+      "symbol": "aau.e",
+      "class": "abg",
+      "original_source_file": "EnchantmentProtection.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.protect.fire",
+      "original_display_name_en_us": "Fire Protection",
+      "proposed_display_name_zh_cn": "火焰保护",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:fire_protection",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 4,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wh",
+        "description_zh_cn": "所有盔甲，包括皮革和锁链甲",
+        "runtime_registered_item_ids_matching_predicate": [
+          298,
+          299,
+          300,
+          301,
+          302,
+          303,
+          304,
+          305,
+          306,
+          307,
+          308,
+          309,
+          314,
+          315,
+          316,
+          317,
+          1067,
+          1068,
+          1069,
+          1070,
+          1071,
+          1072,
+          1073,
+          1074,
+          1075,
+          1076,
+          1077,
+          1078,
+          1079,
+          1080,
+          1081,
+          1082,
+          1083,
+          1084,
+          1085,
+          1086,
+          1087,
+          1088,
+          1089,
+          1090,
+          1091,
+          1092,
+          1093,
+          1094,
+          1095,
+          1096,
+          1097,
+          1098,
+          1099,
+          1100,
+          1101,
+          1102,
+          1103,
+          1104,
+          1105,
+          1106,
+          1107,
+          1108,
+          1109,
+          1110,
+          1252,
+          1253,
+          1254,
+          1255,
+          1256,
+          1257,
+          1258,
+          1259
+        ],
+        "matching_item_count": 68,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          0,
+          3,
+          4
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          0,
+          3,
+          4
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            155
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              155
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            155
+          ]
+        },
+        "max_level": {
+          "source": "abg",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abg",
+          "lines": [
+            141,
+            163
+          ]
+        },
+        "creative_tabs": {
+          "source": "abg",
+          "lines": [
+            166,
+            168
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 982
+        },
+        "compatibility": {
+          "source": "abg",
+          "lines": [
+            116,
+            122
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "symbol": "aau.f",
+      "class": "abg",
+      "original_source_file": "EnchantmentProtection.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.protect.fall",
+      "original_display_name_en_us": "Feather Falling",
+      "proposed_display_name_zh_cn": "摔落缓冲",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:feather_falling",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 4,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemBoots",
+        "description_zh_cn": "靴子",
+        "runtime_registered_item_ids_matching_predicate": [
+          301,
+          305,
+          309,
+          317,
+          1100,
+          1101,
+          1102,
+          1103,
+          1104,
+          1105,
+          1106,
+          1107,
+          1108,
+          1109,
+          1110,
+          1258,
+          1259
+        ],
+        "matching_item_count": 17,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            156
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              156
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            156
+          ]
+        },
+        "max_level": {
+          "source": "abg",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abg",
+          "lines": [
+            141,
+            163
+          ]
+        },
+        "creative_tabs": {
+          "source": "abg",
+          "lines": [
+            166,
+            168
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 983
+        },
+        "compatibility": {
+          "source": "abg",
+          "lines": [
+            116,
+            122
+          ]
+        }
+      }
+    },
+    {
+      "id": 3,
+      "symbol": "aau.g",
+      "class": "abg",
+      "original_source_file": "EnchantmentProtection.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.protect.explosion",
+      "original_display_name_en_us": "Blast Protection",
+      "proposed_display_name_zh_cn": "爆炸保护",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:blast_protection",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 4,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "(item instanceof ItemCuirass || item instanceof ItemLeggings) && armor.isSolidMetal()",
+        "description_zh_cn": "实心金属胸甲或护腿，排除锁链甲和皮甲",
+        "runtime_registered_item_ids_matching_predicate": [
+          307,
+          308,
+          315,
+          316,
+          1078,
+          1079,
+          1080,
+          1081,
+          1087,
+          1089,
+          1090,
+          1091,
+          1092,
+          1098,
+          1254,
+          1256
+        ],
+        "matching_item_count": 16,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          0,
+          1,
+          4
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          0,
+          1,
+          4
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            157
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              157
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            157
+          ]
+        },
+        "max_level": {
+          "source": "abg",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abg",
+          "lines": [
+            141,
+            163
+          ]
+        },
+        "creative_tabs": {
+          "source": "abg",
+          "lines": [
+            166,
+            168
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 984
+        },
+        "compatibility": {
+          "source": "abg",
+          "lines": [
+            116,
+            122
+          ]
+        }
+      }
+    },
+    {
+      "id": 4,
+      "symbol": "aau.h",
+      "class": "abg",
+      "original_source_file": "EnchantmentProtection.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.protect.projectile",
+      "original_display_name_en_us": "Projectile Protection",
+      "proposed_display_name_zh_cn": "弹射物保护",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:projectile_protection",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 4,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "(item instanceof ItemCuirass || item instanceof ItemLeggings) && armor.isSolidMetal()",
+        "description_zh_cn": "实心金属胸甲或护腿，排除锁链甲和皮甲",
+        "runtime_registered_item_ids_matching_predicate": [
+          307,
+          308,
+          315,
+          316,
+          1078,
+          1079,
+          1080,
+          1081,
+          1087,
+          1089,
+          1090,
+          1091,
+          1092,
+          1098,
+          1254,
+          1256
+        ],
+        "matching_item_count": 16,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          0,
+          1,
+          3
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          0,
+          1,
+          3
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            158
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              158
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            158
+          ]
+        },
+        "max_level": {
+          "source": "abg",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abg",
+          "lines": [
+            141,
+            163
+          ]
+        },
+        "creative_tabs": {
+          "source": "abg",
+          "lines": [
+            166,
+            168
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 985
+        },
+        "compatibility": {
+          "source": "abg",
+          "lines": [
+            116,
+            122
+          ]
+        }
+      }
+    },
+    {
+      "id": 5,
+      "symbol": "aau.i",
+      "class": "abf",
+      "original_source_file": "EnchantmentOxygen.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.oxygen",
+      "original_display_name_en_us": "Respiration",
+      "proposed_display_name_zh_cn": "水下呼吸",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:respiration",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 10,
+      "max_level": 3,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemHelmet",
+        "description_zh_cn": "头盔",
+        "runtime_registered_item_ids_matching_predicate": [
+          298,
+          302,
+          306,
+          314,
+          1067,
+          1068,
+          1069,
+          1070,
+          1071,
+          1072,
+          1073,
+          1074,
+          1075,
+          1076,
+          1077,
+          1252,
+          1253
+        ],
+        "matching_item_count": 17,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            159
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              159
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            159
+          ]
+        },
+        "max_level": {
+          "source": "abf",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abf",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "abf",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 986
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 6,
+      "symbol": "aau.j",
+      "class": "abj",
+      "original_source_file": "EnchantmentWaterWorker.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.waterWorker",
+      "original_display_name_en_us": "Aqua Affinity",
+      "proposed_display_name_zh_cn": "水下速掘",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:aqua_affinity",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 10,
+      "max_level": 1,
+      "has_levels": false,
+      "min_cost_by_level": [
+        21
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemHelmet",
+        "description_zh_cn": "头盔",
+        "runtime_registered_item_ids_matching_predicate": [
+          298,
+          302,
+          306,
+          314,
+          1067,
+          1068,
+          1069,
+          1070,
+          1071,
+          1072,
+          1073,
+          1074,
+          1075,
+          1076,
+          1077,
+          1252,
+          1253
+        ],
+        "matching_item_count": 17,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            160
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              160
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            160
+          ]
+        },
+        "max_level": {
+          "source": "abj",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abj",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "abj",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 987
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 7,
+      "symbol": "aau.k",
+      "class": "abh",
+      "original_source_file": "EnchantmentThorns.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.thorns",
+      "original_display_name_en_us": "Thorns",
+      "proposed_display_name_zh_cn": "荆棘",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:thorns",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 20,
+      "max_level": 3,
+      "has_levels": true,
+      "min_cost_by_level": [
+        11,
+        31,
+        51
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemCuirass",
+        "description_zh_cn": "胸甲",
+        "runtime_registered_item_ids_matching_predicate": [
+          299,
+          303,
+          307,
+          315,
+          1078,
+          1079,
+          1080,
+          1081,
+          1082,
+          1083,
+          1084,
+          1085,
+          1086,
+          1087,
+          1088,
+          1254,
+          1255
+        ],
+        "matching_item_count": 17,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            161
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              161
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            161
+          ]
+        },
+        "max_level": {
+          "source": "abh",
+          "lines": [
+            13,
+            15
+          ]
+        },
+        "supported_items": {
+          "source": "abh",
+          "lines": [
+            47,
+            49
+          ]
+        },
+        "creative_tabs": {
+          "source": "abh",
+          "lines": [
+            52,
+            54
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 997
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 16,
+      "symbol": "aau.l",
+      "class": "aar",
+      "original_source_file": "EnchantmentDamage.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.damage.all",
+      "original_display_name_en_us": "Sharpness",
+      "proposed_display_name_zh_cn": "锋利",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:sharpness",
+      "rarity": "common",
+      "weight": 100,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof zl || item.getClass() == ItemBattleAxe.class || item instanceof ItemScythe",
+        "description_zh_cn": "剑、短剑、小刀、战斧、镰刀",
+        "runtime_registered_item_ids_matching_predicate": [
+          267,
+          283,
+          1004,
+          1005,
+          1006,
+          1007,
+          1008,
+          1009,
+          1010,
+          1011,
+          1012,
+          1013,
+          1014,
+          1015,
+          1016,
+          1017,
+          1023,
+          1028,
+          1029,
+          1030,
+          1031,
+          1032,
+          1033,
+          1034,
+          1035,
+          1036,
+          1037,
+          1038,
+          1039,
+          1050,
+          1051,
+          1052,
+          1053,
+          1054,
+          1055,
+          1056,
+          1057,
+          1203,
+          1245,
+          1246,
+          1248,
+          1249
+        ],
+        "matching_item_count": 42,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          17,
+          18
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          17,
+          18
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            162
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              162
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            162
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "aar",
+          "lines": [
+            68,
+            79
+          ]
+        },
+        "creative_tabs": {
+          "source": "aar",
+          "lines": [
+            82,
+            84
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 726
+        },
+        "compatibility": {
+          "source": "aar",
+          "lines": [
+            63,
+            65
+          ]
+        }
+      },
+      "context_display_name_override": {
+        "condition": "item instanceof ya (axes, battle axes, hatchets)",
+        "value": "Slaying",
+        "translation_status": "Hardcoded English",
+        "evidence": {
+          "source": "aar",
+          "lines": [
+            11,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "id": 17,
+      "symbol": "aau.m",
+      "class": "aar",
+      "original_source_file": "EnchantmentDamage.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.damage.undead",
+      "original_display_name_en_us": "Smite",
+      "proposed_display_name_zh_cn": "亡灵杀手",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:smite",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item.getClass() == ItemWarHammer.class",
+        "description_zh_cn": "仅战锤",
+        "runtime_registered_item_ids_matching_predicate": [
+          990,
+          991,
+          992,
+          993,
+          994,
+          995,
+          996,
+          1243
+        ],
+        "matching_item_count": 8,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          16,
+          18
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          16,
+          18
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            163
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              163
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            163
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "aar",
+          "lines": [
+            68,
+            79
+          ]
+        },
+        "creative_tabs": {
+          "source": "aar",
+          "lines": [
+            82,
+            84
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 977
+        },
+        "compatibility": {
+          "source": "aar",
+          "lines": [
+            63,
+            65
+          ]
+        }
+      }
+    },
+    {
+      "id": 18,
+      "symbol": "aau.n",
+      "class": "aar",
+      "original_source_file": "EnchantmentDamage.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.damage.arthropods",
+      "original_display_name_en_us": "Bane of Arthropods",
+      "proposed_display_name_zh_cn": "节肢杀手",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:bane_of_arthropods",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof zl",
+        "description_zh_cn": "剑、短剑、小刀",
+        "runtime_registered_item_ids_matching_predicate": [
+          267,
+          283,
+          1023,
+          1028,
+          1029,
+          1030,
+          1031,
+          1032,
+          1033,
+          1034,
+          1035,
+          1036,
+          1037,
+          1038,
+          1039,
+          1050,
+          1051,
+          1052,
+          1053,
+          1054,
+          1055,
+          1056,
+          1057,
+          1203,
+          1248,
+          1249
+        ],
+        "matching_item_count": 26,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          16,
+          17
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          16,
+          17
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            164
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              164
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            164
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "aar",
+          "lines": [
+            68,
+            79
+          ]
+        },
+        "creative_tabs": {
+          "source": "aar",
+          "lines": [
+            82,
+            84
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 978
+        },
+        "compatibility": {
+          "source": "aar",
+          "lines": [
+            63,
+            65
+          ]
+        }
+      }
+    },
+    {
+      "id": 19,
+      "symbol": "aau.o",
+      "class": "abd",
+      "original_source_file": "EnchantmentKnockback.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.knockback",
+      "original_display_name_en_us": "Knockback",
+      "proposed_display_name_zh_cn": "击退",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:knockback",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 2,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemCudgel || item instanceof ItemWarHammer",
+        "description_zh_cn": "木棒或战锤",
+        "runtime_registered_item_ids_matching_predicate": [
+          990,
+          991,
+          992,
+          993,
+          994,
+          995,
+          996,
+          1024,
+          1025,
+          1243
+        ],
+        "matching_item_count": 10,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            165
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              165
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            165
+          ]
+        },
+        "max_level": {
+          "source": "abd",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abd",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "abd",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 979
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 20,
+      "symbol": "aau.p",
+      "class": "abc",
+      "original_source_file": "EnchantmentFireAspect.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.fire",
+      "original_display_name_en_us": "Fire Aspect",
+      "proposed_display_name_zh_cn": "火焰附加",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:fire_aspect",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 20,
+      "max_level": 2,
+      "has_levels": true,
+      "min_cost_by_level": [
+        11,
+        31
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof zl",
+        "description_zh_cn": "剑、短剑、小刀",
+        "runtime_registered_item_ids_matching_predicate": [
+          267,
+          283,
+          1023,
+          1028,
+          1029,
+          1030,
+          1031,
+          1032,
+          1033,
+          1034,
+          1035,
+          1036,
+          1037,
+          1038,
+          1039,
+          1050,
+          1051,
+          1052,
+          1053,
+          1054,
+          1055,
+          1056,
+          1057,
+          1203,
+          1248,
+          1249
+        ],
+        "matching_item_count": 26,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            166
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              166
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            166
+          ]
+        },
+        "max_level": {
+          "source": "abc",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abc",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "abc",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 980
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 21,
+      "symbol": "aau.q",
+      "class": "abe",
+      "original_source_file": "EnchantmentLootBonus.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.lootBonus",
+      "original_display_name_en_us": "Looting",
+      "proposed_display_name_zh_cn": "抢夺",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:looting",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 3,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemCudgel || item instanceof zl",
+        "description_zh_cn": "木棒、剑、短剑、小刀",
+        "runtime_registered_item_ids_matching_predicate": [
+          267,
+          283,
+          1023,
+          1024,
+          1025,
+          1028,
+          1029,
+          1030,
+          1031,
+          1032,
+          1033,
+          1034,
+          1035,
+          1036,
+          1037,
+          1038,
+          1039,
+          1050,
+          1051,
+          1052,
+          1053,
+          1054,
+          1055,
+          1056,
+          1057,
+          1203,
+          1248,
+          1249
+        ],
+        "matching_item_count": 28,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          33
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          33
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            167
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              167
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            167
+          ]
+        },
+        "max_level": {
+          "source": "abe",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abe",
+          "lines": [
+            33,
+            41
+          ]
+        },
+        "creative_tabs": {
+          "source": "abe",
+          "lines": [
+            44,
+            49
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 991
+        },
+        "compatibility": {
+          "source": "abe",
+          "lines": [
+            28,
+            30
+          ]
+        }
+      }
+    },
+    {
+      "id": 32,
+      "symbol": "aau.r",
+      "class": "aat",
+      "original_source_file": "EnchantmentDigging.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.digging",
+      "original_display_name_en_us": "Efficiency",
+      "proposed_display_name_zh_cn": "效率",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:efficiency",
+      "rarity": "common",
+      "weight": 100,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item.getClass() == yn.class || item instanceof ya || item instanceof ItemShovel || item instanceof yb",
+        "description_zh_cn": "镐、斧、手斧、战斧、锹、鹤嘴锄、锄；排除战锤",
+        "runtime_registered_item_ids_matching_predicate": [
+          256,
+          257,
+          258,
+          269,
+          284,
+          285,
+          286,
+          292,
+          294,
+          967,
+          968,
+          969,
+          970,
+          971,
+          972,
+          973,
+          974,
+          975,
+          976,
+          977,
+          978,
+          979,
+          980,
+          981,
+          982,
+          983,
+          984,
+          985,
+          986,
+          987,
+          988,
+          989,
+          997,
+          998,
+          999,
+          1000,
+          1001,
+          1002,
+          1003,
+          1004,
+          1005,
+          1006,
+          1007,
+          1008,
+          1009,
+          1010,
+          1175,
+          1176,
+          1177,
+          1178,
+          1179,
+          1180,
+          1181,
+          1202,
+          1204,
+          1205,
+          1239,
+          1240,
+          1241,
+          1242,
+          1244,
+          1245,
+          1262
+        ],
+        "matching_item_count": 63,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            168
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              168
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            168
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "aat",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "aat",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 988
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 33,
+      "symbol": "aau.s",
+      "class": "abi",
+      "original_source_file": "EnchantmentUntouching.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.untouching",
+      "original_display_name_en_us": "Silk Touch",
+      "proposed_display_name_zh_cn": "精准采集",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:silk_touch",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 10,
+      "max_level": 1,
+      "has_levels": false,
+      "min_cost_by_level": [
+        21
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item.getClass() == yn.class || item.getClass() == ItemShovel.class || item instanceof yx || item.getClass() == ItemKnife.class || item.getClass() == ItemDagger.class",
+        "description_zh_cn": "镐、锹、剪刀、小刀、短剑；排除战锤和鹤嘴锄",
+        "runtime_registered_item_ids_matching_predicate": [
+          256,
+          257,
+          269,
+          284,
+          285,
+          359,
+          967,
+          968,
+          969,
+          970,
+          971,
+          972,
+          973,
+          974,
+          975,
+          976,
+          977,
+          1018,
+          1019,
+          1020,
+          1021,
+          1022,
+          1023,
+          1033,
+          1034,
+          1035,
+          1036,
+          1037,
+          1038,
+          1039,
+          1050,
+          1051,
+          1052,
+          1053,
+          1054,
+          1055,
+          1056,
+          1057,
+          1182,
+          1202,
+          1203,
+          1239,
+          1240,
+          1247,
+          1249
+        ],
+        "matching_item_count": 45,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          35
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          21,
+          35
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            169
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              169
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            169
+          ]
+        },
+        "max_level": {
+          "source": "abi",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abi",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "creative_tabs": {
+          "source": "abi",
+          "lines": [
+            31,
+            33
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 989
+        },
+        "compatibility": {
+          "source": "abi",
+          "lines": [
+            21,
+            23
+          ]
+        }
+      }
+    },
+    {
+      "id": 34,
+      "symbol": "aau.t",
+      "class": "aas",
+      "original_source_file": "EnchantmentDurability.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.durability",
+      "original_display_name_en_us": "Unbreaking",
+      "proposed_display_name_zh_cn": "耐久",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:unbreaking",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wh ? ((wh)item).isSolidMetal() : (item instanceof ItemCudgel || item instanceof yn || item instanceof ItemShovel || item instanceof yb || item instanceof ya || item instanceof xv || item instanceof wp)",
+        "description_zh_cn": "实心金属非锁链护甲，木棒、镐、战锤、锹、鹤嘴锄、锄、斧、手斧、战斧、钓鱼竿、弓；没有剑、短剑、小刀、剪刀、镰刀",
+        "runtime_registered_item_ids_matching_predicate": [
+          256,
+          257,
+          258,
+          261,
+          269,
+          284,
+          285,
+          286,
+          292,
+          294,
+          306,
+          307,
+          308,
+          309,
+          314,
+          315,
+          316,
+          317,
+          346,
+          967,
+          968,
+          969,
+          970,
+          971,
+          972,
+          973,
+          974,
+          975,
+          976,
+          977,
+          978,
+          979,
+          980,
+          981,
+          982,
+          983,
+          984,
+          985,
+          986,
+          987,
+          988,
+          989,
+          990,
+          991,
+          992,
+          993,
+          994,
+          995,
+          996,
+          997,
+          998,
+          999,
+          1000,
+          1001,
+          1002,
+          1003,
+          1004,
+          1005,
+          1006,
+          1007,
+          1008,
+          1009,
+          1010,
+          1024,
+          1025,
+          1048,
+          1067,
+          1068,
+          1069,
+          1070,
+          1076,
+          1078,
+          1079,
+          1080,
+          1081,
+          1087,
+          1089,
+          1090,
+          1091,
+          1092,
+          1098,
+          1100,
+          1101,
+          1102,
+          1103,
+          1109,
+          1175,
+          1176,
+          1177,
+          1178,
+          1179,
+          1180,
+          1181,
+          1192,
+          1193,
+          1194,
+          1195,
+          1196,
+          1202,
+          1204,
+          1205,
+          1207,
+          1212,
+          1239,
+          1240,
+          1241,
+          1242,
+          1243,
+          1244,
+          1245,
+          1251,
+          1252,
+          1254,
+          1256,
+          1258,
+          1262,
+          1263
+        ],
+        "matching_item_count": 117,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            170
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              170
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            170
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "aas",
+          "lines": [
+            16,
+            22
+          ]
+        },
+        "creative_tabs": {
+          "source": "aas",
+          "lines": [
+            25,
+            27
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 990
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 35,
+      "symbol": "aau.u",
+      "class": "abe",
+      "original_source_file": "EnchantmentLootBonus.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.lootBonusDigger",
+      "original_display_name_en_us": "Fortune",
+      "proposed_display_name_zh_cn": "时运",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:fortune",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 10,
+      "max_level": 3,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item.getClass() == yn.class || item.getClass() == ItemShovel.class",
+        "description_zh_cn": "仅镐和锹；排除战锤、鹤嘴锄",
+        "runtime_registered_item_ids_matching_predicate": [
+          256,
+          257,
+          269,
+          284,
+          285,
+          967,
+          968,
+          969,
+          970,
+          971,
+          972,
+          973,
+          974,
+          975,
+          976,
+          977,
+          1202,
+          1239,
+          1240
+        ],
+        "matching_item_count": 19,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [
+          33
+        ],
+        "pairwise_symmetric_conflict_ids": [
+          33
+        ],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            171
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              171
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            171
+          ]
+        },
+        "max_level": {
+          "source": "abe",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "abe",
+          "lines": [
+            33,
+            41
+          ]
+        },
+        "creative_tabs": {
+          "source": "abe",
+          "lines": [
+            44,
+            49
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 992
+        },
+        "compatibility": {
+          "source": "abe",
+          "lines": [
+            28,
+            30
+          ]
+        }
+      }
+    },
+    {
+      "id": 48,
+      "symbol": "aau.v",
+      "class": "aan",
+      "original_source_file": "EnchantmentArrowDamage.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.arrowDamage",
+      "original_display_name_en_us": "Power",
+      "proposed_display_name_zh_cn": "力量",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:power",
+      "rarity": "common",
+      "weight": 100,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wp",
+        "description_zh_cn": "弓",
+        "runtime_registered_item_ids_matching_predicate": [
+          261,
+          1048,
+          1251
+        ],
+        "matching_item_count": 3,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            172
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              172
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            172
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "aan",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "aan",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 993
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 49,
+      "symbol": "aau.w",
+      "class": "aaq",
+      "original_source_file": "EnchantmentArrowKnockback.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.arrowKnockback",
+      "original_display_name_en_us": "Punch",
+      "proposed_display_name_zh_cn": "冲击",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:punch",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 2,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wp",
+        "description_zh_cn": "弓",
+        "runtime_registered_item_ids_matching_predicate": [
+          261,
+          1048,
+          1251
+        ],
+        "matching_item_count": 3,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            173
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              173
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            173
+          ]
+        },
+        "max_level": {
+          "source": "aaq",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "aaq",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "aaq",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 995
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 50,
+      "symbol": "aau.x",
+      "class": "aao",
+      "original_source_file": "EnchantmentArrowFire.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.arrowFire",
+      "original_display_name_en_us": "Flame",
+      "proposed_display_name_zh_cn": "火矢",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "minecraft:flame",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 20,
+      "max_level": 1,
+      "has_levels": false,
+      "min_cost_by_level": [
+        51
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wp",
+        "description_zh_cn": "弓",
+        "runtime_registered_item_ids_matching_predicate": [
+          261,
+          1048,
+          1251
+        ],
+        "matching_item_count": 3,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            174
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              174
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            174
+          ]
+        },
+        "max_level": {
+          "source": "aao",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "aao",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "aao",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "vanilla_1.6.4_en_US.lang",
+          "line": 994
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 51,
+      "symbol": "aau.arrow_recovery",
+      "class": "EnchantmentArrowRecovery",
+      "original_source_file": "EnchantmentArrowRecovery.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.arrow_recovery",
+      "original_display_name_en_us": "Recovery",
+      "proposed_display_name_zh_cn": "回收",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:arrow_recovery",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wp",
+        "description_zh_cn": "弓",
+        "runtime_registered_item_ids_matching_predicate": [
+          261,
+          1048,
+          1251
+        ],
+        "matching_item_count": 3,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            175
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              175
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            175
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentArrowRecovery",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentArrowRecovery",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 727
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 80,
+      "symbol": "aau.stun",
+      "class": "EnchantmentStun",
+      "original_source_file": "EnchantmentStun.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.stun",
+      "original_display_name_en_us": "Stun",
+      "proposed_display_name_zh_cn": "眩晕",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:stun",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 15,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        6,
+        21,
+        36,
+        51,
+        66
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemCudgel || item instanceof ItemWarHammer",
+        "description_zh_cn": "木棒或战锤",
+        "runtime_registered_item_ids_matching_predicate": [
+          990,
+          991,
+          992,
+          993,
+          994,
+          995,
+          996,
+          1024,
+          1025,
+          1243
+        ],
+        "matching_item_count": 10,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            176
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              176
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            176
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentStun",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentStun",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 728
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 81,
+      "symbol": "aau.fishing_fortune",
+      "class": "EnchantmentFishingFortune",
+      "original_source_file": "EnchantmentFishingFortune.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.fishing_fortune",
+      "original_display_name_en_us": "Luring",
+      "proposed_display_name_zh_cn": "诱饵",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:fishing_fortune",
+      "rarity": "common",
+      "weight": 100,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof xv",
+        "description_zh_cn": "钓鱼竿",
+        "runtime_registered_item_ids_matching_predicate": [
+          346,
+          1192,
+          1193,
+          1194,
+          1195,
+          1196,
+          1207,
+          1212,
+          1263
+        ],
+        "matching_item_count": 9,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            177
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              177
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            177
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentFishingFortune",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentFishingFortune",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 729
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      },
+      "modern_mapping_note": "R196 Luring maxV是自己的fishing_fortune，不与1.21.1 luck_of_the_sea或lure直接混同。"
+    },
+    {
+      "id": 82,
+      "symbol": "aau.fertility",
+      "class": "EnchantmentFertility",
+      "original_source_file": "EnchantmentFertility.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.fertility",
+      "original_display_name_en_us": "Fertility",
+      "proposed_display_name_zh_cn": "肥沃",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:fertility",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof yb || item instanceof ItemMattock || item instanceof ItemScythe",
+        "description_zh_cn": "锄、鹤嘴锄、镰刀",
+        "runtime_registered_item_ids_matching_predicate": [
+          292,
+          294,
+          985,
+          986,
+          987,
+          988,
+          989,
+          997,
+          998,
+          999,
+          1000,
+          1001,
+          1002,
+          1003,
+          1011,
+          1012,
+          1013,
+          1014,
+          1015,
+          1016,
+          1017,
+          1242,
+          1244,
+          1246
+        ],
+        "matching_item_count": 24,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            178
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              178
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            178
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentFertility",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentFertility",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 730
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 83,
+      "symbol": "aau.tree_felling",
+      "class": "EnchantmentTreeFelling",
+      "original_source_file": "EnchantmentTreeFelling.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.tree_felling",
+      "original_display_name_en_us": "Tree Felling",
+      "proposed_display_name_zh_cn": "砍伐",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:tree_felling",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ya && !(item instanceof ItemHatchet)",
+        "description_zh_cn": "斧和战斧，排除手斧",
+        "runtime_registered_item_ids_matching_predicate": [
+          258,
+          286,
+          979,
+          980,
+          981,
+          982,
+          983,
+          984,
+          1004,
+          1005,
+          1006,
+          1007,
+          1008,
+          1009,
+          1010,
+          1205,
+          1241,
+          1245
+        ],
+        "matching_item_count": 18,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            179
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              179
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            179
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentTreeFelling",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentTreeFelling",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 731
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 84,
+      "symbol": "aau.vampiric",
+      "class": "EnchantmentVampiric",
+      "original_source_file": "EnchantmentVampiric.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.vampiric",
+      "original_display_name_en_us": "Vampiric",
+      "proposed_display_name_zh_cn": "吸血",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:vampiric",
+      "rarity": "epic",
+      "weight": 1,
+      "difficulty": 20,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        11,
+        31,
+        51,
+        71,
+        91
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "!(item instanceof xj && (toolMaterial == akc.silver || toolMaterial == akc.mithril)) && (item instanceof zl || item instanceof ItemScythe)",
+        "description_zh_cn": "剑、短剑、小刀、镰刀；排除银和秘银材质",
+        "runtime_registered_item_ids_matching_predicate": [
+          267,
+          283,
+          1011,
+          1013,
+          1014,
+          1016,
+          1017,
+          1023,
+          1028,
+          1031,
+          1032,
+          1033,
+          1035,
+          1036,
+          1038,
+          1039,
+          1050,
+          1052,
+          1053,
+          1055,
+          1056,
+          1057,
+          1203,
+          1246,
+          1248,
+          1249
+        ],
+        "matching_item_count": 26,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            180
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              180
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              8
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            180
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentVampiric",
+          "lines": [
+            16,
+            22
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentVampiric",
+          "lines": [
+            25,
+            27
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 732
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 85,
+      "symbol": "aau.speed",
+      "class": "EnchantmentSpeed",
+      "original_source_file": "EnchantmentSpeed.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.speed",
+      "original_display_name_en_us": "Speed",
+      "proposed_display_name_zh_cn": "速度",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:speed",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemBoots",
+        "description_zh_cn": "靴子",
+        "runtime_registered_item_ids_matching_predicate": [
+          301,
+          305,
+          309,
+          317,
+          1100,
+          1101,
+          1102,
+          1103,
+          1104,
+          1105,
+          1106,
+          1107,
+          1108,
+          1109,
+          1110,
+          1258,
+          1259
+        ],
+        "matching_item_count": 17,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            181
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              181
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            181
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentSpeed",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentSpeed",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 733
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 86,
+      "symbol": "aau.regeneration",
+      "class": "EnchantmentRegeneration",
+      "original_source_file": "EnchantmentRegeneration.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.regeneration",
+      "original_display_name_en_us": "Regeneration",
+      "proposed_display_name_zh_cn": "再生",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:regeneration",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 20,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        11,
+        31,
+        51,
+        71,
+        91
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemCuirass",
+        "description_zh_cn": "胸甲",
+        "runtime_registered_item_ids_matching_predicate": [
+          299,
+          303,
+          307,
+          315,
+          1078,
+          1079,
+          1080,
+          1081,
+          1082,
+          1083,
+          1084,
+          1085,
+          1086,
+          1087,
+          1088,
+          1254,
+          1255
+        ],
+        "matching_item_count": 17,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            182
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              182
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            182
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentRegeneration",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentRegeneration",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 734
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 87,
+      "symbol": "aau.free_action",
+      "class": "EnchantmentFreeAction",
+      "original_source_file": "EnchantmentFreeAction.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.free_action",
+      "original_display_name_en_us": "Free Action",
+      "proposed_display_name_zh_cn": "自由行动",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:free_action",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 4,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemLeggings",
+        "description_zh_cn": "护腿",
+        "runtime_registered_item_ids_matching_predicate": [
+          300,
+          304,
+          308,
+          316,
+          1089,
+          1090,
+          1091,
+          1092,
+          1093,
+          1094,
+          1095,
+          1096,
+          1097,
+          1098,
+          1099,
+          1256,
+          1257
+        ],
+        "matching_item_count": 17,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            183
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              183
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            183
+          ]
+        },
+        "max_level": {
+          "source": "EnchantmentFreeAction",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentFreeAction",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentFreeAction",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 735
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 88,
+      "symbol": "aau.quickness",
+      "class": "EnchantmentQuickness",
+      "original_source_file": "EnchantmentQuickness.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.quickness",
+      "original_display_name_en_us": "Quickness",
+      "proposed_display_name_zh_cn": "迅捷",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:quickness",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wp",
+        "description_zh_cn": "弓",
+        "runtime_registered_item_ids_matching_predicate": [
+          261,
+          1048,
+          1251
+        ],
+        "matching_item_count": 3,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            184
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              184
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            184
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentQuickness",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentQuickness",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 736
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 89,
+      "symbol": "aau.true_flight",
+      "class": "EnchantmentTrueFlight",
+      "original_source_file": "EnchantmentTrueFlight.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.true_flight",
+      "original_display_name_en_us": "Accuracy",
+      "proposed_display_name_zh_cn": "精准",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:true_flight",
+      "rarity": "common",
+      "weight": 100,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wp",
+        "description_zh_cn": "弓",
+        "runtime_registered_item_ids_matching_predicate": [
+          261,
+          1048,
+          1251
+        ],
+        "matching_item_count": 3,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            185
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              185
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            185
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentTrueFlight",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentTrueFlight",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 737
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 90,
+      "symbol": "aau.poison",
+      "class": "EnchantmentPoison",
+      "original_source_file": "EnchantmentPoison.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.poison",
+      "original_display_name_en_us": "Poison",
+      "proposed_display_name_zh_cn": "毒素",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:poison",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof wp",
+        "description_zh_cn": "弓",
+        "runtime_registered_item_ids_matching_predicate": [
+          261,
+          1048,
+          1251
+        ],
+        "matching_item_count": 3,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            186
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              186
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            186
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentPoison",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentPoison",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 738
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 91,
+      "symbol": "aau.disarming",
+      "class": "EnchantmentDisarming",
+      "original_source_file": "EnchantmentDisarming.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.disarming",
+      "original_display_name_en_us": "Disarming",
+      "proposed_display_name_zh_cn": "缴械",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:disarming",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item.getClass() == zl.class",
+        "description_zh_cn": "仅剑；排除短剑和小刀",
+        "runtime_registered_item_ids_matching_predicate": [
+          267,
+          283,
+          1028,
+          1029,
+          1030,
+          1031,
+          1032,
+          1248
+        ],
+        "matching_item_count": 8,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            187
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              187
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            187
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentDisarming",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentDisarming",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 739
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 92,
+      "symbol": "aau.piercing",
+      "class": "EnchantmentPiercing",
+      "original_source_file": "EnchantmentPiercing.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.piercing",
+      "original_display_name_en_us": "Piercing",
+      "proposed_display_name_zh_cn": "穿刺",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:piercing",
+      "rarity": "rare",
+      "weight": 5,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item.getClass() == yn.class || item.getClass() == ItemBattleAxe.class",
+        "description_zh_cn": "镐或战斧；排除战锤和普通斧",
+        "runtime_registered_item_ids_matching_predicate": [
+          257,
+          285,
+          967,
+          968,
+          969,
+          970,
+          971,
+          1004,
+          1005,
+          1006,
+          1007,
+          1008,
+          1009,
+          1010,
+          1239,
+          1245
+        ],
+        "matching_item_count": 16,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            188
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              188
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            188
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentPiercing",
+          "lines": [
+            24,
+            26
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentPiercing",
+          "lines": [
+            29,
+            31
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 740
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      },
+      "context_display_name_override": {
+        "condition": "item instanceof ya; supported normally only battle axe",
+        "value": "Cleaving",
+        "translation_status": "Hardcoded English",
+        "evidence": {
+          "source": "EnchantmentPiercing",
+          "lines": [
+            11,
+            16
+          ]
+        }
+      },
+      "modern_mapping_note": "R196穿刺为近战镐/战斧附魔，使用mite:piercing；minecraft:piercing仍是1.21.1弩附魔。"
+    },
+    {
+      "id": 93,
+      "symbol": "aau.harvesting",
+      "class": "EnchantmentHarvesting",
+      "original_source_file": "EnchantmentHarvesting.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.harvesting",
+      "original_display_name_en_us": "Harvesting",
+      "proposed_display_name_zh_cn": "收割",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:harvesting",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 5,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31,
+        41
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemScythe || item instanceof yb || item instanceof ItemMattock",
+        "description_zh_cn": "镰刀、锄、鹤嘴锄",
+        "runtime_registered_item_ids_matching_predicate": [
+          292,
+          294,
+          985,
+          986,
+          987,
+          988,
+          989,
+          997,
+          998,
+          999,
+          1000,
+          1001,
+          1002,
+          1003,
+          1011,
+          1012,
+          1013,
+          1014,
+          1015,
+          1016,
+          1017,
+          1242,
+          1244,
+          1246
+        ],
+        "matching_item_count": 24,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            189
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              189
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            189
+          ]
+        },
+        "max_level": {
+          "source": "aau",
+          "lines": [
+            67,
+            69
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentHarvesting",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentHarvesting",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 741
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 94,
+      "symbol": "aau.butchering",
+      "class": "EnchantmentButchering",
+      "original_source_file": "EnchantmentButchering.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.butchering",
+      "original_display_name_en_us": "Butchering",
+      "proposed_display_name_zh_cn": "屠宰",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:butchering",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 3,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item.getClass() == ItemKnife.class || item.getClass() == ItemDagger.class",
+        "description_zh_cn": "小刀或短剑",
+        "runtime_registered_item_ids_matching_predicate": [
+          1023,
+          1033,
+          1034,
+          1035,
+          1036,
+          1037,
+          1038,
+          1039,
+          1050,
+          1051,
+          1052,
+          1053,
+          1054,
+          1055,
+          1056,
+          1057,
+          1203,
+          1249
+        ],
+        "matching_item_count": 18,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            190
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              190
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            190
+          ]
+        },
+        "max_level": {
+          "source": "EnchantmentButchering",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentButchering",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentButchering",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 742
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      }
+    },
+    {
+      "id": 95,
+      "symbol": "aau.endurance",
+      "class": "EnchantmentEndurance",
+      "original_source_file": "EnchantmentEndurance.java",
+      "status": "registered_enabled_default",
+      "translation_key": "enchantment.endurance",
+      "original_display_name_en_us": "Endurance",
+      "proposed_display_name_zh_cn": "持久",
+      "translation_zh_note": "复刻中文显示建议；本地R196资源仅提供英文，不将此译名冒充原包中文。",
+      "suggested_modern_id": "mite:endurance",
+      "rarity": "uncommon",
+      "weight": 25,
+      "difficulty": 10,
+      "max_level": 4,
+      "has_levels": true,
+      "min_cost_by_level": [
+        1,
+        11,
+        21,
+        31
+      ],
+      "max_cost_by_level": null,
+      "max_cost_reason": "R196候选构造只检查最小cost，不排除超过最大cost的等级；该null意为无上界，不是缺失数值。",
+      "candidate_level_selection": "从max_level向1找第一个min_cost <= adjusted_enchantment_levels；单级返回level1，但以伪level3计算min_cost。",
+      "supported_items": {
+        "predicate_java": "item instanceof ItemCuirass",
+        "description_zh_cn": "胸甲",
+        "runtime_registered_item_ids_matching_predicate": [
+          299,
+          303,
+          307,
+          315,
+          1078,
+          1079,
+          1080,
+          1081,
+          1082,
+          1083,
+          1084,
+          1085,
+          1086,
+          1087,
+          1088,
+          1254,
+          1255
+        ],
+        "matching_item_count": 17,
+        "note": "仅canEnchantItem支持性，不代表这些物品全部具有正附魔能力；附魔台另检查物品可附魔性。"
+      },
+      "compatibility": {
+        "self_compatible": false,
+        "rejects_other_ids": [],
+        "pairwise_symmetric_conflict_ids": [],
+        "note": "rejects_other_ids逐字描述this.a(other)的有向返回false集合；实际候选移除检查已选附魔.a(candidate)，铁砧需自行核对调用方向。"
+      },
+      "availability": {
+        "enchantment_table": true,
+        "table_requires_item_support_and_positive_enchantability": true,
+        "ordinary_book_can_select": true,
+        "treasure_only": false,
+        "registered_without_mode_gate": true,
+        "random_enchanted_book_helper": {
+          "selection": "uniform across all38 registered enchantments; then uniform level1..max",
+          "evidence": {
+            "source": "xo",
+            "lines": [
+              84,
+              90
+            ]
+          }
+        }
+      },
+      "evidence": {
+        "registration": {
+          "source": "aau",
+          "lines": [
+            191
+          ]
+        },
+        "rarity_and_weight": [
+          {
+            "source": "aau",
+            "lines": [
+              191
+            ]
+          },
+          {
+            "source": "aau",
+            "lines": [
+              52,
+              61
+            ]
+          },
+          {
+            "source": "yq",
+            "lines": [
+              6
+            ]
+          }
+        ],
+        "difficulty": {
+          "source": "aau",
+          "lines": [
+            191
+          ]
+        },
+        "max_level": {
+          "source": "EnchantmentEndurance",
+          "lines": [
+            11,
+            13
+          ]
+        },
+        "supported_items": {
+          "source": "EnchantmentEndurance",
+          "lines": [
+            21,
+            23
+          ]
+        },
+        "creative_tabs": {
+          "source": "EnchantmentEndurance",
+          "lines": [
+            26,
+            28
+          ]
+        },
+        "cost": {
+          "source": "aau",
+          "lines": [
+            124,
+            139
+          ]
+        },
+        "translation": {
+          "source": "r196_MITE.lang",
+          "line": 744
+        },
+        "compatibility": {
+          "source": "aau",
+          "lines": [
+            75,
+            77
+          ]
+        }
+      },
+      "modern_mapping_note": "持久降低消耗，不是耐久。R196耐久是ID34且maxV。"
+    }
+  ],
+  "disabled_or_unregistered": [
+    {
+      "name": "Infinity",
+      "class": "aap",
+      "translation_key": "enchantment.arrowInfinite",
+      "status": "class_present_not_registered",
+      "evidence": [
+        {
+          "source": "aap",
+          "lines": [
+            16,
+            18
+          ]
+        },
+        {
+          "source": "aau",
+          "lines": [
+            153,
+            198
+          ]
+        }
+      ],
+      "note": "原版1.6.4无限类残留；R196 ID51分配给Recovery，未发现new aap构造调用。保留1.21.1无限属于现代适配，不能宣称是R196默认附魔。"
+    },
+    {
+      "name": "Balance",
+      "translation_key": "enchantment.balance",
+      "status": "language_only_not_registered",
+      "evidence": {
+        "source": "r196_MITE.lang",
+        "line": 743
+      },
+      "note": "MITE.lang存在Balance键，无附魔类/静态字段/注册实例，不实现为R196默认附魔。"
+    }
+  ],
+  "modern_adaptation_constraints": [
+    "保留1.21.1新增附魔与相关装备功能；现代附魔的配平、池与互斥由现代适配单独记录。",
+    "旧版同名的21个附魔仍需逐项移植R196效果与适配范围，不可只保持原版1.21.1效果。",
+    "R196额外17个附魔需独立mite命名空间；piercing和endurance尤其不可错误映射原版弩穿透/耐久。",
+    "旧包真实注册的八把金属小刀1050..1057按此前用户确认的目录冲突排除；来源支持ID仍忠实记录其存在，现代支持标签无需补出这些被排除的装备。"
+  ],
+  "evidence_gaps": [
+    {
+      "subject": "Chinese original names",
+      "status": "not in local R196 resources",
+      "validation": "如需严格原版中文，另提供当年中文语言包；当前中文为现代复刻建议。"
+    },
+    {
+      "subject": "per-enchantment gameplay effects and application-site validation",
+      "status": "delegated separate source audit",
+      "validation": "逐条追踪aaw以及武器/盔甲/弓/作物/生物/耐久代码调用；不能仅靠注册/目录推断已实现。"
+    },
+    {
+      "subject": "loot/trade distribution beyond random-book helper",
+      "status": "not globally enumerated by this catalog",
+      "validation": "检查村民、结构战利品、装备随机附魔调用到aaw/xo的各入口，现代来源另作进度配平。"
+    }
+  ],
+  "port_verification": {
+    "author": "NingMeng123",
+    "status": "automated_checks_passed_user_accepted",
+    "report": "build/verification/enchantments-completion.json",
+    "source_data_checks": 9432,
+    "junit": 1226,
+    "gametest": 1156,
+    "user_acceptance": "User confirmed the latest three-line tooltip and lapis cost revision and authorized GitHub submission."
+  }
+}

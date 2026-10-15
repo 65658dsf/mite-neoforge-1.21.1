@@ -1,0 +1,24 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:leather_leggings",
+    "minecraft:chainmail_leggings",
+    "minecraft:iron_leggings",
+    "minecraft:diamond_leggings",
+    "minecraft:golden_leggings",
+    "minecraft:netherite_leggings",
+    "mite:copper_leggings",
+    "mite:silver_leggings",
+    "mite:mithril_leggings",
+    "mite:adamantium_leggings",
+    "mite:copper_chain_leggings",
+    "mite:silver_chain_leggings",
+    "mite:golden_chain_leggings",
+    "mite:mithril_chain_leggings",
+    "mite:adamantium_chain_leggings",
+    "mite:rusted_iron_leggings",
+    "mite:rusted_iron_chain_leggings",
+    "mite:ancient_metal_leggings",
+    "mite:ancient_metal_chainmail_leggings"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "anvil_cost": 8,
+  "description": {
+    "translate": "enchantment.minecraft.silk_touch"
+  },
+  "effects": {
+    "minecraft:block_experience": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": 0.0
+        }
+      }
+    ]
+  },
+  "exclusive_set": [
+    "minecraft:fortune",
+    "minecraft:looting"
+  ],
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 21,
+    "per_level_above_first": 0
+  },
+  "primary_items": "#mite:enchantable/native_compat/silk_touch",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#mite:enchantable/native_compat/silk_touch",
+  "weight": 5
+}

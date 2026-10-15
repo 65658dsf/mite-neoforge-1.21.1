@@ -1,0 +1,22 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.mite.stun"
+  },
+  "effects": {},
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 5,
+  "min_cost": {
+    "base": 6,
+    "per_level_above_first": 15
+  },
+  "primary_items": "#mite:enchantable/stun",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#mite:enchantable/stun",
+  "weight": 25
+}

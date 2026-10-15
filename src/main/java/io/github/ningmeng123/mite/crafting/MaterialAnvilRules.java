@@ -96,6 +96,8 @@ public final class MaterialAnvilRules {
     public static Plan plan(Player player, BlockState anvil, ItemStack first, ItemStack second) {
         Plan disenchanting = io.github.ningmeng123.mite.utility.UtilityDisenchanting.plan(first, second);
         if (disenchanting != null) return disenchanting;
+        Plan enchanting = io.github.ningmeng123.mite.enchantment.R196BookAnvil.plan(first, second);
+        if (enchanting != null) return enchanting;
         Material material = material(first);
         if (material == null || !first.isDamageableItem() || second.isEmpty()
                 || second.has(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS)) return null;

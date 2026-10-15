@@ -58,7 +58,7 @@ public final class ArrowRecovery {
         boolean success;
         try { success = target.hurt(source, amount); }
         finally { if (previous == null) IMPACT.remove(); else IMPACT.set(previous); }
-        if (success && !impact.deathDropsProcessed && living.isAlive() && arrow.getRandom().nextFloat() < material.recovery)
+        if (success && !impact.deathDropsProcessed && living.isAlive() && arrow.getRandom().nextFloat() < io.github.ningmeng123.mite.enchantment.RangedEnchantments.recovery(arrow, material.recovery))
             contain(living, arrow.getPickupItemStackOrigin());
         return success;
     }
@@ -72,7 +72,7 @@ public final class ArrowRecovery {
         Impact impact = IMPACT.get();
         if (impact != null && impact.target == entity && !impact.deathDropsProcessed) {
             impact.deathDropsProcessed = true;
-            if (mayReturn && impact.arrow.getRandom().nextFloat() < impact.material.recovery)
+            if (mayReturn && impact.arrow.getRandom().nextFloat() < io.github.ningmeng123.mite.enchantment.RangedEnchantments.recovery(impact.arrow, impact.material.recovery))
                 event.getDrops().add(new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), impact.arrow.getPickupItemStackOrigin().copyWithCount(1)));
         }
         if (entity.hasData(CONTAINED)) {

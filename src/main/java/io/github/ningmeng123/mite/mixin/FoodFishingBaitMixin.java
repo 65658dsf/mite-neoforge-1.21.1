@@ -35,7 +35,6 @@ public abstract class FoodFishingBaitMixin {
     @Shadow private int nibble;
     @Shadow private int timeUntilLured;
     @Shadow private int timeUntilHooked;
-    @Shadow @Final private int luck;
     @Shadow private Entity hookedIn;
     @Shadow @Final private static EntityDataAccessor<Boolean> DATA_BITING;
     @Unique private boolean mite$paidBait;
@@ -73,8 +72,8 @@ public abstract class FoodFishingBaitMixin {
         if (level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, hook)).getType() != HitResult.Type.MISS) return;
         long time = level.getDayTime();
         boolean blueMoon=LunarCalendar.state(time,level.dimension().equals(Level.OVERWORLD)).blueNight();
-        // Modern Luck of the Sea also supplies R196 Fishing Fortune's 9/10-per-level factor.
-        int chance = R196RangedRules.biteChanceDenominator(time, blueMoon, level.isRainingAt(pos.above()), luck, mite$baitSlot() >= 0);
+        // Source Fishing Fortune uses the cast rod; modern Luck of the Sea remains a loot-only effect.
+        int chance = R196RangedRules.biteChanceDenominator(time, blueMoon, level.isRainingAt(pos.above()), ((FishingHookView)(Object)this).mite$fishingFortune(), mite$baitSlot() >= 0);
         if (random.nextInt(chance) != 0) return;
         nibble = random.nextInt(30) + 30;
         hook.setDeltaMovement(hook.getDeltaMovement().add(0D, -.2D, 0D));

@@ -1,0 +1,43 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.minecraft.bane_of_arthropods"
+  },
+  "effects": {
+    "minecraft:damage": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 2.0,
+            "per_level_above_first": 2.0
+          }
+        },
+        "requirements": {
+          "condition": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "type": "#minecraft:sensitive_to_bane_of_arthropods"
+          }
+        }
+      }
+    ]
+  },
+  "exclusive_set": "#minecraft:exclusive_set/damage",
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 5,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#mite:enchantable/native_primary/bane_of_arthropods",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#mite:enchantable/native_compat/bane_of_arthropods",
+  "weight": 25
+}

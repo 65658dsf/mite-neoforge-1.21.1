@@ -99,6 +99,11 @@ neoForge {
                 systemProperty 'mite.cropJadeAudit', 'true'
                 systemProperty 'mite.cropJadeAuditOutput', file('build/verification/crop-jade-audit.json').absolutePath
             }
+            if (project.providers.gradleProperty('miteEnchantmentAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.enchantmentClientAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.enchantmentClientAuditOutput', file('build/verification/enchantment-client-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteLunarVisualAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.lunarVisualAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'

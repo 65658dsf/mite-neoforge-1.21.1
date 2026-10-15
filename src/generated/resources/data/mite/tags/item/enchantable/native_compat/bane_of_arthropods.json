@@ -1,0 +1,7 @@
+{
+  "replace": true,
+  "values": [
+    "#mite:enchantable/bane_of_arthropods",
+    "minecraft:mace"
+  ]
+}

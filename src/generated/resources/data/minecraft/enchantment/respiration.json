@@ -1,0 +1,35 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.minecraft.respiration"
+  },
+  "effects": {
+    "minecraft:attributes": [
+      {
+        "amount": {
+          "type": "minecraft:linear",
+          "base": 1.0,
+          "per_level_above_first": 1.0
+        },
+        "attribute": "minecraft:generic.oxygen_bonus",
+        "id": "minecraft:enchantment.respiration",
+        "operation": "add_value"
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#mite:enchantable/native_compat/respiration",
+  "slots": [
+    "head"
+  ],
+  "supported_items": "#mite:enchantable/native_compat/respiration",
+  "weight": 5
+}

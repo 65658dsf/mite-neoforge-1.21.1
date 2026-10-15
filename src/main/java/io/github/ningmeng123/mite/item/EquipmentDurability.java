@@ -183,8 +183,8 @@ public final class EquipmentDurability {
         if (profile == null || exempt(attacker)) return;
         boolean sharpness = attacker.level().registryAccess().registry(Registries.ENCHANTMENT)
                 .flatMap(r -> r.getHolder(Enchantments.SHARPNESS)).map(stack::getEnchantmentLevel).orElse(0) > 0;
-        // R196 Vampiric has no registered modern counterpart yet.
-        hurt(stack, EquipmentDurabilityRules.attackWear(profile, false, sharpness), attacker, EquipmentSlot.MAINHAND);
+        boolean vampiric = io.github.ningmeng123.mite.enchantment.R196Enchantments.level(stack, attacker.level(), "vampiric") > 0;
+        hurt(stack, EquipmentDurabilityRules.attackWear(profile, vampiric, sharpness), attacker, EquipmentSlot.MAINHAND);
     }
 
     public static void hurt(ItemStack stack, int amount, LivingEntity owner, EquipmentSlot slot) {

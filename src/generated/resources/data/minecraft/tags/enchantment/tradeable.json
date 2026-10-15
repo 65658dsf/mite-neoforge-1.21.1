@@ -1,7 +1,22 @@
 {
   "replace": false,
   "values": [
+    "mite:arrow_recovery",
+    "mite:stun",
+    "mite:fishing_fortune",
+    "mite:fertility",
+    "mite:tree_felling",
+    "mite:vampiric",
+    "mite:speed",
+    "mite:regeneration",
+    "mite:free_action",
+    "mite:quickness",
+    "mite:true_flight",
+    "mite:poison",
+    "mite:disarming",
+    "mite:piercing",
     "mite:harvesting",
-    "mite:fertility"
+    "mite:butchering",
+    "mite:endurance"
   ]
 }

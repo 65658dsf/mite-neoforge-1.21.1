@@ -1,0 +1,22 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.mite.endurance"
+  },
+  "effects": {},
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 4,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#mite:enchantable/endurance",
+  "slots": [
+    "chest"
+  ],
+  "supported_items": "#mite:enchantable/endurance",
+  "weight": 25
+}

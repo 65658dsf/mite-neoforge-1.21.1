@@ -6,4 +6,5 @@ import net.minecraft.world.InteractionHand;
 public interface FishingHookView {
     InteractionHand mite$castHand();
     String mite$hookMaterial();
+    int mite$fishingFortune();
 }

@@ -1,0 +1,25 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:iron_chestplate",
+    "minecraft:iron_leggings",
+    "minecraft:diamond_chestplate",
+    "minecraft:diamond_leggings",
+    "minecraft:golden_chestplate",
+    "minecraft:golden_leggings",
+    "minecraft:netherite_chestplate",
+    "minecraft:netherite_leggings",
+    "mite:copper_chestplate",
+    "mite:silver_chestplate",
+    "mite:mithril_chestplate",
+    "mite:adamantium_chestplate",
+    "mite:rusted_iron_chestplate",
+    "mite:copper_leggings",
+    "mite:silver_leggings",
+    "mite:mithril_leggings",
+    "mite:adamantium_leggings",
+    "mite:rusted_iron_leggings",
+    "mite:ancient_metal_chestplate",
+    "mite:ancient_metal_leggings"
+  ]
+}

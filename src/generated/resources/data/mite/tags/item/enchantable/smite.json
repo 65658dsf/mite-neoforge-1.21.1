@@ -1,0 +1,13 @@
+{
+  "replace": true,
+  "values": [
+    "mite:copper_war_hammer",
+    "mite:silver_war_hammer",
+    "mite:golden_war_hammer",
+    "mite:rusted_iron_war_hammer",
+    "mite:iron_war_hammer",
+    "mite:ancient_metal_war_hammer",
+    "mite:mithril_war_hammer",
+    "mite:adamantium_war_hammer"
+  ]
+}

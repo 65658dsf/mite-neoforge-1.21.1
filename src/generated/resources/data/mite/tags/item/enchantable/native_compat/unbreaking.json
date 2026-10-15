@@ -1,0 +1,11 @@
+{
+  "replace": true,
+  "values": [
+    "#mite:enchantable/unbreaking",
+    "minecraft:crossbow",
+    "minecraft:trident",
+    "minecraft:mace",
+    "minecraft:shield",
+    "minecraft:elytra"
+  ]
+}

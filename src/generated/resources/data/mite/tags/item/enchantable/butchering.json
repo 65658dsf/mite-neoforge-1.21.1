@@ -1,0 +1,15 @@
+{
+  "replace": true,
+  "values": [
+    "mite:obsidian_knife",
+    "mite:flint_knife",
+    "mite:copper_dagger",
+    "mite:silver_dagger",
+    "mite:golden_dagger",
+    "mite:rusted_iron_dagger",
+    "mite:iron_dagger",
+    "mite:ancient_metal_dagger",
+    "mite:mithril_dagger",
+    "mite:adamantium_dagger"
+  ]
+}

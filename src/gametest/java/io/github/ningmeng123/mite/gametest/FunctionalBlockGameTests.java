@@ -483,8 +483,11 @@ public final class FunctionalBlockGameTests {
         helper.succeed();
     }
     @GameTest(template = "empty")
-    public static void emeraldTableGeneratesSourcePowerAndModernEnchantmentInteraction(GameTestHelper helper) {
-        Player owner = player(helper, 203000);
+    public static void emeraldTableGeneratesSourcePowerAndPointPaidEnchantmentInteraction(GameTestHelper helper) {
+        var owner = FakePlayerFactory.get(helper.getLevel(), new GameProfile(UUID.randomUUID(), "EmeraldEnchantOwner"));
+        owner.setGameMode(GameType.SURVIVAL);
+        owner.moveTo(helper.absolutePos(SITE).getCenter());
+        PlayerExperience.setTotal(owner, 203000);
         BlockPos pos = place(helper, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get());
         // Clear both transmitter rings explicitly; neighboring batch fixtures or template
         // scaffolding must not silently turn a 24-shelf test into a smaller installation.
@@ -500,9 +503,11 @@ public final class FunctionalBlockGameTests {
         menu.getSlot(0).set(new ItemStack(MiteTools.get("mite:copper_pickaxe")));
         menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
         helper.assertValueEqual(menu.costs[2], 40, "Capped24 shelves power50 adjusted for copper enchantability30 =40");
+        int pointCost = menu.costs[0] * 100;
         helper.assertTrue(menu.clickMenuButton(owner, 0), "Actual lower option enchants");
-        helper.assertTrue(menu.getSlot(0).getItem().isEnchanted(), "Native modern enchantments applied to source tool");
-        helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 2, "Modern lapis compatibility retained");
+        helper.assertTrue(menu.getSlot(0).getItem().isEnchanted(), "R196 enchantment selection applies to source tool");
+        helper.assertValueEqual(owner.totalExperience, 203000 - pointCost, "Actual selection pays exact source points");
+        helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 2, "First option consumes one lapis alongside source XP points");
         helper.succeed();
     }
 }

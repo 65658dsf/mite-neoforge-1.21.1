@@ -1,0 +1,22 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.mite.tree_felling"
+  },
+  "effects": {},
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 5,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#mite:enchantable/tree_felling",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#mite:enchantable/tree_felling",
+  "weight": 25
+}

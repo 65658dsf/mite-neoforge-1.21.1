@@ -1,0 +1,25 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:turtle_helmet",
+    "minecraft:leather_helmet",
+    "minecraft:chainmail_helmet",
+    "minecraft:iron_helmet",
+    "minecraft:diamond_helmet",
+    "minecraft:golden_helmet",
+    "minecraft:netherite_helmet",
+    "mite:copper_helmet",
+    "mite:silver_helmet",
+    "mite:mithril_helmet",
+    "mite:adamantium_helmet",
+    "mite:copper_chain_helmet",
+    "mite:silver_chain_helmet",
+    "mite:golden_chain_helmet",
+    "mite:mithril_chain_helmet",
+    "mite:adamantium_chain_helmet",
+    "mite:rusted_iron_helmet",
+    "mite:rusted_iron_chain_helmet",
+    "mite:ancient_metal_helmet",
+    "mite:ancient_metal_chainmail_helmet"
+  ]
+}

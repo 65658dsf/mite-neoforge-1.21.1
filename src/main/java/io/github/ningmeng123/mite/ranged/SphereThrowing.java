@@ -25,7 +25,7 @@ public final class SphereThrowing {
                     R196WeaponRules.inaccuracy(player.experienceLevel, player.isInWaterOrBubble() || player.isInLava()));
             if (!level.addFreshEntity(sphere)) return InteractionResultHolder.fail(stack);
             if (!player.getAbilities().instabuild) {
-                stack.shrink(1); player.causeFoodExhaustion(.25F);
+                stack.shrink(1); io.github.ningmeng123.mite.enchantment.EnduranceActions.throwing(player);
             }
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT,
                     SoundSource.PLAYERS, .5F, .4F / (player.getRandom().nextFloat() * .4F + .8F));

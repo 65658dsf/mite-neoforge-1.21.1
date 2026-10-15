@@ -2,18 +2,15 @@ package io.github.ningmeng123.mite.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.github.ningmeng123.mite.registry.MiteTools;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 
-/** Disease models, source crop loot and agricultural enchantment data. @author NingMeng123 */
+/** Disease models, source crop loot. @author NingMeng123 */
 public final class CropAssetsProvider implements DataProvider {
     private final Path output;
 
@@ -32,7 +29,6 @@ public final class CropAssetsProvider implements DataProvider {
             for (int stage = 0; stage < dead; stage++) cropModel(cache, work, crop, "dead", stage);
         }
         farmland(cache, work);
-        agricultureEnchantments(cache, work);
         save(cache, work, "data/minecraft/loot_table/blocks/melon.json", melonLoot());
         for (String fruit : List.of("melon", "pumpkin")) {
             JsonObject loot = object("type", "minecraft:block");
@@ -169,37 +165,10 @@ public final class CropAssetsProvider implements DataProvider {
         loot.add("pools", array(pool)); return loot;
     }
 
-    private void agricultureEnchantments(CachedOutput cache, List<CompletableFuture<?>> work) {
-        for (String id : List.of("harvesting", "fertility")) {
-            JsonObject enchantment = new JsonObject(); enchantment.addProperty("anvil_cost", 2);
-            enchantment.add("description", object("translate", "enchantment.mite." + id));
-            enchantment.addProperty("supported_items", "#mite:agricultural_tools");
-            enchantment.addProperty("max_level", 5); enchantment.addProperty("weight", 25);
-            JsonObject min = new JsonObject(); min.addProperty("base", 1); min.addProperty("per_level_above_first", 10);
-            JsonObject max = new JsonObject(); max.addProperty("base", Integer.MAX_VALUE); max.addProperty("per_level_above_first", 0);
-            enchantment.add("min_cost", min); enchantment.add("max_cost", max);
-            JsonArray slots = new JsonArray(); slots.add("mainhand"); enchantment.add("slots", slots);
-            save(cache, work, "data/mite/enchantment/" + id + ".json", enchantment);
-        }
-        Set<String> tools = new LinkedHashSet<>();
-        for (String material : List.of("wooden", "stone", "iron", "golden", "diamond", "netherite")) tools.add("minecraft:" + material + "_hoe");
-        for (MiteTools.Definition definition : MiteTools.definitions())
-            if (Set.of("HOE", "MATTOCK", "SCYTHE").contains(definition.family().name())) tools.add(definition.id());
-        JsonArray values = new JsonArray(); tools.forEach(values::add);
-        JsonObject toolTag = new JsonObject(); toolTag.addProperty("replace", false); toolTag.add("values", values);
-        save(cache, work, "data/mite/tags/item/agricultural_tools.json", toolTag);
-        for (String tag : List.of("in_enchanting_table", "tradeable", "on_random_loot", "non_treasure")) {
-            JsonObject enchantmentTag = new JsonObject(); enchantmentTag.addProperty("replace", false);
-            JsonArray enchantments = new JsonArray(); enchantments.add("mite:harvesting"); enchantments.add("mite:fertility");
-            enchantmentTag.add("values", enchantments);
-            save(cache, work, "data/minecraft/tags/enchantment/" + tag + ".json", enchantmentTag);
-        }
-    }
-
     private void save(CachedOutput cache, List<CompletableFuture<?>> work, String path, JsonObject json) {
         work.add(DataProvider.saveStable(cache, json, output.resolve(path)));
     }
     private static JsonObject object(String key, String value) { JsonObject object = new JsonObject(); object.addProperty(key, value); return object; }
     private static JsonArray array(JsonObject value) { JsonArray array = new JsonArray(); array.add(value); return array; }
-    @Override public String getName() { return "MITE crop disease assets, crop loot and agricultural enchantments"; }
+    @Override public String getName() { return "MITE crop disease assets and crop loot"; }
 }

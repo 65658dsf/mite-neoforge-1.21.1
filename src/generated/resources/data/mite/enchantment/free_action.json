@@ -1,0 +1,22 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.mite.free_action"
+  },
+  "effects": {},
+  "max_cost": {
+    "base": 2147483647,
+    "per_level_above_first": 0
+  },
+  "max_level": 4,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#mite:enchantable/free_action",
+  "slots": [
+    "legs"
+  ],
+  "supported_items": "#mite:enchantable/free_action",
+  "weight": 25
+}

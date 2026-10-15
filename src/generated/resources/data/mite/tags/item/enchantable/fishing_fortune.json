@@ -1,0 +1,14 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:fishing_rod",
+    "mite:fishing_rod_flint_hook",
+    "mite:fishing_rod_obsidian_hook",
+    "mite:fishing_rod_copper_hook",
+    "mite:fishing_rod_silver_hook",
+    "mite:fishing_rod_gold_hook",
+    "mite:fishing_rod_ancient_metal_hook",
+    "mite:fishing_rod_mithril_hook",
+    "mite:fishing_rod_adamantium_hook"
+  ]
+}

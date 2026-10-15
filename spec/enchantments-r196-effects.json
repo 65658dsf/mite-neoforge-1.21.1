@@ -1,0 +1,1106 @@
+{
+  "author": "NingMeng123",
+  "schema_version": 1,
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_root": ".reference/r196/decompiled",
+  "scope": "R196 registered and called enchantment effects; enchanting offers/catalog are specified separately.",
+  "evidence_policy": "An effect is enabled only where a registered enchantment is read by a reachable gameplay call; class names and language entries are not sufficient evidence.",
+  "shared_rules": {
+    "level_fraction": {
+      "formula": "L > 0 ? (max_level > 1 ? L / max_level : 1) : 0",
+      "sources": [
+        "aaw.java:19-51"
+      ]
+    },
+    "fraction_integer": {
+      "formula": "Math.round(integer * level_fraction)",
+      "sources": [
+        "aaw.java:47-51"
+      ]
+    },
+    "equipment_level": {
+      "formula": "max of equipped levels, never sum",
+      "sources": [
+        "aaw.java:120-133",
+        "uf.java:1917-1920",
+        "og.java:823-826"
+      ],
+      "note": "Player ae() is inventory armor array; Mob ae() is its complete legacy equipment array. Legal per-item applicability normally limits slot."
+    },
+    "registration": {
+      "sources": [
+        "aau.java:153-197"
+      ],
+      "default_enabled": true,
+      "note": "All effects below are instantiated in the unconditional aau static initializer and included in c; each has concrete gameplay reads recorded below."
+    },
+    "biological_target": {
+      "formula": "default !isUndead; golems, magma cubes, endermen, earth/fire elementals and hellhounds override false",
+      "sources": [
+        "of.java:504-518",
+        "rv.java:40-43",
+        "sb.java:117-120",
+        "tg.java:391-394",
+        "tl.java:161-164",
+        "EntityEarthElemental.java:316-319",
+        "EntityFireElemental.java:145-148",
+        "EntityHellhound.java:98-101"
+      ],
+      "note": "Do not approximate this solely as !UNDEAD; ordinary slimes/gelatinous cubes lack an override and remain biologically alive under this source predicate."
+    }
+  },
+  "effects": [
+    {
+      "id": "mite:arrow_recovery",
+      "legacy_id": 51,
+      "max_level": 5,
+      "sources": [
+        "aau.java:175-175",
+        "EnchantmentArrowRecovery.java:4-24",
+        "of.java:1152-1161",
+        "ItemArrow.java:33-81"
+      ],
+      "trigger": "Recoverable player arrow embeds in LivingEntity and resolves its contained-item return.",
+      "formula": "nextInt(5) < L => recover; otherwise independent nextFloat() < material_probability. Total P = L/5 + (1-L/5)*p.",
+      "material_probability": {
+        "flint": 0.3,
+        "obsidian": 0.4,
+        "copper": 0.6,
+        "silver": 0.6,
+        "rusted_iron": 0.5,
+        "gold": 0.5,
+        "iron": 0.7,
+        "mithril": 0.8,
+        "ancient_metal": 0.8,
+        "adamantium": 0.9
+      },
+      "inputs": [
+        "current shooter main-hand enchantment at collision",
+        "ammunition material",
+        "pickup mode=1"
+      ],
+      "outputs": [
+        "one arrow enters target contained-items on recovery; dies with target inventory drops"
+      ],
+      "server": "Roll and persist contained arrow once, including fatal impact.",
+      "client": "Use synchronized arrow visuals; no client reward roll.",
+      "acceptance": [
+        {
+          "case": "flint no enchant",
+          "probability": 0.3
+        },
+        {
+          "case": "flint I",
+          "probability": 0.44
+        },
+        {
+          "case": "any V",
+          "probability": 1
+        },
+        {
+          "case": "nonrecoverable arrow",
+          "result": "no contained arrow"
+        }
+      ],
+      "current_integration": "ranged/ArrowRecovery.java already owns fatal/drop atomicity; add enchantment chance there rather than an independent second drop listener.",
+      "gaps": []
+    },
+    {
+      "id": "mite:stun",
+      "legacy_id": 80,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentStun.java:4-24",
+        "aaw.java:298-300",
+        "uf.java:1107-1116",
+        "tm.java:59-84",
+        "tm.java:113-138",
+        "ni.java:15-15",
+        "EntityDamageResult.java:22-24"
+      ],
+      "trigger": "Player or mob melee attack returned negatively affected LivingEntity.",
+      "formula": "P=L/10; apply Slowness(duration=50*L ticks, amplifier=5*L). Amplifier is zero-based and intentionally high.",
+      "inputs": [
+        "attacker main-hand level",
+        "successful melee damage result"
+      ],
+      "outputs": [
+        "Slowness effect"
+      ],
+      "server": "Resolve proc after native successful hit, including mob melee.",
+      "client": "Render normal synchronized effect and movement prediction.",
+      "acceptance": [
+        {
+          "level": 1,
+          "probability": 0.1,
+          "duration_ticks": 50,
+          "amplifier": 5
+        },
+        {
+          "level": 5,
+          "probability": 0.5,
+          "duration_ticks": 250,
+          "amplifier": 25
+        },
+        {
+          "case": "failed damage",
+          "result": "no proc"
+        }
+      ],
+      "current_integration": "Use melee-only context around Player.attack/Mob.doHurtTarget; do not proc on arrows or generic fire damage.",
+      "gaps": [],
+      "negative_result": "Negative includes health loss, destruction, knockback and held/armor durability loss. Modern bool false with observed armor wear still qualifies."
+    },
+    {
+      "id": "mite:fishing_fortune",
+      "legacy_id": 81,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentFishingFortune.java:4-24",
+        "aaw.java:302-304",
+        "ul.java:126-161"
+      ],
+      "trigger": "Each source fishing bite attempt after water geometry/line-of-reach checks.",
+      "formula": "N=blueMoon?600:clamp(int(600*min(abs(T-5500),abs(T-17500))/600),600,2400); rain halves N; enabled-skill without FISHING doubles N; repeat L times N=floor(N*9/10); hotbar raw worm halves N; bite iff nextInt(N)==0.",
+      "inputs": [
+        "current owner held rod enchantment",
+        "adjusted time of day",
+        "blue moon",
+        "rain",
+        "raw worm",
+        "optional skills"
+      ],
+      "outputs": [
+        "bite probability denominator reduced, not extra items or rarity"
+      ],
+      "server": "Own random bite eligibility and hook state.",
+      "client": "Use synchronized biting and splash.",
+      "acceptance": [
+        {
+          "case": "N600 fortune I no bait",
+          "denominator": 540
+        },
+        {
+          "case": "N600 fortune V no bait",
+          "denominator": 353
+        },
+        {
+          "case": "N600 fortune V with bait",
+          "denominator": 176
+        }
+      ],
+      "current_integration": "FoodFishingBaitMixin currently maps captured modern luck onto this factor; read new MITE enchantment level independently and preserve modern Luck of the Sea loot luck.",
+      "gaps": [
+        "Skills branch must remain gated by actual world skills setting; default modern port has no skill system and should not silently penalize all players."
+      ]
+    },
+    {
+      "id": "mite:tree_felling",
+      "legacy_id": 83,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentTreeFelling.java:4-24",
+        "aaw.java:310-312",
+        "jw.java:129-158"
+      ],
+      "trigger": "Successful survival harvest of legacy log block, outside existing felling recursion.",
+      "formula": "For dy=1..L, while same x,z above is a log, perform full ordinary player break; stop at first non-log.",
+      "inputs": [
+        "current main-hand level",
+        "vertical column"
+      ],
+      "outputs": [
+        "up to L additional log breaks, each native wear/drops/checks"
+      ],
+      "server": "Perform normal break path under recursion guard and protection checks.",
+      "client": "Receive normal block updates, no predicted extra harvest.",
+      "acceptance": [
+        {
+          "case": "level III with five stacked logs",
+          "removed": 4
+        },
+        {
+          "case": "gap after second log",
+          "removed": 2
+        },
+        {
+          "case": "side branch",
+          "result": "branch not searched"
+        }
+      ],
+      "current_integration": "Extend log identity to modern logs tag; record this modern mapping explicitly. Never fell entire connected tree or bypass the native server player break path.",
+      "gaps": []
+    },
+    {
+      "id": "mite:vampiric",
+      "legacy_id": 84,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentVampiric.java:4-24",
+        "aaw.java:314-327",
+        "uf.java:1110-1116",
+        "tm.java:79-84",
+        "tm.java:133-138",
+        "ItemScythe.java:32-40",
+        "EntityDamageResult.java:22-24"
+      ],
+      "trigger": "Successful melee against biologically alive LivingEntity with positive passed damage.",
+      "formula": "P=L/10; transfer=max(1,int((damage*0.5F)*U)); second U is independent uniform [0,1).",
+      "damage_basis": {
+        "player": "raw melee damage variable passed before target defenses (uf.java:1116)",
+        "mob": "EntityDamageResult actual amount of health lost (tm.java:84,138)"
+      },
+      "secondary_effect": "Scythe base attack decay rate is 1 when Vampiric is present, else 2 when Sharpness is present, else 4.",
+      "inputs": [
+        "attacker main-hand level",
+        "damage basis",
+        "target biological predicate"
+      ],
+      "outputs": [
+        "integer attacker heal, native cap and heal particles"
+      ],
+      "server": "Roll once after successful hit; heal attacker and source-compatible particles.",
+      "client": "Render healing feedback only.",
+      "acceptance": [
+        {
+          "case": "L V",
+          "probability": 0.5
+        },
+        {
+          "case": "raw damage 1 at successful proc",
+          "heal": 1
+        },
+        {
+          "case": "undead or enderman target",
+          "heal": 0
+        },
+        {
+          "case": "scythe Vampiric + Sharpness",
+          "base_attack_decay": 1
+        }
+      ],
+      "current_integration": "SourceEnchantmentCombat implements different player raw vs mob actual-health-loss bases. EquipmentDurability must prioritize Vampiric over Sharpness for scythe decay.",
+      "gaps": []
+    },
+    {
+      "id": "mite:speed",
+      "legacy_id": 85,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentSpeed.java:4-24",
+        "aaw.java:329-331",
+        "uc.java:55-57"
+      ],
+      "trigger": "Player walking ability speed calculation.",
+      "formula": "base_walk_speed * (hasFoodEnergy?1:0.75) * (1+0.05*max_equipped_L) * slow_or_haste_factor.",
+      "inputs": [
+        "highest armor level"
+      ],
+      "outputs": [
+        "walking/sprint ground speed multiplier"
+      ],
+      "server": "Keep movement allowance and tracked attributes consistent.",
+      "client": "Apply equivalent prediction from synchronized armor.",
+      "acceptance": [
+        {
+          "level": 1,
+          "multiplier": 1.05
+        },
+        {
+          "level": 5,
+          "multiplier": 1.25
+        },
+        {
+          "case": "same enchant illegally on multiple pieces",
+          "result": "maximum level only"
+        }
+      ],
+      "current_integration": "Player-only attribute modifier refreshed on equipment change; source call site is PlayerAbilities, not a generic mob-speed effect.",
+      "gaps": []
+    },
+    {
+      "id": "mite:regeneration",
+      "legacy_id": 86,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentRegeneration.java:4-24",
+        "aaw.java:333-335",
+        "ux.java:64-85"
+      ],
+      "trigger": "Nonstarving player's natural-heal progress accumulation.",
+      "formula": "increment=(0.0004F + nutrition*0.00002F)*(malnourished?0.25:1)*(inBed?4:1)*(1+0.5*max_equipped_L). At progress>=1 and naturalRegeneration && damaged, heal1, add hunger1, subtract1.",
+      "inputs": [
+        "highest armor enchant level",
+        "nutrition",
+        "nutrient deficiency",
+        "sleep"
+      ],
+      "outputs": [
+        "faster natural healing only"
+      ],
+      "server": "Advance existing heal progress and food costs.",
+      "client": "Display synchronized health and food; no independent tick heal.",
+      "acceptance": [
+        {
+          "case": "nutrition6, healthy awake, no enchant",
+          "increment": 0.00052
+        },
+        {
+          "case": "nutrition6, healthy awake, V",
+          "increment": 0.00182
+        },
+        {
+          "case": "starving",
+          "result": "healing does not accumulate"
+        }
+      ],
+      "current_integration": "FoodDataMixin currently passes0 to NutritionRules.regenerationIncrement; supply equipped level. Do not multiply potion/heal-command/Vampiric heals.",
+      "gaps": []
+    },
+    {
+      "id": "mite:free_action",
+      "legacy_id": 87,
+      "max_level": 4,
+      "sources": [
+        "EnchantmentFreeAction.java:4-29",
+        "aaw.java:337-339",
+        "of.java:1043-1045",
+        "of.java:1741-1758",
+        "ni.java:212-224",
+        "nn.java:747-754"
+      ],
+      "trigger": "Movement slowdown/potion application.",
+      "formula": "R=max_equipped_L*(0.8/4)=0.2L. Player aggregate slow=−0.2*(slowAmp+1)−(inWeb?0.75:0), haste=+0.2*(speedAmp+1); if sum<0 multiply sum by1−R; movementFactor=clamp(1+sum,0,4). Mob Slowness attribute amount multiplies1−R.",
+      "inputs": [
+        "highest armor level",
+        "Slowness/Speed amplifiers",
+        "web state"
+      ],
+      "outputs": [
+        "up to80% reduction in negative movement modifier"
+      ],
+      "server": "Use the same speed factor when validating movement.",
+      "client": "Prediction must match server, including web movement.",
+      "acceptance": [
+        {
+          "case": "Slowness I, IV, no haste/web",
+          "factor": 0.96
+        },
+        {
+          "case": "web only, IV",
+          "factor": 0.85
+        },
+        {
+          "case": "positive aggregate haste",
+          "result": "unchanged"
+        }
+      ],
+      "current_integration": "SourceEnchantmentCombat refreshes potion attributes and a common Entity move hook retains native physical web friction plus source movement factor for enchanted players. With no Free Action, existing modern potion/web behavior is preserved.",
+      "gaps": [],
+      "physical_web_friction": "nn:747-754 additionally multiplies actual movement by .25/.05/.25 and zeroes velocity; Free Action reduces the separate negative movement-factor amount, not this physical friction."
+    },
+    {
+      "id": "mite:quickness",
+      "legacy_id": 88,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentQuickness.java:4-24",
+        "wp.java:26-35",
+        "wp.java:53-67"
+      ],
+      "trigger": "Bow pull calculation (normal and reinforced source bows).",
+      "formula": "maxPullTicks=20−round(10*L/5); fraction=min(ticksPulled/maxPullTicks,1); velocityFactor=(fraction²+2*fraction)/3.",
+      "inputs": [
+        "active bow enchantment"
+      ],
+      "outputs": [
+        "faster full draw and corresponding full-pull critical state"
+      ],
+      "server": "Use revised pull for actual projectile speed/critical and minimum shot threshold.",
+      "client": "Use same revised pull for pull model stages/FOV.",
+      "acceptance": [
+        {
+          "level": 0,
+          "full_draw_ticks": 20
+        },
+        {
+          "level": 1,
+          "full_draw_ticks": 18
+        },
+        {
+          "level": 5,
+          "full_draw_ticks": 10
+        }
+      ],
+      "current_integration": "Must cover BowItem.releaseUsing and getPowerForTime-derived predicates; a client-only model speedup is insufficient.",
+      "gaps": []
+    },
+    {
+      "id": "mite:true_flight",
+      "legacy_id": 89,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentTrueFlight.java:4-24",
+        "uh.java:120-131"
+      ],
+      "trigger": "Player-launched bow arrow launch.",
+      "formula": "E=effectivePlayerLevel+round(40*L/5); wander=E<0?5−0.5E:0.5+4.5/(0.8+(E+1)/5)^2; multiply2 if shooter suspended in liquid.",
+      "inputs": [
+        "bow enchantment",
+        "player XP level",
+        "skills default-off"
+      ],
+      "outputs": [
+        "Gaussian launch spread reduced via virtual XP level; does not alter gravity or speed"
+      ],
+      "server": "Launch projectile using source formula.",
+      "client": "Predicted trajectory/render uses actual velocity.",
+      "acceptance": [
+        {
+          "level": 5,
+          "virtual_level_bonus": 40
+        },
+        {
+          "case": "player XP0 with V",
+          "wander": 0.5555556
+        },
+        {
+          "case": "XP0, no enchant",
+          "wander": 5
+        }
+      ],
+      "current_integration": "SourceBowLaunch already owns exact Gaussian launch; add equivalent levels before R196WeaponRules.inaccuracy.",
+      "gaps": []
+    },
+    {
+      "id": "mite:poison",
+      "legacy_id": 90,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentPoison.java:4-24",
+        "uh.java:373-389",
+        "aaw.java:40-51",
+        "of.java:504-518"
+      ],
+      "trigger": "Bow arrow successfully negatively affected LivingEntity.",
+      "formula": "P=L/5; apply Poison I for160+round(240*L/5) ticks.",
+      "inputs": [
+        "shooter's current main-hand launcher at impact (legacy getLauncher)"
+      ],
+      "outputs": [
+        "Poison effect subject to biological immunity and existing potion handling"
+      ],
+      "server": "Roll after successful arrow hit; no melee or failed-hit application.",
+      "client": "Normal status-effect synchronization.",
+      "acceptance": [
+        {
+          "level": 1,
+          "probability": 0.2,
+          "duration_ticks": 208,
+          "amplifier": 0
+        },
+        {
+          "level": 5,
+          "probability": 1,
+          "duration_ticks": 400,
+          "amplifier": 0
+        },
+        {
+          "case": "undead target",
+          "result": "potion rejected by source predicate"
+        }
+      ],
+      "current_integration": "Modern native projectile weapon snapshot can supply launcher state safely across equipment changes; if adopted, document this explicit modern persistence adaptation.",
+      "gaps": []
+    },
+    {
+      "id": "mite:disarming",
+      "legacy_id": 91,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentDisarming.java:4-24",
+        "uf.java:1101-1107",
+        "og.java:314-316",
+        "og.java:365-367",
+        "og.java:505-506",
+        "og.java:1025-1032"
+      ],
+      "trigger": "Player melee attack with positive raw damage before target's hurt call; target must be legacy Mob with nonempty held item.",
+      "formula": "P=L/5; drop original held ItemStack, clear its matching equipment slot; ticks_disarmed=40.",
+      "inputs": [
+        "player main-hand level",
+        "target held item",
+        "target Mob identity"
+      ],
+      "outputs": [
+        "one actual held stack on ground",
+        "40 ticks no equipment pickup"
+      ],
+      "server": "Only server executes drop/slot removal and pickup cooldown; persist cooldown.",
+      "client": "Normal equipment/drop sync.",
+      "acceptance": [
+        {
+          "level": 5,
+          "probability": 1
+        },
+        {
+          "case": "target player",
+          "result": "never disarmed"
+        },
+        {
+          "case": "hurt subsequently blocked",
+          "result": "disarm may already have happened, by source ordering"
+        },
+        {
+          "case": "reload after20 ticks",
+          "remaining_ticks": 20
+        }
+      ],
+      "current_integration": "Do not add post-damage only event or allow disarming players. Native pickup checks require a dedicated transient/persisted timer.",
+      "gaps": []
+    },
+    {
+      "id": "mite:piercing",
+      "legacy_id": 92,
+      "max_level": 5,
+      "sources": [
+        "EnchantmentPiercing.java:4-27",
+        "Damage.java:181-220"
+      ],
+      "trigger": "Nonabsolute incoming source damage passes target armor defense calculation.",
+      "formula": "piercing=(L/5)*5=L; effectiveProtection=max(totalProtection−piercing,0). Armor wear is computed using unpierced original armor protection before this subtraction.",
+      "inputs": [
+        "source attacking item",
+        "target total R196 protection"
+      ],
+      "outputs": [
+        "less absorbed damage; no added raw damage against unarmored target"
+      ],
+      "server": "Modify actual defense pipeline once.",
+      "client": "Only translated enchantment tooltip/state.",
+      "acceptance": [
+        {
+          "case": "L V, totalProtection8",
+          "effective_protection": 3
+        },
+        {
+          "case": "L V, totalProtection2",
+          "effective_protection": 0
+        },
+        {
+          "case": "no armor",
+          "result": "no bonus damage"
+        }
+      ],
+      "current_integration": "Current port uses modern percent-based armor reduction for most combat; port source point-defense pipeline or explicitly record a modern equivalent, never pretend modern crossbow Piercing is identical.",
+      "gaps": []
+    },
+    {
+      "id": "mite:butchering",
+      "legacy_id": 94,
+      "max_level": 3,
+      "sources": [
+        "EnchantmentButchering.java:4-29",
+        "aaw.java:341-343",
+        "nb.java:353-358",
+        "rr.java:99-113",
+        "rs.java:478-495",
+        "ry.java:113-122",
+        "rz.java:83-98",
+        "EntityArachnid.java:190-199"
+      ],
+      "trigger": "Source-compatible animal/arachnid death drop routine queries responsible LivingEntity held-item level.",
+      "formula_by_entity": {
+        "cow": "well => nextInt(3)+1+nextInt(1+L); if total1 then50% chance add1",
+        "pig": "well => nextInt(3)+1+nextInt(1+L)",
+        "sheep": "well => max(1,nextInt(2)+nextInt(1+L))",
+        "horse": "non-undead =>1+nextInt(1+L)+(ordinary_horse?nextInt(2):0)",
+        "arachnid": "recentPlayerHit && (nextInt(3)==0 || nextInt(1+L)>0) => one spider eye"
+      },
+      "inputs": [
+        "responsible attacker current main-hand level",
+        "animal wellness/type",
+        "recent player hit"
+      ],
+      "outputs": [
+        "additional meat; higher spider-eye chance; no blanket leather/wool multiplication"
+      ],
+      "server": "Integrate within existing source drop routine to avoid duplicate drops.",
+      "client": "None beyond resulting items.",
+      "acceptance": [
+        {
+          "case": "healthy pig III",
+          "count_range": [
+            1,
+            6
+          ]
+        },
+        {
+          "case": "healthy sheep III",
+          "count_range": [
+            1,
+            4
+          ]
+        },
+        {
+          "case": "spider III recent-player hit",
+          "eye_probability": 0.8333333333333333
+        },
+        {
+          "case": "sick cow",
+          "meat": 0
+        }
+      ],
+      "current_integration": "SourceVanillaMobLoot already reads mite:butchering and uses these formulas. Add missing enchantment registration, not a second extra-drop modifier; confirm R196 new arachnids delegate this same helper.",
+      "gaps": []
+    },
+    {
+      "id": "mite:endurance",
+      "legacy_id": 95,
+      "max_level": 4,
+      "sources": [
+        "EnchantmentEndurance.java:4-29",
+        "aaw.java:345-347",
+        "bdc.java:152-152",
+        "bdc.java:191-191",
+        "jv.java:555-555",
+        "uf.java:1159-1159",
+        "uf.java:2405-2411",
+        "yb.java:65-68",
+        "zh.java:34-38",
+        "ItemBrick.java:17-21",
+        "ItemGelatinousSphere.java:56-60",
+        "ux.java:43-48",
+        "uf.java:1490-1540"
+      ],
+      "trigger": "Specific source action hunger charges.",
+      "formula": "actionCost*=1−0.2*max_equipped_L.",
+      "action_charges": {
+        "mining_tick": 0.01,
+        "melee_attempt": 0.3,
+        "placing_block": "min(hardness,20)",
+        "hoe_action": "blockHardness/2",
+        "snowball_brick_sphere_throw": 0.25
+      },
+      "exclusions": [
+        "base0.002/tick metabolism",
+        "walking/sprinting/swimming per-distance hunger",
+        "natural-heal hunger",
+        "nutrient depletion"
+      ],
+      "server": "Scale only identified action charges, not global FoodData.addExhaustion.",
+      "client": "Mining prediction charge must remain consistent where prediction exists.",
+      "acceptance": [
+        {
+          "level": 1,
+          "multiplier": 0.8
+        },
+        {
+          "level": 4,
+          "multiplier": 0.2
+        },
+        {
+          "case": "idle metabolism wearing IV",
+          "per_tick": 0.002
+        }
+      ],
+      "current_integration": "Existing mining uses source-like wear/speed but not all original action hunger charges. Hook existing action endpoints and mark any deferred cost-source coverage explicitly.",
+      "gaps": []
+    }
+  ],
+  "existing_agriculture": {
+    "sources": [
+      "aau.java:178-178",
+      "aau.java:189-189",
+      "EnchantmentFertility.java:4-24",
+      "EnchantmentHarvesting.java:4-24"
+    ],
+    "ids": [
+      "mite:fertility",
+      "mite:harvesting"
+    ],
+    "status": "Already registered by AgriculturalEnchantments and applied in crop code; retain source mechanics and do not multiply them again.",
+    "spec_reference": "Existing crop mechanics specifications and AgriculturalEnchantments.java"
+  },
+  "vanilla_effect_differences": [
+    {
+      "id": "minecraft:sharpness",
+      "sources": [
+        "aar.java:18-44"
+      ],
+      "formula": "L flat damage; Smite and Bane each2L only matching target, and all three mutually exclusive",
+      "current": "Generated native effect is source L; target-family Smite and Bane are2L; no modern Bane extra slow."
+    },
+    {
+      "id": "minecraft:efficiency",
+      "sources": [
+        "uf.java:789-799",
+        "aaw.java:148-150"
+      ],
+      "formula": "effective held tool strength += L²+1 before survival/level multipliers; ineffective tool returns to empty-hand calculation without bonus",
+      "current": "Modern native formula matches core additive arithmetic; preserve effective-tool gate."
+    },
+    {
+      "id": "minecraft:unbreaking",
+      "sources": [
+        "aas.java:4-28",
+        "ye.java:256-279"
+      ],
+      "formula": "max5; per durability point negate with probability0.75*(L/5), including solid-metal armor",
+      "current": "DurabilityEnchantmentMixin and EquipmentDurabilityRules already implement source probability for managed gear."
+    },
+    {
+      "id": "minecraft:protection",
+      "sources": [
+        "abg.java:81-108",
+        "wh.java:70-76",
+        "wh.java:202-217"
+      ],
+      "formula": "General protection raises individual armor protection multiplier by1+0.5*(L/4); separate fire/blast/projectile protection adds each armor's damage-scaled source protection*(L/4). Feather Falling grants15*(L/4)*armorDamageFactor, not modern EPF percent.",
+      "current": "Existing SourceArmorDefense/MobCombat apply flat defense; native defense effects are not applied again after source processing."
+    },
+    {
+      "id": "minecraft:power",
+      "sources": [
+        "wp.java:65-67"
+      ],
+      "formula": "arrow base damage +=0.5L+0.5 for L>0",
+      "current": "Native1.21Power effect shape is compatible; avoid double-adding on source arrows."
+    },
+    {
+      "id": "minecraft:flame",
+      "sources": [
+        "wp.java:71-72",
+        "nn.java:474-483",
+        "uh.java:346-355"
+      ],
+      "formula": "Arrow ignition requests100seconds: nn.d multiplies by20 and adds10 =>2010ticks. Flaming arrow ignites a living victim for5seconds+10 =>110ticks.",
+      "current": "Generated projectile_spawned duration100.5seconds; source bow impact requests5.5seconds. Native fire protection applies once."
+    },
+    {
+      "id": "minecraft:infinity",
+      "sources": [
+        "aau.java:172-175",
+        "wp.java:74-80"
+      ],
+      "formula": "No Infinity enchantment is registered at51;51 is Arrow Recovery and survival bow always consumes an arrow.",
+      "current": "Modern-only Infinity retained under overall port policy unless separate user balance decision; must not call it an R196 enchantment."
+    },
+    {
+      "id": "minecraft:thorns",
+      "max_level": 3,
+      "sources": [
+        "abh.java:11-46",
+        "aaw.java:171-179",
+        "aaw.java:120-133",
+        "uf.java:1917-1920",
+        "og.java:823-826",
+        "uf.java:1133-1139",
+        "tm.java:74-84",
+        "uh.java:393-398"
+      ],
+      "formula": "highest equipped level determines proc P=0.15L; on proc damage=L>10?L-10:1+nextInt(4). First equipped matching stack takes3durability on proc,1on failed proc, through normalUnbreaking/lastpoint protection.",
+      "item_selection": "NOT random. aaw.a(enchantment,entity) returns first matched stack in ae() iteration: Player boots,legs,chest,head; Mob held then those armor slots.",
+      "proc_random_source": "Attacking player or mob RNG for melee; projectile RNG for arrow collisions. Reflect uses source thorns/magic-aspect damage and does not recurse through melee hooks.",
+      "enabled_trigger": "Original player/mob melee negatively affected target; successful damaging arrow hit likewise calls abh with shooter. Do not trigger on generic poison/fire/fall damage.",
+      "acceptance": [
+        {
+          "case": "maxIII, first bootsI, failedroll",
+          "first_boots_wear": 1,
+          "chest_wear": 0
+        },
+        {
+          "case": "maxIII, successfulroll",
+          "first_enchanted_wear": 3,
+          "damage_range": [
+            1,
+            4
+          ]
+        },
+        {
+          "case": "armor wear but zero health loss",
+          "result": "still attempts reflection"
+        }
+      ],
+      "server": "Own reflection roll, reflecteddamage and itemwear; normal native postattack thorns effect must be cleared to avoid doubling.",
+      "client": "Use normal damage and equipment synchronization."
+    },
+    {
+      "id": "minecraft:fire_aspect",
+      "sources": [
+        "uf.java:1090-1131",
+        "nn.java:474-483"
+      ],
+      "formula": "Successful source melee sets4L seconds plus10ticks; I90 and II170ticks.",
+      "current": "Generated post_attack ignite duration base4.5, per_level4; native primary melee path verified."
+    }
+  ],
+  "evidence_gaps": [
+    {
+      "id": "modern_only_enchantments",
+      "status": "out_of_R196_scope",
+      "detail": "Mending, Frost Walker, curses, modern crossbow/trident/mace enchantments have noR196 counterpart. Preserve modern content per project policy and record balancing separately."
+    },
+    {
+      "id": "legacy_hand_snapshot",
+      "status": "explicit_adaptation_required",
+      "detail": "Legacy arrow getLauncher reads current held stack at impact. Modern projectile native persisted weapon snapshot avoids equipment-swap changes. Whichever behavior chosen must be disclosed and tested."
+    },
+    {
+      "id": "legacy_skills",
+      "status": "gated_not_default_assumed",
+      "detail": "Archery/fishing skill penalties in source depend on world.areSkillsEnabled; do not infer enabled merely from Skill enum."
+    }
+  ],
+  "provenance": {
+    "Damage.java": {
+      "sha256": "21bd577811b38c65af046de7b589d1e793ecbde2154564bcd0788accb24ac64f",
+      "line_count": 254
+    },
+    "EnchantmentArrowRecovery.java": {
+      "sha256": "c28b61f87f4d85a84f2e334fd451578a212641120b2efb6f46ea20c059a9b263",
+      "line_count": 25
+    },
+    "EnchantmentButchering.java": {
+      "sha256": "e6562e5b119097adc163c9431d1f90311b36386bae7a02668b75990212a793af",
+      "line_count": 30
+    },
+    "EnchantmentDisarming.java": {
+      "sha256": "4a024e22d065c93924816cab3d5985cc1b0e7af62fe5dd59d62a6fea3d67926b",
+      "line_count": 25
+    },
+    "EnchantmentEndurance.java": {
+      "sha256": "306fe261d202a5d1cfb736dced0259ab4d29c0ef3b3aabb10a79bfbc42c8b3b7",
+      "line_count": 30
+    },
+    "EnchantmentFertility.java": {
+      "sha256": "a0a51a1f1ba74f04d63ceda73ea0707f7677b5acdc648c0e32579238abd34c4e",
+      "line_count": 25
+    },
+    "EnchantmentFishingFortune.java": {
+      "sha256": "d4d003a364c3d326dd2c330ab028bb78737e0f162f11b0c520fb03c07fab828e",
+      "line_count": 25
+    },
+    "EnchantmentFreeAction.java": {
+      "sha256": "2ecb13b71f63e7734cd2e8828cf6f6927c9bcbad6d7495b7824b8f17dc0e077b",
+      "line_count": 30
+    },
+    "EnchantmentHarvesting.java": {
+      "sha256": "575778d782a1f992a218de036ee69083e1bc94591bb8513b6b7cc4be6d20a78a",
+      "line_count": 25
+    },
+    "EnchantmentPiercing.java": {
+      "sha256": "504b8c2fd2a867e1140a9ef1f072a7c7f2c01b51aa5d22742a926b33160767c8",
+      "line_count": 33
+    },
+    "EnchantmentPoison.java": {
+      "sha256": "3b0edad09f12d67fb74298b023805c1f8a1e591f8f5502081b0cd8e3671e2839",
+      "line_count": 25
+    },
+    "EnchantmentQuickness.java": {
+      "sha256": "3fc4717de6b96e4aa062f7a343d3a682e675c760765c3b927f093314732248d8",
+      "line_count": 25
+    },
+    "EnchantmentRegeneration.java": {
+      "sha256": "3b2a80a051bacbe1bfc8b698bb776d73fe1059993f66611a9cec0d327cc5e805",
+      "line_count": 25
+    },
+    "EnchantmentSpeed.java": {
+      "sha256": "e167d249fee76c8bd6337cafb390cbd59e41a78fbff0710038065a33caa06149",
+      "line_count": 25
+    },
+    "EnchantmentStun.java": {
+      "sha256": "23a4a23c8d9cfe27e97f3d3fdebc3c6f287771ff766e78dd9b056fc769bb6c1d",
+      "line_count": 25
+    },
+    "EnchantmentTreeFelling.java": {
+      "sha256": "4f0ffc0eb36f3a834373b410a362ef057d202bc0ed9bff19b485f041cf6e05b1",
+      "line_count": 25
+    },
+    "EnchantmentTrueFlight.java": {
+      "sha256": "0db42d4038c7dac427402d995dee148ced1f19c13f48a60d34763e123dc0ce14",
+      "line_count": 25
+    },
+    "EnchantmentVampiric.java": {
+      "sha256": "28bae3445b6cd63cb2651b466dfb6d8102e6b364e6359d57962676e241c53226",
+      "line_count": 29
+    },
+    "EntityArachnid.java": {
+      "sha256": "7b6b598a3a9691ef133fe51826b97a9399df00c893b3ea0e28780c727e840595",
+      "line_count": 261
+    },
+    "EntityDamageResult.java": {
+      "sha256": "44ad5cba5983efbfac5ed559d2ca7318e3e49a13df120c6168099a5c04b98adf",
+      "line_count": 176
+    },
+    "EntityEarthElemental.java": {
+      "sha256": "ea10ed19f06279696aadc65c368c27a77348a9626a87cea1c10ad62ec4c4d3fe",
+      "line_count": 370
+    },
+    "EntityFireElemental.java": {
+      "sha256": "2805d3ac62ad6be27129e5c19ee236d433088c9a1f9a858e21cf02e41d464964",
+      "line_count": 185
+    },
+    "EntityHellhound.java": {
+      "sha256": "2f998b545998d49339986ac2b689c35f314f4bb15894f4c8ba46e7089b552215",
+      "line_count": 133
+    },
+    "ItemArrow.java": {
+      "sha256": "18a4b08e252019c071a70f43a44c1d489d4023045c9f03fdc3e317446fbaad61",
+      "line_count": 101
+    },
+    "ItemBrick.java": {
+      "sha256": "606d5a57769d6f589d89f923da2b5e4c904176c50bcb9c7515a9fbc532bdcb5e",
+      "line_count": 39
+    },
+    "ItemGelatinousSphere.java": {
+      "sha256": "3362b29d06744de906eece75c84a291d0e404bad7bd1d9cd18c6a6cae5f7859f",
+      "line_count": 86
+    },
+    "ItemScythe.java": {
+      "sha256": "73d1081116dadc4311bb69ac7866d679a20630c0dbb0110dc1b7d768d4e41a16",
+      "line_count": 58
+    },
+    "aar.java": {
+      "sha256": "37cc6aa8ce882b28fc53b0e04e47587a152cc93ef937300dba282297de58bf42",
+      "line_count": 86
+    },
+    "aas.java": {
+      "sha256": "6b2fb4d45ae253c5cb2803ed90cc5a1aba4d0515116195db41b7ec672fb544a6",
+      "line_count": 29
+    },
+    "aau.java": {
+      "sha256": "d2588724c18b8ba101b4d5b510b8ced09f3f6866f09355404c9fd82a6a1f2181",
+      "line_count": 200
+    },
+    "aaw.java": {
+      "sha256": "f6e9e20d88593fa6b6142f8386f99dceb04bf0e2cc65ee8892c16dce5971873e",
+      "line_count": 349
+    },
+    "abg.java": {
+      "sha256": "23cc66746f6ba0e1060b60d9e153bbcd40b764775e2e649beaac06b9f8c4d713",
+      "line_count": 170
+    },
+    "abh.java": {
+      "sha256": "2dd5b81421290b845f219b1e00e8d585340f6fdf9fff76033ffc327e5b7e014a",
+      "line_count": 56
+    },
+    "bdc.java": {
+      "sha256": "f05331528f6de0206190cbfadf33bbc9a5e36255e4280190a883b6e1e2e95c4f",
+      "line_count": 460
+    },
+    "jv.java": {
+      "sha256": "75592f62f25e66b2d55c2de3f1d77d20965b248a6580577e3076d8d6e740f8bd",
+      "line_count": 1537
+    },
+    "jw.java": {
+      "sha256": "18e87a3f912c2d1aedfc76d2b199ea58d3fa29ba14b3ba058865d144239f1954",
+      "line_count": 195
+    },
+    "nb.java": {
+      "sha256": "fd2be06b668e6ec6fe5400ff10b36e25a535af5f37f750954c01eed8e3e9cac1",
+      "line_count": 360
+    },
+    "ni.java": {
+      "sha256": "d3b6d53cb32e4df79365287fbbe571e38c883a33634cfb9c68a976e8605918bb",
+      "line_count": 236
+    },
+    "nn.java": {
+      "sha256": "8eef572658c250437c15343693cb21c6fecc33197907e7f8aff9f7e90ce2a354",
+      "line_count": 2756
+    },
+    "of.java": {
+      "sha256": "09a6decef7fa4f19a54a2375b90088428fa63d12758ad8f7f68458a2a554d0e5",
+      "line_count": 2357
+    },
+    "og.java": {
+      "sha256": "389465ea1e4a0e99aafb98f3ba9a0acc6680b6e01749fff6545037b348e46372",
+      "line_count": 1546
+    },
+    "rr.java": {
+      "sha256": "558324655216dc7e14847f99797725d89dae28e995c92a8c942d9287381a870a",
+      "line_count": 142
+    },
+    "rs.java": {
+      "sha256": "12c3c00fd42512a87d4a42e2847c3b0632533c65910828b3f496234c91b37303",
+      "line_count": 1396
+    },
+    "rv.java": {
+      "sha256": "0c505180f25c4cb2aefe0c935767c57074aa577fa206d61735028a0231cb3ac4",
+      "line_count": 45
+    },
+    "ry.java": {
+      "sha256": "95b7b8b70d42d5f3694e9aee63fe1a5aa7bd10e9e95aac14968b78099bcca97b",
+      "line_count": 196
+    },
+    "rz.java": {
+      "sha256": "f89eb4477390c1d4c48a999407e480206159b08083380a3beaabc69f0846a89f",
+      "line_count": 257
+    },
+    "sb.java": {
+      "sha256": "256114b232b5069e7df4fda23ff3194c9cd0578fd6a82f92ad8d55a0d36e0caa",
+      "line_count": 132
+    },
+    "tg.java": {
+      "sha256": "b56e7fcc64ab63b6abc6a066bc6bb906f22ad4541b09a287118978fe043f01df",
+      "line_count": 427
+    },
+    "tl.java": {
+      "sha256": "a2d1148cbcad9585238529ce8a07a52f66f44f8faf9ccde1b0686bbfdeb1c1e3",
+      "line_count": 216
+    },
+    "tm.java": {
+      "sha256": "e22950fca180d12b3a64966af44bf6f9c07e857fcefe2765643fbd064ab67285",
+      "line_count": 233
+    },
+    "uc.java": {
+      "sha256": "cb30e24968b366868a5e122f5a7a2545870fe56db816c7962f0ff90bbc984dbf",
+      "line_count": 64
+    },
+    "uf.java": {
+      "sha256": "ad6abab4a99efce4b5dc3f2b64faf77e0e49a8a866317c52b696e348cb347351",
+      "line_count": 2660
+    },
+    "uh.java": {
+      "sha256": "5ab3f307da13b9c949cf2f1bfdb5034451ff6865dc88c2ad6f9ffb08dc03f379",
+      "line_count": 616
+    },
+    "ul.java": {
+      "sha256": "bb171fc35e635c0fbe760ede998f933d71d882de0d79bdf9e13393a4baabe1a1",
+      "line_count": 464
+    },
+    "ux.java": {
+      "sha256": "2436f3de04d452a0f43593ec979a5f4fb4f80a62bd5de9b2ab32b07ee679e40f",
+      "line_count": 182
+    },
+    "wh.java": {
+      "sha256": "76cd690fff781c50c12c83119abbe8bd8a10d2608088aac9f1d9e664e85c6d58",
+      "line_count": 330
+    },
+    "wp.java": {
+      "sha256": "f0a846c06a84c690175cf334b518a5a68a0787582fe262ad894571da8e5766ba",
+      "line_count": 187
+    },
+    "yb.java": {
+      "sha256": "9377112d8cd5b4f0269e42d8e79c2869483af312352f7441efb8d00e151df8e5",
+      "line_count": 103
+    },
+    "ye.java": {
+      "sha256": "da5c8e10fe4f85a6bb57e4816f3fee483675ba092905a72b698b2c01beb0cc42",
+      "line_count": 1204
+    },
+    "zh.java": {
+      "sha256": "c4fb900a66a026a2908c3c17ccc3e48e1aac4ce6085f58805b3461b17ae00df7",
+      "line_count": 292
+    }
+  },
+  "port_verification": {
+    "author": "NingMeng123",
+    "status": "automated_checks_passed_user_accepted",
+    "report": "build/verification/enchantments-completion.json",
+    "source_data_checks": 9432,
+    "junit": 1226,
+    "gametest": 1156,
+    "user_acceptance": "User confirmed the latest three-line tooltip and lapis cost revision and authorized GitHub submission."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:leather_chestplate",
+    "minecraft:chainmail_chestplate",
+    "minecraft:iron_chestplate",
+    "minecraft:diamond_chestplate",
+    "minecraft:golden_chestplate",
+    "minecraft:netherite_chestplate",
+    "mite:copper_chestplate",
+    "mite:silver_chestplate",
+    "mite:mithril_chestplate",
+    "mite:adamantium_chestplate",
+    "mite:copper_chain_chestplate",
+    "mite:silver_chain_chestplate",
+    "mite:golden_chain_chestplate",
+    "mite:mithril_chain_chestplate",
+    "mite:adamantium_chain_chestplate",
+    "mite:rusted_iron_chestplate",
+    "mite:rusted_iron_chain_chestplate",
+    "mite:ancient_metal_chestplate",
+    "mite:ancient_metal_chainmail_chestplate"
+  ]
+}

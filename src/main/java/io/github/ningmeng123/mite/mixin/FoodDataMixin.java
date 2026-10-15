@@ -144,8 +144,8 @@ public abstract class FoodDataMixin implements DualFoodData {
             }
         } else {
             mite$starveProgress=0F;
-            // Regeneration enchantment and tournament hit-list sleep penalties are separate systems.
-            mite$healProgress += NutritionRules.regenerationIncrement(mite$nutrition,state.malnourished(),player.isSleeping(),0);
+            // Source regeneration uses the highest worn level. Tournament-only sleep penalties remain separate.
+            mite$healProgress += NutritionRules.regenerationIncrement(mite$nutrition,state.malnourished(),player.isSleeping(),io.github.ningmeng123.mite.enchantment.R196Enchantments.equipped(player,"regeneration"));
             if (player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION) && player.isHurt()) {
                 if (mite$healProgress>=1F) {
                     player.heal(1F);
