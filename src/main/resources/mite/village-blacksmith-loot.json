@@ -1,0 +1,526 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source": "R196 aji.java static chest table; mk.java generateChestContents; ye.java applyRandomItemStackDamageForChest",
+  "rolls": {
+    "min": 3,
+    "max": 8
+  },
+  "slot_policy": "Each successful stack chooses an independent random slot; later writes replace earlier ones.",
+  "damage_tenths": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "entries": [
+    {
+      "source_field": "yc.shardEmerald",
+      "item": "mite:emerald_shard",
+      "min": 1,
+      "max": 3,
+      "weight": 2,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.shardDiamond",
+      "item": "mite:diamond_shard",
+      "min": 1,
+      "max": 3,
+      "weight": 1,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.copperNugget",
+      "item": "mite:copper_nugget",
+      "min": 1,
+      "max": 5,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.silverNugget",
+      "item": "mite:silver_nugget",
+      "min": 1,
+      "max": 5,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.bs",
+      "item": "minecraft:gold_nugget",
+      "min": 1,
+      "max": 8,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.ironNugget",
+      "item": "minecraft:iron_nugget",
+      "min": 1,
+      "max": 5,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.ingotCopper",
+      "item": "minecraft:copper_ingot",
+      "min": 1,
+      "max": 3,
+      "weight": 3,
+      "minimum_day": 20,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.q",
+      "item": "minecraft:iron_ingot",
+      "min": 1,
+      "max": 3,
+      "weight": 3,
+      "minimum_day": 20,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.coinCopper",
+      "item": "mite:copper_coin",
+      "min": 1,
+      "max": 20,
+      "weight": 15,
+      "minimum_day": 20,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.coinSilver",
+      "item": "mite:silver_coin",
+      "min": 1,
+      "max": 10,
+      "weight": 10,
+      "minimum_day": 20,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.coinGold",
+      "item": "mite:gold_coin",
+      "min": 1,
+      "max": 3,
+      "weight": 5,
+      "minimum_day": 20,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.W",
+      "item": "minecraft:bread",
+      "min": 1,
+      "max": 3,
+      "weight": 15,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.l",
+      "item": "minecraft:apple",
+      "min": 1,
+      "max": 3,
+      "weight": 15,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.Y",
+      "item": "minecraft:leather_chestplate",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.X",
+      "item": "minecraft:leather_helmet",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.Z",
+      "item": "minecraft:leather_leggings",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.aa",
+      "item": "minecraft:leather_boots",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.aC",
+      "item": "minecraft:saddle",
+      "min": 1,
+      "max": 1,
+      "weight": 3,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.helmetCopper",
+      "item": "mite:copper_helmet",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.plateCopper",
+      "item": "mite:copper_chestplate",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.legsCopper",
+      "item": "mite:copper_leggings",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.bootsCopper",
+      "item": "mite:copper_boots",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.helmetChainCopper",
+      "item": "mite:copper_chain_helmet",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.plateChainCopper",
+      "item": "mite:copper_chain_chestplate",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.legsChainCopper",
+      "item": "mite:copper_chain_leggings",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.bootsChainCopper",
+      "item": "mite:copper_chain_boots",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.af",
+      "item": "minecraft:iron_helmet",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.ag",
+      "item": "minecraft:iron_chestplate",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.ah",
+      "item": "minecraft:iron_leggings",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.ai",
+      "item": "minecraft:iron_boots",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.helmetChainIron",
+      "item": "minecraft:chainmail_helmet",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.plateChainIron",
+      "item": "minecraft:chainmail_chestplate",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.legsChainIron",
+      "item": "minecraft:chainmail_leggings",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.bootsChainIron",
+      "item": "minecraft:chainmail_boots",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.shovelCopper",
+      "item": "mite:copper_shovel",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.h",
+      "item": "minecraft:iron_shovel",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.hoeCopper",
+      "item": "mite:copper_hoe",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": true
+    },
+    {
+      "source_field": "yc.R",
+      "item": "minecraft:iron_hoe",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": true
+    },
+    {
+      "source_field": "yc.mattockCopper",
+      "item": "mite:copper_mattock",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.mattockIron",
+      "item": "mite:iron_mattock",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.hatchetCopper",
+      "item": "mite:copper_hatchet",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.hatchetIron",
+      "item": "mite:iron_hatchet",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.axeCopper",
+      "item": "mite:copper_axe",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.j",
+      "item": "minecraft:iron_axe",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.shearsCopper",
+      "item": "mite:copper_shears",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.bg",
+      "item": "minecraft:shears",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.scytheCopper",
+      "item": "mite:copper_scythe",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.pickaxeCopper",
+      "item": "mite:copper_pickaxe",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 20,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.daggerCopper",
+      "item": "mite:copper_dagger",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.daggerIron",
+      "item": "mite:iron_dagger",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.swordCopper",
+      "item": "mite:copper_sword",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.s",
+      "item": "minecraft:iron_sword",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 0,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.warHammerCopper",
+      "item": "mite:copper_war_hammer",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 20,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.warHammerIron",
+      "item": "mite:iron_war_hammer",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 20,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.battleAxeCopper",
+      "item": "mite:copper_battle_axe",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": false
+    },
+    {
+      "source_field": "yc.battleAxeIron",
+      "item": "mite:iron_battle_axe",
+      "min": 1,
+      "max": 1,
+      "weight": 5,
+      "minimum_day": 10,
+      "requires_y_at_least_48": false
+    }
+  ]
+}

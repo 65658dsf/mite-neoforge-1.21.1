@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_classes": {
+    "aiw": {"source_file":"MapGenVillage.java","sha256":"734a7693b4ce9eab66693369150efa542bb2415b1956e896d7fd8b9e03bf21b6"},
+    "ahh": {"source_file":"MapGenScatteredFeature.java","sha256":"1f0ae5c6700897382baf6e0cdc1777cf15d9b39b937c42f753fdcadefcd983c2"},
+    "ahi": {"source_file":"StructureScatteredFeatureStart.java","sha256":"31dda4bf1feca776bc07278c68570425252d23375734cdd7a916e55e072246f8"},
+    "agg": {"source_file":"MapGenMineshaft.java","sha256":"69e7da6825972486efa186db8e93e94b2b10aaffafe0a14ec7f5bf2512a88ec2"},
+    "acq": {"source_file":"BiomeGenBase.java","sha256":"3fe58a21a3bd1c35e25303a7b2713c5d0b1c4ac863d0ac3497b5f7d9d25d1f95"},
+    "ahq": {"source_file":"MapGenStronghold.java","sha256":"8ec2cfb231f157133d3509233b627c37d8fc762f9ebc475b5b57ec4a58f68c71"},
+    "acv": {"source_file":"WorldChunkManager.java","sha256":"f54b0c1ec38453d0d5993fc2e4c890173dfed85cdb954e6bb7f939c33a6a0409"},
+    "aer": {"source_file":"MapGenBase.java","sha256":"f856e6784ef9941b2e739f5c4e41bac8485d1f2dd009366d7de60f5716c1b4b0"},
+    "ain": {"source_file":"MapGenStructure.java","origin":"official Minecraft 1.6.4; not overridden by R196 archive","sha256":"4a790b2bf87d4dccd7eb9c9da94430e86c79ddf4b3a4f9efcb3f096e4aa47fef"}
+  },
+  "village_distribution": {"spacing_chunks":40,"separation_chunks":20,"salt":10387312,"source":"aiw.java:13-14,50-65"},
+  "scattered_distribution": {"spacing_chunks":40,"separation_chunks":20,"salt":14357617,"source":"ahh.java:12-13,36-59","modern_sets":["minecraft:desert_pyramids","minecraft:jungle_temples","minecraft:swamp_huts"]},
+  "mineshaft_distribution": {
+    "source":"agg.java:26-33; acq.java:276-281; aer.java:17-27; official ain.a(World,int,int,int,int,byte[]) offsets26-37",
+    "source_predicate":"nextFloat()<0.005F && canHaveMineshafts() && nextInt(80)<max(abs(chunkX),abs(chunkZ))",
+    "unused_field":"agg.e=0.01 and chance map option are not read by the candidate method",
+    "source_seed_pipeline":"Random(worldSeed), xMultiplier=nextLong(), zMultiplier=nextLong(); setSeed(chunkX*xMultiplier ^ chunkZ*zMultiplier ^ worldSeed); nextInt() discarded; nextFloat()<0.005F; hills; nextInt(80)<max(abs(chunkX),abs(chunkZ))",
+    "modern_structure_set_frequency":1.0,
+    "modern_biome_tag":"mite:has_structure/r196_mineshaft_hills",
+    "modern_biome_values":["#minecraft:is_hill","#minecraft:is_mountain","minecraft:grove","minecraft:windswept_savanna","minecraft:savanna_plateau","#minecraft:is_badlands"],
+    "modern_extensions":"Retain mountain-biome families and modern badlands mineshaft variants; plains, oceans, ordinary forests/deserts, rivers and underground-only biome identities do not themselves qualify.",
+    "random_compatibility":"The pure mineshaftCandidate helper performs the full source frequency/distance stream. Modern frequency is 1.0 to avoid multiplying the 0.5% chance twice. Modern biome and structure validity still apply; same-seed old terrain parity is not claimed."
+  },
+  "strongholds": {
+    "source":"ahq.java:13-23,46-75; acv.java:140-159",
+    "count":3,
+    "distance_chunks":512,
+    "radius_chunks":"(1.25+nextDouble())*512",
+    "angle":"first=nextDouble()*PI*2; increment=PI*2/3",
+    "center":"world coordinate origin (0,0), not shared spawn position",
+    "preferred_biome_radius_blocks":112,
+    "preferred_biome_scan":"X ascending inside Z ascending, inclusive quart bounds; increment selection counter only on successful selection; reuse parent random before next radius",
+    "modern_integration":"Only minecraft:strongholds uses source positions; one asynchronous computation on the native background executor samples the modern BiomeSource at quart Y=0 with modern preferredBiomes; modern structure pieces and world heights are retained.",
+    "metadata_warning":"Setting modern distance=512 alone would produce the wrong 22528..43008 block ring; StrongholdDistributionMixin supplies the source formula."
+  },
+  "seed_fixtures_without_biome_relocation": [
+    {"seed":0,"chunks":[[-91,-758],[889,380],[-738,553]]},
+    {"seed":1,"chunks":[[-102,-844],[686,293],[-648,486]]},
+    {"seed":196,"chunks":[[-58,-672],[774,362],[-782,546]]},
+    {"seed":-1,"chunks":[[-77,642],[-784,-587],[784,-336]]},
+    {"seed":123456789,"chunks":[[-449,-750],[840,-14],[-533,959]]}
+  ],
+  "preserved_modern_content":["all five vanilla village variants","modern temple and swamp hut templates","badlands mineshafts","modern structures introduced after 1.6.4","existing underworld trial chambers and monster rooms"],
+  "verification_status":"source and bytecode checked; runtime and manual tests are recorded by the integration task"
+}

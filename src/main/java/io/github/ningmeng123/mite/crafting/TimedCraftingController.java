@@ -233,6 +233,7 @@ public final class TimedCraftingController {
             if (previousConsumption == null) COMPLETING_CONSUMPTION.remove();
             else COMPLETING_CONSUMPTION.set(previousConsumption);
         }
+        io.github.ningmeng123.mite.worldgen.R196StructureGeneration.crafted(player, crafted);
         giveOrDrop(player, crafted);
         prepared.menu().broadcastChanges();
         Prepared next = prepare(player, prepared.menu());
