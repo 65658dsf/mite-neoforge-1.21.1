@@ -13,7 +13,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,7 +20,6 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -90,20 +88,11 @@ public final class MiteRangedItems {
         SERIALIZERS.register(bus);
         ArrowRecovery.register(bus);
         bus.addListener(MiteRangedItems::defaults);
-        bus.addListener(MiteRangedItems::creative);
         bus.addListener(MiteRangedItems::setup);
     }
     private static void defaults(ModifyDefaultComponentsEvent event) {
         event.modify(Items.ARROW, builder -> builder.set(DataComponents.MAX_STACK_SIZE, 16));
         event.modify(Items.FISHING_ROD, builder -> builder.set(DataComponents.MAX_DAMAGE, 16));
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.COMBAT)
-            for (Material material : Material.values()) if (material != Material.FLINT) event.accept(arrow(material));
-        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES)
-            for (Material material : rods()) if (material != Material.IRON) {
-                event.accept(rod(material)); event.accept(carrotRod(material));
-            }
     }
     private static void setup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {

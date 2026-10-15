@@ -22,13 +22,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -130,7 +128,6 @@ public final class MiteArmorContent {
         MATERIALS.register(bus);
         ITEMS.register(bus);
         bus.addListener(MiteArmorContent::modifyDefaults);
-        bus.addListener(MiteArmorContent::creative);
         ArmorLootIntegration.register(bus);
     }
     private static void modifyDefaults(ModifyDefaultComponentsEvent event) {
@@ -144,11 +141,5 @@ public final class MiteArmorContent {
                     ? new net.minecraft.world.entity.ai.attributes.AttributeModifier(modifier.id(),3D,modifier.operation()) : modifier,entry.slot());
         }
         event.modify(Items.GOLDEN_HORSE_ARMOR,builder->builder.set(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS,gold.build()));
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.COMBAT))
-            definitions().stream().filter(Definition::isNew).forEach(d -> event.accept(get(d.id())));
-        if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS))
-            chains().stream().filter(d -> d.id().startsWith("mite:")).forEach(d -> event.accept(get(d.id())));
     }
 }

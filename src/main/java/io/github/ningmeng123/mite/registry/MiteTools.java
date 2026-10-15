@@ -15,13 +15,11 @@ import java.util.Map;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -179,7 +177,6 @@ public final class MiteTools {
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
         bus.addListener(EventPriority.LOWEST, MiteTools::modifyDefaults);
-        bus.addListener(MiteTools::creative);
     }
 
     private static void modifyDefaults(ModifyDefaultComponentsEvent event) {
@@ -211,19 +208,6 @@ public final class MiteTools {
             EquipmentDurability.registerTool(item, profile);
             event.modify(item, components -> components.set(DataComponents.MAX_DAMAGE,
                     EquipmentDurabilityRules.baseToolDurability(profile)));
-        }
-    }
-
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        for (Definition definition : definitions()) {
-            if (!definition.isNew()) continue;
-            boolean combat = switch (definition.family()) {
-                case SWORD, DAGGER, BATTLE_AXE, WAR_HAMMER, CLUB, CUDGEL -> true;
-                default -> false;
-            };
-            if (event.getTabKey().equals(combat ? CreativeModeTabs.COMBAT : CreativeModeTabs.TOOLS_AND_UTILITIES)) {
-                event.accept(get(definition.id()));
-            }
         }
     }
 }

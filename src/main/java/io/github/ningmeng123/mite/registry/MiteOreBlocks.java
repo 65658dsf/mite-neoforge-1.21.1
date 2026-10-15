@@ -5,14 +5,12 @@ import io.github.ningmeng123.mite.block.R196OreBlock;
 import io.github.ningmeng123.mite.block.R196InfestedNetherrackBlock;
 import io.github.ningmeng123.mite.loot.R196OreBonusFunction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.InfestedBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -46,13 +44,7 @@ public final class MiteOreBlocks {
         BLOCKS.register(bus);
         ITEMS.register(bus);
         R196OreBonusFunction.register(bus);
-        bus.addListener(MiteOreBlocks::creative);
         bus.addListener(MiteOreBlocks::components);
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (!event.getTabKey().equals(CreativeModeTabs.NATURAL_BLOCKS)) return;
-        for (var block : new DeferredBlock<?>[]{SILVER_ORE, DEEPSLATE_SILVER_ORE, MITHRIL_ORE,
-                DEEPSLATE_MITHRIL_ORE, ADAMANTIUM_ORE, DEEPSLATE_ADAMANTIUM_ORE, INFESTED_NETHERRACK}) event.accept(block.get());
     }
     private static void components(ModifyDefaultComponentsEvent event) {
         for (Item item : new Item[]{Items.COAL_ORE, Items.DEEPSLATE_COAL_ORE, Items.COPPER_ORE,

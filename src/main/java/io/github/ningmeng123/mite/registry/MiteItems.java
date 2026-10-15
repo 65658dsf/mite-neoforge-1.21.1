@@ -4,7 +4,6 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.item.FlintHatchetItem;
 import java.util.stream.Stream;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.EventPriority;
@@ -37,11 +36,5 @@ public final class MiteItems {
         Stream.concat(event.getParentEntries().stream(), event.getSearchEntries().stream())
                 .filter(stack -> stack.is(Items.WOODEN_AXE) || stack.is(Items.WOODEN_PICKAXE))
                 .toList().forEach(stack -> event.remove(stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS));
-        if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS)) {
-            event.accept(FLINT_CHIP.get());
-            event.accept(SINEW.get());
-        } else if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
-            event.accept(FLINT_HATCHET.get());
-        }
     }
 }

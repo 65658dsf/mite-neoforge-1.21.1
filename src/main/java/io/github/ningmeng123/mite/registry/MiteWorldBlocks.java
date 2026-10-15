@@ -4,7 +4,6 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.block.MantleBlock;
 import io.github.ningmeng123.mite.block.RunestoneBlock;
 import io.github.ningmeng123.mite.item.RunestoneItem;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -12,7 +11,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -39,17 +37,9 @@ public final class MiteWorldBlocks {
     private MiteWorldBlocks() {}
     public static void register(IEventBus bus) {
         BLOCKS.register(bus); ITEMS.register(bus);
-        bus.addListener(MiteWorldBlocks::creative);
         bus.addListener(MiteWorldBlocks::components);
     }
     private static void components(ModifyDefaultComponentsEvent event) {
         event.modify(Items.FLINT_AND_STEEL, builder -> builder.set(DataComponents.MAX_DAMAGE, 16));
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (!event.getTabKey().equals(CreativeModeTabs.BUILDING_BLOCKS)) return;
-        for (int i = 0; i < 16; i++) {
-            event.accept(RunestoneItem.withRune(new ItemStack(MITHRIL_RUNESTONE_ITEM.get()), i));
-            event.accept(RunestoneItem.withRune(new ItemStack(ADAMANTIUM_RUNESTONE_ITEM.get()), i));
-        }
     }
 }

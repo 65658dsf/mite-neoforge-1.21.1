@@ -4,12 +4,10 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.block.MaterialWorkbenchBlock;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -31,9 +29,5 @@ public final class MiteWorkbenches {
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
         ITEMS.register(bus);
-        bus.addListener(MiteWorkbenches::creative);
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.FUNCTIONAL_BLOCKS)) TABLES.values().forEach(block -> event.accept(block.get()));
     }
 }

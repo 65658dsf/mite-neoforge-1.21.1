@@ -5,28 +5,18 @@ import io.github.ningmeng123.mite.item.MiteBowlItem;
 import io.github.ningmeng123.mite.item.MiteBucketItem;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /** Registered R196 foods, processing materials and matching metal vessels. @author NingMeng123 */
 public final class MiteFoods {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Mite.MOD_ID);
-    private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Mite.MOD_ID);
     private static final Map<String, DeferredItem<? extends Item>> ENTRIES = new LinkedHashMap<>();
     public static final String[] METALS = {"copper", "silver", "gold", "mithril", "adamantium", "ancient_metal"};
 
@@ -73,27 +63,10 @@ public final class MiteFoods {
         }
     }
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FOOD_TAB = TABS.register("foods", () ->
-            CreativeModeTab.builder().title(Component.translatable("itemGroup.mite.foods"))
-                    .icon(() -> new ItemStack(CHEESE.get())).displayItems((parameters, output) -> {
-                        Set<Item> items = new LinkedHashSet<>();
-                        items.addAll(MiteFoodCatalog.sourceProfiles().keySet());
-                        items.addAll(MiteFoodCatalog.modernProfiles().keySet());
-                        items.add(Items.CAKE);
-                        items.add(Items.BOWL);
-                        items.add(Items.BUCKET);
-                        items.add(Items.WATER_BUCKET);
-                        items.add(MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get());
-                        ENTRIES.values().forEach(entry -> items.add(entry.get()));
-                        items.forEach(output::accept);
-                    }).build());
-
     private MiteFoods() {}
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
-        TABS.register(bus);
-        bus.addListener(MiteFoods::creativeContents);
     }
 
     /** Used at runtime by vessel peers, recipes and natural acquisition. */
@@ -121,16 +94,4 @@ public final class MiteFoods {
         return entry;
     }
 
-    private static void creativeContents(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.FOOD_AND_DRINKS)) {
-            ENTRIES.values().stream().map(DeferredItem::get)
-                    .filter(item -> MiteFoodCatalog.profile(new ItemStack(item)) != null).forEach(event::accept);
-        } else if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS)) {
-            event.accept(FLOUR.get());
-            event.accept(MANURE.get());
-        }
-        else if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
-            ENTRIES.forEach((path, item) -> { if (path.endsWith("_bucket")) event.accept(item.get()); });
-        }
-    }
 }

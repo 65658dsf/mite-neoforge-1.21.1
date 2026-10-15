@@ -6,7 +6,6 @@ import io.github.ningmeng123.mite.block.entity.R196FurnaceBlockEntity;
 import java.util.List;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -17,7 +16,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -55,12 +53,8 @@ public final class MiteFurnaces {
         BLOCKS.register(bus);
         ITEMS.register(bus);
         TYPES.register(bus);
-        bus.addListener(MiteFurnaces::creative);
         bus.addListener(MiteFurnaces::capabilities);
         bus.addListener(MiteFurnaces::components);
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.FUNCTIONAL_BLOCKS)) ALL.forEach(block -> event.accept(block.get()));
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BLOCK_ENTITY.get(), SidedInvWrapper::new);

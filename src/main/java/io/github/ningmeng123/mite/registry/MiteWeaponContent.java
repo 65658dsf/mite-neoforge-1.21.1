@@ -7,11 +7,9 @@ import io.github.ningmeng123.mite.item.R196ReinforcedBowItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -35,11 +33,7 @@ public final class MiteWeaponContent {
     }
     public static void register(IEventBus bus) {
         ITEMS.register(bus); ENTITIES.register(bus);
-        bus.addListener(MiteWeaponContent::creative);
         bus.addListener(MiteWeaponContent::defaults);
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.COMBAT)) ITEMS.getEntries().forEach(x -> event.accept(x.get()));
     }
     private static void defaults(ModifyDefaultComponentsEvent event) {
         event.modify(Items.SLIME_BALL, b -> b.set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, 16));

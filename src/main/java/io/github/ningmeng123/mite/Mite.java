@@ -63,6 +63,7 @@ public final class Mite {
         io.github.ningmeng123.mite.registry.MiteMobs.register(modBus);
         io.github.ningmeng123.mite.registry.MiteMobSounds.register(modBus);
         io.github.ningmeng123.mite.registry.MiteMobBlocks.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteCreativeTabs.register(modBus);
         io.github.ningmeng123.mite.entity.R196VanillaMobEvents.register(modBus);
         io.github.ningmeng123.mite.worldgen.R196MobSpawning.register(modBus);
         LOGGER.info("MITE: Modern initialized for Minecraft 1.21.1");

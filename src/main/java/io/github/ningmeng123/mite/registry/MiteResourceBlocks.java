@@ -2,7 +2,6 @@ package io.github.ningmeng123.mite.registry;
 
 import io.github.ningmeng123.mite.Mite;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -10,7 +9,6 @@ import net.minecraft.world.level.block.ColoredFallingBlock;
 import net.minecraft.util.ColorRGBA;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -33,14 +31,9 @@ public final class MiteResourceBlocks {
         BLOCKS.register(bus);
         ITEMS.register(bus);
         bus.addListener(MiteResourceBlocks::components);
-        bus.addListener(MiteResourceBlocks::creativeContents);
     }
 
     private static void components(ModifyDefaultComponentsEvent event) {
         event.modify(Items.GRAVEL, builder -> builder.set(DataComponents.MAX_STACK_SIZE, 4));
-    }
-
-    private static void creativeContents(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.NATURAL_BLOCKS)) event.accept(NETHER_GRAVEL.get());
     }
 }

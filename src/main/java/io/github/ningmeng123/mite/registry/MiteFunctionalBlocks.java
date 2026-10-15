@@ -17,7 +17,6 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -84,23 +82,8 @@ public final class MiteFunctionalBlocks {
     }
     public static void register(IEventBus bus) {
         BLOCKS.register(bus); ITEMS.register(bus); TYPES.register(bus); COMPONENTS.register(bus);
-        bus.addListener(MiteFunctionalBlocks::creative);
         bus.addListener(MiteFunctionalBlocks::capabilities);
         bus.addListener(MiteFunctionalBlocks::components);
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (!event.getTabKey().equals(CreativeModeTabs.FUNCTIONAL_BLOCKS)) return;
-        ANVILS.forEach((material, block) -> {
-            event.accept(block.get());
-            int durability = FunctionalBlockRules.anvilDurability(WorkbenchRules.materialCapacity(material));
-            for (int stage = 1; stage <= 2; stage++) {
-                var stack = new net.minecraft.world.item.ItemStack(block.get());
-                stack.set(ANVIL_DAMAGE.get(), FunctionalBlockRules.minimumDamage(stage, durability));
-                event.accept(stack);
-            }
-        });
-        STRONGBOXES.values().forEach(block -> event.accept(block.get()));
-        event.accept(EMERALD_ENCHANTING_TABLE.get());
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
         // Source ownership controls player use; hoppers continue using ordinary inventory access.

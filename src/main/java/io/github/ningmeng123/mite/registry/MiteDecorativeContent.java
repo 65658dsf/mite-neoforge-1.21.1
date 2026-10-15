@@ -12,7 +12,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -73,7 +71,6 @@ public final class MiteDecorativeContent {
     public static void register(IEventBus bus) {
         BLOCKS.register(bus); ITEMS.register(bus); FEATURES.register(bus);
         bus.addListener(MiteDecorativeContent::components);
-        bus.addListener(MiteDecorativeContent::creative);
         bus.addListener(MiteDecorativeContent::setup);
     }
     private static void setup(FMLCommonSetupEvent event) {
@@ -85,11 +82,6 @@ public final class MiteDecorativeContent {
             event.modify(door, builder -> builder.set(DataComponents.MAX_STACK_SIZE, 1));
         for (Item flower : List.of(Items.ORANGE_TULIP, Items.BLUE_ORCHID, Items.ALLIUM, Items.OXEYE_DAISY))
             event.modify(flower, builder -> builder.set(DataComponents.MAX_STACK_SIZE, 32));
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) DOORS.values().forEach(block -> event.accept(block.get()));
-        if (event.getTabKey().equals(CreativeModeTabs.BUILDING_BLOCKS)) BARS.values().forEach(block -> event.accept(block.get()));
-        if (event.getTabKey().equals(CreativeModeTabs.NATURAL_BLOCKS)) { event.accept(DAHLIA.get()); event.accept(WITHERWOOD_BUSH.get()); }
     }
     public static String material(Block block) {
         if (isCopperDoor(block)) return "copper";

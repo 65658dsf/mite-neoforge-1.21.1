@@ -10,11 +10,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -60,12 +58,9 @@ public final class MiteMobs {
     public static EntityType<? extends Mob> type(MobKind kind) { return MOBS.get(kind).get(); }
     public static void register(IEventBus bus) {
         TYPES.register(bus); ITEMS.register(bus);
-        bus.addListener(MiteMobs::attributes); bus.addListener(MiteMobs::creative);
+        bus.addListener(MiteMobs::attributes);
     }
     private static void attributes(EntityAttributeCreationEvent event) {
         for (MobKind kind : MobKind.values()) event.put(type(kind), R196MobRules.attributes(kind).build());
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.SPAWN_EGGS)) ITEMS.getEntries().forEach(entry -> event.accept(entry.get()));
     }
 }

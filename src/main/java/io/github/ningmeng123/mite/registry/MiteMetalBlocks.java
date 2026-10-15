@@ -4,14 +4,12 @@ import io.github.ningmeng123.mite.Mite;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -35,13 +33,9 @@ public final class MiteMetalBlocks {
         BLOCKS.register(bus);
         ITEMS.register(bus);
         bus.addListener(MiteMetalBlocks::components);
-        bus.addListener(MiteMetalBlocks::creative);
     }
     private static void components(ModifyDefaultComponentsEvent event) {
         event.modify(Items.COPPER_BLOCK, builder -> builder.set(DataComponents.MAX_STACK_SIZE, 4));
-    }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.BUILDING_BLOCKS)) STORAGE.values().forEach(block -> event.accept(block.get()));
     }
     public static String material(net.minecraft.world.level.block.state.BlockState state) {
         if (state.is(Blocks.COPPER_BLOCK)) return "copper";

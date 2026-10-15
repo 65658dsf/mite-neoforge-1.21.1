@@ -14,13 +14,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -48,7 +46,6 @@ public final class MiteUtilityContent {
     private MiteUtilityContent() {}
     public static void register(IEventBus bus) {
         ITEMS.register(bus); RECIPES.register(bus); SOUNDS.register(bus);
-        bus.addListener(MiteUtilityContent::creative);
     }
     public static Map<String, DeferredItem<? extends Item>> entries() { return Collections.unmodifiableMap(ENTRIES); }
     public static Item get(String path) {
@@ -57,8 +54,4 @@ public final class MiteUtilityContent {
         return entry.get();
     }
     public static Item item(String id) { return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)); }
-    private static void creative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) ENTRIES.values().forEach(item -> event.accept(item.get()));
-        if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS)) for (String metal : COIN_MATERIALS) event.accept(get(metal + "_coin"));
-    }
 }

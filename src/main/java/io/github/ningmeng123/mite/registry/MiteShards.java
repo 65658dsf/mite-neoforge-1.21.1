@@ -2,11 +2,9 @@ package io.github.ningmeng123.mite.registry;
 
 import io.github.ningmeng123.mite.Mite;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -25,7 +23,6 @@ public final class MiteShards {
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
         bus.addListener(MiteShards::modifyComponents);
-        bus.addListener(MiteShards::creativeContents);
     }
 
     private static void modifyComponents(ModifyDefaultComponentsEvent event) {
@@ -34,16 +31,6 @@ public final class MiteShards {
         }
         for (Item item : new Item[]{Items.EMERALD, Items.DIAMOND}) {
             event.modify(item, builder -> builder.set(DataComponents.MAX_STACK_SIZE, 32));
-        }
-    }
-
-    private static void creativeContents(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS)) {
-            event.accept(OBSIDIAN_SHARD.get());
-            event.accept(EMERALD_SHARD.get());
-            event.accept(DIAMOND_SHARD.get());
-            event.accept(QUARTZ_SHARD.get());
-            event.accept(GLASS_SHARD.get());
         }
     }
 }
