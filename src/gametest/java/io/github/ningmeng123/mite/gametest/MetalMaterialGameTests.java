@@ -7,9 +7,7 @@ import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.gametest.framework.GameTest;
@@ -291,33 +289,36 @@ public final class MetalMaterialGameTests {
                 AbstractContainerMenu menu = workbench
                         ? new CraftingMenu(1, player.getInventory(), ContainerLevelAccess.create(helper.getLevel(), table)) : player.inventoryMenu;
                 player.containerMenu = menu;
-                try {
+                try (var spawned = new SpawnedEntityCapture(helper.getLevel(), entity -> entity instanceof ItemEntity
+                        && entity.getBoundingBox().intersects(player.getBoundingBox().inflate(2)))) {
                     player.getInventory().clearContent();
                     for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(Items.DIRT, 4));
                     menu.getSlot(1).set(new ItemStack(Items.COPPER_BLOCK, 2));
-                    Set<UUID> existing = nearbyItems(helper, player).stream().map(ItemEntity::getUUID).collect(Collectors.toSet());
                     TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
                     helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "A completed full-inventory manufacturing period consumes one block");
                     helper.assertValueEqual(count(player.getInventory(), Items.COPPER_INGOT), 0, "A full inventory has no illegal ingot stack");
-                    helper.assertValueEqual(newCopperDrops(helper, player, existing), 9, "Exactly the completed nine-ingot batch drops when no storage exists");
-                    discardNewItems(helper, player, existing);
+                    // Capture the real synchronous join event; the random-grid chunk's entity query may not be visible until the next tick.
+                    helper.assertValueEqual(spawned.live(ItemEntity.class).stream().filter(item -> item.getItem().is(Items.COPPER_INGOT))
+                            .mapToInt(item -> item.getItem().getCount()).sum(), 9, "Exactly the completed nine-ingot batch drops when no storage exists");
+                    spawned.live(ItemEntity.class).forEach(ItemEntity::discard);
                     player.getInventory().setItem(8, ItemStack.EMPTY);
                     TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
                     helper.assertValueEqual(count(player.getInventory(), Items.COPPER_INGOT), 8, "A single free slot receives eight ingots");
-                    helper.assertValueEqual(newCopperDrops(helper, player, existing), 1, "Only the one-ingot remainder drops");
+                    helper.assertValueEqual(spawned.live(ItemEntity.class).stream().filter(item -> item.getItem().is(Items.COPPER_INGOT))
+                            .mapToInt(item -> item.getItem().getCount()).sum(), 1, "Only the one-ingot remainder drops");
                     helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Each of the two completed periods consumes exactly one input");
                     assertLegalStacks(helper, player.getInventory());
-                    discardNewItems(helper, player, existing);
+                    spawned.live(ItemEntity.class).forEach(ItemEntity::discard);
                     clearCrafting(menu);
                     for (int target : new int[]{0, 40}) {
                         player.getInventory().clearContent();
                         for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(Items.DIRT, 4));
                         player.getInventory().setItem(target, ItemStack.EMPTY);
                         menu.getSlot(1).set(new ItemStack(Items.COPPER_BLOCK));
-                        existing = nearbyItems(helper, player).stream().map(ItemEntity::getUUID).collect(Collectors.toSet());
                         menu.clicked(0, target, ClickType.SWAP, player);
                         helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "Even with no space, an instantaneous result swap cannot consume the block");
-                        helper.assertValueEqual(newCopperDrops(helper, player, existing), 0, "Rejected swaps cannot create a free dropped batch");
+                        helper.assertValueEqual(spawned.live(ItemEntity.class).stream().filter(item -> item.getItem().is(Items.COPPER_INGOT))
+                                .mapToInt(item -> item.getItem().getCount()).sum(), 0, "Rejected swaps cannot create a free dropped batch");
                         clearCrafting(menu);
                     }
                 } finally {
@@ -336,19 +337,6 @@ public final class MetalMaterialGameTests {
         if (menu instanceof InventoryMenu inventory) inventory.clearCraftingContent();
         else ((CraftingMenu) menu).clearCraftingContent();
         menu.setCarried(ItemStack.EMPTY);
-    }
-
-    private static List<ItemEntity> nearbyItems(GameTestHelper helper, ServerPlayer player) {
-        return helper.getLevel().getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(2));
-    }
-
-    private static int newCopperDrops(GameTestHelper helper, ServerPlayer player, Set<UUID> existing) {
-        return nearbyItems(helper, player).stream().filter(item -> !existing.contains(item.getUUID()) && item.getItem().is(Items.COPPER_INGOT))
-                .mapToInt(item -> item.getItem().getCount()).sum();
-    }
-
-    private static void discardNewItems(GameTestHelper helper, ServerPlayer player, Set<UUID> existing) {
-        nearbyItems(helper, player).stream().filter(item -> !existing.contains(item.getUUID())).forEach(ItemEntity::discard);
     }
 
     private static List<ItemStack> grid(Item item, int slots, int count) {

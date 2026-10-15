@@ -19,6 +19,10 @@ repositories {
         url = 'https://maven.blamejared.com'
         content { includeGroup 'mezz.jei' }
     }
+    maven {
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
 }
 
 sourceSets.main.resources {
@@ -91,6 +95,10 @@ neoForge {
         }
         data {
             data()
+            if (project.providers.gradleProperty('miteCropJadeAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.cropJadeAudit', 'true'
+                systemProperty 'mite.cropJadeAuditOutput', file('build/verification/crop-jade-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteLunarVisualAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.lunarVisualAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'
@@ -135,6 +143,9 @@ dependencies {
     // Optional client integration. JEI is supplied by the player's mods folder, never bundled.
     compileOnly 'mezz.jei:jei-1.21.1-common-api:19.57.0.451'
     compileOnly 'mezz.jei:jei-1.21.1-neoforge-api:19.57.0.451'
+    // Jade discovers its integration only when installed; its classes are never bundled or required.
+    compileOnly 'maven.modrinth:jade:15.10.6+neoforge'
+    gametestCompileOnly 'maven.modrinth:jade:15.10.6+neoforge'
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'com.google.code.gson:gson:2.10.1'
