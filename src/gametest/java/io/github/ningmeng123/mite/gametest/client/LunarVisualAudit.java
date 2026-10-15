@@ -73,6 +73,11 @@ public final class LunarVisualAudit implements DataProvider {
         report.addProperty("call_graph_edges", "same-class method calls and invokedynamic bootstrap method handles");
         try {
             check(Boolean.getBoolean("mixin.debug.export"), "Mixin transformed-class export must be enabled");
+            ClassNode weatherLevel = transformed("net.minecraft.world.level.Level", targets);
+            check(hasMerged(weatherLevel, "io.github.ningmeng123.mite.mixin.LunarThunderMixin"),
+                    "Missing dry blood-night thunder Mixin on the client level base");
+            requireReachable(weatherLevel, method(weatherLevel, "getThunderLevel", "(F)F"),
+                    ROOT + "world/LunarWeather", "dryBloodStorm");
             ClassNode sky = transformed("net.minecraft.client.renderer.LevelRenderer", targets);
             MethodNode render = method(sky, "renderSky", SKY_DESCRIPTOR);
             check(hasMerged(sky, "LunarSkyMixin"), "Missing lunar sky Mixin");
@@ -293,7 +298,7 @@ public final class LunarVisualAudit implements DataProvider {
                 + " from " + type.name + "." + start.name + ", found " + sites.size());
     }
     private static boolean hasMerged(ClassNode type, String simpleName) {
-        String mixin = MIXINS + simpleName;
+        String mixin = simpleName.contains(".") ? simpleName : MIXINS + simpleName;
         return type.methods.stream().anyMatch(method -> mergedFrom(method.visibleAnnotations, mixin) || mergedFrom(method.invisibleAnnotations, mixin));
     }
     private static boolean mergedFrom(List<AnnotationNode> annotations, String mixin) {

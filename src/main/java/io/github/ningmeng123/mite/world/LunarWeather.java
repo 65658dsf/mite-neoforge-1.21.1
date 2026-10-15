@@ -21,6 +21,11 @@ public final class LunarWeather {
         return LunarCalendar.state(level.getDayTime(), level.dimension().equals(Level.OVERWORLD)).bloodPeriod();
     }
 
+    /** Blood nights retain a real storm, with no precipitation target. */
+    public static boolean dryBloodStorm(Level level) {
+        return LunarCalendar.state(level.getDayTime(), level.dimension().equals(Level.OVERWORLD)).bloodNight();
+    }
+
     /** Shared with client rendering without changing global biome climate or other dimensions. */
     public static Biome.Precipitation precipitation(Level level, Biome biome, BlockPos pos, Biome.Precipitation original) {
         if (original != Biome.Precipitation.NONE || !bloodPeriod(level)) return original;
@@ -31,10 +36,10 @@ public final class LunarWeather {
         if (!level.dimension().equals(Level.OVERWORLD)) return;
         ServerLevelData data = (ServerLevelData)level.getLevelData();
         LunarWeatherState override = LunarWeatherState.get(level);
-        // User-requested modern extension: the whole blood date is stormy, even with a frozen weather cycle.
+        // The storm spans the blood date; only its daylight periods have precipitation.
         if (bloodPeriod(level)) {
             override.enter(data);
-            weatherFlags(data, true, true);
+            weatherFlags(data, !dryBloodStorm(level), true);
             return;
         }
         // A saved marker makes leaving a blood date work after restart as well as after /time jumps.

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "author": "NingMeng123",
   "source_version": "MITE 1.6.4 R196",
   "user_requested_modern_extension": true,
@@ -9,6 +9,17 @@
     "calendar": "LunarCalendar.State.bloodPeriod",
     "start_tick": 0,
     "end_tick_exclusive": 24000,
+    "thunder_target": true,
+    "rain_target": "!LunarCalendar.State.night",
+    "daytime_rain_intervals": [
+      {"start_tick": 0, "end_tick_exclusive": 13000},
+      {"start_tick": 23001, "end_tick_exclusive": 24000}
+    ],
+    "nighttime_dry_thunder_interval": {"start_tick": 13000, "end_tick_inclusive": 23000},
+    "nighttime_rain_and_snow": false,
+    "nighttime_cauldron_rain_filling": false,
+    "nighttime_real_lightning_and_thunder_sound": true,
+    "nighttime_lightning_rod_and_target_checks_preserved": true,
     "ignores_disabled_weather_cycle": true,
     "weather_command_overridden_next_normal_weather_tick": true,
     "native_strength_step_per_tick": 0.01,

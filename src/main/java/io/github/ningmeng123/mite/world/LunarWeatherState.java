@@ -28,7 +28,8 @@ public final class LunarWeatherState extends SavedData {
         if (!active) return;
         // A weather command issued after /time has already left the blood date takes precedence
         // over the suspended snapshot. Our own forced timers are always one or two ticks long.
-        if (data.isRaining() && data.isThundering() && data.getClearWeatherTime() == 0
+        // Both daytime rain and the dry night use our short timers and thunder flag.
+        if (data.isThundering() && data.getClearWeatherTime() == 0
                 && data.getRainTime() <= 2 && data.getThunderTime() <= 2) {
             data.setRaining(raining); data.setThundering(thundering);
             data.setRainTime(rainTime); data.setThunderTime(thunderTime); data.setClearWeatherTime(clearTime);

@@ -210,6 +210,8 @@
     "LunarLevelTimeMixin",
     "LunarServerLevelMixin",
     "LunarPrecipitationMixin",
+    "LunarThunderMixin",
+    "LunarWeatherSyncMixin",
     "CropSoilMixin",
     "StemLifecycleMixin",
     "AttachedStemLifecycleMixin",
