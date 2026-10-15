@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.rules.R196MobRules;
+import io.github.ningmeng123.mite.world.CollapseSecondaryTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -101,7 +102,9 @@ public final class R196Silverfish extends Silverfish implements R196Mob {
                     BlockState state=level().getBlockState(pos);
                     if (!(state.getBlock() instanceof InfestedBlock infested)) continue;
                     BlockState host=infested.hostStateByInfested(state);
-                    if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(level(),this)) level().removeBlock(pos,false);
+                    if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(level(),this)) {
+                        if (level().removeBlock(pos,false)) CollapseSecondaryTriggers.removedSupport(level(),pos);
+                    }
                     else level().setBlockAndUpdate(pos,host);
                     R196Infestation.spawn((ServerLevel)level(),pos,state,getTarget());
                     if (random.nextInt(4)==0) return;

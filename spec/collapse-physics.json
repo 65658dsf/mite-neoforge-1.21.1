@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_classes": {
+    "anx": {
+      "source_file": "BlockDirt.java",
+      "sha256": "6ca8dadf7f7888186ca4637eb6bfdef78e0baac12e21cd770748a30f74657dc8"
+    },
+    "aoj": {
+      "source_file": "BlockFlowerPot.java",
+      "sha256": "b33daa9fecc43b45b9645b512cf646888c0ec24cb61feec41cf0f197a78400cb"
+    },
+    "aqn": {
+      "source_file": "BlockSoulSand.java",
+      "sha256": "9e66340b63f4515a772f21a3eb0e89d5986ae7aec84d417e2eea1c458fb208bc"
+    },
+    "aqz": {
+      "source_file": "Block.java",
+      "sha256": "82096b99dd4ff878515b4fe1d67b76f7ec51b8fe366624c203382e39ec649ddc"
+    },
+    "arf": {
+      "source_file": "BlockSnow.java",
+      "sha256": "cf812e9abf51f5efac0e7db76078623d2e8653d6a326b7b980af300e56a77ef7"
+    },
+    "aro": {
+      "source_file": "BlockLilyPad.java",
+      "sha256": "6c73e204812629f652094ac143e950f55107ed892e00d966d96ba31fa9da5182"
+    },
+    "atv": {
+      "source_file": "Minecraft.java",
+      "sha256": "fadc513d78588002b5c8775e53e941db4a160b7afb96ca5816e99b3d501c37d6"
+    },
+    "BlockConstants": {
+      "source_file": "BlockConstants.java",
+      "sha256": "9368ef78f1175859fe472fa47a8bb802bb25019443dbe7d962ecd0f489404216"
+    },
+    "BlockFalling": {
+      "source_file": "BlockFalling.java",
+      "sha256": "b80a59f9865b89fc80f7f741e57249cae1b4cd973bdf9378761057955718dbbb"
+    },
+    "BlockUnderminable": {
+      "source_file": "BlockUnderminable.java",
+      "sha256": "b8e9bdd18568669e3c1774bf76e6a51eddab76408a092250d922d38ba47946a6"
+    },
+    "jw": {
+      "source_file": "ItemInWorldManager.java",
+      "sha256": "30e56088f7782fdfb7b41f618cb6c690fcf9791398547fc5211b703d8263ebcc"
+    },
+    "nn": {
+      "source_file": "Entity.java",
+      "sha256": "dad35ad53c3c2cf6807d6fabdb582af6255f75046e075d6efbacf56f28e0b81e"
+    },
+    "sr": {
+      "source_file": "EntityFallingSand.java",
+      "sha256": "169a10001ecfafd8e0f2e020305bf77d6d97266e9940263f50197517cb7af13c"
+    }
+  },
+  "enabled_blocks": [
+    "minecraft:dirt",
+    "minecraft:soul_sand"
+  ],
+  "excluded_modern_blocks": [
+    "minecraft:grass_block",
+    "minecraft:coarse_dirt",
+    "minecraft:podzol",
+    "minecraft:rooted_dirt",
+    "minecraft:mud",
+    "minecraft:soul_soil"
+  ],
+  "default_new_sand_physics": false,
+  "direction": "vertical only",
+  "delay_ticks": 2,
+  "player_mining": {
+    "when": "actual removal succeeded; not creative; removed block is not a torch",
+    "immediate_checks": [
+      "above",
+      "north",
+      "east",
+      "south",
+      "west"
+    ],
+    "source": "jw.java:159-174"
+  },
+  "player_placement": {
+    "when": "accepted player placement transaction, including creative",
+    "effect": "try vertical fall; schedule above only",
+    "source": "BlockUnderminable.java:81-87"
+  },
+  "entity_contact": {
+    "when": "stepOn or entityInside, including creative players and mobs",
+    "effect": "try fall; when successful schedule above and four orthogonal neighbors",
+    "source": "BlockUnderminable.java:90-98; nn.java:954-963"
+  },
+  "chain": {
+    "above_on_any_successful_fall": true,
+    "horizontal_only_on_undermined_callback": true,
+    "diagonals": false,
+    "source": "BlockFalling.java:38-77; BlockUnderminable.java:52-78"
+  },
+  "other_triggers": {
+    "explosion_actual_removal": "schedule above 2 ticks",
+    "leaves_natural_decay": "try above immediately",
+    "enderman_take": "try above immediately",
+    "silverfish_release": "try above immediately",
+    "monster_dig": "try above immediately"
+  },
+  "does_not_trigger": [
+    "ordinary world generation",
+    "ordinary neighbor changes",
+    "generic setBlock/removeBlock",
+    "canceled player placement or mining"
+  ],
+  "collision": {
+    "solid_support": [
+      "stone",
+      "wood",
+      "glass initially",
+      "slabs",
+      "fences",
+      "doors including open",
+      "trapdoors including open",
+      "beds",
+      "ladder",
+      "cocoa",
+      "flowerpots",
+      "snow layers >=2",
+      "lily pads",
+      "moving piston"
+    ],
+    "non_solid": [
+      "air",
+      "fluids",
+      "plants",
+      "fire",
+      "torches",
+      "pressure plates",
+      "buttons",
+      "levers",
+      "carpets",
+      "redstone wire",
+      "rails",
+      "webs",
+      "portals",
+      "signs",
+      "one snow layer",
+      "open fence gate"
+    ],
+    "cannot_crush": [
+      "rails",
+      "flowerpots",
+      "lily pads",
+      "snow layers >=2",
+      "moving piston"
+    ],
+    "explicit_crush": [
+      "skulls"
+    ],
+    "glass_breakthrough": true,
+    "crushed_against_floor_drops": false,
+    "dislodged_over_open_space_drops": "normal cancellable loot path"
+  },
+  "falling_entity": {
+    "direct_impact_damage": false,
+    "burial_suffocation": "normal block collision remains",
+    "native_factory": true,
+    "natural_trial_provenance_retained": true,
+    "ordinary_sand_and_anvils_unchanged": true
+  },
+  "modern_adaptations": {
+    "minimum_height": "dimension minBuildHeight, includes negative Y",
+    "pending_marker": "versioned per-chunk Data Attachment plus native saved scheduled ticks; no shared block-state rewrite",
+    "native_soul_sand_tick": "earlier native tick executes first; later bubble-column tick retained separately from 2-tick collapse check",
+    "unloaded_behavior": "native persistent falling entity; no old 32-block-area instant teleport"
+  },
+  "known_scope_boundary": {
+    "explosion_soil_preprocessing": "R196 abr uses a separate 2.5x low-resistance preprocessing ray pass for soil conversion, distinct from support-removal collapse; not introduced by this change"
+  }
+}

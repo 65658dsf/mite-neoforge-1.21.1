@@ -7,6 +7,8 @@ import io.github.ningmeng123.mite.registry.MiteMetalBlocks;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.OreBlockRules;
+import io.github.ningmeng123.mite.world.CollapsePhysics;
+import io.github.ningmeng123.mite.world.CollapseSecondaryTriggers;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -146,7 +148,8 @@ public final class R196DiggerGoal extends Goal {
     }
     public boolean blockWillFall(BlockPos pos) {
         var state=mob.level().getBlockState(pos);
-        return state.getBlock() instanceof FallingBlock||state.is(Blocks.CACTUS)||state.is(Blocks.SNOW)||state.is(Blocks.LILY_PAD);
+        return state.getBlock() instanceof FallingBlock||CollapsePhysics.managed(state)
+                ||state.is(Blocks.CACTUS)||state.is(Blocks.SNOW)||state.is(Blocks.LILY_PAD);
     }
     /** Also used by qa's overhead-target support branch; same target keeps its existing progress/cooldown. */
     public boolean setBlockToDig(BlockPos pos,boolean clipping) {
@@ -272,13 +275,14 @@ public final class R196DiggerGoal extends Goal {
                     var melee=SourceMeleeGoal.first(peer);if(melee!=null) melee.suppress(10);
                 }
             var above=level.getBlockState(broken.above());
-            if(above.getBlock() instanceof FallingBlock) { active=true;pause=10; }
+            if(above.getBlock() instanceof FallingBlock||CollapsePhysics.managed(above)) { active=true;pause=10; }
             else if(!above.isAir()&&!blockWillFall(broken.above())) {
                 target=broken.getY()==mob.blockPosition().getY()&&canDestroy(broken.above(),true)?broken.above():broken.below();
                 active=true;pause=10;
             } else if(broken.getY()==mob.blockPosition().getY()+1&&!passable(mob.blockPosition().above(2))&&canDestroy(broken.below(),true)) {
                 target=broken.below();active=true;pause=10;
             }
+            CollapseSecondaryTriggers.removedSupport(level,broken);
         }
         level.destroyBlockProgress(mob.getId(),broken,progress);
         level.levelEvent(2001,broken,Block.getId(state));
