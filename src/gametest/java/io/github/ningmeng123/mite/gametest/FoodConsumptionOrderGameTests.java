@@ -122,7 +122,7 @@ public final class FoodConsumptionOrderGameTests {
         GameRules.BooleanValue natural = helper.getLevel().getGameRules().getRule(GameRules.RULE_NATURAL_REGENERATION);
         boolean previousNatural = natural.get();
         try {
-            server.setDifficulty(Difficulty.NORMAL, true);
+            server.getWorldData().setDifficulty(Difficulty.NORMAL);
             natural.set(true, server);
             for (int tick = 0; tick < 1_000; tick++) player.getFoodData().tick(player);
             helper.assertValueEqual(player.getHealth(), 4F,
@@ -135,7 +135,7 @@ public final class FoodConsumptionOrderGameTests {
                     "Absent nutrition cannot accumulate slow healing progress from satiation alone");
         } finally {
             natural.set(previousNatural, server);
-            server.setDifficulty(previousDifficulty, true);
+            server.getWorldData().setDifficulty(previousDifficulty);
         }
         helper.succeed();
     }
@@ -149,7 +149,8 @@ public final class FoodConsumptionOrderGameTests {
         float[][] expectedHealth = {{13F, 6F, 1F}, {13F, 6F, 1F}, {13F, 5F, 1F}, {13F, 5F, 0F}};
         try {
             for (int difficulty = 0; difficulty < difficulties.length; difficulty++) {
-                server.setDifficulty(difficulties[difficulty], true);
+                // Direct data is an isolated fixture for inactive source branches, not a production difficulty change.
+                server.getWorldData().setDifficulty(difficulties[difficulty]);
                 for (int boundary = 0; boundary < initialHealth.length; boundary++) {
                     Player player = player(helper, GameType.SURVIVAL);
                     player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(14D);
@@ -164,7 +165,7 @@ public final class FoodConsumptionOrderGameTests {
                 }
             }
         } finally {
-            server.setDifficulty(previousDifficulty, true);
+            server.getWorldData().setDifficulty(previousDifficulty);
         }
         helper.succeed();
     }
@@ -176,12 +177,12 @@ public final class FoodConsumptionOrderGameTests {
         MinecraftServer server = helper.getLevel().getServer();
         Difficulty previousDifficulty = helper.getLevel().getDifficulty();
         try {
-            server.setDifficulty(Difficulty.HARD, true);
+            server.getWorldData().setDifficulty(Difficulty.HARD);
             for (int tick = 0; tick < 501; tick++) player.getFoodData().tick(player);
             helper.assertValueEqual(player.getHealth(), 6F, "An empty satiation bar cannot starve a player with nutrition");
             assertReserves(helper, player, 0, 2, 0F, "Nutrition remains independently available without satiation");
         } finally {
-            server.setDifficulty(previousDifficulty, true);
+            server.getWorldData().setDifficulty(previousDifficulty);
         }
         helper.succeed();
     }

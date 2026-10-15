@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.entity.ai.SourceCreeperSwellGoal;
 import io.github.ningmeng123.mite.entity.ai.ZombieMoveToTreeGoal;
+import io.github.ningmeng123.mite.entity.ai.MonsterFarmlandGoal;
 import io.github.ningmeng123.mite.rules.R196MobRules;
 import io.github.ningmeng123.mite.rules.R196SpawnRules;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
@@ -111,6 +112,7 @@ public final class R196MonsterAi {
     @SubscribeEvent(priority=EventPriority.LOWEST)
     public static void join(EntityJoinLevelEvent event) {
         if(event.isCanceled() || event.getLevel().isClientSide || !(event.getEntity() instanceof PathfinderMob mob)) return;
+        MonsterFarmlandGoal.install(mob);
         if(mob.getType()==EntityType.SNOW_GOLEM) { replaceRanged(mob,1.25D,20,10F); return; }
         if(!managed(mob)) return;
         if(mob instanceof Zombie zombie) { smart(zombie); zombie.setCanBreakDoors(false); }

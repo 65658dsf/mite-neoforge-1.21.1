@@ -10,6 +10,7 @@ import io.github.ningmeng123.mite.entity.R196Bat;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.registry.MiteWorldBlocks;
 import io.github.ningmeng123.mite.rules.R196SpawnRules;
+import io.github.ningmeng123.mite.rules.BloodMoonInvasionRules;
 import io.github.ningmeng123.mite.rules.R196MobRules;
 import io.github.ningmeng123.mite.rules.R196SpawnRules.Category;
 import java.io.InputStreamReader;
@@ -177,6 +178,7 @@ public final class R196MobSpawning {
         NeoForge.EVENT_BUS.addListener(R196MobSpawning::onServerTick);
     }
     private static void onServerTick(ServerTickEvent.Post event) {
+        BloodMoonInvasion.unlocked(event.getServer().overworld());
         for (ServerLevel level : event.getServer().getAllLevels()) tick(level);
     }
     public static boolean manages(ServerLevel level) {
@@ -235,7 +237,7 @@ public final class R196MobSpawning {
             var hut = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(BuiltinStructures.SWAMP_HUT);
             if (hut != null && level.structureManager().getStructureWithPieceAt(pos, hut).isValid()) return List.of();
         }
-        return Tables.BIOMES.get(biomeId(sourceBiome(level, pos), level)).lists().get(category);
+        return BloodMoonInvasion.pool(level, category, Tables.BIOMES.get(biomeId(sourceBiome(level, pos), level)).lists().get(category));
     }
     private static List<Entry> pool(ServerLevel level, BlockPos pos, Category category, boolean modernOnly) {
         List<Entry> entries = new ArrayList<>();
@@ -400,12 +402,13 @@ public final class R196MobSpawning {
         int sourceY = R196SpawnRules.sourceY(pos.getY(), underworld(level));
         boolean overworld = level.dimension().equals(Level.OVERWORLD), day = R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000));
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
+        boolean invasion = BloodMoonInvasion.unlocked(level);
         for (int attempt = 0; attempt < 16; attempt++) {
             Entry entry = weighted(entries, random);
             if (entry.modern()) return entry;
             String name = entry.sourceClass();
-            if (!R196SpawnRules.depthAllows(name, sourceY, overworld, moon.blood() && !day, surface.value().getBaseTemperature() <= .15F,
-                    biomeId(surface, level) == 2)) continue;
+            if (!BloodMoonInvasionRules.depthAllows(name, sourceY, overworld, moon.blood() && !day, surface.value().getBaseTemperature() <= .15F,
+                    biomeId(surface, level) == 2, invasion)) continue;
             boolean stoneAbove = firstAbove(level, pos).is(Blocks.STONE) || firstAbove(level, pos).is(Blocks.DEEPSLATE);
             if (name.equals("tf")) {
                 if (level.dimensionType().hasSkyLight() && !day && random.nextInt(4) != 0 && R196OutdoorChecks.outdoors(level, pos)) continue;
@@ -434,7 +437,8 @@ public final class R196MobSpawning {
         return new Entry(MiteMobs.type(kind), kind.sourceClass(), from.category(), from.weight(), from.minimum(), from.maximum(), Tables.PACKS.get(kind.sourceClass()), false);
     }
     private static Entry substitute(ServerLevel level, Entry selected, RandomSource random) {
-        if ("EntityVampireBat".equals(selected.sourceClass()) && underworld(level) && random.nextInt(6) == 0) return custom(MobKind.GIANT_VAMPIRE_BAT, selected);
+        if ("EntityVampireBat".equals(selected.sourceClass()) && (underworld(level) || BloodMoonInvasion.unlocked(level))
+                && random.nextInt(6) == 0) return custom(MobKind.GIANT_VAMPIRE_BAT, selected);
         if ("EntityLongdead".equals(selected.sourceClass()) && random.nextInt(6) == 0) return custom(MobKind.LONGDEAD_GUARDIAN, selected);
         return selected;
     }

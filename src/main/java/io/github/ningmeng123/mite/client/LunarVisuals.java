@@ -87,5 +87,25 @@ public final class LunarVisuals {
                 clamp(blue * tint.blue(), 0F, 1F));
     }
 
+    /** User-requested modern extension; native night lightmap and underwater/lava fog remain independent. */
+    public static Color bloodRainAtmosphere(LunarCalendar.State state, float rain, Color original) {
+        return bloodRainColor(state, rain, original, .16F);
+    }
+
+    /** Air fog may become darker/redder but never gains a brightness floor in caves or blindness. */
+    public static Color bloodRainFog(LunarCalendar.State state, float rain, Color original) {
+        return bloodRainColor(state, rain, original, 0F);
+    }
+
+    private static Color bloodRainColor(LunarCalendar.State state, float rain, Color original, float minimumRed) {
+        if (!state.overworld() || !state.bloodPeriod() || state.night()) return original;
+        float wet = clamp(rain, 0F, 1F);
+        if (wet <= 0F) return original;
+        // Preserve native storm brightness above the minimum needed for a visible dark-red sky.
+        float red = Math.max(minimumRed, original.red());
+        return new Color(original.red() + (red - original.red()) * wet,
+                original.green() * (1F - .88F * wet), original.blue() * (1F - .88F * wet));
+    }
+
     private static float clamp(float value, float min, float max) { return Math.max(min, Math.min(max, value)); }
 }

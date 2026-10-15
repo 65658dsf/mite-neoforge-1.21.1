@@ -7,7 +7,7 @@ import java.util.function.ToDoubleFunction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import io.github.ningmeng123.mite.world.DifficultySystem;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,12 +28,7 @@ public final class R196MobEquipment {
         return BuiltInRegistries.ITEM.get(key);
     }
     public static float tension(Mob mob) {
-        int difficulty = mob.level().getDifficulty().getId();
-        boolean hard = mob.level().getDifficulty() == Difficulty.HARD;
-        float result = Mth.clamp(mob.level().getChunkAt(mob.blockPosition()).getInhabitedTime() / 3_600_000F, 0F, 1F)
-                * (hard ? 1F : .75F) + mob.level().getMoonBrightness() * .25F;
-        if (difficulty < 2) result *= difficulty / 2F;
-        return Mth.clamp(result, 0F, hard ? 1.5F : 1F);
+        return DifficultySystem.tension(mob.level(), mob.blockPosition());
     }
     public static ItemStack generated(Mob mob, String id, boolean enchant) {
         return generated(mob, new ItemStack(item(id)), enchant);
@@ -58,8 +53,9 @@ public final class R196MobEquipment {
     }
     /** Source og.bw draws one material tier and can stop while descending from helmet to boots. */
     public static void randomArmor(Mob mob) {
+        if (BloodMoonEquipment.populate(mob)) return;
         var random = mob.getRandom();
-        if (!(random.nextFloat() < .15F * tension(mob))) return;
+        if (!(random.nextFloat() < BloodMoonEquipment.legacyChance(mob, .15F * tension(mob)))) return;
         int tier = random.nextInt(2);
         for (int i = 0; i < 3; ++i) if (random.nextFloat() < .095F) ++tier;
         float stop = mob.level().getDifficulty() == Difficulty.HARD ? .1F : .25F;

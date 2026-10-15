@@ -2,6 +2,8 @@ package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.world.LunarWeather;
+import io.github.ningmeng123.mite.world.LunarWeatherState;
+import io.netty.channel.embedded.EmbeddedChannel;
 import java.lang.reflect.Method;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -9,8 +11,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.server.commands.FillBiomeCommand;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
@@ -34,7 +42,7 @@ public final class LunarWeatherSleepGameTests {
     private LunarWeatherSleepGameTests() {}
 
     @GameTest(template = "empty")
-    public static void nativeWeatherTickForcesBloodStormThenFadesOutAtTheSourceBoundary(GameTestHelper helper) {
+    public static void nativeWeatherTickForcesBloodStormAllDayThenFadesOutAtTheNextDate(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         try (WeatherSnapshot saved = new WeatherSnapshot(level)) {
             level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(true, level.getServer());
@@ -49,14 +57,20 @@ public final class LunarWeatherSleepGameTests {
             helper.assertTrue(level.getLevelData().isRaining() && level.getLevelData().isThundering(), "Tick12999 remains inside the storm");
             level.setDayTime(31L * 24000L + 13000L);
             advanceWeather(level);
-            helper.assertFalse(level.getLevelData().isRaining() || level.getLevelData().isThundering(), "Tick13000 is outside both half-open event intervals");
+            helper.assertTrue(level.getLevelData().isRaining() && level.getLevelData().isThundering(), "Modern extension includes the entire blood night after the source13000 boundary");
+            level.setDayTime(31L * 24000L + 23999L);
+            advanceWeather(level);
+            helper.assertTrue(level.getLevelData().isRaining() && level.getLevelData().isThundering(), "The last tick of the blood date is still stormy");
+            level.setDayTime(32L * 24000L);
+            advanceWeather(level);
+            helper.assertFalse(level.getLevelData().isRaining() || level.getLevelData().isThundering(), "The next ordinary date resumes the independent seed0 weather schedule");
             helper.assertTrue(Math.abs(level.getRainLevel(1F) - .99F) < .0001F, "The last weather does not disappear instantly at the boundary");
         }
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void blueMoonAndHarvestNightClearNaturalRainWhileDisabledCyclePreservesCommands(GameTestHelper helper) {
+    public static void blueMoonAndHarvestKeepSourceWeatherButBloodOverridesAFrozenClearCommand(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         try (WeatherSnapshot saved = new WeatherSnapshot(level)) {
             level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(true, level.getServer());
@@ -68,10 +82,79 @@ public final class LunarWeatherSleepGameTests {
             level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
             level.setDayTime(31L * 24000L + 6000L); level.setWeatherParameters(1000, 0, false, false);
             advanceWeather(level);
-            helper.assertFalse(level.getLevelData().isRaining() || level.getLevelData().isThundering(), "An administrator may freeze clear weather even during blood day");
+            helper.assertTrue(level.getLevelData().isRaining() && level.getLevelData().isThundering(), "The requested all-day blood storm also overrides frozen clear weather");
             level.setDayTime(127L * 24000L + 18000L); level.setWeatherParameters(0, 1000, true, true);
             advanceWeather(level);
             helper.assertTrue(level.getLevelData().isRaining() && level.getLevelData().isThundering(), "An administrator may retain manual storms during blue moon when cycling is disabled");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyBloodDateIncludesDayAndNightButTheFourthDateRemainsBlue(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        try (WeatherSnapshot saved = new WeatherSnapshot(level)) {
+            level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(true, level.getServer());
+            for (long day : new long[]{32, 64, 96}) for (long tick : new long[]{0, 6000, 13000, 18000, 23999}) {
+                level.setDayTime((day - 1L) * 24000L + tick);
+                level.setWeatherParameters(1000, 0, false, false);
+                advanceWeather(level);
+                helper.assertTrue(level.getLevelData().isRaining() && level.getLevelData().isThundering(),
+                        "The entire actual blood date overrides a clear command: day" + day + " tick" + tick);
+            }
+            level.setDayTime(127L * 24000L + 18000L); advanceWeather(level);
+            helper.assertFalse(level.getLevelData().isRaining() || level.getLevelData().isThundering(),
+                    "The128th date is blue, so no full-date blood storm leaks into it");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void frozenWeatherIsRestoredAfterSavedBloodStateAndForwardOrBackwardTimeJumps(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        try (WeatherSnapshot saved = new WeatherSnapshot(level)) {
+            level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
+            level.setWeatherParameters(9000, 0, false, false);
+            level.setDayTime(31L * 24000L + 18000L); advanceWeather(level);
+            CompoundTag encoded = LunarWeatherState.get(level).save(new CompoundTag(), level.registryAccess());
+            helper.assertTrue(encoded.getBoolean("blood_storm_active"), "A real SavedData payload retains the active override across restart");
+            level.getDataStorage().set(LunarWeatherState.NAME, LunarWeatherState.load(encoded, level.registryAccess()));
+            level.setWeatherParameters(4000, 0, false, false); advanceWeather(level);
+            helper.assertTrue(level.getLevelData().isRaining() && level.getLevelData().isThundering(),
+                    "A restored override still forces the blood night after a clear command");
+            level.setDayTime(127L * 24000L); advanceWeather(level);
+            helper.assertFalse(level.getLevelData().isRaining() || level.getLevelData().isThundering(),
+                    "Jumping out restores the frozen weather saved before blood, even after state reload");
+            helper.assertValueEqual(((ServerLevelData)level.getLevelData()).getClearWeatherTime(), 9000,
+                    "Frozen pre-blood command duration is restored rather than permanently forcing rain");
+            level.setDayTime(31L * 24000L + 23999L); advanceWeather(level);
+            level.setDayTime(30L * 24000L + 6000L); advanceWeather(level);
+            helper.assertFalse(level.getLevelData().isRaining() || level.getLevelData().isThundering(),
+                    "A backwards time command also releases the all-day override");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void saturatedBloodStormDoesNotBroadcastUnchangedWeatherEveryTick(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "blood-weather-test"), false);
+        ServerPlayer player = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation());
+        Connection connection = new Connection(PacketFlow.SERVERBOUND);
+        EmbeddedChannel channel = new EmbeddedChannel(connection);
+        try (WeatherSnapshot saved = new WeatherSnapshot(level)) {
+            level.getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
+            level.setDayTime(31L * 24000L + 18000L);
+            level.setRainLevel(1F); level.setThunderLevel(1F); advanceWeather(level);
+            channel.runPendingTasks(); channel.flushOutbound();
+            while (channel.readOutbound() != null) { /* Clear native login and first weather snapshot. */ }
+            for (int tick = 0; tick < 20; tick++) advanceWeather(level);
+            channel.runPendingTasks(); channel.flushOutbound();
+            Object packet;
+            while ((packet = channel.readOutbound()) != null) helper.assertTrue(!(packet instanceof ClientboundGameEventPacket),
+                    "Steady blood weather does not spam redundant native weather packets");
+        } finally {
+            level.getServer().getPlayerList().remove(player); channel.finishAndReleaseAll();
         }
         helper.succeed();
     }
@@ -187,13 +270,16 @@ public final class LunarWeatherSleepGameTests {
         final ServerLevel level; final ServerLevelData data;
         final long time; final int rainTime, thunderTime, clearTime; final boolean rain, thunder, cycle;
         final float rainStrength, thunderStrength;
+        final CompoundTag bloodWeather;
         WeatherSnapshot(ServerLevel level) {
             this.level = level; data = (ServerLevelData)level.getLevelData(); time = level.getDayTime();
+            bloodWeather = LunarWeatherState.get(level).save(new CompoundTag(), level.registryAccess());
             rainTime = data.getRainTime(); thunderTime = data.getThunderTime(); clearTime = data.getClearWeatherTime();
             rain = data.isRaining(); thunder = data.isThundering(); cycle = level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE);
             rainStrength = level.getRainLevel(1F); level.setRainLevel(1F); thunderStrength = level.getThunderLevel(1F); level.setRainLevel(rainStrength);
         }
         @Override public void close() {
+            level.getDataStorage().set(LunarWeatherState.NAME, LunarWeatherState.load(bloodWeather, level.registryAccess()));
             level.setDayTime(time); data.setRainTime(rainTime); data.setThunderTime(thunderTime); data.setClearWeatherTime(clearTime);
             data.setRaining(rain); data.setThundering(thunder); level.setRainLevel(rainStrength); level.setThunderLevel(thunderStrength);
             level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(cycle, level.getServer()); level.updateSkyBrightness();

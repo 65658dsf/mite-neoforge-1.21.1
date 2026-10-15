@@ -95,6 +95,11 @@ neoForge {
         }
         data {
             data()
+            if (project.providers.gradleProperty('miteDifficultyClientAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.difficultyClientAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.difficultyClientAuditOutput', file('build/verification/difficulty-client-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteCropJadeAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.cropJadeAudit', 'true'
                 systemProperty 'mite.cropJadeAuditOutput', file('build/verification/crop-jade-audit.json').absolutePath

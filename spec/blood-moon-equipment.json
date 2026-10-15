@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "user_requested_modern_extension": true,
+  "r196_source_probabilities": false,
+  "history": "BloodMoonInvasion.highestDay persisted highest primary-world calendar date",
+  "blood_count": "highestDay / 32 - highestDay / 128 using integer division; blue dates excluded",
+  "stage": "bloodCount < 2 ? legacy : min((bloodCount - 2) / 2, 8)",
+  "prefixes": [
+    "minecraft:leather_",
+    "minecraft:chainmail_",
+    "minecraft:golden_",
+    "mite:copper_",
+    "mite:silver_",
+    "minecraft:iron_",
+    "mite:ancient_metal_",
+    "mite:mithril_",
+    "mite:adamantium_"
+  ],
+  "first_blood_date_legacy_armor_chance": 0.6,
+  "first_blood_date_material_and_partial_stop_changed": false,
+  "ordinary_promotion_rate": 0.25,
+  "blood_promotion_rate": 0.4,
+  "material_probability": "tier < stage ? 0 : tier == 8 ? r^(8-stage) : (1-r)*r^(tier-stage)",
+  "overall_material_probability": "armorChance * conditionalMaterialChance",
+  "stages": [
+    {
+      "stage": 0,
+      "common_material": "皮革",
+      "prefix": "minecraft:leather_",
+      "ordinary_armor_chance": 0.2,
+      "blood_armor_chance": 0.7,
+      "ordinary_conditional_material_chances": [
+        0.75,
+        0.1875,
+        0.046875,
+        0.01171875,
+        0.0029296875,
+        0.000732421875,
+        0.00018310546875,
+        4.57763671875e-05,
+        1.52587890625e-05
+      ],
+      "blood_conditional_material_chances": [
+        0.6,
+        0.24,
+        0.096,
+        0.0384,
+        0.01536,
+        0.006144,
+        0.0024576,
+        0.00098304,
+        0.00065536
+      ]
+    },
+    {
+      "stage": 1,
+      "common_material": "锁链",
+      "prefix": "minecraft:chainmail_",
+      "ordinary_armor_chance": 0.28,
+      "blood_armor_chance": 0.73,
+      "ordinary_conditional_material_chances": [
+        0.0,
+        0.75,
+        0.1875,
+        0.046875,
+        0.01171875,
+        0.0029296875,
+        0.000732421875,
+        0.00018310546875,
+        6.103515625e-05
+      ],
+      "blood_conditional_material_chances": [
+        0.0,
+        0.6,
+        0.24,
+        0.096,
+        0.0384,
+        0.01536,
+        0.006144,
+        0.0024576,
+        0.0016384
+      ]
+    },
+    {
+      "stage": 2,
+      "common_material": "金",
+      "prefix": "minecraft:golden_",
+      "ordinary_armor_chance": 0.36,
+      "blood_armor_chance": 0.76,
+      "ordinary_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.75,
+        0.1875,
+        0.046875,
+        0.01171875,
+        0.0029296875,
+        0.000732421875,
+        0.000244140625
+      ],
+      "blood_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.6,
+        0.24,
+        0.096,
+        0.0384,
+        0.01536,
+        0.006144,
+        0.004096
+      ]
+    },
+    {
+      "stage": 3,
+      "common_material": "铜",
+      "prefix": "mite:copper_",
+      "ordinary_armor_chance": 0.44,
+      "blood_armor_chance": 0.79,
+      "ordinary_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.75,
+        0.1875,
+        0.046875,
+        0.01171875,
+        0.0029296875,
+        0.0009765625
+      ],
+      "blood_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.6,
+        0.24,
+        0.096,
+        0.0384,
+        0.01536,
+        0.01024
+      ]
+    },
+    {
+      "stage": 4,
+      "common_material": "银",
+      "prefix": "mite:silver_",
+      "ordinary_armor_chance": 0.52,
+      "blood_armor_chance": 0.82,
+      "ordinary_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.75,
+        0.1875,
+        0.046875,
+        0.01171875,
+        0.00390625
+      ],
+      "blood_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6,
+        0.24,
+        0.096,
+        0.0384,
+        0.0256
+      ]
+    },
+    {
+      "stage": 5,
+      "common_material": "铁",
+      "prefix": "minecraft:iron_",
+      "ordinary_armor_chance": 0.6,
+      "blood_armor_chance": 0.85,
+      "ordinary_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.75,
+        0.1875,
+        0.046875,
+        0.015625
+      ],
+      "blood_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6,
+        0.24,
+        0.096,
+        0.064
+      ]
+    },
+    {
+      "stage": 6,
+      "common_material": "远古金属",
+      "prefix": "mite:ancient_metal_",
+      "ordinary_armor_chance": 0.68,
+      "blood_armor_chance": 0.88,
+      "ordinary_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.75,
+        0.1875,
+        0.0625
+      ],
+      "blood_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6,
+        0.24,
+        0.16
+      ]
+    },
+    {
+      "stage": 7,
+      "common_material": "秘银",
+      "prefix": "mite:mithril_",
+      "ordinary_armor_chance": 0.76,
+      "blood_armor_chance": 0.91,
+      "ordinary_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.75,
+        0.25
+      ],
+      "blood_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6,
+        0.4
+      ]
+    },
+    {
+      "stage": 8,
+      "common_material": "艾德曼",
+      "prefix": "mite:adamantium_",
+      "ordinary_armor_chance": 0.84,
+      "blood_armor_chance": 0.94,
+      "ordinary_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "blood_conditional_material_chances": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  ],
+  "equipment_policy": "New eligible humanoid monsters only; one roll including empty results; fill empty armor slots; preserve fixed special sets, explicit armor, weapons and drop rates; source generated quality/wear/enchantments; persist per-mob decision"
+}

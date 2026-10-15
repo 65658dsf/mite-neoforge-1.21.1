@@ -112,4 +112,25 @@ class LunarVisualsTest {
         color(LunarVisuals.tintLightmap(blood, 15, 0, .75F, .5F, .5F), 1F, .7F, .5F);
         color(LunarVisuals.tintLightmap(blood, 15, 0, -.1F, -.1F, 2F), 0F, 0F, 1F);
     }
+    @Test void requestedDaytimeBloodRainHasADarkRedSkyAtFullRain() {
+        var original = new LunarVisuals.Color(.1F, .2F, .3F);
+        var day = LunarCalendar.state(time(32, 6000), true);
+        color(LunarVisuals.bloodRainAtmosphere(day, 1F, original), .16F, .024F, .036F);
+        color(LunarVisuals.bloodRainAtmosphere(day, .5F, original), .13F, .112F, .168F);
+        color(LunarVisuals.bloodRainAtmosphere(day, 2F, original), .16F, .024F, .036F);
+        color(LunarVisuals.bloodRainAtmosphere(day, -1F, original), .1F, .2F, .3F);
+    }
+    @Test void daytimeAtmosphereExtensionDoesNotReplaceMoonNightsOtherEventsOrDimensions() {
+        var original = new LunarVisuals.Color(.1F, .2F, .3F);
+        for (int day : new int[]{1, 24, 120, 128})
+            assertSame(original, LunarVisuals.bloodRainAtmosphere(LunarCalendar.state(time(day, 6000), true), 1F, original));
+        assertSame(original, LunarVisuals.bloodRainAtmosphere(LunarCalendar.state(time(32, 18000), true), 1F, original));
+        assertSame(original, LunarVisuals.bloodRainAtmosphere(LunarCalendar.state(time(32, 6000), false), 1F, original));
+        assertSame(original, LunarVisuals.bloodRainAtmosphere(LunarCalendar.state(time(32, 6000), true), 0F, original));
+    }
+    @Test void daytimeBloodAirFogDoesNotBrightenCaveOrBlindnessDarkness() {
+        var state = LunarCalendar.state(time(32, 6000), true);
+        color(LunarVisuals.bloodRainFog(state, 1F, new LunarVisuals.Color(0F, 0F, 0F)), 0F, 0F, 0F);
+        color(LunarVisuals.bloodRainFog(state, 1F, new LunarVisuals.Color(.1F, .2F, .3F)), .1F, .024F, .036F);
+    }
 }

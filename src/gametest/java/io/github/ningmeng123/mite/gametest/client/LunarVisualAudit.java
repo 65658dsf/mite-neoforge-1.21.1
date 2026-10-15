@@ -4,6 +4,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.client.LunarVisuals;
+import io.github.ningmeng123.mite.rules.LunarCalendar;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -87,6 +89,20 @@ public final class LunarVisualAudit implements DataProvider {
             requireReachable(sky, rainTick, ROOT + "world/LunarWeather", "precipitation");
             requireReachable(sky, rain, ROOT + "rules/LunarCalendar", "state");
 
+            ClassNode atmosphere = transformed("net.minecraft.client.multiplayer.ClientLevel", targets);
+            check(hasMerged(atmosphere, "BloodMoonAtmosphereMixin"), "Missing requested daytime blood-rain atmosphere Mixin");
+            requireReachable(atmosphere, method(atmosphere, "getSkyColor", "(Lnet/minecraft/world/phys/Vec3;F)Lnet/minecraft/world/phys/Vec3;"),
+                    ROOT + "client/BloodMoonAtmosphere", "color");
+            requireReachable(atmosphere, method(atmosphere, "getCloudColor", "(F)Lnet/minecraft/world/phys/Vec3;"),
+                    ROOT + "client/BloodMoonAtmosphere", "color");
+            ClassNode atmosphereHooks = resourceClass(ROOT + "client/BloodMoonAtmosphere");
+            MethodNode fog = method(atmosphereHooks, "fog", "(Lnet/neoforged/neoforge/client/event/ViewportEvent$ComputeFogColor;)V");
+            requireReachable(atmosphereHooks, fog, "net/minecraft/client/Camera", "getFluidInCamera");
+            requireReachable(atmosphereHooks, fog, ROOT + "client/BloodMoonAtmosphere", "color");
+            for (String channel : List.of("setRed", "setGreen", "setBlue"))
+                requireReachable(atmosphereHooks, fog, "net/neoforged/neoforge/client/event/ViewportEvent$ComputeFogColor", channel);
+            auditDaytimeAtmosphere(report);
+
             ClassNode light = transformed("net.minecraft.client.renderer.LightTexture", targets);
             MethodNode update = method(light, "updateLightTexture", "(F)V");
             check(hasMerged(light, "LunarLightTextureMixin"), "Missing moon lightmap Mixin");
@@ -133,6 +149,28 @@ public final class LunarVisualAudit implements DataProvider {
         JsonObject entry = new JsonObject(); entry.addProperty("class", name);
         entry.addProperty("export", path.toAbsolutePath().normalize().toString()); entry.addProperty("sha256", sha256(bytes));
         targets.add(entry); return type;
+    }
+    private static ClassNode resourceClass(String name) throws Exception {
+        try (var stream = LunarVisualAudit.class.getClassLoader().getResourceAsStream(name + ".class")) {
+            check(stream != null, "Missing atmosphere hook class resource");
+            ClassNode type = new ClassNode(); new ClassReader(stream.readAllBytes()).accept(type, 0); return type;
+        }
+    }
+    private static void auditDaytimeAtmosphere(JsonObject report) {
+        var original = new LunarVisuals.Color(.1F, .2F, .3F);
+        var day = LunarCalendar.state(31L * 24000L + 6000L, true);
+        var red = LunarVisuals.bloodRainAtmosphere(day, 1F, original);
+        check(Math.abs(red.red() - .16F) < .00001F && Math.abs(red.green() - .024F) < .00001F
+                && Math.abs(red.blue() - .036F) < .00001F, "Requested full-rain daylight has the independent dark-red RGB fixture");
+        check(LunarVisuals.bloodRainAtmosphere(day, 0F, original) == original, "No-rain sky remains native");
+        for (long time : new long[]{31L * 24000L + 18000L, 23L * 24000L + 6000L, 127L * 24000L + 6000L})
+            check(LunarVisuals.bloodRainAtmosphere(LunarCalendar.state(time, true), 1F, original) == original,
+                    "Blood night, harvest and blue moon retain their existing atmosphere");
+        check(LunarVisuals.bloodRainAtmosphere(LunarCalendar.state(31L * 24000L + 6000L, false), 1F, original) == original,
+                "Non-overworld atmosphere remains native");
+        report.addProperty("daytime_blood_rain_atmosphere", "passed_native_sky_cloud_hooks_and_air_fog_event");
+        report.addProperty("daytime_atmosphere_is_user_requested_modern_extension", true);
+        report.addProperty("existing_moon_disk_glow_and_night_lightmap_preserved", true);
     }
     private static void requireReachable(ClassNode type, MethodNode start, String owner, String name) {
         check(reachesCall(type, start, owner, name), "Missing reachable injected call " + type.name + "." + start.name + " -> " + owner + "." + name);

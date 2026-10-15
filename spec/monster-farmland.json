@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "original_author": "Avernite",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_classes": {
+    "tm": {
+      "source_file": "EntityMob.java",
+      "sha256": "fd1a79bd2ecb1fc69f59398f1741a551b733b3bc0e534ad65635b516943c93f0"
+    },
+    "on": {
+      "source_file": "EntityCreature.java",
+      "sha256": "d50680ba9e36fca109039006a4149b8f7ff5b476c9f1c36c406f0ae8e1a40545"
+    },
+    "og": {
+      "source_file": "EntityLiving.java",
+      "sha256": "9845b7fdbc33aac7bf251080ab0922fdab51037f38b4f1abfdeb0438bcbc9d7d"
+    },
+    "EntityAnimalWatcher": {
+      "source_file": "EntityAnimalWatcher.java",
+      "sha256": "b8d0e3c8ada618637a9bfbf99b41312dde26a5e9fe47e3eb76e0b411700dcb70"
+    },
+    "EntityAIWatchAnimal": {
+      "source_file": "EntityAIWatchAnimal.java",
+      "sha256": "3fa322939cc7b6a8bac626f4d89d55c302b31670ec1c8cf60f6235718f07cea4"
+    },
+    "qa": {
+      "source_file": "EntityAIAttackOnCollide.java",
+      "sha256": "6b8ca57b56d0cb6186d2287f213bcb794745fe2e39fc544ce64eaea9c421b099"
+    },
+    "aof": {
+      "source_file": "BlockFarmland.java",
+      "sha256": "07118a5087f839ed3c158cb6dcd8c278bc5a8e346a4518fee3b9953719cf4e63"
+    },
+    "BlockPlant": {
+      "source_file": "BlockPlant.java",
+      "sha256": "bb36c98434303f7eac78c4904ab4e470db4c830cb26de2bbf78ee77d58a98194"
+    },
+    "anr": {
+      "source_file": "BlockCrops.java",
+      "sha256": "c14d5a916d50662ad8b61af1d6063de1a7078bac2434e0c522791e1f4ad86727"
+    },
+    "apt": {
+      "source_file": "BlockPotato.java",
+      "sha256": "ca61f435a66578c9d6b2b7805e6c54e3bfa6e0096cb6b230b3eb028d411711e3"
+    },
+    "EntityGelatinousCube": {
+      "source_file": "EntityGelatinousCube.java",
+      "sha256": "ee357b51fbd07d319f4205681e7eb0108f320bf14a63689da37a5640fe2f03c9"
+    },
+    "pn": {
+      "source_file": "EntityAIEatGrass.java",
+      "sha256": "78eba12cfde8c880a941f764d3d6871ce6b4319956f952513c6bcb011b12cdf8"
+    },
+    "tn": {
+      "source_file": "EntityPigZombie.java",
+      "sha256": "901a96e6782ceae99cfce091e5fc059016567f4d5308a01593b311e163e9ce3f"
+    },
+    "tw": {
+      "source_file": "EntityZombie.java",
+      "sha256": "97068256db8f38798ef9474494ddcf59700f40a28fd2ef9765597becc876f9f8"
+    }
+  },
+  "source_behavior": {
+    "autonomous_idle_farmland_search": false,
+    "evidence_scope": "All archive references to aqz.aF/aof, source tm/on/og and registered monster tasks inspected; no generic farmland scanning goal is registered",
+    "pursuit_digging": {
+      "source": "EntityAnimalWatcher.java:13-17,127-174; EntityAIWatchAnimal.java:17-98",
+      "requires_living_target": true,
+      "new_attempt_roll": "nextInt(20)==0",
+      "raw_target_distance_cap": 16,
+      "ray_scan_distance": "8 if high line of reach; else 6 frenzied, 4 normal",
+      "actual_break_reach_squared": 3.25,
+      "height": "at most footY+1; below footY requires a true shovel",
+      "farmland_explicitly_diggable": true,
+      "initial_action_delay_ticks": 40,
+      "farmland_source_hardness": 0.6,
+      "normal_empty_hand_stage_delay_ticks": 180,
+      "actions_to_break": 11,
+      "normal_empty_hand_total_ticks": 1840,
+      "active_families": [
+        "tw ordinary zombie/villager",
+        "EntityRevenant",
+        "EntityGhoul",
+        "EntityEarthElemental",
+        "EntityClayGolem"
+      ],
+      "inherited_but_inactive": "tn pig-zombie bf() disables selector execution",
+      "drops": "actual source digging harvests farmland as dirt; supported crop uses existing illegal-support drop rules"
+    },
+    "passive_trampling": {
+      "source": "aof.java:77-101; BlockPlant.java:69-76; anr.java:284-313; apt.java:30-40",
+      "trigger": "actual fallOn, worldRandom.nextFloat()<fallDistance-0.5F",
+      "gelatinous_cubes_excluded": true,
+      "plant_processed_before_soil_protection": true,
+      "soil_changes_only_when_dry_and_unfertilized": true,
+      "source_mob_griefing_position": "checked only before soil replacement, after plant callback",
+      "modern_existing_protection": "CropSoil checks grief/veto before touching either cell; preserved"
+    },
+    "cube_contact": {
+      "source": "EntityGelatinousCube.java:116-160",
+      "effect": "actual occupied/intersected blocks trigger corrosion or crop blight, without an independent search for farmland"
+    },
+    "not_a_monster_goal": {
+      "source": "pn.java",
+      "effect": "animal grass/crop eating task, not a registered generic monster farmland task"
+    }
+  },
+  "user_requested_modern_extension": {
+    "explicitly_selected": true,
+    "r196_exact_rule": false,
+    "eligible": "PathfinderMob with MobCategory.MONSTER and GroundPathNavigation",
+    "explicit_excluded_types": [
+      "minecraft:blaze",
+      "minecraft:vex",
+      "minecraft:shulker"
+    ],
+    "other_exclusions": [
+      "animals",
+      "ambient bats",
+      "flying navigation",
+      "water navigation",
+      "passengers",
+      "entities with live attack targets"
+    ],
+    "priority": 5,
+    "mutex_flags": [
+      "MOVE",
+      "LOOK"
+    ],
+    "horizontal_radius_blocks": 8,
+    "vertical_radius_blocks": 2,
+    "search_shape": "horizontal disk, inclusive squared radius64",
+    "scan_interval_ticks_minimum": 200,
+    "scan_interval_ticks_maximum": 299,
+    "initial_stagger_ticks": "floorMod(entityId,200)",
+    "consumes_source_random_stream": false,
+    "maximum_path_attempts_per_scan": 8,
+    "candidate_order": "ascending distance to soil.above standing point",
+    "requires_real_path_can_reach": true,
+    "navigation_speed_multiplier": 1,
+    "travel_timeout_ticks": 200,
+    "repath_when_navigation_finished_every_ticks": 20,
+    "work_distance_squared": 2.25,
+    "continuous_work_ticks": 40,
+    "moving_out_of_work_range_resets_progress": true,
+    "target": "FarmBlock with air or herbaceous plants/stems above; loaded chunks and real world height only",
+    "can_target_empty_soil": true,
+    "can_target_wet_soil": true,
+    "can_target_fertilized_soil": true,
+    "result": "one soil cell becomes dirt; no dropped dirt or farmland item",
+    "crop_result": "existing CropLifecycle.TRAMPLE path for managed crops; other herbaceous plants/stems removed without drops",
+    "crop_source_exceptions": "existing poisonous-potato rules remain authoritative; no added harvest yield",
+    "combat_priority": "live target blocks canUse and interrupts current work before any block mutation",
+    "ephemeral_state": "path/progress are not saved; join installation is idempotent",
+    "authoritative_side": "server",
+    "requires_clear_physical_work_ray": true
+  },
+  "protection": {
+    "grief_check": "EventHooks.canEntityGrief at selection, continuation and immediately before mutation",
+    "before_any_cell_mutation": [
+      "soil.canEntityDestroy and LivingDestroyBlockEvent",
+      "plant.canEntityDestroy and LivingDestroyBlockEvent when nonair",
+      "FarmlandTrampleEvent"
+    ],
+    "atomic_veto": "If either cell or the farmland event is vetoed, leave both crop and soil intact",
+    "listener_mutation_guard": "recheck grief/live target and both original states after event callbacks",
+    "forced_chunk_loading": false
+  },
+  "verification_cases": [
+    "real join installation and repeated installation do not duplicate the goal",
+    "ground modern/source monsters versus animals, bats and stationary/floating exclusions",
+    "real navigation path plus39/40tick cropped/empty and dry/fertilized mutation boundaries",
+    "normal entity/controller ticks actually walk and flatten one field",
+    "living target suppresses selection and interrupts ongoing work",
+    "two-high enclosed field path is rejected; distance9 field is outside search",
+    "mobGriefing false during selection and work preserves both cells",
+    "soil LivingDestroyBlockEvent, crop LivingDestroyBlockEvent and FarmlandTrampleEvent separately veto both cells",
+    "source pursuit digger has no targetless search, then selects and actually removes farmland support below prey",
+    "source farmland support loss uses actual crop updates and drops only one dirt; idle flattening produces no soil/crop loot"
+  ]
+}

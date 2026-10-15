@@ -124,7 +124,8 @@ public final class FoodCapacityGameTests {
                 .getRule(GameRules.RULE_NATURAL_REGENERATION);
         boolean previousRegeneration = naturalRegeneration.get();
         try {
-            server.setDifficulty(Difficulty.PEACEFUL, true);
+            // Exercise the retained legacy branch directly; production server APIs stay fixed at Extreme.
+            server.getWorldData().setDifficulty(Difficulty.PEACEFUL);
             naturalRegeneration.set(true, server);
             helper.assertValueEqual(helper.getLevel().getDifficulty(), Difficulty.PEACEFUL, "Peaceful test precondition");
             player.tickCount = 20;
@@ -139,7 +140,7 @@ public final class FoodCapacityGameTests {
             assertFood(helper, food, 6, 1.0F, "Peaceful food recovery must stop at the custom cap");
         } finally {
             naturalRegeneration.set(previousRegeneration, server);
-            server.setDifficulty(previousDifficulty, true);
+            server.getWorldData().setDifficulty(previousDifficulty);
         }
         helper.succeed();
     }

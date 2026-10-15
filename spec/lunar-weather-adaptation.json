@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_version": "MITE 1.6.4 R196",
+  "user_requested_modern_extension": true,
+  "source_forced_storm": {"start_tick": 0, "end_tick_exclusive": 13000, "source": "abw.java:5331-5332"},
+  "modern_forced_storm": {
+    "dimension": "minecraft:overworld",
+    "calendar": "LunarCalendar.State.bloodPeriod",
+    "start_tick": 0,
+    "end_tick_exclusive": 24000,
+    "ignores_disabled_weather_cycle": true,
+    "weather_command_overridden_next_normal_weather_tick": true,
+    "native_strength_step_per_tick": 0.01,
+    "save_data": "mite_lunar_weather",
+    "save_version": 1,
+    "exit_with_weather_cycle": "Resume unchanged source schedule",
+    "exit_without_weather_cycle": "Restore suspended pre-blood weather unless a new weather command has already changed the released date"
+  },
+  "daytime_atmosphere": {
+    "condition": "overworld && bloodPeriod && !night && rainStrength > 0",
+    "sky_and_cloud_target": ["max(originalRed, 0.16)", "originalGreen * 0.12", "originalBlue * 0.12"],
+    "air_fog_target": ["originalRed", "originalGreen * 0.12", "originalBlue * 0.12"],
+    "blend": "lerp(clamp(rainStrength,0,1), original, target)",
+    "original_fixture": [0.1, 0.2, 0.3],
+    "full_rain_sky_fixture": [0.16, 0.024, 0.036],
+    "half_rain_sky_fixture": [0.13, 0.112, 0.168],
+    "full_rain_air_fog_fixture": [0.1, 0.024, 0.036],
+    "night_lightmap_and_moon_rules_changed": false,
+    "fluid_fog_changed": false
+  }
+}

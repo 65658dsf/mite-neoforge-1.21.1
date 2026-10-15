@@ -51,7 +51,8 @@ public final class R196SpawnQualification {
                 && (access.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK) || access.getBlockState(pos.below()).is(BlockTags.LEAVES));
         if (bat) {
             if (name.equals("EntityNightwing") && lightCheck && sunlight(mob, access)) return false;
-            if (level.dimension().equals(Level.OVERWORLD) && pos.getY() >= 63) return false;
+            if (level.dimension().equals(Level.OVERWORLD) && pos.getY() >= 63
+                    && (name.equals("ro") || !BloodMoonInvasion.unlocked(level))) return false;
             LocalDate date = LocalDate.now(); boolean halloween = date.getMonthValue() == 10 && date.getDayOfMonth() >= 20 || date.getMonthValue() == 11 && date.getDayOfMonth() <= 3;
             if (!halloween && random.nextBoolean()) return false;
             int brightest = access.getMaxLocalRawBrightness(pos);

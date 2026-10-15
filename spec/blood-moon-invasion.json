@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "r196_source": {
+    "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+    "third_blood_moon_permanent_invasion": false,
+    "evidence": [
+      {
+        "class": "js",
+        "method": "getSuitableCreature(oh,int,int,int)",
+        "decompiled_lines": "466-567",
+        "bytecode": "offset0-83 reads isOverworld/isBloodMoon(true)/freezing/desert; no calendar-day or96 predicate"
+      },
+      {
+        "class": "acq",
+        "method": "constructor",
+        "decompiled_lines": "84-109",
+        "behavior": "common monster and ambient weights"
+      },
+      {
+        "class": "BiomeGenUnderworld",
+        "method": "constructor",
+        "decompiled_lines": "9-18",
+        "behavior": "remove ordinary skeleton/zombie/ghoul/revenant/bone lord; append cave spider40/longdead40/ancient bone lord5"
+      },
+      {
+        "class": "aci",
+        "method": "getSubstituteClassToSpawn",
+        "decompiled_lines": "67-75",
+        "behavior": "underworld vampire bat1/6 giant; longdead in any dimension1/6 guardian"
+      },
+      {
+        "class": "abw",
+        "method": "isBloodMoon(long,boolean)",
+        "decompiled_lines": "1978-1984",
+        "behavior": "rawDay=(time/24000)+1; multiples32 except multiples128 blue moons"
+      }
+    ],
+    "depth_limits": [
+      {
+        "source_class": "EntityGhoul",
+        "maximum_ordinary_y": 56
+      },
+      {
+        "source_class": "EntityWight",
+        "maximum_ordinary_y": 48
+      },
+      {
+        "source_class": "EntityVampireBat",
+        "maximum_ordinary_y": 48
+      },
+      {
+        "source_class": "EntityRevenant",
+        "maximum_ordinary_y": 44
+      },
+      {
+        "source_class": "EntityInvisibleStalker",
+        "maximum_ordinary_y": 40
+      },
+      {
+        "source_class": "EntityEarthElemental",
+        "maximum_ordinary_y": 40
+      },
+      {
+        "source_class": "EntityBlob",
+        "maximum_ordinary_y": 40
+      },
+      {
+        "source_class": "EntityOoze",
+        "maximum_ordinary_y": 32
+      },
+      {
+        "source_class": "EntityNightwing",
+        "maximum_ordinary_y": 32
+      },
+      {
+        "source_class": "EntityBoneLord",
+        "maximum_ordinary_y": 32
+      },
+      {
+        "source_class": "EntityPudding",
+        "maximum_ordinary_y": 24
+      },
+      {
+        "source_class": "EntityDemonSpider",
+        "maximum_ordinary_y": 32
+      },
+      {
+        "source_class": "EntityPhaseSpider",
+        "maximum_ordinary_y": 32
+      },
+      {
+        "source_class": "EntityHellhound",
+        "maximum_ordinary_y": 32
+      },
+      {
+        "source_class": "EntityShadow",
+        "maximum_ordinary_y": 32
+      }
+    ],
+    "blood_night_surface_exceptions": {
+      "unconditional": [
+        "EntityGhoul",
+        "EntityVampireBat",
+        "EntityRevenant",
+        "EntityNightwing",
+        "EntityBoneLord"
+      ],
+      "freezing_only": [
+        "EntityWight"
+      ],
+      "desert_only": [
+        "EntityShadow"
+      ],
+      "not_relaxed": [
+        "EntityInvisibleStalker",
+        "EntityEarthElemental",
+        "EntityBlob",
+        "EntityOoze",
+        "EntityPudding",
+        "EntityDemonSpider",
+        "EntityPhaseSpider",
+        "EntityHellhound"
+      ]
+    },
+    "other_qualifications": "source ro family additionally has overworldY<63; ordinary R196 blood exceptions do not bypass that later qualification",
+    "preexisting_duplicate_entries": [
+      {
+        "legacy_biome_id": 6,
+        "category": "monster",
+        "source_class": "ts",
+        "entries": [
+          {
+            "weight": 100,
+            "minimum_group": 1,
+            "maximum_group": 4
+          },
+          {
+            "weight": 10,
+            "minimum_group": 1,
+            "maximum_group": 1
+          }
+        ],
+        "evidence": "acq.java:89 adds Slime100(1-4); adi.java:18 additionally adds Slime10(1); these are separate authored entries"
+      }
+    ]
+  },
+  "modern_adaptation": {
+    "provenance": "user_requested_extension",
+    "reason": "User explicitly chose permanent underworld-mob expansion after the third blood moon, rather than strict R196-only spawning.",
+    "dimension": "minecraft:overworld",
+    "calendar": "max(0,day_time)//24000+1",
+    "first_three_actual_blood_moon_days": [
+      32,
+      64,
+      96
+    ],
+    "unlock_day": 97,
+    "first_unlock_tick": 2304000,
+    "persistent": true,
+    "saved_data": "mite_blood_moon_invasion",
+    "saved_version": 1,
+    "saved_fields": {
+      "highest_day": "long maximum calendar day ever reached, shared with equipment progression",
+      "unlocked": "boolean compatibility field, equivalent to highest_day>=97"
+    },
+    "clock_rollback": "does not decrease highest_day or revoke an acquired unlock",
+    "old_save_migration": "first server tick, equipment progression read or source natural-spawn query observes current overworld day; true legacy boolean implies at least day97",
+    "pool_policy": "retain every original entry including pre-existing authored duplicates, order, weights and groups; append only missing underworld EntityType identities once; apply to MONSTER and AMBIENT, not ANIMAL/AQUATIC; retain modern-only mobs and structure-specific pools",
+    "ordinary_biome_additions": [
+      {
+        "source_class": "te",
+        "item_id": "minecraft:cave_spider",
+        "weight": 40,
+        "minimum_group": 1,
+        "maximum_group": 2
+      },
+      {
+        "source_class": "EntityLongdead",
+        "item_id": "mite:longdead",
+        "weight": 40,
+        "minimum_group": 1,
+        "maximum_group": 2
+      },
+      {
+        "source_class": "EntityAncientBoneLord",
+        "item_id": "mite:ancient_bone_lord",
+        "weight": 5,
+        "minimum_group": 1,
+        "maximum_group": 1
+      }
+    ],
+    "plains_weight_example": {
+      "before": 760,
+      "after": 845,
+      "new_total_weight": 85,
+      "note": "weights are selection tickets before retries, habitat, light, collision, category caps and pack limits; they are not final per-tick spawn probabilities"
+    },
+    "surface_depth": "remove ordinary depth cutoffs after persistent unlock; Wight above48 still requires freezing biome; Shadow above32 still requires desert; their original deeper habitats are unchanged",
+    "surface_bats": "only unlocked overworld may bypass originalY<63; retain darkness, collision, seasonal random rejection and nightwing sunlight checks",
+    "substitutions": {
+      "vampire_to_giant": "1/6 in original underworld and unlocked overworld",
+      "longdead_to_guardian": "existing1/6 unchanged"
+    },
+    "lords": "both ordinary and ancient bone lords remain permitted natural entries; existing underworld ordinary/trial-spawner lord replacement policy is unchanged",
+    "unchanged_qualifications": [
+      "stone roof for jelly/blob/ooze/pudding",
+      "stone floor for ooze/pudding and native elemental material rules",
+      "tree/log/leaf habitat for wood spider",
+      "freezing/desert surface niches",
+      "light and sunlight",
+      "collision and fluids",
+      "spawn distance and category caps",
+      "modern-only mob predicates",
+      "cancellable NeoForge spawn events"
+    ],
+    "other_dimensions": "underworld, Nether, End and third-party dimensions retain their own pools, depth and substitution behavior; they read shared highest_day only for equipment progression"
+  },
+  "acceptance": [
+    {
+      "id": "calendar-boundary",
+      "before_tick": 2303999,
+      "after_tick": 2304000
+    },
+    {
+      "id": "persistent-nbt",
+      "method": "SavedData save -> compressed NBT bytes -> fresh load -> DataStorage replacement -> time rollback"
+    },
+    {
+      "id": "source-contrast",
+      "days": [
+        32,
+        64,
+        96
+      ],
+      "expect": "legacy blood-night exceptions active but no permanent full invasion"
+    },
+    {
+      "id": "append-only-pools",
+      "expect": "25 source biome profiles retain their complete original prefix and authored multiplicities; appended suffix adds each missing underworld EntityType exactly once and never repeats an original type"
+    },
+    {
+      "id": "weighted-selection",
+      "expect": "real select entry gets all40/40/5 appended tickets"
+    },
+    {
+      "id": "habitats",
+      "expect": "cold/desert/stone/tree restrictions still enforce"
+    },
+    {
+      "id": "surface-bats",
+      "expect": "actual dark collision-freeY100 habitat works only after unlock; bright/colliding controls fail"
+    },
+    {
+      "id": "natural-finalization",
+      "expect": "longdead/guardian/ancient lord/demon spider retain real NATURAL event/finalization/add lifecycle"
+    },
+    {
+      "id": "dimension-and-spawners",
+      "expect": "original underworld1/6 substitutions retained; other dimensions unaffected; caged lord remap unchanged"
+    }
+  ]
+}

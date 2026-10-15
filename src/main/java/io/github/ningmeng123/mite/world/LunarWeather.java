@@ -28,7 +28,18 @@ public final class LunarWeather {
     }
 
     public static void updateNaturalWeather(ServerLevel level) {
-        if (!level.dimension().equals(Level.OVERWORLD) || !level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) return;
+        if (!level.dimension().equals(Level.OVERWORLD)) return;
+        ServerLevelData data = (ServerLevelData)level.getLevelData();
+        LunarWeatherState override = LunarWeatherState.get(level);
+        // User-requested modern extension: the whole blood date is stormy, even with a frozen weather cycle.
+        if (bloodPeriod(level)) {
+            override.enter(data);
+            weatherFlags(data, true, true);
+            return;
+        }
+        // A saved marker makes leaving a blood date work after restart as well as after /time jumps.
+        override.leave(data);
+        if (!level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) return;
         long time = level.getDayTime();
         long day = LunarWeatherRules.weatherDay(time);
         Cache cache = CACHE.computeIfAbsent(level, ignored -> new Cache());
@@ -45,7 +56,10 @@ public final class LunarWeather {
         }
         boolean rain = cache.current != null;
         boolean thunder = rain && cache.current.thunderingAt(time);
-        ServerLevelData data = (ServerLevelData)level.getLevelData();
+        weatherFlags(data, rain, thunder);
+    }
+
+    private static void weatherFlags(ServerLevelData data, boolean rain, boolean thunder) {
         data.setClearWeatherTime(0);
         // Native advanceWeatherCycle decrements these to one, without toggling our flags.
         data.setRainTime(2);

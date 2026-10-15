@@ -75,8 +75,10 @@ public final class MonsterObstaclesGameTests {
         finally { h.getLevel().setDayTime(old); }
     }
     private static void difficulty(GameTestHelper h,Difficulty value,Runnable action) {
-        Difficulty old=h.getLevel().getDifficulty();try { h.getLevel().getServer().setDifficulty(value,true);action.run(); }
-        finally { h.getLevel().getServer().setDifficulty(old,true); }
+        // Legacy low-difficulty branches need a direct fixture; the actual server setter is fixed to Extreme.
+        var data=h.getLevel().getServer().getWorldData();
+        Difficulty old=h.getLevel().getDifficulty();try { data.setDifficulty(value);action.run(); }
+        finally { data.setDifficulty(old); }
     }
     @GameTest(template="empty") public static void portalThresholdsUse1920ForDoorAnd480ForOtherPortals(GameTestHelper h) {
         ordinaryTime(h,()->{var mob=zombie(h);var goal=new SourceBreakPortalGoal(mob);

@@ -1,0 +1,403 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "original_author": "Avernite",
+  "source_version": "MITE 1.6.4 R196",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_classes": {
+    "uf": {
+      "source_file": "EntityPlayer.java",
+      "sha256": "6aadb6b6596d5328fe512a14f1714abb44b9d1dcc791d0b3abb2349140aeca19"
+    },
+    "aj": {
+      "source_file": "CommandDifficulty.java",
+      "sha256": "8c0631b2b3c36332ef5a656996e1eb3fdadb2c9437856a4215985ea94ca56f5c"
+    },
+    "aul": {
+      "source_file": "GameSettings.java",
+      "sha256": "c10310fc722eb3a96b88a4821ab729096e26c9096a4f89e2fca3adb4c3125de5"
+    },
+    "avw": {
+      "source_file": "GuiOptions.java",
+      "sha256": "6bcbd143ff2bfad3852bb78f2e3c30eeaa2ef928d6f7d38e9392b8fde09c8e2d"
+    },
+    "is": {
+      "source_file": "DedicatedServer.java",
+      "sha256": "e45c333b00c5960db79f476a8631cac2c602d0286c81b3b3baee1a9d602bf7f7"
+    },
+    "bkz": {
+      "source_file": "IntegratedServer.java",
+      "sha256": "3bc0c92c5dd264dcb53b802dfe078be027373e6d04bb489cdfde6fbd973a96eb"
+    },
+    "net/minecraft/server/MinecraftServer": {
+      "source_file": "MinecraftServer.java",
+      "sha256": "3da0f40bc719f178872f9b2b81322e2fa2d98df1540a68faf891920da116800b"
+    },
+    "abw": {
+      "source_file": "World.java",
+      "sha256": "0affe2c94d273750546e4d36d7d124072100f57b2dffba6d51619672f76dda36"
+    },
+    "aei": {
+      "source_file": "WorldProvider.java",
+      "sha256": "853eadb39c50cd694c4d299f4e116728fb0b04210281aa068fa3dbafe0bea5b7"
+    },
+    "jp": {
+      "source_file": "PlayerManager.java",
+      "sha256": "f609d62e28b7317cd3ab7200e3842c4d47a2c089e8bf527dcef5394399d9decf"
+    },
+    "jq": {
+      "source_file": "PlayerInstance.java",
+      "sha256": "baa8edc7d95e23645969bcc2cf5514adc0ce44df4494120cc85dcb3d3ded5241"
+    },
+    "aee": {
+      "source_file": "AnvilChunkLoader.java",
+      "sha256": "2c95f85b8644d9e26190b71883ac342af968703e5cc59a096924fcc0b8ecddca"
+    },
+    "og": {
+      "source_file": "EntityLiving.java",
+      "sha256": "9845b7fdbc33aac7bf251080ab0922fdab51037f38b4f1abfdeb0438bcbc9d7d"
+    },
+    "tt": {
+      "source_file": "EntitySpider.java",
+      "sha256": "54d9b46a9b4762a35ff1a1cf4e89f1e99db461bafc7781d09efbad1d14908ff9"
+    },
+    "tw": {
+      "source_file": "EntityZombie.java",
+      "sha256": "97068256db8f38798ef9474494ddcf59700f40a28fd2ef9765597becc876f9f8"
+    },
+    "ye": {
+      "source_file": "ItemStack.java",
+      "sha256": "a9c67bbf0201ada036663c4f8e88e51b8aa41ba17b219b59cbf56173d44fac65"
+    },
+    "WorldInfoShared": {
+      "source_file": "WorldInfoShared.java",
+      "sha256": "d185fc714daa88eee5c1a78afd72945ec515a71eee281274e49eb29aed105af2"
+    },
+    "acd": {
+      "source_file": "WorldSettings.java",
+      "sha256": "3e29a225a052ea9ac3afe500cbb59eb88d0a1943a176ad5a4320b4ddd9f11c11"
+    },
+    "js": {
+      "source_file": "WorldServer.java",
+      "sha256": "8d12f0f279cb14a5ada750ffba465fb6c3706d389326d8981ee5224a6b672fdc"
+    },
+    "tn": {
+      "source_file": "EntityPigZombie.java",
+      "sha256": "901a96e6782ceae99cfce091e5fc059016567f4d5308a01593b311e163e9ce3f"
+    }
+  },
+  "fixed_world_difficulty": {
+    "id": 3,
+    "modern_id": "minecraft:hard",
+    "source_name": "Extreme",
+    "extra_difficulty_id": false,
+    "hardcore_is_independent": true,
+    "source_name_reference": "assets/minecraft/lang/MITE.lang:40 options.difficulty.hard=Extreme",
+    "client": "aul.java:83,112,122,224-226,344-345,424-425 fixes all constructors/config loads/cycles/display to 3; avw.java:27-33 disables selector",
+    "integrated_server": "bkz.java:109-111 i() returns 3",
+    "dedicated_server": "is.java:102 writes difficulty=3; is.java:215-217 i() returns 3",
+    "all_dimensions": "net/minecraft/server/MinecraftServer.java:785-791 c(int) ignores argument, writes r=3 and allows monsters/animals on every non-null world",
+    "command": "aj.java:26-28 execution only reports unavailable; retained argument parser is not called",
+    "bytecode_verified": [
+      "bkz.i()I and is.i()I offsets 0-1 iconst_3; ireturn",
+      "MinecraftServer.c(I)V offsets 23-24 iconst_3; putfield js.r; parameter 1 is never loaded",
+      "aj.b(Lad;[Ljava/lang/String;)V offsets 0-35 construct unavailable message, invoke feedback, return"
+    ]
+  },
+  "regional_tension": {
+    "source": "abw.java:4549-4570 b(DDD)F floors coordinates and calls I(III)F",
+    "inhabited_time_to_maximum_ticks": 3600000,
+    "inhabited_time_to_maximum_real_hours_at_20_tps": 50,
+    "formula": "valid ? clamp(float(inhabitedTime)/3600000F,0,1)*(difficulty==3?1F:0.75F)+rawPhase*0.25F : 0F; if difficulty<2 multiply by difficulty/2F; clamp final to [0,difficulty==3?1.5F:1F]",
+    "production_difficulty": 3,
+    "source_final_hard_clamp": 1.5,
+    "maximum_with_standard_phases": 1.25,
+    "world_day_growth_term": false,
+    "player_level_scaler": false,
+    "player_count_multiplier": false,
+    "weather_multiplier": false,
+    "source_position_validity": "abw.f(III)Z:805-806, 0<=y<256 and chunk exists",
+    "modern_position_validity": "Use the dimension actual minimum/maximum build heights and already-loaded chunks; querying must not load/generate chunks",
+    "float_operation_order": "long->float first; divide by float3600000; clamp term; multiply difficulty weight; add phase term; optional easy/peaceful scaling; final clamp",
+    "bytecode_verified": "abw.I(III)F offsets42-52 l2f, ldc3600000F, fdiv, clamp; offsets82-120 retain low-difficulty and final clamps",
+    "bit_exact_fixtures": [
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 2,
+        "phase": 0,
+        "result_float_bits_hex": "3515217d"
+      },
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 1799999,
+        "phase": 0,
+        "result_float_bits_hex": "3efffff7"
+      },
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 3599999,
+        "phase": 0,
+        "result_float_bits_hex": "3f7ffffb"
+      }
+    ],
+    "numeric_fixtures": [
+      {
+        "difficulty": 0,
+        "inhabited_ticks": 0,
+        "phase": 0,
+        "valid": true,
+        "expected": 0
+      },
+      {
+        "difficulty": 0,
+        "inhabited_ticks": 3600000,
+        "phase": 1,
+        "valid": true,
+        "expected": 0
+      },
+      {
+        "difficulty": 1,
+        "inhabited_ticks": 0,
+        "phase": 1,
+        "valid": true,
+        "expected": 0.125
+      },
+      {
+        "difficulty": 1,
+        "inhabited_ticks": 1800000,
+        "phase": 0,
+        "valid": true,
+        "expected": 0.1875
+      },
+      {
+        "difficulty": 1,
+        "inhabited_ticks": 3600000,
+        "phase": 1,
+        "valid": true,
+        "expected": 0.5
+      },
+      {
+        "difficulty": 2,
+        "inhabited_ticks": 0,
+        "phase": 1,
+        "valid": true,
+        "expected": 0.25
+      },
+      {
+        "difficulty": 2,
+        "inhabited_ticks": 1800000,
+        "phase": 0,
+        "valid": true,
+        "expected": 0.375
+      },
+      {
+        "difficulty": 2,
+        "inhabited_ticks": 3600000,
+        "phase": 1,
+        "valid": true,
+        "expected": 1
+      },
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 0,
+        "phase": 0,
+        "valid": true,
+        "expected": 0
+      },
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 0,
+        "phase": 1,
+        "valid": true,
+        "expected": 0.25
+      },
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 1800000,
+        "phase": 0,
+        "valid": true,
+        "expected": 0.5
+      },
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 1800000,
+        "phase": 1,
+        "valid": true,
+        "expected": 0.75
+      },
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 3600000,
+        "phase": 1,
+        "valid": true,
+        "expected": 1.25
+      },
+      {
+        "difficulty": 3,
+        "inhabited_ticks": 7200000,
+        "phase": 1,
+        "valid": true,
+        "expected": 1.25
+      }
+    ],
+    "invalid_position_fixture": {
+      "difficulty": 3,
+      "inhabited_ticks": 3600000,
+      "phase": 1,
+      "valid": false,
+      "expected": 0
+    }
+  },
+  "raw_moon_phase": {
+    "source": "abw.x()F:1948-1949 -> aei.a(J)I:103-104 and aei.a[]:5",
+    "source_index": "(int)(worldTime/24000L+1L)%8",
+    "phase_fractions": [
+      1,
+      0.75,
+      0.5,
+      0.25,
+      0,
+      0.25,
+      0.5,
+      0.75
+    ],
+    "not_visual_moonlight": true,
+    "special_moon_or_rain_adjustments": false,
+    "modern_negative_time_extension": "floorMod(floorDiv(dayTime,24000L)+1L,8L); source parity for nonnegative time, defined continuous cycle for negative command input",
+    "fixtures": [
+      {
+        "time": 0,
+        "expected": 0.75
+      },
+      {
+        "time": 23999,
+        "expected": 0.75
+      },
+      {
+        "time": 24000,
+        "expected": 0.5
+      },
+      {
+        "time": 72000,
+        "expected": 0
+      },
+      {
+        "time": 168000,
+        "expected": 1
+      },
+      {
+        "time": 192000,
+        "expected": 0.75
+      },
+      {
+        "time": -1,
+        "expected": 1
+      },
+      {
+        "time": -24001,
+        "expected": 0.75
+      },
+      {
+        "time": 9223372036854775807,
+        "expected": 0.25
+      },
+      {
+        "time": -9223372036854775808,
+        "expected": 0.5
+      }
+    ]
+  },
+  "inhabited_time": {
+    "source": "jq.java:28-30,36-61; jp.java:32-43; aee.java:257,426",
+    "start": "first player begins observing chunk",
+    "update": "player manager interval strictly >8000 world ticks; last observer departure settles elapsed ticks",
+    "counter": "chunk.q += world.totalTime - previousObservationTime",
+    "multiplayer": "one elapsed interval, not multiplied by observing player count",
+    "saved_key": "InhabitedTime",
+    "modern_integration": "reuse existing modern chunk inhabited time, without independent duplicate accumulation"
+  },
+  "enabled_consumers": [
+    {
+      "source": "og.bw():851-876",
+      "effect": "armor chance=0.15F*tension; tier=nextInt(2), three independent 0.095F upgrades; later-slot stop chance=hard?0.1F:0.25F"
+    },
+    {
+      "source": "og.enchantEquipment():971-976 <- ye.randomizeForMob():895-901",
+      "effect": "enchant chance=0.1F*tension, energy=int(5F+tension*nextInt(18))"
+    },
+    {
+      "source": "tt.a(oi):32-41",
+      "effect": "hard-only group potion effect chance=0.1F*tension"
+    },
+    {
+      "source": "tw.a(oi):257-288",
+      "effect": "leader zombie chance=0.05F*tension; separate knockback-resistance [0,0.05F) bonus does not scale with tension"
+    }
+  ],
+  "player_incoming_damage": {
+    "source": "uf.java:967-985 attackEntityFrom(Damage); class bytecode offsets61-75",
+    "default_non_explosion_multiplier": 1.0,
+    "explosion_multiplier": 1.5,
+    "no_world_difficulty_multiplier": true,
+    "modern_hook": "Player.hurt IScalingFunction.scaleDamage invocation, not the unreachable legacy vanilla branch",
+    "custom_scaling_functions": "Only override IScalingFunction.DEFAULT; other mods retain their own damage transforms",
+    "existing_source_explosion_calculator": "R196ExplosionCalculator implements abr damage before uf; apply the player multiplier exactly once"
+  },
+  "scope": {
+    "exclude_crafting_difficulty": true,
+    "exclude_enchantment_difficulty_field": true,
+    "preserve_individual_mob_date_or_dimension_rules": true,
+    "modern_additions": "Modern entities retain their own DifficultyInstance behavior; do not globally replace the modern local-difficulty object with source tension"
+  },
+  "inherited_vanilla_classes": {
+    "tp": {
+      "source_file": "SharedMonsterAttributes.java",
+      "origin": "official Minecraft 1.6.4; not overridden by R196 archive",
+      "sha256": "93622fd6c45774f4b6aed019686adc40c6377cf67fe48cf08a5d4212a1f8f93f",
+      "evidence": "static initializer offsets56-69: generic.knockbackResistance -> tp.c"
+    }
+  },
+  "native_zombie_initialization": {
+    "exact_entity_types": [
+      "minecraft:zombie",
+      "minecraft:zombie_villager",
+      "minecraft:zombified_piglin"
+    ],
+    "source": "tw.java:37-43,257-288; og.java:978-980; tn.java:22-27,155-159; official tp.<clinit> offsets56-69",
+    "pickup": {
+      "enabled": true,
+      "source": "tw.a(oi) offsets26-28 h(true)",
+      "consumes_random_draw": false
+    },
+    "base_reinforcement_chance": {
+      "when": "construction, once",
+      "normal": "nextDouble()*(double)0.1F",
+      "pig_zombie": "inherits ordinary draw, then base=0",
+      "not_rerolled_in_finalize": true
+    },
+    "follow_range": {
+      "inherited_gaussian": "nextGaussian()*0.05D, operation1 ADD_MULTIPLIED_BASE",
+      "modern_extra_total_multiplier": false,
+      "modern_triangle_draw": "Mob.finalizeSpawn uses worldRandom.triangle(0D,0.11485D), unlike source ownerGaussian; the narrow Zombie finalize HEAD registers minecraft:random_spawn_bonus first so the native existing-modifier guard skips it"
+    },
+    "knockback_resistance": {
+      "amount": "nextDouble()*(double)0.05F",
+      "operation": "ADD_VALUE",
+      "armor_modifier": false
+    },
+    "leader": {
+      "chance": "nextFloat()<sourceTension*0.05F",
+      "reinforcements": "nextDouble()*0.25D+0.5D, ADD_VALUE",
+      "maximum_health": "nextDouble()*3D+1D, ADD_MULTIPLIED_TOTAL",
+      "source_pig_zombie_inherits": true
+    },
+    "modern_behavior_preserved": [
+      "native finalize/group/spawn metadata and events",
+      "equipment generation hooks",
+      "modern Husk and Drowned initialization",
+      "existing custom revenant override",
+      "saved attributes are loaded without destructive migration"
+    ],
+    "modern_local_multiplier": "Never used for these three identities source pickup/leader/stat rules"
+  }
+}

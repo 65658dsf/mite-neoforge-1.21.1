@@ -281,7 +281,8 @@ public final class NutritionGameTests {
         MinecraftServer server = helper.getLevel().getServer();
         Difficulty previous = helper.getLevel().getDifficulty();
         try {
-            server.setDifficulty(Difficulty.NORMAL, true);
+            // Build the source's inactive normal branch without weakening the production Extreme lock.
+            server.getWorldData().setDifficulty(Difficulty.NORMAL);
             for (int i = 0; i < 500; i++) player.getFoodData().tick(player);
             helper.assertValueEqual(player.getHealth(), 6F, "Retained satiation prevents starvation after five-hundred updates");
             player.getFoodData().tick(player);
@@ -290,7 +291,7 @@ public final class NutritionGameTests {
             helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 6F,
                     "The existing native saturation buffer is preserved when no exhaustion unit is due");
         } finally {
-            server.setDifficulty(previous, true);
+            server.getWorldData().setDifficulty(previous);
         }
         helper.succeed();
     }
