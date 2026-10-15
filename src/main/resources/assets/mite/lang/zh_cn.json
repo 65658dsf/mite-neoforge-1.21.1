@@ -556,5 +556,10 @@
   "gui.mite.enchant.creative_free": "创造模式免费",
   "gui.mite.enchant.insufficient": "经验不足",
   "gui.mite.enchant.water": "转化为附魔之瓶",
-  "gui.mite.enchant.apple": "转化为附魔金苹果"
+  "gui.mite.enchant.apple": "转化为附魔金苹果",
+  "message.mite.metal_door.frame": "金属门的铰链侧需要两格高的坚实侧框（如石头或木板）",
+  "message.mite.metal_door.redstone": "金属门需要红石信号开启，请使用按钮、拉杆或压力板",
+  "tooltip.mite.metal_door.frame": "放置要求：铰链侧有两格高的坚实侧框",
+  "tooltip.mite.metal_door.redstone": "开启方式：按钮、拉杆、压力板等红石信号",
+  "tooltip.mite.copper_door.manual": "开启方式：直接右键或使用红石信号"
 }

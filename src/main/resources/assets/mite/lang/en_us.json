@@ -556,5 +556,10 @@
   "gui.mite.enchant.creative_free": "Free in Creative mode",
   "gui.mite.enchant.insufficient": "Not enough experience",
   "gui.mite.enchant.water": "Convert into a Bottle o’ Enchanting",
-  "gui.mite.enchant.apple": "Convert into an Enchanted Golden Apple"
+  "gui.mite.enchant.apple": "Convert into an Enchanted Golden Apple",
+  "message.mite.metal_door.frame": "The hinge side needs two solid frame blocks, such as stone or planks.",
+  "message.mite.metal_door.redstone": "Metal doors require redstone: use a button, lever or pressure plate.",
+  "tooltip.mite.metal_door.frame": "Placement: a two-block-high solid frame on the hinge side",
+  "tooltip.mite.metal_door.redstone": "Opening: redstone from a button, lever or pressure plate",
+  "tooltip.mite.copper_door.manual": "Opening: right-click or use redstone"
 }

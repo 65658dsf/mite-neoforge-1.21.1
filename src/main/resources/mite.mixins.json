@@ -219,6 +219,7 @@
   "client": [
     "EnchantmentScreenMixin",
     "client.EnchantedBowFovMixin",
+    "client.SkeletonBowModelMixin",
     "client.GuiFoodMixin",
     "client.LocalPlayerFoodMixin",
     "client.AppleSkinSaturationMixin",

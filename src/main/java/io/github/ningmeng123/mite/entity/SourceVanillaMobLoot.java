@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -95,10 +96,16 @@ public final class SourceVanillaMobLoot {
         stack.set(DataComponents.ITEM_NAME,Component.translatable("item.minecraft."+(variant<2?"potion":"splash_potion")+".effect."+names[variant]));
         return stack;
     }
+    /** Match modern animal loot: lethal Fire Aspect ignites after hurt/death, so burning state alone is insufficient. */
+    private static boolean shouldCookDrops(Mob mob, DamageSource source) {
+        return mob.isOnFire() || source.getDirectEntity() instanceof LivingEntity attacker
+                && EnchantmentHelper.hasTag(attacker.getMainHandItem(), EnchantmentTags.SMELTS_LOOT);
+    }
     public static void fewItems(Mob mob,DamageSource source,boolean recent) {
         initialize(mob);
         if (mob.isBaby() || massive(mob) && mob.getRandom().nextFloat()>=.1F) return;
         var type=mob.getType(); var random=mob.getRandom(); int looting=looting(mob,source),butchering=butchering(mob,source);
+        boolean cooked = shouldCookDrops(mob, source);
         if (type==EntityType.ZOMBIE || type==EntityType.ZOMBIE_VILLAGER) {
             if (random.nextFloat()<(recent ?.5F:.25F)) emit(mob,Items.ROTTEN_FLESH,1);
             boolean villager=type==EntityType.ZOMBIE_VILLAGER;
@@ -119,22 +126,22 @@ public final class SourceVanillaMobLoot {
             emit(mob,Items.BONE,reduced(mob,random.nextInt(3),recent));
         } else if (type==EntityType.COW || type==EntityType.MOOSHROOM) {
             emit(mob,Items.LEATHER,random.nextInt(3)+1);
-            if (well(mob)) { int meat=random.nextInt(3)+1+random.nextInt(1+butchering); if(meat==1 && random.nextInt(2)==0) meat++; emit(mob,mob.isOnFire()?Items.COOKED_BEEF:Items.BEEF,meat); }
+            if (well(mob)) { int meat=random.nextInt(3)+1+random.nextInt(1+butchering); if(meat==1 && random.nextInt(2)==0) meat++; emit(mob,cooked?Items.COOKED_BEEF:Items.BEEF,meat); }
         } else if (type==EntityType.PIG) {
             // The native installed saddle return is kept in dropEquipment, once, outside few-items suppression.
-            if(well(mob)) emit(mob,mob.isOnFire()?Items.COOKED_PORKCHOP:Items.PORKCHOP,random.nextInt(3)+1+random.nextInt(1+butchering));
+            if(well(mob)) emit(mob,cooked?Items.COOKED_PORKCHOP:Items.PORKCHOP,random.nextInt(3)+1+random.nextInt(1+butchering));
         } else if (type==EntityType.SHEEP) {
             Sheep sheep=(Sheep)mob;
-            if(!sheep.isSheared() && !mob.isOnFire() && random.nextInt(2)==0) emit(mob,item("minecraft:"+sheep.getColor().getName()+"_wool"),1);
-            if(well(mob)) emit(mob,mob.isOnFire()?Items.COOKED_MUTTON:Items.MUTTON,Math.max(1,random.nextInt(2)+random.nextInt(1+butchering)));
+            if(!sheep.isSheared() && !cooked && random.nextInt(2)==0) emit(mob,item("minecraft:"+sheep.getColor().getName()+"_wool"),1);
+            if(well(mob)) emit(mob,cooked?Items.COOKED_MUTTON:Items.MUTTON,Math.max(1,random.nextInt(2)+random.nextInt(1+butchering)));
             if(random.nextInt(2)==0) emit(mob,Items.LEATHER,1);
         } else if (type==EntityType.CHICKEN) {
-            if(mob.isOnFire()) { if(well(mob)) emit(mob,Items.COOKED_CHICKEN,1); }
+            if(cooked) { if(well(mob)) emit(mob,Items.COOKED_CHICKEN,1); }
             else { emit(mob,Items.FEATHER,feathers(mob)); if(well(mob)) emit(mob,Items.CHICKEN,1); }
         } else if (type==EntityType.HORSE || type==EntityType.DONKEY || type==EntityType.MULE || type==EntityType.ZOMBIE_HORSE || type==EntityType.SKELETON_HORSE) {
             int count=random.nextInt(3)+1;
             for(int i=0;i<count;i++) { boolean blank=random.nextInt(4)==0; Item skin=type==EntityType.SKELETON_HORSE?Items.BONE:type==EntityType.ZOMBIE_HORSE?(blank?null:Items.ROTTEN_FLESH):Items.LEATHER; if(skin!=null) emit(mob,skin,1); }
-            if(type!=EntityType.ZOMBIE_HORSE && type!=EntityType.SKELETON_HORSE) { int meat=1+random.nextInt(1+butchering); if(type==EntityType.HORSE) meat+=random.nextInt(2); emit(mob,mob.isOnFire()?Items.COOKED_BEEF:Items.BEEF,meat); }
+            if(type!=EntityType.ZOMBIE_HORSE && type!=EntityType.SKELETON_HORSE) { int meat=1+random.nextInt(1+butchering); if(type==EntityType.HORSE) meat+=random.nextInt(2); emit(mob,cooked?Items.COOKED_BEEF:Items.BEEF,meat); }
         } else if (type==EntityType.SQUID) { if(recent) emit(mob,new ItemStack(Items.INK_SAC),0F); }
         else if(type==EntityType.WOLF) emit(mob,Items.LEATHER,1);
         else if(type==EntityType.OCELOT || type==EntityType.CAT) { /* Source rx explicitly overrides few-items with no draws. */ }

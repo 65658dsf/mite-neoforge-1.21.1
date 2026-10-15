@@ -109,14 +109,15 @@ public final class DecorativeContentGameTests {
         return absolute;
     }
     @GameTest(template = "ranged_027")
-    public static void copperAndNewDoorsUseRedstoneInsteadOfHandOpening(GameTestHelper helper) {
+    public static void copperOpensByHandWhileNewMaterialDoorsRequireRedstone(GameTestHelper helper) {
         List<Block> doors = new ArrayList<>(); doors.add(Blocks.COPPER_DOOR); MiteDecorativeContent.DOORS.values().forEach(value -> doors.add(value.get()));
         var player = helper.makeMockPlayer(GameType.SURVIVAL);
         for (Block block : doors) {
             BlockPos pos = framedDoor(helper, block);
             var state = helper.getLevel().getBlockState(pos);
             state.useWithoutItem(helper.getLevel(), player, new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, false));
-            helper.assertTrue(!helper.getLevel().getBlockState(pos).getValue(DoorBlock.OPEN), "Hand cannot open source metal door");
+            helper.assertValueEqual(helper.getLevel().getBlockState(pos).getValue(DoorBlock.OPEN),
+                    MiteDecorativeContent.isCopperDoor(block), "Copper opens by hand while the other source metals require redstone");
             helper.getLevel().setBlock(pos.east(), Blocks.REDSTONE_BLOCK.defaultBlockState(), 3);
             helper.assertTrue(helper.getLevel().getBlockState(pos).getValue(DoorBlock.OPEN), "Redstone opens lower half");
             helper.assertTrue(helper.getLevel().getBlockState(pos.above()).getValue(DoorBlock.OPEN), "Redstone synchronizes upper half");
@@ -126,14 +127,16 @@ public final class DecorativeContentGameTests {
         helper.succeed();
     }
     @GameTest(template = "ranged_027")
-    public static void allCopperStagesRejectBothNativeMobDoorOpeningPaths(GameTestHelper helper) {
+    public static void allCopperStagesKeepNativeManualTypeWithoutChangingVillagerDoorTags(GameTestHelper helper) {
         for (var block : List.of(Blocks.COPPER_DOOR, Blocks.EXPOSED_COPPER_DOOR, Blocks.WEATHERED_COPPER_DOOR,
                 Blocks.OXIDIZED_COPPER_DOOR, Blocks.WAXED_COPPER_DOOR, Blocks.WAXED_EXPOSED_COPPER_DOOR,
                 Blocks.WAXED_WEATHERED_COPPER_DOOR, Blocks.WAXED_OXIDIZED_COPPER_DOOR)) {
             var state = block.defaultBlockState();
-            helper.assertTrue(!DoorBlock.isWoodenDoor(state), "Copper is excluded from DoorInteractGoal opening/breaking");
-            helper.assertTrue(!state.is(BlockTags.MOB_INTERACTABLE_DOORS), "Copper is excluded from villager InteractWithDoor");
+            helper.assertTrue(DoorBlock.isWoodenDoor(state), "Native copper type retains its manual door interaction identity");
+            helper.assertTrue(!state.is(BlockTags.MOB_INTERACTABLE_DOORS), "Manual opening does not alter the existing villager interaction tags");
         }
+        for (var block : MiteDecorativeContent.DOORS.values())
+            helper.assertTrue(!DoorBlock.isWoodenDoor(block.get().defaultBlockState()), "Other source metal types remain redstone-only");
         helper.assertTrue(DoorBlock.isWoodenDoor(Blocks.OAK_DOOR.defaultBlockState()), "Modern wooden door AI retains its native path");
         helper.assertTrue(Blocks.OAK_DOOR.defaultBlockState().is(BlockTags.MOB_INTERACTABLE_DOORS), "Villagers still recognize wooden doors");
         helper.succeed();

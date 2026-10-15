@@ -1,10 +1,13 @@
 package io.github.ningmeng123.mite.entity;
 
 import java.util.EnumSet;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
@@ -32,7 +35,28 @@ public final class SourceRangedAttackGoal extends Goal {
     }
     @Override public boolean canUse() { if(mob.getTarget()==null) return false;target=mob.getTarget();return true; }
     @Override public boolean canContinueToUse() { return canUse()||!mob.getNavigation().isDone(); }
-    @Override public void stop() { target=null;seen=0;attackTime=-1; }
+    @Override public void start() {
+        // Modern skeleton models and bow item overrides read synchronized aggression/use flags.
+        // Keep this cosmetic lifecycle separate from qn's fixed source firing countdown.
+        if (skeletonBow()) mob.setAggressive(true);
+    }
+    @Override public void stop() {
+        target=null;seen=0;attackTime=-1;
+        if (mob instanceof AbstractSkeleton) {
+            mob.setAggressive(false);
+            mob.stopUsingItem();
+        }
+    }
+    private boolean skeletonBow() {
+        return mob instanceof AbstractSkeleton && mob.getMainHandItem().getItem() instanceof BowItem;
+    }
+    private void updateBowAnimation(boolean canAim) {
+        if (!(mob instanceof AbstractSkeleton)) return;
+        if (skeletonBow() && canAim) {
+            mob.setAggressive(true);
+            if (!mob.isUsingItem()) mob.startUsingItem(InteractionHand.MAIN_HAND);
+        } else mob.stopUsingItem();
+    }
     public static boolean clearShot(Mob mob,LivingEntity target) {
         Vec3 from=mob.getEyePosition();
         return clear(mob,from,target.getEyePosition()) || clear(mob,from,target.position().add(0,target.getBbHeight()*.25F,0));
@@ -57,6 +81,7 @@ public final class SourceRangedAttackGoal extends Goal {
         if(target==null) return;
         double distance=mob.distanceToSqr(target.getX(),target.getBoundingBox().minY,target.getZ());
         boolean visible=clearShot(mob,target);
+        updateBowAnimation(visible && distance<=rangeSquared());
         seen=visible?seen+1:0;
         if(distance<=rangeSquared()&&seen>=20) mob.getNavigation().stop();
         else mob.getNavigation().moveTo(target,speed);
@@ -66,7 +91,10 @@ public final class SourceRangedAttackGoal extends Goal {
             float power=Math.clamp((float)Math.sqrt(distance)/nominalRange,.1F,1F);
             BlockPos eyePos=BlockPos.containing(mob.getX(),mob.getEyeY(),mob.getZ());
             var eye=mob.level().getBlockState(eyePos);
-            if(eye.getCollisionShape(mob.level(),eyePos).isEmpty()) shooter.performRangedAttack(target,power);
+            if(eye.getCollisionShape(mob.level(),eyePos).isEmpty()) {
+                if (skeletonBow()) mob.stopUsingItem();
+                shooter.performRangedAttack(target,power);
+            }
             attackTime=attackInterval();
         } else if(attackTime<0) attackTime=attackInterval();
     }
