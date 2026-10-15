@@ -315,7 +315,13 @@ public final class ToolEquipmentGameTests {
     @GameTest(template = "empty")
     public static void timedDismantlingKeepsKnifeAndLogWithFullCreativeInventory(GameTestHelper helper) {
         BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
-        try (Fixture fixture = new Fixture(helper, pos); Session session = player(helper)) {
+        AABB area = new AABB(pos).inflate(5);
+        try (Fixture fixture = new Fixture(helper, pos); Session session = player(helper);
+                SpawnedEntityCapture drops = new SpawnedEntityCapture(helper.getLevel(),
+                        entity -> entity instanceof ItemEntity && entity.getBoundingBox().intersects(area))) {
+            // A successful synchronous add can precede section tracking; count its real join event.
+            java.util.function.ToIntFunction<Item> dropped = item -> drops.live(ItemEntity.class).stream()
+                    .filter(entity -> entity.getItem().is(item)).mapToInt(entity -> entity.getItem().getCount()).sum();
             ServerPlayer player = session.player();
             player.setGameMode(GameType.CREATIVE);
             player.containerMenu = player.inventoryMenu;
@@ -328,8 +334,8 @@ public final class ToolEquipmentGameTests {
                     filler.setCount(filler.getMaxStackSize());
                     player.getInventory().setItem(slot, filler);
                 }
-                int logsBefore = fixture.count(Items.OAK_LOG);
-                int knifeBefore = fixture.count(knife);
+                int logsBefore = dropped.applyAsInt(Items.OAK_LOG);
+                int knifeBefore = dropped.applyAsInt(knife);
                 int fillerBefore = player.getInventory().countItem(Items.COBBLESTONE);
                 var menu = player.inventoryMenu;
                 menu.getSlot(1).set(new ItemStack(table, 2));
@@ -338,21 +344,21 @@ public final class ToolEquipmentGameTests {
                 helper.assertTrue(period >= 25, "Dismantling uses the real manufacturing timer");
                 for (int tick = 0; tick < period - 1; tick++) TimedCraftingController.tick(player);
                 helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 2, "N-1 ticks consume no workbench");
-                helper.assertValueEqual(fixture.count(Items.OAK_LOG), logsBefore, "No remainder exists before completion");
+                helper.assertValueEqual(dropped.applyAsInt(Items.OAK_LOG), logsBefore, "No remainder exists before completion");
                 TimedCraftingController.tick(player);
                 helper.assertTrue(menu.getSlot(1).getItem().is(table), "The remaining workbench still occupies the input slot");
                 helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "Only one of the two workbenches was consumed");
-                helper.assertValueEqual(player.getInventory().countItem(table) + fixture.count(table)
+                helper.assertValueEqual(player.getInventory().countItem(table) + dropped.applyAsInt(table)
                         + menu.getSlot(1).getItem().getCount(), 1, "Exactly one workbench survives across every output location");
-                helper.assertValueEqual(player.getInventory().countItem(knife) + fixture.count(knife), knifeBefore + 1, "Exactly one knife survives in inventory or the world");
-                helper.assertValueEqual(player.getInventory().countItem(Items.OAK_LOG) + fixture.count(Items.OAK_LOG), logsBefore + 1, "The full creative inventory cannot swallow the oak-log remainder");
+                helper.assertValueEqual(player.getInventory().countItem(knife) + dropped.applyAsInt(knife), knifeBefore + 1, "Exactly one knife survives in inventory or the world");
+                helper.assertValueEqual(player.getInventory().countItem(Items.OAK_LOG) + dropped.applyAsInt(Items.OAK_LOG), logsBefore + 1, "The full creative inventory cannot swallow the oak-log remainder");
                 helper.assertValueEqual(player.getInventory().countItem(Items.COBBLESTONE), fillerBefore, "Unrelated full inventory stacks remain intact");
                 helper.assertTrue(menu.getCarried().isEmpty(), "There is no additional cursor output");
                 helper.assertTrue(!TimedCraftingController.isCompletingIn(player.getInventory()), "The transaction marker is cleared after onTake");
                 for (int tick = 0; tick < period; tick++) TimedCraftingController.tick(player);
                 helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "A normal click stops after one batch without manual cancellation");
-                helper.assertValueEqual(fixture.count(Items.OAK_LOG), logsBefore + 1, "There is no extra returned log after the single batch");
-                helper.assertValueEqual(fixture.count(knife), knifeBefore + 1, "There is no extra knife after the single batch");
+                helper.assertValueEqual(dropped.applyAsInt(Items.OAK_LOG), logsBefore + 1, "There is no extra returned log after the single batch");
+                helper.assertValueEqual(dropped.applyAsInt(knife), knifeBefore + 1, "There is no extra knife after the single batch");
                 menu.getSlot(1).set(ItemStack.EMPTY);
             }
         }

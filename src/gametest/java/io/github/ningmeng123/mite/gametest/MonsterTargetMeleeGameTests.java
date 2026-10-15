@@ -115,16 +115,42 @@ public final class MonsterTargetMeleeGameTests {
         goal.stop(); wight.discard(); target.discard(); h.succeed();
     }
 
-    @GameTest(template = "empty")
+    @GameTest(template = "empty", timeoutTicks = 200)
     public static void currentRangeIncludesBoundaryAndRejectsTheNextPosition(GameTestHelper h) {
         var wight = source(h, MobKind.WIGHT);
         var target = mob(h, EntityType.VILLAGER, 40, 0, 0);
         var goal = new SourceMonsterTargeting.Nearest(wight, Villager.class, 0, false);
-        h.assertTrue(goal.canUse(), "R196 wight follow range is forty"); goal.start();
-        h.assertTrue(goal.canContinueToUse(), "Exactly forty blocks is within re range");
-        target.setPos(wight.getX() + 40.01, target.getY(), target.getZ());
-        h.assertFalse(goal.canContinueToUse(), "Any true distance above forty ends target tracking");
-        goal.stop(); wight.discard(); target.discard(); h.succeed();
+        var level = h.getLevel();
+        var chunks = java.util.stream.Stream.of(wight.chunkPosition(), target.chunkPosition()).distinct().toList();
+        var ticket = net.minecraft.server.level.TicketType.<Integer>create(
+                "mite_range_boundary_test", java.util.Comparator.naturalOrder(), 200);
+        int ticketKey = wight.getId();
+        Runnable cleanup = () -> {
+            goal.stop(); wight.discard(); target.discard();
+            for (var chunk : chunks) level.getChunkSource().removeRegionTicket(ticket, chunk, 2, ticketKey);
+        };
+        try {
+            for (var chunk : chunks) level.getChunkSource().addRegionTicket(ticket, chunk, 2, ticketKey);
+            // The forty-block target can lie outside the template's ticking chunks.
+            // Wait for the native query used by Nearest, rather than changing its range.
+            h.runAfterDelay(199, cleanup);
+            h.startSequence().thenWaitUntil(() -> {
+                h.assertTrue(level.isPositionEntityTicking(wight.blockPosition())
+                        && level.isPositionEntityTicking(target.blockPosition()), "Both range fixture chunks reach entity-ticking status");
+                h.assertTrue(level.getEntity(wight.getUUID()) == wight && level.getEntity(target.getUUID()) == target,
+                        "Both live range fixtures are indexed by their actual UUIDs");
+                h.assertTrue(level.getEntitiesOfClass(Villager.class, wight.getBoundingBox().inflate(40, 6, 40),
+                        entity -> entity == target).contains(target), "The original nearest-target query can observe the forty-block fixture");
+            }).thenExecute(() -> {
+                try {
+                    h.assertTrue(goal.canUse(), "R196 wight follow range is forty"); goal.start();
+                    h.assertTrue(wight.getTarget() == target, "Boundary assertions use the actual forty-block target");
+                    h.assertTrue(goal.canContinueToUse(), "Exactly forty blocks is within re range");
+                    target.setPos(wight.getX() + 40.01, target.getY(), target.getZ());
+                    h.assertFalse(goal.canContinueToUse(), "Any true distance above forty ends target tracking");
+                } finally { cleanup.run(); }
+            }).thenSucceed();
+        } catch (RuntimeException | Error failure) { cleanup.run(); throw failure; }
     }
 
     @GameTest(template = "empty")

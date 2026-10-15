@@ -117,6 +117,8 @@
     "R196NaturalSpawnerMixin",
     "R196VillageSiegeMixin",
     "R196SpawnerMixin",
+    "UnderworldTrialSpawnerMixin",
+    "UnderworldTrialSpawnerDataMixin",
     "BoneLordFrenzyMixin",
     "SummonedSkeletonDespawnMixin",
     "MobSpawnTypeAccessor",

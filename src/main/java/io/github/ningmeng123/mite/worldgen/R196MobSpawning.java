@@ -613,6 +613,10 @@ public final class R196MobSpawning {
         }
     }
     private static boolean placement(EntityType<? extends Mob> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos position, RandomSource random) {
+        // Modern trials intentionally ignore natural light, floor and player-distance restrictions.
+        // Their own collision, line-of-sight, obstruction and custom SpawnData checks still run.
+        if (reason == MobSpawnType.TRIAL_SPAWNER && underworld(level.getLevel()))
+            return level.getDifficulty() != Difficulty.PEACEFUL;
         if (reason == MobSpawnType.SPAWNER && manages(level.getLevel())) return true; // Actual positioned mob is checked by PositionCheck, before finalize.
         Mob mob = type.create(level.getLevel()); if (mob == null) return false;
         mob.moveTo(position.getX() + .5, position.getY(), position.getZ() + .5, 0, 0);

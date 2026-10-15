@@ -5,7 +5,6 @@ import io.github.ningmeng123.mite.registry.MiteAttachments;
 import io.github.ningmeng123.mite.registry.MiteWorldBlocks;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -46,8 +45,9 @@ public final class R196UnderworldGenerator extends ChunkGenerator {
     @Override
     public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> structures, RandomState state, long seed) {
         terrain = new ModernUnderworldTerrain(seed);
-        // No vanilla structures implicitly enter this biome. Source dungeons await their R196 mobs/loot.
-        return ChunkGeneratorStructureState.createForFlat(state, seed, biomeSource, Stream.empty());
+        // The normal lifecycle filters registered structure sets by this fixed biome. The dedicated
+        // underworld trial chamber set is eligible; vanilla overworld structures remain excluded.
+        return ChunkGeneratorStructureState.createForNormal(state, seed, biomeSource, structures);
     }
 
     private ModernUnderworldTerrain terrain() {

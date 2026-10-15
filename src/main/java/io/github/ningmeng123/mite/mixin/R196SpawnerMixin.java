@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
 import io.github.ningmeng123.mite.worldgen.R196SpawnerAccess;
+import io.github.ningmeng123.mite.worldgen.UnderworldSpawnerMobs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -13,6 +14,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.SpawnData;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -41,10 +44,24 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     @Shadow private int spawnDelay;
     @Shadow private int requiredPlayerRange;
     @Shadow private SpawnData nextSpawnData;
+    @Shadow private SimpleWeightedRandomList<SpawnData> spawnPotentials;
+    @Shadow private Entity displayEntity;
     @Unique private boolean mite$attemptedCycle;
     @Unique private boolean mite$resetDelay;
     @Unique private boolean mite$disabled;
     @Unique private boolean mite$managed;
+    @Unique private void mite$normalizeUnderworld(Level level) {
+        if (!UnderworldSpawnerMobs.applies(level)) return;
+        var potentials = UnderworldSpawnerMobs.remap(spawnPotentials);
+        SpawnData next = nextSpawnData == null ? null : UnderworldSpawnerMobs.remap(nextSpawnData);
+        if (potentials != spawnPotentials || next != nextSpawnData) {
+            spawnPotentials = potentials;
+            nextSpawnData = next;
+            displayEntity = null;
+            var owner = ((BaseSpawner)(Object)this).getOwner();
+            if (owner != null && !level.isClientSide) owner.ifLeft(net.minecraft.world.level.block.entity.BlockEntity::setChanged);
+        }
+    }
     @Unique private boolean mite$sourceRules() {
         return nextSpawnData == null || nextSpawnData.getCustomSpawnRules().isEmpty()
                 && EntityType.by(nextSpawnData.getEntityToSpawn()).map(R196MobSpawning::sourceType).orElse(false);
@@ -58,6 +75,7 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     }
     @Inject(method = "serverTick", at = @At("HEAD"))
     private void mite$beginSourceCycle(ServerLevel level, BlockPos pos, CallbackInfo ci) {
+        mite$normalizeUnderworld(level);
         mite$managed = R196MobSpawning.manages(level);
         mite$resetDelay = false;
         mite$attemptedCycle = R196MobSpawning.manages(level) && mite$sourceRules() && !mite$disabled && spawnDelay <= 0
@@ -99,9 +117,30 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
         return original.call(mob, level, difficulty, reason, data, spawner, finalize);
     }
     @Inject(method = "load", at = @At("RETURN"))
-    private void mite$loadDisabled(Level level, BlockPos pos, CompoundTag tag, CallbackInfo ci) { mite$disabled = tag.getBoolean("mite:r196_disabled"); }
+    private void mite$loadDisabled(Level level, BlockPos pos, CompoundTag tag, CallbackInfo ci) {
+        mite$disabled = tag.getBoolean("mite:r196_disabled");
+        mite$normalizeUnderworld(level);
+    }
+    @Inject(method = "setNextSpawnData", at = @At("RETURN"))
+    private void mite$normalizeSelectedMob(Level level, BlockPos pos, SpawnData data, CallbackInfo ci) {
+        mite$normalizeUnderworld(level);
+    }
+    @Inject(method = "setEntityId", at = @At("RETURN"))
+    private void mite$normalizeSpawnEgg(EntityType<?> type, Level level, RandomSource random, BlockPos pos, CallbackInfo ci) {
+        mite$normalizeUnderworld(level);
+    }
+    @Inject(method = "getOrCreateDisplayEntity", at = @At("HEAD"))
+    private void mite$normalizeSpinningMob(Level level, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
+        mite$normalizeUnderworld(level);
+    }
     @Inject(method = "save", at = @At("RETURN"))
     private void mite$saveDisabled(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
         if (mite$disabled) cir.getReturnValue().putBoolean("mite:r196_disabled", true);
+    }
+    @Inject(method = "save", at = @At("HEAD"))
+    private void mite$normalizeSavedMob(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+        var owner = ((BaseSpawner)(Object)this).getOwner();
+        if (owner != null) mite$normalizeUnderworld(owner.map(
+                net.minecraft.world.level.block.entity.BlockEntity::getLevel, Entity::level));
     }
 }

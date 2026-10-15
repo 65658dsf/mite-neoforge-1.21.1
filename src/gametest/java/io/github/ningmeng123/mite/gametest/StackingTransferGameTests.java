@@ -512,18 +512,21 @@ public final class StackingTransferGameTests {
             ItemStack source = new ItemStack(Items.STONE, 64);
             source.set(DataComponents.CUSTOM_NAME, Component.literal("NingMeng123 saved dispenser source"));
             loadLegacy(helper, container, source);
-            helper.getLevel().getBlockState(absolute).tick(helper.getLevel(), absolute, helper.getLevel().random);
-            helper.assertValueEqual(container.getItem(0).getCount(), 63, "One actual native scheduled block dispatch retains every remaining legacy source item");
-            helper.assertTrue(ItemStack.isSameItemSameComponents(source, container.getItem(0)), "Dispatch preserves the old source's complete data-component identity");
-            List<ItemEntity> emitted = helper.getLevel().getEntitiesOfClass(ItemEntity.class,
-                    new net.minecraft.world.phys.AABB(absolute).inflate(2), entity -> entity.getItem().is(Items.STONE));
-            helper.assertValueEqual(emitted.stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 1,
-                    "Exactly one legal item is emitted by the dispenser or native dropper fallback");
-            DispenserBlockEntity reloaded = (DispenserBlockEntity) BlockEntity.loadStatic(absolute, helper.getLevel().getBlockState(absolute),
-                    container.saveWithFullMetadata(helper.getLevel().registryAccess()), helper.getLevel().registryAccess());
-            helper.assertTrue(reloaded != null && reloaded.getItem(0).getCount() == 63, "Saving after native dispatch still preserves the complete old remainder");
-            emitted.forEach(ItemEntity::discard);
-            container.clearContent();
+            try (var capture = new SpawnedEntityCapture(helper.getLevel(), entity -> entity instanceof ItemEntity item
+                    && item.getItem().is(Items.STONE)
+                    && new net.minecraft.world.phys.AABB(absolute).inflate(2).contains(entity.position()))) {
+                helper.getLevel().getBlockState(absolute).tick(helper.getLevel(), absolute, helper.getLevel().random);
+                helper.assertValueEqual(container.getItem(0).getCount(), 63, "One actual native scheduled block dispatch retains every remaining legacy source item");
+                helper.assertTrue(ItemStack.isSameItemSameComponents(source, container.getItem(0)), "Dispatch preserves the old source's complete data-component identity");
+                List<ItemEntity> emitted = capture.live(ItemEntity.class);
+                helper.assertValueEqual(emitted.stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 1,
+                        "Exactly one legal item is emitted by the dispenser or native dropper fallback");
+                DispenserBlockEntity reloaded = (DispenserBlockEntity) BlockEntity.loadStatic(absolute, helper.getLevel().getBlockState(absolute),
+                        container.saveWithFullMetadata(helper.getLevel().registryAccess()), helper.getLevel().registryAccess());
+                helper.assertTrue(reloaded != null && reloaded.getItem(0).getCount() == 63, "Saving after native dispatch still preserves the complete old remainder");
+                emitted.forEach(ItemEntity::discard);
+                container.clearContent();
+            }
         }
         helper.succeed();
     }
