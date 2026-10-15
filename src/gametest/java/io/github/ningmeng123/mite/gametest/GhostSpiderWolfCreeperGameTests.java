@@ -96,7 +96,16 @@ public final class GhostSpiderWolfCreeperGameTests {
     @GameTest(template="empty") public static void hellhoundCannotBurnInLava(GameTestHelper h) { R196Wolf e=(R196Wolf)mob(h,MobKind.HELLHOUND); float health=e.getHealth(); e.lavaHurt(); h.assertTrue(e.getHealth()==health && !e.isOnFire(),"Source immunity also prevents burn side state"); h.succeed(); }
     @GameTest(template="empty") public static void infernalRetainsOrdinaryBodyAndNaturalDefense(GameTestHelper h) { var e=mob(h,MobKind.INFERNAL_CREEPER); near(h,e.getBbWidth(),.6,"Source static scale1"); near(h,e.getBbHeight(),1.8,"Explosion doubling never doubles body"); near(h,((R196Mob)e).naturalDefense(e.damageSources().generic()),2,"Source natural defense+2"); h.succeed(); }
     private static void explode(Creeper e) throws Exception { Method method=Creeper.class.getDeclaredMethod("explodeCreeper"); method.setAccessible(true); method.invoke(e); }
-    private static Cow blastTarget(GameTestHelper h,Creeper e,double distance) { Cow c=cow(h); e.moveTo(e.getX(),h.absolutePos(new BlockPos(2,10,2)).getY(),e.getZ(),0,0); c.moveTo(e.getX()+distance,e.getY(),e.getZ(),0,0); return c; }
+    private static Cow blastTarget(GameTestHelper h,Creeper e,double distance) {
+        e.moveTo(e.getX(),h.absolutePos(new BlockPos(2,10,2)).getY(),e.getZ(),0,0);
+        Cow c=EntityType.COW.create(h.getLevel());c.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100);c.setHealth(100);
+        c.moveTo(e.getX()+distance,e.getY(),e.getZ(),0,0);c.setNoAi(true);c.setNoGravity(true);
+        // The blast arena extends outside the one-block template; register at the final loaded position.
+        h.getLevel().getChunkAt(c.blockPosition());h.getLevel().addFreshEntity(c);
+        h.assertTrue(h.getLevel().getEntities(e,e.getBoundingBox().inflate(10)).contains(c),"Blast fixture is indexed in the actual living-entity query before exploding");
+        h.assertTrue(net.minecraft.world.level.Explosion.getSeenPercent(e.position().add(0,e.getBbHeight()*.25,0),c)>0F,"Blast fixture has positive real exposure");
+        return c;
+    }
     @GameTest(template="empty") public static void infernalRealExplosionHitsFourBlocks(GameTestHelper h) throws Exception { var e=(Creeper)mob(h,MobKind.INFERNAL_CREEPER); Cow c=blastTarget(h,e,4); explode(e); h.assertTrue(c.getHealth()<100,"Source living radius8.8 is not clipped to native block radius2.86"); h.succeed(); }
     @GameTest(template="empty") public static void infernalRealExplosionHitsEightBlocks(GameTestHelper h) throws Exception { var e=(Creeper)mob(h,MobKind.INFERNAL_CREEPER); Cow c=blastTarget(h,e,8); explode(e); h.assertTrue(c.getHealth()<100,"Real living query and normalized distance both use source radius"); h.succeed(); }
     @GameTest(template="empty") public static void infernalRealExplosionDamageIsLinear(GameTestHelper h) throws Exception { var e=(Creeper)mob(h,MobKind.INFERNAL_CREEPER); Cow c=blastTarget(h,e,4); double distance=Math.sqrt(16+Math.pow(e.getBbHeight()*.25,2)); double expected=(8.8-distance)*4*.6666667; explode(e); near(h,100-c.getHealth(),expected,"Independent abr formula, actual unarmored health loss"); h.succeed(); }
@@ -105,6 +114,7 @@ public final class GhostSpiderWolfCreeperGameTests {
         R196Elemental e=(R196Elemental)mob(h,MobKind.EARTH_ELEMENTAL); BlockPos pos=e.blockPosition().east(); h.getLevel().setBlockAndUpdate(pos,Blocks.DIRT.defaultBlockState());
         CompoundTag saved=new CompoundTag(); saved.putLong("position",pos.asLong()); saved.putInt("progress",-1); saved.putInt("cooldown",40); e.getPersistentData().put("mite_digging_031",saved);
         R196DiggerGoal goal=new R196DiggerGoal(e); h.assertTrue(goal.canDestroy(pos,true),"Source nearfoot reachable dirt fixture"); h.assertTrue(goal.stageDelay(pos)==18,"Source(int)(300*.5)/8");
+        e.setTarget(cow(h)); h.assertTrue(goal.canUse(),"Actual selector restores saved digging state before activation"); goal.start();
         for (int i=0;i<39;i++) goal.tick(); h.assertTrue(h.getLevel().getBlockState(pos).is(Blocks.DIRT),"Initial40ticks have not completed"); goal.tick();
         h.assertTrue(e.getPersistentData().getCompound("mite_digging_031").getInt("progress")==0,"First stage moves-1to0");
         for (int i=0;i<179;i++) goal.tick(); h.assertTrue(h.getLevel().getBlockState(pos).is(Blocks.DIRT),"Ten further stages require180ticks"); goal.tick();

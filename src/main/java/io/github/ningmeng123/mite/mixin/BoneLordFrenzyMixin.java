@@ -1,12 +1,12 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.entity.BoneLordFrenzy;
+import io.github.ningmeng123.mite.entity.R196MonsterAi;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,9 +28,8 @@ public abstract class BoneLordFrenzyMixin implements BoneLordFrenzy {
         var attack = self.getAttribute(Attributes.ATTACK_DAMAGE);
         if (attack != null) {
             attack.removeModifier(MITE_FRENZY);
-            if (ticks > 0) attack.addTransientModifier(new AttributeModifier(MITE_FRENZY, attack.getBaseValue() * .5,
-                    AttributeModifier.Operation.ADD_VALUE));
         }
+        R196MonsterAi.refreshFrenzyDamage(self);
         if (self.getTarget() == null && target != null) self.setTarget(target);
     }
     @Inject(method = "aiStep", at = @At("HEAD"))

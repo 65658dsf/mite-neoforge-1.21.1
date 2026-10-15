@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "execution_authority": "server",
+  "legacy_world_execution": false,
+  "rules": [
+    {
+      "id": "zombie.smart",
+      "source": [
+        "tw constructor/damage/isDiggingEnabled",
+        "EntityRevenant"
+      ],
+      "initial_probability": {
+        "numerator": 1,
+        "denominator": 8
+      },
+      "revenant_always": true,
+      "learn_on": "positive accepted player damage",
+      "save": "NeoForgeData.mite_zombie_smart_035",
+      "acceptance": "playerDamageTeachesButZeroDamageDoesNot"
+    },
+    {
+      "id": "frenzy.activation",
+      "source": [
+        "tm.isFrenzied",
+        "tr.isFrenzied",
+        "tg.isFrenzied",
+        "abw.isBloodMoon"
+      ],
+      "blood_moon": "overworld, source blood moon, night only, blue excluded",
+      "bone_lord": "logical OR, no stacking",
+      "enderman": false,
+      "acceptance": "bloodMoonAndBoneLordShareOneHalfBaseDamageBonus"
+    },
+    {
+      "id": "frenzy.attack",
+      "source": [
+        "tm attack calculations"
+      ],
+      "extra_base_fraction": 0.5,
+      "operation": "add unmodified attack base * .5 once",
+      "client": "native attribute synchronization"
+    },
+    {
+      "id": "frenzy.movement",
+      "source": [
+        "pf.c",
+        "on.bl"
+      ],
+      "multiplier": 1.2,
+      "adaptation": "single transient ADD_MULTIPLIED_TOTAL movement attribute; removed on expiry"
+    },
+    {
+      "id": "ranged.geometry",
+      "source": [
+        "qn constructor/e",
+        "tr"
+      ],
+      "nominal_skeleton_range": 15,
+      "range_squared_multiplier": 4,
+      "actual_skeleton_radius": 30,
+      "visibility_samples": [
+        "eye",
+        "quarter body"
+      ],
+      "stop_after_visible_ticks": 20,
+      "power_clamp": [
+        0.1,
+        1.0
+      ],
+      "power": "sqrt(true foot distance squared) / nominal range"
+    },
+    {
+      "id": "ranged.timing",
+      "source": [
+        "qn.e"
+      ],
+      "initial_countdown": -1,
+      "skeleton_interval": 60,
+      "frenzy": "truncate(interval * .67f)",
+      "frenzied_skeleton_interval": 40,
+      "distance_interpolation": false,
+      "acceptance": "sourceRangedUsesThirtyBlockRadiusAndFixedSixtyRawTicks"
+    },
+    {
+      "id": "ranged.policies",
+      "source": [
+        "qn.e",
+        "Raycast.setForPiercingProjectile",
+        "Raycast.isFullyImpeded"
+      ],
+      "ignore": [
+        "metal bars",
+        "leaves with null originator",
+        "sugar cane",
+        "vines",
+        "open fence gate",
+        "fluids"
+      ],
+      "block": [
+        "glass",
+        "glass panes",
+        "solid obstacles"
+      ],
+      "leaf_prediction_random_draws": 0,
+      "adaptation": "modern collision shapes and registered MITE metal bars",
+      "acceptance": "rangedFrenzyUsesFortyTicksAndStopsAtSolidWalls"
+    },
+    {
+      "id": "ranged.other",
+      "source": [
+        "sb",
+        "tv",
+        "qn"
+      ],
+      "snow_golem": {
+        "nominal_range": 10,
+        "interval": 20,
+        "speed": 1.25
+      },
+      "witch": {
+        "nominal_range": 10,
+        "interval": 60,
+        "speed": 1.0
+      }
+    },
+    {
+      "id": "activation.scope",
+      "source": [
+        "tw",
+        "tr",
+        "tf",
+        "tv",
+        "tn.bf",
+        "R196 constructors"
+      ],
+      "exclude_modern": [
+        "husk",
+        "drowned",
+        "stray"
+      ],
+      "exclude_inherited_disabled": "pig zombie",
+      "shadow_closed_door_path": false,
+      "acceptance": "oldAiPigZombiesAndModernHusksDoNotGainNewSourceTasks"
+    }
+  ],
+  "related_specifications": [
+    "monster-obstacles-source-035.json"
+  ],
+  "source_documents": [
+    "docs/monster-ai-035-evidence.md",
+    "docs/monster-targeting-melee-035-evidence.md",
+    "docs/monster-special-ai-035-evidence.md"
+  ],
+  "acceptance_state": "automated_passed; user_confirmed_2026-10-15; authorized_to_commit_and_push",
+  "source_files": [
+    {
+      "path": ".reference/r196/decompiled/tw.java",
+      "sha256": "078ea3c3debbcaeb8f1fc1acdece23436b96b3e3b17f8ae687dad8eb1538b5d6"
+    },
+    {
+      "path": ".reference/r196/decompiled/tm.java",
+      "sha256": "e22950fca180d12b3a64966af44bf6f9c07e857fcefe2765643fbd064ab67285"
+    },
+    {
+      "path": ".reference/r196/decompiled/tr.java",
+      "sha256": "d714d0419d07b1516744957c6cbc3f6e5964954a551a6b39c563cbfcfe9290d0"
+    },
+    {
+      "path": ".reference/r196/decompiled/tg.java",
+      "sha256": "b56e7fcc64ab63b6abc6a066bc6bb906f22ad4541b09a287118978fe043f01df"
+    },
+    {
+      "path": ".reference/r196/decompiled/pf.java",
+      "sha256": "cb49af6a3acfc88f2187ba75f0971103f785378f5ef477f00cd6c729219ea002"
+    },
+    {
+      "path": ".reference/r196/decompiled/on.java",
+      "sha256": "13f07244b64a792e9b7f840525e90f95d79528089e1cb01b49434ed170fca983"
+    },
+    {
+      "path": ".reference/r196/decompiled/qn.java",
+      "sha256": "bbafbc06ff4da9294660e91edf3a2332cd9f4a4a5de7aad0e33b1d007fce9924"
+    },
+    {
+      "path": ".reference/r196/decompiled/sb.java",
+      "sha256": "256114b232b5069e7df4fda23ff3194c9cd0578fd6a82f92ad8d55a0d36e0caa"
+    },
+    {
+      "path": ".reference/r196/decompiled/tv.java",
+      "sha256": "275ab2f7dd292ca71b884a074ace7087217dbf06abc26dc9ed5c35c1a6f1109f"
+    },
+    {
+      "path": ".reference/r196/decompiled/EntityRevenant.java",
+      "sha256": "88645929c69a684acac75f523cd089eb3b6e7270339666e8c4f0d3f931f4bd57"
+    },
+    {
+      "path": ".reference/r196/decompiled/Raycast.java",
+      "sha256": "2fccc3b97a7c7ff0c486f391eef09539a4f89d7d050f5e31114edc734d603a95"
+    },
+    {
+      "path": ".reference/r196/decompiled/RaycastPolicies.java",
+      "sha256": "8dc55e930fddd79d13dea8d0d79d8d4141804523d6022c363dee4f443eb83dd0"
+    }
+  ],
+  "modern_door_events": {
+    "pounding": 1019,
+    "crash": 1021,
+    "particles": 2001,
+    "forbidden_legacy": [
+      1010,
+      1012
+    ],
+    "acceptance": "portalPoundingAndBreakSendDoorSoundsInsteadOfJukeboxPackets"
+  }
+}

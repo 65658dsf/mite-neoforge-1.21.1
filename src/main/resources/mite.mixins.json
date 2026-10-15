@@ -163,7 +163,13 @@
     "NativeHorseVariant032Access",
     "NativeBat032Mixin",
     "NativeBoat032Mixin",
-    "SourceAnimalDespawn032Mixin"
+    "SourceAnimalDespawn032Mixin",
+    "SourceWoodenPortalPathMixin",
+    "SourceMonsterLivingAccess",
+    "SourceMonsterTargetMixin",
+    "CreeperCactusMixin",
+    "CactusTrapMixin",
+    "CactusTrapRemovalMixin"
   ],
   "client": [
     "client.GuiFoodMixin",

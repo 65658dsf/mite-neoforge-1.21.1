@@ -3,6 +3,8 @@ package io.github.ningmeng123.mite.mixin;
 import io.github.ningmeng123.mite.entity.OrdinarySkeletonState;
 import io.github.ningmeng123.mite.entity.R196MobEquipment;
 import io.github.ningmeng123.mite.entity.R196Skeleton;
+import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
+import io.github.ningmeng123.mite.entity.SourceRangedAttackGoal;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -41,14 +43,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Only minecraft:skeleton receives source tr spawn metadata and its persistent 25 percent melee variant. @author NingMeng123 */
+/** Ordinary source spawn metadata; original skeleton and wither-skeleton source weapon AI. @author NingMeng123 */
 @Mixin(AbstractSkeleton.class)
 public abstract class OrdinarySkeletonMixin extends Monster implements OrdinarySkeletonState {
     @Unique private static final EntityDataAccessor<Integer> MITE_TYPE = SynchedEntityData.defineId(AbstractSkeleton.class, EntityDataSerializers.INT);
     @Shadow @Final private RangedBowAttackGoal<AbstractSkeleton> bowGoal;
     @Shadow @Final private MeleeAttackGoal meleeGoal;
-    @Unique private RangedAttackGoal mite$rangedGoal;
-    @Unique private MeleeAttackGoal mite$meleeGoal;
+    @Unique private SourceRangedAttackGoal mite$rangedGoal;
+    @Unique private SourceMeleeGoal mite$meleeGoal;
     protected OrdinarySkeletonMixin(EntityType<? extends Monster> type, Level level) { super(type, level); }
     @Unique private AbstractSkeleton mite$self() { return (AbstractSkeleton)(Object)this; }
     @Unique private boolean mite$ordinary() { return getType() == EntityType.SKELETON; }
@@ -77,9 +79,9 @@ public abstract class OrdinarySkeletonMixin extends Monster implements OrdinaryS
     }
     @Inject(method = "reassessWeaponGoal", at = @At("HEAD"), cancellable = true)
     private void mite$sourceWeaponGoals(CallbackInfo ci) {
-        if (!mite$ordinary() || level().isClientSide) return;
-        if (mite$rangedGoal == null) mite$rangedGoal = new RangedAttackGoal(mite$self(),1D,20,60,15F);
-        if (mite$meleeGoal == null) mite$meleeGoal = new MeleeAttackGoal(mite$self(),1.2D,false);
+        if ((!mite$ordinary() && getType()!=EntityType.WITHER_SKELETON) || level().isClientSide) return;
+        if (mite$rangedGoal == null) mite$rangedGoal = new SourceRangedAttackGoal(mite$self(),1D,60,15F);
+        if (mite$meleeGoal == null) mite$meleeGoal = new SourceMeleeGoal(mite$self(),net.minecraft.world.entity.player.Player.class,1.2D,false);
         goalSelector.removeGoal(bowGoal); goalSelector.removeGoal(meleeGoal);
         goalSelector.removeGoal(mite$rangedGoal); goalSelector.removeGoal(mite$meleeGoal);
         goalSelector.addGoal(4,getMainHandItem().getItem() instanceof BowItem ? mite$rangedGoal : mite$meleeGoal);

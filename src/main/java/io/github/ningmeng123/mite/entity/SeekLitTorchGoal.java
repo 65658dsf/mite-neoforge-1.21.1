@@ -19,7 +19,7 @@ public final class SeekLitTorchGoal extends Goal {
                 || (state.is(Blocks.REDSTONE_TORCH) || state.is(Blocks.REDSTONE_WALL_TORCH)) && state.getValue(BlockStateProperties.LIT);
     }
     @Override public boolean canUse() {
-        if (mob.getRandom().nextInt(mob.miteKind() == MobKind.SHADOW ? 40 : 200) != 0 || mob.getTarget() != null) return false;
+        if (mob.getRandom().nextInt(mob.miteKind() == MobKind.SHADOW ? 40 : 200) != 0) return false;
         ArrayList<BlockPos> candidates = new ArrayList<>(); BlockPos origin = mob.blockPosition();
         for (int x = -16; x <= 16; x++) for (int z = -16; z <= 16; z++) for (int y = -4; y <= 4; y++) {
             BlockPos pos = origin.offset(x, y, z);

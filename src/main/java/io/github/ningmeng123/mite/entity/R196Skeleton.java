@@ -61,8 +61,8 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob {
     public static final String TROOP_COUNTER = "mite_bone_lord_despawn_counter";
     private static final EntityDataAccessor<Integer> SKELETON_TYPE = SynchedEntityData.defineId(R196Skeleton.class, EntityDataSerializers.INT);
     private final MobKind kind;
-    private final RangedAttackGoal rangedGoal = new RangedAttackGoal(this, 1D, 20, 60, 15F);
-    private final MeleeAttackGoal meleeGoal = new MeleeAttackGoal(this, 1.2D, false);
+    private final SourceRangedAttackGoal rangedGoal = new SourceRangedAttackGoal(this, 1D, 60, 15F);
+    private final SourceMeleeGoal meleeGoal = new SourceMeleeGoal(this, Player.class, 1.2D, false);
     private ItemStack stowed = ItemStack.EMPTY;
     private int forcedType = -1;
     private int troopsSummoned;

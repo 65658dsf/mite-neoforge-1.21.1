@@ -30,7 +30,7 @@ public final class R196Undead extends Monster implements R196Mob {
     private final MobKind kind;
     public R196Undead(EntityType<? extends R196Undead> type, Level level, MobKind kind) {
         super(type, level); this.kind = kind; this.xpReward = R196MobRules.entry(kind).experience();
-        if (kind == MobKind.INVISIBLE_STALKER || kind == MobKind.SHADOW) goalSelector.addGoal(6, new SeekLitTorchGoal(this));
+        if (kind == MobKind.INVISIBLE_STALKER || kind == MobKind.SHADOW) goalSelector.addGoal(kind == MobKind.SHADOW ? 3 : 4, new SeekLitTorchGoal(this));
     }
     @Override public MobKind miteKind() { return kind; }
     @Override protected void registerGoals() {

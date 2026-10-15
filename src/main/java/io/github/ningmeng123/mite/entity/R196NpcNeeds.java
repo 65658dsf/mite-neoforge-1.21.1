@@ -74,7 +74,7 @@ public final class R196NpcNeeds {
     }
     @SubscribeEvent public static void join(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide || !(event.getEntity() instanceof PathfinderMob mob) || !managed(mob)) return;
-        if (mob.goalSelector.getAvailableGoals().stream().noneMatch(g -> g.getGoal() instanceof R196DiggerGoal) && R196DiggerGoal.watcher(mob))
+        if (R196MonsterAi.managed(mob) && mob.goalSelector.getAvailableGoals().stream().noneMatch(g -> g.getGoal() instanceof R196DiggerGoal) && R196DiggerGoal.watcher(mob))
             mob.goalSelector.addGoal(1, new R196DiggerGoal(mob));
         if (!io.github.ningmeng123.mite.entity.animal.R196AnimalAi032.managed(mob)
                 && mob.goalSelector.getAvailableGoals().stream().noneMatch(g -> g.getGoal() instanceof SeekItem)) mob.goalSelector.addGoal(1, new SeekItem(mob));

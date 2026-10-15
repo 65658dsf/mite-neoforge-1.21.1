@@ -261,9 +261,12 @@ public final class NativeAnimals032GameTests {
     }
     @GameTest(template="ranged_027") public static void actualHorseBreedingMutatesMotherAndLeavesSourceChildDefaults(GameTestHelper h) {
         Horse mother=mob(h,EntityType.HORSE),father=mob(h,EntityType.HORSE); mother.getAttribute(Attributes.MAX_HEALTH).setBaseValue(40);father.getAttribute(Attributes.MAX_HEALTH).setBaseValue(60);
+        // Independent JavaRandom seed2 draws coat4, markings2, then health7+1: (40+60+15+7+1)/3=41.
+        // Unseeded health draws summing to5 legitimately leave the mother at40; exact41 also avoids float range rounding.
+        mother.getRandom().setSeed(2L);
         var child=(AbstractHorse)mother.getBreedOffspring(h.getLevel(),father);
         h.assertTrue(child.getMaxHealth()==53&&child.getAttributeValue(Attributes.MOVEMENT_SPEED)==.225&&child.getAttributeValue(Attributes.JUMP_STRENGTH)==.7,"Source constructor defaults remain on newborn");
-        h.assertTrue(mother.getMaxHealth()>=115D/3&&mother.getMaxHealth()<=130D/3&&mother.getMaxHealth()!=40&&father.getMaxHealth()==60,"Javap confirmed averaged health receiver is mother; father unchanged"); h.succeed();
+        h.assertTrue(mother.getMaxHealth()==41&&mother.getAttribute(Attributes.MAX_HEALTH).getBaseValue()==41&&mother.getMaxHealth()!=40&&father.getMaxHealth()==60&&father.getAttribute(Attributes.MAX_HEALTH).getBaseValue()==60,"Javap confirmed exact averaged health receiver is mother; father unchanged"); h.succeed();
     }
     @GameTest(template="ranged_027") public static void horseAndDonkeyProduceMuleThroughActualBreedingMixin(GameTestHelper h) {
         Horse horse=mob(h,EntityType.HORSE); var donkey=mob(h,EntityType.DONKEY);
