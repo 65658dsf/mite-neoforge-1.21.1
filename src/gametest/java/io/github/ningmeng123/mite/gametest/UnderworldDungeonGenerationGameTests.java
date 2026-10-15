@@ -5,6 +5,7 @@ import com.mojang.serialization.JsonOps;
 import io.github.ningmeng123.mite.registry.MiteWorldBlocks;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
 import io.github.ningmeng123.mite.worldgen.ModernUnderworldTerrain;
+import io.github.ningmeng123.mite.worldgen.NaturalTrialBlocks;
 import io.github.ningmeng123.mite.worldgen.R196UnderworldTerrain;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -137,6 +138,8 @@ public final class UnderworldDungeonGenerationGameTests {
         helper.assertTrue(foundSpawner != null, "FEATURES must place an actual trial spawner from the natural structure templates");
         helper.assertTrue(level.getBlockEntity(foundSpawner) != null,
                 "The generated trial spawner must have its real functional block entity");
+        helper.assertTrue(NaturalTrialBlocks.isNatural(level, foundSpawner),
+                "Natural FULL chunk generation must retain the trial template provenance after proto promotion");
         BlockPos sample = new BlockPos(foundSpawner.getX(), -64, foundSpawner.getZ());
         helper.assertTrue(level.getBlockState(sample).is(MiteWorldBlocks.MANTLE.get()), "Trial generation must preserve the natural mantle floor");
         helper.assertTrue(level.getBlockState(sample.atY(319)).is(Blocks.BEDROCK), "Trial generation must preserve the protected roof");

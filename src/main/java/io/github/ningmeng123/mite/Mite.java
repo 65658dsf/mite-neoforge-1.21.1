@@ -29,6 +29,7 @@ public final class Mite {
 
     public Mite(IEventBus modBus) {
         MiteAttachments.register(modBus);
+        io.github.ningmeng123.mite.worldgen.NaturalTrialBlocks.register(modBus);
         MiteItems.register(modBus);
         MiteMaterials.register(modBus);
         io.github.ningmeng123.mite.registry.MiteMetalBlocks.register(modBus);

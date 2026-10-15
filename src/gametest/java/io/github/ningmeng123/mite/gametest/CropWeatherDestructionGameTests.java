@@ -29,13 +29,17 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class CropWeatherDestructionGameTests {
     @GameTest(template = "empty")
     public static void realSnowfallHarvestsMatureCropBeforeReplacingItWithSnow(GameTestHelper h) {
-        try (var f = new Fixture(h)) {
+        try (var f = new Fixture(h);
+                var spawned = new SpawnedEntityCapture(f.level, entity -> entity instanceof ItemEntity
+                        && entity.getBoundingBox().intersects(new AABB(f.pos).inflate(2)))) {
             f.set(f.pos.below(), Blocks.FARMLAND.defaultBlockState());
             f.set(f.pos, Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE, 7));
             h.assertTrue(Blocks.SNOW.defaultBlockState().canSurvive(f.level, f.pos), "Source farmland supports snow despite modern shortened collision shape");
             f.level.tickPrecipitation(f.pos);
             h.assertTrue(f.level.getBlockState(f.pos).is(Blocks.SNOW), "The actual native precipitation tick replaces a crop with snow");
-            h.assertValueEqual(f.collect(Items.WHEAT), 1, "A mature snowfall crop retains its source output");
+            int wheat = spawned.live(ItemEntity.class).stream().filter(entity -> entity.getItem().is(Items.WHEAT))
+                    .mapToInt(entity -> entity.getItem().getCount()).sum();
+            h.assertValueEqual(wheat, 1, "A mature snowfall crop retains its source output");
         }
         h.succeed();
     }
