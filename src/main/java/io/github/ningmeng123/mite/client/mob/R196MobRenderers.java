@@ -129,6 +129,7 @@ public final class R196MobRenderers {
         SourceSkeletonRenderer(EntityRendererProvider.Context context) {
             super(context, MobModelLayers.INNER_ARMOR, MobModelLayers.OUTER_ARMOR,
                     new LegacySkeletonModel<R196Skeleton>(context.bakeLayer(MobModelLayers.SKELETON)));
+            addLayer(new PlayerTargetEyesLayer<>(this));
         }
         @Override public ResourceLocation getTextureLocation(R196Skeleton entity) {
             return texture("skeleton/" + switch (entity.miteKind()) {
@@ -154,7 +155,7 @@ public final class R196MobRenderers {
         }
     }
     private static final class SourceZombieRenderer extends ZombieRenderer {
-        SourceZombieRenderer(EntityRendererProvider.Context context) { super(context); }
+        SourceZombieRenderer(EntityRendererProvider.Context context) { super(context); addLayer(new PlayerTargetEyesLayer<>(this)); }
         @Override public ResourceLocation getTextureLocation(Zombie entity) { return texture("zombie/revenant"); }
     }
     private static final class SourceWolfRenderer extends WolfRenderer {

@@ -57,9 +57,10 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /** Longdead equipment, guardian weapon storage and both bone-lord troop algorithms. @author NingMeng123 */
-public final class R196Skeleton extends AbstractSkeleton implements R196Mob {
+public final class R196Skeleton extends AbstractSkeleton implements R196Mob, PlayerTargetEyes {
     public static final String TROOP_COUNTER = "mite_bone_lord_despawn_counter";
     private static final EntityDataAccessor<Integer> SKELETON_TYPE = SynchedEntityData.defineId(R196Skeleton.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> RED_EYES = SynchedEntityData.defineId(R196Skeleton.class, EntityDataSerializers.BOOLEAN);
     private final MobKind kind;
     private final SourceRangedAttackGoal rangedGoal = new SourceRangedAttackGoal(this, 1D, 60, 15F);
     private final SourceMeleeGoal meleeGoal = new SourceMeleeGoal(this, Player.class, 1.2D, false);
@@ -76,6 +77,17 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob {
         reassessWeaponGoal();
     }
     @Override public MobKind miteKind() { return kind; }
+    @Override public boolean hasRedEyes() { return entityData.get(RED_EYES); }
+    private void refreshTargetEyes() {
+        if (!level().isClientSide) entityData.set(RED_EYES,
+                (kind == MobKind.LONGDEAD_GUARDIAN || kind == MobKind.BONE_LORD || kind == MobKind.ANCIENT_BONE_LORD)
+                        && PlayerTargetEyes.tracksLivingPlayer(this));
+    }
+    @Override public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
+        // Read the accepted target after NeoForge listeners have canceled or replaced the requested target.
+        refreshTargetEyes();
+    }
     public boolean isLongdead() { return kind == MobKind.LONGDEAD || kind == MobKind.LONGDEAD_GUARDIAN; }
     public boolean isLord() { return kind == MobKind.BONE_LORD || kind == MobKind.ANCIENT_BONE_LORD; }
     public int skeletonType() { return entityData.get(SKELETON_TYPE); }
@@ -87,7 +99,7 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob {
         entityData.set(SKELETON_TYPE, type); refreshDimensions();
     }
     @Override protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder); builder.define(SKELETON_TYPE, 0);
+        super.defineSynchedData(builder); builder.define(SKELETON_TYPE, 0); builder.define(RED_EYES, false);
     }
     @Override public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
         super.onSyncedDataUpdated(accessor); if (accessor.equals(SKELETON_TYPE)) refreshDimensions();
@@ -186,6 +198,7 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob {
     }
     @Override public void aiStep() {
         super.aiStep();
+        refreshTargetEyes();
         if (level().isClientSide || !isAlive()) return;
         if (getMainHandItem().isEmpty() || MobCombat.ticksWithOffset(this) % 10 == 0) updateGuardianWeapon();
         if (!isLord()) return;

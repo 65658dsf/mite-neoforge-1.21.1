@@ -10,12 +10,14 @@ import io.github.ningmeng123.mite.client.mob.LegacyBatModel;
 import io.github.ningmeng123.mite.client.mob.LegacySkeletonModel;
 import io.github.ningmeng123.mite.client.mob.LegacyStalkerModel;
 import io.github.ningmeng123.mite.client.mob.R196MobRenderers;
+import io.github.ningmeng123.mite.client.mob.PlayerTargetEyesLayer;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.OrdinarySkeletonState;
 import io.github.ningmeng123.mite.entity.R196Bat;
 import io.github.ningmeng123.mite.entity.R196Elemental;
 import io.github.ningmeng123.mite.entity.R196Skeleton;
 import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +42,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import javax.imageio.ImageIO;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 
 /** Datagen-only CPU geometry/resource audit: no Minecraft instance, world, OpenGL, UI or actual render call. @author NingMeng123 */
 @EventBusSubscriber(modid=Mite.MOD_ID,value=Dist.CLIENT,bus=EventBusSubscriber.Bus.MOD)
@@ -129,6 +136,7 @@ public final class MobModelAudit031 implements DataProvider {
             check(R196Elemental.class.getMethod("isMagma").getReturnType()==boolean.class,"Elemental synced material renderer API");
             check(R196Bat.class.getMethod("initializeHangingAt",BlockPos.class).getReturnType()==void.class,"Spawn-time hanging sync API");
             report.addProperty("state_interfaces_checked",4); report.addProperty("registered_source_kind_count",MobKind.values().length);
+            auditPlayerEyes(report);
             report.addProperty("status","passed_structure_and_resource_audit_only");
             write(report); return CompletableFuture.completedFuture(null);
         } catch(Exception error) {
@@ -139,6 +147,47 @@ public final class MobModelAudit031 implements DataProvider {
     }
     private void write(JsonObject report) throws Exception {
         Files.createDirectories(output.getParent()); Files.writeString(output,new GsonBuilder().setPrettyPrinting().create().toJson(report)+"\n",StandardCharsets.UTF_8);
+    }
+    private static void auditPlayerEyes(JsonObject report) throws Exception {
+        var expected=Map.of(MobKind.LONGDEAD_GUARDIAN,"skeleton/longdead_guardian_glow",MobKind.ANCIENT_BONE_LORD,"skeleton/longdead_guardian_glow",
+                MobKind.BONE_LORD,"skeleton/bone_lord_glow",MobKind.REVENANT,"zombie/revenant_glow");
+        JsonArray facts=new JsonArray();var eyePixels=java.util.Set.of("9,12","10,12","13,12","14,12");
+        for(var entry:expected.entrySet()) {
+            var texture=PlayerTargetEyesLayer.textureFor(entry.getKey());
+            check(texture!=null && texture.equals(R196MobRenderers.texture(entry.getValue())),"Correct eye mask for "+entry.getKey());
+            String path="/assets/mite/"+texture.getPath();byte[] bytes;
+            try(var input=MobModelAudit031.class.getResourceAsStream(path)) {check(input!=null,"Missing original eye mask "+path);bytes=input.readAllBytes();}
+            var png=ImageIO.read(new ByteArrayInputStream(bytes));
+            String expectedSha=entry.getKey()==MobKind.REVENANT?"0f69482aa6a694170b6e2fcd5351c3de0ed5aad2144277eb0dfcf8d46e78c83a":"a0995732db7d5188576e0382a1ee37e7b5b35da683f3f44990adc338fd20bd72";
+            check(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes)).equals(expectedSha),"Original eye PNG identity "+entry.getKey());
+            check(png.getWidth()==64 && png.getHeight()==(entry.getKey()==MobKind.REVENANT?64:32),"Eye mask UV size "+entry.getKey());
+            var actualPixels=new java.util.HashSet<String>();
+            for(int y=0;y<png.getHeight();y++) for(int x=0;x<png.getWidth();x++) if((png.getRGB(x,y)>>>24)!=0) actualPixels.add(x+","+y);
+            check(actualPixels.equals(eyePixels),"Full-model eye layer affects only the four face pixels "+entry.getKey());
+            JsonObject fact=new JsonObject();fact.addProperty("entity",entry.getKey().path());fact.addProperty("texture",texture.toString());
+            fact.addProperty("sha256",expectedSha);fact.addProperty("visible_pixels",actualPixels.size());facts.add(fact);
+        }
+        for(MobKind kind:MobKind.values()) if(!expected.containsKey(kind)) check(PlayerTargetEyesLayer.textureFor(kind)==null,"No extra eye layer mask for "+kind);
+        for(String renderer:List.of("SourceSkeletonRenderer","SourceZombieRenderer")) {
+            ClassNode type=bytecode("io/github/ningmeng123/mite/client/mob/R196MobRenderers$"+renderer);
+            int count=0;
+            for(var method:type.methods) if(method.name.equals("<init>")) for(var instruction:method.instructions)
+                if(instruction instanceof TypeInsnNode creation&&creation.desc.equals("io/github/ningmeng123/mite/client/mob/PlayerTargetEyesLayer"))count++;
+            check(count==1,"Actual "+renderer+" constructor adds one player-target eye layer");
+        }
+        ClassNode layer=bytecode("io/github/ningmeng123/mite/client/mob/PlayerTargetEyesLayer");
+        int synced=0,targets=0;
+        for(var method:layer.methods) if(method.name.equals("render")) for(var instruction:method.instructions) if(instruction instanceof MethodInsnNode call) {
+            if(call.name.equals("hasRedEyes")&&call.owner.equals("io/github/ningmeng123/mite/entity/PlayerTargetEyes"))synced++;
+            if(call.name.equals("getTarget"))targets++;
+        }
+        check(synced==1&&targets==0,"Actual rendering reads synchronized eye state, never client-only Mob.target");
+        report.add("player_target_eyes",facts);report.addProperty("target_eye_renderer_constructors_checked",2);
+    }
+    private static ClassNode bytecode(String name) throws Exception {
+        try(var input=MobModelAudit031.class.getResourceAsStream("/"+name+".class")) {
+            check(input!=null,"Missing actual compiled renderer "+name);ClassNode type=new ClassNode();new ClassReader(input.readAllBytes()).accept(type,0);return type;
+        }
     }
     private static ModelPart auditLayer(JsonArray facts,String name,LayerDefinition layer,int width,int height,List<String> parts) throws Exception {
         Object material=field(layer,"material"); check((int)field(material,"xTexSize")==width&&(int)field(material,"yTexSize")==height,"Layer texture dimensions "+name);

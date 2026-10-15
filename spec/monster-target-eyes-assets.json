@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_creator": "Avernite",
+  "source_archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_pack_sha256": "4a9bb9f7ab5afee7c0e4e9f57f3b81ff185a0c619d29036b8c2f1ece7450e67a",
+  "files": [
+    {
+      "entities": [
+        "mite:bone_lord"
+      ],
+      "source": "assets/minecraft/textures/entity/skeleton/bone_lord_glow.png",
+      "destination": "src/main/resources/assets/mite/textures/entity/skeleton/bone_lord_glow.png",
+      "sha256": "a0995732db7d5188576e0382a1ee37e7b5b35da683f3f44990adc338fd20bd72",
+      "bytes": 130,
+      "width": 64,
+      "height": 32,
+      "opaque_pixels": [
+        {
+          "x": 9,
+          "y": 12,
+          "rgba": [
+            166,
+            2,
+            2,
+            255
+          ]
+        },
+        {
+          "x": 10,
+          "y": 12,
+          "rgba": [
+            255,
+            14,
+            14,
+            255
+          ]
+        },
+        {
+          "x": 13,
+          "y": 12,
+          "rgba": [
+            255,
+            14,
+            14,
+            255
+          ]
+        },
+        {
+          "x": 14,
+          "y": 12,
+          "rgba": [
+            166,
+            2,
+            2,
+            255
+          ]
+        }
+      ],
+      "base_texture_sha256": "b2d66eb15dfc84bc7fec2f8de7331ff09c30be4b5bcb4dfc5f95936b5f52dd49",
+      "base_eye_pixels": "transparent",
+      "transformation": "none; original ZIP entry bytes"
+    },
+    {
+      "entities": [
+        "mite:longdead_guardian",
+        "mite:ancient_bone_lord"
+      ],
+      "source": "assets/minecraft/textures/entity/skeleton/longdead_guardian_glow.png",
+      "destination": "src/main/resources/assets/mite/textures/entity/skeleton/longdead_guardian_glow.png",
+      "sha256": "a0995732db7d5188576e0382a1ee37e7b5b35da683f3f44990adc338fd20bd72",
+      "bytes": 130,
+      "width": 64,
+      "height": 32,
+      "opaque_pixels": [
+        {
+          "x": 9,
+          "y": 12,
+          "rgba": [
+            166,
+            2,
+            2,
+            255
+          ]
+        },
+        {
+          "x": 10,
+          "y": 12,
+          "rgba": [
+            255,
+            14,
+            14,
+            255
+          ]
+        },
+        {
+          "x": 13,
+          "y": 12,
+          "rgba": [
+            255,
+            14,
+            14,
+            255
+          ]
+        },
+        {
+          "x": 14,
+          "y": 12,
+          "rgba": [
+            166,
+            2,
+            2,
+            255
+          ]
+        }
+      ],
+      "base_texture_sha256": "9eff021d34f44864d1bc122adb00d50dc63ca46d44f91d4909816841a5c5140b",
+      "base_eye_pixels": "transparent",
+      "transformation": "none; original ZIP entry bytes"
+    },
+    {
+      "entities": [
+        "mite:revenant"
+      ],
+      "source": "assets/minecraft/textures/entity/zombie/revenant_glow.png",
+      "destination": "src/main/resources/assets/mite/textures/entity/zombie/revenant_glow.png",
+      "sha256": "0f69482aa6a694170b6e2fcd5351c3de0ed5aad2144277eb0dfcf8d46e78c83a",
+      "bytes": 627,
+      "width": 64,
+      "height": 64,
+      "opaque_pixels": [
+        {
+          "x": 9,
+          "y": 12,
+          "rgba": [
+            166,
+            2,
+            2,
+            255
+          ]
+        },
+        {
+          "x": 10,
+          "y": 12,
+          "rgba": [
+            255,
+            14,
+            14,
+            255
+          ]
+        },
+        {
+          "x": 13,
+          "y": 12,
+          "rgba": [
+            255,
+            14,
+            14,
+            255
+          ]
+        },
+        {
+          "x": 14,
+          "y": 12,
+          "rgba": [
+            166,
+            2,
+            2,
+            255
+          ]
+        }
+      ],
+      "base_texture_sha256": "23ebc3fd2ba891247444e267a4df52cb59859c159713005bb6e2aa6c7ea05c8b",
+      "base_eye_pixels": "transparent",
+      "transformation": "none; original ZIP entry bytes"
+    }
+  ],
+  "source_classes": [
+    {
+      "class": "bhm",
+      "decompiled_path": ".reference/r196/decompiled/bhm.java",
+      "decompiled_sha256": "7506594171f9e88e1315edc8c827028a383b0e62f453c83ecb218abb123956d3",
+      "class_sha256": "da8d10fdd43df6b7969d83dcb021d65e38668f31c0943643b2018bfb49ff13c9"
+    },
+    {
+      "class": "bhz",
+      "decompiled_path": ".reference/r196/decompiled/bhz.java",
+      "decompiled_sha256": "35d19a7732e3bc253b5b8df160298c7de9d8df9237e59884731bd18aa09e9eff",
+      "class_sha256": "5365a7c5ff66014569de3faa7d37a0c70cb1677341f235e746a68ade857bc15f"
+    },
+    {
+      "class": "bgm",
+      "decompiled_path": ".reference/r196/decompiled/bgm.java",
+      "decompiled_sha256": "22a3e12e37d741b8f6128e569987db913b038eee17d547c961f3a84f212d270c",
+      "class_sha256": "f5252df76c98e74774a8c4a4aca68dd767d47baf365415db90cd791aab31713d"
+    },
+    {
+      "class": "bhb",
+      "decompiled_path": ".reference/r196/decompiled/bhb.java",
+      "decompiled_sha256": "da6a09ca9c94dd914db44e50ee8073803086d550b8f0f4554536342c4c0f1208",
+      "class_sha256": "512206ca897198e17135677748c966f47e5e29c6ac0b20baff3d1a4f9845c70b"
+    }
+  ],
+  "source_behavior": "Original renderers automatically use available glow counterparts at full brightness; not conditional on player targeting.",
+  "user_adaptation": "Opaque normal-lit black eyes without a living survival-player target; original full-bright red mask when the server targets such a player. Invisible bodies suppress the eye layer.",
+  "sync": "Transient SynchedEntityData boolean in each concrete entity; final accepted server target, refreshed on aiStep; no saved aggression field.",
+  "manual_test": "user_confirmed_passed_2026-10-15"
+}

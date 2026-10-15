@@ -6,6 +6,9 @@ import io.github.ningmeng123.mite.rules.R196MobRules;
 import javax.annotation.Nullable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -31,7 +34,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
 /** Revenant retains source adult identity, equipment, reinforcement attributes and rare drops. @author NingMeng123 */
-public final class R196Zombie extends Zombie implements R196Mob {
+public final class R196Zombie extends Zombie implements R196Mob, PlayerTargetEyes {
+    private static final EntityDataAccessor<Boolean> RED_EYES = SynchedEntityData.defineId(R196Zombie.class, EntityDataSerializers.BOOLEAN);
     private final MobKind kind;
     private boolean massiveFall;
     public R196Zombie(EntityType<? extends R196Zombie> type, Level level, MobKind kind) {
@@ -41,6 +45,17 @@ public final class R196Zombie extends Zombie implements R196Mob {
         randomizeReinforcementsChance();
     }
     @Override public MobKind miteKind() { return kind; }
+    @Override protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder); builder.define(RED_EYES, false);
+    }
+    @Override public boolean hasRedEyes() { return entityData.get(RED_EYES); }
+    private void refreshTargetEyes() {
+        if (!level().isClientSide) entityData.set(RED_EYES, PlayerTargetEyes.tracksLivingPlayer(this));
+    }
+    @Override public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target); refreshTargetEyes();
+    }
+    @Override public void aiStep() { super.aiStep(); refreshTargetEyes(); }
     @Override protected int getBaseExperienceReward() { return R196MobRules.entry(kind).experience(); }
     @Override public int getMaxSpawnClusterSize() { return 1; }
     @Override public void setBaby(boolean baby) { super.setBaby(false); }
