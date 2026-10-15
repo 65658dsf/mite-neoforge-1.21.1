@@ -172,7 +172,11 @@
     "client.AppleSkinSaturationMixin$Draw",
     "client.AppleSkinSaturationMixin$QueriedFoodResult",
     "client.AppleSkinHealthMixin",
-    "client.HorseArmorUvMixin"
+    "client.HorseArmorUvMixin",
+    "client.SickCowTexture033Mixin",
+    "client.SickChickenTexture033Mixin",
+    "client.SickPigTexture033Mixin",
+    "client.SickSheepTexture033Mixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -97,6 +97,11 @@ neoForge {
             programArguments.addAll '--mod', project.mod_id, '--all',
                     '--output', file('src/generated/resources').absolutePath,
                     '--existing', file('src/main/resources').absolutePath
+            if (project.providers.gradleProperty('miteLivestockHealthAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.livestockHealthAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.livestockHealthAuditOutput', file('build/verification/033-client-health-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteAppleSkinAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.appleSkinAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'

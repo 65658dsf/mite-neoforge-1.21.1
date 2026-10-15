@@ -1,0 +1,2398 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_resource_pack_sha256": "4a9bb9f7ab5afee7c0e4e9f57f3b81ff185a0c619d29036b8c2f1ece7450e67a",
+  "legacy_world_execution": false,
+  "scope": "Actual source livestock unwell state and sick renderer dispatch; not independent infectious disease.",
+  "counts": {
+    "source_livestock_species": 5,
+    "sick_renderer_species": 4,
+    "semantic_rules": 13,
+    "indexed_classes": 19,
+    "selected_decompiled_methods": 83,
+    "isWell_call_sites": 16,
+    "decompiled_classes_scanned": 1183,
+    "class_binaries_scanned": 1186
+  },
+  "entity_scope": [
+    {
+      "entity": "minecraft:chicken",
+      "class": "rq"
+    },
+    {
+      "entity": "minecraft:cow",
+      "class": "rr"
+    },
+    {
+      "entity": "minecraft:mooshroom",
+      "class": "rw"
+    },
+    {
+      "entity": "minecraft:pig",
+      "class": "ry"
+    },
+    {
+      "entity": "minecraft:sheep",
+      "class": "rz"
+    }
+  ],
+  "rules": [
+    {
+      "id": "health.threshold",
+      "scope": "five source livestock",
+      "activation": "Always; independent of HP",
+      "formula": "well = min(food,water,freedom) >= .25",
+      "references": [
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "isWell",
+          "arguments": "",
+          "signature": "public boolean isWell()",
+          "line": 120,
+          "end_line": 125,
+          "method_sha256": "38ad31b782778b7808a98f30e170247e958987115b92b5554699bddf6e81d396"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Each resource .24999 with other two full is unwell.",
+        ".25 boundary is well.",
+        "Hurt full-needs is well; full-HP depleted needs is unwell."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.immediate_sync",
+      "scope": "five source livestock",
+      "activation": "Each setter and NBT load",
+      "formula": "setIsWell writes watcher -1 if well else 0; no recovery timer",
+      "references": [
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "setFood",
+          "arguments": "float food",
+          "signature": "protected void setFood(float food)",
+          "line": 44,
+          "end_line": 50,
+          "method_sha256": "8cc5ef022b1125a06d39827c978f47b719692489db343271f1ce218a8b1e7bcb"
+        },
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "setWater",
+          "arguments": "float water",
+          "signature": "protected void setWater(float water)",
+          "line": 60,
+          "end_line": 67,
+          "method_sha256": "7fc713c689e0e7d474f1a5ad33eb228c4db2005144400b3313d7b13ad01f4fff"
+        },
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "setFreedom",
+          "arguments": "float freedom",
+          "signature": "protected void setFreedom(float freedom)",
+          "line": 77,
+          "end_line": 83,
+          "method_sha256": "3411dfd5a6a6647d4808e5315a45b9e7cba35c471c31d33b169b27262196a970"
+        },
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "setIsWell",
+          "arguments": "boolean is_well",
+          "signature": "protected boolean setIsWell(boolean is_well)",
+          "line": 115,
+          "end_line": 118,
+          "method_sha256": "55a462345c537c6647e22e3e46a31aa8e5dc09935ca8a14fe9db0617e458d6fe"
+        },
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "a",
+          "arguments": "",
+          "signature": "protected void a()",
+          "line": 38,
+          "end_line": 42,
+          "method_sha256": "349ad4038edbd4db109906a4f2feec3576c53db9792d4f6a7c6653d64e31803a"
+        },
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "a",
+          "arguments": "by par1NBTTagCompound",
+          "signature": "public void a(by par1NBTTagCompound)",
+          "line": 105,
+          "end_line": 113,
+          "method_sha256": "e07a770ea9de46e2c3b0aac90a55234dae27ec7acff6df720522a22bf38fe647"
+        },
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "a",
+          "arguments": "int x, int y, int z2",
+          "signature": "public float a(int x, int y, int z2)",
+          "line": 314,
+          "end_line": 324,
+          "method_sha256": "386ef35d2d432283e118144640608a327679eb307e97670d8bd1d8389d8dd588"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Needs crossing .25 updates appearance immediately.",
+        "Reload reconstructs wellness from saved resources."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.environment",
+      "scope": "five source livestock",
+      "activation": "raw tick%100==0 && nextInt(10)>0",
+      "formula": "food += nearFood ?.1:-.005; water += nearWater ?.1:inRain ?.01:-.005; freedom += crowded ?-.005:.1; clamp0..1",
+      "references": [
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "updateWellness",
+          "arguments": "",
+          "signature": "public boolean updateWellness()",
+          "line": 216,
+          "end_line": 237,
+          "method_sha256": "9c070625a748a4e9cfa006d2f7fa07e1ef43f14e0ffb07006fc4e256123f8102"
+        },
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "c",
+          "arguments": "",
+          "signature": "public void c()",
+          "line": 240,
+          "end_line": 286,
+          "method_sha256": "7a3b54d603d1fef49b79b3e9ba11f8bf503ab98caa0df5b1c19a9a732c1c19d2"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Food cannot cure deficient water/freedom.",
+        "No fixed illness/recovery timer exists.",
+        "Qualifying environment restores missing resources."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.production",
+      "scope": "five source livestock",
+      "activation": "100 raw tick cadence",
+      "formula": "Only updated well adults gain production_counter; produceGoods still executes regardless of wellness or update draw",
+      "references": [
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "c",
+          "arguments": "",
+          "signature": "public void c()",
+          "line": 240,
+          "end_line": 286,
+          "method_sha256": "7a3b54d603d1fef49b79b3e9ba11f8bf503ab98caa0df5b1c19a9a732c1c19d2"
+        },
+        {
+          "class": "rq",
+          "file": ".reference/r196/decompiled/rq.java",
+          "name": "produceGoods",
+          "arguments": "",
+          "signature": "public void produceGoods()",
+          "line": 79,
+          "end_line": 92,
+          "method_sha256": "08c39dd7ad690473604a09fdcbcf0e2a9c3e52a52739ae842227668a15aa692f"
+        },
+        {
+          "class": "rr",
+          "file": ".reference/r196/decompiled/rr.java",
+          "name": "produceGoods",
+          "arguments": "",
+          "signature": "public void produceGoods()",
+          "line": 88,
+          "end_line": 91,
+          "method_sha256": "436f8cab6f0c4d5aed04fb6e64377ad9a3ec698d90c3b7791560afc0fac79722"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Sick cannot gain production credit.",
+        "Sick chicken can spend prior >=200 credit to lay an egg.",
+        "Sick cow retains stored milk."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.milk_stock",
+      "scope": "cow and inherited mooshroom milk",
+      "activation": "Empty-vessel interaction",
+      "formula": "getMilk >=25*standard_volume; no wellness/full-HP gate",
+      "references": [
+        {
+          "class": "ItemVessel",
+          "file": ".reference/r196/decompiled/ItemVessel.java",
+          "name": "tryEntityInteraction",
+          "arguments": "nn entity, uf player, ye item_stack",
+          "signature": "public boolean tryEntityInteraction(nn entity, uf player, ye item_stack)",
+          "line": 98,
+          "end_line": 154,
+          "method_sha256": "25c9b34230443f21092a2b82e11742709d293906118e94d207950c7ef2fc938a"
+        },
+        {
+          "class": "rr",
+          "file": ".reference/r196/decompiled/rr.java",
+          "name": "getMilk",
+          "arguments": "",
+          "signature": "protected int getMilk()",
+          "line": 33,
+          "end_line": 38,
+          "method_sha256": "cbda2a894980f731b537729f88dca2a0991c50c33cce7fc38417dcb9d53fd846"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Sick adult with100 stock can fill bucket.",
+        "Sick adult with25 stock can fill bowl.",
+        "Baby milk getter returns0."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.love",
+      "scope": "five source livestock",
+      "activation": "New love entry",
+      "formula": "EntityLivestock.bX calls parent only when well; parent requires full HP",
+      "references": [
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "bX",
+          "arguments": "",
+          "signature": "public void bX()",
+          "line": 335,
+          "end_line": 339,
+          "method_sha256": "2158189be1a16ecd4035eaf68f882d567a06ba3428a2260cf313b031f901b3b6"
+        },
+        {
+          "class": "rp",
+          "file": ".reference/r196/decompiled/rp.java",
+          "name": "bX",
+          "arguments": "",
+          "signature": "public void bX()",
+          "line": 256,
+          "end_line": 265,
+          "method_sha256": "261296cca2f2b2d034ecea108c6887123060d3d22bc07ed4e77fbae790893e2d"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Unwell cannot newly enter love.",
+        "Wellness transition does not explicitly clear previously started love.",
+        "Hurt well adult needs healing before a later food starts love."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.food_tempt",
+      "scope": "five source livestock",
+      "activation": "Correct food with normal adult/cooldown/love/alive eligibility",
+      "formula": "Full HP && unwell && !hungry refuses feeding/tempt; hurt or hungry can accept",
+      "references": [
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "willEat",
+          "arguments": "ye item_stack",
+          "signature": "public boolean willEat(ye item_stack)",
+          "line": 402,
+          "end_line": 407,
+          "method_sha256": "2d2bf10eac62127c2d13f97adeeeaa0b1d22aa2f990271be2ab7868d0a667986"
+        },
+        {
+          "class": "qu",
+          "file": ".reference/r196/decompiled/qu.java",
+          "name": "a",
+          "arguments": "",
+          "signature": "public boolean a()",
+          "line": 29,
+          "end_line": 62,
+          "method_sha256": "9db3946e7d9b783d8ee7c68e87cddf162a1e3c93d65f97d694e664c4113a1c7d"
+        },
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "onFoodEaten",
+          "arguments": "ye item_stack",
+          "signature": "public void onFoodEaten(ye item_stack)",
+          "line": 327,
+          "end_line": 332,
+          "method_sha256": "40b6d7d89513bb4b682068391cb23e76125aaa79241bc3d0306c915a058a2e69"
+        },
+        {
+          "class": "og",
+          "file": ".reference/r196/decompiled/og.java",
+          "name": "onFoodEaten",
+          "arguments": "ye item_stack",
+          "signature": "public void onFoodEaten(ye item_stack)",
+          "line": 1163,
+          "end_line": 1167,
+          "method_sha256": "65c652b62912521686e73726e2cbea3d4f178fa19be1898311aee9d94a1941ce"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Full-HP low-water with food>=.5 refuses wheat/tempt.",
+        "Hungry unwell can eat.",
+        "Hurt unwell can eat and heal .5 maxHP."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.age",
+      "scope": "source livestock infants",
+      "activation": "Requested positive age growth",
+      "formula": "Freeze only if food<.05 OR water<.05; low freedom alone does not freeze",
+      "references": [
+        {
+          "class": "EntityLivestock",
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "name": "c",
+          "arguments": "int par1",
+          "signature": "public void c(int par1)",
+          "line": 378,
+          "end_line": 383,
+          "method_sha256": "962eedd9d212b4cc8723bda6037e4b226c9022fef226724a7f53bfe392d60473"
+        },
+        {
+          "class": "nk",
+          "file": ".reference/r196/decompiled/nk.java",
+          "name": "c",
+          "arguments": "int par1",
+          "signature": "public void c(int par1)",
+          "line": 33,
+          "end_line": 43,
+          "method_sha256": "c8ae9e2106c51d842c0e8097fb4cb8adbfc316081b950eb314bce81b95f06356"
+        },
+        {
+          "class": "nk",
+          "file": ".reference/r196/decompiled/nk.java",
+          "name": "c",
+          "arguments": "",
+          "signature": "public void c()",
+          "line": 70,
+          "end_line": 88,
+          "method_sha256": "6b58113cb83c0211795496768c549b2f5dbbb2d3fdbeac56397846631adb40a9"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Food or water .04999 freezes.",
+        "Food and water .05 permits growth.",
+        "Freedom .0 alone does not freeze."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.meat_loot",
+      "scope": "source livestock",
+      "activation": "Source few-item drop",
+      "formula": "Meat requires well; non-meat drops retain independent species conditions",
+      "references": [
+        {
+          "class": "rq",
+          "file": ".reference/r196/decompiled/rq.java",
+          "name": "dropFewItems",
+          "arguments": "boolean recently_hit_by_player, nb damage_source",
+          "signature": "protected void dropFewItems(boolean recently_hit_by_player, nb damage_source)",
+          "line": 124,
+          "end_line": 137,
+          "method_sha256": "6b92f4e21fc51e5b2da8e832b09a619ab984c255965501960178a45c2880f401"
+        },
+        {
+          "class": "rr",
+          "file": ".reference/r196/decompiled/rr.java",
+          "name": "dropFewItems",
+          "arguments": "boolean recently_hit_by_player, nb damage_source",
+          "signature": "protected void dropFewItems(boolean recently_hit_by_player, nb damage_source)",
+          "line": 99,
+          "end_line": 114,
+          "method_sha256": "4ef01f5356308b5c7a50f50885ef8650aaeb5970fd8de48f3cd5333a59704e48"
+        },
+        {
+          "class": "ry",
+          "file": ".reference/r196/decompiled/ry.java",
+          "name": "dropFewItems",
+          "arguments": "boolean recently_hit_by_player, nb damage_source",
+          "signature": "protected void dropFewItems(boolean recently_hit_by_player, nb damage_source)",
+          "line": 113,
+          "end_line": 123,
+          "method_sha256": "1b30e001eb7a07b35f1a2b5cf0edad0d06b974346681ff6630b24364102f848b"
+        },
+        {
+          "class": "rz",
+          "file": ".reference/r196/decompiled/rz.java",
+          "name": "dropFewItems",
+          "arguments": "boolean recently_hit_by_player, nb damage_source",
+          "signature": "protected void dropFewItems(boolean recently_hit_by_player, nb damage_source)",
+          "line": 83,
+          "end_line": 99,
+          "method_sha256": "0ba525392f3278d06ff59622c0890c2bd8b98c047b917b08186a492bc6a4c26b"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "No sick raw/cooked meat.",
+        "Sick cow leather retained.",
+        "Sick non-burning chicken feathers retained.",
+        "Sick sheep eligible wool/leather retained."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.natural_healing",
+      "scope": "source living livestock",
+      "activation": "Server offset tick%1000==0",
+      "formula": "10% maxHP heal; no isWell condition",
+      "references": [
+        {
+          "class": "of",
+          "file": ".reference/r196/decompiled/of.java",
+          "name": "healsWithTime",
+          "arguments": "",
+          "signature": "public boolean healsWithTime()",
+          "line": 1737,
+          "end_line": 1739,
+          "method_sha256": "1bc233c89e1b5b3681119face0a748e9d7510ceb3b8e7a4884be91355730ba68"
+        },
+        {
+          "class": "of",
+          "file": ".reference/r196/decompiled/of.java",
+          "name": "c",
+          "arguments": "",
+          "signature": "public void c()",
+          "line": 1761,
+          "end_line": 1865,
+          "method_sha256": "233f097d07a8d0a540c8acb738e02df8b51677f6f5c99003a5071fa14fe69467"
+        },
+        {
+          "class": "of",
+          "file": ".reference/r196/decompiled/of.java",
+          "name": "healByPercentage",
+          "arguments": "float percentage",
+          "signature": "public void healByPercentage(float percentage)",
+          "line": 2068,
+          "end_line": 2077,
+          "method_sha256": "b9d200359cdf33335b1b510dad28a6c185518c3ae53b4501875a00452e635007"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Hurt sick livestock naturally heals on schedule.",
+        "No invented sickness HP drain or speed debuff."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.sheep_wool",
+      "scope": "sheep",
+      "activation": "Actual grass bite/native shearing",
+      "formula": "rz.n restores wool and adds .5 food without wellness check",
+      "references": [
+        {
+          "class": "pn",
+          "file": ".reference/r196/decompiled/pn.java",
+          "name": "e",
+          "arguments": "",
+          "signature": "public void e()",
+          "line": 66,
+          "end_line": 82,
+          "method_sha256": "61d4ca5aa0851974784da94d23e224291b197d47959f58180cd356878eb0ed25"
+        },
+        {
+          "class": "rz",
+          "file": ".reference/r196/decompiled/rz.java",
+          "name": "n",
+          "arguments": "",
+          "signature": "public void n()",
+          "line": 197,
+          "end_line": 203,
+          "method_sha256": "651e02a4e52ed3d1431586a64e4085215b4b0cf6ed57a907a48e99d87cc8b108"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Sick sheared sheep can regrow wool after bite.",
+        "Dye overlay independent of sick body."
+      ],
+      "032_baseline_status": "covered_032"
+    },
+    {
+      "id": "health.sick_texture",
+      "scope": "four source species, all ages",
+      "activation": "Renderer texture lookup && !isWell",
+      "formula": "Chicken/cow/pig sick slot1; sheep sick slot2; preserve independent saddle/wool",
+      "references": [
+        {
+          "class": "bge",
+          "file": ".reference/r196/decompiled/bge.java",
+          "name": "a",
+          "arguments": "rq par1EntityChicken, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(rq par1EntityChicken, double par2, double par4, double par6, float par8, float par9)",
+          "line": 19,
+          "end_line": 21,
+          "method_sha256": "b43a53ae824b242681ae10177322ed48220187a3ea3ca472a22419b90396cc27"
+        },
+        {
+          "class": "bge",
+          "file": ".reference/r196/decompiled/bge.java",
+          "name": "a",
+          "arguments": "rq par1EntityChicken",
+          "signature": "protected bjo a(rq par1EntityChicken)",
+          "line": 23,
+          "end_line": 28,
+          "method_sha256": "1ed9f409d3c5bc63a60a23404ab8d59f6dae2a78393d5664609dc959896528b0"
+        },
+        {
+          "class": "bge",
+          "file": ".reference/r196/decompiled/bge.java",
+          "name": "a",
+          "arguments": "rq par1EntityChicken, float par2",
+          "signature": "protected float a(rq par1EntityChicken, float par2)",
+          "line": 30,
+          "end_line": 34,
+          "method_sha256": "c6a8d2650b23d78606ef83f13f9f2d04d72d49c2393f80b101fc3835b738251f"
+        },
+        {
+          "class": "bge",
+          "file": ".reference/r196/decompiled/bge.java",
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 14,
+          "end_line": 17,
+          "method_sha256": "a7543ea8b0aebee48dd7298486332f83510b902f071312a296b12224060532bb"
+        },
+        {
+          "class": "bgf",
+          "file": ".reference/r196/decompiled/bgf.java",
+          "name": "a",
+          "arguments": "rr par1EntityCow",
+          "signature": "protected bjo a(rr par1EntityCow)",
+          "line": 19,
+          "end_line": 24,
+          "method_sha256": "04172b72b80c7f689762c4ce9ef622cdb2b2bd9c9fda2e295c6aae2ce1610465"
+        },
+        {
+          "class": "bgf",
+          "file": ".reference/r196/decompiled/bgf.java",
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 14,
+          "end_line": 17,
+          "method_sha256": "4027f689304b35e4eadc9d863791f0bd27cd9f19d44ab1d91cbe1accf7b99c4e"
+        },
+        {
+          "class": "bhi",
+          "file": ".reference/r196/decompiled/bhi.java",
+          "name": "a",
+          "arguments": "ry par1EntityPig, int par2, float par3",
+          "signature": "protected int a(ry par1EntityPig, int par2, float par3)",
+          "line": 22,
+          "end_line": 28,
+          "method_sha256": "8d669bcd8c832debce54c83a443560d24184a44b34b31b490fd577fbca1afbd4"
+        },
+        {
+          "class": "bhi",
+          "file": ".reference/r196/decompiled/bhi.java",
+          "name": "a",
+          "arguments": "ry par1EntityPig",
+          "signature": "protected bjo a(ry par1EntityPig)",
+          "line": 30,
+          "end_line": 35,
+          "method_sha256": "f4577e91d979234a4a28e06ae03cc4b51ae8b2838b66c741e7b06cda19f3f78c"
+        },
+        {
+          "class": "bhi",
+          "file": ".reference/r196/decompiled/bhi.java",
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 16,
+          "end_line": 20,
+          "method_sha256": "35bf7dfc1f067d5f3e726408a41bf223a599ebb58f4178dd139c8130ac058a06"
+        },
+        {
+          "class": "bhk",
+          "file": ".reference/r196/decompiled/bhk.java",
+          "name": "a",
+          "arguments": "rz par1EntitySheep, int par2, float par3",
+          "signature": "protected int a(rz par1EntitySheep, int par2, float par3)",
+          "line": 27,
+          "end_line": 36,
+          "method_sha256": "8b4383cca257428f15ed79ad953f3e185cf62134af543261f945b4bbf000e3a7"
+        },
+        {
+          "class": "bhk",
+          "file": ".reference/r196/decompiled/bhk.java",
+          "name": "a",
+          "arguments": "rz par1EntitySheep",
+          "signature": "protected bjo a(rz par1EntitySheep)",
+          "line": 38,
+          "end_line": 43,
+          "method_sha256": "302fd8104240054b7a1ec7426556905e35b01eb480cd79767aca9d3d17e34b3b"
+        },
+        {
+          "class": "bhk",
+          "file": ".reference/r196/decompiled/bhk.java",
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 21,
+          "end_line": 25,
+          "method_sha256": "6d5b07952e61f01a44d2f74cfab402421ff6ec98304bc70cf6e9d37827c38086"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Adults/babies switch body texture at needs boundary.",
+        "Pig saddle remains.",
+        "Sheep dye color remains."
+      ],
+      "032_baseline_status": "missing_032"
+    },
+    {
+      "id": "health.mooshroom_visual_exception",
+      "scope": "mooshroom",
+      "activation": "bgl dispatch to independent bhf",
+      "formula": "bhf.a(rw) always returns slot0; no source sick branch",
+      "references": [
+        {
+          "class": "bgl",
+          "file": ".reference/r196/decompiled/bgl.java",
+          "name": "bgl",
+          "arguments": "",
+          "signature": "private bgl()",
+          "line": 31,
+          "end_line": 122,
+          "method_sha256": "8a802d7d3a89c4d5a8db58e6a1cb52022eea412d55d2d45529d09aecd9c5e6ef"
+        },
+        {
+          "class": "bhf",
+          "file": ".reference/r196/decompiled/bhf.java",
+          "name": "a",
+          "arguments": "rw par1EntityMooshroom, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(rw par1EntityMooshroom, double par2, double par4, double par6, float par8, float par9)",
+          "line": 22,
+          "end_line": 24,
+          "method_sha256": "94d6ebee1137fa6a86b4e938263dc1e05ea08c271d37cd00d7a96645f8068582"
+        },
+        {
+          "class": "bhf",
+          "file": ".reference/r196/decompiled/bhf.java",
+          "name": "a",
+          "arguments": "rw par1EntityMooshroom",
+          "signature": "protected bjo a(rw par1EntityMooshroom)",
+          "line": 26,
+          "end_line": 28,
+          "method_sha256": "9143b6a212f21360883e24b9be8c742e5bd0800d1c39f0059462239d356f0266"
+        },
+        {
+          "class": "bhf",
+          "file": ".reference/r196/decompiled/bhf.java",
+          "name": "a",
+          "arguments": "rw par1EntityMooshroom, float par2",
+          "signature": "protected void a(rw par1EntityMooshroom, float par2)",
+          "line": 30,
+          "end_line": 53,
+          "method_sha256": "47efde86153fa5530ee7f0d1679b9f98120329fed6935fd44a30d68d9f80f6c4"
+        },
+        {
+          "class": "bhf",
+          "file": ".reference/r196/decompiled/bhf.java",
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 18,
+          "end_line": 20,
+          "method_sha256": "0b15a11e6181463cbb797d0d70d93bd4e5e1ebe44cf3552fb32ed10a59a3e2d4"
+        }
+      ],
+      "server_role": "Authoritative needs, interaction, production and loot.",
+      "client_role": "Render server-synchronized health; never invent infection state.",
+      "acceptance": [
+        "Sick mooshroom keeps visual texture.",
+        "Mooshroom still inherits sickness gameplay."
+      ],
+      "032_baseline_status": "covered_032"
+    }
+  ],
+  "source_classes": [
+    {
+      "class": "EntityLivestock",
+      "file": ".reference/r196/decompiled/EntityLivestock.java",
+      "decompiled_sha256": "25ce90774d5874ae94a9b92454da979565c59febcc71c6de9fac578ba86a5c90",
+      "class_sha256": "2f6c9562637e32762ab3d22c6636d4911a8720da9fbc4ec64271049a3176a2ac",
+      "original_source_file": "EntityLivestock.java",
+      "parent": "rp",
+      "selected_methods": [
+        {
+          "name": "a",
+          "arguments": "",
+          "signature": "protected void a()",
+          "line": 38,
+          "end_line": 42,
+          "method_sha256": "349ad4038edbd4db109906a4f2feec3576c53db9792d4f6a7c6653d64e31803a"
+        },
+        {
+          "name": "setFood",
+          "arguments": "float food",
+          "signature": "protected void setFood(float food)",
+          "line": 44,
+          "end_line": 50,
+          "method_sha256": "8cc5ef022b1125a06d39827c978f47b719692489db343271f1ce218a8b1e7bcb"
+        },
+        {
+          "name": "setWater",
+          "arguments": "float water",
+          "signature": "protected void setWater(float water)",
+          "line": 60,
+          "end_line": 67,
+          "method_sha256": "7fc713c689e0e7d474f1a5ad33eb228c4db2005144400b3313d7b13ad01f4fff"
+        },
+        {
+          "name": "setFreedom",
+          "arguments": "float freedom",
+          "signature": "protected void setFreedom(float freedom)",
+          "line": 77,
+          "end_line": 83,
+          "method_sha256": "3411dfd5a6a6647d4808e5315a45b9e7cba35c471c31d33b169b27262196a970"
+        },
+        {
+          "name": "b",
+          "arguments": "by par1NBTTagCompound",
+          "signature": "public void b(by par1NBTTagCompound)",
+          "line": 94,
+          "end_line": 102,
+          "method_sha256": "ddeda40643368558aad3985270b77c3afc36db62804227f1eb0a2cb97701d0a7"
+        },
+        {
+          "name": "a",
+          "arguments": "by par1NBTTagCompound",
+          "signature": "public void a(by par1NBTTagCompound)",
+          "line": 105,
+          "end_line": 113,
+          "method_sha256": "e07a770ea9de46e2c3b0aac90a55234dae27ec7acff6df720522a22bf38fe647"
+        },
+        {
+          "name": "setIsWell",
+          "arguments": "boolean is_well",
+          "signature": "protected boolean setIsWell(boolean is_well)",
+          "line": 115,
+          "end_line": 118,
+          "method_sha256": "55a462345c537c6647e22e3e46a31aa8e5dc09935ca8a14fe9db0617e458d6fe"
+        },
+        {
+          "name": "isWell",
+          "arguments": "",
+          "signature": "public boolean isWell()",
+          "line": 120,
+          "end_line": 125,
+          "method_sha256": "38ad31b782778b7808a98f30e170247e958987115b92b5554699bddf6e81d396"
+        },
+        {
+          "name": "isThirsty",
+          "arguments": "",
+          "signature": "public boolean isThirsty()",
+          "line": 132,
+          "end_line": 137,
+          "method_sha256": "8158b35afb77e527594a29052123fab42d00588adfb65ffbd101c424b253d9e1"
+        },
+        {
+          "name": "isHungry",
+          "arguments": "",
+          "signature": "public boolean isHungry()",
+          "line": 139,
+          "end_line": 141,
+          "method_sha256": "43841b4ead77aa093dea181cbe9eca095fe704a7977879153a3f5700a3a1e637"
+        },
+        {
+          "name": "isDesperateForFood",
+          "arguments": "",
+          "signature": "public boolean isDesperateForFood()",
+          "line": 147,
+          "end_line": 149,
+          "method_sha256": "4239e5430241863a2cc3ad199b808a3cd82b1b21a6755567e36ea576dd074b1f"
+        },
+        {
+          "name": "isDesperateForWater",
+          "arguments": "",
+          "signature": "public boolean isDesperateForWater()",
+          "line": 155,
+          "end_line": 157,
+          "method_sha256": "c3c0d37a41415f29d1f7c7859e1b3d89a8cf3c6c9835f95a1a5b3e97cb0f7e35"
+        },
+        {
+          "name": "updateWellness",
+          "arguments": "",
+          "signature": "public boolean updateWellness()",
+          "line": 216,
+          "end_line": 237,
+          "method_sha256": "9c070625a748a4e9cfa006d2f7fa07e1ef43f14e0ffb07006fc4e256123f8102"
+        },
+        {
+          "name": "c",
+          "arguments": "",
+          "signature": "public void c()",
+          "line": 240,
+          "end_line": 286,
+          "method_sha256": "7a3b54d603d1fef49b79b3e9ba11f8bf503ab98caa0df5b1c19a9a732c1c19d2"
+        },
+        {
+          "name": "a",
+          "arguments": "int x, int y, int z2",
+          "signature": "public float a(int x, int y, int z2)",
+          "line": 314,
+          "end_line": 324,
+          "method_sha256": "386ef35d2d432283e118144640608a327679eb307e97670d8bd1d8389d8dd588"
+        },
+        {
+          "name": "onFoodEaten",
+          "arguments": "ye item_stack",
+          "signature": "public void onFoodEaten(ye item_stack)",
+          "line": 327,
+          "end_line": 332,
+          "method_sha256": "40b6d7d89513bb4b682068391cb23e76125aaa79241bc3d0306c915a058a2e69"
+        },
+        {
+          "name": "bX",
+          "arguments": "",
+          "signature": "public void bX()",
+          "line": 335,
+          "end_line": 339,
+          "method_sha256": "2158189be1a16ecd4035eaf68f882d567a06ba3428a2260cf313b031f901b3b6"
+        },
+        {
+          "name": "c",
+          "arguments": "int par1",
+          "signature": "public void c(int par1)",
+          "line": 378,
+          "end_line": 383,
+          "method_sha256": "962eedd9d212b4cc8723bda6037e4b226c9022fef226724a7f53bfe392d60473"
+        },
+        {
+          "name": "willEat",
+          "arguments": "ye item_stack",
+          "signature": "public boolean willEat(ye item_stack)",
+          "line": 402,
+          "end_line": 407,
+          "method_sha256": "2d2bf10eac62127c2d13f97adeeeaa0b1d22aa2f990271be2ab7868d0a667986"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "a",
+          "descriptor": "()V",
+          "access_flags": 4,
+          "code_sha256": "5d73b7b58431a2f708c2fe1af70ec5dad6bb0c8c2f190faefe447bb89d0981b1"
+        },
+        {
+          "name": "setFood",
+          "descriptor": "(F)V",
+          "access_flags": 4,
+          "code_sha256": "50c1e346cd71ae8bcac4480708780c6d10bc0cac1e7defadc4700b7d0fda5a1b"
+        },
+        {
+          "name": "setWater",
+          "descriptor": "(F)V",
+          "access_flags": 4,
+          "code_sha256": "40579319f06acee9e3304c5cb0dd7cfc7b8bbda73b49bc143861b5f28c5ff268"
+        },
+        {
+          "name": "setFreedom",
+          "descriptor": "(F)V",
+          "access_flags": 4,
+          "code_sha256": "2f6a00314f56093e5dcccb3a72022ae9e89bc72601028b28a1734c739fc16e01"
+        },
+        {
+          "name": "b",
+          "descriptor": "(Lby;)V",
+          "access_flags": 1,
+          "code_sha256": "aa00f48c9f6df48b2ab00589bc751f5c8ddf2fea499c5e53f1201c29863dcb50"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lby;)V",
+          "access_flags": 1,
+          "code_sha256": "25f4d872ae3d9abf1ee6f97969fe369b4f92e1336925fa5d58a9b097f7750a7b"
+        },
+        {
+          "name": "setIsWell",
+          "descriptor": "(Z)Z",
+          "access_flags": 4,
+          "code_sha256": "f1b0a0ce12e02a75806e607ea655177a98205a83569d325aba8946909c485c70"
+        },
+        {
+          "name": "isWell",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "f7a947b67c21d2fd71423c9d9f82fff5cca63e9abfcba0cf6d5a5c8ae9097a9d"
+        },
+        {
+          "name": "isThirsty",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "ddbc3ce06883a04cbee36b8da44c87b20cb8dd78d101ef7af7393f00d7dd128c"
+        },
+        {
+          "name": "isHungry",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "1e2eed63c4a7d202a268454a8c389fd6f23b59800e549483a61da93cba0c56ae"
+        },
+        {
+          "name": "isDesperateForFood",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "5741db496beb4570773377da8ef112937f868e310ca544985f35175d1f68980b"
+        },
+        {
+          "name": "isDesperateForWater",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "cd90cad971e05e02b85b0137632391545aebd5aa7461edb4872ea3cfcbcab5ea"
+        },
+        {
+          "name": "updateWellness",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "517475869df061810563cca349ab203134de1e966079d2d9bba2036cd2e86bbf"
+        },
+        {
+          "name": "c",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "9fb0c1d21deaf994b721f61a7fe09ce7a0d2aee39f22f61933aee67f3723120c"
+        },
+        {
+          "name": "a",
+          "descriptor": "(III)F",
+          "access_flags": 1,
+          "code_sha256": "bc83d5450a62263341eb653e645194faa9ad2ba95a5a07cecd9ce6547c7e9c6c"
+        },
+        {
+          "name": "onFoodEaten",
+          "descriptor": "(Lye;)V",
+          "access_flags": 1,
+          "code_sha256": "74eb184fac23748a419aaeb534ba2136007b9ad5e82514867844cc0c7ea532bf"
+        },
+        {
+          "name": "bX",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "e770dcd376072e7dab1c6893e466242a6dc108697242bb20f7496feb73eef455"
+        },
+        {
+          "name": "c",
+          "descriptor": "(I)V",
+          "access_flags": 1,
+          "code_sha256": "46641cbbdfd1fcb99a69031661df63c837e46858fee67ab5b395287326ffc93e"
+        },
+        {
+          "name": "willEat",
+          "descriptor": "(Lye;)Z",
+          "access_flags": 1,
+          "code_sha256": "2a1854a9c6ec3e81d82b4176024d186cf35416129f40c2309dfeb87d3cb1c6ce"
+        }
+      ]
+    },
+    {
+      "class": "rq",
+      "file": ".reference/r196/decompiled/rq.java",
+      "decompiled_sha256": "75929ba6a41c5d97952207edf5565d5a07611b40c85806aaf45491d33389be8c",
+      "class_sha256": "cdff61435410ac1de63951a85c6fdcbd2c44ff31b60fd663a3ade2fc12248e12",
+      "original_source_file": "EntityChicken.java",
+      "parent": "EntityLivestock",
+      "selected_methods": [
+        {
+          "name": "produceGoods",
+          "arguments": "",
+          "signature": "public void produceGoods()",
+          "line": 79,
+          "end_line": 92,
+          "method_sha256": "08c39dd7ad690473604a09fdcbcf0e2a9c3e52a52739ae842227668a15aa692f"
+        },
+        {
+          "name": "dropFewItems",
+          "arguments": "boolean recently_hit_by_player, nb damage_source",
+          "signature": "protected void dropFewItems(boolean recently_hit_by_player, nb damage_source)",
+          "line": 124,
+          "end_line": 137,
+          "method_sha256": "6b92f4e21fc51e5b2da8e832b09a619ab984c255965501960178a45c2880f401"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "produceGoods",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "c3039ac95be2f8a3699ab4b5e58e17f65fd5c45d704ac1c1ee1d39d0a0319882"
+        },
+        {
+          "name": "dropFewItems",
+          "descriptor": "(ZLnb;)V",
+          "access_flags": 4,
+          "code_sha256": "f0e68199d83a9e371ba228be97b2eb7376142442fc3e0ef647c88c2ac3afcef8"
+        }
+      ]
+    },
+    {
+      "class": "rr",
+      "file": ".reference/r196/decompiled/rr.java",
+      "decompiled_sha256": "558324655216dc7e14847f99797725d89dae28e995c92a8c942d9287381a870a",
+      "class_sha256": "8496586f640471355851b46dabea8a15dec5a791fe2ae7ebc879cd800885392f",
+      "original_source_file": "EntityCow.java",
+      "parent": "EntityLivestock",
+      "selected_methods": [
+        {
+          "name": "setMilk",
+          "arguments": "int milk",
+          "signature": "protected void setMilk(int milk)",
+          "line": 29,
+          "end_line": 31,
+          "method_sha256": "e97d0c08f0f1170fc838c43d63117aadb10583a3f3b46aecbd56d25fba60ad3c"
+        },
+        {
+          "name": "getMilk",
+          "arguments": "",
+          "signature": "protected int getMilk()",
+          "line": 33,
+          "end_line": 38,
+          "method_sha256": "cbda2a894980f731b537729f88dca2a0991c50c33cce7fc38417dcb9d53fd846"
+        },
+        {
+          "name": "produceGoods",
+          "arguments": "",
+          "signature": "public void produceGoods()",
+          "line": 88,
+          "end_line": 91,
+          "method_sha256": "436f8cab6f0c4d5aed04fb6e64377ad9a3ec698d90c3b7791560afc0fac79722"
+        },
+        {
+          "name": "dropFewItems",
+          "arguments": "boolean recently_hit_by_player, nb damage_source",
+          "signature": "protected void dropFewItems(boolean recently_hit_by_player, nb damage_source)",
+          "line": 99,
+          "end_line": 114,
+          "method_sha256": "4ef01f5356308b5c7a50f50885ef8650aaeb5970fd8de48f3cd5333a59704e48"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "setMilk",
+          "descriptor": "(I)V",
+          "access_flags": 4,
+          "code_sha256": "9d4c2222efe9be8e078d64d69e6a386b38fe95481f6798f8cefa166b8923c4e7"
+        },
+        {
+          "name": "getMilk",
+          "descriptor": "()I",
+          "access_flags": 4,
+          "code_sha256": "99f56b0c41d04337c35e242cc4120c18c6f633e7a4ddaba51d2d03883e8ea064"
+        },
+        {
+          "name": "produceGoods",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "7702207b90ae0cdc2042d3e9aa1c68746d8f2098055147c3f114bec9faef9807"
+        },
+        {
+          "name": "dropFewItems",
+          "descriptor": "(ZLnb;)V",
+          "access_flags": 4,
+          "code_sha256": "a428616baa39d6bc879d3dbb824693dc709280052ea5f9a8934ab613c0d3fb88"
+        }
+      ]
+    },
+    {
+      "class": "ry",
+      "file": ".reference/r196/decompiled/ry.java",
+      "decompiled_sha256": "95b7b8b70d42d5f3694e9aee63fe1a5aa7bd10e9e95aac14968b78099bcca97b",
+      "class_sha256": "8c2ffad168f674d149af1e45ddd2d7c19ad4146ec9b76d3aa07e774fd6ab9d82",
+      "original_source_file": "EntityPig.java",
+      "parent": "EntityLivestock",
+      "selected_methods": [
+        {
+          "name": "dropFewItems",
+          "arguments": "boolean recently_hit_by_player, nb damage_source",
+          "signature": "protected void dropFewItems(boolean recently_hit_by_player, nb damage_source)",
+          "line": 113,
+          "end_line": 123,
+          "method_sha256": "1b30e001eb7a07b35f1a2b5cf0edad0d06b974346681ff6630b24364102f848b"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "dropFewItems",
+          "descriptor": "(ZLnb;)V",
+          "access_flags": 4,
+          "code_sha256": "6d8e2fead3976e6b6ce1901b844269ddbc53903f58ed63b4359add9688e7ab97"
+        }
+      ]
+    },
+    {
+      "class": "rz",
+      "file": ".reference/r196/decompiled/rz.java",
+      "decompiled_sha256": "f89eb4477390c1d4c48a999407e480206159b08083380a3beaabc69f0846a89f",
+      "class_sha256": "3c8ef4b32bc450c274dc2ff079c40595af3536dc8a0467d4f0936f51c67f40d2",
+      "original_source_file": "EntitySheep.java",
+      "parent": "EntityLivestock",
+      "selected_methods": [
+        {
+          "name": "dropFewItems",
+          "arguments": "boolean recently_hit_by_player, nb damage_source",
+          "signature": "protected void dropFewItems(boolean recently_hit_by_player, nb damage_source)",
+          "line": 83,
+          "end_line": 99,
+          "method_sha256": "0ba525392f3278d06ff59622c0890c2bd8b98c047b917b08186a492bc6a4c26b"
+        },
+        {
+          "name": "n",
+          "arguments": "",
+          "signature": "public void n()",
+          "line": 197,
+          "end_line": 203,
+          "method_sha256": "651e02a4e52ed3d1431586a64e4085215b4b0cf6ed57a907a48e99d87cc8b108"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "dropFewItems",
+          "descriptor": "(ZLnb;)V",
+          "access_flags": 4,
+          "code_sha256": "4c478d1d307243c67e84ab678cd989d487b8092d93c9b6ef43aab5e90a56cfe7"
+        },
+        {
+          "name": "n",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "169820a9e50073c89ae490c30adc0d930bbbb15132b2ceb5ed80b9ecd52e2d0d"
+        }
+      ]
+    },
+    {
+      "class": "rw",
+      "file": ".reference/r196/decompiled/rw.java",
+      "decompiled_sha256": "6f15c120392207b11637793eceb2abc6e6f1aac86a5cb17f3af88be812153c7d",
+      "class_sha256": "8c597a6a87736040168491c3ef24868da46417c8ef85f1160a806a5a62d65c71",
+      "original_source_file": "EntityMooshroom.java",
+      "parent": "rr",
+      "selected_methods": [
+        {
+          "name": "rw",
+          "arguments": "abw par1World",
+          "signature": "public rw(abw par1World)",
+          "line": 6,
+          "end_line": 9,
+          "method_sha256": "6b8495e8b57a55c8c19b2c2ac2b9702077ac0d8d722e37393be181b1074bdb37"
+        }
+      ],
+      "selected_bytecode_methods": []
+    },
+    {
+      "class": "rp",
+      "file": ".reference/r196/decompiled/rp.java",
+      "decompiled_sha256": "556155b843a098110403537ab523b560bda2ee1f9e391774b026693c49e17017",
+      "class_sha256": "50e43d35178d7fb88192a2d1b8b8d089f1bb5a1ade9873659a8e4917e9037828",
+      "original_source_file": "EntityAnimal.java",
+      "parent": "nk",
+      "selected_methods": [
+        {
+          "name": "canEat",
+          "arguments": "",
+          "signature": "public boolean canEat()",
+          "line": 223,
+          "end_line": 225,
+          "method_sha256": "73c8c94e7a60ba67fa3ed1b650dc334b1421cda88f4514597a9212cc27570d0b"
+        },
+        {
+          "name": "onFoodEaten",
+          "arguments": "ye item_stack",
+          "signature": "public void onFoodEaten(ye item_stack)",
+          "line": 242,
+          "end_line": 250,
+          "method_sha256": "27f7a853fe8f846a33bb9456aeba1e4d1f34b3f8fad35e7fb38aa037596263d3"
+        },
+        {
+          "name": "bX",
+          "arguments": "",
+          "signature": "public void bX()",
+          "line": 256,
+          "end_line": 265,
+          "method_sha256": "261296cca2f2b2d034ecea108c6887123060d3d22bc07ed4e77fbae790893e2d"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "canEat",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "68b790cc373eff2e72980bad0ea239854733a94d75c76be2e0b499c18b0aa4b2"
+        },
+        {
+          "name": "onFoodEaten",
+          "descriptor": "(Lye;)V",
+          "access_flags": 1,
+          "code_sha256": "d04b57b8839e7fa0318d6b60f7322bf7ad708fd0da0d142ed2b8ab58150ff719"
+        },
+        {
+          "name": "bX",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "f0bfb82a910a0c1edc83eb607dee61e133708c400bf36571e6316721e6792b20"
+        }
+      ]
+    },
+    {
+      "class": "og",
+      "file": ".reference/r196/decompiled/og.java",
+      "decompiled_sha256": "389465ea1e4a0e99aafb98f3ba9a0acc6680b6e01749fff6545037b348e46372",
+      "class_sha256": "9845b7fdbc33aac7bf251080ab0922fdab51037f38b4f1abfdeb0438bcbc9d7d",
+      "original_source_file": "EntityLiving.java",
+      "parent": "of",
+      "selected_methods": [
+        {
+          "name": "canEat",
+          "arguments": "",
+          "signature": "public boolean canEat()",
+          "line": 1155,
+          "end_line": 1157,
+          "method_sha256": "344233dfc458b646afc1848c017cf95c1044a37061816b0d080b7347356719e1"
+        },
+        {
+          "name": "willEat",
+          "arguments": "ye item_stack",
+          "signature": "public boolean willEat(ye item_stack)",
+          "line": 1159,
+          "end_line": 1161,
+          "method_sha256": "d1d890896a000ea0b3cd5e295b8aedaeae9409f4a9ab34d3422f6119d1de3a80"
+        },
+        {
+          "name": "onFoodEaten",
+          "arguments": "ye item_stack",
+          "signature": "public void onFoodEaten(ye item_stack)",
+          "line": 1163,
+          "end_line": 1167,
+          "method_sha256": "65c652b62912521686e73726e2cbea3d4f178fa19be1898311aee9d94a1941ce"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "canEat",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "92deca7bcc06fd4471370c6a5ba1f137ffe2b2effada9acdb1a63e6566faf15f"
+        },
+        {
+          "name": "willEat",
+          "descriptor": "(Lye;)Z",
+          "access_flags": 1,
+          "code_sha256": "cea4f857d0ec8de0aa88e9839879d0de628fc5d904cbb32137852a3ba218c240"
+        },
+        {
+          "name": "onFoodEaten",
+          "descriptor": "(Lye;)V",
+          "access_flags": 1,
+          "code_sha256": "92f458f41dad1c8c1847c1612a624ca20bd5b33ddb1b3557c5e52ad434ccf596"
+        }
+      ]
+    },
+    {
+      "class": "of",
+      "file": ".reference/r196/decompiled/of.java",
+      "decompiled_sha256": "09a6decef7fa4f19a54a2375b90088428fa63d12758ad8f7f68458a2a554d0e5",
+      "class_sha256": "72da3a31e7c6d74cb1f8591043ee093e43299c21711dbec114ceaff464a4ce2c",
+      "original_source_file": "EntityLivingBase.java",
+      "parent": "nn",
+      "selected_methods": [
+        {
+          "name": "c",
+          "arguments": "nj par1PotionEffect",
+          "signature": "public void c(nj par1PotionEffect)",
+          "line": 487,
+          "end_line": 502,
+          "method_sha256": "61a9a3216c88c2e6fdb9fc4863a6f80b0a785765612065f1dbb762b19338705c"
+        },
+        {
+          "name": "c",
+          "arguments": "boolean par1",
+          "signature": "public void c(boolean par1)",
+          "line": 1323,
+          "end_line": 1332,
+          "method_sha256": "70e039dd33efe78fbe03786037aee1656b712961240e4dc0103936e80999b9c0"
+        },
+        {
+          "name": "healsWithTime",
+          "arguments": "",
+          "signature": "public boolean healsWithTime()",
+          "line": 1737,
+          "end_line": 1739,
+          "method_sha256": "1bc233c89e1b5b3681119face0a748e9d7510ceb3b8e7a4884be91355730ba68"
+        },
+        {
+          "name": "c",
+          "arguments": "",
+          "signature": "public void c()",
+          "line": 1761,
+          "end_line": 1865,
+          "method_sha256": "233f097d07a8d0a540c8acb738e02df8b51677f6f5c99003a5071fa14fe69467"
+        },
+        {
+          "name": "c",
+          "arguments": "of par1EntityLivingBase",
+          "signature": "public boolean c(of par1EntityLivingBase)",
+          "line": 2060,
+          "end_line": 2062,
+          "method_sha256": "0cd9309105e7a1d157b432c29f77949cd9d9a4de6f38b1537107311494cdf6f8"
+        },
+        {
+          "name": "healByPercentage",
+          "arguments": "float percentage",
+          "signature": "public void healByPercentage(float percentage)",
+          "line": 2068,
+          "end_line": 2077,
+          "method_sha256": "b9d200359cdf33335b1b510dad28a6c185518c3ae53b4501875a00452e635007"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "c",
+          "descriptor": "(Lnj;)V",
+          "access_flags": 1,
+          "code_sha256": "39b629383bca7dbfba2dd4133da031833c748231a8069d19d176f8de74f811a4"
+        },
+        {
+          "name": "c",
+          "descriptor": "(ILye;)V",
+          "access_flags": 1025,
+          "code_sha256": null
+        },
+        {
+          "name": "c",
+          "descriptor": "(Z)V",
+          "access_flags": 1,
+          "code_sha256": "ed69609d5ae9104cb4736a0016ac99ac7f00ec76a2b513afdef6178977b81cf6"
+        },
+        {
+          "name": "healsWithTime",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "748d4a1120a23dde7ae902a2ef7fdaef4ee91c9fdefdb9a64355c27897757f32"
+        },
+        {
+          "name": "c",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "eb051f3cd4670d2b6f6d76947fc9d85c3e23a16dd7e58ba872ab21e8bbddc0a0"
+        },
+        {
+          "name": "c",
+          "descriptor": "(Lof;)Z",
+          "access_flags": 1,
+          "code_sha256": "8ea294dd76ac497290a10911bde2138dab1e9ab994c0eb95dd92cecf69248837"
+        },
+        {
+          "name": "healByPercentage",
+          "descriptor": "(F)V",
+          "access_flags": 1,
+          "code_sha256": "33b83668afd82e4c3157f1c560c0a712405325df8ccc2b967c3736108ee7af13"
+        }
+      ]
+    },
+    {
+      "class": "qu",
+      "file": ".reference/r196/decompiled/qu.java",
+      "decompiled_sha256": "32f5037686bcbfde00eee3669a59734a337816a302830b5b6da6ac08b2c8df70",
+      "class_sha256": "7e3fff821cc245fe739f3fd6f94a1fb0191ebb18e6a6a48abc36b8db6d4fc3b5",
+      "original_source_file": "EntityAITempt.java",
+      "parent": "ps",
+      "selected_methods": [
+        {
+          "name": "a",
+          "arguments": "",
+          "signature": "public boolean a()",
+          "line": 29,
+          "end_line": 62,
+          "method_sha256": "9db3946e7d9b783d8ee7c68e87cddf162a1e3c93d65f97d694e664c4113a1c7d"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "a",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "7423132946f36cf8066e53d4491a9c1654aa08db4a022893800a7f348eb2c45d"
+        }
+      ]
+    },
+    {
+      "class": "pn",
+      "file": ".reference/r196/decompiled/pn.java",
+      "decompiled_sha256": "91ec029251fe206352a83f68f7cb5ab3be15ba00b3584322f54285dd7ab30601",
+      "class_sha256": "78eba12cfde8c880a941f764d3d6871ce6b4319956f952513c6bcb011b12cdf8",
+      "original_source_file": "EntityAIEatGrass.java",
+      "parent": "ps",
+      "selected_methods": [
+        {
+          "name": "a",
+          "arguments": "",
+          "signature": "public boolean a()",
+          "line": 19,
+          "end_line": 39,
+          "method_sha256": "bb1976d01bc9c043fefec7adf8dab09c929a9b8f83c8c7450f974fb2beff18e3"
+        },
+        {
+          "name": "e",
+          "arguments": "",
+          "signature": "public void e()",
+          "line": 66,
+          "end_line": 82,
+          "method_sha256": "61d4ca5aa0851974784da94d23e224291b197d47959f58180cd356878eb0ed25"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "a",
+          "descriptor": "()Z",
+          "access_flags": 1,
+          "code_sha256": "5fce04e6e0f9428640ebf5d73939dd7ef8f040e140095455ef1b2da788b6eff7"
+        },
+        {
+          "name": "e",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "6ee99a379662cb8af47b1469220bdb393ec4dfa8129f775f3eced8c41ce552a7"
+        }
+      ]
+    },
+    {
+      "class": "nk",
+      "file": ".reference/r196/decompiled/nk.java",
+      "decompiled_sha256": "f84606dfa7f72f614a8612ab641b9fff06913a94bf762d751cf3ddbcef92d78e",
+      "class_sha256": "b277a001a78c096b5482ed4a3c4b686dc659435fc5d936b3dbd8572f7ec1303d",
+      "original_source_file": "EntityAgeable.java",
+      "parent": "on",
+      "selected_methods": [
+        {
+          "name": "a",
+          "arguments": "",
+          "signature": "protected void a()",
+          "line": 16,
+          "end_line": 19,
+          "method_sha256": "6d1145ba150718ecda6ee6d4a9640b37581d7db199f182d6677f79b0ca199d0c"
+        },
+        {
+          "name": "a",
+          "arguments": "int par1",
+          "signature": "public void a(int par1)",
+          "line": 25,
+          "end_line": 31,
+          "method_sha256": "0d2a38f656e23dc6c939b080149a55ad97652bf5f5b09520bdcc0b82f7b98c6a"
+        },
+        {
+          "name": "c",
+          "arguments": "int par1",
+          "signature": "public void c(int par1)",
+          "line": 33,
+          "end_line": 43,
+          "method_sha256": "c8ae9e2106c51d842c0e8097fb4cb8adbfc316081b950eb314bce81b95f06356"
+        },
+        {
+          "name": "a",
+          "arguments": "by par1NBTTagCompound",
+          "signature": "public void a(by par1NBTTagCompound)",
+          "line": 64,
+          "end_line": 67,
+          "method_sha256": "26574bafcbebcbb8ed6c63fa74c7e0eddb8edb89ce724f643ca0380fe755cb75"
+        },
+        {
+          "name": "c",
+          "arguments": "",
+          "signature": "public void c()",
+          "line": 70,
+          "end_line": 88,
+          "method_sha256": "6b58113cb83c0211795496768c549b2f5dbbb2d3fdbeac56397846631adb40a9"
+        },
+        {
+          "name": "a",
+          "arguments": "boolean par1",
+          "signature": "public void a(boolean par1)",
+          "line": 95,
+          "end_line": 97,
+          "method_sha256": "6e7e9eabc3e2eeb0cb89b2cb35f372230ea71e751e9a77b56d4f1789bc19b676"
+        },
+        {
+          "name": "a",
+          "arguments": "float par1, float par2",
+          "signature": "protected final void a(float par1, float par2)",
+          "line": 100,
+          "end_line": 107,
+          "method_sha256": "dda95e901aff86962935110a4933ecec0b3c209673f81c3d20bc6b239136b44e"
+        },
+        {
+          "name": "a",
+          "arguments": "float par1",
+          "signature": "protected final void a(float par1)",
+          "line": 109,
+          "end_line": 111,
+          "method_sha256": "c25547ea3daf39decea703762c53cc0746647d74dac266baffeaf3d2670c4ccf"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "a",
+          "descriptor": "(Lnk;)Lnk;",
+          "access_flags": 1025,
+          "code_sha256": null
+        },
+        {
+          "name": "a",
+          "descriptor": "()V",
+          "access_flags": 4,
+          "code_sha256": "4d3e1c96b3a7bb956fd80c43ee91d1535465f6184c03881f470ea652bc0e9a34"
+        },
+        {
+          "name": "a",
+          "descriptor": "(I)V",
+          "access_flags": 1,
+          "code_sha256": "e300171b3ed2c60d0d1bfe1af43c5fd04e0db780a885c6e5a0ec468a82d83d92"
+        },
+        {
+          "name": "c",
+          "descriptor": "(I)V",
+          "access_flags": 1,
+          "code_sha256": "31a4e71a80c07abce542398c9dc108ce9243a4d3d55de2df17ded43d46d523f5"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lby;)V",
+          "access_flags": 1,
+          "code_sha256": "7b0b7819e7900b4a188fffa9b9449f623fe468f9cb4ff8dc75c10b4c681a50e3"
+        },
+        {
+          "name": "c",
+          "descriptor": "()V",
+          "access_flags": 1,
+          "code_sha256": "88f734054c26f50830a49b694153307263ddc29aa3fc29b550ee9155f0f9ba4c"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Z)V",
+          "access_flags": 1,
+          "code_sha256": "f2a949f74682b8cbe8beef993e171f22077bd48b5b1482b3afb6b628165198c1"
+        },
+        {
+          "name": "a",
+          "descriptor": "(FF)V",
+          "access_flags": 20,
+          "code_sha256": "133236ce24f2b11f04bf0fa811ff3a4c28bb9386e017b9e491d81e22c0afce33"
+        },
+        {
+          "name": "a",
+          "descriptor": "(F)V",
+          "access_flags": 20,
+          "code_sha256": "4462409b7bea2763b9d47ce8fe6b0cd4f29fb63422193bdf81a36ca30c3b21ed"
+        }
+      ]
+    },
+    {
+      "class": "ItemVessel",
+      "file": ".reference/r196/decompiled/ItemVessel.java",
+      "decompiled_sha256": "8cef1ee1f94ea5ef73654e696f7dfcf08f9e49645767debf39cb415d60b56874",
+      "class_sha256": "671d21638b7502a5be12f660d7b5da6aa6c958f821d2a1a92f1ff93400f90292",
+      "original_source_file": "ItemVessel.java",
+      "parent": "yc",
+      "selected_methods": [
+        {
+          "name": "tryEntityInteraction",
+          "arguments": "nn entity, uf player, ye item_stack",
+          "signature": "public boolean tryEntityInteraction(nn entity, uf player, ye item_stack)",
+          "line": 98,
+          "end_line": 154,
+          "method_sha256": "25c9b34230443f21092a2b82e11742709d293906118e94d207950c7ef2fc938a"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "tryEntityInteraction",
+          "descriptor": "(Lnn;Luf;Lye;)Z",
+          "access_flags": 1,
+          "code_sha256": "f90aab593b3d83c446c41660f5165c0ae230728df26e724884b06d97a7c8ef21"
+        }
+      ]
+    },
+    {
+      "class": "bge",
+      "file": ".reference/r196/decompiled/bge.java",
+      "decompiled_sha256": "48d0f74d2fc5306520a2a9d41d633a0fa041b0434345232a73a1a52103d76452",
+      "class_sha256": "0d4ae457d1cd1ce3fd33dfcb3b0a4656482448f905ce87e2b828741437bef7d8",
+      "original_source_file": "RenderChicken.java",
+      "parent": "bhe",
+      "selected_methods": [
+        {
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 14,
+          "end_line": 17,
+          "method_sha256": "a7543ea8b0aebee48dd7298486332f83510b902f071312a296b12224060532bb"
+        },
+        {
+          "name": "a",
+          "arguments": "rq par1EntityChicken, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(rq par1EntityChicken, double par2, double par4, double par6, float par8, float par9)",
+          "line": 19,
+          "end_line": 21,
+          "method_sha256": "b43a53ae824b242681ae10177322ed48220187a3ea3ca472a22419b90396cc27"
+        },
+        {
+          "name": "a",
+          "arguments": "rq par1EntityChicken",
+          "signature": "protected bjo a(rq par1EntityChicken)",
+          "line": 23,
+          "end_line": 28,
+          "method_sha256": "1ed9f409d3c5bc63a60a23404ab8d59f6dae2a78393d5664609dc959896528b0"
+        },
+        {
+          "name": "a",
+          "arguments": "rq par1EntityChicken, float par2",
+          "signature": "protected float a(rq par1EntityChicken, float par2)",
+          "line": 30,
+          "end_line": 34,
+          "method_sha256": "c6a8d2650b23d78606ef83f13f9f2d04d72d49c2393f80b101fc3835b738251f"
+        },
+        {
+          "name": "a",
+          "arguments": "og par1EntityLiving, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(og par1EntityLiving, double par2, double par4, double par6, float par8, float par9)",
+          "line": 37,
+          "end_line": 39,
+          "method_sha256": "e07f9aa1caf8fa74621efe4ab64196678ccd1f8d605efc19855c48b3aec7e53a"
+        },
+        {
+          "name": "a",
+          "arguments": "of par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(of par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)",
+          "line": 47,
+          "end_line": 49,
+          "method_sha256": "4f447c0b16f4da17efa7c2d0d92520bc22a06b358da57891fb60cd28ed165e09"
+        },
+        {
+          "name": "a",
+          "arguments": "nn par1Entity",
+          "signature": "protected bjo a(nn par1Entity)",
+          "line": 52,
+          "end_line": 54,
+          "method_sha256": "065e09c3fd365627843f265d602d6ed74de8d39fe5d4e23d4812b73ac7b6ceb7"
+        },
+        {
+          "name": "a",
+          "arguments": "nn par1Entity, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(nn par1Entity, double par2, double par4, double par6, float par8, float par9)",
+          "line": 57,
+          "end_line": 59,
+          "method_sha256": "587feaecc99c42780d9ce71df9e156d4efe50f877d54ff76f4938cfab18d2aba"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "setTextures",
+          "descriptor": "()V",
+          "access_flags": 4,
+          "code_sha256": "1e13d4d5d1f66e78238a3443dd165c6e548eba44a501d8ac3e0ef7a941b5f780"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrq;DDDFF)V",
+          "access_flags": 1,
+          "code_sha256": "52395909a36a742bc3622b6b353f4ef51659005810d81f71aa6bbe7675dde672"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrq;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "89653dbbed0e580fd4c8921dc93000fa4961a794d540320ced89c0ce5d27caf2"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrq;F)F",
+          "access_flags": 4,
+          "code_sha256": "1baf7b9fc6ead9aa1ced51a5db116154cf16c7644b8b1dda2ed5e8f983a2e600"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Log;DDDFF)V",
+          "access_flags": 1,
+          "code_sha256": "2fd4f2192162f4eea6a1eab83f21eb3fba21f124ef3a0032658c79b7c7a287df"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lof;DDDFF)V",
+          "access_flags": 1,
+          "code_sha256": "465d02ca80b3cd58704bcc1fe016563405b6d11b25a877f70b314d5316e0976a"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lnn;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "74e585e94da8238761e390b84d0cccdbd09ef1abc0df34551023dd1f58e76356"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lnn;DDDFF)V",
+          "access_flags": 1,
+          "code_sha256": "683986d5788cd00f8aedf51ae020c8f97018dae3e28caf08d4ce877a3b3ec40e"
+        }
+      ]
+    },
+    {
+      "class": "bgf",
+      "file": ".reference/r196/decompiled/bgf.java",
+      "decompiled_sha256": "8928b886c17bc3f8802e0bdfe52369dd2df02663940eef9ed16ececec09fa8dd",
+      "class_sha256": "2c1b5d530865eb53b796ba8a51457884b346b10413227999bdb79f09cf579111",
+      "original_source_file": "RenderCow.java",
+      "parent": "bhe",
+      "selected_methods": [
+        {
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 14,
+          "end_line": 17,
+          "method_sha256": "4027f689304b35e4eadc9d863791f0bd27cd9f19d44ab1d91cbe1accf7b99c4e"
+        },
+        {
+          "name": "a",
+          "arguments": "rr par1EntityCow",
+          "signature": "protected bjo a(rr par1EntityCow)",
+          "line": 19,
+          "end_line": 24,
+          "method_sha256": "04172b72b80c7f689762c4ce9ef622cdb2b2bd9c9fda2e295c6aae2ce1610465"
+        },
+        {
+          "name": "a",
+          "arguments": "nn par1Entity",
+          "signature": "protected bjo a(nn par1Entity)",
+          "line": 27,
+          "end_line": 29,
+          "method_sha256": "67f31dafd85da81fa766bd43abfb5e269ab193e978dc0ac70252be5e703f4060"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "setTextures",
+          "descriptor": "()V",
+          "access_flags": 4,
+          "code_sha256": "a37523ec12e133256f8898bbc42290201b16e78c0694a797fa8291ad52d950ff"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrr;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "d678f10b86017e39bdf4dd6e9870e6fa42031afd07eb38a29a16c62a66dcbb28"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lnn;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "cd45c2dd8133b1d5b282fa8f72b0084ae942f9589f3f856c195ddf4da51d97ab"
+        }
+      ]
+    },
+    {
+      "class": "bhi",
+      "file": ".reference/r196/decompiled/bhi.java",
+      "decompiled_sha256": "5cb2a920941b6b54f7e1484cdd938dc14655261e1a4d8cad1b2ec64bd8008ae4",
+      "class_sha256": "288a61a66e52bf94c77083e1ae731b57e3f286c8606227281bd4d587bbd2cd52",
+      "original_source_file": "RenderPig.java",
+      "parent": "bhe",
+      "selected_methods": [
+        {
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 16,
+          "end_line": 20,
+          "method_sha256": "35bf7dfc1f067d5f3e726408a41bf223a599ebb58f4178dd139c8130ac058a06"
+        },
+        {
+          "name": "a",
+          "arguments": "ry par1EntityPig, int par2, float par3",
+          "signature": "protected int a(ry par1EntityPig, int par2, float par3)",
+          "line": 22,
+          "end_line": 28,
+          "method_sha256": "8d669bcd8c832debce54c83a443560d24184a44b34b31b490fd577fbca1afbd4"
+        },
+        {
+          "name": "a",
+          "arguments": "ry par1EntityPig",
+          "signature": "protected bjo a(ry par1EntityPig)",
+          "line": 30,
+          "end_line": 35,
+          "method_sha256": "f4577e91d979234a4a28e06ae03cc4b51ae8b2838b66c741e7b06cda19f3f78c"
+        },
+        {
+          "name": "a",
+          "arguments": "of par1EntityLivingBase, int par2, float par3",
+          "signature": "protected int a(of par1EntityLivingBase, int par2, float par3)",
+          "line": 38,
+          "end_line": 40,
+          "method_sha256": "455ffca323cbb8bfa159f51ec47ed94383e76175dd5eb159f1acdd0c4043f18a"
+        },
+        {
+          "name": "a",
+          "arguments": "nn par1Entity",
+          "signature": "protected bjo a(nn par1Entity)",
+          "line": 43,
+          "end_line": 45,
+          "method_sha256": "f23d7bf42c2069bdb640d650f0b33ac56028dd6fc2f47a1d6e77fc1fb48314de"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "setTextures",
+          "descriptor": "()V",
+          "access_flags": 4,
+          "code_sha256": "c2a35a4b46a1da7df31c5d010e4fa3ccff44316293384c58a573fb9fcfb11178"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lry;IF)I",
+          "access_flags": 4,
+          "code_sha256": "a43a180adc600b924a422a9b033f233764c708f58b636bbfd07f8a8eed4d51c1"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lry;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "3dedc9781e96fa26559f545ceabf6c76014746cb86042594d35de630366e102c"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lof;IF)I",
+          "access_flags": 4,
+          "code_sha256": "b1da07f1d4432cb6673cec9e191c6c2516ba124d17a841c6177e64290d8bbe09"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lnn;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "160d2abd3801dace21b9f028bba91753ab81cec33de3d6497346bc9cad7cd097"
+        }
+      ]
+    },
+    {
+      "class": "bhk",
+      "file": ".reference/r196/decompiled/bhk.java",
+      "decompiled_sha256": "58be629677aa094f8fe969339b2fdc0f6ed6401214c75040560e8e15e74f1c3b",
+      "class_sha256": "263726c1d61758f7eb7d187e3490bbdc98a1cb95fb987b301e23a49f740ed8e6",
+      "original_source_file": "RenderSheep.java",
+      "parent": "bhe",
+      "selected_methods": [
+        {
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 21,
+          "end_line": 25,
+          "method_sha256": "6d5b07952e61f01a44d2f74cfab402421ff6ec98304bc70cf6e9d37827c38086"
+        },
+        {
+          "name": "a",
+          "arguments": "rz par1EntitySheep, int par2, float par3",
+          "signature": "protected int a(rz par1EntitySheep, int par2, float par3)",
+          "line": 27,
+          "end_line": 36,
+          "method_sha256": "8b4383cca257428f15ed79ad953f3e185cf62134af543261f945b4bbf000e3a7"
+        },
+        {
+          "name": "a",
+          "arguments": "rz par1EntitySheep",
+          "signature": "protected bjo a(rz par1EntitySheep)",
+          "line": 38,
+          "end_line": 43,
+          "method_sha256": "302fd8104240054b7a1ec7426556905e35b01eb480cd79767aca9d3d17e34b3b"
+        },
+        {
+          "name": "a",
+          "arguments": "of par1EntityLivingBase, int par2, float par3",
+          "signature": "protected int a(of par1EntityLivingBase, int par2, float par3)",
+          "line": 46,
+          "end_line": 48,
+          "method_sha256": "f534d8b736d5eea78a041278eba84af8ada56240c5d692ddbf29b7494d95888d"
+        },
+        {
+          "name": "a",
+          "arguments": "nn par1Entity",
+          "signature": "protected bjo a(nn par1Entity)",
+          "line": 51,
+          "end_line": 53,
+          "method_sha256": "12711c086fc7be2ca081306b8a5eba6d9a1dc76250a328fb9d81a625c1c1e75e"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "setTextures",
+          "descriptor": "()V",
+          "access_flags": 4,
+          "code_sha256": "5344a5473b065433a515dccf8fc2b79737cd7629771d563c471186b06887ffd5"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrz;IF)I",
+          "access_flags": 4,
+          "code_sha256": "bf44c46f6a36d4481eb5dbd425cd7919cc50d3a2e584ac5ab6e48926a55fc1eb"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrz;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "b1522de6c04b2c85aa8bc1bb32b0d22dcd13ae3fdb9fa4eab1366ab043da6161"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lof;IF)I",
+          "access_flags": 4,
+          "code_sha256": "7ec4342d6acfe93028d2e8e896af624e446d7eec348160c7b984ec5baa686140"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lnn;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "4da5256ae9c5ae5822eddee583e917c92a28410de6073aa9633ecea487959c97"
+        }
+      ]
+    },
+    {
+      "class": "bhf",
+      "file": ".reference/r196/decompiled/bhf.java",
+      "decompiled_sha256": "7bd41a5b955afab0f1f55991369e1000c69a46322d0bf7506fd032b1f0bafabc",
+      "class_sha256": "25cbeb862b8fe4976f7e14630fcb431ffc2b669404ff004329ae2900109897e4",
+      "original_source_file": "RenderMooshroom.java",
+      "parent": "bhe",
+      "selected_methods": [
+        {
+          "name": "setTextures",
+          "arguments": "",
+          "signature": "protected void setTextures()",
+          "line": 18,
+          "end_line": 20,
+          "method_sha256": "0b15a11e6181463cbb797d0d70d93bd4e5e1ebe44cf3552fb32ed10a59a3e2d4"
+        },
+        {
+          "name": "a",
+          "arguments": "rw par1EntityMooshroom, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(rw par1EntityMooshroom, double par2, double par4, double par6, float par8, float par9)",
+          "line": 22,
+          "end_line": 24,
+          "method_sha256": "94d6ebee1137fa6a86b4e938263dc1e05ea08c271d37cd00d7a96645f8068582"
+        },
+        {
+          "name": "a",
+          "arguments": "rw par1EntityMooshroom",
+          "signature": "protected bjo a(rw par1EntityMooshroom)",
+          "line": 26,
+          "end_line": 28,
+          "method_sha256": "9143b6a212f21360883e24b9be8c742e5bd0800d1c39f0059462239d356f0266"
+        },
+        {
+          "name": "a",
+          "arguments": "rw par1EntityMooshroom, float par2",
+          "signature": "protected void a(rw par1EntityMooshroom, float par2)",
+          "line": 30,
+          "end_line": 53,
+          "method_sha256": "47efde86153fa5530ee7f0d1679b9f98120329fed6935fd44a30d68d9f80f6c4"
+        },
+        {
+          "name": "a",
+          "arguments": "og par1EntityLiving, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(og par1EntityLiving, double par2, double par4, double par6, float par8, float par9)",
+          "line": 56,
+          "end_line": 58,
+          "method_sha256": "c0d4b9467ff7e70e9428da192f25bbbec9df000d2d877b9f2bbeee6cacdf1a76"
+        },
+        {
+          "name": "a",
+          "arguments": "of par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(of par1EntityLivingBase, double par2, double par4, double par6, float par8, float par9)",
+          "line": 66,
+          "end_line": 68,
+          "method_sha256": "571915b24b89466154aba9b773f92447c6258407a6116dc2b9a6ef65301fc429"
+        },
+        {
+          "name": "a",
+          "arguments": "nn par1Entity",
+          "signature": "protected bjo a(nn par1Entity)",
+          "line": 71,
+          "end_line": 73,
+          "method_sha256": "a4681bd0786f70854008d7c493c3a88c9a8fd20afd19d1c711ed73a0ea7a2438"
+        },
+        {
+          "name": "a",
+          "arguments": "nn par1Entity, double par2, double par4, double par6, float par8, float par9",
+          "signature": "public void a(nn par1Entity, double par2, double par4, double par6, float par8, float par9)",
+          "line": 76,
+          "end_line": 78,
+          "method_sha256": "dcc23f32a2a7672ba38b91d13c2ee03ed08cc9a3973da551ed85cf229c0e6bc8"
+        }
+      ],
+      "selected_bytecode_methods": [
+        {
+          "name": "setTextures",
+          "descriptor": "()V",
+          "access_flags": 4,
+          "code_sha256": "8541e1ab0c7e170bbea2c8118119d2a27cbb0799d621b558f2ecd3160ac56c27"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrw;DDDFF)V",
+          "access_flags": 1,
+          "code_sha256": "744da0b022d0ab5aaf14e2761495e11d50aefd3ca0de55b1c77e05ef864c652b"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrw;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "6ca3b5f95690d141e0056ca16f7cde7f9e5879f8e152447e34e5e8ee601a758e"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lrw;F)V",
+          "access_flags": 4,
+          "code_sha256": "91fcb1a94c8a3d1dfb6cd9244b0dfdcb174ae07f108be0c414e6efb05d9a12b1"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Log;DDDFF)V",
+          "access_flags": 1,
+          "code_sha256": "963ed17170955e3e7d71a18436e19295a1f3bbcef5074050bc065f5fbfa9c423"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lof;DDDFF)V",
+          "access_flags": 1,
+          "code_sha256": "082d89873b110b40d5d8abc61ad036695fdcaefc77befe25e47a90b6f395afd3"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lnn;)Lbjo;",
+          "access_flags": 4,
+          "code_sha256": "c6dac543441f12bfedd3155bf08194d29285d4c53822868a818dc4ce1b03e944"
+        },
+        {
+          "name": "a",
+          "descriptor": "(Lnn;DDDFF)V",
+          "access_flags": 1,
+          "code_sha256": "e5ec37ba5bd709638298d6ceba596fe5302e759054a52925a95937a3bfca911f"
+        }
+      ]
+    },
+    {
+      "class": "bgl",
+      "file": ".reference/r196/decompiled/bgl.java",
+      "decompiled_sha256": "897db44bfd3ef04f4e4056a7de3070828b17d0c9b2bdd8a9fce984c3dfcf4d7a",
+      "class_sha256": "4d7fb6c8f4c4e80502d1af9499723021cd67174f0b12e50a41fabbd810f7cdc1",
+      "original_source_file": "RenderManager.java",
+      "parent": "java/lang/Object",
+      "selected_methods": [
+        {
+          "name": "bgl",
+          "arguments": "",
+          "signature": "private bgl()",
+          "line": 31,
+          "end_line": 122,
+          "method_sha256": "8a802d7d3a89c4d5a8db58e6a1cb52022eea412d55d2d45529d09aecd9c5e6ef"
+        }
+      ],
+      "selected_bytecode_methods": []
+    }
+  ],
+  "isWell_call_sites": [
+    {
+      "class": "bge",
+      "file": ".reference/r196/decompiled/bge.java",
+      "line": 24
+    },
+    {
+      "class": "bgf",
+      "file": ".reference/r196/decompiled/bgf.java",
+      "line": 20
+    },
+    {
+      "class": "bhi",
+      "file": ".reference/r196/decompiled/bhi.java",
+      "line": 31
+    },
+    {
+      "class": "bhk",
+      "file": ".reference/r196/decompiled/bhk.java",
+      "line": 39
+    },
+    {
+      "class": "EntityLivestock",
+      "file": ".reference/r196/decompiled/EntityLivestock.java",
+      "line": 49
+    },
+    {
+      "class": "EntityLivestock",
+      "file": ".reference/r196/decompiled/EntityLivestock.java",
+      "line": 65
+    },
+    {
+      "class": "EntityLivestock",
+      "file": ".reference/r196/decompiled/EntityLivestock.java",
+      "line": 82
+    },
+    {
+      "class": "EntityLivestock",
+      "file": ".reference/r196/decompiled/EntityLivestock.java",
+      "line": 236
+    },
+    {
+      "class": "EntityLivestock",
+      "file": ".reference/r196/decompiled/EntityLivestock.java",
+      "line": 336
+    },
+    {
+      "class": "EntityLivestock",
+      "file": ".reference/r196/decompiled/EntityLivestock.java",
+      "line": 403
+    },
+    {
+      "class": "qu",
+      "file": ".reference/r196/decompiled/qu.java",
+      "line": 35
+    },
+    {
+      "class": "rq",
+      "file": ".reference/r196/decompiled/rq.java",
+      "line": 126
+    },
+    {
+      "class": "rq",
+      "file": ".reference/r196/decompiled/rq.java",
+      "line": 133
+    },
+    {
+      "class": "rr",
+      "file": ".reference/r196/decompiled/rr.java",
+      "line": 105
+    },
+    {
+      "class": "ry",
+      "file": ".reference/r196/decompiled/ry.java",
+      "line": 117
+    },
+    {
+      "class": "rz",
+      "file": ".reference/r196/decompiled/rz.java",
+      "line": 87
+    }
+  ],
+  "exact_disease_keyword_search": [
+    {
+      "class": "bge",
+      "file": ".reference/r196/decompiled/bge.java",
+      "line": 16
+    },
+    {
+      "class": "bgf",
+      "file": ".reference/r196/decompiled/bgf.java",
+      "line": 16
+    },
+    {
+      "class": "bhi",
+      "file": ".reference/r196/decompiled/bhi.java",
+      "line": 18
+    },
+    {
+      "class": "bhk",
+      "file": ".reference/r196/decompiled/bhk.java",
+      "line": 24
+    }
+  ],
+  "texture_assets": [
+    {
+      "entity": "minecraft:chicken",
+      "legacy_renderer": "bge",
+      "legacy_sick_texture_index": 1,
+      "reference_path": ".reference/r196/resources/assets/minecraft/textures/entity/chicken/sick.png",
+      "width": 64,
+      "height": 32,
+      "sha256": "21398ff4ef0cb6b6c67869e2ffc1afb903e6ecd1ca329edb4b9e16261deceb3d",
+      "source_zip_entry": "assets/minecraft/textures/entity/chicken/sick.png"
+    },
+    {
+      "entity": "minecraft:cow",
+      "legacy_renderer": "bgf",
+      "legacy_sick_texture_index": 1,
+      "reference_path": ".reference/r196/resources/assets/minecraft/textures/entity/cow/sick.png",
+      "width": 64,
+      "height": 32,
+      "sha256": "b547af8cb364bf46a4d669a60cdc8e06522095307f49dc306529c1750ad5217b",
+      "source_zip_entry": "assets/minecraft/textures/entity/cow/sick.png"
+    },
+    {
+      "entity": "minecraft:pig",
+      "legacy_renderer": "bhi",
+      "legacy_sick_texture_index": 1,
+      "reference_path": ".reference/r196/resources/assets/minecraft/textures/entity/pig/sick.png",
+      "width": 64,
+      "height": 32,
+      "sha256": "6d9d6004dd6e5a80448afbf04abffa06ca727fe1018aaf8f7f532830d5d0ce63",
+      "source_zip_entry": "assets/minecraft/textures/entity/pig/sick.png"
+    },
+    {
+      "entity": "minecraft:sheep",
+      "legacy_renderer": "bhk",
+      "legacy_sick_texture_index": 2,
+      "reference_path": ".reference/r196/resources/assets/minecraft/textures/entity/sheep/sick.png",
+      "width": 64,
+      "height": 32,
+      "sha256": "0bdfad217ff0b5e20e171d7d63dc6bf1e47f744ec1b9371582e0467825726d0a",
+      "source_zip_entry": "assets/minecraft/textures/entity/sheep/sick.png"
+    }
+  ],
+  "bytecode_audit": {
+    "command": "javap -c -p -classpath .reference/r196/classes EntityLivestock bge bgf bhi bhk bhf",
+    "output_sha256": "8a07d26ae85363f3a672bc2cd21619ef0b8802a2289d2cb850be0d97e14acb4e",
+    "confirmed_offsets": {
+      "EntityLivestock.isWell:()Z": {
+        "48": "ldc float0.25f",
+        "50": "fcmpl",
+        "51": "iflt unwell"
+      },
+      "four_sick_renderers": {
+        "1": "invokevirtual isWell",
+        "4": "ifeq sick",
+        "18": "iconst_1 (sheep iconst_2)"
+      },
+      "bhf.a:(Lrw;)Lbjo;": {
+        "0": "aload_0",
+        "1": "getfield textures",
+        "4": "iconst_0",
+        "5": "aaload",
+        "6": "areturn"
+      }
+    }
+  },
+  "explicit_non_rules": [
+    "No independent random infection, contagion, medicine or delayed cure state in traced health path.",
+    "No sickness HP drain, movement penalty or reduced maximum HP.",
+    "No wellness gate on natural healing or stored milk.",
+    "Existing chicken production budget remains usable while sick.",
+    "Low freedom alone never freezes baby age.",
+    "Do not infer sick visuals for mooshroom from Cow inheritance; registered renderer is separate.",
+    "Do not extend livestock health to wolves,cats,horses,bats,squid or unsupported modern animals."
+  ],
+  "modern_adaptation_requirements": [
+    "Reuse supplied pack sick body textures for four source renderer species; retain native models/layers.",
+    "Modern mooshroom variants retain native visuals; source renderer has no illness branch.",
+    "Keep client render classes out of dedicated-server class loading.",
+    "Existing modern synced three-resource view derives source watcher-equivalent health."
+  ],
+  "evidence_limits": [
+    "Readonly source/class audit only; not modern GameTest or live client visual proof.",
+    "No complete decompiled source bodies exported.",
+    "032 baseline coverage based on inspected current code; report 033 test results separately."
+  ],
+  "binary_full_archive_audit": {
+    "class_count": 1186,
+    "isWell_utf8_constant_classes": [
+      {
+        "class": "bge",
+        "path": ".reference/r196/classes/bge.class"
+      },
+      {
+        "class": "bgf",
+        "path": ".reference/r196/classes/bgf.class"
+      },
+      {
+        "class": "bhi",
+        "path": ".reference/r196/classes/bhi.class"
+      },
+      {
+        "class": "bhk",
+        "path": ".reference/r196/classes/bhk.class"
+      },
+      {
+        "class": "EntityLivestock",
+        "path": ".reference/r196/classes/EntityLivestock.class"
+      },
+      {
+        "class": "qu",
+        "path": ".reference/r196/classes/qu.class"
+      },
+      {
+        "class": "rq",
+        "path": ".reference/r196/classes/rq.class"
+      },
+      {
+        "class": "rr",
+        "path": ".reference/r196/classes/rr.class"
+      },
+      {
+        "class": "ry",
+        "path": ".reference/r196/classes/ry.class"
+      },
+      {
+        "class": "rz",
+        "path": ".reference/r196/classes/rz.class"
+      }
+    ],
+    "exact_disease_keyword_utf8_constants": [
+      {
+        "class": "bge",
+        "matching_utf8_constants": [
+          "textures/entity/chicken/sick"
+        ]
+      },
+      {
+        "class": "bgf",
+        "matching_utf8_constants": [
+          "textures/entity/cow/sick"
+        ]
+      },
+      {
+        "class": "bhi",
+        "matching_utf8_constants": [
+          "textures/entity/pig/sick"
+        ]
+      },
+      {
+        "class": "bhk",
+        "matching_utf8_constants": [
+          "textures/entity/sheep/sick"
+        ]
+      }
+    ],
+    "limitation": "Constant-pool search supports the completed call-chain trace; strings alone are not treated as activated behavior."
+  }
+}

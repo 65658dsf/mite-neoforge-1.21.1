@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_creator": "Avernite",
+  "source_project": "Minecraft Is Too Easy (MITE)",
+  "source_website": "https://avernite.ca/MITE/",
+  "source_pack": "MITE Resource Pack 1.6.4.zip",
+  "source_pack_sha256": "4a9bb9f7ab5afee7c0e4e9f57f3b81ff185a0c619d29036b8c2f1ece7450e67a",
+  "png_count": 4,
+  "import_policy": "Copy confirmed R196 sick livestock skins byte for byte; no image conversion or redraw.",
+  "files": [
+    {
+      "entity_id": "minecraft:chicken",
+      "source": "assets/minecraft/textures/entity/chicken/sick.png",
+      "destination": "assets/mite/textures/entity/livestock/chicken_sick.png",
+      "sha256": "21398ff4ef0cb6b6c67869e2ffc1afb903e6ecd1ca329edb4b9e16261deceb3d",
+      "bytes": 651,
+      "width": 64,
+      "height": 32,
+      "transformation": "none; original ZIP entry bytes"
+    },
+    {
+      "entity_id": "minecraft:cow",
+      "source": "assets/minecraft/textures/entity/cow/sick.png",
+      "destination": "assets/mite/textures/entity/livestock/cow_sick.png",
+      "sha256": "b547af8cb364bf46a4d669a60cdc8e06522095307f49dc306529c1750ad5217b",
+      "bytes": 1917,
+      "width": 64,
+      "height": 32,
+      "transformation": "none; original ZIP entry bytes"
+    },
+    {
+      "entity_id": "minecraft:pig",
+      "source": "assets/minecraft/textures/entity/pig/sick.png",
+      "destination": "assets/mite/textures/entity/livestock/pig_sick.png",
+      "sha256": "6d9d6004dd6e5a80448afbf04abffa06ca727fe1018aaf8f7f532830d5d0ce63",
+      "bytes": 3110,
+      "width": 64,
+      "height": 32,
+      "transformation": "none; original ZIP entry bytes"
+    },
+    {
+      "entity_id": "minecraft:sheep",
+      "source": "assets/minecraft/textures/entity/sheep/sick.png",
+      "destination": "assets/mite/textures/entity/livestock/sheep_sick.png",
+      "sha256": "0bdfad217ff0b5e20e171d7d63dc6bf1e47f744ec1b9371582e0467825726d0a",
+      "bytes": 2570,
+      "width": 64,
+      "height": 32,
+      "transformation": "none; original ZIP entry bytes"
+    }
+  ]
+}
