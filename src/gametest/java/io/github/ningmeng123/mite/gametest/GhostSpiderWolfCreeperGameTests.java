@@ -87,7 +87,21 @@ public final class GhostSpiderWolfCreeperGameTests {
     @GameTest(template="empty") public static void webPredictsFourTicksOfMovement(GameTestHelper h) { Cow c=cow(h); BlockPos origin=c.blockPosition(); c.setDeltaMovement(.5,0,0); BlockPos lead=origin.east(2); h.getLevel().removeBlock(lead,false); h.assertTrue(R196Web.impact(c,false) && h.getLevel().getBlockState(lead).is(Blocks.COBWEB),"Source entity hit first tries four-tick horizontal lead"); h.succeed(); }
     @GameTest(template="empty") public static void webOnlyReplacesSingleSnowLayer(GameTestHelper h) { Player p=player(h); BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); h.getLevel().setBlockAndUpdate(pos.below(),Blocks.STONE.defaultBlockState()); h.getLevel().setBlockAndUpdate(pos,Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS,2)); h.assertTrue(!R196Web.place(h.getLevel(),pos,false,p),"Source cannot overwrite thick snow"); h.getLevel().setBlockAndUpdate(pos,Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS,1)); h.assertTrue(R196Web.place(h.getLevel(),pos,false,p),"Source replaces only1layer"); h.succeed(); }
     @GameTest(template="empty") public static void burningWebIgnitesFiveSeconds(GameTestHelper h) { Cow c=cow(h); R196Web.impact(c,true); h.assertTrue(c.getRemainingFireTicks()==100,"Source web impact adds five seconds"); h.succeed(); }
-    @GameTest(template="empty") public static void thrownDemonWebConsumesOneStock(GameTestHelper h) { R196Spider e=(R196Spider)mob(h,MobKind.DEMON_SPIDER); CompoundTag tag=new CompoundTag(); e.addAdditionalSaveData(tag); tag.putInt("num_webs",2); e.readAdditionalSaveData(tag); e.throwWeb(cow(h)); h.assertTrue(e.webStock()==1,"Successful spawn consumes exactlyone source web"); var missiles=h.getLevel().getEntitiesOfClass(R196Web.class,e.getBoundingBox().inflate(2)); h.assertTrue(missiles.size()==1 && missiles.get(0).isOnFire(),"Demon projectile starts burning10seconds"); h.succeed(); }
+    @GameTest(template="empty") public static void thrownDemonWebConsumesOneStock(GameTestHelper h) {
+        R196Spider e=(R196Spider)mob(h,MobKind.DEMON_SPIDER);
+        CompoundTag tag=new CompoundTag(); e.addAdditionalSaveData(tag); tag.putInt("num_webs",2); e.readAdditionalSaveData(tag);
+        Cow target=cow(h);
+        // A successful addFreshEntity can precede random-grid entity-section visibility.
+        // Capture the actual spawn synchronously instead of querying an inaccessible section.
+        try (var capture=new SpawnedEntityCapture(h.getLevel(),entity->entity instanceof R196Web web && web.getOwner()==e)) {
+            e.throwWeb(target);
+            h.assertTrue(e.webStock()==1,"Successful spawn consumes exactlyone source web");
+            var missiles=capture.live(R196Web.class);
+            h.assertTrue(missiles.size()==1,"Exactly one real projectile is spawned by this demon spider");
+            h.assertTrue(missiles.get(0).isOnFire() && missiles.get(0).getRemainingFireTicks()==200,"Demon projectile starts burning10seconds");
+        }
+        h.succeed();
+    }
     private static long leapSeed(boolean success) { for(long n=0;n<1000;n++) if((new java.util.Random(n).nextInt(10)==0)==success) return n; throw new AssertionError("Missing leap seed"); }
     @GameTest(template="empty") public static void spiderLeapRejectsExactTwoBlockBoundary(GameTestHelper h) { R196Spider e=(R196Spider)mob(h,MobKind.WOOD_SPIDER); Cow target=cow(h); target.setPos(e.getX()+2,e.getY(),e.getZ()); e.setOnGround(true); e.getRandom().setSeed(leapSeed(true)); h.assertTrue(!e.trySourceLeap(target),"Source strict distance>2 rejects exactlytwo"); h.succeed(); }
     @GameTest(template="empty") public static void spiderLeapRejectsExactSixBlockBoundary(GameTestHelper h) { R196Spider e=(R196Spider)mob(h,MobKind.WOOD_SPIDER); Cow target=cow(h); target.setPos(e.getX()+6,e.getY(),e.getZ()); e.setOnGround(true); e.getRandom().setSeed(leapSeed(true)); h.assertTrue(!e.trySourceLeap(target),"Source strict distance<6 rejects exactlysix"); h.succeed(); }

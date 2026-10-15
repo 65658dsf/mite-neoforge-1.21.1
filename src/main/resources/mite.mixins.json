@@ -119,6 +119,7 @@
     "R196SpawnerMixin",
     "UnderworldTrialSpawnerMixin",
     "UnderworldTrialSpawnerDataMixin",
+    "UnderworldVaultLootMixin",
     "BoneLordFrenzyMixin",
     "SummonedSkeletonDespawnMixin",
     "MobSpawnTypeAccessor",

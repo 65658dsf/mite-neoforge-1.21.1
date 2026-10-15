@@ -33,6 +33,8 @@ public final class MiteDataGenerators {
         event.getGenerator().addProvider(true, new OreWorldgenProvider(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(event.includeServer(), new UnderworldDungeonWorldgenProvider(
                 event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
+        event.getGenerator().addProvider(event.includeServer(), new UnderworldVaultLootProvider(
+                event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(event.includeServer(),
                 new MiteLootModifierProvider(event.getGenerator().getPackOutput(), event.getLookupProvider()));
         MiteBlockTagsProvider blockTags = new MiteBlockTagsProvider(event.getGenerator().getPackOutput(),

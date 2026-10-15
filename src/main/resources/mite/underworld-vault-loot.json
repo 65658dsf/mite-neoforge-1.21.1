@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "author": "NingMeng123",
+  "basis": "User-authorized modern underworld vault balancing for Minecraft 1.21.1; not extracted R196 loot values.",
+  "source": "Pinned Minecraft 1.21.1 vanilla trial chamber reward tables",
+  "scope": "mite:underworld only; normal Overworld vault loot and trial-spawner rewards remain unchanged",
+  "sourcePrefix": "minecraft:chests/trial_chambers/",
+  "targetPrefix": "mite:chests/underworld_trial_chambers/",
+  "tables": ["reward", "reward_common", "reward_rare", "reward_unique", "reward_ominous", "reward_ominous_common", "reward_ominous_rare", "reward_ominous_unique"],
+  "weightScale": 100,
+  "itemReplacements": {
+    "minecraft:diamond_axe": "mite:ancient_metal_axe",
+    "minecraft:diamond_chestplate": "mite:ancient_metal_chestplate"
+  },
+  "weightOverrides": {
+    "reward_common": {"minecraft:emerald": 440, "minecraft:diamond": 110},
+    "reward_rare": {"minecraft:emerald": 330},
+    "reward_ominous_common": {"minecraft:emerald": 550, "minecraft:diamond": 220, "minecraft:tipped_arrow": 100},
+    "reward_ominous_rare": {"minecraft:emerald_block": 550, "minecraft:diamond_block": 110}
+  },
+  "uniquePools": {
+    "reward_unique": [
+      {"item": "minecraft:golden_apple", "weight": 4, "minCount": 1, "maxCount": 1},
+      {"item": "minecraft:trident", "weight": 1, "minCount": 1, "maxCount": 1},
+      {"item": "mite:ancient_metal_nugget", "weight": 4, "minCount": 2, "maxCount": 5},
+      {"item": "mite:mithril_nugget", "weight": 2, "minCount": 1, "maxCount": 3},
+      {"item": "mite:adamantium_nugget", "weight": 1, "minCount": 1, "maxCount": 1}
+    ],
+    "reward_ominous_unique": [
+      {"item": "minecraft:enchanted_golden_apple", "weight": 100, "minCount": 1, "maxCount": 1},
+      {"item": "minecraft:heavy_core", "weight": 30, "minCount": 1, "maxCount": 1},
+      {"item": "mite:ancient_metal_nugget", "weight": 100, "minCount": 4, "maxCount": 9},
+      {"item": "mite:mithril_nugget", "weight": 50, "minCount": 2, "maxCount": 5},
+      {"item": "mite:adamantium_nugget", "weight": 20, "minCount": 1, "maxCount": 2}
+    ]
+  },
+  "materialArrows": {
+    "rarityBasis": "Modern balance tiers selected for this feature, not an R196 numeric formula; weight = inverseWeightBase / rarityFactor.",
+    "inverseWeightBase": 480,
+    "materials": [
+      {"material": "flint", "item": "minecraft:arrow", "rarityFactor": 1},
+      {"material": "rusted_iron", "item": "mite:rusted_iron_arrow", "rarityFactor": 1},
+      {"material": "obsidian", "item": "mite:obsidian_arrow", "rarityFactor": 2},
+      {"material": "iron", "item": "mite:iron_arrow", "rarityFactor": 2},
+      {"material": "copper", "item": "mite:copper_arrow", "rarityFactor": 3},
+      {"material": "gold", "item": "mite:golden_arrow", "rarityFactor": 4},
+      {"material": "silver", "item": "mite:silver_arrow", "rarityFactor": 5},
+      {"material": "ancient_metal", "item": "mite:ancient_metal_arrow", "rarityFactor": 8},
+      {"material": "mithril", "item": "mite:mithril_arrow", "rarityFactor": 16},
+      {"material": "adamantium", "item": "mite:adamantium_arrow", "rarityFactor": 32}
+    ],
+    "pools": [
+      {"table": "arrows", "parentTable": "reward_common", "replaceItem": "minecraft:arrow", "minCount": 2, "maxCount": 8},
+      {"table": "arrows_ominous", "parentTable": "reward_ominous_common", "insertWeight": 200, "minCount": 4, "maxCount": 12}
+    ]
+  },
+  "preservedRules": {
+    "normalUniqueTrigger": 0.25,
+    "ominousUniqueTrigger": 0.75,
+    "ominousEnchantedGoldenApplePerUnlock": 0.25,
+    "ominousHeavyCorePerUnlock": 0.075,
+    "enchantments": "Replace diamond item ID before original enchant_with_levels functions execute; retain original levels and options.",
+    "otherEquipment": "Keep original iron equipment, bow, crossbow, shield and trident.",
+    "arrows": "Keep normal poison arrows and ominous slowness IV arrows; material-arrow quantities execute once, only in the child table."
+  },
+  "removedItemPathFragments": ["music_disc_", "banner_pattern", "armor_trim_smithing_template"]
+}
