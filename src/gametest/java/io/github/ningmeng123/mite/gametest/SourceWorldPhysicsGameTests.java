@@ -152,14 +152,24 @@ public final class SourceWorldPhysicsGameTests {
         h.getLevel().setBlock(carpet,Blocks.WHITE_CARPET.defaultBlockState(),3);
         h.getLevel().setBlock(natural,Blocks.WHITE_CARPET.defaultBlockState(),3);
         NaturalTrialBlocks.record(h.getLevel().getChunkAt(natural),natural);
-        try {
+        AABB area=AABB.encapsulatingFullBlocks(carpet,natural).inflate(1D);
+        // A synchronous spawn can precede entity-section visibility in the random test-grid chunk.
+        try (SpawnedEntityCapture spawned=new SpawnedEntityCapture(h.getLevel(),
+                entity->entity instanceof ItemEntity&&entity.getBoundingBox().intersects(area))) {
+            h.assertFalse(NaturalTrialBlocks.isNatural(h.getLevel(),carpet),"The ordinary positive control has no natural trial provenance");
+            h.assertTrue(NaturalTrialBlocks.isNatural(h.getLevel(),natural),"The natural negative control has recorded trial provenance before destruction");
             SourceExplosionBlocks.prepare(h.getLevel(),blast(h,Vec3.atCenterOf(carpet),3F,Explosion.BlockInteraction.KEEP));
             h.assertTrue(h.getLevel().getBlockState(carpet).is(Blocks.WHITE_CARPET),"No-block-damage explosion does not run the preliminary destruction");
             SourceExplosionBlocks.destroy(h.getLevel(),carpet,h.getLevel().getBlockState(carpet),blast(h,Vec3.atCenterOf(carpet),3F,Explosion.BlockInteraction.DESTROY));
+            h.assertValueEqual(spawned.live(ItemEntity.class).stream().filter(e->e.getItem().is(Items.WHITE_CARPET)).mapToInt(e->e.getItem().getCount()).sum(),1,
+                    "The ordinary carpet transaction accepts exactly one carpet item spawn");
             SourceExplosionBlocks.destroy(h.getLevel(),natural,h.getLevel().getBlockState(natural),blast(h,Vec3.atCenterOf(natural),3F,Explosion.BlockInteraction.DESTROY));
             h.assertTrue(h.getLevel().getBlockState(carpet).isAir()&&h.getLevel().getBlockState(natural).isAir(),"Both actual block transactions run");
-            h.assertValueEqual(total(h,Items.WHITE_CARPET),1,"Only the ordinary carpet drops; natural trial provenance survives the prepass");
-        } finally { clearDrops(h); }
+            h.assertValueEqual(spawned.live(ItemEntity.class).stream().filter(e->e.getItem().is(Items.WHITE_CARPET)).mapToInt(e->e.getItem().getCount()).sum(),1,
+                    "Only the ordinary carpet drops; natural trial provenance survives the prepass");
+            h.assertValueEqual(spawned.live(ItemEntity.class).size(),1,"The natural transaction spawns no substitute item or duplicate drop");
+            h.assertFalse(NaturalTrialBlocks.isNatural(h.getLevel(),natural),"Removing the natural carpet also clears its now-obsolete provenance marker");
+        }
         h.succeed();
     }
 

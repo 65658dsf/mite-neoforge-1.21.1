@@ -127,16 +127,26 @@ public final class WitchCursePlayerEffectsGameTests {
 
     @GameTest(template = "empty")
     public static void armorRealizationDropsAllFourPiecesExactlyOnce(GameTestHelper h) {
-        try (Fixture f = new Fixture(h)) {
-            f.player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CARVED_PUMPKIN));
-            f.player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
-            f.player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));
-            f.player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS));
+        try (Fixture f = new Fixture(h);
+                SpawnedEntityCapture spawned = new SpawnedEntityCapture(h.getLevel(),
+                        entity -> entity instanceof ItemEntity && entity.getBoundingBox().intersects(new AABB(f.pos).inflate(3)))) {
+            List<ItemStack> originals = List.of(new ItemStack(Items.CARVED_PUMPKIN), new ItemStack(Items.IRON_CHESTPLATE),
+                    new ItemStack(Items.LEATHER_LEGGINGS), new ItemStack(Items.GOLDEN_BOOTS));
+            f.player.setItemSlot(EquipmentSlot.HEAD, originals.get(0));
+            f.player.setItemSlot(EquipmentSlot.CHEST, originals.get(1));
+            f.player.setItemSlot(EquipmentSlot.LEGS, originals.get(2));
+            f.player.setItemSlot(EquipmentSlot.FEET, originals.get(3));
             f.curse(R196Curse.CANNOT_WEAR_ARMOR);
             h.assertTrue(f.player.getInventory().armor.stream().allMatch(ItemStack::isEmpty), "Every humanoid armor slot emptied");
-            h.assertValueEqual(f.drops().size(), 4, "Four original stacks dropped including non-armor helmet");
+            // Native drop joins the level synchronously, before random-grid entity sections are necessarily queryable.
+            h.assertValueEqual(spawned.live(ItemEntity.class).size(), 4, "Four original stacks dropped including non-armor helmet");
             CursePlayerEffects.dropArmor(f.player);
-            h.assertValueEqual(f.drops().size(), 4, "Second pass never duplicates equipment");
+            h.assertValueEqual(spawned.live(ItemEntity.class).size(), 4, "Second pass never duplicates equipment");
+            for (ItemStack original : originals) {
+                h.assertValueEqual(spawned.live(ItemEntity.class).stream().filter(entity -> entity.getItem() == original).count(), 1L,
+                        "Each exact original stack becomes one successful native item entity: " + original.getItem());
+                h.assertValueEqual(original.getCount(), 1, "Dropping retains the full original stack count");
+            }
             h.assertTrue(PlayerCurses.state(f.player).known(), "Forced armor loss discovers curse");
         }
         h.succeed();

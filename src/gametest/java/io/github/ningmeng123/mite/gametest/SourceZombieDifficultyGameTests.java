@@ -73,7 +73,8 @@ public final class SourceZombieDifficultyGameTests {
     public static void allSourceZombieSpawnReasonsAlwaysPickUpLootEvenAtZeroTension(GameTestHelper helper) {
         var level = helper.getLevel(); long oldTime = level.getDayTime();
         var chunk = level.getChunkAt(helper.absolutePos(new BlockPos(2, 3, 2))); long oldInhabited = chunk.getInhabitedTime();
-        try {
+        // Real equipment initialization observes this temporary date in the shared persistent calendar.
+        try (ProgressSnapshot progress = new ProgressSnapshot(level)) {
             level.setDayTime(72_000L); chunk.setInhabitedTime(0L);
             for (var type : SOURCE_TYPES) for (var reason : List.of(MobSpawnType.NATURAL, MobSpawnType.SPAWNER,
                     MobSpawnType.SPAWN_EGG, MobSpawnType.REINFORCEMENT, MobSpawnType.COMMAND)) {

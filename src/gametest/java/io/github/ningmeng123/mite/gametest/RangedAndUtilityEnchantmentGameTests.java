@@ -106,15 +106,18 @@ public final class RangedAndUtilityEnchantmentGameTests {
                 ammo.set(DataComponents.CUSTOM_NAME, Component.literal("quickness-" + UUID.randomUUID()));
                 player.setItemInHand(InteractionHand.MAIN_HAND, bow);
                 player.getInventory().setItem(1, ammo);
-                player.startUsingItem(InteractionHand.MAIN_HAND);
-                ((BowItem)item).releaseUsing(bow, h.getLevel(), player, bow.getUseDuration(player) - 10);
-                player.stopUsingItem();
-                var fired = h.getLevel().getEntitiesOfClass(Arrow.class, player.getBoundingBox().inflate(5), a ->
-                        ItemStack.isSameItemSameComponents(a.getPickupItemStackOrigin(), ammo));
-                h.assertTrue(fired.size() == 1 && ammo.getCount() == 1, "Actual survival release creates and consumes exactly one arrow");
-                h.assertTrue(fired.getFirst().isCritArrow() == quick, "Ten ticks is full draw only with QuicknessV, including reinforced bows");
-                h.assertTrue(bow.getDamageValue() == 1, "Quickness changes pull time without adding or removing firing wear");
-                fired.forEach(Arrow::discard);
+                try (var spawned = new SpawnedEntityCapture(h.getLevel(), entity -> entity instanceof Arrow a
+                        && a.getBoundingBox().intersects(player.getBoundingBox().inflate(5))
+                        && ItemStack.isSameItemSameComponents(a.getPickupItemStackOrigin(), ammo))) {
+                    player.startUsingItem(InteractionHand.MAIN_HAND);
+                    ((BowItem)item).releaseUsing(bow, h.getLevel(), player, bow.getUseDuration(player) - 10);
+                    player.stopUsingItem();
+                    var fired = spawned.live(Arrow.class);
+                    h.assertTrue(fired.size() == 1 && ammo.getCount() == 1, "Actual survival release creates and consumes exactly one arrow");
+                    h.assertTrue(fired.getFirst().isAddedToLevel(), "The captured native arrow was accepted by the real server level");
+                    h.assertTrue(fired.getFirst().isCritArrow() == quick, "Ten ticks is full draw only with QuicknessV, including reinforced bows");
+                    h.assertTrue(bow.getDamageValue() == 1, "Quickness changes pull time without adding or removing firing wear");
+                }
             }
         }
         h.succeed();
@@ -144,19 +147,24 @@ public final class RangedAndUtilityEnchantmentGameTests {
         ammo.set(DataComponents.CUSTOM_NAME, Component.literal("flame-" + UUID.randomUUID()));
         shooter.setItemInHand(InteractionHand.MAIN_HAND, bow);
         shooter.getInventory().setItem(1, ammo);
-        shooter.startUsingItem(InteractionHand.MAIN_HAND);
-        ((BowItem)Items.BOW).releaseUsing(bow, h.getLevel(), shooter, bow.getUseDuration(shooter) - 20);
-        shooter.stopUsingItem();
-        var arrows = h.getLevel().getEntitiesOfClass(Arrow.class, shooter.getBoundingBox().inflate(5), arrow ->
-                ItemStack.isSameItemSameComponents(arrow.getPickupItemStackOrigin(), ammo));
-        h.assertTrue(arrows.size() == 1 && ammo.getCount() == 1, "The actual survival Flame bow creates and pays for its native arrow");
-        Arrow arrow = arrows.getFirst();
-        h.assertTrue(arrow.getRemainingFireTicks() == 2010, "Flame source projectile ignition is100seconds plus ten source ticks");
-        Cow target = cow(h, 200F);
-        hit(arrow, target);
-        h.assertTrue(target.getHealth() < 200F, "The actual spawned Flame projectile collides and damages the unarmored target");
-        h.assertTrue(target.getRemainingFireTicks() == 110, "A burning bow arrow transfers five seconds plus ten source ignition ticks");
-        arrow.discard(); target.discard(); h.succeed();
+        try (var spawned = new SpawnedEntityCapture(h.getLevel(), entity -> entity instanceof Arrow arrow
+                && arrow.getBoundingBox().intersects(shooter.getBoundingBox().inflate(5))
+                && ItemStack.isSameItemSameComponents(arrow.getPickupItemStackOrigin(), ammo))) {
+            shooter.startUsingItem(InteractionHand.MAIN_HAND);
+            ((BowItem)Items.BOW).releaseUsing(bow, h.getLevel(), shooter, bow.getUseDuration(shooter) - 20);
+            shooter.stopUsingItem();
+            var arrows = spawned.live(Arrow.class);
+            h.assertTrue(arrows.size() == 1 && ammo.getCount() == 1, "The actual survival Flame bow creates and pays for its native arrow");
+            Arrow arrow = arrows.getFirst();
+            h.assertTrue(arrow.isAddedToLevel(), "The captured native Flame arrow was accepted by the real server level");
+            h.assertTrue(arrow.getRemainingFireTicks() == 2010, "Flame source projectile ignition is100seconds plus ten source ticks");
+            Cow target = cow(h, 200F);
+            hit(arrow, target);
+            h.assertTrue(target.getHealth() < 200F, "The actual spawned Flame projectile collides and damages the unarmored target");
+            h.assertTrue(target.getRemainingFireTicks() == 110, "A burning bow arrow transfers five seconds plus ten source ignition ticks");
+            target.discard();
+        }
+        h.succeed();
     }
 
     @GameTest(template = "empty")

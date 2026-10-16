@@ -79,17 +79,25 @@ public final class OreFurnaceGameTests {
 
     @GameTest(template = "empty")
     public static void partialAndShiftMetalWithdrawalsPayOnlyTheActualTakenCount(GameTestHelper helper) {
-        try (Fixture f = new Fixture(helper)) {
+        try (Fixture f = new Fixture(helper);
+                var spawned = new SpawnedEntityCapture(helper.getLevel(), entity ->
+                        (entity instanceof ExperienceOrb || entity instanceof ItemEntity) && entity.getBoundingBox().intersects(f.area))) {
+            // Observe accepted native spawns synchronously: this same-tick transaction must not
+            // depend on the random-grid test chunk becoming visible to entity-section queries.
+            java.util.function.IntSupplier xp = () -> spawned.live(ExperienceOrb.class).stream()
+                    .mapToInt(orb -> orb.getValue() * Math.max(1, orb.saveWithoutId(new CompoundTag()).getInt("Count"))).sum();
             f.cook(item("mite:mithril_ore"), 3, 3);
             f.menu.clicked(2, 0, ClickType.THROW, f.player);
             helper.assertValueEqual(f.furnace.getItem(2).getCount(), 2, "The actual result-slot Q action withdraws one ingot");
-            helper.assertValueEqual(f.xp(), 40, "One withdrawn source mithril ingot pays forty, rather than the whole production history");
+            helper.assertValueEqual(xp.getAsInt(), 40, "One withdrawn source mithril ingot pays forty, rather than the whole production history");
             helper.assertValueEqual(f.take(2).getCount(), 2, "The native result slot later withdraws the remaining two ingots");
-            helper.assertValueEqual(f.xp(), 120, "All three independently withdrawn source ingots pay exactly 120");
+            helper.assertValueEqual(xp.getAsInt(), 120, "All three independently withdrawn source ingots pay exactly 120");
             f.cook(item("mite:mithril_ore"), 3, 3);
             f.menu.clicked(2, 0, ClickType.QUICK_MOVE, f.player);
             helper.assertValueEqual(f.player.getInventory().countItem(item("mite:mithril_ingot")), 3, "Native shift movement transfers all three newly cooked ingots");
-            helper.assertValueEqual(f.xp(), 240, "Quick-craft and onTake callbacks cannot double the actual source withdrawal reward");
+            helper.assertValueEqual(xp.getAsInt(), 240, "Quick-craft and onTake callbacks cannot double the actual source withdrawal reward");
+            f.furnace.awardUsedRecipesAndPopExperience(f.player);
+            helper.assertValueEqual(xp.getAsInt(), 240, "A repeated native history claim cannot duplicate either withdrawal reward");
         }
         helper.succeed();
     }

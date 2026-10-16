@@ -123,18 +123,38 @@ public final class MonsterTargetMeleeGameTests {
         var level = h.getLevel();
         var chunks = java.util.stream.Stream.of(wight.chunkPosition(), target.chunkPosition()).distinct().toList();
         var ticket = net.minecraft.server.level.TicketType.<Integer>create(
-                "mite_range_boundary_test", java.util.Comparator.naturalOrder(), 200);
-        int ticketKey = wight.getId();
+                "mite_range_boundary_test", java.util.Comparator.naturalOrder());
+        int ticketKey = wight.getId(); boolean[] cleaned = {false};
         Runnable cleanup = () -> {
+            if (cleaned[0]) return;
+            cleaned[0] = true;
             goal.stop(); wight.discard(); target.discard();
             for (var chunk : chunks) level.getChunkSource().removeRegionTicket(ticket, chunk, 2, ticketKey);
         };
+        h.testInfo.addListener(new net.minecraft.gametest.framework.GameTestListener() {
+            @Override public void testStructureLoaded(net.minecraft.gametest.framework.GameTestInfo info) {}
+            @Override public void testAddedForRerun(net.minecraft.gametest.framework.GameTestInfo original,
+                    net.minecraft.gametest.framework.GameTestInfo rerun, net.minecraft.gametest.framework.GameTestRunner runner) {}
+            @Override public void testPassed(net.minecraft.gametest.framework.GameTestInfo info,
+                    net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+            @Override public void testFailed(net.minecraft.gametest.framework.GameTestInfo info,
+                    net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+        });
         try {
-            for (var chunk : chunks) level.getChunkSource().addRegionTicket(ticket, chunk, 2, ticketKey);
+            for (var chunk : chunks) {
+                level.getChunkSource().addRegionTicket(ticket, chunk, 2, ticketKey);
+                // Native ChunkMap.prepareEntityTickingChunk requires FULL chunks throughout
+                // this radius-two dependency region, including beyond the tiny test template.
+                for (int x = chunk.x - 2; x <= chunk.x + 2; x++) for (int z = chunk.z - 2; z <= chunk.z + 2; z++)
+                    level.getChunk(x, z, net.minecraft.world.level.chunk.status.ChunkStatus.FULL, true);
+            }
             // The forty-block target can lie outside the template's ticking chunks.
             // Wait for the native query used by Nearest, rather than changing its range.
-            h.runAfterDelay(199, cleanup);
             h.startSequence().thenWaitUntil(() -> {
+                // Turbo GameTest ticks can outrun ready chunk-promotion callbacks. Drain a
+                // bounded number of native cache tasks without forcing entity-manager state.
+                if (!level.isPositionEntityTicking(wight.blockPosition()) || !level.isPositionEntityTicking(target.blockPosition()))
+                    for (int tasks = 0; tasks < 64 && level.getChunkSource().pollTask(); tasks++) {}
                 h.assertTrue(level.isPositionEntityTicking(wight.blockPosition())
                         && level.isPositionEntityTicking(target.blockPosition()), "Both range fixture chunks reach entity-ticking status");
                 h.assertTrue(level.getEntity(wight.getUUID()) == wight && level.getEntity(target.getUUID()) == target,
