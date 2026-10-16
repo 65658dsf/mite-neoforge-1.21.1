@@ -9,6 +9,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.enchantment.Enchantments;
+import io.github.ningmeng123.mite.rules.PortableBlockRules;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,15 +26,35 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 public final class FunctionalBlockMining {
     private FunctionalBlockMining() {}
     public static boolean portable(Player player, BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getBlock() instanceof AnvilBlock || state.getBlock() instanceof StrongboxBlock
-                && level.getBlockEntity(pos) instanceof StrongboxBlockEntity entity && entity.isOwner(player);
+        if (state.getBlock() instanceof StrongboxBlock) return level.getBlockEntity(pos) instanceof StrongboxBlockEntity entity && entity.isOwner(player);
+        return portableWithoutOwner(state);
+    }
+    /** Explicit source inheritance families; having a BlockEntity alone never makes a block portable. */
+    public static boolean portableWithoutOwner(BlockState state) {
+        var block = state.getBlock();
+        if (block instanceof StrongboxBlock) return false;
+        return block instanceof AnvilBlock || block instanceof BedBlock || block instanceof LadderBlock
+                || block instanceof AbstractCauldronBlock || block instanceof CraftingTableBlock
+                || block instanceof AbstractFurnaceBlock || block instanceof ChestBlock || block instanceof EnderChestBlock
+                || block instanceof BrewingStandBlock || block instanceof EnchantingTableBlock
+                || block instanceof SignBlock || block instanceof AbstractSkullBlock
+                || state.is(Blocks.TNT) || state.is(Blocks.DRAGON_EGG) || state.is(Blocks.DISPENSER) || state.is(Blocks.DROPPER)
+                || state.is(Blocks.NOTE_BLOCK) || state.is(Blocks.JUKEBOX) || state.is(Blocks.BEACON)
+                || state.is(Blocks.DAYLIGHT_DETECTOR) || state.is(Blocks.HOPPER);
     }
     public static float hardness(BlockState state, float raw) {
         return state.getBlock() instanceof AnvilBlock && !(state.getBlock() instanceof io.github.ningmeng123.mite.block.MaterialAnvilBlock)
                 ? 9.6F : raw;
     }
     public static float portableStrength(Player player, BlockState state, BlockGetter level, BlockPos pos, float strength) {
-        return portable(player, state, level, pos) ? Math.max(strength, 4F * hardness(state, state.getDestroySpeed(level, pos))) : strength;
+        if (!portable(player, state, level, pos) || !(strength > 0F)) return strength;
+        int haste = player.hasEffect(MobEffects.DIG_SPEED) ? player.getEffect(MobEffects.DIG_SPEED).getAmplifier() : -1;
+        int fatigue = player.hasEffect(MobEffects.DIG_SLOWDOWN) ? player.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier() : -1;
+        var affinity = player.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.AQUA_AFFINITY);
+        boolean aqua = java.util.stream.StreamSupport.stream(player.getArmorSlots().spliterator(), false)
+                .anyMatch(stack -> stack.getEnchantmentLevel(affinity) > 0);
+        return PortableBlockRules.strength(hardness(state, state.getDestroySpeed(level, pos)), player.experienceLevel, haste, fatigue,
+                player.isEyeInFluid(net.minecraft.tags.FluidTags.WATER) && !aqua, player.onGround(), io.github.ningmeng123.mite.survival.FoodConsumption.hasEnergy(player));
     }
     public static int requiredHarvest(StrongboxBlock block) {
         return switch (block.material()) {

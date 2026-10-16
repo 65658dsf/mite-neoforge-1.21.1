@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_version": "MITE 1.6.4 R196",
+  "sources": ["uf.java:775-833", "akc.java:324-325", "xj.java:126-142", "reference-data/runtime-registry.json blocks[].scalars.aqz.min_harvest_level"],
+  "source_requires_tool": "material.requires_tool OR block.getMinHarvestLevel(metadata)>0",
+  "ineffective_item": "retry bare hands; source required-tool materials then have strength zero",
+  "enforcement": ["shared getDestroyProgress", "server BlockEvent.BreakEvent"],
+  "precedence": ["negative hardness remains unbreakable", "owner-aware portable exception", "existing log/ore/storage/decorative-specific qualification", "source material requirement and effective tool"],
+  "modern_whole_glass": ["glass", "stained glass", "tinted glass"],
+  "modern_whole_glass_ice_log_minimum": 1,
+  "sandstone_terracotta_minimum": 1,
+  "source_zero_requirement_overrides_modern_pickaxe_tags": ["rails", "buttons", "lever", "flower pots", "repeaters/comparators", "pistons", "infested blocks", "coal block", "glowstone", "redstone lamp"],
+  "modern_tool_policy": "explicit effective Tool speed and native correct-tool rules; no guessed material-name ranking",
+  "source_tool_policy": "source numerical harvest level plus effective material/target match",
+  "acceptance": ["high-level empty hand and wrong tool cannot remove stone", "final removal event rejects bypass", "flint axe can break whole glass and sandstone", "glass panes and source-zero material exceptions remain hand-breakable"]
+}

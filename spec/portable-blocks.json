@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_version": "MITE 1.6.4 R196",
+  "source_entry": "uf.java:787-833",
+  "wear_entry": "xj.java:177",
+  "default_portable": false,
+  "sources": ["aqz.java:1687", "amw.java:35", "amv.java:143", "anb.java:273", "anj.java:177", "aob.java:110", "aoy.java:90", "are.java:90", "arv.java:102", "BlockDirectionalWithTileEntity.java:33", "BlockMountedWithTileEntity.java:43", "BlockStrongbox.java:75-80"],
+  "base_strength": "4F * hardness; ignores held item and efficiency enchantment",
+  "operation_order": ["haste x(1+(amplifier+1)*.2F)", "fatigue x(1-(amplifier+1)*.2F)", "underwater without affinity /5F", "airborne /5F", "no energy /5F", "level x(1+level*.02F)", "max(result,4F*hardness)"],
+  "zero_level_positive_hardness_progress": "1F/128F",
+  "fifty_level_ideal_progress": "1F/64F",
+  "strongbox": "portable only for its persisted owner",
+  "mob_spawner_override": "api.java:41 explicitly false",
+  "not_inferred_from_block_entity": ["spawner", "trial_spawner", "vault", "barrel", "shulker_box"],
+  "modern_family_extensions": ["all colored beds", "all wood signs and hanging signs", "all cauldron fluid states", "smoker", "blast_furnace"],
+  "tool_wear": 0,
+  "container_contents": "native removal behavior; no contents-packing feature"
+}

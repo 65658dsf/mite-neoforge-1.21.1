@@ -124,14 +124,14 @@ public final class LogHarvestGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void unlistedFurnitureGroundPlantsAndStoneKeepTheirExistingBehavior(GameTestHelper helper) {
+    public static void unlistedFurnitureAndPlantsKeepHandProgressWhileStoneRequiresItsOwnTool(GameTestHelper helper) {
         Player player = mockMiner(helper);
         player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         BlockPos position = helper.absolutePos(BlockPos.ZERO);
         BlockState[] states = {Blocks.OAK_PLANKS.defaultBlockState(), Blocks.CRAFTING_TABLE.defaultBlockState(),
                 Blocks.CHEST.defaultBlockState(), Blocks.DIRT.defaultBlockState(), Blocks.GRAVEL.defaultBlockState(),
                 Blocks.OAK_LEAVES.defaultBlockState(), Blocks.TORCH.defaultBlockState(), Blocks.BROWN_MUSHROOM.defaultBlockState(),
-                Blocks.STONE.defaultBlockState(), Blocks.BAMBOO_BLOCK.defaultBlockState(), Blocks.STRIPPED_BAMBOO_BLOCK.defaultBlockState()};
+                Blocks.BAMBOO_BLOCK.defaultBlockState(), Blocks.STRIPPED_BAMBOO_BLOCK.defaultBlockState()};
         for (BlockState state : states) {
             helper.assertFalse(state.is(RESTRICTED_LOGS), "Unlisted target stays outside the new gate: " + state);
             helper.assertFalse(LogHarvestRules.isBlocked(player, state), "The narrow log rule does not restrict " + state);
@@ -144,8 +144,10 @@ public final class LogHarvestGameTests {
                 "Dirt remains on the established base-progress vector");
         assertBits(helper, Blocks.OAK_LEAVES.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0x3c200000,
                 "Leaves remain available for starter sticks");
-        assertBits(helper, Blocks.STONE.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0x3aaaaaab,
-                "This feature does not introduce a new stone mining gate");
+        helper.assertFalse(LogHarvestRules.isBlocked(player,Blocks.STONE.defaultBlockState()),
+                "Stone is still outside the narrow log rule");
+        assertBits(helper, Blocks.STONE.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0,
+                "The separately restored R196 material gate forbids empty-hand stone removal");
         helper.assertFalse(Blocks.STONE.defaultBlockState().canHarvestBlock(helper.getLevel(), position, player),
                 "Existing stone drop requirements remain separate from removal progress");
         helper.assertValueEqual(Blocks.TORCH.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 1.0F,

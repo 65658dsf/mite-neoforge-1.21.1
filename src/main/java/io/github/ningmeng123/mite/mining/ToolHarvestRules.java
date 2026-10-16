@@ -40,9 +40,13 @@ public final class ToolHarvestRules {
                     || !(definition.family() == ToolFamily.PICKAXE || definition.family() == ToolFamily.WAR_HAMMER);
             return !player.getMainHandItem().isCorrectToolForDrops(state);
         }
-        return !player.isCreative() && !player.isSpectator() && state.requiresCorrectToolForDrops()
-                && MiteTools.definition(player.getMainHandItem()) != null
-                && !player.getMainHandItem().isCorrectToolForDrops(state);
+        if (player.isCreative() || player.isSpectator() || !SourceMiningRequirements.requiresTool(state)) return false;
+        var held = player.getMainHandItem();
+        var tool = MiteTools.definition(held);
+        // An ineffective source item returns zero, then uf retries bare hands; a modern baseline one is not a tool.
+        if (held.isEmpty() || !(held.getDestroySpeed(state) > 1F)) return true;
+        if (tool != null && tool.harvestLevel() < SourceMiningRequirements.minimumHarvestLevel(state)) return true;
+        return state.requiresCorrectToolForDrops() && !held.isCorrectToolForDrops(state);
     }
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void harvest(BlockEvent.BreakEvent event) {

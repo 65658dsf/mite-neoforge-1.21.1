@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class FunctionalPlayerHarvestMixin {
     @Inject(method = "hasCorrectToolForDrops", at = @At("HEAD"), cancellable = true)
     private void mite$portableAnvil(BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        if (state.getBlock() instanceof AnvilBlock) cir.setReturnValue(true);
+        if (io.github.ningmeng123.mite.mining.FunctionalBlockMining.portableWithoutOwner(state)
+                || io.github.ningmeng123.mite.mining.SourceMiningRequirements.sourceHandBreakable(state)) cir.setReturnValue(true);
     }
 }

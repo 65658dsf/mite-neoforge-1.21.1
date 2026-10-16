@@ -54,6 +54,12 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
         plants.add(io.github.ningmeng123.mite.registry.MiteDecorativeContent.WITHERWOOD_BUSH.get());
         return plants;
     }
+    /** Stained and tinted modern glass share the source glass material, including their pane variants. */
+    private static List<Block> glassBlocks() {
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.stream()
+                .filter(block -> block instanceof net.minecraft.world.level.block.TransparentBlock
+                        || block == Blocks.GLASS_PANE || block instanceof net.minecraft.world.level.block.StainedGlassPaneBlock).toList();
+    }
     private static final List<Block> SANDSTONE = List.of(Blocks.SANDSTONE, Blocks.CUT_SANDSTONE,
             Blocks.SMOOTH_SANDSTONE, Blocks.CHISELED_SANDSTONE, Blocks.RED_SANDSTONE,
             Blocks.CUT_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE, Blocks.CHISELED_RED_SANDSTONE,
@@ -124,6 +130,7 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
                             Blocks.JACK_O_LANTERN, Blocks.MELON), speed));
             }
             case AXE, HATCHET, BATTLE_AXE -> {
+                rules.add(Tool.Rule.minesAndDrops(glassBlocks(), speed));
                 rules.add(Tool.Rule.minesAndDrops(List.of(MiteFurnaces.SANDSTONE_FURNACE.get()), speed * 0.5F));
                 rules.add(Tool.Rule.minesAndDrops(SANDSTONE, speed * 0.5F));
                 rules.add(Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_AXE, speed));
@@ -138,7 +145,7 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
                 if (definition.family() == ToolFamily.HOE)
                     rules.add(Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_HOE, speed));
                 if (!List.of("wood", "flint", "obsidian").contains(definition.material()))
-                    rules.add(Tool.Rule.minesAndDrops(List.of(Blocks.GLASS, Blocks.GLASS_PANE), speed));
+                    rules.add(Tool.Rule.minesAndDrops(glassBlocks(), speed));
             }
             case SWORD, DAGGER, KNIFE, SHEARS -> {
                 rules.add(Tool.Rule.minesAndDrops(BlockTags.LEAVES, speed));

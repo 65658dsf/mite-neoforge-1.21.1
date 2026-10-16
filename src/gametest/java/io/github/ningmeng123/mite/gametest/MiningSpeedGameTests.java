@@ -309,7 +309,8 @@ public final class MiningSpeedGameTests {
             helper.getLevel().setBlockAndUpdate(slowPos, Blocks.STONE.defaultBlockState());
             helper.assertFalse(Blocks.STONE.defaultBlockState().canHarvestBlock(helper.getLevel(), slowPos, slow),
                     "Maximum level does not make the empty hand a valid stone harvesting tool");
-            helper.assertTrue(slow.gameMode.destroyBlock(slowPos), "Modern empty-handed removal remains possible");
+            helper.assertFalse(slow.gameMode.destroyBlock(slowPos), "Source material gates prohibit empty-handed removal itself");
+            helper.assertTrue(helper.getLevel().getBlockState(slowPos).is(Blocks.STONE), "Rejected direct removal retains the actual stone block");
             int afterWrongTool = helper.getLevel().getEntitiesOfClass(ItemEntity.class, dropsArea).stream()
                     .filter(item -> !existingDrops.contains(item.getUUID()) && item.getItem().is(Items.COBBLESTONE))
                     .mapToInt(item -> item.getItem().getCount()).sum();

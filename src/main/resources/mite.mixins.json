@@ -246,7 +246,8 @@
     "CursePlayerEquipmentMixin",
     "CurseChestMixin",
     "EndermanAggressionGoalMixin",
-    "CurseEquipableMixin"
+    "CurseEquipableMixin",
+    "PortableToolWearMixin"
   ],
   "client": [
     "client.WorldCreationDifficultyMixin",
