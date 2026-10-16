@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.rules.R196SpawnRules.Category;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
+import io.github.ningmeng123.mite.worldgen.OverworldSlimeSpawns;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning.Entry;
 import io.github.ningmeng123.mite.worldgen.R196SpawnQualification;
@@ -91,13 +92,14 @@ public final class BloodMoonInvasionGameTests {
         try (ProgressState state = new ProgressState(helper.getLevel()); Room room = new Room(helper)) {
             state.time(2_303_999L);
             List<Entry> original = R196MobSpawning.sourcePool(state.level, room.pos, Category.MONSTER);
-            helper.assertTrue(original.equals(R196MobSpawning.sourceProfile(1, Category.MONSTER)), "The independent plains source profile is unchanged before day97");
+            helper.assertTrue(original.equals(OverworldSlimeSpawns.pool(state.level, Category.MONSTER, R196MobSpawning.sourceProfile(1, Category.MONSTER))),
+                    "The early pool only applies the four ordinary-overworld slime adaptations before day97");
             state.time(2_304_000L);
             List<Entry> expanded = R196MobSpawning.sourcePool(state.level, room.pos, Category.MONSTER);
             helper.assertTrue(state.data.unlocked(), "A real pool query migrates a late pre-feature save immediately");
             helper.assertTrue(expanded.subList(0, original.size()).equals(original), "Every old entry, weight, group and order remains intact");
             helper.assertValueEqual(expanded.size(), original.size() + 3, "Only three missing underworld types are appended to an ordinary biome");
-            helper.assertValueEqual(expanded.stream().mapToInt(Entry::weight).sum(), 845, "Plains total weight760 receives exactly85 extra tickets");
+            helper.assertValueEqual(expanded.stream().mapToInt(Entry::weight).sum(), 1135, "Adapted plains total weight1050 receives exactly85 extra tickets");
             helper.assertValueEqual(new HashSet<>(expanded.stream().map(Entry::type).toList()).size(), expanded.size(), "Shared species cannot appear twice");
             for (var extra : Map.of("te", 40, "EntityLongdead", 40, "EntityAncientBoneLord", 5).entrySet()) {
                 Entry entry = named(expanded, extra.getKey());
@@ -190,7 +192,7 @@ public final class BloodMoonInvasionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void expandedSelectionKeepsColdDesertStoneRoofAndTreeCoverQualifications(GameTestHelper helper) throws Exception {
+    public static void expandedSelectionKeepsClimateAndTreeCoverWhileOrdinaryOverworldSlimesUseGeneralGround(GameTestHelper helper) throws Exception {
         try (ProgressState state = new ProgressState(helper.getLevel()); Room room = new Room(helper)) {
             state.time(2_304_000L);
             helper.assertTrue(select(room, "EntityWight") == null && select(room, "EntityShadow") == null, "Warm plains do not acquire climate-specific surface monsters");
@@ -201,10 +203,10 @@ public final class BloodMoonInvasionGameTests {
             room.biome(Biomes.PLAINS);
             room.set(room.pos.above(4), Blocks.DIRT.defaultBlockState());
             for (String source : List.of("EntityJelly", "EntityBlob", "EntityOoze", "EntityPudding"))
-                helper.assertTrue(select(room, source) == null, "Depth release does not bypass the stone-roof requirement for " + source);
+                helper.assertTrue(select(room, source) != null, "The user-requested ordinary slime habitat no longer requires a stone roof for " + source);
             room.set(room.pos.above(4), Blocks.STONE.defaultBlockState());
             room.set(room.pos.below(), Blocks.DIRT.defaultBlockState());
-            helper.assertTrue(select(room, "EntityOoze") == null && select(room, "EntityPudding") == null, "Stone-floor species still reject dirt");
+            helper.assertTrue(select(room, "EntityOoze") != null && select(room, "EntityPudding") != null, "All four ordinary-overworld slimes can use dirt ground");
             room.set(room.pos.below(), Blocks.STONE.defaultBlockState());
             helper.assertTrue(select(room, "EntityPudding") != null, "The complete original stone enclosure remains eligible");
             helper.assertTrue(select(room, "EntityWoodSpider") == null, "A stone room does not manufacture a wood-spider habitat");

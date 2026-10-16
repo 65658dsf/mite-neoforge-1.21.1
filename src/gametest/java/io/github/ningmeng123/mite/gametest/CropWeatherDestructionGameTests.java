@@ -78,12 +78,17 @@ public final class CropWeatherDestructionGameTests {
 
     @GameTest(template = "empty")
     public static void actualWaterSpreadDestroysAgeZeroCropWithoutReturningItsSeed(GameTestHelper h) {
-        try (var f = new Fixture(h)) {
+        try (var f = new Fixture(h);
+                var spawned = new SpawnedEntityCapture(f.level, entity -> entity instanceof ItemEntity item
+                        && item.getItem().is(Items.WHEAT_SEEDS)
+                        && entity.getBoundingBox().intersects(new AABB(f.pos).inflate(2)))) {
             f.flowInto(Blocks.WHEAT.defaultBlockState());
             h.assertTrue(f.level.getFluidState(f.pos).is(FluidTags.WATER), "Real water-fluid spreading reaches the crop cell");
-            h.assertValueEqual(f.collect(Items.WHEAT_SEEDS), 0, "Flood reason suppresses the age-zero self-drop seed");
+            h.assertValueEqual(spawned.live(ItemEntity.class).stream().mapToInt(entity -> entity.getItem().getCount()).sum(),
+                    0, "Flood reason suppresses the age-zero self-drop seed");
             Block.dropResources(Blocks.WHEAT.defaultBlockState(), f.level, f.pos);
-            h.assertValueEqual(f.collect(Items.WHEAT_SEEDS), 1, "Flood reason is cleared after native water destruction returns");
+            h.assertValueEqual(spawned.live(ItemEntity.class).stream().mapToInt(entity -> entity.getItem().getCount()).sum(),
+                    1, "Flood reason is cleared after native water destruction returns");
         }
         h.succeed();
     }

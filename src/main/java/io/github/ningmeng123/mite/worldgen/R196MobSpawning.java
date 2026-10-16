@@ -237,7 +237,8 @@ public final class R196MobSpawning {
             var hut = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(BuiltinStructures.SWAMP_HUT);
             if (hut != null && level.structureManager().getStructureWithPieceAt(pos, hut).isValid()) return List.of();
         }
-        return BloodMoonInvasion.pool(level, category, Tables.BIOMES.get(biomeId(sourceBiome(level, pos), level)).lists().get(category));
+        return OverworldSlimeSpawns.pool(level, category,
+                BloodMoonInvasion.pool(level, category, Tables.BIOMES.get(biomeId(sourceBiome(level, pos), level)).lists().get(category)));
     }
     private static List<Entry> pool(ServerLevel level, BlockPos pos, Category category, boolean modernOnly) {
         List<Entry> entries = new ArrayList<>();
@@ -463,6 +464,7 @@ public final class R196MobSpawning {
             Entry entry = weighted(entries, random);
             if (entry.modern()) return entry;
             String name = entry.sourceClass();
+            if (OverworldSlimeSpawns.applies(level, name)) return entry;
             if (!BloodMoonInvasionRules.depthAllows(name, sourceY, overworld, moon.blood(), surface.value().getBaseTemperature() <= .15F,
                     biomeId(surface, level) == 2, invasion)) continue;
             boolean stoneAbove = firstAbove(level, pos).is(Blocks.STONE) || firstAbove(level, pos).is(Blocks.DEEPSLATE);

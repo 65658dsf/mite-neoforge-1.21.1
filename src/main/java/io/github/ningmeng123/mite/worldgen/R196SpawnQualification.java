@@ -31,12 +31,15 @@ public final class R196SpawnQualification {
         boolean animal = R196MobSpawning.category(mob) == R196SpawnRules.Category.ANIMAL;
         boolean monster = R196MobSpawning.category(mob) == R196SpawnRules.Category.MONSTER;
         boolean cube = name.equals("ts") || name.equals("tl") || mob instanceof R196Mob r196 && r196.miteKind().family() == MobKind.Family.CUBE;
+        boolean overworldSlime = OverworldSlimeSpawns.applies(level, name);
         if (!level.isUnobstructed(mob)) return false;
         if (name.equals("sc")) {
             if (sourceHeight <= 45 || sourceHeight >= 63 || !onlyWater(access, mob.getBoundingBox().inflate(2))) return false;
             return true; // se#getCanSpawnHere does not run the ordinary block/liquid collision checks.
         }
         if (!access.noCollision(mob)) return false;
+        if (overworldSlime && (level.getDifficulty() == Difficulty.PEACEFUL || anyFluid(access, mob.getBoundingBox(), false)
+                || R196MobSpawning.positionY(access, pos, R196SpawnRules.Category.MONSTER) == null)) return false;
         boolean leavesException = name.equals("EntityWoodSpider") || name.equals("EntityBlackWidowSpider") || name.equals("rx");
         if (!leavesException && access.getBlockState(pos.below()).is(BlockTags.LEAVES)) return false;
         boolean shallow = monster && !name.equals("td") && !name.equals("tj") && !name.equals("tg") && !name.equals("sk")
@@ -79,7 +82,7 @@ public final class R196SpawnQualification {
             return random.nextInt(10) == 0 && net.minecraft.world.level.levelgen.WorldgenRandom.seedSlimeChunk(pos.getX() >> 4, pos.getZ() >> 4,
                     level.getSeed(), 987234911L).nextInt(10) == 0 && sourceHeight < 40;
         }
-        if (name.equals("EntityOoze") || name.equals("EntityPudding")) {
+        if (!overworldSlime && (name.equals("EntityOoze") || name.equals("EntityPudding"))) {
             var below = access.getBlockState(pos.below()); if (!below.is(Blocks.STONE) && !below.is(Blocks.DEEPSLATE)) return false;
         }
         if (name.equals("tj")) return random.nextInt(20) == 0 && level.getDifficulty() != Difficulty.PEACEFUL;
