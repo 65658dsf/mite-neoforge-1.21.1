@@ -228,6 +228,7 @@
     "NativeFireProtectionMixin",
     "SourceEnchantmentPlayerMeleeMixin",
     "SourceEnchantmentMobMeleeMixin",
+    "MonsterMeleeScalingMixin",
     "SourceEnchantmentMobPickupMixin",
     "SourceEnchantmentMovementMixin",
     "SourceEnchantmentEffectsMixin",
