@@ -95,6 +95,7 @@ public final class R196UnderworldGenerator extends ChunkGenerator {
     @Override
     public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk, StructureManager structures) {
         R196UnderworldVegetation.decorate(level, chunk.getPos().x, chunk.getPos().z, terrain().hashedSeed());
+        UnderworldSpringGeneration.decorate(level, chunk.getPos().x, chunk.getPos().z, terrain().hashedSeed());
         super.applyBiomeDecoration(level, chunk, structures);
     }
 

@@ -41,6 +41,99 @@
       "native durability events and existing Unbreaking retained"
     ]
   },
+  "underworld_springs": {
+    "source": [
+      "acu.java:68,251-283",
+      "afw.java:6-46",
+      "js.java:1538-1549"
+    ],
+    "attempts_per_chunk": 70,
+    "xz_offset": "8+nextInt(16)",
+    "legacy_y": "nextInt(nextInt(120)+8)+120",
+    "fluid": "if(nextInt(32)+16<local_y) water; else nextFloat()<0.95 ? lava : water",
+    "draw_order": [
+      "x",
+      "y_outer",
+      "y_inner",
+      "z",
+      "depth_threshold",
+      "conditional_fluid_float"
+    ],
+    "placement": {
+      "above": "stone",
+      "below": "stone",
+      "target": [
+        "air",
+        "stone"
+      ],
+      "horizontal_stone": 3,
+      "horizontal_air": 1
+    },
+    "mycelium_exclusion": "skip all candidates when any already-available chunk in surrounding 3x3 has persisted natural-mycelium origin",
+    "cave_stub": "always null in source underworld; only aet overworld exposes MapGenCaveNetwork",
+    "modern_adaptations": [
+      "existing fromLegacyY depth mapping",
+      "isolated deterministic per-chunk random stream",
+      "no retroactive old-chunk generation",
+      "no inference that player-placed mycelium is natural"
+    ]
+  },
+  "fluid_freefall": {
+    "source": [
+      "apd.java:21-52",
+      "abw.java:4199-4212"
+    ],
+    "entry_point": "scheduled FlowingFluid.tick before modern spreading",
+    "conditions": [
+      "integer player XZ distance squared <256",
+      "below is air",
+      "above not same fluid",
+      "no horizontal stationary peer"
+    ],
+    "source_mapping": "stationary modern peer = same-fluid source; only LiquidBlock, never waterlogged carriers",
+    "result": "vacate original cell, full source at below, deferred source level1 conversion",
+    "decay_ticks": {
+      "water": 8,
+      "lava_normal": 48,
+      "lava_ultrawarm": 16
+    },
+    "decay_level": {
+      "legacy_metadata": 1,
+      "modern_amount": 7,
+      "modern_falling": false
+    },
+    "save": "per-dimension SavedData mite_temporary_fluids version1; packed position,fluid kind,absolute gameTime deadline",
+    "guards": [
+      "no chunk force load",
+      "no stale overwrite of solids or another fluid",
+      "existing mantle evaporation",
+      "modern minBuildHeight boundary"
+    ],
+    "bucket_interaction": "unchanged modern adaptation; no Ctrl/experience source-placement system"
+  },
+  "explosion_preparation": {
+    "source": [
+      "abr.java:36-91"
+    ],
+    "directions": 1352,
+    "initial_budget": "block_power*(0.7+random_float*0.6)*2*1.25",
+    "step": 0.3,
+    "per_step_loss": "0.3*0.75",
+    "block_loss": "(resistance+0.3)*0.3",
+    "allowed_resistance_inclusive": [
+      0,
+      0.1
+    ],
+    "stopped_downward_mycelium": "convert to dirt and call existing undermining",
+    "main_explosion": "keep existing modern main ray radius and damage calculator",
+    "guards": [
+      "DESTROY or DESTROY_WITH_DECAY only",
+      "native block explosion callback",
+      "natural trial loot context preserved",
+      "existing collapse scheduling",
+      "no unloaded chunk generation"
+    ]
+  },
   "tests": {
     "unit": "SourceWorldPhysicsRulesTest",
     "integration": "SourceWorldPhysicsGameTests"

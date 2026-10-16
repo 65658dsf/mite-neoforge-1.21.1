@@ -4,8 +4,12 @@ import io.github.ningmeng123.mite.registry.MiteItems;
 import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteShards;
 import io.github.ningmeng123.mite.survival.DeathExperienceOrbs;
+import io.github.ningmeng123.mite.world.SourceExplosionBlocks;
 import io.github.ningmeng123.mite.world.SourceExplosionItems;
+import io.github.ningmeng123.mite.world.SourceFluidFall;
+import io.github.ningmeng123.mite.world.TemporaryFluidChanges;
 import io.github.ningmeng123.mite.worldgen.NaturalTrialBlocks;
+import io.github.ningmeng123.mite.worldgen.UnderworldSpringGeneration;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -123,12 +127,131 @@ public final class SourceWorldPhysicsGameTests {
         h.succeed();
     }
 
+    @GameTest(template="empty")
+    public static void preBlastClearsSoftBlocksAndConvertsMyceliumWithoutExcavatingStone(GameTestHelper h) {
+        BlockPos soft=pos(h,2,3,2),soil=pos(h,3,2,2),wall=pos(h,4,3,2);
+        h.getLevel().setBlock(soft.below(),Blocks.STONE.defaultBlockState(),3);
+        h.getLevel().setBlock(soft,Blocks.SHORT_GRASS.defaultBlockState(),3);
+        h.getLevel().setBlock(soil.below(),Blocks.STONE.defaultBlockState(),3);
+        h.getLevel().setBlock(soil,Blocks.MYCELIUM.defaultBlockState(),3);
+        h.getLevel().setBlock(wall,Blocks.STONE.defaultBlockState(),3);
+        SourceExplosionBlocks.prepare(h.getLevel(),blast(h,Vec3.atCenterOf(soft),3F,Explosion.BlockInteraction.DESTROY));
+        h.assertTrue(h.getLevel().getBlockState(soft).isAir(),"The actual preliminary rays clear zero/low resistance plants");
+        h.assertTrue(h.getLevel().getBlockState(soil).is(Blocks.DIRT),"A downward preliminary ray strips mycelium to supported dirt");
+        h.assertTrue(h.getLevel().getBlockState(wall).is(Blocks.STONE),"The preliminary pass stops at source resistance above .1");
+        h.assertValueEqual(blast(h,Vec3.atCenterOf(soft),3F,Explosion.BlockInteraction.DESTROY).radius(),3F,"The modern main blast power is unchanged");
+        clearDrops(h);h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void preBlastHonorsKeepAndNaturalTrialDropProvenance(GameTestHelper h) {
+        BlockPos carpet=pos(h,2,3,2),natural=pos(h,4,3,2);
+        h.getLevel().setBlock(carpet.below(),Blocks.STONE.defaultBlockState(),3);
+        h.getLevel().setBlock(natural.below(),Blocks.STONE.defaultBlockState(),3);
+        h.getLevel().setBlock(carpet,Blocks.WHITE_CARPET.defaultBlockState(),3);
+        h.getLevel().setBlock(natural,Blocks.WHITE_CARPET.defaultBlockState(),3);
+        NaturalTrialBlocks.record(h.getLevel().getChunkAt(natural),natural);
+        try {
+            SourceExplosionBlocks.prepare(h.getLevel(),blast(h,Vec3.atCenterOf(carpet),3F,Explosion.BlockInteraction.KEEP));
+            h.assertTrue(h.getLevel().getBlockState(carpet).is(Blocks.WHITE_CARPET),"No-block-damage explosion does not run the preliminary destruction");
+            SourceExplosionBlocks.destroy(h.getLevel(),carpet,h.getLevel().getBlockState(carpet),blast(h,Vec3.atCenterOf(carpet),3F,Explosion.BlockInteraction.DESTROY));
+            SourceExplosionBlocks.destroy(h.getLevel(),natural,h.getLevel().getBlockState(natural),blast(h,Vec3.atCenterOf(natural),3F,Explosion.BlockInteraction.DESTROY));
+            h.assertTrue(h.getLevel().getBlockState(carpet).isAir()&&h.getLevel().getBlockState(natural).isAir(),"Both actual block transactions run");
+            h.assertValueEqual(total(h,Items.WHITE_CARPET),1,"Only the ordinary carpet drops; natural trial provenance survives the prepass");
+        } finally { clearDrops(h); }
+        h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void springRequiresSourceThreeStoneOneAirCavity(GameTestHelper h) {
+        BlockPos p=pos(h,3,3,3);
+        h.getLevel().setBlock(p.above(),Blocks.STONE.defaultBlockState(),2);
+        h.getLevel().setBlock(p.below(),Blocks.STONE.defaultBlockState(),2);
+        h.getLevel().setBlock(p,Blocks.STONE.defaultBlockState(),2);
+        for (Direction d:Direction.Plane.HORIZONTAL) h.getLevel().setBlock(p.relative(d),Blocks.STONE.defaultBlockState(),2);
+        h.assertFalse(UnderworldSpringGeneration.generate(h.getLevel(),p,true),"Four stone sides provide no cave opening");
+        h.getLevel().setBlock(p.east(),Blocks.AIR.defaultBlockState(),2);
+        h.assertTrue(UnderworldSpringGeneration.generate(h.getLevel(),p,true),"Exactly three stone sides and one air side place water");
+        h.assertTrue(h.getLevel().getFluidState(p).isSource(),"Natural spring is a persistent source");
+        h.getLevel().setBlock(p,Blocks.STONE.defaultBlockState(),2);
+        h.assertTrue(UnderworldSpringGeneration.generate(h.getLevel(),p,false),"The same cavity supports the selected lava variant");
+        h.assertTrue(h.getLevel().getFluidState(p).is(net.minecraft.tags.FluidTags.LAVA),"Lava selection reaches the actual world");
+        h.getLevel().setBlock(p,Blocks.AIR.defaultBlockState(),2);h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void naturalMyceliumFlagPersistsAndSuppressesAllSeventyCandidates(GameTestHelper h) {
+        BlockPos p=pos(h,3,3,3);var chunk=h.getLevel().getChunkAt(p);
+        Boolean before=chunk.getExistingDataOrNull(UnderworldSpringGeneration.NATURAL_MYCELIUM.get());
+        try {
+            UnderworldSpringGeneration.markMycelium(h.getLevel(),p);
+            h.assertTrue(UnderworldSpringGeneration.neighboringMycelium(h.getLevel(),p.getX()>>4,p.getZ()>>4),"Natural-mycelium origin is visible to the neighboring decorator");
+            h.assertValueEqual(UnderworldSpringGeneration.decorate(h.getLevel(),p.getX()>>4,p.getZ()>>4,196),0,"The marked neighbor suppresses the entire source spring loop");
+            h.assertTrue(chunk.getData(UnderworldSpringGeneration.NATURAL_MYCELIUM.get()),"The persistent chunk attachment records natural origin");
+            var saved=net.minecraft.world.level.chunk.storage.ChunkSerializer.write(h.getLevel(),chunk);
+            var loaded=net.minecraft.world.level.chunk.storage.ChunkSerializer.read(h.getLevel(),h.getLevel().getPoiManager(),
+                    new net.minecraft.world.level.chunk.storage.RegionStorageInfo("mite-spring-test",h.getLevel().dimension(),"chunk"),chunk.getPos(),saved);
+            h.assertTrue(loaded.getData(UnderworldSpringGeneration.NATURAL_MYCELIUM.get()),"Native chunk save/read retains the natural mycelium exclusion flag");
+        } finally {
+            if (before==null) chunk.removeData(UnderworldSpringGeneration.NATURAL_MYCELIUM.get());
+            else chunk.setData(UnderworldSpringGeneration.NATURAL_MYCELIUM.get(),before);
+        }
+        h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void scheduledNativeFluidTickMovesTheWholeCellAndPersistsItsDecay(GameTestHelper h) {
+        BlockPos p=pos(h,3,4,3);ServerPlayer player=player(h,point(h,3.5,2,3.5));
+        try {
+            h.getLevel().setBlock(p,Blocks.WATER.defaultBlockState(),2);
+            h.getLevel().setBlock(p.below(),Blocks.AIR.defaultBlockState(),2);
+            h.getLevel().setBlock(p.below(2),Blocks.STONE.defaultBlockState(),2);
+            Fluids.WATER.tick(h.getLevel(),p,h.getLevel().getFluidState(p));
+            h.assertTrue(h.getLevel().getBlockState(p).isAir(),"Real native tick vacates the original cell rather than leaving a modern waterfall source");
+            h.assertTrue(h.getLevel().getFluidState(p.below()).isSource(),"The entire liquid cell moves down one block");
+            var saved=TemporaryFluidChanges.get(h.getLevel()).save(new CompoundTag(),h.getLevel().registryAccess());
+            var restored=TemporaryFluidChanges.load(saved,h.getLevel().registryAccess());
+            h.assertValueEqual(restored.pending().get(p.below().asLong()).due(),h.getLevel().getGameTime()+8,"Water's deferred flowing conversion survives a SavedData roundtrip");
+        } finally {
+            TemporaryFluidChanges.get(h.getLevel()).cancel(p.below());h.getLevel().setBlock(p.below(),Blocks.AIR.defaultBlockState(),2);
+            removePlayer(h,player);
+        }
+        h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void neighboringSourceAndOverheadLiquidVetoWholeCellFalling(GameTestHelper h) {
+        BlockPos p=pos(h,3,4,3);ServerPlayer player=player(h,point(h,3.5,2,3.5));
+        try {
+            h.getLevel().setBlock(p,Blocks.WATER.defaultBlockState(),2);h.getLevel().setBlock(p.below(),Blocks.AIR.defaultBlockState(),2);
+            h.getLevel().setBlock(p.east(),Blocks.WATER.defaultBlockState(),2);
+            h.assertFalse(SourceFluidFall.tryFall(h.getLevel(),p,h.getLevel().getFluidState(p)),"A stationary source peer holds the liquid cell in place");
+            h.getLevel().setBlock(p.east(),Blocks.AIR.defaultBlockState(),2);h.getLevel().setBlock(p.above(),Blocks.WATER.defaultBlockState(),2);
+            h.assertFalse(SourceFluidFall.tryFall(h.getLevel(),p,h.getLevel().getFluidState(p)),"A continuous liquid column does not freefall");
+            h.getLevel().setBlock(p.above(),Blocks.AIR.defaultBlockState(),2);
+            player.moveTo(point(h,40,2,40));
+            h.assertFalse(SourceFluidFall.tryFall(h.getLevel(),p,h.getLevel().getFluidState(p)),"No nearby player means ordinary fluid logic remains responsible");
+        } finally { h.getLevel().setBlock(p,Blocks.AIR.defaultBlockState(),2);h.getLevel().setBlock(p.above(),Blocks.AIR.defaultBlockState(),2);removePlayer(h,player); }
+        h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void deferredFluidConversionHonorsTimeIdentityAndUnloadedChunks(GameTestHelper h) {
+        BlockPos p=pos(h,3,4,3),unloaded=new BlockPos(29_000_000,80,29_000_000);
+        TemporaryFluidChanges data=new TemporaryFluidChanges();long now=h.getLevel().getGameTime();
+        h.getLevel().setBlock(p,Blocks.WATER.defaultBlockState(),2);
+        data.schedule(p,true,now+1);data.tick(h.getLevel());
+        h.assertTrue(h.getLevel().getFluidState(p).isSource(),"The tick before the absolute deadline cannot consume the source");
+        data.schedule(p,true,now);data.schedule(unloaded,false,now);
+        data=TemporaryFluidChanges.load(data.save(new CompoundTag(),h.getLevel().registryAccess()),h.getLevel().registryAccess());
+        data.tick(h.getLevel());
+        h.assertFalse(h.getLevel().getFluidState(p).isSource(),"The deadline converts to source legacy level1, without changing world time");
+        h.assertValueEqual(h.getLevel().getFluidState(p).getAmount(),7,"Legacy level1 corresponds to modern amount7");
+        h.assertTrue(data.pending().containsKey(unloaded.asLong()),"An unloaded destination remains pending without force-loading its chunk");
+        h.getLevel().setBlock(p,Blocks.STONE.defaultBlockState(),2);data.schedule(p,true,now);data.tick(h.getLevel());
+        h.assertTrue(h.getLevel().getBlockState(p).is(Blocks.STONE),"A stale deferred change cannot overwrite a replacement solid block");
+        h.succeed();
+    }
 
 
 

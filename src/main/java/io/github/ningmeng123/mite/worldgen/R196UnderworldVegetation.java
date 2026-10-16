@@ -34,7 +34,8 @@ public final class R196UnderworldVegetation {
                         BlockState target = level.getBlockState(position), floor = level.getBlockState(position.below());
                         if (!target.isSolidRender(level, position) || !floor.isSolidRender(level, position.below())
                                 || target.getBlock() instanceof FallingBlock) break;
-                        level.setBlock(position, Blocks.MYCELIUM.defaultBlockState(), 2);
+                        if (level.setBlock(position, Blocks.MYCELIUM.defaultBlockState(), 2))
+                            UnderworldSpringGeneration.markMycelium(level,position);
                         random.setSeed(post.seed() + R196UnderworldTerrain.chunkHash(x, z));
                         random.nextInt();
                         if (random.nextInt(16) == 0 && !largeBrownMushroom(level, random, position.above())) {

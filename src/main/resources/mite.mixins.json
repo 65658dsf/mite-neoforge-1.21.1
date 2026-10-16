@@ -254,6 +254,8 @@
     "ServerPlayerMovementHungerMixin",
     "BoatMovementHungerMixin",
     "PlayerMovementHungerMixin",
+    "SourceExplosionPreparationMixin",
+    "SourceFluidFallMixin",
     "PlayerRestMixin",
     "ReferencedBookItemMixin",
     "AchievementBonemealMixin"

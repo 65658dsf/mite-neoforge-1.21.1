@@ -25,6 +25,31 @@ class SourceWorldPhysicsRulesTest {
         assertEquals(16,SourceExplosionRules.equipmentWear(2,16,1));
         assertEquals(Integer.MAX_VALUE,SourceExplosionRules.equipmentWear(3,0,100));
     }
+    @ParameterizedTest @CsvSource({"-1,true","0,false","0.1,false","0.100001,true","1,true"})
+    void preBlastOnlyClearsNonnegativeResistanceUpToOneTenth(float resistance,boolean stops) {
+        assertEquals(stops,SourceExplosionRules.stopsPreBlast(resistance));
+    }
+    @Test void preliminaryRayBudgetIsExactlyTwoAndOneQuarterFactors() {
+        assertEquals(5.25F,SourceExplosionRules.preBlastBudget(3,0),.000001F);
+        assertEquals(7.5F,SourceExplosionRules.preBlastBudget(3,.5F),.000001F);
+    }
+    @Test void deepSpringCandidateDoesNotConsumeTheConditionalLavaDraw() {
+        Stub random=new Stub(new int[]{15,119,126,0,31},.01F);
+        assertEquals(new UnderworldSpringRules.Candidate(55,126,-8,true),UnderworldSpringRules.candidate(random,2,-1));
+        assertEquals(List.of(16,120,127,16,32),random.bounds);
+        assertEquals(0,random.floats);
+    }
+    @ParameterizedTest @CsvSource({"0.949999,false","0.95,true","0.999,true"})
+    void shallowSpringFluidBoundaryIsNinetyFivePercentLava(float draw,boolean water) {
+        Stub random=new Stub(new int[]{0,0,0,0,0},draw);
+        assertEquals(water,UnderworldSpringRules.candidate(random,0,0).water());
+        assertEquals(1,random.floats);
+        assertEquals(List.of(16,120,8,16,32),random.bounds);
+    }
+    @ParameterizedTest @CsvSource({"true,false,8","true,true,8","false,false,48","false,true,16"})
+    void fallingFluidDecayUsesSourceWorldDependentTimings(boolean water,boolean ultraWarm,int expected) {
+        assertEquals(expected,UnderworldSpringRules.freefallDecayDelay(water,ultraWarm));
+    }
     private static final class Stub extends Random {
         final int[] values;final float draw;int cursor,floats;final List<Integer> bounds=new ArrayList<>();
         Stub(int[] values,float draw) { this.values=values;this.draw=draw; }
