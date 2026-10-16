@@ -609,5 +609,7 @@
   "commands.mite.curse.already_cursed": "The player already has a curse or pending curse, or is dead. Clear their curse before testing.",
   "commands.mite.curse.applied": "Scheduled a curse for %s: %s, after %s game ticks.",
   "commands.mite.curse.none": "%s has no active or pending curse.",
-  "commands.mite.curse.status": "%s: %s; realized=%s, known=%s, remaining=%s ticks, witch=%s"
+  "commands.mite.curse.status": "%s: %s; realized=%s, known=%s, remaining=%s ticks, witch=%s",
+  "death.attack.mite.hand_damage": "%s hurt their hands",
+  "death.attack.mite.hand_damage.player": "%s fatally hurt their hands attacking %s"
 }

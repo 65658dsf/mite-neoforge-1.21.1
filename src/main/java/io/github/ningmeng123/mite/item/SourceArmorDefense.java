@@ -90,7 +90,8 @@ public final class SourceArmorDefense {
     public static Source flags(DamageSource source) {
         boolean absolute = source.is(DamageTypes.IN_WALL) || source.is(DamageTypes.FELL_OUT_OF_WORLD)
                 || source.is(DamageTypes.GENERIC_KILL) || source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
-        boolean unblockable = source.is(DamageTypeTags.IS_DROWNING) || source.is(DamageTypes.STARVE);
+        boolean unblockable = source.is(DamageTypeTags.IS_DROWNING) || source.is(DamageTypes.STARVE)
+                || io.github.ningmeng123.mite.combat.SourcePlayerCombat.isHandDamage(source);
         boolean lava = source.is(DamageTypes.LAVA);
         // R196 nb.setLavaDamage bypasses mundane armor but does not set nb.m()'s fire flag.
         boolean fire = source.is(DamageTypeTags.IS_FIRE) && !lava;

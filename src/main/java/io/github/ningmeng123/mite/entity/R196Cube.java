@@ -168,12 +168,6 @@ public final class R196Cube extends Slime implements R196Mob, CubeState {
         if (kind==MobKind.PUDDING) return !MobCombat.fire(source) && !source.is(DamageTypes.LAVA) && !MobCombat.magic(source) && !snowball;
         return false;
     }
-    @Override public boolean hurt(DamageSource source,float amount) {
-        boolean hit=super.hurt(source,amount);
-        if (hit && source.getDirectEntity() instanceof Player player && !player.getMainHandItem().isEmpty())
-            MobCorrosion.equipment(player.getMainHandItem(),acidic(),damageMultiplier(kind),player,EquipmentSlot.MAINHAND);
-        return hit;
-    }
     @Override protected void dealDamage(LivingEntity target) {
         if (level().isClientSide || !isAlive() || distanceToSqr(target)>contactRangeSquared(getSize()) || !hasLineOfSight(target)) return;
         if (!(target instanceof Player || target instanceof Animal || target instanceof Villager)) return;

@@ -57,10 +57,16 @@ public final class EnduranceActionGameTests {
     public static void nativeAttackChargesAttemptWithoutDuplicateSuccessfulHitCost(GameTestHelper helper) {
         Player player = player(helper); equip(player, 4);
         var victim = helper.spawn(EntityType.COW, new BlockPos(2, 2, 2)); victim.setNoAi(true);
+        player.setPos(victim.position().add(1D,0D,0D));
+        helper.assertTrue(io.github.ningmeng123.mite.combat.SourcePlayerReach.canMelee(player,victim),"Native attack fixture is within actual empty-hand melee reach");
+        float before=victim.getHealth();
         player.attack(victim);
+        helper.assertTrue(victim.getHealth()<before,"First attempt really harms the non-invulnerable native target");
         effort(helper, player, .06F, "A successful native attack pays .3*.2 exactly once");
+        float afterSuccess=victim.getHealth();
         player.getFoodData().setExhaustion(0F); victim.setInvulnerable(true);
         player.attack(victim);
+        helper.assertTrue(victim.getHealth()==afterSuccess,"Invulnerable second attack really leaves health unchanged while charging attempt effort");
         effort(helper, player, .06F, "An allowed failed hit still pays the source attempt fee");
         helper.succeed();
     }

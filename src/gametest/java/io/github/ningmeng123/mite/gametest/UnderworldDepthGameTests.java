@@ -101,6 +101,8 @@ public final class UnderworldDepthGameTests {
             for (int x = -1; x <= 2; x++) placeObsidian(helper, player, underworld, frame.at(x, 3));
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL));
             BlockPos bottomObsidian = frame.at(0, -1);
+            player.setPos(interior.getX() + .5, interior.getY(), interior.getZ() - .5);
+            helper.assertTrue(player.canInteractWithBlock(bottomObsidian, 1D), "Ignition fixture stays inside actual survival reach");
             var ignition = player.gameMode.useItemOn(player, underworld, player.getMainHandItem(), InteractionHand.MAIN_HAND,
                     new BlockHitResult(Vec3.atCenterOf(bottomObsidian).add(0, .5, 0), Direction.UP, bottomObsidian, false));
             helper.assertTrue(ignition.consumesAction() && frame.complete(underworld), "Actual flint-and-steel interaction activates the hand-built native frame");
@@ -208,11 +210,12 @@ public final class UnderworldDepthGameTests {
     private static void placeObsidian(GameTestHelper helper, ServerPlayer player, ServerLevel level, BlockPos target) {
         if (!player.getMainHandItem().is(Items.OBSIDIAN) || player.getMainHandItem().isEmpty())
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.OBSIDIAN, 8));
-        player.setPos(target.getX() + .5, target.getY(), target.getZ() - 2.5);
+        player.setPos(target.getX() + .5, target.getY(), target.getZ() - .5);
         int before = player.getMainHandItem().getCount();
         for (Direction towardSupport : Direction.values()) {
             BlockPos support = target.relative(towardSupport);
             if (level.getBlockState(support).isAir()) continue;
+            helper.assertTrue(player.canInteractWithBlock(support, 1D), "Placement fixture approaches the real native interaction face inside survival reach");
             Direction face = towardSupport.getOpposite();
             var result = player.gameMode.useItemOn(player, level, player.getMainHandItem(), InteractionHand.MAIN_HAND,
                     new BlockHitResult(Vec3.atCenterOf(support).add(face.getStepX() * .5, face.getStepY() * .5, face.getStepZ() * .5), face, support, false));

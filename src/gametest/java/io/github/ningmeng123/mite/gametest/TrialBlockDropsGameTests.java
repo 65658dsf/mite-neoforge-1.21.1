@@ -235,6 +235,9 @@ public final class TrialBlockDropsGameTests {
                     helper.assertTrue(corridor.equals(pot.getLootTable()), "The real natural pot remains unopened with deferred loot before destruction");
                     if (removal == 0) {
                         session.player.setItemInHand(InteractionHand.MAIN_HAND, tool(level, 0));
+                        session.player.moveTo(fixture.center.getX()+1.5,fixture.center.getY(),fixture.center.getZ()+.5);
+                        helper.assertTrue(io.github.ningmeng123.mite.combat.SourcePlayerReach.canReachBlock(session.player,
+                                fixture.center,InteractionHand.MAIN_HAND),"The survival pot test uses a real reachable target");
                         helper.assertTrue(session.player.gameMode.destroyBlock(fixture.center), "Survival mining actually breaks the unopened natural pot");
                     } else (removal == 1 ? Blast.TNT_DIRECT : Blast.CREEPER).run(level, fixture.center);
                     helper.assertTrue(level.getBlockState(fixture.center).isAir(), "Every tested native destruction route removes the natural pot");
@@ -359,7 +362,7 @@ public final class TrialBlockDropsGameTests {
         try {
             player.server.getPlayerList().placeNewPlayer(connection, player, cookie);
             player.setGameMode(GameType.SURVIVAL);
-            player.teleportTo(target, center.getX() + 3.5, center.getY() + 1, center.getZ() + .5, 0F, 0F);
+            player.teleportTo(target, center.getX() + 1.5, center.getY(), center.getZ() + .5, 0F, 0F);
             helper.assertTrue(player.serverLevel() == target, "The survival player really operates in the target dimension");
             player.setNoGravity(true);
             player.setOnGround(true);

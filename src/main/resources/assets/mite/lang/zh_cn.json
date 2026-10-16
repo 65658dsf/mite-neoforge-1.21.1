@@ -609,5 +609,7 @@
   "commands.mite.curse.already_cursed": "玩家已有诅咒或待生效诅咒，或已死亡；请先清除诅咒再测试。",
   "commands.mite.curse.applied": "已安排 %s 的诅咒：%s，延迟 %s 游戏刻。",
   "commands.mite.curse.none": "%s 没有诅咒或待生效诅咒。",
-  "commands.mite.curse.status": "%s：%s；已生效=%s，效果已知=%s，剩余=%s 刻，施咒女巫=%s"
+  "commands.mite.curse.status": "%s：%s；已生效=%s，效果已知=%s，剩余=%s 刻，施咒女巫=%s",
+  "death.attack.mite.hand_damage": "%s 的手受伤了",
+  "death.attack.mite.hand_damage.player": "%s 攻击 %s 时手部受伤致死"
 }

@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.ningmeng123.mite.enchantment.R196Enchantments;
+import io.github.ningmeng123.mite.enchantment.TreeFellingHarvestAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,11 +15,18 @@ import org.spongepowered.asm.mixin.Unique;
 
 /** jw fells only the vertical log column, with every extra break using normal protection/wear/drops. @author NingMeng123 */
 @Mixin(ServerPlayerGameMode.class)
-public abstract class TreeFellingMixin {
+public abstract class TreeFellingMixin implements TreeFellingHarvestAccess {
     @Shadow protected ServerLevel level;
     @Shadow @org.spongepowered.asm.mixin.Final protected ServerPlayer player;
     @Shadow public abstract boolean destroyBlock(BlockPos pos);
     @Unique private boolean mite$felling;
+    @Unique private BlockPos mite$extraLogReach;
+    @Override public boolean mite$consumeExtraLogReach(BlockPos pos) {
+        if (!mite$felling || mite$extraLogReach == null || !mite$extraLogReach.equals(pos)) return false;
+        // Consumed before cancellable break events: callbacks cannot reuse it for another transaction.
+        mite$extraLogReach = null;
+        return true;
+    }
     @WrapMethod(method = "destroyBlock")
     private boolean mite$verticalLogs(BlockPos pos, Operation<Boolean> original) {
         boolean log = level.getBlockState(pos).is(BlockTags.LOGS);
@@ -31,9 +39,12 @@ public abstract class TreeFellingMixin {
             for (int dy = 1; dy <= count; dy++) {
                 BlockPos above = pos.above(dy);
                 if (!level.getBlockState(above).is(BlockTags.LOGS) || player.getMainHandItem().isEmpty()
-                        || !level.mayInteract(player, above) || !destroyBlock(above)) break;
+                        || !level.mayInteract(player, above)) break;
+                mite$extraLogReach = above.immutable();
+                try { if (!destroyBlock(above)) break; }
+                finally { mite$extraLogReach = null; }
             }
-        } finally { mite$felling = false; }
+        } finally { mite$extraLogReach = null; mite$felling = false; }
         return removed;
     }
 }

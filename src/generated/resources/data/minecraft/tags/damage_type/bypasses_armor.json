@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "mite:melt",
+    "mite:hand_damage",
     "mite:water",
     "mite:sunlight",
     "mite:acid",

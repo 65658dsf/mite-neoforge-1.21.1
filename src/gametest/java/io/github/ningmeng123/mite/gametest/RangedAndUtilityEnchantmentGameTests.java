@@ -226,12 +226,17 @@ public final class RangedAndUtilityEnchantmentGameTests {
             fixture.put(control, Blocks.OAK_LOG.defaultBlockState());
             ItemStack axe = new ItemStack(MiteTools.get("copper_axe"));
             player.setItemInHand(InteractionHand.MAIN_HAND, axe);
+            player.setPos(Vec3.atCenterOf(control).add(0D,0D,1D));
+            h.assertTrue(player.canInteractWithBlock(control,1D),"Control fixture stands inside actual source block reach");
             h.assertTrue(player.gameMode.destroyBlock(control), "Control harvest is a real ordinary source axe break");
             int oneWear = axe.getDamageValue();
             for (int dy = 0; dy < 6; dy++) fixture.put(base.above(dy), Blocks.OAK_LOG.defaultBlockState());
             fixture.put(base.offset(1, 1, 0), Blocks.OAK_LOG.defaultBlockState());
             axe = enchanted(h, MiteTools.get("copper_axe"), "tree_felling", 3);
             player.setItemInHand(InteractionHand.MAIN_HAND, axe);
+            player.setPos(Vec3.atCenterOf(base).add(0D,-2D,1D));
+            h.assertTrue(player.canInteractWithBlock(base,1D),"The primary felling log is inside real source reach");
+            h.assertFalse(player.canInteractWithBlock(base.above(3),1D),"The highest authorized extra log genuinely needs internal felling reach");
             h.assertTrue(player.gameMode.destroyBlock(base), "Native server harvest accepts the enchanted axe");
             for (int dy = 0; dy < 4; dy++) h.assertTrue(h.getLevel().getBlockState(base.above(dy)).isAir(), "The primary log plus three directly above are removed");
             h.assertTrue(h.getLevel().getBlockState(base.above(4)).is(Blocks.OAK_LOG)
@@ -249,17 +254,30 @@ public final class RangedAndUtilityEnchantmentGameTests {
             for (int dy = 0; dy < 5; dy++) fixture.put(base.above(dy), Blocks.OAK_LOG.defaultBlockState());
             ItemStack axe = enchanted(h, MiteTools.get("copper_axe"), "tree_felling", 3);
             player.setItemInHand(InteractionHand.MAIN_HAND, axe);
+            player.setPos(Vec3.atCenterOf(base).add(0D,-4D,1D));
+            h.assertTrue(player.canInteractWithBlock(base,1D),"Primary log is reached normally");
+            h.assertFalse(player.canInteractWithBlock(base.above(),1D),"The first extra requires its precise internal authorization");
+            int[] attempts={0};
             Consumer<BlockEvent.BreakEvent> deny = event -> {
-                if (event.getPlayer() == player && event.getPos().equals(base.above())) event.setCanceled(true);
+                if (event.getPlayer() == player && event.getPos().equals(base.above())) {
+                    attempts[0]++;
+                    h.assertFalse(((io.github.ningmeng123.mite.enchantment.TreeFellingHarvestAccess)player.gameMode)
+                            .mite$consumeExtraLogReach(event.getPos()),"One-use authorization was consumed before cancellable protection callbacks");
+                    event.setCanceled(true);
+                }
             };
             NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, BlockEvent.BreakEvent.class, deny);
             try { h.assertTrue(player.gameMode.destroyBlock(base), "The primary log still breaks"); }
             finally { NeoForge.EVENT_BUS.unregister(deny); }
+            h.assertValueEqual(attempts[0],1,"The extra reaches the actual cancellable native break event once");
+            h.assertFalse(player.gameMode.destroyBlock(base.above()),"Canceled internal felling cannot leak its reach into a later manual destroyBlock");
             for (int dy = 1; dy < 5; dy++) h.assertTrue(h.getLevel().getBlockState(base.above(dy)).is(Blocks.OAK_LOG), "Cancellation stops all further source felling");
             BlockPos control = base.offset(0, 0, 4);
             fixture.put(control, Blocks.OAK_LOG.defaultBlockState());
             ItemStack plain = new ItemStack(MiteTools.get("copper_axe")); player.setItemInHand(InteractionHand.MAIN_HAND, plain);
-            player.gameMode.destroyBlock(control);
+            player.setPos(Vec3.atCenterOf(control).add(0D,0D,1D));
+            h.assertTrue(player.canInteractWithBlock(control,1D),"Plain wear comparison is performed inside actual reach");
+            h.assertTrue(player.gameMode.destroyBlock(control),"Control comparison is an actual successful native break");
             h.assertTrue(axe.getDamageValue() == plain.getDamageValue(), "The canceled extra break consumes no durability");
         }
         h.succeed();

@@ -151,6 +151,8 @@ public final class OreHarvestGameTests {
         BlockState floor = helper.getLevel().getBlockState(pos.below());
         try (Session session = player(helper); DropFixture f = new DropFixture(helper, pos)) {
             helper.getLevel().setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
+            session.player().setPos(Vec3.atBottomCenterOf(pos).add(0D,0D,1.3D));
+            helper.assertTrue(session.player().canInteractWithBlock(pos.below(),1D),"Metal placement fixture stands within real empty-hand support reach");
             for (String name : new String[]{"minecraft:copper_ore", "minecraft:iron_ore", "minecraft:gold_ore", "mite:silver_ore", "mite:mithril_ore", "mite:adamantium_ore"}) {
                 for (String id : new String[]{name, deepslate(name)}) {
                     Block ore = block(helper, id);

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "baseline": "local MITE 1.6.4 R196",
+  "scope": ["player_melee_level", "player_reach", "weak_strike", "hand_injury"],
+  "not_selected": ["legacy_tool_blocking"],
+  "melee": {
+    "source": ["uf.java:558-563", "uf.java:1041-1072", "uf.java:1107-1111", "nn.java:2294-2345"],
+    "level_modifier": {"positive": "0.005 * level", "zero_or_negative": "0.02 * level", "maximum_level": null},
+    "order": ["positive_attack_attribute", "modern_cooldown", "critical", "level_factor", "silver_vs_undead_1.25", "cudgel_club_warhammer_vs_skeleton_2", "add_enchantment_damage", "liquid_compression"],
+    "liquid_compression": "suspended && damage > 1 ? 1 + (damage - 1) * 0.5 : damage",
+    "suspended": "!passenger && !onGround && (inWater || inLava)",
+    "skills": "R196 skills are disabled by default; no new skill gate",
+    "modern_adaptations": ["native_attack_cooldown", "NeoForge_critical_event", "native_sweep_using_final_primary_basis_and_per_target_source_melee_reach", "external_item_bonus_remains_native_before_critical"],
+    "production": ["mixin/SourceEnchantmentPlayerMeleeMixin.java", "combat/SourcePlayerCombat.java", "rules/SourcePlayerCombatRules.java"]
+  },
+  "reach": {
+    "source": ["uf.java:1971-2039", "yc.java:937-958", "Raycast.java:461-484", "sq.java:433-435", "uj.java:289-291"],
+    "block": {"base": 2.75, "target": "block_center", "eye_offsets_y": [-0.625, -0.25], "tool_bonus": "only_effective_and_sufficient_harvest_level"},
+    "melee": {"base": 1.5, "tool_bonus": "mainhand_getReachBonus", "fireball_bonus": 2},
+    "interaction": {"base": 2.5, "tool_bonus": 0, "boat_override": 2.5},
+    "height": {"difference": "player_feet_y - target_feet_y", "dead_zone": [-0.5, 0.5], "outside_slope": 0.5, "clamp": [-1, 1]},
+    "creative_override_all_contexts": 5,
+    "selection_ray": 16,
+    "modern_adaptations": ["server_ordinary_entity_action_uses_nearest_pick_box_point_without_extra_vanilla_padding", "specific_interaction_point_must_be_finite_inside_pick_box_and_reachable", "offhand_block_use_checks_offhand_effective_tool", "modern_tool_family_reach_mapping", "modern_trident_and_mace_melee_bonus_0.75_does_not_imply_block_effectiveness", "effective_source_tools_must_meet_SourceMiningRequirements_material_threshold", "preserve_external_attribute_delta_from_vanilla_default", "subtract_obsolete_saved_mite_tool_reach_modifier"],
+    "revalidated_actions": ["client_selection", "client_attack", "client_interaction", "client_block_use", "client_start_continue_dig", "Player.attack", "Player.interactOn", "ServerboundInteractPacket_all_actions", "ServerboundUseItemOnPacket", "server_start_stop_dig", "server_final_destroyBlock"],
+    "internal_tree_felling": "only an exact one-use extra-log position, consumed before protection callbacks and cleared in finally; native events, permissions, wear and drops remain mandatory; network and ordinary manual actions have no permit",
+    "production": ["combat/SourcePlayerReach.java", "mixin/SourcePlayerReachMixin.java", "mixin/SourcePlayerBlockReachMixin.java", "mixin/SourcePlayerEntityReachPacketMixin.java", "mixin/client/SourceReachSelectionMixin.java", "mixin/client/SourceReachActionsMixin.java"]
+  },
+  "weak_strike": {
+    "source": ["uf.java:2540-2542", "of.java:607-616", "of.java:783-827", "of.java:2234-2236", "yc.java:1527-1529"],
+    "protected_hand": ["source_tool_xj", "stick", "bone", "modern_registered_tool_profile", "modern_trident", "modern_mace"],
+    "condition": "!protected_mainhand && (health < 2 || !FoodConsumption.hasEnergy(player) || attack_attribute < 1)",
+    "health_damage": 0,
+    "armor_wear": 0,
+    "damage_immunity_ticks_added": 0,
+    "knockback_strength": "0.4 * 0.6 * (targetIsPlayer ? 1 : 0.8) * (targetIsEarthElemental ? 0.4 : 1)",
+    "modern_adaptation": "retain_NeoForge_knockback_event_resistance_and_player_friendly_fire; mark_actual_motion_changes_for_native_ServerEntity_broadcastAndSend_to_victims_own_connection_without_health_damage_or_immunity_frames"
+  },
+  "hand_injury": {
+    "source": ["og.java:1502-1520", "nb.java:179-183", "tl.java:104-106", "EntityGelatinousCube.java:377-381"],
+    "bytecode_verified": true,
+    "ordinary_chance": "targets_attacker && !weak ? 0.125 : 0",
+    "cube_chance": "targets_attacker && !weak ? 0.125 : 1",
+    "fire_elemental_or_blaze_chance": 1,
+    "amount": {"ordinary": 1, "slime": 1, "magma_cube": 2, "jelly": 2, "blob": 3, "ooze": 3, "pudding": 4},
+    "callback_order": ["native_or_weak_target_hurt", "hand_injury", "gelatinous_mainhand_corrosion", "existing_enchantment_procs"],
+    "immune_or_weak_target_still_calls_callback": true,
+    "damage_type": "mite:hand_damage",
+    "bypasses": ["mundane_armor", "shield"],
+    "does_not_bypass": ["protection_enchantments", "resistance_effects"],
+    "armor_wear": 0,
+    "target_rng_float_draws_when_unprotected_even_if_chance_zero": 1
+  },
+  "verification": {
+    "junit": "SourcePlayerCombatRulesTest",
+    "junit_vectors": 31,
+    "gametest": "SourcePlayerCombatGameTests",
+    "gametest_cases": 13,
+    "execution_status": "root_task_runs_build_and_gametest",
+    "client_manual_test": "user_performs_after_steps_are_provided"
+  }
+}

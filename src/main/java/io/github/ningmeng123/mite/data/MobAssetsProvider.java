@@ -36,7 +36,7 @@ public final class MobAssetsProvider implements DataProvider {
         }
         for (String tag : List.of("bypasses_armor", "bypasses_invulnerability", "bypasses_effects", "bypasses_resistance")) {
             JsonArray values = new JsonArray(); values.add("mite:melt");
-            if (tag.equals("bypasses_armor")) { values.add("mite:water"); values.add("mite:sunlight"); values.add("mite:acid"); values.add("mite:pepsin"); }
+            if (tag.equals("bypasses_armor")) { values.add("mite:hand_damage"); values.add("mite:water"); values.add("mite:sunlight"); values.add("mite:acid"); values.add("mite:pepsin"); }
             save(work, cache, "data/minecraft/tags/damage_type/" + tag + ".json", tag(values));
         }
         JsonArray undead = new JsonArray(), arthropods = new JsonArray();

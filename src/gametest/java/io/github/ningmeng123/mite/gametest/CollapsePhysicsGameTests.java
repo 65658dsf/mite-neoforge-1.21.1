@@ -80,6 +80,9 @@ public final class CollapsePhysicsGameTests {
             for (Direction direction : Direction.Plane.HORIZONTAL) f.set(support.relative(direction), Blocks.DIRT);
             BlockPos diagonal = support.north().east();
             f.set(diagonal, Blocks.DIRT);
+            f.player.setPos(Vec3.atCenterOf(support).add(0D,0D,2D));
+            f.player.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Items.IRON_PICKAXE));
+            helper.assertTrue(f.player.canInteractWithBlock(support,1D),"Survival fixture approaches with a qualified source pick inside actual reach");
             helper.assertTrue(f.player.gameMode.destroyBlock(support), "The actual survival destruction transaction removes stone");
             helper.assertTrue(f.state(support).isAir(), "The original supporting block is really gone");
             helper.assertTrue(f.state(support.above()).isAir(), "The dirt directly above falls immediately");
@@ -99,6 +102,8 @@ public final class CollapsePhysicsGameTests {
             f.set(f.anchor, Blocks.STONE);
             f.set(f.anchor.above(), Blocks.DIRT);
             f.set(f.anchor.east(), Blocks.SOUL_SAND);
+            f.player.setPos(Vec3.atCenterOf(f.anchor).add(0D,0D,2D));
+            helper.assertTrue(f.player.canInteractWithBlock(f.anchor,1D),"Creative fixture also obeys actual five-block reach");
             helper.assertTrue(f.player.gameMode.destroyBlock(f.anchor), "Creative removal succeeds");
             helper.assertTrue(f.state(f.anchor.above()).is(Blocks.DIRT) && f.state(f.anchor.east()).is(Blocks.SOUL_SAND),
                     "Creative player mining preserves unsupported neighbors");
@@ -107,6 +112,7 @@ public final class CollapsePhysicsGameTests {
             f.player.setGameMode(GameType.SURVIVAL);
             f.set(f.anchor.below(), Blocks.BEDROCK);
             f.set(f.anchor, Blocks.TORCH);
+            helper.assertTrue(f.player.canInteractWithBlock(f.anchor,1D),"Torch removal remains in real survival reach after the mode switch");
             helper.assertTrue(f.player.gameMode.destroyBlock(f.anchor), "Actual survival torch removal succeeds");
             helper.assertTrue(f.state(f.anchor.above()).is(Blocks.DIRT) && f.state(f.anchor.east()).is(Blocks.SOUL_SAND),
                     "The source torch-family exception also preserves nearby soil");
@@ -120,12 +126,17 @@ public final class CollapsePhysicsGameTests {
         run(helper, f -> {
             f.set(f.anchor, Blocks.STONE);
             f.set(f.anchor.above(), Blocks.DIRT);
+            f.player.setPos(Vec3.atCenterOf(f.anchor).add(0D,0D,2D));
+            f.player.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Items.IRON_PICKAXE));
+            helper.assertTrue(f.player.canInteractWithBlock(f.anchor,1D),"Cancellation is tested after real reach qualification");
+            boolean[] reached={false};
             Consumer<BlockEvent.BreakEvent> cancel = event -> {
-                if (event.getPlayer() == f.player && event.getPos().equals(f.anchor)) event.setCanceled(true);
+                if (event.getPlayer() == f.player && event.getPos().equals(f.anchor)) { reached[0]=true; event.setCanceled(true); }
             };
             NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, BlockEvent.BreakEvent.class, cancel);
             try {
                 helper.assertFalse(f.player.gameMode.destroyBlock(f.anchor), "NeoForge refuses the real destruction transaction");
+                helper.assertTrue(reached[0],"The actual native break reached the canceling event instead of failing an unrelated reach/tool check");
                 helper.assertTrue(f.state(f.anchor).is(Blocks.STONE) && f.state(f.anchor.above()).is(Blocks.DIRT),
                         "Canceling the event preserves both the support and its crown");
                 helper.assertTrue(f.falling().isEmpty() && f.check(f.anchor.above()) == null,

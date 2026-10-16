@@ -247,6 +247,9 @@
     "CurseChestMixin",
     "EndermanAggressionGoalMixin",
     "CurseEquipableMixin",
+    "SourcePlayerReachMixin",
+    "SourcePlayerBlockReachMixin",
+    "SourcePlayerEntityReachPacketMixin",
     "PortableToolWearMixin"
   ],
   "client": [
@@ -270,7 +273,9 @@
     "client.LunarSkyMixin",
     "client.LunarLightTextureMixin",
     "client.LunarPrecipitationMixin",
-    "client.CurseGuiMixin"
+    "client.CurseGuiMixin",
+    "client.SourceReachSelectionMixin",
+    "client.SourceReachActionsMixin"
   ],
   "injectors": {
     "defaultRequire": 1
