@@ -7,11 +7,14 @@ import io.github.ningmeng123.mite.worldgen.R196StructureGeneration;
 import io.github.ningmeng123.mite.worldgen.StructureProgressData;
 import io.github.ningmeng123.mite.worldgen.StructureUnlockAnnouncements;
 import io.netty.channel.embedded.EmbeddedChannel;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -21,6 +24,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -28,7 +32,9 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.WorldOptions;
+import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
@@ -40,6 +46,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class StructureUnlockAnnouncementGameTests {
     private static final int BOTH=StructureUnlockAnnouncements.VILLAGE|StructureUnlockAnnouncements.END_PORTAL;
+    private static final int NEW=StructureUnlockAnnouncements.RUINED_PORTAL|StructureUnlockAnnouncements.PILLAGER_OUTPOST;
+    private static final int ALL=BOTH|NEW;
     private static final String PREFIX="message.mite.structure_unlock.";
     private StructureUnlockAnnouncementGameTests() {}
 
@@ -78,11 +86,121 @@ public final class StructureUnlockAnnouncementGameTests {
     }
 
     @GameTest(template="empty")
+    public static void realPortalAndOutpostGatesSendColoredChatOnlyAfterEveryPrerequisite(GameTestHelper h) {
+        try (WorldState world=new WorldState(h); Session session=new Session(h)) {
+            boolean hasPortal=false,hasOutpost=false;
+            for (var set:world.level.getChunkSource().getGeneratorState().possibleStructureSets()) {
+                for (var entry:set.value().structures()) {
+                    var id=entry.structure().unwrapKey().orElseThrow().location();
+                    if (!id.getNamespace().equals("minecraft")) continue;
+                    hasPortal|=id.getPath().equals("ruined_portal")||id.getPath().startsWith("ruined_portal_");
+                    hasOutpost|=id.getPath().equals("pillager_outpost");
+                }
+            }
+            h.assertTrue(hasPortal&&hasOutpost,"The real overworld generator enables ruined portals and pillager outposts");
+            session.drain();world.at(0L,0);
+            StructureUnlockAnnouncements.deliver(session.player(),world.available(),1L);
+            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,1L);
+            world.at(689_999L,StructureProgressData.ALL_CONDITIONS);
+            h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),29L,"The last portal-locked tick is day29");
+            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,29L);
+            world.at(690_000L,StructureProgressData.ALL_CONDITIONS&~StructureProgressData.UNDERWORLD_VISITED);
+            h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),30L,"The ruined portal threshold starts on day30");
+            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,30L);
+            world.at(690_000L,StructureProgressData.ALL_CONDITIONS);
+            int beforeOutpost=StructureUnlockAnnouncements.END_PORTAL|StructureUnlockAnnouncements.RUINED_PORTAL;
+            h.assertValueEqual(world.available(),beforeOutpost,"Only the portal gate completes exactly on day30");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),30L),1,
+                    "Completing both portal prerequisites sends exactly its new notice");
+            assertPacket(h,only(h,session.drain()),"ruined_portal",ChatFormatting.GOLD,30L);
+            world.at(1_049_999L,StructureProgressData.ALL_CONDITIONS);
+            h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),44L,"The last outpost-locked tick is day44");
+            assertNoNewNotice(h,world,session,beforeOutpost,44L);
+            world.at(1_050_000L,StructureProgressData.ALL_CONDITIONS&~StructureProgressData.BOW_CRAFTED);
+            h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),45L,"The outpost threshold starts on day45");
+            assertNoNewNotice(h,world,session,beforeOutpost,45L);
+            world.at(1_050_000L,StructureProgressData.ALL_CONDITIONS&~StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED);
+            assertNoNewNotice(h,world,session,beforeOutpost,45L);
+            world.at(1_050_000L,StructureProgressData.ALL_CONDITIONS);
+            h.assertValueEqual(world.available(),beforeOutpost|StructureUnlockAnnouncements.PILLAGER_OUTPOST,
+                    "The outpost snapshot uses the real date, bow and mithril generation prerequisites");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),45L),1,
+                    "Completing all three outpost prerequisites sends exactly its new notice");
+            assertPacket(h,only(h,session.drain()),"pillager_outpost",ChatFormatting.RED,45L);
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void nativeNetherPortalRemainsEligibleWithoutAnOverworldPortalSet(GameTestHelper h) throws IllegalAccessException {
+        ServerLevel nether=h.getLevel().getServer().getLevel(Level.NETHER);
+        h.assertTrue(nether!=null,"The native nether dimension is loaded");
+        boolean hasNetherPortal=nether.getChunkSource().getGeneratorState().possibleStructureSets().stream()
+                .flatMap(set->set.value().structures().stream()).anyMatch(entry->entry.structure().unwrapKey()
+                        .map(key->key.location().equals(ResourceLocation.withDefaultNamespace("ruined_portal_nether"))).orElse(false));
+        h.assertTrue(hasNetherPortal,"The native nether generator includes its actual ruined portal structure");
+        try (WorldState world=new WorldState(h); Session session=new Session(h)) {
+            int withPortalCount=world.generator.possibleStructureSets().size();
+            var withoutPortals=world.generator.possibleStructureSets().stream().filter(set->set.value().structures().stream()
+                    .noneMatch(entry->entry.structure().unwrapKey().map(key->{
+                        var id=key.location();
+                        return id.getNamespace().equals("minecraft")
+                                &&(id.getPath().equals("ruined_portal")||id.getPath().startsWith("ruined_portal_"));
+                    }).orElse(false))).toList();
+            world.structureSetsField.set(world.generator,withoutPortals);
+            h.assertTrue(world.generator.possibleStructureSets().size()<withPortalCount,
+                    "The actual overworld portal structure sets were removed from the scoped fixture");
+            h.assertTrue((StructureUnlockAnnouncements.enabled(world.level,world.enabledOptions())
+                    &StructureUnlockAnnouncements.RUINED_PORTAL)!=0,"A native nether portal enables the shared notice independently of overworld sets");
+            session.drain();world.at(0L,0);
+            StructureUnlockAnnouncements.deliver(session.player(),world.available(),1L);
+            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,1L);
+            world.at(689_999L,StructureProgressData.UNDERWORLD_VISITED);
+            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,29L);
+            world.at(690_000L,0);
+            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,30L);
+            world.at(690_000L,StructureProgressData.UNDERWORLD_VISITED);
+            h.assertValueEqual(world.available(),StructureUnlockAnnouncements.END_PORTAL|StructureUnlockAnnouncements.RUINED_PORTAL,
+                    "Only a native nether portal set is enough once the shared date and visit gates are complete");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),30L),1,
+                    "Nether-only eligibility delivers the new shared portal notice");
+            assertPacket(h,only(h,session.drain()),"ruined_portal",ChatFormatting.GOLD,30L);
+            var disabled=new WorldOptions(world.level.getSeed(),false,false);
+            h.assertValueEqual(StructureUnlockAnnouncements.enabled(world.level,disabled),0,"Disabled structure options hide even native nether portal sets");
+            h.assertValueEqual(StructureUnlockAnnouncements.available(world.level,disabled),0,"Disabled generation suppresses the unlocked nether portal notice");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void oldVersionOneMarkerReceivesOnlyTheTwoNewNoticesOnce(GameTestHelper h) {
+        try (WorldState world=new WorldState(h); Session session=new Session(h)) {
+            world.at(1_410_000L,StructureProgressData.ALL_CONDITIONS);session.drain();
+            CompoundTag notices=new CompoundTag();notices.putInt("version",1);notices.putInt("seen",3);
+            CompoundTag persisted=session.player().getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+            persisted.put(StructureUnlockAnnouncements.DATA_KEY,notices);
+            session.player().getPersistentData().put(Player.PERSISTED_NBT_TAG,persisted);
+            h.assertValueEqual(BOTH,3,"Existing village and end portal bit assignments remain save compatible");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),2,
+                    "An existing version1 player receives only the newly introduced notices");
+            List<ClientboundSystemChatPacket> packets=session.drain();
+            h.assertValueEqual(packets.size(),2,"The old notices are not replayed during upgrade");
+            assertPacket(h,packets.get(0),"ruined_portal",ChatFormatting.GOLD,60L);
+            assertPacket(h,packets.get(1),"pillager_outpost",ChatFormatting.RED,60L);
+            h.assertValueEqual(marker(session.player()).getInt("version"),1,"Adding notice bits retains the compatible schema version");
+            h.assertValueEqual(marker(session.player()).getInt("seen"),ALL,"The upgraded marker retains old bits and records both new bits");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),ALL,60L),0,"Upgraded players never repeat either new notice");
+            h.assertTrue(session.drain().isEmpty(),"The upgrade sends each new native chat packet only once");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
     public static void disabledWorldNativeLoginAndAnnouncementTickSendNoFalseUnlocks(GameTestHelper h) {
         try (WorldState world=new WorldState(h); Session session=new Session(h)) {
             h.assertFalse(world.level.getServer().getWorldData().worldGenOptions().generateStructures(),
                     "The actual GameTest world keeps its original disabled structure-generation option");
-            world.at(1_410_000L,16);
+            world.at(1_410_000L,StructureProgressData.ALL_CONDITIONS);
             h.assertTrue(session.drain().isEmpty(),"Actual PlayerList login did not claim disabled structures can generate");
             h.assertValueEqual(StructureUnlockAnnouncements.announce(session.player()),0,
                     "The production announce entry reads disabled real WorldOptions");
@@ -91,7 +209,7 @@ public final class StructureUnlockAnnouncementGameTests {
             StructureUnlockAnnouncements.tick(new LevelTickEvent.Post(()->true,world.level));
             h.assertTrue(session.drain().isEmpty(),"Registered login and the production tick subscriber remain silent");
             h.assertFalse(session.player().getPersistentData().getCompound(Player.PERSISTED_NBT_TAG)
-                    .contains(StructureUnlockAnnouncements.DATA_KEY),"A disabled world does not consume either player's future notice");
+                    .contains(StructureUnlockAnnouncements.DATA_KEY),"A disabled world does not consume any of the player's four future notices");
         }
         h.succeed();
     }
@@ -124,30 +242,30 @@ public final class StructureUnlockAnnouncementGameTests {
             h.assertValueEqual(session.player().getPersistentData().getCompound(Player.PERSISTED_NBT_TAG)
                     .getString("other_fixture_marker"),"preserve","Notice updates preserve unrelated persistent player data");
         }
-        lateJoiningDifferentUuidReceivesItsOwnTwoNotices(h);
+        lateJoiningDifferentUuidReceivesItsOwnFourNotices(h);
         h.succeed();
     }
 
     @GameTest(template="empty")
-    public static void actualPlayerFileReloginRetainsBothNoticesEvenAfterTimeRollback(GameTestHelper h) {
+    public static void actualPlayerFileReloginRetainsAllFourNoticesEvenAfterTimeRollback(GameTestHelper h) {
         try (WorldState world=new WorldState(h); Session session=new Session(h)) {
-            world.at(1_410_000L,16);session.drain();
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),2,
-                    "A first login after both milestones delivers both current eligibility facts");
-            assertBoth(h,session.drain(),60L);
+            world.at(1_410_000L,StructureProgressData.ALL_CONDITIONS);session.drain();
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),4,
+                    "A first login after all milestones delivers every current eligibility fact");
+            assertAll(h,session.drain(),60L);
             ServerPlayer before=session.player();
             CompoundTag saved=before.saveWithoutId(new CompoundTag());
             CompoundTag savedNotice=saved.getCompound("NeoForgeData").getCompound(Player.PERSISTED_NBT_TAG)
                     .getCompound(StructureUnlockAnnouncements.DATA_KEY);
             h.assertValueEqual(savedNotice.getInt("version"),1,"Actual native player NBT contains the notice schema");
-            h.assertValueEqual(savedNotice.getInt("seen"),BOTH,"Actual native player NBT contains both delivered bits");
+            h.assertValueEqual(savedNotice.getInt("seen"),ALL,"Actual native player NBT contains all four delivered bits");
             world.at(0L,0);
             session.reconnect();
             h.assertTrue(session.player()!=before&&session.player().getUUID().equals(before.getUUID()),
                     "PlayerList.remove and placeNewPlayer load a new object from the same UUID's actual player file");
-            h.assertValueEqual(marker(session.player()).getInt("seen"),BOTH,"Real disconnect saving and login loading retain the notice marker");
+            h.assertValueEqual(marker(session.player()).getInt("seen"),ALL,"Real disconnect saving and login loading retain the notice marker");
             h.assertTrue(session.drain().isEmpty(),"Real relogin after time rollback does not repeat notices");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),BOTH,1L),0,
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),ALL,1L),0,
                     "Even a subsequently eligible full snapshot cannot repeat saved notices");
             h.assertTrue(session.drain().isEmpty(),"The restored player's active connection receives no duplicate packet");
         }
@@ -157,9 +275,9 @@ public final class StructureUnlockAnnouncementGameTests {
     @GameTest(template="empty")
     public static void realDeathAndNativeRespawnCopyPlayerPersistedWithoutAnotherNotice(GameTestHelper h) {
         try (WorldState world=new WorldState(h); Session session=new Session(h)) {
-            world.at(1_410_000L,16);session.drain();
+            world.at(1_410_000L,StructureProgressData.ALL_CONDITIONS);session.drain();
             StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L);
-            assertBoth(h,session.drain(),60L);
+            assertAll(h,session.drain(),60L);
             ServerPlayer dead=session.player();
             dead.getInventory().clearContent();
             dead.kill();
@@ -171,27 +289,27 @@ public final class StructureUnlockAnnouncementGameTests {
             h.assertTrue(replacement.server.getPlayerList().getPlayer(replacement.getUUID())==replacement,
                     "The native player registry and network listener agree on the replacement");
             h.assertValueEqual(marker(replacement).getInt("version"),1,"Native death cloning retains the versioned PlayerPersisted marker");
-            h.assertValueEqual(marker(replacement).getInt("seen"),BOTH,"Native death cloning retains both delivered notice bits");
+            h.assertValueEqual(marker(replacement).getInt("seen"),ALL,"Native death cloning retains all four delivered notice bits");
             h.assertTrue(session.drain().isEmpty(),"The actual death and native respawn lifecycle itself sends no duplicate structure packet");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(replacement,BOTH,60L),0,
-                    "A living native replacement does not replay either notice");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(replacement,ALL,60L),0,
+                    "A living native replacement does not replay any notice");
             h.assertTrue(session.drain().isEmpty(),"Native respawn cannot duplicate structure chat");
         }
         h.succeed();
     }
 
-    private static void lateJoiningDifferentUuidReceivesItsOwnTwoNotices(GameTestHelper h) {
+    private static void lateJoiningDifferentUuidReceivesItsOwnFourNotices(GameTestHelper h) {
         try (WorldState world=new WorldState(h); Session first=new Session(h); Session late=new Session(h)) {
-            world.at(1_410_000L,16);first.drain();late.drain();
+            world.at(1_410_000L,StructureProgressData.ALL_CONDITIONS);first.drain();late.drain();
             h.assertFalse(first.player().getUUID().equals(late.player().getUUID()),"The two real connected players have different identities");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(first.player(),world.available(),60L),2,"First player receives both eligible notices");
-            assertBoth(h,first.drain(),60L);
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(first.player(),world.available(),60L),4,"First player receives all four eligible notices");
+            assertAll(h,first.drain(),60L);
             h.assertFalse(marker(late.player()).contains("seen"),"One player's delivery does not consume the other player's eligibility");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(late.player(),world.available(),60L),2,
-                    "A late player independently receives both already-available structure notices");
-            assertBoth(h,late.drain(),60L);
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(late.player(),world.available(),60L),4,
+                    "A late player independently receives all four already-available structure notices");
+            assertAll(h,late.drain(),60L);
             h.assertTrue(first.drain().isEmpty(),"The late player's personal notices are not broadcast to the earlier player");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(late.player(),BOTH,60L),0,"The late player's own duplicate is suppressed");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(late.player(),ALL,60L),0,"The late player's own duplicate is suppressed");
         }
     }
 
@@ -210,14 +328,18 @@ public final class StructureUnlockAnnouncementGameTests {
             h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),1L),1,
                     "The connected off-world player can receive the overworld end-portal eligibility fact");
             assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,1L);
-            world.at(1_410_000L,16);nether.setDayTime(0L);
-            h.assertValueEqual(StructureUnlockAnnouncements.available(nether,world.enabledOptions()),BOTH,
-                    "A locally early dimension cannot hide overworld village eligibility");
-            h.assertValueEqual(StructureUnlockAnnouncements.available(underworld,world.enabledOptions()),BOTH,
+            world.at(1_410_000L,StructureProgressData.ALL_CONDITIONS);nether.setDayTime(0L);
+            h.assertValueEqual(StructureUnlockAnnouncements.available(nether,world.enabledOptions()),ALL,
+                    "A locally early dimension cannot hide any overworld structure eligibility");
+            h.assertValueEqual(StructureUnlockAnnouncements.available(underworld,world.enabledOptions()),ALL,
                     "The same shared overworld generator and progress are used for the underworld");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),1,
-                    "Only the newly eligible village fact reaches the off-world player");
-            assertPacket(h,only(h,session.drain()),"village",ChatFormatting.GREEN,60L);
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),3,
+                    "All three newly eligible facts reach the off-world player");
+            List<ClientboundSystemChatPacket> packets=session.drain();
+            h.assertValueEqual(packets.size(),3,"The off-world player receives all newly unlocked structure packets");
+            assertPacket(h,packets.get(0),"village",ChatFormatting.GREEN,60L);
+            assertPacket(h,packets.get(1),"ruined_portal",ChatFormatting.GOLD,60L);
+            assertPacket(h,packets.get(2),"pillager_outpost",ChatFormatting.RED,60L);
             session.player().teleportTo(world.level,.5D,160D,.5D,0F,0F);
             h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),0,
                     "Returning dimensions cannot replay already delivered personal notices");
@@ -234,10 +356,18 @@ public final class StructureUnlockAnnouncementGameTests {
     private static ClientboundSystemChatPacket only(GameTestHelper h,List<ClientboundSystemChatPacket> packets) {
         h.assertValueEqual(packets.size(),1,"Exactly one actual structure system-chat packet was sent");return packets.getFirst();
     }
-    private static void assertBoth(GameTestHelper h,List<ClientboundSystemChatPacket> packets,long day) {
-        h.assertValueEqual(packets.size(),2,"Exactly the two independent native structure packets were sent");
+    private static void assertNoNewNotice(GameTestHelper h,WorldState world,Session session,int expected,long day) {
+        h.assertValueEqual(world.available(),expected,"An incomplete actual generation gate is absent from the announcement snapshot");
+        h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),day),0,
+                "Missing any required date or progress prerequisite sends no premature unlock");
+        h.assertTrue(session.drain().isEmpty(),"No native structure chat packet is sent before the complete gate");
+    }
+    private static void assertAll(GameTestHelper h,List<ClientboundSystemChatPacket> packets,long day) {
+        h.assertValueEqual(packets.size(),4,"Exactly all four independent native structure packets were sent");
         assertPacket(h,packets.get(0),"end_portal",ChatFormatting.AQUA,day);
         assertPacket(h,packets.get(1),"village",ChatFormatting.GREEN,day);
+        assertPacket(h,packets.get(2),"ruined_portal",ChatFormatting.GOLD,day);
+        assertPacket(h,packets.get(3),"pillager_outpost",ChatFormatting.RED,day);
     }
     private static void assertPacket(GameTestHelper h,ClientboundSystemChatPacket packet,String structure,ChatFormatting color,long day) {
         h.assertFalse(packet.overlay(),"Structure eligibility is displayed in chat rather than the action bar");
@@ -255,14 +385,42 @@ public final class StructureUnlockAnnouncementGameTests {
         final StructureProgressData progress;
         final long dayTime;
         final int conditions;
+        final ChunkGeneratorStructureState generator;
+        final Field structureSetsField;
+        final List<Holder<StructureSet>> originalStructureSets;
         WorldState(GameTestHelper h) {
             level=h.getLevel().getServer().overworld();progress=StructureProgressData.get(level);
             dayTime=level.getDayTime();conditions=progress.conditions();
+            generator=level.getChunkSource().getGeneratorState();
+            originalStructureSets=generator.possibleStructureSets();
+            // The native flat GameTest preset includes villages/strongholds only. Temporarily enable the
+            // real registered portal/outpost sets so production availability can exercise their gates.
+            var enabled=new ArrayList<>(originalStructureSets);
+            var registry=level.registryAccess().registryOrThrow(Registries.STRUCTURE_SET);
+            for (String name:List.of("ruined_portals","pillager_outposts")) {
+                Holder<StructureSet> set=registry.getHolder(ResourceLocation.withDefaultNamespace(name)).orElseThrow();
+                if (!enabled.contains(set)) enabled.add(set);
+            }
+            try {
+                structureSetsField=ChunkGeneratorStructureState.class.getDeclaredField("possibleStructureSets");
+                structureSetsField.setAccessible(true);
+                structureSetsField.set(generator,List.copyOf(enabled));
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException("Cannot scope the registered structure-set fixture",e);
+            }
         }
         WorldOptions enabledOptions() { return new WorldOptions(level.getSeed(),true,false); }
         int available() { return StructureUnlockAnnouncements.available(level,enabledOptions()); }
         void at(long time,int bits) { progress.restoreConditions(bits);level.setDayTime(time);R196StructureGeneration.refresh(level); }
-        @Override public void close() { progress.restoreConditions(conditions);level.setDayTime(dayTime);R196StructureGeneration.refresh(level); }
+        @Override public void close() {
+            try {
+                structureSetsField.set(generator,originalStructureSets);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Cannot restore the original structure sets",e);
+            } finally {
+                progress.restoreConditions(conditions);level.setDayTime(dayTime);R196StructureGeneration.refresh(level);
+            }
+        }
     }
 
     /** Actual login, player-file save/reload, and the same listener followed through native respawning. */

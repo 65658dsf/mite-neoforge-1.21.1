@@ -1,0 +1,40 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "crafted_obsidian_tool": {
+      "trigger": "minecraft:impossible"
+    },
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.mite.structures.village.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:bell"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.village.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "crafted_obsidian_tool"
+    ]
+  ]
+}

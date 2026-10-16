@@ -17,6 +17,7 @@ public final class MiteAchievementAssetsProvider implements DataProvider {
     @Override public CompletableFuture<?> run(CachedOutput cache){
         var jobs=new ArrayList<CompletableFuture<?>>();
         DiamondEquipmentAdvancements.addOverrides(cache, output, existingFiles, jobs);
+        StructureAdvancementAssets.addAdvancements(cache, output, jobs);
         for(var a:MiteAchievements.catalog().values()){
             JsonObject json=new JsonObject(),display=new JsonObject(),icon=new JsonObject();
             icon.addProperty("id",a.icon());display.add("icon",icon);

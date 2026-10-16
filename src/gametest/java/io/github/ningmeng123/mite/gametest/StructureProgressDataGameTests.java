@@ -1,8 +1,12 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.advancement.MiteAchievements;
 import io.github.ningmeng123.mite.crafting.TimedCraftingController;
+import io.github.ningmeng123.mite.registry.MiteArmorContent;
+import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.registry.MiteWeaponContent;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
@@ -48,7 +52,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Completed manufacturing, real pickup events and shared persistent village progress. @author NingMeng123 */
+/** Completed manufacturing, dimension events and shared persistent structure progress. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class StructureProgressDataGameTests {
@@ -108,6 +112,76 @@ public final class StructureProgressDataGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void mithrilBowRequiresAnActualCompletedManufacture(GameTestHelper helper) {
+        try (WorldState world = new WorldState(helper); Fixture f = new Fixture(helper)) {
+            f.loadMithrilBow();
+            world.assertConditions(0);
+            int period = f.period();
+            f.menu.clicked(0, 0, ClickType.PICKUP, f.player);
+            f.tick(period / 2);
+            f.menu.clicked(0, 1, ClickType.PICKUP, f.player);
+            f.tick(period);
+            helper.assertFalse(TimedCraftingController.isActive(f.player), "Canceling the reinforced bow stops its manufacture");
+            world.assertConditions(0);
+            helper.assertValueEqual(f.player.getInventory().countItem(MiteWeaponContent.MITHRIL_BOW.get()), 0,
+                    "A preview and a canceled recipe deliver no reinforced bow");
+
+            f.menu.clicked(0, 0, ClickType.PICKUP, f.player);
+            f.tick(period - 1);
+            world.assertConditions(0);
+            f.tick(1);
+            helper.assertValueEqual(f.player.getInventory().countItem(MiteWeaponContent.MITHRIL_BOW.get()), 1,
+                    "The successful final transaction delivers the reinforced bow");
+            world.assertConditions(StructureProgressData.BOW_CRAFTED | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED);
+            helper.assertFalse(world.unlocked(), "New structure progress cannot satisfy the village's old tool prerequisite");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void craftedEquipmentRecognizesEveryMithrilCategoryAndRejectsMaterials(GameTestHelper helper) {
+        try (WorldState world = new WorldState(helper); Fixture f = new Fixture(helper)) {
+            for (Item item : List.of(MiteTools.get("mithril_hatchet"), MiteTools.get("mithril_sword"),
+                    MiteArmorContent.get("mite:mithril_helmet"), MiteArmorContent.get("mite:mithril_chain_helmet"))) {
+                world.data.restoreConditions(0);
+                R196StructureGeneration.crafted(f.player, new ItemStack(item));
+                world.assertConditions(StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED);
+            }
+            world.data.restoreConditions(0);
+            R196StructureGeneration.crafted(f.player, new ItemStack(MiteTools.get("mithril_pickaxe")));
+            world.assertConditions(StructureProgressData.OBSIDIAN_TOOL | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED);
+            world.data.restoreConditions(0);
+            for (Item item : List.of(Items.BOW, MiteWeaponContent.ANCIENT_METAL_BOW.get())) {
+                R196StructureGeneration.crafted(f.player, new ItemStack(item));
+                world.assertConditions(StructureProgressData.BOW_CRAFTED);
+            }
+            world.data.restoreConditions(0);
+            for (Item item : List.of(MiteMaterials.MITHRIL_INGOT.get(), MiteMaterials.MITHRIL_NUGGET.get(),
+                    MiteArmorContent.chain("mithril"), MiteArmorContent.get("mite:mithril_horse_armor"),
+                    MiteTools.get("adamantium_sword"), Items.ARROW)) {
+                R196StructureGeneration.crafted(f.player, new ItemStack(item));
+                world.assertConditions(0);
+            }
+            R196StructureGeneration.crafted(f.player, ItemStack.EMPTY);
+            world.assertConditions(0);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void differentPlayersShareTheirCompletedEquipmentProgress(GameTestHelper helper) {
+        try (WorldState world = new WorldState(helper); Fixture archer = new Fixture(helper); Fixture smith = new Fixture(helper)) {
+            R196StructureGeneration.crafted(archer.player, new ItemStack(Items.BOW));
+            world.assertConditions(StructureProgressData.BOW_CRAFTED);
+            R196StructureGeneration.crafted(smith.player, new ItemStack(MiteTools.get("mithril_sword")));
+            world.assertConditions(StructureProgressData.BOW_CRAFTED | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED);
+            helper.assertTrue(StructureProgressData.get(archer.player.serverLevel()) == StructureProgressData.get(smith.player.serverLevel()),
+                    "Different players fulfill prerequisites in the same world save");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void previewsOwnershipAndActualToolPickupDoNotCountAsCrafting(GameTestHelper helper) {
         try (WorldState world = new WorldState(helper); Fixture f = new Fixture(helper)) {
             f.loadIronPick();
@@ -122,6 +196,9 @@ public final class StructureProgressDataGameTests {
             helper.assertTrue(f.player.getMainHandItem().is(Items.IRON_PICKAXE), "The player actually holds the picked-up tool");
             helper.assertValueEqual(f.player.getStats().getValue(Stats.ITEM_CRAFTED.get(Items.IRON_PICKAXE)), 0,
                     "Item pickup never fabricates completed crafting statistics");
+            f.pickup(Items.BOW);
+            f.pickup(MiteTools.get("mithril_sword"));
+            f.pickup(MiteWeaponContent.MITHRIL_BOW.get());
             NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(f.player));
             world.assertConditions(0);
             helper.assertFalse(world.unlocked(), "Inventory ownership cannot migrate into a crafted-tool prerequisite");
@@ -151,23 +228,33 @@ public final class StructureProgressDataGameTests {
     @GameTest(template = "empty")
     public static void savedNbtReloadRestoresVersionedConditionsAndMasksUnknownBits(GameTestHelper helper) throws Exception {
         try (WorldState world = new WorldState(helper)) {
-            world.data.fulfill(StructureProgressData.WHEAT | StructureProgressData.POTATO | StructureProgressData.OBSIDIAN_TOOL);
+            int conditions = StructureProgressData.WHEAT | StructureProgressData.POTATO | StructureProgressData.OBSIDIAN_TOOL
+                    | StructureProgressData.UNDERWORLD_VISITED | StructureProgressData.BOW_CRAFTED
+                    | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED;
+            world.data.fulfill(conditions);
             CompoundTag serialized = world.data.save(new CompoundTag(), world.level.registryAccess());
-            helper.assertValueEqual(serialized.getInt("version"), 1, "The saved schema records its version");
-            helper.assertValueEqual(serialized.getInt("village_conditions"), 21, "All distinct fulfilled bits are serialized");
+            helper.assertValueEqual(serialized.getInt("version"), 2, "The saved schema records its version");
+            helper.assertValueEqual(serialized.getInt("structure_conditions"), conditions, "Every structure prerequisite bit is serialized");
+            helper.assertValueEqual(serialized.getInt("village_conditions"), 21, "The compatibility field retains only the original village bits");
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             NbtIo.writeCompressed(serialized, bytes);
             CompoundTag decoded = NbtIo.readCompressed(new ByteArrayInputStream(bytes.toByteArray()), NbtAccounter.unlimitedHeap());
             StructureProgressData restored = StructureProgressData.load(decoded, world.level.registryAccess());
             helper.assertTrue(restored != world.data, "The reload constructs a fresh SavedData instance from real NBT bytes");
-            helper.assertValueEqual(restored.conditions(), 21, "The full shared prerequisite state survives serialization");
+            helper.assertValueEqual(restored.conditions(), conditions, "The full shared prerequisite state survives serialization");
             world.level.getDataStorage().set(StructureProgressData.NAME, restored);
             R196StructureGeneration.refresh(world.level);
             helper.assertTrue(StructureProgressData.get(world.level) == restored && world.unlocked(),
                     "The reloaded world data repopulates the generation snapshot");
+            decoded.putInt("structure_conditions", 511);
+            decoded.putInt("village_conditions", 0);
+            helper.assertValueEqual(StructureProgressData.load(decoded, world.level.registryAccess()).conditions(), 255,
+                    "The new field wins over the compatibility field and masks unknown future bits");
+            decoded.remove("structure_conditions");
+            decoded.putInt("version", 1);
             decoded.putInt("village_conditions", 63);
             helper.assertValueEqual(StructureProgressData.load(decoded, world.level.registryAccess()).conditions(), 31,
-                    "Unknown future bits do not leak into the current prerequisite mask");
+                    "Legacy data cannot reinterpret its unknown bits as newly added prerequisites");
         }
         helper.succeed();
     }
@@ -209,6 +296,61 @@ public final class StructureProgressDataGameTests {
             helper.assertTrue(world.unlocked(), "A completed iron-pick statistic migrates even after the tool is lost");
             NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(f.player));
             world.assertConditions(16);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void dimensionEventsRecordOnlyEnteringTheUnderworld(GameTestHelper helper) {
+        try (WorldState world = new WorldState(helper); Fixture f = new Fixture(helper)) {
+            NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(f.player, Level.OVERWORLD, Level.NETHER));
+            NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(f.player, Level.NETHER, Level.END));
+            NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(f.player, MiteWorldDimensions.UNDERWORLD, Level.OVERWORLD));
+            world.assertConditions(0);
+            ServerLevel underworld = world.level.getServer().getLevel(MiteWorldDimensions.UNDERWORLD);
+            helper.assertTrue(underworld != null, "The registered underworld is loaded for the dimension event");
+            f.player.setServerLevel(underworld);
+            try {
+                NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(f.player, Level.OVERWORLD, MiteWorldDimensions.UNDERWORLD));
+                world.assertConditions(StructureProgressData.UNDERWORLD_VISITED);
+            } finally {
+                f.player.setServerLevel(f.level);
+            }
+            helper.assertFalse(world.unlocked(), "Travel progress alone never unlocks villages");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void loginMigrationCollectsAllCraftingStatisticsAndTravelEvidence(GameTestHelper helper) {
+        try (WorldState world = new WorldState(helper); Fixture f = new Fixture(helper)) {
+            f.player.getStats().setValue(f.player, Stats.ITEM_CRAFTED.get(Items.IRON_PICKAXE), 1);
+            f.player.getStats().setValue(f.player, Stats.ITEM_CRAFTED.get(Items.BOW), 1);
+            f.player.getStats().setValue(f.player, Stats.ITEM_CRAFTED.get(MiteArmorContent.get("mite:mithril_helmet")), 1);
+            NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(f.player));
+            int crafted = StructureProgressData.OBSIDIAN_TOOL | StructureProgressData.BOW_CRAFTED
+                    | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED;
+            world.assertConditions(crafted);
+            helper.assertTrue(MiteAchievements.award(f.player, "portal"), "The old save has the real earned underworld advancement");
+            world.assertConditions(crafted);
+            NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(f.player));
+            world.assertConditions(crafted | StructureProgressData.UNDERWORLD_VISITED);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void loginInsideTheUnderworldRepairsTravelProgress(GameTestHelper helper) {
+        try (WorldState world = new WorldState(helper); Fixture f = new Fixture(helper)) {
+            ServerLevel underworld = world.level.getServer().getLevel(MiteWorldDimensions.UNDERWORLD);
+            helper.assertTrue(underworld != null, "The registered underworld exists for old-save migration");
+            f.player.setServerLevel(underworld);
+            try {
+                NeoForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(f.player));
+                world.assertConditions(StructureProgressData.UNDERWORLD_VISITED);
+            } finally {
+                f.player.setServerLevel(f.level);
+            }
         }
         helper.succeed();
     }
@@ -289,6 +431,16 @@ public final class StructureProgressDataGameTests {
             tick(1);
             helper.assertTrue(menu.stillValid(player) && menu.getSlot(0).getItem().is(Items.IRON_PICKAXE),
                     "A physically placed iron workbench exposes the real iron-pick recipe");
+        }
+
+        void loadMithrilBow() {
+            level.setBlockAndUpdate(table, MiteWorkbenches.TABLES.get("mithril").get().defaultBlockState());
+            for (int slot : new int[]{2, 4, 8}) menu.getSlot(slot).set(new ItemStack(Items.STICK));
+            for (int slot : new int[]{3, 6, 9}) menu.getSlot(slot).set(new ItemStack(Items.STRING));
+            menu.getSlot(5).set(new ItemStack(MiteMaterials.MITHRIL_INGOT.get()));
+            tick(1);
+            helper.assertTrue(menu.stillValid(player) && menu.getSlot(0).getItem().is(MiteWeaponContent.MITHRIL_BOW.get()),
+                    "The real mithril workbench exposes the reinforced-bow recipe");
         }
 
         int period() {

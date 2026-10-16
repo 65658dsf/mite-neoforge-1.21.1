@@ -1,0 +1,46 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "crafted_bow": {
+      "trigger": "minecraft:impossible"
+    },
+    "crafted_mithril_equipment": {
+      "trigger": "minecraft:impossible"
+    },
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.mite.structures.pillager_outpost.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:crossbow"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.pillager_outpost.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "crafted_bow"
+    ],
+    [
+      "crafted_mithril_equipment"
+    ]
+  ]
+}

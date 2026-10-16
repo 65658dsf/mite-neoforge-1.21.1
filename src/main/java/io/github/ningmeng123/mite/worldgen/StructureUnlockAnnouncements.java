@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.worldgen;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.advancement.StructureAdvancements;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -17,7 +18,8 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 /** Announce actual structure eligibility once per player, without creating new progression gates. @author NingMeng123 */
 @EventBusSubscriber(modid=Mite.MOD_ID)
 public final class StructureUnlockAnnouncements {
-    public static final int VILLAGE=1, END_PORTAL=2;
+    public static final int VILLAGE=1, END_PORTAL=2, RUINED_PORTAL=4, PILLAGER_OUTPOST=8;
+    private static final int ALL_NOTICES=VILLAGE|END_PORTAL|RUINED_PORTAL|PILLAGER_OUTPOST;
     public static final String DATA_KEY="mite:structure_unlock_notices";
     private StructureUnlockAnnouncements() {}
 
@@ -27,17 +29,31 @@ public final class StructureUnlockAnnouncements {
 
     /** Uses the generator's enabled sets and the same gate as natural generation and locating. */
     public static int available(ServerLevel level,WorldOptions options) {
+        return structureMask(level,options,true);
+    }
+
+    public static int enabled(ServerLevel level,WorldOptions options) {
+        return structureMask(level,options,false);
+    }
+
+    private static int structureMask(ServerLevel level,WorldOptions options,boolean requireUnlocked) {
         ServerLevel overworld=level.getServer().overworld();
         if(overworld==null || !options.generateStructures())return 0;
         int result=0;
-        for(var set:overworld.getChunkSource().getGeneratorState().possibleStructureSets()) {
-            for(var entry:set.value().structures()) {
-                var key=entry.structure().unwrapKey();
-                if(key.isEmpty() || !key.get().location().getNamespace().equals("minecraft"))continue;
-                String id=key.get().location().getPath();
-                if(!R196StructureGeneration.unlocked(overworld,entry.structure()))continue;
-                if(id.startsWith("village_"))result|=VILLAGE;
-                else if(id.equals("stronghold"))result|=END_PORTAL;
+        for(ServerLevel generationLevel:overworld.getServer().getAllLevels()) {
+            for(var set:generationLevel.getChunkSource().getGeneratorState().possibleStructureSets()) {
+                for(var entry:set.value().structures()) {
+                    var key=entry.structure().unwrapKey();
+                    if(key.isEmpty() || !key.get().location().getNamespace().equals("minecraft"))continue;
+                    String id=key.get().location().getPath();
+                    boolean portal=id.equals("ruined_portal")||id.startsWith("ruined_portal_");
+                    if(generationLevel!=overworld&&!portal)continue;
+                    if(requireUnlocked&&!R196StructureGeneration.unlocked(generationLevel,entry.structure()))continue;
+                    if(id.startsWith("village_"))result|=VILLAGE;
+                    else if(id.equals("stronghold"))result|=END_PORTAL;
+                    else if(portal)result|=RUINED_PORTAL;
+                    else if(id.equals("pillager_outpost"))result|=PILLAGER_OUTPOST;
+                }
             }
         }
         return result;
@@ -45,7 +61,10 @@ public final class StructureUnlockAnnouncements {
 
     public static int announce(ServerPlayer player) {
         ServerLevel overworld=player.server.overworld();
-        return overworld==null?0:deliver(player,available(overworld),R196StructureGeneration.displayDay(overworld.getDayTime()));
+        if(overworld==null)return 0;
+        StructureAdvancements.sync(player,enabled(overworld,player.server.getWorldData().worldGenOptions()),
+                overworld.getDayTime(),StructureProgressData.get(overworld).conditions());
+        return deliver(player,available(overworld),R196StructureGeneration.displayDay(overworld.getDayTime()));
     }
 
     /** An authoritative server snapshot; there is no client request that can supply these values. */
@@ -55,12 +74,16 @@ public final class StructureUnlockAnnouncements {
         var persisted=data.getCompound(Player.PERSISTED_NBT_TAG);
         var notices=persisted.getCompound(DATA_KEY);
         int seen=notices.getInt("seen");
-        int pending=(available&(VILLAGE|END_PORTAL))&~seen;
+        int pending=(available&ALL_NOTICES)&~seen;
         if(pending==0)return 0;
         if((pending&END_PORTAL)!=0)player.sendSystemMessage(Component.translatable(
                 "message.mite.structure_unlock.end_portal",day).withStyle(ChatFormatting.AQUA),false);
         if((pending&VILLAGE)!=0)player.sendSystemMessage(Component.translatable(
                 "message.mite.structure_unlock.village",day).withStyle(ChatFormatting.GREEN),false);
+        if((pending&RUINED_PORTAL)!=0)player.sendSystemMessage(Component.translatable(
+                "message.mite.structure_unlock.ruined_portal",day).withStyle(ChatFormatting.GOLD),false);
+        if((pending&PILLAGER_OUTPOST)!=0)player.sendSystemMessage(Component.translatable(
+                "message.mite.structure_unlock.pillager_outpost",day).withStyle(ChatFormatting.RED),false);
         notices.putInt("version",1);
         notices.putInt("seen",seen|pending);
         persisted.put(DATA_KEY,notices);
@@ -80,8 +103,12 @@ public final class StructureUnlockAnnouncements {
         var players=level.getServer().getPlayerList().getPlayers();
         if(players.isEmpty())return;
         int available=available(level);
-        if(available==0)return;
+        int enabled=enabled(level,level.getServer().getWorldData().worldGenOptions());
+        int conditions=StructureProgressData.get(level).conditions();
         long day=R196StructureGeneration.displayDay(level.getDayTime());
-        for(ServerPlayer player:players)deliver(player,available,day);
+        for(ServerPlayer player:players) {
+            StructureAdvancements.sync(player,enabled,level.getDayTime(),conditions);
+            if(available!=0)deliver(player,available,day);
+        }
     }
 }

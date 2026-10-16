@@ -298,7 +298,8 @@
     "client.CurseGuiMixin",
     "client.SourceReachSelectionMixin",
     "client.SourceReachActionsMixin",
-    "client.SourceSleepOverlayMixin"
+    "client.SourceSleepOverlayMixin",
+    "client.MiteAdvancementsTitleMixin"
   ],
   "injectors": {
     "defaultRequire": 1

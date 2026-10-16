@@ -1,6 +1,9 @@
 package io.github.ningmeng123.mite.worldgen;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.advancement.MiteAchievements;
+import io.github.ningmeng123.mite.item.R196ReinforcedBowItem;
+import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
@@ -35,6 +39,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 /** Dynamic gates use immutable world snapshots; generation workers never open save files. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class R196StructureGeneration {
+    public static final long RUINED_PORTAL_DAY = 30L, PILLAGER_OUTPOST_DAY = 45L, VILLAGE_DAY = 60L;
     private record State(long time, int spawnX, int spawnZ, int conditions) {}
     private static final ConcurrentMap<MinecraftServer, State> STATES = new ConcurrentHashMap<>();
     private static final TagKey<Biome> MINESHAFT_HILLS = TagKey.create(Registries.BIOME,
@@ -62,13 +67,29 @@ public final class R196StructureGeneration {
     }
 
     public static boolean villageUnlocked(long time, int conditions) {
-        return displayDay(time) >= 60L && conditions >= StructureProgressData.OBSIDIAN_TOOL;
+        return displayDay(time) >= VILLAGE_DAY && (conditions & StructureProgressData.OBSIDIAN_TOOL) != 0;
+    }
+
+    public static boolean ruinedPortalUnlocked(long time, int conditions) {
+        return displayDay(time) >= RUINED_PORTAL_DAY && (conditions & StructureProgressData.UNDERWORLD_VISITED) != 0;
+    }
+
+    public static boolean pillagerOutpostUnlocked(long time, int conditions) {
+        int required = StructureProgressData.BOW_CRAFTED | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED;
+        return displayDay(time) >= PILLAGER_OUTPOST_DAY && (conditions & required) == required;
     }
 
     public static boolean unlocked(ServerLevel level, Holder<Structure> structure) {
-        if (!level.dimension().equals(Level.OVERWORLD) || !vanillaId(structure).startsWith("village_")) return true;
+        String id = vanillaId(structure);
+        boolean village = level.dimension().equals(Level.OVERWORLD) && id.startsWith("village_");
+        boolean portal = id.equals("ruined_portal") || id.startsWith("ruined_portal_");
+        boolean outpost = id.equals("pillager_outpost");
+        if (!village && !portal && !outpost) return true;
         State state = STATES.get(level.getServer());
-        return state != null && villageUnlocked(state.time(), state.conditions());
+        if (state == null) return false;
+        if (portal) return ruinedPortalUnlocked(state.time(), state.conditions());
+        if (outpost) return pillagerOutpostUnlocked(state.time(), state.conditions());
+        return villageUnlocked(state.time(), state.conditions());
     }
 
     public static boolean canGenerate(ServerLevel level, Holder<Structure> structure, ChunkPos coordinate) {
@@ -105,9 +126,23 @@ public final class R196StructureGeneration {
         return tool && output.isCorrectToolForDrops(Blocks.OBSIDIAN.defaultBlockState());
     }
 
-    /** Called after an actual crafting transaction; merely owning, previewing or automating a tool does not qualify. */
+    private static int craftingConditions(ItemStack output) {
+        if (output.isEmpty()) return 0;
+        int bits = qualifies(output) ? StructureProgressData.OBSIDIAN_TOOL : 0;
+        if (output.getItem() instanceof BowItem) bits |= StructureProgressData.BOW_CRAFTED;
+        var tool = MiteTools.definition(output);
+        var armor = MiteArmorContent.definition(output.getItem());
+        if (tool != null && tool.material().equals("mithril")
+                || armor != null && !armor.horse() && armor.material().equals("mithril")
+                || output.getItem() instanceof R196ReinforcedBowItem bow && bow.material().equals("mithril"))
+            bits |= StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED;
+        return bits;
+    }
+
+    /** Called after an actual crafting transaction; merely owning, previewing or automating equipment does not qualify. */
     public static void crafted(ServerPlayer player, ItemStack output) {
-        if (qualifies(output)) StructureProgressData.get(player.serverLevel()).fulfill(StructureProgressData.OBSIDIAN_TOOL);
+        int bits = craftingConditions(output);
+        if (bits != 0) StructureProgressData.get(player.serverLevel()).fulfill(bits);
     }
 
     @SubscribeEvent public static void load(LevelEvent.Load event) {
@@ -135,14 +170,23 @@ public final class R196StructureGeneration {
         crafted(player, event.getCrafting());
     }
 
+    @SubscribeEvent public static void dimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && event.getTo().equals(MiteWorldDimensions.UNDERWORLD))
+            StructureProgressData.get(player.serverLevel()).fulfill(StructureProgressData.UNDERWORLD_VISITED);
+    }
+
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         // Existing saves have authoritative completed-crafting statistics, unlike a player's current inventory.
+        int bits = 0;
         for (var item : BuiltInRegistries.ITEM) {
-            if (qualifies(new ItemStack(item)) && player.getStats().getValue(Stats.ITEM_CRAFTED.get(item)) > 0) {
-                crafted(player, new ItemStack(item));
-                break;
-            }
+            int crafted = craftingConditions(new ItemStack(item));
+            if (crafted != 0 && player.getStats().getValue(Stats.ITEM_CRAFTED.get(item)) > 0) bits |= crafted;
         }
+        var portal = player.server.getAdvancements().get(MiteAchievements.catalog().get("portal").id());
+        if (player.level().dimension().equals(MiteWorldDimensions.UNDERWORLD)
+                || portal != null && player.getAdvancements().getOrStartProgress(portal).isDone())
+            bits |= StructureProgressData.UNDERWORLD_VISITED;
+        if (bits != 0) StructureProgressData.get(player.serverLevel()).fulfill(bits);
     }
 }

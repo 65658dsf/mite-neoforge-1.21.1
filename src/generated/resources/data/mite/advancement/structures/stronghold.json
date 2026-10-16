@@ -1,0 +1,28 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.mite.structures.stronghold.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:end_portal_frame"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.stronghold.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ]
+  ]
+}

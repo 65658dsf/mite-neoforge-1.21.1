@@ -1,0 +1,40 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    },
+    "visited_underworld": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.mite.structures.ruined_portal.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:crying_obsidian"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.ruined_portal.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "visited_underworld"
+    ]
+  ]
+}
