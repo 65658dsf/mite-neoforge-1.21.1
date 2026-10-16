@@ -763,5 +763,6 @@
   "jade.mite.campfire_fuel": "Fuel: %s / 3",
   "jade.mite.campfire_meat": "Meat remaining: %s",
   "jade.mite.campfire_time": "Current fuel: %s s",
-  "tooltip.mite.bucket_source": "Hold Ctrl to place a source: costs 100 XP (ordinary pour if insufficient)"
+  "tooltip.mite.bucket_source": "Hold Ctrl to place a source: costs 100 XP (ordinary pour if insufficient)",
+  "tooltip.mite.brightness_locked": "MITE locks brightness to Moody (0%)."
 }

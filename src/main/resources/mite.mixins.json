@@ -274,6 +274,8 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.FixedBrightnessOptionMixin",
+    "client.SodiumBrightnessOptionMixin",
     "client.WorldCreationDifficultyMixin",
     "client.BucketPlacementInputMixin",
     "client.CreateWorldDifficultyButtonMixin",

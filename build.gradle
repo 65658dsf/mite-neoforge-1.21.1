@@ -132,6 +132,15 @@ neoForge {
             if (project.providers.gradleProperty('miteDataDirectory').isPresent()) {
                 gameDirectory = file(project.providers.gradleProperty('miteDataDirectory').get())
             }
+            if (project.providers.gradleProperty('miteClientSettingsAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.clientSettingsAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                boolean noSettingsAuditMods = project.providers.gradleProperty('miteClientSettingsAuditNoMods').getOrElse('false').toBoolean()
+                if (noSettingsAuditMods) gameDirectory = file('build/verification/client-settings-no-mods-run')
+                systemProperty 'mite.clientSettingsAuditOutput', file(noSettingsAuditMods
+                        ? 'build/verification/client-settings-audit-absent.json'
+                        : 'build/verification/client-settings-audit.json').absolutePath
+            }
             programArguments.addAll '--mod', project.mod_id, '--all',
                     '--output', file('src/generated/resources').absolutePath,
                     '--existing', file('src/main/resources').absolutePath
