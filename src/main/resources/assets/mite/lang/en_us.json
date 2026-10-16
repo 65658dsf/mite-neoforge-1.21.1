@@ -750,5 +750,6 @@
   "config.jade.plugin_mite.campfire": "Campfire fuel",
   "jade.mite.campfire_fuel": "Fuel: %s / 3",
   "jade.mite.campfire_meat": "Meat remaining: %s",
-  "jade.mite.campfire_time": "Current fuel: %s s"
+  "jade.mite.campfire_time": "Current fuel: %s s",
+  "tooltip.mite.bucket_source": "Hold Ctrl to place a source: costs 100 XP (ordinary pour if insufficient)"
 }

@@ -33,6 +33,7 @@ public final class SourceFluidFall {
         }
         boolean water=state.is(FluidTags.WATER);
         level.setBlock(pos,Blocks.AIR.defaultBlockState(),2);
+        TemporaryFluidChanges.get(server).cancel(pos);
         BlockPos target=pos.below();
         if (water && MantleHeat.evaporatesWater(level,target)) {
             level.levelEvent(1501,target,0);return true;

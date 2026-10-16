@@ -750,5 +750,6 @@
   "config.jade.plugin_mite.campfire": "篝火燃料",
   "jade.mite.campfire_fuel": "燃料：%s / 3",
   "jade.mite.campfire_meat": "当前燃料还能烤：%s 块肉",
-  "jade.mite.campfire_time": "当前燃料剩余：%s 秒"
+  "jade.mite.campfire_time": "当前燃料剩余：%s 秒",
+  "tooltip.mite.bucket_source": "按住 Ctrl 放置液体源：消耗 100 点经验（不足时普通倾倒）"
 }

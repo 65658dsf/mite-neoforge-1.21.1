@@ -95,6 +95,11 @@ neoForge {
         }
         data {
             data()
+            if (project.providers.gradleProperty('miteBucketPlacementAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.bucketPlacementClientAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.bucketPlacementClientAuditOutput', file('build/verification/bucket-client-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteWitchCurseAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.witchCurseAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'

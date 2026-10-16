@@ -85,6 +85,8 @@
     "NetherPortalBlockMixin",
     "MantleWaterFlowMixin",
     "MantleBucketMixin",
+    "BucketSourcePlacementMixin",
+    "BucketPlacementInputMixin",
     "MantleFireContactMixin",
     "EntityPortalCooldownMixin",
     "OrePlacedStateMixin",
@@ -265,6 +267,7 @@
   ],
   "client": [
     "client.WorldCreationDifficultyMixin",
+    "client.BucketPlacementInputMixin",
     "client.CreateWorldDifficultyButtonMixin",
     "client.BloodMoonAtmosphereMixin",
     "EnchantmentScreenMixin",

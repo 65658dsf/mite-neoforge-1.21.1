@@ -25,6 +25,7 @@ public final class TemporaryFluidChanges extends SavedData {
     private final Map<Long,Change> pending=new HashMap<>();
     public static TemporaryFluidChanges get(ServerLevel level) { return level.getDataStorage().computeIfAbsent(FACTORY,NAME); }
     public Map<Long,Change> pending() { return Map.copyOf(pending); }
+    public Change at(BlockPos pos) { return pending.get(pos.asLong()); }
     public void schedule(BlockPos pos,boolean water,long due) {
         pending.put(pos.asLong(),new Change(water,due));setDirty();
     }

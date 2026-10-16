@@ -208,7 +208,11 @@ public final class UnderworldBoundaryGameTests {
             }
             helper.getLevel().setBlockAndUpdate(target.below(), Blocks.STONE.defaultBlockState());
             helper.assertTrue(bucket.emptyContents(player, helper.getLevel(), target, null, new ItemStack(bucket)), "The same bucket still places ordinary modern water on stone");
-            helper.assertTrue(helper.getLevel().getFluidState(target).isSource(), "Ordinary placement preserves a modern source block");
+            helper.assertTrue(helper.getLevel().getFluidState(target).isSource(), "Ordinary pouring initially fills the whole liquid cell");
+            var temporary = io.github.ningmeng123.mite.world.TemporaryFluidChanges.get(helper.getLevel());
+            helper.assertValueEqual(temporary.pending().get(target.asLong()).due(), helper.getLevel().getGameTime() + 16,
+                    "Ordinary pouring receives the R196 sixteen-tick deadline instead of becoming a permanent source");
+            temporary.cancel(target);
             helper.getLevel().setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
         }
         helper.succeed();
