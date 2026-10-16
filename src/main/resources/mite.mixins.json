@@ -274,6 +274,8 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.AutoHarvestMinecraftMixin",
+    "client.AutoHarvestMouseMixin",
     "client.MinimalDebugOverlayMixin",
     "client.MinimalDebugCrosshairMixin",
     "client.FixedBrightnessOptionMixin",

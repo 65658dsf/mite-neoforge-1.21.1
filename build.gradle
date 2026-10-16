@@ -150,6 +150,15 @@ neoForge {
                         ? 'build/verification/minimal-debug-audit-absent.json'
                         : 'build/verification/minimal-debug-audit.json').absolutePath
             }
+            if (project.providers.gradleProperty('miteAutoHarvestInputAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.autoHarvestInputAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                boolean noAutoHarvestAuditMods = project.providers.gradleProperty('miteAutoHarvestInputAuditNoMods').getOrElse('false').toBoolean()
+                if (noAutoHarvestAuditMods) gameDirectory = file('build/verification/auto-harvest-no-mods-run')
+                systemProperty 'mite.autoHarvestInputAuditOutput', file(noAutoHarvestAuditMods
+                        ? 'build/verification/auto-harvest-input-audit-absent.json'
+                        : 'build/verification/auto-harvest-input-audit.json').absolutePath
+            }
             programArguments.addAll '--mod', project.mod_id, '--all',
                     '--output', file('src/generated/resources').absolutePath,
                     '--existing', file('src/main/resources').absolutePath
