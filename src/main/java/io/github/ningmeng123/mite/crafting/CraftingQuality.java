@@ -1,6 +1,8 @@
 package io.github.ningmeng123.mite.crafting;
 
 import com.google.gson.JsonParser;
+import io.github.ningmeng123.mite.curse.PlayerCurses;
+import io.github.ningmeng123.mite.curse.R196Curse;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.rules.EquipmentQualityRules;
@@ -47,7 +49,8 @@ public final class CraftingQuality {
         if (!EquipmentDurability.isManaged(stack)) return true;
         float difficulty = lowestDifficulty(stack);
         return difficulty >= 0F && EquipmentQualityRules.canRepair(EquipmentDurability.quality(stack), difficulty,
-                player.experienceLevel, player.totalExperience, EquipmentDurability.maximumQuality(stack), false, false, true);
+                player.experienceLevel, player.totalExperience, EquipmentDurability.maximumQuality(stack),
+                PlayerCurses.has(player, R196Curse.CLUMSINESS, true), false, true);
     }
 
     public static Result resolve(Player player, AbstractContainerMenu menu, CraftingContainer grid,
@@ -60,8 +63,9 @@ public final class CraftingQuality {
         }
         boolean repair = recipe.value() instanceof RepairItemRecipe || recipe.value() instanceof LeatherMendingRecipe;
         boolean fixed = repair || recipe.value() instanceof ArmorDyeRecipe;
+        boolean clumsy = PlayerCurses.has(player, R196Curse.CLUMSINESS, true);
         QualityRange range = EquipmentQualityRules.selectionRange(player.experienceLevel,
-                EquipmentDurability.maximumQuality(raw), false, false, true);
+                EquipmentDurability.maximumQuality(raw), clumsy, false, true);
         Quality selected = fixed ? EquipmentDurability.quality(raw) : range.minimum();
         if (player instanceof ServerPlayer server) {
             Selection old = SELECTIONS.get(player.getUUID());
@@ -77,7 +81,7 @@ public final class CraftingQuality {
         ItemStack output = raw.copy();
         EquipmentDurability.setQuality(output, selected);
         if (fixed) range = new QualityRange(selected, selected);
-        int cost = EquipmentQualityRules.selectedExperienceCost(rule.difficulty(), selected, fixed, false);
+        int cost = EquipmentQualityRules.selectedExperienceCost(rule.difficulty(), selected, fixed, clumsy);
         int consumption = recipe.value() instanceof LeatherMendingRecipe
                 ? LeatherMendingRecipe.materialConsumption(grid.asCraftInput()) : 1;
         return new Result(rule, output, selected, range, fixed, repair, fixed, cost, consumption);
@@ -87,7 +91,7 @@ public final class CraftingQuality {
     public static boolean canManufacture(Player player, Result result) {
         return result.quality() == null || result.fixed() || EquipmentQualityRules.range(result.rule().difficulty(),
                 player.experienceLevel, player.totalExperience, EquipmentDurability.maximumQuality(result.stack()),
-                false, false, true).contains(result.quality());
+                PlayerCurses.has(player, R196Curse.CLUMSINESS, true), false, true).contains(result.quality());
     }
 
     public static TimedCraftingRecipes.Rule rule(RecipeHolder<CraftingRecipe> recipe, ItemStack output, CraftingContainer grid) {

@@ -13,6 +13,8 @@ public abstract class LocalPlayerFoodMixin {
     @Inject(method = "hasEnoughFoodToStartSprinting", at=@At("HEAD"),cancellable=true)
     private void mite$sprintWhileEnergyRemains(CallbackInfoReturnable<Boolean> cir) {
         LocalPlayer player=(LocalPlayer)(Object)this;
+        // This eligibility method is also polled during ordinary forward walking. The shared
+        // LivingEntity sprint-toggle hook rejects and reveals a curse only on an actual attempt.
         cir.setReturnValue(player.getAbilities().mayfly || FoodConsumption.hasEnergy(player));
     }
 }

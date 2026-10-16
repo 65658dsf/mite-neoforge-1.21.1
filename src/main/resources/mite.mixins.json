@@ -237,9 +237,17 @@
     "EnduranceBlockMiningMixin",
     "EnduranceMeleeMixin",
     "EnduranceItemUseMixin",
-
     "ExperienceBottleExperienceMixin",
-    "R196RandomEnchantmentsMixin"
+    "R196RandomEnchantmentsMixin",
+    "WitchCurseDeathMixin",
+    "CurseEntityMixin",
+    "CurseLivingEntityMixin",
+    "CurseArmorSlotMixin",
+    "CursePlayerEquipmentMixin",
+    "CurseChestMixin",
+    "CurseEndermanMixin",
+    "CurseEndermanTargetGoalMixin",
+    "CurseEquipableMixin"
   ],
   "client": [
     "client.WorldCreationDifficultyMixin",
@@ -261,7 +269,8 @@
     "client.SickSheepTexture033Mixin",
     "client.LunarSkyMixin",
     "client.LunarLightTextureMixin",
-    "client.LunarPrecipitationMixin"
+    "client.LunarPrecipitationMixin",
+    "client.CurseGuiMixin"
   ],
   "injectors": {
     "defaultRequire": 1

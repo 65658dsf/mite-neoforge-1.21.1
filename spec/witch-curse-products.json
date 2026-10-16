@@ -1,0 +1,906 @@
+{
+  "version": 1,
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "rules": {
+    "source": "uf.java:1701-1708,1747-1760",
+    "flags": "yc.java:1170-1185; independent of protein and phytonutrients",
+    "modern_drinks": "Unknown nonfood drinks use DRINK use animation; thrown/splash potions, water placement and other non-ingestion actions remain usable.",
+    "unknown_external_foods": "No guessed animal/plant classification; DRINK animation still checks drink restriction.",
+    "validation": "Recheck before starting, throughout use, before completeUsingItem and food/modern potion finish. Cake checks both flags before each bite."
+  },
+  "products": [
+    {
+      "id": "minecraft:brown_mushroom",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "aqz.java:2564"
+      ],
+      "source_id": 39
+    },
+    {
+      "id": "minecraft:red_mushroom",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "aqz.java:2565"
+      ],
+      "source_id": 40
+    },
+    {
+      "id": "minecraft:apple",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:24"
+      ],
+      "source_id": 260
+    },
+    {
+      "id": "minecraft:mushroom_stew",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:34"
+      ],
+      "source_id": 282
+    },
+    {
+      "id": "minecraft:wheat_seeds",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:44",
+        "yw.java:9-16"
+      ],
+      "source_id": 295,
+      "note": "Only food-energy override is adapted; original product classification remains."
+    },
+    {
+      "id": "minecraft:bread",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:46"
+      ],
+      "source_id": 297
+    },
+    {
+      "id": "minecraft:porkchop",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:64",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 319
+    },
+    {
+      "id": "minecraft:cooked_porkchop",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:65",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 320
+    },
+    {
+      "id": "minecraft:golden_apple",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:67",
+        "xy.java:8-11"
+      ],
+      "source_id": 322
+    },
+    {
+      "id": "minecraft:milk_bucket",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:80",
+        "yi.java:6-11"
+      ],
+      "source_id": 335
+    },
+    {
+      "id": "minecraft:egg",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:89",
+        "xm.java:6-11"
+      ],
+      "source_id": 344
+    },
+    {
+      "id": "minecraft:cod",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:94",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 349
+    },
+    {
+      "id": "minecraft:cooked_cod",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:95",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 350
+    },
+    {
+      "id": "minecraft:sugar",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:98"
+      ],
+      "source_id": 353
+    },
+    {
+      "id": "minecraft:cookie",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:102"
+      ],
+      "source_id": 357
+    },
+    {
+      "id": "minecraft:melon_slice",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:105"
+      ],
+      "source_id": 360
+    },
+    {
+      "id": "minecraft:pumpkin_seeds",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:106",
+        "yw.java:9-16"
+      ],
+      "source_id": 361
+    },
+    {
+      "id": "minecraft:melon_seeds",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:107",
+        "yw.java:9-16"
+      ],
+      "source_id": 362
+    },
+    {
+      "id": "minecraft:beef",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:108",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 363
+    },
+    {
+      "id": "minecraft:cooked_beef",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:109",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 364
+    },
+    {
+      "id": "minecraft:chicken",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:110",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 365
+    },
+    {
+      "id": "minecraft:cooked_chicken",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:111",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 366
+    },
+    {
+      "id": "minecraft:rotten_flesh",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:112",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 367
+    },
+    {
+      "id": "minecraft:nether_wart",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:117",
+        "yw.java:9-16"
+      ],
+      "source_id": 372
+    },
+    {
+      "id": "minecraft:spider_eye",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:120"
+      ],
+      "source_id": 375
+    },
+    {
+      "id": "minecraft:carrot",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:136",
+        "yv.java:9-13"
+      ],
+      "source_id": 391
+    },
+    {
+      "id": "minecraft:potato",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:137",
+        "yv.java:9-13"
+      ],
+      "source_id": 392
+    },
+    {
+      "id": "minecraft:baked_potato",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:138"
+      ],
+      "source_id": 393
+    },
+    {
+      "id": "minecraft:poisonous_potato",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:139"
+      ],
+      "source_id": 394
+    },
+    {
+      "id": "minecraft:golden_carrot",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:141"
+      ],
+      "source_id": 396
+    },
+    {
+      "id": "minecraft:pumpkin_pie",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:145"
+      ],
+      "source_id": 400
+    },
+    {
+      "id": "minecraft:mutton",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:374",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 1172
+    },
+    {
+      "id": "minecraft:cooked_mutton",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:375",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 1173
+    },
+    {
+      "id": "minecraft:enchanted_golden_apple",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:67",
+        "xy.java:8-11"
+      ],
+      "source_id": 322
+    },
+    {
+      "id": "minecraft:rabbit",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern meat follows ItemMeat animal-product rule."
+    },
+    {
+      "id": "minecraft:cooked_rabbit",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern meat follows ItemMeat animal-product rule."
+    },
+    {
+      "id": "minecraft:rabbit_stew",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern rabbit stew contains meat and plants, following beef stew both-product rule."
+    },
+    {
+      "id": "minecraft:salmon",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern fish follows ItemMeat animal-product rule."
+    },
+    {
+      "id": "minecraft:cooked_salmon",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern fish follows ItemMeat animal-product rule."
+    },
+    {
+      "id": "minecraft:tropical_fish",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern fish follows ItemMeat animal-product rule."
+    },
+    {
+      "id": "minecraft:pufferfish",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern fish follows ItemMeat animal-product rule."
+    },
+    {
+      "id": "minecraft:beetroot",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern crop follows yv plant-product rule."
+    },
+    {
+      "id": "minecraft:beetroot_soup",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": true,
+      "kind": "modern_adaptation",
+      "policy": "Modern vegetable food follows vegetable-soup plant-product rule."
+    },
+    {
+      "id": "minecraft:sweet_berries",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern fruit follows fruit plant-product rule."
+    },
+    {
+      "id": "minecraft:glow_berries",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern fruit follows fruit plant-product rule."
+    },
+    {
+      "id": "minecraft:dried_kelp",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern plant food explicitly classified as plant product."
+    },
+    {
+      "id": "minecraft:honey_bottle",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "modern_adaptation",
+      "policy": "Modern bee product explicitly classified as animal product."
+    },
+    {
+      "id": "minecraft:chorus_fruit",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern fruit follows fruit plant-product rule."
+    },
+    {
+      "id": "minecraft:suspicious_stew",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "modern_adaptation",
+      "policy": "Modern mushroom/flower food follows mushroom-stew plant-product rule."
+    },
+    {
+      "id": "mite:cheese",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:386"
+      ],
+      "source_id": 1183
+    },
+    {
+      "id": "mite:dough",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:388"
+      ],
+      "source_id": 1185
+    },
+    {
+      "id": "mite:chocolate",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:389"
+      ],
+      "source_id": 1186
+    },
+    {
+      "id": "mite:onion",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:390",
+        "yv.java:9-13"
+      ],
+      "source_id": 1187
+    },
+    {
+      "id": "mite:orange",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:423"
+      ],
+      "source_id": 1218
+    },
+    {
+      "id": "mite:banana",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:424"
+      ],
+      "source_id": 1219
+    },
+    {
+      "id": "mite:blueberries",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:430"
+      ],
+      "source_id": 1225
+    },
+    {
+      "id": "mite:raw_large_fish",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:434",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 1229
+    },
+    {
+      "id": "mite:cooked_large_fish",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:435",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 1230
+    },
+    {
+      "id": "mite:raw_worm",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:447",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 1280
+    },
+    {
+      "id": "mite:cooked_worm",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:448",
+        "ItemMeat.java:8-11"
+      ],
+      "source_id": 1281
+    },
+    {
+      "id": "mite:milk_bowl",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:372"
+      ],
+      "source_id": 1166
+    },
+    {
+      "id": "mite:water_bowl",
+      "animal_product": false,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:373"
+      ],
+      "source_id": 1167
+    },
+    {
+      "id": "mite:beef_stew",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:391"
+      ],
+      "source_id": 1188
+    },
+    {
+      "id": "mite:chicken_soup",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:392"
+      ],
+      "source_id": 1189
+    },
+    {
+      "id": "mite:vegetable_soup",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:393"
+      ],
+      "source_id": 1190
+    },
+    {
+      "id": "mite:ice_cream",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:411"
+      ],
+      "source_id": 1206
+    },
+    {
+      "id": "mite:salad",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:414"
+      ],
+      "source_id": 1209
+    },
+    {
+      "id": "mite:cream_of_mushroom_soup",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:420"
+      ],
+      "source_id": 1215
+    },
+    {
+      "id": "mite:cream_of_vegetable_soup",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:421"
+      ],
+      "source_id": 1216
+    },
+    {
+      "id": "mite:pumpkin_soup",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:422"
+      ],
+      "source_id": 1217
+    },
+    {
+      "id": "mite:mashed_potato",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:428"
+      ],
+      "source_id": 1223
+    },
+    {
+      "id": "mite:sorbet",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:429"
+      ],
+      "source_id": 1224
+    },
+    {
+      "id": "mite:porridge",
+      "animal_product": false,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:431"
+      ],
+      "source_id": 1226
+    },
+    {
+      "id": "mite:cereal",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:432"
+      ],
+      "source_id": 1227
+    },
+    {
+      "id": "mite:copper_milk_bucket",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:366",
+        "yi.java:6-11"
+      ],
+      "source_id": 1160
+    },
+    {
+      "id": "mite:silver_milk_bucket",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:367",
+        "yi.java:6-11"
+      ],
+      "source_id": 1161
+    },
+    {
+      "id": "mite:gold_milk_bucket",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:368",
+        "yi.java:6-11"
+      ],
+      "source_id": 1162
+    },
+    {
+      "id": "mite:mithril_milk_bucket",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:369",
+        "yi.java:6-11"
+      ],
+      "source_id": 1163
+    },
+    {
+      "id": "mite:adamantium_milk_bucket",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:370",
+        "yi.java:6-11"
+      ],
+      "source_id": 1164
+    },
+    {
+      "id": "mite:ancient_metal_milk_bucket",
+      "animal_product": true,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "yc.java:371",
+        "yi.java:6-11"
+      ],
+      "source_id": 1165
+    },
+    {
+      "id": "minecraft:cake",
+      "animal_product": true,
+      "plant_product": true,
+      "drink": false,
+      "kind": "r196",
+      "source_refs": [
+        "anh.java:82",
+        "aqz.java:2566"
+      ],
+      "note": "Applied only on placed cake bite; held cake remains inedible."
+    },
+    {
+      "id": "mite:bottle_of_disenchanting",
+      "animal_product": false,
+      "plant_product": false,
+      "drink": true,
+      "kind": "r196",
+      "source_refs": [
+        "ItemBottleOfDisenchanting.java:28-29",
+        "uf.java:1708"
+      ],
+      "drink_curse_exempt": true
+    }
+  ]
+}

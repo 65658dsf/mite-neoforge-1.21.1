@@ -1,5 +1,7 @@
 package io.github.ningmeng123.mite.crafting;
 
+import io.github.ningmeng123.mite.curse.PlayerCurses;
+import io.github.ningmeng123.mite.curse.R196Curse;
 import io.github.ningmeng123.mite.network.CraftingProgressPayload;
 import io.github.ningmeng123.mite.network.CraftingQualityPayload;
 import io.github.ningmeng123.mite.rules.EquipmentQualityRules;
@@ -81,6 +83,7 @@ public final class TimedCraftingController {
     public static boolean start(ServerPlayer player, AbstractContainerMenu menu, boolean continuous) {
         Prepared prepared = prepare(player, menu);
         if (prepared == null || player.containerMenu != menu || !allowed(player, prepared)) return false;
+        PlayerCurses.has(player, R196Curse.CLUMSINESS, true);
         Session old = SESSIONS.get(player.getUUID());
         // Repeated clicks neither queue batches nor change an already-running session's mode.
         if (old != null && old.prepared.menu() == menu && old.prepared.recipe().id().equals(prepared.recipe().id())
@@ -144,7 +147,8 @@ public final class TimedCraftingController {
         float capacity = prepared.menu() instanceof WorkbenchAccess access ? access.mite$workbenchCapacity() : 0F;
         return TimedCraftingRules.period(EquipmentQualityRules.adjustedDifficulty(prepared.rule().difficulty(),
                 prepared.quality().quality()), player.experienceLevel,
-                TimedCraftingRules.benchModifier(capacity, prepared.rule().requiredBench() != null), false);
+                TimedCraftingRules.benchModifier(capacity, prepared.rule().requiredBench() != null),
+                PlayerCurses.has(player, R196Curse.CLUMSINESS));
     }
 
     private static boolean allowed(ServerPlayer player, Prepared prepared) {

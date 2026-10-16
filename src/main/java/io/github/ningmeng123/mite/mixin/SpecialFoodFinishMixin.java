@@ -6,6 +6,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ChorusFruitItem;
 import net.minecraft.world.item.HoneyBottleItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.OminousBottleItem;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /** Modern subclass side effects must not happen after a rejected food use. @author NingMeng123 */
-@Mixin({ChorusFruitItem.class,HoneyBottleItem.class})
+@Mixin({ChorusFruitItem.class,HoneyBottleItem.class,PotionItem.class,OminousBottleItem.class})
 public abstract class SpecialFoodFinishMixin {
     @Inject(method="finishUsingItem",at=@At("HEAD"),cancellable=true)
     private void mite$checkSpecialFood(ItemStack stack,Level level,LivingEntity entity,CallbackInfoReturnable<ItemStack> cir) {

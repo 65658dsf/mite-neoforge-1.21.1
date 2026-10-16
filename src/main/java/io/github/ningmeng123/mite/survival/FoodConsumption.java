@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.survival;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.curse.CurseIngestion;
 import io.github.ningmeng123.mite.item.FoodProfile;
 import io.github.ningmeng123.mite.registry.MiteFoodCatalog;
 import io.github.ningmeng123.mite.network.NutritionPayload;
@@ -20,7 +21,9 @@ public final class FoodConsumption {
     public static boolean hasEnergy(Player p) {
         return p.getFoodData().getFoodLevel()>0 || ((DualFoodData)p.getFoodData()).mite$getNutrition()>0;
     }
-    public static boolean canIngest(Player p, ItemStack stack) { return canIngest(p,MiteFoodCatalog.profile(stack)); }
+    public static boolean canIngest(Player p, ItemStack stack) {
+        return canIngest(p,MiteFoodCatalog.profile(stack)) && CurseIngestion.allowed(p, stack);
+    }
     public static boolean canIngest(Player p, FoodProfile f) {
         if (f==null) return true;
         NutritionState state = NutritionState.get(p);

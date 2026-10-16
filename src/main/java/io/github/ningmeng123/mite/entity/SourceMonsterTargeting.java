@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.curse.WitchCursing;
 import io.github.ningmeng123.mite.mixin.SourceMonsterLivingAccess;
 import io.github.ningmeng123.mite.rules.R196MobRules;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
@@ -15,6 +16,7 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,6 +29,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
@@ -186,7 +189,9 @@ public final class SourceMonsterTargeting {
         }
         @Override public void stop() { previous = mob.getTarget(); setGoalTarget(mob, null); target = null; }
         boolean initiallySuitable(LivingEntity candidate) {
-            return suitable(mob, candidate) && (!checksSight(mob, candidate, sight) || canSee(mob, candidate, previous == candidate));
+            if (!suitable(mob, candidate) || checksSight(mob, candidate, sight) && !canSee(mob, candidate, previous == candidate)) return false;
+            if (mob instanceof Witch witch && candidate instanceof ServerPlayer player) WitchCursing.tryCurse(witch, player);
+            return true;
         }
     }
 

@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.registry.MiteFoodCatalog;
+import io.github.ningmeng123.mite.curse.CurseIngestion;
 import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.github.ningmeng123.mite.survival.FoodConsumption;
 import net.minecraft.core.BlockPos;
@@ -21,7 +22,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class CakeNutritionMixin {
     @Inject(method="eat",at=@At("HEAD"),cancellable=true)
     private static void mite$eatSlice(LevelAccessor level,BlockPos pos,BlockState state,Player player,CallbackInfoReturnable<InteractionResult> cir) {
-        if(!FoodConsumption.canIngest(player,MiteFoodCatalog.CAKE_SLICE)) { cir.setReturnValue(InteractionResult.PASS); return; }
+        if(!FoodConsumption.canIngest(player,MiteFoodCatalog.CAKE_SLICE) || !CurseIngestion.cakeAllowed(player)) {
+            cir.setReturnValue(InteractionResult.PASS); return;
+        }
         if(!level.isClientSide()) {
             player.awardStat(Stats.EAT_CAKE_SLICE);
             ((DualFoodData)player.getFoodData()).mite$ingest(MiteFoodCatalog.CAKE_SLICE);

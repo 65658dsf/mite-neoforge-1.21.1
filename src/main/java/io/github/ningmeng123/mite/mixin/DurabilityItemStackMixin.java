@@ -4,9 +4,12 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.curse.PlayerCurses;
+import io.github.ningmeng123.mite.curse.R196Curse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -51,6 +54,10 @@ public abstract class DurabilityItemStackMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;processDurabilityChange(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;I)I"))
     private int mite$lastArmorPoint(ServerLevel level, ItemStack stack, int amount, Operation<Integer> original,
             @Local(argsOnly = true) LivingEntity owner) {
+        // ye.tryDamageItem doubles the incoming budget before Unbreaking and armor last-point protection.
+        if (amount > 0 && owner instanceof Player player
+                && PlayerCurses.has(player, R196Curse.EQUIPMENT_DECAY, true))
+            amount = (int)Math.min((long)amount * 2L, Integer.MAX_VALUE);
         return EquipmentDurability.limitArmorWear(stack, original.call(level, stack, amount), owner);
     }
 }

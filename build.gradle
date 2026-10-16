@@ -95,6 +95,11 @@ neoForge {
         }
         data {
             data()
+            if (project.providers.gradleProperty('miteWitchCurseAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.witchCurseAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.witchCurseAuditOutput', file('build/verification/witch-curse-client-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteDifficultyClientAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.difficultyClientAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'

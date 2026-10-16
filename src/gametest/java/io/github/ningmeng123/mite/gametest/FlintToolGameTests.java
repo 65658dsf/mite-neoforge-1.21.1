@@ -209,6 +209,7 @@ public final class FlintToolGameTests {
         private final BlockState previous;
         private final AABB area;
         private final Set<UUID> existingDrops = new HashSet<>();
+        private final SpawnedEntityCapture spawned;
         private final boolean previousTileDrops;
 
         private BlockFixture(GameTestHelper helper, BlockPos position) {
@@ -217,23 +218,29 @@ public final class FlintToolGameTests {
             this.previous = helper.getLevel().getBlockState(position);
             this.area = new AABB(position).inflate(1.0);
             for (ItemEntity item : helper.getLevel().getEntitiesOfClass(ItemEntity.class, area)) existingDrops.add(item.getUUID());
+            // Newly generated grid chunks may not have accessible entity sections until the next tick.
+            // Observe accepted spawns at this fixture instead of querying that still-hidden spatial index.
+            spawned = new SpawnedEntityCapture(helper.getLevel(), entity -> entity instanceof ItemEntity
+                    && !existingDrops.contains(entity.getUUID()) && entity.getBoundingBox().intersects(area));
             GameRules.BooleanValue drops = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS);
             previousTileDrops = drops.get();
             drops.set(true, helper.getLevel().getServer());
         }
 
         private int countDrops(net.minecraft.world.item.Item item) {
-            return helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).stream()
-                    .filter(entity -> !existingDrops.contains(entity.getUUID()) && entity.getItem().is(item))
+            return spawned.live(ItemEntity.class).stream()
+                    .filter(entity -> entity.getItem().is(item))
                     .mapToInt(entity -> entity.getItem().getCount()).sum();
         }
 
         @Override
         public void close() {
-            helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(previousTileDrops, helper.getLevel().getServer());
-            helper.getLevel().setBlockAndUpdate(position, previous);
-            helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).stream()
-                    .filter(entity -> !existingDrops.contains(entity.getUUID())).forEach(ItemEntity::discard);
+            try {
+                helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(previousTileDrops, helper.getLevel().getServer());
+                helper.getLevel().setBlockAndUpdate(position, previous);
+            } finally {
+                spawned.close();
+            }
         }
     }
 }

@@ -45,6 +45,11 @@ public final class MiteAttachments {
             ATTACHMENTS.register("nutrition", () -> AttachmentType.builder(() -> NutritionState.INITIAL)
                     .serialize(NutritionState.CODEC).copyOnDeath().build());
 
+    /** The world curse ledger is authoritative; this attachment mirrors its realised state. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<io.github.ningmeng123.mite.curse.CurseState>> CURSE_STATE =
+            ATTACHMENTS.register("curse_state", () -> AttachmentType.builder(() -> io.github.ningmeng123.mite.curse.CurseState.NONE)
+                    .serialize(io.github.ningmeng123.mite.curse.CurseState.CODEC).copyOnDeath().build());
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<CowFoodState>> COW_FOOD =
             ATTACHMENTS.register("cow_food", () -> AttachmentType.builder(holder -> CowFoodState.initial(((Cow)holder).getRandom()))
                     .serialize(CowFoodState.CODEC).sync(ByteBufCodecs.fromCodec(CowFoodState.CODEC)).build());

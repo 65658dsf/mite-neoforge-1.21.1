@@ -1,0 +1,348 @@
+{
+  "version": 1,
+  "author": "NingMeng123",
+  "source_release": "MITE R196",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_root": ".reference/r196/decompiled",
+  "selection": {
+    "source_refs": [
+      "tv.java:18,32-33,262-290",
+      "Curse.java:8-24,53-60",
+      "re.java:68-101"
+    ],
+    "trigger": "After a source target candidate passes legality and required line of sight; not every tick or potion impact",
+    "attempt_random_bound": 4,
+    "attempt_random_success": 0,
+    "attempt_probability": 0.25,
+    "witch_seed_type": "signed int32, independently generated and persisted in native entity NBT",
+    "username_hash": "Java int32 sum(username.charAt(i) * i), UTF-16 indices start at zero",
+    "random_seed": "signed int32(witch_seed + username_hash), then widened to long",
+    "random_algorithm": "java.util.Random",
+    "draw_bound": 64,
+    "accepted_ids": {
+      "min": 1,
+      "max": 16
+    },
+    "reject_empty_slots": true,
+    "probability_per_type": 0.0625,
+    "old_special_developer_override": "Old atv.inDevMode forces cannot_drink; not mapped to ordinary NeoForge dev runs",
+    "independent_fixtures": [
+      {
+        "witch_seed": 0,
+        "username": "NingMeng123",
+        "username_hash": 4180,
+        "curse_id": 5
+      },
+      {
+        "witch_seed": 0,
+        "username": "Steve",
+        "username_hash": 1076,
+        "curse_id": 15
+      },
+      {
+        "witch_seed": 0,
+        "username": "Alex",
+        "username_hash": 670,
+        "curse_id": 13
+      },
+      {
+        "witch_seed": 2147483647,
+        "username": "NingMeng123",
+        "combined_signed_seed": -2147479469,
+        "curse_id": 3
+      },
+      {
+        "witch_seed": -2147483648,
+        "username": "A",
+        "combined_signed_seed": -2147483648,
+        "curse_id": 16
+      }
+    ]
+  },
+  "lifecycle": {
+    "source_refs": [
+      "js.java:1389-1472",
+      "tv.java:256-259,279-298",
+      "WorldInfoShared.java:150-156,248-264",
+      "als.java:30-32,324-325"
+    ],
+    "realization_delay_ticks": 6000,
+    "one_pending_or_active_per_player": true,
+    "pending_notification": false,
+    "natural_expiration": null,
+    "source_storage": "Shared world records keyed by case-sensitive player username and caster UUID",
+    "source_time": "Current dimension total world time",
+    "modern_storage": "Versioned SavedData in the overworld; player UUID identity; original username retained for deterministic selection",
+    "modern_time": "Overworld gameTime",
+    "player_death_removes": false,
+    "dimension_change_removes": false,
+    "logout_removes": false,
+    "caster_chunk_unload_removes": false,
+    "caster_natural_distance_despawn": false,
+    "caster_accepted_death_removes_all_owned": true,
+    "canceled_caster_death_removes": false,
+    "offline_pending_realization": "Realize at the first online reconciliation at or after the deadline",
+    "removal_items": [
+      "mite:bottle_of_disenchanting"
+    ],
+    "milk_removes": false,
+    "client_authority": "Client receives active type and known flag; server owns all checks, effects, timers and random rolls"
+  },
+  "discovery": {
+    "source_refs": [
+      "uf.java:2140-2168",
+      "js.java:1449-1468",
+      "bcw.java:1126-1140",
+      "axp.java:62-80,151-161"
+    ],
+    "initial_effect_known": false,
+    "reveal": "An actual triggering check requests learn_effect_if_so; wearing armor at realization also reveals if armor was dropped",
+    "known_state_persisted": true,
+    "first_discovery_particles_once": true,
+    "unknown_display": "Cursed, Effect unknown",
+    "known_display": "Cursed with specific name and descriptive tooltip"
+  },
+  "effects": [
+    {
+      "id": 1,
+      "key": "equipmentDecay",
+      "source_refs": [
+        "ye.java:307-315"
+      ],
+      "rule": "Multiply player equipment durability damage by 2 before the existing native durability pipeline",
+      "damage_multiplier": 2,
+      "creative_damage": false
+    },
+    {
+      "id": 2,
+      "key": "cantHoldBreath",
+      "source_refs": [
+        "uf.java:2172-2177",
+        "of.java:280-285"
+      ],
+      "rule": "Clamp assigned air supply to 90; underwater decrease checks reveal the effect",
+      "max_air": 90,
+      "invented_air_depletion_multiplier": false,
+      "modern_respiration_behavior": "Retained"
+    },
+    {
+      "id": 3,
+      "key": "cantRun",
+      "source_refs": [
+        "bex.java:407-410",
+        "bdc.java:448-456"
+      ],
+      "rule": "Reject enabling sprint; stop existing sprint on realization"
+    },
+    {
+      "id": 4,
+      "key": "cantEatAnimals",
+      "source_refs": [
+        "uf.java:1701-1704"
+      ],
+      "rule": "Reject ingestion of animal-product items",
+      "products_spec": "spec/witch-curse-products.json",
+      "classify_by_nutrient_values": false
+    },
+    {
+      "id": 5,
+      "key": "cantEatPlants",
+      "source_refs": [
+        "uf.java:1705-1707"
+      ],
+      "rule": "Reject ingestion of plant-product items",
+      "products_spec": "spec/witch-curse-products.json",
+      "classify_by_nutrient_values": false
+    },
+    {
+      "id": 6,
+      "key": "cantDrink",
+      "source_refs": [
+        "uf.java:1708"
+      ],
+      "rule": "Reject drinking, except the bottle of disenchanting",
+      "exception": "mite:bottle_of_disenchanting",
+      "thrown_or_splash_potion_restricted": false
+    },
+    {
+      "id": 7,
+      "key": "endermenEnemy",
+      "source_refs": [
+        "tg.java:78-84"
+      ],
+      "rule": "Before normal stare, pumpkin and visibility checks, return hostile if nextInt(3) == 0 and the player has this curse",
+      "random_bound": 3,
+      "success_value": 0
+    },
+    {
+      "id": 8,
+      "key": "clumsiness",
+      "source_refs": [
+        "uf.java:2184-2196,2219-2224",
+        "bex.java:497-503",
+        "wd.java:178-185"
+      ],
+      "effective_crafting_level_delta": -20,
+      "crafting_experience_cost_multiplier": 2,
+      "raw_crafting_period_multiplier": 2,
+      "multiply_period_before_level_and_bench_division": true,
+      "minimum_crafting_period_ticks": 25,
+      "repair_quality_checks": "Use the same reduced crafting ability and doubled applicable XP fees"
+    },
+    {
+      "id": 9,
+      "key": "entanglement",
+      "source_refs": [
+        "of.java:1473-1482"
+      ],
+      "rule": "Scale horizontal travel input for plant material at player feet",
+      "vine_factor": 0.2,
+      "other_plant_factor": 0.4,
+      "vertical_input_factor": 1,
+      "scale_accumulated_velocity": false,
+      "modern_plant_classes": [
+        "VineBlock",
+        "BushBlock",
+        "GrowingPlantBlock",
+        "SugarCaneBlock",
+        "BambooStalkBlock"
+      ]
+    },
+    {
+      "id": 10,
+      "key": "cantWearArmor",
+      "source_refs": [
+        "uf.java:2166-2168",
+        "vw.java:22",
+        "wh.java:160"
+      ],
+      "rule": "Drop existing humanoid armor on realization and prevent subsequent equipment",
+      "modern_slots": [
+        "HEAD",
+        "CHEST",
+        "LEGS",
+        "FEET"
+      ],
+      "includes_pumpkins_and_skulls_in_head_slot": true,
+      "offhand_restricted": false,
+      "modern_entrypoints": [
+        "inventory armor slots",
+        "right-click equip",
+        "dispenser equip",
+        "server tick fallback"
+      ]
+    },
+    {
+      "id": 11,
+      "key": "cantOpenChests",
+      "source_refs": [
+        "ank.java:251-253"
+      ],
+      "rule": "Reject chest open checks, including chest subclasses",
+      "modern_scope": [
+        "ChestBlock",
+        "trapped chest",
+        "metal strongbox subclasses"
+      ],
+      "ender_chest_restricted": false,
+      "other_container_types_restricted": false
+    },
+    {
+      "id": 12,
+      "key": "cantSleep",
+      "source_refs": [
+        "bdi.java:68-72"
+      ],
+      "rule": "Reject falling asleep",
+      "modern_already_sleeping_handling": "Wake the sleeping player when curse realizes"
+    },
+    {
+      "id": 13,
+      "key": "fearOfSpiders",
+      "source_refs": [
+        "EntityArachnid.java:244-249"
+      ],
+      "target_family": "Spider and subclasses",
+      "reject_melee_probability": 0.75,
+      "random_source": "target entity",
+      "random_bound": 4,
+      "reject_values": [
+        1,
+        2,
+        3
+      ],
+      "successful_attack_reveals": false
+    },
+    {
+      "id": 14,
+      "key": "fearOfWolves",
+      "source_refs": [
+        "sf.java:580-584"
+      ],
+      "target_family": "Wolf and subclasses",
+      "reject_melee_probability": 0.75,
+      "random_source": "target entity",
+      "random_bound": 4,
+      "reject_values": [
+        1,
+        2,
+        3
+      ],
+      "successful_attack_reveals": false
+    },
+    {
+      "id": 15,
+      "key": "fearOfCreepers",
+      "source_refs": [
+        "tf.java:199-203"
+      ],
+      "target_family": "Creeper and subclasses",
+      "reject_melee_probability": 0.75,
+      "random_source": "target entity",
+      "random_bound": 4,
+      "reject_values": [
+        1,
+        2,
+        3
+      ],
+      "successful_attack_reveals": false
+    },
+    {
+      "id": 16,
+      "key": "fearOfUndead",
+      "source_refs": [
+        "nn.java:2413-2414"
+      ],
+      "target_family": "Original isEntityUndead; modern EntityTypeTags.UNDEAD",
+      "reject_melee_probability": 0.75,
+      "random_source": "target entity",
+      "random_bound": 4,
+      "reject_values": [
+        1,
+        2,
+        3
+      ],
+      "successful_attack_reveals": false
+    }
+  ],
+  "modern_adaptations": [
+    "Identify the cursed player by UUID so account name changes do not remove the curse; use the original name for selection",
+    "Use shared overworld gameTime instead of old independent per-dimension clocks",
+    "Server-authoritative fear roll is performed once before weapon durability, on-hit enchantments and damage",
+    "Map modern edible items and plant/undead classes explicitly; unknown external foods receive no guessed animal or plant flag",
+    "Recheck ingestion throughout use and at completion to prevent mid-use bypass",
+    "Honor canceled native witch deaths before removing caster-owned curses"
+  ],
+  "synchronization": {
+    "authority": "Shared overworld SavedData; serializable player Data Attachment is a mirror",
+    "recipient": "The cursed player only; guarded custom playToClient channel",
+    "force_sync_on": [
+      "login",
+      "respawn",
+      "dimension_change"
+    ],
+    "pending_type_exposed": false,
+    "client_discovery_request": "Only the sender current active curse can be marked known; cannot apply or lift any curse",
+    "realization_notice": "Separate playToClient payload,100 ticks; reconnecting a realized curse does not replay it"
+  }
+}
