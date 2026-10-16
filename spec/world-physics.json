@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "reference": "MITE 1.6.4 R196",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "verification_status": "implementation_and_independent_tests_written_not_run_in_subagent",
+  "explosion_items": {
+    "source": [
+      "ss.java:548-658",
+      "ss.java:349-357",
+      "yc.java:1079-1088"
+    ],
+    "distance_squared": "dx*dx + dy*dy/4 + dz*dz",
+    "force": "block_power / pow(distance_squared,0.75)",
+    "motion_distance_squared_minimum": 1,
+    "nondamageable_survival_force_exclusive": 0.2,
+    "equipment_damage": "max(1,round(force*64*family_scale))",
+    "family_scale": {
+      "mining_melee_tool": 100,
+      "humanoid_armor": 2,
+      "other": 1
+    },
+    "immune": "nondamageable nonblock completely-metal item OR ItemNugget OR ItemIngot OR redstone",
+    "block_survival": "force*2 < source_block_resistance",
+    "fragments_per_whole_item": {
+      "minecraft:diamond": {
+        "mite:diamond_shard": 1
+      },
+      "minecraft:emerald": {
+        "mite:emerald_shard": 1
+      },
+      "minecraft:flint": {
+        "mite:flint_chip": 1
+      }
+    },
+    "profiles": "src/main/resources/mite/explosion-materials.json",
+    "modern_adaptations": [
+      "frozen stacking identity mapping for modern variants",
+      "unmapped third-party items retain native explosion handling",
+      "modern block loot for source block drops",
+      "native durability events and existing Unbreaking retained"
+    ]
+  },
+  "tests": {
+    "unit": "SourceWorldPhysicsRulesTest",
+    "integration": "SourceWorldPhysicsGameTests"
+  }
+}
