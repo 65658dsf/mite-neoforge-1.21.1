@@ -372,6 +372,7 @@ public final class LogHarvestGameTests {
         private final BlockState previous;
         private final AABB area;
         private final Set<UUID> existing = new HashSet<>();
+        private final SpawnedEntityCapture spawned;
         private final boolean oldDrops;
 
         private BlockFixture(GameTestHelper helper, BlockPos position) {
@@ -380,6 +381,10 @@ public final class LogHarvestGameTests {
             previous = helper.getLevel().getBlockState(position);
             area = new AABB(position).inflate(1.0);
             for (ItemEntity item : helper.getLevel().getEntitiesOfClass(ItemEntity.class, area)) existing.add(item.getUUID());
+            // A newly generated grid chunk can hide its entity sections until the following tick.
+            // Capture accepted item spawns now, without counting old entities or another fixture's drops.
+            spawned = new SpawnedEntityCapture(helper.getLevel(), entity -> entity instanceof ItemEntity
+                    && !existing.contains(entity.getUUID()) && entity.getBoundingBox().intersects(area));
             oldDrops = helper.getLevel().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(true, helper.getLevel().getServer());
         }
@@ -389,8 +394,7 @@ public final class LogHarvestGameTests {
         }
 
         private List<ItemEntity> newDrops() {
-            return helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).stream()
-                    .filter(item -> !existing.contains(item.getUUID())).toList();
+            return spawned.live(ItemEntity.class);
         }
 
         private int logDrops() {
@@ -404,9 +408,12 @@ public final class LogHarvestGameTests {
 
         @Override
         public void close() {
-            helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(oldDrops, helper.getLevel().getServer());
-            helper.getLevel().setBlockAndUpdate(position, previous);
-            newDrops().forEach(ItemEntity::discard);
+            try {
+                helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS).set(oldDrops, helper.getLevel().getServer());
+                helper.getLevel().setBlockAndUpdate(position, previous);
+            } finally {
+                spawned.close();
+            }
         }
     }
 }
