@@ -67,7 +67,10 @@ public final class AnimalCommon032Goals {
         return selected;
     }
     public static final class Flee extends SourceMovement032Goal implements Marker {
+        private static final int REPLAN_INTERVAL=10;
         private final float panicChance;
+        private int replanTicks;
+        private net.minecraft.world.phys.Vec3 plannedThreat;
         public Flee(PathfinderMob mob,float speed,float panicChance) { super(mob,speed,true); this.panicChance=panicChance; }
         public void startPanicking() { R196AnimalAi032.state(mob).putInt("panic_countdown",100+mob.getRandom().nextInt(100)); }
         public boolean panicking() {
@@ -75,17 +78,20 @@ public final class AnimalCommon032Goals {
             return R196AnimalAi032.state(mob).getInt("panic_countdown")>0;
         }
         @Override public boolean canUse() {
+            if(controlled()) return false;
             var state=R196AnimalAi032.state(mob);
             if(state.getBoolean("done_panicking") && mob.level().getRandom().nextInt(10000)==0) state.putBoolean("done_panicking",false);
             return R196AnimalAi032.considerFleeing(mob) || panicking();
         }
         @Override protected Path movementPath() {
-            if(panicking()) return randomPath();
             LivingEntity attacker=R196AnimalAi032.lastAttacker(mob);
-            Path path=attacker==null ? null : away(mob,List.of(attacker),48,16);
-            if(path!=null) {
-                R196AnimalAi032.state(mob).putBoolean("fleeing",true);
-                if(mob instanceof Wolf wolf) NativeAnimalSpecial032.onFleeing(wolf);
+            if(attacker!=null) {
+                Path path=AnimalEscapePath.find(mob,attacker);
+                if(path!=null) {
+                    R196AnimalAi032.state(mob).putBoolean("fleeing",true);
+                    if(mob instanceof Wolf wolf) NativeAnimalSpecial032.onFleeing(wolf);
+                }
+                // A known attacker never turns a failed escape search into a random run toward it.
                 return path;
             }
             if(mob.getRandom().nextFloat()<panicChance) startPanicking();
@@ -98,17 +104,32 @@ public final class AnimalCommon032Goals {
         @Override public void start() {
             if(!R196AnimalAi032.state(mob).getBoolean("done_panicking") && mob.getRandom().nextFloat()<panicChance) startPanicking();
             if(!panicking()) R196AnimalAi032.state(mob).putBoolean("done_panicking",true);
+            rememberPlan();
             super.start();
         }
         @Override public void tick() {
+            super.tick();
             var state=R196AnimalAi032.state(mob); int before=state.getInt("panic_countdown");
             if(mob.isOnFire()) startPanicking();
             else if(before>0) { state.putInt("panic_countdown",before-1); if(before==1) state.putBoolean("done_panicking",true); }
-            if(before==0 && state.getInt("panic_countdown")>0 || isStuck() || mob.getNavigation().isDone()) super.start();
-            // Source's overriding updateTask does not call the movement parent's stationary counter.
+            if(--replanTicks>0) return;
+            replanTicks=REPLAN_INTERVAL;
+            LivingEntity attacker=R196AnimalAi032.lastAttacker(mob);
+            boolean moved=attacker!=null && (plannedThreat==null || attacker.position().distanceToSqr(plannedThreat)>=4D);
+            if(moved || isStuck() || mob.getNavigation().isDone()) {
+                rememberPlan();
+                replan();
+            }
         }
+        private void rememberPlan() {
+            LivingEntity attacker=R196AnimalAi032.lastAttacker(mob);
+            plannedThreat=attacker==null ? null : attacker.position();
+            replanTicks=REPLAN_INTERVAL;
+        }
+        private boolean controlled() { return mob.isPassenger() || mob.getFirstPassenger() instanceof Player; }
         @Override protected float movementSpeed() { return movementSpeed+(panicking() ? .2F : 0F); }
         @Override public boolean canContinueToUse() {
+            if(controlled()) return false;
             R196AnimalAi032.considerStopFleeing(mob);
             return R196AnimalAi032.state(mob).getBoolean("decided_to_flee") || panicking();
         }
@@ -118,6 +139,7 @@ public final class AnimalCommon032Goals {
         private ItemEntity target;
         public FoodItems(PathfinderMob mob) { super(mob,1F,true); }
         @Override public boolean canUse() {
+            if(R196AnimalAi032.isSpookedOrFleeing(mob)) return false;
             if(mob instanceof net.minecraft.world.entity.TamableAnimal pet && pet.isTame() && pet.isOrderedToSit()) return false;
             if(mob.getPersistentData().getInt(R196NpcNeeds.COOLDOWN)>0 || mob.getRandom().nextInt(40)!=0 || mob.isBaby()) return false;
             return !candidates().isEmpty();
@@ -136,7 +158,8 @@ public final class AnimalCommon032Goals {
             return selected;
         }
         @Override public boolean canContinueToUse() {
-            return target!=null && target.isAlive() && mob.getPersistentData().getInt(R196NpcNeeds.COOLDOWN)==0 && super.canContinueToUse();
+            return !R196AnimalAi032.isSpookedOrFleeing(mob) && target!=null && target.isAlive()
+                    && mob.getPersistentData().getInt(R196NpcNeeds.COOLDOWN)==0 && super.canContinueToUse();
         }
         @Override public void stop() { super.stop(); target=null; }
     }

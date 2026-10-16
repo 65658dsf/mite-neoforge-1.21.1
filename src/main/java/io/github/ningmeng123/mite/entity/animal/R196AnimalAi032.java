@@ -36,6 +36,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 @EventBusSubscriber(modid=Mite.MOD_ID)
 public final class R196AnimalAi032 {
     public static final String STATE="mite_animal_ai_032";
+    public static final double ALARM_RADIUS=16D;
     private R196AnimalAi032() {}
     public static boolean managed(Mob mob) {
         var type=mob.getType();
@@ -44,6 +45,10 @@ public final class R196AnimalAi032 {
                 || type==EntityType.HORSE || type==EntityType.DONKEY || type==EntityType.MULE || type==EntityType.ZOMBIE_HORSE || type==EntityType.SKELETON_HORSE;
     }
     public static boolean hellhound(Mob mob) { return mob instanceof R196Mob source && source.miteKind()==MobKind.HELLHOUND; }
+    public static boolean herdAnimal(Mob mob) {
+        return managed(mob) && (Livestock032.sourceLivestock(mob) || mob instanceof AbstractHorse
+                && !mob.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD));
+    }
     public static CompoundTag state(Mob mob) {
         var data=mob.getPersistentData();
         if (!data.contains(STATE)) { var state=new CompoundTag(); state.putInt("version",1); data.put(STATE,state); }
@@ -70,7 +75,7 @@ public final class R196AnimalAi032 {
         var state=state(mob); LivingEntity attacker=lastAttacker(mob);
         boolean healthy=!Livestock032.sourceLivestock(mob) && !(mob instanceof AbstractHorse) && mob.getHealth()/mob.getMaxHealth()>=.2F;
         if(attacker==null || healthy) { state.putBoolean("decided_to_flee",false); state.putBoolean("fleeing",false); return true; }
-        if(mob.distanceTo(attacker)>40F) { state.putBoolean("fleeing",false); return true; }
+        if(mob.distanceTo(attacker)>40F) { state.putBoolean("decided_to_flee",false); state.putBoolean("fleeing",false); return true; }
         return false;
     }
     public static boolean spooked(Mob mob) { return state(mob).getLong("spooked_until")>mob.level().getGameTime(); }
@@ -190,7 +195,25 @@ public final class R196AnimalAi032 {
             SourceAnimalDespawn032.refresh(animal,attacker instanceof net.minecraft.world.entity.player.Player?-9600:-1200);
             if(attacker instanceof Mob attackingMob && SourceAnimalDespawn032.managed(attackingMob)) SourceAnimalDespawn032.refresh(attackingMob,-1200);
             rememberAttacker(animal,attacker); considerFleeing(animal);
-            if(!(animal instanceof TamableAnimal pet && pet.isTame())) warnPeers(animal,attacker);
+            if(attacker instanceof net.minecraft.world.entity.player.Player && herdAnimal(animal)) alarmHerd(animal,attacker);
+            else if(!(animal instanceof TamableAnimal pet && pet.isTame())) warnPeers(animal,attacker);
+        }
+    }
+    /** A real player hit, including arrows and fatal hits, immediately alerts nearby passive herds. */
+    public static void alarmHerd(Mob source,LivingEntity attacker) {
+        if(!(source.level() instanceof ServerLevel) || !herdAnimal(source)
+                || !(attacker instanceof net.minecraft.world.entity.player.Player) || !attacker.isAlive()
+                || attacker.level()!=source.level()) return;
+        long until=Math.max(state(source).getLong("herd_alarm_until"),source.level().getGameTime()+200L+source.getRandom().nextInt(100));
+        for(Mob peer:source.level().getEntitiesOfClass(Mob.class,source.getBoundingBox().inflate(ALARM_RADIUS))) {
+            if(!peer.isAlive() || !herdAnimal(peer) || peer.distanceToSqr(source)>ALARM_RADIUS*ALARM_RADIUS) continue;
+            rememberAttacker(peer,attacker);
+            var fear=state(peer);
+            fear.putLong("herd_alarm_until",Math.max(fear.getLong("herd_alarm_until"),until));
+            setSpooked(peer,Math.max(fear.getLong("spooked_until"),until));
+            fear.putBoolean("peer_spooked",true);
+            considerFleeing(peer);
+            if(peer instanceof Animal animal) animal.resetLove();
         }
     }
     public static void warnPeers(Mob source,LivingEntity attacker) {
@@ -216,14 +239,29 @@ public final class R196AnimalAi032 {
             state.putInt("attacker_memory",0); state.remove("attacker"); considerStopFleeing(mob);
         }
         if(!spooked(mob)) state.remove("spooked_until");
+        if(state.getInt("attacker_memory")==0 && !spooked(mob)) state.remove("herd_alarm_until");
         if(mob.level().getGameTime()%4000L==0) state.putBoolean("peer_spooked",false);
-        if(mob.isNoAi() || !Livestock032.sourceLivestock(mob) || !(spooked(mob) || state.getBoolean("decided_to_flee") || state.getBoolean("fleeing")) || MobCombat.ticksWithOffset(mob)%20!=0) return;
+        long alarmUntil=state.getLong("herd_alarm_until");
+        LivingEntity threat=lastAttacker(mob);
+        if(alarmUntil>0L && (alarmUntil<=mob.level().getGameTime() || threat==null)) return;
+        if(mob.isNoAi() || !(Livestock032.sourceLivestock(mob) || alarmUntil>0L && herdAnimal(mob))
+                || !(spooked(mob) || state.getBoolean("decided_to_flee") || state.getBoolean("fleeing")) || MobCombat.ticksWithOffset(mob)%20!=0) return;
         for(Mob peer:mob.level().getEntitiesOfClass(Mob.class,mob.getBoundingBox().inflate(8,4,8))) {
-            if(peer==mob || !peer.isAlive() || !Livestock032.sourceLivestock(peer) || state(peer).getBoolean("peer_spooked") || spooked(peer) || state(peer).getBoolean("decided_to_flee") || state(peer).getBoolean("fleeing")
+            if(peer==mob || !peer.isAlive() || !(alarmUntil>0L ? herdAnimal(peer) : Livestock032.sourceLivestock(peer))
+                    || state(peer).getBoolean("peer_spooked") || spooked(peer) || state(peer).getBoolean("decided_to_flee") || state(peer).getBoolean("fleeing")
                     || !peer.getSensing().hasLineOfSight(mob) || !(peer instanceof PathfinderMob pathfinder)) continue;
             var path=SourceMovement032Goal.pathTo(pathfinder,mob.blockPosition(),8);
             if(path==null || path.getEndNode()==null || path.getEndNode().asBlockPos().distSqr(mob.blockPosition())>1D) continue;
-            setSpooked(peer,mob.level().getGameTime()+400L+mob.level().getRandom().nextInt(400)); state(peer).putBoolean("peer_spooked",true);
+            var peerState=state(peer);
+            if(threat!=null) {
+                peerState.putUUID("attacker",threat.getUUID());
+                peerState.putInt("attacker_memory",state.getInt("attacker_memory"));
+                considerFleeing(peer);
+                if(peer instanceof Animal animal) animal.resetLove();
+            }
+            if(alarmUntil>0L) peerState.putLong("herd_alarm_until",alarmUntil);
+            setSpooked(peer,alarmUntil>0L ? alarmUntil : mob.level().getGameTime()+400L+mob.level().getRandom().nextInt(400));
+            peerState.putBoolean("peer_spooked",true);
         }
     }
 }

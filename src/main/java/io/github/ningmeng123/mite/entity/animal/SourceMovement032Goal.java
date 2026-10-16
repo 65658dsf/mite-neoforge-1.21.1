@@ -27,8 +27,15 @@ public abstract class SourceMovement032Goal extends Goal {
     public int stationaryTicks() { return stationaryTicks; }
     public int stuckThreshold() { return stuckThreshold; }
     @Override public void start() {
-        previousPosition=mob.blockPosition(); stationaryTicks=0; stuckThreshold=30+mob.getRandom().nextInt(20);
         oldWaterCost=mob.getPathfindingMalus(PathType.WATER);
+        replan();
+    }
+    /** Replanning must not recapture a temporary swimming allowance as the permanent water cost. */
+    protected void replan() {
+        previousPosition=mob.blockPosition(); stationaryTicks=0; stuckThreshold=30+mob.getRandom().nextInt(20);
+        // Native createPath otherwise returns the active route unchanged for the same target.
+        mob.getNavigation().stop();
+        mob.setPathfindingMalus(PathType.WATER,oldWaterCost);
         Path path=movementPath();
         if (!valid(path) && oldWaterCost>0F && swimIfNecessary) {
             mob.setPathfindingMalus(PathType.WATER,0F); path=movementPath();
