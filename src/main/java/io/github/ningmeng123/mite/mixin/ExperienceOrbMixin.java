@@ -2,6 +2,9 @@ package io.github.ningmeng123.mite.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.ningmeng123.mite.survival.DeathExperienceOrbs;
+import io.github.ningmeng123.mite.world.ExperienceOrbPhysics;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Applies ownership without changing ordinary XP orbs. @author NingMeng123 */
+/** Source pickup/physical movement with owner-safe death lifetime and native mending retained. @author NingMeng123 */
 @Mixin(ExperienceOrb.class)
 public abstract class ExperienceOrbMixin {
     @Shadow private Player followingPlayer;
@@ -22,10 +25,31 @@ public abstract class ExperienceOrbMixin {
     @Inject(method = "playerTouch", at = @At("HEAD"), cancellable = true)
     private void mite$restrictDeathOrbPickup(Player player, CallbackInfo ci) {
         if (!DeathExperienceOrbs.canPickup((ExperienceOrb) (Object) this, player)) {
+            ci.cancel();
+            return;
+        }
+        if (!ExperienceOrbPhysics.canReach((ExperienceOrb)(Object)this,player)) {
             // Reject before PickupXp, pickup cooldown, mending and count changes.
             ci.cancel();
         }
     }
+
+    @Inject(method="hurt",at=@At("HEAD"),cancellable=true)
+    private void mite$orbsResistFire(DamageSource source,float amount,CallbackInfoReturnable<Boolean> cir) {
+        if (source.is(DamageTypeTags.IS_FIRE)) cir.setReturnValue(false);
+    }
+
+    @ModifyExpressionValue(method="tick",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/ExperienceOrb;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z"),require=1,allow=1)
+    private boolean mite$sourceUnderwaterGravity(boolean original) { return false; }
+
+    @ModifyExpressionValue(method="tick",at=@At(value="INVOKE",target="Lnet/minecraft/world/level/material/FluidState;is(Lnet/minecraft/tags/TagKey;)Z"),require=1,allow=1)
+    private boolean mite$noNativeLavaBounce(boolean original) { return false; }
+
+    @Inject(method="tick",at=@At(value="INVOKE",target="Lnet/minecraft/world/level/Level;noCollision(Lnet/minecraft/world/phys/AABB;)Z"),require=1,allow=1)
+    private void mite$fullLavaDamping(CallbackInfo ci) { ExperienceOrbPhysics.lavaMovement((ExperienceOrb)(Object)this); }
+
+    @ModifyExpressionValue(method="tick",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/player/Player;getEyeHeight()F"),require=1,allow=1)
+    private float mite$attractToSourceEyeHeight(float original) { return original*2F; }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void mite$refreshDeathOrbTarget(CallbackInfo ci) {

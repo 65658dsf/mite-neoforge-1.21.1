@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.registry.MiteItems;
 import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteShards;
 import io.github.ningmeng123.mite.survival.DeathExperienceOrbs;
+import io.github.ningmeng123.mite.world.ExperienceOrbPhysics;
 import io.github.ningmeng123.mite.world.SourceExplosionBlocks;
 import io.github.ningmeng123.mite.world.SourceExplosionItems;
 import io.github.ningmeng123.mite.world.SourceFluidFall;
@@ -253,9 +254,76 @@ public final class SourceWorldPhysicsGameTests {
         h.succeed();
     }
 
+    @GameTest(template="empty")
+    public static void orbPickupUsesThreePhysicalRaysBeforeSpendingXpOrCooldown(GameTestHelper h) {
+        ServerPlayer player=player(h,point(h,6.5,2,2.5));
+        ExperienceOrb orb=new ExperienceOrb(h.getLevel(),point(h,1.5,2.5,2.5).x,point(h,1.5,2.5,2.5).y,point(h,1.5,2.5,2.5).z,7);
+        try {
+            for (int y=1;y<=4;y++) h.getLevel().setBlock(pos(h,5,y,2),Blocks.STONE.defaultBlockState(),3);
+            int xp=player.totalExperience;player.takeXpDelay=0;
+            h.assertFalse(ExperienceOrbPhysics.canReach(orb,player),"All three target height rays are blocked by stone");
+            orb.playerTouch(player);
+            h.assertValueEqual(player.totalExperience,xp,"A blocked native pickup does not award experience");
+            h.assertValueEqual(player.takeXpDelay,0,"A blocked native pickup does not spend the player cooldown");
+            h.assertFalse(orb.isRemoved(),"Blocked pickup does not consume the orb");
+            h.getLevel().setBlock(pos(h,5,3,2),Blocks.AIR.defaultBlockState(),3);
+            h.assertTrue(ExperienceOrbPhysics.canReach(orb,player),"A clear .75-height ray is sufficient while lower rays remain blocked");
+            orb.playerTouch(player);
+            h.assertTrue(orb.isRemoved(),"The same real native pickup succeeds through the newly opened upper ray");
+            h.assertValueEqual(player.takeXpDelay,2,"Accepted pickup retains native delay");
+            h.assertValueEqual(player.totalExperience,xp+7,"Accepted pickup awards exactly the saved value");
+        } finally { orb.discard();removePlayer(h,player); }
+        h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void narrowOrbRaysIgnoreMetalBarsButGlassAndLeavesStillObstruct(GameTestHelper h) {
+        ServerPlayer player=player(h,point(h,6.5,2,2.5));Vec3 p=point(h,1.5,2.5,2.5);
+        ExperienceOrb orb=new ExperienceOrb(h.getLevel(),p.x,p.y,p.z,1);
+        try {
+            for (int y=1;y<=4;y++) h.getLevel().setBlock(pos(h,5,y,2),Blocks.IRON_BARS.defaultBlockState(),3);
+            h.assertTrue(ExperienceOrbPhysics.canReach(orb,player),"Source narrow physical policy explicitly ignores metal bars");
+            for (int y=1;y<=4;y++) h.getLevel().setBlock(pos(h,5,y,2),Blocks.GLASS.defaultBlockState(),3);
+            h.assertFalse(ExperienceOrbPhysics.canReach(orb,player),"Physical pickup cannot borrow the monster vision exception for glass");
+            for (int y=1;y<=4;y++) h.getLevel().setBlock(pos(h,5,y,2),Blocks.OAK_LEAVES.defaultBlockState(),3);
+            h.assertFalse(ExperienceOrbPhysics.canReach(orb,player),"Unlike dropped-item pickup, XP's narrow source policy does not ignore leaves");
+        } finally { orb.discard();removePlayer(h,player); }
+        h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void realOrbTickSinksInWaterDampsInFullLavaAndRejectsFireDamage(GameTestHelper h) {
+        Vec3 p=point(h,3.5,3.2,3.5);BlockPos at=BlockPos.containing(p);
+        ExperienceOrb orb=new ExperienceOrb(h.getLevel(),p.x,p.y,p.z,3);DeathExperienceOrbs.mark(orb,UUID.randomUUID());
+        try {
+            h.getLevel().setBlock(at,Blocks.WATER.defaultBlockState(),2);orb.setDeltaMovement(Vec3.ZERO);orb.tick();
+            h.assertTrue(orb.getDeltaMovement().y<0,"The real transformed orb tick applies source gravity underwater, not modern buoyancy");
+            orb.setPos(p);h.getLevel().setBlock(at,Blocks.LAVA.defaultBlockState(),2);orb.setDeltaMovement(.2,-.1,.1);orb.tick();
+            h.assertTrue(Math.abs(orb.getDeltaMovement().y)<.000001,"Full lava removes vertical velocity instead of modern random bouncing");
+            h.assertTrue(orb.getDeltaMovement().x>0&&orb.getDeltaMovement().x<.2,"Lava damps horizontal movement by .95 before common .98 friction");
+            h.assertFalse(orb.hurt(h.getLevel().damageSources().lava(),100),"Source orbs are immune to lava damage");
+            h.assertFalse(orb.isRemoved(),"Lava contact does not destroy the experience value");
+        } finally { orb.discard();h.getLevel().setBlock(at,Blocks.AIR.defaultBlockState(),2); }
+        h.succeed();
+    }
 
+    @GameTest(template="empty")
+    public static void remoteOrUnloadedPickupCannotGenerateChunksOrSpendExperience(GameTestHelper h) {
+        BlockPos distant=new BlockPos(29_000_000,80,29_000_000);
+        ServerPlayer player=player(h,point(h,3.5,2,3.5));
+        ExperienceOrb remote=new ExperienceOrb(h.getLevel(),distant.getX()+.5,distant.getY(),distant.getZ()+.5,19);
+        try {
+            h.assertTrue(h.getLevel().getChunkSource().getChunkNow(distant.getX()>>4,distant.getZ()>>4)==null,"The distant chunk is initially unloaded");
+            h.assertTrue(ExperienceOrbPhysics.nonLoadingView(h.getLevel()).getBlockState(distant).is(Blocks.BARRIER),"Unloaded geometry blocks the ray without acquiring the chunk");
+            player.takeXpDelay=0;int xp=player.totalExperience;
+            remote.playerTouch(player);
+            h.assertValueEqual(player.totalExperience,xp,"A direct remote pickup cannot award experience");
+            h.assertValueEqual(player.takeXpDelay,0,"A rejected remote pickup has no cooldown side effect");
+            h.assertFalse(remote.isRemoved(),"The inaccessible orb is not consumed");
+            h.assertTrue(h.getLevel().getChunkSource().getChunkNow(distant.getX()>>4,distant.getZ()>>4)==null,"Neither geometry nor pickup loaded the distant chunk");
+        } finally { remote.discard();removePlayer(h,player); }
+        h.succeed();
+    }
 
     private static Explosion blast(GameTestHelper h,Vec3 p,float power,Explosion.BlockInteraction mode) {
         return new Explosion(h.getLevel(),null,p.x,p.y,p.z,power,false,mode);

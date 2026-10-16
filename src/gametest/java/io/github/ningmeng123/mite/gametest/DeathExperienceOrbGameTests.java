@@ -159,6 +159,7 @@ public final class DeathExperienceOrbGameTests {
             player.kill();
             player = respawn(player);
             helper.assertValueEqual(player.getUUID(), owner, "Death respawn retains the owner UUID");
+            player.moveTo(position(helper));
             player.takeXpDelay = 0;
             beforeDeath.playerTouch(player);
             helper.assertTrue(beforeDeath.isRemoved(), "The replacement player can collect the old owner's orb");
@@ -179,6 +180,7 @@ public final class DeathExperienceOrbGameTests {
             helper.getLevel().getServer().getPlayerList().placeNewPlayer(connection, returning, cookie);
             player = returning;
             helper.assertValueEqual(player.getUUID(), owner, "Relogin creates a new object with the original UUID");
+            player.moveTo(position(helper));
             player.takeXpDelay = 0;
             reloadedOrb.playerTouch(player);
             helper.assertTrue(reloadedOrb.isRemoved(), "A reconnected owner can collect an NBT-restored orb");
@@ -418,6 +420,7 @@ public final class DeathExperienceOrbGameTests {
     private static ServerPlayer newPlayer(GameTestHelper helper) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         player.setGameMode(GameType.SURVIVAL);
+        player.moveTo(position(helper));
         return player;
     }
 
