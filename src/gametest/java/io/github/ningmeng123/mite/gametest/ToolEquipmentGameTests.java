@@ -72,7 +72,7 @@ public final class ToolEquipmentGameTests {
         }
         helper.assertValueEqual(new ItemStack(Items.IRON_PICKAXE).getMaxDamage(), 9600, "Existing iron pickaxe ID receives its R196 capacity");
         helper.assertValueEqual(new ItemStack(Items.GOLDEN_PICKAXE).getMaxDamage(), 4800, "Existing gold pickaxe ID receives its R196 capacity");
-        helper.assertValueEqual(new ItemStack(Items.DIAMOND_PICKAXE).getMaxDamage(), 19200, "Modern diamond mapping is explicitly sixteen");
+        helper.assertValueEqual(tool("ancient_metal_pickaxe").getMaxDamage(), 19200, "Ancient metal retains the source sixteen material capacity");
         helper.assertValueEqual(new ItemStack(Items.NETHERITE_PICKAXE).getMaxDamage(), 38400, "Modern netherite mapping is explicitly thirty-two");
         helper.succeed();
     }

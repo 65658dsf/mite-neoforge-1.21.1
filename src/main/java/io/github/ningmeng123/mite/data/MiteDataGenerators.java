@@ -12,7 +12,7 @@ public final class MiteDataGenerators {
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
-        event.getGenerator().addProvider(event.includeServer(),new MiteAchievementAssetsProvider(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(event.includeServer(),new MiteAchievementAssetsProvider(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(true, new EnchantmentAssetsProvider(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
         event.getGenerator().addProvider(true,new CropAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(event.includeServer(),

@@ -129,7 +129,7 @@ public final class MiningSpeedGameTests {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.setOnGround(true);
         BlockPos position = helper.absolutePos(BlockPos.ZERO);
-        Item[] tools = {Items.AIR, Items.DIAMOND_PICKAXE, Items.DIAMOND_SHOVEL, Items.DIAMOND_AXE};
+        Item[] tools = {Items.AIR, Items.IRON_PICKAXE, Items.IRON_SHOVEL, Items.IRON_AXE};
         BlockState[] states = {Blocks.STONE.defaultBlockState(), Blocks.STONE.defaultBlockState(),
                 Blocks.DIRT.defaultBlockState(), Blocks.OAK_LOG.defaultBlockState()};
         for (int i = 0; i < tools.length; i++) {
@@ -157,7 +157,7 @@ public final class MiningSpeedGameTests {
     @GameTest(template = "empty")
     public static void airAndHastePenaltiesRemainInsideTheFinalMultiplier(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
         BlockState stone = Blocks.STONE.defaultBlockState();
         player.setOnGround(true);
         PlayerExperience.setTotal(player, 0);
@@ -186,7 +186,7 @@ public final class MiningSpeedGameTests {
     @GameTest(template = "empty")
     public static void earlierEventChangesAndCancellationArePreserved(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
         player.setOnGround(true);
         PlayerExperience.setTotal(player, 6650);
         float[] replacement = {4.0F};
@@ -225,7 +225,7 @@ public final class MiningSpeedGameTests {
     public static void gameModesAndSavedExperienceChooseTheRightMultiplier(GameTestHelper helper) {
         try (PlayerSession session = newServerPlayer(helper)) {
             ServerPlayer player = session.player();
-            player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_PICKAXE));
+            player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
             player.setOnGround(true);
             PlayerExperience.setTotal(player, 0);
             float baseline = player.getDestroySpeed(Blocks.STONE.defaultBlockState());
@@ -280,7 +280,7 @@ public final class MiningSpeedGameTests {
             helper.getLevel().setBlockAndUpdate(fastPos, Blocks.STONE.defaultBlockState());
             float slowProgress = Blocks.STONE.defaultBlockState().getDestroyProgress(slow, helper.getLevel(), slowPos);
             float fastProgress = Blocks.STONE.defaultBlockState().getDestroyProgress(fast, helper.getLevel(), fastPos);
-            assertClose(helper, slowProgress, 0.010416667F, "Zero-level diamond mining of stone uses R196 1/96 progress");
+            assertClose(helper, slowProgress, 0.010416667F, "Zero-level iron mining of stone uses R196 1/96 progress");
             assertClose(helper, fastProgress, 0.017708333F, "Level 35 uses its strength multiplier exactly once");
             action(helper, slow, slowPos, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, 1);
             action(helper, fast, fastPos, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, 2);
@@ -328,7 +328,7 @@ public final class MiningSpeedGameTests {
     private static void prepareMiner(ServerPlayer player, BlockPos position, int experience) {
         player.moveTo(position.getX() + 0.5, position.getY(), position.getZ() + 2.0);
         player.setOnGround(true);
-        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
         PlayerExperience.setTotal(player, experience);
     }
 

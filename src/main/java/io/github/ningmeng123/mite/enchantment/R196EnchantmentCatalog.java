@@ -100,7 +100,7 @@ public final class R196EnchantmentCatalog {
 
     public static boolean supported(String id, ItemStack stack) {
         Definition definition = definition(id);
-        if (definition == null || stack.isEmpty()) return false;
+        if (definition == null || stack.isEmpty() || io.github.ningmeng123.mite.item.RemovedDiamondEquipment.isRemoved(stack)) return false;
         ToolFamily family = family(stack);
         boolean armor = stack.getItem() instanceof ArmorItem && !(stack.getItem() instanceof AnimalArmorItem);
         ArmorItem.Type type = armor ? ((ArmorItem)stack.getItem()).getType() : null;
@@ -158,9 +158,9 @@ public final class R196EnchantmentCatalog {
         MiteArmorContent.Definition definition = MiteArmorContent.definition(stack.getItem());
         if (definition != null) return !definition.horse() && !definition.chainmail() && !definition.material().equals("leather");
         String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-        // Diamond/netherite are explicit modern equipment mappings, sharing source solid-armor semantics.
+        // Retained modern netherite equipment shares source solid-armor semantics.
         return id.startsWith("minecraft:iron_") || id.startsWith("minecraft:golden_")
-                || id.startsWith("minecraft:diamond_") || id.startsWith("minecraft:netherite_");
+                || id.startsWith("minecraft:netherite_");
     }
 
     private static boolean vampiricExcludedMaterial(ItemStack stack) {

@@ -101,7 +101,7 @@ public final class UnderworldVaultLootGameTests {
     }
 
     @GameTest(template="empty",timeoutTicks=400)
-    public static void vanillaVaultTablesAreStillPresentWithOriginalRewards(GameTestHelper helper) {
+    public static void vanillaVaultTablesPreserveUnrelatedRewardsButNeverReturnDiamondEquipment(GameTestHelper helper) {
         var level=helper.getLevel();LootParams params=params(level);
         Set<String> normal=new HashSet<>(),ominous=new HashSet<>();
         for(String suffix:new String[]{"reward_rare","reward_unique","reward_ominous_rare","reward_ominous_unique"}) {
@@ -110,10 +110,12 @@ public final class UnderworldVaultLootGameTests {
             for(int trial=1;trial<=512;trial++)for(ItemStack stack:table.getRandomItems(params,0x56414e494c4c41L+trial*1_000_037L))
                 (suffix.contains("ominous")?ominous:normal).add(id(stack));
         }
-        helper.assertTrue(normal.containsAll(Set.of("minecraft:diamond_axe","minecraft:diamond_chestplate","minecraft:music_disc_precipice",
-                "minecraft:guster_banner_pattern","minecraft:bolt_armor_trim_smithing_template")),"Original normal rewards were not globally overwritten");
-        helper.assertTrue(ominous.containsAll(Set.of("minecraft:diamond_axe","minecraft:diamond_chestplate","minecraft:music_disc_creator",
-                "minecraft:flow_banner_pattern","minecraft:flow_armor_trim_smithing_template")),"Original ominous rewards were not globally overwritten");
+        helper.assertTrue(normal.containsAll(Set.of("minecraft:music_disc_precipice",
+                "minecraft:guster_banner_pattern","minecraft:bolt_armor_trim_smithing_template")),"Unrelated original normal rewards remain available");
+        helper.assertTrue(ominous.containsAll(Set.of("minecraft:music_disc_creator",
+                "minecraft:flow_banner_pattern","minecraft:flow_armor_trim_smithing_template")),"Unrelated original ominous rewards remain available");
+        helper.assertTrue(normal.stream().noneMatch(DIAMOND_GEAR::contains),"Normal overworld vault never returns removed diamond equipment");
+        helper.assertTrue(ominous.stream().noneMatch(DIAMOND_GEAR::contains),"Ominous overworld vault never returns removed diamond equipment");
         helper.succeed();
     }
 

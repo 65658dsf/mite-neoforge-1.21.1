@@ -122,7 +122,7 @@ public final class BloodMoonEquipmentGameTests {
             set(h, 64, 6000);
             Mob mob = create(h, EntityType.ZOMBIE);
             ItemStack helmet = new ItemStack(Items.IRON_HELMET); helmet.setDamageValue(1);
-            ItemStack weapon = new ItemStack(Items.DIAMOND_SWORD);
+            ItemStack weapon = new ItemStack(Items.NETHERITE_SWORD);
             mob.setItemSlot(EquipmentSlot.HEAD, helmet); mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
             mob.getRandom().setSeed(seed(.5, true));
             h.assertTrue(BloodMoonEquipment.populate(mob), "The shared source armor hook owns the progressive roll");
@@ -202,7 +202,7 @@ public final class BloodMoonEquipmentGameTests {
     public static void ordinarySkeletonNativeFinalizationRetainsAnExplicitHelmetBeforeTheProgressiveRoll(GameTestHelper h) {
         try (Progress saved = new Progress(h)) {
             set(h, 1152, 6000); Mob skeleton = create(h, EntityType.SKELETON);
-            ItemStack helmet = new ItemStack(Items.DIAMOND_HELMET); skeleton.setItemSlot(EquipmentSlot.HEAD, helmet);
+            ItemStack helmet = new ItemStack(Items.NETHERITE_HELMET); skeleton.setItemSlot(EquipmentSlot.HEAD, helmet);
             EventHooks.finalizeMobSpawn(skeleton, h.getLevel(), h.getLevel().getCurrentDifficultyAt(skeleton.blockPosition()), MobSpawnType.COMMAND, null);
             h.assertTrue(skeleton.getItemBySlot(EquipmentSlot.HEAD) == helmet, "Source initializer must not clear an explicit helmet before the empty-slot policy runs");
         }
@@ -396,7 +396,7 @@ public final class BloodMoonEquipmentGameTests {
     public static void explicitWeaponsAndAllRangedSkeletonsRetainTheirExactMainHand(GameTestHelper h) {
         try (Progress saved = new Progress(h)) {
             set(h, 1152, 6000);
-            for (var item : List.of(Items.DIAMOND_SWORD, Items.BOW, Items.CROSSBOW, Items.TRIDENT, Items.IRON_PICKAXE)) {
+            for (var item : List.of(Items.NETHERITE_SWORD, Items.BOW, Items.CROSSBOW, Items.TRIDENT, Items.IRON_PICKAXE)) {
                 Mob mob = create(h, EntityType.ZOMBIE); emptyArmorRoll(mob, .9D);
                 ItemStack explicit = new ItemStack(item); explicit.setDamageValue(1); mob.setItemSlot(EquipmentSlot.MAINHAND, explicit);
                 mob.getRandom().setSeed(196L); BloodMoonEquipment.join(new EntityJoinLevelEvent(mob, h.getLevel(), false));
@@ -612,7 +612,7 @@ public final class BloodMoonEquipmentGameTests {
         try (Progress saved = new Progress(h)) {
             set(h, 64, 63L * 24000L + 6000L);
             Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
-            ItemStack helmet = new ItemStack(Items.DIAMOND_HELMET); helmet.setDamageValue(1); mob.setItemSlot(EquipmentSlot.HEAD, helmet);
+            ItemStack helmet = new ItemStack(Items.NETHERITE_HELMET); helmet.setDamageValue(1); mob.setItemSlot(EquipmentSlot.HEAD, helmet);
             BloodFixture fixture = bloodFixture(R196MobEquipment.tension(mob), -2, 1, -1, 0);
             mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
             CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);

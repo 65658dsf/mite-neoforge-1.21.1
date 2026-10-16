@@ -54,7 +54,7 @@ public final class ArmorStructureLootModifier extends LootModifier {
             pool = POOLS.get(context.getLevel().dimension().equals(MiteWorldDimensions.UNDERWORLD) ? "dungeon_underworld" : "dungeon_surface");
         else pool = POOLS.values().stream().filter(p -> p.modernTable().equals(table)).findFirst().orElse(null);
         if (pool == null) return loot;
-        // Modern diamond/netherite equipment, leather/diamond horse armor and non-gear loot stay in their modern pools.
+        // Retained modern netherite equipment, leather horse armor and non-gear loot stay in their modern pools.
         loot.removeIf(ArmorStructureLootModifier::replacedGear);
         var random = context.getRandom();
         int rolls = pool.minimumRolls() + random.nextInt(pool.maximumRolls() - pool.minimumRolls() + 1);
@@ -94,8 +94,8 @@ public final class ArmorStructureLootModifier extends LootModifier {
         return loot;
     }
     private static boolean replacedGear(ItemStack stack) {
-        if (stack.is(Items.DIAMOND_HELMET) || stack.is(Items.DIAMOND_CHESTPLATE) || stack.is(Items.DIAMOND_LEGGINGS) || stack.is(Items.DIAMOND_BOOTS)
-                || stack.is(Items.NETHERITE_HELMET) || stack.is(Items.NETHERITE_CHESTPLATE) || stack.is(Items.NETHERITE_LEGGINGS) || stack.is(Items.NETHERITE_BOOTS)) return false;
+        if (io.github.ningmeng123.mite.item.RemovedDiamondEquipment.isRemoved(stack)) return true;
+        if (stack.is(Items.NETHERITE_HELMET) || stack.is(Items.NETHERITE_CHESTPLATE) || stack.is(Items.NETHERITE_LEGGINGS) || stack.is(Items.NETHERITE_BOOTS)) return false;
         return EquipmentDurability.armorProfile(stack) != null || MiteArmorContent.definition(stack.getItem()) != null
                 || stack.is(Items.IRON_HORSE_ARMOR) || stack.is(Items.GOLDEN_HORSE_ARMOR)
                 || MiteArmorContent.chains().stream().anyMatch(c -> stack.is(MiteArmorContent.get(c.id())));

@@ -1,8 +1,10 @@
 package io.github.ningmeng123.mite.data;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import io.github.ningmeng123.mite.registry.MiteTags;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -23,6 +25,16 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookup) {
+        // Preserve native tag unions while excluding only the ten retired item identities.
+        for (var equipmentTag : List.of(ItemTags.SWORDS, ItemTags.AXES, ItemTags.PICKAXES, ItemTags.SHOVELS,
+                ItemTags.HOES, ItemTags.HEAD_ARMOR, ItemTags.CHEST_ARMOR, ItemTags.LEG_ARMOR, ItemTags.FOOT_ARMOR,
+                ItemTags.TRIMMABLE_ARMOR, ItemTags.HEAD_ARMOR_ENCHANTABLE, ItemTags.CHEST_ARMOR_ENCHANTABLE,
+                ItemTags.LEG_ARMOR_ENCHANTABLE, ItemTags.FOOT_ARMOR_ENCHANTABLE, ItemTags.ARMOR_ENCHANTABLE,
+                ItemTags.SWORD_ENCHANTABLE, ItemTags.FIRE_ASPECT_ENCHANTABLE, ItemTags.SHARP_WEAPON_ENCHANTABLE,
+                ItemTags.WEAPON_ENCHANTABLE, ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE,
+                ItemTags.DURABILITY_ENCHANTABLE, ItemTags.EQUIPPABLE_ENCHANTABLE, ItemTags.VANISHING_ENCHANTABLE)) {
+            RemovedDiamondEquipment.IDS.forEach(id -> tag(equipmentTag).remove(id));
+        }
         var ancientBow = io.github.ningmeng123.mite.registry.MiteWeaponContent.ANCIENT_METAL_BOW.get();
         var mithrilBow = io.github.ningmeng123.mite.registry.MiteWeaponContent.MITHRIL_BOW.get();
         tag(ItemTags.DURABILITY_ENCHANTABLE).add(ancientBow, mithrilBow);

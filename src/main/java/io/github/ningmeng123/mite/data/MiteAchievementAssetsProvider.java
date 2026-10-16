@@ -8,12 +8,15 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 /** Modern progression tab generated from the 62 independently extracted source registrations. @author NingMeng123 */
 public final class MiteAchievementAssetsProvider implements DataProvider {
     private final Path output;
-    public MiteAchievementAssetsProvider(PackOutput output){this.output=output.getOutputFolder();}
+    private final ExistingFileHelper existingFiles;
+    public MiteAchievementAssetsProvider(PackOutput output, ExistingFileHelper existingFiles){this.output=output.getOutputFolder();this.existingFiles=existingFiles;}
     @Override public CompletableFuture<?> run(CachedOutput cache){
         var jobs=new ArrayList<CompletableFuture<?>>();
+        DiamondEquipmentAdvancements.addOverrides(cache, output, existingFiles, jobs);
         for(var a:MiteAchievements.catalog().values()){
             JsonObject json=new JsonObject(),display=new JsonObject(),icon=new JsonObject();
             icon.addProperty("id",a.icon());display.add("icon",icon);

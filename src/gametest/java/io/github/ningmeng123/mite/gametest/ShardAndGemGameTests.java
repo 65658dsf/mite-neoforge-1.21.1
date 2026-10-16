@@ -254,7 +254,7 @@ public final class ShardAndGemGameTests {
             helper.assertTrue(helper.getLevel().getBlockState(landed).is(MiteResourceBlocks.NETHER_GRAVEL.get()), "Landing preserves nether gravel rather than converting to ordinary gravel");
             helper.assertTrue(fixture.newDrops().isEmpty(), "Normal landing places the block without a duplicate item");
             helper.assertValueEqual(new ItemStack(MiteResourceBlocks.NETHER_GRAVEL.get()).getMaxStackSize(), 4, "Nether gravel has the declared four-block stack limit");
-            ItemStack shovel = new ItemStack(Items.DIAMOND_SHOVEL);
+            ItemStack shovel = new ItemStack(Items.NETHERITE_SHOVEL);
             shovel.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                     .getHolderOrThrow(Enchantments.SILK_TOUCH), 1);
             session.player().setItemInHand(InteractionHand.MAIN_HAND, shovel);

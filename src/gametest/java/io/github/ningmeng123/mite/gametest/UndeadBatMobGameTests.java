@@ -119,7 +119,7 @@ public final class UndeadBatMobGameTests {
         helper.assertTrue(!guardian.updateGuardianWeapon(), "Exactly six blocks keeps dagger");
         target.setPos(guardian.getX() + 6.1, guardian.getY(), guardian.getZ());
         helper.assertTrue(guardian.updateGuardianWeapon() && guardian.getMainHandItem() == originalBow, "Above six restores the same worn bow");
-        helper.assertTrue(!guardian.canHoldItem(new ItemStack(Items.DIAMOND_SWORD)), "Ranged guardian refuses unrelated weapons");
+        helper.assertTrue(!guardian.canHoldItem(new ItemStack(Items.NETHERITE_SWORD)), "Ranged guardian refuses unrelated weapons");
         helper.succeed();
     }
     @GameTest(template = "ranged_027")

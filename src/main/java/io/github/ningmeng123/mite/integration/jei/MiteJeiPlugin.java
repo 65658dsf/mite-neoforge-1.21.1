@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.integration.jei;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import io.github.ningmeng123.mite.rules.R196FurnaceRules;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -104,6 +106,12 @@ public final class MiteJeiPlugin implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(IJeiRuntime runtime) {
+        var ingredientManager = runtime.getIngredientManager();
+        var removedEquipment = ingredientManager.getAllItemStacks().stream()
+                .filter(RemovedDiamondEquipment::isRemoved).toList();
+        if (!removedEquipment.isEmpty()) {
+            ingredientManager.removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, removedEquipment);
+        }
         if (recipeLevel == null || Minecraft.getInstance().level != recipeLevel) return;
         // A catalyst applies to a whole JEI category. The native category cannot express furnace tiers.
         var manager = runtime.getRecipeManager();

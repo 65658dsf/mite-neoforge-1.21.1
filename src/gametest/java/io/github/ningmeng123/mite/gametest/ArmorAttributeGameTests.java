@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.rules.ArmorBalanceRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
@@ -65,19 +66,20 @@ public final class ArmorAttributeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void retainedVanillaDiamondAndNetheriteKeepToughnessAndKnockbackResistance(GameTestHelper helper) {
+    public static void removedDiamondArmorCannotLoadWhileNetheriteKeepsToughnessAndKnockbackResistance(GameTestHelper helper) {
         Item[] diamonds = {Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE, Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS};
         Item[] netherites = {Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS};
         int[] defense = {3, 8, 6, 3};
         for (int i = 0; i < SLOTS.length; i++) {
             ItemStack diamond = new ItemStack(diamonds[i]);
             ItemStack netherite = new ItemStack(netherites[i]);
-            check(helper, amount(diamond, Attributes.ARMOR, SLOTS[i]), defense[i], "Vanilla diamond defense survives source durability conversion");
-            check(helper, amount(diamond, Attributes.ARMOR_TOUGHNESS, SLOTS[i]), 2D, "Diamond retains two toughness per piece");
+            helper.assertTrue(RemovedDiamondEquipment.isRemoved(diamond), "Diamond armor belongs to the removed equipment set");
+            helper.assertTrue(ItemStack.parse(helper.getLevel().registryAccess(), diamond.save(helper.getLevel().registryAccess()))
+                    .map(ItemStack::isEmpty).orElse(true), "Legacy diamond armor cannot return through saved item loading");
             check(helper, amount(netherite, Attributes.ARMOR, SLOTS[i]), defense[i], "Vanilla netherite defense survives source durability conversion");
             check(helper, amount(netherite, Attributes.ARMOR_TOUGHNESS, SLOTS[i]), 3D, "Netherite retains three toughness per piece");
             check(helper, amount(netherite, Attributes.KNOCKBACK_RESISTANCE, SLOTS[i]), .1D, "Netherite retains native per-piece knockback resistance");
-            check(helper, amount(diamond, Attributes.KNOCKBACK_RESISTANCE, SLOTS[i]), 0D, "Diamond gains no invented knockback resistance");
+            helper.assertFalse(RemovedDiamondEquipment.isRemoved(netherite), "Netherite remains available as modern armor");
         }
         helper.succeed();
     }

@@ -78,7 +78,7 @@ public final class FlintGravelGameTests {
     public static void actualSilkTouchAndSuppressedDropsRemainIntact(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         BlockPos position = helper.absolutePos(new BlockPos(1, 2, 1));
-        ItemStack silkTool = new ItemStack(Items.DIAMOND_SHOVEL);
+        ItemStack silkTool = new ItemStack(Items.NETHERITE_SHOVEL);
         silkTool.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                 .getHolderOrThrow(Enchantments.SILK_TOUCH), 1);
         Consumer<BlockDropsEvent> cancel = event -> {

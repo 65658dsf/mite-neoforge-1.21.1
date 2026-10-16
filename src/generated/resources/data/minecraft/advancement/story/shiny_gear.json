@@ -1,0 +1,66 @@
+{
+  "parent": "minecraft:story/mine_diamond",
+  "criteria": {
+    "diamond_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:ancient_metal_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "diamond_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:ancient_metal_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "diamond_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:ancient_metal_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "diamond_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:ancient_metal_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "text": "获得一件远古金属盔甲"
+    },
+    "icon": {
+      "count": 1,
+      "id": "mite:ancient_metal_chestplate"
+    },
+    "title": {
+      "text": "远古金属护体"
+    }
+  },
+  "requirements": [
+    [
+      "diamond_helmet",
+      "diamond_chestplate",
+      "diamond_leggings",
+      "diamond_boots"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

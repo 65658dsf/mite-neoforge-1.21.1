@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.registry;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.item.FlintHatchetItem;
+import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import java.util.stream.Stream;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -34,7 +35,8 @@ public final class MiteItems {
     private static void addCreativeTabContents(BuildCreativeModeTabContentsEvent event) {
         // Snapshot both sets before mutating; remove all component variants from display and search.
         Stream.concat(event.getParentEntries().stream(), event.getSearchEntries().stream())
-                .filter(stack -> stack.is(Items.WOODEN_AXE) || stack.is(Items.WOODEN_PICKAXE))
+                .filter(stack -> stack.is(Items.WOODEN_AXE) || stack.is(Items.WOODEN_PICKAXE)
+                        || RemovedDiamondEquipment.isRemoved(stack))
                 .toList().forEach(stack -> event.remove(stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS));
     }
 }

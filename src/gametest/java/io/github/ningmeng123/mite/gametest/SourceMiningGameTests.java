@@ -23,7 +23,7 @@ public final class SourceMiningGameTests {
     public static void bareHandsAndUnrelatedItemsCannotRemoveRequiredMaterialsAtAnyLevel(GameTestHelper h) {
         var p=h.makeMockPlayer(GameType.SURVIVAL);p.setOnGround(true);p.experienceLevel=500;
         BlockPos pos=h.absolutePos(new BlockPos(2,2,2));
-        for(var item:new net.minecraft.world.item.Item[]{Items.AIR,Items.STICK,Items.DIAMOND_SHOVEL}) {
+        for(var item:new net.minecraft.world.item.Item[]{Items.AIR,Items.STICK,Items.NETHERITE_SHOVEL}) {
             p.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(item));
             for(var block:new net.minecraft.world.level.block.Block[]{Blocks.STONE,Blocks.COBBLESTONE,Blocks.NETHERRACK,Blocks.IRON_BARS}) {
                 var state=block.defaultBlockState();h.getLevel().setBlock(pos,state,2);
@@ -50,7 +50,7 @@ public final class SourceMiningGameTests {
         for(var block:new net.minecraft.world.level.block.Block[]{Blocks.PISTON,Blocks.STONE_BUTTON,Blocks.RAIL,Blocks.COAL_BLOCK,Blocks.GLOWSTONE})
             h.assertTrue(!ToolHarvestRules.isBlocked(p,block.defaultBlockState()) && p.hasCorrectToolForDrops(block.defaultBlockState()),
                     "A modern pickaxe tag cannot invent a source tool requirement for "+block);
-        p.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.DIAMOND_PICKAXE));
+        p.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.NETHERITE_PICKAXE));
         h.assertTrue(!ToolHarvestRules.isBlocked(p,Blocks.STONE.defaultBlockState()),"Modern tools retain explicit native Tool compatibility");h.succeed();
     }
 }

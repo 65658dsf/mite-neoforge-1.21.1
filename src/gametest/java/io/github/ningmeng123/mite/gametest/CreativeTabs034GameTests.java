@@ -81,7 +81,9 @@ public final class CreativeTabs034GameTests {
 
             for(CreativeModeTab tab:CreativeModeTabs.allTabs()) {
                 ResourceKey<CreativeModeTab> key=BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).orElseThrow();
-                for(Item forbidden:List.of(Items.WOODEN_AXE,Items.WOODEN_PICKAXE,Items.CRAFTING_TABLE)) {
+                for(Item forbidden:List.of(Items.WOODEN_AXE,Items.WOODEN_PICKAXE,Items.CRAFTING_TABLE,
+                        Items.DIAMOND_SWORD,Items.DIAMOND_AXE,Items.DIAMOND_PICKAXE,Items.DIAMOND_SHOVEL,Items.DIAMOND_HOE,
+                        Items.DIAMOND_HELMET,Items.DIAMOND_CHESTPLATE,Items.DIAMOND_LEGGINGS,Items.DIAMOND_BOOTS,Items.DIAMOND_HORSE_ARMOR)) {
                     h.assertTrue(!contains(tab.getDisplayItems(),forbidden)&&!contains(tab.getSearchTabDisplayItems(),forbidden),
                             "Retired item cannot return through parent or search contents: "+id(forbidden));
                 }
@@ -92,11 +94,14 @@ public final class CreativeTabs034GameTests {
                 }
             }
             assertNative(h,CreativeModeTabs.NATURAL_BLOCKS,Items.DIRT);
-            assertNative(h,CreativeModeTabs.COMBAT,Items.DIAMOND_SWORD);
+            assertNative(h,CreativeModeTabs.COMBAT,Items.NETHERITE_SWORD);
             assertNative(h,CreativeModeTabs.TOOLS_AND_UTILITIES,Items.WOODEN_SHOVEL);
             assertNative(h,CreativeModeTabs.TOOLS_AND_UTILITIES,Items.WOODEN_HOE);
             assertNative(h,CreativeModeTabs.FOOD_AND_DRINKS,Items.BREAD);
             assertNative(h,CreativeModeTabs.INGREDIENTS,Items.IRON_INGOT);
+            assertNative(h,CreativeModeTabs.INGREDIENTS,Items.DIAMOND);
+            assertNative(h,CreativeModeTabs.NATURAL_BLOCKS,Items.DIAMOND_ORE);
+            assertNative(h,CreativeModeTabs.NATURAL_BLOCKS,Items.DEEPSLATE_DIAMOND_ORE);
             assertFoodTabContainsOnlyMite(h);
             assertFunctionalVariants(h);
         }

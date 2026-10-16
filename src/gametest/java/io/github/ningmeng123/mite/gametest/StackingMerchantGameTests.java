@@ -128,11 +128,11 @@ public final class StackingMerchantGameTests {
             fixture.assertTrades(0, 6); fixture.assertOutput(0);
             fixture.menu.clicked(2, 0, ClickType.SWAP, fixture.player);
             fixture.assertTrades(0, 6); fixture.assertOutput(0);
-            fixture.menu.setCarried(new ItemStack(Items.DIAMOND_SWORD));
+            fixture.menu.setCarried(new ItemStack(Items.NETHERITE_SWORD));
             for (ClickType click : List.of(ClickType.PICKUP, ClickType.THROW)) {
                 fixture.menu.clicked(2, 0, click, fixture.player);
                 fixture.assertTrades(0, 6); fixture.assertOutput(0);
-                helper.assertTrue(fixture.menu.getCarried().is(Items.DIAMOND_SWORD), "An incompatible occupied cursor cannot be replaced or discarded by a trade");
+                helper.assertTrue(fixture.menu.getCarried().is(Items.NETHERITE_SWORD), "An incompatible occupied cursor cannot be replaced or discarded by a trade");
             }
             fixture.menu.setCarried(new ItemStack(Items.COOKIE, 16));
             fixture.menu.clicked(2, 0, ClickType.PICKUP, fixture.player);
@@ -231,7 +231,7 @@ public final class StackingMerchantGameTests {
 
         void fill(boolean leaveLastFree) {
             for (int slot = 0; slot < player.getInventory().items.size(); slot++)
-                player.getInventory().setItem(slot, leaveLastFree && slot == 35 ? ItemStack.EMPTY : new ItemStack(Items.DIAMOND_SWORD));
+                player.getInventory().setItem(slot, leaveLastFree && slot == 35 ? ItemStack.EMPTY : new ItemStack(Items.NETHERITE_SWORD));
         }
 
         int droppedCookies() {

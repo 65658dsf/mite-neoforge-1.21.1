@@ -89,7 +89,7 @@ public final class LogHarvestClientSmoke {
                 new Case("oak_empty", Blocks.OAK_LOG.defaultBlockState(), Items.AIR, 0, 0, 80, true, 0),
                 new Case("oak_stick", Blocks.OAK_LOG.defaultBlockState(), Items.STICK, 0, 0, 60, true, 0),
                 new Case("oak_wooden_axe_level_200", Blocks.OAK_LOG.defaultBlockState(), Items.WOODEN_AXE, 200, 0, 80, true, 0),
-                new Case("oak_diamond_pickaxe", Blocks.OAK_LOG.defaultBlockState(), Items.DIAMOND_PICKAXE, 0, 0, 80, true, 0),
+                new Case("oak_netherite_pickaxe", Blocks.OAK_LOG.defaultBlockState(), Items.NETHERITE_PICKAXE, 0, 0, 80, true, 0),
                 new Case("oak_flint_hatchet", Blocks.OAK_LOG.defaultBlockState(), MiteItems.FLINT_HATCHET.get(), 0, 0x3b855555, 246, false, 160),
                 new Case("stripped_crimson_stem_flint", Blocks.STRIPPED_CRIMSON_STEM.defaultBlockState(), MiteItems.FLINT_HATCHET.get(), 0, 0x3b855555, 246, false, 160),
                 new Case("oak_stone_axe", Blocks.OAK_LOG.defaultBlockState(), Items.STONE_AXE, 0, 0x3bd55555, 154, false, 1),

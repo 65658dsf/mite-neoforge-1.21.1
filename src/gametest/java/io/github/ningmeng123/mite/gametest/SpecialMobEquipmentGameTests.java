@@ -348,9 +348,9 @@ public final class SpecialMobEquipmentGameTests {
             set(helper, 1152L, 6_000L);
             for (MobKind kind : KINDS) {
                 Mob original = create(helper, kind, 196L);
-                ItemStack helmet = new ItemStack(Items.DIAMOND_HELMET); helmet.setDamageValue(1);
+                ItemStack helmet = new ItemStack(Items.NETHERITE_HELMET); helmet.setDamageValue(1);
                 helmet.set(DataComponents.CUSTOM_NAME, Component.literal("Explicit helmet"));
-                ItemStack weapon = new ItemStack(Items.DIAMOND_AXE); weapon.setDamageValue(2);
+                ItemStack weapon = new ItemStack(Items.NETHERITE_AXE); weapon.setDamageValue(2);
                 original.setItemSlot(EquipmentSlot.HEAD, helmet); original.setItemSlot(EquipmentSlot.MAINHAND, weapon);
                 CompoundTag tag = new CompoundTag(); original.saveWithoutId(tag);
                 tag.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(original.getType()).toString());

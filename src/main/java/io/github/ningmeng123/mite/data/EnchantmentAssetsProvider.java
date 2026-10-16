@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog.Definition;
+import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -83,7 +84,8 @@ public final class EnchantmentAssetsProvider implements DataProvider {
 
             JsonArray items = new JsonArray();
             BuiltInRegistries.ITEM.forEach(item -> {
-                if (definition.supported(new ItemStack(item))) items.add(BuiltInRegistries.ITEM.getKey(item).toString());
+                if (!RemovedDiamondEquipment.isRemoved(item) && definition.supported(new ItemStack(item)))
+                    items.add(BuiltInRegistries.ITEM.getKey(item).toString());
             });
             save(cache, work, "data/mite/tags/item/enchantable/" + definition.id() + ".json", tag(true, items));
             all.add(definition.resourceId());
@@ -93,7 +95,8 @@ public final class EnchantmentAssetsProvider implements DataProvider {
         // Keep the original agriculture integration tag for other crop/data consumers.
         JsonArray agriculture = new JsonArray();
         BuiltInRegistries.ITEM.forEach(item -> {
-            if (R196EnchantmentCatalog.supported("harvesting", new ItemStack(item))) agriculture.add(BuiltInRegistries.ITEM.getKey(item).toString());
+            if (!RemovedDiamondEquipment.isRemoved(item) && R196EnchantmentCatalog.supported("harvesting", new ItemStack(item)))
+                agriculture.add(BuiltInRegistries.ITEM.getKey(item).toString());
         });
         save(cache, work, "data/mite/tags/item/agricultural_tools.json", tag(false, agriculture));
         for (String id : List.of("in_enchanting_table", "tradeable", "on_random_loot", "non_treasure"))

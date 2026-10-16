@@ -112,7 +112,7 @@ public final class GrassMiningGameTests {
         Player player = groundedPlayer(helper);
         BlockPos position = helper.absolutePos(new BlockPos(1, 2, 1));
         Item[] items = {Items.WOODEN_SWORD, Items.SHEARS, Items.IRON_SWORD, MiteItems.FLINT_HATCHET.get(),
-                Items.DIAMOND_AXE, Items.DIAMOND_HOE, Items.DIAMOND_SHOVEL};
+                Items.IRON_AXE, Items.IRON_HOE, Items.IRON_SHOVEL};
         // Iron sword: zl base efficiency 2 * xj iron multiplier 2 = 4; H=.02 gives bits 3ec80000 and three additions.
         float[] strengths = {1.0F, 8.0F, 4.0F, 2.5F, 8.0F, 1.0F, 1.0F};
         int[] bits = {0x3dc80000, 0x3f800000, 0x3ec80000, 0x3e7a0001, 0x3f800000, 0x3dc80000, 0x3dc80000};

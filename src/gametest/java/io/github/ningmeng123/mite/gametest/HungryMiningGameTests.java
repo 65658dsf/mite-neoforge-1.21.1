@@ -93,10 +93,10 @@ public final class HungryMiningGameTests {
         }
 
         PlayerExperience.setTotal(player, 6650);
-        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_PICKAXE));
+        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
         BlockState stone = Blocks.STONE.defaultBlockState();
         assertBits(helper, player.getDigSpeed(stone, position), 0x402e147b,
-                "Diamond tool strength is preserved before hunger and level");
+                "Iron tool strength is preserved before hunger and level");
         player.setOnGround(false);
         assertBits(helper, player.getDigSpeed(stone, position), 0x3f0b4396,
                 "The modern airborne penalty and food penalty each run once");

@@ -369,7 +369,7 @@ public final class FoodAgricultureGameTests {
             helper.assertTrue(loot.getFirst().is(replace ? MiteFoods.get("raw_worm") : Items.DIRT),
                     "The registered natural loot modifier replaces only the winning integer draw with one worm");
         }
-        ItemStack silk = new ItemStack(Items.DIAMOND_SHOVEL);
+        ItemStack silk = new ItemStack(Items.NETHERITE_SHOVEL);
         silk.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SILK_TOUCH), 1);
         var protectedDrop = drops(helper, Blocks.GRASS_BLOCK.defaultBlockState(), silk, 196L);
         helper.assertValueEqual(count(protectedDrop, Items.GRASS_BLOCK), 1, "Silk Touch preserves the grass block instead of extracting a worm");

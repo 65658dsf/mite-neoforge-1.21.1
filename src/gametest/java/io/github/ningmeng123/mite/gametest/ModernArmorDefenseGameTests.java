@@ -49,11 +49,11 @@ public final class ModernArmorDefenseGameTests {
 
     @GameTest(template = "empty")
     public static void plateStagesUseModernArmorAndToughnessForPlayersAndZombies(GameTestHelper helper) {
-        String[] materials = {"leather", "rusted_iron", "gold", "copper", "silver", "iron", "ancient_metal", "diamond", "mithril", "netherite", "adamantium"};
-        double[] armor = {7, 9, 11, 13, 13, 15, 18, 20, 22, 20, 24};
-        double[] toughness = {0, 0, 0, 0, 0, 0, 4, 8, 12, 12, 16};
+        String[] materials = {"leather", "rusted_iron", "gold", "copper", "silver", "iron", "ancient_metal", "mithril", "netherite", "adamantium"};
+        double[] armor = {7, 9, 11, 13, 13, 15, 18, 22, 20, 24};
+        double[] toughness = {0, 0, 0, 0, 0, 0, 4, 12, 12, 16};
         // Native formula: raw20 * (1 - clamp(A - 20/(2+T/4), A*.2, 20)/25).
-        float[] loss = {18.88F, 18.56F, 18.24F, 17.6F, 17.6F, 16F, 10.933333F, 8F, 5.6F, 7.2F, 4F};
+        float[] loss = {18.88F, 18.56F, 18.24F, 17.6F, 17.6F, 16F, 10.933333F, 5.6F, 7.2F, 4F};
         try (Session session = newPlayer(helper)) {
             var player = session.player();
             var zombie = mob(helper, EntityType.ZOMBIE);
@@ -204,12 +204,13 @@ public final class ModernArmorDefenseGameTests {
     public static void toughnessReducesLargeHitsAndNetheriteKeepsNativeKnockbackResistance(GameTestHelper helper) {
         try (Session session = newPlayer(helper)) {
             var player = session.player();
-            equip(player, "diamond", false); refresh(player);
-            close(helper, hit(player, player.damageSources().cactus(), 40F), 24, "Diamond20/toughness8 protects a large hit");
-            equip(player, "diamond", false); refresh(player);
+            equip(player, "netherite", false); refresh(player);
+            // Native formula: effective armor = 20 - 40/(2+12/4) = 12; raw40 * (1-12/25) = 20.8.
+            close(helper, hit(player, player.damageSources().cactus(), 40F), 20.8, "Netherite20/toughness12 protects a large hit");
+            equip(player, "netherite", false); refresh(player);
             var suppress = ResourceLocation.fromNamespaceAndPath("mite", "gametest_toughness_control");
             player.getAttribute(Attributes.ARMOR_TOUGHNESS).addTransientModifier(
-                    new AttributeModifier(suppress, -8D, AttributeModifier.Operation.ADD_VALUE));
+                    new AttributeModifier(suppress, -12D, AttributeModifier.Operation.ADD_VALUE));
             try { close(helper, hit(player, player.damageSources().cactus(), 40F), 33.6,
                     "Same armor without toughness suffers a larger real hit"); }
             finally { player.getAttribute(Attributes.ARMOR_TOUGHNESS).removeModifier(suppress); }
@@ -400,7 +401,7 @@ public final class ModernArmorDefenseGameTests {
                 default -> "mite:" + material + "_chain_";
             };
             else stem = switch (material) {
-                case "leather", "iron", "diamond", "netherite" -> "minecraft:" + material + "_";
+                case "leather", "iron", "netherite" -> "minecraft:" + material + "_";
                 case "gold" -> "minecraft:golden_";
                 default -> "mite:" + material + "_";
             };

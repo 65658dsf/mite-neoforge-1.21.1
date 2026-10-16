@@ -117,7 +117,7 @@ public final class NativeMobEquipmentGameTests {
             Zombie normal = create(helper, EntityType.ZOMBIE), villager = create(helper, EntityType.ZOMBIE_VILLAGER);
             slots(helper, normal, between); slots(helper, villager, between);
             helper.assertTrue(normal.getMainHandItem().isEmpty() && !villager.getMainHandItem().isEmpty(), "Source .05 vs .20 chances do not depend on modern difficulty");
-            ItemStack pickedUp = new ItemStack(Items.DIAMOND_SWORD); normal.setItemSlot(EquipmentSlot.MAINHAND, pickedUp);
+            ItemStack pickedUp = new ItemStack(Items.NETHERITE_SWORD); normal.setItemSlot(EquipmentSlot.MAINHAND, pickedUp);
             long rejected = seedFor(helper, random -> random.nextFloat() >= .2F); slots(helper, normal, rejected);
             helper.assertTrue(normal.getMainHandItem() == pickedUp, "Rejected source weapon roll preserves the existing held stack"); helper.succeed();
         }
@@ -182,7 +182,7 @@ public final class NativeMobEquipmentGameTests {
     public static void modernHuskDrownedPiglinAndSourceSkeletonKeepTheirOwnEquipmentPaths(GameTestHelper helper) throws Exception {
         try (ProgressSnapshot progress = ProgressSnapshot.earlySource(helper.getLevel())) {
             for (var type : List.of(EntityType.HUSK, EntityType.DROWNED, EntityType.PIGLIN, EntityType.SKELETON, EntityType.WITHER_SKELETON)) {
-                Mob mob = create(helper, type); ItemStack sentinel = new ItemStack(Items.DIAMOND_SWORD); mob.setItemSlot(EquipmentSlot.MAINHAND, sentinel);
+                Mob mob = create(helper, type); ItemStack sentinel = new ItemStack(Items.NETHERITE_SWORD); mob.setItemSlot(EquipmentSlot.MAINHAND, sentinel);
                 helper.assertTrue(!NativeMobEquipment.handles(type) && !NativeMobEquipment.populate(mob), "Unrelated equipment identity is excluded " + type);
                 helper.assertTrue(mob.getMainHandItem() == sentinel, "Exclusion preserves existing stack " + type);
             }

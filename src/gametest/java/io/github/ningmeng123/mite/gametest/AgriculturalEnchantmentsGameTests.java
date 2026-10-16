@@ -49,7 +49,7 @@ public final class AgriculturalEnchantmentsGameTests {
             h.assertValueEqual(enchantment.getMinCost(5), 41, "Level V starts at source effective budget 41");
             h.assertValueEqual(enchantment.getMaxCost(5), Integer.MAX_VALUE, "Source effective budget has no upper cutoff");
         }
-        var hoe = enchanted(h, new ItemStack(Items.DIAMOND_HOE), true, 5);
+        var hoe = enchanted(h, new ItemStack(Items.NETHERITE_HOE), true, 5);
         var scythe = enchanted(h, new ItemStack(MiteTools.get("mite:iron_scythe")), true, 5);
         var shovel = enchanted(h, new ItemStack(Items.IRON_SHOVEL), true, 5);
         h.assertValueEqual(AgriculturalEnchantments.harvesting(hoe, level, mature(Blocks.CARROTS.defaultBlockState())), .5F,
@@ -67,8 +67,8 @@ public final class AgriculturalEnchantmentsGameTests {
     public static void actualWheatLootGetsIndependentHarvestingExtraButNoFortuneBonus(GameTestHelper h) {
         try (var f = new Fixture(h)) {
             var player = h.makeMockPlayer(GameType.SURVIVAL);
-            var harvesting = enchanted(h, new ItemStack(Items.DIAMOND_HOE), true, 5);
-            var fortune = new ItemStack(Items.DIAMOND_HOE);
+            var harvesting = enchanted(h, new ItemStack(Items.NETHERITE_HOE), true, 5);
+            var fortune = new ItemStack(Items.NETHERITE_HOE);
             fortune.enchant(f.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.FORTUNE), 3);
             var wheat = mature(Blocks.WHEAT.defaultBlockState());
             int extra = 0;
@@ -112,7 +112,7 @@ public final class AgriculturalEnchantmentsGameTests {
     public static void canceledHarvestDoesNotApplyFertility(GameTestHelper h) {
         try (var f = new Fixture(h)) {
             var player = h.makeMockPlayer(GameType.SURVIVAL);
-            var hoe = enchanted(h, new ItemStack(Items.DIAMOND_HOE), false, 5);
+            var hoe = enchanted(h, new ItemStack(Items.NETHERITE_HOE), false, 5);
             Consumer<BlockDropsEvent> cancel = event -> { if (event.getPos().equals(f.pos)) event.setCanceled(true); };
             NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, BlockDropsEvent.class, cancel);
             try { Block.dropResources(mature(Blocks.WHEAT.defaultBlockState()), f.level, f.pos, null, player, hoe); }
@@ -126,7 +126,7 @@ public final class AgriculturalEnchantmentsGameTests {
     public static void actualModernHoeAndSourceMattockTillingReturnFertilizedFarmland(GameTestHelper h) {
         try (var f = new Fixture(h)) {
             var player = h.makeMockPlayer(GameType.SURVIVAL);
-            for (var item : java.util.List.of(Items.DIAMOND_HOE, MiteTools.get("mite:iron_mattock"))) {
+            for (var item : java.util.List.of(Items.NETHERITE_HOE, MiteTools.get("mite:iron_mattock"))) {
                 f.set(f.pos, Blocks.DIRT.defaultBlockState()); f.set(f.pos.above(), Blocks.AIR.defaultBlockState());
                 var tool = enchanted(h, new ItemStack(item), false, 5); player.setItemInHand(InteractionHand.MAIN_HAND, tool);
                 var context = context(player, f.pos);
@@ -143,7 +143,7 @@ public final class AgriculturalEnchantmentsGameTests {
     @GameTest(template = "empty")
     public static void canceledToolTransformationLeavesDirtUnchanged(GameTestHelper h) {
         try (var f = new Fixture(h)) {
-            var player = h.makeMockPlayer(GameType.SURVIVAL); var tool = enchanted(h, new ItemStack(Items.DIAMOND_HOE), false, 5);
+            var player = h.makeMockPlayer(GameType.SURVIVAL); var tool = enchanted(h, new ItemStack(Items.NETHERITE_HOE), false, 5);
             player.setItemInHand(InteractionHand.MAIN_HAND, tool); f.set(f.pos, Blocks.DIRT.defaultBlockState());
             Consumer<BlockToolModificationEvent> cancel = event -> { if (event.getPos().equals(f.pos)) event.setCanceled(true); };
             NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, BlockToolModificationEvent.class, cancel);

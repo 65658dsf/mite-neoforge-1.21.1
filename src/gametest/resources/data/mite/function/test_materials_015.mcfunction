@@ -24,5 +24,5 @@ give @s minecraft:lapis_lazuli 2
 give @s minecraft:quartz 2
 give @s minecraft:emerald 2
 give @s minecraft:diamond 2
-give @s minecraft:diamond_shovel
+give @s minecraft:netherite_shovel
 tellraw @s {"text":"015 材料测试物资已发放。请用生存模式测试；先记录数量，换算前后不得增减。此函数不清空背包。","color":"yellow"}

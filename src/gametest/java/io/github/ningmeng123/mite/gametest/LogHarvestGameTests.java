@@ -74,9 +74,9 @@ public final class LogHarvestGameTests {
         helper.assertValueEqual(vanillaLogs.size(), 40, "The pinned vanilla LOGS tag contains forty blocks");
         helper.assertValueEqual(BuiltInRegistries.BLOCK.stream().filter(block -> block.defaultBlockState().is(RESTRICTED_LOGS)).count(),
                 40L, "The default restriction tag contains only those forty targets");
-        Item[] denied = {Items.AIR, Items.STICK, Items.WOODEN_AXE, Items.DIAMOND_PICKAXE, Items.DIAMOND_SWORD};
+        Item[] denied = {Items.AIR, Items.STICK, Items.WOODEN_AXE, Items.NETHERITE_PICKAXE, Items.NETHERITE_SWORD};
         Item[] allowed = {MiteItems.FLINT_HATCHET.get(), Items.STONE_AXE, Items.GOLDEN_AXE,
-                Items.IRON_AXE, Items.DIAMOND_AXE, Items.NETHERITE_AXE};
+                Items.IRON_AXE, io.github.ningmeng123.mite.registry.MiteTools.get("mite:ancient_metal_axe"), Items.NETHERITE_AXE};
         for (Block block : vanillaLogs) {
             BlockState state = block.defaultBlockState();
             helper.assertTrue(state.is(RESTRICTED_LOGS), "Every vanilla log, wood, stripped variant, stem and hyphae is explicitly covered");
@@ -111,7 +111,7 @@ public final class LogHarvestGameTests {
                 .getHolderOrThrow(Enchantments.EFFICIENCY), 5);
         for (int level : new int[]{-40, 0, 35, 200}) {
             PlayerExperience.setLevels(player, level);
-            for (ItemStack held : new ItemStack[]{ItemStack.EMPTY, wood, new ItemStack(Items.DIAMOND_PICKAXE)}) {
+            for (ItemStack held : new ItemStack[]{ItemStack.EMPTY, wood, new ItemStack(Items.NETHERITE_PICKAXE)}) {
                 player.setItemSlot(EquipmentSlot.MAINHAND, held);
                 helper.assertTrue(LogHarvestRules.isBlocked(player, log), "Bonuses cannot promote an invalid tool at level " + level);
                 helper.assertValueEqual(log.getDestroyProgress(player, helper.getLevel(), position), 0.0F,
@@ -161,7 +161,7 @@ public final class LogHarvestGameTests {
         try (BlockFixture fixture = new BlockFixture(helper, position); PlayerSession session = newServerPlayer(helper)) {
             ServerPlayer player = session.player();
             fixture.placeLog();
-            for (Item item : new Item[]{Items.AIR, Items.STICK, Items.WOODEN_AXE, Items.DIAMOND_PICKAXE}) {
+            for (Item item : new Item[]{Items.AIR, Items.STICK, Items.WOODEN_AXE, Items.NETHERITE_PICKAXE}) {
                 ItemStack held = item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item);
                 player.setItemSlot(EquipmentSlot.MAINHAND, held);
                 helper.assertFalse(player.gameMode.destroyBlock(position), "Direct server removal refuses " + item);
@@ -286,7 +286,7 @@ public final class LogHarvestGameTests {
         Player player = mockMiner(helper);
         BlockState log = Blocks.OAK_LOG.defaultBlockState();
         Tool fastLogs = new Tool(List.of(Tool.Rule.minesAndDrops(BlockTags.LOGS, 8.0F)), 1.0F, 0);
-        ItemStack disguisedPickaxe = new ItemStack(Items.DIAMOND_PICKAXE);
+        ItemStack disguisedPickaxe = new ItemStack(Items.NETHERITE_PICKAXE);
         disguisedPickaxe.set(DataComponents.TOOL, fastLogs);
         ItemStack slowAxe = new ItemStack(Items.IRON_AXE);
         slowAxe.set(DataComponents.TOOL, new Tool(List.of(Tool.Rule.minesAndDrops(BlockTags.LOGS, 1.0F)), 1.0F, 0));
