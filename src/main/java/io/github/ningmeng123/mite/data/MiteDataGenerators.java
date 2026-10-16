@@ -21,6 +21,7 @@ public final class MiteDataGenerators {
         event.getGenerator().addProvider(true, new ToolAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new WorkbenchAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new FurnaceAssetsProvider(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(event.includeServer(), new CampfireRecipeAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new ArmorAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new RangedAssetsProvider(event.getGenerator().getPackOutput()));
         event.getGenerator().addProvider(true, new FunctionalAssetsProvider(event.getGenerator().getPackOutput()));

@@ -176,7 +176,7 @@ public final class FoodRecipeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void allNineFoodsKeepSourceRecipeDurationAndRewardsOnEveryRetainedDevice(GameTestHelper helper) {
+    public static void allNineFoodsKeepSourceRewardsWithTheExplicitCampfireMeatAdaptation(GameTestHelper helper) {
         Item[] inputs = {Items.PORKCHOP, Items.COD, Items.BEEF, Items.CHICKEN, Items.POTATO, Items.MUTTON,
                 MiteFoods.get("dough"), MiteFoods.get("raw_large_fish"), MiteFoods.get("raw_worm")};
         Item[] outputs = {Items.COOKED_PORKCHOP, Items.COOKED_COD, Items.COOKED_BEEF, Items.COOKED_CHICKEN, Items.BAKED_POTATO,
@@ -188,14 +188,27 @@ public final class FoodRecipeGameTests {
                 var matching = helper.getLevel().getRecipeManager().getRecipes().stream().map(holder -> holder.value())
                         .filter(recipe -> recipe instanceof AbstractCookingRecipe cooking && cooking.getType() == type
                                 && cooking.matches(new SingleRecipeInput(new ItemStack(input)), helper.getLevel())).toList();
+                if (type == RecipeType.CAMPFIRE_COOKING && (input == Items.POTATO || input == MiteFoods.get("dough"))) {
+                    helper.assertTrue(matching.isEmpty(), "Non-meat source foods retain furnace and smoker recipes without a campfire or JEI recipe");
+                    continue;
+                }
                 helper.assertValueEqual(matching.size(), 1, "Each food has exactly one recipe for this retained cooking device");
                 AbstractCookingRecipe cooking = (AbstractCookingRecipe) matching.getFirst();
                 helper.assertTrue(cooking.getResultItem(helper.getLevel().registryAccess()).is(outputs[index]), "The cooked output matches the source mapping");
-                helper.assertValueEqual(cooking.getCookingTime(), type == RecipeType.SMOKING ? 100 : 200,
-                        "Declared recipe-book durations match the source200 ticks and the explicitly adapted modern smoker100 ticks");
+                helper.assertValueEqual(cooking.getCookingTime(), type == RecipeType.CAMPFIRE_COOKING ? 300 : type == RecipeType.SMOKING ? 100 : 200,
+                        "Declared recipe-book durations retain furnace200 and smoker100 while the user's modern campfire adaptation takes300 ticks");
                 helper.assertValueEqual(cooking.getExperience(), (float) rewards[index], "Recipe rewards retain the literal R196 output experience");
             }
         }
+        for (Item[] modern : new Item[][]{{Items.RABBIT, Items.COOKED_RABBIT}, {Items.SALMON, Items.COOKED_SALMON}}) {
+            var recipe = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING,
+                    new SingleRecipeInput(new ItemStack(modern[0])), helper.getLevel()).orElseThrow().value();
+            helper.assertTrue(recipe.getResultItem(helper.getLevel().registryAccess()).is(modern[1]), "Retained modern meats keep their native cooked output");
+            helper.assertValueEqual(recipe.getCookingTime(), 300, "Native rabbit and salmon recipe-book/JEI pages also declare fifteen seconds");
+            helper.assertValueEqual(recipe.getExperience(), .35F, "Modern meats outside the source mappings retain vanilla cooking rewards");
+        }
+        helper.assertTrue(helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING,
+                new SingleRecipeInput(new ItemStack(Items.KELP)), helper.getLevel()).isEmpty(), "Native kelp is removed from campfire recipe lookup and JEI");
         helper.succeed();
     }
 

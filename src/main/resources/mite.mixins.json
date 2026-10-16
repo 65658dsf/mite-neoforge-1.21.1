@@ -98,6 +98,8 @@
     "FurnaceHardnessMixin",
     "FurnaceRecipeBookMixin",
     "FurnaceCampfireHeatMixin",
+    "CampfireBlockRulesMixin",
+    "CampfireLightMixin",
     "SourceMobArmorMixin",
     "SilverArmorPoisonMixin",
     "MobEffectDurationAccessor",

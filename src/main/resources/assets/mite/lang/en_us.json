@@ -746,5 +746,9 @@
   "advancement.mite.crystal_breaker.title": "Crystal Breaker",
   "advancement.mite.crystal_breaker.description": "Forge a tool that is hard enough to break ender crystal",
   "message.mite.structure_unlock.village": "Day %s: Village requirements are met. Villages can now generate in unexplored Overworld chunks.",
-  "message.mite.structure_unlock.end_portal": "Day %s: Strongholds and End portal rooms can generate in unexplored Overworld chunks. Use Eyes of Ender to locate and activate a portal."
+  "message.mite.structure_unlock.end_portal": "Day %s: Strongholds and End portal rooms can generate in unexplored Overworld chunks. Use Eyes of Ender to locate and activate a portal.",
+  "config.jade.plugin_mite.campfire": "Campfire fuel",
+  "jade.mite.campfire_fuel": "Fuel: %s / 3",
+  "jade.mite.campfire_meat": "Meat remaining: %s",
+  "jade.mite.campfire_time": "Current fuel: %s s"
 }

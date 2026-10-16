@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:beef", "minecraft:porkchop", "minecraft:mutton", "minecraft:chicken", "minecraft:rabbit",
+    "minecraft:cod", "minecraft:salmon", "mite:raw_large_fish", "mite:raw_worm",
+    { "id": "#c:foods/raw_meat", "required": false },
+    { "id": "#c:foods/raw_fish", "required": false }
+  ]
+}

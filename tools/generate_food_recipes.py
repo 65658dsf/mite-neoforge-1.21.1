@@ -155,10 +155,15 @@ def main() -> None:
             native = output_id.startswith("minecraft:") and source["input_item_id"] != 1185
             namespace = "minecraft" if native else "mite"
             name = output_id.split(":")[1] + suffix if native else "food_019_cook_" + str(source["input_item_id"]) + "_" + method
-            write(RESOURCES / "data" / namespace / "recipe" / (name + ".json"), {
-                "type": "minecraft:" + method, "category": "food", "ingredient": {"item": input_id},
-                "result": {"id": output_id, "count": 1}, "experience": float(xp), "cookingtime": 100 if method == "smoking" else 200,
-            })
+            # Historical019 evidence below keeps the original200-tick mapping. Live
+            # modern campfire adaptations belong exclusively to the Java data provider,
+            # which also removes non-meat recipe pages and declares the user's15s time.
+            # Do not recreate src/main copies beside src/generated campfire assets.
+            if method != "campfire_cooking":
+                write(RESOURCES / "data" / namespace / "recipe" / (name + ".json"), {
+                    "type": "minecraft:" + method, "category": "food", "ingredient": {"item": input_id},
+                    "result": {"id": output_id, "count": 1}, "experience": float(xp), "cookingtime": 100 if method == "smoking" else 200,
+                })
             entry["recipe_ids"].append(namespace + ":" + name)
         cooking.append(entry)
     write(RESOURCES / "mite/food-manufacturing-019.json", {

@@ -746,5 +746,9 @@
   "advancement.mite.crystal_breaker.title": "晶体破坏者",
   "advancement.mite.crystal_breaker.description": "制作能有效开采秘银块的工具。",
   "message.mite.structure_unlock.village": "今天是第 %s 天：村庄生成条件已满足，主世界的未探索区块现在可以生成村庄。",
-  "message.mite.structure_unlock.end_portal": "今天是第 %s 天：主世界的未探索区块已可生成要塞和末地传送门房间，可用末影之眼寻找并激活。"
+  "message.mite.structure_unlock.end_portal": "今天是第 %s 天：主世界的未探索区块已可生成要塞和末地传送门房间，可用末影之眼寻找并激活。",
+  "config.jade.plugin_mite.campfire": "篝火燃料",
+  "jade.mite.campfire_fuel": "燃料：%s / 3",
+  "jade.mite.campfire_meat": "当前燃料还能烤：%s 块肉",
+  "jade.mite.campfire_time": "当前燃料剩余：%s 秒"
 }
