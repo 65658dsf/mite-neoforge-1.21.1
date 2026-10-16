@@ -109,6 +109,7 @@
     "SourceArmorDefenseMixin",
     "RangedArrowMixin",
     "SkeletonMaterialArrowMixin",
+    "SkeletonArrowLeavesMixin",
     "RangedFishingRodMixin",
     "RangedCarrotRodMixin",
     "RangedPigControlMixin",
