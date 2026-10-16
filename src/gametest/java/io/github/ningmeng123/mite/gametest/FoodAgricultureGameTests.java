@@ -75,7 +75,7 @@ public final class FoodAgricultureGameTests {
             var state = MiteFoodPlants.BLUEBERRY_BUSH.get().defaultBlockState().setValue(SweetBerryBushBlock.AGE, age);
             var ordinary = drops(helper, state, ItemStack.EMPTY, 196L);
             helper.assertValueEqual(count(ordinary, MiteFoods.get("blueberries")), age == 3 ? 1 : 0, "Maturity yields one berry, not vanilla sweet-berry quantities");
-            helper.assertValueEqual(count(ordinary, MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get()), 0, "An ordinary break cannot replant the bush");
+            helper.assertValueEqual(count(ordinary, MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get()), 0, "An ordinary break does not recover the separate bush item");
             var sheared = drops(helper, state, new ItemStack(Items.SHEARS), 196L);
             helper.assertValueEqual(count(sheared, MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get()), 1, "Shearing returns exactly one independently registered bush item");
             helper.assertValueEqual(count(sheared, MiteFoods.get("blueberries")), age == 3 ? 1 : 0, "Shearing preserves the same single mature-berry yield");

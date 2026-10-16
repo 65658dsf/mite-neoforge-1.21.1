@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.registry;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.item.BlueberriesItem;
 import io.github.ningmeng123.mite.item.MiteBowlItem;
 import io.github.ningmeng123.mite.item.MiteBucketItem;
 import java.util.Collections;
@@ -29,7 +30,8 @@ public final class MiteFoods {
             new ItemNameBlockItem(MiteFoodPlants.ONIONS.get(), new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> ORANGE = simple("orange");
     public static final DeferredItem<Item> BANANA = simple("banana");
-    public static final DeferredItem<Item> BLUEBERRIES = simple("blueberries");
+    public static final DeferredItem<BlueberriesItem> BLUEBERRIES = add("blueberries", () ->
+            new BlueberriesItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> RAW_LARGE_FISH = simple("raw_large_fish");
     public static final DeferredItem<Item> COOKED_LARGE_FISH = simple("cooked_large_fish");
     public static final DeferredItem<Item> RAW_WORM = simple("raw_worm");
