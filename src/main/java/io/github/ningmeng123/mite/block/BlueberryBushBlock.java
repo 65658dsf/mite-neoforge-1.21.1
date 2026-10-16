@@ -12,7 +12,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -29,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/** R196 berries regrow through three stages, yield one, and have no modern thorns. @author NingMeng123 */
+/** R196 regrowth and yield, with native contact thorns enabled for modern survival. @author NingMeng123 */
 public final class BlueberryBushBlock extends SweetBerryBushBlock {
     public static final MapCodec<SweetBerryBushBlock> CODEC = simpleCodec(BlueberryBushBlock::new);
     public static final TagKey<Biome> HABITAT = TagKey.create(Registries.BIOME,
@@ -48,7 +47,6 @@ public final class BlueberryBushBlock extends SweetBerryBushBlock {
         return level.getBiome(pos).is(HABITAT) && level.canSeeSky(pos) && !level.getBlockState(pos.below()).is(Blocks.FARMLAND)
                 && super.canSurvive(state, level, pos);
     }
-    @Override protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {}
     @Override protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!state.canSurvive(level, pos)) { level.destroyBlock(pos, true); return; }
         if (state.getValue(AGE) >= 3 || level.getMaxLocalRawBrightness(pos.above()) != 15) return;
