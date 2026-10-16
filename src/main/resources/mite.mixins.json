@@ -251,6 +251,10 @@
     "SourcePlayerBlockReachMixin",
     "SourcePlayerEntityReachPacketMixin",
     "PortableToolWearMixin",
+    "ServerPlayerMovementHungerMixin",
+    "BoatMovementHungerMixin",
+    "PlayerMovementHungerMixin",
+    "PlayerRestMixin",
     "ReferencedBookItemMixin",
     "AchievementBonemealMixin"
   ],
@@ -277,7 +281,8 @@
     "client.LunarPrecipitationMixin",
     "client.CurseGuiMixin",
     "client.SourceReachSelectionMixin",
-    "client.SourceReachActionsMixin"
+    "client.SourceReachActionsMixin",
+    "client.SourceSleepOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 1

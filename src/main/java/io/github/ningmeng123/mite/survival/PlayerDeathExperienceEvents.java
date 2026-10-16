@@ -18,6 +18,7 @@ public final class PlayerDeathExperienceEvents {
 
     /** Called only after ServerPlayer.die's non-cancelled path has finished. */
     public static void captureDeath(ServerPlayer player) {
+        RespawnCountdown.died(player);
         if (!player.hasData(MiteAttachments.RESPAWN_EXPERIENCE)) {
             int total = ExperienceRules.experienceAfterDeath(player.totalExperience);
             player.setData(MiteAttachments.RESPAWN_EXPERIENCE,

@@ -268,18 +268,25 @@ public final class LunarWeatherSleepGameTests {
     public static void bloodSleepDenialUsesActualServerBedAndDoesNotAffectOtherMoonNights(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos foot = helper.absolutePos(new BlockPos(0, 1, 0)), head = foot.east();
-        var oldFoot = level.getBlockState(foot); var oldHead = level.getBlockState(head);
-        var oldFloor = level.getBlockState(foot.below()); var oldHeadFloor = level.getBlockState(head.below());
-        var oldFootAir = level.getBlockState(foot.above()); var oldHeadAir = level.getBlockState(head.above());
+        var shelter = new java.util.LinkedHashMap<BlockPos, net.minecraft.world.level.block.state.BlockState>();
         FakePlayer player = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "lunar-bed-test"));
         player.setGameMode(GameType.CREATIVE);
         try (WeatherSnapshot saved = new WeatherSnapshot(level)) {
+            // This is a lunar restriction test; provide the shelter required by ordinary R196 sleep.
+            for (BlockPos mutable : BlockPos.betweenClosed(foot.offset(-1,-1,-1),foot.offset(2,2,1))) {
+                BlockPos pos=mutable.immutable(); shelter.put(pos,level.getBlockState(pos));
+                boolean wall=pos.getX()==foot.getX()-1||pos.getX()==foot.getX()+2
+                        ||pos.getY()==foot.getY()-1||pos.getY()==foot.getY()+2||pos.getZ()!=foot.getZ();
+                level.setBlock(pos,wall?Blocks.STONE.defaultBlockState():Blocks.AIR.defaultBlockState(),2);
+            }
             level.setBlock(foot.below(), Blocks.STONE.defaultBlockState(), 2); level.setBlock(head.below(), Blocks.STONE.defaultBlockState(), 2);
             level.setBlock(foot.above(), Blocks.AIR.defaultBlockState(), 2); level.setBlock(head.above(), Blocks.AIR.defaultBlockState(), 2);
             var state = Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.EAST);
             level.setBlock(foot, state.setValue(BedBlock.PART, BedPart.FOOT), 2);
             level.setBlock(head, state.setValue(BedBlock.PART, BedPart.HEAD), 2);
             player.setPos(foot.getX() + .5, foot.getY(), foot.getZ() + .5);
+            helper.assertFalse(io.github.ningmeng123.mite.worldgen.R196OutdoorChecks.outdoors(level,head),
+                    "The actual lunar test bed is sheltered under the shared source outdoor check");
             for (long offset : new long[]{0, 13000, 18000, 23000, 23999}) {
                 level.setDayTime(31L * 24000L + offset); level.updateSkyBrightness();
                 var result = player.startSleepInBed(head);
@@ -294,9 +301,7 @@ public final class LunarWeatherSleepGameTests {
             }
         } finally {
             if (player.isSleeping()) player.stopSleepInBed(true, true);
-            level.setBlock(foot, oldFoot, 2); level.setBlock(head, oldHead, 2);
-            level.setBlock(foot.below(), oldFloor, 2); level.setBlock(head.below(), oldHeadFloor, 2);
-            level.setBlock(foot.above(), oldFootAir, 2); level.setBlock(head.above(), oldHeadAir, 2);
+            for(var entry:shelter.entrySet())level.setBlock(entry.getKey(),entry.getValue(),2);
         }
         helper.succeed();
     }

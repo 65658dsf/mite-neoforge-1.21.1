@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_version": "MITE 1.6.4 R196",
+  "sources": ["uf.java:1499-1547", "uf.java:1465-1471", "of.java:1829"],
+  "centimeters": "Math.round((float)Math.sqrt(dx*dx+dy*dy+dz*dz)*100F)",
+  "priority": ["eyes in water", "body in water", "climbable", "on ground", "airborne"],
+  "water_full_distance": "eyes in water uses dx,dy,dz",
+  "water_surface_distance": "body-only uses dx,0,dz",
+  "water_cost": ".015F * roundedCentimeters * .01F",
+  "climbing_cost": "positive dy only: (float)dy/10F",
+  "walk_crouch_cost": ".01F * roundedHorizontalCentimeters * .01F",
+  "sprint_cost": ".05F * roundedHorizontalCentimeters * .01F",
+  "sleeping_ground_cost": 0,
+  "airborne_distance_cost": 0,
+  "ground_jump_additional_cost": 0,
+  "rowing": "abs(nativeForwardInput)*.01F each server Boat.tick; only controlling player",
+  "liquid_upward_input_additional_cost": 0.01,
+  "liquid_upward_input": {"payload": "boolean only", "keepalive_client_ticks": 10, "expiry_server_ticks": 40, "maximum_charges_per_server_tick": 1, "requires": ["server-verified water or lava immersion", "held input", "alive survival player", "not passenger"], "clear": ["release", "logout", "dimension change", "respawn"]},
+  "modern_adaptations": ["retain all native movement and statistics", "replace six native movement exhaustion calls", "remove two modern-only ground-jump exhaustion calls", "native forward input replaces client-reported boat hunger", "server validates liquid-jump intent instead of accepting a hunger number"],
+  "existing_food_reserve_order_unchanged": true
+}

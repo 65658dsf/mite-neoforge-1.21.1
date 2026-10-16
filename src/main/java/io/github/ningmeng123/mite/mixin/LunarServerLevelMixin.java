@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.SleepStatus;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,8 +50,19 @@ public abstract class LunarServerLevelMixin {
         return LunarWeather.precipitation((ServerLevel)(Object)this, biome, pos, original.call(biome, pos));
     }
 
+    @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;areEnoughSleeping(I)Z"))
+    private boolean mite$sourceSleepers(SleepStatus status, int percentage, Operation<Boolean> original) {
+        ServerLevel level=(ServerLevel)(Object)this;
+        return level.dimension().equals(Level.OVERWORLD)
+                ? io.github.ningmeng123.mite.survival.PlayerRest.allInBed(level)
+                : original.call(status,percentage);
+    }
+
     @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;areEnoughDeepSleeping(ILjava/util/List;)Z"))
     private boolean mite$bloodMoonCannotSkip(SleepStatus status, int percentage, List<ServerPlayer> players, Operation<Boolean> original) {
-        return !LunarWeather.bloodPeriod((ServerLevel)(Object)this) && original.call(status, percentage, players);
+        ServerLevel level=(ServerLevel)(Object)this;
+        if(!level.dimension().equals(Level.OVERWORLD))return original.call(status,percentage,players);
+        return io.github.ningmeng123.mite.survival.PlayerRest.canForward(level)
+                && io.github.ningmeng123.mite.survival.PlayerRest.allDeeplyAsleep(players);
     }
 }

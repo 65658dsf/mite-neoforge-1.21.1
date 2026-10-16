@@ -71,7 +71,7 @@ public final class AchievementEvents {
     @SubscribeEvent(priority=EventPriority.LOWEST) public static void death(LivingDeathEvent event){
         if(event.isCanceled()||!(event.getSource().getEntity() instanceof ServerPlayer player))return;
         var type=event.getEntity().getType();
-        if(event.getEntity() instanceof net.minecraft.world.entity.Mob mob&&io.github.ningmeng123.mite.worldgen.R196MobSpawning.category(mob)==io.github.ningmeng123.mite.rules.R196SpawnRules.Category.MONSTER)MiteAchievements.award(player,"killEnemy");
+        if(event.getEntity() instanceof net.minecraft.world.entity.Mob mob&&io.github.ningmeng123.mite.survival.PlayerRest.hostile(mob))MiteAchievements.award(player,"killEnemy");
         boolean sourceSkeleton=event.getEntity() instanceof io.github.ningmeng123.mite.entity.R196Skeleton skeleton?skeleton.skeletonType()==0:
                 event.getEntity() instanceof io.github.ningmeng123.mite.entity.OrdinarySkeletonState state&&state.mite$sourceSkeletonType()==0;
         if(sourceSkeleton&&event.getSource().getDirectEntity() instanceof AbstractArrow){

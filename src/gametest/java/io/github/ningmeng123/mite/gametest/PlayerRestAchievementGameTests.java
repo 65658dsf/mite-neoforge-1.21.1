@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.advancement.*;
+import io.github.ningmeng123.mite.network.RespawnCountdownPayload;
 import io.github.ningmeng123.mite.survival.*;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.UUID;
@@ -71,6 +72,35 @@ public final class PlayerRestAchievementGameTests {
             h.assertTrue(f.player.getAdvancements().getOrStartProgress(holder).isDone(),"All nine unique indices earn Enlightenment");
             CompoundTag saved=new CompoundTag();f.player.saveWithoutId(saved);
             h.assertTrue(saved.toString().contains("mite_books_read"),"Read ledger participates in normal player serialization");
+        }h.succeed();
+    }
+    @GameTest(template="empty") public static void sourceSleepRefusesUncoveredHungryOrPoisonedBeds(GameTestHelper h){
+        try(var f=new Session(h)){
+            BlockPos bed=h.absolutePos(new BlockPos(1,3,1));f.player.moveTo(bed.getX()+.5,bed.getY(),bed.getZ()+.5);
+            h.assertValueEqual(PlayerRest.problem(f.player,bed,true),"shelter","Exposed bed is refused before hunger");
+            for(BlockPos pos:BlockPos.betweenClosed(bed.offset(-4,3,-4),bed.offset(4,3,4)))h.getLevel().setBlock(pos,Blocks.STONE.defaultBlockState(),2);
+            try{
+                ((DualFoodData)f.player.getFoodData()).mite$setNutrition(0);
+                h.assertValueEqual(PlayerRest.problem(f.player,bed,true),"hungry","Sheltered bed still requires nutrition");
+                ((DualFoodData)f.player.getFoodData()).mite$setNutrition(6);
+                f.player.addEffect(new MobEffectInstance(MobEffects.POISON,100));
+                h.assertValueEqual(PlayerRest.problem(f.player,bed,true),"poison","Poison prevents initial sleep");
+                f.player.removeEffect(MobEffects.POISON);
+                h.assertTrue(PlayerRest.problem(f.player,bed,true)==null,"Sheltered healthy fed player has no source bed problem");
+            }finally{for(BlockPos pos:BlockPos.betweenClosed(bed.offset(-4,3,-4),bed.offset(4,3,4)))h.getLevel().setBlock(pos,Blocks.AIR.defaultBlockState(),2);}
+        }h.succeed();
+    }
+    @GameTest(template="empty") public static void respawnTimerUsesGameTicksAndKeepsItsSavedRemainder(GameTestHelper h){
+        try(var f=new Session(h)){
+            RespawnCountdown.died(f.player);h.assertValueEqual(RespawnCountdown.remaining(f.player),120,"Death starts at 120 source seconds");
+            int remaining=120;for(int gameTime=1;gameTime<=2399;gameTime++)remaining=RespawnCountdown.advance(remaining,gameTime,false);
+            h.assertValueEqual(remaining,1,"2399 game ticks cannot finish the countdown, independent of frozen dayTime");
+            h.assertValueEqual(RespawnCountdown.advance(remaining,2400,false),0,"2400 game ticks completes countdown");
+            h.assertValueEqual(RespawnCountdown.advance(120,20,true),120,"Source all-asleep freeze preserves remaining time");
+            f.player.getPersistentData().putInt(RespawnCountdown.KEY,37);
+            CompoundTag saved=new CompoundTag();f.player.saveWithoutId(saved);
+            h.assertTrue(saved.toString().contains("mite_respawn_countdown:37"),"Actual player NBT stores remaining seconds");
+            h.assertTrue(f.player.getFoodData()!=null,"Timer does not interfere with player state");
         }h.succeed();
     }
     private static final class Session implements AutoCloseable{

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_version": "MITE R196",
+  "sources": {
+    "sleep_conditions": ["jv.java:881-904", "js.java:580-609", "abw.java:1394-1423"],
+    "consciousness": ["bdi.java:69-81", "avj.java:113-120"],
+    "forwarded_metabolism": ["js.java:413-463"],
+    "death_countdown": ["jv.java:173,224,406-409,778", "js.java:912-915", "avc.java:25-75"]
+  },
+  "sleep": {
+    "dimension": "minecraft:overworld",
+    "local_daytime_window": {"inclusive_start": 15000, "exclusive_end": 22000, "sunrise_target": 23000},
+    "participant_filter": "alive and not spectator; all must be in bed and all must reach deep sleep",
+    "daytime_rest": "bed pose allowed without advancing the night",
+    "initial_refusals": ["reachable hostile in 8x5x8 bounds", "outdoors", "nearby active zombie digging", "nutrition reserve zero", "poison"],
+    "continuing_refusals": ["reachable hostile", "nearby active zombie digging", "nutrition reserve zero"],
+    "consciousness": {"increment_per_tick": 1, "deep_threshold": 100, "deep_plateau": 110, "waking_decrement_per_tick": 1, "alpha": "min(255, 255 * counter / 100)"},
+    "simulation": {
+      "food_updates_per_elapsed_tick": 1,
+      "interrupting_food_tick_counts_as_elapsed": true,
+      "night_attack_check_probability_per_tick": 0.001,
+      "well_rested_minimum_ticks": 6000,
+      "well_rested_requires": "complete simulation, never interrupted, recipient alive and still in bed",
+      "effect_clear_minimum_ticks": 1000,
+      "effect_clear_requires": "recipient alive and still in bed"
+    },
+    "persistent_player_key": "mite_sleep_consciousness",
+    "network_authority": "server counts, client renders snapshot only"
+  },
+  "respawn": {
+    "initial_seconds": 120,
+    "ticks_per_second": 20,
+    "clock": "actual gameTime, independent of the editable dayTime",
+    "pause_when": "there is at least one alive non-spectator player and all such players are deeply asleep",
+    "manual_respawn": "native button remains available before the automatic deadline",
+    "automatic_action": "native PlayerList.respawn, preserving clone/death-XP/inventory/bed validation events",
+    "excluded": ["hardcore", "spectators", "fake players for automatic replacement"],
+    "persistent_player_key": "mite_respawn_countdown",
+    "reconnect": "restore remaining seconds; do not restart at 120",
+    "network_authority": "server counts, client displays own timer only"
+  },
+  "modern_adaptations": [
+    "advance dayTime and explicitly simulate source food updates; do not jump the shared multi-dimension gameTime",
+    "do not bulk catch up modern entities, crops, furnaces or scheduled ticks through the legacy independent-clock mechanism",
+    "keep modern bed validation and death-screen controls",
+    "keep existing lunar and curse refusal rules"
+  ]
+}
