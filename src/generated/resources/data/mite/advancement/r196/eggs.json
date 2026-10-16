@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/seeds",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.eggs.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.eggs.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

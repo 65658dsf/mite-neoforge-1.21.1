@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_better_pickaxe",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.obsidian_furnace.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:obsidian_furnace"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.obsidian_furnace.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

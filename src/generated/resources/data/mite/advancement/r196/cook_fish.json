@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/fishing_rod",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.cook_fish.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:cooked_cod"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.cook_fish.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

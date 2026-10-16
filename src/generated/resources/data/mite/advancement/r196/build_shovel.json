@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_work_bench",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.build_shovel.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:flint_shovel"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.build_shovel.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_furnace",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.acquire_iron.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:iron_ingot"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.acquire_iron.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

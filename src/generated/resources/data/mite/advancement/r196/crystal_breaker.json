@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/adamantium_ingot",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.crystal_breaker.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "mite:adamantium_pickaxe"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.crystal_breaker.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

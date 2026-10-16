@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_shovel",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.nuggets.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:copper_nugget"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.nuggets.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

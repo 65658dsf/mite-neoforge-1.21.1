@@ -86,6 +86,9 @@ public final class FoodAgriculture {
                 || !event.getEntity().mayUseItemAt(pos, Direction.UP, event.getItemStack())) return;
         if (!level.isClientSide) {
             level.setBlock(pos, state.setValue(FERTILIZED, true), 2);
+            io.github.ningmeng123.mite.advancement.MiteAchievements.award(event.getEntity(),"soilEnrichment");
+            if(FungalGrowth.culture((net.minecraft.server.level.ServerLevel)level,pos.above()))
+                io.github.ningmeng123.mite.advancement.MiteAchievements.award(event.getEntity(),"makeMycelium");
             event.getItemStack().consume(1, event.getEntity());
             level.levelEvent(2005, pos.above(), 0);
         }

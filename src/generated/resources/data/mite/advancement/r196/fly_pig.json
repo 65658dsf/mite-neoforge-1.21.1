@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/kill_cow",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.fly_pig.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:saddle"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.fly_pig.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/netherrack_furnace",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.adamantium_ingot.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:adamantium_ingot"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.adamantium_ingot.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

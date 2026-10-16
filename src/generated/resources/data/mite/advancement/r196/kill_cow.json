@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_club",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.kill_cow.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:leather"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.kill_cow.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

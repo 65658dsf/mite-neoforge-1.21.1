@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_hoe",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.soil_enrichment.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:manure"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.soil_enrichment.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

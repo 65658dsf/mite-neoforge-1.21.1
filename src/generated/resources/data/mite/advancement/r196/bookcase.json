@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/enchantments",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.bookcase.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:bookshelf"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.bookcase.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

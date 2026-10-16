@@ -250,7 +250,9 @@
     "SourcePlayerReachMixin",
     "SourcePlayerBlockReachMixin",
     "SourcePlayerEntityReachPacketMixin",
-    "PortableToolWearMixin"
+    "PortableToolWearMixin",
+    "ReferencedBookItemMixin",
+    "AchievementBonemealMixin"
   ],
   "client": [
     "client.WorldCreationDifficultyMixin",

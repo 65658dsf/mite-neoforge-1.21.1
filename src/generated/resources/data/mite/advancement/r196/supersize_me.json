@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/make_mycelium",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.supersize_me.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:brown_mushroom_block"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.supersize_me.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

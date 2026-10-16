@@ -61,6 +61,8 @@ public final class FlintGravelDrops {
         ItemEntity drop = new ItemEntity(event.getLevel(), pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
         drop.setDefaultPickUpDelay();
         event.getDrops().add(drop);
+        if(stack.is(Items.FLINT)||stack.is(MiteItems.FLINT_CHIP.get()))
+            io.github.ningmeng123.mite.advancement.MiteAchievements.award(player,"flintFinder");
     }
 
     private static boolean isOrdinaryDrop(ItemEntity entity) {

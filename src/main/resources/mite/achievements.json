@@ -1,0 +1,1299 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "source_version": "MITE R196",
+  "source_sha256": "3fe08f96c4fbb2280553cb7c41662ea38a4ec7a6a2fe4d6b7bcd00d5fd6e82c8",
+  "count": 62,
+  "adaptation": "Modern advancement UI; source trigger facts and independent world-first ledger; display parents do not gate source awards.",
+  "achievements": [
+    {
+      "field": "f",
+      "legacy_id": 0,
+      "name": "openInventory",
+      "id": "open_inventory",
+      "parent_field": null,
+      "challenge": false,
+      "source_line": 98,
+      "icon": "minecraft:book",
+      "zh_title": "打开物品栏",
+      "call_sites": [
+        {
+          "file": "atv.java",
+          "line": 364
+        },
+        {
+          "file": "awq.java",
+          "line": 41
+        },
+        {
+          "file": "awq.java",
+          "line": 43
+        },
+        {
+          "file": "axm.java",
+          "line": 35
+        },
+        {
+          "file": "axm.java",
+          "line": 36
+        },
+        {
+          "file": "axv.java",
+          "line": 18
+        },
+        {
+          "file": "axv.java",
+          "line": 19
+        },
+        {
+          "file": "bex.java",
+          "line": 68
+        },
+        {
+          "file": "bex.java",
+          "line": 69
+        }
+      ],
+      "parent": null,
+      "en_title": "打开物品栏",
+      "en_description": "打开物品栏",
+      "second_parent": null
+    },
+    {
+      "field": "stickPicker",
+      "legacy_id": 102,
+      "name": "stickPicker",
+      "id": "stick_picker",
+      "challenge": false,
+      "source_line": 99,
+      "icon": "minecraft:stick",
+      "zh_title": "拾枝者",
+      "call_sites": [
+        {
+          "file": "ss.java",
+          "line": 487
+        }
+      ],
+      "parent": "open_inventory",
+      "en_title": "Stick Picker",
+      "en_description": "Collect sticks to make tools with",
+      "second_parent": null
+    },
+    {
+      "field": "cuttingEdge",
+      "legacy_id": 103,
+      "name": "cuttingEdge",
+      "id": "cutting_edge",
+      "challenge": false,
+      "source_line": 100,
+      "icon": "mite:flint_hatchet",
+      "zh_title": "锋利的开端",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 79
+        }
+      ],
+      "parent": "stick_picker",
+      "en_title": "The Cutting Edge",
+      "en_description": "Craft a flint hatchet or knife",
+      "second_parent": null
+    },
+    {
+      "field": "g",
+      "legacy_id": 1,
+      "name": "mineWood",
+      "id": "mine_wood",
+      "challenge": false,
+      "source_line": 101,
+      "icon": "minecraft:oak_log",
+      "zh_title": "取得原木",
+      "call_sites": [
+        {
+          "file": "ss.java",
+          "line": 469
+        }
+      ],
+      "parent": "cutting_edge",
+      "en_title": "Getting Wood",
+      "en_description": "Chop a tree trunk until a block of wood pops out",
+      "second_parent": null
+    },
+    {
+      "field": "h",
+      "legacy_id": 2,
+      "name": "buildWorkBench",
+      "id": "build_work_bench",
+      "challenge": false,
+      "source_line": 102,
+      "icon": "mite:flint_crafting_table",
+      "zh_title": "搭建工作台",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 51
+        }
+      ],
+      "parent": "mine_wood",
+      "en_title": "Benchmarking",
+      "en_description": "Craft a tool bench with a log and a flint knife",
+      "second_parent": null
+    },
+    {
+      "field": "buildShovel",
+      "legacy_id": 106,
+      "name": "buildShovel",
+      "id": "build_shovel",
+      "challenge": false,
+      "source_line": 103,
+      "icon": "mite:flint_shovel",
+      "zh_title": "制作铲子",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 89
+        }
+      ],
+      "parent": "build_work_bench",
+      "en_title": "Scratching the Surface",
+      "en_description": "Use planks and sticks to make a shovel",
+      "second_parent": null
+    },
+    {
+      "field": "nuggets",
+      "legacy_id": 107,
+      "name": "nuggets",
+      "id": "nuggets",
+      "challenge": false,
+      "source_line": 104,
+      "icon": "mite:copper_nugget",
+      "zh_title": "金属颗粒",
+      "call_sites": [
+        {
+          "file": "ss.java",
+          "line": 490
+        }
+      ],
+      "parent": "build_shovel",
+      "en_title": "Precious Metals",
+      "en_description": "Find a metal nugget",
+      "second_parent": null
+    },
+    {
+      "field": "betterTools",
+      "legacy_id": 135,
+      "name": "betterTools",
+      "id": "better_tools",
+      "challenge": false,
+      "source_line": 105,
+      "icon": "mite:copper_crafting_table",
+      "zh_title": "更好的工具",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 49
+        }
+      ],
+      "parent": "nuggets",
+      "en_title": "Better Tools",
+      "en_description": "Craft a metal tool bench with an ingot, stick, leather and planks",
+      "second_parent": null
+    },
+    {
+      "field": "i",
+      "legacy_id": 3,
+      "name": "buildPickaxe",
+      "id": "build_pickaxe",
+      "challenge": false,
+      "source_line": 106,
+      "icon": "mite:copper_pickaxe",
+      "zh_title": "第一把金属镐",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 59
+        }
+      ],
+      "parent": "better_tools",
+      "en_title": "Time to Mine!",
+      "en_description": "Use ingots and sticks to make a pickaxe",
+      "second_parent": null
+    },
+    {
+      "field": "j",
+      "legacy_id": 4,
+      "name": "buildFurnace",
+      "id": "build_furnace",
+      "challenge": false,
+      "source_line": 107,
+      "icon": "minecraft:furnace",
+      "zh_title": "石质熔炉",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 61
+        }
+      ],
+      "parent": "build_pickaxe",
+      "en_title": "Fire It Up",
+      "en_description": "Build a cobblestone furnace to burn coal",
+      "second_parent": null
+    },
+    {
+      "field": "k",
+      "legacy_id": 5,
+      "name": "acquireIron",
+      "id": "acquire_iron",
+      "challenge": false,
+      "source_line": 108,
+      "icon": "minecraft:iron_ingot",
+      "zh_title": "取得铁锭",
+      "call_sites": [
+        {
+          "file": "vq.java",
+          "line": 25
+        }
+      ],
+      "parent": "build_furnace",
+      "en_title": "The Iron Age",
+      "en_description": "Smelt an iron ingot",
+      "second_parent": null
+    },
+    {
+      "field": "l",
+      "legacy_id": 6,
+      "name": "buildHoe",
+      "id": "build_hoe",
+      "challenge": false,
+      "source_line": 109,
+      "icon": "mite:copper_hoe",
+      "zh_title": "耕作的开始",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 67
+        }
+      ],
+      "parent": "better_tools",
+      "en_title": "Time to Farm",
+      "en_description": "Use ingots and sticks to make a hoe",
+      "second_parent": null
+    },
+    {
+      "field": "flour",
+      "legacy_id": 126,
+      "name": "flour",
+      "id": "flour",
+      "challenge": false,
+      "source_line": 110,
+      "icon": "mite:flour",
+      "zh_title": "研磨面粉",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 97
+        }
+      ],
+      "parent": "build_hoe",
+      "en_title": "Basic Ingredient",
+      "en_description": "Combine three wheat to produce flour",
+      "second_parent": null
+    },
+    {
+      "field": "m",
+      "legacy_id": 7,
+      "name": "makeBread",
+      "id": "make_bread",
+      "challenge": false,
+      "source_line": 111,
+      "icon": "minecraft:bread",
+      "zh_title": "烤制面包",
+      "call_sites": [
+        {
+          "file": "vq.java",
+          "line": 29
+        }
+      ],
+      "parent": "flour",
+      "en_title": "Bake Bread",
+      "en_description": "Mix flour with a bowl of water to form dough and bake it in an oven",
+      "second_parent": null
+    },
+    {
+      "field": "n",
+      "legacy_id": 8,
+      "name": "bakeCake",
+      "id": "bake_cake",
+      "challenge": false,
+      "source_line": 112,
+      "icon": "minecraft:cake",
+      "zh_title": "制作蛋糕",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 69
+        }
+      ],
+      "parent": "flour",
+      "en_title": "The Lie",
+      "en_description": "Flour, sugar, eggs and milk!",
+      "second_parent": null
+    },
+    {
+      "field": "o",
+      "legacy_id": 9,
+      "name": "buildBetterPickaxe",
+      "id": "build_better_pickaxe",
+      "challenge": false,
+      "source_line": 113,
+      "icon": "minecraft:iron_pickaxe",
+      "zh_title": "开采黑曜石",
+      "call_sites": [
+        {
+          "file": "awq.java",
+          "line": 376
+        },
+        {
+          "file": "awq.java",
+          "line": 381
+        },
+        {
+          "file": "wd.java",
+          "line": 71
+        }
+      ],
+      "parent": "acquire_iron",
+      "en_title": "开采黑曜石",
+      "en_description": "开采黑曜石",
+      "second_parent": null
+    },
+    {
+      "field": "q",
+      "legacy_id": 11,
+      "name": "onARail",
+      "id": "on_a_rail",
+      "challenge": true,
+      "source_line": 114,
+      "icon": "minecraft:rail",
+      "zh_title": "在铁轨上",
+      "call_sites": [
+        {
+          "file": "uf.java",
+          "line": 1558
+        }
+      ],
+      "parent": "acquire_iron",
+      "en_title": "在铁轨上",
+      "en_description": "在铁轨上",
+      "second_parent": null
+    },
+    {
+      "field": "buildClub",
+      "legacy_id": 104,
+      "name": "buildClub",
+      "id": "build_club",
+      "challenge": false,
+      "source_line": 115,
+      "icon": "minecraft:wooden_sword",
+      "zh_title": "制作木棒",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 81
+        }
+      ],
+      "parent": "build_work_bench",
+      "en_title": "Time to Strike!",
+      "en_description": "Use planks and sticks to make a club",
+      "second_parent": null
+    },
+    {
+      "field": "s",
+      "legacy_id": 13,
+      "name": "killEnemy",
+      "id": "kill_enemy",
+      "challenge": false,
+      "source_line": 116,
+      "icon": "minecraft:bone",
+      "zh_title": "击败怪物",
+      "call_sites": [
+        {
+          "file": "uf.java",
+          "line": 1581
+        }
+      ],
+      "parent": "build_club",
+      "en_title": "击败怪物",
+      "en_description": "击败怪物",
+      "second_parent": null
+    },
+    {
+      "field": "t",
+      "legacy_id": 14,
+      "name": "killCow",
+      "id": "kill_cow",
+      "challenge": false,
+      "source_line": 117,
+      "icon": "minecraft:leather",
+      "zh_title": "取得皮革",
+      "call_sites": [
+        {
+          "file": "ss.java",
+          "line": 472
+        }
+      ],
+      "parent": "build_club",
+      "en_title": "Leather Worker",
+      "en_description": "Harvest leather from an animal",
+      "second_parent": null
+    },
+    {
+      "field": "u",
+      "legacy_id": 15,
+      "name": "flyPig",
+      "id": "fly_pig",
+      "challenge": true,
+      "source_line": 118,
+      "icon": "minecraft:saddle",
+      "zh_title": "飞天猪",
+      "call_sites": [
+        {
+          "file": "ry.java",
+          "line": 151
+        }
+      ],
+      "parent": "kill_cow",
+      "en_title": "飞天猪",
+      "en_description": "飞天猪",
+      "second_parent": null
+    },
+    {
+      "field": "v",
+      "legacy_id": 16,
+      "name": "snipeSkeleton",
+      "id": "snipe_skeleton",
+      "challenge": true,
+      "source_line": 119,
+      "icon": "minecraft:arrow",
+      "zh_title": "狙击骷髅",
+      "call_sites": [
+        {
+          "file": "tr.java",
+          "line": 134
+        }
+      ],
+      "parent": "kill_enemy",
+      "en_title": "狙击骷髅",
+      "en_description": "狙击骷髅",
+      "second_parent": null
+    },
+    {
+      "field": "obsidianFurnace",
+      "legacy_id": 128,
+      "name": "obsidianFurnace",
+      "id": "obsidian_furnace",
+      "challenge": false,
+      "source_line": 120,
+      "icon": "mite:obsidian_furnace",
+      "zh_title": "黑曜石熔炉",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 63
+        }
+      ],
+      "parent": "build_better_pickaxe",
+      "en_title": "Holding Heat",
+      "en_description": "Construct an obsidian furnace to hold lava",
+      "second_parent": null
+    },
+    {
+      "field": "mithrilIngot",
+      "legacy_id": 129,
+      "name": "mithrilIngot",
+      "id": "mithril_ingot",
+      "challenge": false,
+      "source_line": 121,
+      "icon": "mite:mithril_ingot",
+      "zh_title": "秘银时代",
+      "call_sites": [
+        {
+          "file": "vq.java",
+          "line": 31
+        }
+      ],
+      "parent": "obsidian_furnace",
+      "en_title": "The Mythic Age",
+      "en_description": "Smelt a mithril ingot",
+      "second_parent": null
+    },
+    {
+      "field": "w",
+      "legacy_id": 17,
+      "name": "diamonds",
+      "id": "diamonds",
+      "challenge": false,
+      "source_line": 122,
+      "icon": "minecraft:diamond",
+      "zh_title": "钻石！",
+      "call_sites": [
+        {
+          "file": "ss.java",
+          "line": 475
+        }
+      ],
+      "parent": "mithril_ingot",
+      "en_title": "钻石！",
+      "en_description": "Acquire diamonds with your mithril tools",
+      "second_parent": null
+    },
+    {
+      "field": "x",
+      "legacy_id": 18,
+      "name": "portal",
+      "id": "portal",
+      "challenge": false,
+      "source_line": 123,
+      "icon": "minecraft:obsidian",
+      "zh_title": "进入地底世界",
+      "call_sites": [
+        {
+          "file": "jv.java",
+          "line": 858
+        }
+      ],
+      "parent": "build_better_pickaxe",
+      "en_title": "We Need to Go Deeper",
+      "en_description": "Build a portal on bedrock to the Underworld",
+      "second_parent": null
+    },
+    {
+      "field": "portalToNether",
+      "legacy_id": 134,
+      "name": "portalToNether",
+      "id": "portal_to_nether",
+      "challenge": false,
+      "source_line": 124,
+      "icon": "minecraft:netherrack",
+      "zh_title": "深入下界",
+      "call_sites": [
+        {
+          "file": "jv.java",
+          "line": 552
+        },
+        {
+          "file": "jw.java",
+          "line": 179
+        }
+      ],
+      "parent": "portal",
+      "en_title": "Long Way Down",
+      "en_description": "Descend to the bottom of the Underworld",
+      "second_parent": null
+    },
+    {
+      "field": "y",
+      "legacy_id": 19,
+      "name": "ghast",
+      "id": "ghast",
+      "challenge": true,
+      "source_line": 125,
+      "icon": "minecraft:ghast_tear",
+      "zh_title": "以其人之道还治其人之身",
+      "call_sites": [
+        {
+          "file": "tj.java",
+          "line": 36
+        }
+      ],
+      "parent": "portal_to_nether",
+      "en_title": "以其人之道还治其人之身",
+      "en_description": "以其人之道还治其人之身",
+      "second_parent": null
+    },
+    {
+      "field": "z",
+      "legacy_id": 20,
+      "name": "blazeRod",
+      "id": "blaze_rod",
+      "challenge": false,
+      "source_line": 126,
+      "icon": "minecraft:blaze_rod",
+      "zh_title": "烈焰棒",
+      "call_sites": [
+        {
+          "file": "ss.java",
+          "line": 481
+        }
+      ],
+      "parent": "portal_to_nether",
+      "en_title": "烈焰棒",
+      "en_description": "烈焰棒",
+      "second_parent": null
+    },
+    {
+      "field": "A",
+      "legacy_id": 21,
+      "name": "potion",
+      "id": "potion",
+      "challenge": false,
+      "source_line": 127,
+      "icon": "minecraft:potion",
+      "zh_title": "本地酿造厂",
+      "call_sites": [
+        {
+          "file": "vh.java",
+          "line": 26
+        }
+      ],
+      "parent": "blaze_rod",
+      "en_title": "本地酿造厂",
+      "en_description": "本地酿造厂",
+      "second_parent": null
+    },
+    {
+      "field": "B",
+      "legacy_id": 22,
+      "name": "theEnd",
+      "id": "the_end",
+      "challenge": true,
+      "source_line": 128,
+      "icon": "minecraft:ender_eye",
+      "zh_title": "进入末地",
+      "call_sites": [
+        {
+          "file": "jv.java",
+          "line": 851
+        }
+      ],
+      "parent": "blaze_rod",
+      "en_title": "进入末地",
+      "en_description": "进入末地",
+      "second_parent": null
+    },
+    {
+      "field": "C",
+      "legacy_id": 23,
+      "name": "theEnd2",
+      "id": "the_end2",
+      "challenge": true,
+      "source_line": 129,
+      "icon": "minecraft:dragon_egg",
+      "zh_title": "结束了？",
+      "call_sites": [
+        {
+          "file": "jv.java",
+          "line": 835
+        }
+      ],
+      "parent": "the_end",
+      "en_title": "结束了？",
+      "en_description": "结束了？",
+      "second_parent": null
+    },
+    {
+      "field": "D",
+      "legacy_id": 24,
+      "name": "enchantments",
+      "id": "enchantments",
+      "challenge": false,
+      "source_line": 130,
+      "icon": "minecraft:enchanting_table",
+      "zh_title": "制作附魔台",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 85
+        }
+      ],
+      "parent": "diamonds",
+      "en_title": "制作附魔台",
+      "en_description": "Use a book, obsidian and gems to construct an enchantment table",
+      "second_parent": "emeralds"
+    },
+    {
+      "field": "E",
+      "legacy_id": 30,
+      "name": "overkill",
+      "id": "overkill",
+      "challenge": true,
+      "source_line": 131,
+      "icon": "mite:mithril_sword",
+      "zh_title": "强力一击",
+      "call_sites": [
+        {
+          "file": "uf.java",
+          "line": 1131
+        }
+      ],
+      "parent": "enchantments",
+      "en_title": "强力一击",
+      "en_description": "强力一击",
+      "second_parent": null
+    },
+    {
+      "field": "F",
+      "legacy_id": 26,
+      "name": "bookcase",
+      "id": "bookcase",
+      "challenge": false,
+      "source_line": 132,
+      "icon": "minecraft:bookshelf",
+      "zh_title": "知识的书架",
+      "call_sites": [
+        {
+          "file": "mk.java",
+          "line": 40
+        },
+        {
+          "file": "wd.java",
+          "line": 87
+        }
+      ],
+      "parent": "enchantments",
+      "en_title": "Knowledge is Power",
+      "en_description": "Build some bookshelves to improve your enchantment table",
+      "second_parent": null
+    },
+    {
+      "field": "seeds",
+      "legacy_id": 100,
+      "name": "seeds",
+      "id": "seeds",
+      "challenge": false,
+      "source_line": 133,
+      "icon": "minecraft:wheat_seeds",
+      "zh_title": "觅食者",
+      "call_sites": [
+        {
+          "file": "ss.java",
+          "line": 484
+        }
+      ],
+      "parent": "open_inventory",
+      "en_title": "Foraging",
+      "en_description": "Gather seeds or worms to feed yourself",
+      "second_parent": null
+    },
+    {
+      "field": "eggs",
+      "legacy_id": 101,
+      "name": "eggs",
+      "id": "eggs",
+      "challenge": false,
+      "source_line": 134,
+      "icon": "minecraft:egg",
+      "zh_title": "品尝生鸡蛋",
+      "call_sites": [
+        {
+          "file": "xm.java",
+          "line": 31
+        }
+      ],
+      "parent": "seeds",
+      "en_title": "Sucking Eggs",
+      "en_description": "Eat an egg for nourishment",
+      "second_parent": null
+    },
+    {
+      "field": "buildAxe",
+      "legacy_id": 105,
+      "name": "buildAxe",
+      "id": "build_axe",
+      "challenge": false,
+      "source_line": 135,
+      "icon": "mite:flint_axe",
+      "zh_title": "制作斧子",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 83
+        }
+      ],
+      "parent": "build_work_bench",
+      "en_title": "An Axe To Grind",
+      "en_description": "Build an axe using sticks and flint",
+      "second_parent": null
+    },
+    {
+      "field": "buildScythe",
+      "legacy_id": 108,
+      "name": "buildScythe",
+      "id": "build_scythe",
+      "challenge": false,
+      "source_line": 136,
+      "icon": "mite:copper_scythe",
+      "zh_title": "制作镰刀",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 91
+        }
+      ],
+      "parent": "build_hoe",
+      "en_title": "Reaper",
+      "en_description": "Make a scythe to harvest wheat",
+      "second_parent": null
+    },
+    {
+      "field": "wearLeather",
+      "legacy_id": 109,
+      "name": "wearLeather",
+      "id": "wear_leather",
+      "challenge": false,
+      "source_line": 137,
+      "icon": "minecraft:leather_helmet",
+      "zh_title": "皮革防护",
+      "call_sites": [
+        {
+          "file": "uf.java",
+          "line": 225
+        }
+      ],
+      "parent": "kill_cow",
+      "en_title": "Suiting Up",
+      "en_description": "Wear leather armor to protect yourself",
+      "second_parent": null
+    },
+    {
+      "field": "buildChainMail",
+      "legacy_id": 110,
+      "name": "buildChainMail",
+      "id": "build_chain_mail",
+      "challenge": false,
+      "source_line": 138,
+      "icon": "minecraft:chainmail_chestplate",
+      "zh_title": "制作锁链甲",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 93
+        }
+      ],
+      "parent": "better_tools",
+      "en_title": "Stronger Armor",
+      "en_description": "Use nuggets to craft chains and chain mail armor",
+      "second_parent": null
+    },
+    {
+      "field": "wearAllPlateArmor",
+      "legacy_id": 111,
+      "name": "wearAllPlateArmor",
+      "id": "wear_all_plate_armor",
+      "challenge": false,
+      "source_line": 139,
+      "icon": "minecraft:iron_chestplate",
+      "zh_title": "全套金属防具",
+      "call_sites": [
+        {
+          "file": "uf.java",
+          "line": 228
+        }
+      ],
+      "parent": "build_chain_mail",
+      "en_title": "Tin Can",
+      "en_description": "Cover yourself head to toe with plate armor",
+      "second_parent": null
+    },
+    {
+      "field": "wearAllAdamantiumPlateArmor",
+      "legacy_id": 112,
+      "name": "wearAllAdamantiumPlateArmor",
+      "id": "wear_all_adamantium_plate_armor",
+      "challenge": true,
+      "source_line": 140,
+      "icon": "mite:adamantium_chestplate",
+      "zh_title": "艾德曼全甲",
+      "call_sites": [
+        {
+          "file": "uf.java",
+          "line": 231
+        }
+      ],
+      "parent": "wear_all_plate_armor",
+      "en_title": "Juggernaut",
+      "en_description": "Don a full suit of adamantium plate armor",
+      "second_parent": null
+    },
+    {
+      "field": "buildOven",
+      "legacy_id": 113,
+      "name": "buildOven",
+      "id": "build_oven",
+      "challenge": false,
+      "source_line": 141,
+      "icon": "mite:clay_oven",
+      "zh_title": "黏土烤炉",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 45
+        }
+      ],
+      "parent": "open_inventory",
+      "en_title": "Now You're Cooking",
+      "en_description": "Build an oven to cook meat in",
+      "second_parent": null
+    },
+    {
+      "field": "flintFinder",
+      "legacy_id": 114,
+      "name": "flintFinder",
+      "id": "flint_finder",
+      "challenge": false,
+      "source_line": 142,
+      "icon": "minecraft:flint",
+      "zh_title": "找到燧石",
+      "call_sites": [
+        {
+          "file": "aoo.java",
+          "line": 55
+        }
+      ],
+      "parent": "open_inventory",
+      "en_title": "Flint Finder",
+      "en_description": "Dig through gravel to find pieces of flint",
+      "second_parent": null
+    },
+    {
+      "field": "buildTorches",
+      "legacy_id": 115,
+      "name": "buildTorches",
+      "id": "build_torches",
+      "challenge": false,
+      "source_line": 143,
+      "icon": "minecraft:torch",
+      "zh_title": "点亮黑暗",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 54
+        }
+      ],
+      "parent": "build_work_bench",
+      "en_title": "Let There Be Light",
+      "en_description": "Make torches to light up the darkness",
+      "second_parent": null
+    },
+    {
+      "field": "soilEnrichment",
+      "legacy_id": 116,
+      "name": "soilEnrichment",
+      "id": "soil_enrichment",
+      "challenge": false,
+      "source_line": 144,
+      "icon": "mite:manure",
+      "zh_title": "施肥",
+      "call_sites": [
+        {
+          "file": "aof.java",
+          "line": 221
+        }
+      ],
+      "parent": "build_hoe",
+      "en_title": "Soil Enrichment",
+      "en_description": "Improve farmland by applying manure to it",
+      "second_parent": null
+    },
+    {
+      "field": "wellRested",
+      "legacy_id": 117,
+      "name": "wellRested",
+      "id": "well_rested",
+      "challenge": false,
+      "source_line": 145,
+      "icon": "minecraft:red_bed",
+      "zh_title": "休息充足",
+      "call_sites": [
+        {
+          "file": "js.java",
+          "line": 452
+        }
+      ],
+      "parent": "build_work_bench",
+      "en_title": "Well Rested",
+      "en_description": "Get a good night's sleep in a warm bed",
+      "second_parent": null
+    },
+    {
+      "field": "seaworthy",
+      "legacy_id": 118,
+      "name": "seaworthy",
+      "id": "seaworthy",
+      "challenge": false,
+      "source_line": 146,
+      "icon": "minecraft:oak_boat",
+      "zh_title": "航海者",
+      "call_sites": [
+        {
+          "file": "jv.java",
+          "line": 707
+        }
+      ],
+      "parent": "build_work_bench",
+      "en_title": "Seaworthy",
+      "en_description": "Sail a boat into open waters",
+      "second_parent": null
+    },
+    {
+      "field": "explorer",
+      "legacy_id": 119,
+      "name": "explorer",
+      "id": "explorer",
+      "challenge": true,
+      "source_line": 147,
+      "icon": "minecraft:leather_boots",
+      "zh_title": "远行者",
+      "call_sites": [
+        {
+          "file": "jv.java",
+          "line": 690
+        }
+      ],
+      "parent": "open_inventory",
+      "en_title": "Explorer",
+      "en_description": "Travel 10 km from where you started",
+      "second_parent": null
+    },
+    {
+      "field": "enlightenment",
+      "legacy_id": 120,
+      "name": "enlightenment",
+      "id": "enlightenment",
+      "challenge": true,
+      "source_line": 148,
+      "icon": "minecraft:written_book",
+      "zh_title": "启迪",
+      "call_sites": [
+        {
+          "file": "jv.java",
+          "line": 263
+        }
+      ],
+      "parent": "bookcase",
+      "en_title": "Enlightenment",
+      "en_description": "Read the collected writings of Father Phoonzang",
+      "second_parent": null
+    },
+    {
+      "field": "runegate",
+      "legacy_id": 121,
+      "name": "runegate",
+      "id": "runegate",
+      "challenge": true,
+      "source_line": 149,
+      "icon": "mite:mithril_runestone",
+      "zh_title": "末影人的羡慕",
+      "call_sites": [
+        {
+          "file": "ka.java",
+          "line": 962
+        }
+      ],
+      "parent": "portal",
+      "en_title": "Enderman's Envy",
+      "en_description": "Travel quickly between locations by runegate",
+      "second_parent": null
+    },
+    {
+      "field": "fishingRod",
+      "legacy_id": 122,
+      "name": "fishingRod",
+      "id": "fishing_rod",
+      "challenge": false,
+      "source_line": 150,
+      "icon": "mite:fishing_rod_copper_hook",
+      "zh_title": "制作钓鱼竿",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 95
+        }
+      ],
+      "parent": "better_tools",
+      "en_title": "Gone Fishing",
+      "en_description": "Craft a fishing rod from sticks, string, and a nugget",
+      "second_parent": null
+    },
+    {
+      "field": "p",
+      "legacy_id": 10,
+      "name": "cookFish",
+      "id": "cook_fish",
+      "challenge": false,
+      "source_line": 151,
+      "icon": "minecraft:cooked_cod",
+      "zh_title": "烤鱼",
+      "call_sites": [
+        {
+          "file": "vq.java",
+          "line": 27
+        }
+      ],
+      "parent": "fishing_rod",
+      "en_title": "烤鱼",
+      "en_description": "烤鱼",
+      "second_parent": null
+    },
+    {
+      "field": "plantDoctor",
+      "legacy_id": 123,
+      "name": "plantDoctor",
+      "id": "plant_doctor",
+      "challenge": false,
+      "source_line": 152,
+      "icon": "minecraft:bone_meal",
+      "zh_title": "植物医生",
+      "call_sites": [
+        {
+          "file": "xl.java",
+          "line": 103
+        }
+      ],
+      "parent": "build_hoe",
+      "en_title": "Plant Doctor",
+      "en_description": "Cure a blighted crop by applying bone meal",
+      "second_parent": null
+    },
+    {
+      "field": "makeMycelium",
+      "legacy_id": 124,
+      "name": "makeMycelium",
+      "id": "make_mycelium",
+      "challenge": false,
+      "source_line": 153,
+      "icon": "minecraft:mycelium",
+      "zh_title": "培育菌丝",
+      "call_sites": [
+        {
+          "file": "aof.java",
+          "line": 299
+        }
+      ],
+      "parent": "soil_enrichment",
+      "en_title": "Kept in the Dark",
+      "en_description": "Plant a mushroom on damp, shaded, fertilized farmland and wait",
+      "second_parent": null
+    },
+    {
+      "field": "supersizeMe",
+      "legacy_id": 125,
+      "name": "supersizeMe",
+      "id": "supersize_me",
+      "challenge": false,
+      "source_line": 154,
+      "icon": "minecraft:brown_mushroom_block",
+      "zh_title": "巨型蘑菇",
+      "call_sites": [
+        {
+          "file": "apj.java",
+          "line": 192
+        }
+      ],
+      "parent": "make_mycelium",
+      "en_title": "And Fed Manure",
+      "en_description": "Supersize a mushroom by feeding it manure",
+      "second_parent": null
+    },
+    {
+      "field": "emeralds",
+      "legacy_id": 127,
+      "name": "emeralds",
+      "id": "emeralds",
+      "challenge": false,
+      "source_line": 155,
+      "icon": "minecraft:emerald",
+      "zh_title": "绿宝石！",
+      "call_sites": [
+        {
+          "file": "ss.java",
+          "line": 478
+        }
+      ],
+      "parent": "build_better_pickaxe",
+      "en_title": "Emeralds!",
+      "en_description": "Acquire emeralds with your iron tools",
+      "second_parent": null
+    },
+    {
+      "field": "netherrackFurnace",
+      "legacy_id": 130,
+      "name": "netherrackFurnace",
+      "id": "netherrack_furnace",
+      "challenge": false,
+      "source_line": 156,
+      "icon": "mite:netherrack_furnace",
+      "zh_title": "地狱岩熔炉",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 65
+        }
+      ],
+      "parent": "blaze_rod",
+      "en_title": "Ultimate Furnace",
+      "en_description": "Build a netherrack furnace to smelt adamantium",
+      "second_parent": null
+    },
+    {
+      "field": "adamantiumIngot",
+      "legacy_id": 131,
+      "name": "adamantiumIngot",
+      "id": "adamantium_ingot",
+      "challenge": false,
+      "source_line": 157,
+      "icon": "mite:adamantium_ingot",
+      "zh_title": "艾德曼时代",
+      "call_sites": [
+        {
+          "file": "vq.java",
+          "line": 33
+        }
+      ],
+      "parent": "netherrack_furnace",
+      "en_title": "Strongest Metal",
+      "en_description": "Smelt an adamantium ingot",
+      "second_parent": null
+    },
+    {
+      "field": "fineDining",
+      "legacy_id": 132,
+      "name": "fineDining",
+      "id": "fine_dining",
+      "challenge": false,
+      "source_line": 158,
+      "icon": "mite:salad",
+      "zh_title": "精致饮食",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 99
+        }
+      ],
+      "parent": "build_work_bench",
+      "en_title": "Fine Dining",
+      "en_description": "Prepare soup, stew, or salad in a wooden bowl",
+      "second_parent": null
+    },
+    {
+      "field": "crystalBreaker",
+      "legacy_id": 133,
+      "name": "crystalBreaker",
+      "id": "crystal_breaker",
+      "challenge": true,
+      "source_line": 159,
+      "icon": "mite:adamantium_pickaxe",
+      "zh_title": "晶体破坏者",
+      "call_sites": [
+        {
+          "file": "wd.java",
+          "line": 76
+        }
+      ],
+      "parent": "adamantium_ingot",
+      "en_title": "Crystal Breaker",
+      "en_description": "Forge a tool that is hard enough to break ender crystal",
+      "second_parent": null
+    }
+  ]
+}

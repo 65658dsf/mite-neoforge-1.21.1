@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/the_end",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.the_end2.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:dragon_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.the_end2.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

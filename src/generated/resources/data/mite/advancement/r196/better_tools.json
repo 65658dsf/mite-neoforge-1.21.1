@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/nuggets",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.better_tools.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:copper_crafting_table"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.better_tools.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

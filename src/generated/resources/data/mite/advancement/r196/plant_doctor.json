@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_hoe",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.plant_doctor.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:bone_meal"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.plant_doctor.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

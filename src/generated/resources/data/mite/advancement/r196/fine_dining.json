@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_work_bench",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.fine_dining.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:salad"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.fine_dining.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

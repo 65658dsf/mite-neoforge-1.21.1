@@ -23,6 +23,7 @@ public final class SourceCookingExperience {
     }
     public static void awardTaken(Player player, ItemStack result, int removed) {
         if (!(player.level() instanceof ServerLevel level) || removed <= 0 || result.isEmpty()) return;
+        io.github.ningmeng123.mite.advancement.MiteAchievements.cooked(player,result);
         String id = itemId(result);
         int reward = FoodCookingExperienceRules.rewardPerItem(id) >= 0
                 ? FoodCookingExperienceRules.rewardForTaken(id, removed) : OreCookingExperienceRules.rewardForTaken(id, removed);

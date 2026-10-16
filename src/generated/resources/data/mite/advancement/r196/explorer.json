@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/open_inventory",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.explorer.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:leather_boots"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.explorer.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

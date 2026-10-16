@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/portal",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.runegate.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "mite:mithril_runestone"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.runegate.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

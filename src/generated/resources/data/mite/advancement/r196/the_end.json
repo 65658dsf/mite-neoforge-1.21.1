@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/blaze_rod",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.the_end.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:ender_eye"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.the_end.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

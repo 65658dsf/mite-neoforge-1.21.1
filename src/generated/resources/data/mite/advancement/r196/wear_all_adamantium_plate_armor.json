@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/wear_all_plate_armor",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.wear_all_adamantium_plate_armor.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "mite:adamantium_chestplate"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.wear_all_adamantium_plate_armor.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

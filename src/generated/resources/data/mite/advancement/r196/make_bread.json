@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/flour",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.make_bread.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:bread"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.make_bread.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

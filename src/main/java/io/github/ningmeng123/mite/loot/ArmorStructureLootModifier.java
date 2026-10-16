@@ -46,6 +46,8 @@ public final class ArmorStructureLootModifier extends LootModifier {
     public static Map<String, Pool> pools() { return POOLS; }
 
     @Override protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
+        ItemStack artifact=io.github.ningmeng123.mite.advancement.ReferencedBooks.artifact(context);
+        if(!artifact.isEmpty())loot.add(artifact);
         String table = context.getQueriedLootTableId().toString();
         Pool pool;
         if (table.equals("minecraft:chests/simple_dungeon"))

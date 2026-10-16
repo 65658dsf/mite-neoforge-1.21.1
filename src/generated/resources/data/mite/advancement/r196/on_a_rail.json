@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/acquire_iron",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.on_a_rail.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:rail"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.on_a_rail.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

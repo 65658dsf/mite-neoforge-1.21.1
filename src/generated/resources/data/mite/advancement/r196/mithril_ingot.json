@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/obsidian_furnace",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.mithril_ingot.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:mithril_ingot"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.mithril_ingot.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

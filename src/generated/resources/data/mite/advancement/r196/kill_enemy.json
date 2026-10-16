@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_club",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.kill_enemy.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:bone"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.kill_enemy.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

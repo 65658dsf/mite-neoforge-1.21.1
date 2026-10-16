@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/cutting_edge",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.mine_wood.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:oak_log"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.mine_wood.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

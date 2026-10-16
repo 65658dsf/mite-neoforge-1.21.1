@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_work_bench",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.well_rested.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:red_bed"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.well_rested.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/stone.png",
+    "description": {
+      "translate": "advancement.mite.open_inventory.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:book"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.open_inventory.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

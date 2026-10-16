@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/mithril_ingot",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.diamonds.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:diamond"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.diamonds.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

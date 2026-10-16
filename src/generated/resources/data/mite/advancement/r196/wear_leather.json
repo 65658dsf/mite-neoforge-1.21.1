@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/kill_cow",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.wear_leather.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:leather_helmet"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.wear_leather.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/open_inventory",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.build_oven.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:clay_oven"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.build_oven.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/enchantments",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.overkill.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "mite:mithril_sword"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.overkill.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

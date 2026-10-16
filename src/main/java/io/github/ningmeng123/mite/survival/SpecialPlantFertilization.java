@@ -30,7 +30,8 @@ public final class SpecialPlantFertilization {
         if(level instanceof ServerLevel server) {
             // Clicking mycelium itself directly invokes apk.fertilize, which has no extra 50% gate.
             boolean directMycelium=level.getBlockState(event.getPos()).is(Blocks.MYCELIUM);
-            if(directMycelium||server.random.nextFloat()<.5F) ((MushroomBlock)state.getBlock()).growMushroom(server,pos,state,server.random);
+            if((directMycelium||server.random.nextFloat()<.5F) && ((MushroomBlock)state.getBlock()).growMushroom(server,pos,state,server.random))
+                io.github.ningmeng123.mite.advancement.MiteAchievements.award(event.getEntity(),"supersizeMe");
             event.getItemStack().consume(1,event.getEntity()); level.levelEvent(2005,pos,0);
         }
         event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide)); event.setCanceled(true);

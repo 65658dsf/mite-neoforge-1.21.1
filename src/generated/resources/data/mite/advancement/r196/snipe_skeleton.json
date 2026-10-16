@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/kill_enemy",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.snipe_skeleton.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:arrow"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.snipe_skeleton.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

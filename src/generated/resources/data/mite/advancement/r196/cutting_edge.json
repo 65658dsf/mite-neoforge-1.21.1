@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/stick_picker",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.cutting_edge.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:flint_hatchet"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.cutting_edge.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

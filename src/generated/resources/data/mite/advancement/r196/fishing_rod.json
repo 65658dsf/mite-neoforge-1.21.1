@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/better_tools",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.fishing_rod.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:fishing_rod_copper_hook"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.fishing_rod.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

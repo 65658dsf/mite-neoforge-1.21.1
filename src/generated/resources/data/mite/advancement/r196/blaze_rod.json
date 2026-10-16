@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/portal_to_nether",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.blaze_rod.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:blaze_rod"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.blaze_rod.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

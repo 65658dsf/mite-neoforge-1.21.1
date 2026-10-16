@@ -94,7 +94,10 @@ public final class MitePortals {
         if (rune.isPresent()) {
             if (!(entity instanceof ServerPlayer)) return null;
             if (!state.getValue(MitePortalProperties.RUNEGATE)) writeRoute(source, frame, dimensionId(source), true);
-            return runeDestination(source, entity, rune.get());
+            var destination=runeDestination(source, entity, rune.get());
+            if(destination==null)return null;
+            return new DimensionTransition(destination.newLevel(),destination.pos(),destination.speed(),destination.yRot(),destination.xRot(),
+                    destination.postDimensionTransition().then(traveler->io.github.ningmeng123.mite.advancement.MiteAchievements.award((Player)traveler,"runegate")));
         }
         if (state.getValue(MitePortalProperties.RUNEGATE)) initializeRoute(source, frame);
         int targetId = route(source, frame);

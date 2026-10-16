@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/open_inventory",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.stick_picker.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:stick"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.stick_picker.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

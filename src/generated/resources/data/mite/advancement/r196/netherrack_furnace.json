@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/blaze_rod",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.netherrack_furnace.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "mite:netherrack_furnace"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.netherrack_furnace.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

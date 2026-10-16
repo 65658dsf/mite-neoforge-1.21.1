@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/bookcase",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.enlightenment.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:written_book"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.enlightenment.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

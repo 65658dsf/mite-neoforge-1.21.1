@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/portal_to_nether",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.ghast.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:ghast_tear"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.ghast.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}

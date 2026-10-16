@@ -1,0 +1,28 @@
+{
+  "parent": "mite:r196/build_chain_mail",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.mite.wear_all_plate_armor.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:iron_chestplate"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.mite.wear_all_plate_armor.title"
+    }
+  },
+  "requirements": [
+    [
+      "earned"
+    ]
+  ]
+}
