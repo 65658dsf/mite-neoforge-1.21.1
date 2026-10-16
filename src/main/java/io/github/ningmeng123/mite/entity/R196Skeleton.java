@@ -119,14 +119,14 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
     @Override public boolean canFireProjectileWeapon(ProjectileWeaponItem weapon) { return weapon instanceof BowItem; }
     @Override protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
         if (isLongdead()) {
-            setItemSlot(EquipmentSlot.MAINHAND, R196MobEquipment.generated(this,
+            setItemSlot(EquipmentSlot.MAINHAND, SpecialMobEquipment.generated(this,
                     skeletonType() == 2 ? "mite:ancient_metal_sword" : "mite:ancient_metal_bow", true));
             if (kind == MobKind.LONGDEAD_GUARDIAN && getMainHandItem().getItem() instanceof BowItem)
-                stowed = R196MobEquipment.generated(this, "mite:ancient_metal_dagger", true);
+                stowed = SpecialMobEquipment.generated(this, "mite:ancient_metal_dagger", true);
             R196MobEquipment.armor(this, "ancient_metal_chainmail_");
         } else {
             boolean ancient = kind == MobKind.ANCIENT_BONE_LORD;
-            setItemSlot(EquipmentSlot.MAINHAND, R196MobEquipment.generated(this, R196MobEquipment.lordWeapon(this, ancient), true));
+            setItemSlot(EquipmentSlot.MAINHAND, SpecialMobEquipment.generated(this, R196MobEquipment.lordWeapon(this, ancient), true));
             R196MobEquipment.armor(this, ancient ? "ancient_metal_" : "rusted_iron_");
         }
     }
@@ -141,7 +141,8 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
                 : random.nextFloat() < (isLongdead() ? .5F : .25F) ? 2 : 0;
         setSkeletonType(type);
         if (type == 1) {
-            ItemStack sword = new ItemStack(Items.IRON_SWORD); EquipmentDurability.setQuality(sword, Quality.POOR);
+            ItemStack sword = new ItemStack(R196MobEquipment.item(SpecialMobEquipment.itemId(this, "minecraft:iron_sword")));
+            EquipmentDurability.setQuality(sword, Quality.POOR);
             setItemSlot(EquipmentSlot.MAINHAND, R196MobEquipment.generated(this, sword, false));
             getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4D);
         } else populateDefaultEquipmentSlots(random, difficulty);

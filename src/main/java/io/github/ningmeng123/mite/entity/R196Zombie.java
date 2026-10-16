@@ -68,7 +68,7 @@ public final class R196Zombie extends Zombie implements R196Mob, PlayerTargetEye
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Animal.class, 10, true, false, animal -> true));
     }
     @Override protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
-        setItemSlot(EquipmentSlot.MAINHAND, R196MobEquipment.generated(this, R196MobEquipment.lordWeapon(this, false), true));
+        setItemSlot(EquipmentSlot.MAINHAND, SpecialMobEquipment.generated(this, R196MobEquipment.lordWeapon(this, false), true));
         R196MobEquipment.armor(this, "rusted_iron_");
     }
     @Override protected void populateDefaultEquipmentEnchantments(ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {

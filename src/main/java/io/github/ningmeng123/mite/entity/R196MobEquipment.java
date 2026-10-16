@@ -46,10 +46,10 @@ public final class R196MobEquipment {
         return stack;
     }
     public static void armor(Mob mob, String prefix) {
-        mob.setItemSlot(EquipmentSlot.FEET, generated(mob, "mite:" + prefix + "boots", true));
-        mob.setItemSlot(EquipmentSlot.LEGS, generated(mob, "mite:" + prefix + "leggings", true));
-        mob.setItemSlot(EquipmentSlot.CHEST, generated(mob, "mite:" + prefix + "chestplate", true));
-        mob.setItemSlot(EquipmentSlot.HEAD, generated(mob, "mite:" + prefix + "helmet", true));
+        mob.setItemSlot(EquipmentSlot.FEET, SpecialMobEquipment.generated(mob, "mite:" + prefix + "boots", true));
+        mob.setItemSlot(EquipmentSlot.LEGS, SpecialMobEquipment.generated(mob, "mite:" + prefix + "leggings", true));
+        mob.setItemSlot(EquipmentSlot.CHEST, SpecialMobEquipment.generated(mob, "mite:" + prefix + "chestplate", true));
+        mob.setItemSlot(EquipmentSlot.HEAD, SpecialMobEquipment.generated(mob, "mite:" + prefix + "helmet", true));
     }
     /** Source og.bw draws one material tier and can stop while descending from helmet to boots. */
     public static void randomArmor(Mob mob) {

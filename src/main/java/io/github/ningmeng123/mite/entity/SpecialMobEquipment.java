@@ -1,0 +1,98 @@
+package io.github.ningmeng123.mite.entity;
+
+import io.github.ningmeng123.mite.registry.MiteArmorContent;
+import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
+import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.ItemStack;
+
+/** Spawn-only material growth above the fixed source equipment floor. @author NingMeng123 */
+public final class SpecialMobEquipment {
+    public static final String DATA_KEY = "mite:special_equipment_progression";
+    private static final String[] MATERIALS = {"leather", "iron", "gold", "copper", "silver", "iron",
+            "ancient_metal", "mithril", "adamantium"};
+    private SpecialMobEquipment() {}
+
+    public static boolean handles(Mob mob) {
+        if (!(mob instanceof R196Mob source)) return false;
+        return switch (source.miteKind()) {
+            case BONE_LORD, LONGDEAD_GUARDIAN, ANCIENT_BONE_LORD, REVENANT, LONGDEAD -> true;
+            default -> false;
+        };
+    }
+
+    /** Select the final item first, then perform the source enchantment/quality/wear generation exactly once. */
+    public static ItemStack generated(Mob mob, String sourceId, boolean enchant) {
+        return R196MobEquipment.generated(mob, itemId(mob, sourceId), enchant);
+    }
+
+    public static String itemId(Mob mob, String sourceId) {
+        if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return sourceId;
+        ItemStack source = new ItemStack(R196MobEquipment.item(sourceId));
+        var armor = MiteArmorContent.definition(source.getItem());
+        var tool = MiteTools.definition(source);
+        boolean bow = sourceId.equals("mite:ancient_metal_bow") || sourceId.equals("mite:mithril_bow");
+        if (armor == null && tool == null && !bow) return sourceId;
+        String floorMaterial = armor != null ? armor.material() : tool != null ? tool.material()
+                : sourceId.equals("mite:mithril_bow") ? "mithril" : "ancient_metal";
+        int floorTier = materialTier(floorMaterial);
+        if (floorTier < 0) return sourceId;
+
+        CompoundTag progress = progress(mob, level);
+        double value = progress.getDouble("progress");
+        if (value < 0D) return sourceId;
+        int tier = progress.getBoolean("blood_date")
+                ? BloodMoonEquipmentRules.selectTier((int)value, true, mob.getRandom().nextDouble())
+                : BloodMoonEquipmentRules.selectOrdinaryTier(value, mob.getRandom().nextDouble());
+        if (BloodMoonEquipmentRules.materialGrade(tier) <= BloodMoonEquipmentRules.materialGrade(floorTier)) return sourceId;
+
+        // The source catalog has no Adamantium bow. Keep the highest existing bow instead of inventing an item.
+        if (bow) return "mite:mithril_bow";
+        String material = MATERIALS[tier];
+        // Native iron plate armor has no R196 registration entry; its IDs are retained by the modern adapter.
+        if (armor != null && !armor.chainmail() && material.equals("iron"))
+            return "minecraft:iron_" + armor.type().getName();
+        if (armor != null) return MiteArmorContent.definitions().stream()
+                .filter(candidate -> !candidate.horse() && candidate.material().equals(material)
+                        && candidate.chainmail() == armor.chainmail() && candidate.type() == armor.type())
+                .map(MiteArmorContent.Definition::id).findFirst().orElse(sourceId);
+        return MiteTools.definitions().stream()
+                .filter(candidate -> candidate.material().equals(material) && candidate.family() == tool.family())
+                .map(MiteTools.Definition::id).findFirst().orElse(sourceId);
+    }
+
+    private static int materialTier(String material) {
+        return switch (material) {
+            case "leather" -> 0;
+            case "rusted_iron" -> 1;
+            case "gold" -> 2;
+            case "copper" -> 3;
+            case "silver" -> 4;
+            case "iron" -> 5;
+            case "ancient_metal" -> 6;
+            case "mithril" -> 7;
+            case "adamantium" -> 8;
+            default -> -1;
+        };
+    }
+
+    /** Every piece of this newborn mob uses the same date snapshot; saved mobs never enter this generator. */
+    private static CompoundTag progress(Mob mob, ServerLevel level) {
+        CompoundTag data = mob.getPersistentData();
+        if (data.contains(DATA_KEY)) return data.getCompound(DATA_KEY);
+        long day = BloodMoonInvasion.highestDay(level);
+        boolean blood = BloodMoonEquipment.bloodDate(mob);
+        double value = blood ? BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(day))
+                : BloodMoonEquipmentRules.ordinaryActive(day) ? BloodMoonEquipmentRules.ordinaryProgress(day) : -1D;
+        CompoundTag result = new CompoundTag();
+        result.putInt("version", 1);
+        result.putLong("highest_day", day);
+        result.putBoolean("blood_date", blood);
+        result.putDouble("progress", value);
+        data.put(DATA_KEY, result);
+        return result;
+    }
+}
