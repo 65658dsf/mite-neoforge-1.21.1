@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.curse.CursePlayerEffects;
 import io.github.ningmeng123.mite.curse.PlayerCurses;
 import io.github.ningmeng123.mite.curse.R196Curse;
 import io.github.ningmeng123.mite.entity.MobKind;
+import io.github.ningmeng123.mite.entity.SourceEndermanAggression;
 import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -33,7 +34,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Witch;
@@ -396,9 +396,18 @@ public final class WitchCursePlayerEffectsGameTests {
             f.curse(R196Curse.ENDERMEN_ENEMY);
             for (int roll = 1; roll <= 3; roll++) {
                 int value = roll % 3;
-                enderman.getRandom().setSeed(seed(3, value));
-                h.assertTrue((boolean)gaze.invoke(enderman, f.player) == (value == 0),
-                        "Pumpkin protects only the ordinary gaze path; curse roll=" + value);
+                long sourceSeed = seed(3, value);
+                RandomSource oracle = RandomSource.create(sourceSeed);
+                oracle.nextInt(3);
+                int expectedNext = oracle.nextInt(1_000_003);
+                enderman.getRandom().setSeed(sourceSeed);
+                var decision = SourceEndermanAggression.decide(enderman, f.player, ignored -> false);
+                h.assertTrue(decision.accepted() == (value == 0) && !decision.immediate(),
+                        "Source curse decision bypasses pumpkin and retains ordinary warning; roll=" + value);
+                h.assertTrue(!(boolean)gaze.invoke(enderman, f.player),
+                        "Native gaze no longer carries acquisition-only curse behavior");
+                h.assertValueEqual(enderman.getRandom().nextInt(1_000_003), expectedNext,
+                        "One source curse draw per candidate, and raw gaze consumes no curse draw");
             }
             h.assertTrue(PlayerCurses.state(f.player).known(), "First curse aggression roll discovers effect");
             enderman.setTarget(f.player);
@@ -411,7 +420,7 @@ public final class WitchCursePlayerEffectsGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 200)
-    public static void endermanTargetGoalAcquiresCursedPlayerThroughWallButOrdinaryAggressionStillNeedsSight(GameTestHelper h) {
+    public static void endermanTargetGoalRequiresVisibleCandidateBeforeCurseAndNeverRollsTwice(GameTestHelper h) {
         int fixture = ENDERMAN_FIXTURES.incrementAndGet();
         BlockPos isolated = new BlockPos(-26_000_000 + fixture * 32 + 8, 160, -26_000_000 + 8);
         ChunkPos chunk = new ChunkPos(isolated);
@@ -451,37 +460,40 @@ public final class WitchCursePlayerEffectsGameTests {
             Goal goal = enderman.targetSelector.getAvailableGoals().stream().map(wrapped -> wrapped.getGoal())
                     .filter(candidate -> candidate.getClass().getSimpleName().equals("EndermanLookForPlayerGoal"))
                     .findFirst().orElseThrow(() -> new IllegalStateException("Missing real registered native Enderman target goal"));
-            Field conditionsField = goal.getClass().getDeclaredField("startAggroTargetConditions");
-            conditionsField.setAccessible(true);
-            TargetingConditions conditions = (TargetingConditions)conditionsField.get(goal);
             f.curse(R196Curse.ENDERMEN_ENEMY);
             long sourceSeed = seed(3, 0);
             RandomSource oracle = RandomSource.create(sourceSeed);
-            oracle.nextInt(3);
             int expectedNext = oracle.nextInt(1_000_003);
             enderman.getRandom().setSeed(sourceSeed);
-            h.assertTrue(conditions.test(enderman, f.player), "Successful source roll bypasses both pumpkin and outer sight requirement");
+            h.assertTrue(!goal.canUse(), "R196 og/abw visible-candidate search excludes wall-hidden cursed players first");
             h.assertValueEqual(enderman.getRandom().nextInt(1_000_003), expectedNext,
-                    "One real target candidate consumes exactly one source curse roll");
+                    "No curse draw occurs before a legal visible candidate is found");
 
-            // Other test players may still occur earlier in the world's player list. Use bounded
-            // seeded attempts so their out-of-range predicate calls cannot shift this fixture's roll.
-            boolean acquired = false;
-            for (long attempt = 0; attempt < 128 && !acquired; attempt++) {
-                enderman.getRandom().setSeed(attempt);
-                acquired = goal.canUse();
+            wallBefore.keySet().forEach(pos -> h.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 2));
+            enderman.getSensing().tick();
+            h.assertTrue(enderman.getSensing().hasLineOfSight(f.player), "Removing the wall makes the real player visible");
+            for (int roll : new int[]{1, 2, 0}) {
+                sourceSeed = seed(3, roll);
+                oracle = RandomSource.create(sourceSeed);
+                oracle.nextInt(3);
+                expectedNext = oracle.nextInt(1_000_003);
+                enderman.getRandom().setSeed(sourceSeed);
+                h.assertTrue(goal.canUse() == (roll == 0), "Visible candidate has exact source curse roll=" + roll);
+                h.assertValueEqual(enderman.getRandom().nextInt(1_000_003), expectedNext,
+                        "Real Goal.canUse consumes exactly one curse roll for the nearest visible candidate");
             }
             Field pendingField = goal.getClass().getDeclaredField("pendingTarget");
             pendingField.setAccessible(true);
-            h.assertTrue(acquired && pendingField.get(goal) == f.player,
-                    "Real registered Goal.canUse finds the cursed survival player behind wall and pumpkin");
+            h.assertTrue(pendingField.get(goal) == f.player && enderman.getTarget() == null,
+                    "Successful curse selects the visible pumpkin-wearing player into ordinary pending state");
 
             PlayerCurses.cure(f.player);
+            wallBefore.keySet().forEach(pos -> h.getLevel().setBlock(pos, Blocks.STONE.defaultBlockState(), 2));
             enderman.setPersistentAngerTarget(f.player.getUUID());
             enderman.setRemainingPersistentAngerTime(200);
             h.assertTrue(enderman.isAngryAt(f.player), "Ordinary anger satisfies the original aggression predicate without needing a gaze");
             enderman.getSensing().tick();
-            h.assertTrue(!conditions.test(enderman, f.player) && !goal.canUse(),
+            h.assertTrue(!goal.canUse(),
                     "Uncursed angry players behind the wall still fail native sight targeting");
         } finally {
             enderman.discard();

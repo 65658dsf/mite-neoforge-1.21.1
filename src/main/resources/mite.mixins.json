@@ -245,8 +245,7 @@
     "CurseArmorSlotMixin",
     "CursePlayerEquipmentMixin",
     "CurseChestMixin",
-    "CurseEndermanMixin",
-    "CurseEndermanTargetGoalMixin",
+    "EndermanAggressionGoalMixin",
     "CurseEquipableMixin"
   ],
   "client": [

@@ -168,11 +168,18 @@
       "id": 7,
       "key": "endermenEnemy",
       "source_refs": [
-        "tg.java:78-84"
+        "tg.java:55-84",
+        "og.java:1361-1374",
+        "abw.java:4056-4084"
       ],
-      "rule": "Before normal stare, pumpkin and visibility checks, return hostile if nextInt(3) == 0 and the player has this curse",
+      "rule": "After nearest legal visible candidate selection through tg -> og -> abw, return hostile if nextInt(3) == 0 and the player has this curse; bypass pumpkin and player stare only",
       "random_bound": 3,
-      "success_value": 0
+      "success_value": 0,
+      "bypasses_pumpkin_and_player_stare": true,
+      "bypasses_outer_line_of_sight": false,
+      "scope": "Initial candidate acquisition; retain native gaze behavior for already acquired target freeze and pursuit teleport",
+      "correction_batch": "enderman-item-aggression",
+      "related_spec": "spec/enderman-item-aggression.json"
     },
     {
       "id": 8,
@@ -332,6 +339,16 @@
     "Map modern edible items and plant/undead classes explicitly; unknown external foods receive no guessed animal or plant flag",
     "Recheck ingestion throughout use and at completion to prevent mid-use bypass",
     "Honor canceled native witch deaths before removing caster-owned curses"
+  ],
+  "corrections": [
+    {
+      "batch": "enderman-item-aggression",
+      "effect_id": 7,
+      "previous_incorrect_interpretation": "Early return inside tg.f bypasses the entire acquisition line-of-sight requirement",
+      "corrected_rule": "tg.findPlayerToAttack first calls og and abw candidate filtering, which already requires sensing line of sight; tg.f only bypasses later pumpkin and stare checks",
+      "source_refs": ["tg.java:55-84", "og.java:1361-1374", "abw.java:4056-4084"],
+      "historical_test_documents": "Preserved; new batch verification records the corrected behavior"
+    }
   ],
   "synchronization": {
     "authority": "Shared overworld SavedData; serializable player Data Attachment is a mirror",
