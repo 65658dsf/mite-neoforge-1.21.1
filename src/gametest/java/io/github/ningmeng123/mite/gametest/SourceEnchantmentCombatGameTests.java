@@ -74,21 +74,24 @@ public final class SourceEnchantmentCombatGameTests {
         held.set(DataComponents.CUSTOM_NAME, Component.literal(marker));
         zombie.setItemInHand(InteractionHand.MAIN_HAND, held);
         player.setItemInHand(InteractionHand.MAIN_HAND, enchanted(h, Items.IRON_SWORD, "disarming", 5));
-        player.attack(zombie);
-        h.assertTrue(zombie.getMainHandItem().isEmpty() && !zombie.canPickUpLoot(), "V disarms the actual mob and prevents immediate re-equipping");
-        var drops = h.getLevel().getEntitiesOfClass(ItemEntity.class, zombie.getBoundingBox().inflate(2),
-                item -> item.getItem().getHoverName().getString().equals(marker));
-        h.assertTrue(drops.size() == 1 && drops.getFirst().getItem().getCount() == 1, "Exactly one original held stack is dropped");
-        CompoundTag saved = zombie.saveWithoutId(new CompoundTag());
-        h.assertTrue(saved.getBoolean("CanPickUpLoot"), "NBT stores the original pickup preference, not the temporary denial");
-        var restored = EntityType.ZOMBIE.create(h.getLevel());
-        restored.load(saved);
-        h.assertTrue(SourceEnchantmentCombat.disarmed(restored) && !restored.canPickUpLoot(), "Cooldown is restored with the entity");
-        for (int tick = 0; tick < 39; tick++) SourceEnchantmentCombat.tick(new EntityTickEvent.Pre(restored));
-        h.assertTrue(!restored.canPickUpLoot(), "Pickup remains blocked through tick39");
-        SourceEnchantmentCombat.tick(new EntityTickEvent.Pre(restored));
-        h.assertTrue(restored.canPickUpLoot(), "Pickup is restored exactly on tick40");
-        drops.forEach(ItemEntity::discard); zombie.discard(); restored.discard(); h.succeed();
+        try (var spawned = new SpawnedEntityCapture(h.getLevel(), entity -> entity instanceof ItemEntity item
+                && item.getItem().getHoverName().getString().equals(marker))) {
+            player.attack(zombie);
+            h.assertTrue(zombie.getMainHandItem().isEmpty() && !zombie.canPickUpLoot(), "V disarms the actual mob and prevents immediate re-equipping");
+            var drops = spawned.live(ItemEntity.class);
+            h.assertTrue(drops.size() == 1 && drops.getFirst().getItem().getCount() == 1, "Exactly one original held stack is dropped");
+            CompoundTag saved = zombie.saveWithoutId(new CompoundTag());
+            h.assertTrue(saved.getBoolean("CanPickUpLoot"), "NBT stores the original pickup preference, not the temporary denial");
+            var restored = EntityType.ZOMBIE.create(h.getLevel());
+            restored.load(saved);
+            h.assertTrue(SourceEnchantmentCombat.disarmed(restored) && !restored.canPickUpLoot(), "Cooldown is restored with the entity");
+            for (int tick = 0; tick < 39; tick++) SourceEnchantmentCombat.tick(new EntityTickEvent.Pre(restored));
+            h.assertTrue(!restored.canPickUpLoot(), "Pickup remains blocked through tick39");
+            SourceEnchantmentCombat.tick(new EntityTickEvent.Pre(restored));
+            h.assertTrue(restored.canPickUpLoot(), "Pickup is restored exactly on tick40");
+            zombie.discard(); restored.discard();
+        }
+        h.succeed();
     }
 
     @GameTest(template = "empty")
