@@ -744,5 +744,7 @@
   "advancement.mite.fine_dining.title": "Fine Dining",
   "advancement.mite.fine_dining.description": "Prepare soup, stew, or salad in a wooden bowl",
   "advancement.mite.crystal_breaker.title": "Crystal Breaker",
-  "advancement.mite.crystal_breaker.description": "Forge a tool that is hard enough to break ender crystal"
+  "advancement.mite.crystal_breaker.description": "Forge a tool that is hard enough to break ender crystal",
+  "message.mite.structure_unlock.village": "Day %s: Village requirements are met. Villages can now generate in unexplored Overworld chunks.",
+  "message.mite.structure_unlock.end_portal": "Day %s: Strongholds and End portal rooms can generate in unexplored Overworld chunks. Use Eyes of Ender to locate and activate a portal."
 }

@@ -80,7 +80,10 @@ public final class ToolEquipmentGameTests {
     @GameTest(template = "empty")
     public static void actualMiningHasMaterialEfficiencyThresholdsAndExactlyOneWearCharge(GameTestHelper helper) {
         BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
-        try (Fixture fixture = new Fixture(helper, pos); Session session = player(helper)) {
+        AABB area = new AABB(pos).inflate(5);
+        try (Fixture fixture = new Fixture(helper, pos); Session session = player(helper);
+                SpawnedEntityCapture drops = new SpawnedEntityCapture(helper.getLevel(),
+                        entity -> entity instanceof ItemEntity && entity.getBoundingBox().intersects(area))) {
             ServerPlayer player = session.player();
             ItemStack pick = tool("copper_pickaxe");
             player.setItemInHand(InteractionHand.MAIN_HAND, pick);
@@ -90,7 +93,9 @@ public final class ToolEquipmentGameTests {
             helper.getLevel().setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
             helper.assertTrue(player.gameMode.destroyBlock(pos), "Actual survival server mining removes stone");
             helper.assertValueEqual(pick.getDamageValue(), 150, "One raw hardness-1.5 stone costs exactly 150, not a duplicate modern charge");
-            helper.assertValueEqual(fixture.count(Items.COBBLESTONE), 1, "The successful ordinary harvest produced one cobblestone");
+            // A successful synchronous spawn can precede visibility in the chunk entity-section index.
+            helper.assertValueEqual(drops.live(ItemEntity.class).stream().filter(item -> item.getItem().is(Items.COBBLESTONE))
+                    .mapToInt(item -> item.getItem().getCount()).sum(), 1, "The successful ordinary harvest produced one cobblestone");
             ItemStack restored = ItemStack.parse(helper.getLevel().registryAccess(), pick.save(helper.getLevel().registryAccess())).orElseThrow();
             helper.assertValueEqual(restored.getDamageValue(), 150, "Persistence preserves spent durability");
             helper.assertValueEqual(restored.getMaxDamage(), 4800, "Persistence preserves the source capacity");
