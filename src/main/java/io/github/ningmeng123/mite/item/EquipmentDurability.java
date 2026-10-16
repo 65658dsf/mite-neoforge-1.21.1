@@ -66,7 +66,20 @@ public final class EquipmentDurability {
     private static final EquipmentSlot[] ARMOR_SLOTS = {
             EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
     private static final ThreadLocal<WearContext> WEAR_CONTEXT = new ThreadLocal<>();
+    private static final ThreadLocal<LivingEntity> ARMOR_WEARER = new ThreadLocal<>();
     private record WearContext(ItemStack stack, boolean protectLastPoint) {}
+
+    public static final class ArmorAttributeScope implements AutoCloseable {
+        private final LivingEntity previous;
+        private ArmorAttributeScope(LivingEntity wearer) {
+            previous = ARMOR_WEARER.get();
+            ARMOR_WEARER.set(wearer);
+        }
+        @Override public void close() {
+            if (previous == null) ARMOR_WEARER.remove(); else ARMOR_WEARER.set(previous);
+        }
+    }
+    public static ArmorAttributeScope armorAttributeScope(LivingEntity wearer) { return new ArmorAttributeScope(wearer); }
 
     private EquipmentDurability() {}
 
@@ -102,19 +115,24 @@ public final class EquipmentDurability {
         event.modify(Items.BOW, b -> b.set(DataComponents.MAX_DAMAGE, 32));
         ARMOR.forEach((item, profile) -> event.modify(item, b -> b
                 .set(DataComponents.MAX_DAMAGE, EquipmentDurabilityRules.baseArmorDurability(profile))
-                .set(DataComponents.ATTRIBUTE_MODIFIERS, armorAttributes(item, profile))));
+                .set(DataComponents.ATTRIBUTE_MODIFIERS, armorAttributes(item))));
     }
 
-    private static ItemAttributeModifiers armorAttributes(Item item, ArmorProfile profile) {
+    private static ItemAttributeModifiers armorAttributes(Item item) {
         if (!(item instanceof ArmorItem armor)) return item.getDefaultAttributeModifiers();
         var builder = ItemAttributeModifiers.builder();
-        // Modern knockback resistance is retained; armor toughness is superseded by source flat defense.
+        // Use native material defense/toughness, retaining other defaults such as netherite knockback resistance.
         for (var entry : item.getDefaultAttributeModifiers().modifiers())
             if (!entry.attribute().equals(Attributes.ARMOR) && !entry.attribute().equals(Attributes.ARMOR_TOUGHNESS))
                 builder.add(entry.attribute(), entry.modifier(), entry.slot());
-        float amount = EquipmentDurabilityRules.armorProtection(profile, 0, EquipmentDurabilityRules.baseArmorDurability(profile));
-        return builder.add(Attributes.ARMOR, new AttributeModifier(ResourceLocation.withDefaultNamespace("armor." + armor.getType().getName()),
-                amount, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.bySlot(armor.getEquipmentSlot())).build();
+        var id = ResourceLocation.withDefaultNamespace("armor." + armor.getType().getName());
+        var slot = EquipmentSlotGroup.bySlot(armor.getEquipmentSlot());
+        builder.add(Attributes.ARMOR, new AttributeModifier(id, armor.getMaterial().value().getDefense(armor.getType()),
+                AttributeModifier.Operation.ADD_VALUE), slot);
+        float toughness = armor.getMaterial().value().toughness();
+        if (toughness > 0F) builder.add(Attributes.ARMOR_TOUGHNESS,
+                new AttributeModifier(id, toughness, AttributeModifier.Operation.ADD_VALUE), slot);
+        return builder.build();
     }
 
     public static ToolProfile toolProfile(ItemStack stack) {
@@ -210,7 +228,7 @@ public final class EquipmentDurability {
     public static boolean hurtArmor(Player player, DamageSource source, float incoming) {
         boolean managed = false;
         for (EquipmentSlot slot : ARMOR_SLOTS) managed |= armorProfile(player.getItemBySlot(slot)) != null;
-        if (!managed || !SourceArmorDefense.canHandle(player)) return false;
+        if (!managed || !onlyManagedArmor(player)) return false;
         if (!(player.level() instanceof ServerLevel) || exempt(player) || !(incoming > 0F)
                 || source.is(DamageTypeTags.BYPASSES_ARMOR)) return true;
         float protection = 0F;
@@ -227,9 +245,9 @@ public final class EquipmentDurability {
         return hurtArmorSourceBudget(player, source, Math.min(protection, incoming));
     }
 
-    /** Source defense has already been snapshotted; zero mundane protection still makes ud's minimum wear attempt. */
+    /** The legacy durability budget is independent of modern armor/toughness mitigation. */
     public static boolean hurtArmorSourceBudget(Player player, DamageSource source, float budget) {
-        if (!(player.level() instanceof ServerLevel) || exempt(player) || !SourceArmorDefense.canHandle(player)) return true;
+        if (!(player.level() instanceof ServerLevel) || exempt(player) || !onlyManagedArmor(player)) return true;
         boolean[] occupied = new boolean[4];
         for (int i = 0; i < 4; i++) {
             ItemStack stack = player.getItemBySlot(ARMOR_SLOTS[i]);
@@ -272,17 +290,26 @@ public final class EquipmentDurability {
     public static void wornArmorAttributes(ItemAttributeModifierEvent event) {
         ItemStack stack = event.getItemStack();
         if (armorProfile(stack) == null) return;
-        float factor = EquipmentDurabilityRules.armorProtectionFactor(stack.getDamageValue(), stack.getMaxDamage(), true);
-        int protectionLevel = stack.getTagEnchantments().entrySet().stream()
-                .filter(entry -> entry.getKey().is(Enchantments.PROTECTION)).mapToInt(entry -> entry.getIntValue()).max().orElse(0);
-        float enchantmentFactor = 1F + (float)protectionLevel / 4F * .5F;
+        // Commands and integrations can explicitly replace attributes; preserve those intentional overrides.
+        if (stack.getComponentsPatch().get(DataComponents.ATTRIBUTE_MODIFIERS) != null) return;
+        LivingEntity wearer = ARMOR_WEARER.get();
+        float factor = wearer != null && !(wearer instanceof Player) ? 1F
+                : EquipmentDurabilityRules.armorProtectionFactor(stack.getDamageValue(), stack.getMaxDamage(), true);
         for (var entry : List.copyOf(event.getModifiers())) {
-            if (entry.attribute().equals(Attributes.ARMOR)) {
+            if (entry.attribute().equals(Attributes.ARMOR) || entry.attribute().equals(Attributes.ARMOR_TOUGHNESS)) {
                 var modifier = entry.modifier();
                 event.replaceModifier(entry.attribute(), new AttributeModifier(modifier.id(),
-                        modifier.amount() * factor * enchantmentFactor, modifier.operation()), entry.slot());
+                        modifier.amount() * factor, modifier.operation()), entry.slot());
             }
         }
+    }
+
+    private static boolean onlyManagedArmor(Player player) {
+        for (EquipmentSlot slot : ARMOR_SLOTS) {
+            ItemStack stack = player.getItemBySlot(slot);
+            if (stack.getItem() instanceof ArmorItem && armorProfile(stack) == null) return false;
+        }
+        return true;
     }
 
     private static boolean exempt(LivingEntity owner) {

@@ -61,14 +61,20 @@ public final class SharedNpcRules031GameTests {
         horse.hurt(horse.damageSources().lava(),10); h.assertValueEqual(horse.getHealth(),20F,"Lava bypasses source mundane barding");
         horse.invulnerableTime=0; horse.hurt(horse.damageSources().inWall(),4); h.assertValueEqual(horse.getHealth(),16F,"Absolute suffocation bypasses all barding defense"); h.succeed();
     }
-    @GameTest(template="empty") public static void sourceNpcFireResistanceDoesNotGrantLavaImmunity(GameTestHelper h) {
+    @GameTest(template="empty") public static void modernNpcFireResistanceStopsBothFireAndLavaWithoutChangingNaturalImmunity(GameTestHelper h) {
         Cow cow=EntityType.COW.create(h.getLevel()); cow.setHealth(20); cow.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,200));
-        h.assertTrue(!cow.hurt(cow.damageSources().inFire(),4),"Pure fire nb.m is stopped by source fire resistance");
-        h.assertTrue(cow.hurt(cow.damageSources().lava(),4),"Lava nb.setLavaDamage is a separate damage flag");
-        h.assertValueEqual(cow.getHealth(),16F,"Antifire potion does not subtract source lava damage");
-        var neth=MiteMobs.type(MobKind.NETHERSPAWN).create(h.getLevel()); neth.setHealth(8); neth.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,200));
-        h.assertTrue(neth.hurt(neth.damageSources().lava(),4),"Netherspawn is fire-immune, not lava-immune even with antifire");
-        h.assertValueEqual(neth.getHealth(),4F,"Netherspawn source lava acceptance survives native early fire gate"); h.succeed();
+        h.assertTrue(!cow.hurt(cow.damageSources().inFire(),4),"Modern fire resistance blocks pure fire for native NPCs");
+        h.assertValueEqual(cow.getHealth(),20F,"Pure fire cannot damage a fire-resistant cow");
+        h.assertTrue(!cow.hurt(cow.damageSources().lava(),4),"Modern fire resistance also blocks lava for native NPCs");
+        h.assertValueEqual(cow.getHealth(),20F,"Lava cannot damage a fire-resistant cow");
+        var neth=MiteMobs.type(MobKind.NETHERSPAWN).create(h.getLevel()); neth.setHealth(8);
+        h.assertTrue(!neth.hurt(neth.damageSources().inFire(),4),"Unbuffed Netherspawn retains source natural fire immunity");
+        h.assertValueEqual(neth.getHealth(),8F,"Natural pure-fire immunity preserves Netherspawn health");
+        h.assertTrue(neth.hurt(neth.damageSources().lava(),4),"Natural Netherspawn immunity alone does not block lava");
+        h.assertValueEqual(neth.getHealth(),4F,"Unbuffed Netherspawn takes exactly four lava damage");
+        neth.invulnerableTime=0; neth.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,200));
+        h.assertTrue(!neth.hurt(neth.damageSources().lava(),4),"An added modern fire-resistance effect protects Netherspawn from lava");
+        h.assertValueEqual(neth.getHealth(),4F,"Potion immunity preserves the exact post-lava health"); h.succeed();
     }
     @GameTest(template="empty") public static void burningArrowAspectDoesNotSuppressPhysicalHit(GameTestHelper h) {
         var attacker=h.makeMockPlayer(GameType.SURVIVAL); Arrow arrow=new Arrow(EntityType.ARROW,h.getLevel()); arrow.igniteForSeconds(10);
@@ -85,21 +91,28 @@ public final class SharedNpcRules031GameTests {
         Cow cow=EntityType.COW.create(h.getLevel()); cow.setHealth(20);
         cow.getAttribute(Attributes.MAX_ABSORPTION).setBaseValue(100); cow.setAbsorptionAmount(amount); return cow;
     }
-    @GameTest(template="empty") public static void sourceNpcAbsorptionRetainsOneHealthLossAndExtraDebit(GameTestHelper h) {
+    @GameTest(template="empty") public static void modernNpcAbsorptionCanFullyBlockAndDebitsAbsorbedDamageOnce(GameTestHelper h) {
         Cow cow=absorbingCow(h,20); cow.hurt(cow.damageSources().generic(),4);
-        h.assertValueEqual(cow.getHealth(),19F,"of positive hit costs minimum one health after absorption");
-        h.assertValueEqual(cow.getAbsorptionAmount(),15F,"Source nonplayer decrements original four absorbed plus final one damage"); h.succeed();
+        h.assertValueEqual(cow.getHealth(),20F,"Modern NPC absorption fully blocks four incoming damage without a health-loss floor");
+        h.assertValueEqual(cow.getAbsorptionAmount(),16F,"Four absorbed damage consumes exactly four absorption points once"); h.succeed();
     }
-    @GameTest(template="empty") public static void sourceNpcPartialAbsorptionKeepsActualRemainingDamage(GameTestHelper h) {
+    @GameTest(template="empty") public static void sourceHorseAbsorptionRetainsOneHealthLossAndExtraDebit(GameTestHelper h) {
+        var horse=EntityType.HORSE.create(h.getLevel()); horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30); horse.setHealth(30);
+        horse.getAttribute(Attributes.MAX_ABSORPTION).setBaseValue(100); horse.setAbsorptionAmount(20);
+        horse.hurt(horse.damageSources().generic(),4);
+        h.assertValueEqual(horse.getHealth(),29F,"Legacy horse defense retains the source one-point health-loss floor after absorption");
+        h.assertValueEqual(horse.getAbsorptionAmount(),15F,"Legacy horse absorption retains the four absorbed points plus one extra debit"); h.succeed();
+    }
+    @GameTest(template="empty") public static void modernNpcPartialAbsorptionKeepsActualRemainingDamage(GameTestHelper h) {
         Cow cow=absorbingCow(h,2); cow.hurt(cow.damageSources().generic(),4);
-        h.assertValueEqual(cow.getHealth(),18F,"Partial source absorption leaves two real damage");
-        h.assertValueEqual(cow.getAbsorptionAmount(),0F,"Additional NPC debit cannot make stored absorption negative"); h.succeed();
+        h.assertValueEqual(cow.getHealth(),18F,"Partial modern absorption leaves exactly two real health damage");
+        h.assertValueEqual(cow.getAbsorptionAmount(),0F,"The two-point absorption pool is consumed exactly once"); h.succeed();
     }
-    @GameTest(template="empty") public static void sourceNpcAbsorptionFloorPreservesPreEventZeroDamage(GameTestHelper h) {
+    @GameTest(template="empty") public static void modernNpcAbsorptionPreservesPreEventZeroDamage(GameTestHelper h) {
         Cow cow=absorbingCow(h,20); Consumer<LivingDamageEvent.Pre> listener=e->{ if(e.getEntity()==cow) e.setNewDamage(0); };
         NeoForge.EVENT_BUS.addListener(LivingDamageEvent.Pre.class,listener);
         try { cow.hurt(cow.damageSources().generic(),4); } finally { NeoForge.EVENT_BUS.unregister(listener); }
-        h.assertValueEqual(cow.getHealth(),20F,"A mod's zero-damage pre-event is not resurrected by source positive-hit floor");
+        h.assertValueEqual(cow.getHealth(),20F,"A mod's zero-damage pre-event remains a zero-health-loss transaction");
         h.assertValueEqual(cow.getAbsorptionAmount(),20F,"Zero transaction consumes no absorption"); h.succeed();
     }
     @GameTest(template="empty") public static void fallingAnvilWearsSourceNpcHelmetButOrdinaryHitDoesNot(GameTestHelper h) {

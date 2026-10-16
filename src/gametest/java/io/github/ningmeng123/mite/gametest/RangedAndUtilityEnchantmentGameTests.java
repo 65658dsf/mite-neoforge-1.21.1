@@ -317,18 +317,20 @@ public final class RangedAndUtilityEnchantmentGameTests {
         target.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.IRON_HELMET));
     }
     @GameTest(template = "empty")
-    public static void piercingFiveSubtractsFiveProtectionForPlayersWithoutAddingUnarmoredDamage(GameTestHelper h) {
+    public static void piercingFiveSubtractsFiveModernArmorForPlayersWithoutAddingUnarmoredDamage(GameTestHelper h) {
         Player attacker = player(h), target = player(h);
         target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100D);
         float[] losses = new float[2];
         for (int index = 0; index < 2; index++) {
-            armor(target); target.setHealth(100F); target.invulnerableTime = 0;
+            armor(target); target.tick(); target.setHealth(100F); target.invulnerableTime = 0;
+            close(h, target.getAttributeValue(Attributes.ARMOR), 15D, "Real native equipment refresh installs modern full iron armor");
             attacker.setItemInHand(InteractionHand.MAIN_HAND, index == 0 ? new ItemStack(Items.IRON_PICKAXE)
                     : enchanted(h, Items.IRON_PICKAXE, "piercing", 5));
             target.hurt(attacker.damageSources().playerAttack(attacker), 14F);
             losses[index] = 100F - target.getHealth();
         }
-        close(h, losses[1] - losses[0], 5D, "Piercing subtracts exactly five from source flat player protection");
+        close(h, losses[0], 9.52D, "Raw14 versus iron15 gives effective armor8, so14*.68");
+        close(h, losses[1], 12.32D, "PiercingV makes armor10, effective armor3, so14*.88");
         var cow = cow(h, 200F);
         cow.hurt(attacker.damageSources().playerAttack(attacker), 10F);
         close(h, 200F - cow.getHealth(), 10D, "Unarmored targets do not receive additional raw damage from Piercing");
@@ -341,14 +343,16 @@ public final class RangedAndUtilityEnchantmentGameTests {
         var target = EntityType.ZOMBIE.create(h.getLevel());
         target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(200D); target.setHealth(200F); target.setNoAi(true);
         armor(target);
+        target.tick();
+        close(h, target.getAttributeValue(Attributes.ARMOR), 15D, "Managed native mob installs real iron armor fifteen");
         attacker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_PICKAXE));
         target.hurt(attacker.damageSources().playerAttack(attacker), 10F);
         float plain = 200F - target.getHealth();
-        armor(target); target.setHealth(200F); target.invulnerableTime = 0;
+        armor(target); target.tick(); target.setHealth(200F); target.invulnerableTime = 0;
         attacker.setItemInHand(InteractionHand.MAIN_HAND, enchanted(h, Items.IRON_PICKAXE, "piercing", 5));
         target.hurt(attacker.damageSources().playerAttack(attacker), 10F);
-        close(h, 200F - target.getHealth(), Math.min(10F, plain + 5F), "Five Piercing subtracts up to five flat native-mob protection and never exceeds the original raw hit");
-        h.assertTrue(plain < 10F, "The same managed native armor provided real defense without Piercing");
+        close(h, plain, 6D, "Raw10 versus iron15 gives effective armor10 and damage six");
+        close(h, 200F - target.getHealth(), 8D, "PiercingV makes armor10, effective armor5 and damage eight without extra raw damage");
         target.discard(); h.succeed();
     }
 

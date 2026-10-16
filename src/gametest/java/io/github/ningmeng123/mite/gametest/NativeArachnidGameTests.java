@@ -171,9 +171,12 @@ public final class NativeArachnidGameTests {
         Cow immune=cow(h,spider.position().add(2,0,0)); immune.setInvulnerable(true);
         h.assertTrue(!spider.doHurtTarget(immune) && !immune.hasEffect(MobEffects.POISON),"Invulnerable target acquires no source toxin");
         Cow absorbed=cow(h,spider.position().add(3,0,0)); absorbed.getAttribute(Attributes.MAX_ABSORPTION).setBaseValue(100); absorbed.setAbsorptionAmount(100);
-        float before=absorbed.getHealth(); spider.doHurtTarget(absorbed);
-        h.assertValueEqual(absorbed.getHealth(),before-1F,"Source of keeps minimum one health loss after absorption");
-        h.assertTrue(absorbed.hasEffect(MobEffects.POISON),"Source actual one-point loss still triggers cave spider toxin");
+        float before=absorbed.getHealth();
+        h.assertTrue(spider.doHurtTarget(absorbed),"A fully absorbed native attack still reaches the damage transaction");
+        h.assertValueEqual(absorbed.getHealth(),before,"Native absorption can prevent all real health loss");
+        h.assertValueEqual(absorbed.getAbsorptionAmount(),100F-(float)spider.getAttributeValue(Attributes.ATTACK_DAMAGE),
+                "Only the actual attack damage is consumed from native absorption");
+        h.assertFalse(absorbed.hasEffect(MobEffects.POISON),"Without real health loss the cave spider cannot apply its source toxin");
         target.discard(); immune.discard(); absorbed.discard(); h.succeed();
     }
     @GameTest(template="ranged_027") public static void nativeArachnidFindsVisibleChickenInsteadOfModernGolemPrey(GameTestHelper h) {

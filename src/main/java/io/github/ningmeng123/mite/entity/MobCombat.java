@@ -63,6 +63,7 @@ public final class MobCombat {
         if (stack.isEmpty()) DEFENDING.remove();
     }
     public static boolean defending(LivingEntity entity) { return DEFENDING.get().peek() == entity; }
+    /** Legacy barding is a separate BODY mechanic, so horses retain their source defense path. */
     public static float absorb(LivingEntity entity, DamageSource source, float incoming) {
         var flags = SourceArmorDefense.flags(source);
         int resistance = !source.is(DamageTypeTags.BYPASSES_EFFECTS) && entity.hasEffect(MobEffects.DAMAGE_RESISTANCE)
@@ -70,12 +71,7 @@ public final class MobCombat {
         int fireResistance = entity.hasEffect(MobEffects.FIRE_RESISTANCE) && !source.is(DamageTypeTags.BYPASSES_EFFECTS)
                 ? entity.getEffect(MobEffects.FIRE_RESISTANCE).getAmplifier() + 1 : 0;
         var defense = SourceArmorDefenseRules.defense(SourceArmorDefense.pieces(entity), flags, resistance, fireResistance);
-        float natural = !flags.absolute() && !flags.bypassesMundaneArmor()
-                ? entity instanceof R196Mob mob ? mob.naturalDefense(source)
-                : entity instanceof net.minecraft.world.entity.monster.Slime slime ? R196Cube.vanillaNaturalDefense(slime, source) : 0F : 0F;
-        if (!flags.absolute() && entity.getType() == net.minecraft.world.entity.EntityType.WITHER) natural = 4F;
-        if (!flags.absolute() && entity.getType() == net.minecraft.world.entity.EntityType.WITCH && magic(source)
-                && source.getDirectEntity() != null && source.getDirectEntity() != source.getEntity()) natural = 10F;
+        float natural = naturalDefense(entity, source);
         // rs.getWornItems includes horse barding; wh adds its integer protection directly.
         // It is a BODY item in the modern engine, not one of the four humanoid pieces.
         if (!flags.absolute() && !flags.unblockable() && !flags.bypassesMundaneArmor()
@@ -87,6 +83,24 @@ public final class MobCombat {
         // NPCs always retain the source one-point floor, even when protection exceeds the hit.
         return flags.absolute() || incoming <= 0F ? incoming : Math.max(incoming - Math.max(defense.total() + natural
                 - io.github.ningmeng123.mite.enchantment.R196Enchantments.level(weapon(source), entity.level(), "piercing"), 0F), 1F);
+    }
+
+    /** Species-specific flat defense precedes native equipment mitigation and never substitutes for armor attributes. */
+    public static float naturalArmorInput(LivingEntity entity, DamageSource source, float incoming) {
+        if (!(incoming > 0F)) return incoming;
+        float natural = naturalDefense(entity, source);
+        return natural > 0F ? Math.max(incoming - natural, 1F) : incoming;
+    }
+
+    private static float naturalDefense(LivingEntity entity, DamageSource source) {
+        var flags = SourceArmorDefense.flags(source);
+        if (flags.absolute()) return 0F;
+        if (entity.getType() == net.minecraft.world.entity.EntityType.WITHER) return 4F;
+        if (entity.getType() == net.minecraft.world.entity.EntityType.WITCH && magic(source)
+                && source.getDirectEntity() != null && source.getDirectEntity() != source.getEntity()) return 10F;
+        if (flags.bypassesMundaneArmor()) return 0F;
+        return entity instanceof R196Mob mob ? mob.naturalDefense(source)
+                : entity instanceof net.minecraft.world.entity.monster.Slime slime ? R196Cube.vanillaNaturalDefense(slime, source) : 0F;
     }
     public static boolean managedDefense(LivingEntity entity) {
         return entity instanceof R196Mob || io.github.ningmeng123.mite.rules.R196VanillaMobRules.managed(entity.getType()) || entity.getType() == net.minecraft.world.entity.EntityType.SLIME

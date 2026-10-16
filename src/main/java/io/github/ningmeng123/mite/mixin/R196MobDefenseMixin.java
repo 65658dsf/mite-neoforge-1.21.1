@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.ningmeng123.mite.entity.MobCombat;
-import io.github.ningmeng123.mite.entity.R196Mob;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -14,18 +13,21 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Scope source natural/armor/effect defense once through normal NeoForge damage events. @author NingMeng123 */
+/** Source species defenses precede the shared modern armor pipeline; barding retains its source path. @author NingMeng123 */
 @Mixin(LivingEntity.class)
 public abstract class R196MobDefenseMixin {
     @WrapOperation(method="hurt",at=@At(value="INVOKE",target="Lnet/minecraft/world/damagesource/DamageSource;is(Lnet/minecraft/tags/TagKey;)Z",ordinal=0))
     private boolean mite$lavaIsNotPureFire(DamageSource source,TagKey<DamageType> tag,Operation<Boolean> original) {
-        // nb.setLavaDamage does not set nb.m(): ni.n must not grant lava immunity.
-        if (MobCombat.managedDefense((LivingEntity)(Object)this) && tag.equals(DamageTypeTags.IS_FIRE) && source.is(DamageTypes.LAVA)) return false;
+        // Only the legacy horse path keeps source potion classification; modern entities retain lava fire resistance.
+        LivingEntity self=(LivingEntity)(Object)this;
+        if (self instanceof AbstractHorse && MobCombat.managedDefense(self)
+                && tag.equals(DamageTypeTags.IS_FIRE) && source.is(DamageTypes.LAVA)) return false;
         return original.call(source,tag);
     }
     @Inject(method="hurtHelmet",at=@At("HEAD"))
@@ -41,13 +43,15 @@ public abstract class R196MobDefenseMixin {
     @WrapOperation(method="actuallyHurt",at=@At(value="INVOKE",target="Lnet/neoforged/neoforge/common/damagesource/DamageContainer;setReduction(Lnet/neoforged/neoforge/common/damagesource/DamageContainer$Reduction;F)V"))
     private void mite$sourceAbsorptionFloor(DamageContainer container,DamageContainer.Reduction reduction,float amount,Operation<Void> original) {
         float before=container.getNewDamage(); original.call(container,reduction,amount);
-        if (reduction==DamageContainer.Reduction.ABSORPTION && before>0F && MobCombat.defending((LivingEntity)(Object)this))
+        LivingEntity self=(LivingEntity)(Object)this;
+        if (self instanceof AbstractHorse && reduction==DamageContainer.Reduction.ABSORPTION && before>0F && MobCombat.defending(self))
             container.setNewDamage(Math.max(container.getNewDamage(),1F));
     }
     @WrapOperation(method="actuallyHurt",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/LivingEntity;setHealth(F)V"))
     private void mite$sourceNpcExtraAbsorption(LivingEntity self,float health,Operation<Void> original) {
         float damage=Math.max(0F,self.getHealth()-health); original.call(self,health);
-        if (MobCombat.defending(self) && damage>0F) self.setAbsorptionAmount(Math.max(0F,self.getAbsorptionAmount()-damage));
+        if (self instanceof AbstractHorse && MobCombat.defending(self) && damage>0F)
+            self.setAbsorptionAmount(Math.max(0F,self.getAbsorptionAmount()-damage));
     }
     @WrapMethod(method = "actuallyHurt")
     private void mite$scopeDefense(DamageSource source, float amount, Operation<Void> original) {
@@ -56,13 +60,16 @@ public abstract class R196MobDefenseMixin {
         MobCombat.enterDefense(self);
         try { original.call(source, amount); } finally { MobCombat.exitDefense(self); }
     }
-    @Inject(method = "getDamageAfterArmorAbsorb", at = @At("HEAD"), cancellable = true)
-    private void mite$sourceArmor(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
+    @WrapMethod(method = "getDamageAfterArmorAbsorb")
+    private float mite$sourceNaturalDefenseBeforeModernArmor(DamageSource source, float amount, Operation<Float> original) {
         LivingEntity self = (LivingEntity)(Object)this;
-        if (MobCombat.defending(self)) cir.setReturnValue(MobCombat.absorb(self, source, amount));
+        if (!MobCombat.defending(self)) return original.call(source, amount);
+        if (self instanceof AbstractHorse) return MobCombat.absorb(self, source, amount);
+        return original.call(source, MobCombat.naturalArmorInput(self, source, amount));
     }
     @Inject(method = "getDamageAfterMagicAbsorb", at = @At("HEAD"), cancellable = true)
     private void mite$effectsAlreadyIncluded(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
-        if (MobCombat.defending((LivingEntity)(Object)this)) cir.setReturnValue(amount);
+        LivingEntity self = (LivingEntity)(Object)this;
+        if (self instanceof AbstractHorse && MobCombat.defending(self)) cir.setReturnValue(amount);
     }
 }

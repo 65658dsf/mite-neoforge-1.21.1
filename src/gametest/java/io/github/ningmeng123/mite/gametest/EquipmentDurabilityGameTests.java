@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.buffer.Unpooled;
@@ -126,10 +127,10 @@ public final class EquipmentDurabilityGameTests {
             player.setItemSlot(EquipmentSlot.CHEST, chest);
             player.doTick();
             helper.assertValueEqual(chest.getMaxDamage(), 128, "Iron chestplate has the original maximum");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), (double)(8F / 3F), "Source chest protection is eight components of material eight divided by 24");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Iron chestplate uses native armor six");
             chest.setDamageValue(96);
             player.doTick();
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), (double)(4F / 3F), "Equipment change refreshes half source protection");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 3D, "Equipment change refreshes half modern protection at seventy-five percent wear");
             chest.setDamageValue(127);
             player.doTick();
             helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 0.0, "One remaining durability gives zero protection");
@@ -138,8 +139,44 @@ public final class EquipmentDurabilityGameTests {
             helper.assertValueEqual(chest.getDamageValue(), 127, "The last point is not consumed");
             chest.setDamageValue(0);
             player.doTick();
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), (double)(8F / 3F), "Repair refreshes source protection without unequipping");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Repair refreshes modern protection without unequipping");
         }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void armorQualityNbtAndNetworkRefreshBothArmorAndToughness(GameTestHelper helper) {
+        ItemStack original = new ItemStack(MiteArmorContent.get("mite:mithril_chestplate"));
+        EquipmentDurability.setQuality(original, Quality.FINE);
+        helper.assertValueEqual(original.getMaxDamage(), 1536, "Mithril chest1024 times Fine1.5");
+        original.setDamageValue(1152);
+        ItemStack restored = ItemStack.parse(helper.getLevel().registryAccess(), original.save(helper.getLevel().registryAccess())).orElseThrow();
+        helper.assertValueEqual(EquipmentDurability.quality(restored), Quality.FINE, "Armor NBT keeps quality");
+        helper.assertValueEqual(restored.getDamageValue(), 1152, "Armor NBT keeps exact wear");
+        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+        try (PlayerSession session = newPlayer(helper)) {
+            ItemStack.STREAM_CODEC.encode(buffer, restored);
+            ItemStack decoded = ItemStack.STREAM_CODEC.decode(buffer);
+            helper.assertValueEqual(decoded.getMaxDamage(), 1536, "Armor network maximum is quality adjusted once");
+            helper.assertValueEqual(decoded.getDamageValue(), 1152, "Armor network keeps exact wear");
+            helper.assertValueEqual(EquipmentDurability.quality(decoded), Quality.FINE, "Armor network keeps quality");
+            var player = session.player();
+            player.setItemSlot(EquipmentSlot.CHEST, decoded); player.doTick();
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 4.5D, "Decoded player mithril chest has half of modern armor nine");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1.5D, "Decoded player mithril chest has half of toughness three");
+            EquipmentDurability.setQuality(decoded, Quality.LEGENDARY); player.doTick();
+            helper.assertValueEqual(decoded.getMaxDamage(), 3584, "Quality increases durability rather than direct defensive stats");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 9D, "Larger maximum puts unchanged wear back below half without adding base armor");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 3D, "Quality component refresh also restores full base toughness");
+            decoded.setDamageValue(decoded.getMaxDamage() - 1); player.doTick();
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 0D, "Player last durability point contributes no armor");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "Player last durability point contributes no toughness");
+            decoded.hurtAndBreak(500, player, EquipmentSlot.CHEST);
+            helper.assertFalse(decoded.isEmpty(), "Final point remains repairable under retained source wear rules");
+            decoded.setDamageValue(0); player.doTick();
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 9D, "Repair updates modern armor without re-equipping");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 3D, "Repair updates modern toughness without re-equipping");
+        } finally { buffer.release(); }
         helper.succeed();
     }
 
@@ -156,7 +193,7 @@ public final class EquipmentDurabilityGameTests {
             helper.assertFalse(player.damageSources().cactus().is(DamageTypeTags.BYPASSES_ARMOR),
                     "The damage fixture must enter armor absorption");
             float healthBefore = player.getHealth();
-            helper.assertTrue(player.hurt(player.damageSources().cactus(), 9F), "Hit exceeds eight defense so the source RNG block path cannot obscure the health assertion");
+            helper.assertTrue(player.hurt(player.damageSources().cactus(), 9F), "Native modern armor mitigation still produces a real health transaction");
             helper.assertTrue(player.getHealth() < healthBefore, "The real hit also reduces player health");
             int totalWear = 0;
             for (ItemStack piece : pieces) totalWear += piece.getDamageValue();

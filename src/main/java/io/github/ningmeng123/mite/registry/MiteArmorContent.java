@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.item.R196ArmorItem;
+import io.github.ningmeng123.mite.rules.ArmorBalanceRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ArmorProfile;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import java.io.InputStreamReader;
@@ -65,7 +66,8 @@ public final class MiteArmorContent {
             DeferredHolder<ArmorMaterial, ArmorMaterial> material = ARMOR_MATERIALS.computeIfAbsent(definition.materialKey(), key ->
                     MATERIALS.register(key, () -> armorMaterial(definition)));
             ITEMS.registerItem(definition.id().substring(5), properties -> definition.horse()
-                    ? new AnimalArmorItem(material, AnimalArmorItem.BodyType.EQUESTRIAN, false, properties.stacksTo(1))
+                    ? new AnimalArmorItem(material, AnimalArmorItem.BodyType.EQUESTRIAN, false,
+                            properties.stacksTo(1).attributes(horseAttributes(definition)))
                     : new R196ArmorItem(material, definition, properties));
         });
         source.getAsJsonArray("chains").forEach(element -> {
@@ -105,15 +107,24 @@ public final class MiteArmorContent {
         }
     }
     private static ArmorMaterial armorMaterial(Definition definition) {
+        var stats = ArmorBalanceRules.stats(definition.material(), definition.chainmail());
         Map<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
         for (ArmorItem.Type type : ArmorItem.Type.values()) {
             int components = switch (type) { case HELMET -> 5; case CHESTPLATE -> 8; case LEGGINGS -> 7; case BOOTS -> 4; case BODY -> 0; };
             defense.put(type, type == ArmorItem.Type.BODY ? definition.horseProtection()
-                    : Math.max((components * (definition.materialProtection() - (definition.chainmail() ? 2 : 0))) / 24, 0));
+                    : stats.protection(components));
         }
         return new ArmorMaterial(Map.copyOf(defense), definition.enchantability(), SoundEvents.ARMOR_EQUIP_IRON,
                 () -> Ingredient.of(repairMaterial(definition)),
-                List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, definition.materialKey()))), 0F, 0F);
+                List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, definition.materialKey()))), stats.toughness(), 0F);
+    }
+    private static net.minecraft.world.item.component.ItemAttributeModifiers horseAttributes(Definition definition) {
+        // Barding retains its source BODY protection; humanoid toughness is not added to horses.
+        return net.minecraft.world.item.component.ItemAttributeModifiers.builder().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.ARMOR,
+                new net.minecraft.world.entity.ai.attributes.AttributeModifier(ResourceLocation.withDefaultNamespace("armor.body"),
+                        definition.horseProtection(), net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
+                net.minecraft.world.entity.EquipmentSlotGroup.BODY).build();
     }
     public static Item repairMaterial(Definition definition) {
         if (definition.chainmail()) return chain(definition.material());
