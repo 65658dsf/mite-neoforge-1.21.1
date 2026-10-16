@@ -3,7 +3,7 @@ package io.github.ningmeng123.mite.rules;
 import java.util.Map;
 import java.util.function.IntUnaryOperator;
 
-/** R196 aci/js/tm arithmetic with explicit modern-height adaptation. @author NingMeng123 */
+/** R196 habitat arithmetic with explicit modern-height and user-selected hostile population adaptations. @author NingMeng123 */
 public final class R196SpawnRules {
     public enum Category { MONSTER(50), ANIMAL(10), AMBIENT(5), AQUATIC(5);
         private final int cap; Category(int cap) { this.cap = cap; } public int cap() { return cap; }
@@ -14,6 +14,8 @@ public final class R196SpawnRules {
     }
     public record RateState(int decreased, int increased, int paused) {}
     public record RateStep(RateState state, float modifier) {}
+    public static final int VANILLA_MONSTER_CAP = 70;
+    public static final int VANILLA_ELIGIBLE_CHUNKS = 17 * 17;
     private static final Map<String, Integer> DEPTH = Map.ofEntries(
             Map.entry("EntityGhoul", 56), Map.entry("EntityWight", 48), Map.entry("EntityVampireBat", 48),
             Map.entry("EntityRevenant", 44), Map.entry("EntityInvisibleStalker", 40), Map.entry("EntityEarthElemental", 40),
@@ -43,22 +45,47 @@ public final class R196SpawnRules {
             int minimum = !day && moon.blood() ? 12 : !day && moon.full() ? 10 : 8;
             density = Math.max(density, minimum);
         }
-        return (int)(density + density * Math.clamp(strongholdProximity, 0F, 1F));
+        // The old surface floor of8/12 would stop a player's entire spawning area long
+        // before the adapted105/140 global allowance. Retain a crowd guard for multiple
+        // players, but never make it smaller than one full player's population budget.
+        int source = (int)(density + density * Math.clamp(strongholdProximity, 0F, 1F));
+        return Math.max(source, monsterCap(VANILLA_ELIGIBLE_CHUNKS, moon.blood()));
     }
 
     public static int cap(Category category, int eligibleChunks, boolean deep, boolean tournamentAnimals) {
+        return cap(category, eligibleChunks, deep, tournamentAnimals, false);
+    }
+
+    /** Monster height bands share one budget; other categories retain their R196 calculation. */
+    public static int cap(Category category, int eligibleChunks, boolean deep, boolean tournamentAnimals, boolean bloodPeriod) {
+        if (category == Category.MONSTER) return monsterCap(eligibleChunks, bloodPeriod);
         int cap = category.cap() * eligibleChunks / 256;
-        if (category == Category.MONSTER && deep || category == Category.ANIMAL && tournamentAnimals) cap *= 2;
+        if (category == Category.ANIMAL && tournamentAnimals) cap *= 2;
         return cap;
+    }
+
+    public static int monsterCap(int eligibleChunks, boolean bloodPeriod) {
+        long base = bloodPeriod ? VANILLA_MONSTER_CAP * 2L : VANILLA_MONSTER_CAP * 3L / 2L;
+        return (int)Math.min(Integer.MAX_VALUE, base * Math.max(0, eligibleChunks) / VANILLA_ELIGIBLE_CHUNKS);
+    }
+
+    /** Blood dates double both hostile passes; animal/ambient/aquatic scheduling does not call this rule. */
+    public static float hostilePassProbability(boolean deep, float modifier, boolean bloodPeriod) {
+        return Math.clamp((deep ? .1F : .17F) * modifier * (bloodPeriod ? 2F : 1F), 0F, 1F);
+    }
+
+    /** Blood storms permit outdoor undead throughout the date; ordinary daylight still rejects them. */
+    public static boolean outdoorAllows(boolean undead, boolean day, Moon moon, IntUnaryOperator random) {
+        return day ? !undead || moon.blood() : random.applyAsInt(outdoorNightDenominator(moon)) == 0;
     }
 
     public static int outdoorNightDenominator(Moon moon) {
         return moon.blue() ? 54 : moon.blood() ? 2 : moon.full() ? 3 : moon.fresh() ? 6 : 4;
     }
 
-    public static boolean depthAllows(String sourceClass, int sourceY, boolean overworld, boolean bloodNight, boolean freezing, boolean desert) {
+    public static boolean depthAllows(String sourceClass, int sourceY, boolean overworld, boolean bloodPeriod, boolean freezing, boolean desert) {
         if (!overworld || sourceY <= DEPTH.getOrDefault(sourceClass, Integer.MAX_VALUE)) return true;
-        if (!bloodNight) return false;
+        if (!bloodPeriod) return false;
         return switch (sourceClass) {
             case "EntityGhoul", "EntityVampireBat", "EntityRevenant", "EntityNightwing", "EntityBoneLord" -> true;
             case "EntityWight" -> freezing;

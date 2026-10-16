@@ -32,25 +32,62 @@ class R196SpawnRulesTest {
         assertFalse(R196SpawnRules.moon(127L * 24000, false).blue());
         assertFalse(R196SpawnRules.moon(31L * 24000, false).blood());
     }
-    @Test void sourceDensityHasHeightLunarFloorsAndStrongholdGain() {
+    @Test void localCrowdGuardDoesNotMaskTheModernHostilePopulationBudget() {
         var ordinary = R196SpawnRules.moon(0, true);
-        assertEquals(24, R196SpawnRules.density(0, true, true, ordinary, 0));
-        assertEquals(16, R196SpawnRules.density(32, true, true, ordinary, 0));
-        assertEquals(8, R196SpawnRules.density(64, true, true, ordinary, 0));
-        assertEquals(8, R196SpawnRules.density(200, true, true, ordinary, 0));
-        assertEquals(10, R196SpawnRules.density(200, true, false, R196SpawnRules.moon(7L * 24000, true), 0));
-        assertEquals(12, R196SpawnRules.density(200, true, false, R196SpawnRules.moon(31L * 24000, true), 0));
-        assertEquals(48, R196SpawnRules.density(0, true, true, ordinary, 1));
-        assertEquals(8, R196SpawnRules.density(0, false, false, ordinary, 0));
+        for (int y : List.of(0, 32, 64, 200)) for (boolean day : List.of(false, true)) {
+            assertEquals(105, R196SpawnRules.density(y, true, day, ordinary, 0));
+            assertEquals(105, R196SpawnRules.density(y, true, day, ordinary, 1));
+            assertEquals(140, R196SpawnRules.density(y, true, day, R196SpawnRules.moon(31L * 24000, true), 0));
+        }
+        assertEquals(105, R196SpawnRules.density(0, false, false, ordinary, 0));
     }
-    @Test void edgeChunksCountTowardsEachIndependentSourceCap() {
-        assertEquals(56, R196SpawnRules.cap(R196SpawnRules.Category.MONSTER, 289, false, false));
-        assertEquals(112, R196SpawnRules.cap(R196SpawnRules.Category.MONSTER, 289, true, false));
+    @Test void monsterCapUsesVanillaSeventeenSquareAreaAndDoesNotDoubleTheDeepBand() {
+        assertEquals(105, R196SpawnRules.cap(R196SpawnRules.Category.MONSTER, 289, false, false));
+        assertEquals(105, R196SpawnRules.cap(R196SpawnRules.Category.MONSTER, 289, true, false));
+        assertEquals(140, R196SpawnRules.cap(R196SpawnRules.Category.MONSTER, 289, false, false, true));
+        assertEquals(140, R196SpawnRules.cap(R196SpawnRules.Category.MONSTER, 289, true, false, true));
         assertEquals(11, R196SpawnRules.cap(R196SpawnRules.Category.ANIMAL, 289, false, false));
         assertEquals(22, R196SpawnRules.cap(R196SpawnRules.Category.ANIMAL, 289, false, true));
         assertEquals(5, R196SpawnRules.cap(R196SpawnRules.Category.AMBIENT, 289, false, false));
         assertEquals(5, R196SpawnRules.cap(R196SpawnRules.Category.AQUATIC, 289, false, false));
         assertEquals(0, R196SpawnRules.cap(R196SpawnRules.Category.MONSTER, 0, true, false));
+    }
+    @Test void hostilePopulationScalesTheUnionOnceAndRoundsDownAfterScaling() {
+        assertEquals(0, R196SpawnRules.monsterCap(-1, false));
+        assertEquals(0, R196SpawnRules.monsterCap(1, true));
+        assertEquals(81, R196SpawnRules.monsterCap(225, false));
+        assertEquals(108, R196SpawnRules.monsterCap(225, true));
+        assertEquals(111, R196SpawnRules.monsterCap(306, false));
+        assertEquals(148, R196SpawnRules.monsterCap(306, true));
+        assertEquals(210, R196SpawnRules.monsterCap(578, false));
+        assertEquals(280, R196SpawnRules.monsterCap(578, true));
+        assertEquals(780_227_622, R196SpawnRules.monsterCap(Integer.MAX_VALUE, false));
+        for (var category : List.of(R196SpawnRules.Category.ANIMAL, R196SpawnRules.Category.AMBIENT, R196SpawnRules.Category.AQUATIC))
+            assertEquals(R196SpawnRules.cap(category, 289, false, false), R196SpawnRules.cap(category, 289, false, false, true));
+    }
+    @Test void bloodDateDoublesBothHostileSchedulingProbabilitiesRatherThanTheirProducedMobCounts() {
+        assertEquals(.1F, R196SpawnRules.hostilePassProbability(true, 1F, false), .000001F);
+        assertEquals(.17F, R196SpawnRules.hostilePassProbability(false, 1F, false), .000001F);
+        assertEquals(.2F, R196SpawnRules.hostilePassProbability(true, 1F, true), .000001F);
+        assertEquals(.34F, R196SpawnRules.hostilePassProbability(false, 1F, true), .000001F);
+        assertEquals(.4F, R196SpawnRules.hostilePassProbability(true, 2F, true), .000001F);
+        assertEquals(.68F, R196SpawnRules.hostilePassProbability(false, 2F, true), .000001F);
+        assertEquals(.025F, R196SpawnRules.hostilePassProbability(true, .25F, false), .000001F);
+        assertEquals(0F, R196SpawnRules.hostilePassProbability(false, 0F, true));
+        assertEquals(1F, R196SpawnRules.hostilePassProbability(false, 10F, true));
+    }
+    @Test void bloodDayPermitsOutdoorUndeadWhileOrdinaryDayKeepsItsBanAndNightsKeepTheirOriginalDraw() {
+        var ordinary = R196SpawnRules.moon(0, true);
+        var blood = R196SpawnRules.moon(31L * 24000 + 6000, true);
+        java.util.function.IntUnaryOperator noNightRoll = ignored -> { fail("Daylight does not draw the nighttime outdoor lottery"); return 0; };
+        assertTrue(R196SpawnRules.daytime(6000));
+        assertFalse(R196SpawnRules.outdoorAllows(true, true, ordinary, noNightRoll));
+        assertTrue(R196SpawnRules.outdoorAllows(false, true, ordinary, noNightRoll));
+        assertTrue(R196SpawnRules.outdoorAllows(true, true, blood, noNightRoll));
+        assertTrue(R196SpawnRules.outdoorAllows(false, true, blood, noNightRoll));
+        assertTrue(R196SpawnRules.outdoorAllows(true, false, blood, bound -> { assertEquals(2, bound); return 0; }));
+        assertFalse(R196SpawnRules.outdoorAllows(false, false, blood, bound -> { assertEquals(2, bound); return 1; }));
+        assertFalse(R196SpawnRules.outdoorAllows(true, true, R196SpawnRules.moon(31L * 24000, false), noNightRoll));
     }
     @Test void sourceOutdoorSkipRatesPrioritizeBlueThenBlood() {
         assertEquals(54, R196SpawnRules.outdoorNightDenominator(R196SpawnRules.moon(127L * 24000, true)));
@@ -59,7 +96,7 @@ class R196SpawnRulesTest {
         assertEquals(6, R196SpawnRules.outdoorNightDenominator(R196SpawnRules.moon(3L * 24000, true)));
         assertEquals(4, R196SpawnRules.outdoorNightDenominator(R196SpawnRules.moon(0, true)));
     }
-    @Test void bloodNightSurfaceExceptionsKeepTheirFreezingAndDesertRequirements() {
+    @Test void bloodPeriodSurfaceExceptionsKeepTheirFreezingAndDesertRequirements() {
         assertTrue(R196SpawnRules.depthAllows("EntityGhoul", 56, true, false, false, false));
         assertFalse(R196SpawnRules.depthAllows("EntityGhoul", 57, true, false, false, false));
         assertTrue(R196SpawnRules.depthAllows("EntityGhoul", 100, true, true, false, false));

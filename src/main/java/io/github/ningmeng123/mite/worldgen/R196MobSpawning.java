@@ -305,12 +305,17 @@ public final class R196MobSpawning {
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
         var step = R196SpawnRules.advanceRate(state.rate, overworld, moon.blood() || level.isThundering(), state.modulation::nextInt); state.rate = step.state();
         boolean hostile = level.getDifficulty() != Difficulty.PEACEFUL && level.getServer().isSpawningMonsters();
-        boolean low = hostile && Math.random() < .1F * step.modifier(), high = hostile && Math.random() < .17F * step.modifier();
+        boolean low = hostile && Math.random() < R196SpawnRules.hostilePassProbability(true, step.modifier(), moon.blood());
+        boolean high = hostile && Math.random() < R196SpawnRules.hostilePassProbability(false, step.modifier(), moon.blood());
         boolean periodic = Math.floorMod(level.getGameTime(), 400) == 0;
         if (low || high) {
             Map<Long, Boolean> chunks = eligibleChunks(level, true);
-            if (low) spawnPass(level, Category.MONSTER, true, chunks, false);
-            if (high) spawnPass(level, Category.MONSTER, false, chunks, false);
+            // Both height passes spend one dimension-wide allowance. Carry successful
+            // additions explicitly because newly added hidden sections may not yet be
+            // visible through getAllEntities during this same native server tick.
+            int remaining = Math.max(0, R196SpawnRules.monsterCap(chunks.size(), moon.blood()) - count(level, Category.MONSTER, null));
+            if (low) remaining -= spawnPass(level, Category.MONSTER, true, chunks, false, remaining);
+            if (high && remaining > 0) spawnPass(level, Category.MONSTER, false, chunks, false, remaining);
         }
         if (periodic) {
             Map<Long, Boolean> chunks = eligibleChunks(level, false);
@@ -323,9 +328,14 @@ public final class R196MobSpawning {
         }
     }
     public static int spawnPass(ServerLevel level, Category category, Boolean deep, Map<Long, Boolean> chunks, boolean modernOnly) {
-        int limit = R196SpawnRules.cap(category, chunks.size(), Boolean.TRUE.equals(deep), false);
-        int present = count(level, category, deep);
-        if (present >= limit) return 0;
+        return spawnPass(level, category, deep, chunks, modernOnly, Integer.MAX_VALUE);
+    }
+    private static int spawnPass(ServerLevel level, Category category, Boolean deep, Map<Long, Boolean> chunks, boolean modernOnly, int allowance) {
+        boolean blood = R196SpawnRules.moon(level.getDayTime(), level.dimension().equals(Level.OVERWORLD)).blood();
+        int limit = R196SpawnRules.cap(category, chunks.size(), Boolean.TRUE.equals(deep), false, blood);
+        int present = count(level, category, category == Category.MONSTER ? null : deep);
+        if (present >= limit || allowance <= 0) return 0;
+        int available = Math.min(limit - present, allowance);
         int spawned = 0; RandomSource random = level.getRandom(); boolean hangBats = random.nextBoolean();
         boolean overworld = level.dimension().equals(Level.OVERWORLD), day = R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000));
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
@@ -348,6 +358,7 @@ public final class R196MobSpawning {
             for (int group = 0; group < 3; group++) {
                 int trialX = x, trialZ = z, maximumAttempts = 4; Entry selected = null; SpawnGroupData groupData = null;
                 for (int attempt = 0; attempt < maximumAttempts; attempt++) {
+                    if (category == Category.MONSTER && spawned >= available) return spawned;
                     trialX += random.nextInt(6) - random.nextInt(6); trialZ += random.nextInt(6) - random.nextInt(6);
                     BlockPos position = new BlockPos(trialX, y, trialZ);
                     Double placementY = positionY(level, position, category);
@@ -380,20 +391,65 @@ public final class R196MobSpawning {
                         if (!valid) continue;
                     }
                     if (category == Category.MONSTER && R196OutdoorChecks.outdoors(level, mob.blockPosition())) {
-                        if (day && undead(actual.sourceClass()) || !day && random.nextInt(R196SpawnRules.outdoorNightDenominator(moon)) != 0) continue chunkLoop;
+                        if (!R196SpawnRules.outdoorAllows(undead(actual.sourceClass()), day, moon, random::nextInt)) continue chunkLoop;
                     }
                     SourceFinalization prepared = prepareSourceFinalization(mob, level, groupData);
                     mob = prepared.mob();
-                    groupData = EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.NATURAL, prepared.group());
-                    if (mob.isRemoved() || mob.isSpawnCancelled()) continue;
-                    level.addFreshEntityWithPassengers(mob);
-                    if (!mob.isAddedToLevel()) continue;
-                    spawned++; present++;
+                    if (category == Category.MONSTER) {
+                        var result = finalizeNaturalMonster(level, mob, prepared.group(), available - spawned);
+                        groupData = result.group();
+                        if (result.monsters() == 0) continue;
+                        spawned += result.monsters(); present += result.monsters();
+                    } else {
+                        groupData = EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.NATURAL, prepared.group());
+                        if (mob.isRemoved() || mob.isSpawnCancelled()) continue;
+                        level.addFreshEntityWithPassengers(mob);
+                        if (!mob.isAddedToLevel()) continue;
+                        spawned++; present++;
+                    }
                     if (++successes >= actual.pack()) continue chunkLoop;
                 }
             }
         }
         return spawned;
+    }
+    public record NaturalMonsterSpawn(SpawnGroupData group, int monsters) {}
+
+    /** Commit a fresh natural-spawn tree atomically, including tt's already-added skeleton rider. */
+    public static NaturalMonsterSpawn finalizeNaturalMonster(ServerLevel level, Mob root, SpawnGroupData group, int allowance) {
+        List<Entity> owned = new ArrayList<>(); owned.add(root);
+        try {
+            SpawnGroupData finalized = EventHooks.finalizeMobSpawn(root, level, level.getCurrentDifficultyAt(root.blockPosition()), MobSpawnType.NATURAL, group);
+            // Snapshot immediately, before any parent add callback can cancel/remove it
+            // and consequently detach its pre-added rider from getSelfAndPassengers.
+            List<Entity> tree = root.getSelfAndPassengers().toList();
+            for (Entity entity : tree) if (!owned.contains(entity)) owned.add(entity);
+            int needed = (int)owned.stream().filter(entity -> !entity.isRemoved() && entity instanceof Mob mob
+                    && category(mob) == Category.MONSTER).count();
+            if (root.isRemoved() || root.isSpawnCancelled() || needed > allowance || allowance <= 0) {
+                discardNaturalTree(owned); return new NaturalMonsterSpawn(finalized, 0);
+            }
+            for (Entity entity : tree) {
+                if (entity.isRemoved()) continue;
+                // Source tt's skeleton is already registered; adding it again would replay
+                // join callbacks and attempt a duplicate world UUID insertion.
+                if (!entity.isAddedToLevel() && !level.addFreshEntity(entity)) {
+                    discardNaturalTree(owned); return new NaturalMonsterSpawn(finalized, 0);
+                }
+            }
+            if (root.isRemoved() || !root.isAddedToLevel()) {
+                discardNaturalTree(owned); return new NaturalMonsterSpawn(finalized, 0);
+            }
+            int added = (int)owned.stream().filter(entity -> !entity.isRemoved() && entity.isAddedToLevel()
+                    && entity instanceof Mob mob && category(mob) == Category.MONSTER).count();
+            return new NaturalMonsterSpawn(finalized, added);
+        } catch (RuntimeException | Error failure) {
+            discardNaturalTree(owned); throw failure;
+        }
+    }
+
+    private static void discardNaturalTree(List<Entity> owned) {
+        for (int index = owned.size() - 1; index >= 0; index--) owned.get(index).discard();
     }
     public static Entry select(ServerLevel level, BlockPos pos, Category category, RandomSource random, boolean modernOnly) {
         List<Entry> entries = pool(level, pos, category, modernOnly);
@@ -407,7 +463,7 @@ public final class R196MobSpawning {
             Entry entry = weighted(entries, random);
             if (entry.modern()) return entry;
             String name = entry.sourceClass();
-            if (!BloodMoonInvasionRules.depthAllows(name, sourceY, overworld, moon.blood() && !day, surface.value().getBaseTemperature() <= .15F,
+            if (!BloodMoonInvasionRules.depthAllows(name, sourceY, overworld, moon.blood(), surface.value().getBaseTemperature() <= .15F,
                     biomeId(surface, level) == 2, invasion)) continue;
             boolean stoneAbove = firstAbove(level, pos).is(Blocks.STONE) || firstAbove(level, pos).is(Blocks.DEEPSLATE);
             if (name.equals("tf")) {

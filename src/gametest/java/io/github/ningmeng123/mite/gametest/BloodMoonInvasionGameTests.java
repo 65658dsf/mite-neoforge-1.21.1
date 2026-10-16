@@ -162,6 +162,34 @@ public final class BloodMoonInvasionGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void bloodStormDaylightOpensSourceSurfaceExceptionsWithoutRemovingTheirClimateRules(GameTestHelper helper) throws Exception {
+        try (ProgressState state = new ProgressState(helper.getLevel()); Room room = new Room(helper)) {
+            for (int day : new int[]{32, 64, 96}) for (int hour : new int[]{0, 6000, 12000, 13000, 18000, 23000}) {
+                state.time((day - 1L) * 24_000L + hour);
+                room.biome(Biomes.PLAINS);
+                for (String source : List.of("EntityGhoul", "EntityBoneLord", "EntityRevenant"))
+                    helper.assertTrue(select(room, source) != null, "Actual blood-date selector admits surface " + source + " at day/hour " + day + "/" + hour);
+                helper.assertTrue(select(room, "EntityShadow") == null && select(room, "EntityWight") == null,
+                        "A blood storm does not turn warm plains into desert or freezing habitat");
+                helper.assertTrue(select(room, "EntityDemonSpider") == null,
+                        "Before day97 a blood storm releases only the documented source surface exceptions");
+                room.biome(Biomes.DESERT);
+                helper.assertTrue(select(room, "EntityShadow") != null && select(room, "EntityWight") == null,
+                        "Actual daytime/nighttime desert selection keeps the shadow niche");
+                room.biome(Biomes.SNOWY_PLAINS);
+                helper.assertTrue(select(room, "EntityWight") != null && select(room, "EntityShadow") == null,
+                        "Actual daytime/nighttime freezing selection keeps the wight niche");
+            }
+            room.biome(Biomes.PLAINS); state.time(24_000L + 6000L);
+            helper.assertTrue(select(room, "EntityBoneLord") == null && select(room, "EntityRevenant") == null,
+                    "Ordinary daylight before the permanent invasion keeps the original deep-only selection gates");
+            helper.assertTrue(select(room, "EntityLongdead") == null && select(room, "EntityAncientBoneLord") == null,
+                    "Blood-date daylight does not prematurely add the day97-exclusive source entries");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void expandedSelectionKeepsColdDesertStoneRoofAndTreeCoverQualifications(GameTestHelper helper) throws Exception {
         try (ProgressState state = new ProgressState(helper.getLevel()); Room room = new Room(helper)) {
             state.time(2_304_000L);
