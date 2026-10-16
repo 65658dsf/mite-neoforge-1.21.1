@@ -14,6 +14,20 @@ public final class SourceZombieDifficulty {
 
     private SourceZombieDifficulty() {}
 
+    public record SpawnHealth(float maximum, boolean fillAfterIncrease) {}
+
+    /** Only a fresh, full-health spawn may follow its newly rolled leader maximum. */
+    public static SpawnHealth captureSpawnHealth(Zombie zombie) {
+        float maximum = zombie.getMaxHealth();
+        boolean fresh = zombie.getSpawnType() == null && !zombie.isAddedToLevel() && zombie.tickCount == 0;
+        return new SpawnHealth(maximum, fresh && zombie.getHealth() >= maximum);
+    }
+
+    public static void finishSpawn(Zombie zombie, SpawnHealth before) {
+        if (before.fillAfterIncrease() && zombie.isAlive() && zombie.getMaxHealth() > before.maximum())
+            zombie.setHealth(zombie.getMaxHealth());
+    }
+
     public static boolean handles(EntityType<?> type) {
         return type == EntityType.ZOMBIE || type == EntityType.ZOMBIE_VILLAGER || type == EntityType.ZOMBIFIED_PIGLIN;
     }

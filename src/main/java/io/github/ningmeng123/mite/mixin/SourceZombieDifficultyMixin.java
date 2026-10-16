@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import io.github.ningmeng123.mite.entity.R196MobEquipment;
 import io.github.ningmeng123.mite.entity.SourceZombieDifficulty;
 import net.minecraft.util.RandomSource;
@@ -18,10 +19,20 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Keep native spawn/group hooks while replacing only the three source zombie identities' difficulty rules. @author NingMeng123 */
+/** Keep source difficulty rolls and initialize leader health across native zombie variants. @author NingMeng123 */
 @Mixin(Zombie.class)
 public abstract class SourceZombieDifficultyMixin {
     @Unique private Zombie mite$difficultyZombie() { return (Zombie)(Object)this; }
+
+    @WrapMethod(method = "finalizeSpawn")
+    private SpawnGroupData mite$fillNewLeaderHealth(ServerLevelAccessor level, DifficultyInstance difficulty,
+            MobSpawnType reason, SpawnGroupData group, Operation<SpawnGroupData> original) {
+        Zombie zombie = mite$difficultyZombie();
+        var health = SourceZombieDifficulty.captureSpawnHealth(zombie);
+        SpawnGroupData result = original.call(level, difficulty, reason, group);
+        SourceZombieDifficulty.finishSpawn(zombie, health);
+        return result;
+    }
 
     @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V", at = @At("RETURN"))
     private void mite$sourceBaseReinforcements(CallbackInfo ci) {

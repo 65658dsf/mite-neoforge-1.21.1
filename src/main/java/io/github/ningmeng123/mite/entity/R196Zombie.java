@@ -76,6 +76,7 @@ public final class R196Zombie extends Zombie implements R196Mob, PlayerTargetEye
     }
     @Nullable @Override public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason,
             @Nullable SpawnGroupData group) {
+        var health = SourceZombieDifficulty.captureSpawnHealth(this);
         ((MobSpawnTypeAccessor)(Object)this).mite$setSpawnType(reason);
         var follow = getAttribute(Attributes.FOLLOW_RANGE);
         follow.addOrReplacePermanentModifier(new AttributeModifier(ResourceLocation.fromNamespaceAndPath("mite", "random_follow_bonus"),
@@ -83,6 +84,7 @@ public final class R196Zombie extends Zombie implements R196Mob, PlayerTargetEye
         setBaby(false); setCanPickUpLoot(true); setCanBreakDoors(true);
         populateDefaultEquipmentSlots(random, difficulty);
         handleAttributes(R196MobEquipment.tension(this));
+        SourceZombieDifficulty.finishSpawn(this, health);
         return group;
     }
     @Override protected void handleAttributes(float tension) {
