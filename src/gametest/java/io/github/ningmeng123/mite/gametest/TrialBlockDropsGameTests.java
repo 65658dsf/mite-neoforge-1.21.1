@@ -219,7 +219,9 @@ public final class TrialBlockDropsGameTests {
         for (ServerLevel level : List.of(helper.getLevel().getServer().overworld(), underworld(helper))) {
             try (Fixture fixture = new Fixture(helper, level, 12); Session session = player(helper, level, fixture.center)) {
                 for (int removal = 0; removal < 3; removal++) {
-                    long seed = 196123L + removal;
+                    // These three fixed seeds select arrows in the native corridor pool, so this
+                    // destruction regression stays independent of the Overworld gem acceptance roll.
+                    long seed = 196136L + removal;
                     // Independent native reference: fill a separate unattached-to-world pot with
                     // the exact table, origin and nonzero seed. This preserves the real single-slot
                     // loot-fill behavior instead of guessing expected output from a display name.
@@ -228,6 +230,7 @@ public final class TrialBlockDropsGameTests {
                     reference.setLootTable(corridor, seed);
                     ItemStack expected = reference.getTheItem().copy();
                     helper.assertFalse(expected.isEmpty(), "The pinned vanilla trial corridor table has a positive native loot result");
+                    helper.assertTrue(expected.is(Items.ARROW), "The deterministic native reference selects an unaffected arrow reward");
 
                     fixture.place(fixture.center, Blocks.DECORATED_POT.defaultBlockState(), true);
                     DecoratedPotBlockEntity pot = (DecoratedPotBlockEntity)level.getBlockEntity(fixture.center);

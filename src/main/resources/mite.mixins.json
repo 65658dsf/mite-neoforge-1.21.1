@@ -36,6 +36,8 @@
     "FoodItemStackMixin",
     "RemovedDiamondStackLoadMixin",
     "RemovedDiamondLootMixin",
+    "OverworldTrialLootMixin",
+    "ReducedTrialVaultRewardMixin",
     "RemovedDiamondTradesMixin",
     "RemovedDiamondRecipesMixin",
     "RemovedDiamondMenuMixin",
