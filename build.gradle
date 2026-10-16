@@ -141,6 +141,15 @@ neoForge {
                         ? 'build/verification/client-settings-audit-absent.json'
                         : 'build/verification/client-settings-audit.json').absolutePath
             }
+            if (project.providers.gradleProperty('miteMinimalDebugAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.minimalDebugAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                boolean noDebugAuditMods = project.providers.gradleProperty('miteMinimalDebugAuditNoMods').getOrElse('false').toBoolean()
+                if (noDebugAuditMods) gameDirectory = file('build/verification/minimal-debug-no-mods-run')
+                systemProperty 'mite.minimalDebugAuditOutput', file(noDebugAuditMods
+                        ? 'build/verification/minimal-debug-audit-absent.json'
+                        : 'build/verification/minimal-debug-audit.json').absolutePath
+            }
             programArguments.addAll '--mod', project.mod_id, '--all',
                     '--output', file('src/generated/resources').absolutePath,
                     '--existing', file('src/main/resources').absolutePath

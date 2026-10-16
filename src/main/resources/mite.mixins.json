@@ -274,6 +274,8 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.MinimalDebugOverlayMixin",
+    "client.MinimalDebugCrosshairMixin",
     "client.FixedBrightnessOptionMixin",
     "client.SodiumBrightnessOptionMixin",
     "client.WorldCreationDifficultyMixin",
