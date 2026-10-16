@@ -3,18 +3,25 @@ package io.github.ningmeng123.mite.integration.jei;
 import io.github.ningmeng123.mite.crafting.TimedCraftingRecipes;
 import io.github.ningmeng123.mite.crafting.TimedCraftingRules;
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
-/** Read-only display data with no JEI or client linkage. @author NingMeng123 */
+/** Read-only pages retain their real source recipe separately from variant display IDs. @author NingMeng123 */
 public record WorkbenchJeiRecipe(String workstationId, RecipeHolder<CraftingRecipe> source,
         int width, int height, List<List<ItemStack>> inputs, ItemStack output,
-        TimedCraftingRecipes.Rule rule, float requiredCapacity, boolean shapeless) {
+        TimedCraftingRecipes.Rule rule, float requiredCapacity, boolean shapeless, ResourceLocation displayId) {
     public WorkbenchJeiRecipe {
         inputs = inputs.stream().map(slot -> slot.stream().map(ItemStack::copy).toList()).toList();
         output = output.copy();
+    }
+
+    public WorkbenchJeiRecipe(String workstationId, RecipeHolder<CraftingRecipe> source,
+            int width, int height, List<List<ItemStack>> inputs, ItemStack output,
+            TimedCraftingRecipes.Rule rule, float requiredCapacity, boolean shapeless) {
+        this(workstationId, source, width, height, inputs, output, rule, requiredCapacity, shapeless, source.id());
     }
 
     /** Level zero, default quality, no active curse; actual player manufacturing can take a different time. */

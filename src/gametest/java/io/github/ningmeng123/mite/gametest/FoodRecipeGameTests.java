@@ -49,10 +49,10 @@ public final class FoodRecipeGameTests {
     private FoodRecipeGameTests() {}
 
     @GameTest(template = "empty")
-    public static void full254SourceRecipesLoadWithoutTheElevenConflictingModernCrafts(GameTestHelper helper) {
+    public static void sourceFoodsAndModernWaterBowlSoupsLoadWithoutConflictingCrafts(GameTestHelper helper) {
         var foods = helper.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream()
                 .filter(holder -> holder.value() instanceof FoodManufacturingRecipe).toList();
-        helper.assertValueEqual(foods.size(), 254, "All active food recipes and their vessel dependencies load");
+        helper.assertValueEqual(foods.size(), 258, "254 source recipes and four modern water-bowl adaptations load");
         helper.assertValueEqual(foods.stream().filter(holder -> holder.value() instanceof FoodShapedRecipe).count(), 15L,
                 "Eight food/material patterns plus seven empty-bucket patterns retain their shaped form");
         helper.assertValueEqual(foods.stream().filter(holder -> holder.value().getResultItem(helper.getLevel().registryAccess())

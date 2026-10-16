@@ -84,7 +84,7 @@ public final class WorkbenchJeiCategory implements IRecipeCategory<WorkbenchJeiR
     @Override
     public ResourceLocation getRegistryName(WorkbenchJeiRecipe recipe) {
         ResourceLocation bench = ResourceLocation.parse(recipe.workstationId());
-        ResourceLocation source = recipe.source().id();
+        ResourceLocation source = recipe.displayId();
         return ResourceLocation.fromNamespaceAndPath("mite", "jei_workbench/" + bench.getNamespace() + "/" + bench.getPath()
                 + "/" + source.getNamespace() + "/" + source.getPath());
     }

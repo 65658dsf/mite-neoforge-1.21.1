@@ -3,8 +3,10 @@ package io.github.ningmeng123.mite.registry;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.crafting.FoodShapedRecipe;
 import io.github.ningmeng123.mite.crafting.FoodShapelessRecipe;
+import io.github.ningmeng123.mite.crafting.WaterBowlSuspiciousStewRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -16,6 +18,8 @@ public final class FoodRecipeSerializers {
             SERIALIZERS.register("food_shaped", FoodShapedRecipe.Serializer::new);
     public static final DeferredHolder<RecipeSerializer<?>, FoodShapelessRecipe.Serializer> SHAPELESS =
             SERIALIZERS.register("food_shapeless", FoodShapelessRecipe.Serializer::new);
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<WaterBowlSuspiciousStewRecipe>> WATER_BOWL_STEW =
+            SERIALIZERS.register("water_bowl_suspicious_stew", () -> new SimpleCraftingRecipeSerializer<>(WaterBowlSuspiciousStewRecipe::new));
     private FoodRecipeSerializers() {}
     public static void register(IEventBus bus) { SERIALIZERS.register(bus); }
 }

@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.crafting.FoodShapedRecipe;
 import io.github.ningmeng123.mite.crafting.FoodShapelessRecipe;
 import io.github.ningmeng123.mite.crafting.WorkbenchDismantleRecipe;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
+import io.github.ningmeng123.mite.crafting.WaterBowlSuspiciousStewRecipe;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -64,7 +66,17 @@ public final class WorkbenchJeiRecipes {
         List<ItemStack> milk = BuiltInRegistries.ITEM.stream().map(ItemStack::new)
                 .filter(FoodManufacturingRecipe::isSourceMilkBucket).toList();
         Map<String, Profile> profiles = profiles();
-        for (var holder : level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream()
+        List<RecipeHolder<CraftingRecipe>> displayRecipes = new ArrayList<>();
+        Map<ResourceLocation, RecipeHolder<CraftingRecipe>> displaySources = new LinkedHashMap<>();
+        for (var source : level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
+            if (source.value() instanceof WaterBowlSuspiciousStewRecipe) {
+                for (var variant : SuspiciousStewJeiRecipes.variants(source, level)) {
+                    displayRecipes.add(variant);
+                    displaySources.put(variant.id(), source);
+                }
+            } else displayRecipes.add(source);
+        }
+        for (var holder : displayRecipes.stream()
                 .sorted(Comparator.comparing(recipe -> recipe.id().toString())).toList()) {
             CraftingRecipe recipe = holder.value();
             // Dynamic repair/dye/map/firework recipes remain in JEI's existing extension system.
@@ -110,13 +122,13 @@ public final class WorkbenchJeiRecipes {
                 int displayHeight = shapeless ? (count + displayWidth - 1) / displayWidth : height;
                 List<List<ItemStack>> displaySlots = new ArrayList<>(slots.subList(0, count));
                 while (displaySlots.size() < displayWidth * displayHeight) displaySlots.add(List.of());
-                WorkbenchJeiRecipe page = new WorkbenchJeiRecipe(profile.id(), holder, displayWidth, displayHeight,
-                        displaySlots, output, rule, required, shapeless);
+                WorkbenchJeiRecipe page = new WorkbenchJeiRecipe(profile.id(), displaySources.getOrDefault(holder.id(), holder),
+                        displayWidth, displayHeight, displaySlots, output, rule, required, shapeless, holder.id());
                 // Seven separate source milk recipes accept identical mixed buckets. Show each batch only once.
                 if (!mixedMilk || pages.stream().noneMatch(old -> sameMilkBatch(old, page))) pages.add(page);
                 covered = true;
             }
-            if (covered) originals.add(holder);
+            if (covered && !SuspiciousStewJeiRecipes.isDisplayVariant(holder.id())) originals.add(holder);
         }
         return new Index(pages, originals);
     }

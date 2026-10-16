@@ -109,6 +109,11 @@ public final class MiteJeiPlugin implements IModPlugin {
         var manager = runtime.getRecipeManager();
         // Preserve JEI's dynamic repair/dye/map/firework extensions and other mods' custom recipe categories.
         if (!workbenchIndex.originals().isEmpty()) manager.hideRecipes(RecipeTypes.CRAFTING, workbenchIndex.originals());
+        if (workbenchIndex.recipes().stream().anyMatch(recipe -> SuspiciousStewJeiRecipes.isDisplayVariant(recipe.displayId()))) {
+            var obsoleteStews = manager.createRecipeLookup(RecipeTypes.CRAFTING).get()
+                    .filter(holder -> SuspiciousStewJeiRecipes.isObsoleteVanillaPage(holder, recipeLevel)).toList();
+            if (!obsoleteStews.isEmpty()) manager.hideRecipes(RecipeTypes.CRAFTING, obsoleteStews);
+        }
         if (recipes.isEmpty()) return;
         manager.hideRecipeCategory(RecipeTypes.SMELTING);
         manager.hideRecipeCategory(RecipeTypes.BLASTING);

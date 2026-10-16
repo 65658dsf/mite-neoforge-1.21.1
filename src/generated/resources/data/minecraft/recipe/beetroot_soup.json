@@ -1,0 +1,36 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:beetroot"
+    },
+    {
+      "item": "minecraft:beetroot"
+    },
+    {
+      "item": "minecraft:beetroot"
+    },
+    {
+      "item": "minecraft:beetroot"
+    },
+    {
+      "item": "minecraft:beetroot"
+    },
+    {
+      "item": "minecraft:beetroot"
+    },
+    {
+      "item": "mite:water_bowl"
+    }
+  ],
+  "manufacturing": {
+    "difficulty": 25.0,
+    "output_contains_bowl": true,
+    "source_order": 0
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:beetroot_soup"
+  }
+}

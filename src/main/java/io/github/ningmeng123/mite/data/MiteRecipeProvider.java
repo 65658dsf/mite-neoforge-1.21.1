@@ -41,6 +41,7 @@ public final class MiteRecipeProvider extends RecipeProvider {
         DecorativeRecipes.addRecipes(output);
         WeaponRecipes.addRecipes(output);
         UtilityRecipes.addRecipes(output);
+        SoupRecipes.addRecipes(output);
         // R196's flint workbench uses a fixed 2x2 pattern (horizontal mirror allowed).
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MiteWorkbenches.TABLES.get("flint").get())
                 .pattern("FB").pattern("SL")
