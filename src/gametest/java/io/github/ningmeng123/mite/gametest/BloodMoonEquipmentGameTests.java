@@ -67,19 +67,32 @@ public final class BloodMoonEquipmentGameTests {
     private record BloodFixture(long seed, long nextRandom) {}
     /** Independent first-stage blood probabilities and the documented unenchanted source-item RNG path. */
     private static BloodFixture bloodFixture(float tension, int... expectedTiers) {
-        long[] materialWeights = {390625L, 156250L, 62500L, 25000L, 10000L, 4000L, 1600L, 640L, 256L};
+        long[] materialWeights = {78125L, 31250L, 12500L, 2500L, 2500L, 2000L, 800L, 320L, 128L};
+        return bloodFixture(tension, .8D, materialWeights, 130123D, expectedTiers);
+    }
+    /** Independent eight-grade rational weights, with the copper/silver grade divided in half. */
+    private static BloodFixture highestBloodFixture(float tension, int... expectedTiers) {
+        long[] materialWeights = {823543L, 2352980L, 6722800L, 9604000L, 9604000L,
+                54880000L, 156800000L, 448000000L, 1280000000L};
+        return bloodFixture(tension, .96D, materialWeights, 1968787323D, expectedTiers);
+    }
+    private static BloodFixture copperSilverBloodFixture(float tension, int... expectedTiers) {
+        long[] materialWeights = {1715L, 4900L, 14000L, 20000L, 20000L, 16000L, 6400L, 2560L, 1024L};
+        return bloodFixture(tension, .86D, materialWeights, 86599D, expectedTiers);
+    }
+    private static BloodFixture bloodFixture(float tension, double acceptance, long[] materialWeights, double denominator, int... expectedTiers) {
         candidates: for (long value = 0; value < 100_000; value++) {
             RandomSource random = RandomSource.create(value);
             for (int expected : expectedTiers) {
                 if (expected == -2) continue; // An explicitly occupied slot must skip both acceptance and material draws.
-                boolean accepted = random.nextDouble() < .8D;
+                boolean accepted = random.nextDouble() < acceptance;
                 if (accepted != (expected >= 0)) continue candidates;
                 if (!accepted) continue;
                 double material = random.nextDouble();
                 long cumulative = 0L; int actual = 8;
                 for (int tier = 0; tier < materialWeights.length; tier++) {
                     cumulative += materialWeights[tier];
-                    if (material < cumulative / 650871D) { actual = tier; break; }
+                    if (material < cumulative / denominator) { actual = tier; break; }
                 }
                 if (actual != expected) continue candidates;
                 if (random.nextFloat() < .1F * tension) continue candidates; // Select a fixture without extra enchantment draws.
@@ -153,7 +166,7 @@ public final class BloodMoonEquipmentGameTests {
     @GameTest(template = "empty")
     public static void realSpawnAndJoinPathsCoverModernAndSourceHumanoidsAtTheHighestStage(GameTestHelper h) {
         try (Progress saved = new Progress(h)) {
-            set(h, 736, 735L * 24000L + 6000L);
+            set(h, 320, 319L * 24000L + 6000L);
             List<EntityType<?>> types = new ArrayList<>(List.of(EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER, EntityType.ZOMBIFIED_PIGLIN,
                     EntityType.HUSK, EntityType.DROWNED, EntityType.SKELETON, EntityType.WITHER_SKELETON, EntityType.STRAY, EntityType.BOGGED));
             for (MobKind kind : List.of(MobKind.GHOUL, MobKind.WIGHT, MobKind.SHADOW, MobKind.INVISIBLE_STALKER)) types.add(MiteMobs.type(kind));
@@ -165,7 +178,7 @@ public final class BloodMoonEquipmentGameTests {
                         EventHooks.finalizeMobSpawn(mob, h.getLevel(), h.getLevel().getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.SPAWN_EGG, null);
                         h.getLevel().addFreshEntity(mob);
                         var decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
-                        h.assertValueEqual(decision.getInt("stage"), 8, "Every eligible actual spawn path shares the maximum historical stage: " + type);
+                        h.assertValueEqual(decision.getInt("stage"), 8, "Every eligible actual spawn path reaches the maximum stage on the eighth blood date: " + type);
                         int[] tiers = decision.getIntArray("armor_tiers");
                         h.assertValueEqual(tiers.length, 4, "A blood-date native spawn records all four independent slots");
                         if (decision.getInt("filled_slots") == 0) continue;
@@ -432,7 +445,7 @@ public final class BloodMoonEquipmentGameTests {
         try (Progress saved = new Progress(h)) {
             set(h, 200, 199L * 24000L + 6000L);
             // Independently specified day200: p=9/16, armor52.8125%, held42.8125%.
-            // The normalized stage0/stage1 mixture puts a0.55..0.64 material draw in chainmail, while stage0 alone yields leather.
+            // The independent eight-grade day200 mixture puts0.55..0.64 in chainmail (0.48155..0.87041), while basis0 yields leather.
             Mob armored = create(h, MiteMobs.type(MobKind.GHOUL));
             armored.getRandom().setSeed(fractionalSeed(.5D, .528125D, .55D, .64D));
             BloodMoonEquipment.populate(armored);
@@ -506,17 +519,19 @@ public final class BloodMoonEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void eachBloodMoonAfterTheFirstAdvancesOneActualSpawnMaterialStage(GameTestHelper h) {
+    public static void actualBloodDatesKeepEarlierStagesAndReachAdamantiumOnTheEighth(GameTestHelper h) {
         try (Progress saved = new Progress(h)) {
             long[] days = {64L, 96L, 160L, 192L, 224L, 288L, 320L, 352L, 416L};
-            for (int stage = 0; stage < days.length; stage++) {
-                set(h, days[stage], (days[stage] - 1L) * 24000L + 6000L);
+            int[] stages = {0, 1, 2, 3, 5, 6, 8, 8, 8};
+            for (int index = 0; index < days.length; index++) {
+                int stage = stages[index];
+                set(h, days[index], (days[index] - 1L) * 24000L + 6000L);
                 Mob mob = create(h, EntityType.ZOMBIE);
                 h.assertTrue(BloodMoonEquipment.populate(mob), "Every blood moon from the second onward owns a progressive spawn roll");
                 CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
-                h.assertValueEqual(decision.getInt("stage"), stage, "Actual blood dates advance one material tier each, while blue dates are skipped");
+                h.assertValueEqual(decision.getInt("stage"), stage, "Actual blood dates share copper/silver, then iron and ancient metal before Adamantium at count eight");
                 h.assertTrue(decision.getBoolean("blood_date") && decision.getDouble("progress") == stage,
-                        "The stored blood progress agrees with the one-stage-per-blood calendar");
+                        "The stored blood progress agrees with the eighth-blood threshold");
             }
         }
         h.succeed();
@@ -545,6 +560,49 @@ public final class BloodMoonEquipmentGameTests {
                 }
             }
             h.assertValueEqual(mob.getRandom().nextLong(), fixture.nextRandom(), "Real RNG matches four independent acceptance/material paths and source wear draws");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void eighthBloodDateActuallyGeneratesMixedAdamantiumAndStillAllowsAnEmptySlot(GameTestHelper h) {
+        try (Progress saved = new Progress(h)) {
+            set(h, 320, 319L * 24000L + 6000L);
+            Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
+            int[] expected = {8, 7, -1, 8};
+            BloodFixture fixture = highestBloodFixture(R196MobEquipment.tension(mob), expected);
+            mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
+            CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
+            h.assertTrue(decision.getInt("stage") == 8 && decision.getLong("highest_day") == 320L && decision.getBoolean("blood_date"),
+                    "The actual eighth blood date records its advanced progression");
+            h.assertTrue(Arrays.equals(expected, decision.getIntArray("armor_tiers")) && decision.getInt("filled_slots") == 11,
+                    "Independent96-percent slots produce Adamantium, Mithril, empty leggings and Adamantium boots");
+            String[] ids = {"mite:adamantium_helmet", "mite:mithril_chestplate", "minecraft:air", "mite:adamantium_boots"};
+            for (int index = 0; index < SLOTS.size(); index++) h.assertValueEqual(
+                    BuiltInRegistries.ITEM.getKey(mob.getItemBySlot(SLOTS.get(index)).getItem()).toString(), ids[index],
+                    "Eighth-blood per-slot decisions resolve actual registered mixed armor");
+            h.assertValueEqual(mob.getRandom().nextLong(), fixture.nextRandom(),
+                    "The earlier threshold preserves independent acceptance/material draws and source equipment wear");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void fifthBloodDateCanMixCopperAndSilverWithinOneMaterialGrade(GameTestHelper h) {
+        try (Progress saved = new Progress(h)) {
+            set(h, 192, 191L * 24000L + 6000L);
+            Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
+            int[] expected = {3, 4, -1, 5};
+            BloodFixture fixture = copperSilverBloodFixture(R196MobEquipment.tension(mob), expected);
+            mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
+            CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
+            h.assertTrue(decision.getInt("stage") == 3 && Arrays.equals(expected, decision.getIntArray("armor_tiers")),
+                    "The fifth blood moon shares one copper/silver grade but persists their distinct material IDs");
+            String[] ids = {"mite:copper_helmet", "mite:silver_chestplate", "minecraft:air", "minecraft:iron_boots"};
+            for (int index = 0; index < SLOTS.size(); index++) h.assertValueEqual(
+                    BuiltInRegistries.ITEM.getKey(mob.getItemBySlot(SLOTS.get(index)).getItem()).toString(), ids[index],
+                    "One copper/silver grade allows actual mixed equipment and independent empty slots");
+            h.assertValueEqual(mob.getRandom().nextLong(), fixture.nextRandom(), "Grouped weights do not add a hidden second random draw for copper versus silver");
         }
         h.succeed();
     }
@@ -582,7 +640,7 @@ public final class BloodMoonEquipmentGameTests {
             CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY).copy();
             var armor = equipment(mob); ItemStack hand = mob.getMainHandItem().copy();
             CompoundTag serialized = new CompoundTag(); mob.saveWithoutId(serialized);
-            set(h, 1152, 6000L);
+            set(h, 320, 319L * 24000L + 6000L);
             Mob restored = create(h, MiteMobs.type(MobKind.GHOUL)); restored.load(serialized);
             for (boolean loaded : new boolean[]{true, false, false}) {
                 restored.getRandom().setSeed(196L); BloodMoonEquipment.join(new EntityJoinLevelEvent(restored, h.getLevel(), loaded));
@@ -610,7 +668,7 @@ public final class BloodMoonEquipmentGameTests {
             mob.getRandom().setSeed(fractionalSeed(0D, .7D, .85D, .93D));
             BloodMoonEquipment.join(new EntityJoinLevelEvent(mob, h.getLevel(), false));
             h.assertTrue(SLOTS.stream().allMatch(slot -> mob.getItemBySlot(slot).isEmpty()), "An accepted hand never changes four rejected armor slots");
-            h.assertValueEqual(held(mob).getInt("tier"), 2, "A naked blood-date humanoid independently selects gold from the documented first-stage interval");
+            h.assertValueEqual(held(mob).getInt("tier"), 2, "A naked blood-date humanoid independently selects gold in the eight-grade interval15625/18589..121875/130123");
             h.assertTrue(BuiltInRegistries.ITEM.getKey(mob.getMainHandItem().getItem()).toString().startsWith("minecraft:golden_"),
                     "The naked blood-date hand contains an actual matching gold tool");
         }

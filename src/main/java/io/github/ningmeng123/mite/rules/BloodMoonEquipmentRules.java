@@ -7,6 +7,7 @@ public final class BloodMoonEquipmentRules {
     public static final List<String> PREFIXES = List.of("minecraft:leather_", "minecraft:chainmail_", "minecraft:golden_",
             "mite:copper_", "mite:silver_", "minecraft:iron_", "mite:ancient_metal_", "mite:mithril_", "mite:adamantium_");
     public static final int HIGHEST_TIER = PREFIXES.size() - 1;
+    public static final long ADAMANTIUM_BLOOD_MOON = 8L;
     public static final long ORDINARY_START_DAY = 64L;
     public static final long ORDINARY_PROGRESS_START_DAY = 128L;
     public static final long ORDINARY_DAYS_PER_STAGE = 128L;
@@ -20,7 +21,17 @@ public final class BloodMoonEquipmentRules {
 
     /** -1 preserves the pre-progression source/native equipment path. */
     public static int stage(long bloodMoons) {
-        return bloodMoons < 2L ? -1 : (int)Math.min(HIGHEST_TIER, bloodMoons - 2L);
+        if (bloodMoons < 2L) return -1;
+        if (bloodMoons >= ADAMANTIUM_BLOOD_MOON) return HIGHEST_TIER;
+        int stage = (int)bloodMoons - 2;
+        // Copper and silver share a grade; do not spend a second blood moon on silver.
+        return stage >= 4 ? stage + 1 : stage;
+    }
+
+    /** Stable item indices remain compatible with saved equipment and calendar basis rows. */
+    public static int materialGrade(int tier) {
+        checkStage(tier);
+        return tier <= 3 ? tier : tier - 1;
     }
 
     public static boolean ordinaryActive(long highestDay) {
@@ -96,7 +107,7 @@ public final class BloodMoonEquipmentRules {
         return materialWeight(stage, tier, bloodDate) / total;
     }
 
-    /** The stage is the most likely material; lower and higher materials both remain possible. */
+    /** The stage's grade is most likely; copper/silver split their shared grade equally. */
     public static int selectTier(int stage, boolean bloodDate, double draw) {
         checkStage(stage);
         if (!(draw >= 0D && draw < 1D)) throw new IllegalArgumentException("Material draw must be in [0,1)");
@@ -111,7 +122,9 @@ public final class BloodMoonEquipmentRules {
     private static double materialWeight(int stage, int tier, boolean bloodDate) {
         double lower = bloodDate ? .35D : .5D;
         double upper = bloodDate ? .4D : .25D;
-        return tier < stage ? Math.pow(lower, stage - tier) : Math.pow(upper, tier - stage);
+        int distance = materialGrade(tier) - materialGrade(stage);
+        double weight = distance < 0 ? Math.pow(lower, -distance) : Math.pow(upper, distance);
+        return tier == 3 || tier == 4 ? weight / 2D : weight;
     }
 
     private static void checkStage(int stage) {
