@@ -44,7 +44,7 @@ public final class MiteJeiPlugin implements IModPlugin {
 
     private static Map<String, RecipeType<WorkbenchJeiRecipe>> workbenchTypes() {
         Map<String, RecipeType<WorkbenchJeiRecipe>> result = new LinkedHashMap<>();
-        WorkbenchJeiRecipes.profiles().keySet().forEach(id -> {
+        WorkbenchJeiRecipes.categoryProfiles().keySet().forEach(id -> {
             ResourceLocation bench = ResourceLocation.parse(id);
             result.put(id, RecipeType.create(Mite.MOD_ID,
                     "workbench_" + bench.getNamespace() + "_" + bench.getPath(), WorkbenchJeiRecipe.class));
@@ -75,7 +75,7 @@ public final class MiteJeiPlugin implements IModPlugin {
         if (level == null) return;
         recipeLevel = level;
         try {
-            var built = WorkbenchJeiRecipes.index(level);
+            var built = WorkbenchJeiRecipes.groupedIndex(level);
             WORKBENCH_TYPES.forEach((id, type) -> registration.addRecipes(type,
                     built.recipes().stream().filter(recipe -> recipe.workstationId().equals(id)).toList()));
             workbenchIndex = built;
@@ -100,7 +100,8 @@ public final class MiteJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         TYPES.forEach((id, type) -> registration.addRecipeCatalysts(type, furnace(id)));
         WORKBENCH_TYPES.forEach((id, type) -> {
-            if (!id.equals(WorkbenchJeiRecipes.INVENTORY)) registration.addRecipeCatalysts(type, furnace(id));
+            for (String workstation : WorkbenchJeiRecipes.categoryWorkstations(id))
+                registration.addRecipeCatalysts(type, furnace(workstation));
         });
     }
 

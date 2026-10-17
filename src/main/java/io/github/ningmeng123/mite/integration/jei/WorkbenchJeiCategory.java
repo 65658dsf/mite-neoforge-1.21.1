@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.crafting.WorkbenchDismantleRecipe;
 import io.github.ningmeng123.mite.crafting.FoodManufacturingRecipe;
 import java.math.BigDecimal;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -14,11 +15,12 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-/** One material bench per category; capacity is a recipe condition, never a suggested ingredient. @author NingMeng123 */
+/** One minimum-capacity category with all compatible tables as JEI catalysts. @author NingMeng123 */
 public final class WorkbenchJeiCategory implements IRecipeCategory<WorkbenchJeiRecipe> {
     private static final int WIDTH = 160;
     private static final int HEIGHT = 100;
@@ -69,12 +71,31 @@ public final class WorkbenchJeiCategory implements IRecipeCategory<WorkbenchJeiR
     public void draw(WorkbenchJeiRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         arrow.draw(graphics, 78, 27);
         drawFit(graphics, Component.translatable("jei.mite.workbench_time_basis"), 5, 67);
+        var times = WorkbenchJeiRecipes.categoryWorkstations(recipe.workstationId()).stream()
+                .mapToInt(recipe::baselineTicks).summaryStatistics();
+        String duration = times.getCount() == 0 ? seconds(recipe.baselineTicks())
+                : times.getMin() == times.getMax() ? seconds(times.getMin())
+                : seconds(times.getMin()) + "–" + seconds(times.getMax());
         Component time = recipe.rule() == null ? Component.translatable("jei.mite.workbench_untimed")
-                : Component.translatable("jei.mite.workbench_time", BigDecimal.valueOf(recipe.baselineTicks())
-                        .divide(BigDecimal.valueOf(20)).stripTrailingZeros().toPlainString());
+                : Component.translatable("jei.mite.workbench_time", duration);
         drawFit(graphics, time, 5, 80);
         if (isMixedMilk(recipe))
             drawFit(graphics, Component.translatable("jei.mite.workbench_mixed_milk"), 5, 91);
+    }
+
+    @Override
+    public void getTooltip(ITooltipBuilder tooltip, WorkbenchJeiRecipe recipe, IRecipeSlotsView slots,
+            double mouseX, double mouseY) {
+        if (recipe.rule() == null || mouseX < 5 || mouseX >= WIDTH - 5 || mouseY < 78 || mouseY >= 90) return;
+        for (String id : WorkbenchJeiRecipes.categoryWorkstations(recipe.workstationId())) {
+            ItemStack bench = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)));
+            tooltip.add(bench.getHoverName().copy().append(": ")
+                    .append(Component.translatable("jei.mite.workbench_time", seconds(recipe.baselineTicks(id)))));
+        }
+    }
+
+    private static String seconds(int ticks) {
+        return BigDecimal.valueOf(ticks).divide(BigDecimal.valueOf(20)).stripTrailingZeros().toPlainString();
     }
 
     private static boolean isMixedMilk(WorkbenchJeiRecipe recipe) {

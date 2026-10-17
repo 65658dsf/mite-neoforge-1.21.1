@@ -25,9 +25,11 @@ public record WorkbenchJeiRecipe(String workstationId, RecipeHolder<CraftingReci
     }
 
     /** Level zero, default quality, no active curse; actual player manufacturing can take a different time. */
-    public int baselineTicks() {
+    public int baselineTicks() { return baselineTicks(workstationId); }
+
+    public int baselineTicks(String workstation) {
         if (rule == null) return 0;
-        float capacity = WorkbenchJeiRecipes.profiles().get(workstationId).capacity();
+        float capacity = WorkbenchJeiRecipes.profiles().get(workstation).capacity();
         return TimedCraftingRules.period(rule.difficulty(), 0,
                 TimedCraftingRules.benchModifier(capacity, rule.requiredBench() != null), false);
     }

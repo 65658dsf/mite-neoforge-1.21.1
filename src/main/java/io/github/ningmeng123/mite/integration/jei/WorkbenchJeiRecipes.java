@@ -47,6 +47,42 @@ public final class WorkbenchJeiRecipes {
         return Collections.unmodifiableMap(result);
     }
 
+    /** JEI catalysts apply to an entire category, so equal-capacity tables share one category. */
+    public static Map<String, Profile> categoryProfiles() {
+        Map<String, Profile> result = new LinkedHashMap<>();
+        for (Profile profile : profiles().values()) {
+            if (result.values().stream().noneMatch(existing -> existing.capacity() == profile.capacity()
+                    && existing.gridSize() == profile.gridSize())) result.put(profile.id(), profile);
+        }
+        return Collections.unmodifiableMap(result);
+    }
+
+    /** Every table listed on the left can manufacture every recipe in this category. */
+    public static List<String> categoryWorkstations(String categoryId) {
+        Profile minimum = categoryProfiles().get(categoryId);
+        if (minimum == null) throw new IllegalArgumentException("Unknown workbench category: " + categoryId);
+        if (categoryId.equals(INVENTORY)) return List.of();
+        return profiles().values().stream().filter(profile -> profile.gridSize() == 3
+                && profile.capacity() >= minimum.capacity()).map(Profile::id).toList();
+    }
+
+    public static Index groupedIndex(Level level) { return groupedIndex(index(level)); }
+
+    /** Retain the separate 2x2 inventory view and one lowest-capacity table page per display recipe. */
+    public static Index groupedIndex(Index source) {
+        List<WorkbenchJeiRecipe> inventory = new ArrayList<>();
+        Map<ResourceLocation, WorkbenchJeiRecipe> tables = new LinkedHashMap<>();
+        Map<String, Profile> profiles = profiles();
+        for (WorkbenchJeiRecipe page : source.recipes()) {
+            if (page.workstationId().equals(INVENTORY)) inventory.add(page);
+            else tables.merge(page.displayId(), page, (first, second) ->
+                    profiles.get(first.workstationId()).capacity() <= profiles.get(second.workstationId()).capacity()
+                            ? first : second);
+        }
+        inventory.addAll(tables.values());
+        return new Index(inventory, source.originals());
+    }
+
     public static List<WorkbenchJeiRecipe> build(Level level) { return index(level).recipes(); }
 
     public static boolean supports(CraftingRecipe recipe) {
