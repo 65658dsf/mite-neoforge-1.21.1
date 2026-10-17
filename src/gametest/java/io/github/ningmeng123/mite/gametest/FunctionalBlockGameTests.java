@@ -422,35 +422,21 @@ public final class FunctionalBlockGameTests {
         helper.succeed();
     }
     @GameTest(template = "empty")
-    public static void realStrongboxServerTickerCompostsOneStoredUnitWithoutConsumingWormOrBowlFood(GameTestHelper helper) {
+    public static void realStrongboxRandomTickCompostsOneStoredUnitWithoutConsumingWormOrBowlFood(GameTestHelper helper) {
         BlockPos pos = place(helper, MiteFunctionalBlocks.STRONGBOXES.get("silver").get());
         var entity = (StrongboxBlockEntity)helper.getLevel().getBlockEntity(pos);
         var level = helper.getLevel();
         var state = level.getBlockState(pos);
-        var ticker = ((net.minecraft.world.level.block.EntityBlock)state.getBlock())
-                .getTicker(level, state, MiteFunctionalBlocks.STRONGBOX_ENTITY.get());
-        helper.assertTrue(ticker != null, "Source strongbox receives the existing food module's server ticker");
+        helper.assertTrue(state.isRandomlyTicking(), "Source strongbox participates in native block random ticking");
         entity.setItem(0, new ItemStack(io.github.ningmeng123.mite.registry.MiteFoods.get("raw_worm")));
         entity.setItem(1, new ItemStack(Items.MUSHROOM_STEW));
         entity.getPersistentData().putFloat(io.github.ningmeng123.mite.survival.ChestWormComposting.COMPOST_KEY, 1F);
-        int previousSpeed = level.getGameRules().getInt(net.minecraft.world.level.GameRules.RULE_RANDOMTICKING);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_RANDOMTICKING).set(1, level.getServer());
-        try {
-            // Use the real level's generator to select a deterministic successful first random-tick draw.
-            long winningSeed = -1;
-            for (long seed = 0; seed < 65536; seed++) {
-                level.random.setSeed(seed);
-                if (level.random.nextInt(4096) == 0) { winningSeed = seed; break; }
-            }
-            helper.assertTrue(winningSeed >= 0, "A deterministic ticker-selection seed exists");
-            level.random.setSeed(winningSeed);
-            ticker.tick(level, pos, state, entity);
-            helper.assertValueEqual(entity.countItem(io.github.ningmeng123.mite.registry.MiteFoods.get("manure")), 1, "One stored compost unit becomes exactly one manure");
-            helper.assertValueEqual(entity.countItem(io.github.ningmeng123.mite.registry.MiteFoods.get("raw_worm")), 1, "Ticking retains the worm");
-            helper.assertValueEqual(entity.countItem(Items.MUSHROOM_STEW), 1, "Flushing stored compost does not consume extra soup");
-            helper.assertValueEqual(entity.countItem(Items.BOWL), 0, "No extra soup container is created");
-            helper.assertValueEqual(entity.getPersistentData().getFloat(io.github.ningmeng123.mite.survival.ChestWormComposting.COMPOST_KEY), 0F, "Consumed stored progress is cleared");
-        } finally { level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_RANDOMTICKING).set(previousSpeed, level.getServer()); }
+        state.randomTick(level, pos, net.minecraft.util.RandomSource.create(196L));
+        helper.assertValueEqual(entity.countItem(io.github.ningmeng123.mite.registry.MiteFoods.get("manure")), 1, "One stored compost unit becomes exactly one manure");
+        helper.assertValueEqual(entity.countItem(io.github.ningmeng123.mite.registry.MiteFoods.get("raw_worm")), 1, "Random ticking retains the worm");
+        helper.assertValueEqual(entity.countItem(Items.MUSHROOM_STEW), 1, "Flushing stored compost does not consume extra soup");
+        helper.assertValueEqual(entity.countItem(Items.BOWL), 0, "No extra soup container is created");
+        helper.assertValueEqual(entity.getPersistentData().getFloat(io.github.ningmeng123.mite.survival.ChestWormComposting.COMPOST_KEY), 0F, "Consumed stored progress is cleared");
         helper.succeed();
     }
     @GameTest(template = "empty")
