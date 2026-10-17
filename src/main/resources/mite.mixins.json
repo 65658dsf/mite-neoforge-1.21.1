@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BlazeChargeAccess",
+    "SourceStatusEffectInstanceMixin",
+    "SourceStatusEffectLivingMixin",
     "SourceIceItemMeltingMixin",
     "AutoRestockGameModeMixin",
     "AutoRestockConsumptionMixin",

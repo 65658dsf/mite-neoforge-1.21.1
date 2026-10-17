@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.enchantment;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.entity.R196Mob;
 import io.github.ningmeng123.mite.rules.EnchantmentCombatRules;
+import io.github.ningmeng123.mite.survival.SourceStatusEffects;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -133,6 +134,14 @@ public final class SourceEnchantmentCombat {
     public static void afterEffectRemoved(LivingEntity entity, MobEffectInstance removed) { refreshMovement(entity, removed); }
     private static void refreshMovement(LivingEntity entity, MobEffectInstance removed) {
         if (entity.level().isClientSide) return;
+        SourceStatusEffects.refreshAttack(entity, removed);
+        if (SourceStatusEffects.managed(entity)) {
+            AttributeInstance speed = entity.getAttribute(Attributes.MOVEMENT_SPEED);
+            if (speed != null) modifier(speed, SPEED, entity instanceof Player ? R196Enchantments.equipped(entity, "speed") * .05D : 0D);
+            entity.getPersistentData().remove(SCALED_SLOW);
+            SourceStatusEffects.refreshMovement(entity, removed);
+            return;
+        }
         if (!(entity instanceof Player) && !entity.hasEffect(MobEffects.MOVEMENT_SLOWDOWN)
                 && !entity.getPersistentData().getBoolean(SCALED_SLOW)) return;
         AttributeInstance speed = entity.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -181,7 +190,6 @@ public final class SourceEnchantmentCombat {
     public static Vec3 webMotion(Entity entity, Vec3 movement) {
         if (!(entity instanceof Player player)) return movement;
         int free = R196Enchantments.equipped(player, "free_action");
-        if (free <= 0) return movement;
         double ratio = EnchantmentCombatRules.webMovementRatio(amplifier(player.getEffect(MobEffects.MOVEMENT_SLOWDOWN)),
                 amplifier(player.getEffect(MobEffects.MOVEMENT_SPEED)), free);
         return movement.multiply(ratio, 1D, ratio);

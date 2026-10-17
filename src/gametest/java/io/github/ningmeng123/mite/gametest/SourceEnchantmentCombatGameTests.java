@@ -196,7 +196,7 @@ public final class SourceEnchantmentCombatGameTests {
         player.removeEffect(MobEffects.MOVEMENT_SPEED);
         player.setItemSlot(EquipmentSlot.LEGS, ItemStack.EMPTY);
         SourceEnchantmentCombat.refreshMovement(player);
-        close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), base * 1.25D * .85D, "Removing enchanted leggings restores original modern slowness template");
+        close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), base * 1.25D * .8D, "Removing enchanted leggings restores the source ordinary slowness");
         player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
         close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), base * 1.25D, "Removing potion leaves no resistance modifier behind");
         player.setItemSlot(EquipmentSlot.LEGS, enchanted(h, Items.IRON_LEGGINGS, "free_action", 4));
