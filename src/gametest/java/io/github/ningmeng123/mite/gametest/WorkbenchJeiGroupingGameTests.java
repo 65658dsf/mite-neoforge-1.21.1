@@ -29,11 +29,12 @@ public final class WorkbenchJeiGroupingGameTests {
     private static final String IRON = "mite:iron_crafting_table";
     private static final String MITHRIL = "mite:mithril_crafting_table";
     private static final String ADAMANTIUM = "mite:adamantium_crafting_table";
+    private static final String VIBRANIUM = "mite:vibranium_crafting_table";
     private static final Set<String> ALL_TABLES = Set.of(FLINT, "mite:obsidian_crafting_table",
             COPPER, "mite:silver_crafting_table", "mite:gold_crafting_table", IRON,
-            "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM);
+            "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM, VIBRANIUM);
     private static final Set<String> METAL_TABLES = Set.of(COPPER, "mite:silver_crafting_table",
-            "mite:gold_crafting_table", IRON, "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM);
+            "mite:gold_crafting_table", IRON, "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM, VIBRANIUM);
 
     private WorkbenchJeiGroupingGameTests() {}
 
@@ -41,8 +42,8 @@ public final class WorkbenchJeiGroupingGameTests {
     public static void equalCapacityMetalsShareOneCategoryWithoutLosingTheirCatalysts(GameTestHelper helper) {
         var categories = WorkbenchJeiRecipes.categoryProfiles();
         helper.assertTrue(categories.keySet().equals(Set.of(INVENTORY, FLINT, "mite:obsidian_crafting_table",
-                COPPER, IRON, "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM)),
-                "Seven distinct table capacities and inventory produce exactly eight categories");
+                COPPER, IRON, "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM, VIBRANIUM)),
+                "Eight distinct table capacities and inventory produce exactly nine categories");
         helper.assertTrue(!categories.containsKey("mite:silver_crafting_table")
                 && !categories.containsKey("mite:gold_crafting_table"),
                 "Equal-capacity silver and gold do not add duplicate top tabs");
@@ -59,9 +60,9 @@ public final class WorkbenchJeiGroupingGameTests {
         var pages = WorkbenchJeiRecipes.groupedIndex(helper.getLevel()).recipes();
         assertOutputGroup(helper, pages, "mite:copper_pickaxe", COPPER, METAL_TABLES);
         assertOutputGroup(helper, pages, "minecraft:iron_pickaxe", IRON,
-                Set.of(IRON, "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM));
-        assertOutputGroup(helper, pages, "mite:mithril_pickaxe", MITHRIL, Set.of(MITHRIL, ADAMANTIUM));
-        assertOutputGroup(helper, pages, "mite:adamantium_pickaxe", ADAMANTIUM, Set.of(ADAMANTIUM));
+                Set.of(IRON, "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM, VIBRANIUM));
+        assertOutputGroup(helper, pages, "mite:mithril_pickaxe", MITHRIL, Set.of(MITHRIL, ADAMANTIUM, VIBRANIUM));
+        assertOutputGroup(helper, pages, "mite:adamantium_pickaxe", ADAMANTIUM, Set.of(ADAMANTIUM, VIBRANIUM));
         assertOutputGroup(helper, pages, "minecraft:oak_planks", FLINT, ALL_TABLES);
         helper.assertTrue(pages.stream().noneMatch(page -> page.workstationId().equals(INVENTORY)
                 && page.output().is(Items.OAK_PLANKS)), "Combining categories does not introduce forbidden inventory plank crafting");

@@ -44,7 +44,7 @@ public final class MiteFunctionalBlocks {
     public static final Map<String, DeferredBlock<MaterialAnvilBlock>> ANVILS = new LinkedHashMap<>();
     public static final Map<String, DeferredBlock<StrongboxBlock>> STRONGBOXES = new LinkedHashMap<>();
     static {
-        for (String material : List.of("copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium")) {
+        for (String material : List.of("copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium")) {
             String prefix = material.equals("gold") ? "golden" : material;
             if (!material.equals("iron")) {
                 var anvil = BLOCKS.register(prefix + "_anvil", () -> new MaterialAnvilBlock(material,
@@ -52,8 +52,9 @@ public final class MiteFunctionalBlocks {
                                 .sound(net.minecraft.world.level.block.SoundType.ANVIL)
                                 .strength(WorkbenchRules.materialCapacity(material) * 1.2F).noOcclusion()));
                 ANVILS.put(material, anvil);
-                ITEMS.registerSimpleBlockItem(anvil, new Item.Properties().stacksTo(1));
+                ITEMS.registerSimpleBlockItem(anvil, material.equals("vibranium") ? new Item.Properties().stacksTo(1).fireResistant() : new Item.Properties().stacksTo(1));
             }
+            if (material.equals("vibranium")) continue;
             var strongbox = BLOCKS.register(prefix + "_strongbox", () -> new StrongboxBlock(material,
                     BlockBehaviour.Properties.ofFullCopy(Blocks.CHEST).strength(WorkbenchRules.materialCapacity(material) * 1.2F)));
             STRONGBOXES.put(material, strongbox);

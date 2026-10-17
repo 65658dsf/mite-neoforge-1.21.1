@@ -1,0 +1,21 @@
+{
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "pattern": [
+    "I I",
+    "IAI",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "mite:vibranium_ingot"
+    },
+    "A": {
+      "item": "mite:adamantium_chestplate"
+    }
+  },
+  "result": {
+    "id": "mite:vibranium_chestplate",
+    "count": 1
+  }
+}

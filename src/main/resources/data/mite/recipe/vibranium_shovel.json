@@ -1,0 +1,24 @@
+{
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "pattern": [
+    "I",
+    "A",
+    "S"
+  ],
+  "key": {
+    "I": {
+      "item": "mite:vibranium_ingot"
+    },
+    "S": {
+      "item": "mite:obsidian_stick"
+    },
+    "A": {
+      "item": "mite:ancient_metal_shovel"
+    }
+  },
+  "result": {
+    "id": "mite:vibranium_shovel",
+    "count": 1
+  }
+}

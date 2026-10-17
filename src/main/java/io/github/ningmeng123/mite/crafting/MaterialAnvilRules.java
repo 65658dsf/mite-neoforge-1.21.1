@@ -97,6 +97,7 @@ public final class MaterialAnvilRules {
             case "ancient_metal" -> MiteMaterials.ANCIENT_METAL_NUGGET.get();
             case "mithril" -> MiteMaterials.MITHRIL_NUGGET.get();
             case "adamantium" -> MiteMaterials.ADAMANTIUM_NUGGET.get();
+            case "vibranium" -> MiteMaterials.VIBRANIUM_NUGGET.get();
             default -> null;
         };
     }

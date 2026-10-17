@@ -74,6 +74,10 @@
     "mite:ancient_metal_chainmail_leggings",
     "mite:ancient_metal_boots",
     "mite:ancient_metal_chainmail_boots",
+    "mite:vibranium_helmet",
+    "mite:vibranium_chestplate",
+    "mite:vibranium_leggings",
+    "mite:vibranium_boots",
     {
       "id": "#mite:simplyswords/enchantable/protection",
       "required": false

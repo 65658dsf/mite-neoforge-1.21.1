@@ -61,10 +61,10 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class WorkbenchJeiRecipesGameTests {
     private static final Set<String> ALL_TABLES = Set.of("mite:flint_crafting_table", "mite:obsidian_crafting_table",
             "mite:copper_crafting_table", "mite:silver_crafting_table", "mite:gold_crafting_table",
-            "mite:iron_crafting_table", "mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table");
+            "mite:iron_crafting_table", "mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table");
     private static final Set<String> METAL_TABLES = Set.of("mite:copper_crafting_table", "mite:silver_crafting_table",
             "mite:gold_crafting_table", "mite:iron_crafting_table", "mite:ancient_metal_crafting_table",
-            "mite:mithril_crafting_table", "mite:adamantium_crafting_table");
+            "mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table");
     private WorkbenchJeiRecipesGameTests() {}
 
     @GameTest(template = "empty")
@@ -80,13 +80,13 @@ public final class WorkbenchJeiRecipesGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void allNineMaterialTablesAndTheTwoByTwoInventoryHaveIndependentProfiles(GameTestHelper helper) {
-        Map<String, Float> capacities = Map.of("minecraft:inventory", 0F, "mite:flint_crafting_table", 1F,
-                "mite:obsidian_crafting_table", 2F, "mite:copper_crafting_table", 4F, "mite:silver_crafting_table", 4F,
-                "mite:gold_crafting_table", 4F, "mite:iron_crafting_table", 8F, "mite:ancient_metal_crafting_table", 16F,
-                "mite:mithril_crafting_table", 64F, "mite:adamantium_crafting_table", 256F);
+    public static void allTenMaterialTablesAndTheTwoByTwoInventoryHaveIndependentProfiles(GameTestHelper helper) {
+        Map<String, Float> capacities = Map.ofEntries(Map.entry("minecraft:inventory", 0F), Map.entry("mite:flint_crafting_table", 1F),
+                Map.entry("mite:obsidian_crafting_table", 2F), Map.entry("mite:copper_crafting_table", 4F), Map.entry("mite:silver_crafting_table", 4F),
+                Map.entry("mite:gold_crafting_table", 4F), Map.entry("mite:iron_crafting_table", 8F), Map.entry("mite:ancient_metal_crafting_table", 16F),
+                Map.entry("mite:mithril_crafting_table", 64F), Map.entry("mite:adamantium_crafting_table", 256F), Map.entry("mite:vibranium_crafting_table", 512F));
         var profiles = WorkbenchJeiRecipes.profiles();
-        helper.assertTrue(profiles.keySet().equals(capacities.keySet()), "The viewer exposes exactly the nine enabled source benches and inventory crafting");
+        helper.assertTrue(profiles.keySet().equals(capacities.keySet()), "The viewer exposes exactly ten enabled material benches and inventory crafting");
         capacities.forEach((id, capacity) -> {
             helper.assertValueEqual(profiles.get(id).capacity(), capacity, "Workbench material capacity comes from the independent source tier table: " + id);
             helper.assertValueEqual(profiles.get(id).gridSize(), id.equals("minecraft:inventory") ? 2 : 3,
@@ -102,9 +102,9 @@ public final class WorkbenchJeiRecipesGameTests {
         var pages = WorkbenchJeiRecipes.build(helper.getLevel());
         assertWorkstations(helper, pages, "mite:copper_pickaxe", METAL_TABLES);
         assertWorkstations(helper, pages, "minecraft:iron_pickaxe", Set.of("mite:iron_crafting_table", "mite:ancient_metal_crafting_table",
-                "mite:mithril_crafting_table", "mite:adamantium_crafting_table"));
-        assertWorkstations(helper, pages, "mite:mithril_pickaxe", Set.of("mite:mithril_crafting_table", "mite:adamantium_crafting_table"));
-        assertWorkstations(helper, pages, "mite:adamantium_pickaxe", Set.of("mite:adamantium_crafting_table"));
+                "mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table"));
+        assertWorkstations(helper, pages, "mite:mithril_pickaxe", Set.of("mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table"));
+        assertWorkstations(helper, pages, "mite:adamantium_pickaxe", Set.of("mite:adamantium_crafting_table", "mite:vibranium_crafting_table"));
         for (var page : matching(pages, "mite:copper_pickaxe")) {
             helper.assertValueEqual(page.requiredCapacity(), 4F, "All equal-capacity copper, silver and gold tables support copper equipment");
             helper.assertValueEqual(page.rule().difficulty(), 1250F, "Copper pickaxe keeps the independently extracted whole-batch difficulty");
@@ -121,8 +121,8 @@ public final class WorkbenchJeiRecipesGameTests {
         assertWorkstations(helper, pages, "mite:copper_crafting_table", ALL_TABLES);
         assertWorkstations(helper, pages, "mite:iron_crafting_table", METAL_TABLES);
         assertWorkstations(helper, pages, "mite:mithril_crafting_table", Set.of("mite:ancient_metal_crafting_table",
-                "mite:mithril_crafting_table", "mite:adamantium_crafting_table"));
-        assertWorkstations(helper, pages, "mite:adamantium_crafting_table", Set.of("mite:mithril_crafting_table", "mite:adamantium_crafting_table"));
+                "mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table"));
+        assertWorkstations(helper, pages, "mite:adamantium_crafting_table", Set.of("mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table"));
         for (String material : List.of("copper", "iron", "mithril", "adamantium")) {
             float expected = switch (material) { case "copper" -> 1F; case "iron" -> 4F; case "mithril" -> 16F; default -> 64F; };
             helper.assertTrue(matching(pages, "mite:" + material + "_crafting_table").stream().allMatch(page -> page.requiredCapacity() == expected),
@@ -175,7 +175,7 @@ public final class WorkbenchJeiRecipesGameTests {
         // recipe. Its D100/no-metal rule must not be mistaken for this D1200 manufacture.
         var foodPages = pages.stream().filter(page -> page.source().value() instanceof FoodManufacturingRecipe).toList();
         assertWorkstations(helper, foodPages, "mite:copper_bucket", METAL_TABLES);
-        assertWorkstations(helper, foodPages, "mite:ancient_metal_bucket", Set.of("mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table"));
+        assertWorkstations(helper, foodPages, "mite:ancient_metal_bucket", Set.of("mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table"));
         assertWorkstations(helper, foodPages, "minecraft:golden_apple", METAL_TABLES);
         for (var copper : matching(foodPages, "mite:copper_bucket")) {
             helper.assertValueEqual(copper.rule().difficulty(), 1200F, "Food serializer metadata also retains metal-vessel crafting difficulty");
@@ -220,7 +220,7 @@ public final class WorkbenchJeiRecipesGameTests {
             Item empty = item(metal.equals("iron") ? "minecraft:bucket" : "mite:" + metal + "_bucket");
             var conversions = pages.stream().filter(page -> page.output().is(empty)
                     && page.inputs().stream().flatMap(List::stream).anyMatch(stack -> stack.is(stone))).toList();
-            helper.assertValueEqual(conversions.size(), 10, "Source stone bucket dismantles at inventory and all nine material benches");
+            helper.assertValueEqual(conversions.size(), 11, "Source stone bucket dismantles at inventory and all ten material benches");
             helper.assertTrue(conversions.stream().map(WorkbenchJeiRecipe::workstationId).collect(Collectors.toSet()).equals(allProfiles),
                     "Returning a high-metal vessel is not newly forging that metal: " + metal);
             for (var conversion : conversions) {
@@ -245,9 +245,9 @@ public final class WorkbenchJeiRecipesGameTests {
         var withInventory = new java.util.HashSet<>(ALL_TABLES); withInventory.add("minecraft:inventory");
         Map<String, Set<String>> mintStations = Map.of(
                 "copper", METAL_TABLES, "silver", METAL_TABLES, "gold", METAL_TABLES,
-                "ancient_metal", Set.of("mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table"),
-                "mithril", Set.of("mite:mithril_crafting_table", "mite:adamantium_crafting_table"),
-                "adamantium", Set.of("mite:adamantium_crafting_table"));
+                "ancient_metal", Set.of("mite:ancient_metal_crafting_table", "mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table"),
+                "mithril", Set.of("mite:mithril_crafting_table", "mite:adamantium_crafting_table", "mite:vibranium_crafting_table"),
+                "adamantium", Set.of("mite:adamantium_crafting_table", "mite:vibranium_crafting_table"));
         for (String metal : List.of("copper", "silver", "gold", "ancient_metal", "mithril", "adamantium")) {
             Item coin = item("mite:" + metal + "_coin"); Item nugget = item(metal.equals("gold") ? "minecraft:gold_nugget" : "mite:" + metal + "_nugget");
             assertWorkstations(helper, pages, "mite:" + metal + "_coin", mintStations.get(metal));
@@ -287,7 +287,7 @@ public final class WorkbenchJeiRecipesGameTests {
         var pages = WorkbenchJeiRecipes.build(helper.getLevel()).stream().filter(page -> page.source().id().equals(source.id())).toList();
         var allProfiles = new java.util.HashSet<>(ALL_TABLES); allProfiles.add("minecraft:inventory");
         helper.assertTrue(recipe.waterPotionOnly(), "The source bottle recipe is the subtype-sensitive utility recipe");
-        helper.assertValueEqual(pages.size(), 10, "Source water/wart/coal recipe appears at inventory and nine material benches");
+        helper.assertValueEqual(pages.size(), 11, "Source water/wart/coal recipe appears at inventory and ten material benches");
         helper.assertTrue(pages.stream().map(WorkbenchJeiRecipe::workstationId).collect(Collectors.toSet()).equals(allProfiles),
                 "Three shapeless source ingredients require neither high-metal forging nor a three-wide pattern");
         for (var page : pages) {
@@ -317,7 +317,7 @@ public final class WorkbenchJeiRecipesGameTests {
         helper.assertValueEqual(originals.stream().map(RecipeHolder::id).distinct().count(), 63L,
                 "The hidden-original index retains every unique milk recipe ID exactly once");
         var milkPages = index.recipes().stream().filter(WorkbenchJeiRecipesGameTests::mixedMilk).toList();
-        helper.assertValueEqual(milkPages.size(), 85, "Each of nine tables has nine cheese quantities; the 2x2 inventory has four quantities");
+        helper.assertValueEqual(milkPages.size(), 94, "Each of ten tables has nine cheese quantities; the 2x2 inventory has four quantities");
         for (String station : WorkbenchJeiRecipes.profiles().keySet()) {
             int maximum = station.equals("minecraft:inventory") ? 4 : 9;
             var stationPages = milkPages.stream().filter(page -> page.workstationId().equals(station)).toList();

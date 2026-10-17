@@ -25,11 +25,12 @@ public final class MaterialAssetsProvider implements DataProvider {
             save(work, cache, "assets/mite/models/item/" + name + ".json", "{\"parent\":\"mite:block/" + name + "\"}");
             save(work, cache, "data/mite/loot_table/blocks/" + name + ".json", "{\"type\":\"minecraft:block\",\"pools\":[{\"rolls\":1,\"entries\":[{\"type\":\"minecraft:item\",\"name\":\"mite:" + name + "\"}],\"conditions\":[{\"condition\":\"minecraft:survives_explosion\"}]}]}");
         }
-        for (String metal : List.of("copper", "silver", "ancient_metal", "mithril", "adamantium")) {
+        for (String metal : List.of("copper", "silver", "ancient_metal", "mithril", "adamantium", "vibranium")) {
             model(work, cache, metal + "_nugget", metal.equals("copper")
                     ? "minecraft:item/iron_nugget" : "mite:item/" + metal + "_nugget");
             if (!metal.equals("copper")) model(work, cache, metal + "_ingot", "mite:item/" + metal + "_ingot");
         }
+        model(work, cache, "obsidian_stick", "mite:item/obsidian_stick");
         for (String material : List.of("obsidian", "emerald", "diamond", "quartz", "glass")) {
             model(work, cache, material + "_shard", "mite:item/" + material + "_shard");
         }

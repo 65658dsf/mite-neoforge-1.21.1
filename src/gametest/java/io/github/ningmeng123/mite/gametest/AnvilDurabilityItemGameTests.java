@@ -31,18 +31,20 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class AnvilDurabilityItemGameTests {
     private static final BlockPos SITE = new BlockPos(1, 1, 1);
-    private record MaterialCase(String name, int maximum) {
+    private record MaterialCase(String name, int maximum, int wornMinimum) {
         Block block() { return name.equals("iron") ? Blocks.ANVIL : MiteFunctionalBlocks.ANVILS.get(name).get(); }
     }
     private static final List<MaterialCase> MATERIALS = List.of(
-            new MaterialCase("copper", 198400), new MaterialCase("silver", 198400), new MaterialCase("gold", 198400),
-            new MaterialCase("iron", 396800), new MaterialCase("ancient_metal", 793600),
-            new MaterialCase("mithril", 3174400), new MaterialCase("adamantium", 12697600));
+            new MaterialCase("copper", 198400, 158720), new MaterialCase("silver", 198400, 158720), new MaterialCase("gold", 198400, 158720),
+            new MaterialCase("iron", 396800, 317440), new MaterialCase("ancient_metal", 793600, 634880),
+            new MaterialCase("mithril", 3174400, 2539520), new MaterialCase("adamantium", 12697600, 10158080),
+            // Source float division reaches 0.8F at this first integer, one before exact integer 80% wear.
+            new MaterialCase("vibranium", 25395200, 20316159));
 
     private AnvilDurabilityItemGameTests() {}
 
     @GameTest(template = "empty")
-    public static void sevenFreshMaterialsDisplayTheirActualSourceMaximumWithoutEquipmentDamage(GameTestHelper helper) {
+    public static void eightFreshMaterialsDisplayTheirActualMaximumWithoutEquipmentDamage(GameTestHelper helper) {
         for (MaterialCase material : MATERIALS) {
             ItemStack stack = new ItemStack(material.block());
             assertView(helper, AnvilDurability.of(stack), material.maximum, material.maximum, material.name);
@@ -70,7 +72,8 @@ public final class AnvilDurabilityItemGameTests {
         for (MaterialCase material : MATERIALS) if (!material.name.equals("iron")) {
             for (int stage = 0; stage <= 2; stage++) {
                 ItemStack stack = staged(material, stage);
-                int remaining = stage == 2 ? material.maximum / 5 : stage == 1 ? material.maximum / 2 : material.maximum;
+                int remaining = stage == 2 ? material.maximum - material.wornMinimum
+                        : stage == 1 ? material.maximum / 2 : material.maximum;
                 assertView(helper, AnvilDurability.of(stack), remaining, material.maximum, material.name + " stage " + stage);
                 helper.assertTrue(stack.get(DataComponents.BLOCK_STATE).equals(
                                 BlockItemStateProperties.EMPTY.with(MaterialAnvilBlock.DAMAGE_STAGE, stage)),

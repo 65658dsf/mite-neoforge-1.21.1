@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:item/shield",
+  "overrides": [
+    {
+      "model": "mite:item/vibranium_shield_blocking",
+      "predicate": {
+        "blocking": 1
+      }
+    }
+  ]
+}

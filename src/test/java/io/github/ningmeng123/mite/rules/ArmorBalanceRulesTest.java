@@ -78,6 +78,22 @@ class ArmorBalanceRulesTest {
         assertEquals(0F, EquipmentDurabilityRules.armorProtectionFactor(1023, 1024, true));
     }
 
+    @Test void vibraniumKeepsDocumentedSlotDefenseAndToughness() {
+        var vibranium = ArmorBalanceRules.stats("vibranium", false);
+        int[] components = {5, 8, 7, 4};
+        int[] defense = {5, 8, 7, 4};
+        float[] toughness = {3.3F, 5.3F, 4.7F, 2.7F};
+        float[] knockbackResistance = {.12F, .2F, .18F, .1F};
+        for (int i = 0; i < components.length; i++) {
+            assertEquals(defense[i], vibranium.protection(components[i]));
+            assertEquals(toughness[i], vibranium.toughness(components[i]), 0.00001F);
+            assertEquals(knockbackResistance[i], vibranium.knockbackResistance(components[i]), 0.00001F);
+        }
+        assertEquals(4F, vibranium.toughness(), 0.00001F);
+        assertThrows(IllegalArgumentException.class, () -> vibranium.toughness(0));
+        assertThrows(IllegalArgumentException.class, () -> ArmorBalanceRules.stats("vibranium", true));
+    }
+
     @Test void unknownMaterialsAndNonHumanoidSlotsCannotSilentlyCreateArmorStats() {
         assertThrows(IllegalArgumentException.class, () -> ArmorBalanceRules.stats("unknown", false));
         assertThrows(IllegalArgumentException.class, () -> ArmorBalanceRules.stats("diamond", true));

@@ -164,6 +164,7 @@ public final class TimedCraftingController {
                 || prepared.quality().repair() && !CraftingQuality.canRepair(player, prepared.result())) return false;
         for (int i = 0; i < prepared.grid().getContainerSize(); i++) {
             if (prepared.grid().getItem(i).isDamaged() && !prepared.quality().repair()
+                    && !(prepared.recipe().value() instanceof VibraniumUpgradeRecipe)
                     && !CraftingQuality.shieldDecoration(prepared.recipe(), prepared.result())) return false;
         }
         return true;

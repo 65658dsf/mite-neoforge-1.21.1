@@ -3,10 +3,13 @@ package io.github.ningmeng123.mite.gametest.client;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +21,7 @@ import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -49,8 +53,14 @@ import net.neoforged.neoforge.client.event.RenderFrameEvent;
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT)
 public final class SimplySwordsClientAudit {
     private static final List<String> MATERIALS = List.of("rusted_iron", "copper", "silver",
-            "ancient_metal", "mithril", "adamantium");
+            "ancient_metal", "mithril", "adamantium", "vibranium");
+    private static final List<String> NATIVE_PATHS = List.of("vibranium_hatchet", "vibranium_axe", "vibranium_pickaxe",
+            "vibranium_shovel", "vibranium_hoe", "vibranium_mattock", "vibranium_scythe", "vibranium_shears",
+            "vibranium_dagger", "vibranium_knife", "vibranium_sword", "vibranium_battle_axe", "vibranium_war_hammer",
+            "vibranium_helmet", "vibranium_chestplate", "vibranium_leggings", "vibranium_boots", "vibranium_bow",
+            "vibranium_shield", "vibranium_ingot", "vibranium_nugget", "vibranium_block", "vibranium_crafting_table", "vibranium_anvil");
     private static volatile Set<ModelResourceLocation> optionalModels = Set.of();
+    private static volatile Set<ModelResourceLocation> nativeModels = Set.of();
     private static volatile boolean baked;
     private static boolean finished;
     private static JsonObject pendingReport;
@@ -64,8 +74,13 @@ public final class SimplySwordsClientAudit {
         @SubscribeEvent public static void completed(ModelEvent.BakingCompleted event) {
             if (!Boolean.getBoolean("mite.simplySwordsClientAudit")) return;
             Set<ModelResourceLocation> loaded = new HashSet<>();
-            for (var id : event.getModels().keySet()) if (optional(id.id())) loaded.add(id);
+            Set<ModelResourceLocation> nativeLoaded = new HashSet<>();
+            for (var id : event.getModels().keySet()) {
+                if (optional(id.id())) loaded.add(id);
+                if (id.id().getNamespace().equals("mite") && NATIVE_PATHS.contains(id.id().getPath())) nativeLoaded.add(id);
+            }
             optionalModels = Set.copyOf(loaded);
+            nativeModels = Set.copyOf(nativeLoaded);
             baked = true;
         }
     }
@@ -80,7 +95,8 @@ public final class SimplySwordsClientAudit {
         report.addProperty("author", "NingMeng123");
         report.addProperty("simply_swords_loaded", SimplySwordsCompat.enabled());
         report.addProperty("actual_model_baking_completed", baked);
-        report.addProperty("scope", "engine baked models, item cache, stitched sprites, decoded PNG structure and a native GUI item-render contact sheet");
+        report.addProperty("scope", "native vibranium and optional Simply Swords engine baked inventory models, item-renderer caches, stitched sprites, manifest PNGs and animation metadata; optional Simply Swords GUI contact sheet");
+        report.addProperty("worn_armor_render_verified", false);
         report.addProperty("world_created", minecraft.level != null);
         report.addProperty("title_screen_visible", minecraft.screen instanceof TitleScreen);
         report.addProperty("screen", minecraft.screen == null ? "none" : minecraft.screen.getClass().getName());
@@ -90,6 +106,7 @@ public final class SimplySwordsClientAudit {
         JsonArray models = new JsonArray(); report.add("models", models);
         try {
             check(minecraft.level == null, "The client audit must start outside a played world");
+            auditNativeVibranium(minecraft, report, failures);
             if (SimplySwordsCompat.enabled()) auditPresent(minecraft, report, models, failures);
             else auditAbsent(report);
             report.addProperty("status", failures.isEmpty() ? "passed" : "failed");
@@ -130,7 +147,7 @@ public final class SimplySwordsClientAudit {
             pendingReport.addProperty("screenshot_status", "saved_native_render_target");
             pendingReport.addProperty("screenshot", screenshot.toString());
             pendingReport.addProperty("screenshot_rendered_frames", contactSheet.renderedFrames);
-            pendingReport.addProperty("screenshot_item_rows", 7);
+            pendingReport.addProperty("screenshot_item_rows", MATERIALS.size() + 1);
             pendingReport.addProperty("screenshot_item_columns", SimplySwordsCompat.families().size());
             pendingReport.addProperty("screenshot_render_method", "GuiGraphics.renderItem via native ItemRenderer, including three-dimensional greathammer");
         } catch (Exception failure) {
@@ -156,9 +173,123 @@ public final class SimplySwordsClientAudit {
         report.addProperty("checked_models", 0);
     }
 
+    private static void auditNativeVibranium(Minecraft minecraft, JsonObject report, JsonArray failures) throws Exception {
+        JsonArray models = new JsonArray();
+        report.add("native_vibranium_models", models);
+        for (String path : NATIVE_PATHS) {
+            JsonObject facts = new JsonObject(); models.add(facts);
+            ResourceLocation itemId = id("mite", path);
+            facts.addProperty("item", itemId.toString());
+            try {
+                Item item = BuiltInRegistries.ITEM.getOptional(itemId).orElse(Items.AIR);
+                check(item != Items.AIR, "Native vibranium item is registered");
+                ModelResourceLocation modelId = ModelResourceLocation.inventory(itemId);
+                check(nativeModels.contains(modelId), "The real baking event includes the native inventory model");
+                var manager = minecraft.getModelManager();
+                BakedModel model = manager.getModel(modelId);
+                check(model != null && model != manager.getMissingModel(), "The native inventory model is not missing");
+                check(minecraft.getItemRenderer().getItemModelShaper().getItemModel(item) == model,
+                        "The real ItemRenderer cache resolves the native inventory model");
+                check(!missing(model.getParticleIcon()), "The native particle sprite is stitched");
+                facts.addProperty("inventory_model", modelId.toString());
+                facts.addProperty("model_class", model.getClass().getName());
+                facts.addProperty("item_renderer_cache_matches", true);
+                facts.addProperty("particle_sprite", model.getParticleIcon().contents().name().toString());
+                facts.addProperty("builtin_entity_renderer", model.isCustomRenderer());
+                facts.addProperty("gui_3d", model.isGui3d());
+                if (path.equals("vibranium_shield")) {
+                    check(model.isCustomRenderer(), "The shield retains its builtin entity renderer");
+                    ResourceLocation texture = id("mite", "textures/entity/shield/vibranium.png");
+                    try (var stream = minecraft.getResourceManager().open(texture); NativeImage png = NativeImage.read(stream)) {
+                        check(png.getWidth() == 64 && png.getHeight() == 64, "The builtin shield renderer's local texture has its exact 64 by 64 UV canvas");
+                    }
+                    facts.addProperty("custom_renderer_texture", texture.toString());
+                    facts.addProperty("quad_check", "builtin entity renderer uses a directly verified texture");
+                } else {
+                    List<BakedQuad> quads = new ArrayList<>(model.getQuads(null, null, RandomSource.create(0L)));
+                    for (Direction face : Direction.values()) quads.addAll(model.getQuads(null, face, RandomSource.create(0L)));
+                    check(!quads.isEmpty(), "The native model contains drawable baked geometry");
+                    Set<ResourceLocation> sprites = new HashSet<>();
+                    for (BakedQuad quad : quads) {
+                        check(!missing(quad.getSprite()), "Every native drawable face has a stitched sprite");
+                        sprites.add(quad.getSprite().contents().name());
+                    }
+                    check(sprites.stream().anyMatch(sprite -> sprite.getNamespace().equals("mite")), "The native item uses actual local vibranium artwork");
+                    if (!path.equals("vibranium_block") && !path.equals("vibranium_crafting_table") && !path.equals("vibranium_anvil")) {
+                        ResourceLocation expected = id("mite", path.equals("vibranium_bow")
+                                ? "item/bows/vibranium/standby" : "item/" + path);
+                        check(sprites.contains(expected), "The native model's actual faces resolve its intended vibranium sprite");
+                    }
+                    JsonArray used = new JsonArray(); sprites.stream().map(ResourceLocation::toString).sorted().forEach(used::add);
+                    facts.add("actual_quad_sprites", used);
+                    facts.addProperty("quad_count", quads.size());
+                }
+                facts.addProperty("status", "passed");
+            } catch (Exception failure) {
+                facts.addProperty("status", "failed"); facts.addProperty("failure", failure.toString());
+                failures.add(itemId + ": " + failure);
+            }
+        }
+        JsonArray assets = new JsonArray(); report.add("native_vibranium_assets", assets);
+        int pngs = 0, animations = 0;
+        for (String name : List.of("vibranium-native-assets.json", "vibranium-extension-assets.json")) {
+            JsonObject manifest;
+            try (var reader = new InputStreamReader(Objects.requireNonNull(SimplySwordsClientAudit.class.getResourceAsStream("/mite/" + name)), StandardCharsets.UTF_8)) {
+                manifest = JsonParser.parseReader(reader).getAsJsonObject();
+            }
+            for (var element : manifest.getAsJsonArray("assets")) {
+                JsonObject entry = element.getAsJsonObject();
+                String destination = entry.get("destination").getAsString();
+                String prefix = "src/main/resources/assets/";
+                if (!destination.startsWith(prefix) || !(destination.endsWith(".png") || destination.endsWith(".png.mcmeta"))) continue;
+                String resource = destination.substring(prefix.length());
+                int slash = resource.indexOf('/');
+                ResourceLocation location = id(resource.substring(0, slash), resource.substring(slash + 1));
+                JsonObject facts = new JsonObject(); assets.add(facts);
+                facts.addProperty("resource", location.toString()); facts.addProperty("manifest", name);
+                try {
+                    byte[] bytes;
+                    try (var stream = minecraft.getResourceManager().open(location)) { bytes = stream.readAllBytes(); }
+                    String hash = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));
+                    check(hash.equals(entry.get("sha256").getAsString()), "The loaded resource matches its documented source bytes");
+                    facts.addProperty("sha256", hash);
+                    if (destination.endsWith(".png")) {
+                        try (NativeImage png = NativeImage.read(new ByteArrayInputStream(bytes))) {
+                            check(png.getWidth() == entry.get("width").getAsInt() && png.getHeight() == entry.get("height").getAsInt(),
+                                    "Decoded PNG dimensions match the documented native UV layout");
+                            int visible = 0;
+                            for (int y = 0; y < png.getHeight(); y++) for (int x = 0; x < png.getWidth(); x++)
+                                if ((png.getPixelRGBA(x, y) >>> 24) != 0) visible++;
+                            check(visible > 0, "The documented PNG contains visible artwork");
+                            facts.addProperty("width", png.getWidth()); facts.addProperty("height", png.getHeight());
+                            facts.addProperty("visible_pixels", visible);
+                        }
+                        pngs++;
+                    } else {
+                        JsonObject animation = JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("animation");
+                        check(animation != null, "The loaded sprite metadata contains an animation section");
+                        int frameTime = animation.has("frametime") ? animation.get("frametime").getAsInt() : 1;
+                        check(frameTime > 0, "Animation frame time is positive");
+                        facts.addProperty("frame_time", frameTime);
+                        if (animation.has("frames")) facts.addProperty("declared_frame_entries", animation.getAsJsonArray("frames").size());
+                        animations++;
+                    }
+                    facts.addProperty("status", "passed");
+                } catch (Exception failure) {
+                    facts.addProperty("status", "failed"); facts.addProperty("failure", failure.toString());
+                    failures.add(location + ": " + failure);
+                }
+            }
+        }
+        report.addProperty("checked_native_vibranium_models", models.size());
+        report.addProperty("checked_native_vibranium_pngs", pngs);
+        report.addProperty("checked_native_vibranium_animation_metadata", animations);
+        report.addProperty("armor_layer_validation", "manifest bytes and decoded PNG UV dimensions only; no equipped armor entity was rendered");
+    }
+
     private static void auditPresent(Minecraft minecraft, JsonObject report, JsonArray models, JsonArray failures) throws Exception {
         long registered = BuiltInRegistries.ITEM.keySet().stream().filter(SimplySwordsClientAudit::added).count();
-        check(registered == 90, "Exactly ninety additional weapons must be registered before model verification");
+        check(registered == 105, "Exactly one hundred five additional weapons must be registered before model verification");
         Map<String, Set<String>> materialHashes = new LinkedHashMap<>();
         Map<String, ReferenceTexture> dimensions = new HashMap<>();
         for (String family : SimplySwordsCompat.families()) {
@@ -191,13 +322,13 @@ public final class SimplySwordsClientAudit {
         JsonObject distinct = new JsonObject();
         for (var entry : materialHashes.entrySet()) {
             distinct.addProperty(entry.getKey(), entry.getValue().size());
-            if (entry.getValue().size() != 6) failures.add("Expected six distinct material textures for " + entry.getKey());
+            if (entry.getValue().size() != MATERIALS.size()) failures.add("Expected seven distinct material textures for " + entry.getKey());
         }
         report.add("distinct_pixel_hashes_per_family", distinct);
         report.addProperty("registered_added_weapons", registered);
         report.addProperty("checked_models", models.size());
         report.addProperty("checked_original_reference_dimensions", dimensions.size());
-        report.addProperty("all_materials_distinct", materialHashes.values().stream().allMatch(hashes -> hashes.size() == 6));
+        report.addProperty("all_materials_distinct", materialHashes.values().stream().allMatch(hashes -> hashes.size() == MATERIALS.size()));
     }
 
     private static void auditModel(Minecraft minecraft, ResourceLocation weaponId, String family, JsonObject facts) {
@@ -293,7 +424,7 @@ public final class SimplySwordsClientAudit {
     }
 
     private static final class ContactSheetScreen extends Screen {
-        private static final List<String> LABELS = List.of("原铁", "锈铁", "铜", "银", "远古", "秘银", "艾德曼");
+        private static final List<String> LABELS = List.of("原铁", "锈铁", "铜", "银", "远古", "秘银", "艾德曼", "振金");
         private static final int CELL = 24;
         private static final int LABEL_WIDTH = 32;
         private final List<List<ItemStack>> rows = new ArrayList<>();

@@ -19,14 +19,19 @@ public final class R196ArmorItem extends ArmorItem {
         this.definition = definition;
         EquipmentDurability.registerArmor(this, definition.profile());
     }
+    public Definition definition() { return definition; }
     public static ItemAttributeModifiers attributes(Definition definition) {
         var stats = ArmorBalanceRules.stats(definition.material(), definition.chainmail());
         var id = ResourceLocation.withDefaultNamespace("armor." + definition.type().getName());
         var slot = EquipmentSlotGroup.bySlot(definition.type().getSlot());
         var builder = ItemAttributeModifiers.builder().add(Attributes.ARMOR,
                 new AttributeModifier(id, stats.protection(definition.components()), AttributeModifier.Operation.ADD_VALUE), slot);
-        if (stats.toughness() > 0F) builder.add(Attributes.ARMOR_TOUGHNESS,
-                new AttributeModifier(id, stats.toughness(), AttributeModifier.Operation.ADD_VALUE), slot);
+        float toughness = stats.toughness(definition.components());
+        if (toughness > 0F) builder.add(Attributes.ARMOR_TOUGHNESS,
+                new AttributeModifier(id, toughness, AttributeModifier.Operation.ADD_VALUE), slot);
+        float knockbackResistance = stats.knockbackResistance(definition.components());
+        if (knockbackResistance > 0F) builder.add(Attributes.KNOCKBACK_RESISTANCE,
+                new AttributeModifier(id, knockbackResistance, AttributeModifier.Operation.ADD_VALUE), slot);
         return builder.build();
     }
 }

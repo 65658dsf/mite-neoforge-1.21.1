@@ -280,6 +280,14 @@
     {
       "id": "mite:simplyswords_adamantium_halberd",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_halberd",
+      "required": false
     }
   ]
 }

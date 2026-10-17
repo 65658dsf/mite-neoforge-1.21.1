@@ -10,6 +10,7 @@
     "mite:iron_crafting_table",
     "mite:ancient_metal_crafting_table",
     "mite:mithril_crafting_table",
-    "mite:adamantium_crafting_table"
+    "mite:adamantium_crafting_table",
+    "mite:vibranium_crafting_table"
   ]
 }

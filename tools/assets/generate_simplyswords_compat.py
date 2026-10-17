@@ -47,9 +47,11 @@ MATERIALS = {
     "ancient_metal": ("Ancient Metal", "远古金属"),
     "mithril": ("Mithril", "秘银"),
     "adamantium": ("Adamantium", "艾德曼"),
+    "vibranium": ("Vibranium", "振金"),
 }
-# Shades sampled from the existing MITE sword sprites. The source iron/gold
-# difference identifies exactly the same metal region used by the original mod.
+# Existing-metal shades come from MITE sword sprites; vibranium shades come
+# from the generated palette study in docs/art/vibranium-palette.png. The
+# source iron/gold difference identifies the original mod's metal region.
 STOPS = (24, 68, 107, 150, 190, 216, 255)
 PALETTES = {
     "rusted_iron": ((24,24,24),(68,68,68),(107,107,107),(135,120,111),(165,148,137),(189,178,171),(202,195,190)),
@@ -58,6 +60,7 @@ PALETTES = {
     "ancient_metal": ((30,38,26),(78,89,73),(97,105,93),(140,148,136),(189,197,185),(214,225,209),(246,254,242)),
     "mithril": ((41,51,61),(68,84,100),(86,105,124),(128,147,166),(184,213,230),(203,234,253),(255,255,255)),
     "adamantium": ((3,3,45),(22,23,104),(78,79,114),(120,120,162),(164,165,232),(180,180,234),(235,235,255)),
+    "vibranium": ((39,35,58),(61,48,85),(75,74,97),(97,96,119),(102,122,163),(116,207,253),(209,251,247)),
 }
 CONDITIONS = [{"type": "neoforge:mod_loaded", "modid": "simplyswords"}]
 SWORD_FAMILIES = set(FAMILIES) - {"sai", "greataxe", "halberd", "greathammer", "scythe"}
@@ -133,7 +136,7 @@ def redraw_material(iron: Image.Image, gold: Image.Image, material: str) -> Imag
 
 
 def preview_sheet(source: dict[str, Image.Image], rendered: dict[tuple[str,str], Image.Image]) -> Image.Image:
-    """Review-only original iron row followed by six exact-shape material rows."""
+    """Review-only original iron row followed by exact-shape material rows."""
     width, row_height, header, labels = 108, 114, 38, 135
     rows = ["SS iron reference", *MATERIALS]
     image = Image.new("RGB", (labels + width * len(FAMILIES), header + row_height * len(rows)), (29,32,38))
@@ -308,8 +311,15 @@ def main() -> None:
             "source_archive": source_path,
             "sha256": hashlib.sha256(archive_path.read_bytes()).hexdigest(),
         },
+        "vibranium_artwork": {
+            "author": "NingMeng123",
+            "palette_reference": "docs/art/vibranium-palette.png",
+            "palette_source": "Built-in imagegen palette study based on the referenced vibranium navy-violet metal and cyan highlights",
+            "palette_rgb": PALETTES["vibranium"],
+            "application": "Deterministic luminance repaint of only the original Simply Swords metal region; original grips, silhouettes and model UVs are preserved",
+        },
         "notes": [
-            "All 90 textures are MITE material redraws based on Simply Swords original iron sprites; source artwork belongs to the credited Simply Swords artists.",
+            f"All {len(ids)} textures are MITE material redraws based on Simply Swords original iron sprites; source artwork belongs to the credited Simply Swords artists.",
             "The native iron/gold texture differences define the exact metal mask. MITE colors repaint that region using source luminance; silhouettes, transparency, grips and non-metal decoration remain unchanged.",
             "The original weapon silhouettes and UV layouts are retained; no new weapon shapes are claimed.",
             "Models inherit the original mod's geometry and display transforms, including the three-dimensional greathammer.",
@@ -336,7 +346,8 @@ def main() -> None:
         args.preview.parent.mkdir(parents=True, exist_ok=True)
         preview_sheet(original_iron, rendered).save(args.preview)
         print(f"Material-redraw comparison sheet: {args.preview}")
-    print(f"{'Verified' if args.check else 'Generated'} {len(ids)} weapons, 75 recipes, 75 recipe advancements and {len(files)} resource files.")
+    recipe_count = (len(MATERIALS) - 1) * len(FAMILIES)
+    print(f"{'Verified' if args.check else 'Generated'} {len(ids)} weapons, {recipe_count} recipes, {recipe_count} recipe advancements and {len(files)} resource files.")
 
 
 if __name__ == "__main__":

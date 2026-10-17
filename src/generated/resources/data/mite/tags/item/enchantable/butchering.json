@@ -11,6 +11,8 @@
     "mite:ancient_metal_dagger",
     "mite:mithril_dagger",
     "mite:adamantium_dagger",
+    "mite:vibranium_dagger",
+    "mite:vibranium_knife",
     {
       "id": "#mite:simplyswords/enchantable/butchering",
       "required": false

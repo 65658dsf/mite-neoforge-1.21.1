@@ -19,6 +19,8 @@
     "mite:rusted_iron_leggings",
     "mite:ancient_metal_chestplate",
     "mite:ancient_metal_leggings",
+    "mite:vibranium_chestplate",
+    "mite:vibranium_leggings",
     {
       "id": "#mite:simplyswords/enchantable/projectile_protection",
       "required": false

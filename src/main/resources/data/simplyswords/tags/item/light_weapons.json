@@ -96,6 +96,22 @@
     {
       "id": "mite:simplyswords_adamantium_chakram",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_rapier",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_sai",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_cutlass",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_chakram",
+      "required": false
     }
   ]
 }

@@ -5,13 +5,14 @@ import java.util.List;
 /** User-selected modern armor progression, not R196 source probabilities. @author NingMeng123 */
 public final class BloodMoonEquipmentRules {
     public static final List<String> PREFIXES = List.of("minecraft:leather_", "minecraft:chainmail_", "minecraft:golden_",
-            "mite:copper_", "mite:silver_", "minecraft:iron_", "mite:ancient_metal_", "mite:mithril_", "mite:adamantium_");
+            "mite:copper_", "mite:silver_", "minecraft:iron_", "mite:ancient_metal_", "mite:mithril_", "mite:adamantium_", "mite:vibranium_");
     public static final int HIGHEST_TIER = PREFIXES.size() - 1;
     public static final long ADAMANTIUM_BLOOD_MOON = 8L;
+    public static final long VIBRANIUM_BLOOD_MOON = 9L;
     public static final long ORDINARY_START_DAY = 64L;
     public static final long ORDINARY_PROGRESS_START_DAY = 128L;
     public static final long ORDINARY_DAYS_PER_STAGE = 128L;
-    public static final long ORDINARY_MAXIMUM_DAY = 1152L;
+    public static final long ORDINARY_MAXIMUM_DAY = 1280L;
     private BloodMoonEquipmentRules() {}
 
     public static long bloodMoons(long highestDay) {
@@ -22,7 +23,8 @@ public final class BloodMoonEquipmentRules {
     /** -1 preserves the pre-progression source/native equipment path. */
     public static int stage(long bloodMoons) {
         if (bloodMoons < 2L) return -1;
-        if (bloodMoons >= ADAMANTIUM_BLOOD_MOON) return HIGHEST_TIER;
+        if (bloodMoons >= VIBRANIUM_BLOOD_MOON) return HIGHEST_TIER;
+        if (bloodMoons >= ADAMANTIUM_BLOOD_MOON) return 8;
         int stage = (int)bloodMoons - 2;
         // Copper and silver share a grade; do not spend a second blood moon on silver.
         return stage >= 4 ? stage + 1 : stage;
@@ -133,6 +135,6 @@ public final class BloodMoonEquipmentRules {
 
     private static void checkProgress(double progress) {
         if (!Double.isFinite(progress) || progress < 0D || progress > HIGHEST_TIER)
-            throw new IllegalArgumentException("Ordinary equipment progress must be finite and in [0,8]");
+            throw new IllegalArgumentException("Ordinary equipment progress must be finite and in [0,9]");
     }
 }

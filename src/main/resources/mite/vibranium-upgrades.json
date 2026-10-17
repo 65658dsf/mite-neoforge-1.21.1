@@ -1,0 +1,77 @@
+{
+  "author": "NingMeng123",
+  "items": {
+    "mite:vibranium_helmet": {
+      "base": "mite:adamantium_helmet",
+      "lowest_difficulty": 332800.0,
+      "vibranium_ingots": 4,
+      "preserves_quality": true
+    },
+    "mite:vibranium_chestplate": {
+      "base": "mite:adamantium_chestplate",
+      "lowest_difficulty": 563200.0,
+      "vibranium_ingots": 7,
+      "preserves_quality": true
+    },
+    "mite:vibranium_leggings": {
+      "base": "mite:adamantium_leggings",
+      "lowest_difficulty": 486400.0,
+      "vibranium_ingots": 6,
+      "preserves_quality": true
+    },
+    "mite:vibranium_boots": {
+      "base": "mite:adamantium_boots",
+      "lowest_difficulty": 256000.0,
+      "vibranium_ingots": 3,
+      "preserves_quality": true
+    },
+    "mite:vibranium_pickaxe": {
+      "base": "mite:adamantium_pickaxe",
+      "lowest_difficulty": 230970.0,
+      "vibranium_ingots": 3,
+      "preserves_quality": true
+    },
+    "mite:vibranium_sword": {
+      "base": "mite:adamantium_sword",
+      "lowest_difficulty": 153625.0,
+      "vibranium_ingots": 2,
+      "preserves_quality": true
+    },
+    "mite:vibranium_shovel": {
+      "base": "mite:ancient_metal_shovel",
+      "lowest_difficulty": 53370.0,
+      "vibranium_ingots": 1,
+      "preserves_quality": true
+    },
+    "mite:vibranium_axe": {
+      "base": "mite:ancient_metal_axe",
+      "lowest_difficulty": 158970.0,
+      "vibranium_ingots": 3,
+      "preserves_quality": true
+    },
+    "mite:vibranium_dagger": {
+      "base": "mite:ancient_metal_dagger",
+      "lowest_difficulty": 52825.0,
+      "vibranium_ingots": 1,
+      "preserves_quality": true
+    },
+    "mite:vibranium_war_hammer": {
+      "base": "mite:ancient_metal_war_hammer",
+      "lowest_difficulty": 264570.0,
+      "vibranium_ingots": 5,
+      "preserves_quality": true
+    },
+    "mite:vibranium_battle_axe": {
+      "base": "mite:ancient_metal_battle_axe",
+      "lowest_difficulty": 211770.0,
+      "vibranium_ingots": 4,
+      "preserves_quality": true
+    },
+    "mite:vibranium_bow": {
+      "base": "mite:ancient_metal_bow",
+      "lowest_difficulty": 65442.77777777778,
+      "vibranium_ingots": 1,
+      "preserves_quality": true
+    }
+  }
+}

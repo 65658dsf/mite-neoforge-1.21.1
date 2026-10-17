@@ -47,9 +47,9 @@ public final class AnvilJeiRecipesGameTests {
     private static final BlockPos SITE = new BlockPos(1, 1, 1);
     private static final Set<String> ALL_ANVILS = Set.of("mite:copper_anvil", "mite:silver_anvil", "mite:golden_anvil",
             "minecraft:anvil", "minecraft:chipped_anvil", "minecraft:damaged_anvil", "mite:ancient_metal_anvil",
-            "mite:mithril_anvil", "mite:adamantium_anvil");
+            "mite:mithril_anvil", "mite:adamantium_anvil", "mite:vibranium_anvil");
     private static final Set<String> IRON_ANVILS = Set.of("minecraft:anvil", "minecraft:chipped_anvil", "minecraft:damaged_anvil",
-            "mite:ancient_metal_anvil", "mite:mithril_anvil", "mite:adamantium_anvil");
+            "mite:ancient_metal_anvil", "mite:mithril_anvil", "mite:adamantium_anvil", "mite:vibranium_anvil");
     private static volatile List<String> constructionCategoryIds;
     private static volatile boolean constructionAnvilsUnbound;
     private static volatile boolean constructionPluginInitialized;
@@ -80,8 +80,8 @@ public final class AnvilJeiRecipesGameTests {
     public static void categoryIdsAndOptionalPluginInitializeBeforeDeferredAnvilsAreBound(GameTestHelper helper) {
         helper.assertTrue(constructionAnvilsUnbound, "Construct callback checked truly unbound deferred anvils rather than post-registration state");
         List<String> expected = List.of("mite:copper_anvil", "minecraft:anvil", "mite:ancient_metal_anvil",
-                "mite:mithril_anvil", "mite:adamantium_anvil");
-        helper.assertTrue(expected.equals(constructionCategoryIds), "All five correct repair categories were available during mod construction");
+                "mite:mithril_anvil", "mite:adamantium_anvil", "mite:vibranium_anvil");
+        helper.assertTrue(expected.equals(constructionCategoryIds), "All six correct repair categories were available during mod construction");
         helper.assertTrue(new HashSet<>(constructionCategoryIds).equals(AnvilJeiRecipes.categoryProfiles().keySet()),
                 "Early metadata and the later real registered block profiles describe the same categories");
         if (ModList.get().isLoaded("jei")) helper.assertTrue(constructionPluginInitialized,
@@ -90,7 +90,7 @@ public final class AnvilJeiRecipesGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void commonAnvilIndexLoadsWithoutJeiOrClientApiAndGroupsAllNineAnvils(GameTestHelper helper) {
+    public static void commonAnvilIndexLoadsWithoutJeiOrClientApiAndGroupsAllTenAnvils(GameTestHelper helper) {
         helper.assertFalse(ModList.get().isLoaded("jei"), "The dedicated verification runtime has no JEI mod");
         try {
             Class.forName("mezz.jei.api.IModPlugin", false, AnvilJeiRecipesGameTests.class.getClassLoader());
@@ -101,17 +101,17 @@ public final class AnvilJeiRecipesGameTests {
         Map<String, Float> expectedCapacities = Map.of("mite:copper_anvil", 4F, "mite:silver_anvil", 4F,
                 "mite:golden_anvil", 4F, "minecraft:anvil", 8F, "minecraft:chipped_anvil", 8F,
                 "minecraft:damaged_anvil", 8F, "mite:ancient_metal_anvil", 16F, "mite:mithril_anvil", 64F,
-                "mite:adamantium_anvil", 256F);
+                "mite:adamantium_anvil", 256F, "mite:vibranium_anvil", 512F);
         var profiles = AnvilJeiRecipes.profiles();
-        helper.assertTrue(profiles.keySet().equals(expectedCapacities.keySet()), "Exactly six source anvils and three native iron states are registered");
+        helper.assertTrue(profiles.keySet().equals(expectedCapacities.keySet()), "Exactly seven material anvils and three native iron states are registered");
         expectedCapacities.forEach((id, capacity) -> {
             helper.assertValueEqual(profiles.get(id).capacity(), capacity, "Independent material capacity: " + id);
             helper.assertValueEqual(MaterialAnvilRules.capacity(profiles.get(id).state()), capacity, "Profile represents the real block: " + id);
         });
         var categories = AnvilJeiRecipes.categoryProfiles();
-        helper.assertValueEqual(categories.size(), 5, "Equal-capacity metals and damaged iron states do not duplicate category tabs");
+        helper.assertValueEqual(categories.size(), 6, "Equal-capacity metals and damaged iron states do not duplicate category tabs");
         helper.assertTrue(categories.values().stream().map(AnvilJeiRecipes.Profile::capacity).collect(Collectors.toSet())
-                .equals(Set.of(4F, 8F, 16F, 64F, 256F)), "Categories retain all five independently specified capacity tiers");
+                .equals(Set.of(4F, 8F, 16F, 64F, 256F, 512F)), "Categories retain all six independently specified capacity tiers");
         helper.succeed();
     }
 
@@ -122,8 +122,8 @@ public final class AnvilJeiRecipesGameTests {
         assertAnvils(helper, index, "mite:silver_pickaxe", ALL_ANVILS);
         assertAnvils(helper, index, "minecraft:golden_pickaxe", ALL_ANVILS);
         assertAnvils(helper, index, "minecraft:iron_pickaxe", IRON_ANVILS);
-        assertAnvils(helper, index, "mite:mithril_pickaxe", Set.of("mite:mithril_anvil", "mite:adamantium_anvil"));
-        assertAnvils(helper, index, "mite:adamantium_pickaxe", Set.of("mite:adamantium_anvil"));
+        assertAnvils(helper, index, "mite:mithril_pickaxe", Set.of("mite:mithril_anvil", "mite:adamantium_anvil", "mite:vibranium_anvil"));
+        assertAnvils(helper, index, "mite:adamantium_pickaxe", Set.of("mite:adamantium_anvil", "mite:vibranium_anvil"));
         for (var page : pages(index, "mite:copper_pickaxe"))
             helper.assertValueEqual(page.requiredCapacity(), 4F, "Copper, silver and gold are the same repair tier");
         for (var page : pages(index, "minecraft:iron_pickaxe"))

@@ -235,9 +235,9 @@ public final class EquipmentMaterialRecyclingGameTests {
             helper.assertValueEqual(FurnaceThermalController.requiredHeat(stack), 2,
                     "Simply Swords metal variants use vanilla equipment recycling heat");
         }
-        helper.assertTrue(metal >= 120, "All eight metal sets and fifteen weapon families are exercised");
+        helper.assertTrue(metal >= 135, "All nine metal sets and fifteen weapon families are exercised");
         helper.assertTrue(excluded > 0, "Diamond, netherite, runic and unique weapon materials are not falsely converted to base-metal nuggets");
-        for (String material : new String[]{"iron", "gold", "rusted_iron", "copper", "silver", "ancient_metal", "mithril", "adamantium"})
+        for (String material : new String[]{"iron", "gold", "rusted_iron", "copper", "silver", "ancient_metal", "mithril", "adamantium", "vibranium"})
             for (Block block : new Block[]{Blocks.FURNACE, Blocks.BLAST_FURNACE}) try (Fixture f = new Fixture(helper, block)) {
                 ItemStack weapon = new ItemStack(SimplySwordsCompat.weapon(material, "longsword"));
                 helper.assertTrue(!weapon.isEmpty(), "The optional mod registers the expected actual metal variant");
@@ -302,6 +302,8 @@ public final class EquipmentMaterialRecyclingGameTests {
         Item ancientBow = MiteWeaponContent.ANCIENT_METAL_BOW.get(), mithrilBow = MiteWeaponContent.MITHRIL_BOW.get();
         samples.put(ancientBow, new Sample(ancientBow, "ancient_metal", "reinforced bow"));
         samples.put(mithrilBow, new Sample(mithrilBow, "mithril", "reinforced bow"));
+        Item vibraniumBow = MiteWeaponContent.VIBRANIUM_BOW.get();
+        samples.put(vibraniumBow, new Sample(vibraniumBow, "vibranium", "reinforced bow"));
         return List.copyOf(samples.values());
     }
 
@@ -370,7 +372,7 @@ public final class EquipmentMaterialRecyclingGameTests {
 
     private static Item nugget(String material) {
         return switch (material) {
-            case "copper", "silver", "ancient_metal", "mithril", "adamantium" -> item("mite:" + material + "_nugget");
+            case "copper", "silver", "ancient_metal", "mithril", "adamantium", "vibranium" -> item("mite:" + material + "_nugget");
             case "iron", "rusted_iron" -> Items.IRON_NUGGET;
             case "gold" -> Items.GOLD_NUGGET;
             default -> null;

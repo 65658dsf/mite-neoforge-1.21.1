@@ -9,7 +9,12 @@ public final class R196WeaponRules {
     }
     public static boolean acidic(int subtype) { return subtype == 3 || subtype == 4; }
     public static float velocityMultiplier(String material) {
-        return material.equals("mithril") ? 1.25F : material.equals("ancient_metal") ? 1.1F : 1F;
+        return switch (material) {
+            case "vibranium" -> 1.75F;
+            case "mithril" -> 1.25F;
+            case "ancient_metal" -> 1.1F;
+            default -> 1F;
+        };
     }
     /** Skills are suppressed in the confirmed R196 runtime; caller includes True Flight virtual levels. */
     public static float inaccuracy(int level, boolean inLiquid) {

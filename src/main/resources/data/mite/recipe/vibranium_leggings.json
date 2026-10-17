@@ -1,0 +1,21 @@
+{
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "pattern": [
+    "IAI",
+    "I I",
+    "I I"
+  ],
+  "key": {
+    "I": {
+      "item": "mite:vibranium_ingot"
+    },
+    "A": {
+      "item": "mite:adamantium_leggings"
+    }
+  },
+  "result": {
+    "id": "mite:vibranium_leggings",
+    "count": 1
+  }
+}

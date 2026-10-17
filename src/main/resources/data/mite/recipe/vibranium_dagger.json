@@ -1,0 +1,20 @@
+{
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "pattern": [
+    "I",
+    "A"
+  ],
+  "key": {
+    "I": {
+      "item": "mite:vibranium_ingot"
+    },
+    "A": {
+      "item": "mite:ancient_metal_dagger"
+    }
+  },
+  "result": {
+    "id": "mite:vibranium_dagger",
+    "count": 1
+  }
+}

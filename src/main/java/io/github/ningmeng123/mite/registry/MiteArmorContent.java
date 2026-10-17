@@ -8,6 +8,8 @@ import io.github.ningmeng123.mite.item.R196ArmorItem;
 import io.github.ningmeng123.mite.rules.ArmorBalanceRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ArmorProfile;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
+import io.github.ningmeng123.mite.rules.VibraniumEquipmentRules;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -61,15 +63,24 @@ public final class MiteArmorContent {
                     item.get("material_durability").getAsFloat(), item.get("material_protection").getAsInt(),
                     item.get("enchantability").getAsInt(), Quality.valueOf(item.get("maximum_quality").getAsString()),
                     item.get("horse_protection").getAsInt(), item.get("base_durability").getAsInt());
-            DEFINITIONS.add(definition);
-            if (!definition.isNew()) return;
-            DeferredHolder<ArmorMaterial, ArmorMaterial> material = ARMOR_MATERIALS.computeIfAbsent(definition.materialKey(), key ->
-                    MATERIALS.register(key, () -> armorMaterial(definition)));
-            ITEMS.registerItem(definition.id().substring(5), properties -> definition.horse()
-                    ? new AnimalArmorItem(material, AnimalArmorItem.BodyType.EQUESTRIAN, false,
-                            properties.stacksTo(1).attributes(horseAttributes(definition)))
-                    : new R196ArmorItem(material, definition, properties));
+            define(definition);
         });
+        // Keep the original R196 catalog frozen; vibranium belongs to the requested later expansion.
+        for (ArmorItem.Type type : List.of(ArmorItem.Type.HELMET, ArmorItem.Type.CHESTPLATE,
+                ArmorItem.Type.LEGGINGS, ArmorItem.Type.BOOTS)) {
+            int components = switch (type) {
+                case HELMET -> 5;
+                case CHESTPLATE -> 8;
+                case LEGGINGS -> 7;
+                case BOOTS -> 4;
+                default -> throw new IllegalStateException("Not a humanoid vibranium slot: " + type);
+            };
+            int durability = EquipmentDurabilityRules.baseArmorDurability(VibraniumEquipmentRules.armorProfile(components));
+            define(new Definition("mite:vibranium_" + type.getName(), -1, "vibranium", type,
+                    components, false, false, VibraniumEquipmentRules.MATERIAL_DURABILITY,
+                    VibraniumEquipmentRules.MATERIAL_PROTECTION, VibraniumEquipmentRules.ENCHANTABILITY,
+                    VibraniumEquipmentRules.MAXIMUM_QUALITY, 0, durability));
+        }
         source.getAsJsonArray("chains").forEach(element -> {
             JsonObject item = element.getAsJsonObject();
             ChainDefinition definition = new ChainDefinition(item.get("id").getAsString(), item.get("legacy_id").getAsInt(),
@@ -80,6 +91,17 @@ public final class MiteArmorContent {
     }
 
     private MiteArmorContent() {}
+    private static void define(Definition definition) {
+        DEFINITIONS.add(definition);
+        if (!definition.isNew()) return;
+        DeferredHolder<ArmorMaterial, ArmorMaterial> material = ARMOR_MATERIALS.computeIfAbsent(definition.materialKey(), key ->
+                MATERIALS.register(key, () -> armorMaterial(definition)));
+        ITEMS.registerItem(definition.id().substring(5), properties -> definition.horse()
+                ? new AnimalArmorItem(material, AnimalArmorItem.BodyType.EQUESTRIAN, false,
+                        properties.stacksTo(1).attributes(horseAttributes(definition)))
+                : new R196ArmorItem(material, definition, definition.material().equals("vibranium")
+                        ? properties.fireResistant() : properties));
+    }
     public static List<Definition> definitions() { return List.copyOf(DEFINITIONS); }
     public static List<ChainDefinition> chains() { return List.copyOf(CHAINS); }
     public static Definition definition(Item item) {

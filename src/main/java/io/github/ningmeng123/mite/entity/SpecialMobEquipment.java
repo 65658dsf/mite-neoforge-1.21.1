@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 public final class SpecialMobEquipment {
     public static final String DATA_KEY = "mite:special_equipment_progression";
     private static final String[] MATERIALS = {"leather", "iron", "gold", "copper", "silver", "iron",
-            "ancient_metal", "mithril", "adamantium"};
+            "ancient_metal", "mithril", "adamantium", "vibranium"};
     private SpecialMobEquipment() {}
 
     public static boolean handles(Mob mob) {
@@ -49,18 +49,20 @@ public final class SpecialMobEquipment {
                 : BloodMoonEquipmentRules.selectOrdinaryTier(value, mob.getRandom().nextDouble());
         if (BloodMoonEquipmentRules.materialGrade(tier) <= BloodMoonEquipmentRules.materialGrade(floorTier)) return sourceId;
 
-        // The source catalog has no Adamantium bow. Keep the highest existing bow instead of inventing an item.
-        if (bow) return "mite:mithril_bow";
+        // Adamantium bows and Vibranium chainmail do not exist; retain the highest registered family member.
+        if (bow) return tier == 9 ? "mite:vibranium_bow" : "mite:mithril_bow";
         String material = MATERIALS[tier];
+        if (armor != null && armor.chainmail() && material.equals("vibranium")) material = "adamantium";
+        final String selectedMaterial = material;
         // Native iron plate armor has no R196 registration entry; its IDs are retained by the modern adapter.
         if (armor != null && !armor.chainmail() && material.equals("iron"))
             return "minecraft:iron_" + armor.type().getName();
         if (armor != null) return MiteArmorContent.definitions().stream()
-                .filter(candidate -> !candidate.horse() && candidate.material().equals(material)
+                .filter(candidate -> !candidate.horse() && candidate.material().equals(selectedMaterial)
                         && candidate.chainmail() == armor.chainmail() && candidate.type() == armor.type())
                 .map(MiteArmorContent.Definition::id).findFirst().orElse(sourceId);
         return MiteTools.definitions().stream()
-                .filter(candidate -> candidate.material().equals(material) && candidate.family() == tool.family())
+                .filter(candidate -> candidate.material().equals(selectedMaterial) && candidate.family() == tool.family())
                 .map(MiteTools.Definition::id).findFirst().orElse(sourceId);
     }
 
@@ -75,6 +77,7 @@ public final class SpecialMobEquipment {
             case "ancient_metal" -> 6;
             case "mithril" -> 7;
             case "adamantium" -> 8;
+            case "vibranium" -> 9;
             default -> -1;
         };
     }

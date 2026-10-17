@@ -1,0 +1,20 @@
+{
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "pattern": [
+    "A I",
+    "I I"
+  ],
+  "key": {
+    "I": {
+      "item": "mite:vibranium_ingot"
+    },
+    "A": {
+      "item": "mite:adamantium_boots"
+    }
+  },
+  "result": {
+    "id": "mite:vibranium_boots",
+    "count": 1
+  }
+}

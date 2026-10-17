@@ -26,6 +26,38 @@ class FunctionalBlockRulesTest {
         assertEquals(2, FunctionalBlockRules.damageStage(total - 1, total));
         assertEquals(3, FunctionalBlockRules.damageStage(total, total));
     }
+
+    static Stream<Arguments> precisionBoundaries() {
+        // Independent JVM float-division literals, including capacities not divisible by two/five.
+        return Stream.of(Arguments.of(11, 6, 9), Arguments.of(17, 9, 14),
+                Arguments.of(16777217, 8388608, 13421773),
+                Arguments.of(25395200, 12697600, 20316159),
+                Arguments.of(Integer.MAX_VALUE, 1073741792, 1717986881));
+    }
+
+    @ParameterizedTest @MethodSource("precisionBoundaries")
+    void minimumWearIsTheFirstIntegerThatActuallyReachesEachSourceFloatStage(int maximum, int chipped, int damaged) {
+        assertEquals(0, FunctionalBlockRules.minimumDamage(0, maximum));
+        assertEquals(chipped, FunctionalBlockRules.minimumDamage(1, maximum));
+        assertEquals(damaged, FunctionalBlockRules.minimumDamage(2, maximum));
+        assertEquals(0, FunctionalBlockRules.damageStage(chipped - 1, maximum));
+        assertEquals(1, FunctionalBlockRules.damageStage(chipped, maximum));
+        assertEquals(1, FunctionalBlockRules.damageStage(chipped + 1, maximum));
+        assertEquals(1, FunctionalBlockRules.damageStage(damaged - 1, maximum));
+        assertEquals(2, FunctionalBlockRules.damageStage(damaged, maximum));
+        assertEquals(2, FunctionalBlockRules.damageStage(damaged + 1, maximum));
+    }
+
+    @Test void vibraniumStageTwoUsesSourceFloatRoundingRatherThanAnExactIntegerFraction() {
+        assertEquals(20316160F, (float)20316159);
+        assertEquals(0x3f4ccccd, Float.floatToIntBits((float)20316159 / 25395200F));
+        assertEquals(5079041, 25395200 - FunctionalBlockRules.minimumDamage(2, 25395200));
+        // Exhaustion uses the same float semantics; the last integer may already round to full wear.
+        assertEquals(2, FunctionalBlockRules.damageStage(25395198, 25395200));
+        assertEquals(3, FunctionalBlockRules.damageStage(25395199, 25395200));
+        assertEquals(2, FunctionalBlockRules.damageStage(2147483583, Integer.MAX_VALUE));
+        assertEquals(3, FunctionalBlockRules.damageStage(2147483584, Integer.MAX_VALUE));
+    }
     @Test void sourceRepairStopsBeforeUnequalLastBatch() {
         assertEquals(new FunctionalBlockRules.Repair(250, 4, 3200), FunctionalBlockRules.repair(3450, 4800, 6, false, 5));
         assertEquals(new FunctionalBlockRules.Repair(0, 1, 250), FunctionalBlockRules.repair(250, 4800, 6, false, 5));

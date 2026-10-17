@@ -34,12 +34,12 @@ public final class BulkMaterialRecipe extends ShapelessRecipe {
         return MaterialRecipeSerializers.BULK_MATERIAL.get();
     }
 
-    /** This exception is deliberately limited to a batch of nine of the seven R196 ingots. */
+    /** This exception is deliberately limited to a batch of nine source-metal or vibranium ingots. */
     public static boolean isValidResult(ItemStack stack) {
         return stack.getCount() == 9 && stack.getMaxStackSize() == 8
                 && (stack.is(Items.COPPER_INGOT) || stack.is(Items.IRON_INGOT) || stack.is(Items.GOLD_INGOT)
                 || stack.is(MiteMaterials.SILVER_INGOT.get()) || stack.is(MiteMaterials.ANCIENT_METAL_INGOT.get())
-                || stack.is(MiteMaterials.MITHRIL_INGOT.get()) || stack.is(MiteMaterials.ADAMANTIUM_INGOT.get()));
+                || stack.is(MiteMaterials.MITHRIL_INGOT.get()) || stack.is(MiteMaterials.ADAMANTIUM_INGOT.get()) || stack.is(MiteMaterials.VIBRANIUM_INGOT.get()));
     }
 
     public static final class Serializer implements RecipeSerializer<BulkMaterialRecipe> {

@@ -53,9 +53,9 @@ public final class WorkbenchEquipmentGameTests {
         helper.succeed();
     }
     @GameTest(template = "empty")
-    public static void allNineTablesOpenValidMenusAndHaveExpectedCapacity(GameTestHelper helper) {
-        String[] materials = {"flint", "obsidian", "copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium"};
-        float[] capacities = {1, 2, 4, 4, 4, 8, 16, 64, 256};
+    public static void allTenTablesOpenValidMenusAndHaveExpectedCapacity(GameTestHelper helper) {
+        String[] materials = {"flint", "obsidian", "copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium"};
+        float[] capacities = {1, 2, 4, 4, 4, 8, 16, 64, 256, 512};
         BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
         try (Session session = player(helper)) {
             var player = session.player();

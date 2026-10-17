@@ -20,6 +20,7 @@
     "mite:rusted_iron_chain_helmet",
     "mite:ancient_metal_helmet",
     "mite:ancient_metal_chainmail_helmet",
+    "mite:vibranium_helmet",
     {
       "id": "#mite:simplyswords/enchantable/aqua_affinity",
       "required": false

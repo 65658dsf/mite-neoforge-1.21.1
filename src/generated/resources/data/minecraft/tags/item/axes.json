@@ -1,15 +1,15 @@
 {
   "remove": [
-    "minecraft:diamond_pickaxe",
-    "minecraft:diamond_shovel",
-    "minecraft:diamond_helmet",
-    "minecraft:diamond_chestplate",
-    "minecraft:diamond_boots",
-    "minecraft:diamond_hoe",
-    "minecraft:diamond_horse_armor",
-    "minecraft:diamond_leggings",
+    "minecraft:diamond_axe",
     "minecraft:diamond_sword",
-    "minecraft:diamond_axe"
+    "minecraft:diamond_leggings",
+    "minecraft:diamond_horse_armor",
+    "minecraft:diamond_hoe",
+    "minecraft:diamond_boots",
+    "minecraft:diamond_chestplate",
+    "minecraft:diamond_helmet",
+    "minecraft:diamond_shovel",
+    "minecraft:diamond_pickaxe"
   ],
   "values": [
     "mite:obsidian_hatchet",
@@ -36,6 +36,9 @@
     "mite:iron_battle_axe",
     "mite:ancient_metal_battle_axe",
     "mite:mithril_battle_axe",
-    "mite:adamantium_battle_axe"
+    "mite:adamantium_battle_axe",
+    "mite:vibranium_hatchet",
+    "mite:vibranium_axe",
+    "mite:vibranium_battle_axe"
   ]
 }

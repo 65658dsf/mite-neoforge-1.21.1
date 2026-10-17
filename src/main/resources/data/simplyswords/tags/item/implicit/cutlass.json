@@ -24,6 +24,10 @@
     {
       "id": "mite:simplyswords_adamantium_cutlass",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_cutlass",
+      "required": false
     }
   ]
 }

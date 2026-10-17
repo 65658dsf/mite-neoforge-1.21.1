@@ -1480,6 +1480,46 @@
     {
       "id": "mite:simplyswords_adamantium_chakram",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_longsword",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_twinblade",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_rapier",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_katana",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_spear",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_glaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_warglaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_cutlass",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_claymore",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_chakram",
+      "required": false
     }
   ]
 }

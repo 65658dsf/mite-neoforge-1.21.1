@@ -8,6 +8,7 @@ import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.mixin.MobSpawnTypeAccessor;
 import io.github.ningmeng123.mite.mixin.SourceMobDropChanceAccess;
 import io.github.ningmeng123.mite.registry.MiteMobs;
+import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.rules.SimplySwordsMobRules;
@@ -73,7 +74,7 @@ public final class SimplySwordsMobGameTests {
 
     @GameTest(template = "empty")
     public static void firstTickSeesFinalEquipmentAndPreservesMaterialQualityEnchantmentsWearAndDrops(GameTestHelper h) {
-        for (String material : List.of("rusted_iron", "copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium")) {
+        for (String material : List.of("rusted_iron", "copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium")) {
             Mob mob = create(h, EntityType.ZOMBIE);
             SimplySwordsMobEquipment.join(new EntityJoinLevelEvent(mob, h.getLevel(), false));
             h.assertTrue(mob.getMainHandItem().isEmpty(), "Join listeners do not perform the weapon roll prematurely");
@@ -84,6 +85,8 @@ public final class SimplySwordsMobGameTests {
             EquipmentDurability.setQuality(original, Quality.POOR);
             original.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SHARPNESS), 2);
             original.setDamageValue(original.getMaxDamage() * 3 / 4);
+            ItemStack shield = material.equals("vibranium") ? new ItemStack(MiteShields.get("vibranium")) : ItemStack.EMPTY;
+            if (!shield.isEmpty()) mob.setItemSlot(EquipmentSlot.OFFHAND, shield);
             mob.setItemSlot(EquipmentSlot.MAINHAND, original); mob.setDropChance(EquipmentSlot.MAINHAND, .071F);
             mob.getRandom().setSeed(successSeed());
             NeoForge.EVENT_BUS.post(new EntityTickEvent.Pre(mob));
@@ -97,12 +100,43 @@ public final class SimplySwordsMobGameTests {
                 h.assertTrue(Math.abs(before - after) <= 1D / result.getMaxDamage(), "Material family changes preserve the exact wear fraction up to rounding");
             } else h.assertTrue(result == original, "Without Simply Swords the first tick retains the original real stack");
             h.assertTrue(((SourceMobDropChanceAccess)mob).mite$equipmentDropChance(EquipmentSlot.MAINHAND) == .071F, "Slot drop chances are unchanged");
+            if (!shield.isEmpty()) h.assertTrue(mob.getOffhandItem() == shield, "A vibranium blade conversion retains the same actual vibranium shield stack");
             mob.getRandom().setSeed(713L); SimplySwordsMobEquipment.tick(new EntityTickEvent.Pre(mob));
             h.assertTrue(mob.getMainHandItem() == result, "Later ticks never replace a decided result");
             h.assertValueEqual(mob.getRandom().nextLong(), RandomSource.create(713L).nextLong(), "A repeated decision consumes no RNG");
             mob.discard();
         }
         h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void unarmedLateWorldFallbackCanRollVibraniumAndNeverRerollsAnExistingDecision(GameTestHelper h) {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        long seed = -1L;
+        for (long candidate = 0; candidate < 100_000; candidate++) {
+            RandomSource random = RandomSource.create(candidate);
+            if (random.nextFloat() < SimplySwordsMobRules.EQUIP_CHANCE
+                    && SimplySwordsMobRules.selectMaterial(1280L, false, random.nextDouble()).equals("vibranium")) {
+                seed = candidate; break;
+            }
+        }
+        h.assertTrue(seed >= 0L, "A positive late-world probability provides a reproducible vibranium fallback roll");
+        Mob mob = create(h, EntityType.VINDICATOR);
+        ItemStack shield = new ItemStack(MiteShields.get("vibranium"));
+        mob.setItemSlot(EquipmentSlot.OFFHAND, shield);
+        CompoundTag decision = new CompoundTag();
+        decision.putInt("version", 2); decision.putLong("highest_day", 1280L); decision.putBoolean("blood_date", false);
+        mob.getPersistentData().put(SimplySwordsMobEquipment.DATA_KEY, decision);
+        mob.getRandom().setSeed(seed);
+        h.assertTrue(SimplySwordsMobEquipment.populate(mob), "A new late-world unarmed spawn can receive a fallback weapon");
+        h.assertValueEqual(SimplySwordsCompat.material(mob.getMainHandItem()), "vibranium", "The fallback creates the actual registered vibranium weapon family");
+        h.assertTrue(mob.getOffhandItem() == shield, "Fallback weapon choice preserves the explicitly equipped vibranium shield");
+        ItemStack weapon = mob.getMainHandItem();
+        mob.getRandom().setSeed(713L);
+        h.assertFalse(SimplySwordsMobEquipment.populate(mob), "The saved completion flag prevents a second late-world roll");
+        h.assertTrue(mob.getMainHandItem() == weapon, "The completed decision retains the exact generated blade stack");
+        h.assertValueEqual(mob.getRandom().nextLong(), RandomSource.create(713L).nextLong(), "A completed progression decision consumes no random draws");
+        mob.discard(); h.succeed();
     }
 
     @GameTest(template = "empty")

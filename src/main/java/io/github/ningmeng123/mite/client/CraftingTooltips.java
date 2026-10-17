@@ -30,7 +30,7 @@ public final class CraftingTooltips {
         }
         float required = WorkbenchRules.required(stack);
         if (required > 0) {
-            String material = required >= 256 ? "adamantium" : required >= 64 ? "mithril"
+            String material = required >= 512 ? "vibranium" : required >= 256 ? "adamantium" : required >= 64 ? "mithril"
                     : required >= 16 ? "ancient_metal" : required >= 8 ? "iron" : required >= 4 ? "copper" : "flint";
         }
         int xp = GemSacrifice.experienceValue(event.getItemStack());

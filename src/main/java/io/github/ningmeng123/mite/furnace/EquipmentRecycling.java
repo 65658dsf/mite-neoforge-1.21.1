@@ -29,7 +29,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 /** Material-driven equipment recycling and wooden-body fuel classification. @author NingMeng123 */
 public final class EquipmentRecycling {
-    private static final List<String> METALS = List.of("copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium");
+    private static final List<String> METALS = List.of("copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium");
 
     private EquipmentRecycling() {}
 
@@ -71,6 +71,7 @@ public final class EquipmentRecycling {
             case "ancient_metal" -> MiteMaterials.ANCIENT_METAL_NUGGET.get();
             case "mithril" -> MiteMaterials.MITHRIL_NUGGET.get();
             case "adamantium" -> MiteMaterials.ADAMANTIUM_NUGGET.get();
+            case "vibranium" -> MiteMaterials.VIBRANIUM_NUGGET.get();
             default -> null;
         };
     }
@@ -127,6 +128,7 @@ public final class EquipmentRecycling {
             case "ancient_metal" -> MiteMaterials.ANCIENT_METAL_INGOT.get();
             case "mithril" -> MiteMaterials.MITHRIL_INGOT.get();
             case "adamantium" -> MiteMaterials.ADAMANTIUM_INGOT.get();
+            case "vibranium" -> MiteMaterials.VIBRANIUM_INGOT.get();
             default -> throw new IllegalArgumentException("Unknown equipment metal: " + metal);
         };
     }

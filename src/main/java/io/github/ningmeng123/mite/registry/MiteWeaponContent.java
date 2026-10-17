@@ -15,12 +15,13 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Six remaining source weapon identities and their real thrown sphere entity. @author NingMeng123 */
+/** Source reinforced bows and their real thrown sphere entity, including the later vibranium bow. @author NingMeng123 */
 public final class MiteWeaponContent {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Mite.MOD_ID);
     private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, Mite.MOD_ID);
     public static final DeferredItem<R196ReinforcedBowItem> ANCIENT_METAL_BOW = ITEMS.registerItem("ancient_metal_bow", p -> new R196ReinforcedBowItem("ancient_metal", p));
     public static final DeferredItem<R196ReinforcedBowItem> MITHRIL_BOW = ITEMS.registerItem("mithril_bow", p -> new R196ReinforcedBowItem("mithril", p));
+    public static final DeferredItem<R196ReinforcedBowItem> VIBRANIUM_BOW = ITEMS.registerItem("vibranium_bow", p -> new R196ReinforcedBowItem("vibranium", p.fireResistant()));
     public static final DeferredItem<GelatinousSphereItem> OCHRE_JELLY = ITEMS.registerItem("ochre_jelly", p -> new GelatinousSphereItem(1, p));
     public static final DeferredItem<GelatinousSphereItem> CRIMSON_BLOB = ITEMS.registerItem("crimson_blob", p -> new GelatinousSphereItem(2, p));
     public static final DeferredItem<GelatinousSphereItem> GRAY_OOZE = ITEMS.registerItem("grey_gelatinous_sphere", p -> new GelatinousSphereItem(3, p));

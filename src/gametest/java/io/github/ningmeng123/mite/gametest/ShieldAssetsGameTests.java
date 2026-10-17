@@ -95,7 +95,7 @@ public final class ShieldAssetsGameTests {
             h.assertFalse(recipe.matches(invalid, h.getLevel()), "Wood alone cannot create a metal shield");
             checked++;
         }
-        h.assertValueEqual(checked, 6, "Six ingot materials have new recipes; rusted equipment remains scavenged");
+        h.assertValueEqual(checked, 7, "Seven ingot materials have new recipes; rusted equipment remains scavenged");
         h.succeed();
     }
 

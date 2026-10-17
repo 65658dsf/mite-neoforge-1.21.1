@@ -41,6 +41,8 @@ public final class CraftingQuality {
     private CraftingQuality() {}
 
     public static float lowestDifficulty(ItemStack stack) {
+        float vibranium = VibraniumCrafting.lowestDifficulty(stack);
+        if (vibranium >= 0F) return vibranium;
         var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack);
         if (simply != null) return simply.craftingDifficulty();
         var shield = io.github.ningmeng123.mite.registry.MiteShields.definition(stack);
@@ -67,7 +69,7 @@ public final class CraftingQuality {
             return new Result(rule, RunestoneCrafting.apply(player, menu, grid, recipe.id(), raw), null, null, repair, repair, true, CoinCrafting.cost(raw), 1);
         }
         boolean repair = recipe.value() instanceof RepairItemRecipe || recipe.value() instanceof LeatherMendingRecipe;
-        boolean fixed = repair || recipe.value() instanceof ArmorDyeRecipe || shieldDecoration(recipe, raw);
+        boolean fixed = repair || recipe.value() instanceof VibraniumUpgradeRecipe || recipe.value() instanceof ArmorDyeRecipe || shieldDecoration(recipe, raw);
         boolean clumsy = PlayerCurses.has(player, R196Curse.CLUMSINESS, true);
         QualityRange range = EquipmentQualityRules.selectionRange(player.experienceLevel,
                 EquipmentDurability.maximumQuality(raw), clumsy, false, true);
@@ -127,6 +129,8 @@ public final class CraftingQuality {
         }
         TimedCraftingRecipes.Rule known = TimedCraftingRecipes.get(recipe.id());
         if (known != null) return known;
+        var vibranium = VibraniumCrafting.rule(recipe.id(), output);
+        if (vibranium != null) return vibranium;
         float difficulty = EquipmentDurability.isManaged(output) ? lowestDifficulty(output) : -1F;
         return difficulty < 0F ? null : new TimedCraftingRecipes.Rule(difficulty, benchMaterial(output), -1);
     }
@@ -139,6 +143,7 @@ public final class CraftingQuality {
     private static String benchMaterial(ItemStack output) {
         float capacity = WorkbenchRules.required(output);
         if (capacity <= 0F) return null;
+        if (capacity >= 512F) return "vibranium";
         if (capacity >= 256F) return "adamantium";
         if (capacity >= 64F) return "mithril";
         if (capacity >= 32F) return "netherite";

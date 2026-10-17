@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "type": "mite:equipment_recycling",
+    "material": "vibranium"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:vibranium_nugget"
+  }
+}

@@ -12,12 +12,13 @@ import net.minecraft.data.PackOutput;
 
 /** Thirty arrow-material pull sprites per source reinforced bow, plus five source sphere sprites. @author NingMeng123 */
 public final class WeaponAssetsProvider implements DataProvider {
+    public static final List<String> BOW_MATERIALS = List.of("ancient_metal", "mithril", "vibranium");
     public static final List<String> ARROW_MATERIALS = List.of("flint", "obsidian", "copper", "silver", "rusted_iron", "gold", "iron", "mithril", "adamantium", "ancient_metal");
     private final Path root;
     public WeaponAssetsProvider(PackOutput output) { root = output.getOutputFolder(); }
     @Override public CompletableFuture<?> run(CachedOutput cache) {
         List<CompletableFuture<?>> tasks = new ArrayList<>();
-        for (String material : List.of("ancient_metal", "mithril")) {
+        for (String material : BOW_MATERIALS) {
             JsonObject base = model("minecraft:item/bow", "mite:item/bows/" + material + "/standby");
             JsonArray overrides = new JsonArray();
             for (int arrow = 0; arrow < ARROW_MATERIALS.size(); arrow++) for (int stage = 0; stage < 3; stage++) {
@@ -37,7 +38,7 @@ public final class WeaponAssetsProvider implements DataProvider {
             String[] id = names[i].split(":");
             save(tasks, cache, "assets/" + id[0] + "/models/item/" + id[1] + ".json", model("minecraft:item/generated", "mite:item/gelatinous_sphere/" + colors[i]));
         }
-        JsonArray bows = new JsonArray(); bows.add("mite:ancient_metal_bow"); bows.add("mite:mithril_bow");
+        JsonArray bows = new JsonArray(); BOW_MATERIALS.forEach(material -> bows.add("mite:" + material + "_bow"));
         for (String tag : List.of("bow")) {
             JsonObject data = new JsonObject(); data.addProperty("replace", false); data.add("values", bows.deepCopy());
             save(tasks, cache, "data/minecraft/tags/item/enchantable/" + tag + ".json", data);

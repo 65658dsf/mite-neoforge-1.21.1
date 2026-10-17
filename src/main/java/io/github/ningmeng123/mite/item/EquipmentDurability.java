@@ -123,6 +123,8 @@ public final class EquipmentDurability {
 
     private static ItemAttributeModifiers armorAttributes(Item item) {
         if (!(item instanceof ArmorItem armor)) return item.getDefaultAttributeModifiers();
+        // Added materials may have different toughness in each slot (vibranium).
+        if (item instanceof R196ArmorItem source) return R196ArmorItem.attributes(source.definition());
         var builder = ItemAttributeModifiers.builder();
         // Use native material defense/toughness, retaining other defaults such as netherite knockback resistance.
         for (var entry : item.getDefaultAttributeModifiers().modifiers())

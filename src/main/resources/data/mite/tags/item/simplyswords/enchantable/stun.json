@@ -152,6 +152,10 @@
     {
       "id": "mite:simplyswords_adamantium_greathammer",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_greathammer",
+      "required": false
     }
   ]
 }

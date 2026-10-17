@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "mite:ancient_metal_bow",
-    "mite:mithril_bow"
+    "mite:mithril_bow",
+    "mite:vibranium_bow"
   ]
 }

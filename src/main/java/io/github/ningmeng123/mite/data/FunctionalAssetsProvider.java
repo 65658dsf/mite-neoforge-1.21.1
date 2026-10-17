@@ -18,7 +18,7 @@ public final class FunctionalAssetsProvider implements DataProvider {
     public FunctionalAssetsProvider(PackOutput output) { this.output = output; }
     @Override public CompletableFuture<?> run(CachedOutput cache) {
         List<CompletableFuture<?>> tasks = new ArrayList<>();
-        for (String metal : List.of("copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium")) {
+        for (String metal : List.of("copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium")) {
             String prefix = metal.equals("gold") ? "golden" : metal;
             String name = metal.equals("iron") ? "anvil" : prefix + "_anvil";
             String namespace = metal.equals("iron") ? "minecraft" : "mite";
@@ -42,6 +42,7 @@ public final class FunctionalAssetsProvider implements DataProvider {
                         + "{\"predicate\":{\"mite:anvil_stage\":2},\"model\":\"mite:block/" + name + "_2\"}]}");
                 save(tasks, cache, "data/mite/loot_table/blocks/" + name + ".json", anvilLoot("mite:" + name));
             }
+            if (metal.equals("vibranium")) continue;
             String box = prefix + "_strongbox";
             save(tasks, cache, "assets/mite/blockstates/" + box + ".json", "{\"variants\":{\"\":{\"model\":\"mite:block/" + box + "\"}}}");
             save(tasks, cache, "assets/mite/models/block/" + box + ".json", "{\"textures\":{\"particle\":\"minecraft:block/iron_block\"}}");

@@ -41,8 +41,8 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
         }
         var ancientBow = io.github.ningmeng123.mite.registry.MiteWeaponContent.ANCIENT_METAL_BOW.get();
         var mithrilBow = io.github.ningmeng123.mite.registry.MiteWeaponContent.MITHRIL_BOW.get();
-        tag(ItemTags.DURABILITY_ENCHANTABLE).add(ancientBow, mithrilBow);
-        tag(ItemTags.VANISHING_ENCHANTABLE).add(ancientBow, mithrilBow);
+        tag(ItemTags.DURABILITY_ENCHANTABLE).add(ancientBow, mithrilBow, io.github.ningmeng123.mite.registry.MiteWeaponContent.VIBRANIUM_BOW.get());
+        tag(ItemTags.VANISHING_ENCHANTABLE).add(ancientBow, mithrilBow, io.github.ningmeng123.mite.registry.MiteWeaponContent.VIBRANIUM_BOW.get());
         for (var definition : io.github.ningmeng123.mite.registry.MiteShields.definitions()) {
             if (!definition.isNew()) continue;
             var shield = io.github.ningmeng123.mite.registry.MiteShields.get(definition.material());

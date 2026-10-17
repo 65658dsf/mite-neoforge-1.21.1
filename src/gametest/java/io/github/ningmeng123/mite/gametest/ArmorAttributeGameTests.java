@@ -46,7 +46,7 @@ public final class ArmorAttributeGameTests {
             double protection = stats.protection(definition.components());
             check(helper, amount(stack, Attributes.ARMOR, armor.getEquipmentSlot()), protection,
                     "Native item component uses modern defense: " + definition.id());
-            check(helper, amount(stack, Attributes.ARMOR_TOUGHNESS, armor.getEquipmentSlot()), stats.toughness(),
+            check(helper, amount(stack, Attributes.ARMOR_TOUGHNESS, armor.getEquipmentSlot()), stats.toughness(definition.components()),
                     "Native item component exposes material toughness: " + definition.id());
             if (definition.isNew()) {
                 helper.assertValueEqual(armor.getMaterial().value().getDefense(armor.getType()), (int)protection,
@@ -61,7 +61,7 @@ public final class ArmorAttributeGameTests {
             }
             checked++;
         }
-        helper.assertValueEqual(checked, 60, "All 65 source identities except the five horse armors checked");
+        helper.assertValueEqual(checked, 64, "All 65 source identities except the five horse armors checked");
         helper.succeed();
     }
 

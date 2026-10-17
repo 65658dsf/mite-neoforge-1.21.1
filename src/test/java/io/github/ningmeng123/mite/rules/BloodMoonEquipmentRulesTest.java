@@ -22,24 +22,25 @@ class BloodMoonEquipmentRulesTest {
         for (int index = 0; index < expected.length; index++) {
             assertEquals(expected[index], BloodMoonEquipmentRules.stage(2L + index));
         }
-        for (long count : new long[]{8L, 9L, 10L, 11L}) assertEquals(8, BloodMoonEquipmentRules.stage(count));
-        assertEquals(8, BloodMoonEquipmentRules.stage(Long.MAX_VALUE));
+        assertEquals(8, BloodMoonEquipmentRules.stage(8));
+        for (long count : new long[]{9L, 10L, 11L}) assertEquals(9, BloodMoonEquipmentRules.stage(count));
+        assertEquals(9, BloodMoonEquipmentRules.stage(Long.MAX_VALUE));
     }
 
-    @Test void eighthBloodDateUsesIndependentEightGradeHighestTierSlotAndAtLeastOneProbabilities() {
+    @Test void eighthBloodDateUsesIndependentNineGradeHighestTierSlotAndAtLeastOneProbabilities() {
         assertEquals(6, BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(319)));
         int stage = BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(320));
         assertEquals(8, stage);
         assertEquals(.96D, BloodMoonEquipmentRules.armorChance(stage, true));
-        double expectedSingleSlot = 409_600_000D / 656_262_441D;
+        double expectedSingleSlot = 1228800000D / 2480787323D;
         double actualSingleSlot = BloodMoonEquipmentRules.armorChance(stage, true) * BloodMoonEquipmentRules.tierChance(stage, 8, true);
         assertEquals(expectedSingleSlot, actualSingleSlot, 1E-15);
-        assertEquals(.9800426946666656D, 1D - Math.pow(1D - actualSingleSlot, 4), 1E-15);
-        assertTrue(actualSingleSlot > .62D && 1D - Math.pow(1D - actualSingleSlot, 4) > .98D);
+        assertEquals(0.9351303447388465D, 1D - Math.pow(1D - actualSingleSlot, 4), 1E-15);
+        assertTrue(actualSingleSlot > .49D && 1D - Math.pow(1D - actualSingleSlot, 4) > .93D);
         assertEquals(1.5D, BloodMoonEquipmentRules.ordinaryProgress(320), "Ordinary-day growth does not inherit the eighth-blood jump");
     }
 
-    @Test void allEighteenDistributionsMatchTheIndependentRationalSpecification() throws Exception {
+    @Test void allTwentyDistributionsMatchTheIndependentRationalSpecification() throws Exception {
         var spec = JsonParser.parseString(Files.readString(Path.of("spec/blood-moon-equipment.json"))).getAsJsonObject();
         assertEquals(3, spec.get("schema_version").getAsInt());
         assertEquals("NingMeng123", spec.get("author").getAsString());
@@ -47,7 +48,7 @@ class BloodMoonEquipmentRulesTest {
         assertFalse(spec.get("r196_source_probabilities").getAsBoolean());
         assertEquals(.6D, spec.get("first_blood_date_legacy_armor_chance").getAsDouble());
         assertFalse(spec.get("first_blood_date_material_and_partial_stop_changed").getAsBoolean());
-        assertEquals(9, spec.getAsJsonArray("stages").size());
+        assertEquals(10, spec.getAsJsonArray("stages").size());
         for (var element : spec.getAsJsonArray("stages")) {
             var row = element.getAsJsonObject(); int stage = row.get("stage").getAsInt();
             assertEquals(row.get("prefix").getAsString(), BloodMoonEquipmentRules.PREFIXES.get(stage));
@@ -60,9 +61,9 @@ class BloodMoonEquipmentRulesTest {
                 assertEquals(unarmored, 1D - armor, 1E-14);
                 var expected = row.getAsJsonArray(prefix + "_conditional_material_chances");
                 var overall = row.getAsJsonArray(prefix + "_overall_material_chances");
-                assertEquals(9, expected.size()); assertEquals(9, overall.size());
+                assertEquals(10, expected.size()); assertEquals(10, overall.size());
                 double sum = 0D, overallSum = unarmored;
-                for (int tier = 0; tier < 9; tier++) {
+                for (int tier = 0; tier < 10; tier++) {
                     double probability = expected.get(tier).getAsDouble();
                     assertTrue(probability > 0D, "Every material must remain available, including older armor");
                     assertEquals(probability, BloodMoonEquipmentRules.tierChance(stage, tier, blood), 1E-14);
@@ -74,42 +75,42 @@ class BloodMoonEquipmentRulesTest {
                 assertEquals(1D, sum, 1E-14);
                 assertEquals(1D, overallSum, 1E-14);
                 assertEquals(0, BloodMoonEquipmentRules.selectTier(stage, blood, 0D));
-                assertEquals(8, BloodMoonEquipmentRules.selectTier(stage, blood, Math.nextDown(1D)));
+                assertEquals(9, BloodMoonEquipmentRules.selectTier(stage, blood, Math.nextDown(1D)));
             }
         }
     }
 
     @Test void independentlyCalculatedAnchorValuesIncludeLowMaterialsAtTheHighestStage() {
-        assertEquals(1D / 21845D, BloodMoonEquipmentRules.tierChance(0, 8, false), 1E-15);
-        assertEquals(128D / 130123D, BloodMoonEquipmentRules.tierChance(0, 8, true), 1E-15);
-        assertEquals(32D / 565D, BloodMoonEquipmentRules.tierChance(4, 0, false), 1E-15);
-        assertEquals(1715D / 86599D, BloodMoonEquipmentRules.tierChance(4, 0, true), 1E-15);
-        assertEquals(1D / 255D, BloodMoonEquipmentRules.tierChance(8, 0, false), 1E-15);
-        assertEquals(128D / 255D, BloodMoonEquipmentRules.tierChance(8, 8, false), 1E-15);
-        assertEquals(823543D / 1968787323D, BloodMoonEquipmentRules.tierChance(8, 0, true), 1E-15);
-        assertEquals(1280000000D / 1968787323D, BloodMoonEquipmentRules.tierChance(8, 8, true), 1E-15);
+        assertEquals(4D / 87381D, BloodMoonEquipmentRules.tierChance(0, 8, false), 1E-15);
+        assertEquals(640D / 650871D, BloodMoonEquipmentRules.tierChance(0, 8, true), 1E-15);
+        assertEquals(128D / 2261D, BloodMoonEquipmentRules.tierChance(4, 0, false), 1E-15);
+        assertEquals(1225D / 62149D, BloodMoonEquipmentRules.tierChance(4, 0, true), 1E-15);
+        assertEquals(1D / 287D, BloodMoonEquipmentRules.tierChance(8, 0, false), 1E-15);
+        assertEquals(128D / 287D, BloodMoonEquipmentRules.tierChance(8, 8, false), 1E-15);
+        assertEquals(117649D / 354398189D, BloodMoonEquipmentRules.tierChance(8, 0, true), 1E-15);
+        assertEquals(1280000000D / 2480787323D, BloodMoonEquipmentRules.tierChance(8, 8, true), 1E-15);
     }
 
     @Test void copperAndSilverShareOneGradeAndSplitItsProbabilityAtEveryBasisAndDailyProgress() {
-        int[] expectedGrades = {0, 1, 2, 3, 3, 4, 5, 6, 7};
+        int[] expectedGrades = {0, 1, 2, 3, 3, 4, 5, 6, 7, 8};
         for (int tier = 0; tier < expectedGrades.length; tier++)
             assertEquals(expectedGrades[tier], BloodMoonEquipmentRules.materialGrade(tier));
         for (boolean blood : new boolean[]{false, true}) {
-            for (int stage = 0; stage < 9; stage++)
+            for (int stage = 0; stage < 10; stage++)
                 assertEquals(BloodMoonEquipmentRules.tierChance(stage, 3, blood), BloodMoonEquipmentRules.tierChance(stage, 4, blood),
                         "Copper and silver receive equal halves of one grade, rather than duplicating its weight");
-            for (int tier = 0; tier < 9; tier++)
+            for (int tier = 0; tier < 10; tier++)
                 assertEquals(BloodMoonEquipmentRules.tierChance(3, tier, blood), BloodMoonEquipmentRules.tierChance(4, tier, blood),
                         "The two compatible copper/silver basis indices have the same conditional distribution");
         }
-        assertEquals(128D / 565D, BloodMoonEquipmentRules.tierChance(3, 3, false), 1E-15);
-        assertEquals(20000D / 86599D, BloodMoonEquipmentRules.tierChance(3, 4, true), 1E-15);
-        for (int dayStep = 0; dayStep <= 1024; dayStep++) {
+        assertEquals(512D / 2261D, BloodMoonEquipmentRules.tierChance(3, 3, false), 1E-15);
+        assertEquals(100000D / 435043D, BloodMoonEquipmentRules.tierChance(3, 4, true), 1E-15);
+        for (int dayStep = 0; dayStep <= 1152; dayStep++) {
             double progress = dayStep / 128D;
             assertEquals(BloodMoonEquipmentRules.ordinaryTierChance(progress, 3), BloodMoonEquipmentRules.ordinaryTierChance(progress, 4),
                     "Copper and silver stay equal through each reachable daily interpolation step");
         }
-        for (double progress : new double[]{Math.nextUp(0D), .123456789D, 3.141592654D, 3.999999999D, 5.87654321D, Math.nextDown(8D)})
+        for (double progress : new double[]{Math.nextUp(0D), .123456789D, 3.141592654D, 3.999999999D, 5.87654321D, Math.nextDown(9D)})
             assertEquals(BloodMoonEquipmentRules.ordinaryTierChance(progress, 3), BloodMoonEquipmentRules.ordinaryTierChance(progress, 4));
     }
 
@@ -131,19 +132,19 @@ class BloodMoonEquipmentRulesTest {
         assertEquals(.4096D, BloodMoonEquipmentRules.bloodAllFourChance(0), 1E-14);
         assertEquals(.00000256D, BloodMoonEquipmentRules.bloodAllEmptyChance(8), 1E-14);
         assertEquals(.84934656D, BloodMoonEquipmentRules.bloodAllFourChance(8), 1E-14);
-        for (int stage : new int[]{-1, 9, Integer.MIN_VALUE, Integer.MAX_VALUE}) {
+        for (int stage : new int[]{-1, 10, Integer.MIN_VALUE, Integer.MAX_VALUE}) {
             assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.bloodAllEmptyChance(stage));
             assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.bloodAllFourChance(stage));
         }
     }
 
     @Test void bloodRaisesSlotArmorHeldAndHighMaterialProbabilitiesWhileLaterStagesReduceEmptySlots() {
-        for (int stage = 0; stage < 9; stage++) {
+        for (int stage = 0; stage < 10; stage++) {
             assertTrue(BloodMoonEquipmentRules.armorChance(stage, true) > BloodMoonEquipmentRules.armorChance(stage, false));
             assertTrue(BloodMoonEquipmentRules.heldChance(stage, true) > BloodMoonEquipmentRules.heldChance(stage, false));
-            assertTrue(BloodMoonEquipmentRules.tierChance(stage, 8, true) > BloodMoonEquipmentRules.tierChance(stage, 8, false));
+            assertTrue(BloodMoonEquipmentRules.tierChance(stage, 9, true) > BloodMoonEquipmentRules.tierChance(stage, 9, false));
             for (boolean blood : new boolean[]{false, true}) {
-                for (int tier = 0; tier < 9; tier++)
+                for (int tier = 0; tier < 10; tier++)
                     assertTrue(BloodMoonEquipmentRules.tierChance(stage, stage, blood) >= BloodMoonEquipmentRules.tierChance(stage, tier, blood));
                 if (stage > 0) {
                     assertTrue(BloodMoonEquipmentRules.armorChance(stage, blood) > BloodMoonEquipmentRules.armorChance(stage - 1, blood));
@@ -164,10 +165,10 @@ class BloodMoonEquipmentRulesTest {
     }
 
     @Test void materialDrawIncludesBothSidesOfEachCumulativeBoundary() {
-        for (int stage = 0; stage < 9; stage++) {
+        for (int stage = 0; stage < 10; stage++) {
             for (boolean blood : new boolean[]{false, true}) {
                 double boundary = 0D;
-                for (int tier = 0; tier < 8; tier++) {
+                for (int tier = 0; tier < 9; tier++) {
                     boundary += BloodMoonEquipmentRules.tierChance(stage, tier, blood);
                     assertEquals(tier, BloodMoonEquipmentRules.selectTier(stage, blood, Math.nextDown(boundary)));
                     assertEquals(tier + 1, BloodMoonEquipmentRules.selectTier(stage, blood, boundary));
@@ -181,11 +182,11 @@ class BloodMoonEquipmentRulesTest {
             assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.selectTier(0, false, value));
         assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.armorChance(-1, false));
         assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.heldChance(-1, false));
-        assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.heldChance(9, true));
-        assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.tierChance(9, 0, false));
-        assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.selectTier(9, false, 0D));
+        assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.heldChance(10, true));
+        assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.tierChance(10, 0, false));
+        assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.selectTier(10, false, 0D));
         assertEquals(0D, BloodMoonEquipmentRules.tierChance(0, -1, false));
-        assertEquals(0D, BloodMoonEquipmentRules.tierChance(8, 9, true));
+        assertEquals(0D, BloodMoonEquipmentRules.tierChance(8, 10, true));
     }
 
     @Test void ordinaryCalendarActivationAndLongBoundariesDoNotDependOnBloodCounts() {
@@ -202,8 +203,8 @@ class BloodMoonEquipmentRulesTest {
         assertEquals(129D / 128D, BloodMoonEquipmentRules.ordinaryProgress(257));
         assertEquals(1023D / 128D, BloodMoonEquipmentRules.ordinaryProgress(1151));
         assertEquals(8D, BloodMoonEquipmentRules.ordinaryProgress(1152));
-        assertEquals(8D, BloodMoonEquipmentRules.ordinaryProgress(Long.MAX_VALUE));
-        assertEquals(8, BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(416)));
+        assertEquals(9D, BloodMoonEquipmentRules.ordinaryProgress(Long.MAX_VALUE));
+        assertEquals(9, BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(416)));
         assertEquals(2.25D, BloodMoonEquipmentRules.ordinaryProgress(416));
     }
 
@@ -213,8 +214,8 @@ class BloodMoonEquipmentRulesTest {
         assertEquals(64L, calendar.get("introduced_from_day").getAsLong());
         assertEquals(128L, calendar.get("growth_start_day").getAsLong());
         assertEquals(128L, calendar.get("days_per_stage").getAsLong());
-        assertEquals(1152L, calendar.get("maximum_day").getAsLong());
-        assertEquals(12, calendar.getAsJsonArray("anchors").size());
+        assertEquals(1280L, calendar.get("maximum_day").getAsLong());
+        assertEquals(17, calendar.getAsJsonArray("anchors").size());
         for (var element : calendar.getAsJsonArray("anchors")) {
             var row = element.getAsJsonObject();
             double progress = BloodMoonEquipmentRules.ordinaryProgress(row.get("day").getAsLong());
@@ -227,7 +228,7 @@ class BloodMoonEquipmentRulesTest {
             assertEquals(row.get("unarmored_chance").getAsDouble(), 1D - armor, 1E-14);
             assertEquals(row.get("empty_held_chance").getAsDouble(), 1D - held, 1E-14);
             double cumulative = 0D;
-            for (int tier = 0; tier < 9; tier++) {
+            for (int tier = 0; tier < 10; tier++) {
                 double expected = row.getAsJsonArray("conditional_material_chances").get(tier).getAsDouble();
                 double actual = BloodMoonEquipmentRules.ordinaryTierChance(progress, tier);
                 assertEquals(rational(row.getAsJsonArray("conditional_material_fractions").get(tier).getAsString()), expected, 1E-14);
@@ -240,49 +241,49 @@ class BloodMoonEquipmentRulesTest {
             assertEquals(1D, cumulative, 1E-14);
         }
         // Copper/silver share their two normalized basis rows; the half-stage anchor mixes rows0/1.
-        assertEquals(32D / 565D, BloodMoonEquipmentRules.ordinaryTierChance(3.5D, 0), 1E-15);
-        assertEquals(64D / 565D, BloodMoonEquipmentRules.ordinaryTierChance(3.5D, 5), 1E-15);
-        assertEquals(14677D / 164034105D, BloodMoonEquipmentRules.ordinaryTierChance(.5D, 8), 1E-15);
+        assertEquals(128D / 2261D, BloodMoonEquipmentRules.ordinaryTierChance(3.5D, 0), 1E-15);
+        assertEquals(256D / 2261D, BloodMoonEquipmentRules.ordinaryTierChance(3.5D, 5), 1E-15);
+        assertEquals(33548D / 374951871D, BloodMoonEquipmentRules.ordinaryTierChance(.5D, 8), 1E-15);
     }
 
     @Test void ordinaryProbabilitiesGrowDailyAndNeverOutrunBloodAtAnyMaterialThreshold() {
-        for (long day = 64; day <= 1152; day++) {
+        for (long day = 64; day <= 1280; day++) {
             double progress = BloodMoonEquipmentRules.ordinaryProgress(day);
             double previous = BloodMoonEquipmentRules.ordinaryProgress(day - 1);
             assertTrue(BloodMoonEquipmentRules.ordinaryArmorChance(progress) >= BloodMoonEquipmentRules.ordinaryArmorChance(previous));
             assertTrue(BloodMoonEquipmentRules.ordinaryHeldChance(progress) >= BloodMoonEquipmentRules.ordinaryHeldChance(previous));
             double probability = 0D;
-            for (int tier = 0; tier < 9; tier++) {
+            for (int tier = 0; tier < 10; tier++) {
                 double actual = BloodMoonEquipmentRules.ordinaryTierChance(progress, tier);
                 assertTrue(actual > 0D, "Older materials must remain possible at day " + day);
                 probability += actual;
             }
             assertEquals(1D, probability, 1E-14);
             assertOrdinaryDoesNotOutrunBlood(day);
-            for (int threshold = 1; threshold < 9; threshold++) {
+            for (int threshold = 1; threshold < 10; threshold++) {
                 double currentTail = 0D, previousTail = 0D;
-                for (int tier = threshold; tier < 9; tier++) {
+                for (int tier = threshold; tier < 10; tier++) {
                     currentTail += BloodMoonEquipmentRules.ordinaryTierChance(progress, tier);
                     previousTail += BloodMoonEquipmentRules.ordinaryTierChance(previous, tier);
                 }
                 assertTrue(currentTail + 1E-14 >= previousTail, "High-material tail regressed at day " + day);
             }
         }
-        for (long day : new long[]{1153, 4096, Long.MAX_VALUE}) assertOrdinaryDoesNotOutrunBlood(day);
+        for (long day : new long[]{1281, 4096, Long.MAX_VALUE}) assertOrdinaryDoesNotOutrunBlood(day);
     }
 
     @Test void ordinaryMaterialDrawPreservesEveryCumulativeBoundaryAndRejectsInvalidInputs() {
-        for (double progress : new double[]{0D, .25D, .5D, 1D, 3.5D, 4.125D, 7.9921875D, 8D}) {
+        for (double progress : new double[]{0D, .25D, .5D, 1D, 3.5D, 4.125D, 7.9921875D, 8D, 8.5D, 9D}) {
             double boundary = 0D;
             assertEquals(0, BloodMoonEquipmentRules.selectOrdinaryTier(progress, 0D));
-            assertEquals(8, BloodMoonEquipmentRules.selectOrdinaryTier(progress, Math.nextDown(1D)));
-            for (int tier = 0; tier < 8; tier++) {
+            assertEquals(9, BloodMoonEquipmentRules.selectOrdinaryTier(progress, Math.nextDown(1D)));
+            for (int tier = 0; tier < 9; tier++) {
                 boundary += BloodMoonEquipmentRules.ordinaryTierChance(progress, tier);
                 assertEquals(tier, BloodMoonEquipmentRules.selectOrdinaryTier(progress, Math.nextDown(boundary)));
                 assertEquals(tier + 1, BloodMoonEquipmentRules.selectOrdinaryTier(progress, boundary));
             }
         }
-        for (double invalid : new double[]{-1D, Math.nextUp(8D), Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
+        for (double invalid : new double[]{-1D, Math.nextUp(9D), Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
             assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.ordinaryArmorChance(invalid));
             assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.ordinaryHeldChance(invalid));
             assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.ordinaryTierChance(invalid, 0));
@@ -291,7 +292,36 @@ class BloodMoonEquipmentRulesTest {
         for (double invalid : new double[]{-1D, 1D, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY})
             assertThrows(IllegalArgumentException.class, () -> BloodMoonEquipmentRules.selectOrdinaryTier(0D, invalid));
         assertEquals(0D, BloodMoonEquipmentRules.ordinaryTierChance(0D, -1));
-        assertEquals(0D, BloodMoonEquipmentRules.ordinaryTierChance(8D, 9));
+        assertEquals(0D, BloodMoonEquipmentRules.ordinaryTierChance(9D, 10));
+    }
+
+    @Test void vibraniumAppendsAfterAdamantiumAndItsActualChanceGrowsEveryOrdinaryDay() {
+        assertEquals("mite:adamantium_", BloodMoonEquipmentRules.PREFIXES.get(8));
+        assertEquals("mite:vibranium_", BloodMoonEquipmentRules.PREFIXES.get(9));
+        long[] days = {1151, 1152, 1153, 1279, 1280, 1281};
+        double[] progress = {1023D/128D, 8D, 1025D/128D, 1151D/128D, 9D, 9D};
+        for (int i=0; i<days.length; i++) assertEquals(progress[i], BloodMoonEquipmentRules.ordinaryProgress(days[i]));
+        assertEquals(8, BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(351)));
+        assertEquals(9, BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(352)));
+        assertEquals(.95D, BloodMoonEquipmentRules.ordinaryArmorChance(9D));
+        assertEquals(.85D, BloodMoonEquipmentRules.ordinaryHeldChance(9D));
+        assertEquals(.98D, BloodMoonEquipmentRules.armorChance(9, true));
+        assertEquals(.97D, BloodMoonEquipmentRules.heldChance(9, true));
+        double previousConditional = BloodMoonEquipmentRules.ordinaryTierChance(0D, 9);
+        double previousActual = .5D * previousConditional;
+        for (long day=129; day<=1280; day++) {
+            double p = BloodMoonEquipmentRules.ordinaryProgress(day);
+            double conditional = BloodMoonEquipmentRules.ordinaryTierChance(p, 9);
+            double actual = BloodMoonEquipmentRules.ordinaryArmorChance(p) * conditional;
+            assertTrue(conditional >= previousConditional, "Vibranium conditional chance must not regress at day " + day);
+            assertTrue(actual > previousActual, "Vibranium actual armor chance must increase at day " + day);
+            previousConditional=conditional; previousActual=actual;
+        }
+        assertEquals(8899D/374951871D, BloodMoonEquipmentRules.ordinaryTierChance(9D/16D,9),1E-15);
+        assertEquals(32D/287D, BloodMoonEquipmentRules.ordinaryTierChance(8D,9),1E-15);
+        assertEquals(256D/511D, BloodMoonEquipmentRules.ordinaryTierChance(9D,9),1E-15);
+        assertEquals(512000000D/2480787323D, BloodMoonEquipmentRules.tierChance(8,9,true),1E-15);
+        assertEquals(25600000000D/39381511261D, BloodMoonEquipmentRules.tierChance(9,9,true),1E-15);
     }
 
     private static void assertOrdinaryDoesNotOutrunBlood(long day) {
@@ -303,9 +333,9 @@ class BloodMoonEquipmentRulesTest {
         double bloodHeld = BloodMoonEquipmentRules.heldChance(bloodStage, true);
         assertTrue(ordinaryArmor <= bloodArmor, "Ordinary armor rate outran blood at day " + day);
         assertTrue(ordinaryHeld <= bloodHeld, "Ordinary held rate outran blood at day " + day);
-        for (int threshold = 1; threshold < 9; threshold++) {
+        for (int threshold = 1; threshold < 10; threshold++) {
             double ordinaryTail = 0D, bloodTail = 0D;
-            for (int tier = threshold; tier < 9; tier++) {
+            for (int tier = threshold; tier < 10; tier++) {
                 ordinaryTail += BloodMoonEquipmentRules.ordinaryTierChance(progress, tier);
                 bloodTail += BloodMoonEquipmentRules.tierChance(bloodStage, tier, true);
             }

@@ -130,7 +130,7 @@ public final class CreativeTabs034GameTests {
                 assertVariant(h,search,expected,"Search retains exact rune components "+rune);
             }
         }
-        h.assertValueEqual(MiteFunctionalBlocks.ANVILS.size(),6,"Six additional material anvil identities");
+        h.assertValueEqual(MiteFunctionalBlocks.ANVILS.size(),7,"Seven additional material anvil identities");
         MiteFunctionalBlocks.ANVILS.forEach((material,holder) -> {
             Item item=holder.get().asItem();
             h.assertTrue(MiteCreativeTabs.group(item)==Group.FUNCTIONAL_BLOCKS,"Material anvils remain functional blocks");

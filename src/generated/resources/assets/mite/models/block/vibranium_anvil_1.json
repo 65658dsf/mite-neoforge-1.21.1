@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/template_anvil",
+  "textures": {
+    "body": "mite:block/anvil/vibranium/base",
+    "particle": "mite:block/anvil/vibranium/base",
+    "top": "mite:block/anvil/vibranium/top_damaged_1"
+  }
+}

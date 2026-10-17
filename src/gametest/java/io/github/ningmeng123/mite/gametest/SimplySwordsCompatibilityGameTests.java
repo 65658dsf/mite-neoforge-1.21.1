@@ -49,17 +49,17 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class SimplySwordsCompatibilityGameTests {
     private static final List<String> ADDED_MATERIALS = List.of("rusted_iron", "copper", "silver",
-            "ancient_metal", "mithril", "adamantium");
+            "ancient_metal", "mithril", "adamantium", "vibranium");
     private static final List<String> ALL_METALS = List.of("rusted_iron", "copper", "silver", "gold",
-            "ancient_metal", "mithril", "adamantium");
+            "ancient_metal", "mithril", "adamantium", "vibranium");
     private SimplySwordsCompatibilityGameTests() {}
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void optionalModCreatesExactlyNinetyIdentitiesAndReusesNativeGold(GameTestHelper h) {
+    public static void optionalModCreatesExactlyOneHundredFiveIdentitiesAndReusesNativeGold(GameTestHelper h) {
         long count = BuiltInRegistries.ITEM.keySet().stream().filter(id -> id.getNamespace().equals("mite")
                 && id.getPath().startsWith("simplyswords_")).count();
-        h.assertValueEqual(count, SimplySwordsCompat.enabled() ? 90L : 0L,
-                "Conditional registration creates six material sets and no absent-mod placeholder items");
+        h.assertValueEqual(count, SimplySwordsCompat.enabled() ? 105L : 0L,
+                "Conditional registration creates seven material sets and no absent-mod placeholder items");
         for (String material : ALL_METALS) for (String family : SimplySwordsCompat.families()) {
             Item item = SimplySwordsCompat.weapon(material, family);
             if (!SimplySwordsCompat.enabled()) {
@@ -92,6 +92,11 @@ public final class SimplySwordsCompatibilityGameTests {
             h.assertValueEqual(profile.family(), family(family), "Weapon shape selects source wear: " + label);
             h.assertValueEqual(profile.materialDurability(), factor(material), "Source material durability: " + label);
             h.assertValueEqual(EquipmentDurability.maximumQuality(stack), cap(material), "Material quality cap: " + label);
+            if (material.equals("vibranium")) {
+                h.assertValueEqual(stack.getEnchantmentValue(), 120, "Vibranium preserves source enchantability: " + label);
+                h.assertFalse(stack.canBeHurtBy(h.getLevel().damageSources().lava()), "Dropped vibranium resists lava: " + label);
+                h.assertFalse(stack.canBeHurtBy(h.getLevel().damageSources().inFire()), "Dropped vibranium resists fire: " + label);
+            }
             int base = (int)(400F * family(family).components() * factor(material));
             h.assertValueEqual(stack.getOrDefault(DataComponents.MAX_DAMAGE, 0), base,
                     "Default component stores the unscaled source maximum: " + label);
@@ -103,17 +108,20 @@ public final class SimplySwordsCompatibilityGameTests {
                         "ItemStack applies quality exactly once: " + label);
             }
         }
-        ItemStack original = new ItemStack(SimplySwordsCompat.weapon("mithril", "spear"));
-        EquipmentDurability.setQuality(original, Quality.FINE);
-        original.setDamageValue(713);
-        ItemStack restored = ItemStack.parse(h.getLevel().registryAccess(), original.save(h.getLevel().registryAccess())).orElseThrow();
-        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), h.getLevel().registryAccess());
-        try {
-            ItemStack.STREAM_CODEC.encode(buffer, restored);
-            ItemStack decoded = ItemStack.STREAM_CODEC.decode(buffer);
-            h.assertTrue(ItemStack.matches(original, decoded), "Weapon identity, quality and exact wear survive save and network");
-            h.assertValueEqual(decoded.getMaxDamage(), 76800, "Saved/network Fine mithril spear is not scaled twice");
-        } finally { buffer.release(); }
+        for (String material : List.of("mithril", "vibranium")) {
+            ItemStack original = new ItemStack(SimplySwordsCompat.weapon(material, "spear"));
+            EquipmentDurability.setQuality(original, Quality.FINE);
+            original.setDamageValue(713);
+            ItemStack restored = ItemStack.parse(h.getLevel().registryAccess(), original.save(h.getLevel().registryAccess())).orElseThrow();
+            RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), h.getLevel().registryAccess());
+            try {
+                ItemStack.STREAM_CODEC.encode(buffer, restored);
+                ItemStack decoded = ItemStack.STREAM_CODEC.decode(buffer);
+                h.assertTrue(ItemStack.matches(original, decoded), "Weapon identity, quality and exact wear survive save and network: " + material);
+                h.assertValueEqual(decoded.getMaxDamage(), material.equals("vibranium") ? 614400 : 76800,
+                        "Saved/network Fine spear is not scaled twice: " + material);
+            } finally { buffer.release(); }
+        }
         h.succeed();
     }
 
@@ -159,8 +167,8 @@ public final class SimplySwordsCompatibilityGameTests {
         sounds.setBoolean(general, true);
         NeoForge.EVENT_BUS.addListener(listener);
         try {
-            for (String family : SimplySwordsCompat.families()) {
-                ItemStack stack = new ItemStack(SimplySwordsCompat.weapon("copper", family));
+            for (String material : List.of("copper", "vibranium")) for (String family : SimplySwordsCompat.families()) {
+                ItemStack stack = new ItemStack(SimplySwordsCompat.weapon(material, family));
                 player.setItemSlot(EquipmentSlot.MAINHAND, stack);
                 int before = observed[0];
                 h.assertTrue(stack.hurtEnemy(target, player), "Real ItemStack attack callback succeeds: " + family);
@@ -237,7 +245,8 @@ public final class SimplySwordsCompatibilityGameTests {
                     "Weapon crafting and quality repair have a positive metal-work difficulty");
             h.getLevel().setBlockAndUpdate(bench, MiteWorkbenches.TABLES.get("flint").get().defaultBlockState());
             h.assertFalse(WorkbenchRules.allowsCrafter(h.getLevel(), crafter, stack), "A flint bench cannot manufacture metal weapons");
-            h.getLevel().setBlockAndUpdate(bench, MiteWorkbenches.TABLES.get("adamantium").get().defaultBlockState());
+            h.getLevel().setBlockAndUpdate(bench, MiteWorkbenches.TABLES.get(material.equals("vibranium")
+                    ? "vibranium" : "adamantium").get().defaultBlockState());
             h.assertTrue(WorkbenchRules.allowsCrafter(h.getLevel(), crafter, stack), "A sufficient adjacent bench enables manufacturing");
         }
         ItemStack mithril = new ItemStack(SimplySwordsCompat.weapon("mithril", "greathammer"));
@@ -249,7 +258,7 @@ public final class SimplySwordsCompatibilityGameTests {
     }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void loadedRecipesCraftSeventyFiveWeaponsAndLeaveRustedIronAsLoot(GameTestHelper h) {
+    public static void loadedRecipesCraftNinetyWeaponsAndLeaveRustedIronAsLoot(GameTestHelper h) {
         Map<Item, Integer> recipes = new HashMap<>();
         for (var holder : h.getLevel().getRecipeManager().getRecipes()) {
             ItemStack output = holder.value().getResultItem(h.getLevel().registryAccess());
@@ -265,8 +274,8 @@ public final class SimplySwordsCompatibilityGameTests {
             h.assertTrue(shaped.assemble(input, h.getLevel().registryAccess()).is(output.getItem()), "Recipe assembles its actual registered weapon");
             recipes.merge(output.getItem(), 1, Integer::sum);
         }
-        h.assertValueEqual(recipes.values().stream().mapToInt(Integer::intValue).sum(), SimplySwordsCompat.enabled() ? 75 : 0,
-                "Exactly five craftable material sets load; optional recipes vanish when the mod is absent");
+        h.assertValueEqual(recipes.values().stream().mapToInt(Integer::intValue).sum(), SimplySwordsCompat.enabled() ? 90 : 0,
+                "Exactly six craftable material sets load; optional recipes vanish when the mod is absent");
         if (SimplySwordsCompat.enabled()) for (String material : ADDED_MATERIALS) for (String family : SimplySwordsCompat.families()) {
             Item weapon = SimplySwordsCompat.weapon(material, family);
             h.assertValueEqual(recipes.getOrDefault(weapon, 0), material.equals("rusted_iron") ? 0 : 1,
@@ -325,6 +334,7 @@ public final class SimplySwordsCompatibilityGameTests {
             case "ancient_metal" -> 16F;
             case "mithril" -> 64F;
             case "adamantium" -> 256F;
+            case "vibranium" -> 512F;
             default -> 4F;
         };
     }

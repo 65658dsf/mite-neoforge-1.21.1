@@ -69,7 +69,7 @@ public final class FunctionalBlockGameTests {
     }
     @GameTest(template = "empty")
     public static void allFunctionalBlocksHaveSourceStackSizesAndValidEntities(GameTestHelper helper) {
-        helper.assertValueEqual(MiteFunctionalBlocks.ANVILS.size(), 6, "Six additional metal anvils");
+        helper.assertValueEqual(MiteFunctionalBlocks.ANVILS.size(), 7, "Seven additional metal anvils");
         helper.assertValueEqual(MiteFunctionalBlocks.STRONGBOXES.size(), 7, "Seven source strongboxes");
         for (var anvil : MiteFunctionalBlocks.ANVILS.values()) {
             BlockPos pos = place(helper, anvil.get());

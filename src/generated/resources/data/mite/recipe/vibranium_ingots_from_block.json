@@ -1,0 +1,11 @@
+{
+  "type": "mite:bulk_material",
+  "group": "vibranium_ingot",
+  "ingredient": {
+    "item": "mite:vibranium_block"
+  },
+  "result": {
+    "count": 9,
+    "id": "mite:vibranium_ingot"
+  }
+}

@@ -66,7 +66,7 @@ public final class SimplySwordsThrownGameTests {
     @GameTest(template = "empty")
     public static void actualHitsWearTheRealSpearAndNativePickupKeepsFiftyPoints(GameTestHelper h) throws ReflectiveOperationException {
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
-        for (String material : List.of("iron", "copper", "rusted_iron")) {
+        for (String material : List.of("iron", "copper", "rusted_iron", "vibranium")) {
             Player owner = owner(h, GameType.SURVIVAL); Mob target = target(h);
             ItemStack stack = new ItemStack(SimplySwordsCompat.weapon(material, "spear")); stack.setDamageValue(7);
             AbstractArrow spear = spear(h, owner, stack); float health = target.getHealth();

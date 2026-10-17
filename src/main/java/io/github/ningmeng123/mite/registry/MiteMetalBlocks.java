@@ -20,12 +20,12 @@ public final class MiteMetalBlocks {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Mite.MOD_ID);
     public static final Map<String, DeferredBlock<Block>> STORAGE = new LinkedHashMap<>();
     static {
-        for (String material : new String[] {"silver", "ancient_metal", "mithril", "adamantium"}) {
+        for (String material : new String[] {"silver", "ancient_metal", "mithril", "adamantium", "vibranium"}) {
             var block = BLOCKS.registerSimpleBlock(material + "_block", BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)
                     .strength(io.github.ningmeng123.mite.crafting.WorkbenchRules.materialCapacity(material) * 1.2F)
                     .requiresCorrectToolForDrops());
             STORAGE.put(material, block);
-            ITEMS.registerSimpleBlockItem(block, new Item.Properties().stacksTo(4));
+            ITEMS.registerSimpleBlockItem(block, material.equals("vibranium") ? new Item.Properties().stacksTo(4).fireResistant() : new Item.Properties().stacksTo(4));
         }
     }
     private MiteMetalBlocks() {}
@@ -44,6 +44,6 @@ public final class MiteMetalBlocks {
     }
     public static int requiredHarvest(String material) {
         return switch (material) { case "copper", "silver" -> 3; case "ancient_metal" -> 4;
-            case "mithril" -> 5; case "adamantium" -> 6; default -> throw new IllegalArgumentException(material); };
+            case "mithril" -> 5; case "adamantium", "vibranium" -> 6; default -> throw new IllegalArgumentException(material); };
     }
 }

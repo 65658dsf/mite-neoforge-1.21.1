@@ -1,0 +1,30 @@
+{
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "pattern": [
+    "NSL",
+    "AIL",
+    "NSL"
+  ],
+  "key": {
+    "I": {
+      "item": "mite:vibranium_ingot"
+    },
+    "N": {
+      "item": "mite:vibranium_nugget"
+    },
+    "S": {
+      "item": "mite:obsidian_stick"
+    },
+    "L": {
+      "item": "minecraft:string"
+    },
+    "A": {
+      "item": "mite:ancient_metal_bow"
+    }
+  },
+  "result": {
+    "id": "mite:vibranium_bow",
+    "count": 1
+  }
+}

@@ -31,7 +31,7 @@ public final class MobShields {
     public static final String DISABLED_UNTIL = "mite:shield_disabled_until";
     public static final float SPAWN_CHANCE = .15F;
     private static final Set<String> METALS = Set.of("rusted_iron", "copper", "silver", "gold", "iron",
-            "ancient_metal", "mithril", "adamantium");
+            "ancient_metal", "mithril", "adamantium", "vibranium");
 
     private MobShields() {}
 

@@ -140,6 +140,10 @@
     {
       "id": "mite:simplyswords_adamantium_scythe",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_scythe",
+      "required": false
     }
   ]
 }

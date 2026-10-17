@@ -17,12 +17,12 @@ public final class MiteWorkbenches {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Mite.MOD_ID);
     public static final Map<String, DeferredBlock<MaterialWorkbenchBlock>> TABLES = new LinkedHashMap<>();
     static {
-        for (String material : new String[]{"flint", "obsidian", "copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium"}) {
+        for (String material : new String[]{"flint", "obsidian", "copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium"}) {
             var block = BLOCKS.registerBlock(material + "_crafting_table",
                     properties -> new MaterialWorkbenchBlock(material, properties),
                     BlockBehaviour.Properties.ofFullCopy(Blocks.CRAFTING_TABLE));
             TABLES.put(material, block);
-            ITEMS.registerSimpleBlockItem(block, new Item.Properties().stacksTo(4));
+            ITEMS.registerSimpleBlockItem(block, material.equals("vibranium") ? new Item.Properties().stacksTo(4).fireResistant() : new Item.Properties().stacksTo(4));
         }
     }
     private MiteWorkbenches() {}

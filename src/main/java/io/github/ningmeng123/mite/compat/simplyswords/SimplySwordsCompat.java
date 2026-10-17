@@ -37,7 +37,7 @@ public final class SimplySwordsCompat {
     private static final List<String> FAMILIES = List.of("longsword", "twinblade", "rapier", "katana", "sai",
             "spear", "glaive", "warglaive", "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd");
     public static final List<String> MATERIALS = List.of("rusted_iron", "copper", "silver", "gold",
-            "ancient_metal", "mithril", "adamantium");
+            "ancient_metal", "mithril", "adamantium", "vibranium");
     private static final Map<Item, Definition> DEFINITIONS = new IdentityHashMap<>();
 
     public record Definition(String material, String family, ToolProfile profile, boolean added) {
@@ -106,6 +106,7 @@ public final class SimplySwordsCompat {
     private static Item create(String material, String family, Item.Properties properties) {
         ToolProfile profile = profile(material, family);
         MiteTools.Definition source = source(material);
+        if (material.equals("vibranium")) properties.fireResistant();
         Tier tier = new Tier() {
             @Override public int getUses() { return EquipmentDurabilityRules.baseToolDurability(profile); }
             @Override public float getSpeed() { return source.speed(); }
@@ -140,6 +141,7 @@ public final class SimplySwordsCompat {
             case "ancient_metal" -> MiteMaterials.ANCIENT_METAL_INGOT.get();
             case "mithril" -> MiteMaterials.MITHRIL_INGOT.get();
             case "adamantium" -> MiteMaterials.ADAMANTIUM_INGOT.get();
+            case "vibranium" -> MiteMaterials.VIBRANIUM_INGOT.get();
             default -> Items.IRON_INGOT;
         };
     }

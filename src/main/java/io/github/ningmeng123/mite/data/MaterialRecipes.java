@@ -40,6 +40,7 @@ public final class MaterialRecipes extends RecipeProvider {
         conversion(output, "ancient_metal", MiteMaterials.ANCIENT_METAL_NUGGET.get(), MiteMaterials.ANCIENT_METAL_INGOT.get(), false);
         conversion(output, "mithril", MiteMaterials.MITHRIL_NUGGET.get(), MiteMaterials.MITHRIL_INGOT.get(), false);
         conversion(output, "adamantium", MiteMaterials.ADAMANTIUM_NUGGET.get(), MiteMaterials.ADAMANTIUM_INGOT.get(), false);
+        conversion(output, "vibranium", MiteMaterials.VIBRANIUM_NUGGET.get(), MiteMaterials.VIBRANIUM_INGOT.get(), false);
         bulkUnpacking(output, "copper_ingot", Items.COPPER_BLOCK, Items.COPPER_INGOT, "copper_ingot");
         bulkUnpacking(output, "copper_ingot_from_waxed_copper_block", Items.WAXED_COPPER_BLOCK, Items.COPPER_INGOT, "copper_ingot");
         bulkUnpacking(output, "iron_ingot_from_iron_block", Items.IRON_BLOCK, Items.IRON_INGOT, "iron_ingot");

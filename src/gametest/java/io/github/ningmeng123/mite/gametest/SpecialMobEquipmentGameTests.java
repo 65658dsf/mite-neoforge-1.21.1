@@ -47,7 +47,7 @@ public final class SpecialMobEquipmentGameTests {
             EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
     private static final String[] PARTS = {"helmet", "chestplate", "leggings", "boots"};
     private static final Map<String, Integer> MATERIALS = Map.of("rusted_iron", 0, "gold", 1, "copper", 2,
-            "silver", 2, "iron", 3, "ancient_metal", 4, "mithril", 5, "adamantium", 6);
+            "silver", 2, "iron", 3, "ancient_metal", 4, "mithril", 5, "adamantium", 6, "vibranium", 7);
 
     private SpecialMobEquipmentGameTests() {}
 
@@ -188,10 +188,10 @@ public final class SpecialMobEquipmentGameTests {
                     floor(helper, mob, kind);
                     for (EquipmentSlot slot : ARMOR) {
                         String material = armorMaterial(mob.getItemBySlot(slot));
-                        advancedArmor |= material.equals("mithril") || material.equals("adamantium");
+                        advancedArmor |= material.equals("mithril") || material.equals("adamantium") || material.equals("vibranium");
                     }
                     String held = id(mob.getMainHandItem());
-                    advancedWeapon |= held.startsWith("mite:mithril_") || held.startsWith("mite:adamantium_");
+                    advancedWeapon |= held.startsWith("mite:mithril_") || held.startsWith("mite:adamantium_") || held.startsWith("mite:vibranium_");
                     if (chain(kind)) helper.assertTrue(held.endsWith("_sword"), "A source melee longdead never loses its weapon family");
                     mob.tick();
                     helper.assertTrue(mob.getAttributeValue(Attributes.ARMOR) >= (chain(kind) ? 14D : ancient(kind) ? 18D : 9D),
@@ -238,10 +238,10 @@ public final class SpecialMobEquipmentGameTests {
             Map<String, String> expected = Map.of(
                     "mite:ancient_metal_chainmail_helmet", "mite:adamantium_chain_helmet",
                     "mite:ancient_metal_chainmail_chestplate", "mite:adamantium_chain_chestplate",
-                    "mite:ancient_metal_dagger", "mite:adamantium_dagger",
-                    "mite:ancient_metal_battle_axe", "mite:adamantium_battle_axe",
-                    "mite:ancient_metal_war_hammer", "mite:adamantium_war_hammer",
-                    "mite:ancient_metal_bow", "mite:mithril_bow");
+                    "mite:ancient_metal_dagger", "mite:vibranium_dagger",
+                    "mite:ancient_metal_battle_axe", "mite:vibranium_battle_axe",
+                    "mite:ancient_metal_war_hammer", "mite:vibranium_war_hammer",
+                    "mite:ancient_metal_bow", "mite:vibranium_bow");
             for (var mapping : expected.entrySet()) {
                 Mob mob = create(helper, MobKind.LONGDEAD_GUARDIAN, firstDraw(.999D, 1D));
                 String actual = SpecialMobEquipment.itemId(mob, mapping.getKey());
@@ -257,8 +257,8 @@ public final class SpecialMobEquipmentGameTests {
     public static void intermediateRollsResolveNativeIronPlateAndGoldenAndIronBattleAxes(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 1152L, 6_000L);
-            // Final ordinary-stage weights total 255/128: gold occupies [3/255,7/255), iron [15/255,31/255).
-            long gold = firstDraw(.02D, .025D), iron = firstDraw(.08D, .09D);
+            // Day1152 with the Vibranium tail: gold [3/287,7/287), iron [15/287,31/287).
+            long gold = firstDraw(.015D, .02D), iron = firstDraw(.08D, .09D);
             Mob plate = create(helper, MobKind.BONE_LORD, iron);
             helper.assertValueEqual(SpecialMobEquipment.itemId(plate, "mite:rusted_iron_helmet"), "minecraft:iron_helmet",
                     "Iron plate uses the retained native item ID rather than a nonexistent MITE registration");
@@ -282,7 +282,7 @@ public final class SpecialMobEquipmentGameTests {
             oracle.nextDouble(); // One material selection, followed by the documented source unenchanted wear draw.
             float fraction = .7F + .3F * oracle.nextFloat();
             ItemStack item = SpecialMobEquipment.generated(mob, "mite:ancient_metal_helmet", false);
-            helper.assertValueEqual(id(item), "mite:adamantium_helmet", "The material decision occurs before source item generation");
+            helper.assertValueEqual(id(item), "mite:vibranium_helmet", "The material decision occurs before source item generation");
             helper.assertTrue(!item.isEnchanted() && EquipmentDurability.quality(item) == Quality.AVERAGE,
                     "The ordinary metal item quality remains the source default without a fabricated quality lottery");
             helper.assertValueEqual(item.getDamageValue(), Math.min(item.getMaxDamage() - 1, (int)(item.getMaxDamage() * fraction)),
@@ -318,8 +318,8 @@ public final class SpecialMobEquipmentGameTests {
             for (long seed = 0; seed < 48 && guardian == null; seed++) {
                 R196Skeleton candidate = (R196Skeleton)create(helper, MobKind.LONGDEAD_GUARDIAN, seed);
                 finalizeNative(candidate, MobSpawnType.SPAWN_EGG, 0);
-                if (id(candidate.getMainHandItem()).equals("mite:mithril_bow")
-                        && (id(candidate.stowedItem()).equals("mite:mithril_dagger") || id(candidate.stowedItem()).equals("mite:adamantium_dagger"))) guardian = candidate;
+                if ((id(candidate.getMainHandItem()).equals("mite:mithril_bow") || id(candidate.getMainHandItem()).equals("mite:vibranium_bow"))
+                        && (id(candidate.stowedItem()).equals("mite:mithril_dagger") || id(candidate.stowedItem()).equals("mite:adamantium_dagger") || id(candidate.stowedItem()).equals("mite:vibranium_dagger"))) guardian = candidate;
             }
             helper.assertTrue(guardian != null, "Real guardian finalization upgrades its registered bow and hidden melee weapon");
             floor(helper, guardian, MobKind.LONGDEAD_GUARDIAN);
@@ -381,7 +381,7 @@ public final class SpecialMobEquipmentGameTests {
                 finalizeNative(troop, MobSpawnType.MOB_SUMMONED, 2);
                 floor(helper, troop, MobKind.LONGDEAD);
                 summonedAdvanced |= id(troop.getMainHandItem()).startsWith("mite:mithril_")
-                        || id(troop.getMainHandItem()).startsWith("mite:adamantium_");
+                        || id(troop.getMainHandItem()).startsWith("mite:adamantium_") || id(troop.getMainHandItem()).startsWith("mite:vibranium_");
                 helper.assertValueEqual(troop.getSpawnType(), MobSpawnType.MOB_SUMMONED, "Actual reinforcement reason remains unchanged");
             }
             helper.assertTrue(summonedAdvanced, "The real ancient troop finalize path participates in material progression");
@@ -407,8 +407,8 @@ public final class SpecialMobEquipmentGameTests {
                     finalizeNative(mob, MobSpawnType.SPAWN_EGG, 1);
                     String sword = id(mob.getMainHandItem());
                     helper.assertTrue(List.of("minecraft:iron_sword", "mite:ancient_metal_sword", "mite:mithril_sword",
-                            "mite:adamantium_sword").contains(sword), "Nether type1 swords cannot fall below their iron material floor");
-                    advancedSword |= sword.equals("mite:mithril_sword") || sword.equals("mite:adamantium_sword");
+                            "mite:adamantium_sword", "mite:vibranium_sword").contains(sword), "Nether type1 swords cannot fall below their iron material floor");
+                    advancedSword |= sword.equals("mite:mithril_sword") || sword.equals("mite:adamantium_sword") || sword.equals("mite:vibranium_sword");
                     helper.assertValueEqual(EquipmentDurability.quality(mob.getMainHandItem()), Quality.POOR,
                             "A higher material does not remove the explicit source poor-item quality");
                     helper.assertTrue(!mob.getMainHandItem().isEnchanted(), "The original type1 no-enchantment generation path remains intact");
@@ -427,6 +427,29 @@ public final class SpecialMobEquipmentGameTests {
                     "Ordinary zombie equipment remains under the existing separate progression policy");
             helper.assertValueEqual(ordinary.getRandom().nextLong(), RandomSource.create(196L).nextLong(),
                     "An unrelated species does not consume the special-set material RNG");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void specialSourceFamiliesResolveVibraniumTailAtBothLateCalendarAndNinthBlood(GameTestHelper helper) {
+        try (Progress ignored = new Progress(helper)) {
+            for (long[] date : new long[][]{{1280L, 6000L}, {352L, 351L * 24000L + 6000L}}) {
+                set(helper, date[0], date[1]);
+                Map<String,String> expected = Map.of(
+                        "mite:ancient_metal_helmet", "mite:vibranium_helmet",
+                        "mite:ancient_metal_sword", "mite:vibranium_sword",
+                        "mite:ancient_metal_dagger", "mite:vibranium_dagger",
+                        "mite:ancient_metal_battle_axe", "mite:vibranium_battle_axe",
+                        "mite:ancient_metal_war_hammer", "mite:vibranium_war_hammer",
+                        "mite:ancient_metal_bow", "mite:vibranium_bow",
+                        "mite:ancient_metal_chainmail_helmet", "mite:adamantium_chain_helmet");
+                for (var entry : expected.entrySet()) {
+                    Mob mob = create(helper, MobKind.LONGDEAD_GUARDIAN, firstDraw(.999D, 1D));
+                    helper.assertValueEqual(SpecialMobEquipment.itemId(mob,entry.getKey()),entry.getValue(),
+                            "A deterministic Vibranium tail preserves each registered source family, with an Adamantium ceiling for chainmail");
+                }
+            }
         }
         helper.succeed();
     }

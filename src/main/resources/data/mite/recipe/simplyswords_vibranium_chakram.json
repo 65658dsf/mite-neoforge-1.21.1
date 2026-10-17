@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "tag": "c:wood_sticks"
+    },
+    "X": {
+      "item": "mite:vibranium_ingot"
+    },
+    "Y": {
+      "item": "mite:vibranium_nugget"
+    }
+  },
+  "pattern": [
+    "YXY",
+    "X X",
+    "Y#Y"
+  ],
+  "result": {
+    "id": "mite:simplyswords_vibranium_chakram",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "simplyswords"
+    }
+  ],
+  "category": "equipment"
+}

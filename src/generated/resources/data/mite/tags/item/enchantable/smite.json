@@ -9,6 +9,7 @@
     "mite:ancient_metal_war_hammer",
     "mite:mithril_war_hammer",
     "mite:adamantium_war_hammer",
+    "mite:vibranium_war_hammer",
     {
       "id": "#mite:simplyswords/enchantable/smite",
       "required": false

@@ -64,7 +64,7 @@ public final class MobShieldGameTests {
 
     @GameTest(template = "empty")
     public static void spawnRollCreatesOneWornShieldMatchingEveryMetalWithoutReplacingWeapon(GameTestHelper h) {
-        for (String material : List.of("rusted_iron", "copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium")) {
+        for (String material : List.of("rusted_iron", "copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium")) {
             Mob mob = mob(h, EntityType.ZOMBIE);
             String weaponId = material.equals("iron") ? "minecraft:iron_sword" : material.equals("gold")
                     ? "minecraft:golden_sword" : "mite:" + material + "_sword";

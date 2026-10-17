@@ -24,6 +24,10 @@
     {
       "id": "mite:simplyswords_adamantium_greataxe",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_greataxe",
+      "required": false
     }
   ]
 }

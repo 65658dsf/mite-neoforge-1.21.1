@@ -22,6 +22,7 @@ class R196WeaponRulesTest {
         assertEquals(1F, R196WeaponRules.velocityMultiplier("wood"));
         assertEquals(1.1F, R196WeaponRules.velocityMultiplier("ancient_metal"));
         assertEquals(1.25F, R196WeaponRules.velocityMultiplier("mithril"));
+        assertEquals(1.75F, R196WeaponRules.velocityMultiplier("vibranium"));
         assertEquals(5F, R196WeaponRules.inaccuracy(0, false));
         assertEquals(5.5F, R196WeaponRules.inaccuracy(-1, false));
         assertEquals(10F, R196WeaponRules.inaccuracy(0, true));

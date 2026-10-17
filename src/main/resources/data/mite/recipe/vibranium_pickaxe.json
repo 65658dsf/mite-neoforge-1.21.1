@@ -1,0 +1,24 @@
+{
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "pattern": [
+    "III",
+    " A ",
+    " S "
+  ],
+  "key": {
+    "I": {
+      "item": "mite:vibranium_ingot"
+    },
+    "S": {
+      "item": "mite:obsidian_stick"
+    },
+    "A": {
+      "item": "mite:adamantium_pickaxe"
+    }
+  },
+  "result": {
+    "id": "mite:vibranium_pickaxe",
+    "count": 1
+  }
+}

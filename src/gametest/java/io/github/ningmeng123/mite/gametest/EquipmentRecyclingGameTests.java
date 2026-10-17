@@ -192,7 +192,7 @@ public final class EquipmentRecyclingGameTests {
 
     private static Item nugget(String material) {
         return switch (material) {
-            case "copper", "silver", "ancient_metal", "mithril", "adamantium" -> item("mite:" + material + "_nugget");
+            case "copper", "silver", "ancient_metal", "mithril", "adamantium", "vibranium" -> item("mite:" + material + "_nugget");
             case "gold" -> Items.GOLD_NUGGET;
             case "iron", "rusted_iron" -> Items.IRON_NUGGET;
             default -> null;

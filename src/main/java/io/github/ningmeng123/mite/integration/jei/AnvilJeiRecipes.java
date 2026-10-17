@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 /** Read-only source repair index using the same material preview as physical anvils. @author NingMeng123 */
 public final class AnvilJeiRecipes {
     private static final List<String> MATERIALS = List.of("copper", "silver", "gold", "iron",
-            "ancient_metal", "mithril", "adamantium");
+            "ancient_metal", "mithril", "adamantium", "vibranium");
     public record Profile(String id, float capacity, BlockState state) {}
     public record Index(List<AnvilJeiRecipe> recipes, Set<ResourceLocation> coveredItems) {
         public Index { recipes = List.copyOf(recipes); coveredItems = Set.copyOf(coveredItems); }

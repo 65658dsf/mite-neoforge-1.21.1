@@ -44,6 +44,8 @@ def expected_profiles() -> dict[str, tuple[str, str]]:
 
     for item, family in definitions:
         add(item, family)
+    # Vibranium is registered through the shared family loop instead of literal define calls.
+    add("mite:vibranium_hatchet", "HATCHET")
     return dict(sorted(result.items()))
 
 

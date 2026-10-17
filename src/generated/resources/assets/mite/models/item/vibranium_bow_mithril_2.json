@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": {
+    "layer0": "mite:item/bows/vibranium/mithril_arrow_2"
+  }
+}

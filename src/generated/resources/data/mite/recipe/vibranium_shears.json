@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "mite:vibranium_ingot"
+    }
+  },
+  "pattern": [
+    " I",
+    "I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:vibranium_shears"
+  }
+}

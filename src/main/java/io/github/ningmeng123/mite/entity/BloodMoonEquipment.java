@@ -25,7 +25,7 @@ public final class BloodMoonEquipment {
     private static final EquipmentSlot[] SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private static final String[] SUFFIXES = {"helmet", "chestplate", "leggings", "boots"};
     private static final String[] TOOL_PREFIXES = {"mite:rusted_iron_", "mite:rusted_iron_", "minecraft:golden_",
-            "mite:copper_", "mite:silver_", "minecraft:iron_", "mite:ancient_metal_", "mite:mithril_", "mite:adamantium_"};
+            "mite:copper_", "mite:silver_", "minecraft:iron_", "mite:ancient_metal_", "mite:mithril_", "mite:adamantium_", "mite:vibranium_"};
     private static final String[] TOOLS = {"sword", "pickaxe", "shovel", "axe"};
     private BloodMoonEquipment() {}
 

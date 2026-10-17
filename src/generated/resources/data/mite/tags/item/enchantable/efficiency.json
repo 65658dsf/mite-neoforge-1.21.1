@@ -75,6 +75,13 @@
     "mite:ancient_metal_battle_axe",
     "mite:mithril_battle_axe",
     "mite:adamantium_battle_axe",
+    "mite:vibranium_hatchet",
+    "mite:vibranium_axe",
+    "mite:vibranium_pickaxe",
+    "mite:vibranium_shovel",
+    "mite:vibranium_hoe",
+    "mite:vibranium_mattock",
+    "mite:vibranium_battle_axe",
     {
       "id": "#mite:simplyswords/enchantable/efficiency",
       "required": false

@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.compat.simplyswords;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.entity.MobShields;
+import io.github.ningmeng123.mite.entity.BloodMoonEquipment;
 import io.github.ningmeng123.mite.entity.R196Mob;
 import io.github.ningmeng123.mite.entity.R196MobEquipment;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
@@ -37,7 +38,7 @@ public final class SimplySwordsMobEquipment {
             EntityType.WITHER_SKELETON, EntityType.STRAY, EntityType.BOGGED, EntityType.PIGLIN,
             EntityType.PIGLIN_BRUTE, EntityType.VINDICATOR);
     private static final Set<String> METALS = Set.of("rusted_iron", "copper", "silver", "gold", "iron",
-            "ancient_metal", "mithril", "adamantium");
+            "ancient_metal", "mithril", "adamantium", "vibranium");
     private static final EquipmentSlot[] ARMOR = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
     private SimplySwordsMobEquipment() {}
@@ -51,8 +52,9 @@ public final class SimplySwordsMobEquipment {
         CompoundTag root = mob.getPersistentData();
         if (root.contains(DATA_KEY)) return root.getCompound(DATA_KEY);
         CompoundTag result = new CompoundTag();
-        result.putInt("version", 1);
+        result.putInt("version", 2);
         if (mob.level() instanceof ServerLevel level) result.putLong("highest_day", BloodMoonInvasion.highestDay(level));
+        result.putBoolean("blood_date", BloodMoonEquipment.bloodDate(mob));
         root.put(DATA_KEY, result);
         return result;
     }
@@ -104,7 +106,8 @@ public final class SimplySwordsMobEquipment {
         var families = SimplySwordsCompat.families();
         if (families.isEmpty() || mob.getRandom().nextFloat() >= SimplySwordsMobRules.EQUIP_CHANCE) return false;
         String material = establishedMaterial(mob);
-        if (material == null) material = SimplySwordsMobRules.selectMaterial(result.getLong("highest_day"), mob.getRandom().nextDouble());
+        if (material == null) material = SimplySwordsMobRules.selectMaterial(result.getLong("highest_day"),
+                result.getBoolean("blood_date"), mob.getRandom().nextDouble());
         String family = families.get(mob.getRandom().nextInt(families.size()));
         var item = SimplySwordsCompat.weapon(material, family);
         if (item == Items.AIR) return false;

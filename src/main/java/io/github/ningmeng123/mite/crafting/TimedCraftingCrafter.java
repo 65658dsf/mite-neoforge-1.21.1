@@ -49,6 +49,7 @@ public final class TimedCraftingCrafter {
         if (rule == null) return false;
         // No operator/XP account: automation only manufactures default quality, never selects a paid quality.
         if (!(recipe.get().value() instanceof net.minecraft.world.item.crafting.ArmorDyeRecipe)
+                && !(recipe.get().value() instanceof VibraniumUpgradeRecipe)
                 && !CraftingQuality.shieldDecoration(recipe.get(), result))
             io.github.ningmeng123.mite.item.EquipmentDurability.setQuality(result,
                     io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality.AVERAGE);
@@ -62,7 +63,8 @@ public final class TimedCraftingCrafter {
             return true;
         }
         for (int i = 0; i < crafter.getContainerSize(); i++) {
-            if (crafter.getItem(i).isDamaged() && !CraftingQuality.shieldDecoration(recipe.get(), result)) {
+            if (crafter.getItem(i).isDamaged() && !(recipe.get().value() instanceof VibraniumUpgradeRecipe)
+                    && !CraftingQuality.shieldDecoration(recipe.get(), result)) {
                 JOBS.remove(crafter); return true;
             }
         }

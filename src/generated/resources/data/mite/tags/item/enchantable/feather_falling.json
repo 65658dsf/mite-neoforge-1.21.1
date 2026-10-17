@@ -19,6 +19,7 @@
     "mite:rusted_iron_chain_boots",
     "mite:ancient_metal_boots",
     "mite:ancient_metal_chainmail_boots",
+    "mite:vibranium_boots",
     {
       "id": "#mite:simplyswords/enchantable/feather_falling",
       "required": false

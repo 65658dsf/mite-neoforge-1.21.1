@@ -33,9 +33,9 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 public final class AnvilJeiLayoutAudit {
     private static final Set<String> ALL_ANVILS = Set.of("mite:copper_anvil", "mite:silver_anvil", "mite:golden_anvil",
             "minecraft:anvil", "minecraft:chipped_anvil", "minecraft:damaged_anvil", "mite:ancient_metal_anvil",
-            "mite:mithril_anvil", "mite:adamantium_anvil");
+            "mite:mithril_anvil", "mite:adamantium_anvil", "mite:vibranium_anvil");
     private static final Set<String> IRON_ANVILS = Set.of("minecraft:anvil", "minecraft:chipped_anvil", "minecraft:damaged_anvil",
-            "mite:ancient_metal_anvil", "mite:mithril_anvil", "mite:adamantium_anvil");
+            "mite:ancient_metal_anvil", "mite:mithril_anvil", "mite:adamantium_anvil", "mite:vibranium_anvil");
     private AnvilJeiLayoutAudit() {}
 
     @SubscribeEvent
@@ -90,8 +90,8 @@ public final class AnvilJeiLayoutAudit {
         int layouts = 0;
         layouts += verifyLayouts(categoryClass, category, index, "mite:copper_pickaxe", ALL_ANVILS);
         layouts += verifyLayouts(categoryClass, category, index, "minecraft:iron_pickaxe", IRON_ANVILS);
-        layouts += verifyLayouts(categoryClass, category, index, "mite:mithril_pickaxe", Set.of("mite:mithril_anvil", "mite:adamantium_anvil"));
-        layouts += verifyLayouts(categoryClass, category, index, "mite:adamantium_pickaxe", Set.of("mite:adamantium_anvil"));
+        layouts += verifyLayouts(categoryClass, category, index, "mite:mithril_pickaxe", Set.of("mite:mithril_anvil", "mite:adamantium_anvil", "mite:vibranium_anvil"));
+        layouts += verifyLayouts(categoryClass, category, index, "mite:adamantium_pickaxe", Set.of("mite:adamantium_anvil", "mite:vibranium_anvil"));
         check(layouts == 8, "Both material and combination operations were exercised at all four independent capacity boundaries");
         int sidebarCases = verifyNativeSidebar(category, index);
 
@@ -110,7 +110,7 @@ public final class AnvilJeiLayoutAudit {
         });
         pluginClass.getMethod("registerRecipeCatalysts", registrationType).invoke(plugin, registration);
         check(otherCatalysts[0] > 0, "Real plugin catalyst registration was called and retained furnace/workbench catalysts");
-        Mite.LOGGER.info("[MITE anvil JEI layout audit] passed-real-JEI-api: unified-type=mite:equipment_repair, top-title={}, layouts={}, invisible-catalysts-per-tier=9/6/2/1, visible-catalyst-slots=0, inputs=2, outputs=1, global-anvil-catalysts=0, other-global-catalyst-calls={}, native-sidebar-cases={}, Minecraft-instance-created=false, window-created=false, rendered=false",
+        Mite.LOGGER.info("[MITE anvil JEI layout audit] passed-real-JEI-api: unified-type=mite:equipment_repair, top-title={}, layouts={}, invisible-catalysts-per-tier=10/7/3/2, visible-catalyst-slots=0, inputs=2, outputs=1, global-anvil-catalysts=0, other-global-catalyst-calls={}, native-sidebar-cases={}, Minecraft-instance-created=false, window-created=false, rendered=false",
                 title.getString(), layouts, otherCatalysts[0], sidebarCases);
     }
 
@@ -184,8 +184,8 @@ public final class AnvilJeiLayoutAudit {
         var iron = materialPage(index, "minecraft:iron_pickaxe");
         var mithril = materialPage(index, "mite:mithril_pickaxe");
         var adamantium = materialPage(index, "mite:adamantium_pickaxe");
-        Set<String> mithrilAnvils = Set.of("mite:mithril_anvil", "mite:adamantium_anvil");
-        Set<String> adamantiumAnvil = Set.of("mite:adamantium_anvil");
+        Set<String> mithrilAnvils = Set.of("mite:mithril_anvil", "mite:adamantium_anvil", "mite:vibranium_anvil");
+        Set<String> adamantiumAnvil = Set.of("mite:adamantium_anvil", "mite:vibranium_anvil");
         int cases = 0;
         for (var page : List.of(copper, iron, mithril, adamantium)) {
             Set<String> expected = page == copper ? ALL_ANVILS : page == iron ? IRON_ANVILS
@@ -222,7 +222,7 @@ public final class AnvilJeiLayoutAudit {
                 "past-end focused index does not show previous-page anvils"); cases++;
         assertSidebar(logic(otherCategory, List.of("ordinary recipe"), null, otherCategory, otherCategory, 0, 1),
                 Set.of("minecraft:stick"), true, "ordinary categories retain JEI's original catalyst lookup"); cases++;
-        Mite.LOGGER.info("[MITE anvil JEI native-sidebar audit] passed-transformed-RecipeGuiLogic: cases={}, native-groups-per-tier=9/6/2/1, one-anvil-per-native-group=true, sorted-visible-cache=true, mixed-page-intersection=true, page-index-and-cache-fallbacks=true, ordinary-category-original-lookup=true, screen-created=false, rendered=false", cases);
+        Mite.LOGGER.info("[MITE anvil JEI native-sidebar audit] passed-transformed-RecipeGuiLogic: cases={}, native-groups-per-tier=10/7/3/2, one-anvil-per-native-group=true, sorted-visible-cache=true, mixed-page-intersection=true, page-index-and-cache-fallbacks=true, ordinary-category-original-lookup=true, screen-created=false, rendered=false", cases);
         return cases;
     }
 

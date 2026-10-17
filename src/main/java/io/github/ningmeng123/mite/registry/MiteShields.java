@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.item.R196ShieldItem;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ShieldProfile;
+import io.github.ningmeng123.mite.rules.VibraniumEquipmentRules;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,9 @@ public final class MiteShields {
         define("ancient_metal", 16F, 40, Quality.MASTERWORK);
         define("mithril", 64F, 100, Quality.LEGENDARY);
         define("adamantium", 256F, 40, Quality.LEGENDARY);
+        // Shields are the project's modern extension, retaining the same source material ratios.
+        define("vibranium", VibraniumEquipmentRules.MATERIAL_DURABILITY,
+                VibraniumEquipmentRules.ENCHANTABILITY, VibraniumEquipmentRules.MAXIMUM_QUALITY);
     }
 
     private MiteShields() {}
@@ -50,7 +54,8 @@ public final class MiteShields {
         String id = material.equals("iron") ? "minecraft:shield" : "mite:" + material + "_shield";
         Definition definition = new Definition(id, material, durability, enchantability, maxQuality);
         DEFINITIONS.put(id, definition);
-        if (definition.isNew()) ITEMS.registerItem(material + "_shield", props -> new R196ShieldItem(definition, props));
+        if (definition.isNew()) ITEMS.registerItem(material + "_shield", props -> new R196ShieldItem(definition,
+                material.equals("vibranium") ? props.fireResistant() : props));
     }
 
     public static List<Definition> definitions() { return List.copyOf(DEFINITIONS.values()); }

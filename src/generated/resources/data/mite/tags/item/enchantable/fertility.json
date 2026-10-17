@@ -28,6 +28,9 @@
     "mite:ancient_metal_scythe",
     "mite:mithril_scythe",
     "mite:adamantium_scythe",
+    "mite:vibranium_hoe",
+    "mite:vibranium_mattock",
+    "mite:vibranium_scythe",
     {
       "id": "#mite:simplyswords/enchantable/fertility",
       "required": false

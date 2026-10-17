@@ -28,6 +28,7 @@ public final class WorkbenchRules {
             case "netherite" -> 32F;
             case "mithril" -> 64F;
             case "adamantium" -> 256F;
+            case "vibranium" -> 512F;
             default -> 0F;
         };
     }
@@ -36,6 +37,8 @@ public final class WorkbenchRules {
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
+        float vibranium = VibraniumCrafting.required(result);
+        if (vibranium >= 0F) return vibranium;
         var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(result);
         if (simply != null) return simply.profile().materialDurability();
         var shield = io.github.ningmeng123.mite.registry.MiteShields.definition(result);
@@ -69,6 +72,7 @@ public final class WorkbenchRules {
                 case "ancient_metal" -> 8F;
                 case "mithril" -> 16F;
                 case "adamantium" -> 64F;
+                case "vibranium" -> 256F;
                 default -> 0F;
             };
         }

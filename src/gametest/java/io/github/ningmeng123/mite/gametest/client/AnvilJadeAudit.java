@@ -53,10 +53,10 @@ public final class AnvilJadeAudit {
         for (BlockState state : List.of(Blocks.ANVIL.defaultBlockState(), Blocks.CHIPPED_ANVIL.defaultBlockState(), Blocks.DAMAGED_ANVIL.defaultBlockState()))
             checkState(state, 396800, cases);
         Map<String, Integer> maxima = Map.of("copper", 198400, "silver", 198400, "gold", 198400,
-                "ancient_metal", 793600, "mithril", 3174400, "adamantium", 12697600);
+                "ancient_metal", 793600, "mithril", 3174400, "adamantium", 12697600, "vibranium", 25395200);
         for (var entry : MiteFunctionalBlocks.ANVILS.entrySet()) for (int stage = 0; stage < 3; stage++)
             checkState(entry.getValue().get().defaultBlockState().setValue(MaterialAnvilBlock.DAMAGE_STAGE, stage), maxima.get(entry.getKey()), cases);
-        check(cases.size() == 21, "The seven source materials have exactly three displayed stages each");
+        check(cases.size() == 24, "The eight material anvils have exactly three displayed stages each");
         BlockState state = Blocks.CHIPPED_ANVIL.defaultBlockState();
         CompoundTag packet = packet(state, 123456, 396800);
         Map<String, Consumer<CompoundTag>> mutations = new LinkedHashMap<>();

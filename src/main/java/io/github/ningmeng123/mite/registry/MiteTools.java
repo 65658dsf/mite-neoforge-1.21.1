@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolProfile;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
+import io.github.ningmeng123.mite.rules.VibraniumEquipmentRules;
 import static io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,7 +24,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Source-registered R196 tools; deleted metal knives are deliberately absent. @author NingMeng123 */
+/** Source-registered R196 tools and later vibranium equipment; retired R196 metal knives remain absent. @author NingMeng123 */
 public final class MiteTools {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Mite.MOD_ID);
     private static final Map<String, Definition> DEFINITIONS = new LinkedHashMap<>();
@@ -143,6 +144,14 @@ public final class MiteTools {
         define("mite:adamantium_war_hammer", WAR_HAMMER, "adamantium", 995, 9F, 8.0F, 40, 5, 0.75F, 256F, Quality.LEGENDARY);
         define("minecraft:shears", SHEARS, "iron", 359, 8F, 4.0F, 30, 3, 0.5F, 8F, Quality.MASTERWORK);
         define("minecraft:wooden_shovel", SHOVEL, "wood", 269, 4F, 1.0F, 10, 0, 0.75F, 0.5F, Quality.FINE);
+        // MITE-ITE allocates its old numeric IDs dynamically; no stable R196 ID is claimed here.
+        for (ToolFamily family : VibraniumEquipmentRules.TOOL_FAMILIES) {
+            var stats = VibraniumEquipmentRules.toolStats(family);
+            define("mite:vibranium_" + family.name().toLowerCase(java.util.Locale.ROOT), family, "vibranium", -1,
+                    stats.speed(), stats.damage(), VibraniumEquipmentRules.ENCHANTABILITY,
+                    VibraniumEquipmentRules.HARVEST_LEVEL, stats.reach(), VibraniumEquipmentRules.MATERIAL_DURABILITY,
+                    VibraniumEquipmentRules.MAXIMUM_QUALITY);
+        }
     }
 
     private MiteTools() {}
@@ -152,7 +161,8 @@ public final class MiteTools {
         Definition definition = new Definition(id, family, material, legacyId, speed, damage, enchantability,
                 harvestLevel, reach, materialDurability, maxQuality);
         DEFINITIONS.put(id, definition);
-        if (definition.isNew()) ITEMS.registerItem(id.substring(5), props -> new R196ToolItem(definition, props));
+        if (definition.isNew()) ITEMS.registerItem(id.substring(5), props -> new R196ToolItem(definition,
+                material.equals("vibranium") ? props.fireResistant() : props));
     }
 
     public static List<Definition> definitions() { return List.copyOf(DEFINITIONS.values()); }

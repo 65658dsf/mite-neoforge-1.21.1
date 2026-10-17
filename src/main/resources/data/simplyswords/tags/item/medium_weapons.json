@@ -120,6 +120,26 @@
     {
       "id": "mite:simplyswords_adamantium_warglaive",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_longsword",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_twinblade",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_katana",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_spear",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_warglaive",
+      "required": false
     }
   ]
 }

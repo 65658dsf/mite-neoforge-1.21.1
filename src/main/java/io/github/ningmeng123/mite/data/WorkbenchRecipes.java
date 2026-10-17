@@ -34,7 +34,7 @@ public final class WorkbenchRecipes extends RecipeProvider {
                     .unlockedBy("has_knife", has(knife))
                     .save(output, ResourceLocation.fromNamespaceAndPath("mite", material + "_crafting_table_from_knife"));
         }
-        for (String material : new String[]{"copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium"}) {
+        for (String material : new String[]{"copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium"}) {
             String namespace = material.equals("copper") || material.equals("iron") || material.equals("gold") ? "minecraft" : "mite";
             var ingot = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(namespace, material + "_ingot"));
             ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, MiteWorkbenches.TABLES.get(material).get())

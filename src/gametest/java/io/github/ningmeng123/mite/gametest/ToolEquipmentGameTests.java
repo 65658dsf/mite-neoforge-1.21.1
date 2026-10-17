@@ -51,8 +51,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class ToolEquipmentGameTests {
     @GameTest(template = "empty")
     public static void completeToolIdentitiesAndLiteralDurabilityVectors(GameTestHelper helper) {
-        helper.assertValueEqual(MiteTools.definitions().stream().filter(MiteTools.Definition::isNew).count(), 93L,
-                "The included catalog has exactly ninety-three previously absent tool identities");
+        helper.assertValueEqual(MiteTools.definitions().stream().filter(MiteTools.Definition::isNew).count(), 106L,
+                "The included catalog has ninety-three R196 plus thirteen vibranium tool identities");
         String[] paths = {"copper_pickaxe", "copper_hatchet", "copper_axe", "copper_shovel", "copper_hoe",
                 "copper_mattock", "copper_scythe", "copper_shears", "copper_dagger", "copper_sword",
                 "copper_battle_axe", "copper_war_hammer", "wooden_cudgel", "flint_knife", "obsidian_axe",

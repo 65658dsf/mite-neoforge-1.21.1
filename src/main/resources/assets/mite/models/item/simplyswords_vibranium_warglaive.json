@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_warglaive",
+  "textures": {
+    "layer0": "mite:item/simplyswords_vibranium_warglaive"
+  }
+}

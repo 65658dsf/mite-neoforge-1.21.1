@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.crafting.BulkMaterialRecipe;
 import io.github.ningmeng123.mite.crafting.EquipmentRecyclingIngredient;
 import io.github.ningmeng123.mite.crafting.WorkbenchDismantleRecipe;
+import io.github.ningmeng123.mite.crafting.VibraniumUpgradeRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.bus.api.IEventBus;
@@ -22,6 +23,8 @@ public final class MaterialRecipeSerializers {
             SERIALIZERS.register("bulk_material", BulkMaterialRecipe.Serializer::new);
     public static final DeferredHolder<RecipeSerializer<?>, WorkbenchDismantleRecipe.Serializer> WORKBENCH_DISMANTLE =
             SERIALIZERS.register("workbench_dismantle", WorkbenchDismantleRecipe.Serializer::new);
+    public static final DeferredHolder<RecipeSerializer<?>, VibraniumUpgradeRecipe.Serializer> VIBRANIUM_UPGRADE =
+            SERIALIZERS.register("vibranium_upgrade", VibraniumUpgradeRecipe.Serializer::new);
 
     private MaterialRecipeSerializers() {}
 

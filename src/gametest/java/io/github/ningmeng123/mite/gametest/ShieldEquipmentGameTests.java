@@ -41,9 +41,9 @@ public final class ShieldEquipmentGameTests {
 
     @GameTest(template = "empty")
     public static void allEightShieldMaterialsRetainNativeBlockingAndHaveCappedQuality(GameTestHelper helper) {
-        int[] bases = {84, 84, 84, 84, 168, 336, 1344, 5376};
-        int[] maxima = {63, 84, 84, 84, 168, 336, 1344, 5376};
-        helper.assertValueEqual(MiteShields.definitions().size(), 8, "Seven new shields and the original iron shield are registered");
+        int[] bases = {84, 84, 84, 84, 168, 336, 1344, 5376, 10752};
+        int[] maxima = {63, 84, 84, 84, 168, 336, 1344, 5376, 10752};
+        helper.assertValueEqual(MiteShields.definitions().size(), 9, "Eight new shields and the original iron shield are registered");
         helper.assertTrue(MiteShields.get("iron") == Items.SHIELD, "Original shield keeps its native registry identity");
         for (int i = 0; i < bases.length; i++) {
             var definition = MiteShields.definitions().get(i);

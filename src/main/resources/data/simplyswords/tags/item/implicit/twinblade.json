@@ -24,6 +24,10 @@
     {
       "id": "mite:simplyswords_adamantium_twinblade",
       "required": false
+    },
+    {
+      "id": "mite:simplyswords_vibranium_twinblade",
+      "required": false
     }
   ]
 }

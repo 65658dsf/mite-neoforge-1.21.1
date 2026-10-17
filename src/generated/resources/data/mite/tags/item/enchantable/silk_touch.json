@@ -43,6 +43,11 @@
     "mite:ancient_metal_dagger",
     "mite:mithril_dagger",
     "mite:adamantium_dagger",
+    "mite:vibranium_pickaxe",
+    "mite:vibranium_shovel",
+    "mite:vibranium_shears",
+    "mite:vibranium_dagger",
+    "mite:vibranium_knife",
     {
       "id": "#mite:simplyswords/enchantable/silk_touch",
       "required": false

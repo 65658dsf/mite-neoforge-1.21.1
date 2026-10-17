@@ -19,6 +19,7 @@
     "mite:rusted_iron_chain_chestplate",
     "mite:ancient_metal_chestplate",
     "mite:ancient_metal_chainmail_chestplate",
+    "mite:vibranium_chestplate",
     {
       "id": "#mite:simplyswords/enchantable/thorns",
       "required": false

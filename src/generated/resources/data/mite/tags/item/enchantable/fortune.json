@@ -25,6 +25,8 @@
     "mite:ancient_metal_shovel",
     "mite:mithril_shovel",
     "mite:adamantium_shovel",
+    "mite:vibranium_pickaxe",
+    "mite:vibranium_shovel",
     {
       "id": "#mite:simplyswords/enchantable/fortune",
       "required": false

@@ -13,7 +13,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
 RESOURCES = ROOT / "src/main/resources"
-MATERIALS = {"rusted_iron", "copper", "silver", "ancient_metal", "mithril", "adamantium"}
+MATERIALS = {"rusted_iron", "copper", "silver", "ancient_metal", "mithril", "adamantium", "vibranium"}
 FAMILIES = {"longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive", "warglaive",
             "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd"}
 
@@ -28,7 +28,7 @@ def main():
     args = parser.parse_args()
     manifest = read("mite/simplyswords-compat-assets.json")
     entries = manifest["items"]
-    assert len(entries) == 90 and len({entry["id"] for entry in entries}) == 90
+    assert len(entries) == 105 and len({entry["id"] for entry in entries}) == 105
     assert {entry["material"] for entry in entries} == MATERIALS
     assert {entry["family"] for entry in entries} == FAMILIES
     assert manifest["developer"] == "NingMeng123"
@@ -87,19 +87,23 @@ def main():
             assert advancement["rewards"]["recipes"] == [item_id]
             assert advancement["neoforge:conditions"] == recipe["neoforge:conditions"]
             recipe_count += 1
-    assert recipe_count == 75
-    assert all(len(variants) == 6 for variants in textures.values()), "A material lacks its own colors"
+    assert recipe_count == 90
+    assert all(len(variants) == len(MATERIALS) for variants in textures.values()), "A material lacks its own colors"
     general = read("data/mite/tags/item/simplyswords_weapons.json")
     assert {entry["id"] for entry in general["values"]} == expected_ids
     for directory in ("data/mite/tags/item/simplyswords", "data/simplyswords/tags/item", "data/c/tags/item"):
         for path in (RESOURCES / directory).rglob("*.json"):
             tag = json.loads(path.read_text(encoding="utf-8"))
+            references = [value for value in tag["values"] if (value if isinstance(value, str) else value["id"])
+                          .startswith(("mite:simplyswords_", "simplyswords:"))]
+            if not references:
+                continue
             assert tag.get("replace") is False
-            assert all(isinstance(value, dict) and value.get("required") is False for value in tag["values"]), path
+            assert all(isinstance(value, dict) and value.get("required") is False for value in references), path
     vampiric = {value["id"] for value in read("data/mite/tags/item/simplyswords/enchantable/vampiric.json")["values"]}
     assert not any(item.startswith(("mite:simplyswords_silver_", "mite:simplyswords_mithril_")) for item in vampiric)
     assert not list((RESOURCES / "assets/mite/models/item").glob("simplyswords_gold_*.json"))
-    print("Verified 90 material redraws with exact source silhouettes and preserved grips, 75 conditional recipes and unlocks, optional tags and combat parents.")
+    print("Verified 105 material redraws with exact source silhouettes and preserved grips, 90 conditional recipes and unlocks, optional tags and combat parents.")
 
 
 if __name__ == "__main__":
