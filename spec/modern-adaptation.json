@@ -1,0 +1,1017 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "original_author": "Avernite",
+  "target": {
+    "minecraft": "1.21.1",
+    "loader": "NeoForge",
+    "namespace": "mite"
+  },
+  "status": "planned",
+  "value_provenance": "modern_design_not_r196_extracted_values",
+  "reviewed_on": "2026-10-12",
+  "sources": [
+    {
+      "id": "r196",
+      "kind": "local_archive",
+      "path": "MITE 1.6.4 R196.zip",
+      "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+      "authority": "版本行为最终依据；每条实际规则仍需方法与调用路径证据"
+    },
+    {
+      "id": "official_home",
+      "url": "https://avernite.ca/MITE/",
+      "kind": "design_intent"
+    },
+    {
+      "id": "official_recipes",
+      "url": "https://avernite.ca/MITE/crafting_recipes/",
+      "kind": "recipe_intent"
+    },
+    {
+      "id": "official_hints",
+      "url": "https://avernite.ca/MITE/hints/",
+      "kind": "progression_intent"
+    }
+  ],
+  "coverage": {
+    "feature_families": "设计覆盖主要现代机制族",
+    "per_registry_entry_audit": "pending",
+    "r196_value_extraction": "pending",
+    "runtime_features": "not_implemented_by_this_spec",
+    "rule": "null 原始值是证据缺口，不可按 0 或现代设计值回填"
+  },
+  "preservation": {
+    "overworld": {
+      "noise_generator": "minecraft_1_21_1_vanilla",
+      "biomes": "minecraft_1_21_1_vanilla",
+      "caves": "minecraft_1_21_1_vanilla",
+      "height": "minecraft_1_21_1_vanilla",
+      "mushroom_fields": "preserved_explicit_modern_deviation",
+      "allowed_adjustments": [
+        "ore_placement",
+        "structure_progression",
+        "loot",
+        "biome_modifiers"
+      ],
+      "replace_with_legacy_generator": false
+    },
+    "textures": "modern_vanilla_with_matching_new_content",
+    "underworld": "separate_new_dimension",
+    "complete_equipment_immediately_usable": true,
+    "activation_components": false,
+    "additional_assembly_machines": false,
+    "vanilla_item_ids": true,
+    "new_worlds": true,
+    "legacy_save_import": false
+  },
+  "material_references": [
+    {
+      "id": "flint",
+      "legacy_hardness": null,
+      "legacy_durability": null,
+      "legacy_heat_requirement": null,
+      "ordering_is_not_hardness": true
+    },
+    {
+      "id": "copper",
+      "legacy_hardness": null,
+      "legacy_durability": null,
+      "legacy_heat_requirement": null,
+      "ordering_is_not_hardness": true
+    },
+    {
+      "id": "silver",
+      "legacy_hardness": null,
+      "legacy_durability": null,
+      "legacy_heat_requirement": null,
+      "ordering_is_not_hardness": true
+    },
+    {
+      "id": "gold",
+      "legacy_hardness": null,
+      "legacy_durability": null,
+      "legacy_heat_requirement": null,
+      "ordering_is_not_hardness": true
+    },
+    {
+      "id": "iron",
+      "legacy_hardness": null,
+      "legacy_durability": null,
+      "legacy_heat_requirement": null,
+      "ordering_is_not_hardness": true
+    },
+    {
+      "id": "ancient_metal",
+      "legacy_hardness": null,
+      "legacy_durability": null,
+      "legacy_heat_requirement": null,
+      "ordering_is_not_hardness": true
+    },
+    {
+      "id": "mithril",
+      "legacy_hardness": null,
+      "legacy_durability": null,
+      "legacy_heat_requirement": null,
+      "ordering_is_not_hardness": true
+    },
+    {
+      "id": "adamantium",
+      "legacy_hardness": null,
+      "legacy_durability": null,
+      "legacy_heat_requirement": null,
+      "ordering_is_not_hardness": true
+    }
+  ],
+  "stages": [
+    {
+      "id": "gatherer",
+      "requirement": "已提取的 R196 开局规则"
+    },
+    {
+      "id": "base_metal",
+      "requirement": "取得该配方指定的基础金属及原作设备能力"
+    },
+    {
+      "id": "iron",
+      "requirement": "铁材料与铁加工能力"
+    },
+    {
+      "id": "ancient",
+      "requirement": "远古金属实际获取及使用条件；不假定比铁更硬"
+    },
+    {
+      "id": "mithril",
+      "requirement": "秘银材料与秘银加工能力"
+    },
+    {
+      "id": "adamantium",
+      "requirement": "艾德曼材料与艾德曼加工能力"
+    },
+    {
+      "id": "end",
+      "requirement": "已核实的末地进入条件与实际探索"
+    }
+  ],
+  "manufacturing": {
+    "authority": "server",
+    "inputs": [
+      "recipe_id",
+      "input_snapshot",
+      "station_capabilities",
+      "heat",
+      "nullable_operator",
+      "effective_ticks",
+      "output_capacity"
+    ],
+    "commit": "完成时重新校验并原子扣料、扣费、写入一份输出",
+    "failure": "不产生输出、不部分扣费、稳定本地化原因",
+    "all_paths": [
+      "inventory",
+      "crafting_table",
+      "recipe_book",
+      "quick_move",
+      "drag",
+      "smithing",
+      "anvil",
+      "crafter"
+    ],
+    "default_modern_recipe_xp_points": 0,
+    "tick_unit": "server_game_tick"
+  },
+  "automation": {
+    "status": "planned",
+    "operator": null,
+    "quality": "average_for_verified_hasQuality_items_else_no_component",
+    "player_skill_bonus": false,
+    "xp_recipe_policy": "reject_with_NO_OPERATOR_XP_including_output_item_callbacks_such_as_coin_minting",
+    "xp_storage_block": false,
+    "nearby_player_xp_access": false,
+    "craft_time": "same_as_manual_recipe",
+    "crafter_station_capability": "iron",
+    "adjacent_station_upgrade": false,
+    "trigger": "one_job_per_rising_edge",
+    "busy_trigger": "ignored_not_queued",
+    "invalid_trigger": "not_buffered",
+    "input_reservation": "reserve_inputs_in_persisted_internal_buffer_at_start",
+    "unload": "pause_without_offline_progress_or_forced_chunk_loading",
+    "output_full": "hold_exactly_one_finished_output_until_delivery",
+    "block_broken": "drop_reserved_inputs_or_completed_output_exactly_once",
+    "recipe_reload": "revalidate; invalidated recipe returns reserved inputs to recoverable buffer and resets progress",
+    "acceptance": [
+      "AUTO-01",
+      "AUTO-02",
+      "CRAFT-03",
+      "CRAFT-04"
+    ]
+  },
+  "release_gate": {
+    "per_small_feature": [
+      "implement",
+      "compile_and_appropriate_automated_tests",
+      "open_actual_game_and_test_feature",
+      "record_real_game_evidence",
+      "chinese_commit",
+      "push_confirmed_github_remote"
+    ],
+    "client_test_cannot_be_replaced_by": [
+      "compile",
+      "headless_gametest",
+      "main_menu_only",
+      "startup_log"
+    ],
+    "developer_identity": "NingMeng123",
+    "github_account": "https://github.com/65658dsf",
+    "repository_url": null,
+    "missing_remote": "report_missing_repository_do_not_invent_url"
+  },
+  "features": [
+    {
+      "id": "diamond_equipment",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "mithril",
+      "station": "mithril_workbench",
+      "behavior": "保留原版 ID；制作额外消耗秘银，完整装备直接可用",
+      "design": {
+        "ingredients": "原版材料数量 + 1 秘银锭",
+        "craft_ticks": 400,
+        "mining_capability": "mithril",
+        "loot_replacement": {
+          "item": "minecraft:diamond",
+          "count": "max(1, vanilla_recipe_diamond_count - 1)"
+        },
+        "villager_second_cost": {
+          "material": "mithril_ingot",
+          "count": 2
+        },
+        "existing_emerald_price": "preserved"
+      },
+      "acceptance": [
+        "MODERN-01",
+        "MINE-03",
+        "MODERN-04"
+      ],
+      "risks": [
+        "现代钻石 tier 越过矿物门槛",
+        "结构/交易/生物掉落成品漏网",
+        "组件在升级中丢失"
+      ]
+    },
+    {
+      "id": "netherite_ingot",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "adamantium",
+      "station": "adamantium_workbench",
+      "behavior": "配方增加原作末端材料成本",
+      "design": {
+        "inputs": [
+          {
+            "id": "minecraft:netherite_scrap",
+            "count": 4
+          },
+          {
+            "id": "minecraft:gold_ingot",
+            "count": 4
+          },
+          {
+            "material": "adamantium_ingot",
+            "count": 1
+          }
+        ],
+        "output": {
+          "id": "minecraft:netherite_ingot",
+          "count": 1
+        },
+        "craft_ticks": 600
+      },
+      "acceptance": [
+        "MODERN-01",
+        "CRAFT-01"
+      ],
+      "risks": [
+        "逆向分解创造艾德曼"
+      ]
+    },
+    {
+      "id": "ancient_debris",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "adamantium",
+      "station": "r196_highest_furnace",
+      "behavior": "现代矿源保留，加工要求原作最高炉型及烈焰棒能力",
+      "design": {
+        "fuel": "minecraft:blaze_rod",
+        "legacy_heat_numeric": null,
+        "output": "minecraft:netherite_scrap",
+        "legacy_recipe_duration": null
+      },
+      "acceptance": [
+        "WORLD-01",
+        "FURNACE-01",
+        "MODERN-01"
+      ],
+      "risks": [
+        "普通熔炉/高炉绕过炉温"
+      ]
+    },
+    {
+      "id": "netherite_equipment",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "adamantium",
+      "station": "smithing_table_with_adjacent_adamantium_anvil",
+      "behavior": "保留原版升级模板和三输入升级路径",
+      "design": {
+        "anvil_manhattan_distance": 1,
+        "inputs": [
+          "minecraft:netherite_upgrade_smithing_template",
+          "corresponding_diamond_equipment",
+          "minecraft:netherite_ingot"
+        ],
+        "craft_ticks": 600,
+        "mining_capability": "adamantium",
+        "fire_resistance": "preserved",
+        "loot_replacement": {
+          "item": "minecraft:netherite_scrap",
+          "count": 2
+        },
+        "preserve_existing_components": true,
+        "free_durability_repair": false
+      },
+      "acceptance": [
+        "MODERN-01",
+        "REPAIR-01"
+      ],
+      "risks": [
+        "配方书/快捷键绕过临近铁砧",
+        "loot 直接成品绕过成本"
+      ]
+    },
+    {
+      "id": "shield",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": "iron_workbench",
+      "behavior": "保留主动格挡和破盾，避免双重减伤",
+      "design": {
+        "inputs": [
+          {
+            "tag": "minecraft:planks",
+            "count": 6
+          },
+          {
+            "id": "minecraft:iron_ingot",
+            "count": 2
+          },
+          {
+            "id": "minecraft:leather",
+            "count": 1
+          }
+        ],
+        "craft_ticks": 200
+      },
+      "acceptance": [
+        "COMBAT-02",
+        "CRAFT-01"
+      ],
+      "risks": [
+        "盾牌和原作武器格挡重复生效"
+      ]
+    },
+    {
+      "id": "crossbow",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": "iron_workbench",
+      "behavior": "保留装填、穿透和多重射击",
+      "design": {
+        "inputs": [
+          {
+            "id": "minecraft:stick",
+            "count": 3
+          },
+          {
+            "id": "minecraft:string",
+            "count": 2
+          },
+          {
+            "id": "minecraft:iron_ingot",
+            "count": 2
+          },
+          {
+            "id": "minecraft:tripwire_hook",
+            "count": 1
+          }
+        ],
+        "craft_ticks": 300
+      },
+      "acceptance": [
+        "COMBAT-02",
+        "ENCHANT-01"
+      ],
+      "risks": [
+        "特殊材质箭复制",
+        "多重射击免费保留可回收箭"
+      ]
+    },
+    {
+      "id": "trident",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": "iron_anvil_for_repair",
+      "behavior": "保留溺尸战斗获取，完整物品可立即使用",
+      "design": {
+        "source": "vanilla_drowned",
+        "repair_material": "minecraft:prismarine_shard",
+        "repair_material_count": 1,
+        "repair_fraction_of_max_durability": 0.1,
+        "repair_rounding": "ceil",
+        "repair_ticks": 200,
+        "enchantments": "loyalty_channeling_riptide_preserved"
+      },
+      "acceptance": [
+        "MODERN-02",
+        "REPAIR-01",
+        "COMBAT-01"
+      ],
+      "risks": [
+        "忠诚返还复制",
+        "激流或雷电绕过已核实的免疫"
+      ]
+    },
+    {
+      "id": "elytra",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "end",
+      "station": "mithril_anvil_for_repair",
+      "behavior": "保留末地船来源、原版飞行、火箭推进和胸甲槽取舍",
+      "design": {
+        "source": "vanilla_end_ship",
+        "repair_material": "minecraft:phantom_membrane",
+        "repair_material_count": 1,
+        "repair_fraction_of_max_durability": 0.1,
+        "repair_rounding": "ceil",
+        "repair_ticks": 200,
+        "activation_marker": false
+      },
+      "acceptance": [
+        "MODERN-02",
+        "PORTAL-01"
+      ],
+      "risks": [
+        "传送中飞行状态异常",
+        "维修或修补无成本"
+      ]
+    },
+    {
+      "id": "mace",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "adamantium",
+      "station": "adamantium_workbench",
+      "behavior": "保留重锤和相关附魔，增加艾德曼成本并限制额外砸击伤害",
+      "design": {
+        "inputs": [
+          {
+            "id": "minecraft:heavy_core",
+            "count": 1
+          },
+          {
+            "id": "minecraft:breeze_rod",
+            "count": 1
+          },
+          {
+            "material": "adamantium_ingot",
+            "count": 2
+          }
+        ],
+        "craft_ticks": 600,
+        "bonus_smash_damage_cap_health_points": 20,
+        "base_damage_included_in_cap": false
+      },
+      "acceptance": [
+        "MODERN-02",
+        "COMBAT-01",
+        "ENCHANT-01"
+      ],
+      "risks": [
+        "落地后累计不清除",
+        "服务端信任客户端落距"
+      ]
+    },
+    {
+      "id": "mending",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "mithril",
+      "station": "mithril_anvil_for_book_application",
+      "behavior": "保留附魔和所有原版来源，无充能/激活组件",
+      "design": {
+        "durability_per_xp_point": 1,
+        "villager_base_inputs": [
+          {
+            "id": "minecraft:emerald",
+            "count": 16
+          },
+          {
+            "material": "mithril_ingot",
+            "count": 4
+          }
+        ],
+        "special_material_discount": false,
+        "naturally_enchanted_fishing_equipment": "usable_exploration_reward",
+        "book_application_xp": "vanilla_anvil_cost",
+        "leftover_xp": "credit_to_player",
+        "charge_component": false
+      },
+      "acceptance": [
+        "MODERN-03",
+        "ENCHANT-01",
+        "MODERN-04"
+      ],
+      "risks": [
+        "经验与耐久重复发放",
+        "多个装备分配错误",
+        "同级附魔合并改变原作规则"
+      ]
+    },
+    {
+      "id": "modern_enchantments",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": "original_appropriate_anvil",
+      "behavior": "保留全部现代附魔 ID 与原版适用互斥，交叉检查原作公式",
+      "design": {
+        "same_enchantment_merge_if_legacy_no_stack_verified": "max_not_plus_one",
+        "legacy_no_stack_verified": false,
+        "unbreaking_efficiency_fortune_silk_protection_density": "requires_individual_formula_review"
+      },
+      "acceptance": [
+        "ENCHANT-01",
+        "MINE-02",
+        "COMBAT-01"
+      ],
+      "risks": [
+        "原版效率公式重复叠加",
+        "精准采集绕过矿物等级"
+      ]
+    },
+    {
+      "id": "villager_economy",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "base_metal",
+      "station": "vanilla_profession_blocks",
+      "behavior": "保留现代职业、供需和交易进度，特殊材料成本不受折扣",
+      "design": {
+        "max_restocks_per_offer_per_day": 2,
+        "minimum_payment_per_input": 1,
+        "diamond_second_input": "2_mithril_ingots",
+        "mending_inputs": "16_emeralds_and_4_mithril_ingots",
+        "new_netherite_trade": false,
+        "reset_traded_villager_progress": false,
+        "original_village_generation_gate": "spec/r196-world-rules.json#world.village_gate"
+      },
+      "acceptance": [
+        "MODERN-04",
+        "WORLD-02",
+        "AUTO-03"
+      ],
+      "risks": [
+        "治愈/需求折扣至零",
+        "刷职业清除交易进度",
+        "先取得绿宝石绕过高阶加工"
+      ]
+    },
+    {
+      "id": "structure_loot",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "base_metal",
+      "station": null,
+      "behavior": "保留现代结构和探索；仅越过加工路线的成品映射为材料",
+      "design": {
+        "diamond_item": "max(1, recipe_diamond_count - 1) diamonds",
+        "netherite_item": "2 netherite_scraps",
+        "elytra": "preserved_end_ship",
+        "mithril_added_to_loot": false,
+        "adamantium_added_to_loot": false,
+        "tables_pending_full_registry_audit": true
+      },
+      "acceptance": [
+        "MODERN-04",
+        "MODERN-01",
+        "WORLD-01"
+      ],
+      "risks": [
+        "仅过滤箱子而漏宝库/实体/钓鱼",
+        "替换失去具体loot来源索引"
+      ]
+    },
+    {
+      "id": "iron_golem_farms",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": null,
+      "behavior": "保留农场机制，降低完全自动击杀的金属产量",
+      "design": {
+        "player_or_tamed_damage_credit_window_ticks": 100,
+        "uncredited_death_drop": {
+          "item": "minecraft:iron_nugget",
+          "minimum": 3,
+          "maximum": 5
+        },
+        "player_credited_drop": "pending_r196_extraction"
+      },
+      "acceptance": [
+        "AUTO-03",
+        "MOB-02"
+      ],
+      "risks": [
+        "击杀归因错误",
+        "假玩家归因绕过",
+        "实际 R196 玩家掉落未提取"
+      ]
+    },
+    {
+      "id": "hostile_mob_farms",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": null,
+      "behavior": "保留现代刷怪笼、试炼刷怪笼和战利品路径",
+      "design": {
+        "xp": "per_entity_r196_mapping_required",
+        "offline_or_environmental_credit": "server_owned",
+        "new_entity_xp_values": null
+      },
+      "acceptance": [
+        "MOB-02",
+        "AUTO-03",
+        "MODERN-04"
+      ],
+      "risks": [
+        "经验重复结算",
+        "新实体沿用不合适的和平生物经验"
+      ]
+    },
+    {
+      "id": "new_food_and_crops",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "gatherer",
+      "station": "r196_food_processing",
+      "behavior": "保留现代农作物/食品，逐项营养映射",
+      "design": {
+        "examples": [
+          "beetroot",
+          "kelp",
+          "sweet_berries",
+          "glow_berries",
+          "honey",
+          "rabbit",
+          "suspicious_stew"
+        ],
+        "nutrition_mapping": null,
+        "growth": "r196_climate_disease_and_bounded_offline_progress"
+      },
+      "acceptance": [
+        "FOOD-01",
+        "FARM-01",
+        "FARM-02"
+      ],
+      "risks": [
+        "未映射食物零营养",
+        "高产自动化绕过饥饿系统"
+      ]
+    },
+    {
+      "id": "bees_and_honey",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "base_metal",
+      "station": null,
+      "behavior": "保留授粉、巢箱和采蜜，遵守作物/食物映射",
+      "design": {
+        "honey_nutrition": null,
+        "pollination": "apply_verified_crop_growth_rules",
+        "dispenser_harvest": "preserved"
+      },
+      "acceptance": [
+        "FARM-01",
+        "FOOD-01",
+        "AUTO-03"
+      ],
+      "risks": [
+        "蜂蜜瓶堆叠容器复制",
+        "授粉绕过病害或离线生长上限"
+      ]
+    },
+    {
+      "id": "hopper",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": "iron_workbench",
+      "behavior": "保留原版转移速率，只取已经完成提交的输出",
+      "design": {
+        "inputs": [
+          {
+            "id": "minecraft:iron_ingot",
+            "count": 5
+          },
+          {
+            "id": "minecraft:chest",
+            "count": 1
+          }
+        ],
+        "transfer_interval": "vanilla",
+        "craft_ticks": "r196_recipe_duration_rule"
+      },
+      "acceptance": [
+        "AUTO-02",
+        "CRAFT-03"
+      ],
+      "risks": [
+        "预留区被漏斗取走",
+        "同 tick 人工自动化双取"
+      ]
+    },
+    {
+      "id": "redstone_machines",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": "iron_workbench",
+      "behavior": "保留活塞、投掷器、发射器、观察者功能",
+      "design": {
+        "items": [
+          "minecraft:piston",
+          "minecraft:dropper",
+          "minecraft:dispenser",
+          "minecraft:observer"
+        ],
+        "ingredients": "vanilla",
+        "craft_ticks": 200
+      },
+      "acceptance": [
+        "AUTO-03",
+        "MINE-01",
+        "COMBAT-02"
+      ],
+      "risks": [
+        "推拉/投掷绕过工具损耗和采集掉落"
+      ]
+    },
+    {
+      "id": "blast_furnace_and_smoker",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": "iron_workbench",
+      "behavior": "保留原版用途与速度差异，不提高燃料可达炉温",
+      "design": {
+        "ingredients": "vanilla",
+        "craft_ticks": 300,
+        "processing_speed_multiplier": 2,
+        "heat": "verified_r196_fuel_and_station_limit",
+        "smoker_categories": [
+          "food"
+        ]
+      },
+      "acceptance": [
+        "FURNACE-01",
+        "AUTO-03"
+      ],
+      "risks": [
+        "高炉速度被误认为温度",
+        "普通燃料熔炼高阶金属"
+      ]
+    },
+    {
+      "id": "crafter",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "mithril",
+      "station": "mithril_workbench",
+      "behavior": "完整保留自动合成器零经验配方加工能力",
+      "design": {
+        "ingredients": "vanilla_recipe_replace_5_iron_ingots_with_5_mithril_ingots",
+        "craft_ticks": 600,
+        "output_station_capability": "iron",
+        "rules_ref": "automation"
+      },
+      "acceptance": [
+        "AUTO-01",
+        "AUTO-02",
+        "AUTO-03"
+      ],
+      "risks": [
+        "玩家经验被远程代扣",
+        "高品质无主生产",
+        "红石脉冲重复结算"
+      ]
+    },
+    {
+      "id": "overworld_terrain",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "gatherer",
+      "station": null,
+      "behavior": "完整保留 1.21.1 原版地形与群系生成器",
+      "design": {
+        "noise_generator": "vanilla_1_21_1",
+        "biomes": "all_vanilla_1_21_1",
+        "caves": "vanilla_1_21_1",
+        "height": "vanilla_1_21_1",
+        "mushroom_fields": "retained",
+        "replace_legacy_generator": false
+      },
+      "acceptance": [
+        "WORLD-01",
+        "PERF-01"
+      ],
+      "risks": [
+        "把1.6.4生成器整体移植使现代地形消失"
+      ]
+    },
+    {
+      "id": "ore_distribution",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "base_metal",
+      "station": null,
+      "behavior": "矿物和掉落接入新主世界，不重复注册原版铜/金/铁来源",
+      "design": {
+        "replace_targets": [
+          "stone_ore_replaceables",
+          "deepslate_ore_replaceables"
+        ],
+        "height_condition_classes": [
+          "absolute",
+          "distance_from_bedrock",
+          "distance_from_sea_level",
+          "dimension_local"
+        ],
+        "global_y_shift": false,
+        "legacy_density_and_bounds": null,
+        "fortune_and_raw_ore_yields": null
+      },
+      "acceptance": [
+        "WORLD-01",
+        "MINE-03",
+        "AUTO-03"
+      ],
+      "risks": [
+        "统一 y-64 平移",
+        "原版矿与MITE矿双倍",
+        "粗金属/时运翻倍收支"
+      ]
+    },
+    {
+      "id": "underworld",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": null,
+      "station": null,
+      "behavior": "新增独立地下世界维度，不替换现代主世界",
+      "design": {
+        "original_generator": "spec/r196-world-rules.json#world.underworld_identity",
+        "original_entry_requirements": "spec/r196-world-rules.json#world.portal_route",
+        "modern_vertical_mapping": null,
+        "requires_separate_dimension": true
+      },
+      "acceptance": [
+        "WORLD-03",
+        "PORTAL-01",
+        "PERF-01"
+      ],
+      "risks": [
+        "用普通下界冒充地下世界",
+        "未经证实的高度偏移"
+      ]
+    },
+    {
+      "id": "portals_and_end",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "end",
+      "station": null,
+      "behavior": "按原作规则提取四维度关系，保留新版探索内容",
+      "design": {
+        "legacy_route_and_cost": null,
+        "store_return_dimension_and_position": true,
+        "bounded_safe_landing_search": true,
+        "failed_teleport_consumes_resources": false
+      },
+      "acceptance": [
+        "PORTAL-01",
+        "PROGRESS-01",
+        "SAVE-01"
+      ],
+      "risks": [
+        "无安全落点扣费",
+        "跨维度循环复制",
+        "重连状态丢失"
+      ]
+    },
+    {
+      "id": "modern_storage_and_transport",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "iron",
+      "station": "appropriate_verified_station",
+      "behavior": "保留潜影盒、原版适用的收纳功能、船/矿车和探索工具",
+      "design": {
+        "nested_container_state": "preserve_components",
+        "items_and_recipes": "pending_registry_audit",
+        "stack_and_weight_rules": "only_if_verified_in_r196"
+      },
+      "acceptance": [
+        "ITEMS-01",
+        "AUTO-02",
+        "MODERN-04"
+      ],
+      "risks": [
+        "嵌套容器组件丢失",
+        "假定1.21.1未启用功能默认可用"
+      ]
+    },
+    {
+      "id": "decorations_and_building",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "gatherer",
+      "station": "appropriate_verified_station",
+      "behavior": "现代木种、石种、染色、竹材、樱花、铜变体和饰纹保留",
+      "design": {
+        "textures": "vanilla_modern",
+        "recipes": "map_material_and_station_requirements",
+        "decorative_equipment_trims": "no_combat_bonus_added",
+        "full_entry_audit": null
+      },
+      "acceptance": [
+        "CRAFT-01",
+        "WORLD-01",
+        "HUD-01"
+      ],
+      "risks": [
+        "新木种提供免费木工具",
+        "切石机绕过加工耗时"
+      ]
+    },
+    {
+      "id": "new_passive_and_hostile_mobs",
+      "status": "planned",
+      "provenance": "modern_design",
+      "stage": "base_metal",
+      "station": null,
+      "behavior": "新版生物保留并逐个归入营养/经验/战斗/生成规则",
+      "design": {
+        "examples": [
+          "drowned",
+          "pillager",
+          "ravager",
+          "phantom",
+          "warden",
+          "breeze",
+          "bogged",
+          "sniffer",
+          "armadillo",
+          "camel",
+          "allay"
+        ],
+        "entity_mapping": null,
+        "legacy_rules_applied_after_classification": true
+      },
+      "acceptance": [
+        "MOB-01",
+        "MOB-02",
+        "ANIMAL-01",
+        "MODERN-04"
+      ],
+      "risks": [
+        "全实体统一套相同经验",
+        "新增生物遗漏行为同步"
+      ]
+    }
+  ],
+  "open_evidence_requirements": [
+    "完整R196公式与原版差异",
+    "全部配方和启用条件",
+    "原始材料硬度/耐久/炉温",
+    "品质与技能实际开关",
+    "原版维度和村庄解锁规则",
+    "1.21.1逐注册项差异清单",
+    "各现代生物和食品映射",
+    "所有适用loot table与交易项来源图"
+  ]
+}

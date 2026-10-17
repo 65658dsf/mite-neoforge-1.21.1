@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Mojang version manifest",
+    "url": "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
+    "sha256": "845dfb7f8b28ce06bf0752b597ef2d4d65df973e4b59d8d6ff429ad2d3adde04"
+  },
+  {
+    "name": "Minecraft 1.6.4 version metadata",
+    "url": "https://piston-meta.mojang.com/v1/packages/b71bae449192fbbe1582ff32fb3765edf0b9b0a8/1.6.4.json",
+    "sha1": "b71bae449192fbbe1582ff32fb3765edf0b9b0a8",
+    "sha256": "e773d3d7f2a93c2706d1d06ff9574f9df388f9274a9ed131e11e8b05d09dc977"
+  },
+  {
+    "name": "Minecraft 1.6.4 official client",
+    "url": "https://launcher.mojang.com/v1/objects/1703704407101cf72bd88e68579e3696ce733ecd/client.jar",
+    "sha1": "1703704407101cf72bd88e68579e3696ce733ecd",
+    "sha256": "f4513e51c766cdd1d32ca8acd0835d7e16e2851ebea3f2a3b4ce5ae696baf3ae"
+  },
+  {
+    "name": "CFR 0.152",
+    "url": "https://www.benf.org/other/cfr/cfr-0.152.jar",
+    "publisher_md5": "8a85ada8cec494121246805a5562b82b",
+    "sha256": "f686e8f3ded377d7bc87d216a90e9e9512df4156e75b06c655a16648ae8765b2"
+  }
+]

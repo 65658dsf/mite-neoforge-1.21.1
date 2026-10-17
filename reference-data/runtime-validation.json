@@ -1,0 +1,14 @@
+{
+  "author": "NingMeng123",
+  "success": true,
+  "errors": [],
+  "matched_static_symbols": 756,
+  "explained_nonregistry_symbols": 1,
+  "verified_constructor_ids": 667,
+  "crafting_recipe_count": 902,
+  "dynamic_recipe_count": 4,
+  "furnace_recipe_count": 28,
+  "entity_count": 85,
+  "enchantment_count": 38,
+  "note": "Four algorithmic recipes and heat-dependent furnace behavior still require semantic specifications; this validation is not a gameplay test."
+}

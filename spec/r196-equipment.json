@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "reference_version": "MITE 1.6.4 R196",
+  "status": "numeric_declarations_verified_behavior_integration_pending",
+  "source_sha256": {
+    "EnumEquipmentMaterial.java": "2f3f473c1cb1b69deb244d2e9940812d813d2a629abf1291913d9706f2d408e9",
+    "EnumQuality.java": "8d26259a187ac185006a72483c20a94b22bbe3eeb9bee960758a6ce74ec5690d",
+    "akc.java": "2974cfc831d76bf37d1ebd3a7e93a1397bd152890d22cadb32f4165c272aec45"
+  },
+  "semantics": {
+    "durability_factor": "Material multiplier, NOT the final tool durability in uses.",
+    "minimum_harvest_level_for_material": "Level required to harvest the material, NOT the tool's harvest capability.",
+    "maximum_quality": "Material's declared upper quality, not a guarantee every item supports quality.",
+    "decompiled_line": "Line in CFR 0.152 output; not the original SourceFile line table."
+  },
+  "equipment_materials": [
+    {
+      "id": "leather",
+      "durability_factor": 1.0,
+      "enchantability": 10,
+      "maximum_quality": "fine",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 5
+      }
+    },
+    {
+      "id": "wood",
+      "durability_factor": 0.5,
+      "enchantability": 10,
+      "maximum_quality": "fine",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 6
+      },
+      "legacy_material_field": "d",
+      "minimum_harvest_level_for_material": 0,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 623
+      }
+    },
+    {
+      "id": "flint",
+      "durability_factor": 1.0,
+      "enchantability": 0,
+      "maximum_quality": "fine",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 7
+      },
+      "legacy_material_field": "flint",
+      "minimum_harvest_level_for_material": 2,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 624
+      }
+    },
+    {
+      "id": "obsidian",
+      "durability_factor": 2.0,
+      "enchantability": 0,
+      "maximum_quality": "fine",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 8
+      },
+      "legacy_material_field": "obsidian",
+      "minimum_harvest_level_for_material": 3,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 626
+      }
+    },
+    {
+      "id": "rusted_iron",
+      "durability_factor": 4.0,
+      "enchantability": 0,
+      "maximum_quality": "poor",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 9
+      },
+      "legacy_material_field": "rusted_iron",
+      "minimum_harvest_level_for_material": 2,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 627
+      }
+    },
+    {
+      "id": "copper",
+      "durability_factor": 4.0,
+      "enchantability": 30,
+      "maximum_quality": "excellent",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 10
+      },
+      "legacy_material_field": "copper",
+      "minimum_harvest_level_for_material": 2,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 628
+      }
+    },
+    {
+      "id": "silver",
+      "durability_factor": 4.0,
+      "enchantability": 30,
+      "maximum_quality": "excellent",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 11
+      },
+      "legacy_material_field": "silver",
+      "minimum_harvest_level_for_material": 2,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 629
+      }
+    },
+    {
+      "id": "gold",
+      "durability_factor": 4.0,
+      "enchantability": 50,
+      "maximum_quality": "superb",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 12
+      },
+      "legacy_material_field": "gold",
+      "minimum_harvest_level_for_material": 2,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 630
+      }
+    },
+    {
+      "id": "iron",
+      "durability_factor": 8.0,
+      "enchantability": 30,
+      "maximum_quality": "masterwork",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 13
+      },
+      "legacy_material_field": "f",
+      "minimum_harvest_level_for_material": 3,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 631
+      }
+    },
+    {
+      "id": "ancient_metal",
+      "durability_factor": 16.0,
+      "enchantability": 40,
+      "maximum_quality": "masterwork",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 14
+      },
+      "legacy_material_field": "ancient_metal",
+      "minimum_harvest_level_for_material": 3,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 632
+      }
+    },
+    {
+      "id": "mithril",
+      "durability_factor": 64.0,
+      "enchantability": 100,
+      "maximum_quality": "legendary",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 15
+      },
+      "legacy_material_field": "mithril",
+      "minimum_harvest_level_for_material": 4,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 633
+      }
+    },
+    {
+      "id": "adamantium",
+      "durability_factor": 256.0,
+      "enchantability": 40,
+      "maximum_quality": "legendary",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 16
+      },
+      "legacy_material_field": "adamantium",
+      "minimum_harvest_level_for_material": 5,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 634
+      }
+    },
+    {
+      "id": "netherrack",
+      "durability_factor": 4.0,
+      "enchantability": 0,
+      "maximum_quality": "average",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 17
+      },
+      "legacy_material_field": "netherrack",
+      "minimum_harvest_level_for_material": 2,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 635
+      }
+    },
+    {
+      "id": "glass",
+      "durability_factor": 2.0,
+      "enchantability": 0,
+      "maximum_quality": "average",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 18
+      }
+    },
+    {
+      "id": "quartz",
+      "durability_factor": 4.0,
+      "enchantability": 40,
+      "maximum_quality": "fine",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 19
+      },
+      "legacy_material_field": "quartz",
+      "minimum_harvest_level_for_material": 2,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 637
+      }
+    },
+    {
+      "id": "emerald",
+      "durability_factor": 8.0,
+      "enchantability": 70,
+      "maximum_quality": "excellent",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 20
+      },
+      "legacy_material_field": "emerald",
+      "minimum_harvest_level_for_material": 3,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 638
+      }
+    },
+    {
+      "id": "diamond",
+      "durability_factor": 16.0,
+      "enchantability": 100,
+      "maximum_quality": "superb",
+      "evidence": {
+        "source": "EnumEquipmentMaterial.java",
+        "decompiled_line": 21
+      },
+      "legacy_material_field": "diamond",
+      "minimum_harvest_level_for_material": 4,
+      "harvest_evidence": {
+        "source": "akc.java",
+        "decompiled_line": 639
+      }
+    }
+  ],
+  "qualities": [
+    {
+      "id": "wretched",
+      "durability_multiplier": 0.5,
+      "evidence": {
+        "source": "EnumQuality.java",
+        "decompiled_line": 7
+      }
+    },
+    {
+      "id": "poor",
+      "durability_multiplier": 0.75,
+      "evidence": {
+        "source": "EnumQuality.java",
+        "decompiled_line": 8
+      }
+    },
+    {
+      "id": "average",
+      "durability_multiplier": 1.0,
+      "evidence": {
+        "source": "EnumQuality.java",
+        "decompiled_line": 9
+      }
+    },
+    {
+      "id": "fine",
+      "durability_multiplier": 1.5,
+      "evidence": {
+        "source": "EnumQuality.java",
+        "decompiled_line": 10
+      }
+    },
+    {
+      "id": "excellent",
+      "durability_multiplier": 2.0,
+      "evidence": {
+        "source": "EnumQuality.java",
+        "decompiled_line": 11
+      }
+    },
+    {
+      "id": "superb",
+      "durability_multiplier": 2.5,
+      "evidence": {
+        "source": "EnumQuality.java",
+        "decompiled_line": 12
+      }
+    },
+    {
+      "id": "masterwork",
+      "durability_multiplier": 3.0,
+      "evidence": {
+        "source": "EnumQuality.java",
+        "decompiled_line": 13
+      }
+    },
+    {
+      "id": "legendary",
+      "durability_multiplier": 3.5,
+      "evidence": {
+        "source": "EnumQuality.java",
+        "decompiled_line": 14
+      }
+    }
+  ]
+}

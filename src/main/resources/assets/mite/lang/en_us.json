@@ -152,7 +152,6 @@
   "block.mite.nether_gravel": "Nether Gravel",
   "tooltip.mite.gem_sacrifice": "%s experience points",
   "block.minecraft.crafting_table": "Crafting Table (Disabled)",
-  "tooltip.mite.planks_require_workbench": "Plank processing requires a workbench or crafter",
   "item.minecraft.wooden_sword": "Wooden Club",
   "commands.mite.experience.level_too_high": "The requested level requires more XP than vanilla integer storage can represent (through level %s). No target's experience was changed.",
   "commands.mite.experience.points_overflow": "These points within the level would overflow vanilla's integer XP storage. No target's experience was changed.",

@@ -32,14 +32,8 @@ public final class CraftingTooltips {
         if (required > 0) {
             String material = required >= 256 ? "adamantium" : required >= 64 ? "mithril"
                     : required >= 16 ? "ancient_metal" : required >= 8 ? "iron" : required >= 4 ? "copper" : "flint";
-            event.getToolTip().add(Component.translatable("tooltip.mite.workbench_required",
-                    Component.translatable("block.mite." + material + "_crafting_table")).withStyle(ChatFormatting.DARK_AQUA));
         }
         int xp = GemSacrifice.experienceValue(event.getItemStack());
         if (xp > 0) event.getToolTip().add(Component.translatable("tooltip.mite.gem_sacrifice", xp).withStyle(ChatFormatting.AQUA));
-        if (event.getItemStack().is(ItemTags.LOGS) || event.getItemStack().is(ItemTags.BAMBOO_BLOCKS)) {
-            event.getToolTip().add(Component.translatable("tooltip.mite.planks_require_workbench")
-                    .withStyle(ChatFormatting.GRAY));
-        }
     }
 }

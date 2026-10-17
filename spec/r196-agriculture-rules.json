@@ -1,0 +1,368 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "reference": "MITE 1.6.4 R196",
+  "rules": [
+    {
+      "id": "plant_temperature",
+      "evidence_status": "confirmed_static",
+      "behavior": "最适区间内倍率1；区间外 max(1 - 距离/容忍度,0)，默认容忍度1。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/BlockGrowingPlant.java",
+          "method": "getTemperatureGrowthRateModifier",
+          "start_line": 26,
+          "end_line": 36
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "plant_global_speed",
+      "evidence_status": "confirmed_static",
+      "behavior": "默认全局生长倍率0.25；子类可覆写。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/BlockGrowingPlant.java",
+          "method": "getGlobalGrowthRateModifierFromMITE",
+          "start_line": 19,
+          "end_line": 21
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "plant_neighbor_speed",
+      "evidence_status": "confirmed_static",
+      "behavior": "无同种正交邻居倍率0.5；孤立二株0.75；两个以上邻居或邻居继续相连倍率1。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/BlockGrowingPlant.java",
+          "method": "getProximityGrowthRateModifier",
+          "start_line": 40,
+          "end_line": 76
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "plant_light",
+      "evidence_status": "confirmed_static",
+      "behavior": "默认生长光照下限和上限均15，子类覆写需单独适配。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/BlockGrowingPlant.java",
+          "method": "isLightLevelSuitableForGrowth",
+          "start_line": 79,
+          "end_line": 90
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "crop_temperature",
+      "evidence_status": "confirmed_static",
+      "behavior": "普通作物默认最适温度0.8–1.2，湿度生长倍率1。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/anr.java",
+          "method": "getLowestOptimalTemperature/getHighestOptimalTemperature",
+          "start_line": 36,
+          "end_line": 49
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "crop_drought",
+      "evidence_status": "confirmed_static",
+      "behavior": "生长率为0且下方无水源时，每随机tick有0.05概率枯死；成熟作物先按干旱掉落并移除，未成熟转枯死作物。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/anr.java",
+          "method": "updateTick",
+          "start_line": 61,
+          "end_line": 78
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "crop_blight_progression",
+      "evidence_status": "confirmed_static",
+      "behavior": "染病后每随机tick先以1/64概率枯死；未枯死且随机布尔不提前返回时，在3×3×3邻域随机挑一点传播到活的未染病anr作物；代码不要求相同作物ID。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/anr.java",
+          "method": "updateTick",
+          "start_line": 79,
+          "end_line": 94
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "crop_blood_moon",
+      "evidence_status": "confirmed_static",
+      "behavior": "血月夜、非独立服务器、天空遮挡/室外条件满足时，未染病作物有0.25概率染病。专服该分支禁用。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/anr.java",
+          "method": "updateTick",
+          "start_line": 94,
+          "end_line": 97
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "crop_natural_blight",
+      "evidence_status": "confirmed_static",
+      "behavior": "自然染病概率=0.0005×max((1-温度到[1,1.2]区间距离)×(高湿?1.5:1),0)×(1-上方光照/16)。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/anr.java",
+          "method": "updateTick/getBlightChanceModifierForBiome",
+          "start_line": 98,
+          "end_line": 120
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "crop_growth_probability",
+      "evidence_status": "confirmed_static",
+      "behavior": "未染病且本次自然染病判定未命中、适光、未成熟、非零生长率时，以1/(floor(25/生长率)+1)概率推进1生长阶段；成功生长后1/256概率消耗耕地肥力。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/anr.java",
+          "method": "updateTick",
+          "start_line": 98,
+          "end_line": 112
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "crop_soil_growth",
+      "evidence_status": "confirmed_static",
+      "behavior": "正下方干燥耕地使生长率归0；否则计算3×3耕地加成、同种密植惩罚（任一对角同种，或横纵均有同种时除以2）、肥力1.5倍、温度/湿度/全局/邻近倍率。相邻耕地加成使用metadata>0而非仅湿度位。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/anr.java",
+          "method": "k",
+          "start_line": 132,
+          "end_line": 176
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "crop_harvest",
+      "evidence_status": "confirmed_static",
+      "behavior": "只处理玩家采收、干旱、积雪或自落入口；染病无产出，阶段0返回种子，成熟且非自落返回成熟产物，其余无掉落；有效工具收获附魔增加倍率。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/anr.java",
+          "method": "dropBlockAsEntityItem",
+          "start_line": 284,
+          "end_line": 310
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "farmland_drying",
+      "evidence_status": "confirmed_static",
+      "behavior": "干燥概率=max(群系温度-0.15-(高湿?0.5:0),0)。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aof.java",
+          "method": "chanceOfDrying",
+          "start_line": 41,
+          "end_line": 48
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "farmland_water",
+      "evidence_status": "confirmed_static",
+      "behavior": "同层和上层、水平±4内水材质，或水平±1且同层/上层雪或冰均可作为耕地供水条件。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aof.java",
+          "method": "m",
+          "start_line": 112,
+          "end_line": 132
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_initial_state",
+      "evidence_status": "confirmed_static",
+      "behavior": "服务端初始食物、水、自由度各自为0.8+随机float×0.2；默认粪便周期24000 tick。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "<init>",
+          "start_line": 21,
+          "end_line": 35
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_wellness",
+      "evidence_status": "confirmed_static",
+      "behavior": "三项数值限制[0,1]；均>=0.25为健康；食水<0.5为饥渴、<0.25为严重、<0.05为极度缺乏。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "isWell/isHungry/isThirsty",
+          "start_line": 120,
+          "end_line": 157
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_crowding",
+      "evidence_status": "confirmed_static",
+      "behavior": "不在室外即拥挤；否则扩展包围盒(2,0.5,2)内EntityLiving数量>2判拥挤。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "isCrowded",
+          "start_line": 204,
+          "end_line": 214
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_wellness_update",
+      "evidence_status": "confirmed_static",
+      "behavior": "附近食物/水/不拥挤各增加0.1；缺乏各减少0.005；无水但淋雨加水0.01；牛吃附近植物时有0.01破坏概率。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "updateWellness",
+          "start_line": 216,
+          "end_line": 237
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_update_schedule",
+      "evidence_status": "confirmed_static",
+      "behavior": "服务端每100tick，nextInt(10)>0才调用健康更新；健康且成年增加生产计数1。produceGoods仍在每100tick调用，不依赖本次是否增加计数。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "c",
+          "start_line": 240,
+          "end_line": 253
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_manure",
+      "evidence_status": "confirmed_static",
+      "behavior": "成年且不极度饥饿才递减粪便倒计时；到期掉落1粪便并设为period/2+nextInt(period)。首次倒计时为Math.random()*period。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "c/setManurePeriod",
+          "start_line": 249,
+          "end_line": 254
+        },
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "setManurePeriod",
+          "start_line": 367,
+          "end_line": 369
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_food_and_breeding",
+      "evidence_status": "confirmed_static",
+      "behavior": "进食服务端增加0.5食物；仅健康时进入父类求偶逻辑。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "onFoodEaten/bX",
+          "start_line": 327,
+          "end_line": 338
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_growth_inheritance",
+      "evidence_status": "confirmed_static",
+      "behavior": "幼体在极度缺食水时停止增加年龄；幼体三项健康值各取父母较低值。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "c/adoptWellnessFromParents",
+          "start_line": 378,
+          "end_line": 399
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "livestock_experience",
+      "evidence_status": "confirmed_static",
+      "behavior": "牲畜经验值为0，不能泛化为所有非敌对实体。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/EntityLivestock.java",
+          "method": "getExperienceValue",
+          "start_line": 372,
+          "end_line": 375
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "chicken_production",
+      "evidence_status": "confirmed_static",
+      "behavior": "生产计数>=100且nextInt(500)==0时恢复羽毛、扣100并返回；否则计数>=200且nextInt(20)==0时产蛋、扣200。鸡粪便周期为默认值×16。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/rq.java",
+          "method": "produceGoods",
+          "start_line": 79,
+          "end_line": 93
+        }
+      ],
+      "implementation_status": "planned"
+    },
+    {
+      "id": "cow_milk",
+      "evidence_status": "confirmed_static",
+      "behavior": "牛奶容量限制0–100，幼体读取为0；生产计数加入牛奶后清零。",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/rr.java",
+          "method": "setMilk/produceGoods",
+          "start_line": 29,
+          "end_line": 91
+        }
+      ],
+      "implementation_status": "planned"
+    }
+  ],
+  "limitations": [
+    "仅覆盖共享作物/牲畜与鸡牛生产核心规则；子类、离线生长、完整掉落和全部AI路径另需审计。",
+    "语义为静态审计结果，不等于已完成游戏对照实测。",
+    "原版光照与温度单位需与现代版本分别映射，不能直接使用新群系值认定完全等价。"
+  ]
+}

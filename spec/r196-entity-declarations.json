@@ -1,0 +1,3092 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "reference": "MITE 1.6.4 R196",
+  "status": "declaration_catalogue_not_effective_runtime_stats",
+  "attribute_mapping_evidence": "Vanilla 1.6.4 tp.class static initializer, verified using javap -c -p.",
+  "limitations": [
+    "Attribute writes can be conditional or overwritten later; these are NOT final spawn statistics.",
+    "Inherited defaults, dynamic formulas, equipment and potion modifiers are not evaluated.",
+    "Constant boolean methods do not prove a class is registered or naturally spawned."
+  ],
+  "entity_count": 131,
+  "entities": [
+    {
+      "class": "bdi",
+      "superclass": "bex",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityClientPlayerMP.java",
+      "decompiled_path": "bdi.java"
+    },
+    {
+      "class": "bdo",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityBreakingFX.java",
+      "decompiled_path": "bdo.java"
+    },
+    {
+      "class": "bdq",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityCrit2FX.java",
+      "decompiled_path": "bdq.java"
+    },
+    {
+      "class": "bds",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityDropParticleFX.java",
+      "decompiled_path": "bds.java"
+    },
+    {
+      "class": "bed",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityHugeExplodeFX.java",
+      "decompiled_path": "bed.java"
+    },
+    {
+      "class": "bee",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityLavaFX.java",
+      "decompiled_path": "bee.java"
+    },
+    {
+      "class": "beg",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 103
+        },
+        {
+          "method": "aq",
+          "returns": false,
+          "decompiled_line": 223
+        },
+        {
+          "method": "canCatchFire",
+          "returns": false,
+          "decompiled_line": 233
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 238
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 243
+        }
+      ],
+      "source_file": "EntityFX.java",
+      "decompiled_path": "beg.java"
+    },
+    {
+      "class": "bei",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityCloudFX.java",
+      "decompiled_path": "bei.java"
+    },
+    {
+      "class": "bej",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityPortalFX.java",
+      "decompiled_path": "bej.java"
+    },
+    {
+      "class": "bep",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntitySuspendFX.java",
+      "decompiled_path": "bep.java"
+    },
+    {
+      "class": "beq",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityAuraFX.java",
+      "decompiled_path": "beq.java"
+    },
+    {
+      "class": "bes",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityDiggingFX.java",
+      "decompiled_path": "bes.java"
+    },
+    {
+      "class": "bet",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityRainFX.java",
+      "decompiled_path": "bet.java"
+    },
+    {
+      "class": "beu",
+      "superclass": "uf",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "AbstractClientPlayer.java",
+      "decompiled_path": "beu.java"
+    },
+    {
+      "class": "bex",
+      "superclass": "beu",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityPlayerSP.java",
+      "decompiled_path": "bex.java"
+    },
+    {
+      "class": "bey",
+      "superclass": "beu",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityOtherPlayerMP.java",
+      "decompiled_path": "bey.java"
+    },
+    {
+      "class": "EntityAncientBoneLord",
+      "superclass": "EntityBoneLord",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 15,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.27,
+          "method": "az",
+          "decompiled_line": 16,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 8.0,
+          "method": "az",
+          "decompiled_line": 17,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "max_health",
+          "value": 24.0,
+          "method": "az",
+          "decompiled_line": 18,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [],
+      "source_file": "EntityAncientBoneLord.java",
+      "decompiled_path": "EntityAncientBoneLord.java"
+    },
+    {
+      "class": "EntityAnimalWatcher",
+      "superclass": "tm",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityAnimalWatcher.java",
+      "decompiled_path": "EntityAnimalWatcher.java"
+    },
+    {
+      "class": "EntityArachnid",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 12.0,
+          "method": "az",
+          "decompiled_line": 108,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "follow_range",
+          "value": 28.0,
+          "method": "az",
+          "decompiled_line": 109,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 1.0,
+          "method": "az",
+          "decompiled_line": 110,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 4.0,
+          "method": "az",
+          "decompiled_line": 111,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "canClimbWalls",
+          "returns": true,
+          "decompiled_line": 19
+        },
+        {
+          "method": "peacefulDuringDay",
+          "returns": true,
+          "decompiled_line": 134
+        },
+        {
+          "method": "canJump",
+          "returns": true,
+          "decompiled_line": 160
+        },
+        {
+          "method": "drawBackFaces",
+          "returns": false,
+          "decompiled_line": 240
+        },
+        {
+          "method": "requiresLineOfSightToTargets",
+          "returns": false,
+          "decompiled_line": 253
+        }
+      ],
+      "source_file": "EntityArachnid.java",
+      "decompiled_path": "EntityArachnid.java"
+    },
+    {
+      "class": "EntityBlackWidowSpider",
+      "superclass": "EntityWoodSpider",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityBlackWidowSpider.java",
+      "decompiled_path": "EntityBlackWidowSpider.java"
+    },
+    {
+      "class": "EntityBlob",
+      "superclass": "EntityGelatinousCube",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityBlob.java",
+      "decompiled_path": "EntityBlob.java"
+    },
+    {
+      "class": "EntityBoneLord",
+      "superclass": "tr",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 18,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.26,
+          "method": "az",
+          "decompiled_line": 19,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 5.0,
+          "method": "az",
+          "decompiled_line": 20,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "max_health",
+          "value": 20.0,
+          "method": "az",
+          "decompiled_line": 21,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [],
+      "source_file": "EntityBoneLord.java",
+      "decompiled_path": "EntityBoneLord.java"
+    },
+    {
+      "class": "EntityBrick",
+      "superclass": "uq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityBrick.java",
+      "decompiled_path": "EntityBrick.java"
+    },
+    {
+      "class": "EntityClayGolem",
+      "superclass": "EntityEarthElemental",
+      "attribute_assignments": [
+        {
+          "attribute": "attack_damage",
+          "value": 6.0,
+          "method": "az",
+          "decompiled_line": 13,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "max_health",
+          "value": 30.0,
+          "method": "az",
+          "decompiled_line": 14,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "isMagma",
+          "returns": false,
+          "decompiled_line": 33
+        }
+      ],
+      "source_file": "EntityClayGolem.java",
+      "decompiled_path": "EntityClayGolem.java"
+    },
+    {
+      "class": "EntityCopperspine",
+      "superclass": "tq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityCopperspine.java",
+      "decompiled_path": "EntityCopperspine.java"
+    },
+    {
+      "class": "EntityCubic",
+      "superclass": "og",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "isRepelledByCollisionWithPlayer",
+          "returns": false,
+          "decompiled_line": 278
+        },
+        {
+          "method": "slowsPlayerOnContact",
+          "returns": true,
+          "decompiled_line": 340
+        },
+        {
+          "method": "breathesAir",
+          "returns": false,
+          "decompiled_line": 408
+        },
+        {
+          "method": "canSpawnInShallowWater",
+          "returns": true,
+          "decompiled_line": 416
+        },
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": true,
+          "decompiled_line": 421
+        },
+        {
+          "method": "canBeDamagedByCacti",
+          "returns": false,
+          "decompiled_line": 426
+        },
+        {
+          "method": "e",
+          "returns": false,
+          "decompiled_line": 471
+        },
+        {
+          "method": "isHarmedByPepsin",
+          "returns": false,
+          "decompiled_line": 481
+        }
+      ],
+      "source_file": "EntityCubic.java",
+      "decompiled_path": "EntityCubic.java"
+    },
+    {
+      "class": "EntityDemonSpider",
+      "superclass": "EntityArachnid",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 18.0,
+          "method": "az",
+          "decompiled_line": 14,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 5.0,
+          "method": "az",
+          "decompiled_line": 15,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "peacefulDuringDay",
+          "returns": false,
+          "decompiled_line": 34
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 57
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 62
+        },
+        {
+          "method": "canSpawnInShallowWater",
+          "returns": false,
+          "decompiled_line": 67
+        }
+      ],
+      "source_file": "EntityDemonSpider.java",
+      "decompiled_path": "EntityDemonSpider.java"
+    },
+    {
+      "class": "EntityDepthSuspendParticle",
+      "superclass": "beq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityDepthSuspendParticle.java",
+      "decompiled_path": "EntityDepthSuspendParticle.java"
+    },
+    {
+      "class": "EntityDireWolf",
+      "superclass": "sf",
+      "attribute_assignments": [
+        {
+          "attribute": "attack_damage",
+          "value": 5.0,
+          "method": "az",
+          "decompiled_line": 15,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [],
+      "source_file": "EntityDireWolf.java",
+      "decompiled_path": "EntityDireWolf.java"
+    },
+    {
+      "class": "EntityEarthElemental",
+      "superclass": "EntityAnimalWatcher",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 20.0,
+          "method": "az",
+          "decompiled_line": 44,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.2,
+          "method": "az",
+          "decompiled_line": 45,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 12.0,
+          "method": "az",
+          "decompiled_line": 46,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "max_health",
+          "value": 30.0,
+          "method": "az",
+          "decompiled_line": 47,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 173
+        },
+        {
+          "method": "healsWithTime",
+          "returns": true,
+          "decompiled_line": 312
+        },
+        {
+          "method": "isEntityBiologicallyAlive",
+          "returns": false,
+          "decompiled_line": 317
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 322
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 327
+        },
+        {
+          "method": "ax",
+          "returns": false,
+          "decompiled_line": 332
+        },
+        {
+          "method": "breathesAir",
+          "returns": false,
+          "decompiled_line": 337
+        }
+      ],
+      "source_file": "EntityEarthElemental.java",
+      "decompiled_path": "EntityEarthElemental.java"
+    },
+    {
+      "class": "EntityFireElemental",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 26,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.25,
+          "method": "az",
+          "decompiled_line": 27,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 5.0,
+          "method": "az",
+          "decompiled_line": 28,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 47
+        },
+        {
+          "method": "af",
+          "returns": true,
+          "decompiled_line": 136
+        },
+        {
+          "method": "healsWithTime",
+          "returns": false,
+          "decompiled_line": 141
+        },
+        {
+          "method": "isEntityBiologicallyAlive",
+          "returns": false,
+          "decompiled_line": 146
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 151
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 156
+        },
+        {
+          "method": "isComfortableInLava",
+          "returns": true,
+          "decompiled_line": 161
+        },
+        {
+          "method": "i_",
+          "returns": true,
+          "decompiled_line": 166
+        },
+        {
+          "method": "canSpawnInShallowWater",
+          "returns": false,
+          "decompiled_line": 176
+        },
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": true,
+          "decompiled_line": 181
+        }
+      ],
+      "source_file": "EntityFireElemental.java",
+      "decompiled_path": "EntityFireElemental.java"
+    },
+    {
+      "class": "EntityGelatinousCube",
+      "superclass": "EntityCubic",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "canDouseFire",
+          "returns": true,
+          "decompiled_line": 411
+        },
+        {
+          "method": "canCatchFire",
+          "returns": false,
+          "decompiled_line": 416
+        },
+        {
+          "method": "attacksAnimals",
+          "returns": true,
+          "decompiled_line": 421
+        },
+        {
+          "method": "attacksVillagers",
+          "returns": true,
+          "decompiled_line": 426
+        }
+      ],
+      "source_file": "EntityGelatinousCube.java",
+      "decompiled_path": "EntityGelatinousCube.java"
+    },
+    {
+      "class": "EntityGelatinousSphere",
+      "superclass": "uq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityGelatinousSphere.java",
+      "decompiled_path": "EntityGelatinousSphere.java"
+    },
+    {
+      "class": "EntityGhoul",
+      "superclass": "EntityAnimalWatcher",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 28,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.28,
+          "method": "az",
+          "decompiled_line": 29,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 5.0,
+          "method": "az",
+          "decompiled_line": 30,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 39
+        }
+      ],
+      "source_file": "EntityGhoul.java",
+      "decompiled_path": "EntityGhoul.java"
+    },
+    {
+      "class": "EntityGiantVampireBat",
+      "superclass": "EntityVampireBat",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityGiantVampireBat.java",
+      "decompiled_path": "EntityGiantVampireBat.java"
+    },
+    {
+      "class": "EntityHellhound",
+      "superclass": "sf",
+      "attribute_assignments": [
+        {
+          "attribute": "movement_speed",
+          "value": 0.4,
+          "method": "az",
+          "decompiled_line": 29,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "max_health",
+          "value": 20.0,
+          "method": "az",
+          "decompiled_line": 30,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 4.0,
+          "method": "az",
+          "decompiled_line": 31,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "isHostileToPlayers",
+          "returns": true,
+          "decompiled_line": 76
+        },
+        {
+          "method": "bT",
+          "returns": false,
+          "decompiled_line": 86
+        },
+        {
+          "method": "isEntityBiologicallyAlive",
+          "returns": false,
+          "decompiled_line": 99
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 114
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 119
+        },
+        {
+          "method": "canSpawnInShallowWater",
+          "returns": false,
+          "decompiled_line": 129
+        }
+      ],
+      "source_file": "EntityHellhound.java",
+      "decompiled_path": "EntityHellhound.java"
+    },
+    {
+      "class": "EntityHoarySilverfish",
+      "superclass": "tq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityHoarySilverfish.java",
+      "decompiled_path": "EntityHoarySilverfish.java"
+    },
+    {
+      "class": "EntityInfernalCreeper",
+      "superclass": "tf",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 41
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 46
+        }
+      ],
+      "source_file": "EntityInfernalCreeper.java",
+      "decompiled_path": "EntityInfernalCreeper.java"
+    },
+    {
+      "class": "EntityInvisibleStalker",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 24,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.23,
+          "method": "az",
+          "decompiled_line": 25,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 4.0,
+          "method": "az",
+          "decompiled_line": 26,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 35
+        }
+      ],
+      "source_file": "EntityInvisibleStalker.java",
+      "decompiled_path": "EntityInvisibleStalker.java"
+    },
+    {
+      "class": "EntityJelly",
+      "superclass": "EntityGelatinousCube",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityJelly.java",
+      "decompiled_path": "EntityJelly.java"
+    },
+    {
+      "class": "EntityLivestock",
+      "superclass": "rp",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityLivestock.java",
+      "decompiled_path": "EntityLivestock.java"
+    },
+    {
+      "class": "EntityLongdead",
+      "superclass": "tr",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 18,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.29,
+          "method": "az",
+          "decompiled_line": 20,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "isLongdead",
+          "returns": true,
+          "decompiled_line": 39
+        }
+      ],
+      "source_file": "EntityLongdead.java",
+      "decompiled_path": "EntityLongdead.java"
+    },
+    {
+      "class": "EntityLongdeadGuardian",
+      "superclass": "EntityLongdead",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityLongdeadGuardian.java",
+      "decompiled_path": "EntityLongdeadGuardian.java"
+    },
+    {
+      "class": "EntityNetherspawn",
+      "superclass": "tq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 31
+        },
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": true,
+          "decompiled_line": 49
+        }
+      ],
+      "source_file": "EntityNetherspawn.java",
+      "decompiled_path": "EntityNetherspawn.java"
+    },
+    {
+      "class": "EntityNightwing",
+      "superclass": "ro",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 84
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 89
+        }
+      ],
+      "source_file": "EntityNightwing.java",
+      "decompiled_path": "EntityNightwing.java"
+    },
+    {
+      "class": "EntityOoze",
+      "superclass": "EntityGelatinousCube",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": false,
+          "decompiled_line": 58
+        }
+      ],
+      "source_file": "EntityOoze.java",
+      "decompiled_path": "EntityOoze.java"
+    },
+    {
+      "class": "EntityPhaseSpider",
+      "superclass": "EntityWoodSpider",
+      "attribute_assignments": [
+        {
+          "attribute": "attack_damage",
+          "value": 3.0,
+          "method": "az",
+          "decompiled_line": 19,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [],
+      "source_file": "EntityPhaseSpider.java",
+      "decompiled_path": "EntityPhaseSpider.java"
+    },
+    {
+      "class": "EntityPudding",
+      "superclass": "EntityGelatinousCube",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": false,
+          "decompiled_line": 46
+        }
+      ],
+      "source_file": "EntityPudding.java",
+      "decompiled_path": "EntityPudding.java"
+    },
+    {
+      "class": "EntityRepairFX",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityRepairFX.java",
+      "decompiled_path": "EntityRepairFX.java"
+    },
+    {
+      "class": "EntityRevenant",
+      "superclass": "tw",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 15,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.26,
+          "method": "az",
+          "decompiled_line": 16,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 7.0,
+          "method": "az",
+          "decompiled_line": 17,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "max_health",
+          "value": 30.0,
+          "method": "az",
+          "decompiled_line": 19,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "isRevenant",
+          "returns": true,
+          "decompiled_line": 46
+        },
+        {
+          "method": "bT",
+          "returns": false,
+          "decompiled_line": 57
+        }
+      ],
+      "source_file": "EntityRevenant.java",
+      "decompiled_path": "EntityRevenant.java"
+    },
+    {
+      "class": "EntitySacredFX",
+      "superclass": "beg",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntitySacredFX.java",
+      "decompiled_path": "EntitySacredFX.java"
+    },
+    {
+      "class": "EntityShadow",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 25,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.23,
+          "method": "az",
+          "decompiled_line": 26,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 5.0,
+          "method": "az",
+          "decompiled_line": 27,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 36
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 130
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 135
+        }
+      ],
+      "source_file": "EntityShadow.java",
+      "decompiled_path": "EntityShadow.java"
+    },
+    {
+      "class": "EntityVampireBat",
+      "superclass": "ro",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityVampireBat.java",
+      "decompiled_path": "EntityVampireBat.java"
+    },
+    {
+      "class": "EntityWeb",
+      "superclass": "uq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityWeb.java",
+      "decompiled_path": "EntityWeb.java"
+    },
+    {
+      "class": "EntityWight",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 23,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.25,
+          "method": "az",
+          "decompiled_line": 24,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 5.0,
+          "method": "az",
+          "decompiled_line": 25,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 34
+        }
+      ],
+      "source_file": "EntityWight.java",
+      "decompiled_path": "EntityWight.java"
+    },
+    {
+      "class": "EntityWoodSpider",
+      "superclass": "EntityArachnid",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 6.0,
+          "method": "az",
+          "decompiled_line": 13,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.8,
+          "method": "az",
+          "decompiled_line": 14,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 1.0,
+          "method": "az",
+          "decompiled_line": 15,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "peacefulDuringDay",
+          "returns": false,
+          "decompiled_line": 29
+        },
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": true,
+          "decompiled_line": 63
+        }
+      ],
+      "source_file": "EntityWoodSpider.java",
+      "decompiled_path": "EntityWoodSpider.java"
+    },
+    {
+      "class": "jv",
+      "superclass": "uf",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityPlayerMP.java",
+      "decompiled_path": "jv.java"
+    },
+    {
+      "class": "nk",
+      "superclass": "on",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityAgeable.java",
+      "decompiled_path": "nk.java"
+    },
+    {
+      "class": "nn",
+      "superclass": null,
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "isDecoy",
+          "returns": false,
+          "decompiled_line": 609
+        },
+        {
+          "method": "isEntityPlayer",
+          "returns": false,
+          "decompiled_line": 613
+        },
+        {
+          "method": "e_",
+          "returns": true,
+          "decompiled_line": 1047
+        },
+        {
+          "method": "isHarmedByPepsin",
+          "returns": false,
+          "decompiled_line": 1103
+        },
+        {
+          "method": "isHarmedByAcid",
+          "returns": true,
+          "decompiled_line": 1107
+        },
+        {
+          "method": "isRepelledByCollisionWithPlayer",
+          "returns": true,
+          "decompiled_line": 1320
+        },
+        {
+          "method": "L",
+          "returns": false,
+          "decompiled_line": 1451
+        },
+        {
+          "method": "M",
+          "returns": false,
+          "decompiled_line": 1455
+        },
+        {
+          "method": "P",
+          "returns": true,
+          "decompiled_line": 1600
+        },
+        {
+          "method": "aq",
+          "returns": true,
+          "decompiled_line": 2044
+        },
+        {
+          "method": "isEntityUndead",
+          "returns": false,
+          "decompiled_line": 2048
+        },
+        {
+          "method": "au",
+          "returns": false,
+          "decompiled_line": 2132
+        },
+        {
+          "method": "ax",
+          "returns": true,
+          "decompiled_line": 2177
+        },
+        {
+          "method": "isImmuneToExplosion",
+          "returns": false,
+          "decompiled_line": 2347
+        },
+        {
+          "method": "drawBackFaces",
+          "returns": true,
+          "decompiled_line": 2394
+        },
+        {
+          "method": "canBeDamagedByCacti",
+          "returns": false,
+          "decompiled_line": 2398
+        },
+        {
+          "method": "isZevimrgvInTournament",
+          "returns": false,
+          "decompiled_line": 2534
+        },
+        {
+          "method": "isHarmedByDrowning",
+          "returns": false,
+          "decompiled_line": 2542
+        },
+        {
+          "method": "canBeKnockedBack",
+          "returns": false,
+          "decompiled_line": 2546
+        },
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": false,
+          "decompiled_line": 2550
+        },
+        {
+          "method": "isPlayerInCreative",
+          "returns": false,
+          "decompiled_line": 2646
+        }
+      ],
+      "source_file": "Entity.java",
+      "decompiled_path": "nn.java"
+    },
+    {
+      "class": "oa",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 34
+        },
+        {
+          "method": "aq",
+          "returns": false,
+          "decompiled_line": 210
+        },
+        {
+          "method": "canCatchFire",
+          "returns": false,
+          "decompiled_line": 215
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 220
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 225
+        }
+      ],
+      "source_file": "EntityXPOrb.java",
+      "decompiled_path": "oa.java"
+    },
+    {
+      "class": "oc",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "L",
+          "returns": true,
+          "decompiled_line": 153
+        },
+        {
+          "method": "P",
+          "returns": false,
+          "decompiled_line": 246
+        }
+      ],
+      "source_file": "EntityHanging.java",
+      "decompiled_path": "oc.java"
+    },
+    {
+      "class": "od",
+      "superclass": "oc",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": true,
+          "decompiled_line": 134
+        }
+      ],
+      "source_file": "EntityItemFrame.java",
+      "decompiled_path": "od.java"
+    },
+    {
+      "class": "oe",
+      "superclass": "oc",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "isWrittenToChunkNBT",
+          "returns": false,
+          "decompiled_line": 46
+        }
+      ],
+      "source_file": "EntityLeashKnot.java",
+      "decompiled_path": "oe.java"
+    },
+    {
+      "class": "of",
+      "superclass": "nn",
+      "attribute_assignments": [
+        {
+          "attribute": "movement_speed",
+          "value": 0.1,
+          "method": "az",
+          "decompiled_line": 106,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "aA",
+          "returns": false,
+          "decompiled_line": 142
+        },
+        {
+          "method": "g_",
+          "returns": false,
+          "decompiled_line": 236
+        },
+        {
+          "method": "bd",
+          "returns": false,
+          "decompiled_line": 1377
+        },
+        {
+          "method": "bf",
+          "returns": false,
+          "decompiled_line": 1583
+        },
+        {
+          "method": "inBed",
+          "returns": false,
+          "decompiled_line": 1601
+        },
+        {
+          "method": "fleesWhenBadlyWounded",
+          "returns": true,
+          "decompiled_line": 2179
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": true,
+          "decompiled_line": 2220
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": true,
+          "decompiled_line": 2225
+        },
+        {
+          "method": "canBeDamagedByCacti",
+          "returns": true,
+          "decompiled_line": 2266
+        },
+        {
+          "method": "canTakeDamageFromThrownEggs",
+          "returns": false,
+          "decompiled_line": 2270
+        },
+        {
+          "method": "canBeKnockedBack",
+          "returns": true,
+          "decompiled_line": 2275
+        },
+        {
+          "method": "canOnlyPerformWeakStrike",
+          "returns": false,
+          "decompiled_line": 2293
+        }
+      ],
+      "source_file": "EntityLivingBase.java",
+      "decompiled_path": "of.java"
+    },
+    {
+      "class": "og",
+      "superclass": "of",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 16.0,
+          "method": "az",
+          "decompiled_line": 65,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": false,
+          "decompiled_line": 560
+        },
+        {
+          "method": "by",
+          "returns": false,
+          "decompiled_line": 983
+        },
+        {
+          "method": "isValidLightLevel",
+          "returns": true,
+          "decompiled_line": 1305
+        },
+        {
+          "method": "requiresLineOfSightToTargets",
+          "returns": true,
+          "decompiled_line": 1365
+        },
+        {
+          "method": "isFrenzied",
+          "returns": false,
+          "decompiled_line": 1531
+        },
+        {
+          "method": "isComfortableInLava",
+          "returns": false,
+          "decompiled_line": 1535
+        }
+      ],
+      "source_file": "EntityLiving.java",
+      "decompiled_path": "og.java"
+    },
+    {
+      "class": "ol",
+      "superclass": "oc",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": true,
+          "decompiled_line": 90
+        }
+      ],
+      "source_file": "EntityPainting.java",
+      "decompiled_path": "ol.java"
+    },
+    {
+      "class": "on",
+      "superclass": "og",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "bJ",
+          "returns": false,
+          "decompiled_line": 23
+        }
+      ],
+      "source_file": "EntityCreature.java",
+      "decompiled_path": "on.java"
+    },
+    {
+      "class": "oq",
+      "superclass": "rp",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityTameable.java",
+      "decompiled_path": "oq.java"
+    },
+    {
+      "class": "rn",
+      "superclass": "og",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "bG",
+          "returns": false,
+          "decompiled_line": 12
+        }
+      ],
+      "source_file": "EntityAmbientCreature.java",
+      "decompiled_path": "rn.java"
+    },
+    {
+      "class": "ro",
+      "superclass": "rn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "M",
+          "returns": false,
+          "decompiled_line": 76
+        },
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 130
+        },
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 267
+        },
+        {
+          "method": "au",
+          "returns": true,
+          "decompiled_line": 280
+        }
+      ],
+      "source_file": "EntityBat.java",
+      "decompiled_path": "ro.java"
+    },
+    {
+      "class": "rp",
+      "superclass": "nk",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 17
+        },
+        {
+          "method": "e",
+          "returns": false,
+          "decompiled_line": 303
+        }
+      ],
+      "source_file": "EntityAnimal.java",
+      "decompiled_path": "rp.java"
+    },
+    {
+      "class": "rq",
+      "superclass": "EntityLivestock",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 4.0,
+          "method": "az",
+          "decompiled_line": 38,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.25,
+          "method": "az",
+          "decompiled_line": 39,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": true,
+          "decompiled_line": 197
+        }
+      ],
+      "source_file": "EntityChicken.java",
+      "decompiled_path": "rq.java"
+    },
+    {
+      "class": "rr",
+      "superclass": "EntityLivestock",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 20.0,
+          "method": "az",
+          "decompiled_line": 43,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.2,
+          "method": "az",
+          "decompiled_line": 44,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [],
+      "source_file": "EntityCow.java",
+      "decompiled_path": "rr.java"
+    },
+    {
+      "class": "rs",
+      "superclass": "rp",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 53.0,
+          "method": "az",
+          "decompiled_line": 558,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.225,
+          "method": "az",
+          "decompiled_line": 559,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.175,
+          "method": "a",
+          "decompiled_line": 1227,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "max_health",
+          "value": 15.0,
+          "method": "a",
+          "decompiled_line": 1230,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.2,
+          "method": "a",
+          "decompiled_line": 1231,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "e",
+          "returns": false,
+          "decompiled_line": 1319
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": true,
+          "decompiled_line": 1359
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": true,
+          "decompiled_line": 1364
+        }
+      ],
+      "source_file": "EntityHorse.java",
+      "decompiled_path": "rs.java"
+    },
+    {
+      "class": "rv",
+      "superclass": "on",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "t",
+          "returns": false,
+          "decompiled_line": 36
+        },
+        {
+          "method": "isEntityBiologicallyAlive",
+          "returns": false,
+          "decompiled_line": 41
+        }
+      ],
+      "source_file": "EntityGolem.java",
+      "decompiled_path": "rv.java"
+    },
+    {
+      "class": "rw",
+      "superclass": "rr",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityMooshroom.java",
+      "decompiled_path": "rw.java"
+    },
+    {
+      "class": "rx",
+      "superclass": "oq",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 10.0,
+          "method": "az",
+          "decompiled_line": 67,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.3,
+          "method": "az",
+          "decompiled_line": 68,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [],
+      "source_file": "EntityOcelot.java",
+      "decompiled_path": "rx.java"
+    },
+    {
+      "class": "ry",
+      "superclass": "EntityLivestock",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 10.0,
+          "method": "az",
+          "decompiled_line": 40,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.25,
+          "method": "az",
+          "decompiled_line": 41,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [],
+      "source_file": "EntityPig.java",
+      "decompiled_path": "ry.java"
+    },
+    {
+      "class": "rz",
+      "superclass": "EntityLivestock",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 8.0,
+          "method": "az",
+          "decompiled_line": 72,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.23,
+          "method": "az",
+          "decompiled_line": 73,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [],
+      "source_file": "EntitySheep.java",
+      "decompiled_path": "rz.java"
+    },
+    {
+      "class": "sb",
+      "superclass": "rv",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 8.0,
+          "method": "az",
+          "decompiled_line": 31,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.2,
+          "method": "az",
+          "decompiled_line": 32,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 24
+        },
+        {
+          "method": "canDouseFire",
+          "returns": true,
+          "decompiled_line": 87
+        },
+        {
+          "method": "canCatchFire",
+          "returns": true,
+          "decompiled_line": 92
+        },
+        {
+          "method": "isEntityBiologicallyAlive",
+          "returns": false,
+          "decompiled_line": 118
+        },
+        {
+          "method": "healsWithTime",
+          "returns": false,
+          "decompiled_line": 128
+        }
+      ],
+      "source_file": "EntitySnowman.java",
+      "decompiled_path": "sb.java"
+    },
+    {
+      "class": "sc",
+      "superclass": "se",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 10.0,
+          "method": "az",
+          "decompiled_line": 31,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 60
+        }
+      ],
+      "source_file": "EntitySquid.java",
+      "decompiled_path": "sc.java"
+    },
+    {
+      "class": "sd",
+      "superclass": "rv",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 100.0,
+          "method": "az",
+          "decompiled_line": 57,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.25,
+          "method": "az",
+          "decompiled_line": 58,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 35
+        },
+        {
+          "method": "canCatchFire",
+          "returns": false,
+          "decompiled_line": 210
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 215
+        }
+      ],
+      "source_file": "EntityIronGolem.java",
+      "decompiled_path": "sd.java"
+    },
+    {
+      "class": "se",
+      "superclass": "on",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "aA",
+          "returns": true,
+          "decompiled_line": 12
+        }
+      ],
+      "source_file": "EntityWaterMob.java",
+      "decompiled_path": "se.java"
+    },
+    {
+      "class": "sf",
+      "superclass": "oq",
+      "attribute_assignments": [
+        {
+          "attribute": "movement_speed",
+          "value": 0.4,
+          "method": "az",
+          "decompiled_line": 49,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 3.0,
+          "method": "az",
+          "decompiled_line": 51,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "drawBackFaces",
+          "returns": false,
+          "decompiled_line": 571
+        }
+      ],
+      "source_file": "EntityWolf.java",
+      "decompiled_path": "sf.java"
+    },
+    {
+      "class": "si",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "L",
+          "returns": true,
+          "decompiled_line": 30
+        },
+        {
+          "method": "canCatchFire",
+          "returns": true,
+          "decompiled_line": 45
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 50
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 55
+        }
+      ],
+      "source_file": "EntityDragonPart.java",
+      "decompiled_path": "si.java"
+    },
+    {
+      "class": "sj",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 24
+        },
+        {
+          "method": "L",
+          "returns": true,
+          "decompiled_line": 62
+        },
+        {
+          "method": "canCatchFire",
+          "returns": false,
+          "decompiled_line": 92
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 97
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 102
+        }
+      ],
+      "source_file": "EntityEnderCrystal.java",
+      "decompiled_path": "sj.java"
+    },
+    {
+      "class": "sk",
+      "superclass": "og",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 200.0,
+          "method": "az",
+          "decompiled_line": 46,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "L",
+          "returns": false,
+          "decompiled_line": 469
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 499
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 504
+        },
+        {
+          "method": "canSpawnInShallowWater",
+          "returns": false,
+          "decompiled_line": 509
+        }
+      ],
+      "source_file": "EntityDragon.java",
+      "decompiled_path": "sk.java"
+    },
+    {
+      "class": "sm",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 300.0,
+          "method": "az",
+          "decompiled_line": 370,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.6,
+          "method": "az",
+          "decompiled_line": 371,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 372,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 363
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 419
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 424
+        }
+      ],
+      "source_file": "EntityWither.java",
+      "decompiled_path": "sm.java"
+    },
+    {
+      "class": "so",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "canCatchFire",
+          "returns": false,
+          "decompiled_line": 11
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 16
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 21
+        }
+      ],
+      "source_file": "EntityWeatherEffect.java",
+      "decompiled_path": "so.java"
+    },
+    {
+      "class": "sp",
+      "superclass": "so",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityLightningBolt.java",
+      "decompiled_path": "sp.java"
+    },
+    {
+      "class": "sq",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 33
+        },
+        {
+          "method": "M",
+          "returns": true,
+          "decompiled_line": 55
+        }
+      ],
+      "source_file": "EntityBoat.java",
+      "decompiled_path": "sq.java"
+    },
+    {
+      "class": "sr",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 45
+        },
+        {
+          "method": "av",
+          "returns": false,
+          "decompiled_line": 250
+        },
+        {
+          "method": "canCatchFire",
+          "returns": false,
+          "decompiled_line": 262
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 267
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 272
+        }
+      ],
+      "source_file": "EntityFallingSand.java",
+      "decompiled_path": "sr.java"
+    },
+    {
+      "class": "ss",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 39
+        },
+        {
+          "method": "aq",
+          "returns": false,
+          "decompiled_line": 522
+        }
+      ],
+      "source_file": "EntityItem.java",
+      "decompiled_path": "ss.java"
+    },
+    {
+      "class": "st",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 65
+        },
+        {
+          "method": "M",
+          "returns": true,
+          "decompiled_line": 90
+        }
+      ],
+      "source_file": "EntityMinecart.java",
+      "decompiled_path": "st.java"
+    },
+    {
+      "class": "su",
+      "superclass": "sv",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityMinecartChest.java",
+      "decompiled_path": "su.java"
+    },
+    {
+      "class": "sv",
+      "superclass": "st",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityMinecartContainer.java",
+      "decompiled_path": "sv.java"
+    },
+    {
+      "class": "sw",
+      "superclass": "st",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityMinecartFurnace.java",
+      "decompiled_path": "sw.java"
+    },
+    {
+      "class": "sx",
+      "superclass": "sv",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityMinecartHopper.java",
+      "decompiled_path": "sx.java"
+    },
+    {
+      "class": "sy",
+      "superclass": "st",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityMinecartEmpty.java",
+      "decompiled_path": "sy.java"
+    },
+    {
+      "class": "sz",
+      "superclass": "st",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "canCatchFire",
+          "returns": false,
+          "decompiled_line": 53
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 58
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": true,
+          "decompiled_line": 63
+        }
+      ],
+      "source_file": "EntityMinecartMobSpawner.java",
+      "decompiled_path": "sz.java"
+    },
+    {
+      "class": "tb",
+      "superclass": "st",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityMinecartTNT.java",
+      "decompiled_path": "tb.java"
+    },
+    {
+      "class": "tc",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 37
+        },
+        {
+          "method": "canCatchFire",
+          "returns": true,
+          "decompiled_line": 103
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 108
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 113
+        }
+      ],
+      "source_file": "EntityTNTPrimed.java",
+      "decompiled_path": "tc.java"
+    },
+    {
+      "class": "td",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "attack_damage",
+          "value": 6.0,
+          "method": "az",
+          "decompiled_line": 17,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "i_",
+          "returns": true,
+          "decompiled_line": 153
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 163
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 168
+        },
+        {
+          "method": "isComfortableInLava",
+          "returns": true,
+          "decompiled_line": 173
+        },
+        {
+          "method": "canSpawnInShallowWater",
+          "returns": false,
+          "decompiled_line": 178
+        },
+        {
+          "method": "canTakeDamageFromPlayerThrownSnowballs",
+          "returns": true,
+          "decompiled_line": 183
+        }
+      ],
+      "source_file": "EntityBlaze.java",
+      "decompiled_path": "td.java"
+    },
+    {
+      "class": "te",
+      "superclass": "EntityArachnid",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 16.0,
+          "method": "az",
+          "decompiled_line": 13,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "peacefulDuringDay",
+          "returns": false,
+          "decompiled_line": 17
+        }
+      ],
+      "source_file": "EntityCaveSpider.java",
+      "decompiled_path": "te.java"
+    },
+    {
+      "class": "tf",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "movement_speed",
+          "value": 0.25,
+          "method": "az",
+          "decompiled_line": 30,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 34
+        }
+      ],
+      "source_file": "EntityCreeper.java",
+      "decompiled_path": "tf.java"
+    },
+    {
+      "class": "tg",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 27,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.3,
+          "method": "az",
+          "decompiled_line": 28,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 10.0,
+          "method": "az",
+          "decompiled_line": 29,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "isEntityBiologicallyAlive",
+          "returns": false,
+          "decompiled_line": 392
+        },
+        {
+          "method": "canSpawnInShallowWater",
+          "returns": false,
+          "decompiled_line": 397
+        },
+        {
+          "method": "isFrenzied",
+          "returns": false,
+          "decompiled_line": 406
+        }
+      ],
+      "source_file": "EntityEnderman.java",
+      "decompiled_path": "tg.java"
+    },
+    {
+      "class": "tl",
+      "superclass": "EntityCubic",
+      "attribute_assignments": [
+        {
+          "attribute": "movement_speed",
+          "value": 0.2,
+          "method": "az",
+          "decompiled_line": 15,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "af",
+          "returns": false,
+          "decompiled_line": 77
+        },
+        {
+          "method": "J",
+          "returns": false,
+          "decompiled_line": 123
+        },
+        {
+          "method": "bQ",
+          "returns": true,
+          "decompiled_line": 127
+        },
+        {
+          "method": "slowsPlayerOnContact",
+          "returns": false,
+          "decompiled_line": 152
+        },
+        {
+          "method": "isEntityBiologicallyAlive",
+          "returns": false,
+          "decompiled_line": 162
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 167
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 172
+        },
+        {
+          "method": "attacksAnimals",
+          "returns": false,
+          "decompiled_line": 207
+        },
+        {
+          "method": "attacksVillagers",
+          "returns": false,
+          "decompiled_line": 212
+        }
+      ],
+      "source_file": "EntityMagmaCube.java",
+      "decompiled_path": "tl.java"
+    },
+    {
+      "class": "tm",
+      "superclass": "on",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 32.0,
+          "method": "az",
+          "decompiled_line": 211,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "canSpawnInShallowWater",
+          "returns": true,
+          "decompiled_line": 204
+        }
+      ],
+      "source_file": "EntityMob.java",
+      "decompiled_path": "tm.java"
+    },
+    {
+      "class": "tn",
+      "superclass": "tw",
+      "attribute_assignments": [
+        {
+          "attribute": "movement_speed",
+          "value": 0.5,
+          "method": "az",
+          "decompiled_line": 23,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 8.0,
+          "method": "az",
+          "decompiled_line": 24,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": false,
+          "decompiled_line": 28
+        },
+        {
+          "method": "canCatchFire",
+          "returns": true,
+          "decompiled_line": 168
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 173
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 178
+        },
+        {
+          "method": "catchesFireInSunlight",
+          "returns": false,
+          "decompiled_line": 183
+        }
+      ],
+      "source_file": "EntityPigZombie.java",
+      "decompiled_path": "tn.java"
+    },
+    {
+      "class": "tq",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 8.0,
+          "method": "az",
+          "decompiled_line": 16,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.6,
+          "method": "az",
+          "decompiled_line": 17,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 3.0,
+          "method": "az",
+          "decompiled_line": 18,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 27
+        },
+        {
+          "method": "i_",
+          "returns": true,
+          "decompiled_line": 176
+        }
+      ],
+      "source_file": "EntitySilverfish.java",
+      "decompiled_path": "tq.java"
+    },
+    {
+      "class": "tr",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 6.0,
+          "method": "az",
+          "decompiled_line": 35,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.3,
+          "method": "az",
+          "decompiled_line": 36,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 4.0,
+          "method": "az",
+          "decompiled_line": 37,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 4.0,
+          "method": "a",
+          "decompiled_line": 216,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 65
+        },
+        {
+          "method": "canBeDamagedByCacti",
+          "returns": false,
+          "decompiled_line": 319
+        },
+        {
+          "method": "isLongdead",
+          "returns": false,
+          "decompiled_line": 351
+        }
+      ],
+      "source_file": "EntitySkeleton.java",
+      "decompiled_path": "tr.java"
+    },
+    {
+      "class": "ts",
+      "superclass": "EntityGelatinousCube",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntitySlime.java",
+      "decompiled_path": "ts.java"
+    },
+    {
+      "class": "tt",
+      "superclass": "EntityArachnid",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntitySpider.java",
+      "decompiled_path": "tt.java"
+    },
+    {
+      "class": "tv",
+      "superclass": "tm",
+      "attribute_assignments": [
+        {
+          "attribute": "max_health",
+          "value": 26.0,
+          "method": "az",
+          "decompiled_line": 86,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.25,
+          "method": "az",
+          "decompiled_line": 87,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 91
+        },
+        {
+          "method": "t",
+          "returns": false,
+          "decompiled_line": 257
+        }
+      ],
+      "source_file": "EntityWitch.java",
+      "decompiled_path": "tv.java"
+    },
+    {
+      "class": "tw",
+      "superclass": "EntityAnimalWatcher",
+      "attribute_assignments": [
+        {
+          "attribute": "follow_range",
+          "value": 40.0,
+          "method": "az",
+          "decompiled_line": 41,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "movement_speed",
+          "value": 0.23,
+          "method": "az",
+          "decompiled_line": 42,
+          "condition_review": "required"
+        },
+        {
+          "attribute": "attack_damage",
+          "value": 5.0,
+          "method": "az",
+          "decompiled_line": 43,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 56
+        },
+        {
+          "method": "g_",
+          "returns": false,
+          "decompiled_line": 61
+        },
+        {
+          "method": "isRevenant",
+          "returns": false,
+          "decompiled_line": 89
+        },
+        {
+          "method": "wasVillagerThatWasGeneratedWithVillage",
+          "returns": false,
+          "decompiled_line": 304
+        },
+        {
+          "method": "isHarmedByPepsin",
+          "returns": true,
+          "decompiled_line": 382
+        }
+      ],
+      "source_file": "EntityZombie.java",
+      "decompiled_path": "tw.java"
+    },
+    {
+      "class": "ub",
+      "superclass": "nk",
+      "attribute_assignments": [
+        {
+          "attribute": "movement_speed",
+          "value": 0.5,
+          "method": "az",
+          "decompiled_line": 60,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "bf",
+          "returns": true,
+          "decompiled_line": 64
+        },
+        {
+          "method": "t",
+          "returns": false,
+          "decompiled_line": 163
+        },
+        {
+          "method": "bG",
+          "returns": false,
+          "decompiled_line": 495
+        }
+      ],
+      "source_file": "EntityVillager.java",
+      "decompiled_path": "ub.java"
+    },
+    {
+      "class": "uf",
+      "superclass": "of",
+      "attribute_assignments": [
+        {
+          "attribute": "attack_damage",
+          "value": 1.0,
+          "method": "az",
+          "decompiled_line": 96,
+          "condition_review": "required"
+        }
+      ],
+      "constant_boolean_methods": [
+        {
+          "method": "isSleeping",
+          "returns": false,
+          "decompiled_line": 1418
+        },
+        {
+          "method": "isEntityPlayer",
+          "returns": true,
+          "decompiled_line": 1838
+        },
+        {
+          "method": "bd",
+          "returns": true,
+          "decompiled_line": 1848
+        },
+        {
+          "method": "isImmuneByGrace",
+          "returns": false,
+          "decompiled_line": 2227
+        }
+      ],
+      "source_file": "EntityPlayer.java",
+      "decompiled_path": "uf.java"
+    },
+    {
+      "class": "uh",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "e_",
+          "returns": false,
+          "decompiled_line": 541
+        },
+        {
+          "method": "aq",
+          "returns": false,
+          "decompiled_line": 563
+        }
+      ],
+      "source_file": "EntityArrow.java",
+      "decompiled_path": "uh.java"
+    },
+    {
+      "class": "ui",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "aq",
+          "returns": false,
+          "decompiled_line": 150
+        }
+      ],
+      "source_file": "EntityEnderEye.java",
+      "decompiled_path": "ui.java"
+    },
+    {
+      "class": "uj",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "L",
+          "returns": true,
+          "decompiled_line": 224
+        },
+        {
+          "method": "canCatchFire",
+          "returns": true,
+          "decompiled_line": 272
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 277
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 282
+        }
+      ],
+      "source_file": "EntityFireball.java",
+      "decompiled_path": "uj.java"
+    },
+    {
+      "class": "uk",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "aq",
+          "returns": false,
+          "decompiled_line": 149
+        },
+        {
+          "method": "canCatchFire",
+          "returns": true,
+          "decompiled_line": 154
+        },
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 159
+        },
+        {
+          "method": "isHarmedByLava",
+          "returns": false,
+          "decompiled_line": 164
+        }
+      ],
+      "source_file": "EntityFireworkRocket.java",
+      "decompiled_path": "uk.java"
+    },
+    {
+      "class": "ul",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "isHarmedByFire",
+          "returns": false,
+          "decompiled_line": 442
+        }
+      ],
+      "source_file": "EntityFishHook.java",
+      "decompiled_path": "ul.java"
+    },
+    {
+      "class": "um",
+      "superclass": "uj",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityLargeFireball.java",
+      "decompiled_path": "um.java"
+    },
+    {
+      "class": "uo",
+      "superclass": "uj",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "L",
+          "returns": false,
+          "decompiled_line": 35
+        }
+      ],
+      "source_file": "EntitySmallFireball.java",
+      "decompiled_path": "uo.java"
+    },
+    {
+      "class": "up",
+      "superclass": "uq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntitySnowball.java",
+      "decompiled_path": "up.java"
+    },
+    {
+      "class": "uq",
+      "superclass": "nn",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "isMagical",
+          "returns": false,
+          "decompiled_line": 242
+        }
+      ],
+      "source_file": "EntityThrowable.java",
+      "decompiled_path": "uq.java"
+    },
+    {
+      "class": "ur",
+      "superclass": "uq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityEgg.java",
+      "decompiled_path": "ur.java"
+    },
+    {
+      "class": "us",
+      "superclass": "uq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityEnderPearl.java",
+      "decompiled_path": "us.java"
+    },
+    {
+      "class": "ut",
+      "superclass": "uq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityExpBottle.java",
+      "decompiled_path": "ut.java"
+    },
+    {
+      "class": "uu",
+      "superclass": "uq",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [],
+      "source_file": "EntityPotion.java",
+      "decompiled_path": "uu.java"
+    },
+    {
+      "class": "uv",
+      "superclass": "uj",
+      "attribute_assignments": [],
+      "constant_boolean_methods": [
+        {
+          "method": "af",
+          "returns": false,
+          "decompiled_line": 27
+        },
+        {
+          "method": "L",
+          "returns": false,
+          "decompiled_line": 64
+        }
+      ],
+      "source_file": "EntityWitherSkull.java",
+      "decompiled_path": "uv.java"
+    }
+  ]
+}

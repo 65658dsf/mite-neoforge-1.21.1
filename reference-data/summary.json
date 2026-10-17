@@ -1,0 +1,30 @@
+{
+  "author": "NingMeng123",
+  "archive": "MITE 1.6.4 R196.zip",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "class_count": 1186,
+  "source_file_count": 1186,
+  "classification": {
+    "agriculture": 37,
+    "combat_entities": 255,
+    "infrastructure_or_unclassified": 102,
+    "interface_rendering": 153,
+    "items_blocks": 242,
+    "manufacturing": 52,
+    "network_storage": 155,
+    "player_survival": 27,
+    "world_progression": 163
+  },
+  "comparison": {
+    "added_class": 306,
+    "modified": 880
+  },
+  "language_file_count": 1,
+  "semantic_review_complete": false,
+  "limitations": [
+    "Module labels are filename heuristics, not verified behavior.",
+    "Same obfuscated class name is the comparison key; descriptor and constant-pool renumbering can inflate member changes.",
+    "Detailed class metadata includes original source line tables; decompiled output lines differ.",
+    "Constant-pool references do not prove an execution path is enabled; method Code references identify concrete instructions only."
+  ]
+}

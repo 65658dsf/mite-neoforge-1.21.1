@@ -1,0 +1,13 @@
+{
+  "tool": "CFR 0.152",
+  "exit_code": 0,
+  "java_file_count": 1185,
+  "expected_java_file_count": 1185,
+  "missing_outputs": [],
+  "log": ".reference/r196/cfr.log",
+  "warnings": [
+    "Unable to fully structure code"
+  ],
+  "summary": ".reference/r196/decompiled/summary.txt",
+  "note": "Nested classes may be emitted inside their enclosing Java file; exit 0 does not guarantee every method was fully structured."
+}

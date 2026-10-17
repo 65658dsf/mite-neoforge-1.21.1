@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "baseline": "MITE 1.6.4 R196",
+  "status": "static_core_verified_not_implemented",
+  "rules": [
+    {"id":"mining.requires_tool","behavior":"material.requires_tool || block.minHarvestLevel(metadata)>0", "source":{"file":"akc.java","start_line":324,"end_line":325}},
+    {"id":"mining.held_item_fallback","behavior":"held strength<1 recursively calculates empty-hand strength; required tool then strength=0, otherwise 1", "source":{"file":"uf.java","start_line":789,"end_line":803}},
+    {"id":"mining.tool_tier","behavior":"material minimum 0 stays 0; metal uses minimum; other material minimum-1", "source":{"file":"xj.java","start_line":61,"end_line":62}},
+    {"id":"mining.tool_effectiveness","behavior":"matching material OR matching block AND sufficient tier; sandstone-model slab plus axe has an earlier exception (aqz.V is sandstone ID 24, aqz.java:2284)", "source":{"file":"xj.java","start_line":125,"end_line":138}},
+    {"id":"mining.material_efficiency","values":{"wood":1,"flint":1.25,"obsidian":1.5,"rusted_iron":1.25,"copper":1.75,"silver":1.75,"gold":1.75,"iron":2,"ancient_metal":2,"mithril":2.5,"adamantium":3,"diamond":2.5},"source":{"file":"xj.java","start_line":65,"end_line":103}},
+    {"id":"mining.base_efficiency","default":4,"source":{"file":"xj.java","start_line":43,"end_line":44}},
+    {"id":"mining.portable_strength","behavior":"strength=minimumStrength=4*hardness before all later modifiers; zero hardness earlier returns 1", "source":{"file":"uf.java","start_line":781,"end_line":799}},
+    {"id":"mining.efficiency_enchantment","behavior":"positive efficiency enchantment level adds level*level+1 only on effective held-item branch", "source":{"file":"uf.java","start_line":789,"end_line":799}},
+    {"id":"mining.environment_multipliers","behavior":"ineffective web *=0.2; haste *=1+(amplifier+1)*0.2; fatigue *=1-(amplifier+1)*0.2; underwater without aqua-affinity, airborne, and no food energy each independently /=5; final *=1+level*0.02, lower bounded by portable minimum", "source":{"file":"uf.java","start_line":804,"end_line":828}},
+    {"id":"mining.relative_progress","behavior":"negative hardness/nonpositive strength gives 0; zero hardness instant; relative=hardness/strength; relative<0.0029296875 instant; otherwise progress=1/relative/512", "source":{"file":"uf.java","start_line":831,"end_line":862}},
+    {"id":"mining.server_old_authority_gap","behavior":"old tryHarvestBlock removes block before checking positive strength for drops; modern implementation must validate actual destruction too", "source":{"file":"jw.java","start_line":124,"end_line":149}},
+    {"id":"mining.tool_base_durability","behavior":"int(4*componentCount*materialDurability*100)","source":{"file":"xj.java","start_line":35,"end_line":40}},
+    {"id":"mining.quality_durability","behavior":"round(baseMaxDamage*qualityModifier), minimum 1; average or non-quality uses base", "source":{"file":"yc.java","start_line":590,"end_line":605}},
+    {"id":"mining.decay","behavior":"hardness==0 ->0; else max(int(hardness*100*baseDecay),int(100*baseDecay/20),1)","source":{"file":"xj.java","start_line":145,"end_line":151}},
+    {"id":"mining.decay_gate","behavior":"no wear when item not damageable, block portable, creative player, hardness<=0, or tool strength<=1", "source":{"file":"xj.java","start_line":171,"end_line":180}},
+    {"id":"mining.block_reach","base":2.75,"creative":5,"behavior":"held item bonus applies only if effective against target block", "source":{"file":"uf.java","start_line":1967,"end_line":1980}},
+    {"id":"mining.entity_reach","melee_base":1.5,"interaction_base":2.5,"height_adjustment_limit":1,"behavior":"height delta outside [-0.5,0.5] contributes half of excess, capped [-1,1]; entity adjustment and separate item bonuses then apply", "source":{"file":"uf.java","start_line":1983,"end_line":2007}},
+    {"id":"mining.placement_energy_gate","behavior":"positive-hardness placement requires food energy unless creative", "source":{"file":"aqz.java","start_line":1844,"end_line":1850}},
+    {"id":"mining.placement_hunger","behavior":"successful server-side noncreative placement adds min(hardness(0),20)*enduranceModifier hunger", "source":{"file":"uf.java","start_line":2405,"end_line":2412}},
+    {"id":"mining.gravel_gate","behavior":"road metadata 1, explosion, nonplayer use superclass; otherwise fortune=min(fortune,3), special probability 3/(12-2*fortune)", "source":{"file":"aoo.java","start_line":16,"end_line":30}},
+    {"id":"mining.gravel_special","behavior":"conditional special: 2/3 flint branch (1/16 full flint,15/16 chip); 1/3 mineral branch, successive 2/3 choices copper,silver,gold,obsidian,emerald,diamond,mithril, then adamantium remainder", "source":{"file":"aoo.java","start_line":31,"end_line":43}},
+    {"id":"mining.nether_gravel","behavior":"copper/silver/mithril/adamantium become gold nuggets; obsidian/emerald/diamond become quartz shard", "source":{"file":"aoo.java","start_line":44,"end_line":57}},
+    {"id":"mining.leaf_drops","behavior":"placed=no ordinary drop; swamp first 1/2 no drop; sequential 0.01 sapling then 0.05 stick then 0.005 fruit; oak jungle=orange else apple, jungle leaf=banana", "source":{"file":"aoz.java","start_line":192,"end_line":214}}
+  ],
+  "acceptance_vectors": [
+    {"case":"gravel_fortune_0","special_probability":"1/4"},
+    {"case":"gravel_fortune_1","special_probability":"3/10"},
+    {"case":"gravel_fortune_2","special_probability":"3/8"},
+    {"case":"gravel_fortune_3","special_probability":"1/2"},
+    {"case":"non_swamp_leaf_stick","probability":0.0495},
+    {"case":"non_swamp_fruiting_leaf_fruit","probability":0.0047025},
+    {"case":"relative_hardness_equal_instant_threshold","relative_hardness":0.0029296875,"progress":0.6666666666666666,"instant":false},
+    {"case":"base_iron_pickaxe_average","component_count":3,"material_durability":8,"max_damage":9600}
+  ],
+  "gaps":["all per-block overrides and loot","all tool subclasses","tree felling and block collapse","hand injury","legacy client/server full mining call chain","modern block/tool mapping"]
+}

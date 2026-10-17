@@ -152,7 +152,6 @@
   "block.mite.nether_gravel": "地狱沙砾",
   "tooltip.mite.gem_sacrifice": "%s 点经验",
   "block.minecraft.crafting_table": "原版工作台（已禁用）",
-  "tooltip.mite.planks_require_workbench": "加工木板需要工作台或自动合成器",
   "item.minecraft.wooden_sword": "木棒",
   "commands.mite.experience.level_too_high": "该等级所需累计经验超出原生整数存储范围（可表示到 %s 级），未更改目标玩家的经验。",
   "commands.mite.experience.points_overflow": "这些级内经验会使累计经验超出原生整数存储范围，未更改目标玩家的经验。",

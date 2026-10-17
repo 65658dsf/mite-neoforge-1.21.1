@@ -1,0 +1,1581 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "original_author": "Avernite",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "value_provenance": "r196_source_audit_unless_explicit_modern_design",
+  "implementation_status": "not_implemented_by_this_spec",
+  "audit_scope": "world_time_moons_village_ores_underworld_portals_end_entry",
+  "source_base": ".reference/r196/decompiled",
+  "class_identity_source": "reference-data/class-index.json",
+  "rules": [
+    {
+      "id": "world.clocks",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "维度时钟分开，世界进度共享",
+      "values": {
+        "dimension_to_clock_index": {
+          "0": 0,
+          "1": 2,
+          "-1": 1,
+          "-2": 3
+        },
+        "persisted_keys": [
+          "Time0",
+          "Time1",
+          "Time2",
+          "Time3",
+          "village_conditions",
+          "the_underworld_has_been_visited",
+          "the_nether_has_been_visited"
+        ],
+        "shared_world_info": true
+      },
+      "sources": [
+        {
+          "path": "WorldInfoShared.java",
+          "method": "totalTime/getTotalWorldTime/setTotalWorldTime",
+          "lines": "20,88-89,228,369-382"
+        },
+        {
+          "path": "als.java",
+          "method": "WorldInfo(WorldInfo,int)",
+          "lines": "31-34"
+        },
+        {
+          "path": "net/minecraft/server/MinecraftServer.java",
+          "method": "getWorldIndexForDimensionId",
+          "lines": "1173-1187"
+        }
+      ],
+      "acceptance": [
+        "SAVE-01",
+        "WORLD-02"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.calendar",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "显示日期、月相日期、日内时间不能混用",
+      "values": {
+        "ticks_per_day": 24000,
+        "adjusted_time_offset": 6000,
+        "adjusted_time_formula": "(T % 24000 + 6000) % 24000",
+        "display_day_formula": "(T + 6000) / 24000 + 1",
+        "raw_moon_day_formula": "T / 24000 + 1",
+        "division": "java_integer_division",
+        "daytime_formula": "5000 < adjustedTime && adjustedTime < 19000",
+        "sleep_acceleration_window": "adjustedTime < 4000 || adjustedTime >= 21000",
+        "negative_time_command_setter": "clamped_to_zero"
+      },
+      "sources": [
+        {
+          "path": "abw.java",
+          "method": "getAdjustedTimeOfDay/isDaytime/getDayOfWorld",
+          "lines": "1390-1433,4258-4275"
+        },
+        {
+          "path": "js.java",
+          "method": "tick/setTotalWorldTime",
+          "lines": "181-185,1496-1500"
+        }
+      ],
+      "acceptance": [
+        "WORLD-02",
+        "PLAYER-04"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.moons",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "蓝月替代同一天的血月，丰收月和月狗提前8原始日",
+      "values": {
+        "moon_phase_formula": "(T / 24000 + 1) % 8",
+        "full_moon_phase": 0,
+        "new_moon_phase": 4,
+        "blood_formula": "rawDay % 32 == 0 && rawDay % 128 != 0",
+        "blue_formula": "rawDay % 128 == 0",
+        "harvest_formula": "blood(T + 192000)",
+        "moon_dog_formula": "blue(T + 192000)",
+        "night_only": "if requested reject when isDaytime(T)",
+        "instance_blood_blue_dimension": "overworld_only",
+        "cached_moon_flags_dimension": "overworld_only",
+        "harvest_moon_dog_instance_wrapper_dimension_guard": false,
+        "first_128_raw_days": {
+          "blood": [
+            32,
+            64,
+            96
+          ],
+          "blue": [
+            128
+          ],
+          "harvest": [
+            24,
+            56,
+            88
+          ],
+          "moon_dog": [
+            120
+          ]
+        }
+      },
+      "sources": [
+        {
+          "path": "aei.java",
+          "method": "a(long)",
+          "lines": "110-112"
+        },
+        {
+          "path": "abw.java",
+          "method": "isBloodMoon/isBlueMoon/isHarvestMoon/isMoonDog/updateMoonFlags",
+          "lines": "1978-2031,5578-5580,5605-5622"
+        }
+      ],
+      "acceptance": [
+        "WORLD-02",
+        "HUD-01"
+      ],
+      "limitations": [
+        "static_helpers_have_no_dimension_context_do_not_enable_events_globally"
+      ]
+    },
+    {
+      "id": "world.moon_light",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "月光和特殊月色显示",
+      "values": {
+        "ordinary_phase_factors": [
+          1,
+          0.75,
+          0.5,
+          0.25,
+          0,
+          0.25,
+          0.5,
+          0.75
+        ],
+        "ordinary_brightness": "phaseFactor * 0.5 + 0.75",
+        "blood_brightness": 0.6,
+        "harvest_brightness": 1,
+        "blue_brightness": 1.1,
+        "weather_mix": "if includeWeather && brightness>0.75 then brightness*(1-rain)+0.75*rain"
+      },
+      "sources": [
+        {
+          "path": "aei.java",
+          "method": "moonBrightnessFactors",
+          "lines": "8"
+        },
+        {
+          "path": "abw.java",
+          "method": "getMoonBrightness",
+          "lines": "1952-1958"
+        },
+        {
+          "path": "bfl.java",
+          "method": "sky_render",
+          "lines": "777-821"
+        }
+      ],
+      "acceptance": [
+        "WORLD-02",
+        "HUD-01"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.blood_weather_sleep",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "血月阻止睡眠加速并生成确定风暴",
+      "values": {
+        "sleep_acceleration_block": "isBloodMoon(false) || tournament",
+        "bed_lying_prohibited_by_this_branch": false,
+        "storm_start_raw_tick": "(displayDay - 1) * 24000",
+        "storm_duration_ticks": 13000,
+        "normal_lightning_candidate_denominator": 100000,
+        "blood_lightning_candidate_denominator": 20000,
+        "ordinary_weather_minimum_display_day": 2,
+        "ordinary_weather_exclusions": [
+          "blood_or_blue_start_or_end",
+          "harvest_night_start_or_end",
+          "harvest_night_start_plus_6000_or_end_minus_6000"
+        ]
+      },
+      "sources": [
+        {
+          "path": "js.java",
+          "method": "tick/runSleepTicks/random_block_ticks",
+          "lines": "181-185,413-455,782-783"
+        },
+        {
+          "path": "abw.java",
+          "method": "generateWeatherEvents",
+          "lines": "5313-5334"
+        }
+      ],
+      "acceptance": [
+        "WORLD-02",
+        "PLAYER-04"
+      ],
+      "limitations": [
+        "lightning_is_candidate_chance_with_weather_checks_not_unconditional_strike"
+      ]
+    },
+    {
+      "id": "world.blood_crop_blight",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "额外血月病害仅集成服务器分支",
+      "values": {
+        "phase": "blood_moon_night",
+        "per_applicable_crop_random_tick_chance": 0.25,
+        "conditions": [
+          "crop_not_already_blighted",
+          "not_dedicated_server",
+          "no_standard_opaque_block_above_OR_outdoors",
+          "earlier_updateTick_branches_did_not_return"
+        ],
+        "dedicated_server_extra_branch": false,
+        "ordinary_blight_remains": true
+      },
+      "sources": [
+        {
+          "path": "anr.java",
+          "method": "updateTick",
+          "lines": "94"
+        },
+        {
+          "path": "is.java",
+          "method": "V",
+          "lines": "449-450"
+        },
+        {
+          "path": "bkz.java",
+          "method": "V",
+          "lines": "124-125"
+        }
+      ],
+      "acceptance": [
+        "FARM-01",
+        "WORLD-02",
+        "BOOT-02"
+      ],
+      "limitations": [
+        "not_per_game_tick",
+        "other_blight_and_spread_need_separate_crop_audit"
+      ]
+    },
+    {
+      "id": "world.moon_spawning",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "血月与蓝月影响局部敌对生成",
+      "values": {
+        "overworld_density_formula": "int(8 * (1 + (64 - playerFootY) / 32f))",
+        "density_minimum": {
+          "normal": 8,
+          "full_moon_night": 10,
+          "blood_moon_night": 12
+        },
+        "stronghold_proximity_multiplier": "1 + getStrongholdProximity(x,z)",
+        "blue_night_rejects_when": "world.isOverworld && eyeLightChannelAchA > 0",
+        "blood_surface_permissions": {
+          "ghoul": true,
+          "wight": "freezing_biome_only",
+          "shadow": "desert_biome_only",
+          "revenant": true,
+          "bone_lord": true,
+          "vampire_bat": true,
+          "nightwing": true
+        }
+      },
+      "sources": [
+        {
+          "path": "aci.java",
+          "method": "setEligibleChunksForSpawning/trySpawningHostileMobs",
+          "lines": "19-49,187-190"
+        },
+        {
+          "path": "js.java",
+          "method": "getSuitableCreature",
+          "lines": "466-540"
+        }
+      ],
+      "acceptance": [
+        "MOB-02",
+        "WORLD-02"
+      ],
+      "limitations": [
+        "ach.a_enum_in_vanilla_base_not_in_patch_archive_confirm_channel_mapping",
+        "not_all_hostile_mobs_disabled_on_blue_moon"
+      ]
+    },
+    {
+      "id": "world.blue_fishing",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "蓝月夜覆盖钓鱼基础分母，后续修正照常",
+      "values": {
+        "base_probability_denominator_blue_night": 600,
+        "ordinary_denominator": "clamp(int(600f * (min(abs(A-5500),abs(A-17500)) / 600f)),600,2400)",
+        "raining_modifier": "integer_divide_by_2",
+        "missing_fishing_skill_when_skills_enabled": "multiply_by_2",
+        "fortune_each_level": "integer_multiply_9_divide_10",
+        "raw_worm_in_hotbar": "int(denominator*0.5)",
+        "prerequisites": "water_volume_and_physical_reach_checks"
+      },
+      "sources": [
+        {
+          "path": "ul.java",
+          "method": "fish_bite_attempt",
+          "lines": "130-162"
+        }
+      ],
+      "acceptance": [
+        "WORLD-02",
+        "FOOD-01"
+      ],
+      "limitations": [
+        "denominator_can_be_modified_after_moon_check",
+        "this_is_not_guaranteed_fishing_loot"
+      ]
+    },
+    {
+      "id": "world.harvest_unproven_bonus",
+      "review_status": "callsite_search_reviewed",
+      "r196_enabled": null,
+      "implementation_status": "planned",
+      "behavior": "未在归档调用点发现丰收月增产/加速，不能据名称补造规则",
+      "values": {
+        "found_consumers": [
+          "weather_event_exclusion",
+          "brightness",
+          "sky_render"
+        ],
+        "crop_growth_bonus": null,
+        "crop_drop_bonus": null
+      },
+      "sources": [
+        {
+          "path": "abw.java",
+          "method": "getMoonBrightness/generateWeatherEvents",
+          "lines": "1954,5327"
+        },
+        {
+          "path": "bfe.java",
+          "method": "lightmap",
+          "lines": "602-606"
+        },
+        {
+          "path": "bfl.java",
+          "method": "sky_render",
+          "lines": "779"
+        }
+      ],
+      "acceptance": [
+        "FARM-01",
+        "WORLD-02"
+      ],
+      "limitations": [
+        "absence_is_limited_to_reviewed_archive_callsite_search"
+      ]
+    },
+    {
+      "id": "world.village_gate",
+      "review_status": "bytecode_confirmed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "村庄要求日期与工具制作位；不要求四种作物齐全",
+      "values": {
+        "predicate": "!tournament && displayDay>=60 && villageConditions>=16 && placement_and_biome_checks",
+        "minimum_display_day": 60,
+        "required_numeric_threshold": 16,
+        "comparison": "signed_byte_numeric_greater_or_equal_NOT_all_bits_mask",
+        "flags": {
+          "wheat": 1,
+          "carrot": 2,
+          "potato": 4,
+          "onion": 8,
+          "iron_pickaxe_or_warhammer": 16
+        },
+        "unlock_trigger": "server_crafting_output_callback_item_is_ItemTool_and_effective_against_obsidian_after_prior_else_if_branches",
+        "crop_flags_trigger": "server_player_item_pickup",
+        "storage": "shared_world_info.village_conditions",
+        "mutation": "bitwise_OR",
+        "legacy_placement": {
+          "spacing_chunks": 40,
+          "candidate_offset_bound_exclusive": 20,
+          "allowed_biomes": [
+            "plains",
+            "desert"
+          ]
+        }
+      },
+      "sources": [
+        {
+          "path": "aiw.java",
+          "method": "a(int,int)",
+          "lines": "37-62"
+        },
+        {
+          "path": "als.java",
+          "method": "fullfillVillageCondition/getVillagePrerequisites",
+          "lines": "8-12,271-274,340-342"
+        },
+        {
+          "path": "wd.java",
+          "method": "b(ItemStack)",
+          "lines": "40-78"
+        },
+        {
+          "path": "ss.java",
+          "method": "player_pickup",
+          "lines": "492-502"
+        },
+        {
+          "path": "WorldInfoShared.java",
+          "method": "read/write_NBT",
+          "lines": "113,238"
+        }
+      ],
+      "acceptance": [
+        "WORLD-02",
+        "CRAFT-01",
+        "PROGRESS-02"
+      ],
+      "limitations": [
+        "javap_aiw_a_offsets_15_to_41_and_als_getVillagePrerequisites_0_to_2_verified",
+        "specific_reachable_tool_set_requires_effectiveness_and_else_if_chain"
+      ]
+    },
+    {
+      "id": "world.ore_frequency",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "候选循环不等于成脉数",
+      "values": {
+        "candidate_acceptance_probability": 0.1,
+        "underworld_offset": 120,
+        "underworld_non_gravel_frequency_multiplier": 8,
+        "underworld_adamantium_additional_multiplier": 2,
+        "resource_multiplier": 1,
+        "default_replace_block": "stone",
+        "underworld_gravel_requires_support": true
+      },
+      "sources": [
+        {
+          "path": "acu.java",
+          "method": "genMinable/b",
+          "lines": "289-343"
+        },
+        {
+          "path": "afq.java",
+          "method": "constructors/growVein/generate",
+          "lines": "13-20,36-42,110"
+        }
+      ],
+      "acceptance": [
+        "WORLD-01",
+        "MINE-03"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.ore_heights",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "主世界非均匀高度与地下世界深层偏好",
+      "values": {
+        "overworld_final_formula": "min + int(relative * (max - min + 1))",
+        "high_bias_sampler": "repeat { h=nextFloat(); c=nextFloat(); } until h>c",
+        "low_bias_sampler": "repeat { h=nextFloat(); c=nextFloat(); } until h<c",
+        "copper_sampler": "50% uniform_relative_0.4_to_1_else_low_bias",
+        "lapis_sampler": "(nextFloat()+nextFloat())/2",
+        "underworld_minmax": [
+          0,
+          255
+        ],
+        "underworld_adamantium_y": "nextInt(16+offset)",
+        "underworld_BlockOre_y": "75% nextInt(16+offset); otherwise nextInt(256)",
+        "underworld_other_y": "nextInt(256)",
+        "add_offset_to_ore_seed_y": false
+      },
+      "sources": [
+        {
+          "path": "afq.java",
+          "method": "getMinVeinHeight/getMaxVeinHeight/getRandomVeinHeight",
+          "lines": "112-267"
+        }
+      ],
+      "acceptance": [
+        "WORLD-01",
+        "MINE-03"
+      ],
+      "limitations": [
+        "do_not_replace_rejection_sampling_with_minmax_if_deterministic_random_sequence_is_required"
+      ]
+    },
+    {
+      "id": "world.ore_vein_size",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "随机缩放、深度缩放、小矿脉处理和邻接递归",
+      "values": {
+        "initial_scale": 1,
+        "scale_loop": "while nextInt(2)==0 multiply scale by nextFloat()*0.6+0.7",
+        "scale_cap_before_depth": 4,
+        "depth_scale_if_enabled_and_range_above_16": "1 - (y-min)/(max-min) + 0.5",
+        "final_max_vein_blocks": 32,
+        "small_veins": "<=3 pre-round probabilistic skip/double; after int rounding 1 or 2 probabilistically become 3",
+        "grow_axis_choices": 3,
+        "grow_sign_choices": 2,
+        "neighbor_attempts_per_recursion": 16
+      },
+      "sources": [
+        {
+          "path": "afq.java",
+          "method": "generate/growVein",
+          "lines": "31-111"
+        }
+      ],
+      "acceptance": [
+        "WORLD-01",
+        "MINE-03"
+      ],
+      "limitations": [
+        "candidate_attempts_and_requested_vein_size_do_not_equal_placed_blocks"
+      ]
+    },
+    {
+      "id": "world.emerald_source",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "山地独立生成绿宝石，不经通用10%抽样",
+      "values": {
+        "biomes": [
+          "extreme_hills",
+          "extreme_hills_edge"
+        ],
+        "attempts_minimum": 3,
+        "attempts_maximum": 8,
+        "y_minimum": 4,
+        "y_maximum": 31,
+        "blocks_per_success": 1,
+        "replace": "stone"
+      },
+      "sources": [
+        {
+          "path": "acx.java",
+          "method": "a(World,Random,int,int)",
+          "lines": "11-23"
+        },
+        {
+          "path": "acq.java",
+          "method": "biome_registration",
+          "lines": "15,31"
+        }
+      ],
+      "acceptance": [
+        "WORLD-01",
+        "MINE-03"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.nether_ore_sources",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "下界独立 provider 矿物调用",
+      "values": {
+        "y_inclusive": [
+          10,
+          117
+        ],
+        "replace": "netherrack",
+        "quartz": {
+          "attempts": 16,
+          "vein_base": 13
+        },
+        "gold": {
+          "attempts": 2,
+          "vein_base": 8,
+          "metadata": 2,
+          "enabled_when": "earliest_MITE_release>=139"
+        },
+        "silverfish": {
+          "attempts": "2+nextInt(7)",
+          "vein_base": 8,
+          "metadata": 3,
+          "enabled_when": "earliest_MITE_release>=0"
+        },
+        "new_R196_world_earliest_release": 196,
+        "uses_decorator_ten_percent_gate": false
+      },
+      "sources": [
+        {
+          "path": "aep.java",
+          "method": "populate",
+          "lines": "337-362"
+        },
+        {
+          "path": "WorldInfoShared.java",
+          "method": "earliest_MITE_release_run_in",
+          "lines": "35"
+        }
+      ],
+      "acceptance": [
+        "WORLD-01",
+        "MINE-03"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.underworld_identity",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "独立地下世界，128高缓存和实际256高世界是不同层",
+      "values": {
+        "dimension_id": -2,
+        "provider": "WorldProviderUnderworld",
+        "generator": "ChunkProviderUnderworld",
+        "base_buffer_dimensions": [
+          16,
+          128,
+          16
+        ],
+        "actual_height": [
+          0,
+          255
+        ],
+        "vertical_offset": 120,
+        "base_terrain_world_y": [
+          120,
+          247
+        ],
+        "base_fill_block": "stone",
+        "base_local_y_less_than_24_void_fill": "water_id_9",
+        "bottom": "mantle_metadata_0",
+        "top": "bedrock",
+        "lower_strata_nominal_y": [
+          3,
+          32,
+          72,
+          96
+        ],
+        "celestial_angle": 0.5,
+        "fog_grayscale_formula": "abs(displayDay%32-16)*0.004"
+      },
+      "sources": [
+        {
+          "path": "WorldProviderUnderworld.java",
+          "method": "constructor/c/getFogColor/a(long,float)",
+          "lines": "5-36"
+        },
+        {
+          "path": "ChunkProviderUnderworld.java",
+          "method": "generateNetherTerrain/d",
+          "lines": "71-125,151-174"
+        },
+        {
+          "path": "adr.java",
+          "method": "Chunk(World,byte[],int,int)_underworld_branch",
+          "lines": "138-278"
+        },
+        {
+          "path": "abw.java",
+          "method": "constructors",
+          "lines": "176,249"
+        },
+        {
+          "path": "aqz.java",
+          "method": "water_registration",
+          "lines": "2269"
+        }
+      ],
+      "acceptance": [
+        "WORLD-03",
+        "PERF-01"
+      ],
+      "limitations": [
+        "noise_and_strata_boundaries_need_separate_executable_validation"
+      ]
+    },
+    {
+      "id": "world.underworld_disabled_paths",
+      "review_status": "source_and_callsite_reviewed",
+      "r196_enabled": false,
+      "implementation_status": "planned",
+      "behavior": "默认120偏移下旧表面分支不执行，声明的洞穴字段不代表调用",
+      "values": {
+        "zero_offset_replace_blocks_for_biome": "inactive_with_default_offset_120",
+        "nether_cave_generator_field": "constructed_but_no_use_in_reviewed_generator_callchain"
+      },
+      "sources": [
+        {
+          "path": "ChunkProviderUnderworld.java",
+          "method": "replaceBlocksForBiome/netherCaveGenerator/d",
+          "lines": "19,127-140,151-174"
+        }
+      ],
+      "acceptance": [
+        "WORLD-03"
+      ],
+      "limitations": [
+        "preserve_as_disabled_reference_not_new_feature"
+      ]
+    },
+    {
+      "id": "world.underworld_decoration",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "独立地牢和菌丝装饰入口",
+      "values": {
+        "dungeon_attempts": 16,
+        "dungeon_y_inclusive": [
+          140,
+          171
+        ],
+        "calls_biome_decorator": true,
+        "mycelium_initial_y": "24+offset+nextInt(nextBoolean()?16:72)",
+        "mycelium_search_height": "1+nextInt(5)",
+        "mycelium_post_seeded": true
+      },
+      "sources": [
+        {
+          "path": "ChunkProviderUnderworld.java",
+          "method": "populate",
+          "lines": "269-284"
+        },
+        {
+          "path": "BiomeGenUnderworld.java",
+          "method": "a/placeMycelium",
+          "lines": "22-53"
+        }
+      ],
+      "acceptance": [
+        "WORLD-03",
+        "FARM-01"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.dimension_time_progress",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "首次访问标记控制时钟，不是末地准入证明",
+      "values": {
+        "underworld_and_nether": "visited && nonGhostPlayersInOverworldOrUnderworldOrNether",
+        "end": "hasNonGhostPlayersInEnd",
+        "dedicated_overworld": true,
+        "integrated_overworld": "false_when_onlyGhostPlayers_else_hasNoPlayersOfAnyKind_OR_nonGhostPlayersInOverworldOrUnderworldOrNether",
+        "flag_set_on_player_transfer": true
+      },
+      "sources": [
+        {
+          "path": "js.java",
+          "method": "shouldTimeProgress",
+          "lines": "109-137"
+        },
+        {
+          "path": "jv.java",
+          "method": "b(int)",
+          "lines": "840-845"
+        },
+        {
+          "path": "is.java",
+          "method": "V",
+          "lines": "449-450"
+        },
+        {
+          "path": "bkz.java",
+          "method": "V",
+          "lines": "124-125"
+        }
+      ],
+      "acceptance": [
+        "WORLD-02",
+        "SAVE-01",
+        "BOOT-02"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.portal_route",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "普通门按维度、底部位置决定去向，符文门优先",
+      "values": {
+        "interior_size": [
+          2,
+          3
+        ],
+        "frame": "obsidian_except_runestone_corners",
+        "reject_creation_in_end": true,
+        "destination_metadata_to_dimension": {
+          "0": 0,
+          "1": -2,
+          "2": -1
+        },
+        "runegate_bit": 8,
+        "routing_priority": [
+          "same_dimension_if_valid_runegate",
+          "nether_to_underworld",
+          "bottom_overworld_to_underworld",
+          "bottom_underworld_to_nether",
+          "otherwise_overworld"
+        ],
+        "overworld_to_overworld": "world_spawn_route",
+        "touch_bottom_predicate": "frameMinY<=8 && any_block_below_frame_footprint_matches_world_bottom",
+        "bottom_blocks": {
+          "overworld": "bedrock",
+          "underworld": "mantleOrCore_meta0",
+          "nether": "mantleOrCore_meta1"
+        }
+      },
+      "sources": [
+        {
+          "path": "aps.java",
+          "method": "o_/getPortalTypeBasedOnLocation/isTouchingBottomBedrock/isPortalToOverworldSpawn",
+          "lines": "87-138,268-269,317-383"
+        },
+        {
+          "path": "abw.java",
+          "method": "constructor/isBottomBlock",
+          "lines": "146-147,5699-5710"
+        }
+      ],
+      "acceptance": [
+        "PORTAL-01",
+        "WORLD-03"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.portal_transfer",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "下界坐标按8倍变换，其它维度不自动套该比例",
+      "values": {
+        "xz_divide_enter_nether": 8,
+        "xz_multiply_leave_nether": 8,
+        "overworld_underworld_xz_scale": 1,
+        "existing_portal_search_radius": 128,
+        "existing_portal_requires_reverse_metadata": true,
+        "exclude_runegates_from_link_search": true,
+        "make_return_portal_if_missing": true,
+        "collision_requires_no_rider_or_mount": true,
+        "runegate_server_player_only": true
+      },
+      "sources": [
+        {
+          "path": "hn.java",
+          "method": "a(Entity,int,WorldServer,WorldServer)",
+          "lines": "313-378"
+        },
+        {
+          "path": "acj.java",
+          "method": "placeInPortal/placeInExistingPortal",
+          "lines": "19-93"
+        },
+        {
+          "path": "aps.java",
+          "method": "onEntityCollision",
+          "lines": "476-498"
+        }
+      ],
+      "acceptance": [
+        "PORTAL-01",
+        "NET-01"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.runegate",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "同类四角符文确定同维度远程坐标",
+      "values": {
+        "corner_materials": [
+          "mithril",
+          "adamantium"
+        ],
+        "corner_types_must_match": true,
+        "metadata_digits": 4,
+        "bits_per_digit": 4,
+        "seed": "bottomLeft + (bottomRight<<4) + (topLeft<<8) + (topRight<<12)",
+        "zero_seed_xz": [
+          0,
+          0
+        ],
+        "adamantium_radius": "min(worldBlockDomainRadius/2,40000)",
+        "mithril_radius": "adamantiumRadius/8",
+        "adamantium_inner_exclusion": "euclideanDistance<radius/2",
+        "ocean_avoidance_attempts": 4,
+        "old_fallback": "clear_y64_and_y65_then_arrive_y64",
+        "legacy_world_radius": {
+          "overworld": 524288,
+          "underworld": 524288,
+          "nether": 65536
+        }
+      },
+      "sources": [
+        {
+          "path": "aps.java",
+          "method": "getRunegateType/getRunegateSeed/getRunegateDestinationCoords",
+          "lines": "272-315,389-449"
+        },
+        {
+          "path": "abw.java",
+          "method": "constructors",
+          "lines": "156-157"
+        },
+        {
+          "path": "aei.java",
+          "method": "constructor",
+          "lines": "46"
+        }
+      ],
+      "acceptance": [
+        "PORTAL-01",
+        "WORLD-03"
+      ],
+      "limitations": [
+        "modern_safe_fallback_is_explicit_adaptation_not_legacy_fact"
+      ]
+    },
+    {
+      "id": "world.portal_spawn_disabled",
+      "review_status": "bytecode_confirmed",
+      "r196_enabled": false,
+      "implementation_status": "planned",
+      "behavior": "门刷怪候选无条件清空，概率分支没有实际生成",
+      "values": {
+        "apparent_probability": 0.01,
+        "actual_entity_spawn_in_updateTick": false,
+        "reason": "local constant true clears entity_class",
+        "bytecode_evidence": "aps.updateTick offsets104:iconst_1,105:istore8,107:iload8,109:ifeq115,112:aconst_null,113:astore7"
+      },
+      "sources": [
+        {
+          "path": "aps.java",
+          "method": "updateTick",
+          "lines": "32-77"
+        }
+      ],
+      "acceptance": [
+        "MOB-02",
+        "PORTAL-01"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "world.end_entry",
+      "review_status": "source_reviewed",
+      "r196_enabled": true,
+      "implementation_status": "planned",
+      "behavior": "末影之眼填框和服务端门碰撞进入维度1，无该路径附加金属等级锁",
+      "values": {
+        "eye_recipe": {
+          "inputs": [
+            {
+              "legacy_item": "yc.bp",
+              "name": "ender_pearl",
+              "count": 1
+            },
+            {
+              "legacy_item": "yc.by",
+              "name": "blaze_powder",
+              "count": 1
+            }
+          ],
+          "output": {
+            "legacy_item": "yc.bC",
+            "name": "eye_of_ender",
+            "count": 1
+          }
+        },
+        "eye_recipe_skill": "FINE_ARTS_only_if_skills_enabled",
+        "insert_consumes_one_noncreative": true,
+        "formed_portal_interior": [
+          3,
+          3
+        ],
+        "eye_find_stronghold_dimension": "overworld_only",
+        "portal_collision_destination_dimension": 1,
+        "portal_collision_requires_no_rider_or_mount": true,
+        "extra_level_or_adamantium_check_in_reviewed_entry_paths": false,
+        "first_player_into_empty_end_sets_dragon_heal_flag": true
+      },
+      "sources": [
+        {
+          "path": "RecipesMITE.java",
+          "method": "addCraftingRecipes",
+          "lines": "31"
+        },
+        {
+          "path": "yc.java",
+          "method": "item_registration",
+          "lines": "113,122,126"
+        },
+        {
+          "path": "xp.java",
+          "method": "tryInsertEyeIntoFrame/onItemRightClick",
+          "lines": "11-137"
+        },
+        {
+          "path": "aqw.java",
+          "method": "entity_collision",
+          "lines": "34-37"
+        },
+        {
+          "path": "jv.java",
+          "method": "b(int)",
+          "lines": "833-867"
+        }
+      ],
+      "acceptance": [
+        "PORTAL-01",
+        "PROGRESS-01"
+      ],
+      "limitations": [
+        "does_not_claim_complete_dragon_fight_or_stronghold_layout_audit"
+      ]
+    }
+  ],
+  "ore_generation": [
+    {
+      "id": "dirt",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 32,
+        "max_inclusive": 128
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 32,
+      "overworld_candidate_iterations": 200,
+      "underworld_candidate_iterations_before_multipliers": null,
+      "overworld_expected_generate_calls_per_chunk": 20,
+      "underworld_expected_generate_calls_per_chunk": 0,
+      "overworld_depth_scaling": false,
+      "underworld_depth_scaling": false,
+      "overworld_height_sampler": "high",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "gravel",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 24,
+        "max_inclusive": 128
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 32,
+      "overworld_candidate_iterations": 200,
+      "underworld_candidate_iterations_before_multipliers": 300,
+      "overworld_expected_generate_calls_per_chunk": 20,
+      "underworld_expected_generate_calls_per_chunk": 30,
+      "overworld_depth_scaling": false,
+      "underworld_depth_scaling": false,
+      "overworld_height_sampler": "high",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "coal",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 16,
+        "max_inclusive": 96
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 16,
+      "overworld_candidate_iterations": 50,
+      "underworld_candidate_iterations_before_multipliers": null,
+      "overworld_expected_generate_calls_per_chunk": 5,
+      "underworld_expected_generate_calls_per_chunk": 0,
+      "overworld_depth_scaling": false,
+      "underworld_depth_scaling": false,
+      "overworld_height_sampler": "high",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "copper",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 128
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 6,
+      "overworld_candidate_iterations": 40,
+      "underworld_candidate_iterations_before_multipliers": 40,
+      "overworld_expected_generate_calls_per_chunk": 4,
+      "underworld_expected_generate_calls_per_chunk": 32,
+      "overworld_depth_scaling": true,
+      "underworld_depth_scaling": true,
+      "overworld_height_sampler": "copper_mixture",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "silver",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 96
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 6,
+      "overworld_candidate_iterations": 10,
+      "underworld_candidate_iterations_before_multipliers": 10,
+      "overworld_expected_generate_calls_per_chunk": 1,
+      "underworld_expected_generate_calls_per_chunk": 8,
+      "overworld_depth_scaling": true,
+      "underworld_depth_scaling": true,
+      "overworld_height_sampler": "low",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "gold",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 48
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 4,
+      "overworld_candidate_iterations": 20,
+      "underworld_candidate_iterations_before_multipliers": 20,
+      "overworld_expected_generate_calls_per_chunk": 2,
+      "underworld_expected_generate_calls_per_chunk": 16,
+      "overworld_depth_scaling": true,
+      "underworld_depth_scaling": true,
+      "overworld_height_sampler": "low",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "iron",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 64
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 6,
+      "overworld_candidate_iterations": 60,
+      "underworld_candidate_iterations_before_multipliers": 60,
+      "overworld_expected_generate_calls_per_chunk": 6,
+      "underworld_expected_generate_calls_per_chunk": 48,
+      "overworld_depth_scaling": true,
+      "underworld_depth_scaling": true,
+      "overworld_height_sampler": "low",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "mithril",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 32
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 3,
+      "overworld_candidate_iterations": 10,
+      "underworld_candidate_iterations_before_multipliers": 10,
+      "overworld_expected_generate_calls_per_chunk": 1,
+      "underworld_expected_generate_calls_per_chunk": 8,
+      "overworld_depth_scaling": true,
+      "underworld_depth_scaling": true,
+      "overworld_height_sampler": "low",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "adamantium",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 24
+      },
+      "overworld_generation_called": false,
+      "base_vein_size": 3,
+      "overworld_candidate_iterations": 0,
+      "underworld_candidate_iterations_before_multipliers": 5,
+      "overworld_expected_generate_calls_per_chunk": 0,
+      "underworld_expected_generate_calls_per_chunk": 8,
+      "overworld_depth_scaling": true,
+      "underworld_depth_scaling": true,
+      "overworld_height_sampler": "low_function_exists_but_no_overworld_call",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "silverfish",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 24
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 3,
+      "overworld_candidate_iterations": 5,
+      "underworld_candidate_iterations_before_multipliers": 50,
+      "overworld_expected_generate_calls_per_chunk": 0.5,
+      "underworld_expected_generate_calls_per_chunk": 40,
+      "overworld_depth_scaling": true,
+      "underworld_depth_scaling": false,
+      "overworld_height_sampler": "low",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "redstone",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 24
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 5,
+      "overworld_candidate_iterations": 10,
+      "underworld_candidate_iterations_before_multipliers": 10,
+      "overworld_expected_generate_calls_per_chunk": 1,
+      "underworld_expected_generate_calls_per_chunk": 8,
+      "overworld_depth_scaling": false,
+      "underworld_depth_scaling": false,
+      "overworld_height_sampler": "low",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "diamond",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 0,
+        "max_inclusive": 32
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 3,
+      "overworld_candidate_iterations": 5,
+      "underworld_candidate_iterations_before_multipliers": 5,
+      "overworld_expected_generate_calls_per_chunk": 0.5,
+      "underworld_expected_generate_calls_per_chunk": 4,
+      "overworld_depth_scaling": false,
+      "underworld_depth_scaling": false,
+      "overworld_height_sampler": "low",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    },
+    {
+      "id": "lapis",
+      "legacy_overworld_height_function": {
+        "min_inclusive": 8,
+        "max_inclusive": 40
+      },
+      "overworld_generation_called": true,
+      "base_vein_size": 3,
+      "overworld_candidate_iterations": 5,
+      "underworld_candidate_iterations_before_multipliers": 5,
+      "overworld_expected_generate_calls_per_chunk": 0.5,
+      "underworld_expected_generate_calls_per_chunk": 4,
+      "overworld_depth_scaling": false,
+      "underworld_depth_scaling": false,
+      "overworld_height_sampler": "mean_two_uniform",
+      "source": "acu.java:70-82,289-343; afq.java:112-267",
+      "implementation_status": "planned"
+    }
+  ],
+  "test_vectors": [
+    {
+      "T": 0,
+      "adjusted_time": 6000,
+      "display_day": 1,
+      "raw_day": 1,
+      "is_daytime": true,
+      "moon_phase": 1,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 12999,
+      "adjusted_time": 18999,
+      "display_day": 1,
+      "raw_day": 1,
+      "is_daytime": true,
+      "moon_phase": 1,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 13000,
+      "adjusted_time": 19000,
+      "display_day": 1,
+      "raw_day": 1,
+      "is_daytime": false,
+      "moon_phase": 1,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 17999,
+      "adjusted_time": 23999,
+      "display_day": 1,
+      "raw_day": 1,
+      "is_daytime": false,
+      "moon_phase": 1,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 18000,
+      "adjusted_time": 0,
+      "display_day": 2,
+      "raw_day": 1,
+      "is_daytime": false,
+      "moon_phase": 1,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 22999,
+      "adjusted_time": 4999,
+      "display_day": 2,
+      "raw_day": 1,
+      "is_daytime": false,
+      "moon_phase": 1,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 23000,
+      "adjusted_time": 5000,
+      "display_day": 2,
+      "raw_day": 1,
+      "is_daytime": false,
+      "moon_phase": 1,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 552000,
+      "adjusted_time": 6000,
+      "display_day": 24,
+      "raw_day": 24,
+      "is_daytime": true,
+      "moon_phase": 0,
+      "blood": false,
+      "blue": false,
+      "harvest": true,
+      "moon_dog": false
+    },
+    {
+      "T": 744000,
+      "adjusted_time": 6000,
+      "display_day": 32,
+      "raw_day": 32,
+      "is_daytime": true,
+      "moon_phase": 0,
+      "blood": true,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 756999,
+      "adjusted_time": 18999,
+      "display_day": 32,
+      "raw_day": 32,
+      "is_daytime": true,
+      "moon_phase": 0,
+      "blood": true,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 757000,
+      "adjusted_time": 19000,
+      "display_day": 32,
+      "raw_day": 32,
+      "is_daytime": false,
+      "moon_phase": 0,
+      "blood": true,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 762000,
+      "adjusted_time": 0,
+      "display_day": 33,
+      "raw_day": 32,
+      "is_daytime": false,
+      "moon_phase": 0,
+      "blood": true,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 767999,
+      "adjusted_time": 5999,
+      "display_day": 33,
+      "raw_day": 32,
+      "is_daytime": true,
+      "moon_phase": 0,
+      "blood": true,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 768000,
+      "adjusted_time": 6000,
+      "display_day": 33,
+      "raw_day": 33,
+      "is_daytime": true,
+      "moon_phase": 1,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 2856000,
+      "adjusted_time": 6000,
+      "display_day": 120,
+      "raw_day": 120,
+      "is_daytime": true,
+      "moon_phase": 0,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": true
+    },
+    {
+      "T": 3048000,
+      "adjusted_time": 6000,
+      "display_day": 128,
+      "raw_day": 128,
+      "is_daytime": true,
+      "moon_phase": 0,
+      "blood": false,
+      "blue": true,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 3061000,
+      "adjusted_time": 19000,
+      "display_day": 128,
+      "raw_day": 128,
+      "is_daytime": false,
+      "moon_phase": 0,
+      "blood": false,
+      "blue": true,
+      "harvest": false,
+      "moon_dog": false
+    },
+    {
+      "T": 1410000,
+      "adjusted_time": 0,
+      "display_day": 60,
+      "raw_day": 59,
+      "is_daytime": false,
+      "moon_phase": 3,
+      "blood": false,
+      "blue": false,
+      "harvest": false,
+      "moon_dog": false
+    }
+  ],
+  "open_evidence": [
+    "原版1.6.4基包中的ach光照枚举和缺失结构类",
+    "地下世界完整noise与基岩层算法可执行对照",
+    "所有实体月相响应完整覆盖",
+    "各群系与维度实测矿物收支",
+    "NeoForge入口适配与客户端/独立服务器游戏实测",
+    "完整末地战斗与龙恢复机制"
+  ],
+  "village_test_vectors": [
+    {
+      "display_day": 59,
+      "conditions": 16,
+      "tournament": false,
+      "gate_before_placement": false
+    },
+    {
+      "display_day": 60,
+      "conditions": 15,
+      "tournament": false,
+      "gate_before_placement": false
+    },
+    {
+      "display_day": 60,
+      "conditions": 16,
+      "tournament": false,
+      "gate_before_placement": true
+    },
+    {
+      "display_day": 60,
+      "conditions": 31,
+      "tournament": false,
+      "gate_before_placement": true
+    },
+    {
+      "display_day": 60,
+      "conditions": 16,
+      "tournament": true,
+      "gate_before_placement": false
+    }
+  ],
+  "modern_adaptation": {
+    "provenance": "modern_design_not_r196_fact",
+    "overworld": {
+      "noise_generator": "preserve_vanilla_1_21_1",
+      "biomes": "preserve_vanilla_1_21_1",
+      "caves": "preserve_vanilla_1_21_1",
+      "height": "preserve_vanilla_1_21_1"
+    },
+    "ore_placement": "separate_modern_density_and_depth_mapping_not_global_y_shift",
+    "village": "keep_modern_structure_and_biomes_apply_date_and_crafting_progress_gate",
+    "village_retroactive_regeneration": false,
+    "portal_bottom_height": "frameMinY <= minBuildHeight + 8 with actual bottom block below",
+    "underworld": "separate_dimension_can_preserve_local_0_to_255",
+    "runegate_fallback": "bounded_safe_position_search_with_atomic_failure"
+  }
+}

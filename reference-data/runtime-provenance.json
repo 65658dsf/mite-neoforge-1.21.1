@@ -1,0 +1,122 @@
+{
+  "author": "NingMeng123",
+  "java": "D:\\Coding\\huanjing\\jvms\\store\\jdk21\\bin\\java.exe",
+  "helper_sha256": "3fe30ce42fbeeda071b3fb5062c76546cb8c474eb214c7d5356651c044d9c765",
+  "overlay_sha256": "82a6c0bc5174955bf69c3a38d5b9bda89a955844937d9595918920a32f09f213",
+  "class_count": 1186,
+  "dependencies": [
+    {
+      "name": "net.sf.jopt-simple:jopt-simple:4.5",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\net\\sf\\jopt-simple\\jopt-simple\\4.5\\jopt-simple-4.5.jar",
+      "url": "https://libraries.minecraft.net/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar",
+      "sha1": "6065cc95c661255349c1d0756657be17c29a4fd3",
+      "sha256": "64335a48be6b142a7d0c13ec5c82a707857aa58c0234e6eda3eaca0e96eea51b"
+    },
+    {
+      "name": "com.paulscode:codecjorbis:20101023",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\com\\paulscode\\codecjorbis\\20101023\\codecjorbis-20101023.jar",
+      "url": "https://libraries.minecraft.net/com/paulscode/codecjorbis/20101023/codecjorbis-20101023.jar",
+      "sha1": "c73b5636faf089d9f00e8732a829577de25237ee",
+      "sha256": "6c4b4e50e608763564afa1bde2d25ece9dd715e7c9129540faa1faded4896506"
+    },
+    {
+      "name": "com.paulscode:codecwav:20101023",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\com\\paulscode\\codecwav\\20101023\\codecwav-20101023.jar",
+      "url": "https://libraries.minecraft.net/com/paulscode/codecwav/20101023/codecwav-20101023.jar",
+      "sha1": "12f031cfe88fef5c1dd36c563c0a3a69bd7261da",
+      "sha256": "bb7d17b340afe6abdfbfdaa03683bce4aef39a64887dbab0636eaff3cf2d59ba"
+    },
+    {
+      "name": "com.paulscode:libraryjavasound:20101123",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\com\\paulscode\\libraryjavasound\\20101123\\libraryjavasound-20101123.jar",
+      "url": "https://libraries.minecraft.net/com/paulscode/libraryjavasound/20101123/libraryjavasound-20101123.jar",
+      "sha1": "5c5e304366f75f9eaa2e8cca546a1fb6109348b3",
+      "sha256": "333bbefeff5eb1722dc9b8d2e26c38bc69c1efa07d0ca870480f29d8858aa336"
+    },
+    {
+      "name": "com.paulscode:librarylwjglopenal:20100824",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\com\\paulscode\\librarylwjglopenal\\20100824\\librarylwjglopenal-20100824.jar",
+      "url": "https://libraries.minecraft.net/com/paulscode/librarylwjglopenal/20100824/librarylwjglopenal-20100824.jar",
+      "sha1": "73e80d0794c39665aec3f62eee88ca91676674ef",
+      "sha256": "107d11509f6af59b8c2ba23df828bc5d3c4e067b58f3d858c7deb90ca5308f84"
+    },
+    {
+      "name": "com.paulscode:soundsystem:20120107",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\com\\paulscode\\soundsystem\\20120107\\soundsystem-20120107.jar",
+      "url": "https://libraries.minecraft.net/com/paulscode/soundsystem/20120107/soundsystem-20120107.jar",
+      "sha1": "419c05fe9be71f792b2d76cfc9b67f1ed0fec7f6",
+      "sha256": "2882d64550240dd0c026724da664d9f97ef205c91d6a85273d10790d88608f34"
+    },
+    {
+      "name": "argo:argo:2.25_fixed",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\argo\\argo\\2.25_fixed\\argo-2.25_fixed.jar",
+      "url": "https://libraries.minecraft.net/argo/argo/2.25_fixed/argo-2.25_fixed.jar",
+      "sha1": "751761ce15a3e3aaf3fc75b9f013ff8f7b88a585",
+      "sha256": "74920b1c096f98d7354e11b22d7632bee83dcae9a61e40edc6fbe4f94294c8b9"
+    },
+    {
+      "name": "org.bouncycastle:bcprov-jdk15on:1.47",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\org\\bouncycastle\\bcprov-jdk15on\\1.47\\bcprov-jdk15on-1.47.jar",
+      "url": "https://libraries.minecraft.net/org/bouncycastle/bcprov-jdk15on/1.47/bcprov-jdk15on-1.47.jar",
+      "sha1": "b6f5d9926b0afbde9f4dbe3db88c5247be7794bb",
+      "sha256": "7fb12d09f041c294f08a0a51a2808438092273b51628eecaf2e0d0030b7556f5"
+    },
+    {
+      "name": "com.google.guava:guava:14.0",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\com\\google\\guava\\guava\\14.0\\guava-14.0.jar",
+      "url": "https://libraries.minecraft.net/com/google/guava/guava/14.0/guava-14.0.jar",
+      "sha1": "67b7be4ee7ba48e4828a42d6d5069761186d4a53",
+      "sha256": "c0127b076e3056f58294e4ae6c01a96599b8f58200345eb6f859192a2d9b2962"
+    },
+    {
+      "name": "org.apache.commons:commons-lang3:3.1",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\org\\apache\\commons\\commons-lang3\\3.1\\commons-lang3-3.1.jar",
+      "url": "https://libraries.minecraft.net/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar",
+      "sha1": "905075e6c80f206bbe6cf1e809d2caa69f420c76",
+      "sha256": "131f0519a8e4602e47cf024bfd7e0834bcf5592a7207f9a2fdb711d4f5afc166"
+    },
+    {
+      "name": "commons-io:commons-io:2.4",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\commons-io\\commons-io\\2.4\\commons-io-2.4.jar",
+      "url": "https://libraries.minecraft.net/commons-io/commons-io/2.4/commons-io-2.4.jar",
+      "sha1": "b1b6ea3b7e4aa4f492509a4952029cd8e48019ad",
+      "sha256": "cc6a41dc3eaacc9e440a6bd0d2890b20d36b4ee408fe2d67122f328bb6e01581"
+    },
+    {
+      "name": "net.java.jinput:jinput:2.0.5",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\net\\java\\jinput\\jinput\\2.0.5\\jinput-2.0.5.jar",
+      "url": "https://libraries.minecraft.net/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar",
+      "sha1": "39c7796b469a600f72380316f6b1f11db6c2c7c4",
+      "sha256": "79b5a4f5829e1a49a415711f7fb8eb5b9ad22defa72929fda2da96ec30d3f018"
+    },
+    {
+      "name": "net.java.jutils:jutils:1.0.0",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\net\\java\\jutils\\jutils\\1.0.0\\jutils-1.0.0.jar",
+      "url": "https://libraries.minecraft.net/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar",
+      "sha1": "e12fe1fda814bd348c1579329c86943d2cd3c6a6",
+      "sha256": "c3334ff39cf0ab3b54925619101054c90098b7c733b1e7834c7b75e4c41e84a5"
+    },
+    {
+      "name": "com.google.code.gson:gson:2.2.2",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\com\\google\\code\\gson\\gson\\2.2.2\\gson-2.2.2.jar",
+      "url": "https://libraries.minecraft.net/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar",
+      "sha1": "1f96456ca233dec780aa224bff076d8e8bca3908",
+      "sha256": "0f2b5f715a5506cc14ed352e5ff406b4c480a06344a479629b85e76c2aae7faa"
+    },
+    {
+      "name": "org.lwjgl.lwjgl:lwjgl:2.9.0",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\org\\lwjgl\\lwjgl\\lwjgl\\2.9.0\\lwjgl-2.9.0.jar",
+      "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0.jar",
+      "sha1": "5654d06e61a1bba7ae1e7f5233e1106be64c91cd",
+      "sha256": "c5fb453896fb511a7f949090795c79773f6d6c92e4d13d1f3100f4b2e331471a"
+    },
+    {
+      "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.0",
+      "path": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\downloads\\libraries\\org\\lwjgl\\lwjgl\\lwjgl_util\\2.9.0\\lwjgl_util-2.9.0.jar",
+      "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0.jar",
+      "sha1": "a778846b64008fc7f48ead2377f034e547991699",
+      "sha256": "474c2ca620f4147c72db9fa582993688d3c9bca5aed9d9e937ec4fa89b3c2fad"
+    }
+  ],
+  "exit_code": 0
+}

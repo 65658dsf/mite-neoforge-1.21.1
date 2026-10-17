@@ -1,0 +1,1482 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "analysis_date": "2026-10-12",
+  "source": {
+    "archive": "MITE 1.6.4 R196.zip",
+    "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+    "branch": "R196 experimental",
+    "decompiler": "CFR 0.152",
+    "line_basis": ".reference/r196/decompiled/*.java",
+    "execution": "Static source inspection; R196 gameplay not launched."
+  },
+  "scope": "Manufacturing execution rules, complementary to full runtime registered recipe export; no modern gameplay implementation.",
+  "numeric_semantics": {
+    "integer_division": "Java truncates toward zero",
+    "floating_point": "Java float evaluation order, Math.pow double with widened 0.8f exponent",
+    "time": "20 ticks/second nominal"
+  },
+  "rules": [
+    {
+      "id": "default_feature_state",
+      "evidence_status": "confirmed_static",
+      "rule": "Quality and coins are active. Dedicated server reads professions then forces false; create-world UI defaults false and hides the control. Existing world NBT and development commands can still carry/set skills=true; do not remove conditional skill code.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/is.java",
+          "method": "server initialization",
+          "start_line": 86,
+          "end_line": 87
+        },
+        {
+          "file": ".reference/r196/decompiled/avb.java",
+          "method": "create-world fields and controls",
+          "start_line": 42,
+          "end_line": 81
+        },
+        {
+          "file": ".reference/r196/decompiled/WorldInfoShared.java",
+          "method": "NBT load and world settings",
+          "start_line": 164,
+          "end_line": 214
+        },
+        {
+          "file": ".reference/r196/decompiled/als.java",
+          "method": "areSkillsEnabled / areCoinsEnabled",
+          "start_line": 296,
+          "end_line": 305
+        },
+        {
+          "file": ".reference/r196/decompiled/aa.java",
+          "method": "skills command",
+          "start_line": 144,
+          "end_line": 158
+        },
+        {
+          "file": ".reference/r196/decompiled/wh.java",
+          "method": "hasQuality",
+          "start_line": 231,
+          "end_line": 232
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "method": "hasQuality",
+          "start_line": 241,
+          "end_line": 242
+        },
+        {
+          "file": ".reference/r196/decompiled/wp.java",
+          "method": "hasQuality",
+          "start_line": 169,
+          "end_line": 170
+        }
+      ],
+      "default": {
+        "quality": true,
+        "coins": true,
+        "professions_in_new_normal_world": false
+      },
+      "conditional": [
+        "saved skills state",
+        "development skills command",
+        "wonder tournament recipe filtering"
+      ]
+    },
+    {
+      "id": "bench_metadata",
+      "evidence_status": "confirmed_static",
+      "rule": "Valid metadata 0..14. Flint and obsidian have four wood variants. Player grid 2x2; workbench grid 3x3.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/arv.java",
+          "method": "tool_materials / getToolMaterial",
+          "start_line": 11,
+          "end_line": 73
+        },
+        {
+          "file": ".reference/r196/decompiled/vv.java",
+          "method": "constructor",
+          "start_line": 11,
+          "end_line": 12
+        },
+        {
+          "file": ".reference/r196/decompiled/vl.java",
+          "method": "constructor",
+          "start_line": 18,
+          "end_line": 19
+        }
+      ]
+    },
+    {
+      "id": "bench_recipe_capability",
+      "evidence_status": "confirmed_static",
+      "rule": "RecipeHelper sets required material for metal output to hardest metal, except ingots, exact ItemKnife, or exact bucket output containing a bucket. Planks require wood. Metal bench output requires strongest strictly weaker bench tool material, excluding obsidian.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/RecipeHelper.java",
+          "method": "addRecipe",
+          "start_line": 56,
+          "end_line": 83
+        }
+      ],
+      "comparison": "requiredMaterial.durability <= benchToolMaterial.durability; a non-null requirement also requires a workbench",
+      "legacy_location": "awy GUI display updates crafting_result_shown_but_prevented; wd.canPlayerCraftItem consumes this flag",
+      "additional_evidence": [
+        {
+          "file": ".reference/r196/decompiled/awy.java",
+          "method": "crafting result tooltip",
+          "start_line": 159,
+          "end_line": 218
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "method": "canPlayerCraftItem",
+          "start_line": 143,
+          "end_line": 170
+        }
+      ]
+    },
+    {
+      "id": "bench_creation_and_recovery",
+      "evidence_status": "confirmed_static",
+      "rule": "Flint/obsidian bench: knife+log or flint/obsidian+string/sinew+stick+log. Metal bench: ingot+leather+stick+planks. Converting primitive bench back to knife returns its log through crafting ingredient remainder; knife recipe difficulty 25 excluded from lowest-difficulty determination.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/RecipesMITE.java",
+          "method": "workbench recipes",
+          "start_line": 113,
+          "end_line": 132
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "method": "onPickupFromSlot",
+          "start_line": 104,
+          "end_line": 135
+        },
+        {
+          "file": ".reference/r196/decompiled/arv.java",
+          "method": "getBlockComponent",
+          "start_line": 76,
+          "end_line": 84
+        }
+      ]
+    },
+    {
+      "id": "forbidden_grid_recipes",
+      "evidence_status": "confirmed_static",
+      "rule": "Both player and bench containers forbid an exact ItemKnife metal output. Sandstone metadata 2 forbidden in wonder tournament, metadata 3 forbidden outside it. Coin outputs forbidden only if world coins disabled; current areCoinsEnabled returns true.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/vv.java",
+          "method": "isRecipeForbidden",
+          "start_line": 73,
+          "end_line": 81
+        },
+        {
+          "file": ".reference/r196/decompiled/vl.java",
+          "method": "isRecipeForbidden",
+          "start_line": 76,
+          "end_line": 84
+        },
+        {
+          "file": ".reference/r196/decompiled/MITEContainerCrafting.java",
+          "method": "isRecipeForbidden",
+          "start_line": 101,
+          "end_line": 102
+        },
+        {
+          "file": ".reference/r196/decompiled/als.java",
+          "method": "areCoinsEnabled",
+          "start_line": 304,
+          "end_line": 305
+        }
+      ]
+    },
+    {
+      "id": "recipe_difficulty",
+      "evidence_status": "confirmed_static",
+      "rule": "Sum component difficulty over expanded non-null recipe components. Negative component difficulty falls back to known lowest production difficulty and caches it; rusted iron can fall back to matching copper class scaled by durability. Still-unresolved negative component logs and is skipped. Lowest production difficulty is minimum eligible recipe difficulty/output count or explicit override.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/RecipeHelper.java",
+          "method": "addRecipe",
+          "start_line": 5,
+          "end_line": 55
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "method": "getLowestCraftingDifficultyToProduce",
+          "start_line": 1260,
+          "end_line": 1275
+        }
+      ],
+      "note": "Explicit recipe setDifficulty overrides after registration take precedence. Use runtime recipe export for final values, not raw ingredient count."
+    },
+    {
+      "id": "quality_difficulty",
+      "evidence_status": "confirmed_static",
+      "rule": "Dq = D * 2^max(quality.ordinal-average.ordinal,0); null quality leaves D unchanged; quality_override supersedes selection.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/CraftingResult.java",
+          "method": "getQualityAdjustedDifficulty",
+          "start_line": 29,
+          "end_line": 45
+        }
+      ]
+    },
+    {
+      "id": "base_crafting_period",
+      "evidence_status": "confirmed_static",
+      "rule": "B(Dq)=25 if Dq<25; Math.round(Dq) if 25<=Dq<=100; (int)Math.round(Math.pow(Dq-100f,0.8f))+100 otherwise. Time unit is tick.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/bex.java",
+          "method": "calcUnmodifiedCraftingPeriod",
+          "start_line": 450,
+          "end_line": 457
+        }
+      ]
+    },
+    {
+      "id": "effective_crafting_period",
+      "evidence_status": "confirmed_static",
+      "rule": "P=(int)max((B*(clumsiness?2:1))/(1f+L*0.02f+benchBonus),25f). No bench bonus outside workbench. If recipe requirement null, every workbench gives only 0.2; otherwise material-specific bonus.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/bex.java",
+          "method": "getBenchAndToolsModifier / getCraftingPeriod",
+          "start_line": 460,
+          "end_line": 503
+        },
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getLevelModifier",
+          "start_line": 558,
+          "end_line": 562
+        }
+      ],
+      "numeric_semantics": "Java float arithmetic; power double with float exponent widened; Math.round positive halfway upward; final cast truncates."
+    },
+    {
+      "id": "crafting_completion",
+      "evidence_status": "confirmed_static",
+      "rule": "Client increments crafting_ticks only while crafting_proceed && hasFoodEnergy. At period, collect once and reset ticks. Positive quality-XP cost stops repeat; zero quality-XP cost repeats. Changing selection/result resets progress; invalid crafting clears it. Starvation alone pauses increment.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/MITEContainerCrafting.java",
+          "method": "onUpdate",
+          "start_line": 61,
+          "end_line": 98
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "method": "setCraftingResultIndex",
+          "start_line": 250,
+          "end_line": 260
+        }
+      ],
+      "legacy_server": "ka crafting_completed accepts client cost integer then removes XP; original timing and hardness GUI location must not be copied as authority",
+      "server_evidence": {
+        "file": ".reference/r196/decompiled/ka.java",
+        "method": "crafting_completed signal",
+        "start_line": 861,
+        "end_line": 867
+      }
+    },
+    {
+      "id": "quality_range",
+      "evidence_status": "confirmed_static",
+      "rule": "Minimum ordinal=clamp(2+(L-(clumsiness?20:0))/10,0,2), integer division toward zero. With skills enabled and no matching skill, cap minimum at poor. Maximum is highest item-supported tier above average whose adjusted cost<=total XP, else minimum; XP<=0 or missing enabled skill returns minimum. ItemStack subsequently caps material maximum.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getMinCraftingQuality / getMaxCraftingQuality",
+          "start_line": 2184,
+          "end_line": 2216
+        },
+        {
+          "file": ".reference/r196/decompiled/ye.java",
+          "method": "setQuality / getQuality",
+          "start_line": 927,
+          "end_line": 954
+        }
+      ]
+    },
+    {
+      "id": "quality_xp",
+      "evidence_status": "confirmed_static",
+      "rule": "Candidate cost=Math.round(Dq/5f)*(clumsiness?2:1). Actual crafting_experience_cost is zero for items without quality, quality average or worse, or XP-exempt repair; otherwise candidate cost. Right click selects quality; left starts; fixed override prevents cycling.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/uf.java",
+          "method": "getCraftingExperienceCost",
+          "start_line": 2219,
+          "end_line": 2224
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "method": "onSlotClicked",
+          "start_line": 174,
+          "end_line": 211
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "method": "updatePlayerCrafting",
+          "start_line": 279,
+          "end_line": 287
+        }
+      ]
+    },
+    {
+      "id": "quality_durability",
+      "evidence_status": "confirmed_static",
+      "rule": "Quality-capable classes are armor, tools and bows. maxDamage=max(round(baseMaxDamage*quality durability multiplier),1), with average/null base path. For multi-material maximum: if lowest max tier is below average use it; otherwise use highest max tier. Default=min(item max,average).",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "method": "getMaxDamage",
+          "start_line": 590,
+          "end_line": 605
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "method": "getMaxQuality / getDefaultQuality",
+          "start_line": 1237,
+          "end_line": 1257
+        },
+        {
+          "file": ".reference/r196/decompiled/EnumQuality.java",
+          "method": "enum constants",
+          "start_line": 7,
+          "end_line": 14
+        },
+        {
+          "file": ".reference/r196/decompiled/EnumEquipmentMaterial.java",
+          "method": "enum constants",
+          "start_line": 5,
+          "end_line": 21
+        },
+        {
+          "file": ".reference/r196/decompiled/wh.java",
+          "method": "hasQuality",
+          "start_line": 231,
+          "end_line": 232
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "method": "hasQuality",
+          "start_line": 241,
+          "end_line": 242
+        },
+        {
+          "file": ".reference/r196/decompiled/wp.java",
+          "method": "hasQuality",
+          "start_line": 169,
+          "end_line": 170
+        }
+      ]
+    },
+    {
+      "id": "crafting_eligibility_and_consumption",
+      "evidence_status": "confirmed_static",
+      "rule": "Output required; upper-body web, repair failure or forbidden-container flag blocks. Enabled missing skill blocks non-quality output or armor dyes. Damaged inputs forbidden except repair. Coin output requires enough XP. Consume crafting_result.consumption per occupied input (default1), process container item/log remainder; output goes inventory or drops.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "method": "canPlayerCraftItem",
+          "start_line": 143,
+          "end_line": 170
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "method": "onPickupFromSlot",
+          "start_line": 104,
+          "end_line": 135
+        },
+        {
+          "file": ".reference/r196/decompiled/CraftingResult.java",
+          "method": "consumption",
+          "start_line": 11,
+          "end_line": 11
+        }
+      ]
+    },
+    {
+      "id": "coins",
+      "evidence_status": "confirmed_static",
+      "rule": "Coin onCrafted independently subtracts coinValue*outputCount XP. Consuming coin ingredients recovers sum of coinValue once per occupied coin slot. Mint recipe difficulty100; dismantle 1..9 coin recipe difficulty25. Coin crafting_experience_cost field is zero because coins have no quality; operator-cost detection must still include minting.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/ItemCoin.java",
+          "method": "getExperienceValue / onCrafted",
+          "start_line": 15,
+          "end_line": 58
+        },
+        {
+          "file": ".reference/r196/decompiled/RecipesMITE.java",
+          "method": "coin recipes",
+          "start_line": 104,
+          "end_line": 110
+        },
+        {
+          "file": ".reference/r196/decompiled/wd.java",
+          "method": "coin eligibility / reclaim",
+          "start_line": 104,
+          "end_line": 156
+        }
+      ]
+    },
+    {
+      "id": "grid_combination_repair",
+      "evidence_status": "confirmed_static",
+      "rule": "Exactly two occupied stacks of same item ID, count1 each, repairable, both damaged, same quality, neither enchanted, and matching dye if either dyed. New damage=max(0,d1+d2-M), no bonus. D=lowest production difficulty/2; preserve quality and dye, XP exempt; too-high player quality creates failure1.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aaf.java",
+          "method": "getResultingDurabilityFromCombiningItems / findMatchingRecipe",
+          "start_line": 263,
+          "end_line": 321
+        }
+      ]
+    },
+    {
+      "id": "grid_leather_repair",
+      "evidence_status": "confirmed_static",
+      "rule": "Damaged single leather armor plus sinew/string. step=M/item.repairCost. n=ceil(damage/step); if n>1 and n*step>damage then decrement; clamp n to available thread. resultDamage=max(damage-n*step,0), D=n*50, quality fixed, XP exempt, consumption=n. Above player maximum quality returns no result.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aaf.java",
+          "method": "findMatchingRecipe leather branch",
+          "start_line": 323,
+          "end_line": 353
+        }
+      ]
+    },
+    {
+      "id": "anvil_eligibility",
+      "evidence_status": "confirmed_static",
+      "rule": "Combine matching item/subtype/quality while ignoring damage/count/NBT; first damaged, second not enchanted; unenchanted first requires damaged second. Consumable repair requires damaged item, repair cost and matching repair item. Repair metal cannot exceed anvil durability; too-hard failure2, too-high quality failure1. Enabled missing skill cancels repair. Generic container output slot rejects any repair_fail_condition!=0.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/va.java",
+          "method": "isRepairing",
+          "start_line": 58,
+          "end_line": 98
+        },
+        {
+          "file": ".reference/r196/decompiled/uy.java",
+          "method": "slotClick output repair guard",
+          "start_line": 99,
+          "end_line": 103
+        },
+        {
+          "file": ".reference/r196/decompiled/amv.java",
+          "method": "getIsRepairable",
+          "start_line": 147,
+          "end_line": 148
+        }
+      ]
+    },
+    {
+      "id": "anvil_repair_quantum",
+      "evidence_status": "confirmed_static",
+      "rule": "Normal step=M/repairCost; chainmail step=2*M/armor.getRepairCost(false). Start a=min(damage,step), initial=a; loop while a>0 && a==initial && used<available, subtract a then recompute. If first quantum is full, a trailing partial quantum waits for next operation. Combination uses same damage sum as grid.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/va.java",
+          "method": "updateRepairOutput",
+          "start_line": 128,
+          "end_line": 145
+        },
+        {
+          "file": ".reference/r196/decompiled/wh.java",
+          "method": "getRepairCost",
+          "start_line": 305,
+          "end_line": 319
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "method": "getRepairCost",
+          "start_line": 260,
+          "end_line": 261
+        }
+      ]
+    },
+    {
+      "id": "anvil_other_operations",
+      "evidence_status": "confirmed_static",
+      "rule": "Book enchantment requires first item enchantable and not already enchanted, book has at least one valid enchantment; apply valid capped enchantments. Bottle of disenchanting clears enchantment tags. Renaming supported. No XP deduction/40-level cap in va output calculation or vc onTake; rarity variable calculation is unused.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/va.java",
+          "method": "updateRepairOutput",
+          "start_line": 115,
+          "end_line": 197
+        },
+        {
+          "file": ".reference/r196/decompiled/vc.java",
+          "method": "onPickupFromSlot",
+          "start_line": 32,
+          "end_line": 68
+        }
+      ],
+      "confidence_scope": "Inspected all branches of va/vc plus generic container failure guard; applies to this R196 anvil, not the separate enchanting table."
+    },
+    {
+      "id": "anvil_wear",
+      "evidence_status": "confirmed_static",
+      "rule": "Only consumable repair pickup adds anvil damage: repairedDamage*ratio. Tool ratio1, armor200, bow200, fishing rod22 (200/9 integer). Capacity=int(1600*31*metal.durability). damage/capacity>=0.5 stage1, >=0.8 stage2, >=1 break. Persist cumulative damage; no random 12% vanilla anvil wear.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/vc.java",
+          "method": "onPickupFromSlot",
+          "start_line": 33,
+          "end_line": 51
+        },
+        {
+          "file": ".reference/r196/decompiled/amv.java",
+          "method": "getDurability / getDamageState",
+          "start_line": 187,
+          "end_line": 206
+        },
+        {
+          "file": ".reference/r196/decompiled/TileEntityAnvil.java",
+          "method": "addDamage",
+          "start_line": 25,
+          "end_line": 36
+        }
+      ],
+      "ratios_derived_from": [
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "method": "constructor durability",
+          "start_line": 35,
+          "end_line": 40
+        },
+        {
+          "file": ".reference/r196/decompiled/wh.java",
+          "method": "constructor durability",
+          "start_line": 35,
+          "end_line": 40
+        },
+        {
+          "file": ".reference/r196/decompiled/wp.java",
+          "method": "constructor",
+          "start_line": 21,
+          "end_line": 21
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemMattock.java",
+          "method": "getNumComponentsForDurability",
+          "start_line": 26,
+          "end_line": 27
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemBoots.java",
+          "method": "getNumComponentsForDurability",
+          "start_line": 17,
+          "end_line": 18
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemShovel.java",
+          "method": "getNumComponentsForDurability",
+          "start_line": 26,
+          "end_line": 27
+        }
+      ]
+    },
+    {
+      "id": "furnace_heat_and_input",
+      "evidence_status": "confirmed_static",
+      "rule": "Fuel accepted only with 0<heat<=furnace.maxHeat and size acceptable. Clay max1/no large items; sandstone1, hardened clay1, cobblestone2, obsidian3, netherrack4. Others accept large items. Clay/sandstone/hardened clay are ovens. Recipe input requires heat threshold and known recipe; heat above threshold does not accelerate.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/SlotFuel.java",
+          "method": "isItemValid",
+          "start_line": 14,
+          "end_line": 16
+        },
+        {
+          "file": ".reference/r196/decompiled/BlockFurnaceClay.java",
+          "method": "heat and size",
+          "start_line": 28,
+          "end_line": 39
+        },
+        {
+          "file": ".reference/r196/decompiled/BlockFurnaceSandstone.java",
+          "method": "heat / oven",
+          "start_line": 28,
+          "end_line": 34
+        },
+        {
+          "file": ".reference/r196/decompiled/BlockFurnaceHardenedClay.java",
+          "method": "heat / oven",
+          "start_line": 28,
+          "end_line": 34
+        },
+        {
+          "file": ".reference/r196/decompiled/BlockFurnaceCobblestone.java",
+          "method": "getMaxHeatLevel",
+          "start_line": 28,
+          "end_line": 29
+        },
+        {
+          "file": ".reference/r196/decompiled/BlockFurnaceObsidian.java",
+          "method": "getMaxHeatLevel",
+          "start_line": 28,
+          "end_line": 29
+        },
+        {
+          "file": ".reference/r196/decompiled/BlockFurnaceNetherrack.java",
+          "method": "getMaxHeatLevel",
+          "start_line": 28,
+          "end_line": 29
+        },
+        {
+          "file": ".reference/r196/decompiled/aok.java",
+          "method": "acceptsLargeItems",
+          "start_line": 218,
+          "end_line": 219
+        },
+        {
+          "file": ".reference/r196/decompiled/asg.java",
+          "method": "getHeatLevelRequired / canSmelt",
+          "start_line": 196,
+          "end_line": 254
+        }
+      ]
+    },
+    {
+      "id": "furnace_tick",
+      "evidence_status": "confirmed_static",
+      "rule": "Server flood/smother check when burnTime!=1 extinguishes and clears cook progress. Decrement positive burnTime; otherwise heat=0. When burnTime=0 and recipe accepts fuel heat, consume one fuel and install burn time/heat and container remainder. While burning and canSmelt, increment cookTime; exactly200 emits batch and resets; otherwise reset cookTime. No positive progress retained across interruption.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/asg.java",
+          "method": "updateEntity",
+          "start_line": 142,
+          "end_line": 194
+        }
+      ],
+      "legacy_edge": "The burnTime!=1 guard and decrement/refuel order are explicit. Do not replace by an abstract duration ratio when validating boundaries."
+    },
+    {
+      "id": "furnace_batches",
+      "evidence_status": "confirmed_static",
+      "rule": "Normal one input per result; sand requires at least4 and consumes4: heat1 sandstone, heat>=2 glass. Sandstone itself requires heat2 to glass. Clay ball->brick converts up to4 inputs per200tick cycle, constrained by available input/output room.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/aab.java",
+          "method": "getSmeltingResult",
+          "start_line": 23,
+          "end_line": 32
+        },
+        {
+          "file": ".reference/r196/decompiled/asg.java",
+          "method": "smeltItem",
+          "start_line": 257,
+          "end_line": 277
+        },
+        {
+          "file": ".reference/r196/decompiled/RecipesMITE.java",
+          "method": "sand registrations",
+          "start_line": 135,
+          "end_line": 138
+        }
+      ]
+    },
+    {
+      "id": "furnace_state_and_automation",
+      "evidence_status": "confirmed_static",
+      "rule": "Persist items and BurnTime/CookTime/CurrentItemBurnTime short plus heat byte. Top inserts input; sides fuel; bottom exposes output and fuel but only empty bucket may leave fuel from below. Inventory insertion validates size/recipe/fuel. Output XP computed by result item.getExperienceReward(quantityTaken) on player pickup; no saved per-recipe XP ledger.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/asg.java",
+          "method": "read/write NBT",
+          "start_line": 74,
+          "end_line": 105
+        },
+        {
+          "file": ".reference/r196/decompiled/asg.java",
+          "method": "inventory validity and sided slots",
+          "start_line": 313,
+          "end_line": 348
+        },
+        {
+          "file": ".reference/r196/decompiled/vq.java",
+          "method": "onCrafting",
+          "start_line": 17,
+          "end_line": 21
+        },
+        {
+          "file": ".reference/r196/decompiled/vp.java",
+          "method": "skill guard",
+          "start_line": 95,
+          "end_line": 99
+        },
+        {
+          "file": ".reference/r196/decompiled/we.java",
+          "method": "input skills",
+          "start_line": 64,
+          "end_line": 70
+        }
+      ],
+      "automation_note": "Original hopper extraction does not invoke player output callback. Skill guards are conditional player UI/container checks; skills default false."
+    },
+    {
+      "id": "fuel_values",
+      "evidence_status": "confirmed_static",
+      "rule": "Fuel duration and heat are item methods; see fuel table. Higher heat must fit both fuel-slot maximum and recipe minimum. Charcoal1/coal2, lava3, blaze rod4.",
+      "evidence": [
+        {
+          "file": ".reference/r196/decompiled/wt.java",
+          "method": "fuel methods",
+          "start_line": 40,
+          "end_line": 49
+        },
+        {
+          "file": ".reference/r196/decompiled/wr.java",
+          "method": "fuel methods",
+          "start_line": 228,
+          "end_line": 240
+        },
+        {
+          "file": ".reference/r196/decompiled/yc.java",
+          "method": "getBurnTime / getHeatLevel",
+          "start_line": 1335,
+          "end_line": 1367
+        },
+        {
+          "file": ".reference/r196/decompiled/zh.java",
+          "method": "block fuel methods",
+          "start_line": 136,
+          "end_line": 186
+        },
+        {
+          "file": ".reference/r196/decompiled/xj.java",
+          "method": "getBurnTime",
+          "start_line": 250,
+          "end_line": 251
+        },
+        {
+          "file": ".reference/r196/decompiled/wm.java",
+          "method": "getBurnTime",
+          "start_line": 75,
+          "end_line": 76
+        },
+        {
+          "file": ".reference/r196/decompiled/ItemBowl.java",
+          "method": "getBurnTime",
+          "start_line": 102,
+          "end_line": 103
+        }
+      ]
+    }
+  ],
+  "bench_tiers": [
+    {
+      "material": "flint",
+      "metadata": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "durability": 1,
+      "bonus_when_requirement_non_null": 0.2,
+      "required_material_to_craft": null
+    },
+    {
+      "material": "copper",
+      "metadata": [
+        4
+      ],
+      "durability": 4,
+      "bonus_when_requirement_non_null": 0.3,
+      "required_material_to_craft": "flint"
+    },
+    {
+      "material": "silver",
+      "metadata": [
+        5
+      ],
+      "durability": 4,
+      "bonus_when_requirement_non_null": 0.3,
+      "required_material_to_craft": "flint"
+    },
+    {
+      "material": "gold",
+      "metadata": [
+        6
+      ],
+      "durability": 4,
+      "bonus_when_requirement_non_null": 0.3,
+      "required_material_to_craft": "flint"
+    },
+    {
+      "material": "iron",
+      "metadata": [
+        7
+      ],
+      "durability": 8,
+      "bonus_when_requirement_non_null": 0.4,
+      "required_material_to_craft": "copper"
+    },
+    {
+      "material": "ancient_metal",
+      "metadata": [
+        8
+      ],
+      "durability": 16,
+      "bonus_when_requirement_non_null": 0.5,
+      "required_material_to_craft": "iron"
+    },
+    {
+      "material": "mithril",
+      "metadata": [
+        9
+      ],
+      "durability": 64,
+      "bonus_when_requirement_non_null": 0.6,
+      "required_material_to_craft": "ancient_metal"
+    },
+    {
+      "material": "adamantium",
+      "metadata": [
+        10
+      ],
+      "durability": 256,
+      "bonus_when_requirement_non_null": 0.7,
+      "required_material_to_craft": "mithril"
+    },
+    {
+      "material": "obsidian",
+      "metadata": [
+        11,
+        12,
+        13,
+        14
+      ],
+      "durability": 2,
+      "bonus_when_requirement_non_null": 0.2,
+      "required_material_to_craft": null
+    }
+  ],
+  "quality_tiers": [
+    {
+      "id": "wretched",
+      "ordinal": 0,
+      "durability_multiplier": 0.5,
+      "difficulty_multiplier": 1
+    },
+    {
+      "id": "poor",
+      "ordinal": 1,
+      "durability_multiplier": 0.75,
+      "difficulty_multiplier": 1
+    },
+    {
+      "id": "average",
+      "ordinal": 2,
+      "durability_multiplier": 1,
+      "difficulty_multiplier": 1
+    },
+    {
+      "id": "fine",
+      "ordinal": 3,
+      "durability_multiplier": 1.5,
+      "difficulty_multiplier": 2
+    },
+    {
+      "id": "excellent",
+      "ordinal": 4,
+      "durability_multiplier": 2,
+      "difficulty_multiplier": 4
+    },
+    {
+      "id": "superb",
+      "ordinal": 5,
+      "durability_multiplier": 2.5,
+      "difficulty_multiplier": 8
+    },
+    {
+      "id": "masterwork",
+      "ordinal": 6,
+      "durability_multiplier": 3,
+      "difficulty_multiplier": 16
+    },
+    {
+      "id": "legendary",
+      "ordinal": 7,
+      "durability_multiplier": 3.5,
+      "difficulty_multiplier": 32
+    }
+  ],
+  "material_max_quality": {
+    "leather": "fine",
+    "wood": "fine",
+    "flint": "fine",
+    "obsidian": "fine",
+    "rusted_iron": "poor",
+    "copper": "excellent",
+    "silver": "excellent",
+    "gold": "superb",
+    "iron": "masterwork",
+    "ancient_metal": "masterwork",
+    "mithril": "legendary",
+    "adamantium": "legendary",
+    "netherrack": "average",
+    "glass": "average",
+    "quartz": "fine",
+    "emerald": "excellent",
+    "diamond": "superb"
+  },
+  "coin_values": {
+    "copper": 5,
+    "silver": 25,
+    "gold": 100,
+    "ancient_metal": 500,
+    "mithril": 2500,
+    "adamantium": 10000
+  },
+  "furnace_max_heat": {
+    "clay": 1,
+    "sandstone": 1,
+    "hardened_clay": 1,
+    "cobblestone": 2,
+    "obsidian": 3,
+    "netherrack": 4
+  },
+  "recipe_min_heat": {
+    "adamantium_ore": 4,
+    "mithril_ore": 3,
+    "copper_ore": 2,
+    "silver_ore": 2,
+    "gold_ore": 2,
+    "iron_ore": 2,
+    "nether_quartz_ore": 2,
+    "emerald_ore": 2,
+    "diamond_ore": 2,
+    "redstone_ore": 2,
+    "lapis_ore": 2,
+    "sandstone": 2,
+    "sand": 1,
+    "other_registered_inputs": 1
+  },
+  "fuels": [
+    {
+      "id": "coal",
+      "burn_ticks": 1600,
+      "heat": 2
+    },
+    {
+      "id": "charcoal",
+      "burn_ticks": 1600,
+      "heat": 1
+    },
+    {
+      "id": "coal_block",
+      "burn_ticks": 16000,
+      "heat": 2
+    },
+    {
+      "id": "lava_bucket",
+      "burn_ticks": 3200,
+      "heat": 3
+    },
+    {
+      "id": "blaze_rod",
+      "burn_ticks": 2400,
+      "heat": 4
+    },
+    {
+      "id": "paper",
+      "burn_ticks": 25,
+      "heat": 1
+    },
+    {
+      "id": "manure",
+      "burn_ticks": 100,
+      "heat": 1
+    },
+    {
+      "id": "stick",
+      "burn_ticks": 100,
+      "heat": 1
+    },
+    {
+      "id": "arrow",
+      "burn_ticks": 100,
+      "heat": 1
+    },
+    {
+      "id": "book_or_writable_or_written_or_enchanted_book",
+      "burn_ticks": 100,
+      "heat": 1
+    },
+    {
+      "id": "wood_door",
+      "burn_ticks": 400,
+      "heat": 1
+    },
+    {
+      "id": "other_wood_material_item",
+      "burn_ticks": 200,
+      "heat": 1
+    },
+    {
+      "id": "other_paper_material_item",
+      "burn_ticks": 50,
+      "heat": 1
+    },
+    {
+      "id": "log",
+      "burn_ticks": 1600,
+      "heat": 1
+    },
+    {
+      "id": "planks_or_double_wood_slab_or_wood_button",
+      "burn_ticks": 400,
+      "heat": 1
+    },
+    {
+      "id": "wood_slab_or_sapling_or_dead_bush",
+      "burn_ticks": 200,
+      "heat": 1
+    },
+    {
+      "id": "torch_or_redstone_torch",
+      "burn_ticks": 800,
+      "heat": 1
+    },
+    {
+      "id": "other_burnable_wood_block",
+      "burn_ticks": 400,
+      "heat": 1
+    },
+    {
+      "id": "wood_tool",
+      "burn_ticks": 200,
+      "heat": 1
+    },
+    {
+      "id": "nonwood_tool_with_wood_handle",
+      "burn_ticks": 100,
+      "heat": 1
+    },
+    {
+      "id": "boat",
+      "burn_ticks": 1200,
+      "heat": 1
+    },
+    {
+      "id": "empty_bowl",
+      "burn_ticks": 200,
+      "heat": 1
+    },
+    {
+      "id": "filled_bowl",
+      "burn_ticks": 0,
+      "heat": 0
+    }
+  ],
+  "validation_vectors": {
+    "crafting_period": [
+      {
+        "difficulty": 0,
+        "level": 0,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 25
+      },
+      {
+        "difficulty": 24.9,
+        "level": 0,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 25
+      },
+      {
+        "difficulty": 25,
+        "level": 0,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 25
+      },
+      {
+        "difficulty": 99.5,
+        "level": 0,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 100
+      },
+      {
+        "difficulty": 100,
+        "level": 0,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 100
+      },
+      {
+        "difficulty": 101,
+        "level": 0,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 101
+      },
+      {
+        "difficulty": 200,
+        "level": 0,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 140
+      },
+      {
+        "difficulty": 1000,
+        "level": 0,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 331
+      },
+      {
+        "difficulty": 100,
+        "level": 0,
+        "bench_bonus": 0.2,
+        "clumsiness": false,
+        "expected_ticks": 83
+      },
+      {
+        "difficulty": 100,
+        "level": 0,
+        "bench_bonus": 0.7,
+        "clumsiness": false,
+        "expected_ticks": 58
+      },
+      {
+        "difficulty": 100,
+        "level": 35,
+        "bench_bonus": 0.7,
+        "clumsiness": false,
+        "expected_ticks": 41
+      },
+      {
+        "difficulty": 100,
+        "level": -40,
+        "bench_bonus": 0,
+        "clumsiness": false,
+        "expected_ticks": 499
+      },
+      {
+        "difficulty": 100,
+        "level": 0,
+        "bench_bonus": 0.2,
+        "clumsiness": true,
+        "expected_ticks": 166
+      },
+      {
+        "difficulty": 1000,
+        "level": 35,
+        "bench_bonus": 0.7,
+        "clumsiness": false,
+        "expected_ticks": 137
+      }
+    ],
+    "quality_cost_for_base_difficulty_100": [
+      {
+        "quality": "wretched",
+        "adjusted_difficulty": 100,
+        "actual_xp": 0,
+        "clumsy_xp": 0
+      },
+      {
+        "quality": "poor",
+        "adjusted_difficulty": 100,
+        "actual_xp": 0,
+        "clumsy_xp": 0
+      },
+      {
+        "quality": "average",
+        "adjusted_difficulty": 100,
+        "actual_xp": 0,
+        "clumsy_xp": 0
+      },
+      {
+        "quality": "fine",
+        "adjusted_difficulty": 200,
+        "actual_xp": 40,
+        "clumsy_xp": 80
+      },
+      {
+        "quality": "excellent",
+        "adjusted_difficulty": 400,
+        "actual_xp": 80,
+        "clumsy_xp": 160
+      },
+      {
+        "quality": "superb",
+        "adjusted_difficulty": 800,
+        "actual_xp": 160,
+        "clumsy_xp": 320
+      },
+      {
+        "quality": "masterwork",
+        "adjusted_difficulty": 1600,
+        "actual_xp": 320,
+        "clumsy_xp": 640
+      },
+      {
+        "quality": "legendary",
+        "adjusted_difficulty": 3200,
+        "actual_xp": 640,
+        "clumsy_xp": 1280
+      }
+    ],
+    "min_quality": [
+      {
+        "level": -20,
+        "clumsy": false,
+        "expected": "wretched"
+      },
+      {
+        "level": -19,
+        "clumsy": false,
+        "expected": "poor"
+      },
+      {
+        "level": -10,
+        "clumsy": false,
+        "expected": "poor"
+      },
+      {
+        "level": -9,
+        "clumsy": false,
+        "expected": "average"
+      },
+      {
+        "level": 0,
+        "clumsy": false,
+        "expected": "average"
+      },
+      {
+        "level": 0,
+        "clumsy": true,
+        "expected": "wretched"
+      },
+      {
+        "level": 10,
+        "clumsy": true,
+        "expected": "poor"
+      },
+      {
+        "level": 20,
+        "clumsy": true,
+        "expected": "average"
+      }
+    ],
+    "maximum_quality": [
+      {
+        "base_difficulty": 100,
+        "item_cap": "legendary",
+        "total_xp": 39,
+        "level": 1,
+        "expected": "average"
+      },
+      {
+        "base_difficulty": 100,
+        "item_cap": "legendary",
+        "total_xp": 40,
+        "level": 1,
+        "expected": "fine"
+      },
+      {
+        "base_difficulty": 100,
+        "item_cap": "legendary",
+        "total_xp": 80,
+        "level": 2,
+        "expected": "excellent"
+      },
+      {
+        "base_difficulty": 100,
+        "item_cap": "legendary",
+        "total_xp": 640,
+        "level": 9,
+        "expected": "legendary"
+      },
+      {
+        "base_difficulty": 100,
+        "item_cap": "excellent",
+        "total_xp": 10000,
+        "expected": "excellent"
+      }
+    ],
+    "repair": [
+      {
+        "kind": "combine",
+        "max_damage": 100,
+        "damage": [
+          70,
+          60
+        ],
+        "expected_damage": 30
+      },
+      {
+        "kind": "combine",
+        "max_damage": 100,
+        "damage": [
+          40,
+          50
+        ],
+        "expected_damage": 0
+      },
+      {
+        "kind": "anvil_consumable",
+        "damage": 250,
+        "step": 100,
+        "available": 8,
+        "used": 2,
+        "expected_damage": 50
+      },
+      {
+        "kind": "anvil_consumable",
+        "damage": 50,
+        "step": 100,
+        "available": 8,
+        "used": 1,
+        "expected_damage": 0
+      },
+      {
+        "kind": "anvil_consumable",
+        "damage": 250,
+        "step": 100,
+        "available": 1,
+        "used": 1,
+        "expected_damage": 150
+      },
+      {
+        "kind": "leather_thread",
+        "damage": 25,
+        "step": 10,
+        "available": 9,
+        "used": 2,
+        "expected_damage": 5,
+        "difficulty": 100
+      },
+      {
+        "kind": "leather_thread",
+        "damage": 5,
+        "step": 10,
+        "available": 9,
+        "used": 1,
+        "expected_damage": 0,
+        "difficulty": 50
+      }
+    ],
+    "anvil_wear": [
+      {
+        "material": "iron",
+        "durability": 396800,
+        "damage": 198400,
+        "stage": 1
+      },
+      {
+        "material": "iron",
+        "durability": 396800,
+        "damage": 317440,
+        "stage": 2
+      },
+      {
+        "material": "iron",
+        "durability": 396800,
+        "damage": 396800,
+        "stage": 3
+      },
+      {
+        "repair_kind": "armor",
+        "restored": 12,
+        "anvil_damage": 2400
+      },
+      {
+        "repair_kind": "bow",
+        "restored": 12,
+        "anvil_damage": 2400
+      },
+      {
+        "repair_kind": "fishing_rod",
+        "restored": 12,
+        "anvil_damage": 264
+      }
+    ],
+    "furnace": [
+      {
+        "input": "sand",
+        "count": 3,
+        "heat": 1,
+        "result": null
+      },
+      {
+        "input": "sand",
+        "count": 4,
+        "heat": 1,
+        "result": "sandstone",
+        "output_count": 1,
+        "consumed": 4,
+        "ticks": 200
+      },
+      {
+        "input": "sand",
+        "count": 4,
+        "heat": 2,
+        "result": "glass",
+        "output_count": 1,
+        "consumed": 4,
+        "ticks": 200
+      },
+      {
+        "input": "clay_ball",
+        "count": 5,
+        "heat": 1,
+        "result": "brick",
+        "output_count": 4,
+        "consumed": 4,
+        "ticks": 200
+      },
+      {
+        "input": "clay_ball",
+        "count": 5,
+        "heat": 1,
+        "existing_bricks": 62,
+        "stack_limit": 64,
+        "output_added": 2,
+        "consumed": 2,
+        "ticks": 200
+      },
+      {
+        "furnace": "cobblestone",
+        "fuel": "lava_bucket",
+        "fuel_heat": 3,
+        "fuel_insertion_allowed": false
+      },
+      {
+        "furnace": "obsidian",
+        "input": "adamantium_ore",
+        "max_heat": 3,
+        "required_heat": 4,
+        "possible": false
+      }
+    ]
+  },
+  "modern_adaptation": {
+    "reference": "spec/modern-adaptation.json",
+    "authority": "Server recalculates eligibility/time/cost and owns progression; never trusts packet cost or GUI flags.",
+    "crafter": "Use confirmed quality flags. Fixed average quality capped to material maximum; no skill bonus. Reject any operator-dependent XP cost, including coin minting. Read modern-adaptation for complete machine lifecycle.",
+    "experience": "No original furnace XP ledger; modern held-XP behavior is an explicit design decision, not R196 reconstruction.",
+    "anvil": "Do not import vanilla XP/40-level gate accidentally."
+  },
+  "known_limits": [
+    "Recipe registration catalogue is separate; dynamic grid repair rules do not appear as normal registered recipes.",
+    "Evidence is static source inspection and derived numerical vectors, not observed R196 gameplay.",
+    "Legacy client authority, multi-output capacity edge, illegal saved fuel heat, and malformed zero repair quantum are not proposed modern behavior; server-safe adaptation must be explicit.",
+    "Saved skill state and special tournament mode are conditional; no claim that every experimental field is enabled."
+  ]
+}
