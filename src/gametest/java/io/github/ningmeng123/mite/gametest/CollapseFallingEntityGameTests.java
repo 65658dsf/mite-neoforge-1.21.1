@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -24,9 +27,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.DripstoneThickness;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
@@ -188,7 +193,7 @@ public final class CollapseFallingEntityGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 300)
-    public static void soilImpactRespectsDamageCancellationWhileOrdinarySandStaysHarmless(GameTestHelper h) {
+    public static void fallingSoilAndSandBothRespectNativeDamageCancellation(GameTestHelper h) {
         try (var f = new Fixture(h)) {
             Cow target = f.target();
             int[] hits = {0};
@@ -205,12 +210,176 @@ public final class CollapseFallingEntityGameTests {
                 h.assertValueEqual(target.getHealth(), initial, "Canceling real damage protects the target while soil still lands");
                 f.set(f.landed, Blocks.AIR.defaultBlockState());
                 FallingBlockEntity sand = f.fall(Blocks.SAND.defaultBlockState(), false);
-                h.assertFalse(sand.saveWithoutId(new CompoundTag()).getBoolean("HurtEntities"), "Ordinary sand retains its previous native non-damaging setting");
+                h.assertTrue(sand.saveWithoutId(new CompoundTag()).getBoolean("HurtEntities"), "Ordinary falling sand also carries the requested impact damage");
                 f.finish(sand);
-                h.assertValueEqual(hits[0], 1, "The soil enhancement cannot add a damage transaction to ordinary falling sand");
+                h.assertValueEqual(hits[0], 2, "Both falling materials reach the same real cancellable damage transaction exactly once");
+                h.assertValueEqual(target.getHealth(), initial, "Cancellation protects the target from sand while its block still lands");
             } finally { NeoForge.EVENT_BUS.unregister(cancel); target.discard(); }
         }
         h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void everyManagedSoilAndRepresentativeNativeGravityBlockHurtsOnRealLanding(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            Cow target = f.target();
+            try {
+                for (BlockState state : impactStates()) {
+                    f.set(f.landed, Blocks.AIR.defaultBlockState()); f.clearItems();
+                    target.setHealth(100F); target.invulnerableTime = 0;
+                    FallingBlockEntity falling = f.fall(state, false);
+                    CompoundTag saved = falling.saveWithoutId(new CompoundTag());
+                    h.assertTrue(saved.getBoolean("HurtEntities") && saved.getFloat("FallHurtAmount") == 1F
+                                    && saved.getInt("FallHurtMax") == 20,
+                            "The actual falling factory enables the shared impact profile for " + state);
+                    int[] hits = {0};
+                    Consumer<LivingIncomingDamageEvent> capture = event -> {
+                        if (event.getEntity() == target && event.getSource().getDirectEntity() == falling) {
+                            h.assertTrue(event.getSource().is(DamageTypes.FALLING_BLOCK), "Native impact retains its falling-block damage source");
+                            hits[0]++;
+                        }
+                    };
+                    NeoForge.EVENT_BUS.addListener(LivingIncomingDamageEvent.class, capture);
+                    try { f.finish(falling); }
+                    finally { NeoForge.EVENT_BUS.unregister(capture); }
+                    h.assertTrue(target.getHealth() < 100F && hits[0] == 1,
+                            "Real movement and landing damage the target once for " + state);
+                    h.assertTrue(f.level.getBlockState(f.landed).is(state.getBlock()),
+                            "Impact still lands the original carried block while retaining native neighbor-shape updates");
+                    h.assertTrue(f.items().isEmpty(), "Impact damage cannot duplicate a successfully landed block as an item");
+                }
+            } finally { target.discard(); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void oldMidairNativeGravitySavesAcquireImpactAndRetainTheNativeHeightFormula(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            Cow target = f.target();
+            try {
+                for (BlockState state : List.of(Blocks.SAND.defaultBlockState(), Blocks.GRAVEL.defaultBlockState(),
+                        Blocks.WHITE_CONCRETE_POWDER.defaultBlockState())) {
+                    f.set(f.landed, Blocks.AIR.defaultBlockState()); f.clearItems();
+                    FallingBlockEntity original = f.fall(state, false);
+                    CompoundTag saved = original.saveWithoutId(new CompoundTag()); original.discard();
+                    saved.putBoolean("HurtEntities", false); saved.putFloat("FallHurtAmount", 0F); saved.putInt("FallHurtMax", 0);
+                    FallingBlockEntity loaded = new FallingBlockEntity(EntityType.FALLING_BLOCK, f.level);
+                    loaded.load(saved); f.entities.add(loaded);
+                    CompoundTag upgraded = loaded.saveWithoutId(new CompoundTag());
+                    h.assertTrue(upgraded.getBoolean("HurtEntities") && upgraded.getFloat("FallHurtAmount") == 1F
+                                    && upgraded.getInt("FallHurtMax") == 20,
+                            "Loading an old non-damaging gravity block upgrades its saved impact profile: " + state);
+                    target.setHealth(100F); target.invulnerableTime = 0;
+                    loaded.setPos(target.position());
+                    int[] hits = {0}; float[] firstAmount = {-1F};
+                    Consumer<LivingIncomingDamageEvent> capture = event -> {
+                        if (event.getEntity() == target && event.getSource().getDirectEntity() == loaded) {
+                            if (hits[0]++ == 0) firstAmount[0] = event.getOriginalAmount();
+                            h.assertTrue(event.getSource().is(DamageTypes.FALLING_BLOCK), "A restored entity retains the native falling-block damage type");
+                        }
+                    };
+                    NeoForge.EVENT_BUS.addListener(LivingIncomingDamageEvent.class, capture);
+                    try {
+                        loaded.causeFallDamage(3.5F, 1F, loaded.damageSources().fall());
+                        h.assertTrue(hits[0] == 1 && firstAmount[0] == 3F && target.getHealth() == 97F,
+                                "Actual native fall damage uses ceil(3.5 - 1) times one, including its fractional-height rounding");
+                        target.setHealth(100F); target.invulnerableTime = 0;
+                        loaded.setPos(f.source.getX() + .5D, f.source.getY(), f.source.getZ() + .5D);
+                        loaded.setDeltaMovement(Vec3.ZERO);
+                        f.finish(loaded);
+                    } finally { NeoForge.EVENT_BUS.unregister(capture); }
+                    h.assertTrue(hits[0] == 2 && target.getHealth() < 100F,
+                            "The reloaded block also damages through a real subsequent movement and landing");
+                    h.assertValueEqual(f.level.getBlockState(f.landed), state, "Reloading preserves the actual carried gravity block");
+                    h.assertTrue(f.items().isEmpty(), "A saved damaging fall still has no duplicate item output");
+                }
+            } finally { target.discard(); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void nativeAnvilAndDripstoneTicksKeepTheirStrongerOwnImpactProfilesAfterReload(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            BlockState tip = Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
+                    .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP);
+            for (BlockState state : List.of(Blocks.ANVIL.defaultBlockState(), tip)) {
+                f.set(f.source, state);
+                state.tick(f.level, f.source, RandomSource.create(196L));
+                var falls = f.spawned.live(FallingBlockEntity.class).stream().filter(e -> e.getStartPos().equals(f.source)).toList();
+                h.assertValueEqual(falls.size(), 1, "The actual unsupported block tick creates one native falling entity: " + state);
+                FallingBlockEntity original = falls.getFirst();
+                CompoundTag saved = original.saveWithoutId(new CompoundTag()); original.discard();
+                float amount = state.is(Blocks.ANVIL) ? 2F : 6F;
+                h.assertTrue(saved.getBoolean("HurtEntities") && saved.getFloat("FallHurtAmount") == amount && saved.getInt("FallHurtMax") == 40,
+                        "The native anvil/stalactite spawn callback supplies its own stronger impact profile");
+                FallingBlockEntity loaded = new FallingBlockEntity(EntityType.FALLING_BLOCK, f.level);
+                loaded.load(saved); f.entities.add(loaded);
+                CompoundTag restored = loaded.saveWithoutId(new CompoundTag());
+                h.assertTrue(restored.getFloat("FallHurtAmount") == amount && restored.getInt("FallHurtMax") == 40,
+                        "The shared impact loader cannot weaken an existing native damage configuration");
+                Cow target = f.target();
+                int[] hits = {0};
+                Consumer<LivingIncomingDamageEvent> capture = event -> {
+                    if (event.getEntity() == target && event.getSource().getDirectEntity() == loaded) {
+                        hits[0]++;
+                        h.assertTrue(event.getSource().is(state.is(Blocks.ANVIL) ? DamageTypes.FALLING_ANVIL : DamageTypes.FALLING_STALACTITE)
+                                        && event.getOriginalAmount() == 3F * amount,
+                                "The real native impact keeps its own damage source and fractional-height formula");
+                    }
+                };
+                NeoForge.EVENT_BUS.addListener(LivingIncomingDamageEvent.class, capture);
+                try {
+                    loaded.setPos(target.position()); loaded.causeFallDamage(3.5F, 1F, loaded.damageSources().fall());
+                    h.assertTrue(hits[0] == 1 && target.getHealth() == 100F - 3F * amount,
+                            "The restored original anvil or dripstone damages through its native living transaction");
+                } finally { NeoForge.EVENT_BUS.unregister(capture); target.discard(); loaded.discard(); }
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void directlyConstructedFallingEntityGetsDefaultImpactAndPreservesACustomSavedProfile(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            FallingBlockEntity direct = new FallingBlockEntity(EntityType.FALLING_BLOCK, f.level); f.entities.add(direct);
+            Cow target = f.target();
+            try {
+                direct.setPos(target.position()); direct.causeFallDamage(3.5F, 1F, direct.damageSources().fall());
+                h.assertValueEqual(target.getHealth(), 97F, "A directly constructed command-style entity acquires impact at the real damage entrypoint");
+                direct.setHurtsEntities(3F, 60);
+                CompoundTag saved = direct.saveWithoutId(new CompoundTag()); direct.discard();
+                FallingBlockEntity loaded = new FallingBlockEntity(EntityType.FALLING_BLOCK, f.level); loaded.load(saved); f.entities.add(loaded);
+                CompoundTag restored = loaded.saveWithoutId(new CompoundTag());
+                h.assertTrue(restored.getBoolean("HurtEntities") && restored.getFloat("FallHurtAmount") == 3F && restored.getInt("FallHurtMax") == 60,
+                        "An effective custom three-per-block sixty-cap profile survives actual native save/load unchanged");
+                target.setHealth(100F); target.invulnerableTime = 0;
+                int[] hits = {0};
+                Consumer<LivingIncomingDamageEvent> capture = event -> {
+                    if (event.getEntity() == target && event.getSource().getDirectEntity() == loaded) {
+                        hits[0]++;
+                        h.assertTrue(event.getSource().is(DamageTypes.FALLING_BLOCK) && event.getOriginalAmount() == 9F,
+                                "The damage entrypoint preserves the configured three-per-block profile instead of resetting it");
+                    }
+                };
+                NeoForge.EVENT_BUS.addListener(LivingIncomingDamageEvent.class, capture);
+                try {
+                    loaded.setPos(target.position()); loaded.causeFallDamage(3.5F, 1F, loaded.damageSources().fall());
+                    h.assertTrue(hits[0] == 1 && target.getHealth() == 91F, "The restored custom profile reaches the actual native living damage event");
+                } finally { NeoForge.EVENT_BUS.unregister(capture); }
+            } finally { target.discard(); }
+        }
+        h.succeed();
+    }
+
+    private static List<BlockState> impactStates() {
+        return List.of(Blocks.DIRT.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState(),
+                Blocks.COARSE_DIRT.defaultBlockState(), Blocks.PODZOL.defaultBlockState(), Blocks.ROOTED_DIRT.defaultBlockState(),
+                Blocks.MYCELIUM.defaultBlockState(), Blocks.SOUL_SAND.defaultBlockState(), Blocks.SAND.defaultBlockState(),
+                Blocks.RED_SAND.defaultBlockState(), Blocks.GRAVEL.defaultBlockState(), Blocks.WHITE_CONCRETE_POWDER.defaultBlockState(),
+                Blocks.SUSPICIOUS_SAND.defaultBlockState(), Blocks.SUSPICIOUS_GRAVEL.defaultBlockState(),
+                Blocks.SCAFFOLDING.defaultBlockState(), Blocks.DRAGON_EGG.defaultBlockState());
     }
 
     @GameTest(template = "empty", timeoutTicks = 300)

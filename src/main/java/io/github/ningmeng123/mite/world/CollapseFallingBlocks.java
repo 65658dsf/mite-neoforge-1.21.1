@@ -2,10 +2,11 @@ package io.github.ningmeng123.mite.world;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Source collision rules and requested impact damage for disturbed soil. @author NingMeng123 */
+/** Source soil collision rules and requested impact damage for all falling blocks. @author NingMeng123 */
 public final class CollapseFallingBlocks {
     public static final float IMPACT_DAMAGE_PER_BLOCK = 1F;
     public static final int MAX_IMPACT_DAMAGE = 20;
@@ -13,8 +14,11 @@ public final class CollapseFallingBlocks {
 
     /** Native falling damage keeps its height accumulation, protections and damage events. */
     public static void configureImpact(FallingBlockEntity falling) {
-        if (CollapsePhysics.managed(falling.getBlockState()))
-            falling.setHurtsEntities(IMPACT_DAMAGE_PER_BLOCK, MAX_IMPACT_DAMAGE);
+        if (((FallingBlockImpact)falling).mite$hasImpactDamage()) return;
+        // Anvils and pointed dripstone set their own damage after the native factory returns.
+        // Preserve those values on reload and restore the native anvil default in older saves.
+        if (falling.getBlockState().is(BlockTags.ANVIL)) falling.setHurtsEntities(2F, 40);
+        else falling.setHurtsEntities(IMPACT_DAMAGE_PER_BLOCK, MAX_IMPACT_DAMAGE);
     }
 
     /**

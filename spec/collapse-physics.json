@@ -171,16 +171,20 @@
   },
   "falling_entity": {
     "direct_impact_damage": true,
+    "impact_scope": "all FallingBlockEntity, including native gravity, brushable, scaffolding and pointed dripstone paths",
     "impact_damage_per_block_after_first": 1,
     "impact_damage_max": 20,
     "impact_source": "native FallingBlockEntity.causeFallDamage, normal damage protections and cancellation",
     "burial_suffocation": "normal block collision remains",
     "native_factory": true,
     "natural_trial_provenance_retained": true,
-    "ordinary_sand_and_anvils_unchanged": true
+    "preserve_valid_native_or_custom_impact": true,
+    "anvil_fallback_per_block_and_max": [2, 40],
+    "old_midair_save_and_direct_impact_upgrade": true,
+    "soil_only_collision_rules_unchanged": true
   },
   "modern_adaptations": {
-    "2026-10-17_user_request": "disturbed full surface soil shares dirt collapse; native height-scaled impact damage enabled and upgraded on old entity load",
+    "2026-10-17_user_request": "disturbed full surface soil shares dirt collapse; all falling blocks have native height-scaled impact damage, including old saves, preserving valid native/custom impact parameters",
     "surface_state": "original BlockState retained, including grass and mycelium",
     "minimum_height": "dimension minBuildHeight, includes negative Y",
     "pending_marker": "versioned per-chunk Data Attachment plus native saved scheduled ticks; no shared block-state rewrite",

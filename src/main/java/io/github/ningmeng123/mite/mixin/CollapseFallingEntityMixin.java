@@ -3,30 +3,47 @@ package io.github.ningmeng123.mite.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.world.CollapseFallingBlocks;
+import io.github.ningmeng123.mite.world.FallingBlockImpact;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Source dirt and soul sand reuse the complete native falling entity lifecycle. @author NingMeng123 */
+/** All falling blocks reuse native impact damage; source soil retains its collision rules. @author NingMeng123 */
 @Mixin(FallingBlockEntity.class)
-public abstract class CollapseFallingEntityMixin {
+public abstract class CollapseFallingEntityMixin implements FallingBlockImpact {
+    @Shadow private boolean hurtEntities;
+    @Shadow private float fallDamagePerDistance;
+    @Shadow private int fallDamageMax;
+
+    @Override public boolean mite$hasImpactDamage() {
+        return hurtEntities && Float.isFinite(fallDamagePerDistance) && fallDamagePerDistance > 0F && fallDamageMax > 0;
+    }
+
     @Inject(method = "fall", at = @At("RETURN"))
-    private static void mite$enableSoilImpact(Level level, BlockPos pos, BlockState state,
+    private static void mite$enableBlockImpact(Level level, BlockPos pos, BlockState state,
             CallbackInfoReturnable<FallingBlockEntity> cir) {
         CollapseFallingBlocks.configureImpact(cir.getReturnValue());
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    private void mite$restoreSoilImpact(CompoundTag tag, CallbackInfo ci) {
-        // Also upgrade soil already falling in a save made before impact damage was enabled.
+    private void mite$restoreBlockImpact(CompoundTag tag, CallbackInfo ci) {
+        // Upgrade old non-damaging saves without changing valid native or custom settings.
+        CollapseFallingBlocks.configureImpact((FallingBlockEntity)(Object)this);
+    }
+
+    @Inject(method = "causeFallDamage", at = @At("HEAD"))
+    private void mite$ensureBlockImpact(float distance, float multiplier, DamageSource source,
+            CallbackInfoReturnable<Boolean> cir) {
         CollapseFallingBlocks.configureImpact((FallingBlockEntity)(Object)this);
     }
 
