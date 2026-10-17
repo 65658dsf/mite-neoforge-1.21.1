@@ -28,7 +28,10 @@ import net.minecraft.world.level.Level;
 public final class MiteJeiPlugin implements IModPlugin {
     private static final Map<String, RecipeType<FurnaceJeiRecipe>> TYPES = recipeTypes();
     private static final Map<String, RecipeType<WorkbenchJeiRecipe>> WORKBENCH_TYPES = workbenchTypes();
+    private static final RecipeType<AnvilJeiRecipe> ANVIL_TYPE =
+            RecipeType.create(Mite.MOD_ID, "equipment_repair", AnvilJeiRecipe.class);
     private List<FurnaceJeiRecipe> recipes = List.of();
+    private AnvilJeiRecipes.Index anvilIndex = new AnvilJeiRecipes.Index(List.of(), java.util.Set.of());
     private WorkbenchJeiRecipes.Index workbenchIndex = new WorkbenchJeiRecipes.Index(List.of(), List.of());
     private Level recipeLevel;
 
@@ -64,12 +67,15 @@ public final class MiteJeiPlugin implements IModPlugin {
         WORKBENCH_TYPES.forEach((id, type) -> registration.addRecipeCategories(new WorkbenchJeiCategory(type,
                 id.equals(WorkbenchJeiRecipes.INVENTORY) ? new ItemStack(Items.CHEST) : furnace(id),
                 registration.getJeiHelpers().getGuiHelper(), id.equals(WorkbenchJeiRecipes.INVENTORY))));
+        registration.addRecipeCategories(new AnvilJeiCategory(ANVIL_TYPE,
+                new ItemStack(Items.ANVIL), registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         recipes = List.of();
         workbenchIndex = new WorkbenchJeiRecipes.Index(List.of(), List.of());
+        anvilIndex = new AnvilJeiRecipes.Index(List.of(), java.util.Set.of());
         recipeLevel = null;
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
@@ -81,6 +87,13 @@ public final class MiteJeiPlugin implements IModPlugin {
             workbenchIndex = built;
         } catch (RuntimeException failure) {
             Mite.LOGGER.error("Unable to build MITE workbench recipes for JEI", failure);
+        }
+        try {
+            var repairs = AnvilJeiRecipes.build();
+            registration.addRecipes(ANVIL_TYPE, repairs.recipes());
+            anvilIndex = repairs;
+        } catch (RuntimeException failure) {
+            Mite.LOGGER.error("Unable to build MITE anvil repairs for JEI", failure);
         }
         List<FurnaceJeiRecipe> built;
         try {
@@ -103,6 +116,7 @@ public final class MiteJeiPlugin implements IModPlugin {
             for (String workstation : WorkbenchJeiRecipes.categoryWorkstations(id))
                 registration.addRecipeCatalysts(type, furnace(workstation));
         });
+        // Anvils are recipe-specific CATALYST slots, so uses never include higher-tier repairs.
     }
 
     @Override
@@ -123,6 +137,12 @@ public final class MiteJeiPlugin implements IModPlugin {
                     .filter(holder -> SuspiciousStewJeiRecipes.isObsoleteVanillaPage(holder, recipeLevel)).toList();
             if (!obsoleteStews.isEmpty()) manager.hideRecipes(RecipeTypes.CRAFTING, obsoleteStews);
         }
+        if (!anvilIndex.coveredItems().isEmpty()) {
+            var obsoleteRepairs = manager.createRecipeLookup(RecipeTypes.ANVIL).get()
+                    .filter(recipe -> AnvilJeiRecipes.isCoveredNativeRepair(recipe.getUid(), recipe.getLeftInputs(),
+                            recipe.getRightInputs(), anvilIndex.coveredItems())).toList();
+            if (!obsoleteRepairs.isEmpty()) manager.hideRecipes(RecipeTypes.ANVIL, obsoleteRepairs);
+        }
         if (recipes.isEmpty()) return;
         manager.hideRecipeCategory(RecipeTypes.SMELTING);
         manager.hideRecipeCategory(RecipeTypes.BLASTING);
@@ -134,6 +154,7 @@ public final class MiteJeiPlugin implements IModPlugin {
     public void onRuntimeUnavailable() {
         recipes = List.of();
         workbenchIndex = new WorkbenchJeiRecipes.Index(List.of(), List.of());
+        anvilIndex = new AnvilJeiRecipes.Index(List.of(), java.util.Set.of());
         recipeLevel = null;
     }
 

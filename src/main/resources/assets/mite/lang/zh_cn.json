@@ -901,5 +901,14 @@
   "jade.mite.campfire_time": "当前燃料剩余：%s 秒",
   "tooltip.mite.bucket_source": "按住 Ctrl 放置液体源：消耗 100 点经验（不足时普通倾倒）",
   "tooltip.mite.brightness_locked": "MITE 将亮度固定为最低，无法更改。",
-  "gui.mite.world_day": "第 %s 天"
+  "gui.mite.world_day": "第 %s 天",
+  "jei.mite.anvil_material": "金属粒修复：消耗 1 粒示例",
+  "jei.mite.anvil_combination": "同品质装备合并修复",
+  "jei.mite.anvil_restored": "恢复耐久：%s / %s",
+  "jei.mite.anvil_wear": "铁砧损耗：%s",
+  "jei.mite.anvil_no_xp": "修理不消耗经验",
+  "jei.mite.anvil_example": "默认品质、示例损伤；实际恢复量以放入装备为准",
+  "jei.mite.anvil_qualification": "需要具备该品质的制作能力；修理本身不扣经验",
+  "jei.mite.anvil_preservation": "保留左侧装备的品质、附魔及颜色",
+  "jei.mite.anvil_combination_rules": "要求相同品质，右侧无附魔；盾牌颜色及纹样需一致"
 }

@@ -901,5 +901,14 @@
   "jade.mite.campfire_time": "Current fuel: %s s",
   "tooltip.mite.bucket_source": "Hold Ctrl to place a source: costs 100 XP (ordinary pour if insufficient)",
   "tooltip.mite.brightness_locked": "MITE locks brightness to Moody (0%).",
-  "gui.mite.world_day": "Day %s"
+  "gui.mite.world_day": "Day %s",
+  "jei.mite.anvil_material": "Material repair: one nugget example",
+  "jei.mite.anvil_combination": "Combine equipment of the same quality",
+  "jei.mite.anvil_restored": "Durability restored: %s / %s",
+  "jei.mite.anvil_wear": "Anvil wear: %s",
+  "jei.mite.anvil_no_xp": "Repairing consumes no XP",
+  "jei.mite.anvil_example": "Default quality and example damage; actual restoration depends on the input",
+  "jei.mite.anvil_qualification": "Requires the ability to craft this quality; repairing itself consumes no XP",
+  "jei.mite.anvil_preservation": "Preserves the left equipment's quality, enchantments and colors",
+  "jei.mite.anvil_combination_rules": "Same quality and an unenchanted right input; shield colors and patterns must match"
 }

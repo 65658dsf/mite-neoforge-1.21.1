@@ -101,6 +101,14 @@ public final class MaterialAnvilRules {
         if (disenchanting != null) return disenchanting;
         Plan enchanting = io.github.ningmeng123.mite.enchantment.R196BookAnvil.plan(first, second);
         if (enchanting != null) return enchanting;
+        Plan repair = previewRepair(anvil, first, second);
+        if (repair != null && repair.allowed() && repair.repair() && !CraftingQuality.canRepair(player, first))
+            return new Plan(ItemStack.EMPTY, 0, 0, true);
+        return repair;
+    }
+
+    /** Pure material-repair preview; the live menu separately rechecks the owner's quality ability. */
+    public static Plan previewRepair(BlockState anvil, ItemStack first, ItemStack second) {
         Material material = material(first);
         if (material == null || !first.isDamageableItem() || second.isEmpty()
                 || second.has(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS)) return null;
@@ -112,8 +120,8 @@ public final class MaterialAnvilRules {
                 && (MiteShields.definition(first) == null || EquipmentQuality.sameColor(first, second));
         // R196 rejects ingot repairs; also stop mismatching source equipment combinations.
         if (!consumable && !combination) return new Plan(ItemStack.EMPTY, 0, 0, false);
-        if (!first.isDamaged() || WorkbenchRules.materialCapacity(material.name()) > capacity(anvil)
-                || !CraftingQuality.canRepair(player, first)) return new Plan(ItemStack.EMPTY, 0, 0, true);
+        if (!first.isDamaged() || WorkbenchRules.materialCapacity(material.name()) > capacity(anvil))
+            return new Plan(ItemStack.EMPTY, 0, 0, true);
         ItemStack result = first.copyWithCount(1);
         EquipmentQuality.preserve(first, result);
         if (combination) {

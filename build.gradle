@@ -208,6 +208,8 @@ dependencies {
     // Optional client integration. JEI is supplied by the player's mods folder, never bundled.
     compileOnly 'mezz.jei:jei-1.21.1-common-api:19.57.0.451'
     compileOnly 'mezz.jei:jei-1.21.1-neoforge-api:19.57.0.451'
+    // Optional native sidebar hook; JEI internals are compile-only and never bundled or required.
+    compileOnly('mezz.jei:jei-1.21.1-neoforge:19.57.0.451') { transitive = false }
     // Jade discovers its integration only when installed; its classes are never bundled or required.
     compileOnly 'maven.modrinth:jade:15.10.6+neoforge'
     gametestCompileOnly 'maven.modrinth:jade:15.10.6+neoforge'
