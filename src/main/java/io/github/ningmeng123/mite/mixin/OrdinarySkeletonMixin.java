@@ -5,6 +5,9 @@ import io.github.ningmeng123.mite.entity.R196MobEquipment;
 import io.github.ningmeng123.mite.entity.R196Skeleton;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
 import io.github.ningmeng123.mite.entity.SourceRangedAttackGoal;
+import io.github.ningmeng123.mite.entity.SkeletonWeapons;
+import io.github.ningmeng123.mite.entity.SkeletonDualWeapons;
+import io.github.ningmeng123.mite.enchantment.SourceEnchantmentCombat;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,6 +35,7 @@ import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.spongepowered.asm.mixin.Final;
@@ -45,7 +49,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /** Ordinary source spawn metadata; original skeleton and wither-skeleton source weapon AI. @author NingMeng123 */
 @Mixin(AbstractSkeleton.class)
-public abstract class OrdinarySkeletonMixin extends Monster implements OrdinarySkeletonState {
+public abstract class OrdinarySkeletonMixin extends Monster implements OrdinarySkeletonState, SkeletonDualWeapons {
     @Unique private static final EntityDataAccessor<Integer> MITE_TYPE = SynchedEntityData.defineId(AbstractSkeleton.class, EntityDataSerializers.INT);
     @Shadow @Final private RangedBowAttackGoal<AbstractSkeleton> bowGoal;
     @Shadow @Final private MeleeAttackGoal meleeGoal;
@@ -54,6 +58,50 @@ public abstract class OrdinarySkeletonMixin extends Monster implements OrdinaryS
     protected OrdinarySkeletonMixin(EntityType<? extends Monster> type, Level level) { super(type, level); }
     @Unique private AbstractSkeleton mite$self() { return (AbstractSkeleton)(Object)this; }
     @Unique private boolean mite$ordinary() { return getType() == EntityType.SKELETON; }
+    @Override public ItemStack equipItemIfPossible(ItemStack incoming) {
+        EquipmentSlot slot = SkeletonWeapons.pickupSlot(mite$self(), incoming);
+        if (slot == null) return super.equipItemIfPossible(incoming);
+        ItemStack previous = getItemBySlot(slot);
+        boolean better;
+        if (previous.isEmpty()) better = true;
+        else if (SkeletonWeapons.melee(incoming) && SkeletonWeapons.melee(previous)) {
+            double baseDamage = getAttributeBaseValue(Attributes.ATTACK_DAMAGE);
+            double incomingDamage = incoming.getAttributeModifiers().compute(baseDamage, EquipmentSlot.MAINHAND);
+            double previousDamage = previous.getAttributeModifiers().compute(baseDamage, EquipmentSlot.MAINHAND);
+            better = incomingDamage > previousDamage || incomingDamage == previousDamage && canReplaceEqualItem(incoming, previous);
+        } else better = canReplaceCurrentItem(incoming, previous);
+        if (SourceEnchantmentCombat.disarmed(this) || !canHoldItem(incoming) || !better) return ItemStack.EMPTY;
+        if (!previous.isEmpty() && Math.max(random.nextFloat() - .1F, 0F) < getEquipmentDropChance(slot)) spawnAtLocation(previous);
+        ItemStack equipped = incoming.copyWithCount(1);
+        setItemSlot(slot, equipped); setGuaranteedDrop(slot); setPersistenceRequired();
+        mite$updateDualWeapons();
+        return equipped;
+    }
+
+    @Override public boolean mite$updateDualWeapons() {
+        if (level().isClientSide || SourceEnchantmentCombat.disarmed(this) || !SkeletonWeapons.shouldSwap(mite$self())) return false;
+        mite$swapHandWeapons();
+        return true;
+    }
+
+    @Override public void mite$prepareWeaponDrops() {
+        // Source equipment loot treats the primary weapon specially. Keep its bow policy independent of combat distance.
+        if (SkeletonWeapons.eligible(mite$self()) && SkeletonWeapons.melee(getMainHandItem())
+                && getOffhandItem().getItem() instanceof BowItem) mite$swapHandWeapons();
+    }
+
+    @Unique private void mite$swapHandWeapons() {
+        ItemStack main = getMainHandItem(), spare = getOffhandItem();
+        float mainDrop = getEquipmentDropChance(EquipmentSlot.MAINHAND), spareDrop = getEquipmentDropChance(EquipmentSlot.OFFHAND);
+        stopUsingItem();
+        setItemSlot(EquipmentSlot.MAINHAND, spare); setItemSlot(EquipmentSlot.OFFHAND, main);
+        setDropChance(EquipmentSlot.MAINHAND, spareDrop); setDropChance(EquipmentSlot.OFFHAND, mainDrop);
+    }
+
+    @Inject(method = "aiStep", at = @At("HEAD"))
+    private void mite$chooseWeapon(CallbackInfo ci) {
+        if (!isNoAi() && isAlive() && (getMainHandItem().isEmpty() || (tickCount + getId()) % 10 == 0)) mite$updateDualWeapons();
+    }
     @Override protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder); builder.define(MITE_TYPE, 0);
     }
@@ -111,6 +159,7 @@ public abstract class OrdinarySkeletonMixin extends Monster implements OrdinaryS
     }
     @Override protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recent) {
         if (!mite$ordinary()) { super.dropCustomDeathLoot(level,source,recent); return; }
+        mite$prepareWeaponDrops();
         R196MobEquipment.dropEquipment(mite$self(),source,recent,getPersistentData().getBoolean("mite_massive_fall_031"),false,this::getEquipmentDropChance);
     }
     @Override protected void dropFromLootTable(DamageSource source, boolean recent) {

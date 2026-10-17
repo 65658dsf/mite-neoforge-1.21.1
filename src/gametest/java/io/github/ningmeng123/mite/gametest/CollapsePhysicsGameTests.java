@@ -72,6 +72,52 @@ public final class CollapsePhysicsGameTests {
     private CollapsePhysicsGameTests() {}
 
     @GameTest(template = "empty", timeoutTicks = 200)
+    public static void realSurvivalMiningUnderminesEveryFullSurfaceSoilWithoutStrippingItsState(GameTestHelper helper) {
+        run(helper, f -> {
+            f.player.setPos(Vec3.atCenterOf(f.anchor).add(0D, 0D, 2D));
+            for (Block soil : List.of(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT,
+                    Blocks.PODZOL, Blocks.ROOTED_DIRT, Blocks.MYCELIUM)) {
+                f.set(f.anchor, Blocks.STONE);
+                f.set(f.anchor.above(), soil);
+                int before = f.falling().size();
+                helper.assertTrue(f.player.gameMode.destroyBlock(f.anchor), "Actual survival support removal succeeds under " + soil);
+                helper.assertTrue(f.state(f.anchor.above()).isAir(), "Natural surface soil cannot remain floating after its support is mined: " + soil);
+                helper.assertValueEqual(f.falling().size(), before + 1, "Each removal produces one actual falling surface block");
+                FallingBlockEntity falling = f.falling().getLast();
+                helper.assertTrue(falling.getBlockState().is(soil), "Collapse carries the original surface block instead of silently converting it");
+            }
+            f.finish();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void disturbedDirtQueuesItsGrassCapAndRootedNeighborThroughTheNativeScheduler(GameTestHelper helper) {
+        run(helper, f -> {
+            f.set(f.anchor, Blocks.DIRT);
+            f.set(f.anchor.above(), Blocks.GRASS_BLOCK);
+            f.set(f.anchor.east(), Blocks.ROOTED_DIRT);
+            Blocks.DIRT.stepOn(f.level, f.anchor, f.state(f.anchor), f.player);
+            helper.assertTrue(f.check(f.anchor.above()) != null && f.check(f.anchor.east()) != null,
+                    "A disturbed column now marks both its formerly excluded surface cap and neighboring rooted soil");
+            f.after(2, () -> {
+                helper.assertTrue(f.state(f.anchor.above()).isAir() && f.state(f.anchor.east()).isAir(),
+                        "The real two-tick queue collapses mixed natural soil instead of leaving a surface ceiling");
+                helper.assertValueEqual(f.falling().size(), 3, "Mixed soil chain creates exactly three native falling entities");
+                f.finish();
+            });
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void soilEnhancementLeavesFarmingShapesAndOtherSoftMaterialsOutsideTheCollapseSet(GameTestHelper helper) {
+        for (Block block : List.of(Blocks.FARMLAND, Blocks.DIRT_PATH, Blocks.MUD,
+                Blocks.SOUL_SOIL, Blocks.MOSS_BLOCK, Blocks.CLAY, Blocks.SAND, Blocks.GRAVEL))
+            helper.assertFalse(CollapsePhysics.managed(block.defaultBlockState()),
+                    "Surface fix does not silently include farming shapes, unrelated soils or ordinary falling blocks: " + block);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
     public static void survivalRemovalImmediatelyChecksAboveAndFourSidesButNotTheDiagonal(GameTestHelper helper) {
         run(helper, f -> {
             BlockPos support = f.anchor;

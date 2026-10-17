@@ -20,6 +20,14 @@ public final class SoupRecipes {
 
     public static void addRecipes(RecipeOutput output) {
         Item waterBowl = MiteFoods.WATER_BOWL.get();
+        var flowers = Ingredient.of(Items.DANDELION, Items.OXEYE_DAISY);
+        var saladIngredients = NonNullList.<Ingredient>create();
+        saladIngredients.add(flowers); saladIngredients.add(flowers); saladIngredients.add(flowers);
+        saladIngredients.add(Ingredient.of(waterBowl));
+        output.accept(ResourceLocation.fromNamespaceAndPath("mite", "salad_from_water_bowl"),
+                new FoodShapelessRecipe(new ShapelessRecipe("mite:salad", CraftingBookCategory.MISC,
+                        new ItemStack(MiteFoods.SALAD.get()), saladIngredients),
+                        new FoodManufacturingRecipe.Metadata(100F, "", 0, true, false)), null);
         shapeless(output, "beetroot_soup", "", Items.BEETROOT_SOUP,
                 Items.BEETROOT, Items.BEETROOT, Items.BEETROOT,
                 Items.BEETROOT, Items.BEETROOT, Items.BEETROOT, waterBowl);

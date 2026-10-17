@@ -101,6 +101,14 @@ public final class CraftingQuality {
     public static TimedCraftingRecipes.Rule rule(RecipeHolder<CraftingRecipe> recipe, ItemStack output,
             net.minecraft.world.item.crafting.CraftingInput input) {
         if (output.isEmpty()) return null;
+        if (output.is(io.github.ningmeng123.mite.registry.MiteFoods.SALAD.get())) {
+            // All salad recipes, including old empty-bowl and data-pack alternatives, share
+            // a visible five-second base preparation period rather than the 25-tick minimum.
+            TimedCraftingRecipes.Rule original = recipe.value() instanceof FoodManufacturingRecipe food
+                    ? food.manufacturing().rule() : TimedCraftingRecipes.get(recipe.id());
+            return new TimedCraftingRecipes.Rule(Math.max(100F, original == null ? 0F : original.difficulty()),
+                    original == null ? null : original.requiredBench(), original == null ? 0 : original.sourceOrder());
+        }
         if (recipe.value() instanceof FoodManufacturingRecipe food) return food.manufacturing().rule();
         if (recipe.value() instanceof RepairItemRecipe && RangedRodRepair.applies(output)) return RangedRodRepair.rule(output);
         if (EquipmentDurability.isManaged(output)) {

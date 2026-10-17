@@ -5,13 +5,21 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** The extra sr collision rules apply only to source undermined blocks. @author NingMeng123 */
+/** Source collision rules and requested impact damage for disturbed soil. @author NingMeng123 */
 public final class CollapseFallingBlocks {
+    public static final float IMPACT_DAMAGE_PER_BLOCK = 1F;
+    public static final int MAX_IMPACT_DAMAGE = 20;
     private CollapseFallingBlocks() {}
+
+    /** Native falling damage keeps its height accumulation, protections and damage events. */
+    public static void configureImpact(FallingBlockEntity falling) {
+        if (CollapsePhysics.managed(falling.getBlockState()))
+            falling.setHurtsEntities(IMPACT_DAMAGE_PER_BLOCK, MAX_IMPACT_DAMAGE);
+    }
 
     /**
      * Run after native movement, before the native landing decision. Native gravity, velocity,
-     * world-height bounds, save data, trial provenance and fall damage remain untouched.
+     * world-height bounds, save data, trial provenance and native fall-damage dispatch remain intact.
      */
     public static void afterMove(FallingBlockEntity falling) {
         if (!(falling.level() instanceof ServerLevel level) || falling.isRemoved()

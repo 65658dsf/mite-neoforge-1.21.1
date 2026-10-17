@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.entity.R196DiggerGoal;
 import io.github.ningmeng123.mite.entity.R196MonsterAi;
+import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
 import io.github.ningmeng123.mite.entity.ai.MonsterFarmland;
 import io.github.ningmeng123.mite.entity.ai.MonsterFarmlandGoal;
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
@@ -233,7 +234,8 @@ public final class MonsterFarmlandGameTests {
             fixture.mob.getPersistentData().putBoolean(R196MonsterAi.SMART, true);
             fixture.mob.setTarget(null); fixture.mob.getRandom().setSeed(0L);
             helper.assertTrue(!digger.canUse(), "R196 pursuit digging itself never scans fields without prey");
-            var prey = helper.makeMockPlayer(GameType.SURVIVAL);
+            // Non-player source pursuit retains the original support-digging branch.
+            var prey = EntityType.COW.create(fixture.level);
             prey.moveTo(obstacle.getX() + .5, obstacle.getY() + 1, obstacle.getZ() + .5);
             fixture.mob.setTarget(prey); fixture.mob.getRandom().setSeed(0L);
             helper.assertTrue(digger.canUse(), "Source pursuit selects the real reachable support below elevated prey");
@@ -248,6 +250,28 @@ public final class MonsterFarmlandGameTests {
             helper.assertValueEqual(fixture.drops().stream().mapToInt(item -> item.getItem().getCount()).sum(), 1,
                     "Pursuit harvesting drops one dirt, distinct from deliberate flattening");
             digger.stop();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void playerOnAdjacentFarmlandUsesFasterActuallyAttackableStep(GameTestHelper helper) {
+        try (var fixture = new Fixture(helper)) {
+            BlockPos obstacle=fixture.origin.east();fixture.set(obstacle,soil(false));
+            fixture.set(obstacle.above(),Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,7));
+            var player=helper.makeMockPlayer(GameType.SURVIVAL);
+            player.moveTo(obstacle.getX()+.5,obstacle.getY()+1,obstacle.getZ()+.5);fixture.mob.setTarget(player);
+            var digger=R196DiggerGoal.first(fixture.mob);var plan=digger.pursuitPlan();
+            helper.assertTrue(plan.completeWalkingRoute()&&!plan.choosesBreaking()&&plan.walkingTicks()<1_840D,
+                    "The actual step onto adjacent farmland is quicker than forty plus ten times 180 digging ticks");
+            var endpoint=plan.path().getEntityPosAtNode(fixture.mob,plan.path().getNodeCount()-1);
+            fixture.mob.moveTo(endpoint);
+            helper.assertTrue(SourceMeleeGoal.canStrike(fixture.mob,player),
+                    "The real navigation endpoint passes source melee distance and physical collision rays");
+            fixture.mob.moveTo(fixture.origin.getX()+.25,fixture.origin.getY(),fixture.origin.getZ()+.5);
+            helper.assertFalse(digger.canUse(),"Faster player pursuit does not dig away the reachable farmland support");
+            helper.assertTrue(fixture.level.getBlockState(obstacle).is(Blocks.FARMLAND)
+                    &&fixture.level.getBlockState(obstacle.above()).is(Blocks.WHEAT),"Walking keeps both support and crop intact");
         }
         helper.succeed();
     }

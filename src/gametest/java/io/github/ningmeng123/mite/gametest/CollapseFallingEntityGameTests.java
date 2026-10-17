@@ -15,6 +15,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -31,6 +33,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -138,13 +141,15 @@ public final class CollapseFallingEntityGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 300)
-    public static void savedNaturalDirtKeepsTrialNoDropsAndNoDirectImpactDamage(GameTestHelper h) {
+    public static void savedNaturalDirtKeepsTrialNoDropsAndNativeImpactDamage(GameTestHelper h) {
         try (var f = new Fixture(h)) {
             FallingBlockEntity original = f.fall(Blocks.DIRT.defaultBlockState(), true);
             h.assertTrue(((NaturalTrialFallingBlock)original).mite$isNaturalTrialBlock() && !original.dropItem,
                     "Using the original native factory transfers natural trial provenance to dirt too");
             CompoundTag tag = original.saveWithoutId(new CompoundTag()); original.discard();
-            h.assertFalse(tag.getBoolean("HurtEntities"), "Source dirt does not enable anvil-style direct impact damage");
+            h.assertTrue(tag.getBoolean("HurtEntities"), "Requested soil impact damage persists through the native entity save");
+            h.assertTrue(tag.getFloat("FallHurtAmount") == 1F && tag.getInt("FallHurtMax") == 20,
+                    "Soil uses one damage point per falling block with a twenty-point cap");
             FallingBlockEntity loaded = new FallingBlockEntity(EntityType.FALLING_BLOCK, f.level);
             loaded.load(tag); f.entities.add(loaded);
             h.assertTrue(((NaturalTrialFallingBlock)loaded).mite$isNaturalTrialBlock() && !loaded.dropItem,
@@ -154,6 +159,83 @@ public final class CollapseFallingEntityGameTests {
                     "The actual below-zero landing preserves natural provenance across a midair save");
             f.level.destroyBlock(f.landed, true);
             h.assertTrue(f.items().isEmpty(), "Natural trial dirt stays unharvestable after collapse and reload");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void actualFallingSoilHurtsCreaturesMoreFromGreaterHeightAndDoesNotDuplicateItsBlock(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            Cow target = f.target();
+            float shortDamage;
+            try {
+                FallingBlockEntity shortFall = f.fall(Blocks.DIRT.defaultBlockState(), false);
+                shortFall.setPos(shortFall.getX(), f.landed.getY() + 3, shortFall.getZ());
+                float initial = target.getHealth();
+                f.finish(shortFall);
+                shortDamage = initial - target.getHealth();
+                h.assertTrue(shortDamage > 0, "Native movement and landing physically damage an entity below falling dirt");
+                f.set(f.landed, Blocks.AIR.defaultBlockState());
+                target.setHealth(initial); target.invulnerableTime = 0;
+                FallingBlockEntity highFall = f.fall(Blocks.GRASS_BLOCK.defaultBlockState(), false);
+                f.finish(highFall);
+                h.assertTrue(initial - target.getHealth() > shortDamage, "A longer real fall does more damage than the three-block drop");
+                h.assertTrue(f.level.getBlockState(f.landed).is(Blocks.GRASS_BLOCK), "Damaging grass still settles as its original soil block");
+                h.assertTrue(f.items().isEmpty(), "Impact damage cannot create an extra dropped soil item");
+            } finally { target.discard(); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void soilImpactRespectsDamageCancellationWhileOrdinarySandStaysHarmless(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            Cow target = f.target();
+            int[] hits = {0};
+            Consumer<LivingIncomingDamageEvent> cancel = event -> {
+                if (event.getEntity() == target && event.getSource().getDirectEntity() instanceof FallingBlockEntity) {
+                    hits[0]++; event.setCanceled(true);
+                }
+            };
+            NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, LivingIncomingDamageEvent.class, cancel);
+            float initial = target.getHealth();
+            try {
+                f.finish(f.fall(Blocks.SOUL_SAND.defaultBlockState(), false));
+                h.assertTrue(hits[0] > 0, "Native falling damage reaches the cancellable living damage transaction");
+                h.assertValueEqual(target.getHealth(), initial, "Canceling real damage protects the target while soil still lands");
+                f.set(f.landed, Blocks.AIR.defaultBlockState());
+                FallingBlockEntity sand = f.fall(Blocks.SAND.defaultBlockState(), false);
+                h.assertFalse(sand.saveWithoutId(new CompoundTag()).getBoolean("HurtEntities"), "Ordinary sand retains its previous native non-damaging setting");
+                f.finish(sand);
+                h.assertValueEqual(hits[0], 1, "The soil enhancement cannot add a damage transaction to ordinary falling sand");
+            } finally { NeoForge.EVENT_BUS.unregister(cancel); target.discard(); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void oldMidairSoilSaveIsUpgradedAndImpactDamageIsCapped(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            FallingBlockEntity original = f.fall(Blocks.DIRT.defaultBlockState(), true);
+            CompoundTag tag = original.saveWithoutId(new CompoundTag()); original.discard();
+            tag.putBoolean("HurtEntities", false); tag.putFloat("FallHurtAmount", 0F);
+            FallingBlockEntity loaded = new FallingBlockEntity(EntityType.FALLING_BLOCK, f.level);
+            loaded.load(tag); f.entities.add(loaded);
+            CompoundTag upgraded = loaded.saveWithoutId(new CompoundTag());
+            h.assertTrue(upgraded.getBoolean("HurtEntities") && upgraded.getFloat("FallHurtAmount") == 1F,
+                    "A pre-fix midair soil save acquires the new impact rule on load");
+            h.assertTrue(((NaturalTrialFallingBlock)loaded).mite$isNaturalTrialBlock() && !loaded.dropItem,
+                    "Upgrading damage cannot reset trial provenance or native drop suppression");
+            Cow target = f.target();
+            try {
+                loaded.setPos(target.position());
+                float initial = target.getHealth();
+                loaded.causeFallDamage(1F, 1F, loaded.damageSources().fall());
+                h.assertValueEqual(target.getHealth(), initial, "The first block of soil movement remains a harmless settling allowance");
+                target.invulnerableTime = 0;
+                loaded.causeFallDamage(1000F, 1F, loaded.damageSources().fall());
+                h.assertValueEqual(initial - target.getHealth(), 20F, "Native soil impact is capped at twenty damage even for a very long saved fall");
+            } finally { target.discard(); }
         }
         h.succeed();
     }
@@ -179,7 +261,8 @@ public final class CollapseFallingEntityGameTests {
         try (var f = new Fixture(h)) {
             BlockPos upper = f.source.above();
             f.set(upper, Blocks.DIRT.defaultBlockState());
-            for (BlockState state : List.of(Blocks.DIRT.defaultBlockState(), Blocks.SOUL_SAND.defaultBlockState())) {
+            for (BlockState state : List.of(Blocks.DIRT.defaultBlockState(), Blocks.SOUL_SAND.defaultBlockState(),
+                    Blocks.GRASS_BLOCK.defaultBlockState(), Blocks.ROOTED_DIRT.defaultBlockState())) {
                 for (boolean natural : new boolean[]{false, true}) {
                     f.set(f.source, state);
                     if (natural) NaturalTrialBlocks.record(f.level.getChunkAt(f.source), f.source);
@@ -250,6 +333,15 @@ public final class CollapseFallingEntityGameTests {
             FallingBlockEntity falling = FallingBlockEntity.fall(level, source, state); entities.add(falling);
             helper.assertTrue(level.getBlockState(source).isAir(), "The real factory removes the source before its entity starts moving");
             return falling;
+        }
+        Cow target() {
+            Cow cow = EntityType.COW.create(level);
+            helper.assertTrue(cow != null, "A real living target is available");
+            cow.setNoAi(true); cow.setNoGravity(true);
+            cow.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100D); cow.setHealth(100F);
+            cow.moveTo(Vec3.atBottomCenterOf(landed));
+            helper.assertTrue(level.addFreshEntity(cow), "The real target joins the falling-block level");
+            return cow;
         }
         void finish(FallingBlockEntity falling) {
             for (int ticks = 0; ticks < 100 && !falling.isRemoved(); ticks++) falling.tick();

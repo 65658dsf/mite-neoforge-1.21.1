@@ -318,6 +318,7 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
     }
     @Override protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         if (!massiveFall || random.nextFloat() < .1F) dropSourceMaterials(level, source, recentlyHit);
+        ((SkeletonDualWeapons)(Object)this).mite$prepareWeaponDrops();
         R196MobEquipment.dropEquipment(this, source, recentlyHit, massiveFall, isLongdead(), this::getEquipmentDropChance);
     }
     private void dropSourceMaterials(ServerLevel level, DamageSource source, boolean recentlyHit) {

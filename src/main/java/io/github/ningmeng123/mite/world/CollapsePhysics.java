@@ -59,7 +59,14 @@ public final class CollapsePhysics {
 
     private CollapsePhysics() {}
     public static void register(IEventBus bus) { TYPES.register(bus); }
-    public static boolean managed(BlockState state) { return state.is(Blocks.DIRT) || state.is(Blocks.SOUL_SAND); }
+    public static boolean managed(BlockState state) {
+        // The dirt under a natural surface was already undermined, but its grass/podzol cap
+        // remained suspended. These full soil blocks share the same disturbed-soil lifecycle.
+        // Do not use the DIRT tag: it also includes moss, mud and non-full farming blocks.
+        return state.is(Blocks.DIRT) || state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.COARSE_DIRT)
+                || state.is(Blocks.PODZOL) || state.is(Blocks.ROOTED_DIRT) || state.is(Blocks.MYCELIUM)
+                || state.is(Blocks.SOUL_SAND);
+    }
 
     private static LevelChunk loaded(ServerLevel level, BlockPos pos) {
         return level.isOutsideBuildHeight(pos) ? null : level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4);

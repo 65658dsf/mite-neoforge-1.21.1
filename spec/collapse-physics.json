@@ -58,15 +58,24 @@
   },
   "enabled_blocks": [
     "minecraft:dirt",
-    "minecraft:soul_sand"
-  ],
-  "excluded_modern_blocks": [
     "minecraft:grass_block",
     "minecraft:coarse_dirt",
     "minecraft:podzol",
     "minecraft:rooted_dirt",
+    "minecraft:mycelium",
+    "minecraft:soul_sand"
+  ],
+  "source_enabled_blocks": [
+    "minecraft:dirt",
+    "minecraft:soul_sand"
+  ],
+  "excluded_modern_blocks": [
     "minecraft:mud",
-    "minecraft:soul_soil"
+    "minecraft:soul_soil",
+    "minecraft:farmland",
+    "minecraft:dirt_path",
+    "minecraft:moss_block",
+    "minecraft:clay"
   ],
   "default_new_sand_physics": false,
   "direction": "vertical only",
@@ -161,13 +170,18 @@
     "dislodged_over_open_space_drops": "normal cancellable loot path"
   },
   "falling_entity": {
-    "direct_impact_damage": false,
+    "direct_impact_damage": true,
+    "impact_damage_per_block_after_first": 1,
+    "impact_damage_max": 20,
+    "impact_source": "native FallingBlockEntity.causeFallDamage, normal damage protections and cancellation",
     "burial_suffocation": "normal block collision remains",
     "native_factory": true,
     "natural_trial_provenance_retained": true,
     "ordinary_sand_and_anvils_unchanged": true
   },
   "modern_adaptations": {
+    "2026-10-17_user_request": "disturbed full surface soil shares dirt collapse; native height-scaled impact damage enabled and upgraded on old entity load",
+    "surface_state": "original BlockState retained, including grass and mycelium",
     "minimum_height": "dimension minBuildHeight, includes negative Y",
     "pending_marker": "versioned per-chunk Data Attachment plus native saved scheduled ticks; no shared block-state rewrite",
     "native_soul_sand_tick": "earlier native tick executes first; later bubble-column tick retained separately from 2-tick collapse check",

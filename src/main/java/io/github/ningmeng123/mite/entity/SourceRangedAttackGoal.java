@@ -61,6 +61,7 @@ public final class SourceRangedAttackGoal extends Goal {
         Vec3 from=mob.getEyePosition();
         return clear(mob,from,target.getEyePosition()) || clear(mob,from,target.position().add(0,target.getBbHeight()*.25F,0));
     }
+    public static boolean clearShot(Mob mob, Vec3 point) { return clear(mob, mob.getEyePosition(), point); }
     private static boolean clear(Mob mob,Vec3 from,Vec3 to) {
         var context=new ClipContext(from,to,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,mob) {
             @Override public VoxelShape getBlockShape(BlockState state,net.minecraft.world.level.BlockGetter level,BlockPos pos) {

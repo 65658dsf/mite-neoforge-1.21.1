@@ -58,11 +58,16 @@ public final class SourceMeleeGoal extends Goal {
 
     /** Source og checks true distance to the target feet, then three physical-reach rays. */
     public static boolean canStrike(PathfinderMob mob, LivingEntity target) {
+        return canStrikeFrom(mob,target,mob.position());
+    }
+
+    /** Checks a planned standing position without moving the entity or changing the world. */
+    public static boolean canStrikeFrom(PathfinderMob mob, LivingEntity target, Vec3 feet) {
         if (target == null || !target.isAlive()) return false;
         var definition = MiteTools.definition(mob.getMainHandItem());
         double reach = 1.5D + (definition == null ? 0D : definition.reach() * .6D);
-        if (mob.distanceToSqr(target.getX(), target.getBoundingBox().minY, target.getZ()) > reach * reach) return false;
-        Vec3 origin = mob.position().add(0, mob.getBbHeight() * .75D, 0);
+        if (feet.distanceToSqr(new Vec3(target.getX(),target.getBoundingBox().minY,target.getZ())) > reach * reach) return false;
+        Vec3 origin = feet.add(0, mob.getBbHeight() * .75D, 0);
         for (double fraction : new double[]{.5D, .9D, .1D}) {
             if (clearPhysicalReach(mob, origin, target.position().add(0, target.getBbHeight() * fraction, 0))) return true;
         }
@@ -82,6 +87,10 @@ public final class SourceMeleeGoal extends Goal {
     }
 
     private Path findPath(LivingEntity target) {
+        if(ZombieRoutePlanner.applies(mob)) {
+            var digger=R196DiggerGoal.first(mob);
+            if(digger!=null) return digger.pursuitPlan().path();
+        }
         return mob.getNavigation().createPath(target.blockPosition(), 0, (int)Math.ceil(SourceMonsterTargeting.effectiveRange(mob)));
     }
 
@@ -94,7 +103,7 @@ public final class SourceMeleeGoal extends Goal {
             suppress(10);
             return false;
         }
-        if (suppressed < 1 && MobCombat.ticksWithOffset(mob) % 10 == 0 && mob.distanceTo(target) < 3F && !canStrike(mob, target)) {
+        if (!ZombieRoutePlanner.applies(mob) && suppressed < 1 && MobCombat.ticksWithOffset(mob) % 10 == 0 && mob.distanceTo(target) < 3F && !canStrike(mob, target)) {
             var limit = target.position().add(0, target.getBbHeight() * .5D, 0);
             var collision = mob.level().clip(new ClipContext(mob.position().add(0, mob.getBbHeight() * .75D, 0), limit,
                     ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob));
@@ -116,7 +125,7 @@ public final class SourceMeleeGoal extends Goal {
     @Override public boolean canContinueToUse() {
         LivingEntity target = mob.getTarget();
         if (target == null || !target.isAlive()) return false;
-        if (!followUnseen) return !mob.getNavigation().isDone();
+        if (!followUnseen && !ZombieRoutePlanner.applies(mob)) return !mob.getNavigation().isDone();
         return mob.isWithinRestriction(target.blockPosition());
     }
 
@@ -141,7 +150,7 @@ public final class SourceMeleeGoal extends Goal {
         LivingEntity target = mob.getTarget();
         if (target == null) return;
         mob.getLookControl().setLookAt(target, 30, 30);
-        if ((followUnseen || SourceMonsterTargeting.canSee(mob, target, false)) && --recalculate <= 0) {
+        if ((followUnseen || ZombieRoutePlanner.applies(mob) || SourceMonsterTargeting.canSee(mob, target, false)) && --recalculate <= 0) {
             recalculate = 4 + mob.getRandom().nextInt(7);
             path = findPath(target);
             mob.getNavigation().moveTo(path, speed);

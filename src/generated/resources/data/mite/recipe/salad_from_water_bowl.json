@@ -1,0 +1,14 @@
+{
+  "type": "mite:food_shapeless",
+  "category": "misc",
+  "group": "mite:salad",
+  "ingredients": [
+    [{"item": "minecraft:dandelion"}, {"item": "minecraft:oxeye_daisy"}],
+    [{"item": "minecraft:dandelion"}, {"item": "minecraft:oxeye_daisy"}],
+    [{"item": "minecraft:dandelion"}, {"item": "minecraft:oxeye_daisy"}],
+    {"item": "mite:water_bowl"}
+  ],
+  "result": {"id": "mite:salad", "count": 1},
+  "manufacturing": {"difficulty": 100.0, "required_bench": "", "source_order": 0,
+    "output_contains_bowl": true, "any_milk_buckets": false}
+}

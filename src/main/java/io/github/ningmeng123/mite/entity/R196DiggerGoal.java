@@ -42,7 +42,8 @@ public final class R196DiggerGoal extends Goal {
     private BlockPos target;
     private int progress = -1, cooldown = 40, pause;
     private boolean active;
-    public R196DiggerGoal(PathfinderMob mob) { this.mob=mob; setFlags(EnumSet.of(Flag.MOVE,Flag.LOOK)); }
+    private final ZombieRoutePlanner pursuit;
+    public R196DiggerGoal(PathfinderMob mob) { this.mob=mob; pursuit=new ZombieRoutePlanner(mob,this);setFlags(EnumSet.of(Flag.MOVE,Flag.LOOK)); }
     public static boolean watcher(PathfinderMob mob) {
         String source=io.github.ningmeng123.mite.worldgen.R196MobSpawning.sourceClass(mob);
         if(source==null || source.equals("tn")) return false; // Pigman executes oldAi, not its inherited selectors.
@@ -109,14 +110,27 @@ public final class R196DiggerGoal extends Goal {
         float speed=held.getDestroySpeed(state);
         return speed>1F?speed:0F;
     }
-    public boolean canDestroy(BlockPos pos,boolean clipping) {
-        if(blockingWeapon()||!mob.level().hasChunkAt(pos)||!EventHooks.canEntityGrief(mob.level(),mob)) return false;
-        var tool=EquipmentDurability.toolProfile(mob.getMainHandItem()); int foot=mob.blockPosition().getY();
-        if(pos.getY()>foot+1||pos.getY()<foot&&(tool==null||tool.family()!=ToolFamily.SHOVEL)) return false;
-        if(mob.position().add(0,mob.getBbHeight()*.5,0).distanceToSqr(pos.getCenter())>3.25D) return false;
+    public ZombieRoutePlanner.Plan pursuitPlan() { return pursuit.plan(); }
+    public boolean destructionRejected(BlockPos pos) { return pursuit.rejected(pos); }
+    public void rejectDestruction(BlockPos pos) {
+        pursuit.reject(pos);
         BlockState state=mob.level().getBlockState(pos);
-        if(state.isAir()||!state.getFluidState().isEmpty()||state.getDestroySpeed(mob.level(),pos)<0F) return false;
-        if(clipping&&blocked(mob.getEyePosition(),pos)&&blocked(legs(),pos)) return false;
+        if(state.getBlock() instanceof DoorBlock) {
+            BlockPos partner=state.getValue(DoorBlock.HALF)==net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER
+                    ?pos.below():pos.above();
+            if(mob.level().getBlockState(partner).is(state.getBlock()))pursuit.reject(partner);
+        }
+    }
+    public long remainingBreakTicks(BlockPos pos) {
+        return io.github.ningmeng123.mite.rules.ZombieRouteRules.remainingBreakTicks(
+                active&&pos.equals(target)?cooldown:40,active&&pos.equals(target)?progress:-1,stageDelay(pos));
+    }
+    /** Planning can inspect a future obstacle, but execution still requires physical reach and grief permission. */
+    public boolean canDestroyMaterial(BlockPos pos) {
+        if(blockingWeapon()||!mob.level().hasChunkAt(pos)||pursuit.rejected(pos)) return false;
+        BlockState state=mob.level().getBlockState(pos);
+        if(state.isAir()||!state.getFluidState().isEmpty()||state.getDestroySpeed(mob.level(),pos)<0F
+                || !state.canEntityDestroy(mob.level(),pos,mob)) return false;
         if(mob instanceof R196Elemental earth&&minimumHarvestLevel(state)<=earth.getBlockHarvestLevel()) return true;
         boolean cactus=state.is(Blocks.CACTUS)&&(mob.isInvulnerable()||mob.getType().is(EntityTypeTags.UNDEAD));
         boolean exception=state.is(BlockTags.SAND)||state.is(BlockTags.DIRT)||state.is(Blocks.GRAVEL)
@@ -124,8 +138,17 @@ public final class R196DiggerGoal extends Goal {
                 ||state.is(Blocks.FARMLAND)||state.is(Blocks.CLAY)||state.is(Blocks.SPONGE)||state.is(Blocks.WET_SPONGE)
                 ||state.is(Blocks.PUMPKIN)||state.is(Blocks.CARVED_PUMPKIN)||state.is(Blocks.JACK_O_LANTERN)
                 ||state.is(Blocks.MELON)||state.is(Blocks.MYCELIUM)||state.is(Blocks.HAY_BLOCK)||state.is(Blocks.GLASS_PANE)||cactus;
-        if(requiresSourceTool(state)&&!(R196MonsterAi.frenzied(mob)&&minimumHarvestLevel(state)<2)
-                &&sourceStrength(mob,state)<=0F&&!exception) return false;
+        return !requiresSourceTool(state)||(R196MonsterAi.frenzied(mob)&&minimumHarvestLevel(state)<2)
+                ||sourceStrength(mob,state)>0F||exception;
+    }
+    public boolean canDestroy(BlockPos pos,boolean clipping) {
+        if(!canDestroyMaterial(pos)||!EventHooks.canEntityGrief(mob.level(),mob)) return false;
+        var tool=EquipmentDurability.toolProfile(mob.getMainHandItem()); int foot=mob.blockPosition().getY();
+        if(pos.getY()>foot+1||pos.getY()<foot&&(tool==null||tool.family()!=ToolFamily.SHOVEL)) return false;
+        if(mob.position().add(0,mob.getBbHeight()*.5,0).distanceToSqr(pos.getCenter())>3.25D) return false;
+        BlockState state=mob.level().getBlockState(pos);
+        if(clipping&&blocked(mob.getEyePosition(),pos)&&blocked(legs(),pos)) return false;
+        if(mob instanceof R196Elemental earth&&minimumHarvestLevel(state)<=earth.getBlockHarvestLevel()) return true;
         for(var peer:mob.level().getEntitiesOfClass(PathfinderMob.class,new net.minecraft.world.phys.AABB(
                 mob.getX()-4,mob.getY()-4,mob.getZ()-4,mob.getX()+4,mob.getY()+4,mob.getZ()+4))) {
             if(peer==mob) continue;
@@ -168,6 +191,14 @@ public final class R196DiggerGoal extends Goal {
     }
     @Override public boolean canUse() {
         restore();var prey=mob.getTarget();
+        if(ZombieRoutePlanner.applies(mob)) {
+            var plan=pursuit.plan();
+            if(plan.choosesBreaking()) {
+                if(plan.portal()) {if(active)stop();return false;}
+                return setBlockToDig(plan.firstBlock(),true);
+            }
+            if(plan.completeWalkingRoute()) { if(active) stop();return false; }
+        }
         if(prey==null||!prey.isAlive()||blockingWeapon()||!R196MonsterAi.diggingEnabled(mob)&&!mob.getSensing().hasLineOfSight(prey)
                 ||mob.blockPosition().equals(prey.blockPosition())) return false;
         if(active&&target!=null&&canDestroy(target,true)) return true;
@@ -222,6 +253,10 @@ public final class R196DiggerGoal extends Goal {
         if(pause>0) return pause!=1||!pathIsCloser();
         var prey=mob.getTarget();
         if(!active||target==null||!canDestroy(target,true)||prey==null||!prey.isAlive()||mob.blockPosition().equals(prey.blockPosition())) return false;
+        if(ZombieRoutePlanner.applies(mob)&&MobCombat.ticksWithOffset(mob)%ZombieRoutePlanner.REPLAN_TICKS==0) {
+            var plan=pursuit.plan();
+            if(plan.portal()||plan.completeWalkingRoute()&&!plan.choosesBreaking()) return false;
+        }
         return MobCombat.ticksWithOffset(mob)%10!=0||!pathCanHit();
     }
     /** Actual registered source values; unmapped modern blocks retain the project's modern hardness adaptation. */
@@ -267,6 +302,14 @@ public final class R196DiggerGoal extends Goal {
         BlockPos broken=target;
         if(++progress>=10) {
             progress=-1;
+            if(!state.canEntityDestroy(level,broken,mob)||!EventHooks.onEntityDestroyBlock(mob,broken,state)) { rejectDestruction(broken);stop();return; }
+            if(state.getBlock() instanceof DoorBlock) {
+                BlockPos partner=state.getValue(DoorBlock.HALF)==net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER
+                        ?broken.below():broken.above();
+                BlockState other=level.getBlockState(partner);
+                if(other.is(state.getBlock())&&(!other.canEntityDestroy(level,partner,mob)
+                        ||!EventHooks.onEntityDestroyBlock(mob,partner,other))) {rejectDestruction(partner);stop();return;}
+            }
             if(!level.destroyBlock(broken,true,mob)) { stop();return; }
             if(!mob.getMainHandItem().isEmpty()) EquipmentDurability.mineBlock(mob.getMainHandItem(),level,state,broken,mob);
             active=false;

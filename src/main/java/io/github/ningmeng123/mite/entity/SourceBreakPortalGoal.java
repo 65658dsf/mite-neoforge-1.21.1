@@ -30,6 +30,11 @@ public final class SourceBreakPortalGoal extends Goal {
         // pm and pj never set the source mutex bits: this task can run alongside movement/mining.
     }
 
+    public static SourceBreakPortalGoal first(PathfinderMob mob) {
+        return mob.goalSelector.getAvailableGoals().stream().map(w->w.getGoal()).filter(SourceBreakPortalGoal.class::isInstance)
+                .map(SourceBreakPortalGoal.class::cast).findFirst().orElse(null);
+    }
+
     public static boolean woodenPortal(BlockState state) {
         return state.is(BlockTags.WOODEN_DOORS) || state.is(BlockTags.WOODEN_TRAPDOORS)
                 || state.is(BlockTags.FENCE_GATES);
@@ -51,6 +56,7 @@ public final class SourceBreakPortalGoal extends Goal {
 
     private boolean candidate(BlockPos pos) {
         if (!(mob.level() instanceof ServerLevel level) || !level.hasChunkAt(pos)) return false;
+        var digger=R196DiggerGoal.first(mob);if(digger!=null&&digger.destructionRejected(pos))return false;
         BlockState state = level.getBlockState(pos);
         if (!woodenPortal(state)) return false;
         target = pos.immutable();
@@ -60,6 +66,15 @@ public final class SourceBreakPortalGoal extends Goal {
 
     @Override public boolean canUse() {
         target = null;
+        if(mob.level() instanceof ServerLevel level&&ZombieRoutePlanner.applies(mob)) {
+            var digger=R196DiggerGoal.first(mob);
+            if(digger!=null) {
+                var plan=digger.pursuitPlan();
+                if(plan.portal()&&plan.firstBlock()!=null&&mob.distanceToSqr(plan.firstBlock().getCenter())<4D) {
+                    target=plan.firstBlock();return permitted(level);
+                }
+            }
+        }
         if (!(mob.level() instanceof ServerLevel level) || !mob.horizontalCollision
                 || !(mob.getNavigation() instanceof GroundPathNavigation navigation)) return false;
         var path = navigation.getPath();
@@ -76,7 +91,22 @@ public final class SourceBreakPortalGoal extends Goal {
 
     private boolean permitted(ServerLevel level) {
         return target != null && (!(level.getBlockState(target).getBlock() instanceof FenceGateBlock)
-                || mob.getTarget() instanceof Player) && EventHooks.canEntityGrief(level, mob) && closedPortal(level, target);
+                || mob.getTarget() instanceof Player) && !rejected() && !fasterWalkingRoute() && EventHooks.canEntityGrief(level, mob) && closedPortal(level, target);
+    }
+
+    private void reject(BlockPos pos) {
+        var digger=R196DiggerGoal.first(mob);if(digger!=null)digger.rejectDestruction(pos);
+    }
+
+    private boolean rejected() {
+        var digger=R196DiggerGoal.first(mob);return target!=null&&digger!=null&&digger.destructionRejected(target);
+    }
+
+    private boolean fasterWalkingRoute() {
+        if(!ZombieRoutePlanner.applies(mob)) return false;
+        var digger=R196DiggerGoal.first(mob);if(digger==null) return false;
+        var plan=digger.pursuitPlan();
+        return plan.choosesBreaking()?!plan.portal():plan.completeWalkingRoute();
     }
 
     public int threshold(BlockState state) {
@@ -92,13 +122,13 @@ public final class SourceBreakPortalGoal extends Goal {
     @Override public boolean canContinueToUse() {
         if (!(mob.level() instanceof ServerLevel level) || target == null || !mob.isAlive()) return false;
         // Source checks griefing only on start. Rechecking it is the modern protection-hook adaptation.
-        return EventHooks.canEntityGrief(level, mob) && progress <= threshold(level.getBlockState(target))
+        return !rejected() && !fasterWalkingRoute() && EventHooks.canEntityGrief(level, mob) && progress <= threshold(level.getBlockState(target))
                 && closedPortal(level, target) && mob.distanceToSqr(target.getX(), target.getY(), target.getZ()) < 4D;
     }
 
     @Override public void tick() {
         if (!(mob.level() instanceof ServerLevel level) || target == null || !closedPortal(level, target)
-                || !EventHooks.canEntityGrief(level, mob)) return;
+                || !EventHooks.canEntityGrief(level, mob) || rejected() || fasterWalkingRoute()) return;
         BlockState state = level.getBlockState(target);
         mob.setNoActionTime(-400);
         if (mob.getRandom().nextInt(20) == 0) {
@@ -111,10 +141,15 @@ public final class SourceBreakPortalGoal extends Goal {
         int stage = (int)((float)progress / threshold * 10F);
         if (stage != lastStage) { level.destroyBlockProgress(mob.getId(), target, stage); lastStage = stage; }
         if (progress != threshold || level.getDifficulty() != Difficulty.HARD) return;
+        if(!state.canEntityDestroy(level,target,mob)||!EventHooks.onEntityDestroyBlock(mob,target,state)) { reject(target);stop();return; }
         // pj sets air directly: no item drop and no mining-tool wear.
         if (state.getBlock() instanceof DoorBlock) {
             BlockPos partner = state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER ? target.below() : target.above();
-            if (level.getBlockState(partner).is(state.getBlock())) level.setBlock(partner, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
+            BlockState other=level.getBlockState(partner);
+            if(other.is(state.getBlock())) {
+                if(!other.canEntityDestroy(level,partner,mob)||!EventHooks.onEntityDestroyBlock(mob,partner,other)) {reject(partner);stop();return;}
+                level.setBlock(partner,net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),2);
+            }
         }
         level.setBlock(target, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
         level.gameEvent(mob, GameEvent.BLOCK_DESTROY, target);

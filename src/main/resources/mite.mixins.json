@@ -28,6 +28,7 @@
     "VillageStructurePlacementMixin",
     "VillageTemplateMixin",
     "PlayerFoodMixin",
+    "PlayerSluggishSwimmingMixin",
     "FoodDataMixin",
     "CompleteFoodUseMixin",
     "SpecialFoodFinishMixin",
