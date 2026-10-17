@@ -1,7 +1,9 @@
 package io.github.ningmeng123.mite.mixin;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import io.github.ningmeng123.mite.command.PlayerStatusCommands;
 import io.github.ningmeng123.mite.rules.ExperienceRules;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import java.util.Collection;
@@ -13,11 +15,20 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /** Preserves command meaning while avoiding float-to-point rounding. @author NingMeng123 */
 @Mixin(ExperienceCommand.class)
 public abstract class ExperienceCommandMixin {
+    @ModifyArg(method = "register", at = @At(value = "INVOKE",
+            target = "Lcom/mojang/brigadier/CommandDispatcher;register(Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;)Lcom/mojang/brigadier/tree/LiteralCommandNode;",
+            ordinal = 1), index = 0)
+    private static LiteralArgumentBuilder<CommandSourceStack> mite$allowPersonalExperienceQuery(
+            LiteralArgumentBuilder<CommandSourceStack> alias) {
+        return PlayerStatusCommands.experienceAlias(alias);
+    }
+
     @Inject(method = "queryExperience", at = @At("HEAD"), cancellable = true)
     private static void mite$queryExactPoints(CommandSourceStack source, ServerPlayer player,
                                                @Coerce Object type, CallbackInfoReturnable<Integer> cir) {

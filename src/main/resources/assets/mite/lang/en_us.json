@@ -156,6 +156,7 @@
   "item.minecraft.wooden_sword": "Wooden Club",
   "commands.mite.experience.level_too_high": "The requested level requires more XP than vanilla integer storage can represent (through level %s). No target's experience was changed.",
   "commands.mite.experience.points_overflow": "These points within the level would overflow vanilla's integer XP storage. No target's experience was changed.",
+  "commands.mite.xp": "Current experience: %s points",
   "item.mite.flint_chip": "Flint Chip",
   "item.mite.sinew": "Sinew",
   "item.mite.flint_hatchet": "Flint Hatchet",
