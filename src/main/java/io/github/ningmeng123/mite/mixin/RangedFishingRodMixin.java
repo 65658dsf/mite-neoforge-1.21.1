@@ -7,7 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** R196 casting requires footing or a boat/cart, and no submerged head. @author NingMeng123 */
+/** R196 casting requires footing; riding a boat or horse bypasses the footing check. @author NingMeng123 */
 @Mixin(FishingRodItem.class)
 public abstract class RangedFishingRodMixin {
     @WrapMethod(method = "use")
@@ -33,7 +33,7 @@ public abstract class RangedFishingRodMixin {
             CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
         ItemStack stack = player.getItemInHand(hand);
         if (MiteRangedItems.rodMaterial(stack) == null || player.fishing != null) return;
-        boolean vehicle = player.getVehicle() instanceof Boat || player.getVehicle() instanceof AbstractMinecart;
+        boolean vehicle = player.getVehicle() instanceof Boat || player.getVehicle() instanceof AbstractHorse;
         if (!vehicle && (!player.onGround() || player.isInWater() || player.isUnderWater()
                 || !level.getFluidState(net.minecraft.core.BlockPos.containing(player.getX(), player.getEyeY(), player.getZ())).isEmpty()))
             cir.setReturnValue(InteractionResultHolder.fail(stack));

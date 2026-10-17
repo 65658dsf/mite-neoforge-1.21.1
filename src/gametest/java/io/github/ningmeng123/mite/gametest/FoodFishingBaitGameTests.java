@@ -150,6 +150,26 @@ public final class FoodFishingBaitGameTests {
         helper.succeed();
     }
     @GameTest(template = "ranged_027")
+    public static void mountedBoatAndHorseCastWithoutFootingButMinecartDoesNotReceiveTheHorseException(GameTestHelper helper) {
+        for (EntityType<?> type : new EntityType<?>[]{EntityType.BOAT, EntityType.HORSE, EntityType.MINECART}) {
+            try (Fixture f = new Fixture(helper)) {
+                Entity vehicle = type.create(helper.getLevel());
+                helper.assertTrue(vehicle != null, "Registered native mount can be created");
+                vehicle.moveTo(f.player.position()); vehicle.setNoGravity(true);
+                helper.getLevel().addFreshEntity(vehicle);
+                try {
+                    helper.assertTrue(f.player.startRiding(vehicle, true), "The test uses actual native riding state");
+                    f.player.setOnGround(false);
+                    ((FishingRodItem)Items.FISHING_ROD).use(helper.getLevel(), f.player, InteractionHand.MAIN_HAND);
+                    boolean expected = type != EntityType.MINECART;
+                    f.hook = f.player.fishing;
+                    helper.assertTrue((f.hook != null) == expected, "Boat and Horse are source exceptions; a minecart still needs ordinary footing");
+                } finally { f.player.stopRiding(); vehicle.discard(); }
+            }
+        }
+        helper.succeed();
+    }
+    @GameTest(template = "ranged_027")
     public static void SourceAdamantiumHookResistsFireAndOtherBurningHooksWearTheHeldRod(GameTestHelper helper) {
         for (var material : MiteRangedItems.rods()) try (Fixture f = new Fixture(helper)) {
             ItemStack rod = new ItemStack(MiteRangedItems.rod(material));
