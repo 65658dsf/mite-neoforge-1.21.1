@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.rules.R196SpawnRules;
 import io.github.ningmeng123.mite.rules.R196SpawnRules.Category;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
+import io.github.ningmeng123.mite.worldgen.R196OutdoorChecks;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -134,6 +135,28 @@ public final class HostilePopulationGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 240)
+    public static void ordinaryDayRollsBackTheFinalizedUndeadRiderButBloodDayAdmitsTheSameJockey(GameTestHelper helper) {
+        ready(helper, arena -> savedProgress(arena, () -> {
+            helper.assertTrue(R196OutdoorChecks.outdoors(arena.level, arena.position), "The jockey fixture is actually outdoors");
+            for (boolean blood : List.of(false, true)) {
+                arena.level.setDayTime((blood ? 31L * 24000L : 0L) + 6000L);
+                int before = R196MobSpawning.count(arena.level, Category.MONSTER, null);
+                Spider spider = arena.spider();
+                try (var trace = new RiderTrace(spider, false, false)) {
+                    arena.level.getRandom().setSeed(jockeySeed());
+                    var result = R196MobSpawning.finalizeNaturalMonster(arena.level, spider, null, 2);
+                    helper.assertValueEqual(trace.riderJoins(), 1, "Source finalization really creates the otherwise unchecked skeleton rider");
+                    helper.assertValueEqual(result.monsters(), blood ? 2 : 0, "Only the current blood date admits the outdoor daylight jockey");
+                    helper.assertValueEqual(R196MobSpawning.count(arena.level, Category.MONSTER, null), before + (blood ? 2 : 0),
+                            "A rejected daylight tree leaves no orphan undead in the real population");
+                    if (!blood) helper.assertTrue(spider.isRemoved() && trace.acceptedRiders().stream().allMatch(Mob::isRemoved),
+                            "Ordinary daylight removes both the parent and its pre-added undead rider");
+                }
+            }
+        }));
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 240)
     public static void oneRemainingMonsterPlaceRollsBackTheRealPreAddedSpiderRiderAndItsUnaddedParent(GameTestHelper helper) {
         ready(helper, arena -> savedProgress(arena, () -> {
             int before = R196MobSpawning.count(arena.level, Category.MONSTER, null);
@@ -230,7 +253,14 @@ public final class HostilePopulationGameTests {
     private static void savedProgress(Arena arena, Runnable test) {
         BloodMoonInvasionData progress = BloodMoonInvasionData.get(arena.level);
         long highestDay = progress.highestDay(); boolean dirty = progress.isDirty();
-        try { test.run(); } finally { progress.restoreProgress(highestDay); progress.setDirty(dirty); }
+        long time = arena.level.getDayTime();
+        try {
+            arena.level.setDayTime(18000L);
+            test.run();
+        } finally {
+            arena.level.setDayTime(time);
+            progress.restoreProgress(highestDay); progress.setDirty(dirty);
+        }
     }
 
     /** Test-only event observation; production accounting snapshots only its own actual passenger tree. */

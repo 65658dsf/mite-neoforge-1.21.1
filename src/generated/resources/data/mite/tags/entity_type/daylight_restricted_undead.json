@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:undead",
+    "mite:ghoul",
+    "mite:wight",
+    "mite:invisible_stalker",
+    "mite:shadow"
+  ]
+}

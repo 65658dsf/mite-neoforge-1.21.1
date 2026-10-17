@@ -35,6 +35,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
@@ -83,6 +84,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /** Source spawning loops replace vanilla scheduling; modern-only mobs retain explicit native predicates. @author NingMeng123 */
 public final class R196MobSpawning {
+    public static final TagKey<EntityType<?>> DAYLIGHT_RESTRICTED_UNDEAD = TagKey.create(Registries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "daylight_restricted_undead"));
     public record Entry(EntityType<? extends Mob> type, String sourceClass, Category category,
                         int weight, int minimum, int maximum, int pack, boolean modern) {}
     private record Profile(int id, String name, Map<Category, List<Entry>> lists) {}
@@ -392,7 +395,7 @@ public final class R196MobSpawning {
                         if (!valid) continue;
                     }
                     if (category == Category.MONSTER && R196OutdoorChecks.outdoors(level, mob.blockPosition())) {
-                        if (!R196SpawnRules.outdoorAllows(undead(actual.sourceClass()), day, moon, random::nextInt)) continue chunkLoop;
+                        if (!R196SpawnRules.outdoorAllows(mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD), day, moon, random::nextInt)) continue chunkLoop;
                     }
                     SourceFinalization prepared = prepareSourceFinalization(mob, level, groupData);
                     mob = prepared.mob();
@@ -427,7 +430,9 @@ public final class R196MobSpawning {
             for (Entity entity : tree) if (!owned.contains(entity)) owned.add(entity);
             int needed = (int)owned.stream().filter(entity -> !entity.isRemoved() && entity instanceof Mob mob
                     && category(mob) == Category.MONSTER).count();
-            if (root.isRemoved() || root.isSpawnCancelled() || needed > allowance || allowance <= 0) {
+            boolean daylightBlocked = owned.stream().anyMatch(entity -> !entity.isRemoved() && entity instanceof Mob mob
+                    && !naturalDaylightAllows(mob, level));
+            if (root.isRemoved() || root.isSpawnCancelled() || needed > allowance || allowance <= 0 || daylightBlocked) {
                 discardNaturalTree(owned); return new NaturalMonsterSpawn(finalized, 0);
             }
             for (Entity entity : tree) {
@@ -559,11 +564,19 @@ public final class R196MobSpawning {
         }
     }
     public static boolean qualifiesWithEvent(Mob mob, ServerLevelAccessor accessor, MobSpawnType reason, boolean light, boolean modern) {
+        if (reason == MobSpawnType.NATURAL && !naturalDaylightAllows(mob, accessor.getLevel())) return false;
         if (modern) return SpawnPlacements.checkSpawnRules(mob.getType(), accessor, reason, mob.blockPosition(), mob.getRandom())
                 && EventHooks.checkSpawnPosition(mob, accessor, reason);
         var event = new MobSpawnEvent.PositionCheck(mob, accessor, reason, null); NeoForge.EVENT_BUS.post(event);
         return event.getResult() == MobSpawnEvent.PositionCheck.Result.SUCCEED || event.getResult() == MobSpawnEvent.PositionCheck.Result.DEFAULT
                 && R196SpawnQualification.qualifies(mob, accessor, light, reason == MobSpawnType.SPAWNER);
+    }
+    /** Only the current blood date releases outdoor undead, including modern variants and finalized riders. */
+    public static boolean naturalDaylightAllows(Mob mob, ServerLevel level) {
+        if (!level.dimension().equals(Level.OVERWORLD) || !mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD)) return true;
+        return !R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000L))
+                || R196SpawnRules.moon(level.getDayTime(), true).blood()
+                || !R196OutdoorChecks.outdoors(level, mob.blockPosition());
     }
     private static boolean undead(String name) {
         return name != null && (name.equals("tw") || name.equals("tr") || name.equals("tn") || name.equals("EntityGhoul") || name.equals("EntityWight")

@@ -39,13 +39,16 @@ public final class MobAssetsProvider implements DataProvider {
             if (tag.equals("bypasses_armor")) { values.add("mite:hand_damage"); values.add("mite:water"); values.add("mite:sunlight"); values.add("mite:acid"); values.add("mite:pepsin"); }
             save(work, cache, "data/minecraft/tags/damage_type/" + tag + ".json", tag(values));
         }
-        JsonArray undead = new JsonArray(), arthropods = new JsonArray();
+        JsonArray undead = new JsonArray(), arthropods = new JsonArray(), daylightUndead = new JsonArray();
+        daylightUndead.add("#minecraft:undead");
         for (MobKind kind : MobKind.values()) {
+            if (kind.family() == MobKind.Family.UNDEAD) daylightUndead.add("mite:" + kind.path());
             if (kind.family() == MobKind.Family.SKELETON || kind.family() == MobKind.Family.ZOMBIE || kind == MobKind.WIGHT || kind == MobKind.SHADOW || kind == MobKind.NIGHTWING)
                 undead.add("mite:" + kind.path());
             if (kind.family() == MobKind.Family.SPIDER || kind.family() == MobKind.Family.SILVERFISH) arthropods.add("mite:" + kind.path());
         }
         for (String name : List.of("undead", "sensitive_to_smite", "ignores_poison_and_regen", "inverted_healing_and_harm")) save(work, cache, "data/minecraft/tags/entity_type/" + name + ".json", tag(undead));
+        save(work, cache, "data/mite/tags/entity_type/daylight_restricted_undead.json", tag(daylightUndead));
         for (String name : List.of("arthropod", "sensitive_to_bane_of_arthropods")) save(work, cache, "data/minecraft/tags/entity_type/" + name + ".json", tag(arthropods));
         return CompletableFuture.allOf(work.toArray(CompletableFuture[]::new));
     }
