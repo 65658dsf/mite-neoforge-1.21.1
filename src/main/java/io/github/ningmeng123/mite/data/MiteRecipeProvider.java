@@ -33,6 +33,7 @@ public final class MiteRecipeProvider extends RecipeProvider {
         MetalStorageRecipes.addRecipes(output);
         ShardRecipes.addRecipes(output);
         ToolRecipes.addRecipes(output);
+        EquipmentRecyclingRecipes.addRecipes(output);
         WorkbenchRecipes.addRecipes(output);
         WorldRecipes.addRecipes(output);
         FurnaceRecipes.addRecipes(output);

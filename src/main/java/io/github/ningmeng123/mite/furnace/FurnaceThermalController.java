@@ -39,6 +39,8 @@ public final class FurnaceThermalController {
         return new R196FurnaceRules.Fuel(ticks, ticks > 0 ? 1 : 0);
     }
     private static R196FurnaceRules.Fuel mappedFuel(ItemStack stack) {
+        // User adaptation: a wooden handle does not make non-wood equipment combustible.
+        if (EquipmentRecycling.isNonWoodEquipment(stack)) return new R196FurnaceRules.Fuel(0, 0);
         var source = R196FurnaceRules.fuel(id(stack));
         if (source != null) return source;
         // Modern wood species inherit the corresponding source shape. Nonflammable Nether wood stays nonflammable.
@@ -66,6 +68,8 @@ public final class FurnaceThermalController {
                 || block instanceof ButtonBlock);
     }
     public static int requiredHeat(ItemStack input) {
+        // Equipment recycling uses the same heat gate as vanilla iron/gold recycling.
+        if (EquipmentRecycling.material(input) != null) return 2;
         return R196FurnaceRules.requiredHeat(id(input));
     }
     public static boolean canFuel(R196FurnaceRules.Profile profile, ItemStack stack) {

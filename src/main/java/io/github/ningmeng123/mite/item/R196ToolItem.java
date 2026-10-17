@@ -202,7 +202,7 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
 
     @Override
     public int getBurnTime(ItemStack stack, RecipeType<?> recipeType) {
-        return definition.material().equals("wood") ? 200 : definition.family() == ToolFamily.SHEARS ? 0 : 100;
+        return definition.material().equals("wood") ? 200 : 0;
     }
 
     @Override

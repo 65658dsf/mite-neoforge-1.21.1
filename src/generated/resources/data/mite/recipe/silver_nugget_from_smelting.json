@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "type": "mite:equipment_recycling",
+    "material": "silver"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:silver_nugget"
+  }
+}
