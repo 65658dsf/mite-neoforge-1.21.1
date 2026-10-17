@@ -47,6 +47,11 @@ public final class MiteBlockTagsProvider extends BlockTagsProvider {
             else tag(BlockTags.NEEDS_DIAMOND_TOOL).add(block.get());
         });
         tag(BlockTags.NEEDS_IRON_TOOL).add(Blocks.COPPER_BLOCK);
+        // arw accepts copper, silver, mithril and adamantium bases; ancient metal is absent from that whitelist.
+        tag(BlockTags.BEACON_BASE_BLOCKS).add(Blocks.COPPER_BLOCK,
+                io.github.ningmeng123.mite.registry.MiteMetalBlocks.STORAGE.get("silver").get(),
+                io.github.ningmeng123.mite.registry.MiteMetalBlocks.STORAGE.get("mithril").get(),
+                io.github.ningmeng123.mite.registry.MiteMetalBlocks.STORAGE.get("adamantium").get());
         io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.ANVILS.values().forEach(block -> {
             tag(BlockTags.ANVIL).add(block.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get());
