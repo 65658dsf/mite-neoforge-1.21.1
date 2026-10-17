@@ -47,7 +47,7 @@ public final class EquipmentDurabilityRules {
         }
     }
 
-    /** Shields are a modern adaptation: iron retains its native 336-point baseline. */
+    /** Shields use half the original iron baseline, retaining source metal ratios. */
     public record ShieldProfile(float materialDurability, Quality maxQuality) {
         public ShieldProfile {
             requirePositiveFinite(materialDurability);
@@ -69,7 +69,7 @@ public final class EquipmentDurabilityRules {
     }
 
     public static int baseShieldDurability(ShieldProfile profile) {
-        return Math.max(Math.round(336F * profile.materialDurability() / 8F), 1);
+        return Math.max(Math.round(168F * profile.materialDurability() / 8F), 1);
     }
 
     public static int maxDurability(int base, Quality quality) {

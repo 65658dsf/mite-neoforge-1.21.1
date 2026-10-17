@@ -8,21 +8,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Modern shield baseline and source material scaling remain independent of mining tools. @author NingMeng123 */
 class ShieldDurabilityRulesTest {
-    @Test void ironPreservesTheNativeShieldBaselineAndMetalsUseSourceRatios() {
-        assertEquals(168, baseShieldDurability(new ShieldProfile(4F, Quality.EXCELLENT)));
-        assertEquals(336, baseShieldDurability(new ShieldProfile(8F, Quality.MASTERWORK)));
-        assertEquals(672, baseShieldDurability(new ShieldProfile(16F, Quality.MASTERWORK)));
-        assertEquals(2688, baseShieldDurability(new ShieldProfile(64F, Quality.LEGENDARY)));
-        assertEquals(10752, baseShieldDurability(new ShieldProfile(256F, Quality.LEGENDARY)));
+    @Test void shieldBaselinesAreHalvedWhileMetalsKeepSourceRatios() {
+        assertEquals(84, baseShieldDurability(new ShieldProfile(4F, Quality.EXCELLENT)));
+        assertEquals(168, baseShieldDurability(new ShieldProfile(8F, Quality.MASTERWORK)));
+        assertEquals(336, baseShieldDurability(new ShieldProfile(16F, Quality.MASTERWORK)));
+        assertEquals(1344, baseShieldDurability(new ShieldProfile(64F, Quality.LEGENDARY)));
+        assertEquals(5376, baseShieldDurability(new ShieldProfile(256F, Quality.LEGENDARY)));
     }
 
     @Test void qualityScalesShieldMaximumWithoutTheToolHundredfoldMultiplier() {
         int base = baseShieldDurability(new ShieldProfile(8F, Quality.MASTERWORK));
-        assertEquals(168, maxDurability(base, Quality.WRETCHED));
-        assertEquals(252, maxDurability(base, Quality.POOR));
-        assertEquals(336, maxDurability(base, Quality.AVERAGE));
-        assertEquals(1008, maxDurability(base, Quality.MASTERWORK));
-        assertEquals(37632, maxDurability(baseShieldDurability(new ShieldProfile(256F, Quality.LEGENDARY)), Quality.LEGENDARY));
+        assertEquals(84, maxDurability(base, Quality.WRETCHED));
+        assertEquals(126, maxDurability(base, Quality.POOR));
+        assertEquals(168, maxDurability(base, Quality.AVERAGE));
+        assertEquals(504, maxDurability(base, Quality.MASTERWORK));
+        assertEquals(18816, maxDurability(baseShieldDurability(new ShieldProfile(256F, Quality.LEGENDARY)), Quality.LEGENDARY));
     }
 
     @Test void shieldProfilesRejectInvalidMaterialValuesAndMissingQuality() {

@@ -106,7 +106,8 @@ public final class ShieldCraftingIntegrationGameTests {
                 definition.material().equals("rusted_iron") ? "copper" : definition.material())) {
             ItemStack shield = new ItemStack(MiteShields.get(definition.material()));
             EquipmentDurability.setQuality(shield, definition.maxQuality());
-            shield.setDamageValue(37);
+            int damage = Math.min(37, shield.getMaxDamage() - 1);
+            shield.setDamageValue(damage);
             shield.set(DataComponents.CUSTOM_NAME, Component.literal("Existing metal shield"));
             ItemStack banner = new ItemStack(Items.BLUE_BANNER);
             banner.set(DataComponents.BANNER_PATTERNS, patterns);
@@ -126,7 +127,7 @@ public final class ShieldCraftingIntegrationGameTests {
             ItemStack decorated = f.player.getInventory().items.stream().filter(stack -> stack.is(shield.getItem())).findFirst().orElseThrow();
             helper.assertValueEqual(EquipmentDurability.quality(decorated), definition.maxQuality(), "Actual native consumption preserves the existing quality");
             helper.assertValueEqual(decorated.getMaxDamage(), shield.getMaxDamage(), "Decoration does not alter the quality-adjusted maximum");
-            helper.assertValueEqual(decorated.getDamageValue(), 37, "Decorating a worn shield never repairs or resets its wear");
+            helper.assertValueEqual(decorated.getDamageValue(), damage, "Decorating a worn shield never repairs or resets its wear");
             helper.assertValueEqual(decorated.get(DataComponents.CUSTOM_NAME), shield.get(DataComponents.CUSTOM_NAME), "Decoration retains its custom name");
             helper.assertValueEqual(decorated.get(DataComponents.BASE_COLOR), DyeColor.BLUE, "Native banner base color is copied");
             helper.assertValueEqual(decorated.get(DataComponents.BANNER_PATTERNS), patterns, "Native banner pattern layers are copied");
