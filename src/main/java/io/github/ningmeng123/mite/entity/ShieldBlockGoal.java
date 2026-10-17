@@ -25,7 +25,8 @@ public final class ShieldBlockGoal extends Goal {
     }
 
     @Override public boolean canUse() {
-        if (mob.tickCount < nextAttempt || mob.isUsingItem() || !threat()) return false;
+        if (mob.tickCount < nextAttempt || mob.isUsingItem()
+                || io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat.attacking(mob) || !threat()) return false;
         nextAttempt = mob.tickCount + 10;
         return mob.getRandom().nextFloat() < .55F;
     }

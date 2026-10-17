@@ -64,6 +64,8 @@ public final class SourceMeleeGoal extends Goal {
     /** Checks a planned standing position without moving the entity or changing the world. */
     public static boolean canStrikeFrom(PathfinderMob mob, LivingEntity target, Vec3 feet) {
         if (target == null || !target.isAlive()) return false;
+        if (io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat.supported(mob))
+            return io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat.canStrikeFrom(mob, target, feet);
         var definition = MiteTools.definition(mob.getMainHandItem());
         double reach = 1.5D + (definition == null ? 0D : definition.reach() * .6D);
         if (feet.distanceToSqr(new Vec3(target.getX(),target.getBoundingBox().minY,target.getZ())) > reach * reach) return false;
@@ -158,8 +160,9 @@ public final class SourceMeleeGoal extends Goal {
         attackCooldown = Math.max(0, attackCooldown - 1);
         if (attackCooldown > 0) return;
         if (canStrike(mob, target)) {
-            attackCooldown = 20;
-            if (!mob.getMainHandItem().isEmpty()) mob.swing(InteractionHand.MAIN_HAND);
+            boolean weaponCombat = io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat.supported(mob);
+            attackCooldown = weaponCombat ? 0 : 20;
+            if (!weaponCombat && !mob.getMainHandItem().isEmpty()) mob.swing(InteractionHand.MAIN_HAND);
             mob.doHurtTarget(target);
         } else if (R196MonsterAi.diggingEnabled(mob)) {
             int attackerY = net.minecraft.util.Mth.floor(mob.getY() + .5D);
