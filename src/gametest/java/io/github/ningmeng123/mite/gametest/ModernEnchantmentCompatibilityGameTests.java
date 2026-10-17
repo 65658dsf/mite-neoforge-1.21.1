@@ -21,11 +21,13 @@ public final class ModernEnchantmentCompatibilityGameTests {
     public static void modernDevicesRetainNativeSharedEnchantmentsWithoutEnteringTheSourcePool(GameTestHelper helper) {
         var registry = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
         var unbreaking = registry.getHolderOrThrow(Enchantments.UNBREAKING).value();
-        for (Item item : new Item[]{Items.CROSSBOW, Items.TRIDENT, Items.MACE, Items.SHIELD, Items.ELYTRA}) {
+        for (Item item : new Item[]{Items.CROSSBOW, Items.TRIDENT, Items.MACE, Items.ELYTRA}) {
             ItemStack stack = new ItemStack(item);
             helper.assertTrue(unbreaking.canEnchant(stack) && unbreaking.isPrimaryItem(stack), "Native durability support and table eligibility survive: " + item);
             helper.assertTrue(!R196EnchantmentCatalog.supported("unbreaking", stack), "Modern-only devices remain outside source equipment selection: " + item);
         }
+        helper.assertTrue(R196EnchantmentCatalog.supported("unbreaking", new ItemStack(Items.SHIELD)),
+                "The retained native shield now participates in the requested iron-tier source durability adaptation");
         ItemStack mace = new ItemStack(Items.MACE);
         for (var key : java.util.List.of(Enchantments.SMITE, Enchantments.BANE_OF_ARTHROPODS, Enchantments.FIRE_ASPECT)) {
             var enchantment = registry.getHolderOrThrow(key).value();

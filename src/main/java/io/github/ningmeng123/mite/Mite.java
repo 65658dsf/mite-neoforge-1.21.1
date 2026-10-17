@@ -9,6 +9,7 @@ import io.github.ningmeng123.mite.registry.MiteAttachments;
 import io.github.ningmeng123.mite.registry.MiteItems;
 import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteShards;
+import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.registry.MiteLootModifiers;
 import io.github.ningmeng123.mite.registry.MiteTools;
@@ -42,6 +43,7 @@ public final class Mite {
         io.github.ningmeng123.mite.registry.MiteWorldFeatures.register(modBus);
         io.github.ningmeng123.mite.worldgen.MiteWorldDimensions.register(modBus);
         EquipmentDurability.register(modBus);
+        MiteShields.register(modBus);
         io.github.ningmeng123.mite.registry.MiteArmorContent.register(modBus);
         io.github.ningmeng123.mite.registry.MiteRangedItems.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.register(modBus);

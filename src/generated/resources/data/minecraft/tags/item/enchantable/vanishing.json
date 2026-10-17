@@ -14,6 +14,13 @@
   "values": [
     "mite:ancient_metal_bow",
     "mite:mithril_bow",
+    "mite:rusted_iron_shield",
+    "mite:copper_shield",
+    "mite:silver_shield",
+    "mite:gold_shield",
+    "mite:ancient_metal_shield",
+    "mite:mithril_shield",
+    "mite:adamantium_shield",
     "mite:copper_helmet",
     "mite:silver_helmet",
     "mite:mithril_helmet",

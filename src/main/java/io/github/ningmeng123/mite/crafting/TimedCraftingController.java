@@ -163,7 +163,8 @@ public final class TimedCraftingController {
                 || prepared.quality().cost() > 0 && player.totalExperience < prepared.quality().cost()
                 || prepared.quality().repair() && !CraftingQuality.canRepair(player, prepared.result())) return false;
         for (int i = 0; i < prepared.grid().getContainerSize(); i++) {
-            if (prepared.grid().getItem(i).isDamaged() && !prepared.quality().repair()) return false;
+            if (prepared.grid().getItem(i).isDamaged() && !prepared.quality().repair()
+                    && !CraftingQuality.shieldDecoration(prepared.recipe(), prepared.result())) return false;
         }
         return true;
     }

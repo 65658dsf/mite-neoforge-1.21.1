@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.item.EquipmentQuality;
 import io.github.ningmeng123.mite.item.R196RepairMaterial;
 import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.rules.FunctionalBlockRules;
 import java.util.ArrayDeque;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -66,6 +67,8 @@ public final class MaterialAnvilRules {
                 : state.getBlock() instanceof AnvilBlock ? 8F : 0F;
     }
     public static Material material(ItemStack stack) {
+        var shield = MiteShields.definition(stack);
+        if (shield != null) return new Material(shield.material(), 1, false, false, false, false);
         if (stack.is(Items.FISHING_ROD)) return new Material("iron", 1, false, false, false, true);
         if (stack.getItem() instanceof R196RepairMaterial item)
             return new Material(item.repairMaterial(), item.repairComponents(), false, false, !item.repairFishingRod(), item.repairFishingRod());
@@ -105,7 +108,8 @@ public final class MaterialAnvilRules {
         boolean consumable = repairItem != null && second.is(repairItem);
         boolean combination = second.is(first.getItem()) && first.isDamaged()
                 && (first.isEnchanted() || second.isDamaged()) && !second.isEnchanted()
-                && EquipmentQuality.sameQuality(first, second);
+                && EquipmentQuality.sameQuality(first, second)
+                && (MiteShields.definition(first) == null || EquipmentQuality.sameColor(first, second));
         // R196 rejects ingot repairs; also stop mismatching source equipment combinations.
         if (!consumable && !combination) return new Plan(ItemStack.EMPTY, 0, 0, false);
         if (!first.isDamaged() || WorkbenchRules.materialCapacity(material.name()) > capacity(anvil)

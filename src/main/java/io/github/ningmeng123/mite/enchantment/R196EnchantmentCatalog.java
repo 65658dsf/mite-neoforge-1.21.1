@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.enchantment;
 
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import java.util.List;
 import java.util.Set;
@@ -122,7 +123,8 @@ public final class R196EnchantmentCatalog {
             case "silk_touch" -> in(family, ToolFamily.PICKAXE, ToolFamily.SHOVEL, ToolFamily.SHEARS, ToolFamily.KNIFE, ToolFamily.DAGGER);
             case "unbreaking" -> armor ? solidMetal(stack) : cudgel || in(family, ToolFamily.PICKAXE, ToolFamily.WAR_HAMMER, ToolFamily.AXE,
                     ToolFamily.HATCHET, ToolFamily.BATTLE_AXE, ToolFamily.SHOVEL, ToolFamily.MATTOCK, ToolFamily.HOE)
-                    || stack.getItem() instanceof FishingRodItem || stack.getItem() instanceof BowItem;
+                    || stack.getItem() instanceof FishingRodItem || stack.getItem() instanceof BowItem
+                    || MiteShields.definition(stack) != null;
             case "fortune" -> family == ToolFamily.PICKAXE || family == ToolFamily.SHOVEL;
             case "power", "punch", "flame", "arrow_recovery", "quickness", "true_flight", "poison" -> stack.getItem() instanceof BowItem;
             case "fishing_fortune" -> stack.getItem() instanceof FishingRodItem;

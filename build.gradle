@@ -95,6 +95,11 @@ neoForge {
         }
         data {
             data()
+            if (project.providers.gradleProperty('miteShieldAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.shieldClientAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.shieldClientAuditOutput', file('build/verification/shield-client-audit.json').absolutePath
+            }
             boolean skeletonWeaponDisplayAudit = project.providers.gradleProperty('miteSkeletonWeaponDisplayAudit').getOrElse('false').toBoolean()
             if (skeletonWeaponDisplayAudit) {
                 systemProperty 'mite.skeletonWeaponDisplayAudit', 'true'

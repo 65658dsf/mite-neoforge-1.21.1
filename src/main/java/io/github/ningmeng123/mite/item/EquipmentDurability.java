@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.mining.MiningProgress;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ArmorProfile;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ShieldProfile;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolProfile;
 import java.util.EnumMap;
@@ -63,6 +64,7 @@ public final class EquipmentDurability {
                     .networkSynchronized(ByteBufCodecs.VAR_INT));
     private static final Map<Item, ToolProfile> TOOLS = new IdentityHashMap<>();
     private static final Map<Item, ArmorProfile> ARMOR = new IdentityHashMap<>();
+    private static final Map<Item, ShieldProfile> SHIELDS = new IdentityHashMap<>();
     private static final EquipmentSlot[] ARMOR_SLOTS = {
             EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
     private static final ThreadLocal<WearContext> WEAR_CONTEXT = new ThreadLocal<>();
@@ -103,6 +105,7 @@ public final class EquipmentDurability {
 
     public static void registerTool(Item item, ToolProfile profile) { TOOLS.put(item, profile); }
     public static void registerArmor(Item item, ArmorProfile profile) { ARMOR.put(item, profile); }
+    public static void registerShield(Item item, ShieldProfile profile) { SHIELDS.put(item, profile); }
 
     private static void registerArmorSet(float material, int protection, boolean chain, Quality maximum, Item... items) {
         int[] components = {4, 7, 8, 5};
@@ -140,8 +143,9 @@ public final class EquipmentDurability {
     }
 
     public static ArmorProfile armorProfile(ItemStack stack) { return ARMOR.get(stack.getItem()); }
+    public static ShieldProfile shieldProfile(ItemStack stack) { return SHIELDS.get(stack.getItem()); }
     public static boolean isManaged(ItemStack stack) {
-        return toolProfile(stack) != null || armorProfile(stack) != null || stack.is(Items.BOW)
+        return toolProfile(stack) != null || armorProfile(stack) != null || shieldProfile(stack) != null || stack.is(Items.BOW)
                 || stack.getItem() instanceof QualityProfiled;
     }
 
@@ -150,6 +154,8 @@ public final class EquipmentDurability {
         if (stack.is(Items.BOW)) return Quality.FINE;
         ToolProfile tool = toolProfile(stack);
         if (tool != null) return tool.maxQuality();
+        ShieldProfile shield = shieldProfile(stack);
+        if (shield != null) return shield.maxQuality();
         ArmorProfile armor = armorProfile(stack);
         return armor == null ? Quality.AVERAGE : armor.maxQuality();
     }

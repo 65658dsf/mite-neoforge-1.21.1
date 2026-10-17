@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.item;
 import io.github.ningmeng123.mite.crafting.CraftingQuality;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
+import java.util.Objects;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,6 +23,11 @@ public final class EquipmentQuality {
     }
 
     public static boolean sameColor(ItemStack first, ItemStack second) {
+        if (EquipmentDurability.shieldProfile(first) != null || EquipmentDurability.shieldProfile(second) != null) {
+            if (!Objects.equals(first.get(DataComponents.BASE_COLOR), second.get(DataComponents.BASE_COLOR))
+                    || !Objects.equals(first.get(DataComponents.BANNER_PATTERNS), second.get(DataComponents.BANNER_PATTERNS)))
+                return false;
+        }
         var firstColor = first.get(DataComponents.DYED_COLOR);
         var secondColor = second.get(DataComponents.DYED_COLOR);
         return firstColor == null ? secondColor == null
@@ -41,6 +47,12 @@ public final class EquipmentQuality {
         int base = source.is(result.getItem()) ? source.getOrDefault(DataComponents.MAX_DAMAGE, 1)
                 : new ItemStack(result.getItem()).getOrDefault(DataComponents.MAX_DAMAGE, 1);
         result.set(DataComponents.MAX_DAMAGE, base);
+        if (EquipmentDurability.shieldProfile(source) != null && source.is(result.getItem())) {
+            var color = source.get(DataComponents.BASE_COLOR);
+            if (color != null) result.set(DataComponents.BASE_COLOR, color);
+            var patterns = source.get(DataComponents.BANNER_PATTERNS);
+            if (patterns != null) result.set(DataComponents.BANNER_PATTERNS, patterns);
+        }
     }
 
     public static void combineWithoutBonus(ItemStack first, ItemStack second, ItemStack result) {

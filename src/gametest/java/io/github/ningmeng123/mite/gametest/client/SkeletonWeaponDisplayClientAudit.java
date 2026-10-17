@@ -123,10 +123,17 @@ public final class SkeletonWeaponDisplayClientAudit implements DataProvider {
                 "The real native skeleton animation invokes the swap arm-pose handler exactly once");
         AbstractInsnNode last = previousExecutable(animation.instructions.getLast());
         check(last != null && last.getOpcode() == Opcodes.RETURN, "The native animation has its normal final return");
-        AbstractInsnNode beforeReturn = previousExecutable(last.getPrevious());
-        check(beforeReturn instanceof MethodInsnNode call && call.owner.equals(model.name)
-                && call.name.equals(pose.name) && call.desc.equals(pose.desc),
-                "The arm-lowering handler runs at the actual tail after the native skeleton pose");
+        MethodInsnNode poseCall = null;
+        for (var instruction : animation.instructions) if (instruction instanceof MethodInsnNode call
+                && call.owner.equals(model.name) && call.name.equals(pose.name) && call.desc.equals(pose.desc)) poseCall = call;
+        check(poseCall != null, "The arm-lowering handler runs after the native skeleton pose");
+        for (var instruction = poseCall.getNext(); instruction != null; instruction = instruction.getNext()) {
+            check(!(instruction instanceof FieldInsnNode field) || field.getOpcode() != Opcodes.PUTFIELD,
+                    "Native arm fields are not animated after the swap tail handler");
+            if (instruction instanceof MethodInsnNode call)
+                check(call.owner.equals(model.name) && call.name.contains("mite$showSkeletonShieldBlock"),
+                        "Only a later shield stance handler may follow the swap tail handler");
+        }
         check(calls(pose, DISPLAY, "frame") == 1 && calls(pose, FRAME, "lowering") >= 1,
                 "The actual pose handler uses the same swap-frame lowering as the item layer");
         check(calls(pose, "net/minecraft/world/entity/Mob", "getMainArm")

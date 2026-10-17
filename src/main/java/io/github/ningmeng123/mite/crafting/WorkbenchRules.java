@@ -36,6 +36,8 @@ public final class WorkbenchRules {
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
+        var shield = io.github.ningmeng123.mite.registry.MiteShields.definition(result);
+        if (shield != null) return shield.materialDurability();
         if (result.getItem() instanceof io.github.ningmeng123.mite.item.R196ReinforcedBowItem bow)
             return materialCapacity(bow.material());
         if (result.getItem() instanceof io.github.ningmeng123.mite.item.R196CoinItem coin)

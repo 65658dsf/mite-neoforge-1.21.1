@@ -48,7 +48,8 @@ public final class TimedCraftingCrafter {
         TimedCraftingRecipes.Rule rule = CraftingQuality.rule(recipe.get(), result, crafter.asCraftInput());
         if (rule == null) return false;
         // No operator/XP account: automation only manufactures default quality, never selects a paid quality.
-        if (!(recipe.get().value() instanceof net.minecraft.world.item.crafting.ArmorDyeRecipe))
+        if (!(recipe.get().value() instanceof net.minecraft.world.item.crafting.ArmorDyeRecipe)
+                && !CraftingQuality.shieldDecoration(recipe.get(), result))
             io.github.ningmeng123.mite.item.EquipmentDurability.setQuality(result,
                     io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality.AVERAGE);
         // The Crafter itself is a basic flint-speed device for recipes with no bench requirement.
@@ -61,7 +62,9 @@ public final class TimedCraftingCrafter {
             return true;
         }
         for (int i = 0; i < crafter.getContainerSize(); i++) {
-            if (crafter.getItem(i).isDamaged()) { JOBS.remove(crafter); return true; }
+            if (crafter.getItem(i).isDamaged() && !CraftingQuality.shieldDecoration(recipe.get(), result)) {
+                JOBS.remove(crafter); return true;
+            }
         }
         if (old == null) {
             old = new Job(recipe.get().id(), crafter, level.getGameTime());

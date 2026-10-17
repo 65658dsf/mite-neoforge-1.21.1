@@ -29,7 +29,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 /** Source metadata and supported-item tags share the server's audited catalogue. @author NingMeng123 */
 public final class EnchantmentAssetsProvider implements DataProvider {
-    private static final List<String> MODERN_EQUIPMENT = List.of("minecraft:crossbow", "minecraft:trident", "minecraft:mace", "minecraft:shield", "minecraft:elytra");
+    private static final List<String> MODERN_EQUIPMENT = List.of("minecraft:crossbow", "minecraft:trident", "minecraft:mace", "minecraft:elytra");
     private final Path output;
     private final ExistingFileHelper existingFiles;
     private final Map<String, Set<String>> vanillaItemTags = new LinkedHashMap<>();

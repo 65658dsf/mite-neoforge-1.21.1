@@ -39,6 +39,13 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
         var mithrilBow = io.github.ningmeng123.mite.registry.MiteWeaponContent.MITHRIL_BOW.get();
         tag(ItemTags.DURABILITY_ENCHANTABLE).add(ancientBow, mithrilBow);
         tag(ItemTags.VANISHING_ENCHANTABLE).add(ancientBow, mithrilBow);
+        for (var definition : io.github.ningmeng123.mite.registry.MiteShields.definitions()) {
+            if (!definition.isNew()) continue;
+            var shield = io.github.ningmeng123.mite.registry.MiteShields.get(definition.material());
+            tag(ItemTags.DURABILITY_ENCHANTABLE).add(shield);
+            tag(ItemTags.VANISHING_ENCHANTABLE).add(shield);
+            tag(net.neoforged.neoforge.common.Tags.Items.TOOLS_SHIELD).add(shield);
+        }
         tag(ItemTags.SMALL_FLOWERS).add(io.github.ningmeng123.mite.registry.MiteDecorativeContent.DAHLIA.get().asItem());
         for (var definition : io.github.ningmeng123.mite.registry.MiteArmorContent.definitions()) {
             if (!definition.isNew() || definition.horse()) continue;

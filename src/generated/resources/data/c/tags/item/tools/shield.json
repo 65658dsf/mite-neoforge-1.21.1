@@ -1,0 +1,11 @@
+{
+  "values": [
+    "mite:rusted_iron_shield",
+    "mite:copper_shield",
+    "mite:silver_shield",
+    "mite:gold_shield",
+    "mite:ancient_metal_shield",
+    "mite:mithril_shield",
+    "mite:adamantium_shield"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "mite:shields",
+  "key": {
+    "M": {
+      "item": "mite:adamantium_ingot"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "WMW",
+    "WWW",
+    " W "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:adamantium_shield"
+  }
+}

@@ -26,6 +26,7 @@ import net.minecraft.world.item.crafting.ArmorDyeRecipe;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RepairItemRecipe;
+import net.minecraft.world.item.crafting.ShieldDecorationRecipe;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 
@@ -40,6 +41,8 @@ public final class CraftingQuality {
     private CraftingQuality() {}
 
     public static float lowestDifficulty(ItemStack stack) {
+        var shield = io.github.ningmeng123.mite.registry.MiteShields.definition(stack);
+        if (shield != null) return shield.craftingDifficulty();
         float ranged = RangedRodRepair.lowestDifficulty(stack);
         if (ranged >= 0F) return ranged;
         return DIFFICULTIES.getOrDefault(BuiltInRegistries.ITEM.getKey(stack.getItem()), -1F);
@@ -62,7 +65,7 @@ public final class CraftingQuality {
             return new Result(rule, RunestoneCrafting.apply(player, menu, grid, recipe.id(), raw), null, null, repair, repair, true, CoinCrafting.cost(raw), 1);
         }
         boolean repair = recipe.value() instanceof RepairItemRecipe || recipe.value() instanceof LeatherMendingRecipe;
-        boolean fixed = repair || recipe.value() instanceof ArmorDyeRecipe;
+        boolean fixed = repair || recipe.value() instanceof ArmorDyeRecipe || shieldDecoration(recipe, raw);
         boolean clumsy = PlayerCurses.has(player, R196Curse.CLUMSINESS, true);
         QualityRange range = EquipmentQualityRules.selectionRange(player.experienceLevel,
                 EquipmentDurability.maximumQuality(raw), clumsy, false, true);
@@ -101,6 +104,8 @@ public final class CraftingQuality {
     public static TimedCraftingRecipes.Rule rule(RecipeHolder<CraftingRecipe> recipe, ItemStack output,
             net.minecraft.world.item.crafting.CraftingInput input) {
         if (output.isEmpty()) return null;
+        // Decorating an existing shield is a fixed-quality cosmetic operation, not manufacturing another metal shield.
+        if (shieldDecoration(recipe, output)) return new TimedCraftingRecipes.Rule(100F, benchMaterial(output), -1);
         if (output.is(io.github.ningmeng123.mite.registry.MiteFoods.SALAD.get())) {
             // All salad recipes, including old empty-bowl and data-pack alternatives, share
             // a visible five-second base preparation period rather than the 25-tick minimum.
@@ -122,6 +127,11 @@ public final class CraftingQuality {
         if (known != null) return known;
         float difficulty = EquipmentDurability.isManaged(output) ? lowestDifficulty(output) : -1F;
         return difficulty < 0F ? null : new TimedCraftingRecipes.Rule(difficulty, benchMaterial(output), -1);
+    }
+
+    public static boolean shieldDecoration(RecipeHolder<CraftingRecipe> recipe, ItemStack result) {
+        return recipe.value() instanceof ShieldDecorationRecipe
+                && io.github.ningmeng123.mite.registry.MiteShields.definition(result) != null;
     }
 
     private static String benchMaterial(ItemStack output) {

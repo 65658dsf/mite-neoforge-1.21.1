@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.item.EquipmentQuality;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.crafting.RangedRodRepair;
 import net.minecraft.core.HolderLookup;
@@ -60,6 +61,7 @@ public abstract class DurabilityRepairRecipeMixin {
             // Vanilla stores the already-adjusted maximum on the result. Restore its unscaled base.
             output.set(DataComponents.MAX_DAMAGE, source.getOrDefault(DataComponents.MAX_DAMAGE, 1));
             EquipmentDurability.setQuality(output, EquipmentDurability.quality(source));
+            EquipmentQuality.preserve(source, output);
             var color = source.get(DataComponents.DYED_COLOR);
             if (color != null) output.set(DataComponents.DYED_COLOR, color);
             first = source;
@@ -75,10 +77,7 @@ public abstract class DurabilityRepairRecipeMixin {
                     || RangedRodRepair.applies(first) && RangedRodRepair.applies(stack)) {
                 if (!first.isDamaged() || !stack.isDamaged() || first.isEnchanted() || stack.isEnchanted()
                         || EquipmentDurability.isManaged(first) && EquipmentDurability.quality(first) != EquipmentDurability.quality(stack)) return true;
-                var firstColor = first.get(DataComponents.DYED_COLOR);
-                var secondColor = stack.get(DataComponents.DYED_COLOR);
-                if ((firstColor == null) != (secondColor == null)
-                        || firstColor != null && firstColor.rgb() != secondColor.rgb()) return true;
+                if (!EquipmentQuality.sameColor(first, stack)) return true;
             }
         }
         return false;

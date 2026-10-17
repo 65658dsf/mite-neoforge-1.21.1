@@ -38,7 +38,8 @@ public final class R196EnchantmentTable {
         if (stack.isEmpty() || !stack.isDamageableItem()) return false;
         var item = stack.getItem();
         if (item instanceof CrossbowItem || item instanceof TridentItem || item instanceof MaceItem
-                || item instanceof ShieldItem || item instanceof ElytraItem) return false;
+                || item instanceof ShieldItem && io.github.ningmeng123.mite.registry.MiteShields.definition(stack) == null
+                || item instanceof ElytraItem) return false;
         return R196EnchantmentCatalog.definitions().stream().anyMatch(definition -> definition.supported(stack));
     }
 

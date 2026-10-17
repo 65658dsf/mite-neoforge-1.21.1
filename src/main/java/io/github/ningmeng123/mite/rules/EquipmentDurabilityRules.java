@@ -47,6 +47,14 @@ public final class EquipmentDurabilityRules {
         }
     }
 
+    /** Shields are a modern adaptation: iron retains its native 336-point baseline. */
+    public record ShieldProfile(float materialDurability, Quality maxQuality) {
+        public ShieldProfile {
+            requirePositiveFinite(materialDurability);
+            Objects.requireNonNull(maxQuality);
+        }
+    }
+
     private EquipmentDurabilityRules() {}
 
     public static int baseToolDurability(ToolProfile profile) {
@@ -58,6 +66,10 @@ public final class EquipmentDurabilityRules {
         float durability = (float)profile.components() * profile.materialDurability();
         if (!profile.chainmail()) durability *= 2F;
         return Math.max((int)durability, 1);
+    }
+
+    public static int baseShieldDurability(ShieldProfile profile) {
+        return Math.max(Math.round(336F * profile.materialDurability() / 8F), 1);
     }
 
     public static int maxDurability(int base, Quality quality) {

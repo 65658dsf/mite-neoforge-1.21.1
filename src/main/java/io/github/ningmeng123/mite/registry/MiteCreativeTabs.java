@@ -35,6 +35,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
 import net.neoforged.bus.api.EventPriority;
@@ -95,7 +96,7 @@ public final class MiteCreativeTabs {
             default -> Group.TOOLS;
         };
         if (item instanceof ArmorItem || item instanceof AnimalArmorItem || item instanceof ArrowItem
-                || item instanceof BowItem || item instanceof GelatinousSphereItem) return Group.COMBAT;
+                || item instanceof BowItem || item instanceof ShieldItem || item instanceof GelatinousSphereItem) return Group.COMBAT;
         if (item instanceof FishingRodItem || item instanceof FoodOnAStickItem<?>
                 || item instanceof R196RecordItem || item instanceof R196DisenchantingBottleItem) return Group.TOOLS;
         if (item instanceof BlockItem blockItem) {
