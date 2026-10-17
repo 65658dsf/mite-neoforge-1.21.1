@@ -34,9 +34,11 @@ public final class SkeletonWeapons {
         ItemStack main = skeleton.getMainHandItem(), spare = skeleton.getOffhandItem();
         if (main.getItem() instanceof BowItem && melee(incoming)
                 && (spare.isEmpty() || melee(spare))) return EquipmentSlot.OFFHAND;
-        if (melee(main) && spare.getItem() instanceof BowItem
+        if (melee(main) && (spare.isEmpty() || spare.getItem() instanceof BowItem)
                 && incoming.getItem() instanceof BowItem) return EquipmentSlot.OFFHAND;
         if (spare.getItem() instanceof BowItem && melee(incoming) && (main.isEmpty() || melee(main))) return EquipmentSlot.MAINHAND;
+        if (melee(spare) && incoming.getItem() instanceof BowItem
+                && (main.isEmpty() || main.getItem() instanceof BowItem)) return EquipmentSlot.MAINHAND;
         return null;
     }
 

@@ -82,6 +82,8 @@
     "QualityCombinerQuickMoveMixin",
     "QualitySmithingMixin",
     "QualityMobEquipmentMixin",
+    "MobEquipmentUpgradeMixin",
+    "PiglinEquipmentUpgradeMixin",
     "QualitySpecialMobEquipmentMixin",
     "QualityRepairConsumptionMixin",
     "FoodFireCookingMixin",

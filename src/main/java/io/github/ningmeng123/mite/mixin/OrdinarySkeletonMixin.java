@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.entity.OrdinarySkeletonState;
+import io.github.ningmeng123.mite.entity.MobEquipmentUpgrades;
 import io.github.ningmeng123.mite.entity.R196MobEquipment;
 import io.github.ningmeng123.mite.entity.R196Skeleton;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
@@ -62,8 +63,10 @@ public abstract class OrdinarySkeletonMixin extends Monster implements OrdinaryS
         EquipmentSlot slot = SkeletonWeapons.pickupSlot(mite$self(), incoming);
         if (slot == null) return super.equipItemIfPossible(incoming);
         ItemStack previous = getItemBySlot(slot);
+        Boolean qualityDecision = MobEquipmentUpgrades.replacementDecision(mite$self(), incoming, previous);
         boolean better;
-        if (previous.isEmpty()) better = true;
+        if (qualityDecision != null) better = qualityDecision;
+        else if (previous.isEmpty()) better = true;
         else if (SkeletonWeapons.melee(incoming) && SkeletonWeapons.melee(previous)) {
             double baseDamage = getAttributeBaseValue(Attributes.ATTACK_DAMAGE);
             double incomingDamage = incoming.getAttributeModifiers().compute(baseDamage, EquipmentSlot.MAINHAND);
