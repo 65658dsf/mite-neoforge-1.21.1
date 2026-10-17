@@ -3,12 +3,16 @@ package io.github.ningmeng123.mite.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.rules.AutoHarvestState;
+import io.github.ningmeng123.mite.rules.AutoUseState;
+import io.github.ningmeng123.mite.network.AutoRestockSelectionPayload;
 import io.github.ningmeng123.mite.survival.FoodConsumption;
 import java.util.List;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -25,6 +29,9 @@ import net.neoforged.neoforge.client.settings.KeyModifier;
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT)
 public final class AutoHarvestInput {
     private static final AutoHarvestState<BlockState> STATE = new AutoHarvestState<>(AutoHarvestInput::matches);
+    private static final AutoUseState<Item> USE = new AutoUseState<>();
+    private static boolean suppressAttack;
+    private static long lastUseItemMillis;
     private static Object previousPlayer, previousLevel, previousGameMode;
     private static InputConstants.Key previousAttack, previousUse;
     private static KeyModifier previousAttackModifier, previousUseModifier;
@@ -35,8 +42,50 @@ public final class AutoHarvestInput {
     @SubscribeEvent public static void tick(ClientTickEvent.Pre event) { context(Minecraft.getInstance()); }
 
     public static void beginInput(Minecraft minecraft) {
-        if (context(minecraft)) STATE.update(minecraft.options.keyAttack.isDown(), minecraft.options.keyUse.isDown(),
-                target(minecraft), Util.getMillis());
+        if (!context(minecraft)) return;
+        boolean attack = minecraft.options.keyAttack.isDown(), use = minecraft.options.keyUse.isDown();
+        var stack = minecraft.player.getMainHandItem();
+        Item eligible = ClientIngestionDelay.ingestion(stack) ? stack.getItem() : null;
+        boolean usedBefore = USE.isActive();
+        if (!usedBefore && use && !attack) AutoRestockSelectionPayload.clear();
+        suppressAttack = attack && (USE.isActive() || use && USE.isArmed() && eligible != null);
+        USE.update(attack, use, eligible);
+        if (usedBefore && !USE.isActive()) AutoRestockSelectionPayload.clear();
+        if (USE.isActive()) STATE.clear();
+        else if (FoodConsumption.hasEnergy(minecraft.player)) STATE.update(attack, use, target(minecraft), Util.getMillis());
+        else STATE.clear();
+    }
+
+    public static boolean wantsUse(Minecraft minecraft) {
+        return context(minecraft) && USE.matches(minecraft.player.getMainHandItem().getItem());
+    }
+
+    public static boolean consumeAttack(Minecraft minecraft) { return context(minecraft) && suppressAttack; }
+
+    public static void finishedIngestion(net.minecraft.world.item.ItemStack consumed, net.minecraft.world.item.ItemStack returned) {
+        USE.finished(consumed.getItem(), returned.getItem(), Util.getMillis());
+    }
+
+    /** AUM repeats ingestion directly; looking at a chest or animal must not interact with it. */
+    public static boolean automaticUse(Minecraft minecraft) {
+        if (!context(minecraft) || !USE.isActive() || minecraft.options.keyUse.isDown()) return false;
+        var stack = minecraft.player.getMainHandItem();
+        if (!USE.matches(stack.getItem()) || !ClientIngestionDelay.ready(minecraft, stack)
+                || !FoodConsumption.canIngest(minecraft.player, stack)
+                || minecraft.player.getCooldowns().isOnCooldown(stack.getItem())) return true;
+        var event = net.neoforged.neoforge.client.ClientHooks.onClickInput(1, minecraft.options.keyUse, InteractionHand.MAIN_HAND);
+        if (!event.isCanceled()) {
+            var result = minecraft.gameMode.useItem(minecraft.player, InteractionHand.MAIN_HAND);
+            if (result.consumesAction()) {
+                if (result.shouldSwing() && event.shouldSwingHand()) minecraft.player.swing(InteractionHand.MAIN_HAND);
+                minecraft.gameRenderer.itemInHandRenderer.itemUsed(InteractionHand.MAIN_HAND);
+            }
+        }
+        return true;
+    }
+
+    public static boolean highlighted(Minecraft minecraft) {
+        return context(minecraft) && (STATE.isActive() || USE.isActive());
     }
 
     public static boolean wantsContinue(Minecraft minecraft) {
@@ -58,6 +107,8 @@ public final class AutoHarvestInput {
 
     public static void reset() {
         STATE.clear();
+        USE.clear(); suppressAttack = false; lastUseItemMillis = 0L;
+        AutoRestockSelectionPayload.clear();
         previousPlayer = previousLevel = previousGameMode = null;
         previousAttack = previousUse = null;
         previousAttackModifier = previousUseModifier = null;
@@ -69,21 +120,32 @@ public final class AutoHarvestInput {
         if (player == null || minecraft.level == null || minecraft.gameMode == null || minecraft.options == null
                 || minecraft.screen != null || minecraft.getOverlay() != null || !minecraft.isWindowActive()
                 || minecraft.isPaused() || !minecraft.mouseHandler.isMouseGrabbed() || !player.isAlive()
-                || player.isRemoved() || player.isSleeping() || player.isSpectator() || !FoodConsumption.hasEnergy(player)) {
+                || player.isRemoved() || player.isSleeping() || player.isSpectator()) {
             reset();
             return false;
         }
         var attack = minecraft.options.keyAttack;
         var use = minecraft.options.keyUse;
         int slot = player.getInventory().selected;
-        if (previousPlayer != player || previousLevel != minecraft.level || previousGameMode != minecraft.gameMode
-                || previousSlot != slot || !attack.getKey().equals(previousAttack) || !use.getKey().equals(previousUse)
-                || previousAttackModifier != attack.getKeyModifier() || previousUseModifier != use.getKeyModifier()) {
+        boolean changedContext = previousPlayer != player || previousLevel != minecraft.level || previousGameMode != minecraft.gameMode
+                || !attack.getKey().equals(previousAttack) || !use.getKey().equals(previousUse)
+                || previousAttackModifier != attack.getKeyModifier() || previousUseModifier != use.getKeyModifier();
+        if (changedContext || previousSlot != slot) {
+            if (changedContext) AutoRestockSelectionPayload.clear();
+            boolean automaticSwitch = !changedContext && AutoRestockSelectionPayload.accept(previousSlot, slot);
             STATE.clear();
+            if (changedContext || !USE.matches(player.getMainHandItem().getItem())
+                    || !automaticSwitch) USE.clear();
             previousPlayer = player; previousLevel = minecraft.level; previousGameMode = minecraft.gameMode;
             previousSlot = slot; previousAttack = attack.getKey(); previousUse = use.getKey();
             previousAttackModifier = attack.getKeyModifier(); previousUseModifier = use.getKeyModifier();
         }
+        if (!FoodConsumption.hasEnergy(player)) STATE.clear();
+        if (AutoRestockSelectionPayload.failed(slot)) USE.clear();
+        long now = Util.getMillis();
+        var held = player.getMainHandItem();
+        if (USE.matches(held.getItem())) { lastUseItemMillis = now; USE.resumed(); }
+        else if (!USE.waitingForRestock(held.getItem(), now) && (!held.isEmpty() || now - lastUseItemMillis > 3_000L)) USE.clear();
         return true;
     }
 
