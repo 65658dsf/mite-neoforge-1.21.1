@@ -30,6 +30,7 @@
 - 原版铁砧保留现代附魔、命名及既有等级消耗；品质补丁只在实际减少损耗时校验维修品质能力，不给命名/附魔/祛魔增加品质经验费用。
 - 同一物品在铁砧和砂轮合并要求相同品质及染色；合并不赠送现代 12% / 5% 额外耐久。两条路径都保留品质，并确保 `MAX_DAMAGE` 组件存储未乘品质倍率的基础耐久。
 - 砂轮是现代适配设备，单件祛魔保留品质和损耗，不触发品质维修门槛。双件磨修才应用实际修理能力校验。
+- 2026-10-17 按用户要求调整砂轮祛魔费用：放入物品后，按原版随机经验奖励的两倍确定本次费用，并同步到客户端，悬停产物显示所需经验点；经验不足标红且禁止取出，不会扣成负数。上下两个输入的非诅咒附魔均沿用原版计算；只有诅咒或未附魔维修不扣费。预览、重复刷新和关闭界面不扣费，刷新及余额变化不重新抽取费用，更换输入才重算；普通、快速、数字键、丢弃及收集结果都检查当前余额，禁止中键复制预览绕过费用。现有负经验存档可保留，但不能支付祛魔费用，零费操作仍可用。这是现代平衡适配。
 - 每次结果点击以及直接快速移动都重新检查，防止预览生成后经验减少仍能取出结果。
 - 锻造升级继承基础装备品质，同时使用目标物品的未缩放耐久基础值。不能把修理遗留的钻石 `MAX_DAMAGE` 组件带入下界合金，亦不能再次乘品质倍率。
 - 皮革染色由现代原生复制组件路径保留品质，有实装配方测试覆盖。
@@ -46,3 +47,11 @@
 ## 验证范围
 
 `EquipmentQualityMaintenanceGameTests` 覆盖真实铁砧/砂轮预览、材料维修、经验变化后普通点击和快速转移、单件祛魔、锻造升级、皮革染色、生物装备生成钩子及品质掉落惩罚；同时断言品质不会改变采集速度、攻击属性及附魔能力。自动验证结果由根任务统一运行后记录。
+
+`GrindstoneExperienceGameTests` 验证真实砂轮取出路径的双倍经验扣除、快速取出、双输入合计、零费、稳定预览、余额不足及刚好足额、经验变化后的再检查、数据包同步和经验球抑制。`GrindstoneExperienceClientAudit` 验证费用提示的文本、颜色和客户端接入；客户端视觉及真实联机仍需手测。
+
+2026-10-17 最终验证：`gradlew.bat build runGameTestServer -PmiteGameTestDirectory=build/verification/grindstone-preview-final-run` 通过，1528 项 JUnit、1873 项服务端 GameTest 全部通过，包含本次 13 项砂轮集成测试。日志：`build/verification/grindstone-preview-final.log`。首轮同步测试曾因两个模拟菜单共享服务端世界而额外消耗随机数，修正为仅桥接真实费用数据包后，完整复测通过。
+
+客户端运行 `gradlew.bat runData -PmiteEnchantmentAudit=true -PmiteSkeletonWeaponDisplayAudit=true -PmiteDataDirectory=build/verification/grindstone-preview-client-run`，使用现有审计开关将生成资源隔离到构建目录，费用提示自动注册、精确费用参数、红绿灰颜色、产物槽限定及两种语言检查均通过。日志：`build/verification/grindstone-preview-client-audit.log`，报告：`build/verification/grindstone-experience-client-audit.json`。发布 JAR 包含费用同步、拦截和提示代码，不含集成测试及审计类。未操作用户游戏，未宣称客户端视觉或真实联机已实测。
+
+2026-10-17 用户反馈“可以提交了”，确认当前交付并授权提交、推送；逐项客户端视觉及真实联机结果未另行提供。

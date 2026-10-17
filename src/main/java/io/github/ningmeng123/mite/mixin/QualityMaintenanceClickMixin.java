@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.item.EquipmentQuality;
+import io.github.ningmeng123.mite.survival.GrindstoneExperienceAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.AnvilMenu;
@@ -20,5 +21,7 @@ public abstract class QualityMaintenanceClickMixin {
         if (slot != 2 || !(menu instanceof AnvilMenu || menu instanceof GrindstoneMenu)) return;
         EquipmentQuality.refreshMaintenance(menu);
         if (!EquipmentQuality.maintenanceAllowed(player, menu)) ci.cancel();
+        if (menu instanceof GrindstoneExperienceAccess experience
+                && (!experience.mite$canTake(player) || type == ClickType.CLONE)) ci.cancel();
     }
 }

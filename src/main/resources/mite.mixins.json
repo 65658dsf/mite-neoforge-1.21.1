@@ -89,6 +89,8 @@
     "TimedCraftingRemainderMixin",
     "QualityAnvilMixin",
     "QualityGrindstoneMixin",
+    "GrindstoneExperienceMixin",
+    "GrindstoneResultSlotMixin",
     "QualityMaintenanceClickMixin",
     "QualityCombinerQuickMoveMixin",
     "QualitySmithingMixin",
