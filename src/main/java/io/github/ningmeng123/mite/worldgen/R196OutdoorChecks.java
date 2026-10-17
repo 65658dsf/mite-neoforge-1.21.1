@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.worldgen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 /** Source abw.isOutdoors follows short passable paths to an open column, including two head levels. @author NingMeng123 */
@@ -12,6 +13,17 @@ public final class R196OutdoorChecks {
         int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ());
         for (BlockPos.MutableBlockPos above = pos.mutable(); above.getY() < top; above.move(0, 1, 0))
             if (level.getBlockState(above).getLightBlock(level, above) > 0) return false;
+        return true;
+    }
+    /** Foliage, tree branches and water shade the surface without turning it into an underground habitat. */
+    public static boolean surface(ServerLevel level, BlockPos pos) {
+        if (!level.dimensionType().hasSkyLight()) return false;
+        int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ());
+        for (BlockPos.MutableBlockPos above = pos.mutable(); above.getY() < top; above.move(0, 1, 0)) {
+            var block = level.getBlockState(above);
+            if (block.is(BlockTags.LEAVES) || block.is(BlockTags.LOGS) || block.liquid()) continue;
+            if (block.getLightBlock(level, above) > 0) return false;
+        }
         return true;
     }
     public static boolean outdoors(ServerLevel level, BlockPos pos) {

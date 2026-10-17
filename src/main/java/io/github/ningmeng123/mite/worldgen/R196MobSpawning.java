@@ -394,7 +394,7 @@ public final class R196MobSpawning {
                         }
                         if (!valid) continue;
                     }
-                    if (category == Category.MONSTER && R196OutdoorChecks.outdoors(level, mob.blockPosition())) {
+                    if (category == Category.MONSTER && !day && R196OutdoorChecks.outdoors(level, mob.blockPosition())) {
                         if (!R196SpawnRules.outdoorAllows(mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD), day, moon, random::nextInt)) continue chunkLoop;
                     }
                     SourceFinalization prepared = prepareSourceFinalization(mob, level, groupData);
@@ -565,18 +565,21 @@ public final class R196MobSpawning {
     }
     public static boolean qualifiesWithEvent(Mob mob, ServerLevelAccessor accessor, MobSpawnType reason, boolean light, boolean modern) {
         if (reason == MobSpawnType.NATURAL && !naturalDaylightAllows(mob, accessor.getLevel())) return false;
-        if (modern) return SpawnPlacements.checkSpawnRules(mob.getType(), accessor, reason, mob.blockPosition(), mob.getRandom())
+        // Vanilla's natural-spawn caller checks geometry separately from the mob's light/difficulty predicate.
+        if (modern) return accessor.noCollision(mob)
+                && SpawnPlacements.isSpawnPositionOk(mob.getType(), accessor, mob.blockPosition())
+                && SpawnPlacements.checkSpawnRules(mob.getType(), accessor, reason, mob.blockPosition(), mob.getRandom())
                 && EventHooks.checkSpawnPosition(mob, accessor, reason);
         var event = new MobSpawnEvent.PositionCheck(mob, accessor, reason, null); NeoForge.EVENT_BUS.post(event);
         return event.getResult() == MobSpawnEvent.PositionCheck.Result.SUCCEED || event.getResult() == MobSpawnEvent.PositionCheck.Result.DEFAULT
                 && R196SpawnQualification.qualifies(mob, accessor, light, reason == MobSpawnType.SPAWNER);
     }
-    /** Only the current blood date releases outdoor undead, including modern variants and finalized riders. */
+    /** Only the current blood date releases surface undead; underground habitats keep their own spawn checks. */
     public static boolean naturalDaylightAllows(Mob mob, ServerLevel level) {
         if (!level.dimension().equals(Level.OVERWORLD) || !mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD)) return true;
         return !R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000L))
                 || R196SpawnRules.moon(level.getDayTime(), true).blood()
-                || !R196OutdoorChecks.outdoors(level, mob.blockPosition());
+                || !R196OutdoorChecks.surface(level, mob.blockPosition());
     }
     private static boolean undead(String name) {
         return name != null && (name.equals("tw") || name.equals("tr") || name.equals("tn") || name.equals("EntityGhoul") || name.equals("EntityWight")
