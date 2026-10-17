@@ -8,6 +8,8 @@
     "SourceStatusEffectInstanceMixin",
     "SourceStatusEffectLivingMixin",
     "SourceIceItemMeltingMixin",
+    "SourceVillagerTradesMixin",
+    "SourceVillagerTradeLifecycleMixin",
     "AutoRestockGameModeMixin",
     "AutoRestockConsumptionMixin",
     "AutoRestockAttackMixin",

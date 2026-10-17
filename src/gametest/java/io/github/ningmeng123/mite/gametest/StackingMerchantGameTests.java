@@ -203,6 +203,10 @@ public final class StackingMerchantGameTests {
             villager.setNoAi(true); villager.setNoGravity(true); villager.moveTo(player.position().add(1, 0, 0));
             villager.setVillagerData(villager.getVillagerData().setProfession(VillagerProfession.FARMER).setLevel(3));
             helper.getLevel().addFreshEntity(villager);
+            // Complete native/source stock initialization before this fixture replaces the entire list
+            // with its one authored three-emerald quote. Otherwise getOffers legitimately appends
+            // unrelated one-emerald source trades, which the native matcher may preview for two emeralds.
+            villager.getOffers();
             offer = java.util.Arrays.stream(VillagerTrades.TRADES.get(VillagerProfession.FARMER).get(3))
                     .map(listing -> listing.getOffer(villager, RandomSource.create(30)))
                     .filter(value -> value != null && value.getResult().is(Items.COOKIE)).findFirst().orElseThrow();
