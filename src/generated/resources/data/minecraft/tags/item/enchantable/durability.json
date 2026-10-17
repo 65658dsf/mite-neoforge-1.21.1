@@ -12,6 +12,10 @@
     "minecraft:diamond_axe"
   ],
   "values": [
+    {
+      "id": "#mite:simplyswords_weapons",
+      "required": false
+    },
     "mite:ancient_metal_bow",
     "mite:mithril_bow",
     "mite:rusted_iron_shield",

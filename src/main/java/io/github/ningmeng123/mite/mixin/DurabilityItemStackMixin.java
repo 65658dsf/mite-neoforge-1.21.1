@@ -38,6 +38,9 @@ public abstract class DurabilityItemStackMixin {
     @WrapOperation(method = "hurtEnemy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;hurtEnemy(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)Z"))
     private boolean mite$allToolsWearOnHit(Item item, ItemStack stack, LivingEntity target,
             LivingEntity attacker, Operation<Boolean> original) {
+        // Simply Swords performs unique/runic effects in hurtEnemy; its normal wear is in postHurtEnemy.
+        if (io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack) != null)
+            return original.call(item, stack, target, attacker);
         return EquipmentDurability.toolProfile(stack) != null && !(item instanceof EquipmentDurability.Profiled)
                 || original.call(item, stack, target, attacker);
     }

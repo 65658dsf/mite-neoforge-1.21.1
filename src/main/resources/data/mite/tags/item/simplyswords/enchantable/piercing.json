@@ -1,0 +1,285 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "simplyswords:arcanethyst",
+      "required": false
+    },
+    {
+      "id": "simplyswords:diamond_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:diamond_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:gobber_compat/gobber/gobber_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:gobber_compat/gobber/gobber_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:gobber_compat/gobber_end/gobber_end_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:gobber_compat/gobber_end/gobber_end_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:gobber_compat/gobber_nether/gobber_nether_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:gobber_compat/gobber_nether/gobber_nether_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:gold_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:gold_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:icewhisper",
+      "required": false
+    },
+    {
+      "id": "simplyswords:iron_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:iron_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:livyatan",
+      "required": false
+    },
+    {
+      "id": "simplyswords:molten_edge",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/adamantite/adamantite_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/adamantite/adamantite_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/aquarium/aquarium_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/aquarium/aquarium_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/banglum/banglum_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/banglum/banglum_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/bronze/bronze_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/bronze/bronze_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/carmot/carmot_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/carmot/carmot_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/celestium/celestium_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/celestium/celestium_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/kyber/kyber_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/kyber/kyber_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/metallurgium/metallurgium_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/metallurgium/metallurgium_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/mythril/mythril_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/mythril/mythril_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/orichalcum/orichalcum_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/orichalcum/orichalcum_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/osmium/osmium_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/osmium/osmium_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/palladium/palladium_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/palladium/palladium_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/prometheum/prometheum_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/prometheum/prometheum_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/quadrillum/quadrillum_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/quadrillum/quadrillum_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/runite/runite_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/runite/runite_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/star_platinum/star_platinum_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/star_platinum/star_platinum_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/steel/steel_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/steel/steel_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/stormyx/stormyx_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:mythicmetals_compat/stormyx/stormyx_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:netherite_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:netherite_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:runic_greataxe",
+      "required": false
+    },
+    {
+      "id": "simplyswords:runic_halberd",
+      "required": false
+    },
+    {
+      "id": "simplyswords:soulpyre",
+      "required": false
+    },
+    {
+      "id": "simplyswords:thunderbrand",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_halberd",
+      "required": false
+    }
+  ]
+}

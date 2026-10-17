@@ -10,6 +10,10 @@
     "mite:iron_dagger",
     "mite:ancient_metal_dagger",
     "mite:mithril_dagger",
-    "mite:adamantium_dagger"
+    "mite:adamantium_dagger",
+    {
+      "id": "#mite:simplyswords/enchantable/butchering",
+      "required": false
+    }
   ]
 }

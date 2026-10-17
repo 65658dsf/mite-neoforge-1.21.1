@@ -27,6 +27,10 @@
     "mite:iron_scythe",
     "mite:ancient_metal_scythe",
     "mite:mithril_scythe",
-    "mite:adamantium_scythe"
+    "mite:adamantium_scythe",
+    {
+      "id": "#mite:simplyswords/enchantable/fertility",
+      "required": false
+    }
   ]
 }

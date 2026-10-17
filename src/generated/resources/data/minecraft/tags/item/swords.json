@@ -13,6 +13,10 @@
     "minecraft:wooden_sword"
   ],
   "values": [
+    {
+      "id": "#mite:simplyswords_weapons",
+      "required": false
+    },
     "mite:copper_scythe",
     "mite:silver_scythe",
     "mite:golden_scythe",

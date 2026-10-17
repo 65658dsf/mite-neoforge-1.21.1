@@ -1,0 +1,149 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_glaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_claymore",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_greathammer",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_scythe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_glaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_claymore",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_greathammer",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_scythe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_glaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_claymore",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_greathammer",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_scythe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_glaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_claymore",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_greathammer",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_scythe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_glaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_claymore",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_greathammer",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_scythe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_glaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_claymore",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_greataxe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_greathammer",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_scythe",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_halberd",
+      "required": false
+    }
+  ]
+}

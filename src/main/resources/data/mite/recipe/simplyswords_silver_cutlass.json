@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "tag": "c:wood_sticks"
+    },
+    "X": {
+      "item": "mite:silver_ingot"
+    },
+    "Y": {
+      "item": "mite:silver_nugget"
+    }
+  },
+  "pattern": [
+    " Y",
+    "XX",
+    "# "
+  ],
+  "result": {
+    "id": "mite:simplyswords_silver_cutlass",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "simplyswords"
+    }
+  ],
+  "category": "equipment"
+}

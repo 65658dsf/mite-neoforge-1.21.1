@@ -50,6 +50,7 @@ public final class Mite {
         io.github.ningmeng123.mite.registry.MiteDecorativeContent.register(modBus);
         io.github.ningmeng123.mite.registry.MiteWeaponContent.register(modBus);
         MiteTools.register(modBus);
+        io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.register(modBus);
         MiteWorkbenches.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFurnaces.register(modBus);
         io.github.ningmeng123.mite.registry.MiteFoodPlants.register(modBus);

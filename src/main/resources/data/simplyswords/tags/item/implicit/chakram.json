@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_chakram",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_chakram",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_chakram",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_chakram",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_chakram",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_chakram",
+      "required": false
+    }
+  ]
+}

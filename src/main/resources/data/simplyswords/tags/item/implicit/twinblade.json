@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_twinblade",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_twinblade",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_twinblade",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_twinblade",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_twinblade",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_twinblade",
+      "required": false
+    }
+  ]
+}

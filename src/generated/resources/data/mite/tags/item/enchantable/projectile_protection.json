@@ -18,6 +18,10 @@
     "mite:adamantium_leggings",
     "mite:rusted_iron_leggings",
     "mite:ancient_metal_chestplate",
-    "mite:ancient_metal_leggings"
+    "mite:ancient_metal_leggings",
+    {
+      "id": "#mite:simplyswords/enchantable/projectile_protection",
+      "required": false
+    }
   ]
 }

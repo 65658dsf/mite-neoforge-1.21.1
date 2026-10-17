@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_longsword",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_longsword",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_longsword",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_longsword",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_longsword",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_longsword",
+      "required": false
+    }
+  ]
+}

@@ -73,6 +73,10 @@
     "mite:ancient_metal_leggings",
     "mite:ancient_metal_chainmail_leggings",
     "mite:ancient_metal_boots",
-    "mite:ancient_metal_chainmail_boots"
+    "mite:ancient_metal_chainmail_boots",
+    {
+      "id": "#mite:simplyswords/enchantable/protection",
+      "required": false
+    }
   ]
 }

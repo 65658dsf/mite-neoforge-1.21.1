@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_greathammer",
+  "textures": {
+    "texture": "mite:item/simplyswords_rusted_iron_greathammer"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_longsword",
+  "textures": {
+    "layer0": "mite:item/simplyswords_rusted_iron_longsword"
+  }
+}

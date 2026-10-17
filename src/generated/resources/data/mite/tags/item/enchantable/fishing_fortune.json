@@ -9,6 +9,10 @@
     "mite:fishing_rod_gold_hook",
     "mite:fishing_rod_ancient_metal_hook",
     "mite:fishing_rod_mithril_hook",
-    "mite:fishing_rod_adamantium_hook"
+    "mite:fishing_rod_adamantium_hook",
+    {
+      "id": "#mite:simplyswords/enchantable/fishing_fortune",
+      "required": false
+    }
   ]
 }

@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_halberd",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_halberd",
+      "required": false
+    }
+  ]
+}

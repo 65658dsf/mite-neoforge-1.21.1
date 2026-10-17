@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_sai",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_sai",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_sai",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_sai",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_sai",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_sai",
+      "required": false
+    }
+  ]
+}

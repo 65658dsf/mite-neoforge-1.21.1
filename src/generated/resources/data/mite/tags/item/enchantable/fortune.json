@@ -24,6 +24,10 @@
     "mite:rusted_iron_shovel",
     "mite:ancient_metal_shovel",
     "mite:mithril_shovel",
-    "mite:adamantium_shovel"
+    "mite:adamantium_shovel",
+    {
+      "id": "#mite:simplyswords/enchantable/fortune",
+      "required": false
+    }
   ]
 }

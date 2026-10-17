@@ -1,0 +1,929 @@
+{
+  "developer": "NingMeng123",
+  "upstream": {
+    "name": "Simply Swords",
+    "version": "1.70.2-1.21.1",
+    "repository": "https://github.com/Sweenus/SimplySwords",
+    "authors": "Sweenus",
+    "art_credits": [
+      "Hootea",
+      "Konsyliarz42"
+    ],
+    "declared_license": "Timefall Development License",
+    "source_archive": "run/mods/[简易刀剑] simplyswords-neoforge-1.70.2-1.21.1.jar",
+    "sha256": "5e75bd66ea489079d60c9c1ed98762550fbc0bee88cd7af399f17bbeb56608c3"
+  },
+  "notes": [
+    "All 90 textures are MITE material redraws based on Simply Swords original iron sprites; source artwork belongs to the credited Simply Swords artists.",
+    "The native iron/gold texture differences define the exact metal mask. MITE colors repaint that region using source luminance; silhouettes, transparency, grips and non-metal decoration remain unchanged.",
+    "The original weapon silhouettes and UV layouts are retained; no new weapon shapes are claimed.",
+    "Models inherit the original mod's geometry and display transforms, including the three-dimensional greathammer.",
+    "Gold uses simplyswords:gold_<family>; no duplicate gold weapon is registered.",
+    "Rusted iron weapons are loot equipment and have no crafting recipes.",
+    "Recipe ingot and nugget costs match the original iron weapon recipe.",
+    "Weapon models are used only when Simply Swords is loaded; recipes have a NeoForge mod-loaded condition."
+  ],
+  "optional_native_weapon_ids": 455,
+  "items": [
+    {
+      "id": "mite:simplyswords_rusted_iron_longsword",
+      "material": "rusted_iron",
+      "family": "longsword",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_longsword.png",
+      "craftable": false,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_twinblade",
+      "material": "rusted_iron",
+      "family": "twinblade",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_twinblade.png",
+      "craftable": false,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_rapier",
+      "material": "rusted_iron",
+      "family": "rapier",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_rapier.png",
+      "craftable": false,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_katana",
+      "material": "rusted_iron",
+      "family": "katana",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_katana.png",
+      "craftable": false,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_sai",
+      "material": "rusted_iron",
+      "family": "sai",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_sai.png",
+      "craftable": false,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_spear",
+      "material": "rusted_iron",
+      "family": "spear",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_spear.png",
+      "craftable": false,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_glaive",
+      "material": "rusted_iron",
+      "family": "glaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_glaive.png",
+      "craftable": false,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_warglaive",
+      "material": "rusted_iron",
+      "family": "warglaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_warglaive.png",
+      "craftable": false,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_cutlass",
+      "material": "rusted_iron",
+      "family": "cutlass",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_cutlass.png",
+      "craftable": false,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_claymore",
+      "material": "rusted_iron",
+      "family": "claymore",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_claymore.png",
+      "craftable": false,
+      "ingots": 2,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_greataxe",
+      "material": "rusted_iron",
+      "family": "greataxe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greataxe.png",
+      "craftable": false,
+      "ingots": 3,
+      "nuggets": 2
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_greathammer",
+      "material": "rusted_iron",
+      "family": "greathammer",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greathammer.png",
+      "craftable": false,
+      "ingots": 3,
+      "nuggets": 3
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_chakram",
+      "material": "rusted_iron",
+      "family": "chakram",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_chakram.png",
+      "craftable": false,
+      "ingots": 3,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_scythe",
+      "material": "rusted_iron",
+      "family": "scythe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_scythe.png",
+      "craftable": false,
+      "ingots": 3,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_rusted_iron_halberd",
+      "material": "rusted_iron",
+      "family": "halberd",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_halberd.png",
+      "craftable": false,
+      "ingots": 3,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_copper_longsword",
+      "material": "copper",
+      "family": "longsword",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_longsword.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_copper_twinblade",
+      "material": "copper",
+      "family": "twinblade",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_twinblade.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_copper_rapier",
+      "material": "copper",
+      "family": "rapier",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_rapier.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_copper_katana",
+      "material": "copper",
+      "family": "katana",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_katana.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_copper_sai",
+      "material": "copper",
+      "family": "sai",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_sai.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_copper_spear",
+      "material": "copper",
+      "family": "spear",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_spear.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_copper_glaive",
+      "material": "copper",
+      "family": "glaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_glaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_copper_warglaive",
+      "material": "copper",
+      "family": "warglaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_warglaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_copper_cutlass",
+      "material": "copper",
+      "family": "cutlass",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_cutlass.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_copper_claymore",
+      "material": "copper",
+      "family": "claymore",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_claymore.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_copper_greataxe",
+      "material": "copper",
+      "family": "greataxe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greataxe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 2
+    },
+    {
+      "id": "mite:simplyswords_copper_greathammer",
+      "material": "copper",
+      "family": "greathammer",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greathammer.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 3
+    },
+    {
+      "id": "mite:simplyswords_copper_chakram",
+      "material": "copper",
+      "family": "chakram",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_chakram.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_copper_scythe",
+      "material": "copper",
+      "family": "scythe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_scythe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_copper_halberd",
+      "material": "copper",
+      "family": "halberd",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_halberd.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_silver_longsword",
+      "material": "silver",
+      "family": "longsword",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_longsword.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_silver_twinblade",
+      "material": "silver",
+      "family": "twinblade",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_twinblade.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_silver_rapier",
+      "material": "silver",
+      "family": "rapier",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_rapier.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_silver_katana",
+      "material": "silver",
+      "family": "katana",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_katana.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_silver_sai",
+      "material": "silver",
+      "family": "sai",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_sai.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_silver_spear",
+      "material": "silver",
+      "family": "spear",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_spear.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_silver_glaive",
+      "material": "silver",
+      "family": "glaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_glaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_silver_warglaive",
+      "material": "silver",
+      "family": "warglaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_warglaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_silver_cutlass",
+      "material": "silver",
+      "family": "cutlass",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_cutlass.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_silver_claymore",
+      "material": "silver",
+      "family": "claymore",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_claymore.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_silver_greataxe",
+      "material": "silver",
+      "family": "greataxe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greataxe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 2
+    },
+    {
+      "id": "mite:simplyswords_silver_greathammer",
+      "material": "silver",
+      "family": "greathammer",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greathammer.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 3
+    },
+    {
+      "id": "mite:simplyswords_silver_chakram",
+      "material": "silver",
+      "family": "chakram",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_chakram.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_silver_scythe",
+      "material": "silver",
+      "family": "scythe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_scythe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_silver_halberd",
+      "material": "silver",
+      "family": "halberd",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_halberd.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_longsword",
+      "material": "ancient_metal",
+      "family": "longsword",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_longsword.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_twinblade",
+      "material": "ancient_metal",
+      "family": "twinblade",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_twinblade.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_rapier",
+      "material": "ancient_metal",
+      "family": "rapier",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_rapier.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_katana",
+      "material": "ancient_metal",
+      "family": "katana",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_katana.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_sai",
+      "material": "ancient_metal",
+      "family": "sai",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_sai.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_spear",
+      "material": "ancient_metal",
+      "family": "spear",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_spear.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_glaive",
+      "material": "ancient_metal",
+      "family": "glaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_glaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_warglaive",
+      "material": "ancient_metal",
+      "family": "warglaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_warglaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_cutlass",
+      "material": "ancient_metal",
+      "family": "cutlass",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_cutlass.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_claymore",
+      "material": "ancient_metal",
+      "family": "claymore",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_claymore.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_greataxe",
+      "material": "ancient_metal",
+      "family": "greataxe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greataxe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 2
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_greathammer",
+      "material": "ancient_metal",
+      "family": "greathammer",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greathammer.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 3
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_chakram",
+      "material": "ancient_metal",
+      "family": "chakram",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_chakram.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_scythe",
+      "material": "ancient_metal",
+      "family": "scythe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_scythe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_halberd",
+      "material": "ancient_metal",
+      "family": "halberd",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_halberd.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_mithril_longsword",
+      "material": "mithril",
+      "family": "longsword",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_longsword.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_mithril_twinblade",
+      "material": "mithril",
+      "family": "twinblade",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_twinblade.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_mithril_rapier",
+      "material": "mithril",
+      "family": "rapier",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_rapier.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_mithril_katana",
+      "material": "mithril",
+      "family": "katana",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_katana.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_mithril_sai",
+      "material": "mithril",
+      "family": "sai",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_sai.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_mithril_spear",
+      "material": "mithril",
+      "family": "spear",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_spear.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_mithril_glaive",
+      "material": "mithril",
+      "family": "glaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_glaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_mithril_warglaive",
+      "material": "mithril",
+      "family": "warglaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_warglaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_mithril_cutlass",
+      "material": "mithril",
+      "family": "cutlass",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_cutlass.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_mithril_claymore",
+      "material": "mithril",
+      "family": "claymore",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_claymore.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_mithril_greataxe",
+      "material": "mithril",
+      "family": "greataxe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greataxe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 2
+    },
+    {
+      "id": "mite:simplyswords_mithril_greathammer",
+      "material": "mithril",
+      "family": "greathammer",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greathammer.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 3
+    },
+    {
+      "id": "mite:simplyswords_mithril_chakram",
+      "material": "mithril",
+      "family": "chakram",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_chakram.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_mithril_scythe",
+      "material": "mithril",
+      "family": "scythe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_scythe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_mithril_halberd",
+      "material": "mithril",
+      "family": "halberd",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_halberd.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_adamantium_longsword",
+      "material": "adamantium",
+      "family": "longsword",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_longsword.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_adamantium_twinblade",
+      "material": "adamantium",
+      "family": "twinblade",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_twinblade.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_adamantium_rapier",
+      "material": "adamantium",
+      "family": "rapier",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_rapier.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_adamantium_katana",
+      "material": "adamantium",
+      "family": "katana",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_katana.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_adamantium_sai",
+      "material": "adamantium",
+      "family": "sai",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_sai.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_adamantium_spear",
+      "material": "adamantium",
+      "family": "spear",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_spear.png",
+      "craftable": true,
+      "ingots": 1,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_adamantium_glaive",
+      "material": "adamantium",
+      "family": "glaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_glaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_adamantium_warglaive",
+      "material": "adamantium",
+      "family": "warglaive",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_warglaive.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_adamantium_cutlass",
+      "material": "adamantium",
+      "family": "cutlass",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_cutlass.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 1
+    },
+    {
+      "id": "mite:simplyswords_adamantium_claymore",
+      "material": "adamantium",
+      "family": "claymore",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_claymore.png",
+      "craftable": true,
+      "ingots": 2,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_adamantium_greataxe",
+      "material": "adamantium",
+      "family": "greataxe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greataxe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 2
+    },
+    {
+      "id": "mite:simplyswords_adamantium_greathammer",
+      "material": "adamantium",
+      "family": "greathammer",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_greathammer.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 3
+    },
+    {
+      "id": "mite:simplyswords_adamantium_chakram",
+      "material": "adamantium",
+      "family": "chakram",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_chakram.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 4
+    },
+    {
+      "id": "mite:simplyswords_adamantium_scythe",
+      "material": "adamantium",
+      "family": "scythe",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_scythe.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 0
+    },
+    {
+      "id": "mite:simplyswords_adamantium_halberd",
+      "material": "adamantium",
+      "family": "halberd",
+      "texture_work": "MITE material redraw by NingMeng123 based on the original Simply Swords iron texture",
+      "source_texture": "assets/simplyswords/textures/item/iron_halberd.png",
+      "craftable": true,
+      "ingots": 3,
+      "nuggets": 1
+    }
+  ]
+}

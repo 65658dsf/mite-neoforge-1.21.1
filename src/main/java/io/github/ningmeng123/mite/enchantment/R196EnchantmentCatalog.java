@@ -139,6 +139,8 @@ public final class R196EnchantmentCatalog {
     }
 
     public static ToolFamily family(ItemStack stack) {
+        var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack);
+        if (simply != null) return simply.profile().family();
         MiteTools.Definition source = MiteTools.definition(stack);
         if (source != null) return source.family();
         if (stack.getItem() instanceof PickaxeItem) return ToolFamily.PICKAXE;
@@ -166,6 +168,8 @@ public final class R196EnchantmentCatalog {
     }
 
     private static boolean vampiricExcludedMaterial(ItemStack stack) {
+        var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack);
+        if (simply != null) return simply.material().equals("silver") || simply.material().equals("mithril");
         MiteTools.Definition source = MiteTools.definition(stack);
         return source != null && (source.material().equals("silver") || source.material().equals("mithril"));
     }

@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_rapier",
+  "textures": {
+    "layer0": "mite:item/simplyswords_copper_rapier"
+  }
+}

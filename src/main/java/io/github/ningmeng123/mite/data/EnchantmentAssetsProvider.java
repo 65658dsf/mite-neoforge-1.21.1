@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog.Definition;
 import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
@@ -84,9 +85,12 @@ public final class EnchantmentAssetsProvider implements DataProvider {
 
             JsonArray items = new JsonArray();
             BuiltInRegistries.ITEM.forEach(item -> {
-                if (!RemovedDiamondEquipment.isRemoved(item) && definition.supported(new ItemStack(item)))
+                ItemStack stack = new ItemStack(item);
+                if (!RemovedDiamondEquipment.isRemoved(item) && SimplySwordsCompat.definition(stack) == null
+                        && definition.supported(stack))
                     items.add(BuiltInRegistries.ITEM.getKey(item).toString());
             });
+            items.add(optionalTag("mite:simplyswords/enchantable/" + definition.id()));
             save(cache, work, "data/mite/tags/item/enchantable/" + definition.id() + ".json", tag(true, items));
             all.add(definition.resourceId());
             if (!vanilla) added.add(definition.resourceId());
@@ -95,13 +99,23 @@ public final class EnchantmentAssetsProvider implements DataProvider {
         // Keep the original agriculture integration tag for other crop/data consumers.
         JsonArray agriculture = new JsonArray();
         BuiltInRegistries.ITEM.forEach(item -> {
-            if (!RemovedDiamondEquipment.isRemoved(item) && R196EnchantmentCatalog.supported("harvesting", new ItemStack(item)))
+            ItemStack stack = new ItemStack(item);
+            if (!RemovedDiamondEquipment.isRemoved(item) && SimplySwordsCompat.definition(stack) == null
+                    && R196EnchantmentCatalog.supported("harvesting", stack))
                 agriculture.add(BuiltInRegistries.ITEM.getKey(item).toString());
         });
+        agriculture.add(optionalTag("mite:simplyswords/enchantable/harvesting"));
         save(cache, work, "data/mite/tags/item/agricultural_tools.json", tag(false, agriculture));
         for (String id : List.of("in_enchanting_table", "tradeable", "on_random_loot", "non_treasure"))
             save(cache, work, "data/minecraft/tags/enchantment/" + id + ".json", tag(false, added));
         return CompletableFuture.allOf(work.toArray(CompletableFuture[]::new));
+    }
+
+    private static JsonObject optionalTag(String id) {
+        JsonObject entry = new JsonObject();
+        entry.addProperty("id", "#" + id);
+        entry.addProperty("required", false);
+        return entry;
     }
 
     private static String[] slots(String id) {

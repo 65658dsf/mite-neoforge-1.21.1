@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_rapier",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_rapier",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_rapier",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_rapier",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_rapier",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_rapier",
+      "required": false
+    }
+  ]
+}

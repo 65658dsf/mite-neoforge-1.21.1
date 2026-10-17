@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_spear",
+  "textures": {
+    "layer0": "mite:item/simplyswords_adamantium_spear"
+  }
+}

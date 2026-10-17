@@ -3,6 +3,10 @@
   "values": [
     "minecraft:bow",
     "mite:ancient_metal_bow",
-    "mite:mithril_bow"
+    "mite:mithril_bow",
+    {
+      "id": "#mite:simplyswords/enchantable/arrow_recovery",
+      "required": false
+    }
   ]
 }

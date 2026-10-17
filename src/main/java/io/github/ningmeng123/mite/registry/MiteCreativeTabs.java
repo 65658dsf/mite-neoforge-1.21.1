@@ -87,6 +87,8 @@ public final class MiteCreativeTabs {
     /** Vanilla items shared with modern Minecraft keep their own identity; only the renamed club is moved. */
     @Nullable public static Group group(Item item) {
         if (!owned(item)) return null;
+        if (io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(new ItemStack(item)) != null)
+            return Group.COMBAT;
         if (item instanceof SpawnEggItem) return Group.SPAWN_EGGS;
         if (item instanceof R196StoneBucketItem || item == MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get()
                 || MiteFoods.entries().values().stream().anyMatch(entry -> entry.get() == item)) return Group.FOODS;

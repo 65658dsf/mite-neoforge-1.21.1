@@ -18,6 +18,10 @@
     "mite:rusted_iron_chestplate",
     "mite:rusted_iron_chain_chestplate",
     "mite:ancient_metal_chestplate",
-    "mite:ancient_metal_chainmail_chestplate"
+    "mite:ancient_metal_chainmail_chestplate",
+    {
+      "id": "#mite:simplyswords/enchantable/endurance",
+      "required": false
+    }
   ]
 }

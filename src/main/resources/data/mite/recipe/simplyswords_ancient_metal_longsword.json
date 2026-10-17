@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "tag": "c:wood_sticks"
+    },
+    "X": {
+      "item": "mite:ancient_metal_ingot"
+    }
+  },
+  "pattern": [
+    "#  ",
+    " X ",
+    "  X"
+  ],
+  "result": {
+    "id": "mite:simplyswords_ancient_metal_longsword",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "simplyswords"
+    }
+  ],
+  "category": "equipment"
+}

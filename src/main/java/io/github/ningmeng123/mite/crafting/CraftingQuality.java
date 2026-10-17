@@ -41,6 +41,8 @@ public final class CraftingQuality {
     private CraftingQuality() {}
 
     public static float lowestDifficulty(ItemStack stack) {
+        var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack);
+        if (simply != null) return simply.craftingDifficulty();
         var shield = io.github.ningmeng123.mite.registry.MiteShields.definition(stack);
         if (shield != null) return shield.craftingDifficulty();
         float ranged = RangedRodRepair.lowestDifficulty(stack);

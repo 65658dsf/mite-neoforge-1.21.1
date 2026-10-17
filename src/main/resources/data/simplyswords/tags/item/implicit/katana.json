@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_katana",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_katana",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_katana",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_katana",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_katana",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_katana",
+      "required": false
+    }
+  ]
+}

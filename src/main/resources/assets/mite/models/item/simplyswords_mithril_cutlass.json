@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_cutlass",
+  "textures": {
+    "layer0": "mite:item/simplyswords_mithril_cutlass"
+  }
+}

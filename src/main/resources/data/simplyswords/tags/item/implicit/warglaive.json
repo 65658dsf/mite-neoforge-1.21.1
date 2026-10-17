@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_warglaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_warglaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_warglaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_warglaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_warglaive",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_warglaive",
+      "required": false
+    }
+  ]
+}

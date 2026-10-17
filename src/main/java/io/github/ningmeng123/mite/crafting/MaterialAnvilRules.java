@@ -67,6 +67,10 @@ public final class MaterialAnvilRules {
                 : state.getBlock() instanceof AnvilBlock ? 8F : 0F;
     }
     public static Material material(ItemStack stack) {
+        var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack);
+        if (simply != null && !simply.material().equals("runic") && !simply.material().equals("unique")
+                && !simply.material().equals("diamond") && !simply.material().equals("netherite"))
+            return new Material(simply.material(), simply.profile().family().components(), false, false, false, false);
         var shield = MiteShields.definition(stack);
         if (shield != null) return new Material(shield.material(), 1, false, false, false, false);
         if (stack.is(Items.FISHING_ROD)) return new Material("iron", 1, false, false, false, true);

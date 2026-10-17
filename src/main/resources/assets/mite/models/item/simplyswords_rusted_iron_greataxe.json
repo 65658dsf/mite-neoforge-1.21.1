@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_greataxe",
+  "textures": {
+    "layer0": "mite:item/simplyswords_rusted_iron_greataxe"
+  }
+}

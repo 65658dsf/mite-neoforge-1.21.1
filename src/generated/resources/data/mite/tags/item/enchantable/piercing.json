@@ -19,6 +19,10 @@
     "mite:iron_battle_axe",
     "mite:ancient_metal_battle_axe",
     "mite:mithril_battle_axe",
-    "mite:adamantium_battle_axe"
+    "mite:adamantium_battle_axe",
+    {
+      "id": "#mite:simplyswords/enchantable/piercing",
+      "required": false
+    }
   ]
 }

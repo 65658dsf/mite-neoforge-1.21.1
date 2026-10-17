@@ -11,5 +11,10 @@
     "minecraft:diamond_sword",
     "minecraft:diamond_axe"
   ],
-  "values": []
+  "values": [
+    {
+      "id": "#mite:simplyswords_weapons",
+      "required": false
+    }
+  ]
 }

@@ -18,6 +18,10 @@
     "mite:rusted_iron_leggings",
     "mite:rusted_iron_chain_leggings",
     "mite:ancient_metal_leggings",
-    "mite:ancient_metal_chainmail_leggings"
+    "mite:ancient_metal_chainmail_leggings",
+    {
+      "id": "#mite:simplyswords/enchantable/free_action",
+      "required": false
+    }
   ]
 }

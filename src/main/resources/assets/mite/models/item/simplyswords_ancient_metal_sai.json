@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_sai",
+  "textures": {
+    "layer0": "mite:item/simplyswords_ancient_metal_sai"
+  }
+}

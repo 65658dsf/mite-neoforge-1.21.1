@@ -46,6 +46,14 @@ neoForge {
     runs {
         client {
             client()
+            if (project.providers.gradleProperty('miteClientDirectory').isPresent()) {
+                gameDirectory = file(project.providers.gradleProperty('miteClientDirectory').get())
+            }
+            if (project.providers.gradleProperty('miteSimplySwordsClientAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.simplySwordsClientAudit', 'true'
+                systemProperty 'mite.simplySwordsClientAuditOutput', file(project.providers.gradleProperty('miteSimplySwordsClientAuditOutput')
+                        .getOrElse('build/verification/simplyswords-client-audit.json')).absolutePath
+            }
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             if (project.providers.gradleProperty('miteTestWorld').isPresent()) {
                 programArguments.addAll '--quickPlaySingleplayer', project.providers.gradleProperty('miteTestWorld').get()
@@ -91,7 +99,7 @@ neoForge {
             if (project.providers.gradleProperty('miteGameTestDirectory').isPresent()) {
                 gameDirectory = file(project.providers.gradleProperty('miteGameTestDirectory').get())
             }
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.providers.gradleProperty('miteGameTestNamespaces').getOrElse('mite,mite_simplyswords')
         }
         data {
             data()

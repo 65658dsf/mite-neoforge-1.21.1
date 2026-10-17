@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "mite:simplyswords_rusted_iron_spear",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_copper_spear",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_silver_spear",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_ancient_metal_spear",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_mithril_spear",
+      "required": false
+    },
+    {
+      "id": "mite:simplyswords_adamantium_spear",
+      "required": false
+    }
+  ]
+}

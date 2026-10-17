@@ -1,0 +1,6 @@
+{
+  "parent": "simplyswords:item/iron_scythe",
+  "textures": {
+    "layer0": "mite:item/simplyswords_ancient_metal_scythe"
+  }
+}
