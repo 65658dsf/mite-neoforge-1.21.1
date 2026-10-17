@@ -283,7 +283,7 @@ public final class R196EnchantmentTableGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void sourceBookTransferIsFreePreservesDamageAndRejectsAlreadyEnchantedTarget(GameTestHelper helper) {
+    public static void sourceBookTransferIsFreePreservesDamageAndSupportsCompatibleUpgrades(GameTestHelper helper) {
         var owner = owner(helper, 0);
         var menu = anvil(helper, owner);
         ItemStack tool = new ItemStack(Items.IRON_PICKAXE); tool.setDamageValue(1234);
@@ -298,9 +298,16 @@ public final class R196EnchantmentTableGameTests {
         helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Whole book is consumed exactly once");
         menu.setCarried(ItemStack.EMPTY);
         menu.getSlot(0).set(taken); menu.getSlot(1).set(book(helper, "minecraft:efficiency", 4));
-        helper.assertTrue(menu.getSlot(2).getItem().isEmpty(), "Already-enchanted equipment cannot upgrade source levels");
+        helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(enchantment(helper, "minecraft:efficiency"), menu.getSlot(2).getItem()),
+                5, "Equal source levels combine up to the source maximum");
+        helper.assertValueEqual(menu.getSlot(2).getItem().getDamageValue(), 1234, "A source upgrade preserves existing wear");
+        helper.assertValueEqual(menu.getCost(), 0, "Source upgrades retain free book-transfer costs");
         menu.getSlot(1).set(book(helper, "minecraft:mending", 1));
-        helper.assertTrue(menu.getSlot(2).getItem().isEmpty(), "A modern book cannot bypass an already-source-enchanted target restriction");
+        helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(enchantment(helper, "minecraft:efficiency"), menu.getSlot(2).getItem()),
+                4, "A native modern book retains the existing source enchantment");
+        helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(enchantment(helper, "minecraft:mending"), menu.getSlot(2).getItem()),
+                1, "A compatible modern book can be added to source-enchanted equipment");
+        helper.assertTrue(menu.getCost() > 0, "A modern-only book still uses native anvil costs");
         helper.succeed();
     }
 
