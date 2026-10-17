@@ -1,15 +1,17 @@
 package io.github.ningmeng123.mite.enchantment;
 
 import io.github.ningmeng123.mite.crafting.MaterialAnvilRules;
+import java.util.Objects;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 
-/** Source book transfers retain free costs with modern compatible additions and upgrades. @author NingMeng123 */
+/** Compatible source-book additions and upgrades retain native level fees and deterministic anvil wear. @author NingMeng123 */
 public final class R196BookAnvil {
     private R196BookAnvil() {}
     private static R196EnchantmentCatalog.Definition definition(Holder<Enchantment> holder) {
@@ -26,6 +28,50 @@ public final class R196BookAnvil {
                 || stack.is(Items.LEATHER_LEGGINGS) || stack.is(Items.LEATHER_BOOTS));
     }
     private static MaterialAnvilRules.Plan rejected() { return new MaterialAnvilRules.Plan(ItemStack.EMPTY, 0, 0, false); }
+
+    private static boolean changesBookEnchantments(ItemStack before, ItemStack book, ItemStack after) {
+        if (before.isEmpty() || after.isEmpty()) return false;
+        ItemEnchantments stored = book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+        ItemEnchantments previous = EnchantmentHelper.getEnchantmentsForCrafting(before);
+        ItemEnchantments result = EnchantmentHelper.getEnchantmentsForCrafting(after);
+        for (var entry : stored.entrySet()) {
+            int level = result.getLevel(entry.getKey());
+            if (level > previous.getLevel(entry.getKey())) return true;
+        }
+        return false;
+    }
+
+    /** Native book rarity/level fees, input work penalties and an actual rename surcharge. */
+    public static int experienceLevels(ItemStack before, ItemStack book, ItemStack after) {
+        if (!changesBookEnchantments(before, book, after)) return 0;
+        ItemEnchantments result = EnchantmentHelper.getEnchantmentsForCrafting(after);
+        long cost = (long)Math.max(0, before.getOrDefault(DataComponents.REPAIR_COST, 0))
+                + Math.max(0, book.getOrDefault(DataComponents.REPAIR_COST, 0));
+        for (var entry : book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet()) {
+            var definition = definition(entry.getKey());
+            if (definition != null ? !supportsBook(definition, before) : !entry.getKey().value().canEnchant(before)) continue;
+            int level = result.getLevel(entry.getKey());
+            if (level > 0) cost += (long)Math.max(1, entry.getKey().value().getAnvilCost() / 2) * level;
+        }
+        if (!Objects.equals(before.get(DataComponents.CUSTOM_NAME), after.get(DataComponents.CUSTOM_NAME))) cost++;
+        return (int)Math.min(cost, Integer.MAX_VALUE);
+    }
+
+    /** Successful book changes charge all result levels at 100 each, plus 10% per type after the first. */
+    public static int anvilWear(ItemStack before, ItemStack book, ItemStack after) {
+        if (!changesBookEnchantments(before, book, after)) return 0;
+        ItemEnchantments result = EnchantmentHelper.getEnchantmentsForCrafting(after);
+        long totalLevels = 0;
+        int types = 0;
+        for (var entry : result.entrySet()) {
+            if (entry.getIntValue() <= 0) continue;
+            totalLevels += entry.getIntValue();
+            types++;
+        }
+        // 100 * (1 + 0.1 * (types - 1)) = 10 * (types + 9), using exact integer arithmetic.
+        long wear = totalLevels * 10L * (types + 9L);
+        return (int)Math.min(wear, Integer.MAX_VALUE);
+    }
 
     /** Null leaves modern-only enchants/equipment with their native costs and merge behavior. */
     public static MaterialAnvilRules.Plan plan(ItemStack first, ItemStack second) {
@@ -66,6 +112,8 @@ public final class R196BookAnvil {
         if (!changed) return rejected();
         ItemStack result = first.copyWithCount(1);
         result.set(DataComponents.ENCHANTMENTS, resultEnchantments.toImmutable());
-        return new MaterialAnvilRules.Plan(result, second.getCount(), 0, false);
+        result.set(DataComponents.REPAIR_COST, AnvilMenu.calculateIncreasedRepairCost(Math.max(
+                first.getOrDefault(DataComponents.REPAIR_COST, 0), second.getOrDefault(DataComponents.REPAIR_COST, 0))));
+        return new MaterialAnvilRules.Plan(result, second.getCount(), anvilWear(first, second, result), false);
     }
 }

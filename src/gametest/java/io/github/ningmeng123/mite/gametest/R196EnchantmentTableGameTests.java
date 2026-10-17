@@ -283,25 +283,26 @@ public final class R196EnchantmentTableGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void sourceBookTransferIsFreePreservesDamageAndSupportsCompatibleUpgrades(GameTestHelper helper) {
-        var owner = owner(helper, 0);
+    public static void sourceBookTransferChargesLevelsPreservesDamageAndSupportsCompatibleUpgrades(GameTestHelper helper) {
+        var owner = owner(helper, 650);
         var menu = anvil(helper, owner);
         ItemStack tool = new ItemStack(Items.IRON_PICKAXE); tool.setDamageValue(1234);
         menu.getSlot(0).set(tool); menu.getSlot(1).set(book(helper, "minecraft:efficiency", 4));
         helper.assertFalse(menu.getSlot(2).getItem().isEmpty(), "A source book applies to a fresh unenchanted target");
-        helper.assertValueEqual(menu.getCost(), 0, "Book transfer costs no player levels");
+        helper.assertValueEqual(menu.getCost(), 4, "A fresh Efficiency IV book costs four player levels");
         menu.clicked(2, 0, ClickType.PICKUP, owner);
         ItemStack taken = menu.getCarried();
         helper.assertTrue(taken.isEnchanted(), "Actual pickup obtains enchanted source item");
         helper.assertValueEqual(taken.getDamageValue(), 1234, "Book transfer preserves damage");
-        helper.assertValueEqual(owner.totalExperience, 0, "Book transfer charges no points");
+        helper.assertValueEqual(owner.totalExperience, 270, "Charging four levels carries an exact level-ten player to level six");
+        helper.assertValueEqual(taken.getOrDefault(DataComponents.REPAIR_COST, 0), 1, "The first book application records prior-work penalty one");
         helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Whole book is consumed exactly once");
         menu.setCarried(ItemStack.EMPTY);
         menu.getSlot(0).set(taken); menu.getSlot(1).set(book(helper, "minecraft:efficiency", 4));
         helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(enchantment(helper, "minecraft:efficiency"), menu.getSlot(2).getItem()),
                 5, "Equal source levels combine up to the source maximum");
         helper.assertValueEqual(menu.getSlot(2).getItem().getDamageValue(), 1234, "A source upgrade preserves existing wear");
-        helper.assertValueEqual(menu.getCost(), 0, "Source upgrades retain free book-transfer costs");
+        helper.assertValueEqual(menu.getCost(), 6, "The prior-work penalty one plus upgraded Efficiency V costs six levels");
         menu.getSlot(1).set(book(helper, "minecraft:mending", 1));
         helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(enchantment(helper, "minecraft:efficiency"), menu.getSlot(2).getItem()),
                 4, "A native modern book retains the existing source enchantment");

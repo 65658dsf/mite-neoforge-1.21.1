@@ -26,7 +26,7 @@ public abstract class AnvilDurabilityMenuMixin extends ItemCombinerMenu implemen
     }
 
     // FunctionalAnvilMixin installs sourceMode at the default injector order. Keep its established
-    // cost=0/sourceMode=1 protocol and append our words only after that callback has been installed.
+    // cost at data index0 and sourceMode at index1; append our words after that callback.
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("TAIL"), order = 1100)
     private void mite$addDurabilityData(int id, Inventory inventory, ContainerLevelAccess access, CallbackInfo ci) {
         for (int index=0;index<4;index++) addDataSlot(mite$durabilityWord(index));

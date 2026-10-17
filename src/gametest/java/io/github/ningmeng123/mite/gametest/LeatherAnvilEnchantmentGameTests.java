@@ -60,8 +60,9 @@ public final class LeatherAnvilEnchantmentGameTests {
                 helper.assertFalse(preview.isEmpty(), "Unbreaking IV produces leather armor on " + anvil + " via " + click + ": " + item);
                 assertTransferred(helper, unchanged, preview, 4);
                 helper.assertTrue(ItemStack.matches(input, unchanged), "Preview never mutates the source leather armor");
-                helper.assertValueEqual(f.menu.getCost(), 0, "Source book transfer is available at zero XP");
-                helper.assertTrue(f.menu.getSlot(2).mayPickup(f.owner), "A zero-XP survival player may take fine-quality enchanted leather");
+                helper.assertValueEqual(f.menu.getCost(), 4, "A fresh Unbreaking IV book costs four levels");
+                helper.assertTrue(f.menu.getSlot(2).mayPickup(f.owner), "A funded survival player may take fine-quality enchanted leather");
+                helper.assertValueEqual(f.entity().damage(), wear, "Preparing an enchantment preview does not consume anvil durability");
 
                 f.menu.clicked(2, 0, click, f.owner);
                 ItemStack result = click == ClickType.PICKUP ? f.menu.getCarried() : f.inventoryResult(item);
@@ -69,9 +70,9 @@ public final class LeatherAnvilEnchantmentGameTests {
                 helper.assertTrue(f.menu.getSlot(0).getItem().isEmpty(), "A real pickup consumes the original armor exactly once");
                 helper.assertTrue(f.menu.getSlot(1).getItem().isEmpty(), "A real pickup consumes the Unbreaking IV book");
                 helper.assertTrue(f.menu.getSlot(2).getItem().isEmpty(), "No duplicate enchanted result remains after pickup");
-                helper.assertValueEqual(f.owner.totalExperience, 0, "Applying a source book charges no XP points");
-                helper.assertValueEqual(f.owner.experienceLevel, 0, "Applying a source book charges no levels");
-                helper.assertValueEqual(f.entity().damage(), wear, "Enchantment does not add anvil wear");
+                helper.assertValueEqual(f.owner.totalExperience, 270, "Four levels are deducted using the R196 experience curve");
+                helper.assertValueEqual(f.owner.experienceLevel, 6, "The initial ten-level player pays four levels exactly once");
+                helper.assertValueEqual(f.entity().damage(), wear + 400, "A final Unbreaking IV item consumes 400 anvil durability");
                 helper.assertValueEqual(helper.getLevel().getBlockState(f.pos), state, "Enchantment preserves the physical anvil material and damage stage");
             }
         }
@@ -129,20 +130,21 @@ public final class LeatherAnvilEnchantmentGameTests {
             ItemStack original = input.copy();
             ItemStack expected = original.copy();
             expected.enchant(enchantment(helper, Enchantments.UNBREAKING), 4);
+            expected.set(DataComponents.REPAIR_COST, 1);
             int wear = f.entity().damage();
             f.input(input);
             f.menu.getSlot(1).set(book(helper, Enchantments.UNBREAKING, 4));
             helper.assertTrue(ItemStack.matches(f.menu.getSlot(2).getItem(), expected),
                     "Existing Blast Protection IV adamantium leggings gain Unbreaking IV without losing any components on " + anvil);
             helper.assertTrue(ItemStack.matches(input, original), "Adding a book never mutates existing enchantments in the input preview");
-            helper.assertValueEqual(f.menu.getCost(), 0, "Compatible source-book additions retain zero XP cost");
+            helper.assertValueEqual(f.menu.getCost(), 4, "Adding Unbreaking IV costs four levels, excluding retained Blast Protection IV");
             f.menu.clicked(2, 0, click, f.owner);
             ItemStack result = click == ClickType.PICKUP ? f.menu.getCarried() : f.inventoryResult(leggings);
             helper.assertTrue(ItemStack.matches(result, expected), "Actual pickup preserves Blast Protection IV alongside Unbreaking IV");
             helper.assertTrue(f.menu.getSlot(0).getItem().isEmpty() && f.menu.getSlot(1).getItem().isEmpty(),
                     "The actual compatible-book transaction consumes the leggings and book once");
-            helper.assertValueEqual(f.owner.totalExperience, 0, "Adding compatible source enchantments at zero XP incurs no debt");
-            helper.assertValueEqual(f.entity().damage(), wear, "Adding compatible source enchantments causes no anvil wear");
+            helper.assertValueEqual(f.owner.experienceLevel, 6, "The compatible book addition deducts four levels once");
+            helper.assertValueEqual(f.entity().damage(), wear + 880, "The final Blast Protection IV plus Unbreaking IV charges 800 durability plus the second type's ten percent surcharge");
         }
         helper.succeed();
     }
@@ -155,12 +157,14 @@ public final class LeatherAnvilEnchantmentGameTests {
             input.enchant(enchantment(helper, Enchantments.UNBREAKING), 4);
             ItemStack expected = input.copy();
             expected.enchant(enchantment(helper, Enchantments.UNBREAKING), 5);
+            expected.set(DataComponents.REPAIR_COST, 1);
             f.input(input);
             f.menu.getSlot(1).set(book(helper, Enchantments.UNBREAKING, 4));
             helper.assertTrue(ItemStack.matches(f.menu.getSlot(2).getItem(), expected),
                     "Unbreaking IV plus IV reaches source level V and retains existing Protection III");
             f.menu.clicked(2, 0, ClickType.PICKUP, f.owner);
             helper.assertTrue(ItemStack.matches(f.menu.getCarried(), expected), "Actual pickup obtains the upgraded source level V");
+            helper.assertValueEqual(f.entity().damage(), 880, "The final Protection III plus Unbreaking V has eight levels and two types, costing 880 durability");
             f.menu.setCarried(ItemStack.EMPTY);
 
             for (int bookLevel : new int[] {1, 4, 5, 200}) {
@@ -171,6 +175,7 @@ public final class LeatherAnvilEnchantmentGameTests {
                 helper.assertTrue(f.menu.getCarried().isEmpty(), "A capped source enchantment cannot produce a duplicate result");
                 helper.assertTrue(ItemStack.matches(f.menu.getSlot(0).getItem(), expected), "Rejected capped transfers preserve all existing armor components");
                 helper.assertValueEqual(f.menu.getSlot(1).getItem().getCount(), 1, "Rejected capped transfers do not consume the book");
+                helper.assertValueEqual(f.entity().damage(), 880, "Rejected capped transfers do not consume more anvil durability");
             }
 
             ItemStack conflicting = new ItemStack(MiteArmorContent.get("mite:adamantium_leggings"));
@@ -181,6 +186,7 @@ public final class LeatherAnvilEnchantmentGameTests {
             f.menu.clicked(2, 0, ClickType.QUICK_MOVE, f.owner);
             helper.assertTrue(ItemStack.matches(f.menu.getSlot(0).getItem(), conflicting), "A conflicting shift-click retains the enchanted armor");
             helper.assertValueEqual(f.menu.getSlot(1).getItem().getCount(), 1, "A conflicting shift-click retains the book");
+            helper.assertValueEqual(f.entity().damage(), 880, "Conflicting book operations do not consume anvil durability");
         }
         helper.succeed();
     }
@@ -192,6 +198,7 @@ public final class LeatherAnvilEnchantmentGameTests {
             input.enchant(enchantment(helper, Enchantments.MENDING), 1);
             ItemStack expected = input.copy();
             expected.enchant(enchantment(helper, Enchantments.UNBREAKING), 4);
+            expected.set(DataComponents.REPAIR_COST, 1);
             f.input(input);
             f.menu.getSlot(1).set(book(helper, Enchantments.UNBREAKING, 4));
             helper.assertTrue(ItemStack.matches(f.menu.getSlot(2).getItem(), expected),
@@ -202,6 +209,7 @@ public final class LeatherAnvilEnchantmentGameTests {
 
             input = leather(Items.LEATHER_CHESTPLATE);
             input.enchant(enchantment(helper, Enchantments.UNBREAKING), 4);
+            PlayerExperience.setTotal(f.owner, 0);
             f.input(input);
             f.menu.getSlot(1).set(book(helper, Enchantments.MENDING, 1));
             ItemStack preview = f.menu.getSlot(2).getItem().copy();
@@ -271,7 +279,8 @@ public final class LeatherAnvilEnchantmentGameTests {
         helper.assertValueEqual(result.getCount(), 1, "Transfer yields exactly one item");
         helper.assertValueEqual(result.getDamageValue(), original.getDamageValue(), "Transfer preserves existing leather wear");
         helper.assertValueEqual(result.getMaxDamage(), original.getMaxDamage(), "Transfer preserves quality-scaled maximum durability");
-        helper.assertValueEqual(EquipmentDurability.quality(result), Quality.FINE, "Transfer preserves fine quality at zero XP");
+        helper.assertValueEqual(EquipmentDurability.quality(result), Quality.FINE, "Transfer preserves fine quality");
+        helper.assertValueEqual(result.getOrDefault(DataComponents.REPAIR_COST, 0), 1, "A first book operation records native prior-work penalty one");
         helper.assertValueEqual(result.get(DataComponents.CUSTOM_NAME), original.get(DataComponents.CUSTOM_NAME), "Transfer preserves the custom name");
         helper.assertValueEqual(result.get(DataComponents.DYED_COLOR), original.get(DataComponents.DYED_COLOR), "Transfer preserves dye color and tooltip preference");
         helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(enchantment(helper, Enchantments.UNBREAKING), result),
@@ -297,7 +306,7 @@ public final class LeatherAnvilEnchantmentGameTests {
             helper.getLevel().setBlock(pos, anvil.defaultBlockState(), 3);
             owner = helper.makeMockPlayer(GameType.SURVIVAL);
             owner.moveTo(pos.getCenter());
-            PlayerExperience.setTotal(owner, 0);
+            PlayerExperience.setTotal(owner, 650);
             menu = new AnvilMenu(71, owner.getInventory(), ContainerLevelAccess.create(helper.getLevel(), pos));
         }
 

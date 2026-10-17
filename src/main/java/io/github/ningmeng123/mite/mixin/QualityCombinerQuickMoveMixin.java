@@ -18,7 +18,8 @@ public abstract class QualityCombinerQuickMoveMixin {
         ItemCombinerMenu menu = (ItemCombinerMenu)(Object)this;
         if (menu instanceof AnvilMenu && slot == menu.getResultSlot()) {
             EquipmentQuality.refreshMaintenance(menu);
-            if (!EquipmentQuality.maintenanceAllowed(player, menu)) cir.setReturnValue(ItemStack.EMPTY);
+            if (!EquipmentQuality.maintenanceAllowed(player, menu) || !menu.getSlot(slot).mayPickup(player))
+                cir.setReturnValue(ItemStack.EMPTY);
         }
     }
 }
