@@ -58,4 +58,27 @@ class SkeletonAimRulesTest {
         }
         assertThrows(IllegalArgumentException.class, () -> SkeletonAimRules.aim(0, 0, 0, 0, 0, 0));
     }
+
+    @Test void elevatedAndLowerTargetsAreReachedByNativeDiscretePhysics() {
+        for (double[] target : new double[][]{{8, 12}, {16, 8}, {8, -12}, {1, 10}, {20, 6}}) {
+            var aim = SkeletonAimRules.aim(target[0], target[1], 0, 0, 0, 1.6);
+            double length = Math.hypot(aim.x(), aim.y());
+            double vx = aim.x() / length * 1.6, vy = aim.y() / length * 1.6;
+            double x = 0D, y = 0D;
+            boolean reached = false;
+            // AbstractArrow moves first, then applies air resistance and gravity each tick.
+            for (int tick = 0; tick < 80; tick++) {
+                if (x + vx >= target[0]) {
+                    y += vy * (target[0] - x) / vx;
+                    reached = true;
+                    break;
+                }
+                x += vx; y += vy;
+                vx *= .99F;
+                vy = vy * .99F - .05D;
+            }
+            assertTrue(reached, "The native trajectory reaches the target's horizontal position");
+            assertEquals(target[1], y, .1D, "The release direction reaches elevated and lower body points");
+        }
+    }
 }

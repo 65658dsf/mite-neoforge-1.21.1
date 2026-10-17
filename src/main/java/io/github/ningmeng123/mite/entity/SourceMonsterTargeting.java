@@ -151,6 +151,16 @@ public final class SourceMonsterTargeting {
         return true;
     }
 
+    private static boolean bowArcher(Mob mob) {
+        return mob instanceof AbstractSkeleton && mob.getMainHandItem().getItem() instanceof BowItem;
+    }
+
+    private static boolean targetVisible(Mob mob, LivingEntity target, boolean ignoreLeaves) {
+        // Keep source glass/door vision, allow arrow-transparent leaves, and include exposed heads in the shooting ray.
+        return bowArcher(mob) ? canSee(mob, target, true) || SourceRangedAttackGoal.clearShot(mob, target)
+                : canSee(mob, target, ignoreLeaves);
+    }
+
     private static boolean suitable(PathfinderMob owner, LivingEntity target) {
         if (target == owner || !target.isAlive() || !owner.canAttack(target) || owner.isAlliedTo(target)
                 || !owner.isWithinRestriction(target.blockPosition())) return false;
@@ -182,14 +192,14 @@ public final class SourceMonsterTargeting {
             target = mob.getTarget();
             if (target == null || !target.isAlive() || mob.distanceToSqr(target) > Math.pow(effectiveRange(mob), 2D)) return false;
             if (checksSight(mob, target, sight)) {
-                if (canSee(mob, target, false)) unseen = 0;
+                if (targetVisible(mob, target, false)) unseen = 0;
                 else if (++unseen > 60) return false;
             }
             return true;
         }
         @Override public void stop() { previous = mob.getTarget(); setGoalTarget(mob, null); target = null; }
         boolean initiallySuitable(LivingEntity candidate) {
-            if (!suitable(mob, candidate) || checksSight(mob, candidate, sight) && !canSee(mob, candidate, previous == candidate)) return false;
+            if (!suitable(mob, candidate) || checksSight(mob, candidate, sight) && !targetVisible(mob, candidate, previous == candidate)) return false;
             if (mob instanceof Witch witch && candidate instanceof ServerPlayer player) WitchCursing.tryCurse(witch, player);
             return true;
         }
@@ -205,19 +215,21 @@ public final class SourceMonsterTargeting {
         public Class<? extends LivingEntity> targetType() { return type; }
         private LivingEntity nearest() {
             double range = effectiveRange(mob), vertical = 6D;
+            boolean archer = bowArcher(mob);
             boolean zombieAnimals = sourceIs(mob, "tw") && type == Animal.class;
             if (zombieAnimals) { range *= .5D; vertical *= .5D; }
+            double rangeSquared = range * range;
             var candidates = new ArrayList<LivingEntity>();
-            candidates.addAll(mob.level().getEntitiesOfClass(type, mob.getBoundingBox().inflate(range, vertical, range), this::initiallySuitable));
-            if (candidates.isEmpty() && type == Player.class && mob.level() instanceof ServerLevel level) {
+            candidates.addAll(mob.level().getEntitiesOfClass(type, mob.getBoundingBox().inflate(range, vertical, range),
+                    candidate -> (!archer || mob.distanceToSqr(candidate) <= rangeSquared) && initiallySuitable(candidate)));
+            if ((candidates.isEmpty() || archer) && type == Player.class && mob.level() instanceof ServerLevel level) {
                 boolean digger = R196MonsterAi.diggingEnabled(mob) && R196OutdoorChecks.outdoors(level, mob.blockPosition());
-                boolean archer = mob instanceof AbstractSkeleton && mob.getMainHandItem().getItem() instanceof BowItem;
                 if (digger || archer) for (Player player : level.players()) {
-                    if (!player.isAlive() || player.isCreative() || player.isSpectator()) continue;
+                    if (!suitable(mob, player)) continue;
                     double dx = player.getX() - mob.getX(), dy = player.getY() - mob.getY(), dz = player.getZ() - mob.getZ();
                     if (digger && dy >= vertical && dy <= 14D && dx * dx + dz * dz < 16D
-                            || archer && dy >= vertical && dy <= 20D && dx * dx + dz * dz < range * range
-                            && canSee(mob, player, player == mob.getTarget())) candidates.add(player);
+                            || archer && Math.abs(dy) >= vertical && mob.distanceToSqr(player) <= rangeSquared
+                            && targetVisible(mob, player, player == mob.getTarget())) candidates.add(player);
                 }
             }
             candidates.sort(Comparator.comparingDouble(mob::distanceToSqr));
@@ -241,7 +253,7 @@ public final class SourceMonsterTargeting {
         @Override public void tick() {
             if (mob.getRandom().nextInt(40) == 0) {
                 LivingEntity candidate = nearest();
-                if (candidate != null && candidate != target && canSee(mob, candidate, false)) {
+                if (candidate != null && candidate != target && targetVisible(mob, candidate, false)) {
                     stop(); target = candidate; start(); return;
                 }
             }

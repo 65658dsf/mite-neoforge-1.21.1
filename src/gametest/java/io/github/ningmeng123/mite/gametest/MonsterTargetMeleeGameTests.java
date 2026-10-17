@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
 import io.github.ningmeng123.mite.entity.SourceMonsterTargetMemory;
 import io.github.ningmeng123.mite.entity.SourceMonsterTargeting;
+import io.github.ningmeng123.mite.entity.SourceRangedAttackGoal;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import com.mojang.authlib.GameProfile;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -185,21 +186,136 @@ public final class MonsterTargetMeleeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void archerHighPlayerFallbackUsesTwentyLayerCeiling(GameTestHelper h) {
+    public static void archerPlayerSearchUsesTheSameTrueRangeAboveAndBelow(GameTestHelper h) {
         var skeleton = mob(h, EntityType.SKELETON, 0, 0, 0);
         skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+        skeleton.setPos(skeleton.getX(), skeleton.getY() + 32, skeleton.getZ());
+        skeleton.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE).setBaseValue(32D);
         // GameTestHelper's deprecated server mock hard-overrides isCreative() to true even after setGameMode.
         // A real registered survival ServerPlayer is required to test hostile acquisition without weakening creative exclusion.
         try (var fixture = new SurvivalPlayer(h)) {
             var player = fixture.player;
-            player.moveTo(skeleton.getX() + 2, skeleton.getY() + 20, skeleton.getZ());
             h.assertTrue(!player.isCreative() && !player.isSpectator(), "Actual survival player is an attackable fixture");
-            var goal = new SourceMonsterTargeting.Nearest(skeleton, Player.class, 0, true);
-            h.assertTrue(goal.canUse(), "Source bow skeleton fallback can find a visible player twenty levels above");
-            player.moveTo(skeleton.getX() + 2, skeleton.getY() + 20.01, skeleton.getZ());
-            h.assertFalse(goal.canUse(), "The fallback does not search above twenty");
+            var goal = nearest(skeleton, Player.class);
+            for (double dy : new double[]{24D, -24D, 32D, -32D}) {
+                player.moveTo(skeleton.getX(), skeleton.getY() + dy, skeleton.getZ());
+                h.assertTrue(goal.canUse(), "Installed bow target goal finds an attackable player within true range in either vertical direction: " + dy);
+                goal.start();
+                h.assertTrue(skeleton.getTarget() == player && goal.canContinueToUse(), "Vertical acquisition and continued tracking agree on the same range");
+                goal.stop();
+            }
+            for (double dy : new double[]{32.01D, -32.01D}) {
+                player.moveTo(skeleton.getX(), skeleton.getY() + dy, skeleton.getZ());
+                h.assertFalse(goal.canUse(), "Vertical search does not acquire targets beyond the actual follow range: " + dy);
+            }
+            player.moveTo(skeleton.getX() + 24D, skeleton.getY() + 24D, skeleton.getZ());
+            h.assertFalse(goal.canUse(), "Separate horizontal and vertical limits cannot admit a diagonal target outside true follow range");
+        } finally { skeleton.discard(); }
+        h.succeed();
+    }
+
+    private static void archerCurtain(GameTestHelper h, Mob owner, net.minecraft.world.level.block.Block block) {
+        var state = block.defaultBlockState();
+        if (state.hasProperty(net.minecraft.world.level.block.LeavesBlock.PERSISTENT))
+            state = state.setValue(net.minecraft.world.level.block.LeavesBlock.PERSISTENT, true);
+        for (int x = 1; x <= 2; x++) for (int y = 0; y <= 12; y++) for (int z = -1; z <= 1; z++)
+            h.getLevel().setBlock(owner.blockPosition().offset(x, y, z), state, 3);
+    }
+
+    @GameTest(template = "empty")
+    public static void bowSkeletonsAcquireAndKeepTreeTopPlayersThroughLeaves(GameTestHelper h) {
+        var skeletons = java.util.List.of(mob(h, EntityType.SKELETON, 0, 0, 0), source(h, MobKind.LONGDEAD));
+        try (var fixture = new SurvivalPlayer(h)) {
+            for (var skeleton : skeletons) {
+                skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+                fixture.player.moveTo(skeleton.getX() + 4D, skeleton.getY() + 10D, skeleton.getZ());
+                archerCurtain(h, skeleton, Blocks.OAK_LEAVES);
+                h.assertFalse(SourceMonsterTargeting.canSee(skeleton, fixture.player, false), "The canopy blocks the old two-leaf sight policy");
+                var goal = nearest(skeleton, Player.class);
+                h.assertTrue(goal.canUse(), "Installed bow target goal initially acquires the elevated player behind several leaves");
+                goal.start();
+                h.assertTrue(skeleton.getTarget() == fixture.player, "The real mob target is assigned through the installed selector goal");
+                for (int update = 0; update < 100; update++)
+                    h.assertTrue(goal.canContinueToUse(), "A shootable canopy never expires the sixty-update unseen memory");
+                archerCurtain(h, skeleton, Blocks.OAK_LOG);
+                for (int update = 0; update < 60; update++)
+                    h.assertTrue(goal.canContinueToUse(), "A real trunk still uses the normal brief target memory");
+                h.assertFalse(goal.canContinueToUse(), "Solid trunks eventually end tracking despite adjacent leaf transparency");
+                goal.stop();
+                h.assertFalse(goal.canUse(), "A new target is not acquired through a solid trunk");
+                archerCurtain(h, skeleton, Blocks.AIR);
+            }
+        } finally {
+            archerCurtain(h, skeletons.getFirst(), Blocks.AIR);
+            skeletons.forEach(Mob::discard);
         }
-        skeleton.discard(); h.succeed();
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void leafTargetSightDoesNotExtendToMeleeSkeletonsOrOtherMonsters(GameTestHelper h) {
+        var skeleton = mob(h, EntityType.SKELETON, 0, 0, 0);
+        var wight = source(h, MobKind.WIGHT);
+        try (var fixture = new SurvivalPlayer(h)) {
+            fixture.player.moveTo(skeleton.getX() + 4D, skeleton.getY(), skeleton.getZ());
+            archerCurtain(h, skeleton, Blocks.OAK_LEAVES);
+            skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+            h.assertFalse(nearest(skeleton, Player.class).canUse(), "A melee skeleton retains ordinary foliage sight");
+            h.assertFalse(nearest(wight, Player.class).canUse(), "Other monsters do not inherit the skeleton shooting ray");
+            skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+            h.assertTrue(nearest(skeleton, Player.class).canUse(), "Equipping a bow permits the same real player to be acquired through leaves");
+        } finally {
+            archerCurtain(h, skeleton, Blocks.AIR);
+            skeleton.discard(); wight.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void elevatedArcherSearchPreservesPlayerSuitability(GameTestHelper h) {
+        var skeleton = mob(h, EntityType.SKELETON, 0, 0, 0);
+        skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+        try (var fixture = new SurvivalPlayer(h)) {
+            var player = fixture.player;
+            player.moveTo(skeleton.getX() + 2D, skeleton.getY() + 12D, skeleton.getZ());
+            var goal = nearest(skeleton, Player.class);
+            h.assertTrue(goal.canUse(), "Elevated survival player initially qualifies");
+            player.getAbilities().invulnerable = true;
+            h.assertFalse(goal.canUse(), "Elevated fallback cannot bypass invulnerable abilities");
+            player.getAbilities().invulnerable = false;
+            player.setGameMode(GameType.CREATIVE);
+            h.assertFalse(goal.canUse(), "Elevated fallback excludes creative players");
+            player.setGameMode(GameType.SPECTATOR);
+            h.assertFalse(goal.canUse(), "Elevated fallback excludes spectators");
+            player.setGameMode(GameType.SURVIVAL);
+            skeleton.restrictTo(skeleton.blockPosition(), 4);
+            h.assertFalse(goal.canUse(), "Elevated fallback respects the owner's home restriction");
+            skeleton.clearRestriction();
+            h.assertTrue(goal.canUse(), "An eligible elevated player can be reacquired after the restriction is removed");
+        } finally { skeleton.discard(); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bowSkeletonRetainsGlassVisionWithoutAllowingAnArrowThroughGlass(GameTestHelper h) {
+        var skeleton = mob(h, EntityType.SKELETON, 0, 0, 0);
+        skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+        try (var fixture = new SurvivalPlayer(h)) {
+            fixture.player.moveTo(skeleton.getX() + 3D, skeleton.getY(), skeleton.getZ());
+            wall(h, skeleton, Blocks.GLASS);
+            h.assertFalse(SourceRangedAttackGoal.clearShot(skeleton, fixture.player), "Glass still blocks the actual shooting ray");
+            var goal = nearest(skeleton, Player.class);
+            h.assertTrue(goal.canUse(), "Installed bow goal preserves source visual acquisition through glass");
+            goal.start();
+            h.assertTrue(skeleton.getTarget() == fixture.player, "Glass acquisition assigns the actual survival player");
+            for (int update = 0; update < 100; update++)
+                h.assertTrue(goal.canContinueToUse(), "Source glass visibility continues to reset target memory");
+            goal.stop();
+        } finally {
+            wall(h, skeleton, Blocks.AIR);
+            skeleton.discard();
+        }
+        h.succeed();
     }
 
     private static final class SurvivalPlayer implements AutoCloseable {
