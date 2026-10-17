@@ -4,6 +4,7 @@
   "package": "io.github.ningmeng123.mite.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AnvilDurabilityMenuMixin",
     "BlazeChargeAccess",
     "SourceStatusEffectInstanceMixin",
     "SourceStatusEffectLivingMixin",

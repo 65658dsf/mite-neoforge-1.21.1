@@ -10,6 +10,8 @@
 
 实现与验证状态见 [实施状态](docs/implementation-status.md)。每项玩法只有完成游戏实测后才会标为已验证。
 
+铁砧已加入物品悬停提示、界面数字与耐久条，以及可选 Jade 准星提示，覆盖七种材质和损坏阶段。自动验证通过，2026-10-17 用户已授权提交并推送，实际画面待用户手测；见 [显示与复测步骤](docs/anvil-durability-display.md)、[验证结果](docs/testing/anvil-durability-display.md)。
+
 2026-10-17 已实现本次选定的七类 R196 差距：AHM/AUM 绿色提示、自动换持与补货/冰雪融化/吃喝间隔、烈焰人与恶魂射击、四种金属信标基座、来源状态效果、生物活性药水免疫、来源村民货单与骑马钓鱼修正。1525 项 JUnit、1802 项服务端 GameTest、无扩展及五个扩展模组组合的客户端变换检查、发布包审计均通过；用户已授权按功能分类提交、推送，逐项客户端画面和真实联机未另行提供记录。操作、明确的现代适配及验证记录见 [本轮交付与手测](docs/testing/r196-parity-implementation.md)。
 
 本轮已接入 R196 全部 16 种女巫诅咒及保存、发现与解除，自动验证通过，2026-10-16 用户确认当前交付正常并授权提交。见 [诅咒测试步骤](docs/witch-curses-manual-test.md)、[来源规则](docs/witch-curses-source.md) 和 [自动验证结果](docs/testing/witch-curses-automated-results.md)。

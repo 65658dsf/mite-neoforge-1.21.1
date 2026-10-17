@@ -897,6 +897,7 @@
   "message.mite.structure_unlock.ruined_portal": "Day %s: Ruined portal requirements are met. Ruined portals can now generate in unexplored chunks.",
   "message.mite.structure_unlock.pillager_outpost": "Day %s: Pillager outpost requirements are met. Pillager outposts can now generate in unexplored Overworld chunks.",
   "config.jade.plugin_mite.campfire": "Campfire fuel",
+  "config.jade.plugin_mite.anvil_durability": "Anvil durability",
   "jade.mite.campfire_fuel": "Fuel: %s / 3",
   "jade.mite.campfire_meat": "Meat remaining: %s",
   "jade.mite.campfire_time": "Current fuel: %s s",

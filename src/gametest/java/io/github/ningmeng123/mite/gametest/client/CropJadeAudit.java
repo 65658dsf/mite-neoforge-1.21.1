@@ -30,7 +30,7 @@ public final class CropJadeAudit implements DataProvider {
         event.getGenerator().addProvider(true, new CropJadeAudit(report));
     }
 
-    @Override public String getName() { return "Optional crop inspection against the real Jade API without rendering"; }
+    @Override public String getName() { return "Optional crop and anvil inspection against the real Jade API without rendering"; }
 
     @Override
     public CompletableFuture<?> run(CachedOutput unused) {
@@ -45,7 +45,8 @@ public final class CropJadeAudit implements DataProvider {
             check(ModList.get().isLoaded("jade"), "This opt-in API audit requires an external Jade mod in its isolated mods directory");
             // Do not expose any Jade signatures on this automatically discovered event subscriber.
             // Ordinary no-Jade data/server runs must never resolve the nested optional API implementation.
-            RuntimeAudit.audit(report);
+            RuntimeAudit.audit(report, Path.of(System.getProperty("mite.anvilJadeAuditOutput",
+                    output.resolveSibling("anvil-jade-audit.json").toString())));
             report.addProperty("status", "passed_real_jade_api_and_payload_audit_without_rendering");
             write(report);
             return CompletableFuture.completedFuture(null);
@@ -76,7 +77,7 @@ public final class CropJadeAudit implements DataProvider {
         private static final java.util.List<String> TARGETS = java.util.List.of("CropBlock", "FarmBlock", "StemBlock", "AttachedStemBlock",
                 "BlueberryBushBlock", "CocoaBlock", "NetherWartBlock", "MushroomBlock", "SugarCaneBlock", "CactusBlock");
 
-        private static void audit(JsonObject report) {
+        private static void audit(JsonObject report, Path anvilOutput) throws java.io.IOException {
             var pluginType = io.github.ningmeng123.mite.integration.jade.MiteJadePlugin.class;
             check(pluginType.isAnnotationPresent(snownee.jade.api.WailaPlugin.class), "Missing runtime WailaPlugin entry annotation");
             long discovered = ModList.get().getAllScanData().stream().flatMap(data -> data.getAnnotations().stream())
@@ -140,6 +141,7 @@ public final class CropJadeAudit implements DataProvider {
             check(unrelated.tagged.containsKey(VANILLA), "Unrelated block progress must not be removed by MITE's callback");
             report.addProperty("disabled_and_unrelated_vanilla_progress_retained", true);
             auditPayload(wheat, report);
+            AnvilJadeAudit.audit(report, anvilOutput);
         }
 
         private static void tooltipCase(String name, net.minecraft.world.level.block.state.BlockState state, java.util.Set<String> required,
@@ -258,9 +260,21 @@ public final class CropJadeAudit implements DataProvider {
         private static final class Registration implements java.lang.reflect.InvocationHandler {
             private final java.util.List<Class<?>> server = new java.util.ArrayList<>(), client = new java.util.ArrayList<>();
             private int clientFeatures;
+            private int campfireServer, campfireClient, anvilServer, anvilClient;
             private snownee.jade.api.callback.JadeTooltipCollectedCallback callback;
             @Override public Object invoke(Object target, java.lang.reflect.Method method, Object[] args) throws Throwable {
                 if (method.getName().equals("registerBlockDataProvider") || method.getName().equals("registerBlockComponent")) {
+                    boolean common = method.getName().equals("registerBlockDataProvider");
+                    if (args[0] == io.github.ningmeng123.mite.integration.jade.CampfireJadeProvider.INSTANCE) {
+                        check(args[1] == net.minecraft.world.level.block.CampfireBlock.class, "Campfire data/components target exactly CampfireBlock");
+                        if (common) campfireServer++; else campfireClient++;
+                        return null;
+                    }
+                    if (args[0] == io.github.ningmeng123.mite.integration.jade.AnvilJadeProvider.INSTANCE) {
+                        check(args[1] == net.minecraft.world.level.block.AnvilBlock.class, "Anvil data/components target exactly the one AnvilBlock parent");
+                        if (common) anvilServer++; else anvilClient++;
+                        return null;
+                    }
                     check(args[0] == PROVIDER, "Every crop target must use the same stateless singleton provider");
                     (method.getName().equals("registerBlockDataProvider") ? server : client).add((Class<?>) args[1]); return null;
                 }
@@ -277,10 +291,14 @@ public final class CropJadeAudit implements DataProvider {
                 for (int a = 0; a < server.size(); a++) for (int b = a + 1; b < server.size(); b++)
                     check(!server.get(a).isAssignableFrom(server.get(b)) && !server.get(b).isAssignableFrom(server.get(a)), "Inherited targets would duplicate Jade output");
                 check(clientFeatures == 1 && callback != null, "Local-state feature and final progress-cleanup callback must each be registered once");
+                check(campfireServer == 1 && campfireClient == 1, "Campfire common/client providers are each registered exactly once");
+                check(anvilServer == 1 && anvilClient == 1, "Anvil common/client providers are each registered exactly once, without inherited duplicates");
                 JsonArray names = new JsonArray(); server.forEach(type -> names.add(type.getName())); report.add("registered_block_classes", names);
                 report.addProperty("server_registrations", server.size()); report.addProperty("client_registrations", client.size());
                 report.addProperty("targets_have_no_inheritance_overlap", true); report.addProperty("client_feature_registrations", clientFeatures);
                 report.addProperty("final_tooltip_callbacks", 1);
+                report.addProperty("campfire_server_and_client_registrations", 1);
+                report.addProperty("anvil_server_and_client_registrations", 1);
             }
         }
     }

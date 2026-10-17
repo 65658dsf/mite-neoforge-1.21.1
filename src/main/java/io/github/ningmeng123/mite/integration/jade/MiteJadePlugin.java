@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.integration.jade;
 
 import io.github.ningmeng123.mite.block.BlueberryBushBlock;
 import java.util.List;
+import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CactusBlock;
@@ -31,12 +32,14 @@ public final class MiteJadePlugin implements IWailaPlugin {
     public void register(IWailaCommonRegistration registration) {
         TARGETS.forEach(target -> registration.registerBlockDataProvider(CropJadeProvider.INSTANCE, target));
         registration.registerBlockDataProvider(CampfireJadeProvider.INSTANCE, CampfireBlock.class);
+        registration.registerBlockDataProvider(AnvilJadeProvider.INSTANCE, AnvilBlock.class);
     }
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
         TARGETS.forEach(target -> registration.registerBlockComponent(CropJadeProvider.INSTANCE, target));
         registration.registerBlockComponent(CampfireJadeProvider.INSTANCE, CampfireBlock.class);
+        registration.registerBlockComponent(AnvilJadeProvider.INSTANCE, AnvilBlock.class);
         // Health and age are useful even when the server does not supply the optional Jade payload.
         registration.markAsClientFeature(CropJadeProvider.UID);
         registration.addTooltipCollectedCallback(CropJadeProvider::removeVanillaProgress);
