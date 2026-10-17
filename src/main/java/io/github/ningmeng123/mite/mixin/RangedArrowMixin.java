@@ -17,13 +17,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.phys.EntityHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /** Preserve native arrow stacks/launchers/packets, replacing only source-ammunition arithmetic. @author NingMeng123 */
 @Mixin(AbstractArrow.class)
@@ -86,5 +86,14 @@ public abstract class RangedArrowMixin implements MaterialArrowView {
         if (snapshot != null && snapshot.negativelyAffected((LivingEntity)target))
             io.github.ningmeng123.mite.enchantment.RangedEnchantments.afterHit(arrow, target);
         return success;
+    }
+
+    @Inject(method = "canHitEntity", at = @At("HEAD"), cancellable = true)
+    private void mite$skipHarmlessEntityCollision(Entity target, CallbackInfoReturnable<Boolean> cir) {
+        AbstractArrow arrow = mite$self();
+        // Source ammunition below the damage threshold must keep falling, not repeatedly bounce on heads.
+        if (MiteRangedItems.arrowMaterial(arrow.getPickupItemStackOrigin()) != null
+                && (float)arrow.getDeltaMovement().length() < 1F)
+            cir.setReturnValue(false);
     }
 }
