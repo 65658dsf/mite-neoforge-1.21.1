@@ -95,6 +95,12 @@ neoForge {
         }
         data {
             data()
+            boolean skeletonWeaponDisplayAudit = project.providers.gradleProperty('miteSkeletonWeaponDisplayAudit').getOrElse('false').toBoolean()
+            if (skeletonWeaponDisplayAudit) {
+                systemProperty 'mite.skeletonWeaponDisplayAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.skeletonWeaponDisplayAuditOutput', file('build/verification/skeleton-weapon-display-client-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteAdvancementsTitleAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.advancementsTitleAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'
@@ -160,7 +166,9 @@ neoForge {
                         : 'build/verification/auto-harvest-input-audit.json').absolutePath
             }
             programArguments.addAll '--mod', project.mod_id, '--all',
-                    '--output', file('src/generated/resources').absolutePath,
+                    '--output', file(skeletonWeaponDisplayAudit
+                            ? 'build/verification/skeleton-weapon-display-generated'
+                            : 'src/generated/resources').absolutePath,
                     '--existing', file('src/main/resources').absolutePath
             if (project.providers.gradleProperty('miteLivestockHealthAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.livestockHealthAudit', 'true'

@@ -288,6 +288,8 @@
     "EnchantmentScreenMixin",
     "client.EnchantedBowFovMixin",
     "client.SkeletonBowModelMixin",
+    "client.SkeletonWeaponItemLayerMixin",
+    "client.SkeletonWeaponPoseMixin",
     "client.GuiFoodMixin",
     "client.LocalPlayerFoodMixin",
     "client.AppleSkinSaturationMixin",
