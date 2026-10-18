@@ -107,6 +107,29 @@ public final class MiteAdditiveAffixGameTests {
     }
 
     @GameTest(template = "empty", batch = "gear_affixes")
+    public static void trueFlightCapsNaturalLevelBeforeAddingIndependentVirtualLevels(GameTestHelper h) {
+        Player player = h.makeMockPlayer(GameType.SURVIVAL);
+        for (int[] ranks : new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}) {
+            ItemStack bow = gear(h, Items.BOW, "true_flight", ranks[0], ranks[1]);
+            for (boolean inLiquid : new boolean[]{false, true}) {
+                for (int level : new int[]{-1, 199, 200, 201, Integer.MAX_VALUE}) {
+                    player.experienceLevel = level;
+                    int natural = Math.min(level, 200);
+                    double baseline = R196WeaponRules.inaccuracy(natural, inLiquid);
+                    double expected = (double)R196WeaponRules.inaccuracy(natural + 8 * ranks[0], inLiquid)
+                            + R196WeaponRules.inaccuracy(natural + 8 * ranks[1], inLiquid) - baseline;
+                    if (ranks[1] > 0) expected = Math.max(0D, expected);
+                    double actual = SourceBowLaunch.inaccuracy(bow, player, inLiquid);
+                    h.assertTrue(Math.abs(actual - expected) < 1E-7D,
+                            "Natural level" + level + " caps at200 before independent True Flight gains: " + actual + " vs " + expected);
+                    h.assertValueEqual(player.experienceLevel, level, "Accuracy never rewrites the player's unlimited experience level");
+                }
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "gear_affixes")
     public static void spiderEyeAddsNonlinearButcheringProbabilitiesBeforeOneTrial(GameTestHelper h) {
         Player player = h.makeMockPlayer(GameType.SURVIVAL);
         player.setItemSlot(EquipmentSlot.MAINHAND, gear(h, Items.IRON_SWORD, "butchering", 1, 1));

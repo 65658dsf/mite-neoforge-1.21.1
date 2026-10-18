@@ -76,9 +76,9 @@ public final class SourcePlayerCombatGameTests {
         h.assertTrue(Math.abs(actual - expected) < .0001D, message + ": " + actual + " vs " + expected);
     }
     @GameTest(template = "empty")
-    public static void realPrimaryAttacksScaleAcrossNegativeZeroAndUncappedPositiveLevels(GameTestHelper h) {
-        int[] levels = {-25,0,100,200,201};
-        float[] expected = {5F,10F,15F,20F,20.05F};
+    public static void realPrimaryAttacksKeepNegativePenaltiesAndCapPositiveLevelBenefits(GameTestHelper h) {
+        int[] levels = {-25,0,100,199,200,201,312,403,Integer.MAX_VALUE};
+        float[] expected = {5F,10F,15F,19.95F,20F,20F,20F,20F,20F};
         for (int i=0;i<levels.length;i++) {
             Player player = player(h); player.experienceLevel = levels[i];
             Cow target = cow(h,player,1D);

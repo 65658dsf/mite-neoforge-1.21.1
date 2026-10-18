@@ -172,9 +172,12 @@ public final class ShieldGuardGameTests {
             session.hit(1F);
             state(helper, session.shield, 2D, 2, "Two small successful blocks persist below the third-block boundary");
             helper.assertTrue(session.defender.isUsingItem(), "Two blocks keep the shield raised");
+            helper.assertValueEqual(session.defender.getHealth(), health, "The first two small hits are fully blocked");
             session.defender.stopUsingItem();
             session.raise();
             state(helper, session.shield, 2D, 2, "Lowering and raising the same shield cannot clear cumulative guard pressure");
+            // Raising ticks the live defender; a sunlit zombie can take unrelated fire damage.
+            health = session.defender.getHealth();
             session.hit(1F);
             helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
                     "The third one-point block disables both real survival players and shield-bearing monsters");

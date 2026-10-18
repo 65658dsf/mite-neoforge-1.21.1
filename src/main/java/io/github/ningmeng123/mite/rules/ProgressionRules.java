@@ -6,7 +6,15 @@ package io.github.ningmeng123.mite.rules;
  * @author NingMeng123
  */
 public final class ProgressionRules {
+    /** R196's highest natural level limits attribute gains, not the modern XP curve. */
+    public static final int MAX_ATTRIBUTE_LEVEL = 200;
+
     private ProgressionRules() {
+    }
+
+    /** Keep signed-level penalties while capping natural-level benefits at R196's ceiling. */
+    public static int attributeLevel(int level) {
+        return Math.min(level, MAX_ATTRIBUTE_LEVEL);
     }
 
     /**

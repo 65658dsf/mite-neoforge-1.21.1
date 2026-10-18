@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.entity.R196Wolf;
 import io.github.ningmeng123.mite.entity.R196NpcNeeds;
 import io.github.ningmeng123.mite.registry.MiteFoodCatalog;
 import io.github.ningmeng123.mite.rules.R196SpawnRules;
+import io.github.ningmeng123.mite.rules.ProgressionRules;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -136,7 +137,7 @@ public final class NativeAnimalSpecial032 {
     public static int tamingOutcome(float roll,float levelRoll,int level,boolean dire) {
         if (dire) return R196Wolf.tamingOutcome(roll,levelRoll,level);
         if (roll<.05F) return -1; if (roll<.1F) return 0; if (roll>.9F) return 1;
-        float adjusted=roll+levelRoll*level*.02F; return adjusted<.2F?-1:adjusted<.8F?0:1;
+        float adjusted=roll+levelRoll*ProgressionRules.attributeLevel(level)*.02F; return adjusted<.2F?-1:adjusted<.8F?0:1;
     }
     public static void onFleeing(Wolf wolf) { wolf.stopBeingAngry(); wolf.setTarget(null); wolf.getPersistentData().putInt(WOLF_TARGET_TIME,0); wolf.getPersistentData().putBoolean(HOSTILE,false); }
     /** oq.isAThreat uses the old hostile-marker interface, actual target and line of sight. */

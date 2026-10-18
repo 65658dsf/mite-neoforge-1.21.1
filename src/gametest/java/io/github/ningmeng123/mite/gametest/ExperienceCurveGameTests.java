@@ -1,20 +1,34 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.rules.ProgressionRules;
+import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
+import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
+import io.github.ningmeng123.mite.survival.PlayerHealthEvents;
+import io.netty.channel.embedded.EmbeddedChannel;
+import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -228,10 +242,20 @@ public final class ExperienceCurveGameTests {
     }
 
     @GameTest(template = "empty")
-    @SuppressWarnings("removal")
     public static void commandQueriesAndOrbPickupUseTheIntegerModel(GameTestHelper helper) throws CommandSyntaxException {
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // The deprecated mock hard-codes isCreative() to true, even after setGameMode.
+        // Use a real connected player so commands exercise survival attribute hooks too.
+        CommonListenerCookie cookie = CommonListenerCookie.createInitial(
+                new GameProfile(UUID.randomUUID(), "mite-xp-test"), false);
+        ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+                cookie.gameProfile(), cookie.clientInformation());
+        Connection connection = new Connection(PacketFlow.SERVERBOUND);
+        EmbeddedChannel channel = new EmbeddedChannel(connection);
         try {
+            helper.getLevel().getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
+            player.setGameMode(GameType.SURVIVAL);
+            helper.assertTrue(!player.isCreative() && !player.isSpectator(),
+                    "Command attribute checks require the real survival mode path");
             player.setExperienceLevels(0);
             player.setExperiencePoints(0);
             ExperienceOrb orb = new ExperienceOrb(helper.getLevel(), player.getX(), player.getY(), player.getZ(), 19);
@@ -263,21 +287,40 @@ public final class ExperienceCurveGameTests {
                     "A small bar fraction cannot round its exact point query down to zero");
             execute(helper, source, "experience add @s 288839 points");
             assertExperience(helper, player, 491840, 312, 440, 3140, "Commands can prepare a legendary adamantium pick balance above level 200");
+            assertCappedAttributes(helper, player, "Commands can raise the level to 312 without raising R196 attributes");
             execute(helper, source, "experience add @s 327680 points");
             assertExperience(helper, player, 819520, 403, 1430, 4050, "Point additions continue upgrading on the same curve");
+            assertCappedAttributes(helper, player, "Command point rewards preserve the attribute ceiling at level 403");
             helper.assertValueEqual(execute(helper, source, "experience query @s points"), 1430,
                     "Extended level balances remain exact independently of float progress");
             execute(helper, source, "experience add @s -491840 points");
             assertExperience(helper, player, 327680, 254, 1290, 2560, "A high quality's point cost can leave a spendable balance above level 200");
+            assertCappedAttributes(helper, player, "Spending points above level 200 retains capped attributes");
             assertCommandRejected(helper, source, "experience set @s 20723 levels");
             assertExperience(helper, player, 327680, 254, 1290, 2560, "An unrepresentable command request leaves the balance intact instead of falsely claiming success");
             execute(helper, source, "experience set @s 20722 levels");
             execute(helper, source, "experience set @s 166397 points");
             assertExperience(helper, player, 2147483647, 20722, 166397, 207240, "The highest representable int balance remains a valid exact command target");
+            assertCappedAttributes(helper, player, "The largest stored experience balance cannot overflow attribute benefits");
             assertCommandRejected(helper, source, "experience set @s 166398 points");
             assertExperience(helper, player, 2147483647, 20722, 166397, 207240, "A point setter cannot claim success for a clipped overflow request");
+            execute(helper, source, "experience set @s 0 points");
+            execute(helper, source, "experience set @s 199 levels");
+            assertExperience(helper, player, 200990, 199, 0, 2010, "A command can lower an extended level below the attribute ceiling");
+            helper.assertTrue(Math.abs(player.getDestroySpeed(Blocks.DIRT.defaultBlockState()) - 4.98F) < 0.000001F,
+                    "Lowering the commanded level restores the ordinary sub-cap mining bonus");
+            helper.assertTrue(Math.abs(SourcePlayerCombatRules.meleeLevelFactor(player.experienceLevel) - 1.995F) < 0.000001F,
+                    "Lowering the commanded level restores the ordinary sub-cap melee bonus");
+            execute(helper, source, "experience add @s 2 levels");
+            assertExperience(helper, player, 205020, 201, 0, 2030, "A command can cross 200 again without changing the XP curve");
+            assertCappedAttributes(helper, player, "Command level additions reapply the attribute ceiling");
         } finally {
-            helper.getLevel().getServer().getPlayerList().remove(player);
+            try {
+                ServerPlayer registered = helper.getLevel().getServer().getPlayerList().getPlayer(player.getUUID());
+                if (registered != null) helper.getLevel().getServer().getPlayerList().remove(registered);
+            } finally {
+                channel.finishAndReleaseAll();
+            }
         }
         helper.succeed();
     }
@@ -290,11 +333,14 @@ public final class ExperienceCurveGameTests {
         assertExperience(helper, player, 205019, 200, 2019, 2020, "The last point of level 200 uses the continued curve");
         player.giveExperiencePoints(1);
         assertExperience(helper, player, 205020, 201, 0, 2030, "One more point reaches level 201");
+        assertCappedAttributes(helper, player, "Actual point awards cross level 200 while attribute gains stop");
         player.giveExperienceLevels(-1);
         assertExperience(helper, player, 203000, 200, 0, 2020, "Level spending crosses back through 200 normally");
+        assertCappedAttributes(helper, player, "Spending back to 200 keeps the same maximum attributes");
         PlayerExperience.setPoints(player, 1000);
         player.giveExperienceLevels(1);
         assertExperience(helper, player, 206024, 201, 1004, 2030, "Level additions use the established floor(1000*2030/2020) proportion");
+        assertCappedAttributes(helper, player, "Level additions do not bypass the attribute ceiling");
         helper.succeed();
     }
 
@@ -305,6 +351,7 @@ public final class ExperienceCurveGameTests {
             original.giveExperiencePoints(entry[0]);
             assertExperience(helper, original, entry[0], entry[1], entry[2], entry[3],
                     "Point awards can accumulate enough for legendary adamantium tools");
+            assertCappedAttributes(helper, original, "Large point awards retain full XP with capped attributes");
             original.giveExperienceLevels(0);
             PlayerExperience.setLevels(original, entry[1]);
             assertExperience(helper, original, entry[0], entry[1], entry[2], entry[3],
@@ -322,6 +369,7 @@ public final class ExperienceCurveGameTests {
                 loaded.readAdditionalSaveData(saved);
                 assertExperience(helper, loaded, entry[0], entry[1], entry[2], entry[3],
                         "Canonical save version " + version + " ignores stale derived fields");
+                assertCappedAttributes(helper, loaded, "Canonical save version " + version + " restores the capped attribute behavior");
                 loaded.giveExperiencePoints(-entry[0]);
                 assertExperience(helper, loaded, 0, 0, 0, 20, "The exact legendary manufacturing price can be paid without truncating the original balance");
                 loaded.giveExperiencePoints(1);
@@ -333,6 +381,24 @@ public final class ExperienceCurveGameTests {
 
     private static int execute(GameTestHelper helper, CommandSourceStack source, String command) throws CommandSyntaxException {
         return helper.getLevel().getServer().getCommands().getDispatcher().execute(command, source);
+    }
+
+    private static void assertCappedAttributes(GameTestHelper helper, Player player, String context) {
+        helper.assertTrue(player.experienceLevel >= 200, context + " (fixture retains its actual high level)");
+        player.setOnGround(true);
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        player.getFoodData().setFoodLevel(Integer.MAX_VALUE);
+        ((DualFoodData) player.getFoodData()).mite$setNutrition(Integer.MAX_VALUE);
+        helper.assertValueEqual(player.getFoodData().getFoodLevel(), 20, context + " (satiation cap)");
+        helper.assertValueEqual(((DualFoodData) player.getFoodData()).mite$getNutrition(), 20, context + " (nutrition cap)");
+        helper.assertValueEqual(player.getDestroySpeed(Blocks.DIRT.defaultBlockState()), 5F, context + " (actual mining multiplier)");
+        helper.assertValueEqual(SourcePlayerCombatRules.meleeLevelFactor(player.experienceLevel), 2F, context + " (melee multiplier)");
+        helper.assertValueEqual(ProgressionRules.maxHealthForLevel(player.experienceLevel), 20D, context + " (base health curve)");
+        if (player instanceof ServerPlayer) {
+            PlayerHealthEvents.onPlayerTick(new PlayerTickEvent.Post(player));
+            helper.assertValueEqual(player.getAttributeBaseValue(Attributes.MAX_HEALTH), 20D,
+                    context + " (actual server health attribute)");
+        }
     }
 
     private static void assertCommandRejected(GameTestHelper helper, CommandSourceStack source, String command) {

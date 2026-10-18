@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.ranged;
 
 import io.github.ningmeng123.mite.item.R196ReinforcedBowItem;
 import io.github.ningmeng123.mite.rules.R196WeaponRules;
+import io.github.ningmeng123.mite.rules.ProgressionRules;
 import io.github.ningmeng123.mite.enchantment.R196Enchantments;
 import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import net.minecraft.util.Mth;
@@ -44,11 +45,12 @@ public final class SourceBowLaunch {
     /** True Flight's nonlinear accuracy gains are evaluated independently against the player's base. */
     public static float inaccuracy(ItemStack launcher, Player player, boolean inLiquid) {
         var sources = R196Enchantments.sources(launcher, player.level(), "true_flight");
-        if (sources.affix() == 0) return R196WeaponRules.inaccuracy((int)Math.min((long)player.experienceLevel
+        int level = ProgressionRules.attributeLevel(player.experienceLevel);
+        if (sources.affix() == 0) return R196WeaponRules.inaccuracy((int)Math.min((long)level
                 + Math.round(8F * sources.normal()), Integer.MAX_VALUE), inLiquid);
-        float baseline = R196WeaponRules.inaccuracy(player.experienceLevel, inLiquid);
+        float baseline = R196WeaponRules.inaccuracy(level, inLiquid);
         return (float)Math.max(0D, EnchantmentSources.delta(sources, baseline, value ->
-                R196WeaponRules.inaccuracy((int)Math.min((long)player.experienceLevel + Math.round(8F * value),
+                R196WeaponRules.inaccuracy((int)Math.min((long)level + Math.round(8F * value),
                         Integer.MAX_VALUE), inLiquid)));
     }
 }

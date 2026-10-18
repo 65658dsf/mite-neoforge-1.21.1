@@ -24,6 +24,13 @@ class TimedCraftingRulesTest {
         assertEquals(166, TimedCraftingRules.period(100F, 0, .2F, true));
         assertEquals(163, TimedCraftingRules.period(400F, 0, .2F, false));
     }
+    @Test void naturalLevelSpeedStopsAtTwoHundredForLongRecipes() {
+        assertEquals(230, TimedCraftingRules.period(6400F, 199, .2F, false));
+        for (int level : new int[]{200, 201, Integer.MAX_VALUE}) {
+            assertEquals(229, TimedCraftingRules.period(6400F, level, .2F, false));
+            assertEquals(459, TimedCraftingRules.period(6400F, level, .2F, true));
+        }
+    }
     @Test void noMaterialRequirementAlwaysUsesPointTwoEvenAtHighestBench() {
         assertEquals(0F, TimedCraftingRules.benchModifier(0F, false));
         assertEquals(.2F, TimedCraftingRules.benchModifier(256F, false));

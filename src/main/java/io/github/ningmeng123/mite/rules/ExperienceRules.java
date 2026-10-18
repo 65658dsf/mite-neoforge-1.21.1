@@ -13,6 +13,8 @@ package io.github.ningmeng123.mite.rules;
  *
  * <p>By the user's requested modern adaptation, the same quadratic curve continues
  * beyond R196's original level 200. There is no configured gameplay level cap.
+ * Natural-level attribute benefits independently retain R196's ceiling through
+ * {@link ProgressionRules#attributeLevel(int)}.
  * Vanilla stores total XP as an int, whose largest representable natural level is
  * 20722. The arithmetic protects that storage boundary without wrapping, while
  * preserving all R196 level-zero-to-200 thresholds and signed debt semantics.

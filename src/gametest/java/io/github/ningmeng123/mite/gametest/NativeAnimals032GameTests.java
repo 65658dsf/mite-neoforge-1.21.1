@@ -62,6 +62,20 @@ public final class NativeAnimals032GameTests {
         h.assertValueEqual(NativeAnimalSpecial032.tamingOutcome(.39F,1,100,true),0,"Dire first .4 plain band");
         h.assertValueEqual(NativeAnimalSpecial032.tamingOutcome(.6F,.5F,40,true),1,"Dire adjusted threshold1"); h.succeed();
     }
+    @GameTest(template="ranged_027") public static void wolfTamingLevelBenefitsStopAtTwoHundred(GameTestHelper h) {
+        h.assertValueEqual(NativeAnimalSpecial032.tamingOutcome(.4005F,.1F,199,false),0,"Ordinary wolf still improves from199 to200");
+        h.assertValueEqual(NativeAnimalSpecial032.tamingOutcome(.4005F,.1F,200,false),1,"Ordinary wolf reaches its capped level bonus at200");
+        h.assertValueEqual(R196Wolf.tamingOutcome(.6F,.1F,199),0,"Dire wolf still improves from199 to200");
+        h.assertValueEqual(R196Wolf.tamingOutcome(.6F,.1F,200),1,"Dire wolf reaches its capped level bonus at200");
+        for(int level:new int[]{200,201,Integer.MAX_VALUE}) {
+            h.assertValueEqual(NativeAnimalSpecial032.tamingOutcome(.4F,.0999F,level,false),0,"Ordinary wolf cannot improve beyond its200-level bonus");
+            h.assertValueEqual(NativeAnimalSpecial032.tamingOutcome(.6F,.0999F,level,true),0,"Dire wolf delegated bonus stops at200");
+            h.assertValueEqual(R196Wolf.tamingOutcome(.6F,.0999F,level),0,"Dire wolf direct bonus stops at200");
+        }
+        h.assertValueEqual(NativeAnimalSpecial032.tamingOutcome(.4F,.5F,-40,false),-1,"Ordinary negative-level penalty is retained");
+        h.assertValueEqual(R196Wolf.tamingOutcome(.6F,.1F,-100),-1,"Dire negative-level penalty is retained");
+        h.succeed();
+    }
     @GameTest(template="ranged_027") public static void actualWolfBoneFailureConsumesOnceAndCooldownBlocksReroll(GameTestHelper h) {
         Wolf wolf=mob(h,EntityType.WOLF); var p=player(h,wolf); p.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Items.BONE,3));
         wolf.getRandom().setSeed(seed(r->{float f=r.nextFloat();return f>=.05F&&f<.1F;})); wolf.mobInteract(p,InteractionHand.MAIN_HAND);

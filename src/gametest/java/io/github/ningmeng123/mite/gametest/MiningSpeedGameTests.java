@@ -138,8 +138,8 @@ public final class MiningSpeedGameTests {
             float baseline = player.getDestroySpeed(states[i]);
             helper.assertTrue(baseline > 0.0F, "The modern item has a positive mining speed");
             boolean canHarvest = player.hasCorrectToolForDrops(states[i], helper.getLevel(), position);
-            int[] levels = {-40, -1, 5, 35, 200};
-            float[] multipliers = {0.2F, 0.98F, 1.1F, 1.7F, 5.0F};
+            int[] levels = {-40, -1, 5, 35, 199, 200, 201, 312, 403};
+            float[] multipliers = {0.2F, 0.98F, 1.1F, 1.7F, 4.98F, 5.0F, 5.0F, 5.0F, 5.0F};
             for (int j = 0; j < levels.length; j++) {
                 PlayerExperience.setLevels(player, levels[j]);
                 assertClose(helper, player.getDestroySpeed(states[i]), baseline * multipliers[j],
@@ -239,6 +239,11 @@ public final class MiningSpeedGameTests {
                 float progress = Blocks.STONE.defaultBlockState().getDestroyProgress(player, helper.getLevel(), helper.absolutePos(BlockPos.ZERO));
                 assertClose(helper, progress, mode == GameType.CREATIVE || mode == GameType.SPECTATOR ? 0.17777778F : 0.017708333F,
                         "Creative/spectator keep modern progress while survival/adventure use R196 progress");
+                PlayerExperience.setTotal(player, 819520);
+                helper.assertValueEqual(player.experienceLevel, 403, "Every game mode retains levels above 200");
+                float cappedMultiplier = mode == GameType.CREATIVE || mode == GameType.SPECTATOR ? 1F : 5F;
+                assertClose(helper, player.getDestroySpeed(Blocks.STONE.defaultBlockState()), baseline * cappedMultiplier,
+                        "Level 403 mining retains the R196 attribute ceiling in " + mode);
                 PlayerExperience.setTotal(player, -800);
                 float negativeMultiplier = mode == GameType.CREATIVE || mode == GameType.SPECTATOR ? 1.0F : 0.2F;
                 assertClose(helper, player.getDestroySpeed(Blocks.STONE.defaultBlockState()), baseline * negativeMultiplier,
@@ -255,6 +260,13 @@ public final class MiningSpeedGameTests {
                     "Reloaded player uses the restored level without a separate mining cache");
             assertClose(helper, Blocks.STONE.defaultBlockState().getDestroyProgress(restored, helper.getLevel(), helper.absolutePos(BlockPos.ZERO)),
                     0.017708333F, "Reloaded player uses R196 progress as well as the level multiplier");
+            PlayerExperience.setTotal(player, 819520);
+            Player highLevelRestored = helper.makeMockPlayer(GameType.SURVIVAL);
+            highLevelRestored.load(player.saveWithoutId(new CompoundTag()));
+            helper.assertValueEqual(highLevelRestored.experienceLevel, 403, "Full entity loading retains the extended level");
+            helper.assertValueEqual(highLevelRestored.totalExperience, 819520, "Full entity loading retains every stored point");
+            assertClose(helper, highLevelRestored.getDestroySpeed(Blocks.STONE.defaultBlockState()), baseline * 5F,
+                    "Full entity loading cannot restore an uncapped mining bonus");
         }
         helper.succeed();
     }

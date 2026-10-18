@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.rules.R196MobRules;
+import io.github.ningmeng123.mite.rules.ProgressionRules;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
@@ -65,7 +66,7 @@ public final class R196Wolf extends Wolf implements R196Mob {
     }
     public static int tamingOutcome(float roll, float levelRoll, int level) {
         if (roll < .2F) return -1; if (roll < .4F) return 0; if (roll > .95F) return 1;
-        float adjusted = roll + levelRoll * level * .02F;
+        float adjusted = roll + levelRoll * ProgressionRules.attributeLevel(level) * .02F;
         return adjusted < .5F ? -1 : adjusted < 1F ? 0 : 1;
     }
     @Override public InteractionResult mobInteract(Player player, InteractionHand hand) {

@@ -4,7 +4,10 @@ package io.github.ningmeng123.mite.rules;
 public final class SourcePlayerCombatRules {
     private SourcePlayerCombatRules() {}
 
-    public static float meleeLevelModifier(int level) { return level * (level > 0 ? .005F : .02F); }
+    public static float meleeLevelModifier(int level) {
+        int boundedLevel = ProgressionRules.attributeLevel(level);
+        return boundedLevel * (boundedLevel > 0 ? .005F : .02F);
+    }
     public static float meleeLevelFactor(int level) { return 1F + meleeLevelModifier(level); }
     public static float primaryDamage(float criticalBase, int level, boolean silverVsUndead,
             boolean bluntVsSkeleton, float enchantmentDamage, boolean suspended) {

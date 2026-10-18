@@ -8,8 +8,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /** Literal vectors transcribed from uf/og, independent of game-side hooks. @author NingMeng123 */
 class SourcePlayerCombatRulesTest {
     @ParameterizedTest
-    @CsvSource({"-100,-1", "-50,0", "-25,.5", "-1,.98", "0,1", "1,1.005", "100,1.5", "200,2", "201,2.005", "1000,6"})
-    void levelDamageHasDifferentPositiveAndNegativeSlopesAndNo200Cap(int level, float factor) {
+    @CsvSource({"-100,-1", "-50,0", "-25,.5", "-1,.98", "0,1", "1,1.005", "100,1.5", "199,1.995",
+            "200,2", "201,2", "312,2", "403,2", "1000,2", "2147483647,2"})
+    void levelDamageKeepsSignedPenaltiesAndCapsPositiveBenefitsAt200(int level, float factor) {
         assertEquals(factor, SourcePlayerCombatRules.meleeLevelFactor(level), .000001F);
     }
     @Test void sourceOrderDoesNotMultiplyEnchantmentsByLevelCriticalOrMaterials() {

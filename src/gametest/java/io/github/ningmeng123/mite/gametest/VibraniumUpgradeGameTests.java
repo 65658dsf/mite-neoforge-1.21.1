@@ -73,7 +73,8 @@ public final class VibraniumUpgradeGameTests {
             helper.assertTrue(session.menu.stillValid(session.player), "A physical vibranium workbench backs the menu");
             helper.assertTrue(session.menu.getSlot(0).getItem().is(MiteTools.get("vibranium_sword")), "The native upgrade appears in the real result slot");
             int period = TimedCraftingController.period(session.player, session.menu);
-            helper.assertTrue(period >= 25 && period < 2000, "The consistent high-XP player runs a bounded full production period");
+            // Legendary D153625*32 gives 225671 base ticks / (5 + .7 bench bonus).
+            helper.assertValueEqual(period, 39591, "Even maximum stored XP uses the level-200 crafting speed ceiling");
             int initialExperience = session.player.totalExperience;
             session.menu.clicked(0, 0, ClickType.PICKUP, session.player);
             helper.assertTrue(TimedCraftingController.isActive(session.player), "A real UI click admits damaged named enchanted upgrade inputs");

@@ -5,8 +5,8 @@
   "scope": ["player_melee_level", "player_reach", "weak_strike", "hand_injury"],
   "not_selected": ["legacy_tool_blocking"],
   "melee": {
-    "source": ["uf.java:558-563", "uf.java:1041-1072", "uf.java:1107-1111", "nn.java:2294-2345"],
-    "level_modifier": {"positive": "0.005 * level", "zero_or_negative": "0.02 * level", "maximum_level": null},
+    "source": ["uf.java:520-538", "uf.java:558-563", "uf.java:1041-1072", "uf.java:1107-1111", "nn.java:2294-2345"],
+    "level_modifier": {"positive": "0.005 * min(level,200)", "zero_or_negative": "0.02 * level", "maximum_level": 200, "cap_scope": "attribute benefits only; actual modern experience levels continue beyond 200"},
     "order": ["positive_attack_attribute", "modern_cooldown", "critical", "level_factor", "silver_vs_undead_1.25", "cudgel_club_warhammer_vs_skeleton_2", "add_enchantment_damage", "liquid_compression"],
     "liquid_compression": "suspended && damage > 1 ? 1 + (damage - 1) * 0.5 : damage",
     "suspended": "!passenger && !onGround && (inWater || inLava)",

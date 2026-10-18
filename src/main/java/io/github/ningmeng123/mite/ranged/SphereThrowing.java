@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.ranged;
 import io.github.ningmeng123.mite.entity.GelatinousSphere;
 import io.github.ningmeng123.mite.registry.MiteWeaponContent;
 import io.github.ningmeng123.mite.rules.R196WeaponRules;
+import io.github.ningmeng123.mite.rules.ProgressionRules;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -22,7 +23,8 @@ public final class SphereThrowing {
         if (!level.isClientSide) {
             GelatinousSphere sphere = new GelatinousSphere(level, player, stack);
             sphere.shootFromRotation(player, player.getXRot(), player.getYRot(), 0F, 1.2F,
-                    R196WeaponRules.inaccuracy(player.experienceLevel, player.isInWaterOrBubble() || player.isInLava()));
+                    R196WeaponRules.inaccuracy(ProgressionRules.attributeLevel(player.experienceLevel),
+                            player.isInWaterOrBubble() || player.isInLava()));
             if (!level.addFreshEntity(sphere)) return InteractionResultHolder.fail(stack);
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1); io.github.ningmeng123.mite.enchantment.EnduranceActions.throwing(player);

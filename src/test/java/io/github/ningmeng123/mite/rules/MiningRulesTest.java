@@ -7,14 +7,14 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Independent mining vectors; extended positive levels retain the R196 bonus formula. @author NingMeng123 */
+/** Independent mining vectors; positive bonuses stop at the R196 attribute ceiling. @author NingMeng123 */
 class MiningRulesTest {
     @ParameterizedTest(name = "level {0} multiplies final mining speed by {1}")
     @CsvSource({
             "-2147483648, 0.2", "-41, 0.2", "-40, 0.2", "-39, 0.22",
             "-20, 0.6", "-1, 0.98", "0, 1.0", "1, 1.02", "5, 1.1",
             "35, 1.7", "100, 3.0", "199, 4.98", "200, 5.0",
-            "201, 5.02", "312, 7.24", "403, 9.06"
+            "201, 5.0", "312, 5.0", "403, 5.0", "2147483647, 5.0"
     })
     void matchesLiteralMultipliersAndClampsExtremeInputs(int level, float expected) {
         float multiplier = MiningRules.speedMultiplierForLevel(level);
@@ -24,9 +24,11 @@ class MiningRulesTest {
     }
 
     @Test
-    void extremelyLargeLevelsRemainFiniteWithoutAHidden200Cap() {
-        assertTrue(MiningRules.speedMultiplierForLevel(Integer.MAX_VALUE) > 40000000F);
-        assertTrue(Float.isFinite(MiningRules.speedMultiplierForLevel(Integer.MAX_VALUE)));
+    void hungryAndFedStrengthUseTheSameCappedBonus() {
+        for (int level : new int[]{200, 201, 312, 403, Integer.MAX_VALUE}) {
+            assertEquals(40F, MiningRules.adjustStrengthForSurvival(8F, level, true));
+            assertEquals(8F, MiningRules.adjustStrengthForSurvival(8F, level, false));
+        }
     }
 
     @Test

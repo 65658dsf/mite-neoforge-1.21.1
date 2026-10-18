@@ -1,5 +1,7 @@
 package io.github.ningmeng123.mite.crafting;
 
+import io.github.ningmeng123.mite.rules.ProgressionRules;
+
 /** R196 float arithmetic, independently traceable to bex:450-503. @author NingMeng123 */
 public final class TimedCraftingRules {
     private TimedCraftingRules() {}
@@ -14,7 +16,7 @@ public final class TimedCraftingRules {
     public static int period(float difficulty, int level, float benchModifier, boolean clumsy) {
         int period = basePeriod(difficulty);
         if (clumsy) period *= 2;
-        return (int)Math.max((float)period / ((1F + (float)level * .02F) + benchModifier), 25F);
+        return (int)Math.max((float)period / ((1F + (float)ProgressionRules.attributeLevel(level) * .02F) + benchModifier), 25F);
     }
 
     public static float benchModifier(float capacity, boolean hasMaterialRequirement) {
