@@ -1,7 +1,5 @@
 {
   "tooltip.mite.gear_level": "Equipment level: %s / %s",
-  "tooltip.mite.shield_strain": "Guard strain: %s / %s damage, %s / %s blocks",
-  "tooltip.mite.shield_strain_break": "Either limit disables shields for 5s and clears strain",
   "tooltip.mite.gear_experience": "Growth experience: %s / %s",
   "tooltip.mite.gear_max_level": "Material level cap reached",
   "tooltip.mite.gear_affixes": "Growth affixes",

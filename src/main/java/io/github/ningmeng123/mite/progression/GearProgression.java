@@ -132,9 +132,16 @@ public final class GearProgression {
         List<Holder<Enchantment>> candidates = new ArrayList<>();
         level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).holders()
                 .filter(holder -> supportsAffix(stack, holder) && EnchantmentSources.isSupported(holder)
-                        && affixLevel(stack, holder.unwrapKey().orElseThrow().location()) < 255).forEach(candidates::add);
+                        && affixDefinition(stack, holder).weight() > 0
+                        && affixLevel(stack, holder.unwrapKey().orElseThrow().location())
+                                < affixDefinition(stack, holder).maximumLevel()).forEach(candidates::add);
         candidates.sort(Comparator.comparing(holder -> holder.unwrapKey().orElseThrow().location().toString()));
         return candidates;
+    }
+
+    public static GearAffixRules.Definition affixDefinition(ItemStack stack, Holder<Enchantment> enchantment) {
+        return GearAffixRules.definition(enchantment.unwrapKey().orElseThrow().location().toString(), isArmor(stack),
+                enchantment.value().getWeight(), enchantment.value().getMaxLevel());
     }
 
     public static void award(ItemStack stack, long experienceMillis, ServerPlayer player) {
@@ -143,20 +150,20 @@ public final class GearProgression {
         GearProgress before = state(stack);
         if (cap == 0 || before.level() >= cap) return;
         List<Holder<Enchantment>> candidates = candidates(stack, player.level());
-        // No eligible affix means no lost level rewards; leave this item unchanged.
-        if (candidates.isEmpty()) return;
         UUID id = ensureId(stack);
         int level = before.level();
         long experience = GearProgressionRules.saturatedAdd(before.experienceMillis(), experienceMillis);
         var affixes = new HashMap<>(before.affixes());
         while (level < cap && experience >= GearProgressionRules.nextLevelExperienceMillis(level)) {
-            if (candidates.isEmpty()) break;
             experience -= GearProgressionRules.nextLevelExperienceMillis(level);
-            Holder<Enchantment> selected = candidates.get(player.getRandom().nextInt(candidates.size()));
+            level++;
+            if (candidates.isEmpty() || !GearAffixRules.grantsAffix(level, player.getRandom().nextInt(100))) continue;
+            int[] weights = candidates.stream().mapToInt(holder -> affixDefinition(stack, holder).weight()).toArray();
+            Holder<Enchantment> selected = candidates.get(GearAffixRules.selectIndex(weights,
+                    player.getRandom().nextInt(GearAffixRules.totalWeight(weights))));
             ResourceLocation key = selected.unwrapKey().orElseThrow().location();
             affixes.merge(key, 1, Integer::sum);
-            if (affixes.get(key) >= 255) candidates.remove(selected);
-            level++;
+            if (affixes.get(key) >= affixDefinition(stack, selected).maximumLevel()) candidates.remove(selected);
         }
         if (level >= cap) experience = 0;
         stack.set(PROGRESS.get(), new GearProgress(id, level, experience, affixes, 1));
