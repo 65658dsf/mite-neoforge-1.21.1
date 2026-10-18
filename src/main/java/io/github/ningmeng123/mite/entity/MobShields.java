@@ -29,6 +29,11 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 public final class MobShields {
     public static final String SPAWN_ROLL = "mite:shield_spawn_decided";
     public static final String DISABLED_UNTIL = "mite:shield_disabled_until";
+    private static final String BLOCKED_DAMAGE = "mite:shield_blocked_damage";
+    private static final String BLOCKED_HITS = "mite:shield_blocked_hits";
+    private static final float BREAK_DAMAGE_THRESHOLD = 25F;
+    private static final int BREAK_HIT_THRESHOLD = 3;
+    private static final long BREAK_DURATION_TICKS = 100L;
     public static final float SPAWN_CHANCE = .15F;
     private static final Set<String> METALS = Set.of("rusted_iron", "copper", "silver", "gold", "iron",
             "ancient_metal", "mithril", "adamantium", "vibranium");
@@ -108,9 +113,24 @@ public final class MobShields {
     /** The native shield event has already approved both the block and this durability budget. */
     public static void hurtShield(LivingEntity defender, float damage) {
         if (!(defender instanceof Mob mob) || !(mob.level() instanceof ServerLevel) || !Float.isFinite(damage)
-                || damage < 3F || !mob.isUsingItem()) return;
+                || damage < 0F || !mob.isUsingItem()) return;
         ItemStack stack = mob.getUseItem();
         if (MiteShields.definition(stack) == null || !shield(stack)) return;
+        var data = mob.getPersistentData();
+        float blockedDamage = data.getFloat(BLOCKED_DAMAGE) + damage;
+        int blockedHits = data.getInt(BLOCKED_HITS) + 1;
+        if (blockedDamage >= BREAK_DAMAGE_THRESHOLD || blockedHits >= BREAK_HIT_THRESHOLD) {
+            data.remove(BLOCKED_DAMAGE);
+            data.remove(BLOCKED_HITS);
+            data.putLong(DISABLED_UNTIL, mob.level().getGameTime() + BREAK_DURATION_TICKS);
+            mob.stopUsingItem();
+            mob.playSound(SoundEvents.SHIELD_BREAK, .8F, .9F + mob.getRandom().nextFloat() * .2F);
+            mob.level().broadcastEntityEvent(mob, (byte)30);
+            return;
+        }
+        data.putFloat(BLOCKED_DAMAGE, blockedDamage);
+        data.putInt(BLOCKED_HITS, blockedHits);
+        if (damage < 3F) return;
         EquipmentSlot slot = mob.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
         int wear = (int)Math.min(Integer.MAX_VALUE, 1L + (long)Math.floor(damage));
         stack.hurtAndBreak(wear, mob, slot);
@@ -125,7 +145,9 @@ public final class MobShields {
     public static void afterBlock(LivingEntity defender, LivingEntity attacker) {
         if (!(defender instanceof Mob mob) || !defending(mob)) return;
         if (!attacker.canDisableShield()) return;
-        mob.getPersistentData().putLong(DISABLED_UNTIL, mob.level().getGameTime() + 100L);
+        mob.getPersistentData().putLong(DISABLED_UNTIL, mob.level().getGameTime() + BREAK_DURATION_TICKS);
+        mob.getPersistentData().remove(BLOCKED_DAMAGE);
+        mob.getPersistentData().remove(BLOCKED_HITS);
         mob.stopUsingItem();
         mob.playSound(SoundEvents.SHIELD_BREAK, .8F, .9F + mob.getRandom().nextFloat() * .2F);
         mob.level().broadcastEntityEvent(mob, (byte)30);
