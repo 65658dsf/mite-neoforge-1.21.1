@@ -41,6 +41,9 @@ public final class CraftingQuality {
     private CraftingQuality() {}
 
     public static float lowestDifficulty(ItemStack stack) {
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().craftingDifficulty(stack, nativeLowestDifficulty(stack));
+    }
+    private static float nativeLowestDifficulty(ItemStack stack) {
         float vibranium = VibraniumCrafting.lowestDifficulty(stack);
         if (vibranium >= 0F) return vibranium;
         var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack);
@@ -64,6 +67,10 @@ public final class CraftingQuality {
             RecipeHolder<CraftingRecipe> recipe, ItemStack raw) {
         TimedCraftingRecipes.Rule rule = rule(recipe, raw, grid);
         if (rule == null || raw.isEmpty()) return null;
+        if (io.github.ningmeng123.mite.api.MiteExtensions.policy().isMaintenanceRecipe(recipe.value())) {
+            Quality quality=EquipmentDurability.isManaged(raw)?EquipmentDurability.quality(raw):null;
+            return new Result(rule,raw.copy(),quality,quality==null?null:new QualityRange(quality,quality),true,false,true,0,1);
+        }
         if (!EquipmentDurability.isManaged(raw)) {
             boolean repair = recipe.value() instanceof RepairItemRecipe && RangedRodRepair.applies(raw);
             return new Result(rule, RunestoneCrafting.apply(player, menu, grid, recipe.id(), raw), null, null, repair, repair, true, CoinCrafting.cost(raw), 1);
@@ -108,6 +115,7 @@ public final class CraftingQuality {
     public static TimedCraftingRecipes.Rule rule(RecipeHolder<CraftingRecipe> recipe, ItemStack output,
             net.minecraft.world.item.crafting.CraftingInput input) {
         if (output.isEmpty()) return null;
+        if (io.github.ningmeng123.mite.api.MiteExtensions.policy().isMaintenanceRecipe(recipe.value())) return new TimedCraftingRecipes.Rule(50F,null,-1);
         // Decorating an existing shield is a fixed-quality cosmetic operation, not manufacturing another metal shield.
         if (shieldDecoration(recipe, output)) return new TimedCraftingRecipes.Rule(100F, benchMaterial(output), -1);
         if (output.is(io.github.ningmeng123.mite.registry.MiteFoods.SALAD.get())) {

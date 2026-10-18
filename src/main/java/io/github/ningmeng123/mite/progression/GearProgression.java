@@ -91,7 +91,7 @@ public final class GearProgression {
             if (name.startsWith(material + "_")) return material;
         return null;
     }
-    public static int maxLevel(ItemStack stack) { return GearProgressionRules.maximumLevel(material(stack)); }
+    public static int maxLevel(ItemStack stack) { return Math.clamp(io.github.ningmeng123.mite.api.MiteExtensions.policy().gearMaximumLevel(stack, GearProgressionRules.maximumLevel(material(stack))), 0, 28); }
     public static boolean isArmor(ItemStack stack) {
         return maxLevel(stack) > 0 && stack.getItem() instanceof ArmorItem && !(stack.getItem() instanceof AnimalArmorItem);
     }
@@ -123,6 +123,8 @@ public final class GearProgression {
     /** The book-support leather exception is shared here without changing the enchanting table. */
     public static boolean supportsAffix(ItemStack stack, Holder<Enchantment> enchantment) {
         if (enchantment.is(EnchantmentTags.CURSE) || enchantment.is(net.minecraft.world.item.enchantment.Enchantments.MENDING)) return false;
+        if (enchantment.unwrapKey().map(key -> io.github.ningmeng123.mite.api.MiteExtensions.externalEnchantments().stream().anyMatch(definition -> definition.resourceId().equals(key.location().toString()))).orElse(false))
+            return enchantment.unwrapKey().map(key -> io.github.ningmeng123.mite.api.MiteExtensions.policy().enchantmentApplicable(key.location().toString(),stack,false)).orElse(false);
         if (enchantment.value().canEnchant(stack)) return true;
         return enchantment.unwrapKey().map(key -> key.location().equals(ResourceLocation.withDefaultNamespace("unbreaking")))
                 .orElse(false) && isArmor(stack) && "leather".equals(material(stack));
@@ -140,12 +142,14 @@ public final class GearProgression {
     }
 
     public static GearAffixRules.Definition affixDefinition(ItemStack stack, Holder<Enchantment> enchantment) {
-        return GearAffixRules.definition(enchantment.unwrapKey().orElseThrow().location().toString(), isArmor(stack),
-                enchantment.value().getWeight(), enchantment.value().getMaxLevel());
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().affixDefinition(stack,enchantment,GearAffixRules.definition(enchantment.unwrapKey().orElseThrow().location().toString(), isArmor(stack),
+                enchantment.value().getWeight(), enchantment.value().getMaxLevel()));
     }
 
     public static void award(ItemStack stack, long experienceMillis, ServerPlayer player) {
         if (!canGain(player) || experienceMillis <= 0 || stack.isEmpty()) return;
+        experienceMillis = Math.max(0L,io.github.ningmeng123.mite.api.MiteExtensions.policy().gearExperience(stack,experienceMillis));
+        if (experienceMillis==0) return;
         int cap = maxLevel(stack);
         GearProgress before = state(stack);
         if (cap == 0 || before.level() >= cap) return;
@@ -175,6 +179,7 @@ public final class GearProgression {
     /** Maintenance never merges, transfers or rerolls the sacrificial item's progression. */
     public static void preserve(ItemStack source, ItemStack result) {
         io.github.ningmeng123.mite.combat.ShieldGuard.preserve(source, result);
+        if (!source.isEmpty() && !result.isEmpty()) io.github.ningmeng123.mite.api.MiteExtensions.preserve(source, result);
         if (source.isEmpty() || result.isEmpty() || maxLevel(result) == 0) return;
         GearProgress progress = source.get(PROGRESS.get());
         if (progress == null) result.remove(PROGRESS.get()); else result.set(PROGRESS.get(), progress);

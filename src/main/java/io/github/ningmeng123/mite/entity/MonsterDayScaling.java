@@ -49,21 +49,23 @@ public final class MonsterDayScaling {
         long day = day(mob, level);
         var attribute = mob.getAttribute(Attributes.MAX_HEALTH);
         if (attribute == null) return;
-        double amount = MonsterDayScalingRules.healthMultiplier(day) - 1D;
-        if (mob instanceof AbstractSkeleton) {
-            // Evaluate all native modifiers on a detached copy, excluding our previous growth.
-            // This neither dirties live attributes each second nor compounds the skeleton's twenty-health basis.
-            var unscaled = new AttributeInstance(attribute.getAttribute(), ignored -> {});
-            unscaled.replaceFrom(attribute);
-            unscaled.removeModifier(HEALTH_MODIFIER);
-            amount = MonsterDayScalingRules.healthMultiplier(day, unscaled.getValue(), true) - 1D;
-        }
+        // Explicitly retain the ordinary1024 ceiling even when an extension raises the attribute range.
+        var unscaled = new AttributeInstance(attribute.getAttribute(), ignored -> {});
+        unscaled.replaceFrom(attribute);
+        unscaled.removeModifier(HEALTH_MODIFIER);
+        double baseHealth=unscaled.getValue();
+        double multiplier=mob instanceof AbstractSkeleton
+                ? MonsterDayScalingRules.healthMultiplier(day,baseHealth,true)
+                : MonsterDayScalingRules.healthMultiplier(day);
+        double limit=io.github.ningmeng123.mite.api.MiteExtensions.policy().mobHealthLimit(mob,1024D);
+        if (!Double.isFinite(limit)||limit<1D) throw new IllegalStateException("Invalid monster health limit");
+        double amount=Math.min(limit,baseHealth*multiplier)/baseHealth-1D;
         var previous = attribute.getModifier(HEALTH_MODIFIER);
         if (amount == 0D ? previous != null : previous == null || previous.amount() != amount
                 || previous.operation() != AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
             float health = mob.getHealth(), maximum = mob.getMaxHealth();
             attribute.removeModifier(HEALTH_MODIFIER);
-            if (amount > 0D) attribute.addPermanentModifier(new AttributeModifier(HEALTH_MODIFIER, amount,
+            if (amount != 0D) attribute.addPermanentModifier(new AttributeModifier(HEALTH_MODIFIER, amount,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
             float next = mob.getMaxHealth();
             // Growth preserves injuries as a fraction; it never turns a wounded or explicitly configured mob full-health.

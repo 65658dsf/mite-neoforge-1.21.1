@@ -84,6 +84,25 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /** Source spawning loops replace vanilla scheduling; modern-only mobs retain explicit native predicates. @author NingMeng123 */
 public final class R196MobSpawning {
+    private static io.github.ningmeng123.mite.api.MiteExtensions.Policy extension() { return io.github.ningmeng123.mite.api.MiteExtensions.policy(); }
+    private static io.github.ningmeng123.mite.api.MiteExtensions.SpawnContext context(ServerLevel level, Category category, Boolean deep) {
+        return new io.github.ningmeng123.mite.api.MiteExtensions.SpawnContext(level, category, deep);
+    }
+    private static boolean isDeep(Mob mob, ServerLevel level) { return R196SpawnRules.sourceY(mob.getBlockY(), underworld(level)) < 60; }
+    private static int monsterLimit(ServerLevel level, boolean deep, int chunks, boolean blood) {
+        return Math.max(0, extension().monsterCap(level, deep, chunks, R196SpawnRules.monsterCap(chunks, blood)));
+    }
+    /** One transaction ledger per tick; passengers debit the height interval they actually occupy. */
+    private static final class SpawnBudget {
+        int deep, shallow;
+        SpawnBudget(int deep, int shallow) { this.deep=Math.max(0,deep); this.shallow=Math.max(0,shallow); }
+        int remaining(Boolean low) { return Boolean.TRUE.equals(low) ? deep : shallow; }
+        int needed(List<Entity> tree, ServerLevel level, boolean low) {
+            return (int)tree.stream().filter(entity -> !entity.isRemoved() && entity instanceof Mob mob && category(mob)==Category.MONSTER && isDeep(mob,level)==low).count();
+        }
+        boolean fits(List<Entity> tree, ServerLevel level) { return needed(tree,level,true)<=deep && needed(tree,level,false)<=shallow; }
+        void consume(List<Entity> tree, ServerLevel level) { deep-=needed(tree,level,true); shallow-=needed(tree,level,false); }
+    }
     public static final TagKey<EntityType<?>> DAYLIGHT_RESTRICTED_UNDEAD = TagKey.create(Registries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "daylight_restricted_undead"));
     public record Entry(EntityType<? extends Mob> type, String sourceClass, Category category,
@@ -264,6 +283,7 @@ public final class R196MobSpawning {
             if (hostile) {
                 int density = R196SpawnRules.density(R196SpawnRules.sourceY(player.getBlockY(), underworld(level)), level.dimension().equals(Level.OVERWORLD),
                         day, moon, strongholdProximity(level, player.blockPosition(), state));
+                density = Math.max(0, extension().localDensity(level, player, density));
                 if (level.getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(32, 8, 32), mob -> category(mob) == Category.MONSTER).size() > density) continue;
             }
             ChunkPos center = player.chunkPosition();
@@ -309,17 +329,24 @@ public final class R196MobSpawning {
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
         var step = R196SpawnRules.advanceRate(state.rate, overworld, moon.blood() || level.isThundering(), state.modulation::nextInt); state.rate = step.state();
         boolean hostile = level.getDifficulty() != Difficulty.PEACEFUL && level.getServer().isSpawningMonsters();
-        boolean low = hostile && Math.random() < R196SpawnRules.hostilePassProbability(true, step.modifier(), moon.blood());
-        boolean high = hostile && Math.random() < R196SpawnRules.hostilePassProbability(false, step.modifier(), moon.blood());
+        boolean low = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, true, R196SpawnRules.hostilePassProbability(true, step.modifier(), moon.blood())),0F,1F);
+        boolean high = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, false, R196SpawnRules.hostilePassProbability(false, step.modifier(), moon.blood())),0F,1F);
         boolean periodic = Math.floorMod(level.getGameTime(), 400) == 0;
         if (low || high) {
             Map<Long, Boolean> chunks = eligibleChunks(level, true);
             // Both height passes spend one dimension-wide allowance. Carry successful
             // additions explicitly because newly added hidden sections may not yet be
             // visible through getAllEntities during this same native server tick.
-            int remaining = Math.max(0, R196SpawnRules.monsterCap(chunks.size(), moon.blood()) - count(level, Category.MONSTER, null));
-            if (low) remaining -= spawnPass(level, Category.MONSTER, true, chunks, false, remaining);
-            if (high && remaining > 0) spawnPass(level, Category.MONSTER, false, chunks, false, remaining);
+            if (extension().independentHostileBudgets(level, false)) {
+                SpawnBudget budget = new SpawnBudget(monsterLimit(level,true,chunks.size(),moon.blood())-count(level,Category.MONSTER,true),
+                        monsterLimit(level,false,chunks.size(),moon.blood())-count(level,Category.MONSTER,false));
+                if (low && budget.deep>0) spawnPass(level,Category.MONSTER,true,chunks,false,Integer.MAX_VALUE,budget);
+                if (high && budget.shallow>0) spawnPass(level,Category.MONSTER,false,chunks,false,Integer.MAX_VALUE,budget);
+            } else {
+                int remaining = Math.max(0, monsterLimit(level,false,chunks.size(),moon.blood()) - count(level, Category.MONSTER, null));
+                if (low) remaining -= spawnPass(level, Category.MONSTER, true, chunks, false, remaining);
+                if (high && remaining > 0) spawnPass(level, Category.MONSTER, false, chunks, false, remaining);
+            }
         }
         if (periodic) {
             Map<Long, Boolean> chunks = eligibleChunks(level, false);
@@ -335,9 +362,18 @@ public final class R196MobSpawning {
         return spawnPass(level, category, deep, chunks, modernOnly, Integer.MAX_VALUE);
     }
     private static int spawnPass(ServerLevel level, Category category, Boolean deep, Map<Long, Boolean> chunks, boolean modernOnly, int allowance) {
+        SpawnBudget budget = null;
+        if (category==Category.MONSTER && extension().independentHostileBudgets(level,false)) {
+            boolean blood=R196SpawnRules.moon(level.getDayTime(),level.dimension().equals(Level.OVERWORLD)).blood();
+            budget=new SpawnBudget(monsterLimit(level,true,chunks.size(),blood)-count(level,category,true),monsterLimit(level,false,chunks.size(),blood)-count(level,category,false));
+        }
+        return spawnPass(level,category,deep,chunks,modernOnly,allowance,budget);
+    }
+    private static int spawnPass(ServerLevel level, Category category, Boolean deep, Map<Long, Boolean> chunks, boolean modernOnly, int allowance, SpawnBudget budget) {
+        var spawnContext=context(level,category,deep);
         boolean blood = R196SpawnRules.moon(level.getDayTime(), level.dimension().equals(Level.OVERWORLD)).blood();
-        int limit = R196SpawnRules.cap(category, chunks.size(), Boolean.TRUE.equals(deep), false, blood);
-        int present = count(level, category, category == Category.MONSTER ? null : deep);
+        int limit = category==Category.MONSTER ? monsterLimit(level,Boolean.TRUE.equals(deep),chunks.size(),blood) : R196SpawnRules.cap(category, chunks.size(), Boolean.TRUE.equals(deep), false, blood);
+        int present = count(level, category, category == Category.MONSTER && budget==null ? null : deep);
         if (present >= limit || allowance <= 0) return 0;
         int available = Math.min(limit - present, allowance);
         int spawned = 0; RandomSource random = level.getRandom(); boolean hangBats = random.nextBoolean();
@@ -357,13 +393,15 @@ public final class R196MobSpawning {
             }
             if (deep != null && (R196SpawnRules.sourceY(y, underworld(level)) < 60) != deep) continue;
             if (category == Category.MONSTER && (overworld && y == 63 && level.getBlockState(new BlockPos(x, y - 1, z)).is(Blocks.ICE) && random.nextInt(4) > 0
-                    || nearestPlayer(level, new Vec3(x, y, z), true) >= 2304 && random.nextInt(2) == 0)) continue;
+                    || nearestPlayer(level, new Vec3(x, y, z), true) >= 2304 && random.nextInt(Math.max(1, extension().distantHostileSkipBound(spawnContext, 2))) == 0)) continue;
             int successes = 0;
-            for (int group = 0; group < 3; group++) {
-                int trialX = x, trialZ = z, maximumAttempts = 4; Entry selected = null; SpawnGroupData groupData = null;
+            int groupCount = Math.max(0, extension().spawnGroups(spawnContext, 3));
+            for (int group = 0; group < groupCount; group++) {
+                int trialX = x, trialZ = z, sourceAttempts=4, maximumAttempts = Math.max(0,extension().spawnAttempts(spawnContext,null,4)); Entry selected = null; SpawnGroupData groupData = null;
                 for (int attempt = 0; attempt < maximumAttempts; attempt++) {
-                    if (category == Category.MONSTER && spawned >= available) return spawned;
-                    trialX += random.nextInt(6) - random.nextInt(6); trialZ += random.nextInt(6) - random.nextInt(6);
+                    if (category == Category.MONSTER && (budget==null ? spawned>=available : budget.remaining(deep)<=0)) return spawned;
+                    int jitter=Math.max(1,extension().spawnJitter(spawnContext,6));
+                    trialX += random.nextInt(jitter) - random.nextInt(jitter); trialZ += random.nextInt(jitter) - random.nextInt(jitter);
                     BlockPos position = new BlockPos(trialX, y, trialZ);
                     Double placementY = positionY(level, position, category);
                     if (placementY == null && selected != null && !selected.modern()) continue;
@@ -371,16 +409,17 @@ public final class R196MobSpawning {
                     Vec3 point = new Vec3(trialX + .5, actualY, trialZ + .5);
                     boolean close = category == Category.MONSTER && (overworld || underworld(level)) && nearestPlayer(level, point, true) < 576
                             && level.getMaxLocalRawBrightness(BlockPos.containing(point)) == 0 && level.getMaxLocalRawBrightness(BlockPos.containing(point).above()) == 0;
-                    if (!R196SpawnRules.distanceAllows(nearestPlayer(level, point, false), point.distanceToSqr(Vec3.atLowerCornerOf(level.getSharedSpawnPos())), close)) continue;
+                    double nearest=nearestPlayer(level,point,false), spawnDistance=point.distanceToSqr(Vec3.atLowerCornerOf(level.getSharedSpawnPos()));
+                    if (!extension().spawnDistance(spawnContext,position,nearest,spawnDistance,close,R196SpawnRules.distanceAllows(nearest,spawnDistance,close))) continue;
                     if (selected == null) {
                         selected = select(level, position, category, random, modernOnly || placementY == null);
                         if (selected == null) { if (placementY == null) continue; else break; }
                         if (category != Category.MONSTER && "EntityVampireBat".equals(selected.sourceClass()) && random.nextInt(4) == 0)
-                            maximumAttempts = 4 + random.nextInt(5);
+                            sourceAttempts = 4 + random.nextInt(5);
                     }
                     if (selected.type() == EntityType.GHAST && nearestPlayer(level, point, false) < 2304) continue;
                     Entry actual = substitute(level, selected, random);
-                    maximumAttempts = overworld && "EntityPhaseSpider".equals(actual.sourceClass()) ? 64 : maximumAttempts;
+                    maximumAttempts = Math.max(0,extension().spawnAttempts(spawnContext,actual.type(),overworld && "EntityPhaseSpider".equals(actual.sourceClass()) ? 64 : sourceAttempts));
                     Mob mob = actual.type().create(level); if (mob == null) continue;
                     mob.moveTo(point.x, point.y, point.z, random.nextFloat() * 360F, 0F);
                     if (mob instanceof Bat bat && hangBats) hang(level, bat);
@@ -395,15 +434,15 @@ public final class R196MobSpawning {
                         if (!valid) continue;
                     }
                     if (category == Category.MONSTER && !day && R196OutdoorChecks.outdoors(level, mob.blockPosition())) {
-                        if (!R196SpawnRules.outdoorAllows(mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD), day, moon, random::nextInt)) continue chunkLoop;
+                        if (!extension().outdoorAllows(spawnContext,mob,R196SpawnRules.outdoorAllows(mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD), day, moon, random::nextInt))) continue chunkLoop;
                     }
                     SourceFinalization prepared = prepareSourceFinalization(mob, level, groupData);
                     mob = prepared.mob();
                     if (category == Category.MONSTER) {
-                        var result = finalizeNaturalMonster(level, mob, prepared.group(), available - spawned);
+                        var result = finalizeNaturalMonster(level, mob, prepared.group(), budget==null ? available-spawned : Integer.MAX_VALUE,budget);
                         groupData = result.group();
                         if (result.monsters() == 0) continue;
-                        spawned += result.monsters(); present += result.monsters();
+                        spawned += result.monsters(); present = budget==null ? present+result.monsters() : limit-budget.remaining(deep);
                     } else {
                         groupData = EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.NATURAL, prepared.group());
                         if (mob.isRemoved() || mob.isSpawnCancelled()) continue;
@@ -421,6 +460,9 @@ public final class R196MobSpawning {
 
     /** Commit a fresh natural-spawn tree atomically, including tt's already-added skeleton rider. */
     public static NaturalMonsterSpawn finalizeNaturalMonster(ServerLevel level, Mob root, SpawnGroupData group, int allowance) {
+        return finalizeNaturalMonster(level,root,group,allowance,null);
+    }
+    private static NaturalMonsterSpawn finalizeNaturalMonster(ServerLevel level, Mob root, SpawnGroupData group, int allowance, SpawnBudget budget) {
         List<Entity> owned = new ArrayList<>(); owned.add(root);
         try {
             SpawnGroupData finalized = EventHooks.finalizeMobSpawn(root, level, level.getCurrentDifficultyAt(root.blockPosition()), MobSpawnType.NATURAL, group);
@@ -432,7 +474,7 @@ public final class R196MobSpawning {
                     && category(mob) == Category.MONSTER).count();
             boolean daylightBlocked = owned.stream().anyMatch(entity -> !entity.isRemoved() && entity instanceof Mob mob
                     && !naturalDaylightAllows(mob, level));
-            if (root.isRemoved() || root.isSpawnCancelled() || needed > allowance || allowance <= 0 || daylightBlocked) {
+            if (root.isRemoved() || root.isSpawnCancelled() || needed > allowance || allowance <= 0 || daylightBlocked || budget!=null && !budget.fits(owned,level)) {
                 discardNaturalTree(owned); return new NaturalMonsterSpawn(finalized, 0);
             }
             for (Entity entity : tree) {
@@ -448,6 +490,7 @@ public final class R196MobSpawning {
             }
             int added = (int)owned.stream().filter(entity -> !entity.isRemoved() && entity.isAddedToLevel()
                     && entity instanceof Mob mob && category(mob) == Category.MONSTER).count();
+            if (budget!=null) budget.consume(owned,level);
             return new NaturalMonsterSpawn(finalized, added);
         } catch (RuntimeException | Error failure) {
             discardNaturalTree(owned); throw failure;
@@ -458,7 +501,7 @@ public final class R196MobSpawning {
         for (int index = owned.size() - 1; index >= 0; index--) owned.get(index).discard();
     }
     public static Entry select(ServerLevel level, BlockPos pos, Category category, RandomSource random, boolean modernOnly) {
-        List<Entry> entries = pool(level, pos, category, modernOnly);
+        List<Entry> entries = extension().spawnPool(context(level,category,null),pos,List.copyOf(pool(level, pos, category, modernOnly)));
         if (entries.isEmpty()) return null;
         Holder<Biome> surface = sourceBiome(level, pos);
         int sourceY = R196SpawnRules.sourceY(pos.getY(), underworld(level));

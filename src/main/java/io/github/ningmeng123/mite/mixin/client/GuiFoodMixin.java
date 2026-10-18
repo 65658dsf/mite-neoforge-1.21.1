@@ -32,6 +32,6 @@ public abstract class GuiFoodMixin {
         }
         // renderFoodLevel still reserves one row; mount hearts and air use their
         // own layers and keep NeoForge's existing rightHeight accounting.
-        return ProgressionRules.foodLimitForLevel(this.minecraft.player.experienceLevel) / 2;
+        return io.github.ningmeng123.mite.api.MiteExtensions.foodCapacity(this.minecraft.player) / 2;
     }
 }

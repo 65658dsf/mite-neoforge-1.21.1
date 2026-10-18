@@ -50,6 +50,18 @@ public final class GearProgressionGameTests {
     private GearProgressionGameTests() {}
 
     @GameTest(template = "empty")
+    public static void extensionLevelTwentyEightRoundTripsWithoutChangingStandaloneMaterialCap(GameTestHelper h) {
+        ItemStack stack=new ItemStack(MiteTools.get("mite:vibranium_sword"));
+        GearProgress progress=new GearProgress(UUID.randomUUID(),28,0,Map.of(),1);
+        stack.set(GearProgression.PROGRESS.get(),progress);
+        var tag=stack.save(h.getLevel().registryAccess());
+        ItemStack restored=ItemStack.parse(h.getLevel().registryAccess(),tag).orElseThrow();
+        h.assertTrue(GearProgression.state(restored).equals(progress), "Extension levels through28 retain their identity and growth on item save/load");
+        h.assertTrue(GearProgression.maxLevel(restored)==25, "The default policy does not increase standalone vibranium growth");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void thresholdAndMultiLevelAwardsPreserveOrdinaryEnchantments(GameTestHelper h) {
         try (Session session = new Session(h)) {
             ScriptedRandom random = session.random(27, 0, 31, 33, 0);

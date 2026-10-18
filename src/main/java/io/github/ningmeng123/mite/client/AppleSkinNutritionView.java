@@ -30,7 +30,7 @@ public final class AppleSkinNutritionView {
             return new Reserves(snapshot.nutrition(), snapshot.saturation(), snapshot.satiation(), snapshot.limit());
         var food = player.getFoodData();
         int nutrition = food instanceof DualFoodData dual ? dual.mite$getNutrition() : 0;
-        return new Reserves(nutrition, food.getSaturationLevel(), food.getFoodLevel(), ProgressionRules.foodLimitForLevel(player.experienceLevel));
+        return new Reserves(nutrition, food.getSaturationLevel(), food.getFoodLevel(), io.github.ningmeng123.mite.api.MiteExtensions.foodCapacity(player));
     }
 
     public static int capacity(Player player) { return reserves(player).capacity(); }

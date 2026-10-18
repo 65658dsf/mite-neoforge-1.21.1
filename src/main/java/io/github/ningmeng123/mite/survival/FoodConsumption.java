@@ -33,7 +33,7 @@ public final class FoodConsumption {
             protein=synced.protein(); plants=synced.plants(); resistanceLevel=synced.resistanceLevel();
         }
         return NutritionRules.canIngest(p.getFoodData().getFoodLevel(),((DualFoodData)p.getFoodData()).mite$getNutrition(),
-                ProgressionRules.foodLimitForLevel(p.experienceLevel),
+                io.github.ningmeng123.mite.api.MiteExtensions.foodCapacity(p),
                 NutritionRules.adjustedSatiation(f.satiation(),f.sugar(),resistanceLevel),f.nutrition(),f.sugar(),
                 f.alwaysEdible() || p.hasInfiniteMaterials(),f.protein(),f.plants(),protein,plants,
                 p.hasEffect(MobEffects.CONFUSION),p.isEyeInFluid(net.minecraft.tags.FluidTags.WATER));

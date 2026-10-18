@@ -1,0 +1,17 @@
+MITE 新生 / MITE: Modern — MC 百科封面
+开发署名：NingMeng123
+生成方式：内置 image_gen 工具。
+成品：项目根目录 MCMOD-cover.png。
+原图尺寸：1586×992；上传 MC 百科时按 16:10 裁剪，标题位于画面安全区域。
+
+生成提示词原文：
+
+Use case: stylized-concept.
+Asset type: finished MC百科 Minecraft mod listing cover for the mod MITE 新生 / MITE: Modern.
+Create a polished original voxel/pixel-art title illustration in an EXACT 16:10 landscape aspect ratio, ideally 1600×1000, full bleed with no outer border or blank margins. The cover must stay clearly legible when reduced to 240×150.
+Scene: a compact Minecraft-like survival landscape transitioning from a grassy woodland surface into a deep stone cavern, with a few embedded copper and luminous blue mineral blocks, a small warm torch glow, and a subtle dark-red moon visible above the blocky treeline. The scenery supports the mod's survival progression and underground exploration themes. Use crisp square block geometry and authentic pixel-textured surfaces, restrained detail, clear depth, warm torchlight against cool cavern shadows. Keep the central title area uncluttered and high contrast.
+Primary subject: a very large professionally composed block-built title logo, substantial stone and metal lettering with clean edges, carefully readable Chinese characters. Center the brand across the safe middle 75% of the image. Render these TWO lines of text EXACTLY, including spaces and punctuation:
+"MITE 新生"
+"MITE: Modern"
+The first line is dominant and the second line smaller. The Chinese text must read 新生 (新 then 生), with correct strokes. Keep all lettering safely away from image edges. Make the logo the main focal point, with scenery secondary.
+Constraints: only the two specified text lines; no version number, author signature, website address, Minecraft official logo, extra slogan, watermark, fake HUD, photo frame, or unrelated characters. Deliver a single complete cover image, not a sheet of variants. Opaque background.

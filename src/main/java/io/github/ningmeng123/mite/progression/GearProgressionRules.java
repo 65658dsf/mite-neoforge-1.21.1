@@ -19,7 +19,7 @@ public final class GearProgressionRules {
     }
 
     public static long nextLevelExperienceMillis(int currentLevel) {
-        if (currentLevel < 0 || currentLevel > 25) throw new IllegalArgumentException("Invalid gear level");
+        if (currentLevel < 0 || currentLevel > 27) throw new IllegalArgumentException("Invalid gear level");
         return 100L * (currentLevel + 1L) * (1L + currentLevel / 5) * SCALE;
     }
 

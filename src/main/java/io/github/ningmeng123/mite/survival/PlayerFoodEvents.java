@@ -53,7 +53,7 @@ public final class PlayerFoodEvents {
         if(!(p instanceof ServerPlayer player)) return;
         NutritionState state=NutritionState.get(p);
         NutritionPayload payload=new NutritionPayload(p.getId(),p.getFoodData().getFoodLevel(),
-                ((DualFoodData)p.getFoodData()).mite$getNutrition(),ProgressionRules.foodLimitForLevel(p.experienceLevel),
+                ((DualFoodData)p.getFoodData()).mite$getNutrition(),io.github.ningmeng123.mite.api.MiteExtensions.foodCapacity(p),
                 state.protein(),state.fat(),state.plants(),state.resistance(),state.resistanceLevel(),
                 p.getFoodData().getSaturationLevel());
         NutritionPayload old=SENT.get(p.getUUID());

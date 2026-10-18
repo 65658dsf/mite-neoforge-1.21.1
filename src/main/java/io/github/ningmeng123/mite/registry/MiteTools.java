@@ -172,7 +172,9 @@ public final class MiteTools {
     }
 
     public static Definition definition(ItemStack stack) {
-        return DEFINITIONS.get(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
+        String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+        Definition nativeDefinition = DEFINITIONS.get(id);
+        return nativeDefinition != null ? nativeDefinition : io.github.ningmeng123.mite.api.MiteExtensions.externalTool(id);
     }
 
     public static String requiredBenchMaterial(ItemStack result) {

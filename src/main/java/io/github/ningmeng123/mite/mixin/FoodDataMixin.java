@@ -47,7 +47,7 @@ public abstract class FoodDataMixin implements DualFoodData {
         }
     }
     @Unique private int mite$limit() {
-        return mite$player == null ? 20 : ProgressionRules.foodLimitForLevel(mite$player.experienceLevel);
+        return mite$player == null ? 20 : io.github.ningmeng123.mite.api.MiteExtensions.foodCapacity(mite$player);
     }
     @Override public void mite$clampToLimit() {
         if (mite$player != null && !mite$player.level().isClientSide) {
@@ -145,7 +145,7 @@ public abstract class FoodDataMixin implements DualFoodData {
         } else {
             mite$starveProgress=0F;
             // Source regeneration uses the highest worn level. Tournament-only sleep penalties remain separate.
-            mite$healProgress += NutritionRules.regenerationIncrement(mite$nutrition,state.malnourished(),player.isSleeping(),io.github.ningmeng123.mite.enchantment.R196Enchantments.equipped(player,"regeneration"));
+            mite$healProgress += io.github.ningmeng123.mite.api.MiteExtensions.policy().naturalRegeneration(player, NutritionRules.regenerationIncrement(mite$nutrition,state.malnourished(),player.isSleeping(),io.github.ningmeng123.mite.enchantment.R196Enchantments.equipped(player,"regeneration")));
             if (player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION) && player.isHurt()) {
                 if (mite$healProgress>=1F) {
                     player.heal(1F);

@@ -50,7 +50,7 @@ public final class PlayerHealthEvents {
         if (maxHealth == null) {
             return;
         }
-        double baseHealth = ProgressionRules.maxHealthForLevel(player.experienceLevel);
+        double baseHealth = io.github.ningmeng123.mite.api.MiteExtensions.maximumHealth(player);
         if (maxHealth.getBaseValue() != baseHealth) {
             // Change only the base; health modifiers from effects or other mods remain.
             maxHealth.setBaseValue(baseHealth);

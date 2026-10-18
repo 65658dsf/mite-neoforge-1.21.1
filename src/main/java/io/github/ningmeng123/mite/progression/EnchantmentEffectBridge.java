@@ -27,6 +27,9 @@ public final class EnchantmentEffectBridge {
 
     /** Opaque mod effects require an explicit adapter rather than a misleading added level. */
     public static boolean supported(Holder<Enchantment> holder) {
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().enchantmentSupported(holder, nativeSupported(holder));
+    }
+    private static boolean nativeSupported(Holder<Enchantment> holder) {
         if (holder.value().effects().isEmpty() && holder.unwrapKey().map(key -> !key.location().getNamespace().equals("minecraft")
                 && !key.location().getNamespace().equals("mite")).orElse(true)) return false;
         for (DataComponentType<?> type : holder.value().effects().keySet()) {

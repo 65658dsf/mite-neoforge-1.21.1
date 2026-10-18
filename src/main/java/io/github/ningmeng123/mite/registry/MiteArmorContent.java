@@ -106,7 +106,7 @@ public final class MiteArmorContent {
     public static List<ChainDefinition> chains() { return List.copyOf(CHAINS); }
     public static Definition definition(Item item) {
         String id = BuiltInRegistries.ITEM.getKey(item).toString();
-        return DEFINITIONS.stream().filter(d -> d.id().equals(id)).findFirst().orElse(null);
+        return DEFINITIONS.stream().filter(d -> d.id().equals(id)).findFirst().orElseGet(() -> io.github.ningmeng123.mite.api.MiteExtensions.externalArmor(item));
     }
     public static Item get(String id) { return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)); }
     /** ItemHorseArmor.getProtection; native iron/gold are outside the added-item definition list. */

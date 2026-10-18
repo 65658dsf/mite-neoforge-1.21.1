@@ -15,6 +15,12 @@ class GearProgressionRulesTest {
         for (int level = 0; level < 25; level++) total += GearProgressionRules.nextLevelExperienceMillis(level);
         assertEquals(122_500_000, total);
     }
+    @Test void extensionGrowthContinuesTheExistingCurveThroughLevelTwentyEight() {
+        assertEquals(15_600_000L, GearProgressionRules.nextLevelExperienceMillis(25));
+        assertEquals(16_200_000L, GearProgressionRules.nextLevelExperienceMillis(26));
+        assertEquals(16_800_000L, GearProgressionRules.nextLevelExperienceMillis(27));
+        assertThrows(IllegalArgumentException.class, () -> GearProgressionRules.nextLevelExperienceMillis(28));
+    }
     @Test void allExplicitMaterialsAndModernSeriesUseTheirApprovedCaps() {
         for (String material : new String[]{"copper", "silver", "rusted_iron", "gold", "leather", "wood", "stone", "flint", "obsidian"})
             assertEquals(5, GearProgressionRules.maximumLevel(material));

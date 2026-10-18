@@ -152,18 +152,19 @@ public final class TimedCraftingController {
     }
 
     private static boolean allowed(ServerPlayer player, Prepared prepared) {
+        boolean maintenance=io.github.ningmeng123.mite.api.MiteExtensions.policy().isMaintenanceRecipe(prepared.recipe().value());
         float capacity = prepared.menu() instanceof WorkbenchAccess access ? access.mite$workbenchCapacity() : 0F;
         if (!player.isAlive() || player.isSpectator() || !prepared.menu().stillValid(player)
                 || upperBodyInWeb(player)
                 || prepared.result().isEmpty() || !ItemStack.matches(prepared.result(), prepared.menu().getSlot(0).getItem())
                 || capacity < prepared.rule().requiredCapacity()
-                || !WorkbenchRules.allows(prepared.menu(), prepared.result())
+                || !maintenance && !WorkbenchRules.allows(prepared.menu(), prepared.result())
                 || !CraftingAccessRules.canCraft(prepared.grid(), prepared.result())
                 || !CraftingQuality.canManufacture(player, prepared.quality())
                 || prepared.quality().cost() > 0 && player.totalExperience < prepared.quality().cost()
                 || prepared.quality().repair() && !CraftingQuality.canRepair(player, prepared.result())) return false;
         for (int i = 0; i < prepared.grid().getContainerSize(); i++) {
-            if (prepared.grid().getItem(i).isDamaged() && !prepared.quality().repair()
+            if (prepared.grid().getItem(i).isDamaged() && !maintenance && !prepared.quality().repair()
                     && !(prepared.recipe().value() instanceof VibraniumUpgradeRecipe)
                     && !CraftingQuality.shieldDecoration(prepared.recipe(), prepared.result())) return false;
         }

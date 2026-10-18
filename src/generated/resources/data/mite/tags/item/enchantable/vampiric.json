@@ -27,8 +27,6 @@
     "mite:vibranium_dagger",
     "mite:vibranium_knife",
     "mite:vibranium_sword",
-    "mite_equipment_recycling:unlisted_blade",
-    "mite_equipment_recycling:copper_mithril_iron_blade",
     {
       "id": "#mite:simplyswords/enchantable/vampiric",
       "required": false

@@ -17,7 +17,7 @@ public final class BloodMoonEquipmentRules {
 
     public static long bloodMoons(long highestDay) {
         long day = Math.max(0L, highestDay);
-        return day / 32L - day / 128L;
+        return Math.max(0L, io.github.ningmeng123.mite.api.MiteExtensions.policy().bloodMoonCount(day, day / 32L - day / 128L));
     }
 
     /** -1 preserves the pre-progression source/native equipment path. */

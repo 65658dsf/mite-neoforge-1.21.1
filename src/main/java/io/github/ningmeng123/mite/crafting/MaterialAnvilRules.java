@@ -80,6 +80,8 @@ public final class MaterialAnvilRules {
         if (tool != null) return new Material(tool.material(), tool.family().components(), false, false, false, false);
         var armor = EquipmentDurability.armorProfile(stack);
         if (armor == null) return null;
+        var definition = io.github.ningmeng123.mite.registry.MiteArmorContent.definition(stack.getItem());
+        if (definition!=null) return new Material(definition.material(),armor.components(),true,armor.chainmail(),false,false);
         String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
         // Diamond/netherite are explicitly modern; their retained vanilla repairs are separate.
         if (id.startsWith("diamond_") || id.startsWith("netherite_")) return null;

@@ -141,10 +141,17 @@ public final class EquipmentDurability {
     }
 
     public static ToolProfile toolProfile(ItemStack stack) {
-        return stack.getItem() instanceof Profiled profiled ? profiled.durabilityProfile() : TOOLS.get(stack.getItem());
+        if (stack.getItem() instanceof Profiled profiled) return profiled.durabilityProfile();
+        ToolProfile nativeProfile = TOOLS.get(stack.getItem());
+        var external = io.github.ningmeng123.mite.registry.MiteTools.definition(stack);
+        return nativeProfile != null ? nativeProfile : external == null ? null : external.profile();
     }
 
-    public static ArmorProfile armorProfile(ItemStack stack) { return ARMOR.get(stack.getItem()); }
+    public static ArmorProfile armorProfile(ItemStack stack) {
+        ArmorProfile nativeProfile = ARMOR.get(stack.getItem());
+        var external = io.github.ningmeng123.mite.api.MiteExtensions.externalArmor(stack.getItem());
+        return nativeProfile != null ? nativeProfile : external == null ? null : external.profile();
+    }
     public static ShieldProfile shieldProfile(ItemStack stack) { return SHIELDS.get(stack.getItem()); }
     public static boolean isManaged(ItemStack stack) {
         return toolProfile(stack) != null || armorProfile(stack) != null || shieldProfile(stack) != null || stack.is(Items.BOW)

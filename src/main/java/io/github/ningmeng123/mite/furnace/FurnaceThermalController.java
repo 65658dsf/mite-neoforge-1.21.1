@@ -28,10 +28,13 @@ public final class FurnaceThermalController {
     private FurnaceThermalController() {}
     public record CookingBatch(ItemStack result, int consumed, RecipeHolder<? extends AbstractCookingRecipe> recipe) {}
     public static R196FurnaceRules.Profile profile(BlockState state) {
-        return R196FurnaceRules.profile(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString());
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().furnaceProfile(state,R196FurnaceRules.profile(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString()));
     }
     public static String id(ItemStack stack) { return BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(); }
     public static R196FurnaceRules.Fuel fuel(ItemStack stack) {
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().fuel(stack,nativeFuel(stack));
+    }
+    private static R196FurnaceRules.Fuel nativeFuel(ItemStack stack) {
         if (stack.isEmpty()) return new R196FurnaceRules.Fuel(0, 0);
         var source = mappedFuel(stack);
         if (source != null) return source;
@@ -52,7 +55,7 @@ public final class FurnaceThermalController {
         return ticks > 0 ? new R196FurnaceRules.Fuel(ticks, 1) : null;
     }
     @SubscribeEvent public static void fuelTime(FurnaceFuelBurnTimeEvent event) {
-        var fuel = mappedFuel(event.getItemStack());
+        var fuel = io.github.ningmeng123.mite.api.MiteExtensions.policy().fuel(event.getItemStack(),mappedFuel(event.getItemStack()));
         if (fuel != null) event.setBurnTime(fuel.ticks());
     }
     public static boolean isLarge(ItemStack stack) {
@@ -68,6 +71,9 @@ public final class FurnaceThermalController {
                 || block instanceof ButtonBlock);
     }
     public static int requiredHeat(ItemStack input) {
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().requiredHeat(input,nativeRequiredHeat(input));
+    }
+    private static int nativeRequiredHeat(ItemStack input) {
         // Equipment recycling uses the same heat gate as vanilla iron/gold recycling.
         if (EquipmentRecycling.material(input) != null) return 2;
         return R196FurnaceRules.requiredHeat(id(input));
@@ -138,6 +144,7 @@ public final class FurnaceThermalController {
                 boolean wetSponge = input.is(Items.WET_SPONGE);
                 input.shrink(batch.consumed());
                 if (batch.recipe() != null) furnace.setRecipeUsed(batch.recipe());
+                io.github.ningmeng123.mite.api.MiteExtensions.policy().furnaceCooked(furnace);
                 // Retain the useful modern wet-sponge interaction with both vanilla and metal buckets.
                 if (wetSponge && emptyBucket(furnace.getItem(1))) {
                     ItemStack empty = furnace.getItem(1);

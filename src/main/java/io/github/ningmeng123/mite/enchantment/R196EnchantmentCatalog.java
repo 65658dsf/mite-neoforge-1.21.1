@@ -82,15 +82,22 @@ public final class R196EnchantmentCatalog {
         return new Definition(legacyId, id, "mite:" + id, weight, difficulty, levels);
     }
 
-    public static List<Definition> definitions() { return DEFINITIONS; }
+    public static List<Definition> definitions() {
+        var all=new java.util.ArrayList<>(DEFINITIONS);
+        all.addAll(io.github.ningmeng123.mite.api.MiteExtensions.externalEnchantments());
+        return List.copyOf(all);
+    }
 
     /** Namespaced IDs are matched exactly, so minecraft:piercing is never confused with the source enchantment. */
     public static Definition definition(String id) {
         if (id == null) return null;
-        return DEFINITIONS.stream().filter(d -> id.indexOf(':') >= 0 ? d.resourceId().equals(id) : d.id().equals(id)).findFirst().orElse(null);
+        return definitions().stream().filter(d -> id.indexOf(':') >= 0 ? d.resourceId().equals(id) : d.id().equals(id)).findFirst().orElse(null);
     }
 
     public static boolean compatible(String left, String right) {
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().enchantmentsCompatible(left,right,nativeCompatible(left,right));
+    }
+    private static boolean nativeCompatible(String left, String right) {
         Definition first = definition(left), second = definition(right);
         if (first == null || second == null) return !java.util.Objects.equals(left, right);
         String a = first.id(), b = second.id();
@@ -100,6 +107,9 @@ public final class R196EnchantmentCatalog {
     }
 
     public static boolean supported(String id, ItemStack stack) {
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().enchantmentApplicable(id, stack, nativeSupported(id, stack));
+    }
+    private static boolean nativeSupported(String id, ItemStack stack) {
         Definition definition = definition(id);
         if (definition == null || stack.isEmpty() || io.github.ningmeng123.mite.item.RemovedDiamondEquipment.isRemoved(stack)) return false;
         ToolFamily family = family(stack);

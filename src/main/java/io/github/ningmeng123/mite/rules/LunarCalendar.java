@@ -28,7 +28,7 @@ public final class LunarCalendar {
             else if((day+8L)%128L==0L) event=Event.MOON_DOG;
             else if((day+8L)%32L==0L) event=Event.HARVEST;
         }
-        return new State(day,(int)(day%8L),overworld,!daytime((int)(time%24000L)),event);
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().calendar(new State(day,(int)(day%8L),overworld,!daytime((int)(time%24000L)),event));
     }
     /** Raw phase fraction remains distinct from the stronger visual moonlight formula. */
     public static float phaseBrightness(State state) { return PHASE_BRIGHTNESS[state.phase()]; }
