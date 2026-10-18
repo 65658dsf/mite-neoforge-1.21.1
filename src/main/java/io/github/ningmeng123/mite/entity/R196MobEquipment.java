@@ -94,6 +94,7 @@ public final class R196MobEquipment {
                     >= io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality.AVERAGE.ordinal()) held = false;
             if ((!held || !recent && !picked && !(mob.getRandom().nextFloat() < .05F))
                     && (!recent && !forced || !(mob.getRandom().nextFloat() - looting * .01F < chance))) continue;
+            if (!MobEquipmentDrops.keep(mob, chance)) continue;
             mob.spawnAtLocation(stack); mob.setItemSlot(slot, ItemStack.EMPTY);
         }
     }

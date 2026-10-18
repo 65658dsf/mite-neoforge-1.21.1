@@ -229,6 +229,7 @@
     "OrdinarySkeletonMixin",
     "SourceVanillaMobLootMixin",
     "SourceMobDropChanceAccess",
+    "MobEquipmentDropRateMixin",
     "R196VanillaWolfFoodMixin",
     "SourceWitchDefenseMixin",
     "NativeMobEquipmentMixin",

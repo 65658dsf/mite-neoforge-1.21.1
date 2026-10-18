@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -64,7 +65,9 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
     private final MobKind kind;
     private final SourceRangedAttackGoal rangedGoal = new SourceRangedAttackGoal(this, 1D, 60, 15F);
     private final SourceMeleeGoal meleeGoal = new SourceMeleeGoal(this, Player.class, 1.2D, false);
+    private final float naturalWeaponDropChance;
     private ItemStack stowed = ItemStack.EMPTY;
+    private float stowedDropChance;
     private int forcedType = -1;
     private int troopsSummoned;
     private boolean massiveFall;
@@ -72,6 +75,8 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
         super(type, level);
         if (kind.family() != MobKind.Family.SKELETON) throw new IllegalArgumentException("Not a R196 skeleton");
         this.kind = kind; this.xpReward = R196MobRules.entry(kind).experience();
+        naturalWeaponDropChance = getEquipmentDropChance(EquipmentSlot.MAINHAND);
+        stowedDropChance = naturalWeaponDropChance;
         if (isLongdead()) for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET})
             setDropChance(slot, getEquipmentDropChance(slot) * .25F);
         reassessWeaponGoal();
@@ -121,8 +126,10 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
         if (isLongdead()) {
             setItemSlot(EquipmentSlot.MAINHAND, SpecialMobEquipment.generated(this,
                     skeletonType() == 2 ? "mite:ancient_metal_sword" : "mite:ancient_metal_bow", true));
-            if (kind == MobKind.LONGDEAD_GUARDIAN && getMainHandItem().getItem() instanceof BowItem)
+            if (kind == MobKind.LONGDEAD_GUARDIAN && getMainHandItem().getItem() instanceof BowItem) {
                 stowed = SpecialMobEquipment.generated(this, "mite:ancient_metal_dagger", true);
+                stowedDropChance = getEquipmentDropChance(EquipmentSlot.MAINHAND);
+            }
             R196MobEquipment.armor(this, "ancient_metal_chainmail_");
         } else {
             boolean ancient = kind == MobKind.ANCIENT_BONE_LORD;
@@ -187,7 +194,9 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
         return super.canHoldItem(stack);
     }
     public void swapHeldItemWithStowed() {
+        float heldDropChance = getEquipmentDropChance(EquipmentSlot.MAINHAND);
         ItemStack held = getMainHandItem(); setItemSlot(EquipmentSlot.MAINHAND, stowed); stowed = held;
+        setDropChance(EquipmentSlot.MAINHAND, stowedDropChance); stowedDropChance = heldDropChance;
     }
     public boolean updateGuardianWeapon() {
         if (kind != MobKind.LONGDEAD_GUARDIAN || stowed.isEmpty()) return false;
@@ -343,7 +352,10 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
     }
     @Override public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag); tag.putByte("SkeletonType", (byte)skeletonType());
-        if (!stowed.isEmpty()) tag.put("stowed_item_stack", stowed.save(registryAccess()));
+        if (!stowed.isEmpty()) {
+            tag.put("stowed_item_stack", stowed.save(registryAccess()));
+            tag.putFloat("stowed_item_drop_chance", stowedDropChance);
+        }
         if (troopsSummoned > 0) tag.putByte("num_troops_summoned", (byte)troopsSummoned);
         tag.putBoolean("mite_massive_fall", massiveFall);
     }
@@ -351,6 +363,10 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
         super.readAdditionalSaveData(tag);
         setSkeletonType(Math.max(0, Math.min(2, tag.getByte("SkeletonType"))));
         stowed = tag.contains("stowed_item_stack") ? ItemStack.parse(registryAccess(), tag.getCompound("stowed_item_stack")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
+        float heldDropChance = getEquipmentDropChance(EquipmentSlot.MAINHAND);
+        // Legacy saves shared the main-hand chance with the hidden weapon; preserve an existing pickup guarantee.
+        stowedDropChance = tag.contains("stowed_item_drop_chance", Tag.TAG_ANY_NUMERIC)
+                ? tag.getFloat("stowed_item_drop_chance") : heldDropChance > 1F ? heldDropChance : naturalWeaponDropChance;
         troopsSummoned = Math.max(0, Math.min(6, tag.getByte("num_troops_summoned")));
         massiveFall = tag.getBoolean("mite_massive_fall"); reassessWeaponGoal();
     }

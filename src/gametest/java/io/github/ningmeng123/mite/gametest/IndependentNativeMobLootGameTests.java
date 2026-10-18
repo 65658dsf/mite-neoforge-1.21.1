@@ -81,7 +81,28 @@ public final class IndependentNativeMobLootGameTests {
     @GameTest(template="empty") public static void sourceWolfDropsOneLeather(GameTestHelper h) { var drops=death(h,mob(h,EntityType.WOLF),0,true); h.assertTrue(drops.size()==1 && count(drops,Items.LEATHER)==1,"sf source fixedleather"); h.succeed(); }
     @GameTest(template="empty") public static void sixWitchPotionDurationsMatchGuardedSourceOracle(GameTestHelper h) { int[] expected={3600,1,676,1351,1351,1}; for(int i=0;i<6;i++) { ItemStack stack=SourceVanillaMobLoot.witchPotion(i); var effects=new ArrayList<net.minecraft.world.effect.MobEffectInstance>(); stack.get(DataComponents.POTION_CONTENTS).getAllEffects().forEach(effects::add); h.assertTrue(stack.is(i<2?Items.POTION:Items.SPLASH_POTION) && effects.size()==1 && effects.get(0).getDuration()==expected[i] && effects.get(0).getAmplifier()==0,"Pure yp/zp oracle subtype effect duration "+i); } h.succeed(); }
     @GameTest(template="empty") public static void witchRealDeathProducesSourcePoolCount(GameTestHelper h) { var e=mob(h,EntityType.WITCH); var drops=death(h,e,2,true); h.assertTrue(drops.stream().mapToInt(ItemStack::getCount).sum()==new Random(2).nextInt(5)+1,"Source tv outerpoolcount1..5, no native loottable buckets"); h.succeed(); }
-    @GameTest(template="empty") public static void sourceEquipmentKeepsActualQualityDamageAndReturnsOnce(GameTestHelper h) { var e=mob(h,EntityType.ZOMBIE); ItemStack tool=new ItemStack(SourceVanillaMobLoot.item("mite:flint_knife")); tool.setDamageValue(10); e.setItemSlot(EquipmentSlot.MAINHAND,tool.copy()); var drops=death(h,e,0,true); var tools=drops.stream().filter(s->s.is(tool.getItem())).toList(); h.assertTrue(tools.size()==1 && ItemStack.isSameItemSameComponents(tools.get(0),tool) && e.getMainHandItem().isEmpty(),"Source recentheld return preserves stackcomponents, never damages or duplicates on death"); h.succeed(); }
+    @GameTest(template="empty") public static void sourceEquipmentKeepsActualQualityDamageAndReturnsOnce(GameTestHelper h) {
+        int retained=0;
+        for(long n=0;n<24;n++) {
+            long actualSeed=n*1024L;
+            Random oracle=new Random(actualSeed);
+            oracle.nextFloat(); // Source flesh precedes the rare nugget and equipment draws.
+            if(oracle.nextInt(200)<5) oracle.nextInt(4);
+            boolean expected=oracle.nextInt(3)==0;
+            var e=mob(h,EntityType.ZOMBIE);
+            ItemStack tool=new ItemStack(SourceVanillaMobLoot.item("mite:flint_knife")); tool.setDamageValue(10);
+            e.setItemSlot(EquipmentSlot.MAINHAND,tool.copy());
+            var tools=death(h,e,actualSeed,true).stream().filter(s->s.is(tool.getItem())).toList();
+            h.assertValueEqual(tools.size(),expected?1:0,"Source recent-held equipment follows the independent one-third draw at seed "+actualSeed);
+            h.assertValueEqual(e.getMainHandItem().isEmpty(),expected,"Only a retained drop clears the equipped stack");
+            if(expected) {
+                retained++;
+                h.assertTrue(ItemStack.isSameItemSameComponents(tools.getFirst(),tool),"Retained source equipment keeps its actual quality and damage exactly once");
+            }
+        }
+        h.assertTrue(retained>0 && retained<24,"Real zombie deaths cover both retained and rejected natural equipment");
+        h.succeed();
+    }
     @GameTest(template="empty") public static void modernHorseBodyArmorReturnsExactlyOnce(GameTestHelper h) { var horse=mob(h,EntityType.HORSE); horse.setBodyArmorItem(new ItemStack(Items.IRON_HORSE_ARMOR)); var drops=death(h,horse,0,false); h.assertTrue(count(drops,Items.IRON_HORSE_ARMOR)==1 && horse.getItemBySlot(EquipmentSlot.BODY).isEmpty(),"Modern bodyarmor forcedreturn must not duplicate native horse inventorydrop"); h.succeed(); }
     @GameTest(template="empty") public static void forcedEquipmentSurvivesMassiveFallSuppression(GameTestHelper h) { var e=mob(h,EntityType.ZOMBIE); e.getPersistentData().putBoolean("mite_massive_fall_031",true); ItemStack helmet=new ItemStack(Items.LEATHER_HELMET); e.setItemSlot(EquipmentSlot.HEAD,helmet); e.setDropChance(EquipmentSlot.HEAD,2F); var drops=death(h,e,0,false); h.assertTrue(drops.size()==1 && count(drops,Items.LEATHER_HELMET)==1,"FewItems90%suppressed but picked-up forcedequipment remains intact"); h.succeed(); }
     @GameTest(template="empty") public static void canceledNativeDeathLootLeavesNoWorldItems(GameTestHelper h) { var e=mob(h,EntityType.COW); var captured=death(h,e,0,true,e.damageSources().generic(),true); h.assertTrue(!captured.isEmpty() && h.getLevel().getEntitiesOfClass(ItemEntity.class,e.getBoundingBox().inflate(3)).isEmpty(),"All source materials remain inside cancellable captureDrops transaction"); h.succeed(); }

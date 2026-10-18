@@ -352,26 +352,41 @@ public final class UndeadBatMobGameTests {
     @GameTest(template = "ranged_027")
     public static void ActualAncientLordDeathReturnsTheHeldWeaponWithItsExistingQualityAndWear(GameTestHelper helper) {
         Player player = player(helper);
-        R196Skeleton lord = (R196Skeleton)mob(helper, MobKind.ANCIENT_BONE_LORD); lord.setSkeletonType(2);
-        ItemStack weapon = new ItemStack(R196MobEquipment.item("mite:ancient_metal_sword"));
-        EquipmentDurability.setQuality(weapon, Quality.FINE); weapon.setDamageValue(37);
-        lord.setItemSlot(EquipmentSlot.MAINHAND, weapon);
-        lord.setDropChance(EquipmentSlot.MAINHAND, .085F);
-        for (EquipmentSlot slot : List.of(EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD)) lord.setDropChance(slot, 0F);
-        boolean[] observed = {false};
-        Consumer<LivingDropsEvent> inspect = event -> {
-            if (event.getEntity() != lord) return;
-            observed[0] = true;
-            var equipment = event.getDrops().stream().filter(e -> e.getItem().is(weapon.getItem())).toList();
-            helper.assertValueEqual(equipment.size(), 1, "Recently player-killed source lord always returns its non-poor held weapon");
-            helper.assertValueEqual(equipment.getFirst().getItem().getDamageValue(), 37, "Death does not reroll generated equipment wear");
-            helper.assertTrue(EquipmentDurability.quality(equipment.getFirst().getItem()) == Quality.FINE, "Actual death preserves the held quality");
-            event.setCanceled(true);
-        };
-        NeoForge.EVENT_BUS.addListener(inspect);
-        try { lord.hurt(helper.getLevel().damageSources().playerAttack(player), 1000F); }
-        finally { NeoForge.EVENT_BUS.unregister(inspect); }
-        helper.assertTrue(observed[0], "Actual death uses native cancellable equipment drops"); helper.succeed();
+        int[] returned = {0};
+        for (long seed = 0; seed < 24; seed++) {
+            R196Skeleton lord = (R196Skeleton)mob(helper, MobKind.ANCIENT_BONE_LORD); lord.setSkeletonType(2);
+            ItemStack weapon = new ItemStack(R196MobEquipment.item("mite:ancient_metal_sword"));
+            EquipmentDurability.setQuality(weapon, Quality.FINE); weapon.setDamageValue(37);
+            lord.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+            lord.setDropChance(EquipmentSlot.MAINHAND, .085F);
+            for (EquipmentSlot slot : List.of(EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD)) lord.setDropChance(slot, 0F);
+            long actualSeed = seed * 1024L;
+            RandomSource oracle = RandomSource.create(actualSeed);
+            oracle.nextInt(3); // The existing source bones draw precedes equipment.
+            boolean expected = oracle.nextInt(3) == 0;
+            boolean[] observed = {false};
+            Consumer<LivingDeathEvent> seedAtDeath = event -> { if (event.getEntity() == lord) lord.getRandom().setSeed(actualSeed); };
+            Consumer<LivingDropsEvent> inspect = event -> {
+                if (event.getEntity() != lord) return;
+                observed[0] = true;
+                var equipment = event.getDrops().stream().filter(e -> e.getItem().is(weapon.getItem())).toList();
+                helper.assertValueEqual(equipment.size(), expected ? 1 : 0,
+                        "Recently player-killed source lord retains exactly the one-third equipment draw for seed " + actualSeed);
+                if (expected) {
+                    returned[0]++;
+                    helper.assertTrue(ItemStack.matches(equipment.getFirst().getItem(), weapon), "Actual death retains the original held stack components");
+                    helper.assertValueEqual(equipment.getFirst().getItem().getDamageValue(), 37, "Death does not reroll generated equipment wear");
+                    helper.assertTrue(EquipmentDurability.quality(equipment.getFirst().getItem()) == Quality.FINE, "Actual death preserves the held quality");
+                }
+                event.setCanceled(true);
+            };
+            NeoForge.EVENT_BUS.addListener(seedAtDeath); NeoForge.EVENT_BUS.addListener(inspect);
+            try { lord.hurt(helper.getLevel().damageSources().playerAttack(player), 1000F); }
+            finally { NeoForge.EVENT_BUS.unregister(seedAtDeath); NeoForge.EVENT_BUS.unregister(inspect); }
+            helper.assertTrue(observed[0], "Actual death uses native cancellable equipment drops");
+        }
+        helper.assertTrue(returned[0] > 0 && returned[0] < 24, "Fixed source death seeds cover both retained and rejected original weapons");
+        helper.succeed();
     }
     @GameTest(template = "ranged_027")
     public static void OrdinarySkeletonSpawnMatchesSourceQuarterMeleeDrawAndRetainsSubtypeAndWeapon(GameTestHelper helper) {

@@ -105,7 +105,7 @@ neoForge {
             if (project.providers.gradleProperty('miteGameTestDirectory').isPresent()) {
                 gameDirectory = file(project.providers.gradleProperty('miteGameTestDirectory').get())
             }
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.providers.gradleProperty('miteGameTestNamespaces').getOrElse('mite,mite_simplyswords,mite_equipment_recycling,mite_bettercombat,mite_vibranium,mite_gear')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.providers.gradleProperty('miteGameTestNamespaces').getOrElse('mite,mite_simplyswords,mite_equipment_recycling,mite_bettercombat,mite_vibranium,mite_gear,mite_equipment_drop')
         }
         data {
             data()

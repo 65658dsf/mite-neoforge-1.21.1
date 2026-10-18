@@ -35,6 +35,7 @@ import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -189,27 +190,29 @@ public final class EquipmentQualityMaintenanceGameTests {
     public static void badlyWornPoorMobWeaponsHaveTheExtraDropPenaltyButPickedUpGearDoesNot(GameTestHelper helper) {
         TestSkeleton mob = new TestSkeleton(helper.getLevel());
         mob.captureDrops(new ArrayList<>());
-        mob.getRandom().setSeed(4499L);
         mob.setDropChance(EquipmentSlot.MAINHAND, 1F);
         int dropped = 0;
-        for (int i = 0; i < 128; i++) {
+        for (int quarter = 0; quarter < 4; quarter++) for (int ticket = 0; ticket < 3; ticket++) {
             mob.setItemSlot(EquipmentSlot.MAINHAND, equipment(Items.IRON_PICKAXE, Quality.POOR, 7000));
-            mob.dropTestEquipment();
+            mob.dropTestEquipment(quarter * .25F, ticket);
             if (mob.getMainHandItem().isEmpty()) dropped++;
         }
-        helper.assertTrue(dropped >= 15 && dropped <= 50,
-                "With base guaranteed chance, only about one quarter of badly worn poor held items survive the R196 gate");
+        helper.assertValueEqual(dropped, 1,
+                "One quarter survive the original poor-wear gate and one third of those survive the new equipment gate");
         mob.setDropChance(EquipmentSlot.MAINHAND, 2F);
         mob.setItemSlot(EquipmentSlot.MAINHAND, equipment(Items.IRON_PICKAXE, Quality.POOR, 7000));
-        mob.dropTestEquipment();
-        helper.assertTrue(mob.getMainHandItem().isEmpty(), "Modern picked-up guaranteed equipment bypasses the quality drop penalty");
+        mob.dropTestEquipment(0F, 2);
+        helper.assertTrue(mob.getMainHandItem().isEmpty(), "Modern picked-up guaranteed equipment bypasses both drop reductions");
         mob.setDropChance(EquipmentSlot.MAINHAND, 1F);
-        ItemStack enchanted = equipment(Items.IRON_PICKAXE, Quality.POOR, 7000);
-        enchanted.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
-                .getHolderOrThrow(Enchantments.EFFICIENCY), 1);
-        mob.setItemSlot(EquipmentSlot.MAINHAND, enchanted);
-        mob.dropTestEquipment();
-        helper.assertTrue(mob.getMainHandItem().isEmpty(), "Enchanted poor equipment is exempt from the quality drop penalty");
+        for (int ticket = 0; ticket < 3; ticket++) {
+            ItemStack enchanted = equipment(Items.IRON_PICKAXE, Quality.POOR, 7000);
+            enchanted.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                    .getHolderOrThrow(Enchantments.EFFICIENCY), 1);
+            mob.setItemSlot(EquipmentSlot.MAINHAND, enchanted);
+            mob.dropTestEquipment(0F, ticket);
+            helper.assertValueEqual(mob.getMainHandItem().isEmpty(), ticket == 0,
+                    "Enchantments bypass the original quality penalty while retaining the new one-third equipment gate");
+        }
         mob.discard();
         helper.succeed();
     }
@@ -247,13 +250,23 @@ public final class EquipmentQualityMaintenanceGameTests {
     }
 
     private static final class TestSkeleton extends Skeleton {
+        private RandomSource controlledRandom;
         private TestSkeleton(ServerLevel level) { super(EntityType.SKELETON, level); }
+        @Override public RandomSource getRandom() { return controlledRandom == null ? super.getRandom() : controlledRandom; }
         private void finishEquipment() {
             populateDefaultEquipmentEnchantments((ServerLevel)level(), RandomSource.create(42),
                     new DifficultyInstance(Difficulty.PEACEFUL, 0L, 0L, 0F));
         }
-        private void dropTestEquipment() {
-            super.dropCustomDeathLoot((ServerLevel)level(), damageSources().generic(), true);
+        private void dropTestEquipment(float originalRoll, int reductionTicket) {
+            controlledRandom = new LegacyRandomSource(196L) {
+                @Override public float nextFloat() { return originalRoll; }
+                @Override public int nextInt(int bound) {
+                    if (bound != 3) throw new AssertionError("Unexpected equipment reduction bound " + bound);
+                    return reductionTicket;
+                }
+            };
+            try { super.dropCustomDeathLoot((ServerLevel)level(), damageSources().generic(), true); }
+            finally { controlledRandom = null; }
         }
     }
 
