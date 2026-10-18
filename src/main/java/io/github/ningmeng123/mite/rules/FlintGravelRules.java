@@ -19,6 +19,25 @@ public final class FlintGravelRules {
         if (nextInt.applyAsInt(denominator) > 2) {
             return Drop.GRAVEL;
         }
+        return selected(netherGravel, nextInt);
+    }
+
+    /** Sum both sources' extra success probability over the same unenchanted gravel baseline. */
+    public static double successChance(int normal, int affix) {
+        double normalChance = 3D / (12 - 2 * Math.clamp(normal, 0, 3));
+        if (affix <= 0) return normalChance;
+        double affixChance = Math.min(1D, 3D / Math.max(1D, 12D - 2D * affix));
+        return Math.clamp(normalChance + affixChance - .25D, 0D, 1D);
+    }
+
+    public static Drop roll(int normal, int affix, boolean netherGravel, IntUnaryOperator nextInt) {
+        if (affix <= 0) return roll(normal, netherGravel, nextInt);
+        if (nextInt.applyAsInt(Integer.MAX_VALUE) >= successChance(normal, affix) * Integer.MAX_VALUE)
+            return Drop.GRAVEL;
+        return selected(netherGravel, nextInt);
+    }
+
+    private static Drop selected(boolean netherGravel, IntUnaryOperator nextInt) {
         if (nextInt.applyAsInt(3) == 0) {
             Drop[] minerals = {Drop.COPPER_NUGGET, Drop.SILVER_NUGGET, Drop.GOLD_NUGGET,
                     Drop.OBSIDIAN_SHARD, Drop.EMERALD_SHARD, Drop.DIAMOND_SHARD, Drop.MITHRIL_NUGGET};

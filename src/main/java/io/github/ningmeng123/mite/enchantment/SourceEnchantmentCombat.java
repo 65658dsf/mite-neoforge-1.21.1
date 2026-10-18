@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.enchantment;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.entity.R196Mob;
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import io.github.ningmeng123.mite.rules.EnchantmentCombatRules;
 import io.github.ningmeng123.mite.survival.SourceStatusEffects;
 import java.util.ArrayList;
@@ -54,15 +55,25 @@ public final class SourceEnchantmentCombat {
         boolean affected = nativeDamage.getAsBoolean();
         if (!before.negativelyAffected(living)) return affected;
         if (!(attacker instanceof Player)) thorns(attacker, living);
-        int stun = R196Enchantments.level(attacker.getMainHandItem(), attacker.level(), "stun");
-        if (stun > 0 && EnchantmentCombatRules.meleeProc(stun, attacker.getRandom().nextDouble()))
+        var stun = R196Enchantments.sources(attacker.getMainHandItem(), attacker.level(), "stun");
+        if (EnchantmentSources.present(stun) && attacker.getRandom().nextDouble()
+                < EnchantmentSources.probability(stun, value -> value / 10D))
             living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-                    EnchantmentCombatRules.stunTicks(stun), EnchantmentCombatRules.stunAmplifier(stun)), attacker);
-        int vampiric = R196Enchantments.level(attacker.getMainHandItem(), attacker.level(), "vampiric");
+                    (int)EnchantmentSources.number(stun, EnchantmentCombatRules::stunTicks),
+                    (int)EnchantmentSources.number(stun, EnchantmentCombatRules::stunAmplifier)), attacker);
+        var vampiric = R196Enchantments.sources(attacker.getMainHandItem(), attacker.level(), "vampiric");
         float basis = attacker instanceof Player ? damage : Math.max(0F, before.health - living.getHealth());
-        int healed = vampiric > 0 && basis > 0F && biological(living)
-                ? EnchantmentCombatRules.vampiricTransfer(vampiric, basis, true,
-                        attacker.getRandom().nextDouble(), attacker.getRandom().nextDouble()) : 0;
+        int healed = 0;
+        if (EnchantmentSources.present(vampiric) && basis > 0F && biological(living)) {
+            double procRoll = attacker.getRandom().nextDouble(), healRoll = attacker.getRandom().nextDouble();
+            if (vampiric.affix() == 0) {
+                healed = EnchantmentCombatRules.vampiricTransfer(vampiric.normal(), basis, true, procRoll, healRoll);
+            } else if (procRoll <= EnchantmentSources.probability(vampiric, value -> value / 10D)) {
+                // Each present source grants its own transfer; one merged chance and one healing roll.
+                healed = (int)EnchantmentSources.number(vampiric,
+                        value -> EnchantmentCombatRules.vampiricTransfer(value, basis, true, 0D, healRoll));
+            }
+        }
         if (healed > 0) {
             float old = attacker.getHealth();
             attacker.heal(healed);
@@ -82,8 +93,9 @@ public final class SourceEnchantmentCombat {
 
     private static void disarm(LivingEntity attacker, LivingEntity target) {
         if (!(target instanceof Mob mob) || mob.getMainHandItem().isEmpty()) return;
-        int level = R196Enchantments.level(attacker.getMainHandItem(), attacker.level(), "disarming");
-        if (level <= 0 || attacker.getRandom().nextFloat() >= level / 5F) return;
+        var sources = R196Enchantments.sources(attacker.getMainHandItem(), attacker.level(), "disarming");
+        if (!EnchantmentSources.present(sources) || attacker.getRandom().nextFloat()
+                >= EnchantmentSources.probability(sources, value -> value / 5F)) return;
         ItemStack item = mob.getMainHandItem();
         mob.spawnAtLocation(item.copy(), mob.getBbHeight() / 2F);
         mob.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
@@ -101,6 +113,8 @@ public final class SourceEnchantmentCombat {
         if (attacker == null || defender.level().isClientSide) return;
         var enchantment = defender.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.THORNS);
         int maximum = 0;
+        List<EnchantmentSources.Levels> sourcePairs = new ArrayList<>();
+        boolean hasAffix = false;
         ItemStack wearing = ItemStack.EMPTY;
         EquipmentSlot wearingSlot = EquipmentSlot.CHEST;
         List<EquipmentSlot> slots = new ArrayList<>();
@@ -108,14 +122,29 @@ public final class SourceEnchantmentCombat {
         slots.addAll(List.of(ARMOR));
         for (EquipmentSlot slot : slots) {
             ItemStack stack = defender.getItemBySlot(slot);
-            int level = stack.getEnchantmentLevel(enchantment);
+            var pair = EnchantmentSources.levels(stack, enchantment);
+            sourcePairs.add(pair);
+            hasAffix |= pair.affix() > 0;
+            int level = pair.totalLevel();
             maximum = Math.max(maximum, level);
             if (level > 0 && wearing.isEmpty()) { wearing = stack; wearingSlot = slot; }
         }
         if (maximum <= 0 || wearing.isEmpty()) return;
-        boolean proc = EnchantmentCombatRules.thornsProc(maximum, random.nextFloat());
-        if (proc) attacker.hurt(defender.damageSources().thorns(defender),
-                EnchantmentCombatRules.thornsDamage(maximum, maximum > 10 ? 0 : random.nextInt(4)));
+        float chance = hasAffix ? (float)sourcePairs.stream().mapToDouble(pair ->
+                EnchantmentSources.probability(pair, value -> .15F * value)).max().orElse(0D) : .15F * maximum;
+        boolean proc = random.nextFloat() < chance;
+        if (proc) {
+            if (!hasAffix) attacker.hurt(defender.damageSources().thorns(defender),
+                    EnchantmentCombatRules.thornsDamage(maximum, maximum > 10 ? 0 : random.nextInt(4)));
+            else {
+                boolean needsRoll = sourcePairs.stream().anyMatch(pair -> pair.normal() > 0 && pair.normal() <= 10
+                        || pair.affix() > 0 && pair.affix() <= 10);
+                int damageRoll = needsRoll ? random.nextInt(4) : 0;
+                float damage = (float)sourcePairs.stream().mapToDouble(pair -> EnchantmentSources.number(pair,
+                        value -> EnchantmentCombatRules.thornsDamage(value, damageRoll))).max().orElse(0D);
+                attacker.hurt(defender.damageSources().thorns(defender), damage);
+            }
+        }
         wearing.hurtAndBreak(proc ? 3 : 1, defender, wearingSlot);
     }
 
@@ -148,7 +177,7 @@ public final class SourceEnchantmentCombat {
         if (speed == null) return;
         int speedLevel = entity instanceof Player ? R196Enchantments.equipped(entity, "speed") : 0;
         modifier(speed, SPEED, speedLevel * .05D);
-        int free = R196Enchantments.equipped(entity, "free_action");
+        float resistance = R196Enchantments.freeActionResistance(entity);
         MobEffectInstance slow = removed != null && removed.getEffect().equals(MobEffects.MOVEMENT_SLOWDOWN)
                 ? null : entity.getEffect(MobEffects.MOVEMENT_SLOWDOWN);
         boolean previous = entity.getPersistentData().getBoolean(SCALED_SLOW);
@@ -156,13 +185,13 @@ public final class SourceEnchantmentCombat {
             if (previous) speed.removeModifier(SLOWNESS);
             entity.getPersistentData().remove(SCALED_SLOW); return;
         }
-        if (free <= 0 && !previous) return;
-        if (free > 0) {
+        if (resistance <= 0 && !previous) return;
+        if (resistance > 0) {
             int haste = removed != null && removed.getEffect().equals(MobEffects.MOVEMENT_SPEED)
                     ? -1 : amplifier(entity.getEffect(MobEffects.MOVEMENT_SPEED));
             double amount = entity instanceof Player
-                    ? EnchantmentCombatRules.playerSlownessAmount(slow.getAmplifier(), haste, free)
-                    : -.2D * (slow.getAmplifier() + 1D) * (1D - EnchantmentCombatRules.freeActionResistance(free));
+                    ? EnchantmentCombatRules.playerSlownessAmountWithResistance(slow.getAmplifier(), haste, resistance)
+                    : -.2D * (slow.getAmplifier() + 1D) * (1D - resistance);
             replaceSlow(speed, amount);
             entity.getPersistentData().putBoolean(SCALED_SLOW, true);
         } else {
@@ -189,9 +218,9 @@ public final class SourceEnchantmentCombat {
     /** Keep Entity's original web friction, adding of's separate movement-factor term on both logical sides. */
     public static Vec3 webMotion(Entity entity, Vec3 movement) {
         if (!(entity instanceof Player player)) return movement;
-        int free = R196Enchantments.equipped(player, "free_action");
-        double ratio = EnchantmentCombatRules.webMovementRatio(amplifier(player.getEffect(MobEffects.MOVEMENT_SLOWDOWN)),
-                amplifier(player.getEffect(MobEffects.MOVEMENT_SPEED)), free);
+        float resistance = R196Enchantments.freeActionResistance(player);
+        double ratio = EnchantmentCombatRules.webMovementRatioWithResistance(amplifier(player.getEffect(MobEffects.MOVEMENT_SLOWDOWN)),
+                amplifier(player.getEffect(MobEffects.MOVEMENT_SPEED)), resistance);
         return movement.multiply(ratio, 1D, ratio);
     }
 

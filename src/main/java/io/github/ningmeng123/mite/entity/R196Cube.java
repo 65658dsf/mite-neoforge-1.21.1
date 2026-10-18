@@ -85,8 +85,7 @@ public final class R196Cube extends Slime implements R196Mob, CubeState {
         if (magma && cube.getRandom().nextInt(10)<cube.getSize()*2) target.igniteForSeconds(cube.getSize()*3);
     }
     public static void sourceDrops(Slime cube,DamageSource source,boolean recent) {
-        int looting=source.getEntity() instanceof LivingEntity killer ? net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantmentLevel(
-                cube.level().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).getHolderOrThrow(net.minecraft.world.item.enchantment.Enchantments.LOOTING),killer) : 0;
+        int looting = source.getEntity() instanceof LivingEntity killer ? io.github.ningmeng123.mite.enchantment.R196Enchantments.level(killer.getMainHandItem(), killer.level(), "minecraft:looting") : 0;
         int count;
         Item item;
         if (cube instanceof net.minecraft.world.entity.monster.MagmaCube) {

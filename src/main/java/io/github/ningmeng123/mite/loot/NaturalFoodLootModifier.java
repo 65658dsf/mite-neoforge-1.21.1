@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.ningmeng123.mite.registry.MiteFoodPlants;
 import io.github.ningmeng123.mite.registry.MiteFoods;
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -46,10 +47,21 @@ public final class NaturalFoodLootModifier extends LootModifier {
         if (state != null && state.is(Blocks.GRASS_BLOCK) && entity instanceof Player
                 && !level.getBiome(pos).value().coldEnoughToSnow(pos)
                 && loot.stream().noneMatch(stack -> stack.is(Blocks.GRASS_BLOCK.asItem()))) {
-            int fortune = Math.min(3, enchantment(context, tool, Enchantments.FORTUNE));
+            var sources = tool == null ? new EnchantmentSources.Levels(0, 0) : EnchantmentSources.levels(tool,
+                    level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.FORTUNE));
+            int fortune = Math.min(3, sources.normal());
             if (level.isRainingAt(pos.above())) fortune += 12;
             fortune = Math.min(14, fortune);
-            if (context.getRandom().nextInt(16 - fortune) == 0) {
+            boolean worm;
+            if (sources.affix() == 0) worm = context.getRandom().nextInt(16 - fortune) == 0;
+            else {
+                int rain = level.isRainingAt(pos.above()) ? 12 : 0;
+                double baseline = 1D / (16 - rain);
+                double chance = Math.clamp(1D / (16 - fortune)
+                        + 1D / Math.max(1D, 16D - rain - sources.affix()) - baseline, 0D, 1D);
+                worm = context.getRandom().nextFloat() < chance;
+            }
+            if (worm) {
                 loot.removeIf(stack -> stack.is(Items.DIRT));
                 loot.add(new ItemStack(MiteFoods.get("raw_worm")));
             }
@@ -88,8 +100,8 @@ public final class NaturalFoodLootModifier extends LootModifier {
         return loot;
     }
     private static int enchantment(LootContext context, ItemStack tool, net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> key) {
-        return tool == null ? 0 : EnchantmentHelper.getItemEnchantmentLevel(context.getLevel().registryAccess()
-                .registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(key), tool);
+        return tool == null ? 0 : EnchantmentSources.levels(tool, context.getLevel().registryAccess()
+                .registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(key)).totalLevel();
     }
     public static boolean originalLeaf(Block block) {
         return block == Blocks.OAK_LEAVES || block == Blocks.SPRUCE_LEAVES || block == Blocks.BIRCH_LEAVES || block == Blocks.JUNGLE_LEAVES;

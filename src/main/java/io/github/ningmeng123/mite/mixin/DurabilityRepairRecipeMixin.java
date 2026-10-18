@@ -32,6 +32,12 @@ public abstract class DurabilityRepairRecipeMixin {
         }
         ItemStack output = cir.getReturnValue();
         if (output.isEmpty()) return;
+        for (ItemStack source : input.items()) {
+            if (!source.isEmpty()) {
+                io.github.ningmeng123.mite.progression.GearProgression.preserve(source, output);
+                break;
+            }
+        }
         if (RangedRodRepair.applies(output)) {
             ItemStack first = ItemStack.EMPTY;
             for (ItemStack source : input.items()) {
@@ -43,6 +49,7 @@ public abstract class DurabilityRepairRecipeMixin {
                     result.setDamageValue(EquipmentDurabilityRules.combinedRepairDamage(first.getDamageValue(), source.getDamageValue(), first.getMaxDamage()));
                     var color = first.get(DataComponents.DYED_COLOR);
                     if (color != null) result.set(DataComponents.DYED_COLOR, color);
+                    io.github.ningmeng123.mite.progression.GearProgression.preserve(first, result);
                     cir.setReturnValue(result);
                     return;
                 }

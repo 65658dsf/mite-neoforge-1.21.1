@@ -66,7 +66,10 @@ public abstract class RangedArrowMixin implements MaterialArrowView {
             target = "Lnet/minecraft/world/entity/Entity;igniteForSeconds(F)V"), index = 0)
     private float mite$sourceFlamingHit(float seconds) {
         var weapon = mite$self().getWeaponItem();
-        return weapon != null && weapon.getItem() instanceof net.minecraft.world.item.BowItem ? seconds + .5F : seconds;
+        if (weapon == null || !(weapon.getItem() instanceof net.minecraft.world.item.BowItem)) return seconds;
+        var sources = io.github.ningmeng123.mite.progression.EnchantmentSources.levels(weapon, mite$self().level(), "minecraft:flame");
+        return sources.present() ? (float)io.github.ningmeng123.mite.progression.EnchantmentSources.number(sources,
+                value -> seconds + .5F) : seconds + .5F;
     }
     @Redirect(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
     private boolean mite$sourceImpact(Entity target, DamageSource source, float modernDamage) {
@@ -77,7 +80,8 @@ public abstract class RangedArrowMixin implements MaterialArrowView {
         float damage = material == null ? modernDamage : R196RangedRules.impactDamage(material, speed, mite$preCriticalDamage,
                 target.getType().is(EntityTypeTags.UNDEAD), target instanceof AbstractSkeleton,
                 arrow.getOwner() instanceof AbstractSkeleton, arrow.getOwner() == null,
-                arrow.getWeaponItem() != null && arrow.getWeaponItem().isEnchanted(), arrow.isCritArrow(),
+                arrow.getWeaponItem() != null && (arrow.getWeaponItem().isEnchanted()
+                        || io.github.ningmeng123.mite.progression.EnchantmentSources.hasAffixes(arrow.getWeaponItem())), arrow.isCritArrow(),
                 arrow.isCritArrow() ? arrow.getRandom().nextFloat() : 0F);
         if (!(damage > 0F)) return false;
         var snapshot = target instanceof LivingEntity living

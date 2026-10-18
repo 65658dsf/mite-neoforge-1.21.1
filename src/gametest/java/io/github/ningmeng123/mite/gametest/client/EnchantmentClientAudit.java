@@ -93,6 +93,16 @@ public final class EnchantmentClientAudit implements DataProvider {
             JsonArray screenKeys = new JsonArray(); keys.forEach(screenKeys::add); report.add("screen_translation_keys", screenKeys);
             report.addProperty("source_screen_cost_and_tooltip_paths", true);
 
+            ClassNode hands = transformed("net.neoforged.neoforge.client.ClientHooks", targets);
+            check(hasMerged(hands, MIXINS + "client.GearGrowthHandMixin"), "Growth hand animation hook is transformed in the real client loader");
+            ClassNode mining = transformed("net.minecraft.client.multiplayer.MultiPlayerGameMode", targets);
+            check(hasMerged(mining, MIXINS + "client.GearGrowthMiningMixin"), "Growth mining continuity hook is transformed in the real client loader");
+            check(io.github.ningmeng123.mite.client.GearProgressionTooltips.experience(123456).equals("123.456")
+                    && io.github.ningmeng123.mite.client.GearProgressionTooltips.experience(12000).equals("12"),
+                    "Growth tooltip preserves fractional experience without redundant decimals");
+            report.addProperty("gear_growth_client_hooks_transformed", true);
+            report.addProperty("gear_growth_experience_formatting", true);
+
             ClassNode clientPlayer = transformed("net.minecraft.client.player.AbstractClientPlayer", targets);
             check(hasMerged(clientPlayer, MIXINS + "client.EnchantedBowFovMixin"), "The Quickness FOV Mixin was actually applied");
             MethodNode fov = method(clientPlayer, "getFieldOfViewModifier", "()F");
@@ -111,6 +121,8 @@ public final class EnchantmentClientAudit implements DataProvider {
             auditPropertyRegistration(report);
 
             ENCHANTMENTS.forEach(name -> expectedKeys.add("enchantment.mite." + name));
+            expectedKeys.addAll(Set.of("tooltip.mite.gear_level", "tooltip.mite.gear_experience", "tooltip.mite.gear_max_level",
+                    "tooltip.mite.gear_affixes", "tooltip.mite.gear_affix", "message.mite.gear_level_up"));
             for (String locale : List.of("en_us", "zh_cn")) {
                 String path = "assets/mite/lang/" + locale + ".json";
                 byte[] bytes = resource(path);

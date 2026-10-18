@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.enchantment;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -16,8 +17,9 @@ public final class NativeProtectionEnchantments {
     /** Called only when a new ignition is requested, after the native burning-time attribute. */
     public static int ignitionTicks(Entity entity, int ticks) {
         if (!(entity instanceof LivingEntity living) || ticks <= 0) return ticks;
-        int level = R196Enchantments.equipped(living, "minecraft:fire_protection");
-        return level <= 0 ? ticks : Math.max(0, ticks - (int)Math.ceil((float)ticks * (float)level * .15F));
+        double reduction = EnchantmentSources.equipped(living, "minecraft:fire_protection",
+                value -> Math.ceil((float)ticks * (float)value * .15F));
+        return Math.max(0, ticks - (int)reduction);
     }
 
     public static double explosionImpulse(double impulse, int highestLevel) {
@@ -28,8 +30,9 @@ public final class NativeProtectionEnchantments {
     public static Vec3 explosionKnockback(LivingEntity entity, Vec3 velocity) {
         double length = velocity.length();
         if (length <= 0D) return velocity;
-        int level = R196Enchantments.equipped(entity, "minecraft:blast_protection");
-        double reduced = explosionImpulse(length, level);
+        double reduction = EnchantmentSources.equipped(entity, "minecraft:blast_protection",
+                value -> Math.floor(length * (double)((float)value * .15F)));
+        double reduced = Math.max(0D, length - reduction);
         return reduced == length ? velocity : velocity.scale(reduced / length);
     }
 

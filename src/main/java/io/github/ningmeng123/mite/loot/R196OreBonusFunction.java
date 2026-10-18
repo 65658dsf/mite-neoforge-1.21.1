@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.rules.OreBlockRules;
 import io.github.ningmeng123.mite.registry.MiteShards;
 import io.github.ningmeng123.mite.mining.OreHarvestExperience;
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.registries.Registries;
@@ -66,10 +67,10 @@ public final class R196OreBonusFunction extends LootItemConditionalFunction {
         OreHarvestExperience.record(context, base * rewardPerUnit);
         if (tool == null || stack.isEmpty() || (suppressPlaced && state.hasProperty(OreBlockRules.PLACED)
                 && state.getValue(OreBlockRules.PLACED))) return stack;
-        int fortune = EnchantmentHelper.getItemEnchantmentLevel(enchantments.getOrThrow(Enchantments.FORTUNE), tool);
-        if (fortune <= 0) return stack;
+        var fortune = EnchantmentSources.levels(tool, enchantments.getOrThrow(Enchantments.FORTUNE));
+        if (!EnchantmentSources.present(fortune)) return stack;
         int extra = 0;
-        float chance = (1F + fortune * 0.1F) - 1F;
+        float chance = (float)EnchantmentSources.probability(fortune, value -> (1F + value * .1F) - 1F);
         for (int unit = 0; unit < base; unit++) if (context.getRandom().nextFloat() < chance) extra++;
         stack.grow(extra);
         return stack;

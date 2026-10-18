@@ -117,8 +117,7 @@ public final class R196Zombie extends Zombie implements R196Mob, PlayerTargetEye
     @Override protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         if (!massiveFall || random.nextFloat() < .1F) {
             if (random.nextFloat() < (recentlyHit ? .5F : .25F)) spawnAtLocation(Items.ROTTEN_FLESH);
-            int looting = source.getEntity() instanceof LivingEntity living ? EnchantmentHelper.getEnchantmentLevel(
-                    level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.LOOTING), living) : 0;
+            int looting = source.getEntity() instanceof LivingEntity living ? io.github.ningmeng123.mite.enchantment.R196Enchantments.level(living.getMainHandItem(), living.level(), "minecraft:looting") : 0;
             if (recentlyHit && !massiveFall && random.nextInt(50) < 5 + looting * 2)
                 spawnAtLocation(R196MobEquipment.item(switch (random.nextInt(4)) {
                     case 0 -> "mite:copper_nugget"; case 1 -> "mite:silver_nugget";

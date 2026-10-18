@@ -1,4 +1,10 @@
 {
+  "tooltip.mite.gear_level": "装备等级：%s / %s",
+  "tooltip.mite.gear_experience": "成长经验：%s / %s",
+  "tooltip.mite.gear_max_level": "已达材质等级上限",
+  "tooltip.mite.gear_affixes": "成长副词条",
+  "tooltip.mite.gear_affix": "  %s +%s",
+  "message.mite.gear_level_up": "%s 升至 %s / %s 级！",
   "item.minecraft.shield": "铁盾",
   "item.minecraft.shield.white": "白色铁盾",
   "item.minecraft.shield.orange": "橙色铁盾",

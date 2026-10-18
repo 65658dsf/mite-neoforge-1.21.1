@@ -73,8 +73,13 @@ public abstract class FoodFishingBaitMixin {
         long time = level.getDayTime();
         boolean blueMoon=LunarCalendar.state(time,level.dimension().equals(Level.OVERWORLD)).blueNight();
         // Source Fishing Fortune uses the cast rod; modern Luck of the Sea remains a loot-only effect.
-        int chance = R196RangedRules.biteChanceDenominator(time, blueMoon, level.isRainingAt(pos.above()), ((FishingHookView)(Object)this).mite$fishingFortune(), mite$baitSlot() >= 0);
-        if (random.nextInt(chance) != 0) return;
+        FishingHookView cast = (FishingHookView)(Object)this;
+        boolean raining = level.isRainingAt(pos.above()), bait = mite$baitSlot() >= 0;
+        if (cast.mite$fishingFortuneAffix() == 0) {
+            int chance = R196RangedRules.biteChanceDenominator(time, blueMoon, raining, cast.mite$fishingFortune(), bait);
+            if (random.nextInt(chance) != 0) return;
+        } else if (random.nextFloat() >= R196RangedRules.biteChance(time, blueMoon, raining,
+                cast.mite$fishingFortune(), cast.mite$fishingFortuneAffix(), bait)) return;
         nibble = random.nextInt(30) + 30;
         hook.setDeltaMovement(hook.getDeltaMovement().add(0D, -.2D, 0D));
         hook.playSound(SoundEvents.FISHING_BOBBER_SPLASH, .25F, 1F + (random.nextFloat() - random.nextFloat()) * .4F);

@@ -32,8 +32,7 @@ public final class SkeletonArrowLootModifier extends LootModifier {
                 || !TABLE.equals(context.getQueriedLootTableId())) return loot;
         loot.removeIf(stack -> stack.is(Items.BONE) || MiteRangedItems.arrowMaterial(stack) == Material.FLINT);
         var attacker = context.getParamOrNull(LootContextParams.ATTACKING_ENTITY);
-        int looting = attacker instanceof LivingEntity living ? EnchantmentHelper.getEnchantmentLevel(
-                context.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), living) : 0;
+        int looting = attacker instanceof LivingEntity living ? io.github.ningmeng123.mite.enchantment.R196Enchantments.level(living.getMainHandItem(), living.level(), "minecraft:looting") : 0;
         boolean recentlyHit = context.hasParam(LootContextParams.LAST_DAMAGE_PLAYER);
         var random = skeleton.getRandom();
         int arrows = random.nextInt(2 + Math.max(looting, 0));

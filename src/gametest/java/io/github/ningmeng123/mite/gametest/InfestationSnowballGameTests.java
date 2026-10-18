@@ -53,7 +53,19 @@ public final class InfestationSnowballGameTests {
     @GameTest(template="empty") public static void playerSnowballStillCannotDamagePudding(GameTestHelper h) { var target=mob(h,MobKind.PUDDING); float before=target.getHealth(); new ImpactSnowball(h.getLevel(),player(h)).impact(target); h.assertTrue(target.getHealth()==before,"New source1 general projectile amount retains pudding player-snowball capability gate"); h.succeed(); }
     @GameTest(template="empty") public static void copperspineDoesNotOverrideVanillaHostMap(GameTestHelper h) { h.assertTrue(InfestedBlock.infestedStateByHost(Blocks.STONE.defaultBlockState()).is(Blocks.INFESTED_STONE),"Registering subtype4 cannot replace global native stone host"); h.assertTrue(MiteMobBlocks.COPPERSPINE_STONE.get().getHostBlock()==Blocks.STONE,"Source host remains stone"); h.succeed(); }
     @GameTest(template="empty") public static void infestationNetherspawnSpecies(GameTestHelper h) { BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); var fish=R196Infestation.spawn(h.getLevel(),pos,MiteOreBlocks.INFESTED_NETHERRACK.get().defaultBlockState(),null); h.assertTrue(fish instanceof R196Silverfish r && r.miteKind()==MobKind.NETHERSPAWN,"Metadata3 actual inhabitant replaces prior modern silverfish adaptation"); h.succeed(); }
-    @GameTest(template="empty") public static void playerBreakRetainsAggroTarget(GameTestHelper h) { BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); Player p=player(h); var state=MiteMobBlocks.COPPERSPINE_STONE.get().defaultBlockState(); CommonHooks.handleBlockDrops(h.getLevel(),pos,state,null,new java.util.ArrayList<>(),p,ItemStack.EMPTY); var fish=h.getLevel().getEntitiesOfClass(R196Silverfish.class,new net.minecraft.world.phys.AABB(pos).inflate(1)); h.assertTrue(fish.size()==1 && fish.get(0).miteKind()==MobKind.COPPERSPINE && fish.get(0).getTarget()==p,"Actual final player-drop hook selects subtype4 and responsible target"); h.succeed(); }
+    @GameTest(template="empty") public static void playerBreakRetainsAggroTarget(GameTestHelper h) {
+        BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); Player p=player(h);
+        var state=MiteMobBlocks.COPPERSPINE_STONE.get().defaultBlockState();
+        // Observe this action's synchronous entity additions: nearby old fish and not-yet-visible chunk sections are unrelated.
+        try (var spawned=new SpawnedEntityCapture(h.getLevel(),entity->entity instanceof R196Silverfish)) {
+            CommonHooks.handleBlockDrops(h.getLevel(),pos,state,null,new java.util.ArrayList<>(),p,ItemStack.EMPTY);
+            var fish=spawned.live(R196Silverfish.class);
+            h.assertValueEqual(fish.size(),1,"The actual final player-drop hook releases exactly one new source fish");
+            h.assertTrue(fish.get(0).miteKind()==MobKind.COPPERSPINE,"The new inhabitant retains subtype4");
+            h.assertTrue(fish.get(0).getTarget()==p,"The new inhabitant targets the exact responsible player");
+        }
+        h.succeed();
+    }
     @GameTest(template="empty") public static void explosionDropDoesNotReleaseFish(GameTestHelper h) { BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); int before=countFish(h,pos); CommonHooks.handleBlockDrops(h.getLevel(),pos,Blocks.INFESTED_STONE.defaultBlockState(),null,new java.util.ArrayList<>(),null,ItemStack.EMPTY); h.assertTrue(countFish(h,pos)==before,"Source drop cause without responsible player or fish cannot release inhabitants"); h.succeed(); }
     @GameTest(template="empty") public static void copperUpgradesOnlyConnectedInfestedVein(GameTestHelper h) {
         BlockPos start=h.absolutePos(new BlockPos(2,3,2)); h.getLevel().setBlockAndUpdate(start,Blocks.INFESTED_STONE.defaultBlockState());

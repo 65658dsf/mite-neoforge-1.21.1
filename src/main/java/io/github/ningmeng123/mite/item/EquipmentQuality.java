@@ -41,6 +41,7 @@ public final class EquipmentQuality {
 
     /** The source stores an unscaled base; never copy its getMaxDamage() back into the component. */
     public static void preserve(ItemStack source, ItemStack result) {
+        io.github.ningmeng123.mite.progression.GearProgression.preserve(source, result);
         if (source.isEmpty() || result.isEmpty() || !EquipmentDurability.isManaged(source)
                 || !EquipmentDurability.isManaged(result)) return;
         EquipmentDurability.setQuality(result, EquipmentDurability.quality(source));

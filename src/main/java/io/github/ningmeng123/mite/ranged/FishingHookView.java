@@ -7,4 +7,5 @@ public interface FishingHookView {
     InteractionHand mite$castHand();
     String mite$hookMaterial();
     int mite$fishingFortune();
+    default int mite$fishingFortuneAffix() { return 0; }
 }

@@ -73,7 +73,18 @@ public final class SourceVanillaMobLoot {
     private static int enchantment(Mob mob,DamageSource source,ResourceLocation id) {
         if (!(source.getEntity() instanceof LivingEntity attacker)) return 0;
         var holder=mob.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(id);
-        return holder.map(value -> Math.max(0,EnchantmentHelper.getItemEnchantmentLevel(value,attacker.getMainHandItem()))).orElse(0);
+        return holder.map(value -> io.github.ningmeng123.mite.progression.EnchantmentSources
+                .levels(attacker.getMainHandItem(), value).totalLevel()).orElse(0);
+    }
+    /** Spider-eye Butchering is a nonlinear probability, unlike its linear extra-meat count. */
+    private static boolean spiderEye(Mob mob, DamageSource source) {
+        var pair = source.getEntity() instanceof LivingEntity attacker
+                ? io.github.ningmeng123.mite.enchantment.R196Enchantments.sources(attacker.getMainHandItem(), mob.level(), "butchering")
+                : new io.github.ningmeng123.mite.progression.EnchantmentSources.Levels(0, 0);
+        if (pair.affix() == 0) return mob.getRandom().nextInt(3) == 0 || mob.getRandom().nextInt(1 + pair.normal()) > 0;
+        double chance = 1D / 3D + 2D / 3D * ((double)pair.normal() / (pair.normal() + 1D)
+                + (double)pair.affix() / (pair.affix() + 1D));
+        return mob.getRandom().nextFloat() < Math.clamp(chance, 0D, 1D);
     }
     private static boolean massive(Mob mob) { return mob.getPersistentData().getBoolean("mite_massive_fall_031"); }
     private static int reduced(Mob mob,int count,boolean recent) { return count>0 && !recent ? count-mob.getRandom().nextInt(count+1) : count; }
@@ -146,7 +157,7 @@ public final class SourceVanillaMobLoot {
         else if(type==EntityType.WOLF) emit(mob,Items.LEATHER,1);
         else if(type==EntityType.OCELOT || type==EntityType.CAT) { /* Source rx explicitly overrides few-items with no draws. */ }
         else if(type==EntityType.SPIDER || type==EntityType.CAVE_SPIDER) {
-            if(recent) { emit(mob,Items.STRING,webStock(mob)); setWebStock(mob,0); if(random.nextInt(3)==0 || random.nextInt(1+butchering)>0) emit(mob,Items.SPIDER_EYE,1); }
+            if(recent) { emit(mob,Items.STRING,webStock(mob)); setWebStock(mob,0); if(spiderEye(mob,source)) emit(mob,Items.SPIDER_EYE,1); }
         } else if(type==EntityType.GHAST) {
             int tears=random.nextInt(2); if(source.getDirectEntity() instanceof LargeFireball && source.getEntity() instanceof Player && tears<1) tears=1;
             emit(mob,Items.GHAST_TEAR,tears); emit(mob,Items.GUNPOWDER,random.nextInt(3));

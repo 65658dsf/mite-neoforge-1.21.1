@@ -20,7 +20,7 @@ public abstract class RangedUnbreakingMixin {
     private void mite$rodUnbreaking(ServerLevel level, int enchantmentLevel, ItemStack stack, MutableFloat amount, CallbackInfo ci) {
         if ((MiteRangedItems.rodMaterial(stack) != null || MiteRangedItems.carrotRodMaterial(stack) != null)
                 && level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING).value() == (Object)this) {
-            amount.setValue(EquipmentDurabilityRules.afterUnbreaking(amount.intValue(), enchantmentLevel, level.random::nextFloat));
+            amount.setValue(io.github.ningmeng123.mite.enchantment.R196Enchantments.unbreakingDamage(stack, level, amount.intValue(), enchantmentLevel));
             ci.cancel();
         }
     }

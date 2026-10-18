@@ -1,4 +1,10 @@
 {
+  "tooltip.mite.gear_level": "Equipment level: %s / %s",
+  "tooltip.mite.gear_experience": "Growth experience: %s / %s",
+  "tooltip.mite.gear_max_level": "Material level cap reached",
+  "tooltip.mite.gear_affixes": "Growth affixes",
+  "tooltip.mite.gear_affix": "  %s +%s",
+  "message.mite.gear_level_up": "%s reached level %s / %s!",
   "item.minecraft.shield": "Iron Shield",
   "item.minecraft.shield.white": "White Iron Shield",
   "item.minecraft.shield.orange": "Orange Iron Shield",

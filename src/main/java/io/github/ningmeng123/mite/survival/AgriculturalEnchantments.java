@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.survival;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.entity.CubeCropBlight;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -50,7 +51,8 @@ public final class AgriculturalEnchantments {
 
     private static float fraction(ItemStack tool, ServerLevel level, ResourceKey<Enchantment> key) {
         var holder = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(key);
-        return holder.map(enchantment -> Math.max(0, tool.getEnchantmentLevel(enchantment)) / 5F).orElse(0F);
+        return holder.map(enchantment -> (float)EnchantmentSources.number(
+                EnchantmentSources.levels(tool, enchantment), value -> value / 5F)).orElse(0F);
     }
 
     public static float harvesting(ItemStack tool, ServerLevel level, BlockState state) {
@@ -64,7 +66,7 @@ public final class AgriculturalEnchantments {
         BlockState state = event.getState();
         if (!(state.getBlock() instanceof CropBlock crop) || !effective(event.getTool(), state)
                 || !crop.isMaxAge(state) || CubeCropBlight.dead(state)) return;
-        float chance = fraction(event.getTool(), event.getLevel(), FERTILITY);
+        float chance = Math.min(1F, fraction(event.getTool(), event.getLevel(), FERTILITY));
         if (chance > 0F && event.getLevel().random.nextFloat() < chance) {
             BlockPos soil = event.getPos().below(); BlockState below = event.getLevel().getBlockState(soil);
             if (below.hasProperty(FoodAgriculture.FERTILIZED))
@@ -84,7 +86,7 @@ public final class AgriculturalEnchantments {
         if (result == null || !result.is(Blocks.FARMLAND) || !result.hasProperty(FoodAgriculture.FERTILIZED)
                 || player == null || player.isSpectator() || !level.mayInteract(player, event.getPos())
                 || !player.mayUseItemAt(event.getPos(), event.getContext().getClickedFace(), event.getHeldItemStack())) return;
-        float chance = fraction(event.getHeldItemStack(), level, FERTILITY);
+        float chance = Math.min(1F, fraction(event.getHeldItemStack(), level, FERTILITY));
         if (chance > 0F && level.random.nextFloat() < chance)
             event.setFinalState(result.setValue(FoodAgriculture.FERTILIZED, true));
     }

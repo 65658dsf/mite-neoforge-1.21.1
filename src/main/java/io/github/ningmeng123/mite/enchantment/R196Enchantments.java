@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.enchantment;
 
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.core.registries.Registries;
@@ -23,9 +24,39 @@ public final class R196Enchantments {
     }
 
     public static int level(ItemStack stack, Level level, String id) {
-        if (stack == null || stack.isEmpty()) return 0;
-        return level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(key(id))
-                .map(holder -> Math.max(0, stack.getEnchantmentLevel(holder))).orElse(0);
+        return sources(stack, level, id).totalLevel();
+    }
+
+    /** Only linear level coefficients may consume level(); nonlinear effects inspect both sources. */
+    public static EnchantmentSources.Levels sources(ItemStack stack, Level level, String id) {
+        return EnchantmentSources.levels(stack, level, key(id).location().toString());
+    }
+
+    /** Keep ordinary R196's historical cap while allowing independent affix resistance to add to it. */
+    public static float freeActionResistance(LivingEntity entity) {
+        float highest = 0F;
+        for (EquipmentSlot slot : ARMOR) {
+            var pair = sources(entity.getItemBySlot(slot), entity.level(), "free_action");
+            float resistance = io.github.ningmeng123.mite.rules.EnchantmentCombatRules.freeActionResistance(pair.normal())
+                    + Math.max(pair.affix(), 0) * .2F;
+            highest = Math.max(highest, resistance);
+        }
+        return Math.clamp(highest, 0F, 1F);
+    }
+
+    /** Source chances add first; every requested point consumes exactly one random roll. */
+    public static int unbreakingDamage(ItemStack stack, net.minecraft.server.level.ServerLevel world, int requested) {
+        return unbreakingDamage(stack, world, requested, EnchantmentSources.levels(stack, world, "minecraft:unbreaking").normal());
+    }
+    public static int unbreakingDamage(ItemStack stack, net.minecraft.server.level.ServerLevel world, int requested, int ordinaryLevel) {
+        var pair = EnchantmentSources.levels(stack, world, "minecraft:unbreaking");
+        if (pair.affix() == 0) return io.github.ningmeng123.mite.rules.EquipmentDurabilityRules
+                .afterUnbreaking(requested, ordinaryLevel, world.random::nextFloat);
+        float chance = Math.clamp(io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.unbreakingNegationChance(pair.normal())
+                + pair.affix() * .15F, 0F, 1F);
+        int remaining = Math.max(requested, 0);
+        for (int point = 0; point < requested; point++) if (world.random.nextFloat() < chance) remaining--;
+        return remaining;
     }
 
     public static int equipped(LivingEntity entity, String id) {

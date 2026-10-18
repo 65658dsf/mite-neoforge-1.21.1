@@ -105,9 +105,8 @@ public final class R196Undead extends Monster implements R196Mob {
     @Override protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel level, DamageSource source, boolean recentlyHit) {
         if (kind != MobKind.WIGHT) return;
         if ((!getPersistentData().getBoolean("mite_massive_fall_031") || random.nextFloat() < .1F) && random.nextFloat() < (recentlyHit ? .5F : .25F)) spawnAtLocation(net.minecraft.world.item.Items.ROTTEN_FLESH);
-        int looting = net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantmentLevel(level.registryAccess().registryOrThrow(
-                net.minecraft.core.registries.Registries.ENCHANTMENT).getHolderOrThrow(net.minecraft.world.item.enchantment.Enchantments.LOOTING),
-                source.getEntity() instanceof net.minecraft.world.entity.LivingEntity living ? living : this);
+        var looter = source.getEntity() instanceof net.minecraft.world.entity.LivingEntity living ? living : this;
+        int looting = io.github.ningmeng123.mite.enchantment.R196Enchantments.level(looter.getMainHandItem(), level, "minecraft:looting");
         if (recentlyHit && !getPersistentData().getBoolean("mite_massive_fall_031") && random.nextInt(200) < 5 + looting * 2) {
             var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ResourceLocationForNugget(random.nextInt(4)));
             spawnAtLocation(item);

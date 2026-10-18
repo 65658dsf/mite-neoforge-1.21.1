@@ -33,6 +33,7 @@ public final class Mite {
         io.github.ningmeng123.mite.worldgen.UnderworldSpringGeneration.register(modBus);
         io.github.ningmeng123.mite.world.CollapsePhysics.register(modBus);
         io.github.ningmeng123.mite.worldgen.NaturalTrialBlocks.register(modBus);
+        io.github.ningmeng123.mite.progression.PlayerPlacedBlocks.register(modBus);
         MiteItems.register(modBus);
         MiteMaterials.register(modBus);
         io.github.ningmeng123.mite.registry.MiteMetalBlocks.register(modBus);
@@ -43,6 +44,7 @@ public final class Mite {
         io.github.ningmeng123.mite.registry.MiteWorldFeatures.register(modBus);
         io.github.ningmeng123.mite.worldgen.MiteWorldDimensions.register(modBus);
         EquipmentDurability.register(modBus);
+        io.github.ningmeng123.mite.progression.GearProgression.register(modBus);
         MiteShields.register(modBus);
         io.github.ningmeng123.mite.registry.MiteArmorContent.register(modBus);
         io.github.ningmeng123.mite.registry.MiteRangedItems.register(modBus);

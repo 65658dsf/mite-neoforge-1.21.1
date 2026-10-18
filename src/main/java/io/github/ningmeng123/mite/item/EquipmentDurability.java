@@ -245,7 +245,8 @@ public final class EquipmentDurability {
             ArmorProfile profile = armorProfile(stack);
             if (profile != null) {
                 int protectionLevel = player.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
-                        .getHolder(Enchantments.PROTECTION).map(stack::getEnchantmentLevel).orElse(0);
+                        .getHolder(Enchantments.PROTECTION).map(holder ->
+                                io.github.ningmeng123.mite.progression.EnchantmentSources.levels(stack, holder).totalLevel()).orElse(0);
                 protection += EquipmentDurabilityRules.armorProtection(profile, stack.getDamageValue(), stack.getMaxDamage(), protectionLevel);
             }
         }

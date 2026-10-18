@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.item;
 
 import io.github.ningmeng123.mite.rules.SourceArmorDefenseRules.Piece;
 import io.github.ningmeng123.mite.rules.SourceArmorDefenseRules.Source;
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.registries.Registries;
@@ -52,6 +53,6 @@ public final class SourceArmorDefense {
     }
     private static int level(LivingEntity player, ItemStack stack, ResourceKey<Enchantment> enchantment) {
         return player.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(enchantment)
-                .map(stack::getEnchantmentLevel).orElse(0);
+                .map(holder -> EnchantmentSources.levels(stack, holder).totalLevel()).orElse(0);
     }
 }

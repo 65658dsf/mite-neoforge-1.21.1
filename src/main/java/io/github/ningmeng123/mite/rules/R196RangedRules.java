@@ -38,6 +38,14 @@ public final class R196RangedRules {
         return Math.max(chance, 1);
     }
 
+    /** Fishing Fortune adds each source's probability gain over the same weather/bait baseline. */
+    public static double biteChance(long time, boolean blueMoon, boolean raining, int normal, int affix, boolean worm) {
+        double probability = 1D / biteChanceDenominator(time, blueMoon, raining, normal, worm);
+        if (affix > 0) probability += 1D / biteChanceDenominator(time, blueMoon, raining, affix, worm)
+                - 1D / biteChanceDenominator(time, blueMoon, raining, 0, worm);
+        return Math.clamp(probability, 0D, 1D);
+    }
+
     public static float impactDamage(Material material, float speed, float enchantedDamage,
             boolean silverUndead, boolean skeletonTarget, boolean skeletonShooter, boolean dispenser,
             boolean enchantedLauncher, boolean critical, float criticalRoll) {

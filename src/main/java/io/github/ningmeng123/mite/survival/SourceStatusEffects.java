@@ -100,12 +100,12 @@ public final class SourceStatusEffects {
             MobEffectInstance haste = effect(entity, MobEffects.MOVEMENT_SPEED, removed);
             movement.removeModifier(SPEED);
             movement.removeModifier(SLOWNESS);
-            double factor = EnchantmentCombatRules.movementFactor(amplifier(slow), amplifier(haste), false,
-                    R196Enchantments.equipped(entity, "free_action"));
+            double factor = EnchantmentCombatRules.movementFactorWithResistance(amplifier(slow), amplifier(haste), false,
+                    R196Enchantments.freeActionResistance(entity));
             replace(movement, PLAYER_MOVEMENT, factor - 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         } else {
-            replace(movement, SLOWNESS, slow == null ? 0D : SourceStatusEffectRules.nonPlayerSlowness(slow.getAmplifier(),
-                    R196Enchantments.equipped(entity, "free_action")), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            replace(movement, SLOWNESS, slow == null ? 0D : -.2F * (slow.getAmplifier() + 1D)
+                    * (1F - R196Enchantments.freeActionResistance(entity)), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
     }
 

@@ -26,7 +26,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class RangedFishingHookEnvironmentMixin extends Projectile implements FishingHookView {
     @Unique private Material mite$castMaterial;
     @Unique private int mite$fortune;
+    @Unique private int mite$fortuneAffix;
     @Override public int mite$fishingFortune() { return mite$fortune; }
+    @Override public int mite$fishingFortuneAffix() { return mite$fortuneAffix; }
     @Unique private static final EntityDataAccessor<Byte> MITE_CAST_HAND = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.BYTE);
     @Unique private static final EntityDataAccessor<String> MITE_HOOK_MATERIAL = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.STRING);
     protected RangedFishingHookEnvironmentMixin(EntityType<? extends Projectile> type, Level level) { super(type, level); }
@@ -44,7 +46,9 @@ public abstract class RangedFishingHookEnvironmentMixin extends Projectile imple
             if (hand == null) hand = MiteRangedItems.rodMaterial(player.getMainHandItem()) != null
                     ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
             mite$castMaterial = MiteRangedItems.rodMaterial(player.getItemInHand(hand));
-            mite$fortune = io.github.ningmeng123.mite.enchantment.R196Enchantments.level(player.getItemInHand(hand), level(), "fishing_fortune");
+            var fortune = io.github.ningmeng123.mite.enchantment.R196Enchantments.sources(player.getItemInHand(hand), level(), "fishing_fortune");
+            mite$fortune = fortune.normal();
+            mite$fortuneAffix = fortune.affix();
             getEntityData().set(MITE_CAST_HAND, (byte)(hand == InteractionHand.OFF_HAND ? 1 : 0));
             getEntityData().set(MITE_HOOK_MATERIAL, mite$castMaterial == null ? "" : mite$castMaterial.id);
         }

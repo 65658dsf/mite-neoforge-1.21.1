@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteShards;
 import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.rules.FlintGravelRules;
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -40,8 +41,8 @@ public final class FlintGravelDrops {
         if (event.getDrops().stream().noneMatch(FlintGravelDrops::isOrdinaryDrop)) {
             return;
         }
-        int fortune = event.getTool().getEnchantmentLevel(enchantments.getHolderOrThrow(Enchantments.FORTUNE));
-        var result = FlintGravelRules.roll(fortune, netherGravel, event.getLevel().random::nextInt);
+        var fortune = EnchantmentSources.levels(event.getTool(), enchantments.getHolderOrThrow(Enchantments.FORTUNE));
+        var result = FlintGravelRules.roll(fortune.normal(), fortune.affix(), netherGravel, event.getLevel().random::nextInt);
         ItemStack stack = switch (result) {
             case GRAVEL -> new ItemStack(netherGravel ? MiteResourceBlocks.NETHER_GRAVEL.asItem() : Items.GRAVEL);
             case FLINT_CHIP -> new ItemStack(MiteItems.FLINT_CHIP.get());

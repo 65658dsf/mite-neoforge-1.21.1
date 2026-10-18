@@ -154,9 +154,11 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
         double damage = distanceFactor * 2F + random.nextGaussian() * .25 + level().getDifficulty().getId() * .11F;
         if (bow != null) {
             var registry = level().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-            int power = bow.getEnchantmentLevel(registry.getHolderOrThrow(Enchantments.POWER));
-            if (power > 0) damage += power * .5 + .5;
-            if (bow.getEnchantmentLevel(registry.getHolderOrThrow(Enchantments.FLAME)) > 0) arrow.igniteForTicks(100);
+            var power = io.github.ningmeng123.mite.progression.EnchantmentSources.levels(bow, registry.getHolderOrThrow(Enchantments.POWER));
+            damage += io.github.ningmeng123.mite.progression.EnchantmentSources.number(power, value -> value * .5 + .5);
+            var flame = io.github.ningmeng123.mite.progression.EnchantmentSources.levels(bow, registry.getHolderOrThrow(Enchantments.FLAME));
+            int flameTicks = (int)io.github.ningmeng123.mite.progression.EnchantmentSources.number(flame, value -> 100D);
+            if (flameTicks > 0) arrow.igniteForTicks(flameTicks);
         }
         if (skeletonType() == 1 || isOnFire() && random.nextInt(3) == 0) arrow.igniteForTicks(100);
         arrow.setBaseDamage(damage); return arrow;
@@ -322,8 +324,7 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
         R196MobEquipment.dropEquipment(this, source, recentlyHit, massiveFall, isLongdead(), this::getEquipmentDropChance);
     }
     private void dropSourceMaterials(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        int looting = source.getEntity() instanceof LivingEntity living ? EnchantmentHelper.getEnchantmentLevel(
-                level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.LOOTING), living) : 0;
+        int looting = source.getEntity() instanceof LivingEntity living ? io.github.ningmeng123.mite.enchantment.R196Enchantments.level(living.getMainHandItem(), living.level(), "minecraft:looting") : 0;
         int count;
         if (skeletonType() == 1) {
             count = random.nextInt(3 + looting) - 1;

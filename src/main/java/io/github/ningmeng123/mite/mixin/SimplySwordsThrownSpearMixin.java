@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.progression.ProgressionThrownWeapon;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.entity.EntityType;
@@ -24,11 +25,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /** Native approved spear hits keep their original effects and charge the actual recoverable weapon. @author NingMeng123 */
 @Pseudo
 @Mixin(targets = "net.sweenus.simplyswords.entity.ThrownSpearEntity", remap = false)
-public abstract class SimplySwordsThrownSpearMixin extends AbstractArrow {
+public abstract class SimplySwordsThrownSpearMixin extends AbstractArrow implements ProgressionThrownWeapon {
     @Shadow(remap = false) public ItemStack stack;
     @Shadow(remap = false) @Final private static EntityDataAccessor<ItemStack> ITEM_STACK;
 
     protected SimplySwordsThrownSpearMixin(EntityType<? extends AbstractArrow> type, Level level) { super(type, level); }
+
+    @Override public ItemStack mite$progressionWeapon() { return stack; }
+    @Override public void mite$syncProgressionWeapon() { mite$syncSpear(stack); }
 
     @WrapOperation(method = "onHitEntity", at = @At(value = "INVOKE", target =
             "Lnet/minecraft/world/item/SwordItem;hurtEnemy(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)Z",

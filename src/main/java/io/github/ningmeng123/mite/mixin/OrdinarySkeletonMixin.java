@@ -168,9 +168,7 @@ public abstract class OrdinarySkeletonMixin extends Monster implements OrdinaryS
     @Override protected void dropFromLootTable(DamageSource source, boolean recent) {
         if (!mite$ordinary() || mite$sourceSkeletonType() == 0) { super.dropFromLootTable(source,recent); return; }
         if (getPersistentData().getBoolean("mite_massive_fall_031") && random.nextFloat() >= .1F) return;
-        int looting = source.getEntity() instanceof LivingEntity killer ? net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantmentLevel(
-                registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).getHolderOrThrow(
-                        net.minecraft.world.item.enchantment.Enchantments.LOOTING),killer) : 0;
+        int looting = source.getEntity() instanceof LivingEntity killer ? io.github.ningmeng123.mite.enchantment.R196Enchantments.level(killer.getMainHandItem(), killer.level(), "minecraft:looting") : 0;
         if (mite$sourceSkeletonType() == 1) {
             int coal = random.nextInt(3+looting)-1;
             if (coal>0 && !recent) coal-=random.nextInt(coal+1);

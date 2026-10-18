@@ -81,8 +81,7 @@ public final class R196MobEquipment {
     /** og.a keeps the actual stack and separates held, picked-up, forced and ordinary armor drops. */
     public static void dropEquipment(Mob mob, DamageSource source, boolean recent, boolean massiveFall, boolean longdead,
             ToDoubleFunction<EquipmentSlot> chances) {
-        int looting = source.getEntity() instanceof LivingEntity living ? EnchantmentHelper.getEnchantmentLevel(
-                mob.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.LOOTING), living) : 0;
+        int looting = source.getEntity() instanceof LivingEntity living ? io.github.ningmeng123.mite.enchantment.R196Enchantments.level(living.getMainHandItem(), living.level(), "minecraft:looting") : 0;
         for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.MAINHAND, EquipmentSlot.FEET, EquipmentSlot.LEGS,
                 EquipmentSlot.CHEST, EquipmentSlot.HEAD, EquipmentSlot.OFFHAND, EquipmentSlot.BODY}) {
             ItemStack stack = mob.getItemBySlot(slot);

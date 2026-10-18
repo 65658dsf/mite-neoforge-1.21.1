@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
+import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +22,9 @@ public abstract class DurabilityEnchantmentMixin {
             MutableFloat amount, CallbackInfo ci) {
         if (EquipmentDurability.isManaged(stack) && level.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                 .getHolderOrThrow(Enchantments.UNBREAKING).value() == (Object)this) {
-            amount.setValue(EquipmentDurabilityRules.afterUnbreaking(amount.intValue(), enchantmentLevel, level.random::nextFloat));
+            amount.setValue(io.github.ningmeng123.mite.enchantment.R196Enchantments.unbreakingDamage(stack, level, amount.intValue(), enchantmentLevel));
             ci.cancel();
         }
     }
+
 }
