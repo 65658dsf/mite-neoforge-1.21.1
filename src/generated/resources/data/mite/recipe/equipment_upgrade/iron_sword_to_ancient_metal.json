@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "mite:ancient_metal_ingot"
+  },
+  "base": {
+    "item": "minecraft:iron_sword"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:ancient_metal_sword"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

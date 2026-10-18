@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:iron_ingot"
+  },
+  "base": {
+    "item": "mite:silver_pickaxe"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:iron_pickaxe"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

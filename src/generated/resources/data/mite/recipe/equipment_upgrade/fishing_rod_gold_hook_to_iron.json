@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:iron_ingot"
+  },
+  "base": {
+    "item": "mite:fishing_rod_gold_hook"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:fishing_rod"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

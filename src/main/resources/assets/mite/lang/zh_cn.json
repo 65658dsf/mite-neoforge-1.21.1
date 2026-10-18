@@ -1067,5 +1067,11 @@
   "item.mite.vibranium_knife": "振金小刀",
   "item.mite.vibranium_bow": "振金弓",
   "item.mite.obsidian_stick": "黑曜石棒",
-  "material.mite.vibranium": "振金"
+  "material.mite.vibranium": "振金",
+  "item.mite.equipment_upgrade_smithing_template": "升级模板",
+  "upgrade.mite.equipment_upgrade": "装备材质升级",
+  "item.mite.smithing_template.equipment_upgrade.applies_to": "金属装备",
+  "item.mite.smithing_template.equipment_upgrade.ingredients": "下一阶材质锭",
+  "item.mite.smithing_template.equipment_upgrade.base_slot_description": "在此放入要升级的金属装备",
+  "item.mite.smithing_template.equipment_upgrade.additions_slot_description": "在此放入下一阶材质的锭"
 }

@@ -30,6 +30,7 @@ public final class MiteRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes(RecipeOutput output) {
         MaterialRecipes.addRecipes(output);
+        MaterialUpgradeRecipes.addRecipes(output);
         VibraniumRecipes.addRecipes(output);
         MetalStorageRecipes.addRecipes(output);
         ShardRecipes.addRecipes(output);

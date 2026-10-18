@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:iron_ingot"
+  },
+  "base": {
+    "item": "mite:copper_battle_axe"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:iron_battle_axe"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

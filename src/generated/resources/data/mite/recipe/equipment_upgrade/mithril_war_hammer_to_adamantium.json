@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "mite:adamantium_ingot"
+  },
+  "base": {
+    "item": "mite:mithril_war_hammer"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:adamantium_war_hammer"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

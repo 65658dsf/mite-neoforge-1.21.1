@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "mite:ancient_metal_ingot"
+  },
+  "base": {
+    "item": "mite:iron_war_hammer"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:ancient_metal_war_hammer"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

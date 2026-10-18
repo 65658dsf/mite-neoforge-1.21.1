@@ -1067,5 +1067,11 @@
   "item.mite.vibranium_knife": "Vibranium Knife",
   "item.mite.vibranium_bow": "Vibranium Bow",
   "item.mite.obsidian_stick": "Obsidian Stick",
-  "material.mite.vibranium": "Vibranium"
+  "material.mite.vibranium": "Vibranium",
+  "item.mite.equipment_upgrade_smithing_template": "Upgrade Template",
+  "upgrade.mite.equipment_upgrade": "Equipment Material Upgrade",
+  "item.mite.smithing_template.equipment_upgrade.applies_to": "Metal Equipment",
+  "item.mite.smithing_template.equipment_upgrade.ingredients": "Next Material Ingot",
+  "item.mite.smithing_template.equipment_upgrade.base_slot_description": "Place metal equipment to upgrade here",
+  "item.mite.smithing_template.equipment_upgrade.additions_slot_description": "Place an ingot of the next material here"
 }

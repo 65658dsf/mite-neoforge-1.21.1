@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "mite:vibranium_ingot"
+  },
+  "base": {
+    "item": "mite:adamantium_boots"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:vibranium_boots"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

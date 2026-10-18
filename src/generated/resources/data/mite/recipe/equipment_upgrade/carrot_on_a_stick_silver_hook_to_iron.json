@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:iron_ingot"
+  },
+  "base": {
+    "item": "mite:carrot_on_a_stick_silver_hook"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:carrot_on_a_stick"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

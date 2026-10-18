@@ -36,6 +36,7 @@ public final class Mite {
         io.github.ningmeng123.mite.progression.PlayerPlacedBlocks.register(modBus);
         MiteItems.register(modBus);
         MiteMaterials.register(modBus);
+        io.github.ningmeng123.mite.registry.MiteUpgradeTemplates.register(modBus);
         io.github.ningmeng123.mite.registry.MiteMetalBlocks.register(modBus);
         MiteShards.register(modBus);
         MiteResourceBlocks.register(modBus);

@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "simplyswords"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "mite:equipment_upgrade/simplyswords_gold_greataxe_to_iron"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_upgrade_template": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mite:equipment_upgrade_smithing_template"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_upgrade_template",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mite:equipment_upgrade/simplyswords_gold_greataxe_to_iron"
+    ]
+  }
+}

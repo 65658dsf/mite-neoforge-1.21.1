@@ -261,6 +261,7 @@ public final class SimplySwordsCompatibilityGameTests {
     public static void loadedRecipesCraftNinetyWeaponsAndLeaveRustedIronAsLoot(GameTestHelper h) {
         Map<Item, Integer> recipes = new HashMap<>();
         for (var holder : h.getLevel().getRecipeManager().getRecipes()) {
+            if (holder.value().getType() != net.minecraft.world.item.crafting.RecipeType.CRAFTING) continue;
             ItemStack output = holder.value().getResultItem(h.getLevel().registryAccess());
             if (output.isEmpty()) continue;
             var definition = SimplySwordsCompat.definition(output);

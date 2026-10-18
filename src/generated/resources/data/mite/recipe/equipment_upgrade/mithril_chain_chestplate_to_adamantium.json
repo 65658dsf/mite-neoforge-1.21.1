@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "mite:adamantium_ingot"
+  },
+  "base": {
+    "item": "mite:mithril_chain_chestplate"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:adamantium_chain_chestplate"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

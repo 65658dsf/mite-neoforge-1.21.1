@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "mite:mithril_ingot"
+  },
+  "base": {
+    "item": "mite:ancient_metal_mattock"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:mithril_mattock"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}

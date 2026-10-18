@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "mite:mithril_ingot"
+  },
+  "base": {
+    "item": "mite:carrot_on_a_stick_ancient_metal_hook"
+  },
+  "result": {
+    "count": 1,
+    "id": "mite:carrot_on_a_stick_mithril_hook"
+  },
+  "template": {
+    "item": "mite:equipment_upgrade_smithing_template"
+  }
+}
