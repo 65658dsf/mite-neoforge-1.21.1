@@ -223,7 +223,13 @@ public final class R196Cube extends Slime implements R196Mob, CubeState {
             cube.yBodyRot=cube.getYRot();
             boolean crawl=cube.kind==MobKind.OOZE || target instanceof ItemEntity && target.getBoundingBox().inflate(.5,0,.5).intersects(cube.getBoundingBox())
                     || !cube.level().noCollision(cube,cube.getBoundingBox().move(0,.25,0));
-            if (crawl) { cube.setSpeed(target==null ? .015F : .025F); return; }
+            if (crawl) {
+                // Mob.setSpeed also writes forward input; keep the source acceleration and input separate.
+                cube.setSpeed(.1F);
+                cube.setXxa(0F);
+                cube.setZza(target==null ? .15F : .25F);
+                return;
+            }
             if (cube.isInWater() || cube.isInLava()) { cube.getJumpControl().jump(); cube.setSpeed(.1F*cube.getSize()); return; }
             if (cube.onGround()) {
                 if (target!=null && cube.jumpDelay>10) cube.jumpDelay=10;
