@@ -45,6 +45,7 @@ public final class Mite {
         io.github.ningmeng123.mite.worldgen.MiteWorldDimensions.register(modBus);
         EquipmentDurability.register(modBus);
         io.github.ningmeng123.mite.progression.GearProgression.register(modBus);
+        io.github.ningmeng123.mite.combat.ShieldGuard.register(modBus);
         MiteShields.register(modBus);
         io.github.ningmeng123.mite.registry.MiteArmorContent.register(modBus);
         io.github.ningmeng123.mite.registry.MiteRangedItems.register(modBus);

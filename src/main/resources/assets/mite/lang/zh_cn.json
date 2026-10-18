@@ -1,5 +1,7 @@
 {
   "tooltip.mite.gear_level": "装备等级：%s / %s",
+  "tooltip.mite.shield_strain": "格挡负荷：%s / %s 点伤害，%s / %s 次",
+  "tooltip.mite.shield_strain_break": "任一项满后破盾5秒，负荷清零",
   "tooltip.mite.gear_experience": "成长经验：%s / %s",
   "tooltip.mite.gear_max_level": "已达材质等级上限",
   "tooltip.mite.gear_affixes": "成长副词条",

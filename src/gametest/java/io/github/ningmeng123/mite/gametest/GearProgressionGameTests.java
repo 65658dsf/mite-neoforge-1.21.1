@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.combat.ShieldGuard;
 import io.github.ningmeng123.mite.item.EquipmentQuality;
 import io.github.ningmeng123.mite.progression.GearProgress;
 import io.github.ningmeng123.mite.progression.GearProgression;
@@ -152,6 +153,45 @@ public final class GearProgressionGameTests {
         h.assertFalse(GearProgression.growthChanged(grown, grown.copy()), "Unchanged growth does not override other mods' hand hooks");
         grown.setDamageValue(1);
         h.assertFalse(GearProgression.sameIgnoringGrowth(plain, grown), "Damage is still a real component change");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void shieldGuardDisplayUpdatesPreservePoseWithoutMaskingRealEquipmentChanges(GameTestHelper h) {
+        ItemStack plain = new ItemStack(Items.SHIELD);
+        ItemStack guarded = plain.copy();
+        guarded.set(ShieldGuard.GUARD.get(), new ShieldGuard.State(4D, 1));
+        h.assertTrue(GearProgression.guardChanged(plain, guarded) && !GearProgression.growthChanged(plain, guarded),
+                "A guard-only packet is recognized independently of experience");
+        h.assertTrue(GearProgression.keepProgressionHandPose(plain, guarded, false), "Guard-only updates retain the raised shield pose");
+        h.assertFalse(GearProgression.sameIgnoringGrowth(plain, guarded), "Mining retains its existing growth-only exception");
+
+        ItemStack before = grown(Items.SHIELD, 1, 100, "minecraft:unbreaking", 1);
+        before.set(ShieldGuard.GUARD.get(), new ShieldGuard.State(4D, 1));
+        ItemStack after = before.copy();
+        GearProgress progress = GearProgression.state(before);
+        after.set(GearProgression.PROGRESS.get(), new GearProgress(progress.id(), progress.level(), 200, progress.affixes(), progress.version()));
+        after.set(ShieldGuard.GUARD.get(), new ShieldGuard.State(8D, 2));
+        h.assertTrue(GearProgression.growthChanged(before, after) && GearProgression.guardChanged(before, after)
+                && GearProgression.keepProgressionHandPose(before, after, false), "Combined guard and experience packets retain the same pose");
+        h.assertFalse(GearProgression.keepProgressionHandPose(before, after, true), "Changing slots retains native animation behavior");
+        h.assertFalse(GearProgression.keepProgressionHandPose(before, before.copy(), false), "Unchanged bookkeeping does not override other item hooks");
+
+        ItemStack reset = guarded.copy(); reset.remove(ShieldGuard.GUARD.get());
+        h.assertTrue(GearProgression.keepProgressionHandPose(guarded, reset, false), "Removing the guard component is also display-only");
+        ItemStack changed = after.copy(); changed.setDamageValue(1);
+        h.assertFalse(GearProgression.keepProgressionHandPose(before, changed, false), "Real durability changes retain native animation behavior");
+        changed = after.copy(); changed.setCount(2);
+        h.assertFalse(GearProgression.keepProgressionHandPose(before, changed, false), "Count changes are not hidden");
+        changed = after.copy(); changed.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("NingMeng123"));
+        h.assertFalse(GearProgression.keepProgressionHandPose(before, changed, false), "Renaming remains a real component change");
+        changed = after.copy();
+        changed.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
+        h.assertFalse(GearProgression.keepProgressionHandPose(before, changed, false), "Ordinary enchantment changes are not hidden");
+        changed = after.copy();
+        changed.set(GearProgression.PROGRESS.get(), new GearProgress(UUID.randomUUID(), progress.level(), 200, progress.affixes(), progress.version()));
+        h.assertFalse(GearProgression.keepProgressionHandPose(before, changed, false), "A different physical shield identity still replaces the rendered item");
+        h.assertFalse(GearProgression.keepProgressionHandPose(before, new ItemStack(Items.IRON_SWORD), false), "Different item types keep native behavior");
         h.succeed();
     }
 

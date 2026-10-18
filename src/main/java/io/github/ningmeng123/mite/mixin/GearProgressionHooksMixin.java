@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.ningmeng123.mite.progression.GearProgressionEvents;
+import io.github.ningmeng123.mite.combat.ShieldGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
@@ -41,6 +42,7 @@ public abstract class GearProgressionHooksMixin {
     private static LivingShieldBlockEvent mite$completedShieldBlock(LivingEntity entity, DamageContainer container,
             boolean originalBlocked, Operation<LivingShieldBlockEvent> original) {
         LivingShieldBlockEvent result = original.call(entity, container, originalBlocked);
+        ShieldGuard.accepted(entity, result);
         GearProgressionEvents.shieldBlocked(entity, result);
         return result;
     }

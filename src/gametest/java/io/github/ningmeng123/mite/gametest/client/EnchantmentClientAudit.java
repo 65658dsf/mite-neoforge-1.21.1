@@ -123,6 +123,7 @@ public final class EnchantmentClientAudit implements DataProvider {
             ENCHANTMENTS.forEach(name -> expectedKeys.add("enchantment.mite." + name));
             expectedKeys.addAll(Set.of("tooltip.mite.gear_level", "tooltip.mite.gear_experience", "tooltip.mite.gear_max_level",
                     "tooltip.mite.gear_affixes", "tooltip.mite.gear_affix", "message.mite.gear_level_up"));
+            expectedKeys.addAll(Set.of("tooltip.mite.shield_strain", "tooltip.mite.shield_strain_break"));
             for (String locale : List.of("en_us", "zh_cn")) {
                 String path = "assets/mite/lang/" + locale + ".json";
                 byte[] bytes = resource(path);

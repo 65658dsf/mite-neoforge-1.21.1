@@ -31,6 +31,14 @@ public final class GearProgressionTooltips {
                 ? Component.translatable("tooltip.mite.gear_max_level").withStyle(ChatFormatting.GOLD)
                 : Component.translatable("tooltip.mite.gear_experience", experience(state.experienceMillis()),
                         experience(GearProgressionRules.nextLevelExperienceMillis(state.level()))).withStyle(ChatFormatting.GRAY));
+        if (GearProgression.isShield(event.getItemStack())) {
+            var guard = io.github.ningmeng123.mite.combat.ShieldGuard.state(event.getItemStack());
+            String damage = BigDecimal.valueOf(guard.blockedDamage()).setScale(2, java.math.RoundingMode.HALF_UP)
+                    .stripTrailingZeros().toPlainString();
+            event.getToolTip().add(Component.translatable("tooltip.mite.shield_strain", damage, 25, guard.blocks(), 3)
+                    .withStyle(ChatFormatting.GRAY));
+            event.getToolTip().add(Component.translatable("tooltip.mite.shield_strain_break").withStyle(ChatFormatting.DARK_GRAY));
+        }
         if (state.affixes().isEmpty()) return;
         event.getToolTip().add(Component.translatable("tooltip.mite.gear_affixes").withStyle(ChatFormatting.DARK_AQUA));
         state.affixes().entrySet().stream().sorted(Comparator.comparing(entry -> entry.getKey().toString())).forEach(entry -> {

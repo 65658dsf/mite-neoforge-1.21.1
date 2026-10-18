@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.progression;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.combat.ShieldGuard;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.item.R196ReinforcedBowItem;
@@ -166,6 +167,7 @@ public final class GearProgression {
 
     /** Maintenance never merges, transfers or rerolls the sacrificial item's progression. */
     public static void preserve(ItemStack source, ItemStack result) {
+        io.github.ningmeng123.mite.combat.ShieldGuard.preserve(source, result);
         if (source.isEmpty() || result.isEmpty() || maxLevel(result) == 0) return;
         GearProgress progress = source.get(PROGRESS.get());
         if (progress == null) result.remove(PROGRESS.get()); else result.set(PROGRESS.get(), progress);
@@ -174,6 +176,9 @@ public final class GearProgression {
     /** XP-only changes must not restart hand animations or mining; other components still matter. */
     public static boolean growthChanged(ItemStack first, ItemStack second) {
         return !java.util.Objects.equals(first.get(PROGRESS.get()), second.get(PROGRESS.get()));
+    }
+    public static boolean guardChanged(ItemStack first, ItemStack second) {
+        return !java.util.Objects.equals(first.get(ShieldGuard.GUARD.get()), second.get(ShieldGuard.GUARD.get()));
     }
     public static boolean sameIdentity(ItemStack first, ItemStack second) {
         UUID previous = id(first), next = id(second);
@@ -188,4 +193,17 @@ public final class GearProgression {
         return ItemStack.isSameItemSameComponents(left, right);
     }
 
+    /** Display-only bookkeeping never changes mining's stricter component comparison. */
+    public static boolean sameIgnoringProgressionDisplay(ItemStack first, ItemStack second) {
+        if (!first.is(second.getItem()) || !sameIdentity(first, second)) return false;
+        ItemStack left = first.copy(), right = second.copy();
+        left.remove(PROGRESS.get()); right.remove(PROGRESS.get());
+        left.remove(ShieldGuard.GUARD.get()); right.remove(ShieldGuard.GUARD.get());
+        return ItemStack.isSameItemSameComponents(left, right);
+    }
+
+    public static boolean keepProgressionHandPose(ItemStack previous, ItemStack next, boolean slotChanged) {
+        return !slotChanged && (growthChanged(previous, next) || guardChanged(previous, next))
+                && previous.getCount() == next.getCount() && sameIgnoringProgressionDisplay(previous, next);
+    }
 }
