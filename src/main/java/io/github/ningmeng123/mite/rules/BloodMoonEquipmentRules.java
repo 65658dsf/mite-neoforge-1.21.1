@@ -10,9 +10,9 @@ public final class BloodMoonEquipmentRules {
     public static final long ADAMANTIUM_BLOOD_MOON = 8L;
     public static final long VIBRANIUM_BLOOD_MOON = 9L;
     public static final long ORDINARY_START_DAY = 64L;
-    public static final long ORDINARY_PROGRESS_START_DAY = 128L;
-    public static final long ORDINARY_DAYS_PER_STAGE = 128L;
-    public static final long ORDINARY_MAXIMUM_DAY = 1280L;
+    public static final double ORDINARY_EQUIPMENT_FACTOR = .5D;
+    public static final double FIRST_BLOOD_ARMOR_CHANCE = .6D;
+    public static final double EARLY_ORDINARY_ARMOR_CHANCE = FIRST_BLOOD_ARMOR_CHANCE * ORDINARY_EQUIPMENT_FACTOR;
     private BloodMoonEquipmentRules() {}
 
     public static long bloodMoons(long highestDay) {
@@ -40,24 +40,22 @@ public final class BloodMoonEquipmentRules {
         return highestDay >= ORDINARY_START_DAY;
     }
 
-    /** Ordinary-day growth depends only on the highest calendar date, including blue dates. */
+    /** Ordinary dates use the material stage unlocked by the same highest calendar date. */
     public static double ordinaryProgress(long highestDay) {
-        if (highestDay <= ORDINARY_PROGRESS_START_DAY) return 0D;
-        if (highestDay >= ORDINARY_MAXIMUM_DAY) return HIGHEST_TIER;
-        return (highestDay - ORDINARY_PROGRESS_START_DAY) / (double)ORDINARY_DAYS_PER_STAGE;
+        return Math.max(0, stage(bloodMoons(highestDay)));
     }
 
     public static double ordinaryArmorChance(double progress) {
         checkProgress(progress);
-        return (50D + 5D * progress) / 100D;
+        return ORDINARY_EQUIPMENT_FACTOR * (80D + 2D * progress) / 100D;
     }
 
     public static double ordinaryHeldChance(double progress) {
         checkProgress(progress);
-        return (40D + 5D * progress) / 100D;
+        return ORDINARY_EQUIPMENT_FACTOR * (70D + 3D * progress) / 100D;
     }
 
-    /** Mix normalized adjacent stage distributions so advancement has no date-boundary jump. */
+    /** Keep blood-date material weights; interpolation also supports compatible saved fractional decisions. */
     public static double ordinaryTierChance(double progress, int tier) {
         checkProgress(progress);
         if (tier < 0 || tier > HIGHEST_TIER) return 0D;
@@ -79,10 +77,10 @@ public final class BloodMoonEquipmentRules {
         return HIGHEST_TIER;
     }
 
-    /** Blood dates roll this chance independently for each slot; ordinary values are whole-set basis rates. */
+    /** Blood dates roll each slot independently; ordinary whole-set acceptance is exactly half. */
     public static double armorChance(int stage, boolean bloodDate) {
         checkStage(stage);
-        return (bloodDate ? 80 + 2 * stage : 50 + 5 * stage) / 100D;
+        return (80 + 2 * stage) / 100D * (bloodDate ? 1D : ORDINARY_EQUIPMENT_FACTOR);
     }
 
     /** Chance that all four initially empty slots reject their independent blood-date armor roll. */
@@ -97,7 +95,7 @@ public final class BloodMoonEquipmentRules {
 
     public static double heldChance(int stage, boolean bloodDate) {
         checkStage(stage);
-        return (bloodDate ? 70 + 3 * stage : 40 + 5 * stage) / 100D;
+        return (70 + 3 * stage) / 100D * (bloodDate ? 1D : ORDINARY_EQUIPMENT_FACTOR);
     }
 
     public static double tierChance(int stage, int tier, boolean bloodDate) {
@@ -122,8 +120,8 @@ public final class BloodMoonEquipmentRules {
     }
 
     private static double materialWeight(int stage, int tier, boolean bloodDate) {
-        double lower = bloodDate ? .35D : .5D;
-        double upper = bloodDate ? .4D : .25D;
+        double lower = .35D;
+        double upper = .4D;
         int distance = materialGrade(tier) - materialGrade(stage);
         double weight = distance < 0 ? Math.pow(lower, -distance) : Math.pow(upper, distance);
         return tier == 3 || tier == 4 ? weight / 2D : weight;

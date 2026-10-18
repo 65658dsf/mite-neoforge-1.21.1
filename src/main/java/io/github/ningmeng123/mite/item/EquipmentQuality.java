@@ -96,8 +96,14 @@ public final class EquipmentQuality {
 
     /** R196 og:838 excludes badly worn, non-picked-up poor held equipment from 75 percent of drops. */
     public static boolean hasPoorHeldDropPenalty(ItemStack stack, EquipmentSlot slot, float dropChance) {
+        return hasPoorHeldDropPenalty(stack, slot, dropChance, false);
+    }
+
+    /** Natural monster enchantments must not remove the existing poor-quality wear penalty. */
+    public static boolean hasPoorHeldDropPenalty(ItemStack stack, EquipmentSlot slot, float dropChance,
+            boolean includeEnchanted) {
         return slot == EquipmentSlot.MAINHAND && dropChance > 0F && dropChance <= 1F
-                && !stack.isEmpty() && EquipmentDurability.isManaged(stack) && !stack.isEnchanted()
+                && !stack.isEmpty() && EquipmentDurability.isManaged(stack) && (includeEnchanted || !stack.isEnchanted())
                 && stack.isDamaged() && EquipmentDurability.quality(stack).ordinal() < Quality.AVERAGE.ordinal()
                 && (float)stack.getDamageValue() / (float)stack.getMaxDamage() > 0.7F;
     }

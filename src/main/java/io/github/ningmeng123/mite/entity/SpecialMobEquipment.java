@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 
-/** Spawn-only material growth above the fixed source equipment floor. @author NingMeng123 */
+/** Spawn-only shared highest-date materials above the fixed source equipment floor. @author NingMeng123 */
 public final class SpecialMobEquipment {
     public static final String DATA_KEY = "mite:special_equipment_progression";
     private static final String[] MATERIALS = {"leather", "iron", "gold", "copper", "silver", "iron",

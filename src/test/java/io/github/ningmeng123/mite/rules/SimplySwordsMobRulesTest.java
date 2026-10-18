@@ -19,7 +19,7 @@ class SimplySwordsMobRulesTest {
         }
     }
 
-    @Test void ordinaryFallbackUsesTheExactSharedHighestDayCurveIncludingNativeIronAndVibranium() {
+    @Test void ordinaryFallbackUsesTheSameHighestDayBloodStageIncludingNativeIronAndVibranium() {
         for (long day : new long[]{64, 128, 129, 320, 352, 640, 1152, 1153, 1280, Long.MAX_VALUE}) {
             var available = SimplySwordsMobRules.available(day);
             assertEquals(9, available.size());
@@ -51,6 +51,17 @@ class SimplySwordsMobRulesTest {
         }
     }
 
+    @Test void ordinaryAndBloodFallbacksShareEveryMaterialProbabilityAndBlueDatesDoNotAdvanceIt() {
+        for (long day : new long[]{64, 95, 96, 127, 128, 159, 160, 192, 224, 255, 256, 288, 320, 352, Long.MAX_VALUE}) {
+            assertEquals(SimplySwordsMobRules.available(day, true), SimplySwordsMobRules.available(day, false),
+                    "Optional weapon materials share the same historical blood stage at day " + day);
+            for (double draw : new double[]{0D, .001D, .15D, .3D, .5D, .85D, Math.nextDown(1D)})
+                assertEquals(SimplySwordsMobRules.selectMaterial(day, true, draw), SimplySwordsMobRules.selectMaterial(day, false, draw));
+        }
+        assertEquals(SimplySwordsMobRules.available(127), SimplySwordsMobRules.available(128));
+        assertEquals(SimplySwordsMobRules.available(255), SimplySwordsMobRules.available(256));
+    }
+
     @Test void lateWorldVibraniumRemainsReachableAndGrowsWithTheOrdinaryCurve() {
         double previous = 0D;
         for (long day = 64; day <= 1280; day++) {
@@ -59,7 +70,7 @@ class SimplySwordsMobRulesTest {
             assertTrue(probability + 1E-12 >= previous, "Vibranium chance cannot fall as the highest calendar day advances: " + day);
             previous = probability;
         }
-        assertTrue(chance(129, "vibranium") > chance(128, "vibranium"));
+        assertTrue(chance(160, "vibranium") > chance(159, "vibranium"));
         assertTrue(chance(1280, "vibranium") > chance(1280, "adamantium"));
         assertEquals("vibranium", SimplySwordsMobRules.selectMaterial(Long.MAX_VALUE, Math.nextDown(1D)));
         for (double invalid : new double[]{-1D, 1D, Double.NaN, Double.POSITIVE_INFINITY})

@@ -3,7 +3,7 @@ package io.github.ningmeng123.mite.rules;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/** Spawn-only optional weapons follow the shared ordinary-day and blood-date material curves. @author NingMeng123 */
+/** Spawn-only optional weapons share the same highest-date material stage on ordinary and blood dates. @author NingMeng123 */
 public final class SimplySwordsMobRules {
     public static final float EQUIP_CHANCE = .15F;
     public record Material(String name, double weight) {}

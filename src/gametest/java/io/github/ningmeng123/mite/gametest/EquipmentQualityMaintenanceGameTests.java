@@ -191,27 +191,30 @@ public final class EquipmentQualityMaintenanceGameTests {
         TestSkeleton mob = new TestSkeleton(helper.getLevel());
         mob.captureDrops(new ArrayList<>());
         mob.setDropChance(EquipmentSlot.MAINHAND, 1F);
-        int dropped = 0;
-        for (int quarter = 0; quarter < 4; quarter++) for (int ticket = 0; ticket < 3; ticket++) {
-            mob.setItemSlot(EquipmentSlot.MAINHAND, equipment(Items.IRON_PICKAXE, Quality.POOR, 7000));
-            mob.dropTestEquipment(quarter * .25F, ticket);
-            if (mob.getMainHandItem().isEmpty()) dropped++;
-        }
-        helper.assertValueEqual(dropped, 1,
-                "One quarter survive the original poor-wear gate and one third of those survive the new equipment gate");
+        int[] dropped = new int[2];
+        for (boolean enchanted : new boolean[]{false, true}) for (int quarter = 0; quarter < 4; quarter++)
+            for (int ticket = 0; ticket < 3; ticket++) for (int enchantmentTicket = 0; enchantmentTicket < 2; enchantmentTicket++) {
+                ItemStack weapon = equipment(Items.IRON_PICKAXE, Quality.POOR, 7000);
+                if (enchanted) weapon.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                        .getHolderOrThrow(Enchantments.EFFICIENCY), 1);
+                mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+                mob.dropTestEquipment(quarter * .25F, ticket, enchantmentTicket);
+                boolean expected = quarter == 3 && ticket == 0 && (!enchanted || enchantmentTicket == 0);
+                helper.assertValueEqual(mob.getMainHandItem().isEmpty(), expected,
+                        "Equal quality and wear apply the same original poor-wear penalty, then both independent drop gates");
+                if (expected) dropped[enchanted ? 1 : 0]++;
+            }
+        helper.assertValueEqual(dropped[0], 2, "Unenchanted poor worn weapons keep two of twenty-four matching ticket triples");
+        helper.assertValueEqual(dropped[1], 1, "Enchanted poor worn weapons keep one of the same twenty-four ticket triples");
+        helper.assertValueEqual(dropped[1] * 2, dropped[0], "Equal-quality equally worn enchanted weapons drop half as often");
         mob.setDropChance(EquipmentSlot.MAINHAND, 2F);
-        mob.setItemSlot(EquipmentSlot.MAINHAND, equipment(Items.IRON_PICKAXE, Quality.POOR, 7000));
-        mob.dropTestEquipment(0F, 2);
-        helper.assertTrue(mob.getMainHandItem().isEmpty(), "Modern picked-up guaranteed equipment bypasses both drop reductions");
-        mob.setDropChance(EquipmentSlot.MAINHAND, 1F);
-        for (int ticket = 0; ticket < 3; ticket++) {
-            ItemStack enchanted = equipment(Items.IRON_PICKAXE, Quality.POOR, 7000);
-            enchanted.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+        for (boolean enchanted : new boolean[]{false, true}) {
+            ItemStack weapon = equipment(Items.IRON_PICKAXE, Quality.POOR, 7000);
+            if (enchanted) weapon.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                     .getHolderOrThrow(Enchantments.EFFICIENCY), 1);
-            mob.setItemSlot(EquipmentSlot.MAINHAND, enchanted);
-            mob.dropTestEquipment(0F, ticket);
-            helper.assertValueEqual(mob.getMainHandItem().isEmpty(), ticket == 0,
-                    "Enchantments bypass the original quality penalty while retaining the new one-third equipment gate");
+            mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+            mob.dropTestEquipment(0F, 2, 1);
+            helper.assertTrue(mob.getMainHandItem().isEmpty(), "Picked-up equipment bypasses quality and both drop reductions, enchanted=" + enchanted);
         }
         mob.discard();
         helper.succeed();
@@ -258,11 +261,15 @@ public final class EquipmentQualityMaintenanceGameTests {
                     new DifficultyInstance(Difficulty.PEACEFUL, 0L, 0L, 0F));
         }
         private void dropTestEquipment(float originalRoll, int reductionTicket) {
+            dropTestEquipment(originalRoll, reductionTicket, 0);
+        }
+        private void dropTestEquipment(float originalRoll, int reductionTicket, int enchantmentTicket) {
             controlledRandom = new LegacyRandomSource(196L) {
                 @Override public float nextFloat() { return originalRoll; }
                 @Override public int nextInt(int bound) {
-                    if (bound != 3) throw new AssertionError("Unexpected equipment reduction bound " + bound);
-                    return reductionTicket;
+                    if (bound == 3) return reductionTicket;
+                    if (bound == 2) return enchantmentTicket;
+                    throw new AssertionError("Unexpected equipment reduction bound " + bound);
                 }
             };
             try { super.dropCustomDeathLoot((ServerLevel)level(), damageSources().generic(), true); }

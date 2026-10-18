@@ -1,7 +1,9 @@
 package io.github.ningmeng123.mite.enchantment;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.entity.MobEquipmentDrops;
 import io.github.ningmeng123.mite.entity.R196Mob;
+import io.github.ningmeng123.mite.mixin.SourceMobDropChanceAccess;
 import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import io.github.ningmeng123.mite.rules.EnchantmentCombatRules;
 import io.github.ningmeng123.mite.survival.SourceStatusEffects;
@@ -97,7 +99,8 @@ public final class SourceEnchantmentCombat {
         if (!EnchantmentSources.present(sources) || attacker.getRandom().nextFloat()
                 >= EnchantmentSources.probability(sources, value -> value / 5F)) return;
         ItemStack item = mob.getMainHandItem();
-        mob.spawnAtLocation(item.copy(), mob.getBbHeight() / 2F);
+        float chance = ((SourceMobDropChanceAccess)mob).mite$equipmentDropChance(EquipmentSlot.MAINHAND);
+        if (MobEquipmentDrops.canDrop(mob, chance, item)) mob.spawnAtLocation(item.copy(), mob.getBbHeight() / 2F);
         mob.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         mob.getPersistentData().putInt(DISARMED, 40);
     }

@@ -2,7 +2,6 @@ package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.item.EquipmentQuality;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
-import java.util.Optional;
 import java.util.function.ToDoubleFunction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,10 +33,7 @@ public final class R196MobEquipment {
         return generated(mob, new ItemStack(item(id)), enchant);
     }
     public static ItemStack generated(Mob mob, ItemStack stack, boolean enchant) {
-        float tension = tension(mob);
-        if (enchant && mob.getRandom().nextFloat() < .1F * tension)
-            stack = EnchantmentHelper.enchantItem(mob.getRandom(), stack, (int)(5F + tension * mob.getRandom().nextInt(18)),
-                    mob.level().registryAccess(), Optional.empty());
+        stack = MobEquipmentEnchantments.generated(mob, stack, enchant);
         EquipmentQuality.applyGeneratedMobQuality(stack);
         if (stack.isDamageableItem()) {
             float fraction = (stack.isEnchanted() ? .5F : .7F) + .3F * mob.getRandom().nextFloat();
@@ -89,12 +85,14 @@ public final class R196MobEquipment {
             float chance = (float)chances.applyAsDouble(slot);
             boolean held = slot == EquipmentSlot.MAINHAND, picked = held && chance > 1F, forced = chance > 1F;
             if (massiveFall && chance < 1F && mob.getRandom().nextFloat() < .9F && (!held || !picked)) continue;
-            if (EquipmentQuality.hasPoorHeldDropPenalty(stack, slot, chance) && mob.getRandom().nextFloat() < .75F) continue;
+            if (EquipmentQuality.hasPoorHeldDropPenalty(stack, slot, chance,
+                    mob.getType().getCategory() == net.minecraft.world.entity.MobCategory.MONSTER)
+                    && mob.getRandom().nextFloat() < .75F) continue;
             if (longdead && held && !picked && EquipmentDurability.quality(stack).ordinal()
                     >= io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality.AVERAGE.ordinal()) held = false;
             if ((!held || !recent && !picked && !(mob.getRandom().nextFloat() < .05F))
                     && (!recent && !forced || !(mob.getRandom().nextFloat() - looting * .01F < chance))) continue;
-            if (!MobEquipmentDrops.keep(mob, chance)) continue;
+            if (!MobEquipmentDrops.keep(mob, chance, stack)) continue;
             mob.spawnAtLocation(stack); mob.setItemSlot(slot, ItemStack.EMPTY);
         }
     }

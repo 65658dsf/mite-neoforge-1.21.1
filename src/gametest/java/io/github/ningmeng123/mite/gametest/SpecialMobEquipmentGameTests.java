@@ -207,16 +207,16 @@ public final class SpecialMobEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void eighthBloodMoonAndOrdinaryDatesUseDifferentMaterialDistributionsWithoutChangingFloors(GameTestHelper helper) {
+    public static void eighthBloodMoonAndOrdinaryDatesShareMaterialDistributionsWithoutChangingFloors(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             long seed = firstDraw(.5D, .55D);
             set(helper, 320L, 6_000L);
             Mob ordinary = create(helper, MobKind.ANCIENT_BONE_LORD, seed);
-            helper.assertValueEqual(SpecialMobEquipment.itemId(ordinary, "mite:ancient_metal_helmet"), "mite:ancient_metal_helmet",
-                    "An ordinary day320 middle draw remains below the ancient material floor and retains it");
+            helper.assertValueEqual(SpecialMobEquipment.itemId(ordinary, "mite:ancient_metal_helmet"), "mite:adamantium_helmet",
+                    "An ordinary day320 middle draw uses the same adamantium distribution as blood");
             CompoundTag normal = ordinary.getPersistentData().getCompound(SpecialMobEquipment.DATA_KEY);
-            helper.assertTrue(!normal.getBoolean("blood_date") && Math.abs(normal.getDouble("progress") - 1.5D) < 1E-10,
-                    "Ordinary growth follows the independently agreed (320-128)/128 timeline");
+            helper.assertTrue(!normal.getBoolean("blood_date") && normal.getDouble("progress") == 8D,
+                    "Ordinary growth reaches the same eighth blood-moon stage on day320");
 
             set(helper, 320L, 319L * 24_000L + 6_000L);
             Mob blood = create(helper, MobKind.ANCIENT_BONE_LORD, seed);
@@ -224,7 +224,7 @@ public final class SpecialMobEquipmentGameTests {
                     "The same middle draw is adamantium at the eighth blood moon");
             CompoundTag crimson = blood.getPersistentData().getCompound(SpecialMobEquipment.DATA_KEY);
             helper.assertTrue(crimson.getBoolean("blood_date") && crimson.getDouble("progress") == 8D,
-                    "Blood day320 has reached the eighth blood-moon stage rather than ordinary progress");
+                    "Blood day320 and ordinary highest day320 share the eighth blood-moon stage");
             helper.assertTrue(crimson.getLong("highest_day") == 320L && crimson.getInt("version") > 0,
                     "The authoritative highest day and schema version accompany the spawn snapshot");
         }
@@ -257,8 +257,8 @@ public final class SpecialMobEquipmentGameTests {
     public static void intermediateRollsResolveNativeIronPlateAndGoldenAndIronBattleAxes(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 1152L, 6_000L);
-            // Day1152 with the Vibranium tail: gold [3/287,7/287), iron [15/287,31/287).
-            long gold = firstDraw(.015D, .02D), iron = firstDraw(.08D, .09D);
+            // Shared stage9: gold [22235661,69295261)/39381511261; iron [203751261,587911261)/39381511261.
+            long gold = firstDraw(.001D, .0015D), iron = firstDraw(.008D, .01D);
             Mob plate = create(helper, MobKind.BONE_LORD, iron);
             helper.assertValueEqual(SpecialMobEquipment.itemId(plate, "mite:rusted_iron_helmet"), "minecraft:iron_helmet",
                     "Iron plate uses the retained native item ID rather than a nonexistent MITE registration");
@@ -276,10 +276,16 @@ public final class SpecialMobEquipmentGameTests {
     public static void finalRegisteredItemReceivesExactlyOneSourceWearGeneration(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 1152L, 6_000L);
-            long seed = firstDraw(.999D, 1D);
+            long seed = -1L;
+            for (long candidate = 0; candidate < 1_000_000 && seed < 0L; candidate++) {
+                RandomSource random = RandomSource.create(candidate);
+                if (random.nextDouble() >= .999D && random.nextFloat() >= .75F) seed = candidate;
+            }
+            helper.assertTrue(seed >= 0L, "An independent late-world fixture selects the highest material and rejects its75-percent enchantment roll");
             Mob mob = create(helper, MobKind.ANCIENT_BONE_LORD, seed);
             RandomSource oracle = RandomSource.create(seed);
-            oracle.nextDouble(); // One material selection, followed by the documented source unenchanted wear draw.
+            oracle.nextDouble(); // One material selection, then the single calendar enchantment decision.
+            oracle.nextFloat();
             float fraction = .7F + .3F * oracle.nextFloat();
             ItemStack item = SpecialMobEquipment.generated(mob, "mite:ancient_metal_helmet", false);
             helper.assertValueEqual(id(item), "mite:vibranium_helmet", "The material decision occurs before source item generation");
@@ -401,7 +407,7 @@ public final class SpecialMobEquipmentGameTests {
                             "The original Nether type1 base attack remains four before equipment attributes");
                 }
                 set(helper, 1152L, 6_000L);
-                boolean advancedSword = false;
+                boolean advancedSword = false, enchantedSword = false;
                 for (long seed = 0; seed < 24L; seed++) {
                     Mob mob = create(helper, kind, nether, seed);
                     finalizeNative(mob, MobSpawnType.SPAWN_EGG, 1);
@@ -411,7 +417,7 @@ public final class SpecialMobEquipmentGameTests {
                     advancedSword |= sword.equals("mite:mithril_sword") || sword.equals("mite:adamantium_sword") || sword.equals("mite:vibranium_sword");
                     helper.assertValueEqual(EquipmentDurability.quality(mob.getMainHandItem()), Quality.POOR,
                             "A higher material does not remove the explicit source poor-item quality");
-                    helper.assertTrue(!mob.getMainHandItem().isEnchanted(), "The original type1 no-enchantment generation path remains intact");
+                    enchantedSword |= mob.getMainHandItem().isEnchanted();
                     helper.assertTrue(ARMOR.stream().allMatch(slot -> mob.getItemBySlot(slot).isEmpty()),
                             "Late material progression upgrades the existing sword without adding armor");
                     helper.assertValueEqual(mob.getAttributeBaseValue(Attributes.ATTACK_DAMAGE), 4D,
@@ -420,6 +426,7 @@ public final class SpecialMobEquipmentGameTests {
                             "Material progression preserves the actual Nether skeleton subtype");
                 }
                 helper.assertTrue(advancedSword, "Every selected Nether skeleton species can receive a high-material sword: " + kind);
+                helper.assertTrue(enchantedSword, "Late calendar growth can enchant generated Nether type1 swords while retaining source poor quality and subtype: " + kind);
             }
             Mob ordinary = EntityType.ZOMBIE.create(helper.getLevel());
             ordinary.getRandom().setSeed(196L);

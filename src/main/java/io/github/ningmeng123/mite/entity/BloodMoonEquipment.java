@@ -143,8 +143,12 @@ public final class BloodMoonEquipment {
     }
 
     public static double legacyChance(Mob mob, double sourceChance) {
-        if (!(mob.level() instanceof ServerLevel level) || !bloodDate(mob)) return sourceChance;
-        return BloodMoonEquipmentRules.bloodMoons(BloodMoonInvasion.highestDay(level)) == 1L ? .6D : sourceChance;
+        if (!(mob.level() instanceof ServerLevel level) || !handles(mob)) return sourceChance;
+        long day = BloodMoonInvasion.highestDay(level);
+        if (!bloodDate(mob)) return !BloodMoonEquipmentRules.ordinaryActive(day)
+                ? BloodMoonEquipmentRules.EARLY_ORDINARY_ARMOR_CHANCE : sourceChance;
+        return BloodMoonEquipmentRules.bloodMoons(day) == 1L
+                ? BloodMoonEquipmentRules.FIRST_BLOOD_ARMOR_CHANCE : sourceChance;
     }
 
     public static boolean generatedSlot(Mob mob, EquipmentSlot slot) {

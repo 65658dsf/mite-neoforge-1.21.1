@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.entity.OrdinarySkeletonState;
+import io.github.ningmeng123.mite.entity.MobEquipmentDrops;
 import io.github.ningmeng123.mite.entity.MobEquipmentUpgrades;
 import io.github.ningmeng123.mite.entity.R196MobEquipment;
 import io.github.ningmeng123.mite.entity.R196Skeleton;
@@ -74,7 +75,8 @@ public abstract class OrdinarySkeletonMixin extends Monster implements OrdinaryS
             better = incomingDamage > previousDamage || incomingDamage == previousDamage && canReplaceEqualItem(incoming, previous);
         } else better = canReplaceCurrentItem(incoming, previous);
         if (SourceEnchantmentCombat.disarmed(this) || !canHoldItem(incoming) || !better) return ItemStack.EMPTY;
-        if (!previous.isEmpty() && Math.max(random.nextFloat() - .1F, 0F) < getEquipmentDropChance(slot)) spawnAtLocation(previous);
+        if (!previous.isEmpty() && Math.max(random.nextFloat() - .1F, 0F) < getEquipmentDropChance(slot)
+                && MobEquipmentDrops.canDrop(mite$self(), getEquipmentDropChance(slot), previous)) spawnAtLocation(previous);
         ItemStack equipped = incoming.copyWithCount(1);
         setItemSlot(slot, equipped); setGuaranteedDrop(slot); setPersistenceRequired();
         mite$updateDualWeapons();
