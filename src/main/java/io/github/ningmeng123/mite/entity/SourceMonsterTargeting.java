@@ -193,7 +193,13 @@ public final class SourceMonsterTargeting {
             if (target == null || !target.isAlive() || mob.distanceToSqr(target) > Math.pow(effectiveRange(mob), 2D)) return false;
             if (checksSight(mob, target, sight)) {
                 if (targetVisible(mob, target, false)) unseen = 0;
-                else if (++unseen > 60) return false;
+                else if (++unseen > 60) {
+                    // A verified route keeps an acquired target through a long detour, but never indefinitely.
+                    var melee = SourceMeleeGoal.first(mob);
+                    var digger = R196DiggerGoal.first(mob);
+                    boolean overhead = digger != null && digger.isBreakingOverheadFor(target);
+                    if (!overhead && (unseen > 600 || melee == null || !melee.followsReachableRoute(target))) return false;
+                }
             }
             return true;
         }

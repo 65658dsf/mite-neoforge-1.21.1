@@ -30,6 +30,10 @@ public final class SourceMeleeGoal extends Goal {
     private int attackCooldown;
     private int recalculate;
     private int suppressed;
+    private LivingEntity pathTarget;
+    private Vec3 progressPosition;
+    private int stalledTicks;
+    private long lastProgressAt;
 
     public SourceMeleeGoal(PathfinderMob mob, double speed, boolean followUnseen) {
         this(mob, null, speed, followUnseen);
@@ -93,6 +97,8 @@ public final class SourceMeleeGoal extends Goal {
             var digger=R196DiggerGoal.first(mob);
             if(digger!=null) return digger.pursuitPlan().path();
         }
+        if (MeleePursuitPaths.applies(mob) && MeleePursuitPaths.inRange(mob, target))
+            return MeleePursuitPaths.find(mob, target, path);
         return mob.getNavigation().createPath(target.blockPosition(), 0, (int)Math.ceil(SourceMonsterTargeting.effectiveRange(mob)));
     }
 
@@ -105,7 +111,7 @@ public final class SourceMeleeGoal extends Goal {
             suppress(10);
             return false;
         }
-        if (!ZombieRoutePlanner.applies(mob) && suppressed < 1 && MobCombat.ticksWithOffset(mob) % 10 == 0 && mob.distanceTo(target) < 3F && !canStrike(mob, target)) {
+        if (!MeleePursuitPaths.applies(mob) && suppressed < 1 && MobCombat.ticksWithOffset(mob) % 10 == 0 && mob.distanceTo(target) < 3F && !canStrike(mob, target)) {
             var limit = target.position().add(0, target.getBbHeight() * .5D, 0);
             var collision = mob.level().clip(new ClipContext(mob.position().add(0, mob.getBbHeight() * .75D, 0), limit,
                     ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob));
@@ -127,13 +133,26 @@ public final class SourceMeleeGoal extends Goal {
     @Override public boolean canContinueToUse() {
         LivingEntity target = mob.getTarget();
         if (target == null || !target.isAlive()) return false;
-        if (!followUnseen && !ZombieRoutePlanner.applies(mob)) return !mob.getNavigation().isDone();
+        if (!followUnseen && !MeleePursuitPaths.applies(mob)) return !mob.getNavigation().isDone();
         return mob.isWithinRestriction(target.blockPosition());
     }
 
-    @Override public void start() { mob.getNavigation().moveTo(path, speed); recalculate = 0; }
-    @Override public void stop() { mob.getNavigation().stop(); }
+    @Override public void start() {
+        mob.getNavigation().moveTo(path, speed);
+        path = mob.getNavigation().getPath();
+        pathTarget = mob.getTarget(); progressPosition = mob.position(); stalledTicks = 0; recalculate = 0;
+        lastProgressAt = mob.level().getGameTime();
+    }
+    @Override public void stop() { mob.getNavigation().stop(); pathTarget = null; progressPosition = null; }
     @Override public boolean requiresUpdateEveryTick() { return true; }
+
+    /** Existing target memory only lasts longer while an actual complete pursuit route is making progress. */
+    public boolean followsReachableRoute(LivingEntity target) {
+        return MeleePursuitPaths.applies(mob) && pathTarget == target && stalledTicks < 60
+                && mob.level().getGameTime() - lastProgressAt < 60L && mob.getNavigation().getPath() == path
+                && !mob.getNavigation().isDone() && !mob.getNavigation().isStuck()
+                && MeleePursuitPaths.reaches(mob, mob.getNavigation().getPath(), target);
+    }
 
     public boolean canStrikeNow() {
         return suppressed <= 0 && attackCooldown <= 0 && canStrike(mob, mob.getTarget());
@@ -151,11 +170,32 @@ public final class SourceMeleeGoal extends Goal {
         if (suppressed > 0) { --suppressed; return; }
         LivingEntity target = mob.getTarget();
         if (target == null) return;
+        if (pathTarget != target || progressPosition == null || progressPosition.distanceToSqr(mob.position()) >= .25D) {
+            pathTarget = target; progressPosition = mob.position(); stalledTicks = 0;
+            lastProgressAt = mob.level().getGameTime();
+        } else ++stalledTicks;
+        if (MeleePursuitPaths.applies(mob) && stalledTicks > 0 && stalledTicks % 60 == 0) {
+            mob.getNavigation().stop();
+            var digger = R196DiggerGoal.first(mob);
+            if (digger != null) digger.invalidatePursuit();
+            recalculate = 0;
+        }
         mob.getLookControl().setLookAt(target, 30, 30);
-        if ((followUnseen || ZombieRoutePlanner.applies(mob) || SourceMonsterTargeting.canSee(mob, target, false)) && --recalculate <= 0) {
+        if ((followUnseen || MeleePursuitPaths.applies(mob) || SourceMonsterTargeting.canSee(mob, target, false)) && --recalculate <= 0) {
             recalculate = 4 + mob.getRandom().nextInt(7);
             path = findPath(target);
-            mob.getNavigation().moveTo(path, speed);
+            if (MeleePursuitPaths.applies(mob) && MeleePursuitPaths.inRange(mob, target)
+                    && !MeleePursuitPaths.reaches(mob, path, target)) recalculate = 20;
+            // Reissuing the same route resets vanilla's stuck timer, hiding a blocked passage forever.
+            if (path != mob.getNavigation().getPath() || mob.getNavigation().isDone()) mob.getNavigation().moveTo(path, speed);
+            path = mob.getNavigation().getPath();
+        }
+        if (MeleePursuitPaths.applies(mob) && mob.getNavigation().isDone()
+                && MeleePursuitPaths.reaches(mob, path, target) && !canStrike(mob, target)) {
+            // Native waypoint tolerance can finish just outside real melee reach. Finish the verified last step.
+            Vec3 end = MeleePursuitPaths.standingPoint(mob, path, path.getNodeCount() - 1);
+            if (mob.level().noCollision(mob, mob.getBoundingBox().move(end.subtract(mob.position())).deflate(.001D)))
+                mob.getMoveControl().setWantedPosition(end.x, end.y, end.z, speed);
         }
         attackCooldown = Math.max(0, attackCooldown - 1);
         if (attackCooldown > 0) return;

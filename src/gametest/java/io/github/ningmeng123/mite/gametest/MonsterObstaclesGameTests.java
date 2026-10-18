@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -33,9 +34,12 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -62,6 +66,14 @@ public final class MonsterObstaclesGameTests {
             h.getLevel().setBlock(pos.above(),state.setValue(DoorBlock.HALF,DoubleBlockHalf.UPPER),2);
     }
     private static SourceBreakPortalGoal portal(GameTestHelper h,Zombie mob,BlockState state) {
+        // Give the target real support and make this portal the only way through the corridor.
+        BlockPos origin=mob.blockPosition();
+        for(int x=-1;x<=4;x++)for(int z=-1;z<=1;z++)for(int y=-1;y<=2;y++) {
+            boolean boundary=y==-1||y==2||z!=0||x==-1||x==4;
+            h.getLevel().setBlock(origin.offset(x,y,z),(boundary?Blocks.BEDROCK:Blocks.AIR).defaultBlockState(),2);
+        }
+        mob.setOnGround(true);
+        if(state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) state=state.setValue(BlockStateProperties.HORIZONTAL_FACING,Direction.EAST);
         BlockPos p=mob.blockPosition().east();put(h,p,state);
         var navigation=(net.minecraft.world.entity.ai.navigation.GroundPathNavigation)mob.getNavigation();
         navigation.setCanOpenDoors(true);navigation.setCanPassDoors(true);
@@ -89,12 +101,15 @@ public final class MonsterObstaclesGameTests {
     }
     @GameTest(template="empty") public static void realPathAndCollisionSelectDoorAndTrapdoorAndGate(GameTestHelper h) {
         for(var state:List.of(Blocks.OAK_DOOR.defaultBlockState(),Blocks.OAK_TRAPDOOR.defaultBlockState(),Blocks.OAK_FENCE_GATE.defaultBlockState())) {
-            var mob=zombie(h);var goal=portal(h,mob,state);h.assertTrue(goal.canUse(),"pm finds a real closed wooden portal through its path");
+            var mob=zombie(h);mob.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.IRON_SWORD));
+            var goal=portal(h,mob,state);h.assertTrue(goal.canUse(),"pm finds a real closed wooden portal through its path");
             goal.stop();h.getLevel().setBlock(mob.blockPosition().east().above(),Blocks.AIR.defaultBlockState(),2);mob.discard();
         }h.succeed();
     }
     @GameTest(template="empty") public static void portalNeedsCollisionAndAnActivePath(GameTestHelper h) {
         var mob=zombie(h);var goal=portal(h,mob,Blocks.OAK_TRAPDOOR.defaultBlockState());
+        // The source collision/path branch is independent of the newer player route planner.
+        mob.setTarget(null);
         mob.horizontalCollision=false;h.assertFalse(goal.canUse(),"No horizontal collision cannot start");
         mob.horizontalCollision=true;mob.getNavigation().stop();h.assertFalse(goal.canUse(),"No active path cannot start");mob.discard();h.succeed();
     }
@@ -115,25 +130,34 @@ public final class MonsterObstaclesGameTests {
         ordinaryTime(h,()->difficulty(h,Difficulty.HARD,()->{
             var mob=zombie(h);mob.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.IRON_SWORD));
             var goal=portal(h,mob,Blocks.OAK_DOOR.defaultBlockState());h.assertTrue(goal.canUse(),"Sword still pounds doors");goal.start();
+            h.assertFalse(digger(mob).pursuitPlan().completeWalkingRoute(),"The supported enclosed corridor offers no walking alternative to its closed door");
             BlockPos p=mob.blockPosition().east();
-            for(int i=0;i<1920;i++) goal.tick();
+            int[] doorDrops={0};
+            java.util.function.Consumer<EntityJoinLevelEvent> capture=event->{
+                if(event.getLevel()==h.getLevel()&&event.getEntity() instanceof ItemEntity item&&item.getItem().is(Items.OAK_DOOR))doorDrops[0]++;
+            };
+            NeoForge.EVENT_BUS.addListener(EntityJoinLevelEvent.class,capture);
+            try {for(int i=0;i<1920;i++)goal.tick();}finally {NeoForge.EVENT_BUS.unregister(capture);}
             h.assertTrue(h.getLevel().getBlockState(p).isAir()&&h.getLevel().getBlockState(p.above()).isAir(),"Both halves removed");
-            h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class,mob.getBoundingBox().inflate(4)).stream()
-                    .noneMatch(item->item.getItem().is(Items.OAK_DOOR)),"Direct source air removal never drops door");
+            h.assertValueEqual(doorDrops[0],0,"Actual door-pounding ticks never spawn a door item");
             h.assertValueEqual(mob.getMainHandItem().getDamageValue(),0,"Door pounding never wears held sword");goal.stop();mob.discard();
         }));h.succeed();
     }
     @GameTest(template="empty") public static void normalDifficultyHoldsAtFullProgressWithoutBreaking(GameTestHelper h) {
         ordinaryTime(h,()->difficulty(h,Difficulty.NORMAL,()->{
-            var mob=zombie(h);var goal=portal(h,mob,Blocks.OAK_TRAPDOOR.defaultBlockState());
+            var mob=zombie(h);mob.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.IRON_SWORD));
+            // Nonplayer prey isolates the source Normal-difficulty pounding branch from player route choices.
+            var cow=EntityType.COW.create(h.getLevel());mob.setTarget(cow);
+            var goal=portal(h,mob,Blocks.OAK_TRAPDOOR.defaultBlockState());
             h.assertTrue(goal.canUse(),"Normal can pound");goal.start();for(int i=0;i<500;i++)goal.tick();
             h.assertValueEqual(goal.progress(),480,"Progress caps at source threshold");
-            h.assertTrue(goal.canContinueToUse()&&!h.getLevel().getBlockState(mob.blockPosition().east()).isAir(),"Normal keeps pounding full bar");goal.stop();mob.discard();
+            h.assertTrue(goal.canContinueToUse()&&!h.getLevel().getBlockState(mob.blockPosition().east()).isAir(),"Normal keeps pounding full bar");goal.stop();mob.discard();cow.discard();
         }));h.succeed();
     }
     @GameTest(template="empty") public static void portalPoundingAndBreakSendDoorSoundsInsteadOfJukeboxPackets(GameTestHelper h) {
         ordinaryTime(h,()->difficulty(h,Difficulty.HARD,()->{
-            var mob=zombie(h);var goal=portal(h,mob,Blocks.OAK_DOOR.defaultBlockState());
+            var mob=zombie(h);mob.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.IRON_SWORD));
+            var goal=portal(h,mob,Blocks.OAK_DOOR.defaultBlockState());
             var cookie=CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(),"mite-door-sounds"),false);
             var player=new ServerPlayer(h.getLevel().getServer(),h.getLevel(),cookie.gameProfile(),cookie.clientInformation());
             var connection=new Connection(PacketFlow.SERVERBOUND);var channel=new EmbeddedChannel(connection);

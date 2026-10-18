@@ -148,7 +148,8 @@ public final class SourceBreakPortalGoal extends Goal {
             BlockState other=level.getBlockState(partner);
             if(other.is(state.getBlock())) {
                 if(!other.canEntityDestroy(level,partner,mob)||!EventHooks.onEntityDestroyBlock(mob,partner,other)) {reject(partner);stop();return;}
-                level.setBlock(partner,net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),2);
+                // Shape updates must not remove and drop the still-present half before the next line removes it.
+                level.setBlock(partner,net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),Block.UPDATE_CLIENTS|Block.UPDATE_KNOWN_SHAPE);
             }
         }
         level.setBlock(target, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);

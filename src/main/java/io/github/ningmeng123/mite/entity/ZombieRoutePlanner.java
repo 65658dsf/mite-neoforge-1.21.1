@@ -13,17 +13,13 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.PathNavigationRegion;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
@@ -31,7 +27,7 @@ import net.neoforged.neoforge.event.EventHooks;
 /** Bounded pursuit compares real walking routes with verified, short ground-level openings. @author NingMeng123 */
 public final class ZombieRoutePlanner {
     public static final int REPLAN_TICKS = 10;
-    private static final int RANGE = 48, MAX_NODES = 2048, MAX_BLOCKS = 8;
+    private static final int MAX_BLOCKS = 8;
     private final PathfinderMob mob;
     private final R196DiggerGoal digger;
     private Plan cached;
@@ -48,6 +44,8 @@ public final class ZombieRoutePlanner {
     }
 
     public ZombieRoutePlanner(PathfinderMob mob, R196DiggerGoal digger) { this.mob = mob; this.digger = digger; }
+
+    public void invalidate() { cached = null; }
 
     /** A real protection veto is remembered briefly; speculative path queries never fire destroy events. */
     public void reject(BlockPos pos) {
@@ -72,18 +70,14 @@ public final class ZombieRoutePlanner {
         if (target == null) return new Plan(null, null, false, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         long now = mob.level().getGameTime();
         boolean permitted = EventHooks.canEntityGrief(mob.level(), mob), frenzied = R196MonsterAi.frenzied(mob);
-        if (cached != null && prey == target && now >= plannedAt && now - plannedAt < REPLAN_TICKS
+        int lifetime = cached != null && !cached.completeWalkingRoute() && !cached.choosesBreaking() ? 20 : REPLAN_TICKS;
+        if (cached != null && prey == target && now >= plannedAt && now - plannedAt < lifetime
                 && origin.distanceToSqr(mob.position()) < 1D && destination.distanceToSqr(target.position()) < 1D
                 && griefing == permitted && frenzy == frenzied && ItemStack.isSameItemSameComponents(held, mob.getMainHandItem())
                 && (cached.firstBlock() == null || !mob.level().getBlockState(cached.firstBlock()).isAir())) return cached;
         prey = target; origin = mob.position(); destination = target.position(); plannedAt = now;
         held = mob.getMainHandItem().copy(); griefing = permitted; frenzy = frenzied;
-        Path walk = findPath(target.blockPosition(), 1);
-        // A target at the far edge of its block can be outside melee reach of an accuracy-one endpoint.
-        if(!reaches(walk,target)) {
-            Path exact=findPath(target.blockPosition(),0);
-            if(exact!=null&&(reaches(exact,target)||closer(exact,target)<closer(walk,target)))walk=exact;
-        }
+        Path walk = MeleePursuitPaths.find(mob, target, cached == null ? null : cached.path());
         double walking = reaches(walk, target) ? pathTicks(walk) : Double.POSITIVE_INFINITY;
         Opening opening = permitted ? directOpening(target) : null;
         double breaking = opening == null ? Double.POSITIVE_INFINITY : opening.ticks();
@@ -101,44 +95,19 @@ public final class ZombieRoutePlanner {
 
     /** Never loads a chunk, and closed portals are obstacles rather than imaginary open doorways. */
     @Nullable private Path findPath(BlockPos target, int reach) {
-        if (!mob.level().hasChunkAt(target) || target.distSqr(mob.blockPosition()) > RANGE * RANGE) return null;
-        BlockPos start = mob.blockPosition();
-        PathNavigationRegion region = new PathNavigationRegion(mob.level(), start.offset(-RANGE - 8, -RANGE - 8, -RANGE - 8),
-                start.offset(RANGE + 8, RANGE + 8, RANGE + 8)) {
-            @Override public BlockState getBlockState(BlockPos pos) {
-                return !mob.level().hasChunkAt(pos) || isOutsideBuildHeight(pos) ? Blocks.BEDROCK.defaultBlockState() : super.getBlockState(pos);
-            }
-        };
-        WalkNodeEvaluator nodes = new WalkNodeEvaluator();
-        nodes.setCanOpenDoors(false); nodes.setCanPassDoors(true);
-        nodes.setCanFloat(mob.getNavigation().getNodeEvaluator().canFloat());
-        Path path = new PathFinder(nodes, MAX_NODES).findPath(region, mob, Set.of(target), RANGE, reach, 1F);
-        if (path == null) return null;
-        for (int i = 0; i < path.getNodeCount(); i++) {
-            Node node = path.getNode(i);
-            if (!mob.level().hasChunkAt(node.asBlockPos()) || node.type == PathType.LAVA || node.type == PathType.DAMAGE_FIRE
-                    || node.type == PathType.DAMAGE_OTHER || node.type == PathType.POWDER_SNOW) return null;
-        }
-        return path;
+        return MeleePursuitPaths.find(mob, Set.of(target), reach, false);
     }
 
     private boolean reaches(@Nullable Path path, LivingEntity target) {
-        if (path == null || !path.canReach() || path.getEndNode() == null) return false;
-        Vec3 end = path.getEntityPosAtNode(mob, path.getNodeCount() - 1);
-        return SourceMeleeGoal.canStrikeFrom(mob,target,end);
-    }
-
-    private double closer(@Nullable Path path,LivingEntity target) {
-        return path==null||path.getEndNode()==null?Double.POSITIVE_INFINITY
-                :path.getEntityPosAtNode(mob,path.getNodeCount()-1).distanceToSqr(target.position());
+        return MeleePursuitPaths.reaches(mob, path, target);
     }
 
     private double speed() { return Math.max(.01D, mob.getAttributeValue(Attributes.MOVEMENT_SPEED)); }
 
     private double pathTicks(Path path) {
         Vec3 previous = mob.position(); double length = 0D, rise = 0D, water = 0D, malus = 0D;
-        for (int i = 0; i < path.getNodeCount(); i++) {
-            Node node = path.getNode(i); Vec3 point = path.getEntityPosAtNode(mob, i);
+        for (int i = path.getNextNodeIndex(); i < path.getNodeCount(); i++) {
+            Node node = path.getNode(i); Vec3 point = MeleePursuitPaths.standingPoint(mob, path, i);
             double segment = previous.distanceTo(point); length += segment;
             rise += Math.max(0D, point.y - previous.y); malus += Math.max(0D, node.costMalus);
             if (node.type == PathType.WATER || node.type == PathType.WATER_BORDER) water += segment;

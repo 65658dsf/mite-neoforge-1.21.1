@@ -18,7 +18,9 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
@@ -42,6 +44,7 @@ public final class R196DiggerGoal extends Goal {
     private BlockPos target;
     private int progress = -1, cooldown = 40, pause;
     private boolean active;
+    private boolean overheadDigging, started;
     private final ZombieRoutePlanner pursuit;
     public R196DiggerGoal(PathfinderMob mob) { this.mob=mob; pursuit=new ZombieRoutePlanner(mob,this);setFlags(EnumSet.of(Flag.MOVE,Flag.LOOK)); }
     public static boolean watcher(PathfinderMob mob) {
@@ -111,6 +114,7 @@ public final class R196DiggerGoal extends Goal {
         return speed>1F?speed:0F;
     }
     public ZombieRoutePlanner.Plan pursuitPlan() { return pursuit.plan(); }
+    public void invalidatePursuit() { pursuit.invalidate(); }
     public boolean destructionRejected(BlockPos pos) { return pursuit.rejected(pos); }
     public void rejectDestruction(BlockPos pos) {
         pursuit.reject(pos);
@@ -144,8 +148,10 @@ public final class R196DiggerGoal extends Goal {
     public boolean canDestroy(BlockPos pos,boolean clipping) {
         if(!canDestroyMaterial(pos)||!EventHooks.canEntityGrief(mob.level(),mob)) return false;
         var tool=EquipmentDurability.toolProfile(mob.getMainHandItem()); int foot=mob.blockPosition().getY();
-        if(pos.getY()>foot+1||pos.getY()<foot&&(tool==null||tool.family()!=ToolFamily.SHOVEL)) return false;
-        if(mob.position().add(0,mob.getBbHeight()*.5,0).distanceToSqr(pos.getCenter())>3.25D) return false;
+        boolean overhead=pos.getY()>foot+1&&overheadObstruction(pos);
+        if(pos.getY()>foot+1&&!overhead||pos.getY()<foot&&(tool==null||tool.family()!=ToolFamily.SHOVEL)) return false;
+        Vec3 reach=overhead?mob.getEyePosition():mob.position().add(0,mob.getBbHeight()*.5,0);
+        if(reach.distanceToSqr(pos.getCenter())>3.25D) return false;
         BlockState state=mob.level().getBlockState(pos);
         if(clipping&&blocked(mob.getEyePosition(),pos)&&blocked(legs(),pos)) return false;
         if(mob instanceof R196Elemental earth&&minimumHarvestLevel(state)<=earth.getBlockHarvestLevel()) return true;
@@ -155,6 +161,46 @@ public final class R196DiggerGoal extends Goal {
             var digger=first(peer); if(digger!=null&&digger.isDestroying(pos)) return false;
         }
         return true;
+    }
+
+    /** Only the close player's actual support directly over this mob gets the upward reach exception. */
+    private boolean overheadObstruction(BlockPos pos) {
+        if(!(mob.getTarget() instanceof Player player)||!player.isAlive()||player.level()!=mob.level()
+                ||!R196MonsterAi.managed(mob)||!watcher(mob)||!mob.level().hasChunkAt(pos)
+                ||SourceMeleeGoal.canStrike(mob,player)) return false;
+        var body=mob.getBoundingBox();var prey=player.getBoundingBox();
+        if(pos.getX()+1D<=body.minX||pos.getX()>=body.maxX||pos.getZ()+1D<=body.minZ||pos.getZ()>=body.maxZ
+                ||pos.getX()+1D<=prey.minX||pos.getX()>=prey.maxX||pos.getZ()+1D<=prey.minZ||pos.getZ()>=prey.maxZ) return false;
+        double dx=player.getX()-mob.getX(),dz=player.getZ()-mob.getZ();
+        if(dx*dx+dz*dz>2.25D||mob.getEyePosition().distanceToSqr(pos.getCenter())>3.25D) return false;
+        for(var shape:mob.level().getBlockState(pos).getCollisionShape(mob.level(),pos).toAabbs()) {
+            var obstacle=shape.move(pos);
+            if(obstacle.minY<body.maxY-.01D||obstacle.minY-body.maxY>1.25D||Math.abs(obstacle.maxY-prey.minY)>.125D
+                    ||obstacle.maxX<=body.minX||obstacle.minX>=body.maxX||obstacle.maxZ<=body.minZ||obstacle.minZ>=body.maxZ
+                    ||obstacle.maxX<=prey.minX||obstacle.minX>=prey.maxX||obstacle.maxZ<=prey.minZ||obstacle.minZ>=prey.maxZ) continue;
+            var hit=clip(mob.getEyePosition(),player.position().add(0,.1D,0));
+            if(hit.getType()==HitResult.Type.BLOCK&&hit.getBlockPos().equals(pos)) return true;
+        }
+        return false;
+    }
+
+    private BlockPos overheadBlock() {
+        var prey=mob.getTarget();
+        if(!(prey instanceof Player)||!prey.isAlive()) return null;
+        var bounds=prey.getBoundingBox();int top=net.minecraft.util.Mth.floor(bounds.minY-.001D);
+        for(int y=top;y>=top-1;y--)
+            for(int x=net.minecraft.util.Mth.floor(bounds.minX+.001D);x<=net.minecraft.util.Mth.floor(bounds.maxX-.001D);x++)
+                for(int z=net.minecraft.util.Mth.floor(bounds.minZ+.001D);z<=net.minecraft.util.Mth.floor(bounds.maxZ-.001D);z++) {
+                    BlockPos candidate=new BlockPos(x,y,z);
+                    if(overheadObstruction(candidate)&&canDestroy(candidate,true)) return candidate;
+                }
+        return null;
+    }
+
+    /** Digging keeps an already acquired hidden player only while this goal is actually doing valid work. */
+    public boolean isBreakingOverheadFor(LivingEntity prey) {
+        return started&&active&&overheadDigging&&target!=null&&mob.getTarget()==prey
+                &&overheadObstruction(target)&&canDestroy(target,true);
     }
     private Vec3 legs() { return mob.position().add(0,mob.getBbHeight()*.25F,0); }
     private BlockHitResult clip(Vec3 from,Vec3 to) {
@@ -178,9 +224,9 @@ public final class R196DiggerGoal extends Goal {
     public boolean setBlockToDig(BlockPos pos,boolean clipping) {
         if(!canDestroy(pos,clipping)) return false;
         active=true;
-        if(pos.equals(target)) return true;
+        if(pos.equals(target)) { overheadDigging|=overheadObstruction(pos);save();return true; }
         if(pos.getY()==mob.blockPosition().getY()+1&&mob.level().getBlockState(pos).is(Blocks.CACTUS)&&canDestroy(pos.below(),clipping)) pos=pos.below();
-        target=pos.immutable(); progress=-1; save(); return true;
+        target=pos.immutable(); overheadDigging=overheadObstruction(pos);progress=-1; save(); return true;
     }
     private void restore() {
         if(target!=null||!mob.getPersistentData().contains(SAVE)) return;
@@ -188,9 +234,15 @@ public final class R196DiggerGoal extends Goal {
         if(!tag.contains("position")) return;
         target=BlockPos.of(tag.getLong("position"));progress=Math.clamp(tag.getInt("progress"),-1,9);
         cooldown=Math.max(0,tag.getInt("cooldown"));active=true;
+        overheadDigging=tag.getBoolean("overhead");
     }
     @Override public boolean canUse() {
         restore();var prey=mob.getTarget();
+        // Restored target UUIDs may be resolved a few ticks after the goal's saved work is loaded.
+        if(overheadDigging&&prey==null&&!started) return false;
+        if(overheadDigging&&(target==null||!overheadObstruction(target))) stop();
+        BlockPos overhead=overheadBlock();
+        if(overhead!=null) return setBlockToDig(overhead,true);
         if(ZombieRoutePlanner.applies(mob)) {
             var plan=pursuit.plan();
             if(plan.choosesBreaking()) {
@@ -245,19 +297,20 @@ public final class R196DiggerGoal extends Goal {
         var n=path.getEndNode();Vec3 foot=new Vec3(n.x+.5,n.y,n.z+.5);
         return foot.distanceTo(prey.position())<=1D&&clip(foot,prey.position().add(0,prey.getBbHeight()*.5F,0)).getType()==HitResult.Type.MISS;
     }
-    @Override public void start() { active=true;save(); }
+    @Override public void start() { active=true;started=true;if(overheadDigging)mob.getNavigation().stop();save(); }
     @Override public boolean canContinueToUse() {
         if(blockingWeapon()||!mob.isAlive()) return false;
+        if(overheadDigging&&(target==null||!overheadObstruction(target))) return false;
         var melee=SourceMeleeGoal.first(mob);
         if(melee!=null&&melee.tickWhenDigging()) return false;
         if(pause>0) return pause!=1||!pathIsCloser();
         var prey=mob.getTarget();
         if(!active||target==null||!canDestroy(target,true)||prey==null||!prey.isAlive()||mob.blockPosition().equals(prey.blockPosition())) return false;
-        if(ZombieRoutePlanner.applies(mob)&&MobCombat.ticksWithOffset(mob)%ZombieRoutePlanner.REPLAN_TICKS==0) {
+        if(!overheadDigging&&ZombieRoutePlanner.applies(mob)&&MobCombat.ticksWithOffset(mob)%ZombieRoutePlanner.REPLAN_TICKS==0) {
             var plan=pursuit.plan();
             if(plan.portal()||plan.completeWalkingRoute()&&!plan.choosesBreaking()) return false;
         }
-        return MobCombat.ticksWithOffset(mob)%10!=0||!pathCanHit();
+        return overheadDigging||MobCombat.ticksWithOffset(mob)%10!=0||!pathCanHit();
     }
     /** Actual registered source values; unmapped modern blocks retain the project's modern hardness adaptation. */
     public float hardness(BlockPos pos) {
@@ -292,7 +345,7 @@ public final class R196DiggerGoal extends Goal {
     @Override public void tick() {
         if(!active||target==null||!(mob.level() instanceof ServerLevel level)) return;
         if(pause>0) { pause--;return; }
-        if(!canDestroy(target,true)) { stop();return; }
+        if(overheadDigging&&!overheadObstruction(target)||!canDestroy(target,true)) { stop();return; }
         mob.getLookControl().setLookAt(target.getX()+.5,target.getY()+.5,target.getZ()+.5,10,mob.getMaxHeadXRot());
         if(cooldown==10) mob.swing(InteractionHand.MAIN_HAND);
         if(--cooldown>0) { save();return; }
@@ -335,11 +388,12 @@ public final class R196DiggerGoal extends Goal {
     private void save() {
         if(!active||target==null) { mob.getPersistentData().remove(SAVE);return; }
         var tag=new CompoundTag();tag.putLong("position",target.asLong());tag.putInt("progress",progress);tag.putInt("cooldown",cooldown);
+        tag.putBoolean("overhead",overheadDigging);
         mob.getPersistentData().put(SAVE,tag); // Source does not persist the transient pause.
     }
     @Override public void stop() {
         if(target!=null&&mob.level() instanceof ServerLevel level) level.destroyBlockProgress(mob.getId(),target,-1);
-        target=null;active=false;progress=-1;cooldown=40;pause=0;save();
+        target=null;active=false;overheadDigging=false;started=false;progress=-1;cooldown=40;pause=0;save();
     }
     @Override public boolean requiresUpdateEveryTick() { return true; }
 }
