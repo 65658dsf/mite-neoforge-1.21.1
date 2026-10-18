@@ -1,11 +1,14 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
 import io.github.ningmeng123.mite.combat.ShieldGuard;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.progression.GearProgression;
 import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.rules.ShieldGuardRules;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.List;
 import java.util.UUID;
@@ -74,6 +77,9 @@ public final class ShieldGuardGameTests {
             this(helper, player, InteractionHand.OFF_HAND);
         }
         private Session(GameTestHelper helper, boolean player, InteractionHand hand) {
+            this(helper, player, hand, "copper");
+        }
+        private Session(GameTestHelper helper, boolean player, InteractionHand hand, String material) {
             this.helper = helper;
             this.hand = hand;
             if (player) defender = new GuardPlayer(helper);
@@ -87,7 +93,7 @@ public final class ShieldGuardGameTests {
             defender.setOnGround(true);
             defender.getAttribute(Attributes.MAX_HEALTH).setBaseValue(200D);
             defender.setHealth(200F);
-            shield = new ItemStack(MiteShields.get("iron"));
+            shield = new ItemStack(MiteShields.get(material));
             defender.setItemInHand(hand, shield);
             attacker = EntityType.COW.create(helper.getLevel());
             attacker.setNoAi(true);
@@ -126,6 +132,95 @@ public final class ShieldGuardGameTests {
         var state = ShieldGuard.state(shield);
         helper.assertTrue(Math.abs(state.blockedDamage() - damage) < 1E-6D && state.blocks() == blocks,
                 message + ": actual=" + state + ", expected=" + damage + "/" + blocks);
+    }
+
+    @GameTest(template = "empty")
+    public static void everyRegisteredMaterialUsesItsOwnAcceptedBlockLimitForPlayersAndMobs(GameTestHelper helper) {
+        for (var definition : MiteShields.definitions()) for (boolean player : new boolean[]{false, true})
+            try (Session session = new Session(helper, player, InteractionHand.OFF_HAND, definition.material())) {
+                var profile = ShieldGuard.profile(session.shield);
+                helper.assertValueEqual(profile, ShieldGuardRules.profile(definition.material()),
+                        "The actual registered shield resolves its own material band: " + definition.material());
+                float health = session.defender.getHealth();
+                for (int count = 1; count < profile.blockLimit(); count++) {
+                    session.hit(1F);
+                    state(helper, session.shield, count, count, definition.material() + " retains block " + count);
+                    helper.assertTrue(session.defender.isUsingItem() && !ShieldGuard.disabled(session.defender),
+                            definition.material() + " stays raised until its own final accepted block");
+                }
+                session.hit(1F);
+                helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
+                        definition.material() + " exhausts exactly at its material-specific block count");
+                helper.assertValueEqual(session.defender.getHealth(), health, "The final accepted block still protects health");
+                state(helper, session.shield, 0D, 0, "The material-specific exhaustion resets both counters");
+                helper.assertValueEqual(session.defender.getPersistentData().getLong(MobShields.DISABLED_UNTIL),
+                        helper.getLevel().getGameTime() + ShieldGuard.COOLDOWN_TICKS,
+                        "Every material keeps the same five-second cooldown for players and mobs");
+            }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyRegisteredMaterialUsesItsExactUnroundedDamageLimit(GameTestHelper helper) {
+        for (var definition : MiteShields.definitions()) for (boolean player : new boolean[]{false, true})
+            try (Session session = new Session(helper, player, InteractionHand.MAIN_HAND, definition.material())) {
+                var profile = ShieldGuard.profile(session.shield);
+                float below = Math.nextDown((float)profile.damageLimit());
+                float health = session.defender.getHealth();
+                session.hit(below);
+                state(helper, session.shield, below, 1, definition.material() + " records the actual damage below its boundary");
+                helper.assertTrue(session.defender.isUsingItem() && !ShieldGuard.disabled(session.defender),
+                        definition.material() + " does not round its damage limit down");
+                float remainder = Math.nextUp((float)(profile.damageLimit() - below));
+                session.hit(remainder);
+                helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
+                        definition.material() + " breaks as soon as actual accepted damage crosses its precise boundary");
+                helper.assertValueEqual(session.defender.getHealth(), health, "The damage-boundary hit remains fully blocked");
+                state(helper, session.shield, 0D, 0, "Crossing the exact damage boundary clears both counters");
+            }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void transferringAHigherTierShieldToTheOtherHandKeepsItsExistingPressure(GameTestHelper helper) {
+        for (boolean player : new boolean[]{false, true})
+            try (Session session = new Session(helper, player, InteractionHand.OFF_HAND, "mithril")) {
+                session.hit(1F); session.hit(1F); session.hit(1F); session.hit(1F);
+                state(helper, session.shield, 4D, 4, "A higher-tier shield retains history beyond the former third-block cap");
+                session.defender.stopUsingItem();
+                session.defender.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+                session.defender.setItemInHand(InteractionHand.MAIN_HAND, session.shield);
+                session.defender.startUsingItem(InteractionHand.MAIN_HAND);
+                for (int tick = 0; tick < 6; tick++) {
+                    if (session.defender instanceof ServerPlayer realPlayer) realPlayer.doTick(); else session.defender.tick();
+                }
+                session.forward();
+                helper.assertTrue(session.defender.isBlocking(), "The transferred physical shield completes its native raising delay");
+                session.hit(1F); session.hit(1F);
+                state(helper, session.shield, 6D, 6, "Changing hands cannot erase the same shield's accepted blocks");
+                session.hit(1F);
+                helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
+                        "The transferred mithril shield still exhausts on its seventh cumulative block");
+            }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void shieldGuardCodecAcceptsLegacyVersionOneAndTheFullNewMaterialRange(GameTestHelper helper) {
+        var legacy = ShieldGuard.State.CODEC.parse(JsonOps.INSTANCE,
+                JsonParser.parseString("{\"blocked_damage\":24,\"blocks\":2,\"version\":1}")).getOrThrow();
+        helper.assertValueEqual(legacy, new ShieldGuard.State(24D, 2), "Existing version-one components remain readable");
+        var maximum = new ShieldGuard.State(ShieldGuardRules.MAX_DAMAGE_LIMIT, ShieldGuardRules.MAX_BLOCK_LIMIT);
+        var encoded = ShieldGuard.State.CODEC.encodeStart(JsonOps.INSTANCE, maximum).getOrThrow();
+        helper.assertValueEqual(ShieldGuard.State.CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow(), maximum,
+                "The codec round-trips both maximum-tier bounds without truncation");
+        helper.assertTrue(ShieldGuard.State.CODEC.parse(JsonOps.INSTANCE,
+                JsonParser.parseString("{\"blocked_damage\":92,\"blocks\":11,\"version\":1}")).error().isPresent(),
+                "Damage above the highest supported material limit is rejected");
+        helper.assertTrue(ShieldGuard.State.CODEC.parse(JsonOps.INSTANCE,
+                JsonParser.parseString("{\"blocked_damage\":1,\"blocks\":12,\"version\":1}")).error().isPresent(),
+                "Block counts above the highest supported material limit are rejected");
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -279,8 +374,9 @@ public final class ShieldGuardGameTests {
 
     @GameTest(template = "empty")
     public static void savedPressureAndAllThreeRepairRoutesKeepOnlyTheFirstShieldsPressure(GameTestHelper helper) {
-        try (Session session = new Session(helper, true)) {
-            session.hit(4F);
+        try (Session session = new Session(helper, true, InteractionHand.OFF_HAND, "vibranium")) {
+            session.hit(8F); session.hit(8F); session.hit(8F); session.hit(8F);
+            state(helper, session.shield, 32D, 4, "The saved high-tier fixture exceeds both former global limits");
             var expected = ShieldGuard.state(session.shield);
             ItemStack saved = ItemStack.parse(helper.getLevel().registryAccess(), session.shield.save(helper.getLevel().registryAccess())).orElseThrow();
             helper.assertValueEqual(ShieldGuard.state(saved), expected, "Both cumulative damage and block count survive real ItemStack save/load");

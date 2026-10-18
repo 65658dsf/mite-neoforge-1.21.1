@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.entity.MobShields;
+import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.rules.ShieldGuardRules;
 import java.util.function.Supplier;
 import net.minecraft.core.component.DataComponentType;
@@ -24,8 +25,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /** Persistent per-shield guard exhaustion, applied only after the native blocked hit finishes. @author NingMeng123 */
 public final class ShieldGuard {
-    public static final double DAMAGE_LIMIT = ShieldGuardRules.DAMAGE_LIMIT;
-    public static final int BLOCK_LIMIT = ShieldGuardRules.BLOCK_LIMIT;
     public static final int COOLDOWN_TICKS = ShieldGuardRules.COOLDOWN_TICKS;
     private static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Mite.MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<State>> GUARD =
@@ -36,19 +35,19 @@ public final class ShieldGuard {
     public record State(double blockedDamage, int blocks) {
         public static final State EMPTY = new State(0D, 0);
         public static final Codec<State> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.doubleRange(0D, DAMAGE_LIMIT).optionalFieldOf("blocked_damage", 0D).forGetter(State::blockedDamage),
-                Codec.intRange(0, BLOCK_LIMIT).optionalFieldOf("blocks", 0).forGetter(State::blocks),
+                Codec.doubleRange(0D, ShieldGuardRules.MAX_DAMAGE_LIMIT).optionalFieldOf("blocked_damage", 0D).forGetter(State::blockedDamage),
+                Codec.intRange(0, ShieldGuardRules.MAX_BLOCK_LIMIT).optionalFieldOf("blocks", 0).forGetter(State::blocks),
                 Codec.intRange(1, 1).optionalFieldOf("version", 1).forGetter(value -> 1)
         ).apply(instance, (damage, blocks, version) -> new State(damage, blocks)));
 
         public State {
-            if (!Double.isFinite(blockedDamage) || blockedDamage < 0D || blockedDamage > DAMAGE_LIMIT
-                    || blocks < 0 || blocks > BLOCK_LIMIT)
+            if (!Double.isFinite(blockedDamage) || blockedDamage < 0D || blockedDamage > ShieldGuardRules.MAX_DAMAGE_LIMIT
+                    || blocks < 0 || blocks > ShieldGuardRules.MAX_BLOCK_LIMIT)
                 throw new IllegalArgumentException("Invalid shield guard state");
         }
     }
 
-    private record Accepted(ItemStack shield, Item item, State before, float blockedDamage) {}
+    private record Accepted(ItemStack shield, Item item, State before, float blockedDamage, ShieldGuardRules.Profile profile) {}
     private static final class HitScope {
         private final LivingEntity defender;
         private final HitScope parent;
@@ -61,6 +60,10 @@ public final class ShieldGuard {
 
     public static void register(IEventBus bus) { COMPONENTS.register(bus); }
     public static boolean shield(ItemStack stack) { return !stack.isEmpty() && stack.canPerformAction(ItemAbilities.SHIELD_BLOCK); }
+    public static ShieldGuardRules.Profile profile(ItemStack stack) {
+        MiteShields.Definition definition = MiteShields.definition(stack);
+        return ShieldGuardRules.profile(definition == null ? null : definition.material());
+    }
     public static State state(ItemStack stack) { return stack.isEmpty() ? State.EMPTY : stack.getOrDefault(GUARD.get(), State.EMPTY); }
     public static boolean disabled(LivingEntity defender) {
         return defender.getPersistentData().getLong(MobShields.DISABLED_UNTIL) > defender.level().getGameTime();
@@ -87,7 +90,7 @@ public final class ShieldGuard {
         ItemStack stack = defender.getUseItem();
         if (scope == null || scope.defender != defender || event.isCanceled() || !event.getBlocked()
                 || !shield(stack) || !Float.isFinite(event.getBlockedDamage()) || !(event.getBlockedDamage() > 0F)) return;
-        scope.accepted = new Accepted(stack, stack.getItem(), state(stack), event.getBlockedDamage());
+        scope.accepted = new Accepted(stack, stack.getItem(), state(stack), event.getBlockedDamage(), profile(stack));
     }
 
     private static void complete(HitScope scope) {
@@ -106,7 +109,7 @@ public final class ShieldGuard {
             return;
         }
         State before = accepted.shield().isEmpty() ? accepted.before() : state(accepted.shield());
-        ShieldGuardRules.Result next = ShieldGuardRules.advance(before.blockedDamage(), before.blocks(), accepted.blockedDamage());
+        ShieldGuardRules.Result next = ShieldGuardRules.advance(accepted.profile(), before.blockedDamage(), before.blocks(), accepted.blockedDamage());
         write(accepted.shield(), new State(next.blockedDamage(), next.blocks()), scope.defender);
         if (next.broken()) disable(scope.defender, accepted);
     }
