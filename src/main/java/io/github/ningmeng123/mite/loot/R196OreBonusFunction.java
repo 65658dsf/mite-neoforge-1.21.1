@@ -65,7 +65,8 @@ public final class R196OreBonusFunction extends LootItemConditionalFunction {
             stack = new ItemStack(Items.REDSTONE, 3 + context.getRandom().nextInt(3));
         int base = stack.getCount();
         OreHarvestExperience.record(context, base * rewardPerUnit);
-        if (tool == null || stack.isEmpty() || (suppressPlaced && state.hasProperty(OreBlockRules.PLACED)
+        // BlockBreakInfo.getHarvester() is null for explosions, even when another mod supplies a tool.
+        if (exploded || tool == null || stack.isEmpty() || (suppressPlaced && state.hasProperty(OreBlockRules.PLACED)
                 && state.getValue(OreBlockRules.PLACED))) return stack;
         var fortune = EnchantmentSources.levels(tool, enchantments.getOrThrow(Enchantments.FORTUNE));
         if (!EnchantmentSources.present(fortune)) return stack;
