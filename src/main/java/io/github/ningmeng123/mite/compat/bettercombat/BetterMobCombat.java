@@ -86,7 +86,8 @@ public final class BetterMobCombat {
         // A single intended target: no incidental friendly-fire sweep around an AI mob.
         if (facing && attack.angle() < 360D) {
             Vec3 toward = target.getBoundingBox().getCenter().subtract(eye).multiply(1, 0, 1);
-            Vec3 look = Vec3.directionFromRotation(0, mob.getYRot());
+            // LookControl turns the AI's head while a stationary mob keeps its last movement yaw.
+            Vec3 look = Vec3.directionFromRotation(0, mob.getYHeadRot());
             double padding = Math.toDegrees(Math.atan2(target.getBbWidth() * .5D, Math.max(.001D, toward.length())));
             if (toward.lengthSqr() > .0001D && look.dot(toward.normalize())
                     < Math.cos(Math.toRadians(Math.min(180D, attack.angle() * .5D + padding)))) return false;

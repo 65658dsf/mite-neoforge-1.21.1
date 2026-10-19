@@ -261,6 +261,52 @@ public final class BetterCombatMobGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void stationaryAiHeadFacingControlsTheDelayedWeaponHit(GameTestHelper h) {
+        if (absent(h)) return;
+        Mob attacker = armed(h, EntityType.ZOMBIE);
+        Mob target = target(h, attacker);
+        try {
+            var profile = profile(h, attacker);
+            h.assertTrue(profile.angle() < 360D, "The sword fixture has a directional attack");
+            attacker.setYRot(180F);
+            attacker.yBodyRot = 180F;
+            attacker.setYHeadRot(180F);
+            attacker.getLookControl().setLookAt(target, 180F, 180F);
+            attacker.getLookControl().tick();
+            h.assertTrue(Math.abs(attacker.getYHeadRot()) < .001F && attacker.getYRot() == 180F,
+                    "The real AI look controller faces the nearby target without changing the stationary entity yaw");
+            float health = target.getHealth();
+            begin(h, attacker, target);
+            advance(attacker, target, profile.windupTicks());
+            h.assertTrue(target.getHealth() < health,
+                    "The delayed native weapon hit follows the AI's actual aim despite its old movement and body yaw");
+        } finally { BetterMobCombat.cancel(attacker); attacker.discard(); target.discard(); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void movingBehindTheUnturnedHeadStillAvoidsTheDelayedHit(GameTestHelper h) {
+        if (absent(h)) return;
+        Mob attacker = armed(h, EntityType.ZOMBIE);
+        Mob target = target(h, attacker);
+        try {
+            var profile = profile(h, attacker);
+            h.assertTrue(profile.angle() < 360D, "The sword fixture has a directional attack");
+            float health = target.getHealth();
+            begin(h, attacker, target);
+            target.setPos(attacker.position().add(0D, 0D, -1.25D));
+            attacker.setYRot(180F);
+            attacker.yBodyRot = 180F;
+            h.assertTrue(BetterMobCombat.canStrike(attacker, target),
+                    "The target remains physically reachable after moving behind the unchanged head direction");
+            advance(attacker, target, profile.windupTicks());
+            h.assertValueEqual(target.getHealth(), health,
+                    "Entity and body rotation cannot hit a target behind the AI's head before its aim catches up");
+        } finally { BetterMobCombat.cancel(attacker); attacker.discard(); target.discard(); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void movingOutOfWeaponReachDuringWindupMakesTheAttackMiss(GameTestHelper h) {
         if (absent(h)) return;
         Mob attacker = armed(h, EntityType.ZOMBIE);
