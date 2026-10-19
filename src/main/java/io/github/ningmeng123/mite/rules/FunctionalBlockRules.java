@@ -1,7 +1,10 @@
 package io.github.ningmeng123.mite.rules;
 
-/** Independently extracted amv/va/vc/vm/aaw arithmetic. @author NingMeng123 */
+/** Source amv/va/vc/vm/aaw arithmetic with the requested four-layer bookshelf extension. @author NingMeng123 */
 public final class FunctionalBlockRules {
+    public static final int ENCHANTMENT_BOOKSHELF_LAYERS = 4;
+    public static final int MAX_ENCHANTMENT_BOOKSHELVES = 12 * ENCHANTMENT_BOOKSHELF_LAYERS;
+
     private FunctionalBlockRules() {}
     public static int anvilDurability(float materialDurability) {
         return (int)(1600F * 31F * materialDurability);
@@ -43,7 +46,7 @@ public final class FunctionalBlockRules {
         return Math.round(adjusted);
     }
     public static int enchantmentPower(int accessibleBookshelves, boolean emerald) {
-        return (1 + Math.clamp(accessibleBookshelves, 0, 24)) * (emerald ? 2 : 4);
+        return (1 + Math.clamp(accessibleBookshelves, 0, MAX_ENCHANTMENT_BOOKSHELVES)) * (emerald ? 2 : 4);
     }
     public static int enchantmentLevels(int bookshelves, boolean emerald, int enchantability, int slot, float random) {
         int levels = enchantabilityAdjustedPower(enchantmentPower(bookshelves, emerald), enchantability);

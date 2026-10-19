@@ -90,8 +90,8 @@ public final class R196EnchantmentTable {
     }
     public static int accessibleBookshelves(Level level, BlockPos table) {
         int shelves = 0;
-        for (int dy = 0; dy <= 1; dy++) {
-            if (dy == 1 && !passable(level, table.above())) break;
+        for (int dy = 0; dy < FunctionalBlockRules.ENCHANTMENT_BOOKSHELF_LAYERS; dy++) {
+            if (dy > 0 && !passable(level, table.above(dy))) break;
             for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
                 if (Math.max(Math.abs(dx), Math.abs(dz)) != 2 || Math.abs(dx) == 2 && Math.abs(dz) == 2) continue;
                 boolean accessible;

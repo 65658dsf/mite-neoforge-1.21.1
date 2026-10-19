@@ -75,7 +75,7 @@ class FunctionalBlockRulesTest {
     @Test void emeraldSourceEnergyAndEnchantabilityBands() {
         assertEquals(2, FunctionalBlockRules.enchantmentPower(0, true));
         assertEquals(50, FunctionalBlockRules.enchantmentPower(24, true));
-        assertEquals(50, FunctionalBlockRules.enchantmentPower(999, true));
+        assertEquals(98, FunctionalBlockRules.enchantmentPower(999, true));
         assertEquals(100, FunctionalBlockRules.enchantmentPower(24, false));
         assertEquals(30, FunctionalBlockRules.enchantabilityAdjustedPower(30, 30));
         assertEquals(40, FunctionalBlockRules.enchantabilityAdjustedPower(50, 30));
@@ -89,5 +89,17 @@ class FunctionalBlockRulesTest {
         assertEquals(9, FunctionalBlockRules.enchantmentLevels(24, true, 30, 0, 0F));
         assertEquals(17, FunctionalBlockRules.enchantmentLevels(24, true, 30, 0, 1F));
         assertEquals(0, FunctionalBlockRules.enchantmentLevels(24, true, 0, 2, .5F));
+    }
+
+    @Test void fourBookshelfLayersReachVibraniumPower158AndIgnoreExtraShelves() {
+        assertEquals(196, FunctionalBlockRules.enchantmentPower(48, false));
+        assertEquals(196, FunctionalBlockRules.enchantmentPower(60, false));
+        assertEquals(98, FunctionalBlockRules.enchantmentPower(48, true));
+        assertEquals(4, FunctionalBlockRules.enchantmentPower(-1, false));
+        assertEquals(158, FunctionalBlockRules.enchantmentLevels(48, false, VibraniumEquipmentRules.ENCHANTABILITY, 2, .5F));
+        assertEquals(158, FunctionalBlockRules.enchantmentLevels(60, false, VibraniumEquipmentRules.ENCHANTABILITY, 2, .5F));
+        assertEquals(98, FunctionalBlockRules.enchantmentLevels(48, true, VibraniumEquipmentRules.ENCHANTABILITY, 2, .5F));
+        assertEquals(100, FunctionalBlockRules.enchantmentLevels(24, false, VibraniumEquipmentRules.ENCHANTABILITY, 2, .5F));
+        assertEquals(2, FunctionalBlockRules.enchantmentLevels(48, false, 1, 2, .5F));
     }
 }

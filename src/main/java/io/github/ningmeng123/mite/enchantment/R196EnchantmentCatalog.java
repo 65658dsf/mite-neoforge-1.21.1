@@ -39,7 +39,7 @@ public final class R196EnchantmentCatalog {
             nativeEntry(5, "respiration", 5, 10, 3),
             nativeEntry(6, "aqua_affinity", 5, 10, 1),
             nativeEntry(7, "thorns", 5, 20, 3),
-            nativeEntry(16, "sharpness", 100, 10, 5),
+            nativeEntry(16, "sharpness", 100, 10, 7),
             nativeEntry(17, "smite", 25, 10, 5),
             nativeEntry(18, "bane_of_arthropods", 25, 10, 5),
             nativeEntry(19, "knockback", 25, 10, 2),

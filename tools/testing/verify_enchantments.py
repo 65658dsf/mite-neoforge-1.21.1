@@ -2,6 +2,7 @@
 
 This audit does not call the Java production catalogue, support predicates or selection helper.
 Source item eligibility comes from the recorded old runtime IDs and earlier equipment evidence.
+Sharpness VII is a modern adaptation; the R196 evidence stays unchanged.
 Author: NingMeng123
 """
 
@@ -30,7 +31,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", type=Path, default=ROOT / "build/verification/enchantments-audit.json")
     args = parser.parse_args()
-    report = {"author": "NingMeng123", "checks": 0, "failures": [], "source_item_mappings": {}, "enchantments": []}
+    report = {"author": "NingMeng123", "checks": 0, "failures": [], "source_item_mappings": {}, "modern_adaptations": {}, "enchantments": []}
 
     def check(condition, message):
         report["checks"] += 1
@@ -138,17 +139,30 @@ def main() -> int:
             kind, name, weight, difficulty, maximum = by_legacy[legacy]
             resource_id = ("minecraft:" if kind == "native" else "mite:") + name
             check(resource_id == source["suggested_modern_id"], f"Runtime resource identity: {legacy}")
-            check((weight, difficulty, maximum) == (source["weight"], source["difficulty"], source["max_level"]), f"Runtime metadata source identity: {resource_id}")
+            expected_maximum = source["max_level"]
+            expected_minimum = source["min_cost_by_level"]
+            if resource_id == "minecraft:sharpness":
+                check((legacy, source["max_level"], source["min_cost_by_level"]) == (16, 5, [1, 11, 21, 31, 41]),
+                      "Sharpness adaptation retains the original R196 level V and minimum costs")
+                expected_maximum = 7
+                expected_minimum = [1, 11, 21, 31, 41, 51, 61]
+                report["modern_adaptations"][resource_id] = {
+                    "source_max_level": source["max_level"],
+                    "max_level": expected_maximum,
+                    "min_cost_by_level": expected_minimum,
+                }
+            check((weight, difficulty) == (source["weight"], source["difficulty"]), f"Runtime metadata source identity: {resource_id}")
+            check(maximum == expected_maximum, f"Runtime maximum level: {resource_id}")
             path = generated_file("enchantment", resource_id)
             check(path.is_file(), f"Generated definition exists: {resource_id}")
             if not path.is_file():
                 continue
             data = read_json(path)
             definition_data[resource_id] = data
-            check(data["max_level"] == source["max_level"], f"Generated max level: {resource_id}")
+            check(data["max_level"] == expected_maximum, f"Generated max level: {resource_id}")
             check(data["weight"] == source["weight"], f"Generated selection weight: {resource_id}")
-            minimum = [data["min_cost"]["base"] + data["min_cost"]["per_level_above_first"] * (level - 1) for level in range(1, source["max_level"] + 1)]
-            check(minimum == source["min_cost_by_level"], f"Generated independent minimum costs: {resource_id}")
+            minimum = [data["min_cost"]["base"] + data["min_cost"]["per_level_above_first"] * (level - 1) for level in range(1, expected_maximum + 1)]
+            check(minimum == expected_minimum, f"Generated independent minimum costs: {resource_id}")
             check(data["max_cost"] == {"base": 2147483647, "per_level_above_first": 0}, f"Unbounded source candidate maximum: {resource_id}")
             if kind == "native":
                 check(data["supported_items"] == f"#mite:enchantable/native_compat/{name}", f"Native metadata uses the isolated modern-compatibility union: {resource_id}")
