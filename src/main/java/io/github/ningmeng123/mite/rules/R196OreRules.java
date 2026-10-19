@@ -48,6 +48,16 @@ public final class R196OreRules {
         };
     }
 
+    /** Real ore variants only; legacy gravel and infested-stone settings retain their original scope. */
+    public static boolean hasDeepslateOre(Kind kind) {
+        return switch (kind) {
+            case COAL, COPPER, SILVER, GOLD, IRON, MITHRIL, ADAMANTIUM, REDSTONE, DIAMOND, LAPIS, EMERALD -> true;
+            default -> false;
+        };
+    }
+
+    public static String deepslateMultiplierKey(Kind kind) { return "DEEPSLATE_" + kind.name(); }
+
     /** Probability that a sampled candidate advances to vein placement, before terrain checks. */
     public static double candidateChance(Dimension dimension) { return 1D / candidateRarity(dimension); }
     public static int candidateRarity(Dimension dimension) { return dimension == Dimension.NETHER ? 1 : 10; }

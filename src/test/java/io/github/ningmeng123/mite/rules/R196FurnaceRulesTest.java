@@ -38,6 +38,13 @@ class R196FurnaceRulesTest {
     }
 
     @ParameterizedTest
+    @CsvSource({"minecraft:raw_copper,2", "minecraft:raw_iron,2", "minecraft:raw_gold,2",
+            "mite:raw_silver,2", "mite:raw_mithril,3", "mite:raw_adamantium,4"})
+    void modernRawMetalsKeepTheOreHeatTier(String id, int heat) {
+        assertEquals(heat, R196FurnaceRules.requiredHeat(id));
+    }
+
+    @ParameterizedTest
     @CsvSource({"-1,4,false,true,false", "0,4,false,true,false", "1,1,false,false,true", "1,1,true,false,false",
             "1,1,true,true,true", "2,1,false,true,false", "2,2,false,false,true", "2,2,true,true,true",
             "3,2,false,true,false", "3,3,false,true,true", "4,3,false,true,false", "4,4,true,true,true", "5,4,false,true,false"})

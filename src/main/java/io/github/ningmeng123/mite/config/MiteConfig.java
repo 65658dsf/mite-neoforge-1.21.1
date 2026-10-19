@@ -24,6 +24,8 @@ public final class MiteConfig {
     public static final ModConfigSpec SPEC;
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_ORES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_ORES = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_DEEPSLATE_ORES = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_DEEPSLATE_ORES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_ORE_CANDIDATES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_ORE_CHANCES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_ORE_CANDIDATES = new EnumMap<>(R196OreRules.Kind.class);
@@ -49,6 +51,7 @@ public final class MiteConfig {
                     .comment("Generation multiplier for " + key + "; not a percentage of existing blocks.")
                     .defineInRange(key, 1D, 0D, 100D));
         }
+        defineDeepslateMultipliers(builder, R196OreRules.Dimension.UNDERWORLD, UNDERWORLD_DEEPSLATE_ORES);
         builder.pop();
         builder.translation("mite.config.overworld_ores").comment("Overworld mineral generation multipliers. 1 preserves the original rate, 2 doubles attempts, 0.5 halves them, and 0 disables. Existing advanced candidate/probability values are preserved.").push("overworld_ores");
         for (var kind : R196OreRules.configurableKinds(R196OreRules.Dimension.OVERWORLD)) {
@@ -57,6 +60,7 @@ public final class MiteConfig {
                     .comment("Candidate count multiplier for overworld " + key + "; applied once before probability filtering.")
                     .defineInRange(key, 1D, 0D, 100D));
         }
+        defineDeepslateMultipliers(builder, R196OreRules.Dimension.OVERWORLD, OVERWORLD_DEEPSLATE_ORES);
         builder.pop();
         builder.translation("mite.config.ore_generation").push("underworld_generation");
         for (var kind : R196OreRules.UNDERWORLD) {
@@ -128,6 +132,17 @@ public final class MiteConfig {
 
     private MiteConfig() {}
 
+    private static void defineDeepslateMultipliers(ModConfigSpec.Builder builder, R196OreRules.Dimension dimension,
+            Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> settings) {
+        for (var kind : R196OreRules.configurableKinds(dimension)) {
+            if (!R196OreRules.hasDeepslateOre(kind)) continue;
+            String key = "deepslate_" + kind.name().toLowerCase(Locale.ROOT);
+            settings.put(kind, builder.translation("mite.config.ore_deepslate_multiplier")
+                    .comment("Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.")
+                    .defineInRange(key, -1D, -1D, 100D));
+        }
+    }
+
     private static ModConfigSpec.DoubleValue number(ModConfigSpec.Builder b, String key, double defaultValue, double maximum, String comment) {
         return b.translation("mite.config." + key).comment(comment).defineInRange(key, defaultValue, 0D, maximum);
     }
@@ -171,6 +186,17 @@ public final class MiteConfig {
         var snapshot = effectiveSnapshot();
         return dimension == R196OreRules.Dimension.OVERWORLD ? snapshot.overworldOres().getOrDefault(kind.name(), 1D)
                 : dimension == R196OreRules.Dimension.UNDERWORLD ? snapshot.ores().getOrDefault(kind.name(), 1D) : 1D;
+    }
+    /** A missing/-1 override inherits the old setting so loading an existing world never changes its deep ore rate. */
+    public static double deepslateOreMultiplierOverride(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
+        var snapshot = effectiveSnapshot();
+        var multipliers = dimension == R196OreRules.Dimension.OVERWORLD ? snapshot.overworldOres()
+                : dimension == R196OreRules.Dimension.UNDERWORLD ? snapshot.ores() : Map.<String, Double>of();
+        return multipliers.getOrDefault(R196OreRules.deepslateMultiplierKey(kind), -1D);
+    }
+    public static double oreMultiplier(R196OreRules.Kind kind, R196OreRules.Dimension dimension, boolean deepslate) {
+        double override = deepslate && R196OreRules.hasDeepslateOre(kind) ? deepslateOreMultiplierOverride(kind, dimension) : -1D;
+        return override < 0D ? oreMultiplier(kind, dimension) : override;
     }
     public static double underworldOreCandidates(R196OreRules.Kind kind) {
         return oreCandidates(kind, R196OreRules.Dimension.UNDERWORLD);
@@ -262,6 +288,7 @@ public final class MiteConfig {
     private static Snapshot readLocalSnapshot() {
         var ores = new HashMap<String, Double>();
         UNDERWORLD_ORES.forEach((kind, setting) -> ores.put(kind.name(), value(setting)));
+        UNDERWORLD_DEEPSLATE_ORES.forEach((kind, setting) -> ores.put(R196OreRules.deepslateMultiplierKey(kind), value(setting)));
         var candidates = new HashMap<String, Double>();
         var chances = new HashMap<String, Double>();
         UNDERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> candidates.put(kind.name(), value(setting)));
@@ -272,6 +299,7 @@ public final class MiteConfig {
         OVERWORLD_ORE_CHANCES.forEach((kind, setting) -> surfaceChances.put(kind.name(), value(setting) / 100D));
         var surfaceMultipliers = new HashMap<String, Double>();
         OVERWORLD_ORES.forEach((kind, setting) -> surfaceMultipliers.put(kind.name(), value(setting)));
+        OVERWORLD_DEEPSLATE_ORES.forEach((kind, setting) -> surfaceMultipliers.put(R196OreRules.deepslateMultiplierKey(kind), value(setting)));
         var caps = new HashMap<String, Integer>();
         for (String entry : value(ENCHANTMENT_MAX_LEVELS)) {
             if (validLevelOverride(entry)) {
@@ -352,6 +380,12 @@ public final class MiteConfig {
 
     /** The simple UI edits multipliers only; existing advanced rates are never rewritten. */
     public static boolean saveOreMultipliers(Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> multipliers) {
+        return saveOreMultipliers(multipliers, Map.of());
+    }
+
+    /** Save deep overrides atomically; omitted deep rows retain their previous override or inheritance. */
+    public static boolean saveOreMultipliers(Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> multipliers,
+            Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> deepslateMultipliers) {
         if (multipliers.isEmpty()) return false;
         for (var dimension : multipliers.keySet()) {
             var kinds = R196OreRules.configurableKinds(dimension);
@@ -361,10 +395,24 @@ public final class MiteConfig {
                 if (multiplier == null || !Double.isFinite(multiplier) || multiplier < 0D || multiplier > 100D) return false;
             }
         }
+        if (!multipliers.keySet().containsAll(deepslateMultipliers.keySet())) return false;
+        for (var dimension : deepslateMultipliers.keySet()) {
+            var deepValues = deepslateMultipliers.get(dimension);
+            if (deepValues == null) return false;
+            for (var entry : deepValues.entrySet()) {
+                Double multiplier = entry.getValue();
+                if (!R196OreRules.configurableKinds(dimension).contains(entry.getKey()) || !R196OreRules.hasDeepslateOre(entry.getKey())
+                        || multiplier == null || !Double.isFinite(multiplier) || multiplier > 100D || multiplier < 0D && multiplier != -1D) return false;
+            }
+        }
         for (var dimension : multipliers.keySet()) {
             var settings = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_ORES : UNDERWORLD_ORES;
             for (var kind : R196OreRules.configurableKinds(dimension)) settings.get(kind).set(multipliers.get(dimension).get(kind));
         }
+        deepslateMultipliers.forEach((dimension, values) -> {
+            var settings = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_DEEPSLATE_ORES : UNDERWORLD_DEEPSLATE_ORES;
+            values.forEach((kind, multiplier) -> settings.get(kind).set(multiplier));
+        });
         refreshEnchantmentRules();
         SPEC.save();
         return true;

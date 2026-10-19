@@ -1,0 +1,95 @@
+{
+  "author": "NingMeng123",
+  "date": "2026-10-19",
+  "mode": "Built-in image_gen.imagegen",
+  "revision": "Final mod ore palette adaptation after user feedback",
+  "import_tool": "tools/assets/import_modern_ore_textures.py",
+  "reference_preparation": "Original 16x16 source images were enlarged to 1024x1024 with nearest-neighbor sampling only. Ordinary mod ore sprites are the mineral identity and palette authority. Vanilla raw_iron supplies only the raw item silhouette and stone matrix; vanilla deepslate supplies only host stone.",
+  "constraints": "Final game sprites are 16x16 RGBA. Keep original ore minerals: neutral silver, near-white pale icy mithril, nearly black dark indigo adamantium. No ingot reference, no bright violet crystals. Block textures are opaque; raw items retain transparent padding.",
+  "prompts": [
+    {
+      "asset": "block/deepslate_silver_ore.png",
+      "prompt": "Use case: precise-object-edit\nAsset type: exact Minecraft pixel-art asset adaptation for an established mod. A 16x16 source has been uniformly enlarged to 1024x1024 for editing.\nInput images: Image 1 is the edit target: this mod's EXISTING ordinary silver ore. Its mineral pixels are the sole authority for mineral colors, size, positions and shapes. Image 2 is exact vanilla deepslate, to replace only the gray stone host.\nPrimary request: Create the DEEPSLATE variant of the ordinary ore in Image 1. Keep every mineral pixel in its existing location, color and shape. Replace only the surrounding medium-gray stone host with dark horizontally layered vanilla deepslate as in Image 2.\nColor authority: MINERAL PIXELS ONLY: neutral grayscale silver white. Mineral highlights #FFFFFF, middle #E6E6E6, shadow #C3C3C3. No bluish tint. The gray stone host is not silver.\nGrid constraints: retain exactly 16 by 16 logical pixels. 1024x1024 enlarged output means exactly 64x64 uniform squares for each logical source pixel. Do not add new micro-pixels or detail. A pixel must be a single flat color. Preserve recognizable existing ore flecks from the mod.\nComposition: One flat opaque square tile, fills canvas edge to edge, same orientation as Image 1. Not a 3D cube.\nAvoid: inventing a palette from the metal name, using an ingot palette, brightening dark adamantium, saturated blue mithril, crystals, gems, glow, redesigned flecks, additional clusters, new outlines, changing the stone lump shape, noise, gradients, antialiasing, blur, extra tiles, perspective, text, labels, checkerboard, scenery. Match the exact mod ore identity, with vanilla-style host stone.",
+      "transparent_background": false,
+      "reference_images": [
+        "build/art/modern-ores/reference/silver_ore.png",
+        "build/art/modern-ores/reference/deepslate.png"
+      ],
+      "original_reference_images": [
+        "src/main/resources/assets/mite/textures/block/silver_ore.png",
+        "Minecraft 1.21.1 assets/minecraft/textures/block/deepslate.png"
+      ],
+      "selected_generated_source": "build/art/modern-ores/generated/deepslate_silver_ore.png"
+    },
+    {
+      "asset": "item/raw_silver.png",
+      "prompt": "Use case: precise-object-edit\nAsset type: exact Minecraft pixel-art asset adaptation for an established mod. A 16x16 source has been uniformly enlarged to 1024x1024 for editing.\nInput images: Image 1 is the edit target: exact vanilla raw iron sprite. Image 2 is the AUTHORITY for this metal's existing mod ore shape, scale and color.\nPrimary request: Create raw silver by changing only the peach iron deposits inside the original raw-iron stone lump to this mod ore's EXACT mineral palette. Preserve the original brown-gray coarse stone lump, its irregular vanilla raw iron silhouette, dark brown outline, cracks and transparency. Keep the mineral embedded in the rock in small patches. The visible object stays mostly stony matrix, not crystalline masses.\nColor authority: MINERAL PIXELS ONLY: neutral grayscale silver white. Mineral highlights #FFFFFF, middle #E6E6E6, shadow #C3C3C3. No bluish tint. The gray stone host is not silver.\nGrid constraints: retain exactly 16 by 16 logical pixels. 1024x1024 enlarged output means exactly 64x64 uniform squares for each logical source pixel. Do not add new micro-pixels or detail. A pixel must be a single flat color. Preserve recognizable existing ore flecks from the mod.\nComposition: One original-raw-iron-shaped mineral stone lump centered, same transparent exterior padding. Genuine transparent alpha outside the sprite; visible pixels opaque.\nAvoid: inventing a palette from the metal name, using an ingot palette, brightening dark adamantium, saturated blue mithril, crystals, gems, glow, redesigned flecks, additional clusters, new outlines, changing the stone lump shape, noise, gradients, antialiasing, blur, extra tiles, perspective, text, labels, checkerboard, scenery. Match the exact mod ore identity, with vanilla-style host stone.",
+      "transparent_background": true,
+      "reference_images": [
+        "build/art/modern-ores/reference/raw_iron.png",
+        "build/art/modern-ores/reference/silver_ore.png"
+      ],
+      "original_reference_images": [
+        "Minecraft 1.21.1 assets/minecraft/textures/item/raw_iron.png",
+        "src/main/resources/assets/mite/textures/block/silver_ore.png"
+      ],
+      "selected_generated_source": "build/art/modern-ores/generated/raw_silver.png"
+    },
+    {
+      "asset": "block/deepslate_mithril_ore.png",
+      "prompt": "Use case: precise-object-edit\nAsset type: exact Minecraft pixel-art asset adaptation for an established mod. A 16x16 source has been uniformly enlarged to 1024x1024 for editing.\nInput images: Image 1 is the edit target: this mod's EXISTING ordinary mithril ore. Its mineral pixels are the sole authority for mineral colors, size, positions and shapes. Image 2 is exact vanilla deepslate, to replace only the gray stone host.\nPrimary request: Create the DEEPSLATE variant of the ordinary ore in Image 1. Keep every mineral pixel in its existing location, color and shape. Replace only the surrounding medium-gray stone host with dark horizontally layered vanilla deepslate as in Image 2.\nColor authority: MINERAL PIXELS ONLY: extremely pale near-white icy cyan. Mineral highlights #F6FFFD, light #D2F2FB, subtle shadow #A7D4E2 and #A7D1DA. Do not introduce medium blue, steel blue, royal blue, teal, vivid cyan or dark blue. The long narrow pale streak shape in the original ore identifies mithril.\nGrid constraints: retain exactly 16 by 16 logical pixels. 1024x1024 enlarged output means exactly 64x64 uniform squares for each logical source pixel. Do not add new micro-pixels or detail. A pixel must be a single flat color. Preserve recognizable existing ore flecks from the mod.\nComposition: One flat opaque square tile, fills canvas edge to edge, same orientation as Image 1. Not a 3D cube.\nAvoid: inventing a palette from the metal name, using an ingot palette, brightening dark adamantium, saturated blue mithril, crystals, gems, glow, redesigned flecks, additional clusters, new outlines, changing the stone lump shape, noise, gradients, antialiasing, blur, extra tiles, perspective, text, labels, checkerboard, scenery. Match the exact mod ore identity, with vanilla-style host stone.",
+      "transparent_background": false,
+      "reference_images": [
+        "build/art/modern-ores/reference/mithril_ore.png",
+        "build/art/modern-ores/reference/deepslate.png"
+      ],
+      "original_reference_images": [
+        "src/main/resources/assets/mite/textures/block/mithril_ore.png",
+        "Minecraft 1.21.1 assets/minecraft/textures/block/deepslate.png"
+      ],
+      "selected_generated_source": "build/art/modern-ores/generated/deepslate_mithril_ore.png"
+    },
+    {
+      "asset": "item/raw_mithril.png",
+      "prompt": "Use case: precise-object-edit\nAsset type: exact Minecraft pixel-art asset adaptation for an established mod. A 16x16 source has been uniformly enlarged to 1024x1024 for editing.\nInput images: Image 1 is the edit target: exact vanilla raw iron sprite. Image 2 is the AUTHORITY for this metal's existing mod ore shape, scale and color.\nPrimary request: Create raw mithril by changing only the peach iron deposits inside the original raw-iron stone lump to this mod ore's EXACT mineral palette. Preserve the original brown-gray coarse stone lump, its irregular vanilla raw iron silhouette, dark brown outline, cracks and transparency. Keep the mineral embedded in the rock in small patches. The visible object stays mostly stony matrix, not crystalline masses.\nColor authority: MINERAL PIXELS ONLY: extremely pale near-white icy cyan. Mineral highlights #F6FFFD, light #D2F2FB, subtle shadow #A7D4E2 and #A7D1DA. Do not introduce medium blue, steel blue, royal blue, teal, vivid cyan or dark blue. The long narrow pale streak shape in the original ore identifies mithril.\nGrid constraints: retain exactly 16 by 16 logical pixels. 1024x1024 enlarged output means exactly 64x64 uniform squares for each logical source pixel. Do not add new micro-pixels or detail. A pixel must be a single flat color. Preserve recognizable existing ore flecks from the mod.\nComposition: One original-raw-iron-shaped mineral stone lump centered, same transparent exterior padding. Genuine transparent alpha outside the sprite; visible pixels opaque.\nAvoid: inventing a palette from the metal name, using an ingot palette, brightening dark adamantium, saturated blue mithril, crystals, gems, glow, redesigned flecks, additional clusters, new outlines, changing the stone lump shape, noise, gradients, antialiasing, blur, extra tiles, perspective, text, labels, checkerboard, scenery. Match the exact mod ore identity, with vanilla-style host stone.",
+      "transparent_background": true,
+      "reference_images": [
+        "build/art/modern-ores/reference/raw_iron.png",
+        "build/art/modern-ores/reference/mithril_ore.png"
+      ],
+      "original_reference_images": [
+        "Minecraft 1.21.1 assets/minecraft/textures/item/raw_iron.png",
+        "src/main/resources/assets/mite/textures/block/mithril_ore.png"
+      ],
+      "selected_generated_source": "build/art/modern-ores/generated/raw_mithril.png"
+    },
+    {
+      "asset": "block/deepslate_adamantium_ore.png",
+      "prompt": "Use case: precise-object-edit\nAsset type: exact Minecraft pixel-art asset adaptation for an established mod. A 16x16 source has been uniformly enlarged to 1024x1024 for editing.\nInput images: Image 1 is the edit target: this mod's EXISTING ordinary adamantium ore. Its mineral pixels are the sole authority for mineral colors, size, positions and shapes. Image 2 is exact vanilla deepslate, to replace only the gray stone host.\nPrimary request: Create the DEEPSLATE variant of the ordinary ore in Image 1. Keep every mineral pixel in its existing location, color and shape. Replace only the surrounding medium-gray stone host with dark horizontally layered vanilla deepslate as in Image 2.\nColor authority: MINERAL PIXELS ONLY: almost BLACK with very subtle DARK indigo. Main mineral #020015 and charcoal #262626; muted shadow/highlight shades #030024, #3F3F5C and only very sparse #595984. The mineral is darker than the gray stone. Absolutely no bright purple, violet, lavender, light blue, vivid blue, white sparkle, gemstone or crystal look. Dark near-black embedded grains identify this mod's adamantium.\nGrid constraints: retain exactly 16 by 16 logical pixels. 1024x1024 enlarged output means exactly 64x64 uniform squares for each logical source pixel. Do not add new micro-pixels or detail. A pixel must be a single flat color. Preserve recognizable existing ore flecks from the mod.\nComposition: One flat opaque square tile, fills canvas edge to edge, same orientation as Image 1. Not a 3D cube.\nAvoid: inventing a palette from the metal name, using an ingot palette, brightening dark adamantium, saturated blue mithril, crystals, gems, glow, redesigned flecks, additional clusters, new outlines, changing the stone lump shape, noise, gradients, antialiasing, blur, extra tiles, perspective, text, labels, checkerboard, scenery. Match the exact mod ore identity, with vanilla-style host stone.",
+      "transparent_background": false,
+      "reference_images": [
+        "build/art/modern-ores/reference/adamantium_ore.png",
+        "build/art/modern-ores/reference/deepslate.png"
+      ],
+      "original_reference_images": [
+        "src/main/resources/assets/mite/textures/block/adamantium_ore.png",
+        "Minecraft 1.21.1 assets/minecraft/textures/block/deepslate.png"
+      ],
+      "selected_generated_source": "build/art/modern-ores/generated/deepslate_adamantium_ore.png"
+    },
+    {
+      "asset": "item/raw_adamantium.png",
+      "prompt": "Use case: precise-object-edit\nAsset type: exact Minecraft pixel-art asset adaptation for an established mod. A 16x16 source has been uniformly enlarged to 1024x1024 for editing.\nInput images: Image 1 is the edit target: exact vanilla raw iron sprite. Image 2 is the AUTHORITY for this metal's existing mod ore shape, scale and color.\nPrimary request: Create raw adamantium by changing only the peach iron deposits inside the original raw-iron stone lump to this mod ore's EXACT mineral palette. Preserve the original brown-gray coarse stone lump, its irregular vanilla raw iron silhouette, dark brown outline, cracks and transparency. Keep the mineral embedded in the rock in small patches. The visible object stays mostly stony matrix, not crystalline masses.\nColor authority: MINERAL PIXELS ONLY: almost BLACK with very subtle DARK indigo. Main mineral #020015 and charcoal #262626; muted shadow/highlight shades #030024, #3F3F5C and only very sparse #595984. The mineral is darker than the gray stone. Absolutely no bright purple, violet, lavender, light blue, vivid blue, white sparkle, gemstone or crystal look. Dark near-black embedded grains identify this mod's adamantium.\nGrid constraints: retain exactly 16 by 16 logical pixels. 1024x1024 enlarged output means exactly 64x64 uniform squares for each logical source pixel. Do not add new micro-pixels or detail. A pixel must be a single flat color. Preserve recognizable existing ore flecks from the mod.\nComposition: One original-raw-iron-shaped mineral stone lump centered, same transparent exterior padding. Genuine transparent alpha outside the sprite; visible pixels opaque.\nAvoid: inventing a palette from the metal name, using an ingot palette, brightening dark adamantium, saturated blue mithril, crystals, gems, glow, redesigned flecks, additional clusters, new outlines, changing the stone lump shape, noise, gradients, antialiasing, blur, extra tiles, perspective, text, labels, checkerboard, scenery. Match the exact mod ore identity, with vanilla-style host stone.",
+      "transparent_background": true,
+      "reference_images": [
+        "build/art/modern-ores/reference/raw_iron.png",
+        "build/art/modern-ores/reference/adamantium_ore.png"
+      ],
+      "original_reference_images": [
+        "Minecraft 1.21.1 assets/minecraft/textures/item/raw_iron.png",
+        "src/main/resources/assets/mite/textures/block/adamantium_ore.png"
+      ],
+      "selected_generated_source": "build/art/modern-ores/generated/raw_adamantium.png"
+    }
+  ]
+}

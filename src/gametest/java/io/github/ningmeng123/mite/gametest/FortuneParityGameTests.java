@@ -105,17 +105,26 @@ public final class FortuneParityGameTests {
                 "mite:adamantium_ore", "mite:deepslate_adamantium_ore")) {
             Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
             for (int level = 0; level <= 3; level++) {
-                ScriptedRandom natural = new ScriptedRandom(new int[0], level == 0 ? new float[0] : new float[]{0F});
-                ItemStack result = ore(h, block.defaultBlockState(), tool(h, level, 0), true, natural);
-                h.assertValueEqual(result.getCount(), level == 0 ? 1 : 2, "Natural metal enters the source per-unit fortune path: " + id);
-                h.assertTrue(result.is(block.asItem()), "Natural metal fortune copies its whole ore block");
-                natural.assertConsumed(h);
+                float boundary = (1F + level * .1F) - 1F;
+                for (float draw : level == 0 ? new float[]{0F} : new float[]{Math.nextDown(boundary), boundary}) {
+                    ScriptedRandom natural = new ScriptedRandom(new int[0], level == 0 ? new float[0] : new float[]{draw});
+                    ItemStack result = ore(h, block.defaultBlockState(), tool(h, level, 0), true, natural);
+                    h.assertValueEqual(result.getCount(), level > 0 && draw < boundary ? 2 : 1, "Natural metal keeps the exact source per-unit fortune probability: " + id);
+                    h.assertTrue(result.is(metalOutput(id)), "Natural metal fortune copies its matching raw metal; nether gold keeps its source ore");
+                    natural.assertConsumed(h);
+                }
                 ScriptedRandom placed = new ScriptedRandom(new int[0], new float[0]);
-                result = ore(h, block.defaultBlockState().setValue(OreBlockRules.PLACED, true), tool(h, level, 0), true, placed);
+                ItemStack result = ore(h, block.defaultBlockState().setValue(OreBlockRules.PLACED, true), tool(h, level, 0), true, placed);
                 h.assertValueEqual(result.getCount(), 1, "Placed metal suppresses fortune at every ordinary level: " + id);
-                h.assertTrue(result.is(block.asItem()), "Placed metal retains its block identity");
+                h.assertTrue(result.is(metalOutput(id)), "Placed metal returns one matching raw metal; nether gold keeps its source ore");
                 placed.assertConsumed(h);
             }
+            ItemStack silk = tool(h, 3, 0);
+            silk.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SILK_TOUCH), 1);
+            ScriptedRandom random = new ScriptedRandom(new int[0], new float[0]);
+            ItemStack result = ore(h, block.defaultBlockState(), silk, true, random);
+            h.assertTrue(result.is(block.asItem()) && result.getCount() == 1, "Metal Silk Touch returns the exact ore host without raw conversion or Fortune draws");
+            random.assertConsumed(h);
         }
         for (Block block : List.of(Blocks.DIAMOND_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE, Blocks.NETHER_QUARTZ_ORE)) {
             ItemStack silk = tool(h, 3, 0);
@@ -191,6 +200,27 @@ public final class FortuneParityGameTests {
                 h.assertTrue(h.getLevel().getBlockState(pos).isAir() && drops.isEmpty(), "The real explosion removes age " + age + " wart without producing loot");
             }
         } finally { h.getLevel().setBlock(pos, previous, 2); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void metalExplosionsKeepOreBlocksEvenWithProvidedSilkAndFortuneTools(GameTestHelper h) {
+        for (String metal : List.of("minecraft:copper_ore", "minecraft:iron_ore", "minecraft:gold_ore", "mite:silver_ore", "mite:mithril_ore", "mite:adamantium_ore")) {
+            int colon = metal.indexOf(':');
+            for (String id : List.of(metal, metal.substring(0, colon + 1) + "deepslate_" + metal.substring(colon + 1))) {
+                Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+                ItemStack silk = tool(h, 3, 0);
+                silk.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SILK_TOUCH), 1);
+                ScriptedRandom random = new ScriptedRandom(new int[0], new float[0]);
+                var params = new LootParams.Builder(h.getLevel()).withParameter(LootContextParams.ORIGIN, h.absolutePos(new BlockPos(2, 2, 2)).getCenter())
+                        .withParameter(LootContextParams.BLOCK_STATE, block.defaultBlockState()).withParameter(LootContextParams.TOOL, silk)
+                        .withParameter(LootContextParams.EXPLOSION_RADIUS, 4F).create(LootContextParamSets.BLOCK);
+                var context = new LootContext.Builder(params).withOptionalRandomSource(random).create(Optional.empty());
+                ItemStack result = new R196OreBonusFunction(List.of(), true).apply(new ItemStack(block), context);
+                h.assertTrue(result.is(block.asItem()) && result.getCount() == 1, "Explosion keeps the source metal ore output instead of raw metal: " + id);
+                random.assertConsumed(h);
+            }
+        }
         h.succeed();
     }
 
@@ -351,6 +381,13 @@ public final class FortuneParityGameTests {
         if (ore == Blocks.EMERALD_ORE || ore == Blocks.DEEPSLATE_EMERALD_ORE) return Items.EMERALD;
         if (ore == Blocks.NETHER_QUARTZ_ORE) return Items.QUARTZ;
         return ore == Blocks.LAPIS_ORE || ore == Blocks.DEEPSLATE_LAPIS_ORE ? Items.LAPIS_LAZULI : Items.REDSTONE;
+    }
+
+    private static Item metalOutput(String oreId) {
+        if (oreId.equals("minecraft:nether_gold_ore")) return Items.NETHER_GOLD_ORE;
+        ResourceLocation id = ResourceLocation.parse(oreId);
+        String metal = id.getPath().replace("deepslate_", "").replace("_ore", "");
+        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "raw_" + metal));
     }
 
     private static void assertOnly(GameTestHelper h, List<ItemStack> drops, Item item, int quantity, String message) {

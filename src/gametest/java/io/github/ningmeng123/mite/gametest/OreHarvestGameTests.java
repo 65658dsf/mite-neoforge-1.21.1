@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
@@ -24,6 +25,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
@@ -99,7 +101,7 @@ public final class OreHarvestGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void ordinaryHarvestReturnsR196MetalOreBlocksInsteadOfModernRawMetals(GameTestHelper helper) {
+    public static void ordinaryHarvestReturnsRawMetalsForBothOreHosts(GameTestHelper helper) {
         BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
         try (Session session = player(helper); DropFixture f = new DropFixture(helper, pos)) {
             for (String name : new String[]{"minecraft:copper_ore", "minecraft:iron_ore", "minecraft:gold_ore", "mite:silver_ore", "mite:mithril_ore", "mite:adamantium_ore"}) {
@@ -109,8 +111,36 @@ public final class OreHarvestGameTests {
                     session.player().setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteTools.get("mithril_pickaxe")));
                     helper.assertTrue(session.player().gameMode.destroyBlock(pos), "The native source-qualified harvest accepts " + id);
                     List<ItemEntity> drops = f.drops();
-                    helper.assertValueEqual(drops.stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 1, "Ordinary source metal harvest gives exactly one ore block");
-                    helper.assertTrue(drops.stream().allMatch(entity -> entity.getItem().is(ore.asItem())), "Modern raw-metal or unrelated loot bypasses the R196 metal drop for " + id);
+                    helper.assertValueEqual(drops.stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 1, "Ordinary metal harvest gives exactly one raw metal");
+                    helper.assertTrue(drops.stream().allMatch(entity -> entity.getItem().is(rawMetal(id))), "Both ore hosts must return their matching raw metal: " + id);
+                    f.clearDrops();
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void customRawMetalsAreRegisteredAndSilkTouchKeepsBothOreHosts(GameTestHelper helper) {
+        for (String metal : List.of("silver", "mithril", "adamantium")) {
+            var id = ResourceLocation.fromNamespaceAndPath("mite", "raw_" + metal);
+            helper.assertTrue(BuiltInRegistries.ITEM.containsKey(id), "Custom raw metal is registered: " + id);
+            ItemStack raw = new ItemStack(BuiltInRegistries.ITEM.get(id));
+            helper.assertValueEqual(raw.getMaxStackSize(), 8, "Custom raw metal matches existing copper, iron and gold raw-metal limits");
+            helper.assertTrue(raw.has(DataComponents.FIRE_RESISTANT) == metal.equals("adamantium"), "Only adamantium raw metal retains its ore's fire resistance");
+        }
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
+        try (Session session = player(helper); DropFixture f = new DropFixture(helper, pos)) {
+            for (String name : List.of("minecraft:copper_ore", "minecraft:iron_ore", "minecraft:gold_ore", "mite:silver_ore", "mite:mithril_ore", "mite:adamantium_ore")) {
+                for (String id : new String[]{name, deepslate(name)}) {
+                    Block ore = block(helper, id);
+                    helper.getLevel().setBlockAndUpdate(pos, ore.defaultBlockState());
+                    ItemStack tool = fortuneTool(helper);
+                    tool.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SILK_TOUCH), 1);
+                    session.player().setItemInHand(InteractionHand.MAIN_HAND, tool);
+                    helper.assertTrue(session.player().gameMode.destroyBlock(pos), "Silk Touch still obeys native harvest qualification: " + id);
+                    helper.assertValueEqual(f.drops().stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 1, "Silk Touch bypasses raw metal conversion and Fortune copies");
+                    helper.assertTrue(f.drops().stream().allMatch(entity -> entity.getItem().is(ore.asItem())), "Silk Touch keeps the exact ore host: " + id);
                     f.clearDrops();
                 }
             }
@@ -163,7 +193,7 @@ public final class OreHarvestGameTests {
                     helper.assertTrue(session.player().gameMode.destroyBlock(pos), "Fortune still obeys the normal qualified native harvest");
                     helper.assertValueEqual(f.drops().stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 2,
                             "Source ten-level fortune deterministically adds one to a natural metal base unit");
-                    helper.assertTrue(f.drops().stream().allMatch(entity -> entity.getItem().is(ore.asItem())), "Source fortune still returns the same metal ore identity");
+                    helper.assertTrue(f.drops().stream().allMatch(entity -> entity.getItem().is(rawMetal(id))), "Source fortune copies the matching raw metal");
                     f.clearDrops();
                     session.player().setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ore));
                     var placed = session.player().gameMode.useItemOn(session.player(), helper.getLevel(), session.player().getMainHandItem(), InteractionHand.MAIN_HAND,
@@ -177,8 +207,8 @@ public final class OreHarvestGameTests {
                     session.player().setItemInHand(InteractionHand.MAIN_HAND, fortuneTool(helper));
                     helper.assertTrue(session.player().gameMode.destroyBlock(pos), "Saved placed ore can be mined normally");
                     helper.assertValueEqual(f.drops().stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 1,
-                            "Repeated placed-metal mining cannot reroll fortune into duplicate ore blocks");
-                    helper.assertTrue(f.drops().stream().allMatch(entity -> entity.getItem().is(ore.asItem())), "Placed ore preserves its metal/deepslate identity");
+                            "Repeated placed-metal mining cannot reroll fortune into duplicate raw metal");
+                    helper.assertTrue(f.drops().stream().allMatch(entity -> entity.getItem().is(rawMetal(id))), "Placed ore still returns one matching raw metal");
                     f.clearDrops();
                 }
             }
@@ -257,6 +287,11 @@ public final class OreHarvestGameTests {
         ResourceLocation key = ResourceLocation.parse(id);
         helper.assertTrue(BuiltInRegistries.BLOCK.containsKey(key), "Expected R196 ore identity is missing: " + id);
         return BuiltInRegistries.BLOCK.get(key);
+    }
+    private static Item rawMetal(String oreId) {
+        ResourceLocation id = ResourceLocation.parse(oreId);
+        String metal = id.getPath().replace("deepslate_", "").replace("_ore", "");
+        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "raw_" + metal));
     }
     private static String deepslate(String id) { int colon = id.indexOf(':'); return id.substring(0, colon + 1) + "deepslate_" + id.substring(colon + 1); }
     private record Threshold(String ore, String insufficient, String sufficient) {}

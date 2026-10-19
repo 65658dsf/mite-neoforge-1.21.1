@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -26,12 +27,21 @@ import net.minecraft.resources.ResourceLocation;
 
 /** Simple per-dimension multipliers; source counts and chance are read-only references. @author NingMeng123 */
 public final class OreGenerationSettingsScreen extends Screen {
-    private record Entry(Dimension dimension, Kind kind, ResourceLocation id, Component name, double base, double chance) {}
+    private record Mineral(Kind kind, boolean deepslate) {}
+    private record Entry(Dimension dimension, Mineral mineral, ResourceLocation id, Component name, double base, double chance) {
+        Kind kind() { return mineral.kind(); }
+    }
     private record VisibleRow(Entry entry, int y) {}
     private static final class Draft {
         final Map<Kind, Double> multipliers = new EnumMap<>(Kind.class);
-        final Map<Kind, String> text = new EnumMap<>(Kind.class);
-        final Set<Kind> invalid = new HashSet<>();
+        final Map<Kind, Double> deepslateMultipliers = new EnumMap<>(Kind.class);
+        final Map<Mineral, String> text = new HashMap<>();
+        final Set<Mineral> invalid = new HashSet<>();
+
+        double multiplier(Mineral mineral) {
+            double override = mineral.deepslate() ? deepslateMultipliers.get(mineral.kind()) : -1D;
+            return override < 0D ? multipliers.get(mineral.kind()) : override;
+        }
     }
     private final Screen parent;
     private final boolean editable;
@@ -55,8 +65,15 @@ public final class OreGenerationSettingsScreen extends Screen {
             for (Kind kind : R196OreRules.configurableKinds(selected)) {
                 var block = R196OreFeature.generationBlock(kind);
                 draft.multipliers.put(kind, MiteConfig.oreMultiplier(kind, selected));
-                minerals.add(new Entry(selected, kind, BuiltInRegistries.BLOCK.getKey(block), block.getName(),
+                minerals.add(new Entry(selected, new Mineral(kind, false), BuiltInRegistries.BLOCK.getKey(block), block.getName(),
                         MiteConfig.oreBaseCandidates(kind, selected), MiteConfig.orePassChance(kind, selected)));
+                if (R196OreRules.hasDeepslateOre(kind)) {
+                    var deepBlock = R196OreFeature.generationBlock(kind, true);
+                    // The editor shows absolute rates; saving keeps the displayed deep value independent of regular-row edits.
+                    draft.deepslateMultipliers.put(kind, MiteConfig.oreMultiplier(kind, selected, true));
+                    minerals.add(new Entry(selected, new Mineral(kind, true), BuiltInRegistries.BLOCK.getKey(deepBlock), deepBlock.getName(),
+                            MiteConfig.oreBaseCandidates(kind, selected), MiteConfig.orePassChance(kind, selected)));
+                }
             }
             minerals.sort(Comparator.comparing(entry -> entry.id().toString()));
             drafts.put(selected, draft);
@@ -106,19 +123,21 @@ public final class OreGenerationSettingsScreen extends Screen {
             box.setMaxLength(24);
             box.setEditable(editable);
             box.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_multiplier.tooltip")));
+            // Initial display must not overwrite invalid text preserved across searches and pages.
+            box.setValue(draft.text.getOrDefault(entry.mineral(), format(draft.multiplier(entry.mineral()))));
+            if (draft.invalid.contains(entry.mineral())) box.setTextColor(0xFFFF5555);
             box.setResponder(text -> {
-                draft.text.put(entry.kind(), text);
+                draft.text.put(entry.mineral(), text);
                 try {
                     double value = Double.parseDouble(text.trim());
                     if (!Double.isFinite(value) || value < 0D || value > 100D) throw new NumberFormatException();
-                    draft.multipliers.put(entry.kind(), value);
-                    draft.invalid.remove(entry.kind());
+                    (entry.mineral().deepslate() ? draft.deepslateMultipliers : draft.multipliers).put(entry.kind(), value);
+                    draft.invalid.remove(entry.mineral());
                     box.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
-                } catch (NumberFormatException ignored) { draft.invalid.add(entry.kind()); box.setTextColor(0xFFFF5555); }
+                } catch (NumberFormatException ignored) { draft.invalid.add(entry.mineral()); box.setTextColor(0xFFFF5555); }
                 saveFailed = false;
                 refreshSave();
             });
-            box.setValue(draft.text.getOrDefault(entry.kind(), format(draft.multipliers.get(entry.kind()))));
             var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"),
                     button -> box.setValue("1")).bounds(controlsX + 84, y, 54, 20).build());
             reset.active = editable;
@@ -133,8 +152,10 @@ public final class OreGenerationSettingsScreen extends Screen {
         save = addRenderableWidget(Button.builder(Component.translatable("mite.config.save"), button -> {
             if (!editable || !MiteConfigClient.editable() || invalidCount() != 0) return;
             var values = new EnumMap<Dimension, Map<Kind, Double>>(Dimension.class);
+            var deepValues = new EnumMap<Dimension, Map<Kind, Double>>(Dimension.class);
             drafts.forEach((selected, draftValues) -> values.put(selected, draftValues.multipliers));
-            if (MiteConfig.saveOreMultipliers(values)) minecraft.setScreen(parent);
+            drafts.forEach((selected, draftValues) -> deepValues.put(selected, draftValues.deepslateMultipliers));
+            if (MiteConfig.saveOreMultipliers(values, deepValues)) minecraft.setScreen(parent);
             else { saveFailed = true; refreshSave(); }
         }).bounds(width / 2 - 104, height - 29, 100, 20).build());
         refreshSave();
@@ -157,7 +178,7 @@ public final class OreGenerationSettingsScreen extends Screen {
     }
     private Component effective(Entry entry) {
         Draft draft = drafts.get(entry.dimension());
-        String attempts = draft.invalid.contains(entry.kind()) ? "?" : format(entry.base() * draft.multipliers.get(entry.kind()) * entry.chance());
+        String attempts = draft.invalid.contains(entry.mineral()) ? "?" : format(entry.base() * draft.multiplier(entry.mineral()) * entry.chance());
         return Component.translatable("mite.config.ore_effective", format(entry.base()), format(entry.chance() * 100D), attempts);
     }
 
@@ -178,6 +199,7 @@ public final class OreGenerationSettingsScreen extends Screen {
                         Component.translatable("mite.config.ore_multiplier.tooltip"), Component.translatable("mite.config.ore_multiplier_hint")));
                 if (entry.dimension() == Dimension.OVERWORLD && entry.kind() == Kind.ADAMANTIUM)
                     lines.add(Component.translatable("mite.config.ore_surface_adamantium"));
+                if (entry.mineral().deepslate()) lines.add(Component.translatable("mite.config.ore_deepslate_hint"));
                 graphics.renderTooltip(font, lines.stream().flatMap(line -> font.split(line, Math.min(360, width - 24)).stream()).toList(), mouseX, mouseY);
             }
         }

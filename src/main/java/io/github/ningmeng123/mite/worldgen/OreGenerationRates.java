@@ -1,11 +1,24 @@
 package io.github.ningmeng123.mite.worldgen;
 
 import io.github.ningmeng123.mite.rules.R196OreRules;
+import java.util.List;
 import java.util.Random;
 
 /** Scale new vein attempts, retaining fractional rates and the default random sequence. @author NingMeng123 */
 final class OreGenerationRates {
     private OreGenerationRates() {}
+
+    record Batch(double candidates, boolean stone, boolean deepslate) {}
+
+    /** Equal rates share the original batch; only their difference gets a substrate-restricted batch. */
+    static List<Batch> batches(double baseCandidates, double stoneMultiplier, double deepslateMultiplier) {
+        double shared = Math.min(stoneMultiplier, deepslateMultiplier);
+        Batch common = new Batch(baseCandidates * shared, true, true);
+        if (stoneMultiplier == deepslateMultiplier) return List.of(common);
+        Batch extra = new Batch(baseCandidates * Math.abs(stoneMultiplier - deepslateMultiplier),
+                stoneMultiplier > deepslateMultiplier, deepslateMultiplier > stoneMultiplier);
+        return shared == 0D ? List.of(extra) : List.of(common, extra);
+    }
 
     /** Integral counts consume no extra random draw; baseCount=1 also accepts actual configured counts. */
     static int scaleCandidates(int baseCount, double multiplier, Random random) {

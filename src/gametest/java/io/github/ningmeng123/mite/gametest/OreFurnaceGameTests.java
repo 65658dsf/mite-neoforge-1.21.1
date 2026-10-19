@@ -78,6 +78,30 @@ public final class OreFurnaceGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void allRawMetalsMatchOneRecipeAndActuallySmeltIntoOneIngot(GameTestHelper helper) {
+        for (String metal : List.of("copper", "iron", "gold", "silver", "mithril", "adamantium")) {
+            String namespace = List.of("copper", "iron", "gold").contains(metal) ? "minecraft:" : "mite:";
+            Item raw = item(namespace + "raw_" + metal), ingot = item(namespace + metal + "_ingot");
+            helper.assertTrue(raw != Items.AIR, "The raw metal is registered: " + metal);
+            for (RecipeType<?> type : new RecipeType<?>[]{RecipeType.SMELTING, RecipeType.BLASTING}) {
+                var matching = helper.getLevel().getRecipeManager().getRecipes().stream().map(holder -> holder.value())
+                        .filter(recipe -> recipe instanceof AbstractCookingRecipe cooking && cooking.getType() == type
+                                && cooking.matches(new SingleRecipeInput(new ItemStack(raw)), helper.getLevel())).toList();
+                helper.assertValueEqual(matching.size(), 1, "Raw metal has exactly one cooking recipe per device: " + metal);
+                AbstractCookingRecipe recipe = (AbstractCookingRecipe) matching.getFirst();
+                ItemStack output = recipe.getResultItem(helper.getLevel().registryAccess());
+                helper.assertTrue(output.is(ingot) && output.getCount() == 1, "One raw metal produces one matching ingot");
+                helper.assertValueEqual(recipe.getExperience(), 0F, "Raw metal uses the unified withdrawal experience path");
+            }
+            try (Fixture f = new Fixture(helper)) {
+                f.cook(raw, 1, 1);
+                helper.assertTrue(f.take(1).is(ingot), "Raw metal cooks in its required heat-tier furnace: " + metal);
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void partialAndShiftMetalWithdrawalsPayOnlyTheActualTakenCount(GameTestHelper helper) {
         try (Fixture f = new Fixture(helper);
                 var spawned = new SpawnedEntityCapture(helper.getLevel(), entity ->

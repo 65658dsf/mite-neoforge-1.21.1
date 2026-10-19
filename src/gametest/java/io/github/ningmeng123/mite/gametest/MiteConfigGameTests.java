@@ -110,6 +110,9 @@ public final class MiteConfigGameTests {
                 String feature = "ores_" + dimension.name().toLowerCase(java.util.Locale.ROOT);
                 for (double multiplier : new double[]{0D, .5D, 2D}) {
                     multipliers.get(kind).set(multiplier);
+                    // Long generation fixtures can overlap a FileWatcher reload from earlier tests' saves.
+                    // Keep the disk revision consistent with the intended fixture instead of publishing temporary unsaved rates.
+                    MiteConfig.SPEC.save();
                     MiteConfig.refreshEnchantmentRules();
                     fixture.fill(-64, 129);
                     fixture.place(feature, 196L);
@@ -118,9 +121,13 @@ public final class MiteConfigGameTests {
                             "Actual " + dimension + "/" + kind + " generation obeys multiplier " + multiplier + "; found=" + found);
                 }
                 chances.get(kind).set(0D);
+                MiteConfig.SPEC.save();
                 MiteConfig.refreshEnchantmentRules();
+                close(helper, MiteConfig.orePassChance(kind, dimension), 0D, "The zero pass chance reaches the published runtime revision: " + dimension);
                 fixture.fill(-64, 129);
+                helper.assertValueEqual(countMineral(fixture, kind), 0, "Refilling the fixture clears every earlier ore before the zero-chance check: " + dimension);
                 fixture.place(feature, 196L);
+                close(helper, MiteConfig.orePassChance(kind, dimension), 0D, "The intended zero pass chance remains published throughout generation: " + dimension);
                 helper.assertValueEqual(countMineral(fixture, kind), 0,
                         "An explicitly configured zero chance still disables the real batch without a second rarity path");
             }

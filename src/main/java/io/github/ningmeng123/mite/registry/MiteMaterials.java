@@ -22,6 +22,9 @@ public final class MiteMaterials {
     public static final DeferredItem<Item> ANCIENT_METAL_INGOT = ingot("ancient_metal_ingot");
     public static final DeferredItem<Item> MITHRIL_INGOT = ingot("mithril_ingot");
     public static final DeferredItem<Item> ADAMANTIUM_INGOT = ingot("adamantium_ingot");
+    public static final DeferredItem<Item> RAW_SILVER = ITEMS.registerSimpleItem("raw_silver", new Item.Properties().stacksTo(8));
+    public static final DeferredItem<Item> RAW_MITHRIL = ITEMS.registerSimpleItem("raw_mithril", new Item.Properties().stacksTo(8));
+    public static final DeferredItem<Item> RAW_ADAMANTIUM = ITEMS.registerSimpleItem("raw_adamantium", new Item.Properties().stacksTo(8).fireResistant());
     public static final DeferredItem<Item> VIBRANIUM_NUGGET = ITEMS.registerSimpleItem("vibranium_nugget", new Item.Properties().stacksTo(64).fireResistant());
     public static final DeferredItem<Item> VIBRANIUM_INGOT = ITEMS.registerSimpleItem("vibranium_ingot", new Item.Properties().stacksTo(8).fireResistant());
 

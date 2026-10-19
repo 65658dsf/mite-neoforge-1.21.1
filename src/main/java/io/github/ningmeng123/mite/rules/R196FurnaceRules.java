@@ -35,6 +35,16 @@ public final class R196FurnaceRules {
         return java.util.Collections.unmodifiableMap(result);
     }
     public static int requiredHeat(String id) {
+        // Modern raw metals retain the heat tier of the corresponding source ore.
+        id = switch (id) {
+            case "minecraft:raw_copper" -> "minecraft:copper_ore";
+            case "minecraft:raw_iron" -> "minecraft:iron_ore";
+            case "minecraft:raw_gold" -> "minecraft:gold_ore";
+            case "mite:raw_silver" -> "mite:silver_ore";
+            case "mite:raw_mithril" -> "mite:mithril_ore";
+            case "mite:raw_adamantium" -> "mite:adamantium_ore";
+            default -> id;
+        };
         var value = DATA.getAsJsonObject("required_heat").get(id);
         return value == null ? 1 : value.getAsInt();
     }

@@ -4,12 +4,15 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.rules.OreBlockRules;
+import io.github.ningmeng123.mite.registry.MiteMaterials;
+import io.github.ningmeng123.mite.registry.MiteOreBlocks;
 import io.github.ningmeng123.mite.registry.MiteShards;
 import io.github.ningmeng123.mite.mining.OreHarvestExperience;
 import io.github.ningmeng123.mite.progression.EnchantmentSources;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -52,7 +55,9 @@ public final class R196OreBonusFunction extends LootItemConditionalFunction {
             return stack;
         }
         int rewardPerUnit = 0;
-        if (state.is(Blocks.COAL_ORE) || state.is(Blocks.DEEPSLATE_COAL_ORE)) stack = exploded ? ItemStack.EMPTY : new ItemStack(Items.COAL);
+        Item rawMetal = exploded ? null : rawMetal(state);
+        if (rawMetal != null) stack = new ItemStack(rawMetal);
+        else if (state.is(Blocks.COAL_ORE) || state.is(Blocks.DEEPSLATE_COAL_ORE)) stack = exploded ? ItemStack.EMPTY : new ItemStack(Items.COAL);
         else if (state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.DEEPSLATE_DIAMOND_ORE)) {
             stack = new ItemStack(exploded ? MiteShards.DIAMOND_SHARD.get() : Items.DIAMOND); rewardPerUnit = exploded ? 0 : 30;
         } else if (state.is(Blocks.EMERALD_ORE) || state.is(Blocks.DEEPSLATE_EMERALD_ORE)) {
@@ -75,5 +80,16 @@ public final class R196OreBonusFunction extends LootItemConditionalFunction {
         for (int unit = 0; unit < base; unit++) if (context.getRandom().nextFloat() < chance) extra++;
         stack.grow(extra);
         return stack;
+    }
+
+    /** Host stone changes the ore block, while ordinary mining returns the same raw metal. */
+    private static Item rawMetal(BlockState state) {
+        if (state.is(Blocks.COPPER_ORE) || state.is(Blocks.DEEPSLATE_COPPER_ORE)) return Items.RAW_COPPER;
+        if (state.is(Blocks.IRON_ORE) || state.is(Blocks.DEEPSLATE_IRON_ORE)) return Items.RAW_IRON;
+        if (state.is(Blocks.GOLD_ORE) || state.is(Blocks.DEEPSLATE_GOLD_ORE)) return Items.RAW_GOLD;
+        if (state.is(MiteOreBlocks.SILVER_ORE.get()) || state.is(MiteOreBlocks.DEEPSLATE_SILVER_ORE.get())) return MiteMaterials.RAW_SILVER.get();
+        if (state.is(MiteOreBlocks.MITHRIL_ORE.get()) || state.is(MiteOreBlocks.DEEPSLATE_MITHRIL_ORE.get())) return MiteMaterials.RAW_MITHRIL.get();
+        if (state.is(MiteOreBlocks.ADAMANTIUM_ORE.get()) || state.is(MiteOreBlocks.DEEPSLATE_ADAMANTIUM_ORE.get())) return MiteMaterials.RAW_ADAMANTIUM.get();
+        return null;
     }
 }

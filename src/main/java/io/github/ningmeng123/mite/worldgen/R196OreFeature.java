@@ -42,18 +42,24 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         for (Kind kind : order) {
             int count = R196OreRules.candidateCount(kind, dimension, random);
             boolean configurable = R196OreRules.configurableKinds(dimension).contains(kind);
-            if (configurable) count = OreGenerationRates.scaleCandidates(1, MiteConfig.oreCandidates(kind, dimension), random);
-            Access access = new Access(level, dimension, kind);
-            for (int candidate = 0; candidate < count; candidate++) {
-                if (configurable) {
-                    if (!OreGenerationRates.passesChance(MiteConfig.orePassChance(kind, dimension), dimension, random)) continue;
-                } else if (dimension != Dimension.NETHER && random.nextInt(R196OreRules.candidateRarity(dimension)) != 0) continue;
-                int x = originX + random.nextInt(16);
-                int legacyY = R196OreRules.randomHeight(kind, dimension, random);
-                int z = originZ + random.nextInt(16);
-                int y = R196OreRules.modernY(dimension, legacyY);
-                placed += R196OreRules.generateVein(kind, dimension, access, x, y, z, legacyY,
-                        R196OreRules.depthScaled(kind, dimension), random);
+            var batches = configurable && R196OreRules.hasDeepslateOre(kind)
+                    ? OreGenerationRates.batches(MiteConfig.oreBaseCandidates(kind, dimension),
+                            MiteConfig.oreMultiplier(kind, dimension), MiteConfig.oreMultiplier(kind, dimension, true))
+                    : List.of(new OreGenerationRates.Batch(configurable ? MiteConfig.oreCandidates(kind, dimension) : count, true, true));
+            for (var batch : batches) {
+                count = OreGenerationRates.scaleCandidates(1, batch.candidates(), random);
+                Access access = new Access(level, dimension, kind, batch.stone(), batch.deepslate());
+                for (int candidate = 0; candidate < count; candidate++) {
+                    if (configurable) {
+                        if (!OreGenerationRates.passesChance(MiteConfig.orePassChance(kind, dimension), dimension, random)) continue;
+                    } else if (dimension != Dimension.NETHER && random.nextInt(R196OreRules.candidateRarity(dimension)) != 0) continue;
+                    int x = originX + random.nextInt(16);
+                    int legacyY = R196OreRules.randomHeight(kind, dimension, random);
+                    int z = originZ + random.nextInt(16);
+                    int y = R196OreRules.modernY(dimension, legacyY);
+                    placed += R196OreRules.generateVein(kind, dimension, access, x, y, z, legacyY,
+                            R196OreRules.depthScaled(kind, dimension), random);
+                }
             }
         }
         if (dimension == Dimension.OVERWORLD) {
@@ -109,9 +115,14 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         private final WorldGenLevel level;
         private final Dimension dimension;
         private final Kind kind;
+        private final boolean stone, deepslate;
         private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         private Access(WorldGenLevel level, Dimension dimension, Kind kind) {
+            this(level, dimension, kind, true, true);
+        }
+        private Access(WorldGenLevel level, Dimension dimension, Kind kind, boolean stone, boolean deepslate) {
             this.level = level; this.dimension = dimension; this.kind = kind;
+            this.stone = stone; this.deepslate = deepslate;
         }
         @Override
         public boolean canReplace(int x, int y, int z) {
@@ -120,7 +131,7 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
             BlockState current = level.getBlockState(pos);
             // Existing ore, boundary blocks, structures, containers, fluids and air never become new ore.
             return dimension == Dimension.NETHER ? current.is(Blocks.NETHERRACK)
-                    : current.is(Blocks.STONE) || current.is(Blocks.DEEPSLATE);
+                    : stone && current.is(Blocks.STONE) || deepslate && current.is(Blocks.DEEPSLATE);
         }
         @Override
         public boolean supported(int x, int y, int z) {
@@ -141,6 +152,7 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
     }
     /** Settings use the actual registered target block and its translated name. */
     public static Block generationBlock(Kind kind) { return block(kind, false); }
+    public static Block generationBlock(Kind kind, boolean deepslate) { return block(kind, deepslate); }
 
     private static Block block(Kind kind, boolean deep) {
         return switch (kind) {

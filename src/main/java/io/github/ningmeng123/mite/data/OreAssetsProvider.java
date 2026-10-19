@@ -28,13 +28,23 @@ public final class OreAssetsProvider implements DataProvider {
             for (String prefix : List.of("", "deepslate_")) {
                 String ore = prefix + metal + "_ore";
                 save(work, cache, "assets/mite/blockstates/" + ore + ".json", "{\"variants\":{\"\":{\"model\":\"mite:block/" + ore + "\"}}}");
-                // Until a matching modern deepslate sprite exists, both host variants use the authorized original ore artwork.
-                save(work, cache, "assets/mite/models/block/" + ore + ".json", "{\"parent\":\"minecraft:block/cube_all\",\"textures\":{\"all\":\"mite:block/" + metal + "_ore\"}}");
+                save(work, cache, "assets/mite/models/block/" + ore + ".json", "{\"parent\":\"minecraft:block/cube_all\",\"textures\":{\"all\":\"mite:block/" + ore + "\"}}");
                 save(work, cache, "assets/mite/models/item/" + ore + ".json", "{\"parent\":\"mite:block/" + ore + "\"}");
                 loot(work, cache, "mite", ore, true);
                 newMetalCooking(work, cache, ore, "mite:" + metal + "_ingot", false);
                 newMetalCooking(work, cache, ore, "mite:" + metal + "_ingot", true);
             }
+            String raw = "raw_" + metal;
+            save(work, cache, "assets/mite/models/item/" + raw + ".json",
+                    "{\"parent\":\"minecraft:item/generated\",\"textures\":{\"layer0\":\"mite:item/" + raw + "\"}}");
+            newMetalCooking(work, cache, raw, "mite:" + metal + "_ingot", false);
+            newMetalCooking(work, cache, raw, "mite:" + metal + "_ingot", true);
+            tag(work, cache, "item", "raw_materials/" + metal, "mite:" + raw);
+        }
+        tag(work, cache, "item", "raw_materials", "#c:raw_materials/silver", "#c:raw_materials/mithril", "#c:raw_materials/adamantium");
+        for (String metal : List.of("copper", "iron", "gold")) {
+            vanillaCooking(work, cache, metal + "_ingot_from_smelting_raw_" + metal, 1, false);
+            vanillaCooking(work, cache, metal + "_ingot_from_blasting_raw_" + metal, 1, true);
         }
         for (String ore : List.of("coal_ore", "copper_ore", "iron_ore", "gold_ore", "lapis_ore", "redstone_ore", "diamond_ore", "emerald_ore")) {
             boolean metal = ore.equals("copper_ore") || ore.equals("iron_ore") || ore.equals("gold_ore");

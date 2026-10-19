@@ -113,6 +113,12 @@ public final class FurnaceJeiRecipesGameTests {
         assertOre(helper, recipes, "minecraft:nether_quartz_ore", "minecraft:quartz", 2, 1, HEAT_TWO_DEVICES);
         assertOre(helper, recipes, "minecraft:nether_gold_ore", "minecraft:gold_ingot", 2, 1, HEAT_TWO_DEVICES);
         assertOre(helper, recipes, "minecraft:ancient_debris", "minecraft:netherite_scrap", 4, 1, Set.of("mite:netherrack_furnace"));
+        for (String metal : List.of("copper", "iron", "gold"))
+            assertOre(helper, recipes, "minecraft:raw_" + metal, "minecraft:" + metal + "_ingot", 2, 1, HEAT_TWO_DEVICES);
+        assertOre(helper, recipes, "mite:raw_silver", "mite:silver_ingot", 2, 1, HEAT_TWO_DEVICES);
+        assertOre(helper, recipes, "mite:raw_mithril", "mite:mithril_ingot", 3, 1,
+                Set.of("mite:obsidian_furnace", "mite:netherrack_furnace"));
+        assertOre(helper, recipes, "mite:raw_adamantium", "mite:adamantium_ingot", 4, 1, Set.of("mite:netherrack_furnace"));
         helper.succeed();
     }
 

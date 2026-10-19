@@ -7,6 +7,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Configurable rates change attempts rather than vein size or existing blocks. @author NingMeng123 */
 class OreGenerationRatesTest {
+    @Test void equalStoneAndDeepslateRatesKeepOneOriginalBatchAndItsRandomSequence() {
+        for (double multiplier : new double[]{0D, .001D, .5D, 1D, 2D, 100D}) {
+            var batches = OreGenerationRates.batches(40D, multiplier, multiplier);
+            assertEquals(1, batches.size());
+            var batch = batches.getFirst();
+            assertTrue(batch.stone() && batch.deepslate());
+            Random actual = new Random(196), expected = new Random(196);
+            assertEquals(OreGenerationRates.scaleCandidates(40, multiplier, expected),
+                    OreGenerationRates.scaleCandidates(1, batch.candidates(), actual));
+            assertEquals(expected.nextLong(), actual.nextLong(), "Splitting equal rates must not consume another random draw");
+        }
+    }
+
+    @Test void differentVariantRatesShareOnlyTheMinimumAndRestrictAllExtraCandidates() {
+        for (double stone : new double[]{0D, .5D, 1D, 2D}) for (double deep : new double[]{0D, .5D, 1D, 2D}) {
+            double stoneCandidates = 0D, deepCandidates = 0D;
+            for (var batch : OreGenerationRates.batches(80D, stone, deep)) {
+                assertTrue(batch.stone() || batch.deepslate());
+                if (batch.stone()) stoneCandidates += batch.candidates();
+                if (batch.deepslate()) deepCandidates += batch.candidates();
+            }
+            assertEquals(80D * stone, stoneCandidates, "Regular stone candidates must use only their own multiplier");
+            assertEquals(80D * deep, deepCandidates, "Deep stone candidates must use only their own multiplier");
+        }
+        var deepOnly = OreGenerationRates.batches(80D, 0D, 2D);
+        assertEquals(java.util.List.of(new OreGenerationRates.Batch(160D, false, true)), deepOnly);
+        var stoneOnly = OreGenerationRates.batches(80D, 2D, 0D);
+        assertEquals(java.util.List.of(new OreGenerationRates.Batch(160D, true, false)), stoneOnly);
+    }
+
     @Test void defaultRatesPreserveEveryUnderworldCandidateCountAndRandomStream() {
         Random actual = new Random(196), expected = new Random(196);
         for (var kind : R196OreRules.UNDERWORLD) {

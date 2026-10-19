@@ -38,11 +38,15 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.config.ModConfigs;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen.Context;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen.Element;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Handle;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
@@ -145,6 +149,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
         report.addProperty("registered_factory_class", factory.getClass().getName());
         report.addProperty("actual_factory_screen_class", screen.getClass().getName());
         report.addProperty("landing_screen_constructor_invoked", true);
+        auditAdvancedSections(report, screen);
 
         ClassNode browser = bytecode(enchantments.getName());
         String catalogName = "io.github.ningmeng123.mite.config.EnchantmentCatalog";
@@ -210,6 +215,100 @@ public final class GameplayConfigClientAudit implements DataProvider {
                 }
             } else throw cause;
         }
+    }
+
+    private static void auditAdvancedSections(JsonObject report, Screen parent) throws Exception {
+        String name = CLIENT + "MiteSettingsScreen$GameplaySectionScreen";
+        String owner = name.replace('.', '/');
+        String nativeOwner = ConfigurationSectionScreen.class.getName().replace('.', '/');
+        Class<?> section = Class.forName(name, false, GameplayConfigClientAudit.class.getClassLoader());
+        check(section.getSuperclass() == ConfigurationSectionScreen.class,
+                "The advanced page uses the native section screen with its save and restart handling");
+        check(section.getDeclaredMethod("createSection", String.class, UnmodifiableConfig.class, UnmodifiableConfig.class)
+                .getReturnType() == Element.class, "The advanced page overrides native subsection creation");
+        ClassNode code = bytecode(name);
+        check(references(bytecode(CLIENT + "MiteSettingsScreen"), "gameplayScreen", owner, "<init>"),
+                "The advanced config factory is bound to the filtered section constructor");
+        check(references(code, "<init>", owner, "filterValue"),
+                "The filtered section constructor installs its leaf-value filter");
+        check(calls(code, "createSection", owner, "hidesOreSection")
+                && calls(code, "createSection", Context.class.getName().replace('.', '/'), "keylist")
+                && calls(code, "createSection", "java/util/List", "isEmpty"),
+                "Subsection creation checks the native context's root path and ore-section policy");
+        boolean delegatesToNative = false;
+        for (var method : code.methods) if (method.name.equals("createSection")) for (var instruction : method.instructions)
+            if (instruction instanceof MethodInsnNode call && call.getOpcode() == Opcodes.INVOKESPECIAL
+                    && call.owner.equals(nativeOwner) && call.name.equals("createSection")) delegatesToNative = true;
+        check(delegatesToNative, "Retained subsections delegate to native section creation");
+
+        var hiddenPolicy = section.getDeclaredMethod("hidesOreSection", String.class);
+        var leafPolicy = section.getDeclaredMethod("filterValue", Context.class, String.class, Element.class);
+        check(hiddenPolicy.trySetAccessible() && leafPolicy.trySetAccessible(), "Production section policies are accessible to the audit");
+        var matchingConfigs = new ArrayList<ModConfig>();
+        for (var type : ModConfig.Type.values()) for (var config : ModConfigs.getConfigSet(type))
+            if (config.getModId().equals(Mite.MOD_ID) && config.getSpec() == MiteConfig.SPEC) matchingConfigs.add(config);
+        check(matchingConfigs.size() == 1, "The audit uses the actual registered MITE gameplay config spec");
+        ModConfig config = matchingConfigs.getFirst();
+        var originalLoadedConfig = config.getLoadedConfig();
+        boolean originallyLoaded = MiteConfig.SPEC.isLoaded();
+        var originalValues = new LinkedHashMap<>(MiteConfig.SPEC.getValues().valueMap());
+        var originalSpecs = new LinkedHashMap<>(MiteConfig.SPEC.getSpec().valueMap());
+        Context root = Context.top(Mite.MOD_ID, parent, config, (context, key, original) -> {
+            try { return (Element) leafPolicy.invoke(null, context, key, original); }
+            catch (ReflectiveOperationException failure) { throw new IllegalStateException("Cannot invoke the production leaf filter", failure); }
+        });
+        check(root.keylist().isEmpty() && root.modSpec() == MiteConfig.SPEC,
+                "The native top context exposes the actual root entries with an empty path");
+        Set<String> expectedHidden = Set.of("underworld_ores", "overworld_ores", "underworld_generation", "overworld_generation");
+        Set<String> expectedVisible = Set.of("monsters", "combat", "structures", "enchantments");
+        Set<String> hidden = new TreeSet<>(), visible = new TreeSet<>(), monsterValues = new TreeSet<>();
+        Element sentinel = new Element(null, null, null, null, true);
+        int suppressedMonsterValues = 0;
+        for (var entry : root.entries()) {
+            String key = entry.getKey();
+            check(entry.getRawValue() instanceof UnmodifiableConfig && root.valueSpecs().get(key) instanceof UnmodifiableConfig,
+                    "The registered root entry is a native config subsection: " + key);
+            if ((boolean) hiddenPolicy.invoke(null, key)) {
+                hidden.add(key);
+                continue;
+            }
+            visible.add(key);
+            UnmodifiableConfig values = (UnmodifiableConfig) entry.getRawValue();
+            UnmodifiableConfig specs = (UnmodifiableConfig) root.valueSpecs().get(key);
+            Context child = Context.section(root, parent, values.entrySet(), specs.valueMap(), key);
+            check(child.keylist().equals(List.of(key)) && child.filter() == root.filter(),
+                    "Native subsection contexts preserve their absolute path and inherited leaf filter: " + key);
+            for (var value : child.entries()) {
+                check(value.getRawValue() instanceof ModConfigSpec.ConfigValue<?>, "A retained section contains a native config value");
+                Element selected = child.filter().filterEntry(child, value.getKey(), sentinel);
+                if (key.equals("monsters")) {
+                    if (selected == null) suppressedMonsterValues++;
+                    else {
+                        check(selected == sentinel, "Retained monster settings preserve the original native element");
+                        monsterValues.add(value.getKey());
+                    }
+                } else check(selected == sentinel, "Other gameplay and advanced enchantment values remain visible: " + key + "." + value.getKey());
+            }
+        }
+        check(hidden.equals(expectedHidden) && visible.equals(expectedVisible),
+                "Only the four duplicate ore sections are suppressed; all four other gameplay sections remain");
+        check(monsterValues.equals(Set.of("growth_multiplier", "health_growth_multiplier", "damage_growth_multiplier"))
+                && suppressedMonsterValues > 0, "Only the three monster multipliers remain in the advanced page");
+        check(originalValues.equals(MiteConfig.SPEC.getValues().valueMap()) && originalSpecs.equals(MiteConfig.SPEC.getSpec().valueMap())
+                && config.getLoadedConfig() == originalLoadedConfig && MiteConfig.SPEC.isLoaded() == originallyLoaded,
+                "Section visibility checks do not modify the registered spec, config values or loaded config");
+        var hiddenNames = new JsonArray(); hidden.forEach(hiddenNames::add);
+        var visibleNames = new JsonArray(); visible.forEach(visibleNames::add);
+        var monsterNames = new JsonArray(); monsterValues.forEach(monsterNames::add);
+        report.add("advanced_hidden_ore_sections", hiddenNames);
+        report.add("advanced_visible_sections", visibleNames);
+        report.add("advanced_visible_monster_values", monsterNames);
+        report.addProperty("advanced_suppressed_monster_values", suppressedMonsterValues);
+        report.addProperty("advanced_section_factory_and_native_override_bytecode_verified", true);
+        report.addProperty("advanced_section_policies_invoked_on_native_config_contexts", true);
+        report.addProperty("advanced_section_config_spec_and_values_unchanged", true);
+        report.addProperty("advanced_section_screen_constructor_invoked", false);
+        report.addProperty("advanced_section_widgets_created", false);
     }
 
     private static void auditEnchantmentSeed(JsonObject report) throws Exception {
@@ -327,6 +426,12 @@ public final class GameplayConfigClientAudit implements DataProvider {
     private static boolean calls(ClassNode type, String methodName, String owner, String name) {
         for (var method : type.methods) if (method.name.equals(methodName)) for (var instruction : method.instructions)
             if (instruction instanceof MethodInsnNode call && call.owner.equals(owner) && call.name.equals(name)) return true;
+        return false;
+    }
+    private static boolean references(ClassNode type, String methodName, String owner, String name) {
+        for (var method : type.methods) if (method.name.equals(methodName)) for (var instruction : method.instructions)
+            if (instruction instanceof InvokeDynamicInsnNode dynamic) for (Object argument : dynamic.bsmArgs)
+                if (argument instanceof Handle handle && handle.getOwner().equals(owner) && handle.getName().equals(name)) return true;
         return false;
     }
     private static ClassNode bytecode(String name) throws Exception {

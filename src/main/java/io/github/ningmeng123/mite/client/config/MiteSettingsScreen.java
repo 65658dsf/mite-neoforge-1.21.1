@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.client.config;
 
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.config.GameplayConfigExport;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 
 /** Compact entry point for gameplay settings and the offline/live enchantment catalog. @author NingMeng123 */
@@ -57,13 +59,32 @@ public final class MiteSettingsScreen extends Screen {
         }
     }
     private Screen gameplayScreen() {
-        return new ConfigurationScreen(container, this, (context, key, original) -> {
-            if (context.keylist().isEmpty() && (key.equals("underworld_ores") || key.equals("underworld_generation")
-                    || key.equals("overworld_generation") || key.equals("overworld_ores"))) return null;
+        return new ConfigurationScreen(container, this, GameplaySectionScreen::new);
+    }
+
+    /** Native sections bypass the value filter, so remove duplicate ore groups at section creation. */
+    private static final class GameplaySectionScreen extends ConfigurationScreen.ConfigurationSectionScreen {
+        private GameplaySectionScreen(Screen parent, ModConfig.Type type, ModConfig config, Component title) {
+            super(parent, type, config, title, GameplaySectionScreen::filterValue);
+        }
+
+        private static boolean hidesOreSection(String key) {
+            return switch (key) {
+                case "underworld_ores", "overworld_ores", "underworld_generation", "overworld_generation" -> true;
+                default -> false;
+            };
+        }
+
+        private static Element filterValue(Context context, String key, Element original) {
             // Formula edits go through the dedicated page's full validation and trial calculations.
             if (context.keylist().equals(java.util.List.of("monsters")) && !key.endsWith("_multiplier")) return null;
             return original;
-        });
+        }
+
+        @Override protected Element createSection(String key, UnmodifiableConfig subconfig, UnmodifiableConfig subsection) {
+            if (context.keylist().isEmpty() && hidesOreSection(key)) return null;
+            return super.createSection(key, subconfig, subsection);
+        }
     }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
