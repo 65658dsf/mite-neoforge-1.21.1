@@ -193,6 +193,7 @@
     "R196NaturalSpawnerMixin",
     "R196VillageSiegeMixin",
     "R196SpawnerMixin",
+    "UnderworldDungeonSpawnerMixin",
     "UnderworldTrialSpawnerMixin",
     "UnderworldTrialSpawnerDataMixin",
     "UnderworldVaultLootMixin",

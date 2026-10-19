@@ -53,7 +53,7 @@ public final class UnderworldDungeonWorldgenProvider implements DataProvider {
         // never adds artificial caves, and stays above the water band and below the ceiling stratum.
         save(work, cache, "worldgen/placed_feature/underworld_monster_room.json", """
                 {"feature":"minecraft:monster_room","placement":[
-                  {"type":"minecraft:count","count":10},
+                  {"type":"minecraft:count","count":12},
                   {"type":"minecraft:in_square"},
                   {"type":"minecraft:height_range","height":{"type":"minecraft:uniform",
                     "min_inclusive":{"absolute":154},"max_inclusive":{"absolute":300}}},

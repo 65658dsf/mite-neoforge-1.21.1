@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.gametest;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
+import io.github.ningmeng123.mite.worldgen.UnderworldDungeonSpawns;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -205,7 +206,7 @@ public final class UnderworldSpawnerGameTests {
     private static CompoundTag data(String id) { CompoundTag entity=new CompoundTag();entity.putString("id",id);return (CompoundTag)SpawnData.CODEC.encodeStart(NbtOps.INSTANCE,new SpawnData(entity,Optional.empty(),Optional.empty())).getOrThrow(); }
     private static CompoundTag weighted(String id,int weight) { CompoundTag entry=new CompoundTag();entry.putInt("weight",weight);entry.put("data",data(id));return entry; }
     private static CompoundTag baseTag(String id) {
-        CompoundTag tag=new CompoundTag();tag.putShort("Delay",(short)0);tag.putShort("MinSpawnDelay",(short)200);tag.putShort("MaxSpawnDelay",(short)800);tag.putShort("SpawnCount",(short)1);tag.putShort("SpawnRange",(short)1);tag.put("SpawnData",data(id));return tag;
+        CompoundTag tag=new CompoundTag();tag.putBoolean(UnderworldDungeonSpawns.CONFIGURED_TAG,true);tag.putShort("Delay",(short)0);tag.putShort("MinSpawnDelay",(short)200);tag.putShort("MaxSpawnDelay",(short)800);tag.putShort("SpawnCount",(short)1);tag.putShort("SpawnRange",(short)1);tag.put("SpawnData",data(id));return tag;
     }
     private static CompoundTag trialTag(String normal,String ominous,BlockPos spawn) {
         CompoundTag tag=new CompoundTag();

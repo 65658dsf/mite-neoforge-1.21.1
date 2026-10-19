@@ -198,8 +198,11 @@ public final class UnderworldDungeonGenerationGameTests {
                         "A naturally placed ordinary dungeon stays in the accessible cave band");
                 CompoundTag saved = spawner.getSpawner().save(new CompoundTag());
                 String mob = saved.getCompound("SpawnData").getCompound("entity").getString("id");
-                helper.assertTrue(Set.of("mite:revenant", "mite:longdead", "mite:demon_spider").contains(mob),
-                        "The naturally generated ordinary spawner replaces its zombie/skeleton/spider with a non-lord MITE mob: " + mob);
+                helper.assertTrue(Set.of("mite:revenant", "mite:longdead", "mite:longdead_guardian", "mite:demon_spider",
+                                "mite:phase_spider", "mite:ghoul").contains(mob),
+                        "The naturally generated ordinary spawner chooses a non-lord from its underworld roster: " + mob);
+                helper.assertTrue(saved.getBoolean(io.github.ningmeng123.mite.worldgen.UnderworldDungeonSpawns.CONFIGURED_TAG),
+                        "Natural dungeon generation stores its permanent roster selection");
                 boolean chest = false;
                 for (int x = -4; x <= 4; x++) for (int z = -4; z <= 4; z++) {
                     BlockPos near = position.offset(x, 0, z);

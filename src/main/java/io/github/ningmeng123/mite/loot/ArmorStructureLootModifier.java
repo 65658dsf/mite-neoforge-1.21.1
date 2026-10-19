@@ -91,6 +91,12 @@ public final class ArmorStructureLootModifier extends LootModifier {
         }
         if (!reservedRecord.isEmpty() && unique.mark(((io.github.ningmeng123.mite.item.R196RecordItem)reservedRecord.getItem()).recordName()))
             loot.add(reservedRecord);
+        // Modern balance bonus only fills underworld dungeon chests that did not already roll a coin.
+        if (pool == POOLS.get("dungeon_underworld")) {
+            var coin = MiteArmorContent.get("mite:ancient_metal_coin");
+            if (loot.stream().noneMatch(stack -> stack.is(coin)) && random.nextFloat() < .03F)
+                loot.add(new ItemStack(coin));
+        }
         return loot;
     }
     private static boolean replacedGear(ItemStack stack) {

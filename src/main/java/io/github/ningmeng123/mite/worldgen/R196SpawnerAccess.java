@@ -1,6 +1,10 @@
 package io.github.ningmeng123.mite.worldgen;
 
-/** Exposes only whether an active spawner uses default R196 predicates, preserving custom SpawnData rules. @author NingMeng123 */
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+
+/** Source predicates and explicit initialization of naturally generated underworld dungeons. @author NingMeng123 */
 public interface R196SpawnerAccess {
     boolean miteUsesSourceRules();
+    void mite$configureUnderworldDungeon(ServerLevel level, BlockPos pos);
 }

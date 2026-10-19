@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
 import io.github.ningmeng123.mite.worldgen.R196SpawnerAccess;
+import io.github.ningmeng123.mite.worldgen.UnderworldDungeonSpawns;
 import io.github.ningmeng123.mite.worldgen.UnderworldSpawnerMobs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -50,11 +51,28 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     @Unique private boolean mite$resetDelay;
     @Unique private boolean mite$disabled;
     @Unique private boolean mite$managed;
-    @Unique private void mite$normalizeUnderworld(Level level) {
-        if (!UnderworldSpawnerMobs.applies(level)) return;
+    @Unique private boolean mite$dungeonConfigured;
+    @Unique private boolean mite$loading;
+
+    @Override public void mite$configureUnderworldDungeon(ServerLevel level, BlockPos pos) {
+        if (!UnderworldSpawnerMobs.applies(level) || !UnderworldDungeonSpawns.canUpgrade(nextSpawnData, spawnPotentials)) return;
+        mite$dungeonConfigured = false;
+        mite$normalizeUnderworld(level, pos);
+    }
+
+    @Unique private void mite$normalizeUnderworld(Level level, BlockPos pos) {
+        if (mite$loading || !UnderworldSpawnerMobs.applies(level)) return;
+        boolean configured = false;
+        if (level instanceof ServerLevel && !mite$dungeonConfigured
+                && UnderworldDungeonSpawns.canUpgrade(nextSpawnData, spawnPotentials)) {
+            nextSpawnData = UnderworldDungeonSpawns.select(level, pos);
+            spawnPotentials = SimpleWeightedRandomList.single(nextSpawnData);
+            mite$dungeonConfigured = true;
+            configured = true;
+        }
         var potentials = UnderworldSpawnerMobs.remap(spawnPotentials);
         SpawnData next = nextSpawnData == null ? null : UnderworldSpawnerMobs.remap(nextSpawnData);
-        if (potentials != spawnPotentials || next != nextSpawnData) {
+        if (configured || potentials != spawnPotentials || next != nextSpawnData) {
             spawnPotentials = potentials;
             nextSpawnData = next;
             displayEntity = null;
@@ -75,7 +93,7 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     }
     @Inject(method = "serverTick", at = @At("HEAD"))
     private void mite$beginSourceCycle(ServerLevel level, BlockPos pos, CallbackInfo ci) {
-        mite$normalizeUnderworld(level);
+        mite$normalizeUnderworld(level, pos);
         mite$managed = R196MobSpawning.manages(level);
         mite$resetDelay = false;
         mite$attemptedCycle = R196MobSpawning.manages(level) && mite$sourceRules() && !mite$disabled && spawnDelay <= 0
@@ -109,38 +127,65 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     private FinalizeSpawnEvent mite$netherSkeletonIdentityAfterQualification(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty,
             MobSpawnType reason, SpawnGroupData data, IOwnedSpawner spawner, boolean finalize,
             Operation<FinalizeSpawnEvent> original, @Local LocalRef<Entity> entity, @Local LocalRef<Mob> living) {
+        boolean jockey = UnderworldSpawnerMobs.applies(level.getLevel()) && nextSpawnData != null
+                && UnderworldDungeonSpawns.isJockey(nextSpawnData);
+        if (jockey) finalize = true;
         if (miteUsesSourceRules() && finalize) {
             var prepared = R196MobSpawning.prepareSourceFinalization(mob, level.getLevel(), data);
             Mob replacement = prepared.mob(); data = prepared.group();
             if (replacement != mob) { entity.set(replacement); living.set(replacement); mob = replacement; }
         }
-        return original.call(mob, level, difficulty, reason, data, spawner, finalize);
+        FinalizeSpawnEvent event = original.call(mob, level, difficulty, reason, data, spawner, finalize);
+        if (jockey) {
+            if (event.isCanceled()) mob.setSpawnCancelled(true);
+            UnderworldDungeonSpawns.finalizeJockey(mob, level, event.getDifficulty(), event.getSpawnType());
+        }
+        return event;
+    }
+    @Inject(method = "load", at = @At("HEAD"))
+    private void mite$beginLoad(Level level, BlockPos pos, CompoundTag tag, CallbackInfo ci) {
+        mite$loading = true;
+        mite$dungeonConfigured = tag.getBoolean(UnderworldDungeonSpawns.CONFIGURED_TAG);
     }
     @Inject(method = "load", at = @At("RETURN"))
     private void mite$loadDisabled(Level level, BlockPos pos, CompoundTag tag, CallbackInfo ci) {
         mite$disabled = tag.getBoolean("mite:r196_disabled");
-        mite$normalizeUnderworld(level);
+        mite$loading = false;
+        mite$normalizeUnderworld(level, pos);
     }
     @Inject(method = "setNextSpawnData", at = @At("RETURN"))
     private void mite$normalizeSelectedMob(Level level, BlockPos pos, SpawnData data, CallbackInfo ci) {
-        mite$normalizeUnderworld(level);
+        mite$normalizeUnderworld(level, pos);
+    }
+    @Inject(method = "setEntityId", at = @At("HEAD"))
+    private void mite$clearDungeonSelection(EntityType<?> type, Level level, RandomSource random, BlockPos pos, CallbackInfo ci) {
+        if (!UnderworldSpawnerMobs.applies(level)) return;
+        if (nextSpawnData != null && UnderworldDungeonSpawns.isJockey(nextSpawnData)) {
+            nextSpawnData.getEntityToSpawn().remove(UnderworldDungeonSpawns.JOCKEY_TAG);
+            nextSpawnData.getEntityToSpawn().remove("Passengers");
+        }
+        if (mite$dungeonConfigured) spawnPotentials = SimpleWeightedRandomList.empty();
+        // Explicit egg/API choices keep their selected identity. The dungeon feature opts back in.
+        mite$dungeonConfigured = true;
+        displayEntity = null;
     }
     @Inject(method = "setEntityId", at = @At("RETURN"))
     private void mite$normalizeSpawnEgg(EntityType<?> type, Level level, RandomSource random, BlockPos pos, CallbackInfo ci) {
-        mite$normalizeUnderworld(level);
+        mite$normalizeUnderworld(level, pos);
     }
     @Inject(method = "getOrCreateDisplayEntity", at = @At("HEAD"))
     private void mite$normalizeSpinningMob(Level level, BlockPos pos, CallbackInfoReturnable<Entity> cir) {
-        mite$normalizeUnderworld(level);
+        mite$normalizeUnderworld(level, pos);
     }
     @Inject(method = "save", at = @At("RETURN"))
     private void mite$saveDisabled(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
         if (mite$disabled) cir.getReturnValue().putBoolean("mite:r196_disabled", true);
+        if (mite$dungeonConfigured) cir.getReturnValue().putBoolean(UnderworldDungeonSpawns.CONFIGURED_TAG, true);
     }
     @Inject(method = "save", at = @At("HEAD"))
     private void mite$normalizeSavedMob(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
         var owner = ((BaseSpawner)(Object)this).getOwner();
-        if (owner != null) mite$normalizeUnderworld(owner.map(
-                net.minecraft.world.level.block.entity.BlockEntity::getLevel, Entity::level));
+        if (owner != null) owner.ifLeft(blockEntity -> mite$normalizeUnderworld(blockEntity.getLevel(), blockEntity.getBlockPos()));
+        if (owner != null) owner.ifRight(entity -> mite$normalizeUnderworld(entity.level(), entity.blockPosition()));
     }
 }
