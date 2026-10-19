@@ -16,10 +16,62 @@ RESOURCES = ROOT / "src/main/resources"
 MATERIALS = {"rusted_iron", "copper", "silver", "ancient_metal", "mithril", "adamantium", "vibranium"}
 FAMILIES = {"longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive", "warglaive",
             "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd"}
+TWO_HANDED_FAMILIES = {"twinblade", "katana", "glaive", "claymore", "greataxe", "greathammer", "scythe", "halberd"}
 
 
 def read(path):
     return json.loads((RESOURCES / path).read_text(encoding="utf-8"))
+
+
+def verify_two_handed(archive, entries):
+    """Independently audit declarations, inherited flags and known exceptions."""
+    expected = {entry["id"] for entry in entries if entry["family"] in TWO_HANDED_FAMILIES}
+    assert len(expected) == 56
+    native_ids, visited = set(), set()
+
+    def visit(tag):
+        if tag in visited:
+            return
+        visited.add(tag)
+        namespace, path = tag.split(":", 1)
+        location = f"data/{namespace}/tags/item/{path}.json"
+        if location not in archive.namelist():
+            return
+        for value in json.loads(archive.read(location))["values"]:
+            item_id = value if isinstance(value, str) else value["id"]
+            if item_id.startswith("#"):
+                visit(item_id[1:])
+            elif item_id.startswith("simplyswords:"):
+                native_ids.add(item_id)
+
+    visit("simplyswords:swords")
+    native_ids.update("simplyswords:" + Path(path).stem for path in archive.namelist()
+                      if path.startswith("data/simplyswords/weapon_attributes/")
+                      and path.count("/") == 3 and path.endswith(".json"))
+    # Effective values checked against Better Combat 2.4.0+1.21.1. Its trident
+    # explicitly turns off the two-handed spear parent; SS spears use trident.
+    two_handed_parents = {"bettercombat:claymore", "bettercombat:glaive", "bettercombat:heavy_axe",
+                          "bettercombat:katana", "bettercombat:scythe", "bettercombat:spear"}
+    one_handed_parents = {"bettercombat:rapier", "bettercombat:sickle", "bettercombat:trident"}
+    for item_id in native_ids:
+        location = f"data/simplyswords/weapon_attributes/{item_id.split(':', 1)[1]}.json"
+        if location in archive.namelist():
+            profile = json.loads(archive.read(location))
+            parent = profile.get("parent")
+            assert parent is None or parent in two_handed_parents | one_handed_parents, parent
+            flag = profile.get("attributes", {}).get("two_handed", parent in two_handed_parents)
+        else:
+            flag = item_id.endswith("_scythe")  # Better Combat's missing-profile fallback.
+        if flag:
+            expected.add(item_id)
+    tag = read("data/mite/tags/item/simplyswords/two_handed.json")
+    actual = {value["id"] for value in tag["values"]}
+    assert len(tag["values"]) == len(actual), "Duplicate two-handed weapons"
+    assert actual == expected, f"Two-handed tag: missing {expected - actual}, unexpected {actual - expected}"
+    assert {"simplyswords:iron_scythe", "simplyswords:electric_claymore", "simplyswords:sword_on_a_stick"} <= actual
+    assert not {"simplyswords:iron_spear", "simplyswords:magispear", "simplyswords:mjolnir",
+                "simplyswords:soulrender", "simplyswords:soulstalker", "simplyswords:iron_warglaive"} & actual
+    return len(actual)
 
 
 def main():
@@ -39,6 +91,7 @@ def main():
     textures = {family: set() for family in FAMILIES}
     recipe_count = 0
     with zipfile.ZipFile(args.archive) as archive:
+        two_handed_count = verify_two_handed(archive, entries)
         for entry in entries:
             item_id, material, family = entry["id"], entry["material"], entry["family"]
             path = item_id.split(":")[1]
@@ -103,7 +156,7 @@ def main():
     vampiric = {value["id"] for value in read("data/mite/tags/item/simplyswords/enchantable/vampiric.json")["values"]}
     assert not any(item.startswith(("mite:simplyswords_silver_", "mite:simplyswords_mithril_")) for item in vampiric)
     assert not list((RESOURCES / "assets/mite/models/item").glob("simplyswords_gold_*.json"))
-    print("Verified 105 material redraws with exact source silhouettes and preserved grips, 90 conditional recipes and unlocks, optional tags and combat parents.")
+    print(f"Verified 105 material redraws with exact source silhouettes and preserved grips, 90 conditional recipes and unlocks, optional tags and combat parents, {two_handed_count} two-handed weapon entries.")
 
 
 if __name__ == "__main__":

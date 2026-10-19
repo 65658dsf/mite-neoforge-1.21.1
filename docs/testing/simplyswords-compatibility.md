@@ -47,3 +47,20 @@ Simply Swords 自带的 `mythicmetals_compat/adamantite/adamantite_twinblade` �
 `build/releases/mite-0.1.0-simplyswords.jar`
 
 SHA-256：`8adeaa922019d5aa207750cc8b271cd723aeb9d02d4f81e224dbe6558be1e690`。
+
+## 2026-10-18 双手武器负重
+
+开发与验证：NingMeng123。主手双手武器额外降低 20% 攻速、15% 移速，按原有最终属性乘算。Better Combat 存在时使用其真实武器注册表及动作预设；缺失时使用源资源生成的双手标签（299 个可选条目，含 56 把新增金属武器）。
+
+| 验证 | 结果 |
+| --- | --- |
+| `gradlew build` | 成功，1594 项 JUnit 测试，无失败或跳过 |
+| 仅安装 Simply Swords 的服务端 GameTest | 23 项全部通过 |
+| Simply Swords 与 Better Combat 同时安装的服务端 GameTest | 23 项全部通过 |
+| 未安装 Simply Swords 的服务端 GameTest | 23 项全部通过 |
+| 资源生成器 `--check`、独立资源审核及实际模组 JAR 对照 | 通过，双手标签与上游属性继承、显式单手覆盖及镰刀后备动作一致 |
+| 发布包审核 | 包含处理类及双手标签，标签与源文件一致，不含 GameTest 类 |
+
+新增 5 项 `SimplySwordsHandlingGameTests` 实际验证 12 套材质与 15 族、独特武器特例、各装备槽、重复读取及保存重载；通过真实玩家装备 tick 检查攻速与移速下降、原伤害保留、切换双手武器不叠加、单手/空手恢复、副手不触发。Better Combat 分支还检查注册表一致、双向动作预设覆盖和同一武器基础属性下怪物实际攻击间隔延长。
+
+日志位于被忽略的 `build/verification/simplyswords-handling-{build,present,absent,bettercombat}.log`。本次构建产物为 `build/libs/mite-0.1.10.jar`。

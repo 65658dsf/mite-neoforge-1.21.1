@@ -91,6 +91,21 @@ NATIVE_SPECIAL_FAMILY = {
     "soulkeeper": "greathammer", "hiveheart": "greathammer",
     "icewhisper": "halberd", "arcanethyst": "halberd", "thunderbrand": "halberd",
 }
+# Effective two_handed values from Better Combat 2.4.0+1.21.1, limited to
+# parents referenced by Simply Swords 1.70.2. Keeping these here preserves the
+# generator's single-archive interface. A child profile can override either
+# value: notably trident overrides spear to false, as does SS magispear.
+BETTER_COMBAT_TWO_HANDED = {
+    "bettercombat:claymore": True,
+    "bettercombat:glaive": True,
+    "bettercombat:heavy_axe": True,
+    "bettercombat:katana": True,
+    "bettercombat:rapier": False,
+    "bettercombat:scythe": True,
+    "bettercombat:sickle": False,
+    "bettercombat:spear": True,
+    "bettercombat:trident": False,
+}
 
 
 def json_bytes(value: object) -> bytes:
@@ -191,6 +206,34 @@ def native_family(item_id: str) -> str:
     return next((family for family in FAMILIES if path.endswith("_" + family)), NATIVE_SPECIAL_FAMILY.get(path, "longsword"))
 
 
+def is_two_handed(archive: zipfile.ZipFile, item_id: str, parents: tuple[str, ...] = ()) -> bool:
+    """Resolve the effective upstream flag, preserving explicit false overrides."""
+    if item_id in parents:
+        raise ValueError(f"Cyclic weapon-attribute parents: {(*parents, item_id)}")
+    namespace, path = item_id.split(":", 1)
+    location = f"data/{namespace}/weapon_attributes/{path}.json"
+    try:
+        profile = json.loads(archive.read(location))
+    except KeyError:
+        if item_id in BETTER_COMBAT_TWO_HANDED:
+            return BETTER_COMBAT_TWO_HANDED[item_id]
+        # The upstream jar omits ordinary scythe profiles. Better Combat's
+        # default fallback rule resolves these item IDs to its two-handed scythe.
+        if namespace == "simplyswords" and path.endswith("_scythe"):
+            return True
+        if parents:
+            raise ValueError(f"Unresolved weapon-attribute parent: {item_id}")
+        return False
+    attributes = profile.get("attributes", {})
+    if "two_handed" in attributes:
+        value = attributes["two_handed"]
+        if not isinstance(value, bool):
+            raise ValueError(f"Invalid two_handed value in {location}: {value!r}")
+        return value
+    parent = profile.get("parent")
+    return is_two_handed(archive, parent, (*parents, item_id)) if parent else False
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive", type=Path)
@@ -210,6 +253,7 @@ def main() -> None:
 
     with zipfile.ZipFile(archive_path) as archive:
         native_ids = native_weapons(archive)
+        two_handed_ids = [item_id for item_id in native_ids if is_two_handed(archive, item_id)]
         for family in FAMILIES:
             original_iron[family] = Image.open(BytesIO(archive.read(f"assets/simplyswords/textures/item/iron_{family}.png"))).convert("RGBA")
             original_gold[family] = Image.open(BytesIO(archive.read(f"assets/simplyswords/textures/item/gold_{family}.png"))).convert("RGBA")
@@ -229,6 +273,8 @@ def main() -> None:
                 # moveset instead of an unresolved weapon-attribute parent.
                 parent_family = "glaive" if family == "scythe" else family
                 put(f"data/mite/weapon_attributes/{path}.json", {"parent": f"simplyswords:iron_{parent_family}"})
+                if is_two_handed(archive, f"simplyswords:iron_{parent_family}"):
+                    two_handed_ids.append(item_id)
                 translations["en_us"][f"item.mite.{path}"] = f"{english_metal} {english_family}"
                 translations["zh_cn"][f"item.mite.{path}"] = f"{chinese_metal}{chinese_family}"
 
@@ -270,6 +316,7 @@ def main() -> None:
         for tag in ("swords", "tools", "tools/melee_weapon"):
             put(f"data/c/tags/item/{tag}.json", optional(ids))
         put("data/mite/tags/item/simplyswords_weapons.json", optional(ids))
+        put("data/mite/tags/item/simplyswords/two_handed.json", optional(sorted(two_handed_ids)))
         put("data/simplyswords/tags/item/swords.json", optional(ids))
         put("data/simplyswords/tags/item/spears.json", optional([item for item in ids if item.endswith("_spear")]))
         for family in FAMILIES:
