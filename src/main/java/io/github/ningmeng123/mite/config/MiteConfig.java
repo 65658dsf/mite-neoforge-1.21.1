@@ -82,7 +82,7 @@ public final class MiteConfig {
                 .define("damage_blood_moon_formula", "", MiteConfig::validOptionalFormulaSyntax);
         builder.pop();
         builder.translation("mite.config.combat").push("combat");
-        WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Survival melee attack reach multiplier. Better Combat attacks also obey MITE's per-weapon reach cap. Creative reach remains unchanged.");
+        WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Survival melee attack reach multiplier. Original MITE weapons keep source reach; Simply Swords weapons use their own Better Combat base range. Creative reach remains unchanged.");
         WEAPON_REACH_REDUCTION = number(builder, "weapon_reach_reduction", 0D, 16D, "Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.");
         HEIGHT_REACH_PENALTY = builder.translation("mite.config.height_reach_penalty").comment("Apply MITE target-height reach adjustments.").define("height_reach_penalty", true);
         builder.pop();

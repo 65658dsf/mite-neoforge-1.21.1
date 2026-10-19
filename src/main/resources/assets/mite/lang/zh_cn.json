@@ -1128,7 +1128,7 @@
   "mite.config.combat": "武器攻击距离",
   "mite.config.combat.tooltip": "调整生存模式近战距离，客户端选取与服务端验证一致。",
   "mite.config.weapon_reach_multiplier": "攻击距离倍率",
-  "mite.config.weapon_reach_multiplier.tooltip": "先将生存近战距离乘此数，再扣除固定减少值。1 保持默认；不影响创造模式。Better Combat 攻击同样遵守 MITE 的各类武器距离上限。",
+  "mite.config.weapon_reach_multiplier.tooltip": "先将生存近战距离乘此数，再扣除固定减少值。1 保持默认；不影响创造模式。普通 MITE 武器沿用原有距离；安装 Better Combat 时，简易刀剑保留各自的武器基础距离。",
   "mite.config.weapon_reach_reduction": "攻击距离减少（方块）",
   "mite.config.weapon_reach_reduction.tooltip": "从倍率计算后的近战距离中扣除，最低为 0。默认 0；该设置不改变伤害。",
   "mite.config.height_reach_penalty": "启用高低差攻击距离修正",

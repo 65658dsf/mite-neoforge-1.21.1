@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
 import io.github.ningmeng123.mite.registry.MiteTools;
@@ -608,5 +609,74 @@ public final class BetterCombatMobGameTests {
                     "Every original gold and diamond Simply Swords family is sampled through the actual registry");
         } finally { BetterMobCombat.cancel(attacker); attacker.discard(); target.discard(); player.discard(); }
         h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void simplySwordsLongAndShortWeaponsKeepDistinctRangesAtActualImpact(GameTestHelper h) {
+        if (absent(h)) return;
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        double multiplier = MiteConfig.WEAPON_REACH_MULTIPLIER.get();
+        double reduction = MiteConfig.WEAPON_REACH_REDUCTION.get();
+        try {
+            MiteConfig.WEAPON_REACH_MULTIPLIER.set(1D);
+            MiteConfig.WEAPON_REACH_REDUCTION.set(0D);
+            MiteConfig.refreshEnchantmentRules();
+            simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.5D, 2.5D, true);
+            simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.9D, 2.9D, false);
+            simplySwordsDistanceCase(h, "glaive", 3.5D, 2.9D, 2.9D, true);
+            simplySwordsDistanceCase(h, "glaive", 3.5D, 3.7D, 3.7D, false);
+            simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.5D, 2.9D, false);
+            simplySwordsDistanceCase(h, "glaive", 3.5D, 2.9D, 3.7D, false);
+        } finally {
+            MiteConfig.WEAPON_REACH_MULTIPLIER.set(multiplier);
+            MiteConfig.WEAPON_REACH_REDUCTION.set(reduction);
+            MiteConfig.refreshEnchantmentRules();
+        }
+        h.succeed();
+    }
+
+    private static void simplySwordsDistanceCase(GameTestHelper h, String family, double expectedRange,
+            double startDistance, double impactDistance, boolean hits) {
+        Mob attacker = armed(h, EntityType.ZOMBIE);
+        Mob target = target(h, attacker);
+        try {
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath("mite", "simplyswords_vibranium_" + family);
+            h.assertTrue(BuiltInRegistries.ITEM.containsKey(id), "The screenshot's actual vibranium weapon is registered: " + id);
+            attacker.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(BuiltInRegistries.ITEM.get(id)));
+            var profile = profile(h, attacker);
+            h.assertTrue(Math.abs(profile.range() - expectedRange) < .000001D,
+                    "The actual Better Combat weapon registry retains its distinct native range: " + id);
+            h.assertTrue(Math.abs(profile.reach(attacker, target) - expectedRange) < .000001D,
+                    "The mob uses the weapon's own same-height range instead of the generic sword cap: " + id);
+            placeAtEyeDistance(attacker, target, startDistance);
+            float health = target.getHealth();
+            if (startDistance > expectedRange) {
+                h.assertFalse(BetterMobCombat.canStrike(attacker, target),
+                        "A target outside this weapon's own range cannot begin a swing: " + id);
+                h.assertFalse(BetterMobCombat.request(attacker, target),
+                        "A rejected remote request creates no pending weapon impact: " + id);
+                advance(attacker, target, profile.windupTicks());
+                h.assertValueEqual(target.getHealth(), health, "A rejected remote swing causes no damage: " + id);
+                return;
+            }
+            h.assertTrue(BetterMobCombat.canStrike(attacker, target),
+                    "The weapon's distinct native range admits its nearby target: " + id);
+            begin(h, attacker, target);
+            placeAtEyeDistance(attacker, target, impactDistance);
+            advance(attacker, target, profile.windupTicks() - 1);
+            h.assertValueEqual(target.getHealth(), health, "The longer weapon still spends its actual windup: " + id);
+            advance(attacker, target, 1);
+            if (hits) h.assertTrue(target.getHealth() < health,
+                    "The delayed native impact damages a target inside this weapon's own range: " + id);
+            else h.assertValueEqual(target.getHealth(), health,
+                    "The delayed impact rechecks the weapon's own range after its target retreats: " + id);
+        } finally { BetterMobCombat.cancel(attacker); attacker.discard(); target.discard(); }
+    }
+
+    private static void placeAtEyeDistance(Mob attacker, Mob target, double distance) {
+        // Keep both feet at the same height while measuring the guard's eye-to-collision-box distance.
+        double vertical = Math.max(0D, attacker.getEyeHeight() - target.getBbHeight());
+        double forward = Math.sqrt(distance * distance - vertical * vertical) + target.getBbWidth() * .5D;
+        target.setPos(attacker.position().add(0D, 0D, forward));
     }
 }

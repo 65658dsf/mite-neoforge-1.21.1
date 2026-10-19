@@ -1128,7 +1128,7 @@
   "mite.config.combat": "Weapon attack reach",
   "mite.config.combat.tooltip": "Adjust survival melee reach with matching client selection and server checks.",
   "mite.config.weapon_reach_multiplier": "Attack reach multiplier",
-  "mite.config.weapon_reach_multiplier.tooltip": "Multiply survival melee reach before subtracting the fixed reduction. 1 keeps defaults; creative is unchanged. Better Combat attacks also obey MITE's per-weapon reach cap.",
+  "mite.config.weapon_reach_multiplier.tooltip": "Multiply survival melee reach before subtracting the fixed reduction. 1 keeps defaults; creative is unchanged. Original MITE weapons retain source reach; Simply Swords weapons use their own Better Combat base range when installed.",
   "mite.config.weapon_reach_reduction": "Attack reach reduction (blocks)",
   "mite.config.weapon_reach_reduction.tooltip": "Subtract from multiplied melee reach, with a minimum of 0. Default 0. This setting does not change damage.",
   "mite.config.height_reach_penalty": "Apply target-height reach adjustment",

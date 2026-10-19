@@ -30,6 +30,13 @@ public final class BetterCombatBridge {
 
     public static boolean enabled() { return ModList.get().isLoaded(MOD_ID); }
 
+    /** Simply Swords declares its own weapon length; its durability family must not replace it. */
+    public static Double weaponBaseReach(ItemStack stack, double itemRange) {
+        if (!enabled() || io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack) == null)
+            return null;
+        return Loaded.weaponBaseReach(stack, itemRange);
+    }
+
     /** No optional types escape this boundary, including on servers without Better Combat. */
     public static Profile profile(Mob mob, int combo) {
         if (!enabled()) return null;
@@ -57,7 +64,7 @@ public final class BetterCombatBridge {
 
         public double reach(Mob mob, Entity target, double feetY) {
             double sourceReach = SourcePlayerCombatRules.meleeReach(false, feetY - target.getY(),
-                    SourcePlayerReach.toolBonus(mob.getMainHandItem()), false, itemRange - 3D,
+                    SourcePlayerReach.baseMeleeReach(mob.getMainHandItem(), itemRange) - 1.5D, false, 0D,
                     MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled());
             return Math.max(0D, Math.min(range, sourceReach));
         }
@@ -84,6 +91,15 @@ public final class BetterCombatBridge {
 
     /** Loaded only after the mod-presence guard; all Better Combat references stay here. */
     private static final class Loaded {
+        private static Double weaponBaseReach(ItemStack stack, double itemRange) {
+            var attributes = net.bettercombat.logic.WeaponRegistry.getAttributes(stack);
+            if (attributes == null) return null;
+            // Explicit range components override weapon metadata, including legacy absolute attack_range.
+            double range = net.bettercombat.logic.EntityAttributeHelper.itemHasRangeAttribute(stack)
+                    ? itemRange : net.bettercombat.logic.PlayerAttackHelper.combineAttackRange(attributes, itemRange);
+            return Double.isFinite(range) && range > 0D ? range : 0D;
+        }
+
         private static Profile profile(Mob mob, ItemStack stack, int combo) {
             var attributes = net.bettercombat.logic.WeaponRegistry.getAttributes(stack);
             if (attributes == null || attributes.attacks() == null) return null;

@@ -1,6 +1,8 @@
 package io.github.ningmeng123.mite.combat;
 
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerReach;
+import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
@@ -65,13 +67,19 @@ public final class SourcePlayerReach {
         double sourceReach = sourceMeleeReach(player, target);
         return weaponReach == null ? sourceReach : Math.min(weaponReach, sourceReach);
     }
+    /** Weapon length is independent of its durability family; external range is included exactly once. */
+    public static double baseMeleeReach(ItemStack weapon, double itemRange) {
+        Double weaponBase = BetterCombatBridge.weaponBaseReach(weapon, itemRange);
+        return weaponBase == null ? 1.5D + toolBonus(weapon) + itemRange - 3D : weaponBase;
+    }
     /** Preserve MITE's weapon, target-height and attribute limits for either attack system. */
     public static double sourceMeleeReach(Player player, Entity target) {
+        ItemStack weapon = BetterCombatPlayerReach.attackingWeapon(player);
+        double base = baseMeleeReach(weapon, BetterCombatPlayerReach.rangeAttribute(player, LEGACY_TOOL_REACH));
+        if (!player.getAbilities().instabuild && (!Double.isFinite(base)
+                || base <= 0D && BetterCombatBridge.enabled() && SimplySwordsCompat.definition(weapon) != null)) return 0D;
         return SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
-                player.getY() - target.getY(),
-                toolBonus(BetterCombatPlayerReach.attackingWeapon(player)),
-                target instanceof AbstractHurtingProjectile,
-                BetterCombatPlayerReach.rangeAttribute(player, LEGACY_TOOL_REACH) - 3D,
+                player.getY() - target.getY(), base - 1.5D, target instanceof AbstractHurtingProjectile, 0D,
                 MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(),
                 MiteConfig.heightReachPenaltyEnabled());
     }
@@ -117,7 +125,7 @@ public final class SourcePlayerReach {
             if (weaponHit != null) return weaponHit;
         }
         double reach = melee ? meleeReach(player, target) : interactionReach(player, target);
-        return player.getEyePosition(partialTick).distanceToSqr(point) <= reach * reach;
+        return (!melee || reach > 0D) && player.getEyePosition(partialTick).distanceToSqr(point) <= reach * reach;
     }
     public static boolean canInteractAt(Player player, Entity target, Vec3 relative) {
         if (!finite(relative)) return false;

@@ -172,16 +172,17 @@ public final class BetterCombatPlayerReachClientAudit {
                 check(!polearm.isEmpty() && !polearm.is(Items.AIR), "The installed Simply Swords iron glaive exists");
                 equip(player, polearm);
                 Attack glaive = attack(player);
-                check(glaive.rawRange() > 3D, "The real Simply Swords polearm has a longer range than the ordinary sword");
-                sample(mc, "simplyswords_glaive_inside_mite_range", glaive, 2.1D, 0D, 2.25D, true);
-                sample(mc, "simplyswords_glaive_native_range_is_capped", glaive, 2.4D, 0D, 2.25D, false);
-                ItemStack scytheStack = new ItemStack(SimplySwordsCompat.weapon("iron", "scythe"));
-                check(!scytheStack.isEmpty() && !scytheStack.is(Items.AIR), "The installed Simply Swords iron scythe exists");
+                near(glaive.rawRange(), 3.5D, "The installed Simply Swords glaive declares its own three-and-a-half-block range");
+                sample(mc, "simplyswords_glaive_inside_declared_weapon_range", glaive, 3.3D, 0D, 3.5D, true);
+                sample(mc, "simplyswords_glaive_outside_declared_weapon_range", glaive, 3.7D, 0D, 3.5D, false);
+                ItemStack scytheStack = new ItemStack(SimplySwordsCompat.weapon("copper", "scythe"));
+                check(!scytheStack.isEmpty() && !scytheStack.is(Items.AIR), "The MITE-registered Simply Swords copper scythe exists");
                 equip(player, scytheStack);
                 Attack scythe = attack(player);
-                check(scythe.rawRange() >= 2.5D, "The real Simply Swords scythe can cover its MITE source range");
-                sample(mc, "simplyswords_scythe_inside_mite_range", scythe, 2.4D, 0D, 2.5D, true);
-                sample(mc, "simplyswords_scythe_outside_mite_range", scythe, 2.7D, 0D, 2.5D, false);
+                near(scythe.rawRange(), 3.5D, "The MITE Simply Swords scythe inherits the glaive's declared range");
+                sample(mc, "simplyswords_scythe_inside_declared_weapon_range", scythe, 3.3D, 0D, 3.5D, true);
+                sample(mc, "simplyswords_scythe_outside_declared_weapon_range", scythe, 3.7D, 0D, 3.5D, false);
+                simplySwordsLengthCases(mc, savedSettings);
             } else {
                 report.addProperty("simplyswords_polearm_case", "skipped_optional_simplyswords_absent");
             }
@@ -237,6 +238,42 @@ public final class BetterCombatPlayerReachClientAudit {
         }
     }
 
+    /** Reproduce the two photographed weapons, including the point where their reach differs. */
+    private static void simplySwordsLengthCases(Minecraft mc, MiteConfig.Snapshot base) throws ReflectiveOperationException {
+        Player player = mc.player;
+        ItemStack glaiveStack = new ItemStack(SimplySwordsCompat.weapon("vibranium", "glaive"));
+        ItemStack cutlassStack = new ItemStack(SimplySwordsCompat.weapon("vibranium", "cutlass"));
+        check(!glaiveStack.isEmpty() && !cutlassStack.isEmpty(), "Both photographed vibranium weapons are registered");
+        equip(player, glaiveStack);
+        Attack glaive = attack(player);
+        near(glaive.rawRange(), 3.5D, "The photographed vibranium glaive declares 3.5 blocks");
+        sample(mc, "vibranium_glaive_hits_at_2_6", glaive, 2.6D, 0D, 3.5D, true);
+        sample(mc, "vibranium_glaive_reaches_beyond_cutlass_at_2_9", glaive, 2.9D, 0D, 3.5D, true);
+        sample(mc, "vibranium_glaive_hits_near_its_3_5_boundary", glaive, 3.3D, 0D, 3.5D, true);
+        sample(mc, "vibranium_glaive_rejects_beyond_its_3_5_boundary", glaive, 3.7D, 0D, 3.5D, false);
+
+        equip(player, cutlassStack);
+        Attack cutlass = attack(player);
+        near(cutlass.rawRange(), 2.75D, "The photographed vibranium cutlass retains the inherited sickle range");
+        sample(mc, "vibranium_cutlass_hits_at_2_6", cutlass, 2.6D, 0D, 2.75D, true);
+        sample(mc, "vibranium_cutlass_cannot_reach_glaive_target_at_2_9", cutlass, 2.9D, 0D, 2.75D, false);
+
+        equip(player, glaiveStack);
+        settings(base, 1.5D, .25D, true);
+        glaive = attack(player);
+        sample(mc, "simplyswords_declared_range_receives_multiplier_then_reduction", glaive, 4.8D, 0D, 5D, true);
+        sample(mc, "simplyswords_configured_range_still_has_a_boundary", glaive, 5.2D, 0D, 5D, false);
+        settings(base, 1D, 0D, true);
+
+        // An explicit interaction-range component replaces BC's +.5 glaive metadata bonus.
+        // The source guard must consume the same resulting attribute, not add either bonus again.
+        equip(player, weaponWithRangeBonus(glaiveStack.copy(), "client_audit_simplyswords_range"));
+        Attack componentGlaive = attack(player);
+        near(componentGlaive.rawRange(), 5D, "The glaive's explicit range component replaces its metadata range bonus");
+        sample(mc, "simplyswords_explicit_range_component_is_preserved", componentGlaive, 4.8D, 0D, 5D, true);
+        sample(mc, "simplyswords_explicit_range_component_does_not_double_metadata", componentGlaive, 5.2D, 0D, 5D, false);
+    }
+
     /** Keep the equipped hand's component modifiers real while BC temporarily reads the attacking hand. */
     private static void dualWieldCases(Minecraft mc) throws ReflectiveOperationException {
         Player player = mc.player;
@@ -274,15 +311,18 @@ public final class BetterCombatPlayerReachClientAudit {
     }
 
     private static ItemStack swordWithRangeBonus() {
-        ItemStack sword = new ItemStack(Items.IRON_SWORD);
+        return weaponWithRangeBonus(new ItemStack(Items.IRON_SWORD), "client_audit_dual_wield_range");
+    }
+
+    private static ItemStack weaponWithRangeBonus(ItemStack weapon, String modifierId) {
         var modifiers = ItemAttributeModifiers.builder();
-        sword.forEachModifier(EquipmentSlot.MAINHAND, (attribute, modifier) ->
+        weapon.forEachModifier(EquipmentSlot.MAINHAND, (attribute, modifier) ->
                 modifiers.add(attribute, modifier, EquipmentSlotGroup.MAINHAND));
         modifiers.add(Attributes.ENTITY_INTERACTION_RANGE,
-                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "client_audit_dual_wield_range"),
+                new AttributeModifier(ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, modifierId),
                         2D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
-        sword.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers.build());
-        return sword;
+        weapon.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers.build());
+        return weapon;
     }
 
     private static void sample(Minecraft mc, String name, Attack attack, double faceDistance, double feetOffset,

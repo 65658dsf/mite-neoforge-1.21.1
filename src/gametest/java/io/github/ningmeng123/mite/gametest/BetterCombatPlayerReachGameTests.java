@@ -78,10 +78,42 @@ public final class BetterCombatPlayerReachGameTests {
     }
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
-    public static void simplySwordsLongWeaponKeepsItsSourceRangeCap(GameTestHelper h) {
+    public static void simplySwordsCutlassAndGlaiveKeepTheirDistinctNativeRanges(GameTestHelper h) {
         if (absent(h)) return;
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
-        try (ReachSettings ignored = new ReachSettings(1D, 0D)) { Loaded.simplySwordsLongWeapon(h); }
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) { Loaded.simplySwordsWeapons(h); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void simplySwordsNativeBaseStillReceivesConfigurationAndHeightRules(GameTestHelper h) {
+        if (absent(h)) return;
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        Loaded.simplySwordsConfiguredAndHeight(h);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void simplySwordsNativeScaleStillLimitsItsLongWeaponRange(GameTestHelper h) {
+        if (absent(h)) return;
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) { Loaded.simplySwordsScaled(h); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void simplySwordsExplicitRangeComponentOverridesItsNativeBonus(GameTestHelper h) {
+        if (absent(h)) return;
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) { Loaded.simplySwordsItemRange(h); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void invalidSimplySwordsMetadataCannotAuthorizeAnyAttackPath(GameTestHelper h) {
+        if (absent(h)) return;
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) { Loaded.invalidSimplySwordsMetadata(h); }
         h.succeed();
     }
 
@@ -343,25 +375,174 @@ public final class BetterCombatPlayerReachGameTests {
             }
         }
 
-        private static void simplySwordsLongWeapon(GameTestHelper h) {
+        private static ItemStack vibraniumWeapon(GameTestHelper h, String family) {
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath("mite", "simplyswords_vibranium_" + family);
+            h.assertTrue(BuiltInRegistries.ITEM.containsKey(id), "The screenshot's actual vibranium weapon is registered: " + id);
+            return new ItemStack(BuiltInRegistries.ITEM.get(id));
+        }
+
+        private static void requestAtDistance(GameTestHelper h, ServerPlayer player, double distance,
+                Double feetDifference, boolean hit, String message) {
+            try (Target target = target(h, player, distance, feetDifference)) {
+                request(player, target.entity(), 0);
+                if (hit) h.assertTrue(target.entity().getHealth() < 200F, message);
+                else h.assertValueEqual(target.entity().getHealth(), 200F, message);
+            }
+        }
+
+        private static void simplySwordsWeapons(GameTestHelper h) {
             try (Session session = session(h)) {
                 ServerPlayer player = session.player();
-                ResourceLocation id = ResourceLocation.fromNamespaceAndPath("simplyswords", "iron_glaive");
-                h.assertTrue(BuiltInRegistries.ITEM.containsKey(id), "The actual Simply Swords glaive is registered");
-                equip(player, new ItemStack(BuiltInRegistries.ITEM.get(id)), ItemStack.EMPTY);
-                var hand = net.bettercombat.logic.PlayerAttackHelper.getCurrentAttack(player, 0);
-                h.assertTrue(hand != null, "The actual glaive resolves a Better Combat attack");
-                double range = net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, hand.itemStack())
-                        * hand.attack().rangeMultiplier();
-                h.assertTrue(range > 3D, "The real long weapon extends beyond the ordinary sword range");
-                try (Target near = target(h, player, 2.1D); Target far = target(h, player, 2.4D)) {
-                    request(player, near.entity(), 0);
-                    h.assertTrue(near.entity().getHealth() < 200F,
-                            "The registered long weapon hits inside its source 2.25 block reach through the real request");
-                    request(player, far.entity(), 0);
-                    h.assertValueEqual(far.entity().getHealth(), 200F,
-                            "The actual long weapon cannot exceed its source 2.25 block cap");
+                for (String family : List.of("cutlass", "glaive")) {
+                    ItemStack stack = vibraniumWeapon(h, family);
+                    equip(player, stack, ItemStack.EMPTY);
+                    var hand = net.bettercombat.logic.PlayerAttackHelper.getCurrentAttack(player, 0);
+                    h.assertTrue(hand != null, "The actual vibranium " + family + " resolves a Better Combat attack");
+                    double expectedRange = family.equals("glaive") ? 3.5D : 2.75D;
+                    double nativeRange = net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, hand.itemStack());
+                    h.assertTrue(Math.abs(nativeRange - expectedRange) < .00001D,
+                            "The real inherited weapon data resolves its own range for " + family + ": " + nativeRange);
+                    h.assertTrue(Math.abs(SourcePlayerReach.baseMeleeReach(stack,
+                            player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE)) - expectedRange) < .00001D,
+                            "A Simply Swords durability family does not replace its native range: " + family);
+                    requestAtDistance(h, player, 2.6D, 0D, true,
+                            "Both screenshot weapons hit beyond the ordinary sword's 2.25 block range: " + family);
+                    requestAtDistance(h, player, 2.9D, 0D, family.equals("glaive"),
+                            "At 2.9 blocks only the longer glaive can cause real damage: " + family);
+                    requestAtDistance(h, player, 3.3D, 0D, family.equals("glaive"),
+                            "At 3.3 blocks only the glaive retains its real weapon reach: " + family);
+                    requestAtDistance(h, player, 3.7D, 0D, false,
+                            "Neither weapon can cause real damage beyond its own native range: " + family);
                 }
+            }
+        }
+
+        private static void simplySwordsConfiguredAndHeight(GameTestHelper h) {
+            try (ReachSettings ignored = new ReachSettings(.75D, .25D); Session session = session(h)) {
+                ServerPlayer player = session.player();
+                equip(player, vibraniumWeapon(h, "glaive"), ItemStack.EMPTY);
+                requestAtDistance(h, player, 2.2D, 0D, true,
+                        "The glaive's own base receives configuration once: 3.5 * 0.75 - 0.25 = 2.375");
+                requestAtDistance(h, player, 2.5D, 0D, false,
+                        "The configured glaive still rejects a target beyond 2.375 blocks");
+            }
+            try (ReachSettings ignored = new ReachSettings(1.5D, .25D); Session session = session(h)) {
+                ServerPlayer player = session.player();
+                equip(player, vibraniumWeapon(h, "glaive"), ItemStack.EMPTY);
+                requestAtDistance(h, player, 4.8D, 0D, true,
+                        "A larger configuration starts with the glaive's native base: 3.5 * 1.5 - 0.25 = 5");
+                requestAtDistance(h, player, 5.2D, 0D, false,
+                        "The configured glaive does not receive its native bonus twice");
+            }
+            try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+                ServerPlayer player = session.player();
+                equip(player, vibraniumWeapon(h, "glaive"), ItemStack.EMPTY);
+                try (Target uphill = target(h, player, 2.8D, -1.5D);
+                        Target downhill = target(h, player, 3.3D, 1.5D)) {
+                    h.assertTrue(Math.abs(SourcePlayerReach.sourceMeleeReach(player, uphill.entity()) - 3D) < .00001D,
+                            "The glaive retains the source half-block uphill penalty after its native base");
+                    h.assertTrue(Math.abs(SourcePlayerReach.sourceMeleeReach(player, downhill.entity()) - 4D) < .00001D,
+                            "The glaive retains the source half-block downhill advantage after its native base");
+                    request(player, uphill.entity(), 0);
+                    h.assertTrue(uphill.entity().getHealth() < 200F, "The uphill glaive hits inside its three block source limit");
+                    request(player, downhill.entity(), 0);
+                    h.assertTrue(downhill.entity().getHealth() < 200F, "The downhill glaive hits within its native 3.5 block range");
+                }
+                requestAtDistance(h, player, 3.2D, -1.5D, false,
+                        "Native long-weapon data cannot bypass the source uphill penalty");
+                requestAtDistance(h, player, 3.7D, 1.5D, false,
+                        "The downhill source advantage cannot bypass the glaive's actual native range");
+            }
+        }
+
+        private static void simplySwordsScaled(GameTestHelper h) {
+            float previousInfluence = net.bettercombat.BetterCombatMod.config.entity_scale_attack_range_influence;
+            net.bettercombat.BetterCombatMod.config.entity_scale_attack_range_influence = 1F;
+            try (Session session = session(h)) {
+                ServerPlayer player = session.player();
+                equip(player, vibraniumWeapon(h, "glaive"), ItemStack.EMPTY);
+                player.getAttribute(Attributes.SCALE).setBaseValue(.5D);
+                player.refreshDimensions();
+                requestAtDistance(h, player, 1.6D, 0D, true,
+                        "A half-size glaive user still hits inside the scaled native 1.75 block range");
+                requestAtDistance(h, player, 1.9D, 0D, false,
+                        "Preserving the glaive's own source base does not bypass Better Combat scale");
+            } finally {
+                net.bettercombat.BetterCombatMod.config.entity_scale_attack_range_influence = previousInfluence;
+            }
+        }
+
+        private static void simplySwordsItemRange(GameTestHelper h) {
+            try (Session session = session(h)) {
+                ServerPlayer player = session.player();
+                ItemStack stack = vibraniumWeapon(h, "glaive");
+                var modifiers = ItemAttributeModifiers.builder();
+                stack.forEachModifier(net.minecraft.world.entity.EquipmentSlot.MAINHAND,
+                        (attribute, modifier) -> modifiers.add(attribute, modifier, EquipmentSlotGroup.MAINHAND));
+                modifiers.add(Attributes.ENTITY_INTERACTION_RANGE,
+                        new AttributeModifier(ResourceLocation.fromNamespaceAndPath("mite", "simplyswords_reach_override_test"),
+                                2D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+                stack.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers.build());
+                equip(player, stack, ItemStack.EMPTY);
+                double effectiveRange = player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+                h.assertTrue(Math.abs(effectiveRange - 5D) < .00001D,
+                        "The real equipped item range component contributes exactly two blocks to the range attribute");
+                h.assertTrue(Math.abs(net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, stack) - 5D) < .00001D,
+                        "Better Combat gives the explicit item range component precedence over the glaive bonus");
+                h.assertTrue(Math.abs(SourcePlayerReach.baseMeleeReach(stack, effectiveRange) - 5D) < .00001D,
+                        "The source range likewise overrides the glaive bonus instead of adding it again");
+                requestAtDistance(h, player, 4.8D, 0D, true,
+                        "The explicit component's five block range produces real damage");
+                requestAtDistance(h, player, 5.2D, 0D, false,
+                        "The glaive bonus cannot extend the explicit component range to 5.5 blocks");
+                equip(player, vibraniumWeapon(h, "glaive"), ItemStack.EMPTY);
+                requestAtDistance(h, player, 3.7D, 0D, false,
+                        "Removing the extended item restores the ordinary glaive's 3.5 block limit");
+            }
+        }
+
+        private static void invalidSimplySwordsMetadata(GameTestHelper h) {
+            ItemStack stack = vibraniumWeapon(h, "glaive");
+            ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            var previous = net.bettercombat.logic.WeaponRegistry.getAttributes(stack);
+            var invalidProfiles = new net.bettercombat.api.WeaponAttributes[] {
+                attributes(Double.NaN, attack(1F)),
+                attributes(Double.POSITIVE_INFINITY, attack(1F)),
+                attributes(Double.NEGATIVE_INFINITY, attack(1F)),
+                new net.bettercombat.api.WeaponAttributes(0D, -3D, null, null, false,
+                        "mite_zero_ss_range_test", new net.bettercombat.api.WeaponAttributes.Attack[] { attack(1F) }, null),
+                new net.bettercombat.api.WeaponAttributes(0D, -4D, null, null, false,
+                        "mite_negative_ss_range_test", new net.bettercombat.api.WeaponAttributes.Attack[] { attack(1F) }, null)
+            };
+            try (Session session = session(h)) {
+                ServerPlayer player = session.player();
+                equip(player, stack, ItemStack.EMPTY);
+                for (var invalid : invalidProfiles) {
+                    net.bettercombat.logic.WeaponRegistry.register(id, invalid);
+                    double parsed = net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, stack);
+                    h.assertTrue(!Double.isFinite(parsed) || parsed <= 0D,
+                            "The test metadata actually resolves to a non-finite or non-positive weapon range: " + parsed);
+                    for (boolean overlap : new boolean[] { false, true }) {
+                        try (Target near = target(h, player, overlap ? 0D : 1D, 0D)) {
+                            if (overlap) near.entity().setPos(player.position());
+                            String context = parsed + (overlap ? " with an overlapping target" : " at one block");
+                            h.assertValueEqual(SourcePlayerReach.sourceMeleeReach(player, near.entity()), 0D,
+                                    "Invalid Simply Swords metadata clamps source reach to zero instead of falling back to 2.25: " + context);
+                            vanillaAttack(player, near.entity());
+                            h.assertValueEqual(near.entity().getHealth(), 200F,
+                                    "A normal vanilla attack packet rejects invalid Simply Swords range metadata: " + context);
+                            near.entity().invulnerableTime = 0;
+                            player.attack(near.entity());
+                            h.assertValueEqual(near.entity().getHealth(), 200F,
+                                    "A direct player attack rejects invalid metadata outside any Better Combat request scope: " + context);
+                            request(player, near.entity(), 0);
+                            h.assertValueEqual(near.entity().getHealth(), 200F,
+                                    "A real Better Combat request likewise rejects invalid Simply Swords range metadata: " + context);
+                        }
+                    }
+                }
+            } finally {
+                net.bettercombat.logic.WeaponRegistry.register(id, previous);
             }
         }
 
