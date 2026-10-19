@@ -118,16 +118,17 @@ public final class R196EnchantmentTable {
     /** Already-compressed table energy enters this method exactly once, unlike loot/mob helper inputs. */
     public static List<EnchantmentInstance> select(RegistryAccess access, ItemStack stack, int energy, RandomSource random) {
         return select(stack, energy, random, access.registryOrThrow(Registries.ENCHANTMENT).holders()
-                .map(holder -> (Holder<Enchantment>)holder).toList());
+                .map(holder -> (Holder<Enchantment>)holder).toList(), true);
     }
 
     /** Source loot/mob entry point applies material compression before, rather than twice during, the draw. */
     public static List<EnchantmentInstance> randomEnchantments(ItemStack stack, int rawEnergy, RandomSource random, List<Holder<Enchantment>> allowed) {
         int energy = FunctionalBlockRules.enchantabilityAdjustedPower(rawEnergy, enchantability(stack));
-        return energy < 1 ? List.of() : select(stack, energy, random, allowed);
+        return energy < 1 ? List.of() : select(stack, energy, random, allowed, false);
     }
 
-    private static List<EnchantmentInstance> select(ItemStack stack, int energy, RandomSource random, List<Holder<Enchantment>> allowed) {
+    private static List<EnchantmentInstance> select(ItemStack stack, int energy, RandomSource random,
+            List<Holder<Enchantment>> allowed, boolean playerEnchanting) {
         if (energy < 1 || enchantability(stack) < 1) return List.of();
         int remaining = Math.max(1, (int)(energy * (1F + (random.nextFloat() - .5F) * .5F)));
         List<Candidate> selected = new ArrayList<>();
@@ -141,7 +142,8 @@ public final class R196EnchantmentTable {
                 if (selected.stream().anyMatch(previous -> !R196EnchantmentCatalog.compatible(previous.definition().id(), definition.id()))) continue;
                 var holder = holders.get(definition.resourceId());
                 if (holder == null) continue;
-                for (int level = definition.maxLevel(); level >= 1; level--) {
+                int maximum = playerEnchanting ? definition.maxLevel() : definition.maxGeneratedLevel();
+                for (int level = maximum; level >= 1; level--) {
                     if (definition.minCost(level) <= remaining) {
                         candidates.add(new Candidate(definition, new EnchantmentInstance(holder, level)));
                         break;

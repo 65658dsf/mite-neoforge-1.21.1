@@ -26,6 +26,12 @@ public final class R196EnchantmentCatalog {
             return io.github.ningmeng123.mite.config.MiteConfig.enchantmentMaxLevel(resourceId, maxLevel);
         }
 
+        /** Protection V is reserved for player enchanting and anvil upgrades. */
+        public int maxGeneratedLevel() {
+            int fallback = resourceId.equals("minecraft:protection") ? Math.min(4, maxLevel) : maxLevel;
+            return io.github.ningmeng123.mite.config.MiteConfig.enchantmentMaxLevel(resourceId, fallback);
+        }
+
         public int minCost(int level) {
             if (level < 1 || level > maxLevel()) throw new IllegalArgumentException("Invalid source enchantment level: " + id + " " + level);
             // Preserve a single-level enchantment's original first-rank cost while charging for explicit extra ranks.
@@ -36,7 +42,7 @@ public final class R196EnchantmentCatalog {
     }
 
     private static final List<Definition> DEFINITIONS = List.of(
-            nativeEntry(0, "protection", 100, 10, 4),
+            nativeEntry(0, "protection", 100, 10, 5),
             nativeEntry(1, "fire_protection", 25, 10, 4),
             nativeEntry(2, "feather_falling", 25, 10, 4),
             nativeEntry(3, "blast_protection", 25, 10, 4),

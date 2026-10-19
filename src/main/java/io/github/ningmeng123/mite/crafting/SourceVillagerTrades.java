@@ -86,7 +86,7 @@ public final class SourceVillagerTrades {
                         .filter(definition -> io.github.ningmeng123.mite.config.MiteConfig.enchantmentEnabled(definition.resourceId())).toList();
                 if (definitions.isEmpty()) yield null;
                 var definition = definitions.get(random.nextInt(definitions.size()));
-                int level = random.nextInt(definition.maxLevel())+1;
+                int level = random.nextInt(definition.maxGeneratedLevel())+1;
                 int emeralds = 2+random.nextInt(5+level*10)+3*level;
                 var payment = SourceVillagerTradeRules.bookPayment(emeralds,new ItemStack(Items.EMERALD).getMaxStackSize());
                 Holder<Enchantment> holder = villager.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT)

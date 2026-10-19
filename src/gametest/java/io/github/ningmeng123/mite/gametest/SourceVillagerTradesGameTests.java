@@ -133,7 +133,8 @@ public final class SourceVillagerTradesGameTests {
         for(int seed=0;seed<100000&&!boundaries.isEmpty();seed++) {
             RandomSource oracle=RandomSource.create(seed);
             var definition=R196EnchantmentCatalog.definitions().get(oracle.nextInt(38));
-            int level=oracle.nextInt(definition.maxLevel())+1;
+            int maximum=definition.resourceId().equals("minecraft:protection")?4:definition.maxLevel();
+            int level=oracle.nextInt(maximum)+1;
             int price=2+oracle.nextInt(5+level*10)+3*level;
             if(!boundaries.remove(price))continue;
             MerchantOffer quote=SourceVillagerTrades.create(villager,listing,RandomSource.create(seed));

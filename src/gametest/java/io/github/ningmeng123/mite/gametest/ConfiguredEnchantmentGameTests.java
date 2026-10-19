@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.gametest;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.crafting.SourceVillagerTrades;
 import io.github.ningmeng123.mite.enchantment.ConfiguredEnchantments;
+import io.github.ningmeng123.mite.enchantment.NaturalEnchantmentLimits;
 import io.github.ningmeng123.mite.enchantment.R196BookAnvil;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
@@ -103,6 +104,8 @@ public final class ConfiguredEnchantmentGameTests {
             var added = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
             added.upgrade(sharpness, 10);
             helper.assertValueEqual(added.getLevel(sharpness), 2, "Direct new upgrade paths obey explicit caps");
+            helper.assertValueEqual(NaturalEnchantmentLimits.maximumLevel(holder(helper, Enchantments.PROTECTION)), 4,
+                    "Unconfigured Protection retains its player-exclusive level V rule");
         }
         helper.succeed();
     }

@@ -21,6 +21,7 @@ public final class R196BookAnvil {
         return EnchantmentHelper.getEnchantmentsForCrafting(stack).entrySet().stream().anyMatch(entry -> definition(entry.getKey()) != null);
     }
     private static boolean supportsBook(R196EnchantmentCatalog.Definition definition, ItemStack stack) {
+        if (stack.is(Items.ENCHANTED_BOOK)) return definition.resourceId().equals("minecraft:protection");
         // Modern anvil adaptation: leather accepts Unbreaking books, including source levels IV/V.
         // Keep the table's original metal-only candidate predicate in the source catalogue.
         return definition.supported(stack) || definition.resourceId().equals("minecraft:unbreaking")
@@ -28,6 +29,14 @@ public final class R196BookAnvil {
                 || stack.is(Items.LEATHER_LEGGINGS) || stack.is(Items.LEATHER_BOOTS));
     }
     private static MaterialAnvilRules.Plan rejected() { return new MaterialAnvilRules.Plan(ItemStack.EMPTY, 0, 0, false); }
+
+    private static boolean protectionBook(ItemStack stack) {
+        return stack.is(Items.ENCHANTED_BOOK) && stack.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY)
+                .entrySet().stream().anyMatch(entry -> {
+                    var definition = definition(entry.getKey());
+                    return definition != null && definition.resourceId().equals("minecraft:protection") && entry.getIntValue() > 0;
+                });
+    }
 
     private static boolean changesBookEnchantments(ItemStack before, ItemStack book, ItemStack after) {
         if (before.isEmpty() || after.isEmpty()) return false;
@@ -80,11 +89,12 @@ public final class R196BookAnvil {
         boolean source = hasSource(first) || hasSource(second);
         if (!source) return null;
         boolean book = second.has(DataComponents.STORED_ENCHANTMENTS);
-        if ((first.is(Items.BOOK) || first.is(Items.ENCHANTED_BOOK)) && book) return rejected();
-        if (!R196EnchantmentTable.isSourceEquipment(first)) return null;
+        boolean protectionBooks = protectionBook(first) && protectionBook(second);
+        if ((first.is(Items.BOOK) || first.is(Items.ENCHANTED_BOOK)) && book && !protectionBooks) return rejected();
+        if (!protectionBooks && !R196EnchantmentTable.isSourceEquipment(first)) return null;
         // Equipment+equipment must never smuggle source enchantments past the book-only entry rule.
         if (!book) return second.isEnchanted() ? rejected() : null;
-        if (first.getMaxStackSize() != 1 || R196EnchantmentTable.enchantability(first) < 1) return rejected();
+        if (first.getMaxStackSize() != 1 || !protectionBooks && R196EnchantmentTable.enchantability(first) < 1) return rejected();
         ItemEnchantments stored = second.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         boolean applicableSource = stored.entrySet().stream().anyMatch(entry -> {
             var definition = definition(entry.getKey());
@@ -94,7 +104,7 @@ public final class R196BookAnvil {
         if (!applicableSource && stored.entrySet().stream().anyMatch(entry -> definition(entry.getKey()) == null
                 && entry.getKey().value().canEnchant(first))) return null;
         ItemEnchantments.Mutable resultEnchantments = new ItemEnchantments.Mutable(
-                first.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY));
+                EnchantmentHelper.getEnchantmentsForCrafting(first));
         boolean changed = false;
         for (var entry : stored.entrySet()) {
             if (!ConfiguredEnchantments.enabled(entry.getKey())) continue;
@@ -113,7 +123,7 @@ public final class R196BookAnvil {
         }
         if (!changed) return rejected();
         ItemStack result = first.copyWithCount(1);
-        result.set(DataComponents.ENCHANTMENTS, resultEnchantments.toImmutable());
+        result.set(protectionBooks ? DataComponents.STORED_ENCHANTMENTS : DataComponents.ENCHANTMENTS, resultEnchantments.toImmutable());
         result.set(DataComponents.REPAIR_COST, AnvilMenu.calculateIncreasedRepairCost(Math.max(
                 first.getOrDefault(DataComponents.REPAIR_COST, 0), second.getOrDefault(DataComponents.REPAIR_COST, 0))));
         return new MaterialAnvilRules.Plan(result, second.getCount(), anvilWear(first, second, result), false);

@@ -2,7 +2,7 @@
 
 This audit does not call the Java production catalogue, support predicates or selection helper.
 Source item eligibility comes from the recorded old runtime IDs and earlier equipment evidence.
-Sharpness VII is a modern adaptation; the R196 evidence stays unchanged.
+Modern level adaptations are Protection V and Sharpness VII; their R196 evidence stays unchanged.
 Author: NingMeng123
 """
 
@@ -107,6 +107,11 @@ def main() -> int:
                 values |= tag_values(entry[1:], seen) if entry.startswith("#") else {entry}
             return values
 
+        optional_compatibility_tags = {
+            "#mite:simplyswords/enchantable/" + entry["suggested_modern_id"].split(":", 1)[1]
+            for entry in expected
+        }
+
         def item_values(item_set, pinned=False, seen=None):
             """Expand actual 1.21.1 item sets separately from the independently extracted source support."""
             seen = set() if seen is None else seen
@@ -115,6 +120,11 @@ def main() -> int:
                 for item in item_set:
                     result |= item_values(item, pinned, seen)
                 return result
+            # The base audit excludes optional-mod items; each source tag's exact optional
+            # Simply Swords reference is checked separately below, rather than generalized away.
+            if (not pinned and isinstance(item_set, dict) and set(item_set) == {"id", "required"}
+                    and item_set["required"] is False and item_set["id"] in optional_compatibility_tags):
+                return set()
             value = item_set if isinstance(item_set, str) else item_set["id"]
             if not value.startswith("#"):
                 return {value}
@@ -141,7 +151,18 @@ def main() -> int:
             check(resource_id == source["suggested_modern_id"], f"Runtime resource identity: {legacy}")
             expected_maximum = source["max_level"]
             expected_minimum = source["min_cost_by_level"]
-            if resource_id == "minecraft:sharpness":
+            if resource_id == "minecraft:protection":
+                # User-requested modern adaptation, never a correction to the pinned R196 evidence.
+                check((legacy, source["max_level"], source["min_cost_by_level"]) == (0, 4, [1, 11, 21, 31]),
+                      "Protection adaptation retains the original R196 level IV and minimum costs")
+                expected_maximum = 5
+                expected_minimum = [1, 11, 21, 31, 41]
+                report["modern_adaptations"][resource_id] = {
+                    "source_max_level": source["max_level"],
+                    "max_level": expected_maximum,
+                    "min_cost_by_level": expected_minimum,
+                }
+            elif resource_id == "minecraft:sharpness":
                 check((legacy, source["max_level"], source["min_cost_by_level"]) == (16, 5, [1, 11, 21, 31, 41]),
                       "Sharpness adaptation retains the original R196 level V and minimum costs")
                 expected_maximum = 7
@@ -172,11 +193,20 @@ def main() -> int:
             check(tag_path.is_file(), f"Generated support tag exists: {resource_id}")
             if not tag_path.is_file():
                 continue
-            values = set(read_json(tag_path)["values"])
+            tag_entries = read_json(tag_path)["values"]
+            values = {entry for entry in tag_entries if isinstance(entry, str) and not entry.startswith("#")}
+            optional_entries = [entry for entry in tag_entries if not isinstance(entry, str) or entry.startswith("#")]
+            check(len(optional_entries) == 1 and isinstance(optional_entries[0], dict)
+                  and set(optional_entries[0]) == {"id", "required"}
+                  and optional_entries[0]["id"] == f"#mite:simplyswords/enchantable/{name}"
+                  and optional_entries[0]["required"] is False,
+                  f"Source support has only its exact optional Simply Swords tag: {resource_id}")
             old_eligible = set(source["supported_items"]["runtime_registered_item_ids_matching_predicate"])
             for old in source_items & set(mapped):
                 check((mapped[old] in values) == (old in old_eligible), f"Independently extracted supported item {legacy}/{old}/{mapped[old]}")
-            check(not values.intersection({"minecraft:crossbow", "minecraft:trident", "minecraft:mace", "minecraft:elytra", "minecraft:shield"}), f"Modern-only device is not accidentally source equipment: {resource_id}")
+            check(not values.intersection({"minecraft:crossbow", "minecraft:trident", "minecraft:mace", "minecraft:elytra"}), f"Modern-only device is not accidentally source equipment: {resource_id}")
+            check(("minecraft:shield" in values) == (resource_id == "minecraft:unbreaking"),
+                  f"Modern shield source-support adaptation is exactly Unbreaking: {resource_id}")
             if kind == "native":
                 pinned = json.loads(vanilla.read(f"data/minecraft/enchantment/{name}.json"))
                 modern = {"minecraft:crossbow", "minecraft:trident", "minecraft:mace", "minecraft:elytra", "minecraft:shield"}
