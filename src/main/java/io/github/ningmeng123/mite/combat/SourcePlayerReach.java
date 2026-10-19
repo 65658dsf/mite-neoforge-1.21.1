@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.combat;
 
+import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerReach;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
@@ -60,13 +61,24 @@ public final class SourcePlayerReach {
                 + (player.getAbilities().instabuild ? 0D : externalRange(player, true)));
     }
     public static double meleeReach(Player player, Entity target) {
+        Double weaponReach = BetterCombatPlayerReach.reach(player);
+        double sourceReach = sourceMeleeReach(player, target);
+        return weaponReach == null ? sourceReach : Math.min(weaponReach, sourceReach);
+    }
+    /** Preserve MITE's weapon, target-height and attribute limits for either attack system. */
+    public static double sourceMeleeReach(Player player, Entity target) {
         return SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
-                player.getY() - target.getY(), toolBonus(player.getMainHandItem()), target instanceof AbstractHurtingProjectile,
-                externalRange(player, false), MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(),
+                player.getY() - target.getY(),
+                toolBonus(BetterCombatPlayerReach.attackingWeapon(player)),
+                target instanceof AbstractHurtingProjectile,
+                BetterCombatPlayerReach.rangeAttribute(player, LEGACY_TOOL_REACH) - 3D,
+                MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(),
                 MiteConfig.heightReachPenaltyEnabled());
     }
     /** Keep the historical ray while allowing configured long weapons to be selected on the client. */
     public static double selectionRange(Player player) {
+        Double weaponReach = BetterCombatPlayerReach.reach(player);
+        if (weaponReach != null) return Math.max(16D, weaponReach);
         if (player.getAbilities().instabuild || MiteConfig.weaponReachMultiplier() <= 1D) return 16D;
         return Math.max(16D, SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
                 2.5D, toolBonus(player.getMainHandItem()), true, externalRange(player, false),
@@ -100,6 +112,10 @@ public final class SourcePlayerReach {
     }
     public static boolean canReachEntityAt(Player player, Entity target, Vec3 point, boolean melee, float partialTick) {
         if (target.level() != player.level() || !finite(point)) return false;
+        if (melee) {
+            Boolean weaponHit = BetterCombatPlayerReach.canMelee(player, target);
+            if (weaponHit != null) return weaponHit;
+        }
         double reach = melee ? meleeReach(player, target) : interactionReach(player, target);
         return player.getEyePosition(partialTick).distanceToSqr(point) <= reach * reach;
     }

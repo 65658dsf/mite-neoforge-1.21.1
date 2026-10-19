@@ -52,6 +52,12 @@ neoForge {
                 systemProperty 'mite.betterCombatMobAuditOutput', file(project.providers.gradleProperty('miteBetterCombatMobAuditOutput')
                         .getOrElse('build/verification/bettercombat-mob-client-audit.json')).absolutePath
             }
+            if (project.providers.gradleProperty('miteBetterCombatPlayerReachAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.betterCombatPlayerReachAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.betterCombatPlayerReachAuditOutput', file(project.providers.gradleProperty('miteBetterCombatPlayerReachAuditOutput')
+                        .getOrElse('build/verification/bettercombat-player-reach-client-audit.json')).absolutePath
+            }
             if (project.providers.gradleProperty('miteClientDirectory').isPresent()) {
                 gameDirectory = file(project.providers.gradleProperty('miteClientDirectory').get())
             }
@@ -228,6 +234,7 @@ neoForge {
 dependencies {
     // Optional combat integration; users supply both mods, neither is bundled.
     compileOnly('maven.modrinth:better-combat:2.4.0+1.21.1-neoforge') { transitive = false }
+    gametestCompileOnly('maven.modrinth:better-combat:2.4.0+1.21.1-neoforge') { transitive = false }
     compileOnly('maven.modrinth:playeranimator:2.0.4+1.21.1-forge') { transitive = false }
     compileOnly('maven.modrinth:cloth-config:15.0.140+neoforge') { transitive = false }
     // Optional client integration. JEI is supplied by the player's mods folder, never bundled.
