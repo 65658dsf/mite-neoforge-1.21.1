@@ -24,11 +24,11 @@ public final class MonsterMeleeScaling {
         if (!active(attacker) || !MonsterDayScaling.handles(attacker)) return nativeValue;
         AttributeInstance attribute = attacker.getAttribute(Attributes.ATTACK_DAMAGE);
         if (attribute == null) return nativeValue;
-        double multiplier = MonsterDayScaling.attackMultiplier(attacker);
-        if (multiplier == 1D) return nativeValue;
+        double base = MonsterDayScaling.attackBase(attacker, attribute.getBaseValue());
+        if (base == attribute.getBaseValue()) return nativeValue;
         AttributeInstance grown = new AttributeInstance(attribute.getAttribute(), ignored -> {});
         grown.replaceFrom(attribute);
-        grown.setBaseValue(attribute.getBaseValue() * multiplier);
+        grown.setBaseValue(base);
         return grown.getValue();
     }
 

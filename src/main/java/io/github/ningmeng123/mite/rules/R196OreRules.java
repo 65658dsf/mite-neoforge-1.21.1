@@ -26,6 +26,10 @@ public final class R196OreRules {
     }
     private R196OreRules() {}
 
+    /** Probability that a sampled candidate advances to vein placement, before terrain checks. */
+    public static double candidateChance(Dimension dimension) { return 1D / candidateRarity(dimension); }
+    public static int candidateRarity(Dimension dimension) { return dimension == Dimension.NETHER ? 1 : 10; }
+
     public static int candidateCount(Kind kind, Dimension dimension) {
         if (dimension == Dimension.NETHER) return switch (kind) {
             case QUARTZ -> 16;

@@ -46,6 +46,47 @@ class SourcePlayerCombatRulesTest {
         assertEquals(5D, SourcePlayerCombatRules.blockReach(true,100D));
         assertEquals(5D, SourcePlayerCombatRules.interactionReach(true,-20,true));
     }
+
+    @Test void defaultReachSettingsPreserveHeightsWeaponsFireballsAndExternalAttributes() {
+        for (boolean creative : new boolean[]{false, true}) for (boolean fireball : new boolean[]{false, true})
+            for (double height : new double[]{-5D, -.5D, 0D, .5D, 5D})
+                for (double tool : new double[]{0D, .25D, .75D, 1D})
+                    for (double external : new double[]{-2D, 0D, 2D}) {
+                        double expected = creative ? 5D : Math.max(0D,
+                                SourcePlayerCombatRules.meleeReach(false, height, tool, fireball) + external);
+                        assertEquals(expected, SourcePlayerCombatRules.meleeReach(creative, height, tool, fireball,
+                                external, 1D, 0D, true), 1E-12);
+                    }
+    }
+
+    @Test void weaponReachScalesTheCompleteSurvivalRangeBeforeSubtractingBlocks() {
+        assertEquals(2.875D, SourcePlayerCombatRules.meleeReach(false, 0D, .75D, false,
+                0D, 1.5D, .5D, true));
+        assertEquals(1.875D, SourcePlayerCombatRules.meleeReach(false, 0D, .75D, false,
+                2D, .5D, .25D, true));
+        assertEquals(0D, SourcePlayerCombatRules.meleeReach(false, 0D, .75D, false,
+                0D, 0D, 0D, true));
+        assertEquals(0D, SourcePlayerCombatRules.meleeReach(false, 0D, .75D, false,
+                0D, 1D, 16D, true));
+        assertEquals(5D, SourcePlayerCombatRules.meleeReach(true, -5D, .75D, false,
+                2D, 0D, 16D, false));
+    }
+
+    @Test void heightAdjustmentCanBeDisabledWithoutRemovingToolOrProjectileBonuses() {
+        for (double height : new double[]{-5D, 0D, 5D}) {
+            assertEquals(2.25D, SourcePlayerCombatRules.meleeReach(false, height, .75D, false,
+                    0D, 1D, 0D, false));
+            assertEquals(4.25D, SourcePlayerCombatRules.meleeReach(false, height, .75D, true,
+                    0D, 1D, 0D, false));
+        }
+    }
+
+    @Test void reachSettingsRejectNonfiniteAndNegativeValues() {
+        for (double invalid : new double[]{-1D, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
+            assertThrows(IllegalArgumentException.class, () -> SourcePlayerCombatRules.configuredWeaponReach(2.25D, invalid, 0D));
+            assertThrows(IllegalArgumentException.class, () -> SourcePlayerCombatRules.configuredWeaponReach(2.25D, 1D, invalid));
+        }
+    }
     @ParameterizedTest
     @CsvSource({"false,false,false,false,0", "false,false,true,false,.125", "false,false,true,true,0",
             "true,false,false,false,1", "true,false,true,false,.125", "true,false,true,true,1",

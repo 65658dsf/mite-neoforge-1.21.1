@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.progression;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.enchantment.ConfiguredEnchantments;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntToDoubleFunction;
@@ -61,7 +62,7 @@ public final class EnchantmentSources {
         return false;
     }
     public static Levels levels(ItemStack stack, Holder<Enchantment> enchantment) {
-        if (stack == null || stack.isEmpty()) return new Levels(0, 0);
+        if (stack == null || stack.isEmpty() || !ConfiguredEnchantments.enabled(enchantment)) return new Levels(0, 0);
         int normal;
         try (Scope ignored = source(Mode.NORMAL)) { normal = Math.max(0, stack.getEnchantmentLevel(enchantment)); }
         int bonus = enchantment.unwrapKey().map(key -> GearProgression.affixLevel(stack, key.location())).orElse(0);
@@ -115,14 +116,17 @@ public final class EnchantmentSources {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void gameplayEnchantments(GetEnchantmentLevelEvent event) {
-        if (mode() == Mode.NORMAL) return;
-        if (mode() == Mode.AFFIX) event.getEnchantments().removeIf(holder -> true);
-        if (!hasAffixes(event.getStack())) return;
-        for (Map.Entry<ResourceLocation, Integer> entry : GearProgression.state(event.getStack()).affixes().entrySet()) {
-            event.getLookup().get(net.minecraft.resources.ResourceKey.create(Registries.ENCHANTMENT, entry.getKey())).ifPresent(holder -> {
-                if (event.isTargetting(holder)) event.getEnchantments().set(holder,
-                        mode() == Mode.AFFIX ? entry.getValue() : Math.max(event.getEnchantments().getLevel(holder), entry.getValue()));
-            });
+        if (mode() != Mode.NORMAL) {
+            if (mode() == Mode.AFFIX) event.getEnchantments().removeIf(holder -> true);
+            if (hasAffixes(event.getStack())) {
+                for (Map.Entry<ResourceLocation, Integer> entry : GearProgression.state(event.getStack()).affixes().entrySet()) {
+                    event.getLookup().get(net.minecraft.resources.ResourceKey.create(Registries.ENCHANTMENT, entry.getKey())).ifPresent(holder -> {
+                        if (event.isTargetting(holder)) event.getEnchantments().set(holder,
+                                mode() == Mode.AFFIX ? entry.getValue() : Math.max(event.getEnchantments().getLevel(holder), entry.getValue()));
+                    });
+                }
+            }
         }
+        ConfiguredEnchantments.apply(event.getEnchantments());
     }
 }

@@ -24,7 +24,7 @@ public abstract class R196RandomEnchantmentsMixin {
             Stream<Holder<Enchantment>> stream, CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
         if (Boolean.TRUE.equals(MITE_NATIVE_BOOK.get())) return;
         if (!stack.is(Items.BOOK) && !R196EnchantmentTable.isSourceEquipment(stack)) return;
-        List<Holder<Enchantment>> allowed = stream.toList();
+        List<Holder<Enchantment>> allowed = stream.filter(io.github.ningmeng123.mite.enchantment.ConfiguredEnchantments::enabled).toList();
         // Explicit modern-only book pools retain their intended modern rewards. Mixed/general pools use R196.
         boolean modernBook = stack.is(Items.BOOK) && allowed.stream().noneMatch(holder -> holder.unwrapKey()
                 .map(key -> R196EnchantmentCatalog.definition(key.location().toString()) != null).orElse(false));

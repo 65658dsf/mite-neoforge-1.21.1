@@ -80,4 +80,32 @@ class MonsterDayScalingRulesTest {
                 assertEquals(1D, MonsterDayScalingRules.healthMultiplier(1L, basis, skeleton));
         }
     }
+
+    @Test void configuredGrowthChangesEachDailyIncreaseAndRetainsTheThirtyTwoDayRebase() {
+        assertEquals(1.32D, MonsterDayScalingRules.healthMultiplier(33L, 2D), 1E-12);
+        assertEquals(1.7424D, MonsterDayScalingRules.healthMultiplier(65L, 2D), 1E-12);
+        assertEquals(1.16D, MonsterDayScalingRules.damageMultiplier(33L, 2D), 1E-12);
+        assertEquals(1.3456D, MonsterDayScalingRules.damageMultiplier(65L, 2D), 1E-12);
+        assertEquals(1.08D, MonsterDayScalingRules.healthMultiplier(33L, .5D), 1E-12);
+        assertEquals(1.04D, MonsterDayScalingRules.damageMultiplier(33L, .5D), 1E-12);
+        assertEquals(12.4D, 6D * MonsterDayScalingRules.healthMultiplier(33L, 6D, true, 2D), 1E-12);
+        assertEquals(20.848D, 6D * MonsterDayScalingRules.healthMultiplier(65L, 6D, true, 2D), 1E-12);
+    }
+
+    @Test void zeroGrowthKeepsTheOriginalBodyAndDamageEvenForAncientWorlds() {
+        for (long day : new long[]{1L, 33L, 65L, 1_000_000_001L, Long.MAX_VALUE}) {
+            assertEquals(1D, MonsterDayScalingRules.healthMultiplier(day, 0D));
+            assertEquals(1D, MonsterDayScalingRules.damageMultiplier(day, 0D));
+            assertEquals(1D, MonsterDayScalingRules.healthMultiplier(day, 6D, true, 0D));
+        }
+    }
+
+    @Test void configuredGrowthCannotIntroduceNegativeOrNonfiniteRates() {
+        for (double invalid : new double[]{-1D, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
+            assertThrows(IllegalArgumentException.class, () -> MonsterDayScalingRules.healthMultiplier(65L, invalid));
+            assertThrows(IllegalArgumentException.class, () -> MonsterDayScalingRules.damageMultiplier(65L, invalid));
+        }
+        assertEquals(Double.MAX_VALUE, MonsterDayScalingRules.healthMultiplier(Long.MAX_VALUE, 10_000D));
+        assertEquals(Double.MAX_VALUE, MonsterDayScalingRules.damageMultiplier(Long.MAX_VALUE, 10_000D));
+    }
 }

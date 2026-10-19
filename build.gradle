@@ -149,6 +149,11 @@ neoForge {
                 systemProperty 'mixin.debug.export', 'true'
                 systemProperty 'mite.enchantmentClientAuditOutput', file('build/verification/enchantment-client-audit.json').absolutePath
             }
+            boolean gameplayConfigClientAudit = project.providers.gradleProperty('miteGameplayConfigClientAudit').getOrElse('false').toBoolean()
+            if (gameplayConfigClientAudit) {
+                systemProperty 'mite.gameplayConfigClientAudit', 'true'
+                systemProperty 'mite.gameplayConfigClientAuditOutput', file('build/verification/gameplay-config-client-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteLunarVisualAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.lunarVisualAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'
@@ -185,9 +190,11 @@ neoForge {
                         : 'build/verification/auto-harvest-input-audit.json').absolutePath
             }
             programArguments.addAll '--mod', project.mod_id, '--all',
-                    '--output', file(skeletonWeaponDisplayAudit
-                            ? 'build/verification/skeleton-weapon-display-generated'
-                            : 'src/generated/resources').absolutePath,
+                    '--output', file(gameplayConfigClientAudit
+                            ? 'build/verification/gameplay-config-client-audit-generated'
+                            : skeletonWeaponDisplayAudit
+                                    ? 'build/verification/skeleton-weapon-display-generated'
+                                    : 'src/generated/resources').absolutePath,
                     '--existing', file('src/main/resources').absolutePath
             if (project.providers.gradleProperty('miteLivestockHealthAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.livestockHealthAudit', 'true'

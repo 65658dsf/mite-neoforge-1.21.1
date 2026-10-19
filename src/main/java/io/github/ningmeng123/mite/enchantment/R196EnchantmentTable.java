@@ -136,6 +136,7 @@ public final class R196EnchantmentTable {
         while (remaining > 0) {
             List<Candidate> candidates = new ArrayList<>();
             for (var definition : R196EnchantmentCatalog.definitions()) {
+                if (!io.github.ningmeng123.mite.config.MiteConfig.enchantmentEnabled(definition.resourceId())) continue;
                 if (!stack.is(Items.BOOK) && !definition.supported(stack)) continue;
                 if (selected.stream().anyMatch(previous -> !R196EnchantmentCatalog.compatible(previous.definition().id(), definition.id()))) continue;
                 var holder = holders.get(definition.resourceId());

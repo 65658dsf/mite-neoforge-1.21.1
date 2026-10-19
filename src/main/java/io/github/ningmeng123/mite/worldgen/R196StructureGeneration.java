@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.worldgen;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.advancement.MiteAchievements;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.item.R196ReinforcedBowItem;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteTools;
@@ -44,6 +45,9 @@ public final class R196StructureGeneration {
     private static final ConcurrentMap<MinecraftServer, State> STATES = new ConcurrentHashMap<>();
     private static final TagKey<Biome> MINESHAFT_HILLS = TagKey.create(Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "has_structure/r196_mineshaft_hills"));
+    private static final ResourceLocation UNDERWORLD_TRIAL = ResourceLocation.fromNamespaceAndPath(
+            Mite.MOD_ID, "underworld_trial_chambers");
+    private static final ResourceLocation OVERWORLD_TRIAL = ResourceLocation.withDefaultNamespace("trial_chambers");
     private R196StructureGeneration() {}
 
     /** Publish only on the main thread, before spawn generation and after live progress/time changes. */
@@ -80,6 +84,10 @@ public final class R196StructureGeneration {
     }
 
     public static boolean unlocked(ServerLevel level, Holder<Structure> structure) {
+        // Generation and locate share this live gate, outside StructureCheck's permanent cache.
+        ResourceLocation location = structure.unwrapKey().map(key -> key.location()).orElse(null);
+        if (UNDERWORLD_TRIAL.equals(location) && !MiteConfig.underworldTrialsEnabled()) return false;
+        if (OVERWORLD_TRIAL.equals(location) && !MiteConfig.overworldTrialsEnabled()) return false;
         String id = vanillaId(structure);
         boolean village = level.dimension().equals(Level.OVERWORLD) && id.startsWith("village_");
         boolean portal = id.equals("ruined_portal") || id.startsWith("ruined_portal_");

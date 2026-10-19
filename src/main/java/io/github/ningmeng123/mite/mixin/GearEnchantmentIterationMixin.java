@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.ningmeng123.mite.progression.EnchantmentSources;
+import io.github.ningmeng123.mite.enchantment.ConfiguredEnchantments;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
@@ -19,6 +20,8 @@ public abstract class GearEnchantmentIterationMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor;accept(Lnet/minecraft/core/Holder;I)V"))
     private static void mite$visit(EnchantmentHelper.EnchantmentVisitor visitor, Holder<Enchantment> enchantment,
             int level, Operation<Void> original, @Local(argsOnly = true) ItemStack stack) {
+        level = ConfiguredEnchantments.effectiveLevel(enchantment, level);
+        if (level <= 0) return;
         try (var ignored = EnchantmentSources.visiting(stack, enchantment)) { original.call(visitor, enchantment, level); }
     }
 
@@ -26,6 +29,8 @@ public abstract class GearEnchantmentIterationMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentInSlotVisitor;accept(Lnet/minecraft/core/Holder;ILnet/minecraft/world/item/enchantment/EnchantedItemInUse;)V"))
     private static void mite$visitSlot(EnchantmentHelper.EnchantmentInSlotVisitor visitor, Holder<Enchantment> enchantment,
             int level, EnchantedItemInUse item, Operation<Void> original) {
+        level = ConfiguredEnchantments.effectiveLevel(enchantment, level);
+        if (level <= 0) return;
         try (var ignored = EnchantmentSources.visiting(item.itemStack(), enchantment)) { original.call(visitor, enchantment, level, item); }
     }
 }

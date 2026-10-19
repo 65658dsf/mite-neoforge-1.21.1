@@ -82,7 +82,9 @@ public final class SourceVillagerTrades {
             case GRAVEL -> offer(new ItemCost(Items.GRAVEL,4),Optional.of(new ItemCost(Items.EMERALD)),
                     new ItemStack(Items.FLINT,SourceVillagerTradeRules.count(4,6,random::nextInt)));
             case BOOK -> {
-                var definitions = R196EnchantmentCatalog.definitions();
+                var definitions = R196EnchantmentCatalog.definitions().stream()
+                        .filter(definition -> io.github.ningmeng123.mite.config.MiteConfig.enchantmentEnabled(definition.resourceId())).toList();
+                if (definitions.isEmpty()) yield null;
                 var definition = definitions.get(random.nextInt(definitions.size()));
                 int level = random.nextInt(definition.maxLevel())+1;
                 int emeralds = 2+random.nextInt(5+level*10)+3*level;

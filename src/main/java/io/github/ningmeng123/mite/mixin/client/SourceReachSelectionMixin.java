@@ -17,14 +17,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** R196 selects the nearest collision in a 16-block ray, then checks its target-specific reach. @author NingMeng123 */
+/** Select the nearest collision with the R196 ray extended for configured long weapons, then check reach. @author NingMeng123 */
 @Mixin(GameRenderer.class)
 public abstract class SourceReachSelectionMixin {
     @Shadow @Final private Minecraft minecraft;
 
     @ModifyArgs(method = "pick(F)V", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/GameRenderer;pick(Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;"))
-    private void mite$sourceSelectionRay(Args args) { args.set(1, 16D); args.set(2, 16D); }
+    private void mite$sourceSelectionRay(Args args) {
+        double range = minecraft.player == null ? 16D : SourcePlayerReach.selectionRange(minecraft.player);
+        args.set(1, range); args.set(2, range);
+    }
 
     @Inject(method = "pick(F)V", at = @At("RETURN"))
     private void mite$filterTargetReach(float partialTick, CallbackInfo ci) {

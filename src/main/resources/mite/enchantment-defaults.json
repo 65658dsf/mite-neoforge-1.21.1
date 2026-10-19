@@ -1,0 +1,300 @@
+{
+  "schema": 1,
+  "enchantments": [
+    {
+      "id": "minecraft:aqua_affinity",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.aqua_affinity\"}"
+    },
+    {
+      "id": "minecraft:bane_of_arthropods",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.bane_of_arthropods\"}"
+    },
+    {
+      "id": "minecraft:binding_curse",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.binding_curse\"}"
+    },
+    {
+      "id": "minecraft:blast_protection",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.blast_protection\"}"
+    },
+    {
+      "id": "minecraft:breach",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.breach\"}"
+    },
+    {
+      "id": "minecraft:channeling",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.channeling\"}"
+    },
+    {
+      "id": "minecraft:density",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.density\"}"
+    },
+    {
+      "id": "minecraft:depth_strider",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.depth_strider\"}"
+    },
+    {
+      "id": "minecraft:efficiency",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.efficiency\"}"
+    },
+    {
+      "id": "minecraft:feather_falling",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.feather_falling\"}"
+    },
+    {
+      "id": "minecraft:fire_aspect",
+      "defaultMaxLevel": 2,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.fire_aspect\"}"
+    },
+    {
+      "id": "minecraft:fire_protection",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.fire_protection\"}"
+    },
+    {
+      "id": "minecraft:flame",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.flame\"}"
+    },
+    {
+      "id": "minecraft:fortune",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.fortune\"}"
+    },
+    {
+      "id": "minecraft:frost_walker",
+      "defaultMaxLevel": 2,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.frost_walker\"}"
+    },
+    {
+      "id": "minecraft:impaling",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.impaling\"}"
+    },
+    {
+      "id": "minecraft:infinity",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.infinity\"}"
+    },
+    {
+      "id": "minecraft:knockback",
+      "defaultMaxLevel": 2,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.knockback\"}"
+    },
+    {
+      "id": "minecraft:looting",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.looting\"}"
+    },
+    {
+      "id": "minecraft:loyalty",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.loyalty\"}"
+    },
+    {
+      "id": "minecraft:luck_of_the_sea",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.luck_of_the_sea\"}"
+    },
+    {
+      "id": "minecraft:lure",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.lure\"}"
+    },
+    {
+      "id": "minecraft:mending",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.mending\"}"
+    },
+    {
+      "id": "minecraft:multishot",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.multishot\"}"
+    },
+    {
+      "id": "minecraft:piercing",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.piercing\"}"
+    },
+    {
+      "id": "minecraft:power",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.power\"}"
+    },
+    {
+      "id": "minecraft:projectile_protection",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.projectile_protection\"}"
+    },
+    {
+      "id": "minecraft:protection",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.protection\"}"
+    },
+    {
+      "id": "minecraft:punch",
+      "defaultMaxLevel": 2,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.punch\"}"
+    },
+    {
+      "id": "minecraft:quick_charge",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.quick_charge\"}"
+    },
+    {
+      "id": "minecraft:respiration",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.respiration\"}"
+    },
+    {
+      "id": "minecraft:riptide",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.riptide\"}"
+    },
+    {
+      "id": "minecraft:sharpness",
+      "defaultMaxLevel": 7,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.sharpness\"}"
+    },
+    {
+      "id": "minecraft:silk_touch",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.silk_touch\"}"
+    },
+    {
+      "id": "minecraft:smite",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.smite\"}"
+    },
+    {
+      "id": "minecraft:soul_speed",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.soul_speed\"}"
+    },
+    {
+      "id": "minecraft:sweeping_edge",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.sweeping_edge\"}"
+    },
+    {
+      "id": "minecraft:swift_sneak",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.swift_sneak\"}"
+    },
+    {
+      "id": "minecraft:thorns",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.thorns\"}"
+    },
+    {
+      "id": "minecraft:unbreaking",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.unbreaking\"}"
+    },
+    {
+      "id": "minecraft:vanishing_curse",
+      "defaultMaxLevel": 1,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.vanishing_curse\"}"
+    },
+    {
+      "id": "minecraft:wind_burst",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.minecraft.wind_burst\"}"
+    },
+    {
+      "id": "mite:arrow_recovery",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.arrow_recovery\"}"
+    },
+    {
+      "id": "mite:butchering",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.butchering\"}"
+    },
+    {
+      "id": "mite:disarming",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.disarming\"}"
+    },
+    {
+      "id": "mite:endurance",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.endurance\"}"
+    },
+    {
+      "id": "mite:fertility",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.fertility\"}"
+    },
+    {
+      "id": "mite:fishing_fortune",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.fishing_fortune\"}"
+    },
+    {
+      "id": "mite:free_action",
+      "defaultMaxLevel": 4,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.free_action\"}"
+    },
+    {
+      "id": "mite:harvesting",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.harvesting\"}"
+    },
+    {
+      "id": "mite:piercing",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.piercing\"}"
+    },
+    {
+      "id": "mite:poison",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.poison\"}"
+    },
+    {
+      "id": "mite:quickness",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.quickness\"}"
+    },
+    {
+      "id": "mite:regeneration",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.regeneration\"}"
+    },
+    {
+      "id": "mite:speed",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.speed\"}"
+    },
+    {
+      "id": "mite:stun",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.stun\"}"
+    },
+    {
+      "id": "mite:tree_felling",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.tree_felling\"}"
+    },
+    {
+      "id": "mite:true_flight",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.true_flight\"}"
+    },
+    {
+      "id": "mite:vampiric",
+      "defaultMaxLevel": 5,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.vampiric\"}"
+    }
+  ]
+}

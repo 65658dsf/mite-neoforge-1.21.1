@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.combat.ShieldGuard;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
+import io.github.ningmeng123.mite.enchantment.ConfiguredEnchantments;
 import io.github.ningmeng123.mite.item.R196ReinforcedBowItem;
 import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
@@ -61,7 +62,8 @@ public final class GearProgression {
         return id;
     }
     public static int affixLevel(ItemStack stack, ResourceLocation enchantment) {
-        return stack.isEmpty() ? 0 : state(stack).affixes().getOrDefault(enchantment, 0);
+        return stack.isEmpty() ? 0 : ConfiguredEnchantments.effectiveLevel(enchantment.toString(),
+                state(stack).affixes().getOrDefault(enchantment, 0));
     }
     public static boolean canGain(Player player) {
         return player instanceof ServerPlayer && !player.isCreative() && !player.isSpectator();
@@ -122,6 +124,7 @@ public final class GearProgression {
 
     /** The book-support leather exception is shared here without changing the enchanting table. */
     public static boolean supportsAffix(ItemStack stack, Holder<Enchantment> enchantment) {
+        if (!ConfiguredEnchantments.enabled(enchantment)) return false;
         if (enchantment.is(EnchantmentTags.CURSE) || enchantment.is(net.minecraft.world.item.enchantment.Enchantments.MENDING)) return false;
         if (enchantment.unwrapKey().map(key -> io.github.ningmeng123.mite.api.MiteExtensions.externalEnchantments().stream().anyMatch(definition -> definition.resourceId().equals(key.location().toString()))).orElse(false))
             return enchantment.unwrapKey().map(key -> io.github.ningmeng123.mite.api.MiteExtensions.policy().enchantmentApplicable(key.location().toString(),stack,false)).orElse(false);
@@ -142,8 +145,10 @@ public final class GearProgression {
     }
 
     public static GearAffixRules.Definition affixDefinition(ItemStack stack, Holder<Enchantment> enchantment) {
-        return io.github.ningmeng123.mite.api.MiteExtensions.policy().affixDefinition(stack,enchantment,GearAffixRules.definition(enchantment.unwrapKey().orElseThrow().location().toString(), isArmor(stack),
+        var definition = io.github.ningmeng123.mite.api.MiteExtensions.policy().affixDefinition(stack,enchantment,GearAffixRules.definition(enchantment.unwrapKey().orElseThrow().location().toString(), isArmor(stack),
                 enchantment.value().getWeight(), enchantment.value().getMaxLevel()));
+        return new GearAffixRules.Definition(definition.weight(), io.github.ningmeng123.mite.config.MiteConfig.enchantmentMaxLevel(
+                enchantment.unwrapKey().orElseThrow().location().toString(), definition.maximumLevel()));
     }
 
     public static void award(ItemStack stack, long experienceMillis, ServerPlayer player) {

@@ -22,9 +22,14 @@ import net.minecraft.world.item.SwordItem;
 /** Independently audited source identities and exact-class item rules. @author NingMeng123 */
 public final class R196EnchantmentCatalog {
     public record Definition(int legacyId, String id, String resourceId, int weight, int difficulty, int maxLevel) {
+        @Override public int maxLevel() {
+            return io.github.ningmeng123.mite.config.MiteConfig.enchantmentMaxLevel(resourceId, maxLevel);
+        }
+
         public int minCost(int level) {
-            if (level < 1 || level > maxLevel) throw new IllegalArgumentException("Invalid source enchantment level: " + id + " " + level);
-            return Math.max(difficulty - 10, 0) + difficulty * ((maxLevel == 1 ? 3 : level) - 1) + 1;
+            if (level < 1 || level > maxLevel()) throw new IllegalArgumentException("Invalid source enchantment level: " + id + " " + level);
+            // Preserve a single-level enchantment's original first-rank cost while charging for explicit extra ranks.
+            return Math.max(difficulty - 10, 0) + difficulty * (level - 1 + (maxLevel == 1 ? 2 : 0)) + 1;
         }
 
         public boolean supported(ItemStack stack) { return R196EnchantmentCatalog.supported(id, stack); }

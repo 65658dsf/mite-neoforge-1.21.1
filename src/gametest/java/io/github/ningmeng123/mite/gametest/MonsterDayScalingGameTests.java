@@ -342,9 +342,9 @@ public final class MonsterDayScalingGameTests {
             set(helper, 33L);
             MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 9.2F, 4.6F); modifier(helper, skeleton, 3.2D / 6D);
             set(helper, 65L);
-            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 12.912F, 6.456F); modifier(helper, skeleton, 6.912D / 6D);
+            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 10.672F, 5.336F); modifier(helper, skeleton, 4.672D / 6D);
             for (int repeat = 0; repeat < 20; repeat++) MonsterDayScaling.refresh(skeleton);
-            health(helper, skeleton, 12.912F, 6.456F);
+            health(helper, skeleton, 10.672F, 5.336F);
             CompoundTag saved = new CompoundTag(); skeleton.saveWithoutId(saved);
             saved.putString("id", "minecraft:skeleton");
             set(helper, 1L);
@@ -352,7 +352,7 @@ public final class MonsterDayScalingGameTests {
             helper.assertTrue(restored != null, "A real native skeleton reloads with its date and ordinary max-health attributes");
             for (boolean loaded : new boolean[]{true, false, true}) {
                 MonsterDayScaling.join(new EntityJoinLevelEvent(restored, helper.getLevel(), loaded));
-                health(helper, restored, 12.912F, 6.456F); modifier(helper, restored, 6.912D / 6D);
+                health(helper, restored, 10.672F, 5.336F); modifier(helper, restored, 4.672D / 6D);
             }
             close(helper, restored.getAttributeBaseValue(Attributes.MAX_HEALTH), 6D,
                     "The detached growth calculation preserves the original six-health base across save and read");

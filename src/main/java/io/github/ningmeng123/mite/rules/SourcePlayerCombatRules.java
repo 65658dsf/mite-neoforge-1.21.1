@@ -33,6 +33,17 @@ public final class SourcePlayerCombatRules {
     public static double meleeReach(boolean creative, double feetDifference, double toolBonus, boolean fireball) {
         return creative ? 5D : 1.5D + heightAdvantage(feetDifference) + toolBonus + (fireball ? 2D : 0D);
     }
+    /** Configure the complete survival reach, including attributes supplied by another weapon mod. */
+    public static double meleeReach(boolean creative, double feetDifference, double toolBonus, boolean fireball,
+            double externalRange, double multiplier, double reduction, boolean heightAdjustment) {
+        return creative ? 5D : configuredWeaponReach(meleeReach(false, heightAdjustment ? feetDifference : 0D,
+                toolBonus, fireball) + externalRange, multiplier, reduction);
+    }
+    public static double configuredWeaponReach(double reach, double multiplier, double reduction) {
+        if (!Double.isFinite(multiplier) || multiplier < 0D || !Double.isFinite(reduction) || reduction < 0D)
+            throw new IllegalArgumentException("Weapon reach settings must be finite and nonnegative");
+        return Math.max(0D, reach * multiplier - reduction);
+    }
     public static double interactionReach(boolean creative, double feetDifference, boolean boat) {
         return creative ? 5D : boat ? 2.5D : 2.5D + heightAdvantage(feetDifference);
     }

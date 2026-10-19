@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.worldgen;
 
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.R196OreRules;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import io.github.ningmeng123.mite.rules.R196OreRules.Kind;
@@ -44,9 +45,14 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         int placed = 0;
         for (Kind kind : order) {
             int count = R196OreRules.candidateCount(kind, dimension, random);
+            if (dimension == Dimension.UNDERWORLD) {
+                count = OreGenerationRates.scaleCandidates(1, MiteConfig.underworldOreCandidates(kind), random);
+            }
             Access access = new Access(level, dimension, kind);
             for (int candidate = 0; candidate < count; candidate++) {
-                if (dimension != Dimension.NETHER && random.nextInt(10) != 0) continue;
+                if (dimension == Dimension.UNDERWORLD) {
+                    if (!OreGenerationRates.passesChance(MiteConfig.underworldOrePassChance(kind), dimension, random)) continue;
+                } else if (dimension != Dimension.NETHER && random.nextInt(R196OreRules.candidateRarity(dimension)) != 0) continue;
                 int x = originX + random.nextInt(16);
                 int legacyY = R196OreRules.randomHeight(kind, dimension, random);
                 int z = originZ + random.nextInt(16);
@@ -138,6 +144,9 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
             level.setBlock(pos, target, 2);
         }
     }
+    /** Settings use the actual registered target block and its translated name. */
+    public static Block generationBlock(Kind kind) { return block(kind, false); }
+
     private static Block block(Kind kind, boolean deep) {
         return switch (kind) {
             case DIRT -> Blocks.DIRT;

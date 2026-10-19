@@ -48,6 +48,7 @@ public final class R196BookAnvil {
         long cost = (long)Math.max(0, before.getOrDefault(DataComponents.REPAIR_COST, 0))
                 + Math.max(0, book.getOrDefault(DataComponents.REPAIR_COST, 0));
         for (var entry : book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet()) {
+            if (!ConfiguredEnchantments.enabled(entry.getKey())) continue;
             var definition = definition(entry.getKey());
             if (definition != null ? !supportsBook(definition, before) : !entry.getKey().value().canEnchant(before)) continue;
             int level = result.getLevel(entry.getKey());
@@ -87,7 +88,7 @@ public final class R196BookAnvil {
         ItemEnchantments stored = second.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
         boolean applicableSource = stored.entrySet().stream().anyMatch(entry -> {
             var definition = definition(entry.getKey());
-            return definition != null && supportsBook(definition, first);
+            return ConfiguredEnchantments.enabled(entry.getKey()) && definition != null && supportsBook(definition, first);
         });
         // An irrelevant source entry must not make an otherwise modern-only transfer free.
         if (!applicableSource && stored.entrySet().stream().anyMatch(entry -> definition(entry.getKey()) == null
@@ -96,6 +97,7 @@ public final class R196BookAnvil {
                 first.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY));
         boolean changed = false;
         for (var entry : stored.entrySet()) {
+            if (!ConfiguredEnchantments.enabled(entry.getKey())) continue;
             var definition = definition(entry.getKey());
             if (definition != null ? !supportsBook(definition, first) : !entry.getKey().value().canEnchant(first)) continue;
             // Check both retained and newly added entries; the same enchantment is an upgrade candidate.

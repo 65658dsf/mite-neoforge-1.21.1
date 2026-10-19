@@ -16,6 +16,8 @@ import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import org.slf4j.Logger;
 
 /**
@@ -28,7 +30,10 @@ public final class Mite {
     public static final String MOD_ID = "mite";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public Mite(IEventBus modBus) {
+    public Mite(IEventBus modBus, ModContainer container) {
+        container.registerConfig(ModConfig.Type.COMMON, io.github.ningmeng123.mite.config.MiteConfig.SPEC);
+        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT)
+            io.github.ningmeng123.mite.client.config.MiteConfigClient.register(container);
         MiteAttachments.register(modBus);
         io.github.ningmeng123.mite.worldgen.UnderworldSpringGeneration.register(modBus);
         io.github.ningmeng123.mite.world.CollapsePhysics.register(modBus);

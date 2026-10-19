@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.compat.bettercombat;
 
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
 import java.util.ArrayList;
@@ -56,7 +57,8 @@ public final class BetterCombatBridge {
 
         public double reach(Mob mob, Entity target, double feetY) {
             double sourceReach = SourcePlayerCombatRules.meleeReach(false, feetY - target.getY(),
-                    SourcePlayerReach.toolBonus(mob.getMainHandItem()), false) + itemRange - 3D;
+                    SourcePlayerReach.toolBonus(mob.getMainHandItem()), false, itemRange - 3D,
+                    MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled());
             return Math.max(0D, Math.min(range, sourceReach));
         }
 

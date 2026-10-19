@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.combat;
 
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
 import io.github.ningmeng123.mite.registry.MiteTools;
@@ -59,9 +60,17 @@ public final class SourcePlayerReach {
                 + (player.getAbilities().instabuild ? 0D : externalRange(player, true)));
     }
     public static double meleeReach(Player player, Entity target) {
-        return Math.max(0D, SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
-                player.getY() - target.getY(), toolBonus(player.getMainHandItem()), target instanceof AbstractHurtingProjectile)
-                + (player.getAbilities().instabuild ? 0D : externalRange(player, false)));
+        return SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
+                player.getY() - target.getY(), toolBonus(player.getMainHandItem()), target instanceof AbstractHurtingProjectile,
+                externalRange(player, false), MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(),
+                MiteConfig.heightReachPenaltyEnabled());
+    }
+    /** Keep the historical ray while allowing configured long weapons to be selected on the client. */
+    public static double selectionRange(Player player) {
+        if (player.getAbilities().instabuild || MiteConfig.weaponReachMultiplier() <= 1D) return 16D;
+        return Math.max(16D, SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
+                2.5D, toolBonus(player.getMainHandItem()), true, externalRange(player, false),
+                MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled()));
     }
     public static double interactionReach(Player player, Entity target) {
         // Source yc.getReachBonus(entity) is zero for every active item. Modern offhand follows the same rule.
