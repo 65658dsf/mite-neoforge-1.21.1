@@ -96,15 +96,15 @@ public final class MitePortals {
             if (!state.getValue(MitePortalProperties.RUNEGATE)) writeRoute(source, frame, dimensionId(source), true);
             var destination=runeDestination(source, entity, rune.get());
             if(destination==null)return null;
-            return new DimensionTransition(destination.newLevel(),destination.pos(),destination.speed(),destination.yRot(),destination.xRot(),
-                    destination.postDimensionTransition().then(traveler->io.github.ningmeng123.mite.advancement.MiteAchievements.award((Player)traveler,"runegate")));
+            return notifyPortalUse(new DimensionTransition(destination.newLevel(),destination.pos(),destination.speed(),destination.yRot(),destination.xRot(),
+                    destination.postDimensionTransition().then(traveler->io.github.ningmeng123.mite.advancement.MiteAchievements.award((Player)traveler,"runegate"))),entry);
         }
         if (state.getValue(MitePortalProperties.RUNEGATE)) initializeRoute(source, frame);
         int targetId = route(source, frame);
         if (dimensionId(source) == R196PortalRules.OVERWORLD && targetId == R196PortalRules.OVERWORLD) {
             if (!(entity instanceof ServerPlayer)) return null;
             Optional<Vec3> position = safeLanding(source, entity, source.getSharedSpawnPos().getX(), source.getSharedSpawnPos().getZ(), true, 8);
-            return position.map(pos -> transition(source, entity, pos, Vec3.ZERO, entity.getYRot())).orElse(null);
+            return position.map(pos -> notifyPortalUse(transition(source, entity, pos, Vec3.ZERO, entity.getYRot()),entry)).orElse(null);
         }
         ServerLevel target = source.getServer().getLevel(dimensionKey(targetId));
         if (target == null) return null;
@@ -113,7 +113,18 @@ public final class MitePortals {
         Optional<MitePortalFrame> exit = findExit(target, around, dimensionId(source));
         if (exit.isEmpty()) exit = createExit(target, around, frame.axis(), dimensionId(source), entity);
         if (exit.isEmpty()) return null;
-        return portalTransition(source, target, frame, exit.get(), entity);
+        return notifyPortalUse(portalTransition(source, target, frame, exit.get(), entity),entry);
+    }
+
+    /** The callback runs only after the actual native travel transaction succeeds. */
+    @Nullable
+    private static DimensionTransition notifyPortalUse(@Nullable DimensionTransition destination,BlockPos entry) {
+        if(destination==null)return null;
+        BlockPos position=entry.immutable();
+        return new DimensionTransition(destination.newLevel(),destination.pos(),destination.speed(),destination.yRot(),destination.xRot(),
+                destination.postDimensionTransition().then(traveler->{
+                    if(traveler instanceof ServerPlayer player)io.github.ningmeng123.mite.api.MiteExtensions.policy().portalUsed(player,position);
+                }));
     }
 
     public static Optional<MitePortalFrame> findExit(ServerLevel target, BlockPos around, int returnDimension) {

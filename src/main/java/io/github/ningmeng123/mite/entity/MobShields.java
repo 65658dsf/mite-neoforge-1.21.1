@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.entity;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import java.util.Set;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -78,7 +79,7 @@ public final class MobShields {
     public static boolean populate(Mob mob) {
         if (!handles(mob) || mob.level().isClientSide || mob.getPersistentData().getBoolean(SPAWN_ROLL)) return false;
         mob.getPersistentData().putBoolean(SPAWN_ROLL, true);
-        if (!spawnReason(mob.getSpawnType()) || !mob.getOffhandItem().isEmpty()
+        if (!MiteExtensions.policy().mobDefense(mob,true) || !spawnReason(mob.getSpawnType()) || !mob.getOffhandItem().isEmpty()
                 || !mob.getMainHandItem().isEmpty() && !melee(mob.getMainHandItem())
                 || mob.getRandom().nextFloat() >= SPAWN_CHANCE) return false;
         long day = NativeMobEquipment.day(mob.level().getDayTime());

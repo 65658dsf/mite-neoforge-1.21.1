@@ -17,6 +17,58 @@ class OreGenerationRatesTest {
         assertEquals(expected.nextLong(), actual.nextLong());
     }
 
+    @Test void configuredSurfaceAndDeepMineralsUseExistingCountsAndOneDefaultRarityRoll() {
+        for (var dimension : java.util.List.of(R196OreRules.Dimension.OVERWORLD, R196OreRules.Dimension.UNDERWORLD)) {
+            for (long seed : new long[]{0L, 196L, -1L, Long.MAX_VALUE}) {
+                Random actual = new Random(seed), expected = new Random(seed);
+                for (var kind : R196OreRules.generationKinds(dimension)) {
+                    int source = R196OreRules.candidateCount(kind, dimension);
+                    int count = R196OreRules.configurableKinds(dimension).contains(kind)
+                            ? OreGenerationRates.scaleCandidates(1, source, actual) : source;
+                    assertEquals(source, count, dimension + "/" + kind);
+                    for (int candidate = 0; candidate < count; candidate++) {
+                        boolean pass = expected.nextInt(10) == 0;
+                        assertEquals(pass, OreGenerationRates.passesChance(.1D, dimension, actual));
+                        if (pass) {
+                            assertEquals(expected.nextInt(16), actual.nextInt(16));
+                            assertEquals(R196OreRules.randomHeight(kind, dimension, expected), R196OreRules.randomHeight(kind, dimension, actual));
+                            assertEquals(expected.nextInt(16), actual.nextInt(16));
+                            assertEquals(expected.nextLong(), actual.nextLong());
+                        }
+                    }
+                }
+                assertEquals(expected.nextLong(), actual.nextLong(), dimension + " preserves the existing default sequence");
+            }
+        }
+    }
+
+    @Test void surfaceAdamantiumHasOneRealEntryAndConsumesNoRandomnessAtItsZeroDefault() {
+        assertEquals(0, R196OreRules.candidateCount(R196OreRules.Kind.ADAMANTIUM, R196OreRules.Dimension.OVERWORLD));
+        assertEquals(1L, R196OreRules.generationKinds(R196OreRules.Dimension.OVERWORLD).stream()
+                .filter(kind -> kind == R196OreRules.Kind.ADAMANTIUM).count());
+        assertEquals(R196OreRules.OVERWORLD, R196OreRules.generationKinds(R196OreRules.Dimension.OVERWORLD).subList(0, R196OreRules.OVERWORLD.size()));
+        assertEquals(8, R196OreRules.CONFIGURABLE_OVERWORLD.size());
+        assertTrue(R196OreRules.UNDERWORLD.containsAll(R196OreRules.CONFIGURABLE_OVERWORLD));
+        assertTrue(R196OreRules.generationKinds(R196OreRules.Dimension.OVERWORLD).containsAll(R196OreRules.CONFIGURABLE_OVERWORLD));
+        assertEquals(8, new java.util.HashSet<>(R196OreRules.CONFIGURABLE_OVERWORLD).size());
+        Random actual = new Random(196), expected = new Random(196);
+        assertEquals(0, OreGenerationRates.scaleCandidates(1, 0D, actual));
+        assertEquals(expected.nextLong(), actual.nextLong());
+    }
+
+    @Test void zeroHalfOriginalAndDoubleMultipliersScaleCandidatesOnceInEitherDimension() {
+        for (var dimension : java.util.List.of(R196OreRules.Dimension.OVERWORLD, R196OreRules.Dimension.UNDERWORLD)) {
+            for (var kind : R196OreRules.configurableKinds(dimension)) {
+                int original = R196OreRules.candidateCount(kind, dimension);
+                for (double multiplier : new double[]{0D, .5D, 1D, 2D}) {
+                    double scaled = original * multiplier;
+                    assertEquals((int)Math.ceil(scaled), OreGenerationRates.scaleCandidates(1, scaled, draw(.25D)), dimension + "/" + kind);
+                    assertEquals((int)Math.floor(scaled), OreGenerationRates.scaleCandidates(1, scaled, draw(.75D)), dimension + "/" + kind);
+                }
+            }
+        }
+    }
+
     @Test void defaultCandidateProbabilityMatchesEveryOriginalRollAndTheFollowingRandomStream() {
         var dimension = R196OreRules.Dimension.UNDERWORLD;
         for (long seed : new long[]{0L, 196L, -1L, Long.MAX_VALUE}) {

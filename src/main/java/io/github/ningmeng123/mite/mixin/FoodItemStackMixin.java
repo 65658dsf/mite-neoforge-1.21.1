@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class FoodItemStackMixin {
     @Inject(method="getUseDuration",at=@At("RETURN"),cancellable=true)
     private void mite$foodDuration(LivingEntity entity,CallbackInfoReturnable<Integer> cir) {
-        if(MiteFoodCatalog.profile((ItemStack)(Object)this)!=null) cir.setReturnValue(32);
+        if(MiteFoodCatalog.profile((ItemStack)(Object)this)!=null)
+            cir.setReturnValue(Math.max(1,io.github.ningmeng123.mite.api.MiteExtensions.policy().foodUseDuration((ItemStack)(Object)this,entity,32)));
     }
     @Inject(method="getUseAnimation",at=@At("RETURN"),cancellable=true)
     private void mite$foodAnimation(CallbackInfoReturnable<UseAnim> cir) {

@@ -24,96 +24,117 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-/** Shows the actual generation candidates and pass rates from the active underworld generator. @author NingMeng123 */
+/** Simple per-dimension multipliers; source counts and chance are read-only references. @author NingMeng123 */
 public final class OreGenerationSettingsScreen extends Screen {
-    private record Entry(Kind kind, ResourceLocation id, Component name) {}
+    private record Entry(Dimension dimension, Kind kind, ResourceLocation id, Component name, double base, double chance) {}
     private record VisibleRow(Entry entry, int y) {}
+    private static final class Draft {
+        final Map<Kind, Double> multipliers = new EnumMap<>(Kind.class);
+        final Map<Kind, String> text = new EnumMap<>(Kind.class);
+        final Set<Kind> invalid = new HashSet<>();
+    }
     private final Screen parent;
     private final boolean editable;
-    private final List<Entry> entries = new ArrayList<>();
+    private final Map<Dimension, Draft> drafts = new EnumMap<>(Dimension.class);
+    private final Map<Dimension, List<Entry>> entries = new EnumMap<>(Dimension.class);
     private final List<VisibleRow> visible = new ArrayList<>();
-    private final Map<Kind, Double> candidates = new EnumMap<>(Kind.class);
-    private final Map<Kind, Double> chances = new EnumMap<>(Kind.class);
-    private final Map<Kind, String> candidateDrafts = new EnumMap<>(Kind.class);
-    private final Map<Kind, String> chanceDrafts = new EnumMap<>(Kind.class);
-    private final Set<Kind> invalidCandidates = new HashSet<>();
-    private final Set<Kind> invalidChances = new HashSet<>();
+    private Dimension dimension = Dimension.UNDERWORLD;
     private String query = "";
-    private int page;
-    private int pageCount = 1;
+    private int page, pageCount = 1;
     private EditBox search;
-    private Button save;
+    private Button overworld, underworld, save;
     private boolean saveFailed;
 
     public OreGenerationSettingsScreen(Screen parent) {
         super(Component.translatable("mite.config.ore_generation"));
         this.parent = parent;
         editable = MiteConfigClient.editable();
-        for (Kind kind : R196OreRules.UNDERWORLD) {
-            var block = R196OreFeature.generationBlock(kind);
-            entries.add(new Entry(kind, BuiltInRegistries.BLOCK.getKey(block), block.getName()));
-            candidates.put(kind, MiteConfig.underworldOreCandidates(kind));
-            chances.put(kind, MiteConfig.underworldOrePassChance(kind) * 100D);
+        for (var selected : List.of(Dimension.OVERWORLD, Dimension.UNDERWORLD)) {
+            Draft draft = new Draft();
+            List<Entry> minerals = new ArrayList<>();
+            for (Kind kind : R196OreRules.configurableKinds(selected)) {
+                var block = R196OreFeature.generationBlock(kind);
+                draft.multipliers.put(kind, MiteConfig.oreMultiplier(kind, selected));
+                minerals.add(new Entry(selected, kind, BuiltInRegistries.BLOCK.getKey(block), block.getName(),
+                        MiteConfig.oreBaseCandidates(kind, selected), MiteConfig.orePassChance(kind, selected)));
+            }
+            minerals.sort(Comparator.comparing(entry -> entry.id().toString()));
+            drafts.put(selected, draft);
+            entries.put(selected, List.copyOf(minerals));
         }
-        entries.sort(Comparator.comparing(entry -> entry.id().toString()));
     }
 
     @Override protected void init() {
-        search = addRenderableWidget(new EditBox(font, 12, 38, Math.max(100, width - 24), 20,
-                Component.translatable("mite.config.search")));
+        int tabWidth = (width - 30) / 2;
+        overworld = addRenderableWidget(Button.builder(Component.translatable("mite.config.ore_dimension.overworld"),
+                button -> changeDimension(Dimension.OVERWORLD)).bounds(12, 34, tabWidth, 20).build());
+        underworld = addRenderableWidget(Button.builder(Component.translatable("mite.config.ore_dimension.underworld"),
+                button -> changeDimension(Dimension.UNDERWORLD)).bounds(18 + tabWidth, 34, tabWidth, 20).build());
+        search = addRenderableWidget(new EditBox(font, 12, 60, width - 24, 20, Component.translatable("mite.config.ore_search")));
         search.setMaxLength(200);
-        search.setHint(Component.translatable("mite.config.search"));
+        search.setHint(Component.translatable("mite.config.ore_search"));
         search.setValue(query);
         search.setResponder(text -> { query = text; page = 0; rebuildRows(); });
         rebuildRows();
     }
 
+    private void changeDimension(Dimension selected) { dimension = selected; page = 0; rebuildRows(); }
+
     private List<Entry> filtered() {
-        String filter = query.toLowerCase(Locale.ROOT).trim();
-        return entries.stream().filter(entry -> entry.id().toString().contains(filter)
+        String filter = query.trim().toLowerCase(Locale.ROOT);
+        return entries.get(dimension).stream().filter(entry -> entry.id().toString().contains(filter)
                 || entry.name().getString().toLowerCase(Locale.ROOT).contains(filter)).toList();
     }
 
-    private int controlsX() { return Math.max(118, width - 194); }
-
     private void rebuildRows() {
-        // Keep the search box and every draft, including invalid text, while filtering, paging or resizing.
-        for (var child : List.copyOf(children())) if (child != search) removeWidget(child);
+        for (var child : List.copyOf(children()))
+            if (child != search && child != overworld && child != underworld) removeWidget(child);
+        overworld.active = dimension != Dimension.OVERWORLD;
+        underworld.active = dimension != Dimension.UNDERWORLD;
         visible.clear();
         List<Entry> filtered = filtered();
-        int rows = Math.max(1, (height - 148) / 54);
+        int rows = Math.max(1, (height - 170) / 54);
         pageCount = Math.max(1, (filtered.size() + rows - 1) / rows);
         page = Math.clamp(page, 0, pageCount - 1);
-        int controlsX = controlsX();
+        Draft draft = drafts.get(dimension);
+        int controlsX = width - 150;
         for (int index = page * rows; index < Math.min(filtered.size(), (page + 1) * rows); index++) {
             Entry entry = filtered.get(index);
-            Kind kind = entry.kind();
-            int y = 78 + (index - page * rows) * 54;
+            int y = 100 + (index - page * rows) * 54;
             visible.add(new VisibleRow(entry, y));
-            EditBox count = numberBox(controlsX, y, 62, "mite.config.ore_candidates", entry);
-            EditBox chance = numberBox(controlsX + 68, y, 56, "mite.config.ore_chance", entry);
-            count.setResponder(text -> updateDraft(kind, text, false, count));
-            chance.setResponder(text -> updateDraft(kind, text, true, chance));
-            count.setValue(candidateDrafts.getOrDefault(kind, format(candidates.get(kind))));
-            chance.setValue(chanceDrafts.getOrDefault(kind, format(chances.get(kind))));
-            var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
-                count.setValue(format(R196OreRules.candidateCount(kind, Dimension.UNDERWORLD)));
-                chance.setValue(format(R196OreRules.candidateChance(Dimension.UNDERWORLD) * 100D));
-            }).bounds(controlsX + 130, y, 52, 20).build());
+            var box = addRenderableWidget(new EditBox(font, controlsX, y, 78, 20, Component.translatable("mite.config.ore_multiplier")));
+            box.setMaxLength(24);
+            box.setEditable(editable);
+            box.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_multiplier.tooltip")));
+            box.setResponder(text -> {
+                draft.text.put(entry.kind(), text);
+                try {
+                    double value = Double.parseDouble(text.trim());
+                    if (!Double.isFinite(value) || value < 0D || value > 100D) throw new NumberFormatException();
+                    draft.multipliers.put(entry.kind(), value);
+                    draft.invalid.remove(entry.kind());
+                    box.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
+                } catch (NumberFormatException ignored) { draft.invalid.add(entry.kind()); box.setTextColor(0xFFFF5555); }
+                saveFailed = false;
+                refreshSave();
+            });
+            box.setValue(draft.text.getOrDefault(entry.kind(), format(draft.multipliers.get(entry.kind()))));
+            var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"),
+                    button -> box.setValue("1")).bounds(controlsX + 84, y, 54, 20).build());
             reset.active = editable;
-            reset.setTooltip(Tooltip.create(baseline(entry)));
+            reset.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_multiplier_reset")));
         }
-        var previous = addRenderableWidget(Button.builder(Component.literal("<"), button -> {
-            page--; rebuildRows();
-        }).bounds(12, height - 65, 30, 20).build());
+        var previous = addRenderableWidget(Button.builder(Component.literal("<"), button -> { page--; rebuildRows(); })
+                .bounds(12, height - 65, 30, 20).build());
         previous.active = page > 0;
-        var next = addRenderableWidget(Button.builder(Component.literal(">"), button -> {
-            page++; rebuildRows();
-        }).bounds(width - 42, height - 65, 30, 20).build());
+        var next = addRenderableWidget(Button.builder(Component.literal(">"), button -> { page++; rebuildRows(); })
+                .bounds(width - 42, height - 65, 30, 20).build());
         next.active = page < pageCount - 1;
         save = addRenderableWidget(Button.builder(Component.translatable("mite.config.save"), button -> {
             if (!editable || !MiteConfigClient.editable() || invalidCount() != 0) return;
-            if (MiteConfig.saveUnderworldOreGeneration(candidates, chances)) minecraft.setScreen(parent);
+            var values = new EnumMap<Dimension, Map<Kind, Double>>(Dimension.class);
+            drafts.forEach((selected, draftValues) -> values.put(selected, draftValues.multipliers));
+            if (MiteConfig.saveOreMultipliers(values)) minecraft.setScreen(parent);
             else { saveFailed = true; refreshSave(); }
         }).bounds(width / 2 - 104, height - 29, 100, 20).build());
         refreshSave();
@@ -121,108 +142,62 @@ public final class OreGenerationSettingsScreen extends Screen {
                 .bounds(width / 2 + 4, height - 29, 100, 20).build());
     }
 
-    private EditBox numberBox(int x, int y, int boxWidth, String label, Entry entry) {
-        var box = addRenderableWidget(new EditBox(font, x, y, boxWidth, 20, Component.translatable(label)));
-        box.setMaxLength(24);
-        box.setEditable(editable);
-        box.setTooltip(Tooltip.create(Component.translatable(label).append("\n").append(baseline(entry))
-                .append("\n").append(Component.translatable("mite.config.ore_actual_hint"))));
-        return box;
-    }
-
-    private void updateDraft(Kind kind, String text, boolean percentage, EditBox box) {
-        (percentage ? chanceDrafts : candidateDrafts).put(kind, text);
-        Set<Kind> invalid = percentage ? invalidChances : invalidCandidates;
-        try {
-            double number = Double.parseDouble(text.trim());
-            if (!Double.isFinite(number) || number < 0D || number > (percentage ? 100D : 100_000D))
-                throw new NumberFormatException();
-            (percentage ? chances : candidates).put(kind, number);
-            invalid.remove(kind);
-            box.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
-        } catch (NumberFormatException ignored) {
-            invalid.add(kind);
-            box.setTextColor(0xFFFF5555);
-        }
-        saveFailed = false;
-        refreshSave();
-    }
-
-    private int invalidCount() {
-        Set<Kind> invalid = new HashSet<>(invalidCandidates);
-        invalid.addAll(invalidChances);
-        return invalid.size();
-    }
-
+    private int invalidCount() { return drafts.values().stream().mapToInt(draft -> draft.invalid.size()).sum(); }
     private void refreshSave() {
         if (save == null) return;
-        int invalid = invalidCount();
-        save.active = editable && MiteConfigClient.editable() && invalid == 0;
-        save.setTooltip(invalid == 0 && !saveFailed ? null
-                : Tooltip.create(Component.translatable("mite.config.ore_invalid", Math.max(1, invalid))));
+        save.active = editable && MiteConfigClient.editable() && invalidCount() == 0;
+        save.setTooltip(invalidCount() == 0 && !saveFailed ? null : Tooltip.create(
+                Component.translatable("mite.config.ore_multiplier_invalid", Math.max(1, invalidCount()))));
     }
-
+    private static String format(double value) { return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString(); }
     private static Component baseline(Entry entry) {
-        double originalCandidates = R196OreRules.candidateCount(entry.kind(), Dimension.UNDERWORLD);
-        double originalChance = R196OreRules.candidateChance(Dimension.UNDERWORLD) * 100D;
-        return Component.translatable("mite.config.ore_baseline", format(originalCandidates), format(originalChance),
-                format(originalCandidates * originalChance / 100D));
+        double count = R196OreRules.candidateCount(entry.kind(), entry.dimension());
+        double chance = R196OreRules.candidateChance(entry.dimension()) * 100D;
+        return Component.translatable("mite.config.ore_baseline", format(count), format(chance), format(count * chance / 100D));
     }
-
-    private static String format(double value) {
-        return Double.isFinite(value) ? BigDecimal.valueOf(value).stripTrailingZeros().toPlainString() : Double.toString(value);
-    }
-
-    private Component expected(Entry entry) {
-        Kind kind = entry.kind();
-        String value = invalidCandidates.contains(kind) || invalidChances.contains(kind) ? "?"
-                : format(candidates.get(kind) * chances.get(kind) / 100D);
-        return Component.translatable("mite.config.ore_expected", value);
+    private Component effective(Entry entry) {
+        Draft draft = drafts.get(entry.dimension());
+        String attempts = draft.invalid.contains(entry.kind()) ? "?" : format(entry.base() * draft.multipliers.get(entry.kind()) * entry.chance());
+        return Component.translatable("mite.config.ore_effective", format(entry.base()), format(entry.chance() * 100D), attempts);
     }
 
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         graphics.drawCenteredString(font, title, width / 2, 14, 0xFFFFFF);
-        int controlsX = controlsX();
-        graphics.drawString(font, font.plainSubstrByWidth(Component.translatable("mite.config.ore_generation").getString(), controlsX - 22),
-                12, 64, 0xBBBBBB);
-        graphics.drawString(font, font.plainSubstrByWidth(Component.translatable("mite.config.ore_candidates").getString(), 64),
-                controlsX, 64, 0xBBBBBB);
-        graphics.drawString(font, font.plainSubstrByWidth(Component.translatable("mite.config.ore_chance").getString(), 58),
-                controlsX + 68, 64, 0xBBBBBB);
+        int controlsX = width - 150;
+        graphics.drawString(font, Component.translatable("mite.config.ore_mineral"), 12, 86, 0xBBBBBB);
+        graphics.drawString(font, Component.translatable("mite.config.ore_multiplier"), controlsX, 86, 0xBBBBBB);
         for (VisibleRow row : visible) {
             Entry entry = row.entry();
-            graphics.drawString(font, font.plainSubstrByWidth(entry.name().getString(), controlsX - 22),
-                    12, row.y() + 1, 0xFFFFFF);
-            graphics.drawString(font, font.plainSubstrByWidth(entry.id().toString(), controlsX - 22),
-                    12, row.y() + 12, 0x999999);
-            graphics.drawString(font, font.plainSubstrByWidth(expected(entry).getString(), width - 24),
-                    12, row.y() + 26, invalidCandidates.contains(entry.kind()) || invalidChances.contains(entry.kind()) ? 0xFF5555 : 0xCCCCCC);
-            graphics.drawString(font, font.plainSubstrByWidth(baseline(entry).getString(), width - 24),
-                    12, row.y() + 38, 0x999999);
-            if (mouseX >= 12 && mouseX < controlsX - 5 && mouseY >= row.y() && mouseY < row.y() + 24)
-                graphics.renderTooltip(font, List.of(entry.name().getVisualOrderText(),
-                        Component.literal(entry.id().toString()).getVisualOrderText(), expected(entry).getVisualOrderText(),
-                        baseline(entry).getVisualOrderText(), Component.translatable("mite.config.ore_actual_hint").getVisualOrderText()), mouseX, mouseY);
+            graphics.drawString(font, font.plainSubstrByWidth(entry.name().getString(), controlsX - 24), 12, row.y() + 1, 0xFFFFFF);
+            graphics.drawString(font, font.plainSubstrByWidth(entry.id().toString(), controlsX - 24), 12, row.y() + 13, 0x999999);
+            graphics.drawString(font, font.plainSubstrByWidth(baseline(entry).getString(), width - 24), 12, row.y() + 27, 0x999999);
+            graphics.drawString(font, font.plainSubstrByWidth(effective(entry).getString(), width - 24), 12, row.y() + 39, 0xCCCCCC);
+            if (mouseX >= 12 && mouseX < controlsX - 4 && mouseY >= row.y() && mouseY < row.y() + 24) {
+                var lines = new ArrayList<Component>(List.of(entry.name(), Component.literal(entry.id().toString()), baseline(entry), effective(entry),
+                        Component.translatable("mite.config.ore_multiplier.tooltip"), Component.translatable("mite.config.ore_multiplier_hint")));
+                if (entry.dimension() == Dimension.OVERWORLD && entry.kind() == Kind.ADAMANTIUM)
+                    lines.add(Component.translatable("mite.config.ore_surface_adamantium"));
+                graphics.renderTooltip(font, lines.stream().flatMap(line -> font.split(line, Math.min(360, width - 24)).stream()).toList(), mouseX, mouseY);
+            }
         }
         graphics.drawCenteredString(font, Component.translatable("mite.config.page", page + 1, pageCount, filtered().size()),
                 width / 2, height - 59, 0xCCCCCC);
-        int invalid = invalidCount();
-        Component hint = invalid > 0 || saveFailed ? Component.translatable("mite.config.ore_invalid", Math.max(1, invalid))
-                : Component.translatable(editable ? "mite.config.ore_actual_hint" : "mite.config.server_owned");
-        graphics.drawCenteredString(font, font.plainSubstrByWidth(hint.getString(), width - 24), width / 2,
-                height - 42, invalid > 0 || saveFailed ? 0xFF5555 : 0xBBBBBB);
+        Component hint = invalidCount() > 0 || saveFailed
+                ? Component.translatable("mite.config.ore_multiplier_invalid", Math.max(1, invalidCount()))
+                : Component.translatable(editable ? "mite.config.ore_multiplier_hint" : "mite.config.server_owned");
+        graphics.drawCenteredString(font, font.plainSubstrByWidth(hint.getString(), width - 24), width / 2, height - 42,
+                invalidCount() > 0 || saveFailed ? 0xFF5555 : 0xBBBBBB);
         if (mouseY >= height - 44 && mouseY < height - 31)
             graphics.renderTooltip(font, font.split(hint, Math.min(360, width - 24)), mouseX, mouseY);
     }
 
     @Override public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (scrollY == 0D) return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
-        int previous = page;
+        int before = page;
         page = Math.clamp(page + (scrollY > 0D ? -1 : 1), 0, pageCount - 1);
-        if (page != previous) rebuildRows();
+        if (page != before) rebuildRows();
         return true;
     }
-
     @Override public void onClose() { minecraft.setScreen(parent); }
 }

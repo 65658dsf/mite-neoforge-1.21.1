@@ -37,21 +37,16 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         Random random = new Random(context.random().nextLong());
         int originX = Math.floorDiv(context.origin().getX(), 16) * 16;
         int originZ = Math.floorDiv(context.origin().getZ(), 16) * 16;
-        List<Kind> order = switch (dimension) {
-            case OVERWORLD -> R196OreRules.OVERWORLD;
-            case UNDERWORLD -> R196OreRules.UNDERWORLD;
-            case NETHER -> R196OreRules.NETHER;
-        };
+        List<Kind> order = R196OreRules.generationKinds(dimension);
         int placed = 0;
         for (Kind kind : order) {
             int count = R196OreRules.candidateCount(kind, dimension, random);
-            if (dimension == Dimension.UNDERWORLD) {
-                count = OreGenerationRates.scaleCandidates(1, MiteConfig.underworldOreCandidates(kind), random);
-            }
+            boolean configurable = R196OreRules.configurableKinds(dimension).contains(kind);
+            if (configurable) count = OreGenerationRates.scaleCandidates(1, MiteConfig.oreCandidates(kind, dimension), random);
             Access access = new Access(level, dimension, kind);
             for (int candidate = 0; candidate < count; candidate++) {
-                if (dimension == Dimension.UNDERWORLD) {
-                    if (!OreGenerationRates.passesChance(MiteConfig.underworldOrePassChance(kind), dimension, random)) continue;
+                if (configurable) {
+                    if (!OreGenerationRates.passesChance(MiteConfig.orePassChance(kind, dimension), dimension, random)) continue;
                 } else if (dimension != Dimension.NETHER && random.nextInt(R196OreRules.candidateRarity(dimension)) != 0) continue;
                 int x = originX + random.nextInt(16);
                 int legacyY = R196OreRules.randomHeight(kind, dimension, random);

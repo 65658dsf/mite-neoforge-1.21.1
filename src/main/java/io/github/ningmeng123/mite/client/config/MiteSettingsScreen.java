@@ -58,7 +58,8 @@ public final class MiteSettingsScreen extends Screen {
     }
     private Screen gameplayScreen() {
         return new ConfigurationScreen(container, this, (context, key, original) -> {
-            if (context.keylist().isEmpty() && (key.equals("underworld_ores") || key.equals("underworld_generation"))) return null;
+            if (context.keylist().isEmpty() && (key.equals("underworld_ores") || key.equals("underworld_generation")
+                    || key.equals("overworld_generation") || key.equals("overworld_ores"))) return null;
             // Formula edits go through the dedicated page's full validation and trial calculations.
             if (context.keylist().equals(java.util.List.of("monsters")) && !key.endsWith("_multiplier")) return null;
             return original;

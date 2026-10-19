@@ -17,6 +17,11 @@ public final class R196OreRules {
             Kind.GOLD, Kind.IRON, Kind.MITHRIL, Kind.ADAMANTIUM, Kind.REDSTONE,
             Kind.DIAMOND, Kind.LAPIS, Kind.INFESTED);
     public static final List<Kind> NETHER = List.of(Kind.QUARTZ, Kind.NETHER_GOLD, Kind.NETHER_INFESTED);
+    /** The eight legacy configurable minerals; surface adamantium remains disabled by default. */
+    public static final List<Kind> CONFIGURABLE_OVERWORLD = List.of(Kind.COPPER, Kind.SILVER, Kind.IRON,
+            Kind.GOLD, Kind.MITHRIL, Kind.LAPIS, Kind.DIAMOND, Kind.ADAMANTIUM);
+    private static final List<Kind> OVERWORLD_GENERATION = java.util.stream.Stream.concat(
+            OVERWORLD.stream(), java.util.stream.Stream.of(Kind.ADAMANTIUM)).toList();
 
     /** Each call replaces at most one eligible block; unsuccessful steps consume no random values. */
     public interface VeinAccess {
@@ -25,6 +30,23 @@ public final class R196OreRules {
         void replace(int x, int y, int z);
     }
     private R196OreRules() {}
+
+    /** A zero-default extra entry consumes no random draws until the player enables it. */
+    public static List<Kind> generationKinds(Dimension dimension) {
+        return switch (dimension) {
+            case OVERWORLD -> OVERWORLD_GENERATION;
+            case UNDERWORLD -> UNDERWORLD;
+            case NETHER -> NETHER;
+        };
+    }
+
+    public static List<Kind> configurableKinds(Dimension dimension) {
+        return switch (dimension) {
+            case OVERWORLD -> CONFIGURABLE_OVERWORLD;
+            case UNDERWORLD -> UNDERWORLD;
+            case NETHER -> List.of();
+        };
+    }
 
     /** Probability that a sampled candidate advances to vein placement, before terrain checks. */
     public static double candidateChance(Dimension dimension) { return 1D / candidateRarity(dimension); }

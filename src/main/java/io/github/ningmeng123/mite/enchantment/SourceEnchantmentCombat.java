@@ -56,6 +56,8 @@ public final class SourceEnchantmentCombat {
         HarmSnapshot before = new HarmSnapshot(living);
         boolean affected = nativeDamage.getAsBoolean();
         if (!before.negativelyAffected(living)) return affected;
+        if(affected&&attacker instanceof Player player&&living instanceof Player defender
+                &&(defender.getHealth()<before.health||defender.getAbsorptionAmount()<before.absorption))disarmPlayer(player,defender);
         if (!(attacker instanceof Player)) thorns(attacker, living);
         var stun = R196Enchantments.sources(attacker.getMainHandItem(), attacker.level(), "stun");
         if (EnchantmentSources.present(stun) && attacker.getRandom().nextDouble()
@@ -103,6 +105,22 @@ public final class SourceEnchantmentCombat {
         if (MobEquipmentDrops.canDrop(mob, chance, item)) mob.spawnAtLocation(item.copy(), mob.getBbHeight() / 2F);
         mob.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         mob.getPersistentData().putInt(DISARMED, 40);
+    }
+
+    private static void disarmPlayer(Player attacker,Player target) {
+        if(attacker==target||attacker.isCreative()||attacker.isSpectator()||target.isCreative()||target.isSpectator()
+                ||!target.isAlive()||!attacker.canHarmPlayer(target)||!target.canHarmPlayer(attacker)||target.isBlocking()
+                ||target.isUsingItem()&&target.getUseItem().getUseAnimation()==net.minecraft.world.item.UseAnim.BLOCK
+                ||target.getMainHandItem().isEmpty()
+                ||!io.github.ningmeng123.mite.api.MiteExtensions.policy().canDisarmPlayer(attacker,target,false))return;
+        var sources=R196Enchantments.sources(attacker.getMainHandItem(),attacker.level(),"disarming");
+        if(!EnchantmentSources.present(sources)||attacker.getRandom().nextFloat()>=EnchantmentSources.probability(sources,value->value/5F))return;
+        ItemStack held=target.getMainHandItem();
+        var dropped=target.drop(held.copy(),false,true);
+        if(dropped!=null){
+            dropped.setPickUpDelay(20);var look=target.getLookAngle();dropped.setDeltaMovement(dropped.getDeltaMovement().add(-look.z*.4,0,look.x*.4));
+            target.setItemInHand(InteractionHand.MAIN_HAND,ItemStack.EMPTY);target.getInventory().setChanged();
+        }
     }
 
     public static boolean disarmed(Mob mob) { return mob.getPersistentData().getInt(DISARMED) > 0; }

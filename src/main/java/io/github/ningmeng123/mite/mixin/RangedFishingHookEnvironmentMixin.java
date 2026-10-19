@@ -19,11 +19,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** ul stores the cast hook material; adamantium resists lava and burning hooks wear the rod. @author NingMeng123 */
 @Mixin(FishingHook.class)
 public abstract class RangedFishingHookEnvironmentMixin extends Projectile implements FishingHookView {
+    @ModifyArg(method="retrieve",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/ExperienceOrb;<init>(Lnet/minecraft/world/level/Level;DDDI)V"),index=4)
+    private int mite$configuredFishingExperience(int original) {
+        Player player=((FishingHook)(Object)this).getPlayerOwner();
+        return player==null?original:Math.max(0,io.github.ningmeng123.mite.api.MiteExtensions.policy().fishingExperience(player,original));
+    }
     @Unique private Material mite$castMaterial;
     @Unique private int mite$fortune;
     @Unique private int mite$fortuneAffix;

@@ -168,6 +168,13 @@ public final class GameplayConfigExportGameTests {
 
     private static void configureDistinctLocalValues() {
         restoreDefaults();
+        int surfaceIndex = 0;
+        for (var kind : R196OreRules.CONFIGURABLE_OVERWORLD) {
+            MiteConfig.OVERWORLD_ORES.get(kind).set(.5D + surfaceIndex * .25D);
+            MiteConfig.OVERWORLD_ORE_CANDIDATES.get(kind).set(3.5D + surfaceIndex * 2.25D);
+            MiteConfig.OVERWORLD_ORE_CHANCES.get(kind).set(12.5D + surfaceIndex * 7.25D);
+            surfaceIndex++;
+        }
         int index = 0;
         for (var kind : R196OreRules.UNDERWORLD) {
             MiteConfig.UNDERWORLD_ORES.get(kind).set(1.25D + index * .125D);

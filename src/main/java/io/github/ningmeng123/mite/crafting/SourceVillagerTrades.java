@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
 import io.github.ningmeng123.mite.rules.SourceVillagerTradeRules;
 import io.github.ningmeng123.mite.rules.SourceVillagerTradeRules.Listing;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,11 @@ public final class SourceVillagerTrades {
     private SourceVillagerTrades() {}
 
     public static void ensure(Villager villager, MerchantOffers offers) {
+        ensureSourceStock(villager,offers);
+        if(!villager.level().isClientSide&&!villager.isBaby())MiteExtensions.policy().villagerOffers(villager,offers);
+    }
+
+    private static void ensureSourceStock(Villager villager, MerchantOffers offers) {
         if (villager.level().isClientSide || villager.isBaby()) return;
         ResourceLocation professionId = BuiltInRegistries.VILLAGER_PROFESSION.getKey(villager.getVillagerData().getProfession());
         if (professionId == null || !professionId.getNamespace().equals("minecraft")) return;

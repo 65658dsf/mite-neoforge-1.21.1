@@ -18,18 +18,16 @@ public final class GemSacrifice {
     private GemSacrifice() {}
 
     public static int experienceValue(ItemStack stack) {
-        if (stack.is(Items.LAPIS_LAZULI)) return 25;
-        if (stack.is(Items.QUARTZ)) return 50;
-        if (stack.is(Items.EMERALD)) return 250;
-        if (stack.is(Items.DIAMOND)) return 500;
-        return 0;
+        int original=stack.is(Items.LAPIS_LAZULI)?25:stack.is(Items.QUARTZ)?50:stack.is(Items.EMERALD)?250:stack.is(Items.DIAMOND)?500:0;
+        return Math.max(0,io.github.ningmeng123.mite.api.MiteExtensions.policy().gemSacrificeExperience(stack,original));
     }
 
     @SubscribeEvent
     public static void onUse(PlayerInteractEvent.RightClickItem event) {
         ItemStack stack = event.getItemStack();
         int value = experienceValue(stack);
-        if (event.isCanceled() || value == 0 || stack.isEmpty() || event.getEntity().isSpectator()) return;
+        if (event.isCanceled() || value == 0 || stack.isEmpty() || event.getEntity().isSpectator()
+                || !io.github.ningmeng123.mite.api.MiteExtensions.policy().canSacrificeGem(event.getEntity(),stack,true)) return;
         if (!event.getLevel().isClientSide()) {
             var player = event.getEntity();
             var item = stack.getItem();

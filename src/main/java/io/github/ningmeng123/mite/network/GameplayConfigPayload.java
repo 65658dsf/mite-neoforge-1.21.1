@@ -13,7 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
-/** Authoritative server gameplay settings, sent on login and config reload. @author NingMeng123 */
+/** Server settings including both ore dimensions, sent on login and config reload. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public record GameplayConfigPayload(MiteConfig.Snapshot snapshot) implements CustomPacketPayload {
     private static final Gson GSON = new Gson();

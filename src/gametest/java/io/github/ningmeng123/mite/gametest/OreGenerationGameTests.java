@@ -167,7 +167,7 @@ public final class OreGenerationGameTests {
                 .flatMap(holder -> holder.unwrapKey().stream()).map(ResourceKey::location).toList();
     }
 
-    private static final class GenerationFixture {
+    static final class GenerationFixture {
         final ServerLevel source;
         final ProtoChunk center;
         final List<ProtoChunk> all = new ArrayList<>();

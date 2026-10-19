@@ -58,6 +58,17 @@ public final class MiteExtensions {
         default io.github.ningmeng123.mite.rules.R196FurnaceRules.Fuel fuel(ItemStack stack, io.github.ningmeng123.mite.rules.R196FurnaceRules.Fuel original) { return original; }
         default int requiredHeat(ItemStack stack, int original) { return original; }
         default void furnaceCooked(net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity furnace) {}
+        default int gemSacrificeExperience(ItemStack stack, int original) { return original; }
+        default boolean canSacrificeGem(Player player, ItemStack stack, boolean original) { return original; }
+        default int foodUseDuration(ItemStack stack, net.minecraft.world.entity.LivingEntity user, int original) { return original; }
+        default void portalUsed(net.minecraft.server.level.ServerPlayer player, BlockPos entry) {}
+        default int breedingExperience(net.minecraft.world.entity.animal.Animal parent, int original) { return original; }
+        default float creeperExplosionRadius(net.minecraft.world.entity.monster.Creeper creeper, float original) { return original; }
+        default void villagerOffers(net.minecraft.world.entity.npc.Villager villager, net.minecraft.world.item.trading.MerchantOffers offers) {}
+        default boolean mobDefense(Mob mob, boolean original) { return original; }
+        default float playerInWallDamage(Player player, float original) { return original; }
+        default int fishingExperience(Player player, int original) { return original; }
+        default boolean canDisarmPlayer(Player attacker, Player target, boolean original) { return original; }
     }
     private static volatile Policy policy = new Policy() {};
     private static boolean registered;

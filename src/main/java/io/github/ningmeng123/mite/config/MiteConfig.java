@@ -23,8 +23,11 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class MiteConfig {
     public static final ModConfigSpec SPEC;
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_ORES = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_ORES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_ORE_CANDIDATES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_ORE_CHANCES = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_ORE_CANDIDATES = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_ORE_CHANCES = new EnumMap<>(R196OreRules.Kind.class);
     public static final ModConfigSpec.DoubleValue MONSTER_GROWTH, MONSTER_HEALTH_GROWTH, MONSTER_DAMAGE_GROWTH;
     public static final ModConfigSpec.DoubleValue MONSTER_HEALTH_BASE, MONSTER_DAMAGE_BASE, MONSTER_SKELETON_REFERENCE;
     public static final ModConfigSpec.DoubleValue MONSTER_HEALTH_DAILY_PERCENT, MONSTER_DAMAGE_DAILY_PERCENT;
@@ -47,6 +50,14 @@ public final class MiteConfig {
                     .defineInRange(key, 1D, 0D, 100D));
         }
         builder.pop();
+        builder.translation("mite.config.overworld_ores").comment("Overworld mineral generation multipliers. 1 preserves the original rate, 2 doubles attempts, 0.5 halves them, and 0 disables. Existing advanced candidate/probability values are preserved.").push("overworld_ores");
+        for (var kind : R196OreRules.configurableKinds(R196OreRules.Dimension.OVERWORLD)) {
+            String key = kind.name().toLowerCase(Locale.ROOT);
+            OVERWORLD_ORES.put(kind, builder.translation("mite.config.ore." + key)
+                    .comment("Candidate count multiplier for overworld " + key + "; applied once before probability filtering.")
+                    .defineInRange(key, 1D, 0D, 100D));
+        }
+        builder.pop();
         builder.translation("mite.config.ore_generation").push("underworld_generation");
         for (var kind : R196OreRules.UNDERWORLD) {
             builder.push(kind.name().toLowerCase(Locale.ROOT));
@@ -56,6 +67,18 @@ public final class MiteConfig {
             UNDERWORLD_ORE_CHANCES.put(kind, builder.translation("mite.config.ore_chance")
                     .comment("Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.")
                     .defineInRange("chance_percent", 100D * R196OreRules.candidateChance(R196OreRules.Dimension.UNDERWORLD), 0D, 100D));
+            builder.pop();
+        }
+        builder.pop();
+        builder.translation("mite.config.overworld_generation").push("overworld_generation");
+        for (var kind : R196OreRules.configurableKinds(R196OreRules.Dimension.OVERWORLD)) {
+            builder.push(kind.name().toLowerCase(Locale.ROOT));
+            OVERWORLD_ORE_CANDIDATES.put(kind, builder.translation("mite.config.ore_candidates")
+                    .comment("Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.")
+                    .defineInRange("candidates", (double)R196OreRules.candidateCount(kind, R196OreRules.Dimension.OVERWORLD), 0D, 100000D));
+            OVERWORLD_ORE_CHANCES.put(kind, builder.translation("mite.config.ore_chance")
+                    .comment("The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.")
+                    .defineInRange("chance_percent", 100D * R196OreRules.candidateChance(R196OreRules.Dimension.OVERWORLD), 0D, 100D));
             builder.pop();
         }
         builder.pop();
@@ -142,15 +165,39 @@ public final class MiteConfig {
     }
 
     public static double underworldOreMultiplier(R196OreRules.Kind kind) {
-        return effectiveSnapshot().ores().getOrDefault(kind.name(), 1D);
+        return oreMultiplier(kind, R196OreRules.Dimension.UNDERWORLD);
+    }
+    public static double oreMultiplier(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
+        var snapshot = effectiveSnapshot();
+        return dimension == R196OreRules.Dimension.OVERWORLD ? snapshot.overworldOres().getOrDefault(kind.name(), 1D)
+                : dimension == R196OreRules.Dimension.UNDERWORLD ? snapshot.ores().getOrDefault(kind.name(), 1D) : 1D;
     }
     public static double underworldOreCandidates(R196OreRules.Kind kind) {
+        return oreCandidates(kind, R196OreRules.Dimension.UNDERWORLD);
+    }
+    public static double oreBaseCandidates(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
         var snapshot = effectiveSnapshot();
+        var configured = dimension == R196OreRules.Dimension.OVERWORLD ? snapshot.overworldOreCandidates()
+                : dimension == R196OreRules.Dimension.UNDERWORLD ? snapshot.oreCandidates() : Map.<String, Double>of();
+        return configured.getOrDefault(kind.name(), (double)R196OreRules.candidateCount(kind, dimension));
+    }
+    public static double oreCandidates(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
+        var snapshot = effectiveSnapshot();
+        if (dimension == R196OreRules.Dimension.OVERWORLD)
+            return snapshot.overworldOreCandidates().getOrDefault(kind.name(), (double)R196OreRules.candidateCount(kind, dimension))
+                    * snapshot.overworldOres().getOrDefault(kind.name(), 1D);
+        if (dimension != R196OreRules.Dimension.UNDERWORLD) return R196OreRules.candidateCount(kind, dimension);
         return snapshot.oreCandidates().getOrDefault(kind.name(),
                 (double)R196OreRules.candidateCount(kind, R196OreRules.Dimension.UNDERWORLD))
                 * snapshot.ores().getOrDefault(kind.name(), 1D);
     }
     public static double underworldOrePassChance(R196OreRules.Kind kind) {
+        return orePassChance(kind, R196OreRules.Dimension.UNDERWORLD);
+    }
+    public static double orePassChance(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
+        if (dimension == R196OreRules.Dimension.OVERWORLD)
+            return effectiveSnapshot().overworldOreChances().getOrDefault(kind.name(), R196OreRules.candidateChance(dimension));
+        if (dimension != R196OreRules.Dimension.UNDERWORLD) return R196OreRules.candidateChance(dimension);
         return effectiveSnapshot().oreChances().getOrDefault(kind.name(),
                 R196OreRules.candidateChance(R196OreRules.Dimension.UNDERWORLD));
     }
@@ -175,7 +222,8 @@ public final class MiteConfig {
     public record Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
             double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
             boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
-            MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances) {
+            MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+            Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres) {
         public Snapshot {
             ores = Map.copyOf(ores);
             caps = Map.copyOf(caps);
@@ -183,6 +231,25 @@ public final class MiteConfig {
             monsterSettings = monsterSettings == null ? MonsterGrowthRules.DEFAULTS : monsterSettings;
             oreCandidates = oreCandidates == null ? Map.of() : Map.copyOf(oreCandidates);
             oreChances = oreChances == null ? Map.of() : Map.copyOf(oreChances);
+            overworldOreCandidates = overworldOreCandidates == null ? Map.of() : Map.copyOf(overworldOreCandidates);
+            overworldOreChances = overworldOreChances == null ? Map.of() : Map.copyOf(overworldOreChances);
+            overworldOres = overworldOres == null ? Map.of() : Map.copyOf(overworldOres);
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, Map.of());
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances, Map.of(), Map.of());
         }
         public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
                 double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
@@ -199,6 +266,12 @@ public final class MiteConfig {
         var chances = new HashMap<String, Double>();
         UNDERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> candidates.put(kind.name(), value(setting)));
         UNDERWORLD_ORE_CHANCES.forEach((kind, setting) -> chances.put(kind.name(), value(setting) / 100D));
+        var surfaceCandidates = new HashMap<String, Double>();
+        var surfaceChances = new HashMap<String, Double>();
+        OVERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> surfaceCandidates.put(kind.name(), value(setting)));
+        OVERWORLD_ORE_CHANCES.forEach((kind, setting) -> surfaceChances.put(kind.name(), value(setting) / 100D));
+        var surfaceMultipliers = new HashMap<String, Double>();
+        OVERWORLD_ORES.forEach((kind, setting) -> surfaceMultipliers.put(kind.name(), value(setting)));
         var caps = new HashMap<String, Integer>();
         for (String entry : value(ENCHANTMENT_MAX_LEVELS)) {
             if (validLevelOverride(entry)) {
@@ -223,7 +296,8 @@ public final class MiteConfig {
         }
         return new Snapshot(ores, overall, healthMultiplier, damageMultiplier,
                 value(WEAPON_REACH_MULTIPLIER), value(WEAPON_REACH_REDUCTION), value(HEIGHT_REACH_PENALTY),
-                value(UNDERWORLD_TRIALS), value(OVERWORLD_TRIALS), caps, new HashSet<>(value(DISABLED_ENCHANTMENTS)), growth, candidates, chances);
+                value(UNDERWORLD_TRIALS), value(OVERWORLD_TRIALS), caps, new HashSet<>(value(DISABLED_ENCHANTMENTS)), growth, candidates, chances,
+                surfaceCandidates, surfaceChances, surfaceMultipliers);
     }
     public static Snapshot localSnapshot() { return local; }
     public static Snapshot effectiveSnapshot() {
@@ -273,15 +347,55 @@ public final class MiteConfig {
 
     public static boolean saveUnderworldOreGeneration(Map<R196OreRules.Kind, Double> candidates,
             Map<R196OreRules.Kind, Double> chancePercent) {
-        for (var kind : R196OreRules.UNDERWORLD) {
-            Double count = candidates.get(kind), chance = chancePercent.get(kind);
-            if (count == null || chance == null || !Double.isFinite(count) || count < 0D || count > 100000D
-                    || !Double.isFinite(chance) || chance < 0D || chance > 100D) return false;
+        return saveOreGeneration(R196OreRules.Dimension.UNDERWORLD, candidates, chancePercent);
+    }
+
+    /** The simple UI edits multipliers only; existing advanced rates are never rewritten. */
+    public static boolean saveOreMultipliers(Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> multipliers) {
+        if (multipliers.isEmpty()) return false;
+        for (var dimension : multipliers.keySet()) {
+            var kinds = R196OreRules.configurableKinds(dimension);
+            if (kinds.isEmpty() || multipliers.get(dimension) == null) return false;
+            for (var kind : kinds) {
+                Double multiplier = multipliers.get(dimension).get(kind);
+                if (multiplier == null || !Double.isFinite(multiplier) || multiplier < 0D || multiplier > 100D) return false;
+            }
         }
-        for (var kind : R196OreRules.UNDERWORLD) {
-            UNDERWORLD_ORE_CANDIDATES.get(kind).set(candidates.get(kind));
-            UNDERWORLD_ORE_CHANCES.get(kind).set(chancePercent.get(kind));
-            UNDERWORLD_ORES.get(kind).set(1D);
+        for (var dimension : multipliers.keySet()) {
+            var settings = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_ORES : UNDERWORLD_ORES;
+            for (var kind : R196OreRules.configurableKinds(dimension)) settings.get(kind).set(multipliers.get(dimension).get(kind));
+        }
+        refreshEnchantmentRules();
+        SPEC.save();
+        return true;
+    }
+
+    public static boolean saveOreGeneration(R196OreRules.Dimension dimension, Map<R196OreRules.Kind, Double> candidates,
+            Map<R196OreRules.Kind, Double> chancePercent) {
+        return saveOreGeneration(Map.of(dimension, candidates), Map.of(dimension, chancePercent));
+    }
+
+    /** Validate every dimension before publishing either page's drafts. */
+    public static boolean saveOreGeneration(Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> candidates,
+            Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> chancePercent) {
+        if (candidates.isEmpty() || !candidates.keySet().equals(chancePercent.keySet())) return false;
+        for (var dimension : candidates.keySet()) {
+            var kinds = R196OreRules.configurableKinds(dimension);
+            if (kinds.isEmpty() || candidates.get(dimension) == null || chancePercent.get(dimension) == null) return false;
+            for (var kind : kinds) {
+                Double count = candidates.get(dimension).get(kind), chance = chancePercent.get(dimension).get(kind);
+                if (count == null || chance == null || !Double.isFinite(count) || count < 0D || count > 100000D
+                        || !Double.isFinite(chance) || chance < 0D || chance > 100D) return false;
+            }
+        }
+        for (var dimension : candidates.keySet()) {
+            var counts = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_ORE_CANDIDATES : UNDERWORLD_ORE_CANDIDATES;
+            var chances = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_ORE_CHANCES : UNDERWORLD_ORE_CHANCES;
+            for (var kind : R196OreRules.configurableKinds(dimension)) {
+                counts.get(kind).set(candidates.get(dimension).get(kind));
+                chances.get(kind).set(chancePercent.get(dimension).get(kind));
+                if (dimension == R196OreRules.Dimension.UNDERWORLD) UNDERWORLD_ORES.get(kind).set(1D);
+            }
         }
         refreshEnchantmentRules();
         SPEC.save();

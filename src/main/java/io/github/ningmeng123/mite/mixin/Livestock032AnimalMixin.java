@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.entity.animal.Livestock032;
 import io.github.ningmeng123.mite.entity.animal.LivestockRules032;
 import io.github.ningmeng123.mite.entity.animal.R196AnimalAi032;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -18,6 +19,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -52,6 +54,8 @@ public abstract class Livestock032AnimalMixin {
     }
     @ModifyConstant(method={"spawnChildFromBreeding","finalizeSpawnChildFromBreeding"},constant=@Constant(intValue=6000))
     private int mite$sourceCooldown(int original) { return R196AnimalAi032.managed((Animal)(Object)this)?LivestockRules032.BREEDING_COOLDOWN:original; }
+    @ModifyArg(method="finalizeSpawnChildFromBreeding",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/ExperienceOrb;<init>(Lnet/minecraft/world/level/Level;DDDI)V"),index=4)
+    private int mite$extensionBreedingExperience(int original) { return Math.max(0,MiteExtensions.policy().breedingExperience((Animal)(Object)this,original)); }
     @Inject(method="finalizeSpawnChildFromBreeding",at=@At("TAIL"))
     private void mite$sourceNewborn(ServerLevel level,Animal other,AgeableMob child,CallbackInfo ci) {
         if(child!=null && R196AnimalAi032.managed(child)) child.setAge(LivestockRules032.NEWBORN_AGE);

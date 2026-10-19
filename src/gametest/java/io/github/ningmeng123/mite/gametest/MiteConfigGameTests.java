@@ -29,6 +29,117 @@ public final class MiteConfigGameTests {
     private MiteConfigGameTests() {}
 
     @GameTest(template = "empty")
+    public static void bothDimensionsPublishIndependentMultipliersWithoutRewritingAdvancedRates(GameTestHelper helper) {
+        try (var ignored = new Settings()) {
+            var values = new EnumMap<R196OreRules.Dimension, Map<R196OreRules.Kind, Double>>(R196OreRules.Dimension.class);
+            for (var dimension : List.of(R196OreRules.Dimension.OVERWORLD, R196OreRules.Dimension.UNDERWORLD)) {
+                var multipliers = new EnumMap<R196OreRules.Kind, Double>(R196OreRules.Kind.class);
+                for (var kind : R196OreRules.configurableKinds(dimension)) multipliers.put(kind, 1D);
+                values.put(dimension, multipliers);
+            }
+            double surfaceCount = MiteConfig.OVERWORLD_ORE_CANDIDATES.get(R196OreRules.Kind.COPPER).get();
+            double deepCount = MiteConfig.UNDERWORLD_ORE_CANDIDATES.get(R196OreRules.Kind.COPPER).get();
+            double surfaceChance = MiteConfig.OVERWORLD_ORE_CHANCES.get(R196OreRules.Kind.COPPER).get();
+            double deepChance = MiteConfig.UNDERWORLD_ORE_CHANCES.get(R196OreRules.Kind.COPPER).get();
+            for (double multiplier : new double[]{0D, .5D, 1D, 2D}) {
+                values.get(R196OreRules.Dimension.OVERWORLD).put(R196OreRules.Kind.COPPER, multiplier);
+                values.get(R196OreRules.Dimension.UNDERWORLD).put(R196OreRules.Kind.COPPER, 2D - multiplier);
+                helper.assertTrue(MiteConfig.saveOreMultipliers(values), "The two dimension drafts can be saved together");
+                close(helper, MiteConfig.oreCandidates(R196OreRules.Kind.COPPER, R196OreRules.Dimension.OVERWORLD), surfaceCount * multiplier,
+                        "The surface multiplier scales its own candidate count exactly once");
+                close(helper, MiteConfig.underworldOreCandidates(R196OreRules.Kind.COPPER), deepCount * (2D - multiplier),
+                        "The deep multiplier remains independent");
+                close(helper, MiteConfig.OVERWORLD_ORE_CANDIDATES.get(R196OreRules.Kind.COPPER).get(), surfaceCount, "Simple editing preserves advanced surface candidates");
+                close(helper, MiteConfig.UNDERWORLD_ORE_CANDIDATES.get(R196OreRules.Kind.COPPER).get(), deepCount, "Simple editing preserves advanced deep candidates");
+                close(helper, MiteConfig.orePassChance(R196OreRules.Kind.COPPER, R196OreRules.Dimension.OVERWORLD), surfaceChance / 100D, "Surface probability remains unchanged");
+                close(helper, MiteConfig.underworldOrePassChance(R196OreRules.Kind.COPPER), deepChance / 100D, "Deep probability remains unchanged");
+            }
+            for (var dimension : List.of(R196OreRules.Dimension.OVERWORLD, R196OreRules.Dimension.UNDERWORLD)) {
+                var counts = dimension == R196OreRules.Dimension.OVERWORLD ? MiteConfig.OVERWORLD_ORE_CANDIDATES : MiteConfig.UNDERWORLD_ORE_CANDIDATES;
+                var chances = dimension == R196OreRules.Dimension.OVERWORLD ? MiteConfig.OVERWORLD_ORE_CHANCES : MiteConfig.UNDERWORLD_ORE_CHANCES;
+                int mineral = 0;
+                for (var kind : R196OreRules.CONFIGURABLE_OVERWORLD) {
+                    counts.get(kind).set(17.5D + mineral);
+                    chances.get(kind).set(23D + mineral++);
+                }
+            }
+            MiteConfig.refreshEnchantmentRules();
+            for (var dimension : List.of(R196OreRules.Dimension.OVERWORLD, R196OreRules.Dimension.UNDERWORLD)) {
+                int mineral = 0;
+                for (var kind : R196OreRules.CONFIGURABLE_OVERWORLD) {
+                    close(helper, MiteConfig.oreBaseCandidates(kind, dimension), 17.5D + mineral, "Each legacy frequency maps to a real candidate base: " + dimension + "/" + kind);
+                    close(helper, MiteConfig.orePassChance(kind, dimension), (23D + mineral++) / 100D, "Each legacy chance maps to the only runtime pass filter: " + dimension + "/" + kind);
+                }
+            }
+            var published = MiteConfig.localSnapshot();
+            var bytes = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+            try {
+                GameplayConfigPayload.CODEC.encode(bytes, new GameplayConfigPayload(published));
+                var decoded = GameplayConfigPayload.CODEC.decode(bytes).snapshot();
+                helper.assertValueEqual(decoded, published, "The real codec preserves separate multipliers and advanced rates for both dimensions");
+                MiteConfig.receiveServerSnapshot(decoded);
+                close(helper, MiteConfig.oreMultiplier(R196OreRules.Kind.COPPER, R196OreRules.Dimension.OVERWORLD), 2D, "Remote surface multiplier");
+                close(helper, MiteConfig.underworldOreMultiplier(R196OreRules.Kind.COPPER), 0D, "Remote deep multiplier");
+            } finally { bytes.release(); MiteConfig.clearServerSnapshot(); }
+            values.get(R196OreRules.Dimension.UNDERWORLD).put(R196OreRules.Kind.COPPER, Double.NaN);
+            values.get(R196OreRules.Dimension.OVERWORLD).put(R196OreRules.Kind.COPPER, 99D);
+            helper.assertFalse(MiteConfig.saveOreMultipliers(values), "An invalid hidden dimension prevents saving either draft");
+            helper.assertTrue(MiteConfig.localSnapshot() == published, "Rejected drafts cannot publish a partial revision");
+            close(helper, MiteConfig.OVERWORLD_ORES.get(R196OreRules.Kind.COPPER).get(), 2D, "Rejected drafts do not mutate valid dimension fields");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 600)
+    public static void multipliersAndAdvancedChanceReachTheRealSurfaceAndDeepFeatureBatches(GameTestHelper helper) {
+        try (var ignored = new Settings()) {
+            int index = 0;
+            for (var dimension : List.of(R196OreRules.Dimension.OVERWORLD, R196OreRules.Dimension.UNDERWORLD)) {
+                var level = dimension == R196OreRules.Dimension.OVERWORLD ? helper.getLevel().getServer().overworld()
+                        : helper.getLevel().getServer().getLevel(io.github.ningmeng123.mite.worldgen.MiteWorldDimensions.UNDERWORLD);
+                helper.assertTrue(level != null, "The actual dimension is registered");
+                var candidates = dimension == R196OreRules.Dimension.OVERWORLD ? MiteConfig.OVERWORLD_ORE_CANDIDATES : MiteConfig.UNDERWORLD_ORE_CANDIDATES;
+                var chances = dimension == R196OreRules.Dimension.OVERWORLD ? MiteConfig.OVERWORLD_ORE_CHANCES : MiteConfig.UNDERWORLD_ORE_CHANCES;
+                var multipliers = dimension == R196OreRules.Dimension.OVERWORLD ? MiteConfig.OVERWORLD_ORES : MiteConfig.UNDERWORLD_ORES;
+                R196OreRules.Kind kind = dimension == R196OreRules.Dimension.OVERWORLD ? R196OreRules.Kind.ADAMANTIUM : R196OreRules.Kind.COPPER;
+                candidates.values().forEach(value -> value.set(0D));
+                chances.values().forEach(value -> value.set(100D));
+                multipliers.values().forEach(value -> value.set(1D));
+                candidates.get(kind).set(300D);
+                var fixture = new OreGenerationGameTests.GenerationFixture(level, new net.minecraft.world.level.ChunkPos(6450 + index++, -6450), false);
+                String feature = "ores_" + dimension.name().toLowerCase(java.util.Locale.ROOT);
+                for (double multiplier : new double[]{0D, .5D, 2D}) {
+                    multipliers.get(kind).set(multiplier);
+                    MiteConfig.refreshEnchantmentRules();
+                    fixture.fill(-64, 129);
+                    fixture.place(feature, 196L);
+                    int found = countMineral(fixture, kind);
+                    helper.assertTrue(multiplier == 0D ? found == 0 : found > 0,
+                            "Actual " + dimension + "/" + kind + " generation obeys multiplier " + multiplier + "; found=" + found);
+                }
+                chances.get(kind).set(0D);
+                MiteConfig.refreshEnchantmentRules();
+                fixture.fill(-64, 129);
+                fixture.place(feature, 196L);
+                helper.assertValueEqual(countMineral(fixture, kind), 0,
+                        "An explicitly configured zero chance still disables the real batch without a second rarity path");
+            }
+        }
+        helper.succeed();
+    }
+
+    private static int countMineral(OreGenerationGameTests.GenerationFixture fixture, R196OreRules.Kind kind) {
+        int found = 0;
+        String suffix = kind.name().toLowerCase(java.util.Locale.ROOT) + "_ore";
+        BlockPos origin = fixture.center.getPos().getWorldPosition();
+        for (int x = 0; x < 16; x++) for (int z = 0; z < 16; z++) for (int y = -64; y < 129; y++) {
+            var id = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(fixture.region.getBlockState(origin.offset(x, y, z)).getBlock());
+            if (id.getPath().equals(suffix) || id.getPath().equals("deepslate_" + suffix)) found++;
+        }
+        return found;
+    }
+
+    @GameTest(template = "empty")
     public static void commonSettingsPublishOneSnapshotAndSurviveTheActualNetworkCodec(GameTestHelper helper) {
         try (var ignored = new Settings()) {
             var before = MiteConfig.localSnapshot();
@@ -308,6 +419,9 @@ public final class MiteConfigGameTests {
         private final List<? extends String> disabled = MiteConfig.DISABLED_ENCHANTMENTS.get();
         private final Map<R196OreRules.Kind, Double> candidates = new EnumMap<>(R196OreRules.Kind.class);
         private final Map<R196OreRules.Kind, Double> chances = new EnumMap<>(R196OreRules.Kind.class);
+        private final Map<R196OreRules.Kind, Double> surfaceCandidates = new EnumMap<>(R196OreRules.Kind.class);
+        private final Map<R196OreRules.Kind, Double> surfaceChances = new EnumMap<>(R196OreRules.Kind.class);
+        private final Map<R196OreRules.Kind, Double> surfaceMultipliers = new EnumMap<>(R196OreRules.Kind.class);
         private final double healthBase = MiteConfig.MONSTER_HEALTH_BASE.get(), damageBase = MiteConfig.MONSTER_DAMAGE_BASE.get();
         private final double skeletonReference = MiteConfig.MONSTER_SKELETON_REFERENCE.get();
         private final double healthPercent = MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.get(), damagePercent = MiteConfig.MONSTER_DAMAGE_DAILY_PERCENT.get();
@@ -316,11 +430,17 @@ public final class MiteConfigGameTests {
         private final String damageBloodMoonFormula = MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.get();
 
         private Settings() {
+            MiteConfig.OVERWORLD_ORES.forEach((kind, setting) -> surfaceMultipliers.put(kind, setting.get()));
+            MiteConfig.OVERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> surfaceCandidates.put(kind, setting.get()));
+            MiteConfig.OVERWORLD_ORE_CHANCES.forEach((kind, setting) -> surfaceChances.put(kind, setting.get()));
             MiteConfig.UNDERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> candidates.put(kind, setting.get()));
             MiteConfig.UNDERWORLD_ORE_CHANCES.forEach((kind, setting) -> chances.put(kind, setting.get()));
         }
 
         @Override public void close() {
+            MiteConfig.OVERWORLD_ORES.forEach((kind, setting) -> setting.set(surfaceMultipliers.get(kind)));
+            MiteConfig.OVERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> setting.set(surfaceCandidates.get(kind)));
+            MiteConfig.OVERWORLD_ORE_CHANCES.forEach((kind, setting) -> setting.set(surfaceChances.get(kind)));
             MiteConfig.UNDERWORLD_ORES.forEach((kind, setting) -> setting.set(original.ores().get(kind.name())));
             MiteConfig.UNDERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> setting.set(candidates.get(kind)));
             MiteConfig.UNDERWORLD_ORE_CHANCES.forEach((kind, setting) -> setting.set(chances.get(kind)));

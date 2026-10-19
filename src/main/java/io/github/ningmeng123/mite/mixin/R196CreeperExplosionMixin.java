@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.entity.R196InfernalCreeper;
 import io.github.ningmeng123.mite.entity.R196ExplosionCalculator;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.Explosion;
@@ -21,7 +22,7 @@ public abstract class R196CreeperExplosionMixin {
         // pass and uses block hardness as resistance. Feeding it to modern rays reduced
         // the ordinary creeper's block energy from 3 to .715. Keep the 1.21 terrain's
         // native scale, including charged/custom NBT radii, and double infernal blasts.
-        float blockRadius = nativeRadius * (entity instanceof R196InfernalCreeper ? 2F : 1F);
+        float blockRadius = MiteExtensions.policy().creeperExplosionRadius((Creeper)entity,nativeRadius * (entity instanceof R196InfernalCreeper ? 2F : 1F));
         float livingPower = blockRadius / 3F * 1.1F;
         return level.explode(entity, Explosion.getDefaultDamageSource(level, entity), new R196ExplosionCalculator(entity, livingPower),
                 x, y + entity.getBbHeight() * .25F, z, blockRadius, false, interaction);
