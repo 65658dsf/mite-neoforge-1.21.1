@@ -19,6 +19,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -98,33 +99,43 @@ public final class FortuneParityGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void naturalMetalAndPlacedMetalKeepDifferentFortuneEligibilityWhileSilkReturnsOre(GameTestHelper h) {
+    public static void rawMetalFortuneMatchesAcrossNaturalAndPlacedOreWhileNetherGoldKeepsItsPlacedGuard(GameTestHelper h) {
         for (String id : List.of("minecraft:copper_ore", "minecraft:deepslate_copper_ore", "minecraft:iron_ore",
                 "minecraft:deepslate_iron_ore", "minecraft:gold_ore", "minecraft:deepslate_gold_ore", "minecraft:nether_gold_ore",
                 "mite:silver_ore", "mite:deepslate_silver_ore", "mite:mithril_ore", "mite:deepslate_mithril_ore",
                 "mite:adamantium_ore", "mite:deepslate_adamantium_ore")) {
             Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+            boolean rawMetal = !id.equals("minecraft:nether_gold_ore");
             for (int level = 0; level <= 3; level++) {
                 float boundary = (1F + level * .1F) - 1F;
-                for (float draw : level == 0 ? new float[]{0F} : new float[]{Math.nextDown(boundary), boundary}) {
-                    ScriptedRandom natural = new ScriptedRandom(new int[0], level == 0 ? new float[0] : new float[]{draw});
-                    ItemStack result = ore(h, block.defaultBlockState(), tool(h, level, 0), true, natural);
-                    h.assertValueEqual(result.getCount(), level > 0 && draw < boundary ? 2 : 1, "Natural metal keeps the exact source per-unit fortune probability: " + id);
-                    h.assertTrue(result.is(metalOutput(id)), "Natural metal fortune copies its matching raw metal; nether gold keeps its source ore");
-                    natural.assertConsumed(h);
+                for (float draw : level == 0 ? new float[]{0F} : new float[]{Math.nextDown(boundary), boundary, Math.nextUp(boundary)}) {
+                    for (boolean placed : new boolean[]{false, true}) {
+                        boolean eligible = level > 0 && (rawMetal || !placed);
+                        ScriptedRandom random = new ScriptedRandom(new int[0], eligible ? new float[]{draw} : new float[0]);
+                        ItemStack result = ore(h, block.defaultBlockState().setValue(OreBlockRules.PLACED, placed), tool(h, level, 0), true, random);
+                        h.assertValueEqual(result.getCount(), eligible && draw < boundary ? 2 : 1,
+                                "Raw metal uses the same strict source float boundary regardless of placement; placed nether gold skips Fortune: " + id + "/" + level + "/placed=" + placed);
+                        h.assertTrue(result.is(metalOutput(id)), "Fortune preserves matching raw metal or the source nether gold ore");
+                        random.assertConsumed(h);
+                    }
                 }
-                ScriptedRandom placed = new ScriptedRandom(new int[0], new float[0]);
-                ItemStack result = ore(h, block.defaultBlockState().setValue(OreBlockRules.PLACED, true), tool(h, level, 0), true, placed);
-                h.assertValueEqual(result.getCount(), 1, "Placed metal suppresses fortune at every ordinary level: " + id);
-                h.assertTrue(result.is(metalOutput(id)), "Placed metal returns one matching raw metal; nether gold keeps its source ore");
-                placed.assertConsumed(h);
+                if (rawMetal) {
+                    RandomSource naturalRandom = new LegacyRandomSource(196L), placedRandom = new LegacyRandomSource(196L);
+                    ItemStack tool = tool(h, level, 0);
+                    ItemStack natural = ore(h, block.defaultBlockState(), tool, true, naturalRandom);
+                    ItemStack placed = ore(h, block.defaultBlockState().setValue(OreBlockRules.PLACED, true), tool, true, placedRandom);
+                    h.assertValueEqual(placed.getCount(), natural.getCount(), "Equal native random streams give equal raw-metal Fortune counts: " + id + "/" + level);
+                    h.assertValueEqual(placedRandom.nextLong(), naturalRandom.nextLong(), "Raw-metal placement cannot alter subsequent random draws: " + id + "/" + level);
+                }
             }
             ItemStack silk = tool(h, 3, 0);
             silk.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SILK_TOUCH), 1);
-            ScriptedRandom random = new ScriptedRandom(new int[0], new float[0]);
-            ItemStack result = ore(h, block.defaultBlockState(), silk, true, random);
-            h.assertTrue(result.is(block.asItem()) && result.getCount() == 1, "Metal Silk Touch returns the exact ore host without raw conversion or Fortune draws");
-            random.assertConsumed(h);
+            for (boolean placed : new boolean[]{false, true}) {
+                ScriptedRandom random = new ScriptedRandom(new int[0], new float[0]);
+                ItemStack result = ore(h, block.defaultBlockState().setValue(OreBlockRules.PLACED, placed), silk, true, random);
+                h.assertTrue(result.is(block.asItem()) && result.getCount() == 1, "Metal Silk Touch returns the exact ore host without raw conversion or Fortune draws: " + id + "/placed=" + placed);
+                random.assertConsumed(h);
+            }
         }
         for (Block block : List.of(Blocks.DIAMOND_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE, Blocks.NETHER_QUARTZ_ORE)) {
             ItemStack silk = tool(h, 3, 0);
@@ -142,11 +153,13 @@ public final class FortuneParityGameTests {
         for (int normal = 0; normal <= 3; normal++) for (int affix = 1; affix <= 3; affix++) {
             float boundary = (float)((normal > 0 ? (double)((1F + normal * .1F) - 1F) : 0D)
                     + (double)((1F + affix * .1F) - 1F));
-            for (float draw : new float[]{Math.nextDown(boundary), boundary}) {
+            for (float draw : new float[]{Math.nextDown(boundary), boundary}) for (BlockState state : List.of(
+                    Blocks.DIAMOND_ORE.defaultBlockState(), Blocks.COPPER_ORE.defaultBlockState().setValue(OreBlockRules.PLACED, true))) {
                 ScriptedRandom random = new ScriptedRandom(new int[0], new float[]{draw});
-                ItemStack result = ore(h, Blocks.DIAMOND_ORE.defaultBlockState(), tool(h, normal, affix), false, random);
+                ItemStack result = ore(h, state, tool(h, normal, affix), true, random);
                 h.assertValueEqual(result.getCount(), draw < boundary ? 2 : 1,
-                        "Independent ordinary and affix improvements feed one shared per-unit copy trial");
+                        "Independent ordinary and affix improvements feed one shared per-unit copy trial for gems and placed raw-metal ore");
+                h.assertTrue(result.is(state.is(Blocks.COPPER_ORE) ? Items.RAW_COPPER : Items.DIAMOND), "Affix Fortune preserves the selected mineral output");
                 random.assertConsumed(h);
             }
         }
@@ -366,7 +379,7 @@ public final class FortuneParityGameTests {
                 .withParameter(LootContextParams.BLOCK_STATE, state).withParameter(LootContextParams.TOOL, tool).create(LootContextParamSets.BLOCK);
     }
 
-    private static ItemStack ore(GameTestHelper h, BlockState state, ItemStack tool, boolean suppressPlaced, ScriptedRandom random) {
+    private static ItemStack ore(GameTestHelper h, BlockState state, ItemStack tool, boolean suppressPlaced, RandomSource random) {
         LootContext context = new LootContext.Builder(params(h, state, tool)).withOptionalRandomSource(random).create(Optional.empty());
         return new R196OreBonusFunction(List.of(), suppressPlaced).apply(new ItemStack(state.getBlock().asItem()), context);
     }

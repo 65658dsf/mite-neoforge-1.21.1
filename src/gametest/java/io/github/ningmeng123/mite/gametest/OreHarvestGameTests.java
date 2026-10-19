@@ -27,6 +27,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Explosion;
@@ -176,7 +177,7 @@ public final class OreHarvestGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void nativeMetalPlacementStoresItsFlagAndCannotMultiplyWithSourceFortune(GameTestHelper helper) {
+    public static void nativeMetalPlacementPreservesItsFlagAndRawMetalStillReceivesFortune(GameTestHelper helper) {
         BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
         BlockState floor = helper.getLevel().getBlockState(pos.below());
         try (Session session = player(helper); DropFixture f = new DropFixture(helper, pos)) {
@@ -206,9 +207,10 @@ public final class OreHarvestGameTests {
                     helper.getLevel().setBlockAndUpdate(pos, loaded);
                     session.player().setItemInHand(InteractionHand.MAIN_HAND, fortuneTool(helper));
                     helper.assertTrue(session.player().gameMode.destroyBlock(pos), "Saved placed ore can be mined normally");
-                    helper.assertValueEqual(f.drops().stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 1,
-                            "Repeated placed-metal mining cannot reroll fortune into duplicate raw metal");
-                    helper.assertTrue(f.drops().stream().allMatch(entity -> entity.getItem().is(rawMetal(id))), "Placed ore still returns one matching raw metal");
+                    helper.assertValueEqual(f.drops().stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 2,
+                            "Source ten-level fortune also deterministically copies raw metal from a player-placed ore");
+                    helper.assertTrue(f.drops().stream().allMatch(entity -> entity.getItem().is(rawMetal(id))), "Placed and natural ore receive the same raw-metal Fortune output");
+                    helper.assertFalse(rawMetal(id) instanceof BlockItem, "Raw metal cannot be placed back as an ore block: " + id);
                     f.clearDrops();
                 }
             }

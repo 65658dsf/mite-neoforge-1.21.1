@@ -71,7 +71,8 @@ public final class R196OreBonusFunction extends LootItemConditionalFunction {
         int base = stack.getCount();
         OreHarvestExperience.record(context, base * rewardPerUnit);
         // BlockBreakInfo.getHarvester() is null for explosions, even when another mod supplies a tool.
-        if (exploded || tool == null || stack.isEmpty() || (suppressPlaced && state.hasProperty(OreBlockRules.PLACED)
+        // Raw metal cannot be placed back as ore, so the legacy whole-ore duplication guard does not apply.
+        if (exploded || tool == null || stack.isEmpty() || (rawMetal == null && suppressPlaced && state.hasProperty(OreBlockRules.PLACED)
                 && state.getValue(OreBlockRules.PLACED))) return stack;
         var fortune = EnchantmentSources.levels(tool, enchantments.getOrThrow(Enchantments.FORTUNE));
         if (!EnchantmentSources.present(fortune)) return stack;
