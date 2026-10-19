@@ -32,11 +32,14 @@ public final class MonsterIntegrationGameTests {
         T mob=type.create(h.getLevel());BlockPos p=h.absolutePos(new BlockPos(1,10,1));
         mob.moveTo(p.getX()+.5,p.getY(),p.getZ()+.5);mob.setNoAi(true);mob.setNoGravity(true);h.getLevel().addFreshEntity(mob);return mob;
     }
-    @GameTest(template="empty") public static void zombiesReceiveSourceDoorMiningAndThreeMeleeTasks(GameTestHelper h) {
+    @GameTest(template="empty") public static void zombiesReceiveSourceDoorMiningAndThreeMeleeTasksWithFallback(GameTestHelper h) {
         var zombie=spawn(h,EntityType.ZOMBIE);
         h.assertTrue(zombie.goalSelector.getAvailableGoals().stream().anyMatch(g -> g.getGoal() instanceof SourceBreakPortalGoal),"Source portal pounding is installed without a spawn chance");
         h.assertTrue(zombie.goalSelector.getAvailableGoals().stream().noneMatch(g -> g.getGoal() instanceof BreakDoorGoal),"Native 240-tick goal cannot race the source goal");
-        h.assertValueEqual(zombie.goalSelector.getAvailableGoals().stream().filter(g -> g.getGoal() instanceof SourceMeleeGoal).count(),3L,"Player, villager and animal melee have their source priorities");
+        h.assertValueEqual(zombie.goalSelector.getAvailableGoals().stream().filter(g -> g.getGoal() instanceof SourceMeleeGoal).count(),4L,"Three source prey tasks retain a separate fallback for accepted retaliation and mount targets");
+        for(int priority:new int[]{2,3,4,5}) h.assertValueEqual(zombie.goalSelector.getAvailableGoals().stream()
+                .filter(g -> g.getGoal() instanceof SourceMeleeGoal && g.getPriority()==priority).count(),1L,
+                "Exactly one melee task retains source priority or fallback priority "+priority);
         h.assertTrue(R196DiggerGoal.first(zombie)!=null,"Source watcher mining remains independent");
         h.assertTrue(((GroundPathNavigation)zombie.getNavigation()).getNodeEvaluator().canOpenDoors(),"The actual closed-door navigation flag is enabled");
         zombie.discard();h.succeed();

@@ -138,6 +138,8 @@ public final class R196MonsterAi {
             mob.goalSelector.addGoal(2,new SourceMeleeGoal(mob,Player.class,1D,false));
             mob.goalSelector.addGoal(3,new SourceMeleeGoal(mob,Villager.class,1D,true));
             if(mob instanceof Zombie || ghoul) mob.goalSelector.addGoal(4,new SourceMeleeGoal(mob,Animal.class,1D,true));
+            // Revenge and rider targeting can select living entities outside the source prey classes.
+            mob.goalSelector.addGoal(5,new SourceMeleeGoal(mob,1D,true));
         } else {
             var old=mob.goalSelector.getAvailableGoals().stream().filter(g -> g.getGoal() instanceof MeleeAttackGoal).toList();
             for(var wrapped:old) { mob.goalSelector.removeGoal(wrapped.getGoal()); mob.goalSelector.addGoal(wrapped.getPriority(),new SourceMeleeGoal(mob,1D,false)); }
