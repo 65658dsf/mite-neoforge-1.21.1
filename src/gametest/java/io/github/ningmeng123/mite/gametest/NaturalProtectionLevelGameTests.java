@@ -20,6 +20,9 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
+import net.minecraft.world.item.enchantment.providers.EnchantmentsByCost;
+import net.minecraft.world.item.enchantment.providers.EnchantmentsByCostWithDifficulty;
 import net.minecraft.world.item.enchantment.providers.SingleEnchantment;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -122,5 +125,40 @@ public final class NaturalProtectionLevelGameTests {
                 helper.getLevel().getCurrentDifficultyAt(helper.absolutePos(new net.minecraft.core.BlockPos(1, 1, 1))));
         helper.assertValueEqual(other.getLevel(unbreaking), 5, "Unbreaking V remains a legal generated reward");
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void directCostProviderReservesProtectionFiveButRetainsOtherLevelFiveRewards(GameTestHelper helper) {
+        var registry = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        var pool = HolderSet.direct(protection(helper), registry.getHolderOrThrow(Enchantments.UNBREAKING));
+        assertNaturalCostProvider(helper, new EnchantmentsByCost(pool, ConstantInt.of(200)));
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void directDifficultyCostProviderReservesProtectionFiveButRetainsOtherLevelFiveRewards(GameTestHelper helper) {
+        var registry = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        var pool = HolderSet.direct(protection(helper), registry.getHolderOrThrow(Enchantments.UNBREAKING));
+        assertNaturalCostProvider(helper, new EnchantmentsByCostWithDifficulty(pool, 200, 0));
+        helper.succeed();
+    }
+
+    private static void assertNaturalCostProvider(GameTestHelper helper, EnchantmentProvider provider) {
+        var protection = protection(helper);
+        var unbreaking = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING);
+        var difficulty = helper.getLevel().getCurrentDifficultyAt(helper.absolutePos(new net.minecraft.core.BlockPos(1, 1, 1)));
+        boolean foundProtectionFour = false, foundUnbreakingFive = false;
+        for (int seed = 0; seed < 128; seed++) {
+            var enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+            provider.enchant(new ItemStack(Items.IRON_CHESTPLATE), enchantments, RandomSource.create(seed), difficulty);
+            int protectionLevel = enchantments.getLevel(protection), unbreakingLevel = enchantments.getLevel(unbreaking);
+            helper.assertTrue(protectionLevel >= 0 && protectionLevel <= 4, "A direct cost provider respects the natural Protection IV ceiling");
+            helper.assertTrue(unbreakingLevel >= 0 && unbreakingLevel <= 5, "The direct provider respects the Unbreaking V ceiling");
+            helper.assertTrue(protectionLevel > 0 || unbreakingLevel > 0, "A nonempty eligible pool provides at least one random reward");
+            foundProtectionFour |= protectionLevel == 4;
+            foundUnbreakingFive |= unbreakingLevel == 5;
+        }
+        helper.assertTrue(foundProtectionFour, "Protection IV remains reachable across a fixed sequence of source rewards");
+        helper.assertTrue(foundUnbreakingFive, "Unbreaking V remains reachable across a fixed sequence of source rewards");
     }
 }

@@ -46,7 +46,7 @@ public final class ProtectionFiveGameTests {
             ItemStack output = R196EnchantmentTable.output(helper.getLevel().registryAccess(), new ItemStack(Items.BOOK), energy, random);
             helper.assertTrue(output.is(Items.ENCHANTED_BOOK), "Player enchanting produces an enchanted book");
             var stored = output.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-            helper.assertValueEqual(stored.size(), 1, "Table books keep a single enchantment");
+            helper.assertTrue(stored.size() >= 1, "Native table book trimming retains at least one enchantment");
             helper.assertTrue(stored.getLevel(protection) <= 5, "Player enchanting never exceeds Protection V");
             found |= stored.getLevel(protection) == 5;
         }

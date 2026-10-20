@@ -13,6 +13,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
@@ -61,6 +62,14 @@ public final class ConfiguredEnchantments {
     public static boolean enabled(Enchantment enchantment) {
         String id = id(enchantment);
         return id == null || MiteConfig.enchantmentEnabled(id);
+    }
+
+    /** A candidate's participation chance; defaults consume no RNG and preserve native seeded results. */
+    public static boolean availableForRandomSelection(Holder<Enchantment> enchantment, RandomSource random) {
+        if (!enabled(enchantment)) return false;
+        double percent = enchantment.unwrapKey()
+                .map(key -> MiteConfig.enchantmentChancePercent(key.location().toString())).orElse(100D);
+        return percent >= 100D || percent > 0D && random.nextDouble() * 100D < percent;
     }
 
     public static int maximumLevel(Enchantment enchantment, int fallback) {

@@ -37,7 +37,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_BLOOD_MOON_FORMULA, MONSTER_DAMAGE_BLOOD_MOON_FORMULA;
     public static final ModConfigSpec.DoubleValue WEAPON_REACH_MULTIPLIER, WEAPON_REACH_REDUCTION;
     public static final ModConfigSpec.BooleanValue HEIGHT_REACH_PENALTY, UNDERWORLD_TRIALS, OVERWORLD_TRIALS;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS, ENCHANTMENT_CHANCES;
     private static volatile Snapshot local;
     private static volatile Snapshot remote;
 
@@ -124,6 +124,9 @@ public final class MiteConfig {
         ENCHANTMENT_MAX_LEVELS = builder.translation("mite.config.enchantment_max_levels")
                 .comment("Only explicit overrides: namespace:enchantment=maximum (1..255). Omitted IDs retain their original rules. Unknown IDs are retained for temporarily removed mods.")
                 .defineListAllowEmpty(List.of("max_levels"), List::of, () -> "minecraft:sharpness=5", MiteConfig::validLevelOverride);
+        ENCHANTMENT_CHANCES = builder.translation("mite.config.enchantment_chances")
+                .comment("Random enchanting candidate admission chance: namespace:enchantment=percent (0..100). Omitted IDs and 100 retain vanilla selection; 0 excludes the enchantment from random enchanting. This does not change existing enchantments, anvil application, or commands. Unknown IDs are retained for temporarily removed mods.")
+                .defineListAllowEmpty(List.of("chance_percent"), List::of, () -> "minecraft:sharpness=50", MiteConfig::validEnchantmentChanceOverride);
         builder.pop();
         SPEC = builder.build();
         // Publish defaults before configuration loading; workers never read ModConfigSpec's mutable caches.
@@ -177,6 +180,29 @@ public final class MiteConfig {
             int maximum = Integer.parseInt(entry.substring(separator + 1));
             return maximum >= 1 && maximum <= 255;
         } catch (NumberFormatException ignored) { return false; }
+    }
+
+    public static boolean validEnchantmentChanceOverride(Object input) {
+        if (!(input instanceof String entry)) return false;
+        int separator = entry.indexOf('=');
+        if (separator < 0 || !validEnchantmentId(entry.substring(0, separator))) return false;
+        try { return validEnchantmentChance(Double.parseDouble(entry.substring(separator + 1))); }
+        catch (NumberFormatException ignored) { return false; }
+    }
+
+    private static boolean validEnchantmentChance(Double percent) {
+        return percent != null && Double.isFinite(percent) && percent >= 0D && percent <= 100D;
+    }
+
+    private static Map<String, Double> enchantmentChanceOverrides(Map<String, Double> chances) {
+        if (chances == null) return Map.of();
+        var overrides = new HashMap<String, Double>();
+        chances.forEach((id, percent) -> {
+            if (!validEnchantmentId(id) || !validEnchantmentChance(percent))
+                throw new IllegalArgumentException("Invalid enchantment chance override: " + id + "=" + percent);
+            if (percent < 100D) overrides.put(id, percent);
+        });
+        return Map.copyOf(overrides);
     }
 
     public static double underworldOreMultiplier(R196OreRules.Kind kind) {
@@ -243,13 +269,18 @@ public final class MiteConfig {
     public static boolean enchantmentEnabled(String resourceId) {
         return !effectiveSnapshot().disabled().contains(resourceId);
     }
+    /** Candidate admission percentage; vanilla weighting and compatibility still select the result. */
+    public static double enchantmentChancePercent(String resourceId) {
+        return effectiveSnapshot().enchantmentChances().getOrDefault(resourceId, 100D);
+    }
 
     /** Immutable state is also used by the read-only remote settings browser. */
     public record Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
             double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
             boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
             MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
-            Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres) {
+            Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
+            Map<String, Double> enchantmentChances) {
         public Snapshot {
             ores = Map.copyOf(ores);
             caps = Map.copyOf(caps);
@@ -260,6 +291,16 @@ public final class MiteConfig {
             overworldOreCandidates = overworldOreCandidates == null ? Map.of() : Map.copyOf(overworldOreCandidates);
             overworldOreChances = overworldOreChances == null ? Map.of() : Map.copyOf(overworldOreChances);
             overworldOres = overworldOres == null ? Map.of() : Map.copyOf(overworldOres);
+            enchantmentChances = enchantmentChanceOverrides(enchantmentChances);
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, overworldOres, Map.of());
         }
         public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
                 double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
@@ -307,6 +348,13 @@ public final class MiteConfig {
                 caps.put(entry.substring(0, split), Integer.parseInt(entry.substring(split + 1)));
             }
         }
+        var enchantmentChances = new HashMap<String, Double>();
+        for (String entry : value(ENCHANTMENT_CHANCES)) {
+            if (validEnchantmentChanceOverride(entry)) {
+                int split = entry.indexOf('=');
+                enchantmentChances.put(entry.substring(0, split), Double.parseDouble(entry.substring(split + 1)));
+            }
+        }
         String healthFormula = value(MONSTER_HEALTH_FORMULA), damageFormula = value(MONSTER_DAMAGE_FORMULA);
         var growth = new MonsterGrowthRules.Settings(value(MONSTER_HEALTH_BASE), value(MONSTER_DAMAGE_BASE),
                 value(MONSTER_SKELETON_REFERENCE), value(MONSTER_HEALTH_DAILY_PERCENT) / 100D,
@@ -325,7 +373,7 @@ public final class MiteConfig {
         return new Snapshot(ores, overall, healthMultiplier, damageMultiplier,
                 value(WEAPON_REACH_MULTIPLIER), value(WEAPON_REACH_REDUCTION), value(HEIGHT_REACH_PENALTY),
                 value(UNDERWORLD_TRIALS), value(OVERWORLD_TRIALS), caps, new HashSet<>(value(DISABLED_ENCHANTMENTS)), growth, candidates, chances,
-                surfaceCandidates, surfaceChances, surfaceMultipliers);
+                surfaceCandidates, surfaceChances, surfaceMultipliers, enchantmentChances);
     }
     public static Snapshot localSnapshot() { return local; }
     public static Snapshot effectiveSnapshot() {
@@ -342,12 +390,21 @@ public final class MiteConfig {
     }
 
     public static void saveEnchantments(Map<String, Integer> caps, Set<String> disabled) {
+        saveEnchantments(caps, disabled, localSnapshot().enchantmentChances());
+    }
+
+    public static void saveEnchantments(Map<String, Integer> caps, Set<String> disabled, Map<String, Double> chances) {
+        var chanceOverrides = enchantmentChanceOverrides(chances);
         var entries = new ArrayList<String>();
         caps.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> entries.add(entry.getKey() + "=" + entry.getValue()));
+        var chanceEntries = chanceOverrides.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .map(entry -> entry.getKey() + "=" + entry.getValue()).toList();
         ENCHANTMENT_MAX_LEVELS.set(entries);
         DISABLED_ENCHANTMENTS.set(disabled.stream().sorted().toList());
+        ENCHANTMENT_CHANCES.set(chanceEntries);
         refreshEnchantmentRules();
         SPEC.save();
+        GameplayConfigSync.broadcast();
     }
 
     public static GrowthFormula.Validation validateMonsterGrowth(MonsterGrowthRules.Settings settings) {

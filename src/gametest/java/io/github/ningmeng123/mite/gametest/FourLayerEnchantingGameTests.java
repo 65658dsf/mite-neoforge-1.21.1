@@ -198,7 +198,7 @@ public final class FourLayerEnchantingGameTests {
                         "Stored Protection never exceeds its configured ceiling");
                 helper.assertTrue(enchantments.getLevel(unbreaking) <= 3,
                         "Stored Unbreaking remains at most III despite high table power");
-                if (input.is(Items.BOOK)) helper.assertValueEqual(enchantments.size(), 1, "Table books retain a single enchantment");
+                if (input.is(Items.BOOK)) helper.assertTrue(enchantments.size() >= 1, "Table books retain at least one enchantment");
                 foundProtectionMaximum |= enchantments.getLevel(protection) == protectionCap;
                 foundUnbreakingThree |= enchantments.getLevel(unbreaking) == 3;
             }

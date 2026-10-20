@@ -399,7 +399,10 @@ public final class GameplayConfigClientAudit implements DataProvider {
                 String value = language.getValue().get(key);
                 check(value != null && !value.isBlank() && !value.equals(key), "Missing native-parsed " + language.getKey() + " translation: " + key);
             }
-            for (var format : Map.of("mite.config.page", 3, "mite.config.maximum.tooltip", 1, "mite.config.invalid_maximums", 1).entrySet()) {
+            for (var format : Map.of("mite.config.page", 3, "mite.config.maximum.tooltip", 1, "mite.config.invalid_maximums", 1,
+                    "mite.config.invalid_enchantment_entries", 1, "mite.config.enchantment_chance.tooltip", 0,
+                    "mite.config.enchantment_chances.tooltip", 0, "mite.config.enchantment_reset.tooltip", 0,
+                    "mite.config.enchantment_hint", 0).entrySet()) {
                 String value = language.getValue().get(format.getKey());
                 String formatted = String.format(Locale.ROOT, value, java.util.stream.IntStream.rangeClosed(1, format.getValue()).boxed().toArray());
                 check(!formatted.contains("%s"), "Unresolved config placeholder in " + language.getKey() + ": " + format.getKey());

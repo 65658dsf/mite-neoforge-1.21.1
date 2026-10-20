@@ -125,7 +125,7 @@ public final class R196EnchantmentTableGameTests {
         helper.assertTrue(menu.clickMenuButton(owner, 2), "Exactly4000 points and3 lapis can take40-energy offer");
         var result = menu.getSlot(0).getItem();
         helper.assertTrue(result.is(Items.ENCHANTED_BOOK), "Actual native container transforms the book");
-        helper.assertValueEqual(result.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).size(), 1, "Table books store exactly one selected enchantment");
+        helper.assertTrue(result.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).size() >= 1, "Table books retain at least one selected enchantment");
         helper.assertValueEqual(owner.totalExperience, 0, "Payment removes4000 points rather than levels");
         helper.assertValueEqual(owner.getScore(), score, "Source enchanting spends XP points without lowering accumulated score");
         helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Third option consumes exactly3 lapis");
@@ -261,14 +261,19 @@ public final class R196EnchantmentTableGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void selectionGivesBooksOneAndEquipmentAtMostThreeCompatibleSourceEnchantments(GameTestHelper helper) {
+    public static void selectionVariesCountsWithoutThreeEnchantmentCeilingAndBooksCanKeepMultiple(GameTestHelper helper) {
         var random = RandomSource.create(196L);
         var registry = helper.getLevel().registryAccess();
+        boolean foundSingle = false, foundMoreThanThree = false, foundMultipleBook = false;
         for (int run = 0; run < 1024; run++) {
             var book = R196EnchantmentTable.output(registry, new ItemStack(Items.BOOK), 53, random);
-            helper.assertValueEqual(book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).size(), 1, "Every table book keeps one enchantment");
+            int bookCount = book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).size();
+            helper.assertTrue(bookCount >= 1, "Book trimming always leaves at least one enchantment");
+            foundMultipleBook |= bookCount > 1;
             var selected = R196EnchantmentTable.select(registry, new ItemStack(Items.IRON_SWORD), 200, random);
-            helper.assertTrue(!selected.isEmpty() && selected.size() <= 3, "High-energy equipment draws have1..3 entries");
+            helper.assertFalse(selected.isEmpty(), "High-energy equipment has an eligible initial enchantment");
+            foundSingle |= selected.size() == 1;
+            foundMoreThanThree |= selected.size() > 3;
             HashSet<String> ids = new HashSet<>();
             for (var entry : selected) {
                 String id = entry.enchantment.unwrapKey().orElseThrow().location().toString();
@@ -279,6 +284,9 @@ public final class R196EnchantmentTableGameTests {
                 helper.assertTrue(ids.add(id), "Self duplicates are rejected");
             }
         }
+        helper.assertTrue(foundSingle, "High-energy equipment can receive only one enchantment");
+        helper.assertTrue(foundMoreThanThree, "Random additional rolls have no artificial three-enchantment ceiling");
+        helper.assertTrue(foundMultipleBook, "Books can retain multiple compatible enchantments after native trimming");
         helper.succeed();
     }
 

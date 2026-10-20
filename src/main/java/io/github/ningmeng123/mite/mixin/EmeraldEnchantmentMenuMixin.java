@@ -28,13 +28,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** R196 table offers, point payment with native lapis costs and native modern-only equipment fallback. @author NingMeng123 */
+/** Four-layer source offers and point payment, with native lapis costs. @author NingMeng123 */
 @Mixin(EnchantmentMenu.class)
 public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu implements R196EnchantmentMenuAccess {
     @Shadow @Final private ContainerLevelAccess access;
     @Shadow @Final private Container enchantSlots;
     @Shadow @Final private RandomSource random;
-    @Shadow @Final private DataSlot enchantmentSeed;
     @Shadow @Final public int[] costs;
     @Shadow @Final public int[] enchantClue;
     @Shadow @Final public int[] levelClue;
@@ -80,7 +79,6 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
             mite$shelves = shelves;
             mite$emerald = emerald;
             mite$unblocked = unblocked;
-            enchantmentSeed.set(random.nextInt());
             for (int slot = 0; slot < 3; slot++) {
                 costs[slot] = unblocked
                         ? R196EnchantmentTable.energy(stack, mite$shelves, mite$emerald, slot, slot < 2 ? random.nextFloat() : .5F) : 0;

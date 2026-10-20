@@ -1,6 +1,8 @@
 package io.github.ningmeng123.mite.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.rules.ExperienceRules;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import net.minecraft.nbt.CompoundTag;
@@ -60,6 +62,12 @@ public abstract class PlayerExperienceMixin {
         // Only bypass vanilla's post-cost negative-level reset. Keep the call to
         // giveExperienceLevels and enchantment-seed randomization unchanged.
         return Math.max(0, levelForVanillaResetCheck);
+    }
+
+    @WrapOperation(method = "onEnchantmentPerformed", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;giveExperienceLevels(I)V"))
+    private void mite$creativeEnchantingIsFree(Player player, int levels, Operation<Void> original) {
+        if (!player.getAbilities().instabuild) original.call(player, levels);
     }
 
     @Inject(method = "getBaseExperienceReward", at = @At("HEAD"), cancellable = true)

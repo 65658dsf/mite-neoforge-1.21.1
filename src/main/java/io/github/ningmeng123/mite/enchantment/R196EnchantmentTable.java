@@ -30,7 +30,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
-/** vm/aaw source table arithmetic and weighted draws; modern-only equipment retains its native route. @author NingMeng123 */
+/** Source table costs and levels with probabilistic additional enchantments. @author NingMeng123 */
 public final class R196EnchantmentTable {
     private R196EnchantmentTable() {}
 
@@ -115,13 +115,13 @@ public final class R196EnchantmentTable {
 
     private record Candidate(R196EnchantmentCatalog.Definition definition, EnchantmentInstance enchantment) {}
 
-    /** Already-compressed table energy enters this method exactly once, unlike loot/mob helper inputs. */
+    /** Player enchanting retains source energy, candidate rules and configurable level ceilings. */
     public static List<EnchantmentInstance> select(RegistryAccess access, ItemStack stack, int energy, RandomSource random) {
         return select(stack, energy, random, access.registryOrThrow(Registries.ENCHANTMENT).holders()
                 .map(holder -> (Holder<Enchantment>)holder).toList(), true);
     }
 
-    /** Source loot/mob entry point applies material compression before, rather than twice during, the draw. */
+    /** Generated rewards keep source material compression and natural level ceilings. */
     public static List<EnchantmentInstance> randomEnchantments(ItemStack stack, int rawEnergy, RandomSource random, List<Holder<Enchantment>> allowed) {
         int energy = FunctionalBlockRules.enchantabilityAdjustedPower(rawEnergy, enchantability(stack));
         return energy < 1 ? List.of() : select(stack, energy, random, allowed, false);
@@ -131,13 +131,18 @@ public final class R196EnchantmentTable {
             List<Holder<Enchantment>> allowed, boolean playerEnchanting) {
         if (energy < 1 || enchantability(stack) < 1) return List.of();
         int remaining = Math.max(1, (int)(energy * (1F + (random.nextFloat() - .5F) * .5F)));
+        // Source offers can exceed 150 energy. Use vanilla's table range for the count roll,
+        // while the full source energy still controls levels and the existing energy budget.
+        int extraPower = Math.min(30, remaining);
         List<Candidate> selected = new ArrayList<>();
-        Map<String, Holder<Enchantment>> holders = allowed.stream().filter(holder -> holder.unwrapKey().isPresent())
-                .collect(Collectors.toMap(holder -> holder.unwrapKey().orElseThrow().location().toString(), Function.identity(), (first, second) -> first));
+        Map<String, Holder<Enchantment>> holders = allowed.stream()
+                .filter(holder -> ConfiguredEnchantments.availableForRandomSelection(holder, random))
+                .filter(holder -> holder.unwrapKey().isPresent())
+                .collect(Collectors.toMap(holder -> holder.unwrapKey().orElseThrow().location().toString(),
+                        Function.identity(), (first, second) -> first));
         while (remaining > 0) {
             List<Candidate> candidates = new ArrayList<>();
             for (var definition : R196EnchantmentCatalog.definitions()) {
-                if (!io.github.ningmeng123.mite.config.MiteConfig.enchantmentEnabled(definition.resourceId())) continue;
                 if (!stack.is(Items.BOOK) && !definition.supported(stack)) continue;
                 if (selected.stream().anyMatch(previous -> !R196EnchantmentCatalog.compatible(previous.definition().id(), definition.id()))) continue;
                 var holder = holders.get(definition.resourceId());
@@ -158,10 +163,12 @@ public final class R196EnchantmentTable {
                 if (draw < 0) { chosen = candidate; break; }
             }
             if (selected.size() < 2 && candidates.size() > 1 && chosen.definition().maxLevel() > 1 && random.nextInt(2) == 0)
-                chosen = new Candidate(chosen.definition(), new EnchantmentInstance(chosen.enchantment().enchantment, random.nextInt(chosen.enchantment().level) + 1));
+                chosen = new Candidate(chosen.definition(), new EnchantmentInstance(chosen.enchantment().enchantment,
+                        random.nextInt(chosen.enchantment().level) + 1));
             selected.add(chosen);
             remaining -= chosen.definition().minCost(chosen.enchantment().level) + 5;
-            if (remaining < 5 || selected.size() > 2) break;
+            if (remaining < 5 || random.nextInt(50) > extraPower) break;
+            extraPower /= 2;
         }
         List<EnchantmentInstance> shuffled = new ArrayList<>();
         while (!selected.isEmpty()) shuffled.add(selected.remove(random.nextInt(selected.size())).enchantment());
@@ -171,9 +178,9 @@ public final class R196EnchantmentTable {
     public static ItemStack output(RegistryAccess access, ItemStack input, int energy, RandomSource random) {
         if (water(input)) return new ItemStack(Items.EXPERIENCE_BOTTLE);
         if (input.is(Items.GOLDEN_APPLE)) return new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);
-        List<EnchantmentInstance> selected = select(access, input, energy, random);
+        List<EnchantmentInstance> selected = new ArrayList<>(select(access, input, energy, random));
         if (selected.isEmpty()) return ItemStack.EMPTY;
-        if (input.is(Items.BOOK)) selected = List.of(selected.get(random.nextInt(selected.size())));
+        if (input.is(Items.BOOK) && selected.size() > 1) selected.remove(random.nextInt(selected.size()));
         ItemStack result = input.is(Items.BOOK) ? input.transmuteCopy(Items.ENCHANTED_BOOK, 1) : input.copyWithCount(1);
         ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
         for (var entry : selected) enchantments.set(entry.enchantment, entry.level);
