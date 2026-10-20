@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
+import io.github.ningmeng123.mite.enchantment.VanillaTableEnchanting;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.registry.MiteShields;
@@ -86,6 +87,8 @@ public final class FourLayerEnchantingGameTests {
             helper.assertValueEqual(ordinary.costs[2], 158, "Four layers yield the exact ordinary-table maximum");
             helper.assertValueEqual(R196EnchantmentTable.experienceCost(ordinary.costs[2]), 15800,
                     "The maximum ordinary-table offer costs 15800 experience points");
+            helper.assertValueEqual(VanillaTableEnchanting.offerStrength(equipment, 48, 2, player.getEnchantmentSeed()), 30,
+                    "The same forty-eight physical shelves provide vanilla thirty-strength selection");
             var emerald = menu(helper, player, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get());
             emerald.getSlot(0).set(equipment.copy());
             helper.assertValueEqual(emerald.costs[2], 98, "Emerald tables retain their separate lower power");
@@ -109,21 +112,26 @@ public final class FourLayerEnchantingGameTests {
         helper.assertTrue(menu.clickMenuButton(player, 2), "Exactly 15800 points fund the maximum offer");
         helper.assertTrue(menu.getSlot(0).getItem().is(input.getItem()) && menu.getSlot(0).getItem().isEnchanted(),
                 "The successful transaction publishes enchanted vibranium armor");
+        var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(menu.getSlot(0).getItem());
+        helper.assertTrue(enchantments.getLevel(holder(helper, Enchantments.PROTECTION)) <= 4,
+                "The actual fully paid third option cannot publish Protection V");
+        helper.assertTrue(enchantments.getLevel(holder(helper, Enchantments.UNBREAKING)) <= 3,
+                "The actual fully paid third option cannot publish Unbreaking IV or V");
         helper.assertValueEqual(player.totalExperience, 0, "Successful enchanting deducts exactly 15800 points");
         helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 1, "The third option consumes exactly three lapis");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void highPowerBookAndArmorRollsRespectLoweredRaisedAndDisabledConfiguredCaps(GameTestHelper helper) {
+    public static void fullBookshelvesRespectLoweredCapsWithoutRaisedCapsExceedingVanillaTableRanks(GameTestHelper helper) {
         try (var settings = new Settings()) {
-            settings.set(List.of(), List.of("minecraft:unbreaking=3"));
-            assertOutputCaps(helper, 5);
-            settings.set(List.of(), List.of("minecraft:unbreaking=3", "minecraft:protection=3"));
-            assertOutputCaps(helper, 3);
-            settings.set(List.of(), List.of("minecraft:unbreaking=3", "minecraft:protection=6"));
-            assertOutputCaps(helper, 6);
-            settings.set(List.of("minecraft:protection"), List.of("minecraft:unbreaking=3"));
+            settings.set(List.of(), List.of());
+            assertOutputCaps(helper, 4, 3, 5);
+            settings.set(List.of(), List.of("minecraft:unbreaking=2", "minecraft:protection=3", "minecraft:sharpness=3"));
+            assertOutputCaps(helper, 3, 2, 3);
+            settings.set(List.of(), List.of("minecraft:unbreaking=6", "minecraft:protection=6", "minecraft:sharpness=9"));
+            assertOutputCaps(helper, 4, 3, 5);
+            settings.set(List.of("minecraft:protection"), List.of("minecraft:unbreaking=2"));
             var protection = holder(helper, Enchantments.PROTECTION);
             var unbreaking = holder(helper, Enchantments.UNBREAKING);
             var random = RandomSource.create(196L);
@@ -134,8 +142,8 @@ public final class FourLayerEnchantingGameTests {
                     var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(output);
                     helper.assertValueEqual(enchantments.getLevel(protection), 0,
                             "Additional bookshelf power cannot restore a disabled enchantment");
-                    helper.assertTrue(enchantments.getLevel(unbreaking) <= 3,
-                            "Disabled-entry selection still observes the configured Unbreaking III ceiling");
+                    helper.assertTrue(enchantments.getLevel(unbreaking) <= 2,
+                            "Disabled-entry selection still observes the lowered Unbreaking II ceiling");
                 }
             }
         }
@@ -143,7 +151,7 @@ public final class FourLayerEnchantingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void defaultCeilingsAllowUnbreakingFiveAndFourLayerVibraniumSharpnessSeven(GameTestHelper helper) {
+    public static void registeredHighRanksRemainAvailableWhileFourLayerTableStopsAtVanillaRanks(GameTestHelper helper) {
         try (var settings = new Settings()) {
             helper.assertValueEqual(R196EnchantmentCatalog.definition("minecraft:unbreaking").maxLevel(), 5,
                     "Default Unbreaking ceiling is V");
@@ -151,59 +159,76 @@ public final class FourLayerEnchantingGameTests {
                     "Default Sharpness ceiling is VII");
             var sharpness = holder(helper, Enchantments.SHARPNESS);
             var unbreaking = holder(helper, Enchantments.UNBREAKING);
+            var protection = holder(helper, Enchantments.PROTECTION);
             helper.assertValueEqual(sharpness.value().getMaxLevel(), 7, "Native Sharpness metadata exposes VII");
             helper.assertValueEqual(unbreaking.value().getMaxLevel(), 5, "Native Unbreaking metadata exposes V");
-            boolean foundSharpnessSeven = false;
-            boolean foundUnbreakingFive = false;
+            helper.assertValueEqual(protection.value().getMaxLevel(), 5, "Protection metadata retains V for existing items and anvil upgrades");
+            boolean foundSharpnessFive = false;
+            boolean foundUnbreakingThree = false;
+            boolean foundProtectionFour = false;
             var random = RandomSource.create(196L);
             for (ItemStack input : List.of(new ItemStack(MiteTools.get("vibranium_sword")), armor())) {
                 int energy = R196EnchantmentTable.energy(input, 48, false, 2, .5F);
                 helper.assertValueEqual(energy, 158, "Both source routes use reachable four-layer vibranium power");
-                for (int draw = 0; draw < 256; draw++) {
+                for (int draw = 0; draw < 4096; draw++) {
                     var output = R196EnchantmentTable.output(helper.getLevel().registryAccess(), input, energy, random);
                     var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(output);
-                    helper.assertTrue(enchantments.getLevel(sharpness) <= 7, "Default Sharpness stops at VII");
-                    helper.assertTrue(enchantments.getLevel(unbreaking) <= 5, "Default Unbreaking stops at V");
-                    foundSharpnessSeven |= enchantments.getLevel(sharpness) == 7;
-                    foundUnbreakingFive |= enchantments.getLevel(unbreaking) == 5;
+                    helper.assertTrue(enchantments.getLevel(sharpness) <= 5, "Thirty-strength table selection stops at Sharpness V despite metadata VII");
+                    helper.assertTrue(enchantments.getLevel(unbreaking) <= 3, "Thirty-strength table selection stops at Unbreaking III despite metadata V");
+                    helper.assertTrue(enchantments.getLevel(protection) <= 4, "Thirty-strength table selection stops at Protection IV despite metadata V");
+                    foundSharpnessFive |= enchantments.getLevel(sharpness) == 5;
+                    foundUnbreakingThree |= enchantments.getLevel(unbreaking) == 3;
+                    foundProtectionFour |= enchantments.getLevel(protection) == 4;
                 }
             }
-            helper.assertTrue(foundSharpnessSeven, "A fixed four-layer vibranium sword sequence reaches Sharpness VII");
-            helper.assertTrue(foundUnbreakingFive, "A fixed four-layer vibranium armor sequence reaches Unbreaking V");
+            helper.assertTrue(foundSharpnessFive, "A fixed full-bookshelf sword sequence can reach the vanilla Sharpness V maximum");
+            helper.assertTrue(foundUnbreakingThree, "A fixed full-bookshelf sequence can reach vanilla Unbreaking III");
+            helper.assertTrue(foundProtectionFour, "A fixed full-bookshelf armor sequence can reach vanilla Protection IV");
         }
         helper.succeed();
     }
 
-    private static void assertOutputCaps(GameTestHelper helper, int protectionCap) {
+    private static void assertOutputCaps(GameTestHelper helper, int protectionCap, int unbreakingCap, int sharpnessCap) {
         var protection = holder(helper, Enchantments.PROTECTION);
         var unbreaking = holder(helper, Enchantments.UNBREAKING);
-        for (ItemStack input : List.of(new ItemStack(Items.BOOK), armor())) {
+        var sharpness = holder(helper, Enchantments.SHARPNESS);
+        for (ItemStack input : List.of(new ItemStack(Items.BOOK), armor(), new ItemStack(MiteTools.get("vibranium_sword")))) {
             int energy = R196EnchantmentTable.energy(input, 48, false, 2, .5F);
             helper.assertTrue(energy > 0 && energy <= 158, "Cap regression uses reachable four-layer table power");
             boolean foundProtectionMaximum = false;
-            boolean foundUnbreakingThree = false;
+            boolean foundUnbreakingMaximum = false;
+            boolean foundSharpnessMaximum = false;
             var random = RandomSource.create(196L);
-            for (int draw = 0; draw < 512; draw++) {
+            for (int draw = 0; draw < 4096; draw++) {
                 var selected = R196EnchantmentTable.select(helper.getLevel().registryAccess(), input, energy, random);
                 for (var entry : selected) {
                     if (entry.enchantment.equals(protection))
                         helper.assertTrue(entry.level <= protectionCap, "Candidate selection observes the Protection ceiling");
                     if (entry.enchantment.equals(unbreaking))
-                        helper.assertTrue(entry.level <= 3, "Candidate selection never bypasses configured Unbreaking III");
+                        helper.assertTrue(entry.level <= unbreakingCap, "Candidate selection observes both configured and vanilla Unbreaking ceilings");
+                    if (entry.enchantment.equals(sharpness))
+                        helper.assertTrue(entry.level <= sharpnessCap, "Candidate selection observes both configured and vanilla Sharpness ceilings");
                 }
                 var output = R196EnchantmentTable.output(helper.getLevel().registryAccess(), input, energy, random);
-                helper.assertFalse(output.isEmpty(), "The four-layer table generates a result for both books and armor");
+                if (output.isEmpty()) continue;
                 var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(output);
                 helper.assertTrue(enchantments.getLevel(protection) <= protectionCap,
                         "Stored Protection never exceeds its configured ceiling");
-                helper.assertTrue(enchantments.getLevel(unbreaking) <= 3,
-                        "Stored Unbreaking remains at most III despite high table power");
+                helper.assertTrue(enchantments.getLevel(unbreaking) <= unbreakingCap,
+                        "Stored Unbreaking cannot exceed its configured or vanilla table ceiling");
+                helper.assertTrue(enchantments.getLevel(sharpness) <= sharpnessCap,
+                        "Stored Sharpness cannot exceed its configured or vanilla table ceiling");
                 if (input.is(Items.BOOK)) helper.assertTrue(enchantments.size() >= 1, "Table books retain at least one enchantment");
                 foundProtectionMaximum |= enchantments.getLevel(protection) == protectionCap;
-                foundUnbreakingThree |= enchantments.getLevel(unbreaking) == 3;
+                foundUnbreakingMaximum |= enchantments.getLevel(unbreaking) == unbreakingCap;
+                foundSharpnessMaximum |= enchantments.getLevel(sharpness) == Math.min(sharpnessCap, input.is(Items.BOOK) ? 4 : 5);
             }
-            helper.assertTrue(foundProtectionMaximum, "Each fixed book/armor sequence reaches Protection " + protectionCap);
-            helper.assertTrue(foundUnbreakingThree, "Each fixed book/armor sequence can still reach configured Unbreaking III");
+            if (input.is(Items.BOOK) || input.getItem() instanceof net.minecraft.world.item.ArmorItem)
+                helper.assertTrue(foundProtectionMaximum, "Each fixed eligible sequence reaches Protection " + protectionCap);
+            if (input.is(Items.BOOK) || input.is(MiteTools.get("vibranium_sword")))
+                helper.assertTrue(foundSharpnessMaximum, "Each fixed eligible sequence reaches its obtainable Sharpness maximum");
+            if (input.is(Items.BOOK) || input.getItem() instanceof net.minecraft.world.item.ArmorItem)
+                helper.assertTrue(foundUnbreakingMaximum, "Each eligible fixed sequence reaches Unbreaking " + unbreakingCap);
         }
     }
 
@@ -244,7 +269,8 @@ public final class FourLayerEnchantingGameTests {
     private static final class Settings implements AutoCloseable {
         private final List<? extends String> disabled = MiteConfig.DISABLED_ENCHANTMENTS.get();
         private final List<? extends String> caps = MiteConfig.ENCHANTMENT_MAX_LEVELS.get();
-        private Settings() { set(List.of(), List.of()); }
+        private final List<? extends String> chances = MiteConfig.ENCHANTMENT_CHANCES.get();
+        private Settings() { MiteConfig.ENCHANTMENT_CHANCES.set(List.of()); set(List.of(), List.of()); }
         private void set(List<String> disabled, List<String> caps) {
             MiteConfig.DISABLED_ENCHANTMENTS.set(disabled);
             MiteConfig.ENCHANTMENT_MAX_LEVELS.set(caps);
@@ -253,6 +279,7 @@ public final class FourLayerEnchantingGameTests {
         @Override public void close() {
             MiteConfig.DISABLED_ENCHANTMENTS.set(disabled);
             MiteConfig.ENCHANTMENT_MAX_LEVELS.set(caps);
+            MiteConfig.ENCHANTMENT_CHANCES.set(chances);
             MiteConfig.refreshEnchantmentRules();
         }
     }

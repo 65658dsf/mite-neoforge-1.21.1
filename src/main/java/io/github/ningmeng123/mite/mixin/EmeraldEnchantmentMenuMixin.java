@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import io.github.ningmeng123.mite.crafting.CraftingQuality;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentMenuAccess;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
+import io.github.ningmeng123.mite.enchantment.VanillaTableEnchanting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -34,6 +35,7 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
     @Shadow @Final private ContainerLevelAccess access;
     @Shadow @Final private Container enchantSlots;
     @Shadow @Final private RandomSource random;
+    @Shadow @Final private DataSlot enchantmentSeed;
     @Shadow @Final public int[] costs;
     @Shadow @Final public int[] enchantClue;
     @Shadow @Final public int[] levelClue;
@@ -112,7 +114,9 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
             }
             ItemStack before = input.copy();
             ItemStack lapisBefore = enchantSlots.getItem(1).copy();
-            ItemStack output = R196EnchantmentTable.output(level.registryAccess(), before, energy, random);
+            int selectionLevel = VanillaTableEnchanting.offerStrength(before, mite$shelves, slot, enchantmentSeed.get());
+            RandomSource selectionRandom = RandomSource.create((long)enchantmentSeed.get() + slot);
+            ItemStack output = R196EnchantmentTable.output(level.registryAccess(), before, energy, selectionLevel, selectionRandom);
             if (output.isEmpty()) return;
             if (!owner.getAbilities().instabuild) {
                 if (!(owner instanceof ServerPlayer server)) return;
@@ -125,6 +129,9 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
                 enchantSlots.getItem(1).shrink(lapisCost);
             }
             // Modern creative keeps free enchanting, rather than the source's creative XP debt.
+            // Zero native levels refreshes the player's seed without charging a second time.
+            owner.onEnchantmentPerformed(before, 0);
+            enchantmentSeed.set(owner.getEnchantmentSeed());
             enchantSlots.setItem(0, output);
             net.neoforged.neoforge.common.CommonHooks.onPlayerEnchantItem(owner, output,
                     EnchantmentHelper.getEnchantmentsForCrafting(output).entrySet().stream()

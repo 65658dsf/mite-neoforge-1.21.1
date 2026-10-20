@@ -30,7 +30,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
-/** Source table costs and levels with probabilistic additional enchantments. @author NingMeng123 */
+/** Source table structure/payment, vanilla-strength player results and independent source rewards. @author NingMeng123 */
 public final class R196EnchantmentTable {
     private R196EnchantmentTable() {}
 
@@ -115,10 +115,9 @@ public final class R196EnchantmentTable {
 
     private record Candidate(R196EnchantmentCatalog.Definition definition, EnchantmentInstance enchantment) {}
 
-    /** Player enchanting retains source energy, candidate rules and configurable level ceilings. */
+    /** Compatibility API: the supplied strength is bounded to the vanilla table range, independently of payment. */
     public static List<EnchantmentInstance> select(RegistryAccess access, ItemStack stack, int energy, RandomSource random) {
-        return select(stack, energy, random, access.registryOrThrow(Registries.ENCHANTMENT).holders()
-                .map(holder -> (Holder<Enchantment>)holder).toList(), true);
+        return VanillaTableEnchanting.select(access, stack, energy, random);
     }
 
     /** Generated rewards keep source material compression and natural level ceilings. */
@@ -176,9 +175,14 @@ public final class R196EnchantmentTable {
     }
 
     public static ItemStack output(RegistryAccess access, ItemStack input, int energy, RandomSource random) {
+        return output(access, input, energy, energy, random);
+    }
+
+    /** Payment energy keeps its source scale; selectionLevel comes from the actual four-layer shelf/slot offer. */
+    public static ItemStack output(RegistryAccess access, ItemStack input, int energy, int selectionLevel, RandomSource random) {
         if (water(input)) return new ItemStack(Items.EXPERIENCE_BOTTLE);
         if (input.is(Items.GOLDEN_APPLE)) return new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);
-        List<EnchantmentInstance> selected = new ArrayList<>(select(access, input, energy, random));
+        List<EnchantmentInstance> selected = new ArrayList<>(select(access, input, selectionLevel, random));
         if (selected.isEmpty()) return ItemStack.EMPTY;
         if (input.is(Items.BOOK) && selected.size() > 1) selected.remove(random.nextInt(selected.size()));
         ItemStack result = input.is(Items.BOOK) ? input.transmuteCopy(Items.ENCHANTED_BOOK, 1) : input.copyWithCount(1);

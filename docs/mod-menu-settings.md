@@ -133,6 +133,8 @@ chance_percent = ["minecraft:sharpness=50.0", "mite:stun=0.0"]
 
 ## 验证方式
 
+2026-10-20 概率设置实机验证：真实NeoForge客户端通过配置工厂进入附魔页，在320×240和854×480实际绘制中文“出现概率 (%)”输入框，并验证37.5/12.5跨页保留、中文名称及注册ID搜索、0概率保存、窗口调整、隐藏的101无效输入阻止保存、TOML回读和重新打开后的值。原配置文件逐字节还原，全程未进入存档。报告和四张原生GPU截图见 `build/verification/enchantment-probability-client/`；修正版JAR的界面类与绘制类逐字节核对一致。
+
 2026-10-19 矿石入口统一：NeoForge 21.1.259 的普通分组创建绕过数值 `Filter`，现改为在 `createSection` 隐藏四个旧矿石分组。真实客户端库检查确认高级页仅保留 `monsters`、`combat`、`structures`、`enchantments`，怪物分组仍只显示三个倍率；配置结构、保存值及加载状态未改变，Mod Menu 实际入口仍返回玩法设置首页。检查未初始化或渲染游戏界面。日志为 `build/verification/single-ore-page-client.log`，报告为 `single-ore-page-client-audit.json`，构建和发布包审计为 `single-ore-page-build.log`、`single-ore-page-package.json`。当前 `build/libs/mite-0.2.3.jar` 的 SHA-256 为 `cdca49aa403398396b73476fd733e669f4032a1344284c60121f125ffe805700`。
 
 2026-10-19 矿物倍率扩展：本体 0.2.3 构建、1,644 项 JUnit 和 1,932 项本体 GameTest 通过。组合拓展 0.2.1 的真实客户端审计在 320×240、854×480 检查了两个维度的倍率页，验证 0／0.5／2 草稿、跨维度保留、隐藏无效值阻止保存、还原为 1、两维度一起保存及原配置文件逐字节恢复。报告和截图位于相邻拓展工程的 `build/verification/config/`。多人同步编解码与只读权限已有自动回归，未做独立双进程多人实测。

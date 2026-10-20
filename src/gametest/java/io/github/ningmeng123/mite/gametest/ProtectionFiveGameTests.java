@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import java.util.UUID;
@@ -26,31 +27,46 @@ import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Player enchanting and real anvil transactions can produce Protection V. @author NingMeng123 */
+/** Table acquisition stops at Protection IV while real anvil transactions retain Protection V. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class ProtectionFiveGameTests {
     private ProtectionFiveGameTests() {}
 
     @GameTest(template = "empty")
-    public static void fullPowerEnchantingProducesProtectionFiveBooks(GameTestHelper helper) {
+    public static void fullPowerEnchantingStopsAtProtectionFourWhileRegistryRetainsFive(GameTestHelper helper) {
         var protection = protection(helper);
         helper.assertValueEqual(protection.value().getMaxLevel(), 5, "Registered Protection supports level V");
         for (var key : java.util.List.of(Enchantments.FIRE_PROTECTION, Enchantments.BLAST_PROTECTION, Enchantments.PROJECTILE_PROTECTION))
             helper.assertValueEqual(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                     .getHolderOrThrow(key).value().getMaxLevel(), 4, "Other protection enchantments retain level IV");
-        int energy = R196EnchantmentTable.energy(new ItemStack(Items.BOOK), 24, false, 2, .5F);
-        var random = RandomSource.create(196L);
-        boolean found = false;
-        for (int draw = 0; draw < 512; draw++) {
-            ItemStack output = R196EnchantmentTable.output(helper.getLevel().registryAccess(), new ItemStack(Items.BOOK), energy, random);
-            helper.assertTrue(output.is(Items.ENCHANTED_BOOK), "Player enchanting produces an enchanted book");
-            var stored = output.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-            helper.assertTrue(stored.size() >= 1, "Native table book trimming retains at least one enchantment");
-            helper.assertTrue(stored.getLevel(protection) <= 5, "Player enchanting never exceeds Protection V");
-            found |= stored.getLevel(protection) == 5;
+        var disabled = MiteConfig.DISABLED_ENCHANTMENTS.get();
+        var caps = MiteConfig.ENCHANTMENT_MAX_LEVELS.get();
+        var chances = MiteConfig.ENCHANTMENT_CHANCES.get();
+        try {
+            MiteConfig.DISABLED_ENCHANTMENTS.set(java.util.List.of());
+            MiteConfig.ENCHANTMENT_MAX_LEVELS.set(java.util.List.of());
+            MiteConfig.ENCHANTMENT_CHANCES.set(java.util.List.of());
+            MiteConfig.refreshEnchantmentRules();
+            int energy = R196EnchantmentTable.energy(new ItemStack(Items.BOOK), 48, false, 2, .5F);
+            var random = RandomSource.create(196L);
+            boolean found = false;
+            for (int draw = 0; draw < 4096; draw++) {
+                ItemStack output = R196EnchantmentTable.output(helper.getLevel().registryAccess(), new ItemStack(Items.BOOK), energy, random);
+                if (output.isEmpty()) continue;
+                helper.assertTrue(output.is(Items.ENCHANTED_BOOK), "Player enchanting produces an enchanted book");
+                var stored = output.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+                helper.assertTrue(stored.size() >= 1, "Native table book trimming retains at least one enchantment");
+                helper.assertTrue(stored.getLevel(protection) <= 4, "Full-bookshelf thirty-strength acquisition never exceeds Protection IV");
+                found |= stored.getLevel(protection) == 4;
+            }
+            helper.assertTrue(found, "A fixed full-bookshelf table sequence reaches Protection IV books");
+        } finally {
+            MiteConfig.DISABLED_ENCHANTMENTS.set(disabled);
+            MiteConfig.ENCHANTMENT_MAX_LEVELS.set(caps);
+            MiteConfig.ENCHANTMENT_CHANCES.set(chances);
+            MiteConfig.refreshEnchantmentRules();
         }
-        helper.assertTrue(found, "A fixed sequence at reachable table power produces Protection V books");
         helper.succeed();
     }
 

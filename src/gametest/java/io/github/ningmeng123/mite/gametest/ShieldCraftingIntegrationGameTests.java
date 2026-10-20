@@ -151,7 +151,7 @@ public final class ShieldCraftingIntegrationGameTests {
             } else {
                 helper.assertValueEqual(selected.size(), 1, "Shield source candidates contain only the durability enchantment");
                 helper.assertTrue(selected.getFirst().enchantment.is(Enchantments.UNBREAKING), "Actual source weighted selection chooses Unbreaking");
-                helper.assertValueEqual(selected.getFirst().level, 5, "Sufficient source table energy can produce the five-level durability enchantment");
+                helper.assertValueEqual(selected.getFirst().level, 3, "Player table acquisition respects vanilla Unbreaking III while retaining source shield applicability");
             }
         }
         helper.succeed();
