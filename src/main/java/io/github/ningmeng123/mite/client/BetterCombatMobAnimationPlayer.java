@@ -52,6 +52,15 @@ final class BetterCombatMobAnimationPlayer {
         ATTACKS.remove(mob);
     }
 
+    static boolean active(Mob mob) {
+        Attack attack = ATTACKS.get(mob);
+        if (attack == null) return false;
+        float partial = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+        if (mob.isAlive() && attack.sample(mob.tickCount + partial) != null) return true;
+        ATTACKS.remove(mob);
+        return false;
+    }
+
     static void apply(EntityModel<?> model, Mob mob, float partialTick, PoseStack pose) {
         finish(model);
         Attack attack = ATTACKS.get(mob);

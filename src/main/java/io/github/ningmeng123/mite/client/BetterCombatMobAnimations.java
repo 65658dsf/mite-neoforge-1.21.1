@@ -22,6 +22,10 @@ public final class BetterCombatMobAnimations {
         if (available()) BetterCombatMobAnimationPlayer.stop(mob);
     }
 
+    public static boolean active(Mob mob) {
+        return available() && BetterCombatMobAnimationPlayer.active(mob);
+    }
+
     public static void apply(EntityModel<?> model, Mob mob, float partialTick, PoseStack pose) {
         if (available()) BetterCombatMobAnimationPlayer.apply(model, mob, partialTick, pose);
     }

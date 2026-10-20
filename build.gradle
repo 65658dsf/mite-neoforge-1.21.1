@@ -46,6 +46,11 @@ neoForge {
     runs {
         client {
             client()
+            if (project.providers.gradleProperty('miteFreshAnimationsCombatAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.freshAnimationsCombatAudit', 'true'
+                systemProperty 'mite.freshAnimationsCombatAuditOutput', file(project.providers.gradleProperty('miteFreshAnimationsCombatAuditOutput')
+                        .getOrElse('build/verification/fresh-animations-combat-client-audit.json')).absolutePath
+            }
             if (project.providers.gradleProperty('miteBetterCombatMobAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.betterCombatMobAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'
@@ -236,6 +241,12 @@ dependencies {
     compileOnly('maven.modrinth:better-combat:2.4.0+1.21.1-neoforge') { transitive = false }
     gametestCompileOnly('maven.modrinth:better-combat:2.4.0+1.21.1-neoforge') { transitive = false }
     compileOnly('maven.modrinth:playeranimator:2.0.4+1.21.1-forge') { transitive = false }
+    // Official EMF animation hooks; neither EMF nor ETF is bundled or required at runtime.
+    compileOnly('maven.modrinth:entity-model-features:3.3.12-neoforge-1.21') { transitive = false }
+    compileOnly('maven.modrinth:entitytexturefeatures:7.2.6-neoforge-1.21') { transitive = false }
+    gametestCompileOnly('maven.modrinth:playeranimator:2.0.4+1.21.1-forge') { transitive = false }
+    gametestCompileOnly('maven.modrinth:entity-model-features:3.3.12-neoforge-1.21') { transitive = false }
+    gametestCompileOnly('maven.modrinth:entitytexturefeatures:7.2.6-neoforge-1.21') { transitive = false }
     compileOnly('maven.modrinth:cloth-config:15.0.140+neoforge') { transitive = false }
     // Optional client integration. JEI is supplied by the player's mods folder, never bundled.
     compileOnly 'mezz.jei:jei-1.21.1-common-api:19.57.0.451'
