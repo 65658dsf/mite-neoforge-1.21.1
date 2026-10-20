@@ -54,7 +54,8 @@ public final class EnchantmentSources {
                 && frame.levels().affix() > 0 ? frame : null;
     }
     public static boolean hasAffixes(ItemStack stack) {
-        return stack != null && !stack.isEmpty() && !GearProgression.state(stack).affixes().isEmpty();
+        return stack != null && !stack.isEmpty() && GearProgression.state(stack).affixes().keySet().stream()
+                .anyMatch(id -> GearModifier.fromId(id) == null);
     }
     public static boolean hasAffixes(LivingEntity living) {
         if (living == null) return false;

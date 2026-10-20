@@ -2,8 +2,8 @@ package io.github.ningmeng123.mite.progression;
 
 /** Independent growth caps and rarity tiers inspired by MITE-ITE 2.0.28. @author NingMeng123 */
 public final class GearAffixRules {
-    public static final int BASE_REWARD_CHANCE_PERCENT = 25;
-    public static final int REWARD_CHANCE_PER_LEVEL = 3;
+    public static final int BASE_REWARD_CHANCE_PERCENT = 100;
+    public static final int REWARD_CHANCE_PER_LEVEL = 0;
 
     public record Definition(int weight, int maximumLevel) {
         public Definition {
@@ -45,7 +45,7 @@ public final class GearAffixRules {
         };
     }
 
-    /** The newly reached equipment level determines this upgrade's reward chance. */
+    /** Compatibility API: source modifiers are guaranteed whenever the candidate pool is nonempty. */
     public static int rewardChancePercent(int level) {
         if (level < 0) throw new IllegalArgumentException("Negative equipment level");
         return (int)Math.min(100L, BASE_REWARD_CHANCE_PERCENT + (long)level * REWARD_CHANCE_PER_LEVEL);

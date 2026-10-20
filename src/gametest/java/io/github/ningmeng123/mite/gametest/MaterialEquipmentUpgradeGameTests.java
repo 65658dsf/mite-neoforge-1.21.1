@@ -157,13 +157,13 @@ public final class MaterialEquipmentUpgradeGameTests {
     public static void fullCopperToVibraniumRouteKeepsIdentityLevelsExperienceAndLegacyAffixes(GameTestHelper h) {
         ItemStack current = personalEquipment(h, item("mite:copper_sword"));
         GearProgress original = GearProgression.state(current);
-        for (var step : List.of(Map.entry("iron", 10), Map.entry("ancient_metal", 10), Map.entry("mithril", 15),
-                Map.entry("adamantium", 20), Map.entry("vibranium", 25))) {
+        for (var step : List.of(Map.entry("iron", 25), Map.entry("ancient_metal", 25), Map.entry("mithril", 25),
+                Map.entry("adamantium", 25), Map.entry("vibranium", 25))) {
             Upgrade upgrade = upgrade(BuiltInRegistries.ITEM.getKey(current.getItem()).toString(), step.getKey());
             ItemStack before = current.copy();
             current = recipe(h, upgrade).assemble(input(current, upgrade.addition()), h.getLevel().registryAccess());
             h.assertValueEqual(GearProgression.state(current), original, "Each material upgrade preserves the exact growth UUID, level, XP and every historical affix");
-            h.assertValueEqual(GearProgression.maxLevel(current), step.getValue(), "Only the new material determines the new growth cap");
+            h.assertValueEqual(GearProgression.maxLevel(current), step.getValue(), "Standalone material upgrades retain the uniform growth cap");
             assertPersonalComponents(h, before, current);
         }
         h.assertTrue(current.is(item("mite:vibranium_sword")), "Five consecutive smithing steps reach vibranium");

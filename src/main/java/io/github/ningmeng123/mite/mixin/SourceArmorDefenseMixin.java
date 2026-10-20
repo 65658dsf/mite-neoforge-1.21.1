@@ -15,6 +15,8 @@ public abstract class SourceArmorDefenseMixin {
             "Lnet/minecraft/world/damagesource/CombatRules;getDamageAfterAbsorb(Lnet/minecraft/world/entity/LivingEntity;FLnet/minecraft/world/damagesource/DamageSource;FF)F"))
     private float mite$sourcePiercingBeforeModernArmor(LivingEntity target, float incoming, DamageSource source,
             float armor, float toughness, Operation<Float> original) {
+        armor = io.github.ningmeng123.mite.progression.GearModifierEffects.generalProtectionArmor(target, armor);
+        armor += io.github.ningmeng123.mite.progression.GearModifierEffects.conditionalArmor(target, source);
         return original.call(target, incoming, source, SourceArmorDefense.armorAfterPiercing(target, source, armor), toughness);
     }
 }

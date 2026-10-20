@@ -57,6 +57,7 @@ public abstract class DurabilityItemStackMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;processDurabilityChange(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;I)I"))
     private int mite$lastArmorPoint(ServerLevel level, ItemStack stack, int amount, Operation<Integer> original,
             @Local(argsOnly = true) LivingEntity owner) {
+        amount = io.github.ningmeng123.mite.progression.GearModifierEffects.durabilityWear(stack, amount);
         // ye.tryDamageItem doubles the incoming budget before Unbreaking and armor last-point protection.
         if (amount > 0 && owner instanceof Player player
                 && PlayerCurses.has(player, R196Curse.EQUIPMENT_DECAY, true))

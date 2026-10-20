@@ -5,19 +5,16 @@ import org.junit.jupiter.api.Test;
 
 /** Exhaustive integer draws verify growth rewards without sampling or a Minecraft runtime. @author NingMeng123 */
 class GearAffixRulesTest {
-    @Test void everyLevelFromZeroThroughTwentyFiveHasItsExactNumberOfSuccessfulIntegerDraws() {
-        assertEquals(25, GearAffixRules.BASE_REWARD_CHANCE_PERCENT);
-        assertEquals(3, GearAffixRules.REWARD_CHANCE_PER_LEVEL);
+    @Test void everyLevelFromZeroThroughTwentyFiveAlwaysGrantsItsUpgrade() {
         for (int level = 0; level <= 25; level++) {
-            int expectedChance = 25 + 3 * level;
             int successes = 0;
-            assertEquals(expectedChance, GearAffixRules.rewardChancePercent(level), "Chance at level " + level);
+            assertEquals(100, GearAffixRules.rewardChancePercent(level), "Chance at level " + level);
             for (int roll = 0; roll < 100; roll++) {
                 boolean granted = GearAffixRules.grantsAffix(level, roll);
-                assertEquals(roll < expectedChance, granted, "Level " + level + " reward roll " + roll);
+                assertTrue(granted, "Level " + level + " reward roll " + roll);
                 if (granted) successes++;
             }
-            assertEquals(expectedChance, successes, "Successful draws at level " + level);
+            assertEquals(100, successes, "Successful draws at level " + level);
         }
     }
 
@@ -31,18 +28,15 @@ class GearAffixRulesTest {
         }
     }
 
-    @Test void targetLevelCheckpointsAndProbabilityEdgesUseTheNewlyReachedLevel() {
-        int[][] checkpoints = {{0, 25}, {1, 28}, {5, 40}, {10, 55}, {15, 70}, {20, 85}, {25, 100}};
-        for (int[] checkpoint : checkpoints)
-            assertEquals(checkpoint[1], GearAffixRules.rewardChancePercent(checkpoint[0]), "Target level " + checkpoint[0]);
-        assertTrue(GearAffixRules.grantsAffix(0, 24));
-        assertFalse(GearAffixRules.grantsAffix(0, 25));
-        assertTrue(GearAffixRules.grantsAffix(1, 27));
-        assertFalse(GearAffixRules.grantsAffix(1, 28));
-        assertTrue(GearAffixRules.grantsAffix(25, 99));
+    @Test void formerChanceBoundariesAreAllGuaranteedAtEveryTargetLevel() {
+        for (int level : new int[]{0, 1, 5, 10, 15, 20, 25}) {
+            assertEquals(100, GearAffixRules.rewardChancePercent(level), "Target level " + level);
+            for (int roll : new int[]{0, 24, 25, 27, 28, 31, 34, 99})
+                assertTrue(GearAffixRules.grantsAffix(level, roll), "Level " + level + " old boundary " + roll);
+        }
     }
 
-    @Test void levelsAboveTwentyFiveClampAtOneHundredWithoutIntegerOverflow() {
+    @Test void extensionAndLargestLevelsRemainGuaranteedWithoutIntegerOverflow() {
         for (int level : new int[]{26, 100, 715_827_875, 715_827_883, Integer.MAX_VALUE}) {
             assertEquals(100, GearAffixRules.rewardChancePercent(level), "Clamped chance at level " + level);
             for (int roll = 0; roll < 100; roll++)

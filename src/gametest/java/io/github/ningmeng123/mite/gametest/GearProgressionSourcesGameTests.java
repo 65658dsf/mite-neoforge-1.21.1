@@ -2,12 +2,10 @@ package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
-import io.github.ningmeng123.mite.mining.MiningProgress;
-import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
 import io.github.ningmeng123.mite.progression.GearProgress;
 import io.github.ningmeng123.mite.progression.GearProgression;
-import io.github.ningmeng123.mite.progression.GearProgressionRules;
 import io.github.ningmeng123.mite.progression.PlayerPlacedBlocks;
+import io.github.ningmeng123.mite.survival.DualFoodData;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 import java.util.UUID;
@@ -15,6 +13,7 @@ import java.util.Map;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -31,15 +30,18 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -56,7 +58,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
-/** Completed harvesting, real damage and recoverable projectile attribution. @author NingMeng123 */
+/** Committed harvesting, primary health loss and non-training projectile transport. @author NingMeng123 */
 @GameTestHolder("mite_gear")
 @PrefixGameTestTemplate(false)
 public final class GearProgressionSourcesGameTests {
@@ -72,6 +74,9 @@ public final class GearProgressionSourcesGameTests {
         player.setOnGround(true);
         player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100D);
         player.setHealth(100F);
+        player.getAttribute(Attributes.ATTACK_SPEED).setBaseValue(1024D);
+        player.getFoodData().setFoodLevel(6);
+        ((DualFoodData)player.getFoodData()).mite$setNutrition(0);
         return player;
     }
 
@@ -91,6 +96,21 @@ public final class GearProgressionSourcesGameTests {
         finally { ((SourcePlayer)player).channel.finishAndReleaseAll(); }
     }
     private static long xp(ItemStack stack) { return GearProgression.state(stack).experienceMillis(); }
+    private static long armorXp(ItemStack[] armor) {
+        long total = 0L;
+        for (ItemStack stack : armor) total += xp(stack);
+        return total;
+    }
+    private static void equipPrimaryWeapon(ServerPlayer player, ItemStack weapon) {
+        // Source XP is under test here, independently of weapon stat profiles or nutrition bonuses.
+        weapon.set(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.fromNamespaceAndPath("mite", "source_xp_fixture"),
+                        0D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND).build());
+        player.setItemInHand(InteractionHand.MAIN_HAND, weapon);
+        player.tick();
+        player.setOnGround(true);
+        player.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4D);
+    }
     private static Mob victim(GameTestHelper h, ServerPlayer player, EntityType<? extends Mob> type, float maxHealth) {
         Mob victim = type.create(h.getLevel());
         victim.setNoAi(true);
@@ -106,70 +126,73 @@ public final class GearProgressionSourcesGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void killsUseMaximumHealthForPassiveAndHostileCreaturesButIgnoreCreativeAndPlayers(GameTestHelper h) {
+    public static void primaryMeleeUsesLostHealthWhileDirectKillsCreativeAndPlayersCannotTrain(GameTestHelper h) {
         ServerPlayer player = player(h);
         try {
             ItemStack sword = new ItemStack(Items.IRON_SWORD);
-            player.setItemInHand(InteractionHand.MAIN_HAND, sword);
+            equipPrimaryWeapon(player, sword);
+            h.assertFalse(io.github.ningmeng123.mite.combat.SourcePlayerCombat.weak(player), "The real sword fixture has energy for a damaging primary attack");
             Mob cow = victim(h, player, EntityType.COW, 24F);
-            cow.hurt(player.damageSources().playerAttack(player), 100F);
-            h.assertValueEqual(xp(sword), 24_000L, "A one-health passive victim awards its full maximum health");
+            player.attack(cow);
+            h.assertTrue(cow.isDeadOrDying(), "The actual primary sword attack kills its one-health target");
+            h.assertValueEqual(xp(sword), 1000L, "A one-health victim awards one actual lost-health point rather than its maximum health");
             Mob zombie = victim(h, player, EntityType.ZOMBIE, 30F);
             zombie.hurt(player.damageSources().playerAttack(player), 100F);
-            h.assertValueEqual(xp(sword), 54_000L, "Hostile and passive creatures share the same health rule");
+            h.assertValueEqual(xp(sword), 1000L, "A direct damage/kill call outside primary melee cannot grant a kill reward");
             Player other = h.makeMockPlayer(GameType.SURVIVAL);
             other.hurt(player.damageSources().playerAttack(player), 100F);
-            h.assertValueEqual(xp(sword), 54_000L, "Player kills never grant equipment experience");
+            h.assertValueEqual(xp(sword), 1000L, "Player kills never grant equipment experience");
             player.setGameMode(GameType.CREATIVE);
-            victim(h, player, EntityType.COW, 20F).hurt(player.damageSources().playerAttack(player), 100F);
-            h.assertValueEqual(xp(sword), 54_000L, "Creative kills never advance equipment");
+            player.attack(victim(h, player, EntityType.COW, 20F));
+            h.assertValueEqual(xp(sword), 1000L, "Creative primary attacks never advance equipment");
         } finally { close(player); }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void aRecentWeaponReceivesDelayedFireKillsButNeverBorrowsCreatureFinishingBlows(GameTestHelper h) {
+    public static void immediateMeleeRewardsDoNotGrowFromDelayedFireOrCreatureFinishingBlows(GameTestHelper h) {
         ServerPlayer player = player(h);
         try {
             ItemStack sword = new ItemStack(Items.IRON_SWORD), spare = new ItemStack(Items.IRON_AXE);
-            player.setItemInHand(InteractionHand.MAIN_HAND, sword);
+            equipPrimaryWeapon(player, sword);
+            h.assertFalse(io.github.ningmeng123.mite.combat.SourcePlayerCombat.weak(player), "The nonlethal primary attack is not a weak knockback-only strike");
             Mob cow = victim(h, player, EntityType.COW, 20F);
             cow.setHealth(20F);
-            cow.hurt(player.damageSources().playerAttack(player), 1F);
+            player.attack(cow);
+            long immediate = xp(sword);
+            h.assertTrue(immediate > 0 && cow.isAlive(), "A nonlethal primary attack grants its immediate whole-health reward");
             player.setItemInHand(InteractionHand.MAIN_HAND, spare);
             player.getInventory().setItem(7, sword);
             cow.invulnerableTime = 0;
             cow.hurt(player.damageSources().onFire(), 100F);
-            h.assertValueEqual(xp(sword), 20_000L, "A recently credited weapon retains its delayed fire kill after switching hands");
+            h.assertValueEqual(xp(sword), immediate, "Delayed fire adds no experience to the switched-out melee weapon");
             h.assertValueEqual(xp(spare), 0L, "The new held weapon cannot take a previous weapon's delayed reward");
-            player.setItemInHand(InteractionHand.MAIN_HAND, sword);
+            equipPrimaryWeapon(player, sword);
             player.getInventory().setItem(7, ItemStack.EMPTY);
             Mob second = victim(h, player, EntityType.COW, 20F);
             second.setHealth(20F);
-            second.hurt(player.damageSources().playerAttack(player), 1F);
+            player.attack(second);
+            long beforeCreatureFinisher = xp(sword);
             second.invulnerableTime = 0;
             Mob wolf = EntityType.WOLF.create(h.getLevel());
             second.hurt(player.damageSources().mobAttack(wolf), 100F);
-            h.assertValueEqual(xp(sword), 20_000L, "A different creature's finishing blow never borrows the recent player weapon");
+            h.assertValueEqual(xp(sword), beforeCreatureFinisher, "A different creature's finishing blow cannot add experience to a recent player weapon");
             wolf.discard();
         } finally { close(player); }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void actualNaturalMiningAwardsOnlyTheEffectiveToolAndLastPlacedBlockRemainsMarked(GameTestHelper h) {
+    public static void effectiveMiningAwardsNaturalAndPlayerPlacedBlocksWhileProvenanceStillCommits(GameTestHelper h) {
         ServerPlayer player = player(h);
         try {
             BlockPos natural = h.absolutePos(new BlockPos(2, 3, 1));
             h.getLevel().setBlock(natural, Blocks.STONE.defaultBlockState(), 3);
             ItemStack pick = new ItemStack(Items.IRON_PICKAXE);
             player.setItemInHand(InteractionHand.MAIN_HAND, pick);
-            var state = h.getLevel().getBlockState(natural);
-            long expected = GearProgressionRules.miningExperienceMillis(
-                    MiningProgress.effectiveHardness(state, state.getDestroySpeed(h.getLevel(), natural)),
-                    SourceMiningRequirements.minimumHarvestLevel(state));
+            long expected = 2000L;
             h.assertTrue(player.gameMode.destroyBlock(natural), "The real player removal succeeds");
-            h.assertValueEqual(xp(pick), expected, "Natural harvesting uses source hardness and harvest tier");
+            h.assertValueEqual(xp(pick), expected, "An effective pickaxe gains the source stone material's two experience points");
             BlockPos support = h.absolutePos(new BlockPos(3, 2, 1));
             h.getLevel().setBlock(support, Blocks.STONE.defaultBlockState(), 3);
             ItemStack lastBlock = new ItemStack(Items.STONE);
@@ -180,19 +203,19 @@ public final class GearProgressionSourcesGameTests {
             h.assertTrue(PlayerPlacedBlocks.isPlaced(h.getLevel(), placed), "Committed provenance survives consuming the final block item");
             player.setItemInHand(InteractionHand.MAIN_HAND, pick);
             player.gameMode.destroyBlock(placed);
-            h.assertValueEqual(xp(pick), expected, "A player-placed block cannot recycle equipment experience");
+            h.assertValueEqual(xp(pick), 2L * expected, "Effective harvesting also grants experience for committed player-placed stone");
             h.assertFalse(PlayerPlacedBlocks.isPlaced(h.getLevel(), placed), "Removing the player block releases its position marker");
             ItemStack hoe = new ItemStack(Items.IRON_HOE);
             player.setItemInHand(InteractionHand.MAIN_HAND, hoe);
             h.getLevel().setBlock(natural, Blocks.OAK_LEAVES.defaultBlockState(), 3);
             player.gameMode.destroyBlock(natural);
-            h.assertValueEqual(xp(hoe), 0L, "A hoe cannot gain experience by breaking blocks");
+            h.assertValueEqual(xp(hoe), 0L, "Breaking leaves with a hoe is not a source crop-harvesting action");
         } finally { close(player); }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void normalAndAffixTreeFellingAwardEveryNaturalLogWithoutRewardingThePlacedMiddleLog(GameTestHelper h) {
+    public static void normalAndAffixTreeFellingAwardEveryEffectiveLogIncludingPlayerPlacedLogs(GameTestHelper h) {
         ServerPlayer player = player(h);
         try {
             ResourceLocation key = ResourceLocation.fromNamespaceAndPath("mite", "tree_felling");
@@ -206,15 +229,12 @@ public final class GearProgressionSourcesGameTests {
                 BlockPos trunk = h.absolutePos(new BlockPos(2, 3, 1));
                 for (int height = 0; height < 3; height++) h.getLevel().setBlock(trunk.above(height), Blocks.OAK_LOG.defaultBlockState(), 3);
                 PlayerPlacedBlocks.set(h.getLevel(), trunk.above(), true);
-                var state = h.getLevel().getBlockState(trunk);
-                long perLog = GearProgressionRules.miningExperienceMillis(
-                        MiningProgress.effectiveHardness(state, state.getDestroySpeed(h.getLevel(), trunk)),
-                        SourceMiningRequirements.minimumHarvestLevel(state));
+                long perLog = 2000L;
                 h.assertTrue(player.gameMode.destroyBlock(trunk), "The original log removal succeeds");
                 for (int height = 0; height < 3; height++)
                     h.assertTrue(h.getLevel().getBlockState(trunk.above(height)).isAir(), "The real tree-felling callback removes every vertical log");
-                h.assertValueEqual(xp(axe), 2L * perLog,
-                        (affix ? "Affix" : "Ordinary") + " tree felling awards each natural log while excluding the player-placed middle log");
+                h.assertValueEqual(xp(axe), 3L * perLog,
+                        (affix ? "Affix" : "Ordinary") + " tree felling awards two points per effective log, including the placed middle log");
                 h.assertFalse(PlayerPlacedBlocks.isPlaced(h.getLevel(), trunk.above()), "Removing the placed middle log clears its marker");
             }
         } finally { close(player); }
@@ -259,53 +279,75 @@ public final class GearProgressionSourcesGameTests {
             player.setItemInHand(InteractionHand.MAIN_HAND, hoe);
             hoe.useOn(use(player, pos, Direction.UP));
             h.assertTrue(h.getLevel().getBlockState(pos).is(Blocks.FARMLAND), "The actual hoe creates farmland");
-            h.assertValueEqual(xp(hoe), 12_000L, "Player-laid soil is eligible for tilling experience");
+            h.assertValueEqual(xp(hoe), 1000L, "Player-laid soil grants the source one-point tilling reward");
             h.assertTrue(PlayerPlacedBlocks.isPlaced(h.getLevel(), pos), "Tilling preserves the placed soil's mining provenance");
             h.getLevel().setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
             hoe.useOn(use(player, pos, Direction.UP));
-            h.assertValueEqual(xp(hoe), 24_000L, "A later successful tilling of the same coordinate earns another reward");
+            h.assertValueEqual(xp(hoe), 2000L, "A later successful tilling of the same coordinate earns another one-point reward");
             h.getLevel().setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);
             NeoForge.EVENT_BUS.addListener(cancel);
             try { hoe.useOn(use(player, pos, Direction.UP)); }
             finally { NeoForge.EVENT_BUS.unregister(cancel); }
             h.assertTrue(h.getLevel().getBlockState(pos).is(Blocks.DIRT), "A cancelled tilling returns the original soil");
-            h.assertValueEqual(xp(hoe), 24_000L, "The cancelled tilling never retains an experience reward");
+            h.assertValueEqual(xp(hoe), 2000L, "The cancelled tilling never retains an experience reward");
         } finally { close(player); }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void armorSharesPreMitigationDamageAndRejectsCancelledOrInvulnerableHits(GameTestHelper h) {
+    public static void armorTrainsActualEntityDamagePortionsAndRejectsEnvironmentCancelledOrInvulnerableHits(GameTestHelper h) {
         ServerPlayer player = player(h);
         Consumer<LivingIncomingDamageEvent> cancel = event -> { if (event.getEntity() == player) event.setCanceled(true); };
         try {
-            ItemStack chest = new ItemStack(Items.IRON_CHESTPLATE), boots = new ItemStack(Items.IRON_BOOTS);
-            player.setItemSlot(EquipmentSlot.CHEST, chest);
-            player.setItemSlot(EquipmentSlot.FEET, boots);
+            ItemStack[] armor = {new ItemStack(Items.IRON_BOOTS), new ItemStack(Items.IRON_LEGGINGS),
+                    new ItemStack(Items.IRON_CHESTPLATE), new ItemStack(Items.IRON_HELMET)};
+            EquipmentSlot[] slots = {EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
+            for (int index = 0; index < armor.length; index++) {
+                // Keep this source test below its next level threshold even if the random allocator chooses one piece repeatedly.
+                armor[index].set(GearProgression.PROGRESS.get(), new GearProgress(UUID.randomUUID(), 10, 0L, Map.of(), 1));
+                player.setItemSlot(slots[index], armor[index]);
+            }
             player.hurt(player.damageSources().generic(), 4F);
-            h.assertValueEqual(xp(chest), 8_000L, "Four incoming damage grants sixteen experience shared over two armor pieces");
-            h.assertValueEqual(xp(boots), 8_000L, "Each equipped armor piece receives the same share");
-            player.hurt(player.damageSources().generic(), 3F);
-            h.assertValueEqual(xp(chest), 8_000L, "The invulnerability cooldown rejects a smaller repeated hit");
-            player.hurt(player.damageSources().generic(), 6F);
-            h.assertValueEqual(xp(chest), 12_000L, "Only the stronger hit's two-point cooldown difference reaches the armor");
+            h.assertValueEqual(armorXp(armor), 0L, "Environmental damage cannot train armor even when it spends durability");
+            Mob attacker = EntityType.COW.create(h.getLevel());
+            DamageSource source = player.damageSources().mobAttack(attacker);
+            player.invulnerableTime = 0;
+            int[] beforeWear = java.util.Arrays.stream(armor).mapToInt(ItemStack::getDamageValue).toArray();
+            player.hurt(source, 4F);
+            long accepted = armorXp(armor);
+            h.assertTrue(accepted > 0 && accepted % 4000L == 0,
+                    "Each actual random armor portion grants two raw points followed by armor's outer doubling");
+            for (int index = 0; index < armor.length; index++) {
+                h.assertTrue(xp(armor[index]) % 4000L == 0, "Armor experience belongs to selected portions rather than equal damage shares");
+                if (xp(armor[index]) > 0) h.assertTrue(armor[index].getDamageValue() > beforeWear[index],
+                        "Only a piece selected for actual wear receives source experience");
+            }
+            player.hurt(source, 3F);
+            h.assertValueEqual(armorXp(armor), accepted, "The invulnerability cooldown rejects a smaller repeated hit");
+            player.hurt(source, 6F);
+            long stronger = armorXp(armor);
+            h.assertTrue(stronger > accepted && (stronger - accepted) % 4000L == 0,
+                    "The stronger hit's accepted cooldown difference creates new wear portions");
             player.invulnerableTime = 0;
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 4));
             float health = player.getHealth();
-            player.hurt(player.damageSources().generic(), 5F);
+            player.hurt(source, 5F);
             h.assertValueEqual(player.getHealth(), health, "Full resistance absorbs all health damage");
-            h.assertValueEqual(xp(chest), 22_000L, "Fully mitigated hits still award their armor-before-reduction share");
+            long mitigated = armorXp(armor);
+            h.assertTrue(mitigated > stronger && (mitigated - stronger) % 4000L == 0,
+                    "Entity hits still train their actual armor portions before health mitigation");
             player.invulnerableTime = 0;
             NeoForge.EVENT_BUS.addListener(cancel);
-            try { player.hurt(player.damageSources().generic(), 5F); }
+            try { player.hurt(source, 5F); }
             finally { NeoForge.EVENT_BUS.unregister(cancel); }
-            h.assertValueEqual(xp(chest), 22_000L, "Cancelled incoming damage cannot train armor");
+            h.assertValueEqual(armorXp(armor), mitigated, "Cancelled incoming damage cannot train armor");
+            attacker.discard();
         } finally { close(player); }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void shieldsTrainOnBlockedDamageWhileArmorSharesOnlyTheUnblockedRemainder(GameTestHelper h) {
+    public static void shieldBlocksGrantNoExperienceWhileUnblockedEntityDamageCanTrainArmorPortions(GameTestHelper h) {
         ServerPlayer player = player(h);
         Consumer<LivingShieldBlockEvent> partial = event -> { if (event.getEntity() == player) event.setBlockedDamage(2F); };
         try {
@@ -340,21 +382,22 @@ public final class GearProgressionSourcesGameTests {
             }
             h.assertValueEqual(incoming[0], 1, "The non-player attack enters the real server incoming damage pipeline");
             h.assertValueEqual(blocked[0], 4F, "The real shield event accepts all four incoming damage points");
-            h.assertValueEqual(xp(shield), 8_000L, "The shield earns two experience per completely blocked damage point");
+            h.assertValueEqual(xp(shield), 0L, "Completely blocked damage does not train the shield");
             h.assertValueEqual(xp(chest), 0L, "A completely blocked hit cannot also train armor");
             player.invulnerableTime = 0;
             NeoForge.EVENT_BUS.addListener(partial);
             try { player.hurt(source, 4F); }
             finally { NeoForge.EVENT_BUS.unregister(partial); }
-            h.assertValueEqual(xp(shield), 12_000L, "A partial shield block awards only the two blocked points");
-            h.assertValueEqual(xp(chest), 8_000L, "Armor trains on the remaining two points before its own mitigation");
+            h.assertValueEqual(xp(shield), 0L, "A partial shield block also grants no shield experience");
+            h.assertValueEqual(xp(chest), chest.getDamageValue() > 0 ? 4000L : 0L,
+                    "The single worn chestplate receives four experience only if its actual random wear portion was selected");
             attacker.discard();
         } finally { close(player); }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void bowKillsAfterSwitchingWeaponsRewardOnlyTheOriginalBowAndSurviveProjectileSave(GameTestHelper h) {
+    public static void bowProjectileSaveAndWeaponSwitchingNeverCreateKillExperience(GameTestHelper h) {
         ServerPlayer player = player(h);
         try {
             ItemStack bow = new ItemStack(Items.BOW), sword = new ItemStack(Items.IRON_SWORD);
@@ -371,28 +414,28 @@ public final class GearProgressionSourcesGameTests {
             player.setItemInHand(InteractionHand.MAIN_HAND, sword);
             player.getInventory().setItem(7, bow);
             victim(h, player, EntityType.COW, 20F).hurt(player.damageSources().arrow(restored, player), 100F);
-            h.assertValueEqual(xp(bow), 20_000L, "The reloaded arrow resolves the original bow in a different inventory slot");
+            h.assertValueEqual(xp(bow), 0L, "The reloaded arrow grants no bow experience after switching inventory slots");
             h.assertValueEqual(xp(sword), 0L, "Switching to a sword cannot steal bow experience");
             player.getInventory().setItem(6, bow.copy());
             victim(h, player, EntityType.COW, 20F).hurt(player.damageSources().arrow(restored, player), 100F);
-            h.assertValueEqual(xp(bow), 20_000L, "Ambiguous cloned weapon identities cannot duplicate a reward");
+            h.assertValueEqual(xp(bow), 0L, "Cloned weapon identities cannot create a projectile kill reward");
             restored.discard();
         } finally { close(player); }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void thrownTridentKeepsExperienceInTheRecoverableStack(GameTestHelper h) {
+    public static void thrownTridentKeepsItsRecoverableStackWithoutTrainingOnKills(GameTestHelper h) {
         ServerPlayer player = player(h);
         try {
             ItemStack original = new ItemStack(Items.TRIDENT);
             ThrownTrident trident = new ThrownTrident(h.getLevel(), player, original);
             victim(h, player, EntityType.COW, 20F).hurt(player.damageSources().trident(trident, player), 100F);
-            h.assertValueEqual(xp(trident.getPickupItemStackOrigin()), 20_000L, "Thrown experience updates the real recoverable trident");
+            h.assertValueEqual(xp(trident.getPickupItemStackOrigin()), 0L, "A thrown kill does not train the recoverable trident");
             CompoundTag saved = trident.saveWithoutId(new CompoundTag());
             ThrownTrident restored = new ThrownTrident(EntityType.TRIDENT, h.getLevel());
             restored.load(saved);
-            h.assertValueEqual(xp(restored.getPickupItemStackOrigin()), 20_000L, "The recoverable trident retains progression after saving");
+            h.assertValueEqual(xp(restored.getPickupItemStackOrigin()), 0L, "Reloading the recoverable trident does not manufacture experience");
             trident.discard();
             restored.discard();
         } finally { close(player); }
@@ -417,7 +460,7 @@ public final class GearProgressionSourcesGameTests {
         restored.setOnGround(true);
         restored.tick();
         h.assertTrue(h.getLevel().getBlockState(landing).is(Blocks.SAND), "The reloaded falling sand really lands");
-        h.assertTrue(PlayerPlacedBlocks.isPlaced(h.getLevel(), landing), "The landed player sand cannot be laundered into natural mining experience");
+        h.assertTrue(PlayerPlacedBlocks.isPlaced(h.getLevel(), landing), "Landing preserves player provenance for geology and source ore-drop rules");
         restored.discard();
         h.succeed();
     }
@@ -441,7 +484,7 @@ public final class GearProgressionSourcesGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void simplySwordsSpearKillProgressionSurvivesItsNativeWearAndSaveSynchronization(GameTestHelper h) throws ReflectiveOperationException {
+    public static void simplySwordsThrownSpearKeepsNativeWearAndSaveSynchronizationWithoutKillExperience(GameTestHelper h) throws ReflectiveOperationException {
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
         ServerPlayer player = player(h);
         try {
@@ -455,12 +498,12 @@ public final class GearProgressionSourcesGameTests {
             hit.setAccessible(true);
             hit.invoke(spear, new EntityHitResult(zombie));
             h.assertTrue(zombie.isDeadOrDying(), "The native approved spear hit actually kills the target");
-            h.assertValueEqual(xp(spearStack), 20_000L, "The kill trains the original spear rather than its synchronized visual copy");
-            h.assertValueEqual(xp(spear.getPickupItemStackOrigin()), 20_000L, "Subsequent native durability synchronization retains the kill reward");
+            h.assertValueEqual(xp(spearStack), 0L, "Thrown spear kills do not train the original item");
+            h.assertValueEqual(xp(spear.getPickupItemStackOrigin()), 0L, "Native durability synchronization cannot add a projectile kill reward");
             CompoundTag saved = spear.saveWithoutId(new CompoundTag());
             AbstractArrow restored = (AbstractArrow)spear.getType().create(h.getLevel());
             restored.load(saved);
-            h.assertValueEqual(xp(restored.getPickupItemStackOrigin()), 20_000L, "The actual recoverable spear retains progression across reload");
+            h.assertValueEqual(xp(restored.getPickupItemStackOrigin()), 0L, "The recoverable spear retains the non-training result across reload");
             spear.discard();
             restored.discard();
         } finally { close(player); }

@@ -115,11 +115,15 @@ public final class GearProgression {
     public static boolean canMine(ItemStack stack, BlockState state, Level level, BlockPos pos) {
         if (maxLevel(stack) == 0 || SimplySwordsCompat.definition(stack) != null) return false;
         ToolFamily family = R196EnchantmentCatalog.family(stack);
-        return family != null && switch (family) {
-            case PICKAXE, AXE, HATCHET, BATTLE_AXE, WAR_HAMMER, SHOVEL, MATTOCK, SHEARS, SCYTHE, KNIFE, DAGGER ->
-                    stack.getDestroySpeed(state) > 1F && (!state.requiresCorrectToolForDrops() || stack.isCorrectToolForDrops(state));
-            default -> false;
-        };
+        return family != null && family != ToolFamily.SWORD && family != ToolFamily.DAGGER && family != ToolFamily.KNIFE
+                && stack.getDestroySpeed(state) > 1F && (!state.requiresCorrectToolForDrops() || stack.isCorrectToolForDrops(state));
+    }
+
+    public static long nextLevelExperienceMillis(ItemStack stack, int level) {
+        int armorSlot = stack.getItem() instanceof ArmorItem armor ? switch (armor.getType()) {
+            case HELMET -> 0; case CHESTPLATE -> 1; case LEGGINGS -> 2; case BOOTS -> 3; default -> -1;
+        } : -1;
+        return GearProgressionRules.nextLevelExperienceMillis(material(stack), level, GearModifier.isWeapon(stack), armorSlot);
     }
 
     /** The book-support leather exception is shared here without changing the enchanting table. */
@@ -133,7 +137,8 @@ public final class GearProgression {
                 .orElse(false) && isArmor(stack) && "leather".equals(material(stack));
     }
 
-    public static List<Holder<Enchantment>> candidates(ItemStack stack, Level level) {
+    /** Historical enchantment-affix introspection; these entries are never rolled by new upgrades. */
+    public static List<Holder<Enchantment>> legacyCandidates(ItemStack stack, Level level) {
         List<Holder<Enchantment>> candidates = new ArrayList<>();
         level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).holders()
                 .filter(holder -> supportsAffix(stack, holder) && EnchantmentSources.isSupported(holder)
@@ -144,6 +149,12 @@ public final class GearProgression {
         return candidates;
     }
 
+    public static List<GearModifier> modifierCandidates(ItemStack stack) {
+        return GearModifier.candidates(stack, state(stack).affixes());
+    }
+
+    public static List<GearModifier> candidates(ItemStack stack, Level level) { return modifierCandidates(stack); }
+
     public static GearAffixRules.Definition affixDefinition(ItemStack stack, Holder<Enchantment> enchantment) {
         var definition = io.github.ningmeng123.mite.api.MiteExtensions.policy().affixDefinition(stack,enchantment,GearAffixRules.definition(enchantment.unwrapKey().orElseThrow().location().toString(), isArmor(stack),
                 enchantment.value().getWeight(), enchantment.value().getMaxLevel()));
@@ -153,26 +164,29 @@ public final class GearProgression {
 
     public static void award(ItemStack stack, long experienceMillis, ServerPlayer player) {
         if (!canGain(player) || experienceMillis <= 0 || stack.isEmpty()) return;
+        experienceMillis = Math.min(Integer.MAX_VALUE, experienceMillis / GearProgressionRules.SCALE) * GearProgressionRules.SCALE;
         experienceMillis = Math.max(0L,io.github.ningmeng123.mite.api.MiteExtensions.policy().gearExperience(stack,experienceMillis));
+        experienceMillis = experienceMillis / GearProgressionRules.SCALE * GearProgressionRules.SCALE;
+        if (isArmor(stack)) experienceMillis = Math.min(Integer.MAX_VALUE, experienceMillis / GearProgressionRules.SCALE * 2L)
+                * GearProgressionRules.SCALE;
         if (experienceMillis==0) return;
         int cap = maxLevel(stack);
         GearProgress before = state(stack);
         if (cap == 0 || before.level() >= cap) return;
-        List<Holder<Enchantment>> candidates = candidates(stack, player.level());
         UUID id = ensureId(stack);
         int level = before.level();
         long experience = GearProgressionRules.saturatedAdd(before.experienceMillis(), experienceMillis);
         var affixes = new HashMap<>(before.affixes());
-        while (level < cap && experience >= GearProgressionRules.nextLevelExperienceMillis(level)) {
-            experience -= GearProgressionRules.nextLevelExperienceMillis(level);
+        if (experience >= nextLevelExperienceMillis(stack, level)) {
+            experience = 0;
             level++;
-            if (candidates.isEmpty() || !GearAffixRules.grantsAffix(level, player.getRandom().nextInt(100))) continue;
-            int[] weights = candidates.stream().mapToInt(holder -> affixDefinition(stack, holder).weight()).toArray();
-            Holder<Enchantment> selected = candidates.get(GearAffixRules.selectIndex(weights,
-                    player.getRandom().nextInt(GearAffixRules.totalWeight(weights))));
-            ResourceLocation key = selected.unwrapKey().orElseThrow().location();
-            affixes.merge(key, 1, Integer::sum);
-            if (affixes.get(key) >= affixDefinition(stack, selected).maximumLevel()) candidates.remove(selected);
+            List<GearModifier> candidates = GearModifier.candidates(stack, affixes);
+            if (!candidates.isEmpty()) {
+                int[] weights = candidates.stream().mapToInt(GearModifier::weight).toArray();
+                GearModifier selected = candidates.get(GearAffixRules.selectIndex(weights,
+                        player.getRandom().nextInt(GearAffixRules.totalWeight(weights))));
+                affixes.merge(selected.id(), 1, Integer::sum);
+            }
         }
         if (level >= cap) experience = 0;
         stack.set(PROGRESS.get(), new GearProgress(id, level, experience, affixes, 1));
@@ -185,8 +199,10 @@ public final class GearProgression {
     public static void preserve(ItemStack source, ItemStack result) {
         io.github.ningmeng123.mite.combat.ShieldGuard.preserve(source, result);
         if (!source.isEmpty() && !result.isEmpty()) io.github.ningmeng123.mite.api.MiteExtensions.preserve(source, result);
-        if (source.isEmpty() || result.isEmpty() || maxLevel(result) == 0) return;
+        if (source.isEmpty() || result.isEmpty()) return;
         GearProgress progress = source.get(PROGRESS.get());
+        // An optional extension can lower a saved item's cap to zero; maintenance still keeps its history.
+        if (progress == null && maxLevel(result) == 0) return;
         if (progress == null) result.remove(PROGRESS.get()); else result.set(PROGRESS.get(), progress);
     }
 

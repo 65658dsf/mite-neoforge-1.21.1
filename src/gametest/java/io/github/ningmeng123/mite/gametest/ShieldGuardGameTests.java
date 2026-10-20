@@ -39,7 +39,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
-/** Real successful blocks retain native damage/wear/experience before cumulative guard failure. @author NingMeng123 */
+/** Real successful blocks retain damage prevention and wear without granting growth before guard failure. @author NingMeng123 */
 @GameTestHolder("mite_gear")
 @PrefixGameTestTemplate(false)
 public final class ShieldGuardGameTests {
@@ -232,12 +232,12 @@ public final class ShieldGuardGameTests {
             helper.assertTrue(session.defender.isUsingItem() && !ShieldGuard.disabled(session.defender),
                     "A twenty-four-damage first block does not disable the shield early");
             helper.assertValueEqual(session.shield.getDamageValue(), 25, "The large accepted hit keeps native1+floor24 wear");
-            helper.assertValueEqual(session.experience(), 48_000L, "Every blocked point grants two shield experience");
+            helper.assertValueEqual(session.experience(), 0L, "A large successful shield block does not grant growth experience");
             session.hit(1F);
             helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
                     "Exactly twenty-five cumulative damage forces the shield down even with only two blocks");
             helper.assertValueEqual(session.defender.getHealth(), health, "The boundary-crossing hit is still fully blocked");
-            helper.assertValueEqual(session.experience(), 50_000L, "The final one-point block retains its doubled experience");
+            helper.assertValueEqual(session.experience(), 0L, "The boundary-crossing block also grants no growth experience");
             helper.assertValueEqual(session.shield.getDamageValue(), 25, "A sub-three terminal hit retains native zero wear");
             state(helper, session.shield, 0D, 0, "Guard pressure resets when the forced cooldown begins");
         }
@@ -245,13 +245,13 @@ public final class ShieldGuardGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void terminalDamagingBlockKeepsItsNativeDurabilityAndExperienceBeforeTheShieldLowers(GameTestHelper helper) {
+    public static void terminalDamagingBlockKeepsNativeDurabilityWithoutTrainingBeforeTheShieldLowers(GameTestHelper helper) {
         try (Session session = new Session(helper, true)) {
             session.shield.set(ShieldGuard.GUARD.get(), new ShieldGuard.State(24D, 1));
             float health = session.defender.getHealth();
             session.hit(4F);
             helper.assertValueEqual(session.shield.getDamageValue(), 5, "The terminal hit spends its actual five durability points");
-            helper.assertValueEqual(session.experience(), 8_000L, "The terminal hit earns its complete doubled blocked-damage reward");
+            helper.assertValueEqual(session.experience(), 0L, "The terminal damaging block retains its native wear without granting growth experience");
             helper.assertValueEqual(session.defender.getHealth(), health, "Forced lowering happens after the accepted health block");
             helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(), "The terminal hit then starts cooldown");
         }
@@ -278,7 +278,7 @@ public final class ShieldGuardGameTests {
                     "The third one-point block disables both real survival players and shield-bearing monsters");
             helper.assertValueEqual(session.shield.getDamageValue(), 0, "All three small hits retain the native zero-durability rule");
             helper.assertValueEqual(session.defender.getHealth(), health, "The third small hit is still blocked");
-            if (player) helper.assertValueEqual(session.experience(), 6_000L, "Small blocks still grant their complete doubled experience");
+            if (player) helper.assertValueEqual(session.experience(), 0L, "Repeated small blocks never train the shield");
         }
         helper.succeed();
     }
@@ -326,7 +326,7 @@ public final class ShieldGuardGameTests {
             finally { NeoForge.EVENT_BUS.unregister(partial); }
             helper.assertTrue(seen[2] && session.defender.isAlive(), "The real partial event approves two blocked points and its unblocked remainder is nonlethal");
             state(helper, session.shield, 6D, 2, "The accepted partial block adds only two actual blocked points and one block");
-            helper.assertValueEqual(session.experience(), experience + 4_000L, "The partial block rewards only its approved two points");
+            helper.assertValueEqual(session.experience(), experience, "An approved partial block changes guard pressure without granting growth experience");
         }
         helper.succeed();
     }

@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.rules;
 
 import java.util.Objects;
 import java.util.function.IntUnaryOperator;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 /** R196 durability arithmetic without Minecraft dependencies. @author NingMeng123 */
@@ -166,6 +167,12 @@ public final class EquipmentDurabilityRules {
 
     /** Empty slots consume a random portion too; the four-slot order is boots, legs, chest, head. */
     public static int[] distributeArmorWear(float amount, boolean[] occupied, IntUnaryOperator nextInt) {
+        return distributeArmorWear(amount, occupied, nextInt, (slot, portion) -> {});
+    }
+
+    /** Observe each occupied random selection without changing its draw sequence or aggregated wear. */
+    public static int[] distributeArmorWear(float amount, boolean[] occupied, IntUnaryOperator nextInt,
+            BiConsumer<Integer, Integer> selectedPortion) {
         if (occupied.length != 4) throw new IllegalArgumentException("Four armor slots required");
         int[] result = new int[4];
         int count = 0;
@@ -177,7 +184,10 @@ public final class EquipmentDurabilityRules {
             if (slot < 0 || slot >= 4) throw new IllegalArgumentException("RNG slot outside bound");
             int portion = occupied[slot] && count == 1 ? remaining : nextInt.applyAsInt(remaining) + 1;
             if (portion < 1 || portion > remaining) throw new IllegalArgumentException("RNG portion outside bound");
-            if (occupied[slot]) result[slot] += portion;
+            if (occupied[slot]) {
+                result[slot] += portion;
+                selectedPortion.accept(slot, portion);
+            }
             remaining -= portion;
         }
         return result;

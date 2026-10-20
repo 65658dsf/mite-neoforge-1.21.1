@@ -1,65 +1,52 @@
 package io.github.ningmeng123.mite.progression;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
+import io.github.ningmeng123.mite.entity.MobKind;
+import io.github.ningmeng123.mite.entity.R196Mob;
+import io.github.ningmeng123.mite.mining.FunctionalBlockMining;
 import io.github.ningmeng123.mite.mining.MiningProgress;
-import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.WeakHashMap;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.damagesource.DamageContainer;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
+import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 
-/** Experience belongs to the actual completed server action and its original equipment. @author NingMeng123 */
+/** Source ITE experience belongs to effective tool actions, real primary melee and each accepted armor portion. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class GearProgressionEvents {
-    private static final String PROJECTILE_WEAPON = "mite:progression_weapon";
-    private static final String KILL_REWARDED = "mite:progression_kill_rewarded";
-    private static final String LAST_PLAYER = "mite:progression_last_player";
-    private static final String LAST_WEAPON = "mite:progression_last_weapon";
-    private static final String LAST_PROJECTILE = "mite:progression_last_projectile";
-    private static final String LAST_TIME = "mite:progression_last_hit_time";
-    private static final EquipmentSlot[] ARMOR_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    private static final Map<DamageContainer, ArmorHit> ARMOR_HITS = new WeakHashMap<>();
     private static final ThreadLocal<MiningAction> MINING = new ThreadLocal<>();
+    private static final ThreadLocal<Boolean> SOURCE_ARMOR_ALLOCATION = new ThreadLocal<>();
 
-    private record ArmorHit(ServerPlayer player, List<ItemStack> armor, float damage) {}
     private static final class MiningAction {
         private final ServerPlayer player;
         private final BlockPos pos;
         private final ItemStack tool;
         private final BlockState state;
-        private final boolean placed;
         private final float hardness;
+        private final boolean portable;
         private boolean rewarded;
         private MiningAction(ServerPlayer player, BlockPos pos) {
             this.player = player;
             this.pos = pos.immutable();
             tool = player.getMainHandItem();
             state = player.serverLevel().getBlockState(pos);
-            placed = PlayerPlacedBlocks.isPlaced(player.level(), pos);
             hardness = MiningProgress.effectiveHardness(state, state.getDestroySpeed(player.level(), pos));
+            portable = FunctionalBlockMining.portable(player, state, player.level(), pos);
         }
     }
 
@@ -77,145 +64,80 @@ public final class GearProgressionEvents {
         MiningAction action = MINING.get();
         if (action == null || action.rewarded || action.player != player || !action.pos.equals(pos)) return;
         action.rewarded = true;
-        if (!canHarvest || action.placed || !GearProgression.canGain(player)
-                || !(action.hardness > 0F) || !GearProgression.canMine(action.tool, action.state, player.level(), pos)) return;
-        GearProgression.award(action.tool, GearProgressionRules.miningExperienceMillis(action.hardness,
-                SourceMiningRequirements.minimumHarvestLevel(action.state)), player);
+        if (!canHarvest || !GearProgression.canGain(player) || action.portable
+                || !(action.hardness > 0F) || !action.tool.isDamageableItem()
+                || !GearProgression.canMine(action.tool, action.state, player.level(), pos)) return;
+        GearProgression.award(action.tool, miningExperienceMillis(action.tool, action.state), player);
     }
 
-    /** Called after NeoForge has accepted every placement snapshot and restored committed item data. */
+    public static long miningExperienceMillis(ItemStack tool, BlockState state) {
+        ToolFamily family = R196EnchantmentCatalog.family(tool);
+        if (family == null) return 0L;
+        int points = switch (family) {
+            case SHOVEL -> 3;
+            case MATTOCK -> 2;
+            case SCYTHE -> 1;
+            case AXE, HATCHET, BATTLE_AXE -> state.is(BlockTags.LOGS) ? 2
+                    : Math.max(SourceBlockMaterialExperience.minimumHarvestLevel(state), 1);
+            case HOE -> state.getBlock() instanceof CropBlock crop && crop.isMaxAge(state) ? 8 : 0;
+            default -> SourceBlockMaterialExperience.minimumHarvestLevel(state);
+        };
+        return points * GearProgressionRules.SCALE;
+    }
+
+    /** Committed placement provenance remains useful to geology and source ore drops, not as a general XP ban. */
     public static void beforeCommittedUse(UseOnContext context, BlockPos pos, BlockState state, boolean blockItem) {
         if (context.getPlayer() != null && context.getLevel() instanceof ServerLevel
-                && blockItem && !state.isAir())
-            PlayerPlacedBlocks.set(context.getLevel(), pos, true);
+                && blockItem && !state.isAir()) PlayerPlacedBlocks.set(context.getLevel(), pos, true);
     }
 
     public static void afterCommittedUse(UseOnContext context, BlockPos pos, BlockState previous) {
         if (!(context.getPlayer() instanceof ServerPlayer player) || !GearProgression.canGain(player)
                 || previous.is(Blocks.FARMLAND) || !context.getLevel().getBlockState(pos).is(Blocks.FARMLAND)
                 || !GearProgression.canTill(context.getItemInHand())) return;
-        GearProgression.award(context.getItemInHand(), GearProgressionRules.TILL_EXPERIENCE_MILLIS, player);
+        GearProgression.award(context.getItemInHand(), GearProgressionRules.SCALE, player);
     }
 
-    public static void projectile(Projectile projectile, ItemStack weapon) {
-        UUID id = GearProgression.ensureId(weapon);
-        if (id != null) projectile.getPersistentData().putUUID(PROJECTILE_WEAPON, id);
+    /** The old bow/shield/projectile paths do not train equipment; retain this transport hook for binary callers. */
+    public static void projectile(Projectile projectile, ItemStack weapon) {}
+
+    /** Called from the primary melee transaction with the original attacking item and actual lost health. */
+    public static void melee(Player attacker, LivingEntity target, ItemStack weapon, float actualHealthLost) {
+        if (!(attacker instanceof ServerPlayer player) || !GearProgression.canGain(player)
+                || target instanceof Player || !(actualHealthLost > 0F) || !Float.isFinite(actualHealthLost)
+                || !GearModifier.isWeapon(weapon)) return;
+        ToolFamily family = R196EnchantmentCatalog.family(weapon);
+        int multiplier = target instanceof R196Mob mob && mob.miteKind() == MobKind.EARTH_ELEMENTAL
+                && (family == ToolFamily.AXE || family == ToolFamily.HATCHET || family == ToolFamily.BATTLE_AXE) ? 10 : 1;
+        int points = (int)Math.min(target.getMaxHealth(), actualHealthLost * multiplier);
+        GearProgression.award(weapon, points * GearProgressionRules.SCALE, player);
     }
 
+    /** In the reference timing, armor's health-loss result is still zero and clamps to one for each chosen portion. */
+    public static void armorPortion(Player wearer, DamageSource source, ItemStack armor) {
+        if (!(wearer instanceof ServerPlayer player) || !GearProgression.canGain(player)
+                || source == null || source.getEntity() == null || !GearProgression.isArmor(armor)) return;
+        GearProgression.award(armor, 2L * GearProgressionRules.SCALE, player);
+    }
+
+    /** Mark only our random-portion event; native mixed armor must still train every applicable slot. */
+    public static <T> T sourceArmorAllocation(Supplier<T> operation) {
+        Boolean previous = SOURCE_ARMOR_ALLOCATION.get();
+        SOURCE_ARMOR_ALLOCATION.set(true);
+        try { return operation.get(); }
+        finally {
+            if (previous == null) SOURCE_ARMOR_ALLOCATION.remove(); else SOURCE_ARMOR_ALLOCATION.set(previous);
+        }
+    }
+
+    /** Modern native armor follows once-per-slot allocation; our scoped source path reports exact portions itself. */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void killed(LivingDeathEvent event) {
-        if (event.isCanceled() || event.getEntity() instanceof Player
-                || event.getEntity().getPersistentData().getBoolean(KILL_REWARDED)
-                || !(event.getEntity().level() instanceof ServerLevel level)) return;
-        var direct = event.getSource().getDirectEntity();
-        ServerPlayer player;
-        ItemStack weapon;
-        ProgressionThrownWeapon thrown = null;
-        if (event.getSource().getEntity() instanceof ServerPlayer attacker) {
-            player = attacker;
-            weapon = sourceWeapon(player, direct);
-            if (direct instanceof ProgressionThrownWeapon carried) thrown = carried;
-        } else {
-            // Environmental finishes retain only the weapon still credited by vanilla.
-            // Another creature or a pet cannot borrow the player's previous weapon.
-            if (event.getSource().getEntity() != null || direct != null) return;
-            var data = event.getEntity().getPersistentData();
-            long age = level.getGameTime() - data.getLong(LAST_TIME);
-            if (!data.hasUUID(LAST_PLAYER) || !data.hasUUID(LAST_WEAPON) || age < 0 || age > 100) return;
-            player = level.getServer().getPlayerList().getPlayer(data.getUUID(LAST_PLAYER));
-            if (player == null || event.getEntity().getKillCredit() != player) return;
-            weapon = findWeapon(player, data.getUUID(LAST_WEAPON));
-            if (weapon.isEmpty() && data.hasUUID(LAST_PROJECTILE)) {
-                var projectile = level.getEntity(data.getUUID(LAST_PROJECTILE));
-                if (projectile instanceof ProgressionThrownWeapon carried) {
-                    thrown = carried;
-                    weapon = carried.mite$progressionWeapon();
-                } else if (projectile instanceof ThrownTrident trident) weapon = trident.getWeaponItem();
-                if (!data.getUUID(LAST_WEAPON).equals(GearProgression.id(weapon))) weapon = ItemStack.EMPTY;
-            }
-        }
-        if (!GearProgression.canGain(player) || !GearProgression.canKill(weapon)) return;
-        event.getEntity().getPersistentData().putBoolean(KILL_REWARDED, true);
-        GearProgression.award(weapon, GearProgressionRules.killExperienceMillis(event.getEntity().getMaxHealth()), player);
-        if (thrown != null) thrown.mite$syncProgressionWeapon();
-    }
-
-    private static ItemStack sourceWeapon(ServerPlayer player, net.minecraft.world.entity.Entity direct) {
-        if (direct instanceof ProgressionThrownWeapon carried) return carried.mite$progressionWeapon();
-        if (direct instanceof ThrownTrident trident) return trident.getWeaponItem();
-        if (direct instanceof Projectile projectile) {
-            if (projectile.getPersistentData().hasUUID(PROJECTILE_WEAPON))
-                return findWeapon(player, projectile.getPersistentData().getUUID(PROJECTILE_WEAPON));
-            else if (projectile instanceof AbstractArrow arrow && arrow.getWeaponItem() != null) {
-                UUID id = GearProgression.id(arrow.getWeaponItem());
-                if (id != null) return findWeapon(player, id);
-            }
-        } else if (direct == player) return player.getWeaponItem();
-        return ItemStack.EMPTY;
-    }
-
-    private static void rememberHit(LivingEntity victim, DamageContainer container) {
-        if (victim instanceof Player || !(container.getNewDamage() > 0F)
-                || !(container.getSource().getEntity() instanceof ServerPlayer player) || !GearProgression.canGain(player)) return;
-        var data = victim.getPersistentData();
-        ItemStack weapon = sourceWeapon(player, container.getSource().getDirectEntity());
-        if (!GearProgression.canKill(weapon)) {
-            data.remove(LAST_PLAYER);
-            data.remove(LAST_WEAPON);
-            data.remove(LAST_PROJECTILE);
-            data.remove(LAST_TIME);
-            return;
-        }
-        data.putUUID(LAST_PLAYER, player.getUUID());
-        data.putUUID(LAST_WEAPON, GearProgression.ensureId(weapon));
-        data.putLong(LAST_TIME, victim.level().getGameTime());
-        if (container.getSource().getDirectEntity() instanceof Projectile projectile)
-            data.putUUID(LAST_PROJECTILE, projectile.getUUID());
-        else data.remove(LAST_PROJECTILE);
-    }
-
-    private static ItemStack findWeapon(ServerPlayer player, UUID id) {
-        ItemStack found = ItemStack.EMPTY;
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack candidate = player.getInventory().getItem(slot);
-            if (!id.equals(GearProgression.id(candidate))) continue;
-            // Copied UUIDs are ambiguous: never duplicate an experience reward across cloned items.
-            if (!found.isEmpty()) return ItemStack.EMPTY;
-            found = candidate;
-        }
-        return found;
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void incoming(LivingIncomingDamageEvent event) {
-        if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer player) || !GearProgression.canGain(player)) return;
-        List<ItemStack> armor = new ArrayList<>();
-        for (EquipmentSlot slot : ARMOR_SLOTS) {
-            ItemStack stack = player.getItemBySlot(slot);
-            if (GearProgression.isArmor(stack) && GearProgression.maxLevel(stack) > 0) armor.add(stack);
-        }
-        if (armor.isEmpty()) return;
-        event.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) -> {
-            // This runs after shield/cooldown processing, before the armor reduction is subtracted.
-            float damage = container.getNewDamage();
-            if (Float.isFinite(damage) && damage > 0F) ARMOR_HITS.put(container, new ArmorHit(player, armor, damage));
-            return reduction;
+    public static void nativeArmor(ArmorHurtEvent event) {
+        if (event.isCanceled() || Boolean.TRUE.equals(SOURCE_ARMOR_ALLOCATION.get())
+                || !(event.getEntity() instanceof Player player)) return;
+        event.getArmorMap().values().forEach(entry -> {
+            if ((int)entry.newDamage > 0)
+                armorPortion(player, event.getDamageSource(), entry.armorItemStack);
         });
-    }
-
-    public static void damageCompleted(LivingEntity entity, DamageContainer container) {
-        rememberHit(entity, container);
-        ArmorHit hit = ARMOR_HITS.remove(container);
-        if (hit == null || hit.player() != entity || !GearProgression.canGain(hit.player())) return;
-        long total = GearProgressionRules.damageExperienceMillis(hit.damage());
-        long each = total / hit.armor().size(), remainder = total % hit.armor().size();
-        for (int index = 0; index < hit.armor().size(); index++)
-            GearProgression.award(hit.armor().get(index), each + (index < remainder ? 1 : 0), hit.player());
-    }
-
-    public static void shieldBlocked(LivingEntity entity, LivingShieldBlockEvent event) {
-        if (event.isCanceled() || !event.getBlocked() || !(entity instanceof ServerPlayer player)
-                || !GearProgression.canGain(player) || !GearProgression.isShield(entity.getUseItem())) return;
-        GearProgression.award(entity.getUseItem(), GearProgressionRules.shieldExperienceMillis(event.getBlockedDamage()), player);
     }
 }

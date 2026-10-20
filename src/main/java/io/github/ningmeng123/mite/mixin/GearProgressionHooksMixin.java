@@ -32,18 +32,11 @@ public abstract class GearProgressionHooksMixin {
         GearProgressionEvents.afterCommittedUse(context, pos, previous);
     }
 
-    @WrapMethod(method = "onLivingDamagePost")
-    private static void mite$completedArmorHit(LivingEntity entity, DamageContainer container, Operation<Void> original) {
-        original.call(entity, container);
-        GearProgressionEvents.damageCompleted(entity, container);
-    }
-
     @WrapMethod(method = "onDamageBlock")
     private static LivingShieldBlockEvent mite$completedShieldBlock(LivingEntity entity, DamageContainer container,
             boolean originalBlocked, Operation<LivingShieldBlockEvent> original) {
         LivingShieldBlockEvent result = original.call(entity, container, originalBlocked);
         ShieldGuard.accepted(entity, result);
-        GearProgressionEvents.shieldBlocked(entity, result);
         return result;
     }
 }

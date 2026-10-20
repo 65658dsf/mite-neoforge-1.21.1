@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.client;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.progression.GearProgression;
 import io.github.ningmeng123.mite.progression.GearProgressionRules;
+import io.github.ningmeng123.mite.progression.GearModifier;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import net.minecraft.ChatFormatting;
@@ -30,11 +31,13 @@ public final class GearProgressionTooltips {
         event.getToolTip().add(state.level() >= cap
                 ? Component.translatable("tooltip.mite.gear_max_level").withStyle(ChatFormatting.GOLD)
                 : Component.translatable("tooltip.mite.gear_experience", experience(state.experienceMillis()),
-                        experience(GearProgressionRules.nextLevelExperienceMillis(state.level()))).withStyle(ChatFormatting.GRAY));
+                        experience(GearProgression.nextLevelExperienceMillis(event.getItemStack(), state.level()))).withStyle(ChatFormatting.GRAY));
         if (state.affixes().isEmpty()) return;
         event.getToolTip().add(Component.translatable("tooltip.mite.gear_affixes").withStyle(ChatFormatting.DARK_AQUA));
         state.affixes().entrySet().stream().sorted(Comparator.comparing(entry -> entry.getKey().toString())).forEach(entry -> {
-            Component name = event.getEntity() == null ? Component.literal(entry.getKey().toString())
+            GearModifier modifier = GearModifier.fromId(entry.getKey());
+            Component name = modifier != null ? modifier.displayName()
+                    : event.getEntity() == null ? Component.literal(entry.getKey().toString())
                     : event.getEntity().level().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                             .getHolder(ResourceKey.create(Registries.ENCHANTMENT, entry.getKey()))
                             .map(holder -> holder.value().description()).orElse(Component.literal(entry.getKey().toString()));
