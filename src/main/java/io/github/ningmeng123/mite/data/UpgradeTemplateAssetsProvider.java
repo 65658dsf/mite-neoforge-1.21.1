@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.data;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 
-/** Vanilla template visuals and optional Simply Swords smithing routes. @author NingMeng123 */
+/** Custom template visuals and optional Simply Swords smithing routes. @author NingMeng123 */
 public final class UpgradeTemplateAssetsProvider implements DataProvider {
     private final Path output;
 
@@ -21,7 +22,7 @@ public final class UpgradeTemplateAssetsProvider implements DataProvider {
         List<CompletableFuture<?>> work = new ArrayList<>();
         JsonObject model = new JsonObject(), textures = new JsonObject();
         model.addProperty("parent", "minecraft:item/generated");
-        textures.addProperty("layer0", "minecraft:item/netherite_upgrade_smithing_template");
+        textures.addProperty("layer0", "mite:item/equipment_upgrade_smithing_template");
         model.add("textures", textures);
         save(work, cache, "assets/mite/models/item/equipment_upgrade_smithing_template.json", model);
         for (var route : MaterialUpgradeRecipes.optionalUpgrades()) {
@@ -36,6 +37,18 @@ public final class UpgradeTemplateAssetsProvider implements DataProvider {
             ResourceLocation id = ResourceLocation.parse(route.id());
             save(work, cache, "data/mite/recipe/" + id.getPath() + ".json", recipe);
             save(work, cache, "data/mite/advancement/recipes/combat/" + id.getPath() + ".json", advancement(route.id()));
+        }
+        // Keep native runic recipes craftable after their retired netherite bases disappear.
+        for (String family : SimplySwordsCompat.families()) {
+            JsonObject recipe = new JsonObject();
+            recipe.add("neoforge:conditions", conditions());
+            recipe.addProperty("type", "minecraft:smithing_transform");
+            recipe.add("template", ingredient("simplyswords:runic_tablet"));
+            recipe.add("base", ingredient("mite:" + SimplySwordsCompat.path("mithril", family)));
+            recipe.add("addition", ingredient("minecraft:diamond"));
+            JsonObject result = new JsonObject(); result.addProperty("id", "simplyswords:runic_" + family);
+            recipe.add("result", result);
+            save(work, cache, "data/simplyswords/recipe/runic_" + family + ".json", recipe);
         }
         return CompletableFuture.allOf(work.toArray(CompletableFuture[]::new));
     }

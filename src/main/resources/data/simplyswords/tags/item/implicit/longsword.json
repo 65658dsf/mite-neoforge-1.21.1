@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_longsword",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_longsword",
+      "required": false
+    }
   ]
 }

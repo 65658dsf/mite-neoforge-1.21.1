@@ -98,10 +98,6 @@
       "required": false
     },
     {
-      "id": "simplyswords:netherite_sai",
-      "required": false
-    },
-    {
       "id": "simplyswords:runic_sai",
       "required": false
     },

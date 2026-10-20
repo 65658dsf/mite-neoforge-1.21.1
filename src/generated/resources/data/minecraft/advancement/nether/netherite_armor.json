@@ -1,0 +1,46 @@
+{
+  "parent": "minecraft:nether/obtain_ancient_debris",
+  "criteria": {
+    "netherite_armor": {
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:mithril_helmet"
+          },
+          {
+            "items": "mite:mithril_chestplate"
+          },
+          {
+            "items": "mite:mithril_leggings"
+          },
+          {
+            "items": "mite:mithril_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "text": "获得一整套秘银盔甲"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "mite:mithril_chestplate"
+    },
+    "title": {
+      "text": "秘银全副武装"
+    }
+  },
+  "requirements": [
+    [
+      "netherite_armor"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}

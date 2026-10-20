@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_katana",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_katana",
+      "required": false
+    }
   ]
 }

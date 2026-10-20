@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_chakram",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_chakram",
+      "required": false
+    }
   ]
 }

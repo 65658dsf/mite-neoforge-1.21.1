@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "simplyswords"
+    }
+  ],
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:diamond"
+  },
+  "base": {
+    "item": "mite:simplyswords_mithril_chakram"
+  },
+  "result": {
+    "id": "simplyswords:runic_chakram"
+  },
+  "template": {
+    "item": "simplyswords:runic_tablet"
+  }
+}

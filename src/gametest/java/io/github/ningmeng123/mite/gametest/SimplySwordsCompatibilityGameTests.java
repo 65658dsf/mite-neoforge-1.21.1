@@ -4,7 +4,9 @@ import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.crafting.CraftingQuality;
 import io.github.ningmeng123.mite.crafting.MaterialAnvilRules;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
+import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import io.github.ningmeng123.mite.registry.MiteCreativeTabs;
 import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
@@ -22,11 +24,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -37,6 +41,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.SmithingRecipeInput;
+import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.NeoForge;
@@ -145,12 +151,48 @@ public final class SimplySwordsCompatibilityGameTests {
         assertNative(h, "iron_longsword", 8F, ToolFamily.SWORD);
         assertNative(h, "sword_on_a_stick", .5F, ToolFamily.SWORD);
         assertNative(h, "diamond_longsword", 16F, ToolFamily.SWORD);
-        assertNative(h, "netherite_longsword", 32F, ToolFamily.SWORD);
         assertNative(h, "runic_longsword", 32F, ToolFamily.SWORD);
         assertNative(h, "soulrender", 64F, ToolFamily.SCYTHE);
         assertNative(h, "magiscythe", 64F, ToolFamily.SCYTHE);
         assertNative(h, "molten_edge", 64F, ToolFamily.BATTLE_AXE);
         assertNative(h, "hearthflame", 64F, ToolFamily.WAR_HAMMER);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "simplyswords_compat")
+    public static void runicUpgradesUseMithrilWhileOrdinaryNetheriteWeaponsRemainRetired(GameTestHelper h) {
+        if (absent(h)) return;
+        ItemStack tablet = new ItemStack(BuiltInRegistries.ITEM.get(id("simplyswords", "runic_tablet")));
+        h.assertFalse(tablet.isEmpty(), "The native runic tablet remains available");
+        for (String family : SimplySwordsCompat.families()) {
+            ItemStack netherite = new ItemStack(SimplySwordsCompat.weapon("netherite", family));
+            ItemStack runic = new ItemStack(SimplySwordsCompat.weapon("runic", family));
+            h.assertTrue(RemovedDiamondEquipment.isRemoved(netherite), "Every ordinary netherite weapon is retired: " + family);
+            assertRetiredTags(h, netherite, family);
+            h.assertFalse(RemovedDiamondEquipment.isRemoved(runic), "Runic weapons retain their own progression: " + family);
+            h.assertTrue(ItemStack.parse(h.getLevel().registryAccess(), netherite.save(h.getLevel().registryAccess()))
+                    .map(ItemStack::isEmpty).orElse(true), "Saved ordinary netherite weapons cannot return: " + family);
+            h.assertTrue(ItemStack.matches(runic, ItemStack.parse(h.getLevel().registryAccess(), runic.save(h.getLevel().registryAccess()))
+                    .orElse(ItemStack.EMPTY)), "Saved runic weapons remain available: " + family);
+            var holder = h.getLevel().getRecipeManager().byKey(id("simplyswords", "runic_" + family)).orElseThrow();
+            h.assertTrue(holder.value() instanceof SmithingTransformRecipe, "Native runic upgrade retains smithing: " + family);
+            var recipe = (SmithingTransformRecipe)holder.value();
+            ItemStack mithril = new ItemStack(SimplySwordsCompat.weapon("mithril", family));
+            SmithingRecipeInput input = new SmithingRecipeInput(tablet, mithril, new ItemStack(Items.DIAMOND));
+            h.assertTrue(recipe.matches(input, h.getLevel()), "Mithril weapon, tablet and diamond unlock runic progression: " + family);
+            h.assertTrue(recipe.assemble(input, h.getLevel().registryAccess()).is(runic.getItem()),
+                    "Each mithril family upgrades to the matching native runic weapon: " + family);
+            h.assertFalse(recipe.matches(new SmithingRecipeInput(tablet, netherite, new ItemStack(Items.DIAMOND)), h.getLevel()),
+                    "The runic route no longer requires retired netherite: " + family);
+            h.assertFalse(recipe.matches(new SmithingRecipeInput(tablet,
+                    new ItemStack(SimplySwordsCompat.weapon("iron", family)), new ItemStack(Items.DIAMOND)), h.getLevel()),
+                    "Low-tier weapons cannot skip the mithril prerequisite: " + family);
+        }
+        for (String path : List.of("soulrender", "magiscythe", "hearthflame")) {
+            ItemStack unique = new ItemStack(BuiltInRegistries.ITEM.get(id("simplyswords", path)));
+            h.assertFalse(unique.isEmpty() || RemovedDiamondEquipment.isRemoved(unique),
+                    "Unique weapons sharing a native netherite tier remain available: " + path);
+        }
         h.succeed();
     }
 
@@ -261,9 +303,12 @@ public final class SimplySwordsCompatibilityGameTests {
     public static void loadedRecipesCraftNinetyWeaponsAndLeaveRustedIronAsLoot(GameTestHelper h) {
         Map<Item, Integer> recipes = new HashMap<>();
         for (var holder : h.getLevel().getRecipeManager().getRecipes()) {
-            if (holder.value().getType() != net.minecraft.world.item.crafting.RecipeType.CRAFTING) continue;
             ItemStack output = holder.value().getResultItem(h.getLevel().registryAccess());
             if (output.isEmpty()) continue;
+            ResourceLocation outputId = BuiltInRegistries.ITEM.getKey(output.getItem());
+            h.assertFalse(outputId.getNamespace().equals("simplyswords") && outputId.getPath().startsWith("netherite_"),
+                    "No loaded crafting or smithing recipe produces retired Simply Swords netherite: " + holder.id());
+            if (holder.value().getType() != net.minecraft.world.item.crafting.RecipeType.CRAFTING) continue;
             var definition = SimplySwordsCompat.definition(output);
             if (definition == null || !definition.added()) continue;
             h.assertTrue(holder.value() instanceof ShapedRecipe, "Added weapons use real ordinary crafting recipes");
@@ -288,19 +333,42 @@ public final class SimplySwordsCompatibilityGameTests {
     @GameTest(template = "empty", batch = "simplyswords_compat")
     public static void addedWeaponsAppearInCombatSearchAndEnchantingTags(GameTestHelper h) {
         if (absent(h)) return;
-        CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(), false, h.getLevel().registryAccess());
-        var combat = BuiltInRegistries.CREATIVE_MODE_TAB.getOrThrow(MiteCreativeTabs.Group.COMBAT.key());
-        var search = CreativeModeTabs.searchTab();
-        for (String material : ADDED_MATERIALS) for (String family : SimplySwordsCompat.families()) {
-            Item weapon = SimplySwordsCompat.weapon(material, family);
-            ItemStack stack = new ItemStack(weapon);
-            h.assertTrue(combat.getDisplayItems().stream().anyMatch(entry -> entry.is(weapon)), "New weapon appears in MITE Combat");
-            h.assertTrue(search.getDisplayItems().stream().anyMatch(entry -> entry.is(weapon)), "New weapon appears in global creative search");
-            h.assertTrue(stack.is(ItemTags.SWORDS), "Sword tag includes the actual added weapon");
-            h.assertTrue(stack.is(ItemTags.SHARP_WEAPON_ENCHANTABLE) && stack.is(ItemTags.DURABILITY_ENCHANTABLE),
-                    "Actual enchantment eligibility includes damage and durability enchantments");
+        for (boolean permissions : new boolean[]{false, true}) {
+            CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(), permissions, h.getLevel().registryAccess());
+            var combat = BuiltInRegistries.CREATIVE_MODE_TAB.getOrThrow(MiteCreativeTabs.Group.COMBAT.key());
+            var search = CreativeModeTabs.searchTab();
+            for (String material : ADDED_MATERIALS) for (String family : SimplySwordsCompat.families()) {
+                Item weapon = SimplySwordsCompat.weapon(material, family);
+                ItemStack stack = new ItemStack(weapon);
+                h.assertTrue(combat.getDisplayItems().stream().anyMatch(entry -> entry.is(weapon)), "New weapon appears in MITE Combat");
+                h.assertTrue(search.getDisplayItems().stream().anyMatch(entry -> entry.is(weapon)), "New weapon appears in global creative search");
+                h.assertTrue(stack.is(ItemTags.SWORDS), "Sword tag includes the actual added weapon");
+                h.assertTrue(stack.is(ItemTags.SHARP_WEAPON_ENCHANTABLE) && stack.is(ItemTags.DURABILITY_ENCHANTABLE),
+                        "Actual enchantment eligibility includes damage and durability enchantments");
+            }
+            for (var tab : CreativeModeTabs.allTabs()) for (String family : SimplySwordsCompat.families()) {
+                Item retired = SimplySwordsCompat.weapon("netherite", family);
+                h.assertTrue(tab.getDisplayItems().stream().noneMatch(entry -> entry.is(retired))
+                                && tab.getSearchTabDisplayItems().stream().noneMatch(entry -> entry.is(retired)),
+                        "Every creative category and search excludes retired Simply Swords netherite: " + family);
+            }
         }
         h.succeed();
+    }
+
+    private static void assertRetiredTags(GameTestHelper h, ItemStack stack, String family) {
+        for (var tag : List.of(ItemTags.SWORDS, ItemTags.AXES, ItemTags.PICKAXES, ItemTags.SHOVELS, ItemTags.HOES,
+                ItemTags.HEAD_ARMOR, ItemTags.CHEST_ARMOR, ItemTags.LEG_ARMOR, ItemTags.FOOT_ARMOR,
+                ItemTags.TRIMMABLE_ARMOR, ItemTags.HEAD_ARMOR_ENCHANTABLE, ItemTags.CHEST_ARMOR_ENCHANTABLE,
+                ItemTags.LEG_ARMOR_ENCHANTABLE, ItemTags.FOOT_ARMOR_ENCHANTABLE, ItemTags.ARMOR_ENCHANTABLE,
+                ItemTags.SWORD_ENCHANTABLE, ItemTags.FIRE_ASPECT_ENCHANTABLE, ItemTags.SHARP_WEAPON_ENCHANTABLE,
+                ItemTags.WEAPON_ENCHANTABLE, ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE,
+                ItemTags.DURABILITY_ENCHANTABLE, ItemTags.EQUIPPABLE_ENCHANTABLE, ItemTags.VANISHING_ENCHANTABLE))
+            h.assertFalse(stack.is(tag), "Retired Simply Swords netherite " + family + " is absent from " + tag.location());
+        for (var definition : R196EnchantmentCatalog.definitions()) {
+            var tag = TagKey.create(Registries.ITEM, id("mite", "enchantable/" + definition.id()));
+            h.assertFalse(stack.is(tag), "Retired Simply Swords netherite " + family + " is absent from source support " + definition.id());
+        }
     }
 
     private static boolean absent(GameTestHelper h) {

@@ -40,6 +40,7 @@ FAMILIES = {
     "scythe": ("Scythe", "战镰"),
     "halberd": ("Halberd", "戟"),
 }
+RETIRED_NATIVE_IDS = {f"simplyswords:netherite_{family}" for family in FAMILIES}
 MATERIALS = {
     "rusted_iron": ("Rusted Iron", "锈铁"),
     "copper": ("Copper", "铜"),
@@ -170,8 +171,11 @@ def preview_sheet(source: dict[str, Image.Image], rendered: dict[tuple[str,str],
     return image
 
 
-def optional(ids: list[str]) -> dict:
-    return {"replace": False, "values": [{"id": item_id, "required": False} for item_id in ids]}
+def optional(ids: list[str], removed: set[str] | None = None) -> dict:
+    result = {"replace": False, "values": [{"id": item_id, "required": False} for item_id in ids]}
+    if removed:
+        result["remove"] = [{"id": item_id, "required": False} for item_id in sorted(removed)]
+    return result
 
 
 def native_weapons(archive: zipfile.ZipFile) -> list[str]:
@@ -198,7 +202,7 @@ def native_weapons(archive: zipfile.ZipFile) -> list[str]:
     for location in archive.namelist():
         if location.startswith("data/simplyswords/weapon_attributes/") and location.count("/") == 3 and location.endswith(".json"):
             found.add("simplyswords:" + Path(location).stem)
-    return sorted(found)
+    return sorted(found - RETIRED_NATIVE_IDS)
 
 
 def native_family(item_id: str) -> str:
@@ -314,18 +318,23 @@ def main() -> None:
         # Explicit optional entries avoid missing-registry errors in a MITE-only
         # installation. Upstream sword/enchantable tag unions then see these too.
         for tag in ("swords", "tools", "tools/melee_weapon"):
-            put(f"data/c/tags/item/{tag}.json", optional(ids))
+            put(f"data/c/tags/item/{tag}.json", optional(ids, RETIRED_NATIVE_IDS))
         put("data/mite/tags/item/simplyswords_weapons.json", optional(ids))
         put("data/mite/tags/item/simplyswords/two_handed.json", optional(sorted(two_handed_ids)))
-        put("data/simplyswords/tags/item/swords.json", optional(ids))
-        put("data/simplyswords/tags/item/spears.json", optional([item for item in ids if item.endswith("_spear")]))
+        put("data/simplyswords/tags/item/swords.json", optional(ids, RETIRED_NATIVE_IDS))
+        put("data/simplyswords/tags/item/netherite_gear.json", optional([], RETIRED_NATIVE_IDS))
+        put("data/simplyswords/tags/item/spears.json", optional([item for item in ids if item.endswith("_spear")],
+                {"simplyswords:netherite_spear"}))
         for family in FAMILIES:
-            put(f"data/simplyswords/tags/item/implicit/{family}.json", optional([item for item in ids if item.endswith("_" + family)]))
+            put(f"data/simplyswords/tags/item/implicit/{family}.json", optional(
+                [item for item in ids if item.endswith("_" + family)], {f"simplyswords:netherite_{family}"}))
         for weight in ("light", "medium", "heavy"):
             upstream = json.loads(archive.read(f"data/simplyswords/tags/item/{weight}_weapons.json"))
             iron_ids = {value for value in upstream["values"] if isinstance(value, str) and value.startswith("simplyswords:iron_")}
             families = {value.removeprefix("simplyswords:iron_") for value in iron_ids}
-            put(f"data/simplyswords/tags/item/{weight}_weapons.json", optional([item for item in ids if item.split("_")[-1] in families]))
+            put(f"data/simplyswords/tags/item/{weight}_weapons.json", optional(
+                [item for item in ids if item.split("_")[-1] in families],
+                {f"simplyswords:netherite_{family}" for family in families}))
 
         # The source enchantments replace vanilla support tags with exact source
         # families. Keep this optional union stable whether runData has SS or not.
@@ -374,8 +383,10 @@ def main() -> None:
             "Rusted iron weapons are loot equipment and have no crafting recipes.",
             "Recipe ingot and nugget costs match the original iron weapon recipe.",
             "Weapon models are used only when Simply Swords is loaded; recipes have a NeoForge mod-loaded condition.",
+            "Native netherite weapons are retired; optional tag removals preserve all other native weapon materials and unique weapons.",
         ],
         "optional_native_weapon_ids": len(native_ids),
+        "retired_native_weapon_ids": sorted(RETIRED_NATIVE_IDS),
         "items": entries,
     })
 

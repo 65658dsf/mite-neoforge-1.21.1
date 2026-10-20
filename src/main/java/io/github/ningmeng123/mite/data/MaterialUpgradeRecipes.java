@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.data;
 
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
+import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteRangedItems;
 import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.registry.MiteTools;
@@ -17,7 +18,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorItem;
@@ -93,8 +93,10 @@ public final class MaterialUpgradeRecipes {
 
     public static void addRecipes(RecipeOutput output) {
         Item template = MiteUpgradeTemplates.UPGRADE_TEMPLATE.get();
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, template)
-                .requires(Items.PAPER).requires(Items.STONE).requires(Items.IRON_INGOT).requires(Items.DIAMOND)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, template)
+                .pattern("CIC").pattern("GDG").pattern("CIC")
+                .define('C', Ingredient.of(Items.COPPER_INGOT, MiteMaterials.SILVER_INGOT.get())).define('I', Items.IRON_INGOT)
+                .define('G', Items.GOLD_INGOT).define('D', Items.DIAMOND)
                 .unlockedBy("has_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(Items.IRON_INGOT))
                 .save(output, ResourceLocation.parse("mite:equipment_upgrade_smithing_template"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, template, 2)

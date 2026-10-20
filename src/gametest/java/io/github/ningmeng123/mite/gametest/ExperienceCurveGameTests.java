@@ -93,7 +93,7 @@ public final class ExperienceCurveGameTests {
     public static void enchantingSpendsLevelsWithoutRestoringOldTotal(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.giveExperiencePoints(493);
-        player.onEnchantmentPerformed(new ItemStack(Items.NETHERITE_SWORD), 3);
+        player.onEnchantmentPerformed(new ItemStack(Items.IRON_SWORD), 3);
         assertExperience(helper, player, 237, 5, 37, 70, "Enchanting spends three levels and retains the old proportion");
         player.giveExperienceLevels(-1);
         assertExperience(helper, player, 171, 4, 31, 60, "The level API used by anvils also spends the canonical total");
@@ -102,9 +102,9 @@ public final class ExperienceCurveGameTests {
 
         Player creative = helper.makeMockPlayer(GameType.CREATIVE);
         PlayerExperience.setTotal(creative, -1);
-        creative.onEnchantmentPerformed(new ItemStack(Items.NETHERITE_SWORD), 0);
+        creative.onEnchantmentPerformed(new ItemStack(Items.IRON_SWORD), 0);
         assertExperience(helper, creative, -1, -1, 19, 20, "Creative enchanting must not clear an existing debt");
-        creative.onEnchantmentPerformed(new ItemStack(Items.NETHERITE_SWORD), 1);
+        creative.onEnchantmentPerformed(new ItemStack(Items.IRON_SWORD), 1);
         assertExperience(helper, creative, -21, -2, 19, 20, "The enchantment callback preserves signed level spending");
         helper.succeed();
     }

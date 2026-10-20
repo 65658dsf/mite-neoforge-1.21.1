@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.gametest;
 import io.github.ningmeng123.mite.client.GearProgressionTooltips;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.item.R196ReinforcedBowItem;
+import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import io.github.ningmeng123.mite.progression.GearProgress;
 import io.github.ningmeng123.mite.progression.GearProgression;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
@@ -115,13 +116,21 @@ public final class GearExperienceThresholdGameTests {
 
     @GameTest(template = "empty")
     public static void everyLoadedSimplySwordsWeaponUsesTheWeaponCurveIncludingAxesAndScythes(GameTestHelper helper) {
-        int checked = 0;
+        int checked = 0, retired = 0;
         for (Item item : BuiltInRegistries.ITEM) {
             ItemStack stack = new ItemStack(item);
             if (SimplySwordsCompat.definition(stack) == null) continue;
+            if (RemovedDiamondEquipment.isRemoved(stack)) {
+                helper.assertValueEqual(GearProgression.maxLevel(stack), 0,
+                        "Retired weapons cannot participate in available equipment growth: " + BuiltInRegistries.ITEM.getKey(item));
+                retired++;
+                continue;
+            }
             assertMatrix(helper, stack, WEAPON);
             checked++;
         }
+        helper.assertValueEqual(retired, SimplySwordsCompat.enabled() ? 15 : 0,
+                "All fifteen retired native netherite families are excluded from the available weapon matrix");
         helper.assertTrue(SimplySwordsCompat.enabled() ? checked > 0 : checked == 0,
                 "The optional matrix checks every live compatibility definition and stays empty when the mod is absent");
         helper.succeed();

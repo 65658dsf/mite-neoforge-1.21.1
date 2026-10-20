@@ -117,11 +117,11 @@ public final class CropHarvestGameTests {
     public static void melonIsFourSlicesWithoutFortuneAndSilkStillRecoversTheBlock(GameTestHelper h) {
         try(var f=new Fixture(h)) {
             for(int level:new int[]{0,3}) {
-                var tool=new ItemStack(Items.NETHERITE_AXE);
+                var tool=new ItemStack(Items.IRON_AXE);
                 if(level>0)tool.enchant(f.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.FORTUNE),level);
                 for(int repeat=0;repeat<16;repeat++)h.assertValueEqual(count(f.loot(Blocks.MELON.defaultBlockState(),CropHarvest.Reason.PLAYER,tool),Items.MELON_SLICE),4,"Source melon yield ignores Fortune and is fixed at four");
             }
-            var silk=new ItemStack(Items.NETHERITE_AXE);silk.enchant(f.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SILK_TOUCH),1);
+            var silk=new ItemStack(Items.IRON_AXE);silk.enchant(f.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SILK_TOUCH),1);
             h.assertValueEqual(count(f.loot(Blocks.MELON.defaultBlockState(),CropHarvest.Reason.PLAYER,silk),Items.MELON),1,"Silk Touch retains the source whole melon path");
         } h.succeed();
     }

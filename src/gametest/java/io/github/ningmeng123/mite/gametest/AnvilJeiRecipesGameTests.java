@@ -268,9 +268,9 @@ public final class AnvilJeiRecipesGameTests {
         var bow = List.of(new ItemStack(Items.BOW));
         helper.assertFalse(AnvilJeiRecipes.isCoveredNativeRepair(ResourceLocation.parse("minecraft:anvil.self_repair.minecraft.bow"),
                 bow, bow, covered), "Ordinary bow has no replacement and retains native repair display");
-        var netherite = List.of(new ItemStack(Items.NETHERITE_PICKAXE));
-        helper.assertFalse(AnvilJeiRecipes.isCoveredNativeRepair(ResourceLocation.parse("minecraft:anvil.materials_repair.minecraft.netherite_pickaxe"),
-                netherite, List.of(new ItemStack(Items.NETHERITE_INGOT)), covered), "Uncovered modern equipment does not lose its viewer operation");
+        var elytra = List.of(new ItemStack(Items.ELYTRA));
+        helper.assertFalse(AnvilJeiRecipes.isCoveredNativeRepair(ResourceLocation.parse("minecraft:anvil.materials_repair.minecraft.elytra"),
+                elytra, List.of(new ItemStack(Items.PHANTOM_MEMBRANE)), covered), "Uncovered modern equipment does not lose its viewer operation");
         helper.assertFalse(AnvilJeiRecipes.isCoveredNativeRepair(materialUid,
                 List.of(new ItemStack(Items.IRON_PICKAXE), new ItemStack(Items.BOW)), nugget, covered), "A mixed focus cannot hide an uncovered alternative");
         helper.assertFalse(AnvilJeiRecipes.isCoveredNativeRepair(null, iron, nugget, covered), "Anonymous operations remain untouched");

@@ -37,7 +37,7 @@ public final class PortableBlocksGameTests {
         var p=h.makeMockPlayer(GameType.SURVIVAL);p.setOnGround(true);var pos=h.absolutePos(new BlockPos(2,2,2));var s=Blocks.HOPPER.defaultBlockState();
         h.getLevel().setBlock(pos,s,2);p.experienceLevel=50;
         float empty=s.getDestroyProgress(p,h.getLevel(),pos);
-        var tool=new ItemStack(Items.NETHERITE_PICKAXE);p.setItemSlot(EquipmentSlot.MAINHAND,tool);
+        var tool=new ItemStack(Items.STONE_PICKAXE);p.setItemSlot(EquipmentSlot.MAINHAND,tool);
         h.assertValueEqual(s.getDestroyProgress(p,h.getLevel(),pos),empty,"Held efficiency cannot accelerate portable handling");
         h.assertValueEqual(empty,1F/64F,"Level fifty doubles source handling speed exactly once");
         int before=tool.getDamageValue();tool.mineBlock(h.getLevel(),s,pos,p);

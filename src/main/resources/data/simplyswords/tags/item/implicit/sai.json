@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_sai",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_sai",
+      "required": false
+    }
   ]
 }

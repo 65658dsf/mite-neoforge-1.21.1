@@ -118,10 +118,6 @@
       "required": false
     },
     {
-      "id": "simplyswords:netherite_greathammer",
-      "required": false
-    },
-    {
       "id": "simplyswords:runic_greathammer",
       "required": false
     },

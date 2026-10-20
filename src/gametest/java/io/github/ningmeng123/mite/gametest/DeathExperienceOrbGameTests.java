@@ -367,7 +367,7 @@ public final class DeathExperienceOrbGameTests {
     }
 
     private static ItemStack mendingTool(GameTestHelper helper) {
-        ItemStack tool = new ItemStack(Items.NETHERITE_PICKAXE);
+        ItemStack tool = new ItemStack(Items.IRON_PICKAXE);
         tool.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                 .getHolderOrThrow(Enchantments.MENDING), 1);
         tool.setDamageValue(4);

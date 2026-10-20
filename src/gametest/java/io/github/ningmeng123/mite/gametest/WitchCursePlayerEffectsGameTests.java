@@ -269,7 +269,7 @@ public final class WitchCursePlayerEffectsGameTests {
     public static void armorInsertedDirectlyAfterRealizationDropsOnFollowingPlayerTick(GameTestHelper h) {
         try (Fixture f = new Fixture(h)) {
             f.curse(R196Curse.CANNOT_WEAR_ARMOR);
-            f.player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.NETHERITE_BOOTS));
+            f.player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
             CursePlayerEffects.tick(new PlayerTickEvent.Post(f.player));
             h.assertTrue(f.player.getItemBySlot(EquipmentSlot.FEET).isEmpty(), "Direct mod/command assignment cannot retain armor");
             h.assertValueEqual(f.drops().size(), 1, "Bypass stack dropped once instead of deleted");

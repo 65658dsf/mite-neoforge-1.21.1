@@ -102,10 +102,6 @@
       "required": false
     },
     {
-      "id": "simplyswords:netherite_scythe",
-      "required": false
-    },
-    {
       "id": "simplyswords:runic_scythe",
       "required": false
     },

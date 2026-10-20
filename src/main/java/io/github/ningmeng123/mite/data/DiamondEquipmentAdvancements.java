@@ -24,7 +24,8 @@ public final class DiamondEquipmentAdvancements {
     public static void addOverrides(CachedOutput cache, Path output, ExistingFileHelper existingFiles,
             List<CompletableFuture<?>> writes) {
         for (String path : List.of("story/shiny_gear", "adventure/adventuring_time", "adventure/kill_all_mobs",
-                "adventure/lighten_up", "husbandry/wax_off")) {
+                "adventure/lighten_up", "husbandry/wax_off", "husbandry/obtain_netherite_hoe",
+                "nether/explore_nether", "nether/netherite_armor")) {
             ResourceLocation source = ResourceLocation.withDefaultNamespace("advancement/" + path + ".json");
             var vanilla = existingFiles.getResourceStack(source, PackType.SERVER_DATA).stream()
                     .filter(resource -> resource.sourcePackId().equals("vanilla")).findFirst()
@@ -34,10 +35,11 @@ public final class DiamondEquipmentAdvancements {
                 JsonObject adapted = replaceEquipment(original).getAsJsonObject();
                 if (adapted.equals(original)) throw new IllegalStateException("Pinned advancement lost its expected equipment reference: " + path);
                 if (path.equals("story/shiny_gear")) {
-                    var title = new JsonObject(); title.addProperty("text", "远古金属护体");
-                    var description = new JsonObject(); description.addProperty("text", "获得一件远古金属盔甲");
-                    adapted.getAsJsonObject("display").add("title", title);
-                    adapted.getAsJsonObject("display").add("description", description);
+                    displayText(adapted, "远古金属护体", "获得一件远古金属盔甲");
+                } else if (path.equals("husbandry/obtain_netherite_hoe")) {
+                    displayText(adapted, "秘银耕作", "获得一把秘银锄");
+                } else if (path.equals("nether/netherite_armor")) {
+                    displayText(adapted, "秘银全副武装", "获得一整套秘银盔甲");
                 }
                 writes.add(DataProvider.saveStable(cache, adapted,
                         output.resolve("data/minecraft/advancement/" + path + ".json")));
@@ -45,6 +47,13 @@ public final class DiamondEquipmentAdvancements {
                 throw new IllegalStateException("Cannot adapt pinned vanilla advancement: " + path, exception);
             }
         }
+    }
+
+    private static void displayText(JsonObject advancement, String title, String description) {
+        var titleText = new JsonObject(); titleText.addProperty("text", title);
+        var descriptionText = new JsonObject(); descriptionText.addProperty("text", description);
+        advancement.getAsJsonObject("display").add("title", titleText);
+        advancement.getAsJsonObject("display").add("description", descriptionText);
     }
 
     private static JsonElement replaceEquipment(JsonElement value) {
@@ -60,8 +69,12 @@ public final class DiamondEquipmentAdvancements {
         }
         if (value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
             String item = value.getAsString();
-            if (RemovedDiamondEquipment.IDS.stream().anyMatch(id -> id.toString().equals(item)))
-                return new JsonPrimitive("mite:ancient_metal_" + item.substring("minecraft:diamond_".length()));
+            ResourceLocation id = ResourceLocation.tryParse(item);
+            if (item.startsWith("minecraft:") && id != null && RemovedDiamondEquipment.IDS.contains(id)) {
+                String material = id.getPath().startsWith("diamond_") ? "diamond" : "netherite";
+                String replacement = material.equals("diamond") ? "ancient_metal" : "mithril";
+                return new JsonPrimitive("mite:" + replacement + "_" + id.getPath().substring(material.length() + 1));
+            }
         }
         return value;
     }

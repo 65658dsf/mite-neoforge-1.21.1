@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_cutlass",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_cutlass",
+      "required": false
+    }
   ]
 }

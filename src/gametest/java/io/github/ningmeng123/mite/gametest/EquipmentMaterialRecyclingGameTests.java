@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -57,6 +58,8 @@ public final class EquipmentMaterialRecyclingGameTests {
 
     @SubscribeEvent
     public static void registerIndependentTierFixtures(RegisterEvent event) {
+        // Test-only weapons must never become required entries in generated production tags.
+        if (DatagenModLoader.isRunningDataGen()) return;
         event.register(Registries.ITEM, registry -> {
             Tier copper = new Tier() {
                 @Override public int getUses() { return 500; }

@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_greathammer",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_greathammer",
+      "required": false
+    }
   ]
 }

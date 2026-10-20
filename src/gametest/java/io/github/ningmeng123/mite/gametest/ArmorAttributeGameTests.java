@@ -66,20 +66,13 @@ public final class ArmorAttributeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void removedDiamondArmorCannotLoadWhileNetheriteKeepsToughnessAndKnockbackResistance(GameTestHelper helper) {
-        Item[] diamonds = {Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE, Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS};
-        Item[] netherites = {Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS};
-        int[] defense = {3, 8, 6, 3};
-        for (int i = 0; i < SLOTS.length; i++) {
-            ItemStack diamond = new ItemStack(diamonds[i]);
-            ItemStack netherite = new ItemStack(netherites[i]);
-            helper.assertTrue(RemovedDiamondEquipment.isRemoved(diamond), "Diamond armor belongs to the removed equipment set");
-            helper.assertTrue(ItemStack.parse(helper.getLevel().registryAccess(), diamond.save(helper.getLevel().registryAccess()))
-                    .map(ItemStack::isEmpty).orElse(true), "Legacy diamond armor cannot return through saved item loading");
-            check(helper, amount(netherite, Attributes.ARMOR, SLOTS[i]), defense[i], "Vanilla netherite defense survives source durability conversion");
-            check(helper, amount(netherite, Attributes.ARMOR_TOUGHNESS, SLOTS[i]), 3D, "Netherite retains three toughness per piece");
-            check(helper, amount(netherite, Attributes.KNOCKBACK_RESISTANCE, SLOTS[i]), .1D, "Netherite retains native per-piece knockback resistance");
-            helper.assertFalse(RemovedDiamondEquipment.isRemoved(netherite), "Netherite remains available as modern armor");
+    public static void removedDiamondAndNetheriteArmorCannotLoadFromSavedStacks(GameTestHelper helper) {
+        for (Item item : new Item[]{Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE, Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS,
+                Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS}) {
+            ItemStack stack = new ItemStack(item);
+            helper.assertTrue(RemovedDiamondEquipment.isRemoved(stack), "Retired armor belongs to the removed equipment set: " + item);
+            helper.assertTrue(ItemStack.parse(helper.getLevel().registryAccess(), stack.save(helper.getLevel().registryAccess()))
+                    .map(ItemStack::isEmpty).orElse(true), "Legacy retired armor cannot return through saved item loading: " + item);
         }
         helper.succeed();
     }

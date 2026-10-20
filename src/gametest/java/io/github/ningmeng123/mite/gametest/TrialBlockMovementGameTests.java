@@ -187,7 +187,7 @@ public final class TrialBlockMovementGameTests {
 
         private List<ItemStack> loot(int index) {
             BlockPos pos = pos(index);
-            return Block.getDrops(level.getBlockState(pos), level, pos, level.getBlockEntity(pos), null, new ItemStack(Items.NETHERITE_PICKAXE));
+            return Block.getDrops(level.getBlockState(pos), level, pos, level.getBlockEntity(pos), null, new ItemStack(Items.IRON_PICKAXE));
         }
 
         @Override

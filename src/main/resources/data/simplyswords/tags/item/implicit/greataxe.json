@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_greataxe",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_greataxe",
+      "required": false
+    }
   ]
 }

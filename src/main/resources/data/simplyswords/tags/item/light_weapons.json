@@ -113,5 +113,23 @@
       "id": "mite:simplyswords_vibranium_chakram",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_chakram",
+      "required": false
+    },
+    {
+      "id": "simplyswords:netherite_cutlass",
+      "required": false
+    },
+    {
+      "id": "simplyswords:netherite_rapier",
+      "required": false
+    },
+    {
+      "id": "simplyswords:netherite_sai",
+      "required": false
+    }
   ]
 }

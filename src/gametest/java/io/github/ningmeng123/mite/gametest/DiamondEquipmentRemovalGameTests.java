@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -50,31 +52,37 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Native acquisition and saved-state boundaries retire gear without deleting diamond resources. @author NingMeng123 */
+/** Native acquisition and saved-state boundaries retire gear without deleting mineral resources. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class DiamondEquipmentRemovalGameTests {
     private static final List<Item> REMOVED = List.of(Items.DIAMOND_SWORD, Items.DIAMOND_AXE, Items.DIAMOND_PICKAXE,
             Items.DIAMOND_SHOVEL, Items.DIAMOND_HOE, Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE,
-            Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS, Items.DIAMOND_HORSE_ARMOR);
+            Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS, Items.DIAMOND_HORSE_ARMOR,
+            Items.NETHERITE_SWORD, Items.NETHERITE_AXE, Items.NETHERITE_PICKAXE, Items.NETHERITE_SHOVEL,
+            Items.NETHERITE_HOE, Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS);
 
     private DiamondEquipmentRemovalGameTests() {}
 
     @GameTest(template = "empty")
-    public static void finalLootPipelineRemovesAllTenGearTypesAndPreservesResources(GameTestHelper helper) {
+    public static void finalLootPipelineRemovesAllRetiredGearTypesAndPreservesResources(GameTestHelper helper) {
         LootTable.Builder builder = LootTable.lootTable().setParamSet(LootContextParamSets.CHEST);
-        for (Item item : REMOVED) builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(item)));
+        for (Item item : removedItems()) builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(item)));
         builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(Items.DIAMOND)));
         builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(Items.DIAMOND_BLOCK)));
         builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(Items.IRON_SWORD)));
+        builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(Items.NETHERITE_INGOT)));
+        builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)));
         LootTable table = builder.build();
         table.setLootTableId(id("diamond_removal_fixture"));
         List<ItemStack> actual = table.getRandomItems(params(helper, LootContextParamSets.CHEST), 1234L);
-        helper.assertValueEqual(actual.size(), 3, "The final native loot return removes every retired gear entry and only those entries");
-        helper.assertTrue(actual.stream().noneMatch(DiamondEquipmentRemovalGameTests::removed), "No diamond equipment reaches loot consumers");
+        helper.assertValueEqual(actual.size(), 5, "The final native loot return removes every retired gear entry and only those entries");
+        helper.assertTrue(actual.stream().noneMatch(DiamondEquipmentRemovalGameTests::removed), "No retired equipment reaches loot consumers");
         helper.assertTrue(actual.stream().anyMatch(stack -> stack.is(Items.DIAMOND)), "Diamond gems remain available");
         helper.assertTrue(actual.stream().anyMatch(stack -> stack.is(Items.DIAMOND_BLOCK)), "Diamond storage blocks remain available");
         helper.assertTrue(actual.stream().anyMatch(stack -> stack.is(Items.IRON_SWORD)), "Other equipment is retained");
+        helper.assertTrue(actual.stream().anyMatch(stack -> stack.is(Items.NETHERITE_INGOT)), "Netherite ingots remain available");
+        helper.assertTrue(actual.stream().anyMatch(stack -> stack.is(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)), "Netherite templates are not equipment");
         helper.succeed();
     }
 
@@ -104,6 +112,9 @@ public final class DiamondEquipmentRemovalGameTests {
             offers.add(offer(Items.EMERALD, null, Items.DIAMOND_SWORD));
             offers.add(offer(Items.DIAMOND_CHESTPLATE, null, Items.EMERALD));
             offers.add(offer(Items.EMERALD, Items.DIAMOND_BOOTS, Items.IRON_BOOTS));
+            offers.add(offer(Items.EMERALD, null, Items.NETHERITE_SWORD));
+            offers.add(offer(Items.NETHERITE_CHESTPLATE, null, Items.EMERALD));
+            offers.add(offer(Items.EMERALD, Items.NETHERITE_BOOTS, Items.IRON_BOOTS));
             MerchantOffer diamonds = offer(Items.DIAMOND, null, Items.EMERALD);
             MerchantOffer purchaseDiamonds = offer(Items.EMERALD, null, Items.DIAMOND);
             MerchantOffer iron = offer(Items.EMERALD, null, Items.IRON_SWORD);
@@ -140,14 +151,15 @@ public final class DiamondEquipmentRemovalGameTests {
 
     @GameTest(template = "empty")
     public static void nativeStackNbtLoadClearsAllRetiredGearWithoutChangingAllowedStacks(GameTestHelper helper) {
-        for (Item item : REMOVED) {
+        for (Item item : removedItems()) {
             ItemStack original = new ItemStack(item);
             original.set(DataComponents.CUSTOM_NAME, Component.literal("Retired NingMeng123 fixture"));
             ItemStack loaded = load(helper, original);
             helper.assertTrue(loaded.isEmpty(), "Native ItemStack.parse removes saved retired gear: " + item);
         }
         for (Item item : List.of(Items.DIAMOND, Items.DIAMOND_ORE, Items.DEEPSLATE_DIAMOND_ORE, Items.DIAMOND_BLOCK,
-                Items.IRON_SWORD, Items.NETHERITE_HELMET)) {
+                Items.IRON_SWORD, Items.NETHERITE_INGOT, Items.NETHERITE_SCRAP, Items.NETHERITE_BLOCK,
+                Items.ANCIENT_DEBRIS, Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)) {
             ItemStack original = new ItemStack(item);
             original.set(DataComponents.CUSTOM_NAME, Component.literal("Allowed NingMeng123 fixture"));
             helper.assertTrue(ItemStack.matches(original, load(helper, original)), "Allowed resource/equipment stack retains every component: " + item);
@@ -160,7 +172,7 @@ public final class DiamondEquipmentRemovalGameTests {
         ItemStack diamonds = new ItemStack(Items.DIAMOND, 3);
         diamonds.set(DataComponents.CUSTOM_NAME, Component.literal("Nested NingMeng123 diamonds"));
         ItemStack bundle = new ItemStack(Items.BUNDLE);
-        bundle.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(List.of(new ItemStack(Items.DIAMOND_AXE), diamonds)));
+        bundle.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(List.of(new ItemStack(Items.NETHERITE_AXE), diamonds)));
         ItemStack shulker = new ItemStack(Items.SHULKER_BOX);
         shulker.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(
                 List.of(new ItemStack(Items.DIAMOND_HELMET), new ItemStack(Items.STONE, 5), bundle)));
@@ -193,8 +205,8 @@ public final class DiamondEquipmentRemovalGameTests {
                     && gemDrop.getItem().getCount() == 3, "Diamond gem drops remain normal world entities");
             zombie.moveTo(location); zombie.setNoAi(true); zombie.setNoGravity(true);
             zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.DIAMOND_HELMET));
-            zombie.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
-            zombie.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_SWORD));
+            zombie.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.NETHERITE_CHESTPLATE));
+            zombie.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.NETHERITE_SWORD));
             zombie.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
             helper.assertTrue(helper.getLevel().addFreshEntity(zombie), "The ordinary mob still joins the world");
             helper.assertTrue(zombie.getItemBySlot(EquipmentSlot.HEAD).isEmpty() && zombie.getItemBySlot(EquipmentSlot.CHEST).isEmpty()
@@ -210,14 +222,14 @@ public final class DiamondEquipmentRemovalGameTests {
             var player = session.player();
             player.getInventory().setItem(0, new ItemStack(Items.DIAMOND_PICKAXE));
             player.getInventory().setItem(1, new ItemStack(Items.DIAMOND, 4));
-            player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
-            player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.DIAMOND_SWORD));
+            player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.NETHERITE_CHESTPLATE));
+            player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.NETHERITE_SWORD));
             player.getEnderChestInventory().setItem(0, new ItemStack(Items.DIAMOND_HORSE_ARMOR));
             player.getEnderChestInventory().setItem(1, new ItemStack(Items.IRON_INGOT, 4));
             ItemStack bundle = new ItemStack(Items.BUNDLE);
-            bundle.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(List.of(new ItemStack(Items.DIAMOND_HOE), new ItemStack(Items.STICK, 2))));
+            bundle.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(List.of(new ItemStack(Items.NETHERITE_HOE), new ItemStack(Items.STICK, 2))));
             player.getInventory().setItem(2, bundle);
-            player.containerMenu.setCarried(new ItemStack(Items.DIAMOND_AXE));
+            player.containerMenu.setCarried(new ItemStack(Items.NETHERITE_AXE));
             // The real network listener calls doTick(), which enters Player.tick and its NeoForge pre event.
             player.doTick();
             helper.assertTrue(player.getInventory().getItem(0).isEmpty() && player.getItemBySlot(EquipmentSlot.CHEST).isEmpty()
@@ -244,8 +256,8 @@ public final class DiamondEquipmentRemovalGameTests {
         try {
             zombie.moveTo(location); zombie.setNoAi(true); zombie.setNoGravity(true);
             helper.assertTrue(level.addFreshEntity(zombie) && level.addFreshEntity(drop), "Legal entities first join normally");
-            zombie.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_SWORD));
-            zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.DIAMOND_HELMET));
+            zombie.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.NETHERITE_SWORD));
+            zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.NETHERITE_HELMET));
             zombie.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
             drop.setItem(new ItemStack(Items.DIAMOND_HORSE_ARMOR));
             // ServerLevel owns the entity pre event; calling Entity.tick directly would bypass this real boundary.
@@ -263,7 +275,8 @@ public final class DiamondEquipmentRemovalGameTests {
     public static void recipeManagerReplacementRejectsForbiddenStaticResultsAcrossBothIndexes(GameTestHelper helper) {
         RecipeManager manager = new RecipeManager(helper.getLevel().registryAccess());
         List<RecipeHolder<?>> fixtures = new ArrayList<>();
-        for (int index = 0; index < REMOVED.size(); index++) fixtures.add(recipe("retired_" + index, REMOVED.get(index)));
+        List<Item> retiredItems = removedItems();
+        for (int index = 0; index < retiredItems.size(); index++) fixtures.add(recipe("retired_" + index, retiredItems.get(index)));
         fixtures.add(recipe("diamond_resource", Items.DIAMOND));
         fixtures.add(recipe("other_equipment", Items.IRON_SWORD));
         manager.replaceRecipes(fixtures);
@@ -298,7 +311,20 @@ public final class DiamondEquipmentRemovalGameTests {
 
     private static Vec3 location(GameTestHelper helper) { return Vec3.atCenterOf(helper.absolutePos(new BlockPos(2, 12, 2))); }
     private static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath("mite", "diamond_removal_test/" + path); }
-    private static boolean removed(ItemStack stack) { return !stack.isEmpty() && REMOVED.stream().anyMatch(stack::is); }
+    private static boolean removed(ItemStack stack) { return !stack.isEmpty() && removedItems().stream().anyMatch(stack::is); }
+
+    private static List<Item> removedItems() {
+        List<Item> items = new ArrayList<>(REMOVED);
+        if (SimplySwordsCompat.enabled()) {
+            for (String family : List.of("longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive", "warglaive",
+                    "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd")) {
+                Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("simplyswords", "netherite_" + family));
+                if (item == Items.AIR) throw new IllegalStateException("Missing native netherite fixture: " + family);
+                items.add(item);
+            }
+        }
+        return items;
+    }
 
     private static Session newPlayer(GameTestHelper helper) {
         var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "diamond-retire"), false);

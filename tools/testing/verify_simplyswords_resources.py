@@ -16,6 +16,7 @@ RESOURCES = ROOT / "src/main/resources"
 MATERIALS = {"rusted_iron", "copper", "silver", "ancient_metal", "mithril", "adamantium", "vibranium"}
 FAMILIES = {"longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive", "warglaive",
             "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd"}
+RETIRED_NATIVE_IDS = {f"simplyswords:netherite_{family}" for family in FAMILIES}
 TWO_HANDED_FAMILIES = {"twinblade", "katana", "glaive", "claymore", "greataxe", "greathammer", "scythe", "halberd"}
 
 
@@ -48,6 +49,7 @@ def verify_two_handed(archive, entries):
     native_ids.update("simplyswords:" + Path(path).stem for path in archive.namelist()
                       if path.startswith("data/simplyswords/weapon_attributes/")
                       and path.count("/") == 3 and path.endswith(".json"))
+    native_ids.difference_update(RETIRED_NATIVE_IDS)
     # Effective values checked against Better Combat 2.4.0+1.21.1. Its trident
     # explicitly turns off the two-handed spear parent; SS spears use trident.
     two_handed_parents = {"bettercombat:claymore", "bettercombat:glaive", "bettercombat:heavy_axe",
@@ -74,6 +76,32 @@ def verify_two_handed(archive, entries):
     return len(actual)
 
 
+def verify_retired_native_tags(archive):
+    """Keep retired native swords out of upstream unions and compatibility tags."""
+    for directory in ("data/mite/tags/item/simplyswords", "data/simplyswords/tags/item", "data/c/tags/item"):
+        for path in (RESOURCES / directory).rglob("*.json"):
+            tag = json.loads(path.read_text(encoding="utf-8"))
+            ids = {value if isinstance(value, str) else value["id"] for value in tag["values"]}
+            assert not ids & RETIRED_NATIVE_IDS, f"Retired weapon remains in {path}"
+
+    targets = {f"data/c/tags/item/{tag}.json": RETIRED_NATIVE_IDS
+               for tag in ("swords", "tools", "tools/melee_weapon")}
+    targets.update({f"data/simplyswords/tags/item/{tag}.json": RETIRED_NATIVE_IDS
+                    for tag in ("swords", "netherite_gear")})
+    targets["data/simplyswords/tags/item/spears.json"] = {"simplyswords:netherite_spear"}
+    for family in FAMILIES:
+        targets[f"data/simplyswords/tags/item/implicit/{family}.json"] = {f"simplyswords:netherite_{family}"}
+    for weight in ("light", "medium", "heavy"):
+        path = f"data/simplyswords/tags/item/{weight}_weapons.json"
+        upstream = json.loads(archive.read(path))
+        targets[path] = {value if isinstance(value, str) else value["id"] for value in upstream["values"]} & RETIRED_NATIVE_IDS
+    for path, expected in targets.items():
+        tag = read(path)
+        removed = tag.get("remove", [])
+        assert {value["id"] for value in removed} == expected, f"Native netherite exclusion: {path}"
+        assert all(value.get("required") is False for value in removed), f"Optional mod removal must be optional: {path}"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive", type=Path)
@@ -84,6 +112,7 @@ def main():
     assert {entry["material"] for entry in entries} == MATERIALS
     assert {entry["family"] for entry in entries} == FAMILIES
     assert manifest["developer"] == "NingMeng123"
+    assert set(manifest["retired_native_weapon_ids"]) == RETIRED_NATIVE_IDS
     expected_ids = {entry["id"] for entry in entries}
     en = read("assets/mite/lang/en_us.json")
     zh = read("assets/mite/lang/zh_cn.json")
@@ -92,6 +121,7 @@ def main():
     recipe_count = 0
     with zipfile.ZipFile(args.archive) as archive:
         two_handed_count = verify_two_handed(archive, entries)
+        verify_retired_native_tags(archive)
         for entry in entries:
             item_id, material, family = entry["id"], entry["material"], entry["family"]
             path = item_id.split(":")[1]

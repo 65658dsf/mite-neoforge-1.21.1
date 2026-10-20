@@ -1,11 +1,16 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:false"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_ancient_metal_equipment": {
+    "has_netherite_ingot": {
       "conditions": {
         "items": [
           {
-            "items": "mite:ancient_metal_boots"
+            "items": "minecraft:netherite_ingot"
           }
         ]
       },
@@ -21,7 +26,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_ancient_metal_equipment"
+      "has_netherite_ingot"
     ]
   ],
   "rewards": {

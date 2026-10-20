@@ -326,18 +326,6 @@
       "required": false
     },
     {
-      "id": "simplyswords:netherite_greataxe",
-      "required": false
-    },
-    {
-      "id": "simplyswords:netherite_greathammer",
-      "required": false
-    },
-    {
-      "id": "simplyswords:netherite_halberd",
-      "required": false
-    },
-    {
       "id": "simplyswords:runic_greataxe",
       "required": false
     },

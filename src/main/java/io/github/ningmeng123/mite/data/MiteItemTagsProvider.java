@@ -29,7 +29,7 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
                 ItemTags.SHARP_WEAPON_ENCHANTABLE, ItemTags.WEAPON_ENCHANTABLE,
                 ItemTags.DURABILITY_ENCHANTABLE, ItemTags.VANISHING_ENCHANTABLE))
             tag(weaponTag).addOptionalTag(ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "simplyswords_weapons"));
-        // Preserve native tag unions while excluding only the ten retired item identities.
+        // Preserve native tag unions while excluding retired equipment identities.
         for (var equipmentTag : List.of(ItemTags.SWORDS, ItemTags.AXES, ItemTags.PICKAXES, ItemTags.SHOVELS,
                 ItemTags.HOES, ItemTags.HEAD_ARMOR, ItemTags.CHEST_ARMOR, ItemTags.LEG_ARMOR, ItemTags.FOOT_ARMOR,
                 ItemTags.TRIMMABLE_ARMOR, ItemTags.HEAD_ARMOR_ENCHANTABLE, ItemTags.CHEST_ARMOR_ENCHANTABLE,

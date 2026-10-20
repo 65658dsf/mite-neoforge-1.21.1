@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_scythe",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_scythe",
+      "required": false
+    }
   ]
 }

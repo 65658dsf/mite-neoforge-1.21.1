@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
 import io.github.ningmeng123.mite.item.RunestoneItem;
 import io.github.ningmeng123.mite.registry.MiteCreativeTabs;
@@ -83,9 +84,16 @@ public final class CreativeTabs034GameTests {
                 ResourceKey<CreativeModeTab> key=BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).orElseThrow();
                 for(Item forbidden:List.of(Items.WOODEN_AXE,Items.WOODEN_PICKAXE,Items.CRAFTING_TABLE,
                         Items.DIAMOND_SWORD,Items.DIAMOND_AXE,Items.DIAMOND_PICKAXE,Items.DIAMOND_SHOVEL,Items.DIAMOND_HOE,
-                        Items.DIAMOND_HELMET,Items.DIAMOND_CHESTPLATE,Items.DIAMOND_LEGGINGS,Items.DIAMOND_BOOTS,Items.DIAMOND_HORSE_ARMOR)) {
+                        Items.DIAMOND_HELMET,Items.DIAMOND_CHESTPLATE,Items.DIAMOND_LEGGINGS,Items.DIAMOND_BOOTS,Items.DIAMOND_HORSE_ARMOR,
+                        Items.NETHERITE_SWORD,Items.NETHERITE_AXE,Items.NETHERITE_PICKAXE,Items.NETHERITE_SHOVEL,Items.NETHERITE_HOE,
+                        Items.NETHERITE_HELMET,Items.NETHERITE_CHESTPLATE,Items.NETHERITE_LEGGINGS,Items.NETHERITE_BOOTS)) {
                     h.assertTrue(!contains(tab.getDisplayItems(),forbidden)&&!contains(tab.getSearchTabDisplayItems(),forbidden),
                             "Retired item cannot return through parent or search contents: "+id(forbidden));
+                }
+                if(SimplySwordsCompat.enabled()) for(String family:SimplySwordsCompat.families()) {
+                    Item forbidden=SimplySwordsCompat.weapon("netherite",family);
+                    h.assertTrue(!contains(tab.getDisplayItems(),forbidden)&&!contains(tab.getSearchTabDisplayItems(),forbidden),
+                            "Retired Simply Swords netherite weapon stays absent from parent and search contents: "+family);
                 }
                 if(key.location().getNamespace().equals("minecraft")&&tab.getType()==CreativeModeTab.Type.CATEGORY) {
                     h.assertTrue(tab.getDisplayItems().stream().noneMatch(stack -> required.contains(stack.getItem()))
@@ -94,12 +102,14 @@ public final class CreativeTabs034GameTests {
                 }
             }
             assertNative(h,CreativeModeTabs.NATURAL_BLOCKS,Items.DIRT);
-            assertNative(h,CreativeModeTabs.COMBAT,Items.NETHERITE_SWORD);
+            assertNative(h,CreativeModeTabs.COMBAT,Items.IRON_SWORD);
             assertNative(h,CreativeModeTabs.TOOLS_AND_UTILITIES,Items.WOODEN_SHOVEL);
             assertNative(h,CreativeModeTabs.TOOLS_AND_UTILITIES,Items.WOODEN_HOE);
             assertNative(h,CreativeModeTabs.FOOD_AND_DRINKS,Items.BREAD);
             assertNative(h,CreativeModeTabs.INGREDIENTS,Items.IRON_INGOT);
             assertNative(h,CreativeModeTabs.INGREDIENTS,Items.DIAMOND);
+            assertNative(h,CreativeModeTabs.INGREDIENTS,Items.NETHERITE_INGOT);
+            assertNative(h,CreativeModeTabs.INGREDIENTS,Items.NETHERITE_SCRAP);
             assertNative(h,CreativeModeTabs.NATURAL_BLOCKS,Items.DIAMOND_ORE);
             assertNative(h,CreativeModeTabs.NATURAL_BLOCKS,Items.DEEPSLATE_DIAMOND_ORE);
             assertFoodTabContainsOnlyMite(h);

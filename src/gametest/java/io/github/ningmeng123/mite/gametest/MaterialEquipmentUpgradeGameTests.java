@@ -8,6 +8,7 @@ import io.github.ningmeng123.mite.data.MaterialUpgradeRecipes.Upgrade;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.progression.GearProgress;
 import io.github.ningmeng123.mite.progression.GearProgression;
+import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
@@ -293,24 +294,14 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void ordinaryNetheriteTemplateRetainsItsPreviousAbsoluteDamageBehavior(GameTestHelper h) {
-        var holder = h.getLevel().getRecipeManager().byKey(id("minecraft:netherite_pickaxe_smithing")).orElseThrow();
-        var recipe = (SmithingTransformRecipe) holder.value();
+    public static void ordinaryNetheriteTemplateCannotRestoreRemovedEquipment(GameTestHelper h) {
+        h.assertTrue(h.getLevel().getRecipeManager().byKey(id("minecraft:netherite_pickaxe_smithing")).isEmpty(),
+                "The retired netherite upgrade recipe is not loaded");
         ItemStack source = personalEquipment(h, item("mite:ancient_metal_pickaxe"));
-        source.set(DataComponents.MAX_DAMAGE, 400);
-        source.setDamageValue(100);
-        source.set(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
         SmithingRecipeInput input = new SmithingRecipeInput(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), source,
                 new ItemStack(Items.NETHERITE_INGOT));
-        h.assertTrue(recipe.matches(input, h.getLevel()), "The existing ancient-metal-to-netherite recipe remains loaded");
-        ItemStack output = recipe.assemble(input, h.getLevel().registryAccess());
-        h.assertTrue(output.is(Items.NETHERITE_PICKAXE), "The ordinary template still produces netherite");
-        assertPersonalComponents(h, source, output);
-        h.assertValueEqual(output.getDamageValue(), 100, "The existing native upgrade keeps absolute damage rather than using the new proportional branch");
-        h.assertValueEqual(output.get(DataComponents.ATTRIBUTE_MODIFIERS), ItemAttributeModifiers.EMPTY,
-                "The native template retains its pre-existing component-copy semantics");
-        h.assertValueEqual(output.getOrDefault(DataComponents.MAX_DAMAGE, 0), new ItemStack(Items.NETHERITE_PICKAXE).getOrDefault(DataComponents.MAX_DAMAGE, 0),
-                "The existing quality-preservation hook still adopts the target durability base");
+        h.assertTrue(h.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMITHING, input, h.getLevel()).isEmpty(),
+                "The old template, ancient metal and netherite ingot cannot restore retired equipment");
         h.succeed();
     }
 
@@ -318,15 +309,30 @@ public final class MaterialEquipmentUpgradeGameTests {
     public static void templateHasLoadedSurvivalCreationAndNativeStyleDuplicationRecipes(GameTestHelper h) {
         h.assertValueEqual(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get().getDescriptionId(), "item.mite.equipment_upgrade_smithing_template",
                 "The template uses its own registered translated display name");
-        CraftingInput firstInput = CraftingInput.of(2, 2, List.of(new ItemStack(Items.PAPER), new ItemStack(Items.STONE),
-                new ItemStack(Items.IRON_INGOT), new ItemStack(Items.DIAMOND)));
         CraftingRecipe first = craftingRecipe(h, "mite:equipment_upgrade_smithing_template");
-        h.assertTrue(first.matches(firstInput, h.getLevel()), "Paper, stone, iron and a diamond allow the first template to be obtained in survival");
-        CraftingInput noDiamond = CraftingInput.of(2, 2, List.of(new ItemStack(Items.PAPER), new ItemStack(Items.STONE),
-                new ItemStack(Items.IRON_INGOT), ItemStack.EMPTY));
-        h.assertFalse(first.matches(noDiamond, h.getLevel()), "The previous three-ingredient recipe cannot omit the required diamond");
-        ItemStack made = first.assemble(firstInput, h.getLevel().registryAccess());
-        h.assertTrue(made.is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()) && made.getCount() == 1, "Initial crafting creates one template");
+        h.assertTrue(first.getSerializer() == RecipeSerializer.SHAPED_RECIPE, "The pictured layout uses a shaped recipe");
+        for (int silverCorners = 0; silverCorners < 16; silverCorners++) {
+            List<ItemStack> ingredients = new java.util.ArrayList<>(List.of(
+                    new ItemStack(Items.COPPER_INGOT), new ItemStack(Items.IRON_INGOT), new ItemStack(Items.COPPER_INGOT),
+                    new ItemStack(Items.GOLD_INGOT), new ItemStack(Items.DIAMOND), new ItemStack(Items.GOLD_INGOT),
+                    new ItemStack(Items.COPPER_INGOT), new ItemStack(Items.IRON_INGOT), new ItemStack(Items.COPPER_INGOT)));
+            int[] corners = {0, 2, 6, 8};
+            for (int corner = 0; corner < corners.length; corner++) if ((silverCorners & (1 << corner)) != 0)
+                ingredients.set(corners[corner], new ItemStack(MiteMaterials.SILVER_INGOT.get()));
+            CraftingInput firstInput = CraftingInput.of(3, 3, ingredients);
+            h.assertTrue(first.matches(firstInput, h.getLevel()), "Every corner independently accepts copper or silver: " + silverCorners);
+            ItemStack made = first.assemble(firstInput, h.getLevel().registryAccess());
+            h.assertTrue(made.is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()) && made.getCount() == 1, "Initial crafting creates one template");
+            for (int slot = 0; slot < ingredients.size(); slot++) {
+                List<ItemStack> missing = new java.util.ArrayList<>(ingredients);
+                missing.set(slot, ItemStack.EMPTY);
+                h.assertFalse(first.matches(CraftingInput.of(3, 3, missing), h.getLevel()), "All nine ingredients are required: " + slot);
+            }
+            java.util.Collections.swap(ingredients, 1, 3);
+            h.assertFalse(first.matches(CraftingInput.of(3, 3, ingredients), h.getLevel()), "Iron and gold must occupy their pictured positions");
+        }
+        h.assertFalse(first.matches(CraftingInput.of(2, 2, List.of(new ItemStack(Items.PAPER), new ItemStack(Items.STONE),
+                new ItemStack(Items.IRON_INGOT), new ItemStack(Items.DIAMOND))), h.getLevel()), "The previous shapeless recipe is retired");
         CraftingRecipe copy = craftingRecipe(h, "mite:equipment_upgrade_smithing_template_duplication");
         CraftingInput copyInput = CraftingInput.of(3, 3, List.of(new ItemStack(Items.IRON_INGOT), template(), new ItemStack(Items.IRON_INGOT),
                 new ItemStack(Items.IRON_INGOT), new ItemStack(Items.STONE), new ItemStack(Items.IRON_INGOT),

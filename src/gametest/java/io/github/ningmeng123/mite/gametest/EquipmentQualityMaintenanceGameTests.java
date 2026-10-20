@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import java.util.List;
@@ -132,12 +133,12 @@ public final class EquipmentQualityMaintenanceGameTests {
         ItemStack ancient = equipment(ancientPickaxe, Quality.FINE, 1000);
         ancient.set(DataComponents.MAX_DAMAGE, 19200); // Simulates a normal combine-repair component patch.
         SmithingTransformRecipe upgrade = new SmithingTransformRecipe(Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-                Ingredient.of(ancientPickaxe), Ingredient.of(Items.NETHERITE_INGOT), new ItemStack(Items.NETHERITE_PICKAXE));
+                Ingredient.of(ancientPickaxe), Ingredient.of(MiteMaterials.MITHRIL_INGOT.get()), new ItemStack(MiteTools.get("mite:mithril_pickaxe")));
         ItemStack upgraded = upgrade.assemble(new SmithingRecipeInput(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-                ancient, new ItemStack(Items.NETHERITE_INGOT)), helper.getLevel().registryAccess());
+                ancient, new ItemStack(MiteMaterials.MITHRIL_INGOT.get())), helper.getLevel().registryAccess());
         helper.assertValueEqual(EquipmentDurability.quality(upgraded), Quality.FINE, "Upgrade preserves fine quality");
-        helper.assertValueEqual(upgraded.getOrDefault(DataComponents.MAX_DAMAGE, 0), 38400, "Upgrade adopts the netherite base");
-        helper.assertValueEqual(upgraded.getMaxDamage(), 57600, "New base receives quality exactly once");
+        helper.assertValueEqual(upgraded.getOrDefault(DataComponents.MAX_DAMAGE, 0), 76800, "Upgrade adopts the mithril base");
+        helper.assertValueEqual(upgraded.getMaxDamage(), 115200, "New base receives quality exactly once");
         helper.assertValueEqual(upgraded.getDamageValue(), 1000, "Modern upgrade preserves damage");
 
         ItemStack leather = equipment(Items.LEATHER_CHESTPLATE, Quality.FINE, 6);

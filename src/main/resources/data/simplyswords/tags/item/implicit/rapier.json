@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_rapier",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_rapier",
+      "required": false
+    }
   ]
 }

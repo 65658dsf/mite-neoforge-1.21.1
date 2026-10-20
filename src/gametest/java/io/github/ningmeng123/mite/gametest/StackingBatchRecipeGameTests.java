@@ -160,7 +160,7 @@ public final class StackingBatchRecipeGameTests {
                 try (Fixture fixture = new Fixture(helper)) {
             fixture.player.setGameMode(mode); fixture.load(doors);
             for (int slot = 0; slot < fixture.player.getInventory().items.size(); slot++)
-                fixture.player.getInventory().setItem(slot, new ItemStack(Items.NETHERITE_SWORD));
+                fixture.player.getInventory().setItem(slot, new ItemStack(Items.IRON_SWORD));
             fixture.menu.clicked(0, 0, ClickType.PICKUP, fixture.player);
             helper.assertTrue(fixture.grid.isEmpty(), "A full backpack still consumes only one complete immediate batch");
             assertConservedAndBounded(helper, fixture, doors ? Items.BIRCH_DOOR : Items.RAW_COPPER, doors ? 3 : 9,
@@ -201,7 +201,7 @@ public final class StackingBatchRecipeGameTests {
                 try (Fixture fixture = new Fixture(helper)) {
             fixture.player.setGameMode(mode); fixture.load(doors, 2);
             for (int slot = 0; slot < fixture.player.getInventory().items.size(); slot++)
-                fixture.player.getInventory().setItem(slot, slot == 35 ? ItemStack.EMPTY : new ItemStack(Items.NETHERITE_SWORD));
+                fixture.player.getInventory().setItem(slot, slot == 35 ? ItemStack.EMPTY : new ItemStack(Items.IRON_SWORD));
             fixture.menu.clicked(0, 0, ClickType.QUICK_MOVE, fixture.player);
             Item output = doors ? Items.BIRCH_DOOR : Items.RAW_COPPER;
             helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 1, "The successful partial Shift transfer consumes exactly one input batch, and cannot consume the blocked next batch");
@@ -222,15 +222,15 @@ public final class StackingBatchRecipeGameTests {
         for (boolean doors : List.of(true, false)) try (Fixture fixture = new Fixture(helper)) {
             fixture.load(doors, 2);
             for (int slot = 0; slot < fixture.player.getInventory().items.size(); slot++)
-                fixture.player.getInventory().setItem(slot, new ItemStack(Items.NETHERITE_SWORD));
+                fixture.player.getInventory().setItem(slot, new ItemStack(Items.IRON_SWORD));
             fixture.menu.clicked(0, 0, ClickType.QUICK_MOVE, fixture.player);
             helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 2, "A fully blocked Shift transfer cannot consume either input batch");
             assertConservedAndBounded(helper, fixture, doors ? Items.BIRCH_DOOR : Items.RAW_COPPER, 0, "No-free-slot Shift");
-            fixture.menu.setCarried(new ItemStack(Items.NETHERITE_SWORD));
+            fixture.menu.setCarried(new ItemStack(Items.IRON_SWORD));
             for (ClickType type : List.of(ClickType.PICKUP, ClickType.THROW)) {
                 fixture.menu.clicked(0, 0, type, fixture.player);
                 helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 2, "An incompatible occupied cursor prevents " + type + " from consuming a batch");
-                helper.assertTrue(fixture.menu.getCarried().is(Items.NETHERITE_SWORD), "Blocked batch output preserves the unrelated cursor item");
+                helper.assertTrue(fixture.menu.getCarried().is(Items.IRON_SWORD), "Blocked batch output preserves the unrelated cursor item");
                 assertConservedAndBounded(helper, fixture, doors ? Items.BIRCH_DOOR : Items.RAW_COPPER, 0, "Occupied cursor " + type);
             }
             Item output = doors ? Items.BIRCH_DOOR : Items.RAW_COPPER;

@@ -356,10 +356,8 @@ public final class BloodMoonInvasionGameTests {
         return (List<Entry>)method.invoke(null, level, pos, category, false);
     }
 
-    private static Entry substitute(ServerLevel level, Entry entry, RandomSource random) throws ReflectiveOperationException {
-        Method method = R196MobSpawning.class.getDeclaredMethod("substitute", ServerLevel.class, Entry.class, RandomSource.class);
-        method.setAccessible(true);
-        return (Entry)method.invoke(null, level, entry, random);
+    private static Entry substitute(ServerLevel level, Entry entry, RandomSource random) {
+        return R196MobSpawning.substituteNatural(level, entry, random);
     }
 
     private static final class TicketRandom extends LegacyRandomSource {

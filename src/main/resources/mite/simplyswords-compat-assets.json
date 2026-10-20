@@ -64,9 +64,27 @@
     "Gold uses simplyswords:gold_<family>; no duplicate gold weapon is registered.",
     "Rusted iron weapons are loot equipment and have no crafting recipes.",
     "Recipe ingot and nugget costs match the original iron weapon recipe.",
-    "Weapon models are used only when Simply Swords is loaded; recipes have a NeoForge mod-loaded condition."
+    "Weapon models are used only when Simply Swords is loaded; recipes have a NeoForge mod-loaded condition.",
+    "Native netherite weapons are retired; optional tag removals preserve all other native weapon materials and unique weapons."
   ],
-  "optional_native_weapon_ids": 455,
+  "optional_native_weapon_ids": 440,
+  "retired_native_weapon_ids": [
+    "simplyswords:netherite_chakram",
+    "simplyswords:netherite_claymore",
+    "simplyswords:netherite_cutlass",
+    "simplyswords:netherite_glaive",
+    "simplyswords:netherite_greataxe",
+    "simplyswords:netherite_greathammer",
+    "simplyswords:netherite_halberd",
+    "simplyswords:netherite_katana",
+    "simplyswords:netherite_longsword",
+    "simplyswords:netherite_rapier",
+    "simplyswords:netherite_sai",
+    "simplyswords:netherite_scythe",
+    "simplyswords:netherite_spear",
+    "simplyswords:netherite_twinblade",
+    "simplyswords:netherite_warglaive"
+  ],
   "items": [
     {
       "id": "mite:simplyswords_rusted_iron_longsword",

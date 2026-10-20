@@ -29,5 +29,11 @@
       "id": "mite:simplyswords_vibranium_glaive",
       "required": false
     }
+  ],
+  "remove": [
+    {
+      "id": "simplyswords:netherite_glaive",
+      "required": false
+    }
   ]
 }

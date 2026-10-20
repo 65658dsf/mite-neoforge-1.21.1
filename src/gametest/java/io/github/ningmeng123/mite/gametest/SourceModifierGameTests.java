@@ -227,7 +227,7 @@ public final class SourceModifierGameTests {
     @GameTest(template = "empty")
     public static void allRecognizedStandaloneEquipmentUsesTheTwentyFiveLevelCap(GameTestHelper h) {
         for (Item item : List.of(Items.WOODEN_SWORD, Items.STONE_PICKAXE, Items.GOLDEN_SWORD, Items.IRON_PICKAXE,
-                Items.LEATHER_CHESTPLATE, Items.IRON_CHESTPLATE, Items.NETHERITE_SWORD, Items.BOW, Items.CROSSBOW,
+                Items.LEATHER_CHESTPLATE, Items.IRON_CHESTPLATE, Items.IRON_SWORD, Items.BOW, Items.CROSSBOW,
                 Items.TRIDENT, Items.MACE, Items.SHIELD, MiteTools.get("mite:flint_knife"), MiteTools.get("mite:copper_sword"),
                 MiteTools.get("mite:mithril_pickaxe"), MiteTools.get("mite:vibranium_pickaxe")))
             h.assertTrue(GearProgression.maxLevel(new ItemStack(item)) == 25, "Standalone cap is twenty-five for " + item);

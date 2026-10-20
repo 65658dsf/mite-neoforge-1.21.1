@@ -4,9 +4,16 @@
 
 ## 模板与操作
 
-新增物品`mite:equipment_upgrade_smithing_template`，中文名“升级模板”，位于MITE材料分类。使用原生锻造模板物品及槽位说明，图标复用原版下界合金升级模板的纹理。
+新增物品`mite:equipment_upgrade_smithing_template`，中文名“升级模板”，位于MITE材料分类。使用原生锻造模板物品及槽位说明，使用独立的32×32透明像素纹理：铜银金属框、金色扣件及中央青色钻石，不复用原版模板贴图。纹理为`assets/mite/textures/item/equipment_upgrade_smithing_template.png`；生成来源及提示词见[贴图记录](art/equipment-upgrade-template.md)。
 
-纸、石头、铁锭、钻石各1个可无序合成1个模板，缺少钻石不能合成。已有模板可按原版模板的九格布局复制：第一行“铁锭、模板、铁锭”，第二行“铁锭、石头、铁锭”，第三行3个铁锭，得到2个模板，即消耗1个旧模板、7个铁锭和1块石头。
+按以下九格布局有序合成1个模板，共消耗4个铜锭或银锭、2个铁锭、2个金锭和1颗钻石。四个角各自接受铜锭或银锭，支持全铜、全银和任意铜银混搭，其他材料不能替换或换位。
+
+| 铜锭或银锭 | 铁锭 | 铜锭或银锭 |
+| --- | --- | --- |
+| 金锭 | 钻石 | 金锭 |
+| 铜锭或银锭 | 铁锭 | 铜锭或银锭 |
+
+已有模板仍可按原版模板的九格布局复制：第一行“铁锭、模板、铁锭”，第二行“铁锭、石头、铁锭”，第三行3个铁锭，得到2个模板，即消耗1个旧模板、7个铁锭和1块石头。
 
 在原版锻造台依次放入升级模板、待升级装备和1个目标材质锭，取出对应高阶装备。模板、原装备及目标材质锭各消耗1个，支持原生预览与快速取出。
 
@@ -18,7 +25,7 @@
 
 范围包含已有金属工具与武器、板甲、锁甲、马铠、盾牌，以及存在相邻材质的强化弓、钓竿和胡萝卜钓竿。强化弓只提供远古金属→秘银：目录没有艾德曼强化弓，不从秘银直接跳到振金。木、石、燧石、黑曜石装备和箭矢没有新增转换。
 
-安装Simply Swords时，已有15种兼容武器族沿同一金属路线逐级升级；未安装时配方由模组加载条件跳过，不解析不存在的物品。不修改原模组钻石、下界合金、符文和独特武器的路线。
+安装Simply Swords时，已有15种兼容武器族沿同一金属路线逐级升级；未安装时配方由模组加载条件跳过，不解析不存在的物品。下界合金等级武器随原版同等级装备移除；原有符文升级改用对应秘银武器作为底材，其余原生材料不变。钻石及独特武器保持原有规则。
 
 ## 数据继承
 
@@ -28,12 +35,14 @@
 
 盾牌负荷随同一面盾保留，升级后按新材质的次数及累计伤害上限继续结算。装备成长等级不因换材质立即提高；例如5级铜剑升为铁剑后仍为5级，可继续按铁质上限练到10级。
 
-新逻辑仅用于新增模板。原有下界合金模板升级继续保留绝对损伤值，原有振金工作台升级配方也继续保留。
+新逻辑仅用于新增模板。下界合金装备及对应锻造路线已移除，原有振金工作台升级配方继续保留。
 
 ## 验证入口
 
-`MaterialEquipmentUpgradeGameTests`使用`mite_upgrade`命名空间，验证真实加载的逐级配方、锻造菜单、输入消耗、保留组件和目标默认属性。原有下界合金及振金升级测试继续作为回归检查。
+`MaterialEquipmentUpgradeGameTests`使用`mite_upgrade`命名空间，验证真实加载的逐级配方、锻造菜单、输入消耗、保留组件和目标默认属性。模板合成检查全部16种铜银角落组合、九个槽位缺料与错位；下界合金配方不可恢复和振金升级继续作为回归检查。
 
-2026-10-18验证：数据生成及构建成功，1593项JUnit、1977项本体服务端GameTest，以及安装Simply Swords 1.70.2、Better Combat 2.4.0后的119项兼容GameTest全部通过。新模板11项用例同时覆盖未安装与已安装简易刀剑的183/303条实际加载路线、首次合成需要钻石、原生锻造台普通取出与快速取出、组件及序列化继承。自动测试运行真实服务端，没有启动图形客户端进行视觉手测。
+2026-10-18历史验证（旧模板配方版本）：数据生成及构建成功，1593项JUnit、1977项本体服务端GameTest，以及安装Simply Swords 1.70.2、Better Combat 2.4.0后的119项兼容GameTest全部通过。新模板11项用例同时覆盖未安装与已安装简易刀剑的183/303条实际加载路线、首次合成需要钻石、原生锻造台普通取出与快速取出、组件及序列化继承。自动测试运行真实服务端，没有启动图形客户端进行视觉手测。
 
-发布版本为`1.1.10`，正式包为`build/libs/mite-1.1.10.jar`。验证日志为`build/verification/material-upgrade-diamond-datagen.log`、`build/verification/material-upgrade-build-regression.log`和`build/verification/material-upgrade-compat-tests.log`。
+上述历史发布版本为`1.1.10`，当时正式包为`build/libs/mite-1.1.10.jar`。历史验证日志为`build/verification/material-upgrade-diamond-datagen.log`、`build/verification/material-upgrade-build-regression.log`和`build/verification/material-upgrade-compat-tests.log`。
+
+2026-10-20验证：新九格配方和独立贴图的数据生成、构建、1670项JUnit、2205项本体服务端GameTest及168项Simply Swords/Better Combat专用兼容GameTest全部通过。模板用例覆盖16种铜银角落组合、缺料与错位、首次制作与原有复制配方、锻造菜单和组件继承。当前构建为`build/libs/mite-0.2.5.jar`；日志为`build/netherite-removal-data.log`、`build/netherite-removal-base-final.log`及`build/netherite-removal-compat-verified.log`。发布包资源检查通过，像素预览见[贴图记录](art/equipment-upgrade-template.md)。

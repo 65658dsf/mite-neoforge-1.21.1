@@ -75,7 +75,7 @@ public final class StackingTransferGameTests {
     @GameTest(template = "empty")
     public static void survivalFullInventoryPreservesUnacceptedPickupRemainder(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        fill(player, Items.NETHERITE_SWORD);
+        fill(player, Items.IRON_SWORD);
         player.getInventory().setItem(0, new ItemStack(Items.STONE, 3));
         ItemStack pickup = new ItemStack(Items.STONE, 9);
         player.getInventory().add(pickup);
@@ -409,7 +409,7 @@ public final class StackingTransferGameTests {
     @GameTest(template = "ranged_027")
     public static void fullSurvivalAndCreativeInventoriesDropEveryIngotAsLegalStacks(GameTestHelper helper) {
         for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE)) try (CraftFixture fixture = new CraftFixture(helper, mode)) {
-            fill(fixture.player, Items.NETHERITE_SWORD);
+            fill(fixture.player, Items.IRON_SWORD);
             fixture.loadIronBlock();
             TimedCraftingTestSupport.craftOne(helper, fixture.player, fixture.menu, ClickType.PICKUP);
             List<ItemEntity> drops = helper.getLevel().getEntitiesOfClass(ItemEntity.class, fixture.player.getBoundingBox().inflate(3),
@@ -555,7 +555,7 @@ public final class StackingTransferGameTests {
     public static void fullInventoriesKeepEveryDisplacedItemWhenSwappingALegacyHotbarStack(GameTestHelper helper) {
         for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE)) for (int sourceCount : new int[]{5, 64})
                 for (int displacedCount : new int[]{4, 64}) try (CraftFixture fixture = new CraftFixture(helper, mode)) {
-            fill(fixture.player, Items.NETHERITE_SWORD);
+            fill(fixture.player, Items.IRON_SWORD);
             fixture.player.getInventory().items.set(0, new ItemStack(Items.STONE, sourceCount));
             SimpleContainer chest = legacyChest(new ItemStack(Items.DIRT, displacedCount));
             ChestMenu menu = ChestMenu.threeRows(90, fixture.player.getInventory(), chest);
@@ -582,7 +582,7 @@ public final class StackingTransferGameTests {
     @GameTest(template = "empty")
     public static void ordinaryLegalHotbarSwapKeepsItsNativeDirectExchange(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.CREATIVE);
-        fill(player, Items.NETHERITE_SWORD);
+        fill(player, Items.IRON_SWORD);
         player.getInventory().setItem(0, new ItemStack(Items.STONE, 4));
         SimpleContainer chest = new SimpleContainer(27);
         chest.setItem(0, new ItemStack(Items.DIRT, 4));
@@ -591,7 +591,7 @@ public final class StackingTransferGameTests {
         helper.assertTrue(chest.getItem(0).is(Items.STONE) && chest.getItem(0).getCount() == 4, "A legal hotbar stack moves directly to the native container slot");
         helper.assertTrue(player.getInventory().getItem(0).is(Items.DIRT) && player.getInventory().getItem(0).getCount() == 4,
                 "The unrelated container stack directly replaces the legal hotbar stack without entering overflow handling");
-        helper.assertValueEqual(player.getInventory().countItem(Items.NETHERITE_SWORD), 35, "A normal direct swap does not alter any other inventory slot");
+        helper.assertValueEqual(player.getInventory().countItem(Items.IRON_SWORD), 35, "A normal direct swap does not alter any other inventory slot");
         helper.succeed();
     }
 
