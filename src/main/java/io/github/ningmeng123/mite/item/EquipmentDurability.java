@@ -11,7 +11,6 @@ import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ShieldProfile;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolProfile;
 import java.util.EnumMap;
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -270,9 +269,8 @@ public final class EquipmentDurability {
             ItemStack stack = player.getItemBySlot(ARMOR_SLOTS[i]);
             occupied[i] = !stack.isEmpty() && stack.getItem() instanceof ArmorItem;
         }
-        List<EquipmentSlot> selectedPortions = new ArrayList<>();
         int[] wear = EquipmentDurabilityRules.distributeArmorWear(budget,
-                occupied, player.getRandom()::nextInt, (slot, portion) -> selectedPortions.add(ARMOR_SLOTS[slot]));
+                occupied, player.getRandom()::nextInt);
         EnumMap<EquipmentSlot, ArmorHurtEvent.ArmorEntry> entries = new EnumMap<>(EquipmentSlot.class);
         for (int i = 0; i < 4; i++) {
             ItemStack stack = player.getItemBySlot(ARMOR_SLOTS[i]);
@@ -281,8 +279,7 @@ public final class EquipmentDurability {
             if (!(stack.getItem() instanceof ArmorItem) || !stack.canBeHurtBy(source)) amount = 0;
             entries.put(ARMOR_SLOTS[i], new ArmorHurtEvent.ArmorEntry(stack, amount));
         }
-        ArmorHurtEvent event = io.github.ningmeng123.mite.progression.GearProgressionEvents.sourceArmorAllocation(
-                () -> NeoForge.EVENT_BUS.post(new ArmorHurtEvent(entries, player, source)));
+        ArmorHurtEvent event = NeoForge.EVENT_BUS.post(new ArmorHurtEvent(entries, player, source));
         if (event.isCanceled()) return true;
         event.getArmorMap().forEach((slot, entry) -> {
             ItemStack stack = entry.armorItemStack;
@@ -302,11 +299,6 @@ public final class EquipmentDurability {
                 if (previous == null) WEAR_CONTEXT.remove(); else WEAR_CONTEXT.set(previous);
             }
         });
-        for (EquipmentSlot slot : selectedPortions) {
-            var entry = event.getArmorMap().get(slot);
-            if (entry != null && (int)entry.newDamage > 0 && armorProfile(entry.armorItemStack) != null)
-                io.github.ningmeng123.mite.progression.GearProgressionEvents.armorPortion(player, source, entry.armorItemStack);
-        }
         return true;
     }
 

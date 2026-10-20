@@ -115,15 +115,34 @@ public final class GearProgression {
     public static boolean canMine(ItemStack stack, BlockState state, Level level, BlockPos pos) {
         if (maxLevel(stack) == 0 || SimplySwordsCompat.definition(stack) != null) return false;
         ToolFamily family = R196EnchantmentCatalog.family(stack);
-        return family != null && family != ToolFamily.SWORD && family != ToolFamily.DAGGER && family != ToolFamily.KNIFE
-                && stack.getDestroySpeed(state) > 1F && (!state.requiresCorrectToolForDrops() || stack.isCorrectToolForDrops(state));
+        return family != null && switch (family) {
+            case PICKAXE, AXE, HATCHET, BATTLE_AXE, WAR_HAMMER, SHOVEL, MATTOCK, SHEARS, SCYTHE, KNIFE, DAGGER ->
+                    stack.getDestroySpeed(state) > 1F && (!state.requiresCorrectToolForDrops() || stack.isCorrectToolForDrops(state));
+            default -> false;
+        };
     }
 
     public static long nextLevelExperienceMillis(ItemStack stack, int level) {
-        int armorSlot = stack.getItem() instanceof ArmorItem armor ? switch (armor.getType()) {
-            case HELMET -> 0; case CHESTPLATE -> 1; case LEGGINGS -> 2; case BOOTS -> 3; default -> -1;
-        } : -1;
-        return GearProgressionRules.nextLevelExperienceMillis(material(stack), level, GearModifier.isWeapon(stack), armorSlot);
+        int armorSlot = stack.getItem() instanceof ArmorItem armor && !(armor instanceof AnimalArmorItem)
+                ? switch (armor.getType()) {
+                    case HELMET -> 0;
+                    case CHESTPLATE -> 1;
+                    case LEGGINGS -> 2;
+                    case BOOTS -> 3;
+                    default -> -1;
+                } : -1;
+        return GearProgressionRules.nextLevelExperienceMillis(material(stack), level, usesWeaponExperience(stack), armorSlot);
+    }
+
+    /** Experience follows the item's earning role independently of its modifier candidates. */
+    private static boolean usesWeaponExperience(ItemStack stack) {
+        if (SimplySwordsCompat.definition(stack) != null || stack.getItem() instanceof BowItem
+                || stack.getItem() instanceof CrossbowItem || stack.is(Items.TRIDENT) || stack.is(Items.MACE)) return true;
+        ToolFamily family = R196EnchantmentCatalog.family(stack);
+        return family != null && switch (family) {
+            case SWORD, DAGGER, KNIFE, CLUB, CUDGEL, BATTLE_AXE, WAR_HAMMER -> true;
+            default -> false;
+        };
     }
 
     /** The book-support leather exception is shared here without changing the enchanting table. */
@@ -164,11 +183,7 @@ public final class GearProgression {
 
     public static void award(ItemStack stack, long experienceMillis, ServerPlayer player) {
         if (!canGain(player) || experienceMillis <= 0 || stack.isEmpty()) return;
-        experienceMillis = Math.min(Integer.MAX_VALUE, experienceMillis / GearProgressionRules.SCALE) * GearProgressionRules.SCALE;
         experienceMillis = Math.max(0L,io.github.ningmeng123.mite.api.MiteExtensions.policy().gearExperience(stack,experienceMillis));
-        experienceMillis = experienceMillis / GearProgressionRules.SCALE * GearProgressionRules.SCALE;
-        if (isArmor(stack)) experienceMillis = Math.min(Integer.MAX_VALUE, experienceMillis / GearProgressionRules.SCALE * 2L)
-                * GearProgressionRules.SCALE;
         if (experienceMillis==0) return;
         int cap = maxLevel(stack);
         GearProgress before = state(stack);
@@ -177,8 +192,10 @@ public final class GearProgression {
         int level = before.level();
         long experience = GearProgressionRules.saturatedAdd(before.experienceMillis(), experienceMillis);
         var affixes = new HashMap<>(before.affixes());
-        if (experience >= nextLevelExperienceMillis(stack, level)) {
-            experience = 0;
+        while (level < cap) {
+            long required = nextLevelExperienceMillis(stack, level);
+            if (experience < required) break;
+            experience -= required;
             level++;
             List<GearModifier> candidates = GearModifier.candidates(stack, affixes);
             if (!candidates.isEmpty()) {

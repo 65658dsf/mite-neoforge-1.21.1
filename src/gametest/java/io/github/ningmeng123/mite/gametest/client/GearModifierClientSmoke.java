@@ -79,10 +79,13 @@ public final class GearModifierClientSmoke {
                     ItemStack sword = new ItemStack(Items.IRON_SWORD);
                     check(GearProgression.maxLevel(sword) == 25, "Standalone iron sword has a 25-level cap");
                     for (int level = 0; level < 25; level++) {
-                        GearProgression.award(sword, GearProgression.nextLevelExperienceMillis(sword, level), player);
+                        long threshold = (150L + 100L * level) * 1000L;
+                        check(GearProgression.nextLevelExperienceMillis(sword, level) == threshold,
+                                "The live server sword uses the approved weapon threshold at L" + level);
+                        GearProgression.award(sword, threshold, player);
                         check(GearProgression.state(sword).level() == level + 1
                                 && GearProgression.state(sword).experienceMillis() == 0,
-                                "Each independent server award upgrades once and clears XP");
+                                "Each exact current-level threshold advances once without a remainder");
                     }
                     check(GearProgression.state(sword).level() == 25, "Twenty-five independent server awards reach the cap");
                     check(GearProgression.state(sword).affixes().keySet().stream().allMatch(key -> GearModifier.fromId(key) != null),
@@ -107,6 +110,14 @@ public final class GearModifierClientSmoke {
                 REPORT.addProperty("server_to_client_component_sync", true);
                 REPORT.addProperty("sword_level", GearProgression.state(sword).level());
                 REPORT.addProperty("sword_modifier_ranks", GearProgression.state(sword).affixes().values().stream().mapToInt(Integer::intValue).sum());
+                check(GearProgression.nextLevelExperienceMillis(pickaxe, 1) == 150_000L,
+                        "The synchronized level-one iron pickaxe uses the approved one-hundred-fifty-point tool threshold");
+                String experienceLine = Component.translatable("tooltip.mite.gear_experience", "0", "150").getString();
+                check(pickaxe.getTooltipLines(Item.TooltipContext.of(mc.level), mc.player, TooltipFlag.NORMAL).stream()
+                                .anyMatch(line -> line.getString().equals(experienceLine)),
+                        "The real localized tooltip displays zero of one hundred fifty experience on the synchronized pickaxe");
+                REPORT.addProperty("iron_pickaxe_level_one_required_experience", 150);
+                REPORT.addProperty("iron_pickaxe_experience_tooltip", experienceLine);
                 check(GearModifier.values().length == 17, "All 17 source names exist");
                 for (GearModifier modifier : GearModifier.values())
                     check(!modifier.displayName().getString().startsWith("modifier.mite."), "Native language resolves " + modifier.id());

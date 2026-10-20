@@ -31,6 +31,7 @@ import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.GrindstoneMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -62,7 +63,7 @@ public final class GearProgressionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void integerThresholdAndOversizedAwardsPreserveOrdinaryEnchantments(GameTestHelper h) {
+    public static void fractionalThresholdAndMultiLevelAwardsPreserveOrdinaryEnchantments(GameTestHelper h) {
         try (Session session = new Session(h)) {
             ScriptedRandom random = session.random(0, 0, 0);
             ItemStack sword = new ItemStack(Items.IRON_SWORD);
@@ -72,19 +73,13 @@ public final class GearProgressionGameTests {
             long threshold = GearProgression.nextLevelExperienceMillis(sword, 0);
             GearProgression.award(sword, threshold - 1, session.player);
             h.assertTrue(GearProgression.state(sword).level() == 0
-                    && GearProgression.state(sword).experienceMillis() == threshold - 1000,
-                    "A source integer award discards the fractional point before accumulation");
-            GearProgression.award(sword, 999, session.player);
-            h.assertTrue(GearProgression.state(sword).experienceMillis() == threshold - 1000,
-                    "A separate sub-point award cannot accumulate toward an equipment level");
-            GearProgression.award(sword, 1000, session.player);
+                    && GearProgression.state(sword).experienceMillis() == threshold - 1,
+                    "A fractional point remains below the first threshold without being discarded");
+            GearProgression.award(sword, 1, session.player);
             h.assertTrue(GearProgression.state(sword).level() == 1 && GearProgression.state(sword).experienceMillis() == 0, "Exact threshold upgrades once");
-            GearProgression.award(sword, 500_123, session.player);
-            h.assertTrue(GearProgression.state(sword).level() == 2 && GearProgression.state(sword).experienceMillis() == 0,
-                    "An oversized award upgrades once and discards every point above that threshold");
-            GearProgression.award(sword, GearProgression.nextLevelExperienceMillis(sword, 2), session.player);
-            h.assertTrue(GearProgression.state(sword).level() == 3 && GearProgression.state(sword).experienceMillis() == 0,
-                    "The next independent award uses the current weapon level's linear threshold");
+            GearProgression.award(sword, 600_123, session.player);
+            h.assertTrue(GearProgression.state(sword).level() == 3 && GearProgression.state(sword).experienceMillis() == 123,
+                    "One award crosses two current-level thresholds and preserves its fractional remainder");
             h.assertTrue(GearProgression.state(sword).affixes().values().stream().mapToInt(Integer::intValue).sum() == 3,
                     "Each of the three reached levels grants one custom modifier rank");
             h.assertTrue(random.finished() && random.bounds.equals(List.of(74, 74, 74)),
@@ -96,26 +91,37 @@ public final class GearProgressionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void anOversizedAwardStopsAfterOneLevelAndLaterAwardsExhaustTheCustomPool(GameTestHelper h) {
+    public static void oneAwardCrossesSeveralLevelsAndExhaustsTheIndependentModifierPool(GameTestHelper h) {
         try (Session session = new Session(h)) {
             ScriptedRandom random = session.random(19, 1);
             ItemStack pickaxe = almostFullEfficiencyAndGeology(h);
-            GearProgression.award(pickaxe, 600_123, session.player);
+            GearProgression.award(pickaxe, 450_123, session.player);
             GearProgress after = GearProgression.state(pickaxe);
-            h.assertTrue(after.level() == 1 && after.experienceMillis() == 0
-                    && after.affixes().get(modifierId("tool/efficiency")) == 10
-                    && !after.affixes().containsKey(modifierId("tool/geology")),
-                    "A single large award grants one rank and discards all excess experience");
-            GearProgression.award(pickaxe, GearProgression.nextLevelExperienceMillis(pickaxe, 1), session.player);
-            GearProgression.award(pickaxe, GearProgression.nextLevelExperienceMillis(pickaxe, 2), session.player);
-            after = GearProgression.state(pickaxe);
-            h.assertTrue(after.level() == 3 && after.experienceMillis() == 0,
-                    "Three separate awards can reach three levels even after the candidate pool empties");
+            h.assertTrue(after.level() == 3 && after.experienceMillis() == 123,
+                    "One award crosses three levels and keeps the remainder even after the candidate pool empties");
             h.assertTrue(after.affixes().get(modifierId("tool/efficiency")) == 10
                     && after.affixes().get(modifierId("tool/geology")) == 1,
                     "The last efficiency rank and the single geology rank each consume one reached level");
             h.assertTrue(random.finished() && random.bounds.equals(List.of(22, 2)),
                     "A capped entry leaves the denominator immediately and an empty pool draws nothing");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void actualAwardsConsumeEachCategoryCurveAndCrossTheFifthLevelWithoutAnOldCurveJump(GameTestHelper h) {
+        try (Session session = new Session(h)) {
+            for (Item item : List.of(Items.IRON_PICKAXE, Items.IRON_AXE, Items.SHIELD,
+                    MiteTools.get("mite:iron_hatchet"), MiteTools.get("mite:iron_scythe")))
+                categoryAwards(h, session, item, 100, 150, 200, 300, 350);
+            for (Item item : List.of(Items.IRON_SWORD, Items.WOODEN_SWORD, Items.BOW, Items.CROSSBOW,
+                    Items.TRIDENT, Items.MACE, MiteTools.get("mite:wooden_cudgel"), MiteTools.get("mite:flint_knife"),
+                    MiteTools.get("mite:copper_dagger"), MiteTools.get("mite:iron_battle_axe"), MiteTools.get("mite:iron_war_hammer")))
+                categoryAwards(h, session, item, 150, 250, 350, 550, 650);
+            categoryAwards(h, session, Items.IRON_HELMET, 40, 60, 80, 120, 140);
+            categoryAwards(h, session, Items.IRON_CHESTPLATE, 80, 120, 160, 240, 280);
+            categoryAwards(h, session, Items.IRON_LEGGINGS, 60, 90, 120, 180, 210);
+            categoryAwards(h, session, Items.IRON_BOOTS, 20, 30, 40, 60, 70);
         }
         h.succeed();
     }
@@ -150,8 +156,7 @@ public final class GearProgressionGameTests {
         try (Session session = new Session(h)) {
             ScriptedRandom random = session.random(new int[21]);
             ItemStack copper = new ItemStack(MiteTools.get("copper_sword"));
-            for (int level = 0; level < 25; level++)
-                GearProgression.award(copper, GearProgression.nextLevelExperienceMillis(copper, level), session.player);
+            GearProgression.award(copper, Long.MAX_VALUE, session.player);
             GearProgress full = GearProgression.state(copper);
             h.assertTrue(full.level() == 25 && full.experienceMillis() == 0
                     && full.affixes().values().stream().mapToInt(Integer::intValue).sum() == 21,
@@ -320,7 +325,7 @@ public final class GearProgressionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void emptyAffixPoolsKeepPartialExperienceButDiscardTheRemainderOnEachUpgrade(GameTestHelper h) {
+    public static void emptyModifierPoolsKeepFractionalExperienceAndMultiLevelRemaindersUntilTheCap(GameTestHelper h) {
         try (Session session = new Session(h)) {
             ScriptedRandom random = session.random();
             ItemStack pickaxe = new ItemStack(Items.IRON_PICKAXE);
@@ -333,13 +338,12 @@ public final class GearProgressionGameTests {
             GearProgression.award(pickaxe, threshold - 1000, session.player);
             h.assertTrue(GearProgression.state(pickaxe).level() == 0
                     && GearProgression.state(pickaxe).experienceMillis() == threshold - 1000,
-                    "An empty candidate pool retains ordinary below-threshold integer experience");
-            GearProgression.award(pickaxe, 600_123, session.player);
+                    "An empty candidate pool retains ordinary below-threshold experience");
+            GearProgression.award(pickaxe, 450_123, session.player);
             GearProgress partial = GearProgression.state(pickaxe);
-            h.assertTrue(partial.level() == 1 && partial.experienceMillis() == 0 && partial.affixes().equals(capped)
-                    && partial.id().equals(id), "An empty pool preserves every old rank and UUID while a large award advances only one level");
-            for (int level = 1; level < 25; level++)
-                GearProgression.award(pickaxe, GearProgression.nextLevelExperienceMillis(pickaxe, level), session.player);
+            h.assertTrue(partial.level() == 3 && partial.experienceMillis() == 99_123 && partial.affixes().equals(capped)
+                    && partial.id().equals(id), "An empty pool preserves old ranks, UUID and the remainder through several level-ups");
+            GearProgression.award(pickaxe, Long.MAX_VALUE, session.player);
             GearProgress full = GearProgression.state(pickaxe);
             h.assertTrue(full.level() == 25 && full.experienceMillis() == 0 && full.affixes().equals(capped),
                     "A fully saturated pool still reaches the standalone cap and clears excess experience");
@@ -353,10 +357,9 @@ public final class GearProgressionGameTests {
         try (Session session = new Session(h)) {
             ScriptedRandom random = session.random(20, 19);
             ItemStack pickaxe = almostFullEfficiencyAndGeology(h);
-            for (int level = 0; level < 3; level++)
-                GearProgression.award(pickaxe, GearProgression.nextLevelExperienceMillis(pickaxe, level), session.player);
+            GearProgression.award(pickaxe, 450_000, session.player);
             GearProgress state = GearProgression.state(pickaxe);
-            h.assertTrue(state.level() == 3 && state.experienceMillis() == 0, "Three separate awards advance even after the second reward empties the pool");
+            h.assertTrue(state.level() == 3 && state.experienceMillis() == 0, "One award advances three levels even after the second reward empties the pool");
             h.assertTrue(state.affixes().get(modifierId("tool/geology")) == 1
                     && state.affixes().get(modifierId("tool/efficiency")) == 10,
                     "The rare geology reward and the last efficiency rank stop exactly at their individual caps");
@@ -403,8 +406,8 @@ public final class GearProgressionGameTests {
                     "Old over-cap and excluded affixes cannot be selected again");
             GearProgression.award(pickaxe, GearProgression.nextLevelExperienceMillis(pickaxe, 1) + 321, session.player);
             GearProgress after = GearProgression.state(pickaxe);
-            h.assertTrue(after.level() == 2 && after.experienceMillis() == 0 && after.id().equals(id),
-                    "The existing item progresses without changing identity");
+            h.assertTrue(after.level() == 2 && after.experienceMillis() == 321 && after.id().equals(id),
+                    "The existing item progresses without changing identity or discarding its remainder");
             legacy.forEach((key, rank) -> h.assertTrue(after.affixes().get(key).equals(rank), "The exact old rank remains for " + key));
             h.assertTrue(after.affixes().values().stream().mapToInt(Integer::intValue).sum() == 251
                     && ordinary.equals(pickaxe.get(DataComponents.ENCHANTMENTS)), "Only one new rank is added and ordinary enchants remain untouched");
@@ -429,6 +432,46 @@ public final class GearProgressionGameTests {
             h.assertTrue(random.finished() && random.bounds.equals(List.of(78)), "The new custom modifier consumes one draw independent of legacy enchantment ranks");
         }
         h.succeed();
+    }
+
+    private static void categoryAwards(GameTestHelper h, Session session, Item item,
+            int first, int second, int third, int levelFour, int levelFive) {
+        ItemStack stack = new ItemStack(item);
+        h.assertTrue(GearProgression.maxLevel(stack) == 25, "The category fixture is supported equipment: " + item);
+        int[] levels = {0, 1, 2, 4, 5};
+        int[] points = {first, second, third, levelFour, levelFive};
+        for (int index = 0; index < levels.length; index++)
+            h.assertTrue(GearProgression.nextLevelExperienceMillis(stack, levels[index]) == points[index] * 1000L,
+                    "The registered category has the spreadsheet threshold at L" + levels[index] + ": " + item);
+        ScriptedRandom random = session.random(0, 0, 0);
+        GearProgression.award(stack, first * 1000L - 1, session.player);
+        h.assertTrue(GearProgression.state(stack).level() == 0
+                        && GearProgression.state(stack).experienceMillis() == first * 1000L - 1,
+                "The actual award stops one stored unit before the category's first threshold: " + item);
+        GearProgression.award(stack, 1, session.player);
+        UUID identity = GearProgression.state(stack).id();
+        h.assertTrue(GearProgression.state(stack).level() == 1 && GearProgression.state(stack).experienceMillis() == 0,
+                "The final stored unit consumes exactly the category's first threshold: " + item);
+        GearProgression.award(stack, (second + third) * 1000L + 123, session.player);
+        GearProgress after = GearProgression.state(stack);
+        h.assertTrue(after.level() == 3 && after.experienceMillis() == 123 && after.id().equals(identity)
+                        && after.affixes().values().stream().mapToInt(Integer::intValue).sum() == 3,
+                "Two more category thresholds advance to L3, retain 0.123 XP and grant one rank per level: " + item);
+        h.assertTrue(random.finished() && random.bounds.size() == 3,
+                "The three reached levels each make one modifier selection: " + item);
+
+        stack.set(GearProgression.PROGRESS.get(), new GearProgress(identity, 4, 0, Map.of(), 1));
+        random = session.random(0, 0);
+        GearProgression.award(stack, levelFour * 1000L - 1, session.player);
+        h.assertTrue(GearProgression.state(stack).level() == 4,
+                "The L4 boundary still uses this category's threshold: " + item);
+        GearProgression.award(stack, levelFive * 1000L + 124, session.player);
+        after = GearProgression.state(stack);
+        h.assertTrue(after.level() == 6 && after.experienceMillis() == 123 && after.id().equals(identity)
+                        && after.affixes().values().stream().mapToInt(Integer::intValue).sum() == 2,
+                "Actual consumption crosses L4 to L6 smoothly and retains the same fractional remainder: " + item);
+        h.assertTrue(random.finished() && random.bounds.size() == 2,
+                "Crossing the fifth-level boundary retains one modifier roll per reached level: " + item);
     }
 
     private static Map<ResourceLocation, Integer> cappedRanks(GameTestHelper h, ItemStack stack) {

@@ -144,7 +144,7 @@ public final class SourceModifierGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void independentExperienceAwardsRebuildProtectionExclusionsAndDiscardAnOversizedAwardsRemainder(GameTestHelper h) {
+    public static void oneMultiLevelAwardRebuildsProtectionExclusionsAndPreservesItsRemainder(GameTestHelper h) {
         try (Session session = new Session(h)) {
             ScriptedRandom random = session.random(0, 6, 0);
             ItemStack chestplate = new ItemStack(Items.IRON_CHESTPLATE);
@@ -154,18 +154,12 @@ public final class SourceModifierGameTests {
             ranks.put(id("armor/blessed"), 5);
             ranks.put(id("armor/indomitable"), 4);
             chestplate.set(GearProgression.PROGRESS.get(), new GearProgress(UUID.randomUUID(), 0, 0, ranks, 1));
-            GearProgression.award(chestplate, 600_123, session.player);
-            h.assertTrue(GearProgression.state(chestplate).level() == 1
-                            && GearProgression.state(chestplate).experienceMillis() == 0
-                            && GearProgression.state(chestplate).affixes().get(id("armor/projectile_protection")) == 1,
-                    "A large armor award grants only one modifier rank and discards all excess XP");
-            for (int level = 1; level < 3; level++)
-                GearProgression.award(chestplate, GearProgression.nextLevelExperienceMillis(chestplate, level) / 2, session.player);
+            GearProgression.award(chestplate, 360_123, session.player);
             GearProgress state = GearProgression.state(chestplate);
-            h.assertTrue(state.level() == 3 && state.experienceMillis() == 0 && state.affixes().get(id("armor/projectile_protection")) == 3,
-                    "Three separate reached levels all upgrade the first selected protection kind");
+            h.assertTrue(state.level() == 3 && state.experienceMillis() == 123 && state.affixes().get(id("armor/projectile_protection")) == 3,
+                    "One award reaches three levels, grants all three modifier ranks and keeps its fractional remainder");
             for (String other : List.of("armor/explosion_protection", "armor/fire_protection", "armor/protection"))
-                h.assertFalse(state.affixes().containsKey(id(other)), "Later awards cannot select incompatible " + other);
+                h.assertFalse(state.affixes().containsKey(id(other)), "Later levels in the same award cannot select incompatible " + other);
             h.assertTrue(random.finished() && random.bounds.equals(List.of(26, 7, 7)),
                     "The first choice removes all three incompatible kinds before the next selection");
         }
@@ -256,7 +250,7 @@ public final class SourceModifierGameTests {
                 ScriptedRandom random = session.random(start + offset);
                 ItemStack stack = new ItemStack(item);
                 long threshold = GearProgression.nextLevelExperienceMillis(stack, 0);
-                GearProgression.award(stack, GearProgression.isArmor(stack) ? threshold / 2 : threshold, session.player);
+                GearProgression.award(stack, threshold, session.player);
                 h.assertTrue(GearProgression.state(stack).level() == 1
                                 && GearProgression.state(stack).affixes().equals(Map.of(id(path), 1)),
                         "Weighted roll " + (start + offset) + " selects the source interval for " + path);

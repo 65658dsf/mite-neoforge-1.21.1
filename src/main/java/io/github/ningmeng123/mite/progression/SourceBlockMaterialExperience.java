@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.progression;
 
 import io.github.ningmeng123.mite.block.StrongboxBlock;
+import io.github.ningmeng123.mite.block.RunestoneBlock;
 import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
 import io.github.ningmeng123.mite.registry.MiteDecorativeContent;
 import io.github.ningmeng123.mite.registry.MiteMetalBlocks;
@@ -20,6 +21,7 @@ public final class SourceBlockMaterialExperience {
                 || state.is(Blocks.CLAY) || state.is(Blocks.COAL_BLOCK)
                 || SourceMiningRequirements.sourceHandBreakable(state)) return 0;
         if (state.is(Tags.Blocks.ORES)) return 2; // The old ore blocks have stone material, even adamantium/diamond ore.
+        if (state.getBlock() instanceof RunestoneBlock) return 3; // R196 runestones inherit obsidian, regardless of rune metal.
         if (state.getBlock() instanceof StrongboxBlock box) return GearModifierRules.materialHarvestLevel(box.material());
         String metal = MiteMetalBlocks.material(state);
         if (metal == null) metal = MiteDecorativeContent.material(state.getBlock());

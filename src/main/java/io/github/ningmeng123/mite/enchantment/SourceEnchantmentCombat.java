@@ -52,13 +52,11 @@ public final class SourceEnchantmentCombat {
     /** Called at the actual native hurt invocation, not at the earlier cancellable attack event. */
     public static boolean melee(LivingEntity attacker, Entity target, DamageSource source, float damage, BooleanSupplier nativeDamage) {
         if (attacker.level().isClientSide || !(target instanceof LivingEntity living)) return nativeDamage.getAsBoolean();
-        ItemStack attackingWeapon = attacker.getMainHandItem();
         if (attacker instanceof Player && damage > 0F) disarm(attacker, living);
         HarmSnapshot before = new HarmSnapshot(living);
         boolean affected = nativeDamage.getAsBoolean();
         if (!before.negativelyAffected(living)) return affected;
         if (attacker instanceof Player player && living.getHealth() < before.health) {
-            io.github.ningmeng123.mite.progression.GearProgressionEvents.melee(player, living, attackingWeapon, before.health - living.getHealth());
             io.github.ningmeng123.mite.progression.GearModifierEffects.slowOnHealthLoss(player, living);
         }
         if(affected&&attacker instanceof Player player&&living instanceof Player defender
