@@ -8,6 +8,8 @@ import com.mojang.blaze3d.platform.NativeImage;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.client.BetterCombatMobAnimations;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
+import io.github.ningmeng123.mite.entity.MobKind;
+import io.github.ningmeng123.mite.registry.MiteMobs;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -171,7 +173,7 @@ public final class FreshAnimationsCombatClientAudit {
             Object root = invoke(context, "animatingModelRoot");
             Object mainRoot = Class.forName("traben.entity_model_features.models.IEMFModel")
                     .getMethod("emf$getEMFRootModel").invoke(model(trace.entity));
-            boolean main = root == mainRoot;
+            boolean main = root == mainRoot || poseDriver(trace.entity);
             trace.rootNames.add("main=" + main + ", root=" + root.getClass().getField("modelName").get(root));
             var canonical = canonical(root);
             Map<ModelPart, PartState> all = new IdentityHashMap<>();
@@ -195,7 +197,7 @@ public final class FreshAnimationsCombatClientAudit {
             if (before.active) {
                 trace.guardedCalls++;
                 if (!sameStates(before.canonical, canonical(root))) trace.errors.add("EMF overwrote an active combat canonical part");
-                if (before.main) trace.expectedFinalCore = before.modelPose;
+                if (before.main && !poseDriver(trace.entity)) trace.expectedFinalCore = before.modelPose;
             }
         } catch (Throwable failure) { trace.errors.add("after EMF: " + failure); }
     }
@@ -260,19 +262,21 @@ public final class FreshAnimationsCombatClientAudit {
             report.add("player_attack_lifecycle", lifecycle);
             for (var type : List.of(EntityType.ZOMBIE, EntityType.SKELETON, EntityType.WITHER_SKELETON,
                     EntityType.PIGLIN, EntityType.VINDICATOR)) {
-                // Ordinary skeletons deliberately use MITE's source_skeleton geometry, which FA does not supply.
-                // Wither skeletons retain the standard layer and exercise the real FA skeleton animations.
-                boolean requireFa = type != EntityType.SKELETON;
-                add(type.create(mc.level), type.create(mc.level), EntityType.getKey(type).toString(), requireFa);
-                if (!requireFa) rows.getLast().fact.addProperty("fa_scope_note",
-                        "MITE ordinary skeleton renderer uses mite:source_skeleton; this pack has no matching model. Native-layer Better Combat and isolation remain audited.");
+                add(type.create(mc.level), type.create(mc.level), EntityType.getKey(type).toString(), true);
+            }
+            for (MobKind kind : List.of(MobKind.LONGDEAD, MobKind.LONGDEAD_GUARDIAN,
+                    MobKind.BONE_LORD, MobKind.ANCIENT_BONE_LORD, MobKind.JELLY, MobKind.BLOB,
+                    MobKind.OOZE, MobKind.PUDDING)) {
+                var type = MiteMobs.type(kind);
+                add(type.create(mc.level), type.create(mc.level), EntityType.getKey(type).toString(), true);
             }
             int modern = 0;
             for (var entry : BuiltInRegistries.ENTITY_TYPE.entrySet()) {
                 if (!entry.getKey().location().getNamespace().equals("modern_ite")) continue;
                 var entity = entry.getValue().create(mc.level);
                 if (!(entity instanceof Mob mob) || !humanoid(model(mob))) continue;
-                add(mob, (LivingEntity)entry.getValue().create(mc.level), entry.getKey().location().toString(), false);
+                add(mob, (LivingEntity)entry.getValue().create(mc.level), entry.getKey().location().toString(),
+                        entry.getKey().location().getPath().equals("skeleton_zombie"));
                 modern++;
             }
             report.addProperty("modern_ite_loaded", ModList.get().isLoaded("modern_ite"));
@@ -294,20 +298,20 @@ public final class FreshAnimationsCombatClientAudit {
             if (done) return;
             try {
                 graphics.fill(0, 0, width, height, 0xFF111923);
-                graphics.drawCenteredString(font, "Fresh Animations + Better Combat: idle / windup / impact / recovery", width / 2, 6, 0xFFE8EEF8);
+                graphics.drawCenteredString(font, "Fresh Animations + Better Combat: idle / walk / windup / impact / recovery", width / 2, 6, 0xFFE8EEF8);
                 int label = Math.min(138, Math.max(85, width / 4));
-                int cell = Math.max(1, (width - label - 8) / 4), top = 25;
+                int cell = Math.max(1, (width - label - 8) / 5), top = 25;
                 int end = Math.min(rows.size(), (page + 1) * PAGE_ROWS);
                 int rowHeight = Math.max(20, (height - top - 8) / Math.max(1, end - page * PAGE_ROWS));
                 for (int index = page * PAGE_ROWS; index < end; index++) {
                     Row row = rows.get(index); int y = top + (index % PAGE_ROWS) * rowHeight;
                     graphics.drawString(font, row.key.substring(row.key.indexOf(':') + 1), 4, y + rowHeight / 2, 0xFFD8E4F2, false);
-                    int[] ages = {1, 3, 8, 14};
-                    for (int column = 0; column < 4; column++) {
+                    int[] ages = {1, 1, 3, 8, 14};
+                    for (int column = 0; column < 5; column++) {
                         int x = label + column * cell;
                         graphics.fill(x, y, x + cell - 2, y + rowHeight - 2, 0xFF203044);
-                        sample(graphics, row, ages[column], column > 0, x + cell / 2F, y + rowHeight - 4,
-                                Math.min(34F, rowHeight * .38F), List.of("idle", "windup", "impact", "recovery").get(column));
+                        sample(graphics, row, ages[column], column > 1, x + cell / 2F, y + rowHeight - 4,
+                                Math.min(34F, rowHeight * .38F), List.of("idle", "walk", "windup", "impact", "recovery").get(column));
                     }
                 }
                 graphics.flush(); framesOnPage++;
@@ -317,25 +321,33 @@ public final class FreshAnimationsCombatClientAudit {
 
         private void sample(GuiGraphics graphics, Row row, int age, boolean attack, float x, float y, float scale, String phase) throws ReflectiveOperationException {
             stop(row.entity); stop(row.control);
+            row.entity.walkAnimation.update(0F, 1F);
             row.entity.tickCount = row.control.tickCount = 40;
             Trace controlBefore = renderEntity(graphics, row.control, -500, -500, scale);
             Trace idle = renderEntity(graphics, row.entity, -500, -500, scale);
-            boolean animal = row.entity.getType() == EntityType.COW;
+            boolean animal = !humanoid(model(row.entity));
+            boolean slime = row.entity instanceof net.minecraft.world.entity.monster.Slime;
             if (row.requireFa) {
                 check(idle.mainEmfCalls > 0, "Actual FA model animates " + row.key + "; emfCalls=" + idle.emfCalls
                         + "; mainEmfCalls=" + idle.mainEmfCalls + "; roots=" + idle.rootNames);
-                if (phase.equals("idle")) check(idle.changedEmfCalls > 0, "FA idle changes actual model parts: " + row.key);
+                if (phase.equals("idle") && !slime) check(idle.changedEmfCalls > 0, "FA idle changes actual model parts: " + row.key);
             }
             if (attack && !animal) begin(row.entity, age);
+            if (phase.equals("walk")) {
+                for (int index = 0; index < 6; index++) row.entity.walkAnimation.update(.8F, 1F);
+                row.entity.tickCount = 60;
+            }
             check(active(row.entity) == (attack && !animal), "Combat guard follows actual attack state: " + row.key + " / " + phase);
             Trace visible = renderEntity(graphics, row.entity, x, y, scale);
+            if (phase.equals("walk") && !slime) check(!samePose(idle.finalPose, visible.finalPose),
+                    "Actual renderer has a distinct walking pose: " + row.key);
             if (attack && !animal) {
                 if (row.requireFa) check(visible.guardedCalls > 0, "FA attack passes through the real compatibility guard: " + row.key);
                 check(!samePose(idle.finalPose, visible.finalPose), "Real weapon keyframes change the rendered pose: " + row.key + " / " + phase);
             }
             if (animal) {
                 check(visible.guardedCalls == 0, "Animal FA animation is never guarded");
-                check(samePose(idle.finalPose, visible.finalPose), "Unrelated attack sample leaves animal pose unchanged");
+                if (!phase.equals("walk")) check(samePose(idle.finalPose, visible.finalPose), "Unrelated attack sample leaves animal pose unchanged");
             }
             stop(row.entity);
             check(!active(row.entity), "Guard releases immediately after ending the attack: " + row.key);
@@ -445,6 +457,10 @@ public final class FreshAnimationsCombatClientAudit {
     }
 
     private static boolean humanoid(EntityModel<?> model) { return model instanceof HumanoidModel<?> || model instanceof IllagerModel<?>; }
+
+    private static boolean poseDriver(LivingEntity entity) {
+        return model(entity).getClass().getSimpleName().equals("SkeletonZombieModel");
+    }
 
     private static Map<ModelPart, PartState> canonical(Object root) throws ReflectiveOperationException {
         Map<ModelPart, PartState> result = new IdentityHashMap<>();

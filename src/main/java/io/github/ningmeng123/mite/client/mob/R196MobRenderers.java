@@ -128,7 +128,7 @@ public final class R196MobRenderers {
     private static final class SourceSkeletonRenderer extends SkeletonRenderer<R196Skeleton> {
         SourceSkeletonRenderer(EntityRendererProvider.Context context) {
             super(context, MobModelLayers.INNER_ARMOR, MobModelLayers.OUTER_ARMOR,
-                    new LegacySkeletonModel<R196Skeleton>(context.bakeLayer(MobModelLayers.SKELETON)));
+                    new LegacySkeletonModel<R196Skeleton>(context.bakeLayer(ModelLayers.SKELETON)));
             addLayer(new PlayerTargetEyesLayer<>(this));
         }
         @Override public ResourceLocation getTextureLocation(R196Skeleton entity) {
@@ -144,7 +144,7 @@ public final class R196MobRenderers {
     private static final class OrdinarySkeletonRenderer extends SkeletonRenderer<Skeleton> {
         OrdinarySkeletonRenderer(EntityRendererProvider.Context context) {
             super(context, MobModelLayers.INNER_ARMOR, MobModelLayers.OUTER_ARMOR,
-                    new LegacySkeletonModel<Skeleton>(context.bakeLayer(MobModelLayers.SKELETON)));
+                    new LegacySkeletonModel<Skeleton>(context.bakeLayer(ModelLayers.SKELETON)));
         }
         @Override public ResourceLocation getTextureLocation(Skeleton entity) {
             return ResourceLocation.withDefaultNamespace("textures/entity/skeleton/"
@@ -200,7 +200,7 @@ public final class R196MobRenderers {
     }
     private static final class SourceCubeRenderer extends MobRenderer<R196Cube,SlimeModel<R196Cube>> {
         SourceCubeRenderer(EntityRendererProvider.Context context) {
-            super(context, new SlimeModel<>(context.bakeLayer(MobModelLayers.CUBE_INNER)), .25F);
+            super(context, new SlimeModel<>(context.bakeLayer(ModelLayers.SLIME)), .25F);
             addLayer(new SlimeOuterLayer<>(this,context.getModelSet()));
         }
         @Override public ResourceLocation getTextureLocation(R196Cube entity) { return texture("slime/" + entity.miteKind().path()); }
