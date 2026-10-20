@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.client.config;
 
+import io.github.ningmeng123.mite.config.GameplayConfigExport;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public final class ConfigExportResultScreen extends Screen {
     private record TextLine(FormattedCharSequence text, int y, int color) {}
     private final Screen parent;
     private final Path file;
+    private final List<Path> files;
     private final String failure;
     private final List<TextLine> lines = new ArrayList<>();
     private int contentX;
@@ -25,9 +27,18 @@ public final class ConfigExportResultScreen extends Screen {
     private int scroll;
 
     public ConfigExportResultScreen(Screen parent, Path file, String failure) {
+        this(parent, file, file == null ? List.of() : List.of(file), failure);
+    }
+
+    public static ConfigExportResultScreen success(Screen parent, GameplayConfigExport.ExportedBundle bundle) {
+        return new ConfigExportResultScreen(parent, bundle.primaryFile(), bundle.files(), null);
+    }
+
+    private ConfigExportResultScreen(Screen parent, Path file, List<Path> files, String failure) {
         super(Component.translatable(file == null ? "mite.config.export.failed" : "mite.config.export.success"));
         this.parent = parent;
         this.file = file;
+        this.files = List.copyOf(files);
         this.failure = failure;
     }
 
@@ -38,7 +49,11 @@ public final class ConfigExportResultScreen extends Screen {
         int y = 0;
         if (file != null) {
             y = paragraph(Component.translatable("mite.config.export.saved"), y, 0x88FF88) + 8;
-            y = paragraph(Component.literal(file.toString()), y, 0xFFFFFF) + 12;
+            y = paragraph(Component.literal(file.getParent().toString()), y, 0xFFFFFF) + 8;
+            y = paragraph(Component.translatable("mite.config.export.files", files.size()), y, 0xCCCCCC) + 3;
+            for (Path exported : files)
+                y = paragraph(Component.literal("• " + exported.getFileName()), y, 0xFFFFFF);
+            y += 12;
             y = paragraph(Component.translatable("mite.config.export.install"), y, 0xCCCCCC) + 8;
             y = paragraph(Component.translatable("mite.config.export.saved_only"), y, 0xAAAAAA);
             int buttonWidth = Math.max(80, Math.min(150, (width - 28) / 2));
@@ -46,10 +61,10 @@ public final class ConfigExportResultScreen extends Screen {
                     button -> Util.getPlatform().openPath(file.getParent()))
                     .bounds(width / 2 - buttonWidth - 4, height - 54, buttonWidth, 20).build());
             var copy = addRenderableWidget(Button.builder(Component.translatable("mite.config.export.copy_path"), button -> {
-                minecraft.keyboardHandler.setClipboard(file.toString());
+                minecraft.keyboardHandler.setClipboard(file.getParent().toString());
                 button.setMessage(Component.translatable("mite.config.export.path_copied"));
             }).bounds(width / 2 + 4, height - 54, buttonWidth, 20).build());
-            copy.setTooltip(Tooltip.create(Component.literal(file.toString())));
+            copy.setTooltip(Tooltip.create(Component.literal(file.getParent().toString())));
         } else {
             y = paragraph(Component.translatable("mite.config.export.failure_hint"), y, 0xFF8888) + 8;
             y = paragraph(Component.literal(failure == null ? "" : failure), y, 0xCCCCCC);

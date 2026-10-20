@@ -25,11 +25,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -112,14 +117,40 @@ public final class GameplayConfigClientAudit implements DataProvider {
             check(settings.getDeclaredMethod("init").getReturnType() == void.class, name + " init signature resolves");
         }
         report.addProperty("growth_formula_and_actual_ore_screen_linkage_verified", true);
+        Class<?> spawnSettings = Class.forName(CLIENT + "MonsterSpawnSettingsScreen", false, loader);
+        MethodHandles.publicLookup().findConstructor(spawnSettings,
+                MethodType.methodType(void.class, Screen.class, String.class, Supplier.class, Consumer.class));
+        MethodHandles.publicLookup().findConstructor(spawnSettings,
+                MethodType.methodType(void.class, Screen.class, String.class, Supplier.class, Consumer.class, Function.class));
+        check(spawnSettings.getDeclaredMethod("init").getReturnType() == void.class, "Shared monster spawn screen init resolves");
+        Class<?> spawnCatalog = Class.forName("io.github.ningmeng123.mite.config.MonsterSpawnCatalog", false, loader);
+        Class<?> spawnEntry = Class.forName(spawnCatalog.getName() + "$Entry", false, loader);
+        MethodHandles.publicLookup().findStatic(spawnCatalog, "entries", MethodType.methodType(List.class, String.class, RegistryAccess.class));
+        MethodHandles.publicLookup().findStatic(spawnCatalog, "ownedBy", MethodType.methodType(boolean.class, String.class, String.class));
+        MethodHandles.publicLookup().findConstructor(spawnEntry,
+                MethodType.methodType(void.class, String.class, Component.class, EntityType.class, List.class));
+        check(calls(bytecode(spawnSettings.getName()), "<init>", spawnCatalog.getName().replace('.', '/'), "entries")
+                        && callsOrLinkedLambda(bytecode(spawnSettings.getName()), "<init>", spawnCatalog.getName().replace('.', '/'), "ownedBy"),
+                "The shared browser discovers current registry entries and retains overrides under their owning mod");
+        boolean entityRegistry = false;
+        for (var method : bytecode(spawnCatalog.getName()).methods) for (var instruction : method.instructions)
+            if (instruction instanceof FieldInsnNode field && field.owner.equals("net/minecraft/core/registries/BuiltInRegistries")
+                    && field.name.equals("ENTITY_TYPE")) entityRegistry = true;
+        check(entityRegistry, "Monster settings enumerate the actual entity registry without a UI entity allowlist");
+        report.addProperty("shared_monster_spawn_screen_and_registry_catalog_linkage_verified", true);
+        report.addProperty("monster_spawn_screen_constructor_or_init_invoked", false);
         Class<?> exportResult = Class.forName(CLIENT + "ConfigExportResultScreen", false, loader);
         MethodHandles.publicLookup().findConstructor(exportResult,
                 MethodType.methodType(void.class, Screen.class, Path.class, String.class));
         check(exportResult.getDeclaredMethod("init").getReturnType() == void.class, "Export result screen init resolves");
         MethodHandles.publicLookup().findStatic(Class.forName("io.github.ningmeng123.mite.config.GameplayConfigExport", false, loader),
                 "export", MethodType.methodType(Path.class, Path.class));
-        check(calls(bytecode(landing.getName()), "exportConfiguration", "io/github/ningmeng123/mite/config/GameplayConfigExport", "export"),
-                "The settings page calls the validated server configuration exporter");
+        Class<?> exportedBundle = Class.forName("io.github.ningmeng123.mite.config.GameplayConfigExport$ExportedBundle", false, loader);
+        MethodHandles.publicLookup().findStatic(Class.forName("io.github.ningmeng123.mite.config.GameplayConfigExport", false, loader),
+                "exportBundle", MethodType.methodType(exportedBundle, Path.class));
+        MethodHandles.publicLookup().findStatic(exportResult, "success", MethodType.methodType(exportResult, Screen.class, exportedBundle));
+        check(calls(bytecode(landing.getName()), "exportConfiguration", "io/github/ningmeng123/mite/config/GameplayConfigExport", "exportBundle"),
+                "The settings page calls the complete MITE and optional ITE configuration bundle exporter");
         report.addProperty("config_export_screen_and_backend_linkage_verified", true);
         report.addProperty("config_export_invoked_by_client_audit", false);
         report.addProperty("enchantment_screen_constructor_invoked", false);
@@ -259,7 +290,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
         });
         check(root.keylist().isEmpty() && root.modSpec() == MiteConfig.SPEC,
                 "The native top context exposes the actual root entries with an empty path");
-        Set<String> expectedHidden = Set.of("underworld_ores", "overworld_ores", "underworld_generation", "overworld_generation");
+        Set<String> expectedHidden = Set.of("underworld_ores", "overworld_ores", "underworld_generation", "overworld_generation", "monster_spawning");
         Set<String> expectedVisible = Set.of("monsters", "combat", "structures", "enchantments");
         Set<String> hidden = new TreeSet<>(), visible = new TreeSet<>(), monsterValues = new TreeSet<>();
         Element sentinel = new Element(null, null, null, null, true);
@@ -291,7 +322,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
             }
         }
         check(hidden.equals(expectedHidden) && visible.equals(expectedVisible),
-                "Only the four duplicate ore sections are suppressed; all four other gameplay sections remain");
+                "Dedicated ore and monster-spawn sections are suppressed; all four other gameplay sections remain");
         check(monsterValues.equals(Set.of("growth_multiplier", "health_growth_multiplier", "damage_growth_multiplier"))
                 && suppressedMonsterValues > 0, "Only the three monster multipliers remain in the advanced page");
         check(originalValues.equals(MiteConfig.SPEC.getValues().valueMap()) && originalSpecs.equals(MiteConfig.SPEC.getSpec().valueMap())
@@ -390,7 +421,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
             facts.add(fact);
         }
         for (String name : List.of(CLIENT + "MiteSettingsScreen", CLIENT + "EnchantmentSettingsScreen",
-                CLIENT + "MonsterGrowthSettingsScreen", CLIENT + "OreGenerationSettingsScreen", CLIENT + "ConfigExportResultScreen", MiteConfig.class.getName()))
+                CLIENT + "MonsterGrowthSettingsScreen", CLIENT + "MonsterSpawnSettingsScreen", CLIENT + "OreGenerationSettingsScreen",
+                CLIENT + "ConfigExportResultScreen", MiteConfig.class.getName()))
             for (var method : bytecode(name).methods) for (var instruction : method.instructions)
                 if (instruction instanceof LdcInsnNode constant && constant.cst instanceof String key && configKey(key)) required.add(key);
         collectSpecKeys(MiteConfig.SPEC.getSpec(), List.of(), required);
@@ -429,6 +461,14 @@ public final class GameplayConfigClientAudit implements DataProvider {
     private static boolean calls(ClassNode type, String methodName, String owner, String name) {
         for (var method : type.methods) if (method.name.equals(methodName)) for (var instruction : method.instructions)
             if (instruction instanceof MethodInsnNode call && call.owner.equals(owner) && call.name.equals(name)) return true;
+        return false;
+    }
+    private static boolean callsOrLinkedLambda(ClassNode type, String methodName, String owner, String name) {
+        if (calls(type, methodName, owner, name)) return true;
+        for (var method : type.methods) if (method.name.equals(methodName)) for (var instruction : method.instructions)
+            if (instruction instanceof InvokeDynamicInsnNode dynamic) for (Object argument : dynamic.bsmArgs)
+                if (argument instanceof Handle handle && handle.getOwner().equals(type.name)
+                        && calls(type, handle.getName(), owner, name)) return true;
         return false;
     }
     private static boolean references(ClassNode type, String methodName, String owner, String name) {

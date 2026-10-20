@@ -40,6 +40,12 @@ public final class MiteExtensions {
         default boolean spawnDistance(SpawnContext context, BlockPos pos, double nearestPlayerSq, double spawnSq, boolean close, boolean original) { return original; }
         default boolean outdoorAllows(SpawnContext context, Mob mob, boolean original) { return original; }
         default List<R196MobSpawning.Entry> spawnPool(SpawnContext context, BlockPos pos, List<R196MobSpawning.Entry> original) { return original; }
+        /** Return the addon's own saved natural-spawn rate for a registered entity. */
+        default double monsterSpawnMultiplier(EntityType<?> type, double original) { return original; }
+        /** Configuration screens use this to keep addon-owned creatures in their own menu. */
+        default boolean ownsMonsterSpawnSettings(String entityId) { return false; }
+        /** Include an addon's finalization replacements in the parent family's effective weight. */
+        default double monsterSpawnWeightMultiplier(SpawnContext context, BlockPos pos, EntityType<?> type, double original) { return original; }
         default double maximumHealth(Player player, double original) { return original; }
         default int foodCapacity(Player player, int original) { return original; }
         default int gearMaximumLevel(ItemStack stack, int original) { return original; }

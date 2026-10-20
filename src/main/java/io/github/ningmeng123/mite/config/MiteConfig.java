@@ -38,6 +38,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.DoubleValue WEAPON_REACH_MULTIPLIER, WEAPON_REACH_REDUCTION;
     public static final ModConfigSpec.BooleanValue HEIGHT_REACH_PENALTY, UNDERWORLD_TRIALS, OVERWORLD_TRIALS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS, ENCHANTMENT_CHANCES;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_RATES;
     private static volatile Snapshot local;
     private static volatile Snapshot remote;
 
@@ -108,6 +109,11 @@ public final class MiteConfig {
                 .comment("Innate attack baseline settlement when each blood moon ends. The result becomes both base and reference for the next growth period; blue moons are skipped. Empty inherits damage_formula, preserving existing custom configurations.")
                 .define("damage_blood_moon_formula", "", MiteConfig::validOptionalFormulaSyntax);
         builder.pop();
+        builder.translation("mite.config.monster_spawning").push("monster_spawning");
+        NATURAL_SPAWN_RATES = builder.translation("mite.config.natural_spawn_rates")
+                .comment("Natural spawn weight overrides: namespace:entity=multiplier (0..100). 1 preserves the original weight; 0 disables natural spawning of that entity. Unknown IDs are retained. Existing biome, date, depth, population and spawn rules still apply. ITE-owned entities use the ITE configuration instead.")
+                .defineListAllowEmpty(List.of("rates"), List::of, () -> "minecraft:zombie=1.0", MiteConfig::validMonsterSpawnOverride);
+        builder.pop();
         builder.translation("mite.config.combat").push("combat");
         WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Survival melee attack reach multiplier. Original MITE weapons keep source reach; Simply Swords weapons use their own Better Combat base range. Creative reach remains unchanged.");
         WEAPON_REACH_REDUCTION = number(builder, "weapon_reach_reduction", 0D, 16D, "Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.");
@@ -156,6 +162,39 @@ public final class MiteConfig {
 
     public static boolean validEnchantmentId(Object input) {
         return input instanceof String id && id.contains(":") && ResourceLocation.tryParse(id) != null;
+    }
+
+    public static boolean validMonsterSpawnOverride(Object input) {
+        if (!(input instanceof String entry)) return false;
+        int separator = entry.indexOf('=');
+        if (separator < 0 || !validEnchantmentId(entry.substring(0, separator))) return false;
+        try {
+            double multiplier = Double.parseDouble(entry.substring(separator + 1));
+            return Double.isFinite(multiplier) && multiplier >= 0D && multiplier <= 100D;
+        } catch (NumberFormatException ignored) { return false; }
+    }
+
+    private static Map<String, Double> spawnRateOverrides(Map<String, Double> values) {
+        if (values == null) return Map.of();
+        var valid = new HashMap<String, Double>();
+        values.forEach((id, multiplier) -> {
+            if (validEnchantmentId(id) && multiplier != null && Double.isFinite(multiplier) && multiplier >= 0D && multiplier <= 100D)
+                valid.put(id, multiplier);
+        });
+        return Map.copyOf(valid);
+    }
+
+    public static double monsterSpawnMultiplier(String entityId) {
+        return effectiveSnapshot().monsterSpawnRates().getOrDefault(entityId, 1D);
+    }
+
+    public static boolean saveMonsterSpawnRates(Map<String, Double> values) {
+        if (values == null || spawnRateOverrides(values).size() != values.size()) return false;
+        NATURAL_SPAWN_RATES.set(values.entrySet().stream().filter(entry -> entry.getValue() != 1D)
+                .sorted(Map.Entry.comparingByKey()).map(entry -> entry.getKey() + "=" + entry.getValue()).toList());
+        refreshEnchantmentRules();
+        SPEC.save();
+        return true;
     }
 
     private static boolean validFormulaSyntax(Object input) {
@@ -280,7 +319,7 @@ public final class MiteConfig {
             boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
             MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
             Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
-            Map<String, Double> enchantmentChances) {
+            Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates) {
         public Snapshot {
             ores = Map.copyOf(ores);
             caps = Map.copyOf(caps);
@@ -292,6 +331,17 @@ public final class MiteConfig {
             overworldOreChances = overworldOreChances == null ? Map.of() : Map.copyOf(overworldOreChances);
             overworldOres = overworldOres == null ? Map.of() : Map.copyOf(overworldOres);
             enchantmentChances = enchantmentChanceOverrides(enchantmentChances);
+            monsterSpawnRates = spawnRateOverrides(monsterSpawnRates);
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
+                Map<String, Double> enchantmentChances) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, overworldOres, enchantmentChances, Map.of());
         }
         public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
                 double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
@@ -327,6 +377,11 @@ public final class MiteConfig {
     }
 
     private static Snapshot readLocalSnapshot() {
+        var spawnRates = new HashMap<String, Double>();
+        for (String entry : value(NATURAL_SPAWN_RATES)) if (validMonsterSpawnOverride(entry)) {
+            int split = entry.indexOf('=');
+            spawnRates.put(entry.substring(0, split), Double.parseDouble(entry.substring(split + 1)));
+        }
         var ores = new HashMap<String, Double>();
         UNDERWORLD_ORES.forEach((kind, setting) -> ores.put(kind.name(), value(setting)));
         UNDERWORLD_DEEPSLATE_ORES.forEach((kind, setting) -> ores.put(R196OreRules.deepslateMultiplierKey(kind), value(setting)));
@@ -373,7 +428,7 @@ public final class MiteConfig {
         return new Snapshot(ores, overall, healthMultiplier, damageMultiplier,
                 value(WEAPON_REACH_MULTIPLIER), value(WEAPON_REACH_REDUCTION), value(HEIGHT_REACH_PENALTY),
                 value(UNDERWORLD_TRIALS), value(OVERWORLD_TRIALS), caps, new HashSet<>(value(DISABLED_ENCHANTMENTS)), growth, candidates, chances,
-                surfaceCandidates, surfaceChances, surfaceMultipliers, enchantmentChances);
+                surfaceCandidates, surfaceChances, surfaceMultipliers, enchantmentChances, spawnRates);
     }
     public static Snapshot localSnapshot() { return local; }
     public static Snapshot effectiveSnapshot() {

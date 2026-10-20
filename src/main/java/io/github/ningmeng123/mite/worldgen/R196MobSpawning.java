@@ -195,6 +195,7 @@ public final class R196MobSpawning {
 
     public static void register(IEventBus modBus) {
         ATTACHMENTS.register(modBus);
+        ConfiguredMonsterSpawns.register();
         modBus.addListener(R196MobSpawning::registerPlacements);
         NeoForge.EVENT_BUS.addListener(R196MobSpawning::spawnerPosition);
         NeoForge.EVENT_BUS.addListener(R196MobSpawning::onServerTick);
@@ -219,6 +220,14 @@ public final class R196MobSpawning {
     }
     public static boolean sourceType(EntityType<?> type) { return Tables.CLASSES.containsKey(type); }
     public static List<Entry> sourceProfile(int legacyBiomeId, Category category) { return Tables.BIOMES.get(legacyBiomeId).lists().get(category); }
+    /** Existing authored pool metadata, including structure overrides; no parallel configuration entity list. */
+    public static List<Entry> sourceEntries() {
+        List<Entry> result = new ArrayList<>();
+        for (var profile : Tables.BIOMES.values())
+            for (var entries : profile.lists().values()) result.addAll(entries);
+        result.addAll(Tables.FORTRESS);
+        return List.copyOf(result);
+    }
     public static Category category(Mob mob) {
         if (mob instanceof R196Mob r196) return category(r196.miteKind().category());
         if (mob.getType() == EntityType.IRON_GOLEM || mob.getType() == EntityType.SNOW_GOLEM || mob.getType() == EntityType.VILLAGER) return null;
@@ -412,13 +421,13 @@ public final class R196MobSpawning {
                     double nearest=nearestPlayer(level,point,false), spawnDistance=point.distanceToSqr(Vec3.atLowerCornerOf(level.getSharedSpawnPos()));
                     if (!extension().spawnDistance(spawnContext,position,nearest,spawnDistance,close,R196SpawnRules.distanceAllows(nearest,spawnDistance,close))) continue;
                     if (selected == null) {
-                        selected = select(level, position, category, random, modernOnly || placementY == null);
+                        selected = select(level, position, category, random, modernOnly || placementY == null, true);
                         if (selected == null) { if (placementY == null) continue; else break; }
                         if (category != Category.MONSTER && "EntityVampireBat".equals(selected.sourceClass()) && random.nextInt(4) == 0)
                             sourceAttempts = 4 + random.nextInt(5);
                     }
                     if (selected.type() == EntityType.GHAST && nearestPlayer(level, point, false) < 2304) continue;
-                    Entry actual = substitute(level, selected, random);
+                    Entry actual = substituteNatural(level, selected, random);
                     maximumAttempts = Math.max(0,extension().spawnAttempts(spawnContext,actual.type(),overworld && "EntityPhaseSpider".equals(actual.sourceClass()) ? 64 : sourceAttempts));
                     Mob mob = actual.type().create(level); if (mob == null) continue;
                     mob.moveTo(point.x, point.y, point.z, random.nextFloat() * 360F, 0F);
@@ -436,7 +445,7 @@ public final class R196MobSpawning {
                     if (category == Category.MONSTER && !day && R196OutdoorChecks.outdoors(level, mob.blockPosition())) {
                         if (!extension().outdoorAllows(spawnContext,mob,R196SpawnRules.outdoorAllows(mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD), day, moon, random::nextInt))) continue chunkLoop;
                     }
-                    SourceFinalization prepared = prepareSourceFinalization(mob, level, groupData);
+                    SourceFinalization prepared = prepareSourceFinalization(mob, level, groupData, MobSpawnType.NATURAL);
                     mob = prepared.mob();
                     if (category == Category.MONSTER) {
                         var result = finalizeNaturalMonster(level, mob, prepared.group(), budget==null ? available-spawned : Integer.MAX_VALUE,budget);
@@ -501,6 +510,11 @@ public final class R196MobSpawning {
         for (int index = owned.size() - 1; index >= 0; index--) owned.get(index).discard();
     }
     public static Entry select(ServerLevel level, BlockPos pos, Category category, RandomSource random, boolean modernOnly) {
+        return select(level, pos, category, random, modernOnly, false);
+    }
+    /** Ordinary source passes also perform the later pack and finalization identity lotteries. */
+    public static Entry select(ServerLevel level, BlockPos pos, Category category, RandomSource random, boolean modernOnly,
+            boolean finalizationTransforms) {
         List<Entry> entries = extension().spawnPool(context(level,category,null),pos,List.copyOf(pool(level, pos, category, modernOnly)));
         if (entries.isEmpty()) return null;
         Holder<Biome> surface = sourceBiome(level, pos);
@@ -509,7 +523,8 @@ public final class R196MobSpawning {
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
         boolean invasion = BloodMoonInvasion.unlocked(level);
         for (int attempt = 0; attempt < 16; attempt++) {
-            Entry entry = weighted(entries, random);
+            Entry entry = ConfiguredMonsterSpawns.choose(level, pos, category, entries, random, finalizationTransforms);
+            if (entry == null) return null;
             if (entry.modern()) return entry;
             String name = entry.sourceClass();
             if (OverworldSlimeSpawns.applies(level, name)) return entry;
@@ -518,7 +533,11 @@ public final class R196MobSpawning {
             boolean stoneAbove = firstAbove(level, pos).is(Blocks.STONE) || firstAbove(level, pos).is(Blocks.DEEPSLATE);
             if (name.equals("tf")) {
                 if (level.dimensionType().hasSkyLight() && !day && random.nextInt(4) != 0 && R196OutdoorChecks.outdoors(level, pos)) continue;
-                if (R196SpawnRules.infernalCreeper(sourceY, random.nextInt(40), random.nextFloat())) return custom(MobKind.INFERNAL_CREEPER, entry);
+                if (ConfiguredMonsterSpawns.replacement(random,
+                        io.github.ningmeng123.mite.rules.MonsterSpawnRules.infernalCreeperProbability(sourceY),
+                        entry.type(), MiteMobs.type(MobKind.INFERNAL_CREEPER),
+                        () -> R196SpawnRules.infernalCreeper(sourceY, random.nextInt(40), random.nextFloat())))
+                    return custom(MobKind.INFERNAL_CREEPER, entry);
             } else if (name.equals("ts") && stoneAbove || name.equals("EntityJelly") && !stoneAbove
                     || name.equals("EntityBlob") && !stoneAbove
                     || (name.equals("EntityOoze") || name.equals("EntityPudding")) && (!stoneAbove || !stone(level.getBlockState(pos.below())))) continue;
@@ -542,10 +561,14 @@ public final class R196MobSpawning {
     private static Entry custom(MobKind kind, Entry from) {
         return new Entry(MiteMobs.type(kind), kind.sourceClass(), from.category(), from.weight(), from.minimum(), from.maximum(), Tables.PACKS.get(kind.sourceClass()), false);
     }
-    private static Entry substitute(ServerLevel level, Entry selected, RandomSource random) {
+    /** The source natural pass chooses each member's rare identity before native placement checks. */
+    public static Entry substituteNatural(ServerLevel level, Entry selected, RandomSource random) {
         if ("EntityVampireBat".equals(selected.sourceClass()) && (underworld(level) || BloodMoonInvasion.unlocked(level))
-                && random.nextInt(6) == 0) return custom(MobKind.GIANT_VAMPIRE_BAT, selected);
-        if ("EntityLongdead".equals(selected.sourceClass()) && random.nextInt(6) == 0) return custom(MobKind.LONGDEAD_GUARDIAN, selected);
+                && ConfiguredMonsterSpawns.replacement(random, 1D / 6D, selected.type(), MiteMobs.type(MobKind.GIANT_VAMPIRE_BAT),
+                        () -> random.nextInt(6) == 0)) return custom(MobKind.GIANT_VAMPIRE_BAT, selected);
+        if ("EntityLongdead".equals(selected.sourceClass())
+                && ConfiguredMonsterSpawns.replacement(random, 1D / 6D, selected.type(), MiteMobs.type(MobKind.LONGDEAD_GUARDIAN),
+                        () -> random.nextInt(6) == 0)) return custom(MobKind.LONGDEAD_GUARDIAN, selected);
         return selected;
     }
     private static double nearestPlayer(ServerLevel level, Vec3 position, boolean aliveOnly) {
@@ -650,10 +673,21 @@ public final class R196MobSpawning {
     }
     /** tw:263..273 represents a villager as state; modern Minecraft requires a separate identity. */
     public static SourceFinalization prepareSourceFinalization(Mob candidate, ServerLevel level, SpawnGroupData group) {
+        return prepareSourceFinalization(candidate, level, group, MobSpawnType.SPAWNER);
+    }
+    /** Natural spawn rates never alter dungeon/spawner source identity lotteries. */
+    public static SourceFinalization prepareSourceFinalization(Mob candidate, ServerLevel level, SpawnGroupData group, MobSpawnType reason) {
         Mob mob = sourceFinalizationIdentity(candidate, level);
         if (mob.getType() != EntityType.ZOMBIE && mob.getType() != EntityType.ZOMBIE_VILLAGER && mob.getType() != EntityType.ZOMBIFIED_PIGLIN)
             return new SourceFinalization(mob, group);
-        if (group == null) group = new SourceZombieGroupData(level.getRandom().nextFloat() < .05F, level.getRandom().nextFloat() < .05F);
+        if (group == null) {
+            boolean baby = level.getRandom().nextFloat() < .05F;
+            boolean villager = mob.getType() == EntityType.ZOMBIE && reason == MobSpawnType.NATURAL
+                    ? ConfiguredMonsterSpawns.replacement(level.getRandom(), .05D, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER,
+                            () -> level.getRandom().nextFloat() < .05F)
+                    : level.getRandom().nextFloat() < .05F;
+            group = new SourceZombieGroupData(baby, villager);
+        }
         if (group instanceof SourceZombieGroupData source && source.sourceVillager && mob.getType() == EntityType.ZOMBIE) {
             ZombieVillager villager = EntityType.ZOMBIE_VILLAGER.create(level);
             if (villager == null) throw new IllegalStateException("Registered source villager zombie cannot create");

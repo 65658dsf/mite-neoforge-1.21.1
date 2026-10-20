@@ -28,7 +28,7 @@ public record GameplayConfigPayload(MiteConfig.Snapshot snapshot) implements Cus
     };
     @Override public Type<GameplayConfigPayload> type() { return TYPE; }
     @SubscribeEvent public static void register(RegisterPayloadHandlersEvent event) {
-        event.registrar("3").playToClient(TYPE, CODEC, (payload, context) -> context.enqueueWork(() ->
+        event.registrar("4").playToClient(TYPE, CODEC, (payload, context) -> context.enqueueWork(() ->
                 io.github.ningmeng123.mite.client.config.MiteConfigClient.receive(payload.snapshot())));
     }
     public static void send(ServerPlayer player) {
