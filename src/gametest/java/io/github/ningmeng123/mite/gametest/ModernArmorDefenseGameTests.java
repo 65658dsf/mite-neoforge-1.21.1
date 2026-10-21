@@ -269,15 +269,48 @@ public final class ModernArmorDefenseGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void fireResistanceGivesNativeFireAndLavaImmunityWithManagedArmor(GameTestHelper helper) {
+    public static void fireResistanceKeepsFireImmunityAndHalvesLavaForPlayersAndNpcs(GameTestHelper helper) {
         try (Session session = newPlayer(helper)) {
             var zombie = mob(helper, EntityType.ZOMBIE);
             try {
                 for (LivingEntity target : new LivingEntity[]{session.player(), zombie}) {
-                    equip(target, "iron", false); refresh(target);
+                    close(helper, hit(target, target.damageSources().lava(), 14F), 14,
+                            "Lava deals its full damage without fire resistance");
                     target.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0));
-                    close(helper, hit(target, target.damageSources().inFire(), 14F), 0, "Managed armor preserves native fire resistance immunity");
-                    close(helper, hit(target, target.damageSources().lava(), 14F), 0, "Managed armor preserves native lava resistance immunity");
+                    close(helper, hit(target, target.damageSources().inFire(), 14F), 0,
+                            "Fire resistance still blocks contact fire");
+                    close(helper, hit(target, target.damageSources().onFire(), 14F), 0,
+                            "Fire resistance still blocks ongoing burning");
+                    close(helper, hit(target, target.damageSources().lava(), 14F), 7,
+                            "Fire resistance halves lava damage instead of granting immunity");
+                    target.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 3));
+                    close(helper, hit(target, target.damageSources().lava(), 14F), 7,
+                            "Higher fire resistance amplifiers retain exactly fifty percent lava reduction");
+                    target.removeEffect(MobEffects.FIRE_RESISTANCE);
+                    close(helper, hit(target, target.damageSources().lava(), 14F), 14,
+                            "Removing fire resistance restores full lava damage");
+                }
+            } finally { zombie.discard(); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void fireResistanceHalvesLavaAfterArmorResistanceAndEnchantments(GameTestHelper helper) {
+        try (Session session = newPlayer(helper)) {
+            var zombie = mob(helper, EntityType.ZOMBIE);
+            try {
+                for (LivingEntity target : new LivingEntity[]{session.player(), zombie}) {
+                    equip(target, "adamantium", false);
+                    enchantSet(helper, target, Enchantments.FIRE_PROTECTION, 2);
+                    refresh(target);
+                    target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 200, 0));
+                    float baseline = hit(target, target.damageSources().lava(), 20F);
+                    close(helper, baseline, 1.152,
+                            "Lava-resistant armor, Resistance I and fire protection EPF16 provide a stable mitigated baseline");
+                    target.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0));
+                    close(helper, hit(target, target.damageSources().lava(), 20F), baseline / 2F,
+                            "Fire resistance halves the result after native armor, resistance and enchantments");
                 }
             } finally { zombie.discard(); }
         }

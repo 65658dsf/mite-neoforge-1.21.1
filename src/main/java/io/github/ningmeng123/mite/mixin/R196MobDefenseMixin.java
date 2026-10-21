@@ -4,9 +4,11 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.ningmeng123.mite.entity.MobCombat;
+import java.util.Stack;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -15,19 +17,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /** Source species defenses precede the shared modern armor pipeline; barding retains its source path. @author NingMeng123 */
 @Mixin(LivingEntity.class)
 public abstract class R196MobDefenseMixin {
+    @Shadow protected Stack<DamageContainer> damageContainers;
+
     @WrapOperation(method="hurt",at=@At(value="INVOKE",target="Lnet/minecraft/world/damagesource/DamageSource;is(Lnet/minecraft/tags/TagKey;)Z",ordinal=0))
     private boolean mite$lavaIsNotPureFire(DamageSource source,TagKey<DamageType> tag,Operation<Boolean> original) {
-        // Only the legacy horse path keeps source potion classification; modern entities retain lava fire resistance.
-        LivingEntity self=(LivingEntity)(Object)this;
-        if (self instanceof AbstractHorse && MobCombat.managedDefense(self)
-                && tag.equals(DamageTypeTags.IS_FIRE) && source.is(DamageTypes.LAVA)) return false;
+        if (tag.equals(DamageTypeTags.IS_FIRE) && source.is(DamageTypes.LAVA)) return false;
         return original.call(source,tag);
     }
     @Inject(method="hurtHelmet",at=@At("HEAD"))
@@ -67,9 +68,15 @@ public abstract class R196MobDefenseMixin {
         if (self instanceof AbstractHorse) return MobCombat.absorb(self, source, amount);
         return original.call(source, MobCombat.naturalArmorInput(self, source, amount));
     }
-    @Inject(method = "getDamageAfterMagicAbsorb", at = @At("HEAD"), cancellable = true)
-    private void mite$effectsAlreadyIncluded(DamageSource source, float amount, CallbackInfoReturnable<Float> cir) {
+    @WrapMethod(method = "getDamageAfterMagicAbsorb")
+    private float mite$lavaResistanceAfterDefense(DamageSource source, float amount, Operation<Float> original) {
         LivingEntity self = (LivingEntity)(Object)this;
-        if (self instanceof AbstractHorse && MobCombat.defending(self)) cir.setReturnValue(amount);
+        float damage = self instanceof AbstractHorse && MobCombat.defending(self) ? amount : original.call(source, amount);
+        if (!source.is(DamageTypes.LAVA) || source.is(DamageTypeTags.BYPASSES_EFFECTS)
+                || !self.hasEffect(MobEffects.FIRE_RESISTANCE)) return damage;
+        if (damageContainers.isEmpty()) return damage * .5F;
+        DamageContainer container = damageContainers.peek();
+        container.setNewDamage(container.getNewDamage() * .5F);
+        return container.getNewDamage();
     }
 }

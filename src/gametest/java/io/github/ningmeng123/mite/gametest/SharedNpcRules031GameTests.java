@@ -61,20 +61,42 @@ public final class SharedNpcRules031GameTests {
         horse.hurt(horse.damageSources().lava(),10); h.assertValueEqual(horse.getHealth(),20F,"Lava bypasses source mundane barding");
         horse.invulnerableTime=0; horse.hurt(horse.damageSources().inWall(),4); h.assertValueEqual(horse.getHealth(),16F,"Absolute suffocation bypasses all barding defense"); h.succeed();
     }
-    @GameTest(template="empty") public static void modernNpcFireResistanceStopsBothFireAndLavaWithoutChangingNaturalImmunity(GameTestHelper h) {
+    @GameTest(template="empty") public static void modernNpcFireResistanceHalvesLavaWithoutChangingNaturalFireImmunity(GameTestHelper h) {
         Cow cow=EntityType.COW.create(h.getLevel()); cow.setHealth(20); cow.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,200));
         h.assertTrue(!cow.hurt(cow.damageSources().inFire(),4),"Modern fire resistance blocks pure fire for native NPCs");
         h.assertValueEqual(cow.getHealth(),20F,"Pure fire cannot damage a fire-resistant cow");
-        h.assertTrue(!cow.hurt(cow.damageSources().lava(),4),"Modern fire resistance also blocks lava for native NPCs");
-        h.assertValueEqual(cow.getHealth(),20F,"Lava cannot damage a fire-resistant cow");
+        h.assertTrue(cow.hurt(cow.damageSources().lava(),4),"Fire resistance allows a native NPC to take reduced lava damage");
+        h.assertValueEqual(cow.getHealth(),18F,"A fire-resistant cow takes exactly half of four lava damage");
         var neth=MiteMobs.type(MobKind.NETHERSPAWN).create(h.getLevel()); neth.setHealth(8);
         h.assertTrue(!neth.hurt(neth.damageSources().inFire(),4),"Unbuffed Netherspawn retains source natural fire immunity");
         h.assertValueEqual(neth.getHealth(),8F,"Natural pure-fire immunity preserves Netherspawn health");
         h.assertTrue(neth.hurt(neth.damageSources().lava(),4),"Natural Netherspawn immunity alone does not block lava");
         h.assertValueEqual(neth.getHealth(),4F,"Unbuffed Netherspawn takes exactly four lava damage");
         neth.invulnerableTime=0; neth.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,200));
-        h.assertTrue(!neth.hurt(neth.damageSources().lava(),4),"An added modern fire-resistance effect protects Netherspawn from lava");
-        h.assertValueEqual(neth.getHealth(),4F,"Potion immunity preserves the exact post-lava health"); h.succeed();
+        h.assertTrue(neth.hurt(neth.damageSources().lava(),4),"Added fire resistance does not grant Netherspawn lava immunity");
+        h.assertValueEqual(neth.getHealth(),2F,"Fire resistance halves Netherspawn lava damage without changing its natural fire immunity"); h.succeed();
+    }
+    @GameTest(template="empty") public static void fireResistanceHalvesLavaOnTheLegacyHorseDefensePath(GameTestHelper helper) {
+        var horse=EntityType.HORSE.create(helper.getLevel()); horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30); horse.setHealth(30);
+        horse.setBodyArmorItem(new ItemStack(io.github.ningmeng123.mite.registry.MiteArmorContent.get("mite:adamantium_horse_armor")));
+        horse.hurt(horse.damageSources().lava(),10);
+        helper.assertValueEqual(horse.getHealth(),20F,"Unbuffed lava bypasses source mundane barding");
+        horse.invulnerableTime=0; horse.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,200,0));
+        helper.assertTrue(horse.hurt(horse.damageSources().lava(),10),"Fire resistance also permits reduced lava damage on legacy horse defense");
+        helper.assertValueEqual(horse.getHealth(),15F,"Horse lava damage is halved exactly once after its source defense path");
+        horse.invulnerableTime=0;
+        helper.assertTrue(!horse.hurt(horse.damageSources().inFire(),10),"Fire resistance retains ordinary fire immunity for horses");
+        helper.assertValueEqual(horse.getHealth(),15F,"Ordinary fire cannot hurt a fire-resistant horse"); helper.succeed();
+    }
+    @GameTest(template="empty") public static void naturalLavaImmunitySurvivesTheFireResistanceNerf(GameTestHelper helper) {
+        var cube=EntityType.MAGMA_CUBE.create(helper.getLevel()); cube.setHealth(cube.getMaxHealth());
+        float health=cube.getHealth();
+        helper.assertTrue(cube.fireImmune(),"The magma cube fixture has natural fire and lava immunity");
+        helper.assertTrue(!cube.hurt(cube.damageSources().lava(),4),"Unbuffed natural lava immunity remains effective");
+        cube.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,200,0));
+        helper.assertTrue(cube.hasEffect(MobEffects.FIRE_RESISTANCE),"The natural immunity fixture receives fire resistance");
+        helper.assertTrue(!cube.hurt(cube.damageSources().lava(),4),"Adding fire resistance cannot remove natural lava immunity");
+        helper.assertValueEqual(cube.getHealth(),health,"Natural immunity still prevents all lava health loss"); helper.succeed();
     }
     @GameTest(template="empty") public static void burningArrowAspectDoesNotSuppressPhysicalHit(GameTestHelper h) {
         var attacker=h.makeMockPlayer(GameType.SURVIVAL); Arrow arrow=new Arrow(EntityType.ARROW,h.getLevel()); arrow.igniteForSeconds(10);
