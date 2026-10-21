@@ -5,6 +5,8 @@ import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
@@ -52,6 +55,17 @@ public final class StrongboxBlock extends ChestBlock {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (placer instanceof Player player && level.getBlockEntity(pos) instanceof StrongboxBlockEntity entity)
             entity.setOwner(player);
+    }
+    @Override public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player,
+            boolean willHarvest, FluidState fluid) {
+        var entity = level.getBlockEntity(pos);
+        String ownerName = player != null && entity instanceof StrongboxBlockEntity strongbox
+                && strongbox.hasOwner() && !strongbox.isOwner(player) ? strongbox.ownerName() : null;
+        boolean removed = super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+        if (removed && ownerName != null && level instanceof ServerLevel serverLevel)
+            serverLevel.getServer().getPlayerList().broadcastSystemMessage(Component.translatable(
+                    "mite.strongbox.destroyed_by_non_owner", player.getDisplayName(), ownerName, getName()), false);
+        return removed;
     }
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new StrongboxBlockEntity(pos, state); }
     @Override public DoubleBlockCombiner.NeighborCombineResult<? extends ChestBlockEntity> combine(

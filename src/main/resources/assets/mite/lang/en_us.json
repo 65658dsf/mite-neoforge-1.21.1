@@ -533,6 +533,7 @@
   "item.mite.fishing_rod_adamantium_hook": "Fishing Rod [Adamantium Hook]",
   "item.mite.carrot_on_a_stick_adamantium_hook": "Carrot on a Stick [Adamantium Hook]",
   "mite.strongbox.locked": "This strongbox belongs to %s and is locked",
+  "mite.strongbox.destroyed_by_non_owner": "%s destroyed %s's %s",
   "block.mite.copper_anvil": "Copper Anvil",
   "block.mite.copper_strongbox": "Copper Strongbox",
   "block.mite.silver_anvil": "Silver Anvil",

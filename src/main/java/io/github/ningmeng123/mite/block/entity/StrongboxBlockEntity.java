@@ -21,6 +21,7 @@ public final class StrongboxBlockEntity extends ChestBlockEntity {
         owner = player.getUUID(); ownerName = player.getGameProfile().getName(); setChanged();
         if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
+    public boolean hasOwner() { return owner != null; }
     public boolean isOwner(Player player) { return owner != null && owner.equals(player.getUUID()); }
     public String ownerName() { return ownerName; }
     @Override public boolean canOpen(Player player) {

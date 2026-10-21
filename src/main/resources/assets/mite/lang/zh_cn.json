@@ -533,6 +533,7 @@
   "item.mite.fishing_rod_adamantium_hook": "钓鱼竿[艾德曼钓钩]",
   "item.mite.carrot_on_a_stick_adamantium_hook": "胡萝卜钓竿[艾德曼钓钩]",
   "mite.strongbox.locked": "这个箱子属于 %s，已上锁",
+  "mite.strongbox.destroyed_by_non_owner": "%s 破坏了属于 %s 的%s",
   "block.mite.copper_anvil": "铜砧",
   "block.mite.copper_strongbox": "铜箱子",
   "block.mite.silver_anvil": "银砧",

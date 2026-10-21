@@ -190,6 +190,7 @@
     "UtilityItemDamageMixin",
     "StoneBucketDestructionMixin",
     "UniqueRecordLifecycleMixin",
+    "DroppedItemLifetimeMixin",
     "WitherwoodFallCushionMixin",
     "SourceStackLimitMixin",
     "SlotStackSafetyMixin",
