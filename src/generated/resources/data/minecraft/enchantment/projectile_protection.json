@@ -44,8 +44,7 @@
   },
   "primary_items": "#mite:enchantable/native_compat/projectile_protection",
   "slots": [
-    "chest",
-    "legs"
+    "armor"
   ],
   "supported_items": "#mite:enchantable/native_compat/projectile_protection",
   "weight": 25

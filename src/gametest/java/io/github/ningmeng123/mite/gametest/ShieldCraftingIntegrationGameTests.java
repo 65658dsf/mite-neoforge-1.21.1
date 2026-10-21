@@ -139,6 +139,7 @@ public final class ShieldCraftingIntegrationGameTests {
 
     @GameTest(template = "empty")
     public static void onlyManagedMetalShieldsEnterTheSourceUnbreakingPoolWithTheirOwnEnchantability(GameTestHelper helper) {
+        boolean foundAboveVanilla = false;
         for (var definition : MiteShields.definitions()) {
             ItemStack shield = new ItemStack(MiteShields.get(definition.material()));
             helper.assertTrue(R196EnchantmentTable.isSourceEquipment(shield), "All eight explicit shield identities use source equipment rules");
@@ -151,9 +152,12 @@ public final class ShieldCraftingIntegrationGameTests {
             } else {
                 helper.assertValueEqual(selected.size(), 1, "Shield source candidates contain only the durability enchantment");
                 helper.assertTrue(selected.getFirst().enchantment.is(Enchantments.UNBREAKING), "Actual source weighted selection chooses Unbreaking");
-                helper.assertValueEqual(selected.getFirst().level, 3, "Player table acquisition respects vanilla Unbreaking III while retaining source shield applicability");
+                helper.assertTrue(selected.getFirst().level >= 1 && selected.getFirst().level <= 5,
+                        "Player table acquisition respects the configured Unbreaking V ceiling and material power");
+                foundAboveVanilla |= selected.getFirst().level > 3;
             }
         }
+        helper.assertTrue(foundAboveVanilla, "Stronger shield materials can reach Unbreaking above the old vanilla cap");
         helper.succeed();
     }
 

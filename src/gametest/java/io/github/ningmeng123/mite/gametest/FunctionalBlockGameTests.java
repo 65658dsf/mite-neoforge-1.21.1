@@ -469,7 +469,7 @@ public final class FunctionalBlockGameTests {
         helper.succeed();
     }
     @GameTest(template = "empty")
-    public static void emeraldTableGeneratesSourcePowerAndPointPaidEnchantmentInteraction(GameTestHelper helper) {
+    public static void emeraldTableGeneratesNativeOffersAndPointPaidEnchantmentInteraction(GameTestHelper helper) {
         var owner = FakePlayerFactory.get(helper.getLevel(), new GameProfile(UUID.randomUUID(), "EmeraldEnchantOwner"));
         owner.setGameMode(GameType.SURVIVAL);
         owner.moveTo(helper.absolutePos(SITE).getCenter());
@@ -488,8 +488,10 @@ public final class FunctionalBlockGameTests {
         helper.assertTrue(menu.stillValid(owner), "Native enchantment menu accepts added emerald table");
         menu.getSlot(0).set(new ItemStack(MiteTools.get("mite:copper_pickaxe")));
         menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
-        helper.assertValueEqual(menu.costs[2], 40, "Capped24 shelves power50 adjusted for copper enchantability30 =40");
-        int pointCost = menu.costs[0] * 100;
+        helper.assertValueEqual(menu.costs[2], 30, "Emerald tables use the native level-thirty offer");
+        var prices = (io.github.ningmeng123.mite.enchantment.R196EnchantmentMenuAccess)menu;
+        helper.assertValueEqual(prices.mite$experienceCost(2), 4000, "The retained copper pricing formula still charges 4000 points");
+        int pointCost = prices.mite$experienceCost(0);
         helper.assertTrue(menu.clickMenuButton(owner, 0), "Actual lower option enchants");
         helper.assertTrue(menu.getSlot(0).getItem().isEnchanted(), "R196 enchantment selection applies to source tool");
         helper.assertValueEqual(owner.totalExperience, 203000 - pointCost, "Actual selection pays exact source points");

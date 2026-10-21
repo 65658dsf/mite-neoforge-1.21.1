@@ -120,8 +120,7 @@ public final class EnchantmentAssetsProvider implements DataProvider {
 
     private static String[] slots(String id) {
         return switch (id) {
-            case "protection", "fire_protection" -> new String[]{"armor"};
-            case "blast_protection", "projectile_protection" -> new String[]{"chest", "legs"};
+            case "protection", "fire_protection", "blast_protection", "projectile_protection" -> new String[]{"armor"};
             case "respiration", "aqua_affinity" -> new String[]{"head"};
             case "feather_falling", "speed" -> new String[]{"feet"};
             case "thorns", "regeneration", "endurance" -> new String[]{"chest"};

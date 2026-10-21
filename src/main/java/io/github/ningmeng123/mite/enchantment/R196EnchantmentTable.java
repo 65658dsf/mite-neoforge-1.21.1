@@ -117,7 +117,7 @@ public final class R196EnchantmentTable {
 
     /** Compatibility API: the supplied strength is bounded to the vanilla table range, independently of payment. */
     public static List<EnchantmentInstance> select(RegistryAccess access, ItemStack stack, int energy, RandomSource random) {
-        return VanillaTableEnchanting.select(access, stack, energy, random);
+        return VanillaTableEnchanting.select(access, stack, Math.min(energy, VanillaTableEnchanting.MAXIMUM_SELECTION_LEVEL), random);
     }
 
     /** Generated rewards keep source material compression and natural level ceilings. */
@@ -178,7 +178,7 @@ public final class R196EnchantmentTable {
         return output(access, input, energy, energy, random);
     }
 
-    /** Payment energy keeps its source scale; selectionLevel comes from the actual four-layer shelf/slot offer. */
+    /** Legacy conversion API; native menus generate their offers and item transformations separately. */
     public static ItemStack output(RegistryAccess access, ItemStack input, int energy, int selectionLevel, RandomSource random) {
         if (water(input)) return new ItemStack(Items.EXPERIENCE_BOTTLE);
         if (input.is(Items.GOLDEN_APPLE)) return new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);

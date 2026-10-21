@@ -12,9 +12,11 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EnchantmentNames;
 import net.minecraft.client.gui.screens.inventory.EnchantmentScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.item.enchantment.Enchantment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -44,9 +46,9 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
         renderBook(graphics, x, y, partialTick);
         EnchantmentNames.getInstance().initSeed(menu.getEnchantmentSeed());
         for (int slot = 0; slot < 3; slot++) {
-            int energy = menu.costs[slot], points = R196EnchantmentTable.experienceCost(energy);
-            boolean affordable = energy > 0 && minecraft.player != null
-                    && (minecraft.player.getAbilities().instabuild || minecraft.player.totalExperience >= points
+            int energy = menu.costs[slot], points = ((R196EnchantmentMenuAccess)menu).mite$experienceCost(slot);
+            boolean affordable = energy > 0 && menu.enchantClue[slot] >= 0 && minecraft.player != null
+                    && (minecraft.player.getAbilities().instabuild || minecraft.player.experienceLevel >= energy && minecraft.player.totalExperience >= points
                             && R196EnchantmentTable.hasLapis(menu.getSlot(1).getItem(), slot));
             boolean hovered = mouseX >= x + 60 && mouseX < x + 168 && mouseY >= y + 14 + slot * 19 && mouseY < y + 33 + slot * 19;
             graphics.blitSprite(!affordable ? MITE_DISABLED : hovered ? MITE_HOVERED : MITE_ENABLED, x + 60, y + 14 + slot * 19, 108, 19);
@@ -70,11 +72,21 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
         for (int slot = 0; slot < 3; slot++) {
             if (menu.costs[slot] <= 0 || !isHovering(60, 14 + slot * 19, 108, 19, mouseX, mouseY)) continue;
             List<Component> tooltip = new ArrayList<>();
-            tooltip.add(Component.translatable("gui.mite.enchant.energy", menu.costs[slot]).withStyle(ChatFormatting.GRAY));
-            int points = R196EnchantmentTable.experienceCost(menu.costs[slot]);
+            var clue = minecraft.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(menu.enchantClue[slot]);
+            int rank = menu.levelClue[slot];
+            tooltip.add(Component.translatable("container.enchant.clue",
+                    clue.isEmpty() ? "" : Enchantment.getFullname(clue.get(), rank)).withStyle(ChatFormatting.WHITE));
+            if (clue.isEmpty()) tooltip.add(Component.translatable("neoforge.container.enchant.limitedEnchantability").withStyle(ChatFormatting.RED));
+            boolean creative = minecraft.player.getAbilities().instabuild;
+            tooltip.add(Component.translatable("container.enchant.level.requirement", menu.costs[slot])
+                    .withStyle(creative || minecraft.player.experienceLevel >= menu.costs[slot] ? ChatFormatting.GRAY : ChatFormatting.RED));
+            int points = ((R196EnchantmentMenuAccess)menu).mite$experienceCost(slot);
             boolean affordable = minecraft.player.getAbilities().instabuild || minecraft.player.totalExperience >= points;
             tooltip.add(Component.translatable("gui.mite.enchant.available", minecraft.player.totalExperience).withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("gui.mite.enchant.points", points).withStyle(affordable ? ChatFormatting.GREEN : ChatFormatting.RED));
+            tooltip.add((slot == 0 ? Component.translatable("container.enchant.lapis.one")
+                    : Component.translatable("container.enchant.lapis.many", slot + 1))
+                    .withStyle(creative || R196EnchantmentTable.hasLapis(menu.getSlot(1).getItem(), slot) ? ChatFormatting.GRAY : ChatFormatting.RED));
             graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
             break;
         }

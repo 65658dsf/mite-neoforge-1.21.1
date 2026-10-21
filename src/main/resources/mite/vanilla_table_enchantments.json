@@ -1,9 +1,9 @@
 {
-  "schema": 1,
+  "schema": 2,
   "minecraft_version": "1.21.1",
   "author": "NingMeng123",
   "source": "Official Minecraft 1.21.1 data/minecraft/enchantment/*.json",
-  "scope": "Table acquisition weights, natural level limits and cost windows only. Does not replace registry definitions or enchantment effects.",
+  "scope": "Official table acquisition weights, natural level limits, cost windows, primary/support item sets and compatibility. Does not replace registry definitions or enchantment effects.",
   "enchantments": [
     {
       "id": "minecraft:aqua_affinity",
@@ -16,7 +16,14 @@
       "max_cost": {
         "base": 41,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/head_armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/head_armor"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:bane_of_arthropods",
@@ -29,7 +36,16 @@
       "max_cost": {
         "base": 25,
         "per_level_above_first": 8
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/weapon"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/damage"
+      ]
     },
     {
       "id": "minecraft:binding_curse",
@@ -42,7 +58,14 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/equippable"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/equippable"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:blast_protection",
@@ -55,7 +78,16 @@
       "max_cost": {
         "base": 13,
         "per_level_above_first": 8
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/armor"
+      ]
     },
     {
       "id": "minecraft:breach",
@@ -68,7 +100,16 @@
       "max_cost": {
         "base": 65,
         "per_level_above_first": 9
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/mace"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/mace"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/damage"
+      ]
     },
     {
       "id": "minecraft:channeling",
@@ -81,7 +122,14 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/trident"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/trident"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:density",
@@ -94,7 +142,16 @@
       "max_cost": {
         "base": 25,
         "per_level_above_first": 8
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/mace"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/mace"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/damage"
+      ]
     },
     {
       "id": "minecraft:depth_strider",
@@ -107,7 +164,16 @@
       "max_cost": {
         "base": 25,
         "per_level_above_first": 10
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/foot_armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/foot_armor"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/boots"
+      ]
     },
     {
       "id": "minecraft:efficiency",
@@ -120,7 +186,14 @@
       "max_cost": {
         "base": 51,
         "per_level_above_first": 10
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/mining"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/mining"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:feather_falling",
@@ -133,7 +206,14 @@
       "max_cost": {
         "base": 11,
         "per_level_above_first": 6
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/foot_armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/foot_armor"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:fire_aspect",
@@ -146,7 +226,14 @@
       "max_cost": {
         "base": 60,
         "per_level_above_first": 20
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/fire_aspect"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:fire_protection",
@@ -159,7 +246,16 @@
       "max_cost": {
         "base": 18,
         "per_level_above_first": 8
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/armor"
+      ]
     },
     {
       "id": "minecraft:flame",
@@ -172,7 +268,14 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/bow"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/bow"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:fortune",
@@ -185,7 +288,16 @@
       "max_cost": {
         "base": 65,
         "per_level_above_first": 9
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/mining_loot"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/mining_loot"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/mining"
+      ]
     },
     {
       "id": "minecraft:frost_walker",
@@ -198,7 +310,16 @@
       "max_cost": {
         "base": 25,
         "per_level_above_first": 10
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/foot_armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/foot_armor"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/boots"
+      ]
     },
     {
       "id": "minecraft:impaling",
@@ -211,7 +332,16 @@
       "max_cost": {
         "base": 21,
         "per_level_above_first": 8
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/trident"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/trident"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/damage"
+      ]
     },
     {
       "id": "minecraft:infinity",
@@ -224,7 +354,16 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/bow"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/bow"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/bow"
+      ]
     },
     {
       "id": "minecraft:knockback",
@@ -237,7 +376,14 @@
       "max_cost": {
         "base": 55,
         "per_level_above_first": 20
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:looting",
@@ -250,7 +396,14 @@
       "max_cost": {
         "base": 65,
         "per_level_above_first": 9
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:loyalty",
@@ -263,7 +416,14 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/trident"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/trident"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:luck_of_the_sea",
@@ -276,7 +436,14 @@
       "max_cost": {
         "base": 65,
         "per_level_above_first": 9
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/fishing"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/fishing"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:lure",
@@ -289,7 +456,14 @@
       "max_cost": {
         "base": 65,
         "per_level_above_first": 9
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/fishing"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/fishing"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:mending",
@@ -302,7 +476,14 @@
       "max_cost": {
         "base": 75,
         "per_level_above_first": 25
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/durability"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/durability"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:multishot",
@@ -315,7 +496,16 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/crossbow"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/crossbow"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/crossbow"
+      ]
     },
     {
       "id": "minecraft:piercing",
@@ -328,7 +518,16 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/crossbow"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/crossbow"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/crossbow"
+      ]
     },
     {
       "id": "minecraft:power",
@@ -341,7 +540,14 @@
       "max_cost": {
         "base": 16,
         "per_level_above_first": 10
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/bow"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/bow"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:projectile_protection",
@@ -354,7 +560,16 @@
       "max_cost": {
         "base": 9,
         "per_level_above_first": 6
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/armor"
+      ]
     },
     {
       "id": "minecraft:protection",
@@ -367,7 +582,16 @@
       "max_cost": {
         "base": 12,
         "per_level_above_first": 11
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/armor"
+      ]
     },
     {
       "id": "minecraft:punch",
@@ -380,7 +604,14 @@
       "max_cost": {
         "base": 37,
         "per_level_above_first": 20
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/bow"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/bow"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:quick_charge",
@@ -393,7 +624,14 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/crossbow"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/crossbow"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:respiration",
@@ -406,7 +644,14 @@
       "max_cost": {
         "base": 40,
         "per_level_above_first": 10
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/head_armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/head_armor"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:riptide",
@@ -419,7 +664,16 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/trident"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/trident"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/riptide"
+      ]
     },
     {
       "id": "minecraft:sharpness",
@@ -432,7 +686,16 @@
       "max_cost": {
         "base": 21,
         "per_level_above_first": 11
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/sharp_weapon"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/damage"
+      ]
     },
     {
       "id": "minecraft:silk_touch",
@@ -445,7 +708,16 @@
       "max_cost": {
         "base": 65,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/mining_loot"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/mining_loot"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/mining"
+      ]
     },
     {
       "id": "minecraft:smite",
@@ -458,7 +730,16 @@
       "max_cost": {
         "base": 25,
         "per_level_above_first": 8
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/weapon"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "exclusive_set": [
+        "#minecraft:exclusive_set/damage"
+      ]
     },
     {
       "id": "minecraft:soul_speed",
@@ -471,7 +752,14 @@
       "max_cost": {
         "base": 25,
         "per_level_above_first": 10
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/foot_armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/foot_armor"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:sweeping_edge",
@@ -484,7 +772,14 @@
       "max_cost": {
         "base": 20,
         "per_level_above_first": 9
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/sword"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:swift_sneak",
@@ -497,7 +792,14 @@
       "max_cost": {
         "base": 75,
         "per_level_above_first": 25
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/leg_armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/leg_armor"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:thorns",
@@ -510,7 +812,14 @@
       "max_cost": {
         "base": 60,
         "per_level_above_first": 20
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/armor"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/chest_armor"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:unbreaking",
@@ -523,7 +832,14 @@
       "max_cost": {
         "base": 55,
         "per_level_above_first": 8
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/durability"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/durability"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:vanishing_curse",
@@ -536,7 +852,14 @@
       "max_cost": {
         "base": 50,
         "per_level_above_first": 0
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/vanishing"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/vanishing"
+      ],
+      "exclusive_set": []
     },
     {
       "id": "minecraft:wind_burst",
@@ -549,7 +872,14 @@
       "max_cost": {
         "base": 65,
         "per_level_above_first": 9
-      }
+      },
+      "supported_items": [
+        "#minecraft:enchantable/mace"
+      ],
+      "primary_items": [
+        "#minecraft:enchantable/mace"
+      ],
+      "exclusive_set": []
     }
   ]
 }

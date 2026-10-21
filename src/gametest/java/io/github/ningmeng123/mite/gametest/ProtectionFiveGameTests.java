@@ -27,14 +27,14 @@ import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Table acquisition stops at Protection IV while real anvil transactions retain Protection V. @author NingMeng123 */
+/** Book power reaches Protection IV while the configured ceiling and anvil operations permit V. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class ProtectionFiveGameTests {
     private ProtectionFiveGameTests() {}
 
     @GameTest(template = "empty")
-    public static void fullPowerEnchantingStopsAtProtectionFourWhileRegistryRetainsFive(GameTestHelper helper) {
+    public static void booksOnlyReachProtectionFourThroughTheirNativePowerWhileRegistryRetainsFive(GameTestHelper helper) {
         var protection = protection(helper);
         helper.assertValueEqual(protection.value().getMaxLevel(), 5, "Registered Protection supports level V");
         for (var key : java.util.List.of(Enchantments.FIRE_PROTECTION, Enchantments.BLAST_PROTECTION, Enchantments.PROJECTILE_PROTECTION))
@@ -57,7 +57,7 @@ public final class ProtectionFiveGameTests {
                 helper.assertTrue(output.is(Items.ENCHANTED_BOOK), "Player enchanting produces an enchanted book");
                 var stored = output.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
                 helper.assertTrue(stored.size() >= 1, "Native table book trimming retains at least one enchantment");
-                helper.assertTrue(stored.getLevel(protection) <= 4, "Full-bookshelf thirty-strength acquisition never exceeds Protection IV");
+                helper.assertTrue(stored.getLevel(protection) <= 4, "Native book enchantability cannot reach Protection V's minimum power of 45");
                 found |= stored.getLevel(protection) == 4;
             }
             helper.assertTrue(found, "A fixed full-bookshelf table sequence reaches Protection IV books");

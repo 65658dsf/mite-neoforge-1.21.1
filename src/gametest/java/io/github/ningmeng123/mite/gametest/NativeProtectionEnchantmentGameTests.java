@@ -15,6 +15,7 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.ExplosionKnockbackEvent;
@@ -84,6 +85,49 @@ public final class NativeProtectionEnchantmentGameTests {
                 "Without the enchantment, no resistance is added");
         helper.assertTrue(NativeProtectionEnchantments.explosionKnockback(cow, Vec3.ZERO).equals(Vec3.ZERO),
                 "A zero vector remains finite and unchanged");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void blastProtectionOnNativeHelmetAndBootOffersProtectsTheirWornSlots(GameTestHelper helper) {
+        Cow cow = cow(helper);
+        var explosionDamage = helper.getLevel().damageSources().explosion(null, null);
+        Vec3 input = new Vec3(6D, 8D, 0D);
+        for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.FEET}) {
+            equip(cow, slot, slot == EquipmentSlot.HEAD ? Items.IRON_HELMET : Items.IRON_BOOTS, "blast_protection", 4);
+            helper.assertValueEqual(EnchantmentHelper.getDamageProtection(helper.getLevel(), cow, explosionDamage), 8F,
+                    "A native table Blast Protection IV result contributes eight protection points in " + slot);
+            helper.assertValueEqual(EnchantmentHelper.getDamageProtection(helper.getLevel(), cow, cow.damageSources().generic()), 0F,
+                    "Expanding valid armor slots does not change the explosion-only damage predicate");
+            Explosion explosion = new Explosion(helper.getLevel(), null, cow.getX(), cow.getY(), cow.getZ(), 4F, false, Explosion.BlockInteraction.KEEP);
+            ExplosionKnockbackEvent event = new ExplosionKnockbackEvent(helper.getLevel(), explosion, cow, input);
+            NeoForge.EVENT_BUS.post(event);
+            helper.assertTrue(event.getKnockbackVelocity().distanceTo(new Vec3(2.4D, 3.2D, 0D)) < 1e-7,
+                    "Head and feet retain existing level-IV floored explosion resistance without changing its magnitude");
+            cow.setItemSlot(slot, ItemStack.EMPTY);
+            helper.assertValueEqual(EnchantmentHelper.getDamageProtection(helper.getLevel(), cow, explosionDamage), 0F,
+                    "Removing the enchanted " + slot + " item removes its protection");
+            helper.assertTrue(NativeProtectionEnchantments.explosionKnockback(cow, input).equals(input),
+                    "Removing the enchanted armor removes its explosion resistance");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void projectileProtectionOnNativeHelmetAndBootOffersProtectsTheirWornSlots(GameTestHelper helper) {
+        Cow cow = cow(helper);
+        var arrow = EntityType.ARROW.create(helper.getLevel());
+        var projectileDamage = helper.getLevel().damageSources().arrow(arrow, null);
+        for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.FEET}) {
+            equip(cow, slot, slot == EquipmentSlot.HEAD ? Items.IRON_HELMET : Items.IRON_BOOTS, "projectile_protection", 4);
+            helper.assertValueEqual(EnchantmentHelper.getDamageProtection(helper.getLevel(), cow, projectileDamage), 8F,
+                    "A native table Projectile Protection IV result contributes eight protection points in " + slot);
+            helper.assertValueEqual(EnchantmentHelper.getDamageProtection(helper.getLevel(), cow, cow.damageSources().generic()), 0F,
+                    "Expanding valid armor slots does not change the projectile-only damage predicate");
+            cow.setItemSlot(slot, ItemStack.EMPTY);
+            helper.assertValueEqual(EnchantmentHelper.getDamageProtection(helper.getLevel(), cow, projectileDamage), 0F,
+                    "Removing the enchanted " + slot + " item removes its protection");
+        }
         helper.succeed();
     }
 

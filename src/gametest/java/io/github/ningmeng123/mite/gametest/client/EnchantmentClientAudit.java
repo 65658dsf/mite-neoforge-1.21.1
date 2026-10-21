@@ -43,7 +43,7 @@ public final class EnchantmentClientAudit implements DataProvider {
     private static final String MIXINS = "io.github.ningmeng123.mite.mixin.";
     private static final Set<String> ENCHANTMENTS = Set.of("arrow_recovery", "stun", "fishing_fortune", "fertility", "tree_felling",
             "vampiric", "speed", "regeneration", "free_action", "quickness", "true_flight", "poison", "disarming", "piercing", "harvesting", "butchering", "endurance");
-    private static final Set<String> UI = Set.of("cost", "points", "energy", "available");
+    private static final Set<String> UI = Set.of("cost", "points", "available");
     private final Path output;
 
     private EnchantmentClientAudit(Path output) { this.output = output; }
@@ -73,22 +73,29 @@ public final class EnchantmentClientAudit implements DataProvider {
         try {
             check(Boolean.getBoolean("mixin.debug.export"), "Mixin transformed-class export must be enabled");
             ClassNode screen = transformed("net.minecraft.client.gui.screens.inventory.EnchantmentScreen", targets);
-            check(hasMerged(screen, MIXINS + "EnchantmentScreenMixin"), "The source point-cost screen Mixin was actually applied");
+            check(hasMerged(screen, MIXINS + "EnchantmentScreenMixin"), "The point-cost screen Mixin was actually applied");
             MethodNode background = method(screen, "renderBg", "(Lnet/minecraft/client/gui/GuiGraphics;FII)V");
             MethodNode render = method(screen, "render", "(Lnet/minecraft/client/gui/GuiGraphics;IIF)V");
-            requireCall(screen, background, ROOT + "enchantment/R196EnchantmentTable", "experienceCost");
+            requireCall(screen, background, ROOT + "enchantment/R196EnchantmentMenuAccess", "mite$experienceCost");
             requireCall(screen, background, ROOT + "enchantment/R196EnchantmentMenuAccess", "mite$usesSourceEnchanting");
-            requireCall(screen, render, ROOT + "enchantment/R196EnchantmentTable", "experienceCost");
+            requireCall(screen, render, ROOT + "enchantment/R196EnchantmentMenuAccess", "mite$experienceCost");
             requireCall(screen, background, ROOT + "enchantment/R196EnchantmentTable", "hasLapis");
             requireCall(screen, render, "net/minecraft/client/gui/GuiGraphics", "renderComponentTooltip");
             Set<String> keys = translationKeys(screen, background);
             keys.addAll(translationKeys(screen, render));
             Set<String> expectedKeys = new LinkedHashSet<>(); UI.forEach(name -> expectedKeys.add("gui.mite.enchant." + name));
-            check(keys.equals(expectedKeys), "The source screen uses only cost plus the three requested tooltip keys");
+            check(keys.equals(expectedKeys), "The point screen uses cost, available points and required points translations");
             Set<String> tooltipKeys = translationKeys(screen, render);
-            check(tooltipKeys.equals(Set.of("gui.mite.enchant.energy", "gui.mite.enchant.available", "gui.mite.enchant.points")),
-                    "Only energy, available points and required points remain in the actual transformed tooltip");
-            report.addProperty("tooltip_keys_exactly_three", true);
+            check(tooltipKeys.equals(Set.of("gui.mite.enchant.available", "gui.mite.enchant.points")),
+                    "The custom tooltip keys describe available points and required points");
+            Set<String> nativeTooltipKeys = translationKeys(screen, render, "container.enchant.");
+            check(nativeTooltipKeys.containsAll(Set.of("container.enchant.clue", "container.enchant.level.requirement",
+                    "container.enchant.lapis.one", "container.enchant.lapis.many")),
+                    "The actual transformed tooltip restores native clues, required levels and lapis quantities");
+            requireCall(screen, render, "net/minecraft/world/item/enchantment/Enchantment", "getFullname");
+            report.addProperty("point_tooltip_keys_exactly_two", true);
+            report.addProperty("native_clue_level_and_lapis_tooltip_paths", true);
+            report.addProperty("server_quoted_point_prices_used", true);
             report.addProperty("native_lapis_affordability_checked", true);
             JsonArray screenKeys = new JsonArray(); keys.forEach(screenKeys::add); report.add("screen_translation_keys", screenKeys);
             report.addProperty("source_screen_cost_and_tooltip_paths", true);
@@ -132,14 +139,14 @@ public final class EnchantmentClientAudit implements DataProvider {
                     check(translations.containsKey(key), "Missing native-parsed translation " + locale + ": " + key);
                     check(!translations.get(key).isBlank() && !translations.get(key).equals(key), "Unresolved native-parsed translation " + locale + ": " + key);
                 }
-                for (String suffix : List.of("cost", "points", "energy", "available")) {
+                for (String suffix : List.of("cost", "points", "available")) {
                     String value = translations.get("gui.mite.enchant." + suffix);
                     check(value.contains("%s") && !String.format(java.util.Locale.ROOT, value, 123).contains("%s"), "Point display formats its actual numeric argument in " + locale);
                 }
                 JsonObject fact = new JsonObject(); fact.addProperty("locale", locale); fact.addProperty("resource", path);
                 fact.addProperty("sha256", sha256(bytes)); fact.addProperty("parser", "net.minecraft.locale.Language.loadFromJson");
                 fact.addProperty("required_keys_loaded", expectedKeys.size()); fact.addProperty("total_keys_loaded", translations.size());
-                fact.addProperty("numeric_placeholders_formatted", 4); languageFacts.add(fact);
+                fact.addProperty("numeric_placeholders_formatted", 3); languageFacts.add(fact);
             }
             report.addProperty("status", "passed_transformed_client_classes_and_native_language_parser_without_rendering");
             write(report);
@@ -184,9 +191,13 @@ public final class EnchantmentClientAudit implements DataProvider {
     }
 
     private static Set<String> translationKeys(ClassNode type, MethodNode start) {
+        return translationKeys(type, start, "gui.mite.enchant.");
+    }
+
+    private static Set<String> translationKeys(ClassNode type, MethodNode start, String prefix) {
         Set<String> result = new LinkedHashSet<>();
         for (MethodNode method : reachable(type, start)) for (AbstractInsnNode instruction : method.instructions)
-            if (instruction instanceof LdcInsnNode ldc && ldc.cst instanceof String key && key.startsWith("gui.mite.enchant.")) result.add(key);
+            if (instruction instanceof LdcInsnNode ldc && ldc.cst instanceof String key && key.startsWith(prefix)) result.add(key);
         return result;
     }
 

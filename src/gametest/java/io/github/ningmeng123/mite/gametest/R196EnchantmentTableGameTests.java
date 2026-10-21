@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentMenuAccess;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
+import io.github.ningmeng123.mite.enchantment.VanillaTableEnchanting;
 import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import java.util.HashSet;
@@ -88,10 +89,10 @@ public final class R196EnchantmentTableGameTests {
         var emerald = table(helper, owner, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get(), true);
         helper.assertValueEqual(R196EnchantmentTable.accessibleBookshelves(helper.getLevel(), helper.absolutePos(SITE)), 24, "Two complete source layers count 24 bookshelves");
         emerald.getSlot(0).set(new ItemStack(Items.BOOK));
-        helper.assertValueEqual(emerald.costs[2], 40, "Emerald raw50 compresses to40 with book enchantability30");
+        helper.assertValueEqual(((R196EnchantmentMenuAccess)emerald).mite$experienceCost(2), 4000, "Emerald pricing retains raw50 compressed to40 times100 points");
         var diamond = table(helper, owner, Blocks.ENCHANTING_TABLE, true);
         diamond.getSlot(0).set(new ItemStack(Items.BOOK));
-        helper.assertValueEqual(diamond.costs[2], 53, "Diamond raw100 saturates at52.5 rounded53");
+        helper.assertValueEqual(((R196EnchantmentMenuAccess)diamond).mite$experienceCost(2), 5300, "Ordinary pricing retains raw100 compressed to53 times100 points");
         helper.assertTrue(((R196EnchantmentMenuAccess)diamond).mite$usesSourceEnchanting(), "Actual menu synchronizes source point-cost mode");
         helper.succeed();
     }
@@ -115,18 +116,18 @@ public final class R196EnchantmentTableGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void actualBookEnchantSpendsFourThousandPointsAndThreeLapis(GameTestHelper helper) {
-        var owner = owner(helper, 4000);
+    public static void actualBookEnchantSpendsFiveThousandThreeHundredPointsAndThreeLapis(GameTestHelper helper) {
+        var owner = owner(helper, 5300);
         owner.increaseScore(173);
         int score = owner.getScore();
-        var menu = table(helper, owner, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get(), true);
+        var menu = table(helper, owner, Blocks.ENCHANTING_TABLE, true);
         menu.getSlot(0).set(new ItemStack(Items.BOOK));
         menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
-        helper.assertTrue(menu.clickMenuButton(owner, 2), "Exactly4000 points and3 lapis can take40-energy offer");
+        helper.assertTrue(menu.clickMenuButton(owner, 2), "Exactly5300 points and3 lapis can take the native level-thirty offer");
         var result = menu.getSlot(0).getItem();
         helper.assertTrue(result.is(Items.ENCHANTED_BOOK), "Actual native container transforms the book");
         helper.assertTrue(result.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).size() >= 1, "Table books retain at least one selected enchantment");
-        helper.assertValueEqual(owner.totalExperience, 0, "Payment removes4000 points rather than levels");
+        helper.assertValueEqual(owner.totalExperience, 0, "Payment removes5300 points rather than levels");
         helper.assertValueEqual(owner.getScore(), score, "Source enchanting spends XP points without lowering accumulated score");
         helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Third option consumes exactly3 lapis");
         helper.succeed();
@@ -134,36 +135,35 @@ public final class R196EnchantmentTableGameTests {
 
     @GameTest(template = "empty")
     public static void insufficientPointsCannotUseLapisOrAnInvalidButtonToEnchant(GameTestHelper helper) {
-        var owner = owner(helper, 3999);
-        var menu = table(helper, owner, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get(), true);
+        var owner = owner(helper, 5299);
+        var menu = table(helper, owner, Blocks.ENCHANTING_TABLE, true);
         menu.getSlot(0).set(new ItemStack(Items.BOOK)); menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
-        helper.assertFalse(menu.clickMenuButton(owner, 2), "3999 points cannot pay4000-point offer");
+        helper.assertFalse(menu.clickMenuButton(owner, 2), "5299 points cannot pay5300-point offer");
         helper.assertFalse(menu.clickMenuButton(owner, -1), "Invalid negative button is rejected");
         helper.assertFalse(menu.clickMenuButton(owner, 3), "Out-of-range button is rejected");
         helper.assertTrue(menu.getSlot(0).getItem().is(Items.BOOK), "Rejected payment leaves book untouched");
         helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 3, "Rejected payment leaves lapis untouched");
-        helper.assertValueEqual(owner.totalExperience, 3999, "No partial point deduction");
+        helper.assertValueEqual(owner.totalExperience, 5299, "No partial point deduction");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void fixedWaterAndAppleConversionsCostTwoHundredPointsAndTheSelectedLapisFee(GameTestHelper helper) {
-        var owner = owner(helper, 200);
+    public static void nativeTablesRejectWaterAndAppleConversionsWithoutPayment(GameTestHelper helper) {
+        var owner = owner(helper, 10000);
         for (Block block : new Block[] {Blocks.ENCHANTING_TABLE, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get()}) {
-            for (int slot = 0; slot < 3; slot++) for (boolean water : new boolean[] {true, false}) {
-                PlayerExperience.setTotal(owner, 200);
-                var menu = table(helper, owner, block, false);
-                menu.getSlot(0).set(water ? PotionContents.createItemStack(Items.POTION, Potions.WATER) : new ItemStack(Items.GOLDEN_APPLE));
-                for (int energy : menu.costs) helper.assertValueEqual(energy, 2, "Special conversion is fixed at2 energy");
-                menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, slot));
-                helper.assertFalse(menu.clickMenuButton(owner, slot), "Special conversion still requires the selected option's lapis fee");
-                helper.assertValueEqual(owner.totalExperience, 200, "Missing special-conversion lapis cannot consume XP");
-                helper.assertTrue(water ? R196EnchantmentTable.water(menu.getSlot(0).getItem()) : menu.getSlot(0).getItem().is(Items.GOLDEN_APPLE), "Missing lapis preserves special input");
+            for (boolean water : new boolean[] {true, false}) {
+                var menu = table(helper, owner, block, true);
+                ItemStack input = water ? PotionContents.createItemStack(Items.POTION, Potions.WATER) : new ItemStack(Items.GOLDEN_APPLE);
+                menu.getSlot(0).set(input.copy());
                 menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 4));
-                helper.assertTrue(menu.clickMenuButton(owner, slot), "Special conversion uses exact200 points plus selected lapis fee");
-                helper.assertTrue(menu.getSlot(0).getItem().is(water ? Items.EXPERIENCE_BOTTLE : Items.ENCHANTED_GOLDEN_APPLE), "Special conversion creates the matching source result");
-                helper.assertValueEqual(owner.totalExperience, 0, "Special conversion costs200 points");
-                helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 4 - slot - 1, "Special conversion consumes exactly selected option plus1 lapis");
+                for (int slot = 0; slot < 3; slot++) {
+                    helper.assertValueEqual(menu.costs[slot], 0, "Native non-enchantable inputs have no offer");
+                    helper.assertValueEqual(((R196EnchantmentMenuAccess)menu).mite$experienceCost(slot), 0, "Rejected inputs have no point quote");
+                    helper.assertFalse(menu.clickMenuButton(owner, slot), "Native enchanting does not convert water or apples");
+                }
+                helper.assertTrue(ItemStack.matches(menu.getSlot(0).getItem(), input), "Rejected conversion preserves its input");
+                helper.assertValueEqual(owner.totalExperience, 10000, "Rejected conversion consumes no points");
+                helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 4, "Rejected conversion consumes no lapis");
             }
         }
         helper.succeed();
@@ -171,7 +171,7 @@ public final class R196EnchantmentTableGameTests {
 
     @GameTest(template = "empty")
     public static void canceledOrModifiedPointPaymentCannotGrantAFreeBook(GameTestHelper helper) {
-        var owner = owner(helper, 4000);
+        var owner = owner(helper, 10000);
         var menu = table(helper, owner, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get(), true);
         menu.getSlot(0).set(new ItemStack(Items.BOOK));
         menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
@@ -185,7 +185,7 @@ public final class R196EnchantmentTableGameTests {
         try { helper.assertFalse(menu.clickMenuButton(owner, 2), "Altered point cost cannot silently grant free output"); }
         finally { NeoForge.EVENT_BUS.unregister(modify); }
         helper.assertTrue(menu.getSlot(0).getItem().is(Items.BOOK), "Failed transaction preserves input");
-        helper.assertValueEqual(owner.totalExperience, 4000, "Failed transaction preserves canonical points");
+        helper.assertValueEqual(owner.totalExperience, 10000, "Failed transaction preserves canonical points");
         helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 3, "Modified XP payment cannot consume lapis");
         helper.succeed();
     }
@@ -220,6 +220,7 @@ public final class R196EnchantmentTableGameTests {
                 var menu = table(helper, owner, block, true);
                 menu.getSlot(0).set(new ItemStack(Items.BOOK));
                 int[] offers = menu.costs.clone();
+                int pointCost = ((R196EnchantmentMenuAccess)menu).mite$experienceCost(slot);
                 menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 6));
                 for (int i = 0; i < 3; i++) helper.assertValueEqual(menu.costs[i], offers[i], "Adding lapis cannot reroll source offers");
                 menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 4));
@@ -229,7 +230,7 @@ public final class R196EnchantmentTableGameTests {
                 menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 4));
                 helper.assertTrue(menu.clickMenuButton(owner, slot), "Sufficient source XP and lapis complete selected offer");
                 helper.assertTrue(menu.getSlot(0).getItem().is(Items.ENCHANTED_BOOK), "Successful payment publishes one enchanted book");
-                helper.assertValueEqual(owner.totalExperience, 10000 - offers[slot] * 100, "Source XP fee is the unchanged energy times100");
+                helper.assertValueEqual(owner.totalExperience, 10000 - pointCost, "Payment uses the independent synchronized point quote");
                 helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 4 - slot - 1, "Selected offers consume1,2,3 lapis respectively");
             }
         }
@@ -238,7 +239,7 @@ public final class R196EnchantmentTableGameTests {
 
     @GameTest(template = "empty")
     public static void paymentCallbacksCannotSwapOrShrinkLapisAndStillProduceEnchantment(GameTestHelper helper) {
-        var owner = owner(helper, 4000);
+        var owner = owner(helper, 10000);
         for (boolean swap : new boolean[] {true, false}) {
             var menu = table(helper, owner, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get(), true);
             menu.getSlot(0).set(new ItemStack(Items.BOOK));
@@ -252,7 +253,7 @@ public final class R196EnchantmentTableGameTests {
             NeoForge.EVENT_BUS.addListener(PlayerXpEvent.XpChange.class, mutate);
             try { helper.assertFalse(menu.clickMenuButton(owner, 2), "Reentrant lapis mutation invalidates the payment snapshot"); }
             finally { NeoForge.EVENT_BUS.unregister(mutate); }
-            helper.assertValueEqual(owner.totalExperience, 4000, "Invalidated payment does not consume source XP");
+            helper.assertValueEqual(owner.totalExperience, 10000, "Invalidated payment does not consume source XP");
             helper.assertTrue(ItemStack.matches(input, menu.getSlot(0).getItem()), "Invalidated payment publishes no result");
             helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), swap ? 3 : 2, "Rejected payment neither charges lapis nor overwrites callback changes");
             helper.assertTrue(menu.getSlot(1).getItem().is(swap ? Items.IRON_INGOT : Items.LAPIS_LAZULI), "Rejected payment preserves the callback's item choice");
@@ -274,14 +275,13 @@ public final class R196EnchantmentTableGameTests {
             helper.assertFalse(selected.isEmpty(), "High-energy equipment has an eligible initial enchantment");
             foundSingle |= selected.size() == 1;
             foundMoreThanThree |= selected.size() > 3;
-            HashSet<String> ids = new HashSet<>();
+            HashSet<Holder<Enchantment>> chosen = new HashSet<>();
             for (var entry : selected) {
                 String id = entry.enchantment.unwrapKey().orElseThrow().location().toString();
-                var definition = R196EnchantmentCatalog.definition(id);
-                helper.assertTrue(definition != null && definition.supported(new ItemStack(Items.IRON_SWORD)), "Only source-supported candidates are chosen");
-                helper.assertTrue(entry.level >= 1 && entry.level <= definition.maxLevel(), "Source level bound respected");
-                for (String previous : ids) helper.assertTrue(R196EnchantmentCatalog.compatible(previous, id), "Every pair passes source compatibility");
-                helper.assertTrue(ids.add(id), "Self duplicates are rejected");
+                helper.assertTrue(VanillaTableEnchanting.primaryItem(new ItemStack(Items.IRON_SWORD), entry.enchantment), "Every candidate supports the native sword table route: " + id);
+                helper.assertTrue(entry.level >= 1 && entry.level <= VanillaTableEnchanting.maximumLevel(entry.enchantment), "Native table level bound respected");
+                for (var previous : chosen) helper.assertTrue(VanillaTableEnchanting.compatible(previous, entry.enchantment), "Every pair passes native table compatibility");
+                helper.assertTrue(chosen.add(entry.enchantment), "Self duplicates are rejected");
             }
         }
         helper.assertTrue(foundSingle, "High-energy equipment can receive only one enchantment");

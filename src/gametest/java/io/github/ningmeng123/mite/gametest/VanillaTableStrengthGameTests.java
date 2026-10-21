@@ -3,12 +3,12 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
+import io.github.ningmeng123.mite.enchantment.R196EnchantmentMenuAccess;
 import io.github.ningmeng123.mite.enchantment.VanillaTableEnchanting;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +44,7 @@ public final class VanillaTableStrengthGameTests {
     private VanillaTableStrengthGameTests() {}
 
     @GameTest(template = "empty", templateNamespace = "mite")
-    public static void vanillaAcquisitionCeilingsDoNotRewriteRegisteredOrSavedHighRanks(GameTestHelper h) {
+    public static void tableUsesConfiguredCeilingsWithoutRewritingSavedHighRanks(GameTestHelper h) {
         try (var settings = new Settings()) {
             var registry = h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
             var sharpness = registry.getHolderOrThrow(Enchantments.SHARPNESS);
@@ -53,9 +53,9 @@ public final class VanillaTableStrengthGameTests {
             h.assertValueEqual(sharpness.value().getMaxLevel(), 7, "Registered source Sharpness still supports existing VII and anvil operations");
             h.assertValueEqual(unbreaking.value().getMaxLevel(), 5, "Registered source Unbreaking remains V");
             h.assertValueEqual(protection.value().getMaxLevel(), 5, "Registered source Protection remains V");
-            h.assertValueEqual(VanillaTableEnchanting.maximumLevel(sharpness), 5, "New table acquisition uses vanilla Sharpness V ceiling");
-            h.assertValueEqual(VanillaTableEnchanting.maximumLevel(unbreaking), 3, "New table acquisition uses vanilla Unbreaking III ceiling");
-            h.assertValueEqual(VanillaTableEnchanting.maximumLevel(protection), 4, "New table acquisition uses vanilla Protection IV ceiling");
+            h.assertValueEqual(VanillaTableEnchanting.maximumLevel(sharpness), 7, "New table acquisition uses the configured Sharpness VII ceiling");
+            h.assertValueEqual(VanillaTableEnchanting.maximumLevel(unbreaking), 5, "New table acquisition uses the configured Unbreaking V ceiling");
+            h.assertValueEqual(VanillaTableEnchanting.maximumLevel(protection), 5, "New table acquisition uses the configured Protection V ceiling");
             ItemStack saved = new ItemStack(Items.IRON_SWORD);
             saved.enchant(sharpness, 7);
             h.assertValueEqual(saved.getEnchantmentLevel(sharpness), 7, "Acquisition profiles never downgrade saved enchantments");
@@ -66,15 +66,15 @@ public final class VanillaTableStrengthGameTests {
     @GameTest(template = "empty", templateNamespace = "mite")
     public static void actualBookshelvesRatherThanCompressedFeeControlVanillaOfferStrength(GameTestHelper h) {
         h.assertValueEqual(VanillaTableEnchanting.mappedBookshelves(0), 0, "No shelves means vanilla zero shelves");
-        h.assertValueEqual(VanillaTableEnchanting.mappedBookshelves(24), 7, "Half of forty-eight shelves remains below full vanilla power");
-        h.assertValueEqual(VanillaTableEnchanting.mappedBookshelves(48), 15, "All forty-eight shelves map to vanilla fifteen");
+        h.assertValueEqual(VanillaTableEnchanting.mappedBookshelves(14), 14, "Every native shelf contributes one point up to fifteen");
+        h.assertValueEqual(VanillaTableEnchanting.mappedBookshelves(15), 15, "Fifteen shelves already provide full vanilla power");
         h.assertValueEqual(VanillaTableEnchanting.mappedBookshelves(100), 15, "Extra shelves cannot exceed full vanilla power");
         for (ItemStack stack : List.of(new ItemStack(Items.BOOK), new ItemStack(Items.IRON_SWORD),
                 new ItemStack(MiteTools.get("vibranium_sword")))) {
             for (int seed = 0; seed < 32; seed++) {
-                h.assertValueEqual(VanillaTableEnchanting.offerStrength(stack, 48, 2, seed), 30,
+                h.assertValueEqual(VanillaTableEnchanting.offerStrength(stack, 15, 2, seed), 30,
                         "The fully surrounded third offer is level thirty for every material");
-                h.assertTrue(VanillaTableEnchanting.offerStrength(stack, 48, 0, seed) < 30,
+                h.assertTrue(VanillaTableEnchanting.offerStrength(stack, 15, 0, seed) < 30,
                         "The first slot does not inherit the maximum offer's strength");
                 h.assertTrue(VanillaTableEnchanting.offerStrength(stack, 0, 2, seed) <= 8,
                         "An empty table cannot reach full strength through source material compression");
@@ -87,18 +87,40 @@ public final class VanillaTableStrengthGameTests {
         h.assertValueEqual(VanillaTableEnchanting.selectionEnchantability(new ItemStack(Items.FISHING_ROD)), 1, "The retained fishing rod keeps native result power despite source casting adaptation");
         ItemStack vibranium = new ItemStack(MiteTools.get("vibranium_sword"));
         h.assertValueEqual(R196EnchantmentTable.enchantability(vibranium), 120, "Source material enchantability is retained for fees");
-        h.assertValueEqual(VanillaTableEnchanting.selectionEnchantability(vibranium), 25, "Custom material bonus stays within the vanilla material range");
+        h.assertValueEqual(VanillaTableEnchanting.selectionEnchantability(vibranium), 120, "The native algorithm uses the custom material enchantability without an artificial cap");
         h.succeed();
     }
 
     @GameTest(template = "empty", templateNamespace = "mite")
-    public static void raisingConfigurationCapsCannotGiveHigherThanVanillaRanksOrChangeDefaultDraws(GameTestHelper h) {
+    public static void raisingConfigurationCapsExtendsRanksOnlyWhenTheNativePowerCanReachThem(GameTestHelper h) {
         try (var settings = new Settings()) {
-            Map<Integer, List<String>> baseline = new HashMap<>();
-            for (int seed = 0; seed < 128; seed++) baseline.put(seed, draw(h, seed));
-            settings.set(Map.of("minecraft:sharpness", 99, "minecraft:unbreaking", 99, "minecraft:protection", 99), Set.of());
-            for (int seed = 0; seed < 128; seed++)
-                h.assertValueEqual(draw(h, seed), baseline.get(seed), "An upper limit is not a rank reward or an increase in acquisition power: " + seed);
+            var sharpness = h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(MiteTools.get("vibranium_sword"));
+            boolean foundRaisedRank = false, foundBelowMaximum = false;
+            for (int cap : new int[]{5, 7, 9}) {
+                settings.set(Map.of("minecraft:sharpness", cap), Set.of());
+                h.assertValueEqual(VanillaTableEnchanting.maximumLevel(sharpness), cap, "The table reads the configured cap directly");
+                for (int seed = 0; seed < 256; seed++) {
+                    RandomSource oracle = RandomSource.create(seed);
+                    int power = 31 + oracle.nextInt(31) + oracle.nextInt(31);
+                    float variation = (oracle.nextFloat() + oracle.nextFloat() - 1F) * .15F;
+                    power = Math.max(1, Math.round(power + power * variation));
+                    int expected = 0;
+                    for (int rank = cap; rank >= 1; rank--) {
+                        if (power >= 1 + (rank - 1) * 11 && power <= 21 + (rank - 1) * 11) {
+                            expected = rank;
+                            break;
+                        }
+                    }
+                    var selected = VanillaTableEnchanting.select(sword, 30, RandomSource.create(seed), List.of(sharpness));
+                    int actual = selected.isEmpty() ? 0 : selected.getFirst().level;
+                    h.assertValueEqual(actual, expected, "Raised caps still obey the unmodified native power and cost windows");
+                    foundRaisedRank |= actual > 5;
+                    foundBelowMaximum |= actual > 0 && actual < cap;
+                }
+            }
+            h.assertTrue(foundRaisedRank, "Raised configuration allows ranks above the old vanilla ceiling");
+            h.assertTrue(foundBelowMaximum, "A configured maximum does not guarantee that rank on every draw");
         }
         h.succeed();
     }
@@ -156,7 +178,7 @@ public final class VanillaTableStrengthGameTests {
                 menu.getSlot(0).set(new ItemStack(MiteArmorContent.get("mite:vibranium_chestplate")));
                 menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 6));
                 int expected = block == Blocks.ENCHANTING_TABLE ? 15800 : 9800;
-                h.assertValueEqual(menu.costs[2] * 100, expected, "The original table-specific source point price is retained");
+                h.assertValueEqual(((R196EnchantmentMenuAccess)menu).mite$experienceCost(2), expected, "The original table-specific source point price is retained");
                 int seed = player.getEnchantmentSeed();
                 h.assertFalse(menu.clickMenuButton(player, 2), "An unfunded offer is rejected");
                 h.assertValueEqual(player.getEnchantmentSeed(), seed, "Rejected offers do not consume the enchantment seed");
@@ -188,11 +210,6 @@ public final class VanillaTableStrengthGameTests {
                 h.assertValueEqual(entry.getIntValue(), 1, "No-shelf book power cannot reach second-rank costs");
         }
         h.succeed();
-    }
-
-    private static List<String> draw(GameTestHelper h, long seed) {
-        return R196EnchantmentTable.select(h.getLevel().registryAccess(), new ItemStack(Items.BOOK), 30, RandomSource.create(seed))
-                .stream().map(entry -> entry.enchantment.unwrapKey().orElseThrow().location() + "=" + entry.level).toList();
     }
 
     private static ServerPlayer owner(GameTestHelper h, int points) {

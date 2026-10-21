@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.enchantment;
 
-/** One synchronized menu flag shares authoritative point-cost rendering with the client. @author NingMeng123 */
+/** Server quotes are synchronized separately from vanilla offer levels. @author NingMeng123 */
 public interface R196EnchantmentMenuAccess {
     boolean mite$usesSourceEnchanting();
+    int mite$experienceCost(int slot);
 }
