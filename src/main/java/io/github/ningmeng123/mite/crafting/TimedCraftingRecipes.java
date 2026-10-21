@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import net.minecraft.resources.ResourceLocation;
 
-/** Explicit recipe IDs and whole-batch difficulties extracted from R196. @author NingMeng123 */
+/** Explicit recipe IDs and whole-batch manufacturing difficulties. @author NingMeng123 */
 public final class TimedCraftingRecipes {
     public record Rule(float difficulty, String requiredBench, int sourceOrder) {
         public float requiredCapacity() { return WorkbenchRules.materialCapacity(requiredBench); }
@@ -49,7 +49,8 @@ public final class TimedCraftingRecipes {
             for (String resource : java.util.List.of("/mite/timed-crafting-027-armor.json",
                     "/mite/timed-crafting-027-ranged.json", "/mite/timed-crafting-027-functional.json",
                     "/mite/timed-crafting-027-storage.json", "/mite/timed-crafting-028-weapons.json",
-                    "/mite/timed-crafting-028-utility.json", "/mite/timed-crafting-028-decorative.json")) {
+                    "/mite/timed-crafting-028-utility.json", "/mite/timed-crafting-028-decorative.json",
+                    "/mite/timed-crafting-equipment-upgrades.json")) {
                 try (var reader027 = new InputStreamReader(Objects.requireNonNull(
                         TimedCraftingRecipes.class.getResourceAsStream(resource)), StandardCharsets.UTF_8)) {
                     JsonParser.parseReader(reader027).getAsJsonObject().getAsJsonObject("recipes").entrySet().forEach(entry -> {

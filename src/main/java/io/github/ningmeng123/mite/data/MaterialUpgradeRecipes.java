@@ -99,11 +99,6 @@ public final class MaterialUpgradeRecipes {
                 .define('G', Items.GOLD_INGOT).define('D', Items.DIAMOND)
                 .unlockedBy("has_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(Items.IRON_INGOT))
                 .save(output, ResourceLocation.parse("mite:equipment_upgrade_smithing_template"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, template, 2)
-                .pattern("ITI").pattern("ISI").pattern("III")
-                .define('I', Items.IRON_INGOT).define('T', template).define('S', Items.STONE)
-                .unlockedBy("has_upgrade_template", InventoryChangeTrigger.TriggerInstance.hasItems(template))
-                .save(output, ResourceLocation.parse("mite:equipment_upgrade_smithing_template_duplication"));
         for (Upgrade entry : upgrades()) {
             // Optional routes are emitted by the assets provider so runData never depends on the optional mod.
             if (entry.id().contains("/simplyswords_") || BuiltInRegistries.ITEM.getKey(entry.base()).getNamespace().equals(SimplySwordsCompat.MOD_ID)) continue;

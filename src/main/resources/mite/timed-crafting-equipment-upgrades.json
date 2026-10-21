@@ -1,0 +1,11 @@
+{
+  "author": "NingMeng123",
+  "source": "Modern equipment upgrade template adaptation",
+  "recipes": {
+    "mite:equipment_upgrade_smithing_template": {
+      "difficulty": 400.0,
+      "required_bench": "iron",
+      "source_order": -1
+    }
+  }
+}

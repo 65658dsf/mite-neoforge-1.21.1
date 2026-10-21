@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.crafting;
 
 import io.github.ningmeng123.mite.block.MaterialWorkbenchBlock;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,6 +38,7 @@ public final class WorkbenchRules {
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
+        if (result.is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get())) return materialCapacity("iron");
         float vibranium = VibraniumCrafting.required(result);
         if (vibranium >= 0F) return vibranium;
         var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(result);

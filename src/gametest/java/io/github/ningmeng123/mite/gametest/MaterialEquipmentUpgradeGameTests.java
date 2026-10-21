@@ -3,13 +3,16 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.JsonOps;
 import io.github.ningmeng123.mite.combat.ShieldGuard;
+import io.github.ningmeng123.mite.crafting.TimedCraftingController;
 import io.github.ningmeng123.mite.data.MaterialUpgradeRecipes;
 import io.github.ningmeng123.mite.data.MaterialUpgradeRecipes.Upgrade;
+import io.github.ningmeng123.mite.integration.jei.WorkbenchJeiRecipes;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.progression.GearProgress;
 import io.github.ningmeng123.mite.progression.GearProgression;
 import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
+import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.buffer.Unpooled;
@@ -20,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -35,8 +39,11 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -306,19 +313,13 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void templateHasLoadedSurvivalCreationAndNativeStyleDuplicationRecipes(GameTestHelper h) {
+    public static void templateHasOnlyItsLoadedSurvivalCreationRecipeAndNoDuplication(GameTestHelper h) {
         h.assertValueEqual(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get().getDescriptionId(), "item.mite.equipment_upgrade_smithing_template",
                 "The template uses its own registered translated display name");
         CraftingRecipe first = craftingRecipe(h, "mite:equipment_upgrade_smithing_template");
         h.assertTrue(first.getSerializer() == RecipeSerializer.SHAPED_RECIPE, "The pictured layout uses a shaped recipe");
         for (int silverCorners = 0; silverCorners < 16; silverCorners++) {
-            List<ItemStack> ingredients = new java.util.ArrayList<>(List.of(
-                    new ItemStack(Items.COPPER_INGOT), new ItemStack(Items.IRON_INGOT), new ItemStack(Items.COPPER_INGOT),
-                    new ItemStack(Items.GOLD_INGOT), new ItemStack(Items.DIAMOND), new ItemStack(Items.GOLD_INGOT),
-                    new ItemStack(Items.COPPER_INGOT), new ItemStack(Items.IRON_INGOT), new ItemStack(Items.COPPER_INGOT)));
-            int[] corners = {0, 2, 6, 8};
-            for (int corner = 0; corner < corners.length; corner++) if ((silverCorners & (1 << corner)) != 0)
-                ingredients.set(corners[corner], new ItemStack(MiteMaterials.SILVER_INGOT.get()));
+            List<ItemStack> ingredients = templateIngredients(silverCorners, 1);
             CraftingInput firstInput = CraftingInput.of(3, 3, ingredients);
             h.assertTrue(first.matches(firstInput, h.getLevel()), "Every corner independently accepts copper or silver: " + silverCorners);
             ItemStack made = first.assemble(firstInput, h.getLevel().registryAccess());
@@ -333,15 +334,138 @@ public final class MaterialEquipmentUpgradeGameTests {
         }
         h.assertFalse(first.matches(CraftingInput.of(2, 2, List.of(new ItemStack(Items.PAPER), new ItemStack(Items.STONE),
                 new ItemStack(Items.IRON_INGOT), new ItemStack(Items.DIAMOND))), h.getLevel()), "The previous shapeless recipe is retired");
-        CraftingRecipe copy = craftingRecipe(h, "mite:equipment_upgrade_smithing_template_duplication");
+        h.assertTrue(h.getLevel().getRecipeManager().byKey(id("mite:equipment_upgrade_smithing_template_duplication")).isEmpty(),
+                "The removed duplication recipe is absent from the loaded server recipe set");
         CraftingInput copyInput = CraftingInput.of(3, 3, List.of(new ItemStack(Items.IRON_INGOT), template(), new ItemStack(Items.IRON_INGOT),
                 new ItemStack(Items.IRON_INGOT), new ItemStack(Items.STONE), new ItemStack(Items.IRON_INGOT),
                 new ItemStack(Items.IRON_INGOT), new ItemStack(Items.IRON_INGOT), new ItemStack(Items.IRON_INGOT)));
-        h.assertTrue(copy.matches(copyInput, h.getLevel()), "Seven iron ingots, stone and an old template match the duplication recipe");
-        ItemStack copied = copy.assemble(copyInput, h.getLevel().registryAccess());
-        h.assertTrue(copied.is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()) && copied.getCount() == 2, "Duplication consumes the old template and yields two");
-        h.assertTrue(copy.getRemainingItems(copyInput).stream().allMatch(ItemStack::isEmpty), "The old template is not also returned as a third copy");
+        h.assertTrue(h.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, copyInput, h.getLevel()).isEmpty(),
+                "An old template, seven iron ingots and stone cannot manufacture more templates");
+        h.assertValueEqual(h.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream()
+                .filter(holder -> holder.value().getResultItem(h.getLevel().registryAccess()).is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get())).count(),
+                1L, "Only the copper/silver, iron, gold and diamond layout produces the template");
         h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void templatePickupAndShiftClickWaitForOneCompleteManufacturingPeriod(GameTestHelper h) {
+        for (ClickType click : List.of(ClickType.PICKUP, ClickType.QUICK_MOVE)) {
+            try (CraftingSession session = new CraftingSession(h)) {
+                session.load(click == ClickType.PICKUP ? 0 : 9, 2);
+                h.assertValueEqual(TimedCraftingController.period(session.player, session.menu), 140,
+                        "A level-zero iron workbench applies its normal speed bonus to template manufacture");
+                TimedCraftingTestSupport.craftOne(h, session.player, session.menu, click);
+                h.assertValueEqual(session.player.getInventory().countItem(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()), 1,
+                        "A completed pickup or shift-click produces exactly one template");
+                for (int slot = 0; slot < 9; slot++) h.assertValueEqual(session.grid.getItem(slot).getCount(), 1,
+                        "Exactly one material in each of the nine input slots is consumed");
+                h.assertTrue(session.menu.getCarried().isEmpty(), "The timed result cannot also appear on the cursor");
+                h.assertValueEqual(session.player.totalExperience, 0, "A non-equipment template does not acquire equipment quality costs");
+                PlayerExperience.setLevels(session.player, 10);
+                h.assertTrue(TimedCraftingController.period(session.player, session.menu) < 140,
+                        "The template inherits existing experience-level manufacturing speed bonuses");
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void exchangingACopperCornerForSilverCancelsTheUnfinishedTemplateBatch(GameTestHelper h) {
+        try (CraftingSession session = new CraftingSession(h)) {
+            session.load(0, 2);
+            session.menu.clicked(0, 0, ClickType.QUICK_MOVE, session.player);
+            session.tick(70);
+            h.assertTrue(TimedCraftingController.isActive(session.player) && TimedCraftingController.progress(session.player) > 0,
+                    "The actual shift-click has an unfinished template batch");
+            session.grid.setItem(0, new ItemStack(MiteMaterials.SILVER_INGOT.get(), 2));
+            session.menu.slotsChanged(session.grid);
+            session.tick(280);
+            h.assertFalse(TimedCraftingController.isActive(session.player), "A changed copper/silver input snapshot cancels manufacture");
+            h.assertValueEqual(session.player.getInventory().countItem(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()), 0,
+                    "Changing valid ingredient alternatives cannot deliver the old preview");
+            for (int slot = 0; slot < 9; slot++) h.assertValueEqual(session.grid.getItem(slot).getCount(), 2,
+                    "Cancellation consumes none of the remaining ingredients");
+            TimedCraftingTestSupport.craftOne(h, session.player, session.menu, ClickType.PICKUP);
+            h.assertValueEqual(session.player.getInventory().countItem(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()), 1,
+                    "The valid mixed-metal replacement recipe must wait a fresh complete period");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void jeiTemplatePagesUseTheSameManufacturingRuleAndOmitDuplication(GameTestHelper h) {
+        var index = WorkbenchJeiRecipes.index(h.getLevel());
+        var pages = index.recipes().stream().filter(page -> page.output().is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get())).toList();
+        Map<String, Integer> periods = templateWorkbenchPeriods();
+        h.assertValueEqual(pages.stream().map(page -> page.workstationId()).collect(java.util.stream.Collectors.toSet()), periods.keySet(),
+                "JEI lists the template only on iron and higher workbenches, with no sub-iron or inventory page");
+        for (var page : pages) {
+            h.assertValueEqual(page.source().id(), id("mite:equipment_upgrade_smithing_template"),
+                    "Every template page comes from its single surviving creation recipe");
+            h.assertTrue(page.rule() != null, "JEI receives manufacturing metadata instead of an instant-crafting page");
+            h.assertValueEqual(page.rule().difficulty(), 400F, "JEI uses the template's actual manufacturing difficulty");
+            h.assertValueEqual(page.rule().requiredBench(), "iron", "Template manufacturing has an iron workbench minimum");
+            h.assertValueEqual(page.requiredCapacity(), 8F, "JEI enforces the iron material capacity");
+            h.assertValueEqual(page.baselineTicks(), periods.get(page.workstationId()).intValue(),
+                    "JEI reports each permitted workbench's actual material speed");
+        }
+        h.assertTrue(index.originals().stream().noneMatch(holder -> holder.id().equals(id("mite:equipment_upgrade_smithing_template_duplication"))),
+                "The removed duplication recipe has no surviving native or custom JEI page");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void templateManufacturingRequiresIronAndAcceptsEveryHigherWorkbench(GameTestHelper h) {
+        Map<String, Integer> periods = templateWorkbenchPeriods();
+        for (String material : MiteWorkbenches.TABLES.keySet()) {
+            try (CraftingSession session = new CraftingSession(h, material)) {
+                session.load(6, 2);
+                Integer expectedPeriod = periods.get("mite:" + material + "_crafting_table");
+                if (expectedPeriod == null) {
+                    h.assertTrue(session.menu.getSlot(0).getItem().isEmpty(),
+                            "A sub-iron workbench cannot advertise a usable template preview");
+                    h.assertFalse(TimedCraftingController.start(session.player, session.menu),
+                            "A " + material + " workbench cannot start template manufacturing");
+                    for (ClickType click : List.of(ClickType.PICKUP, ClickType.QUICK_MOVE)) {
+                        session.menu.clicked(0, 0, click, session.player);
+                        session.tick(280);
+                        h.assertFalse(TimedCraftingController.isActive(session.player), "Clicks cannot bypass the iron workbench minimum");
+                        h.assertValueEqual(session.player.getInventory().countItem(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()), 0,
+                                "A sub-iron workbench never delivers a template");
+                        h.assertTrue(session.menu.getCarried().isEmpty(), "The result cannot bypass the gate on the cursor");
+                        for (int slot = 0; slot < 9; slot++) h.assertValueEqual(session.grid.getItem(slot).getCount(), 2,
+                                "Rejected template manufacture consumes none of its input materials");
+                    }
+                } else {
+                    h.assertTrue(session.menu.getSlot(0).getItem().is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()),
+                            "Every permitted workbench displays the actual template preview");
+                    h.assertValueEqual(TimedCraftingController.period(session.player, session.menu), expectedPeriod.intValue(),
+                            "A " + material + " workbench applies its ordinary material speed bonus");
+                    TimedCraftingTestSupport.craftOne(h, session.player, session.menu, ClickType.PICKUP);
+                    h.assertValueEqual(session.player.getInventory().countItem(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()), 1,
+                            "Every iron-or-higher workbench completes one real template batch");
+                    for (int slot = 0; slot < 9; slot++) h.assertValueEqual(session.grid.getItem(slot).getCount(), 1,
+                            "A permitted workbench consumes precisely one complete material batch");
+                }
+            }
+        }
+        h.succeed();
+    }
+
+    private static Map<String, Integer> templateWorkbenchPeriods() {
+        return Map.of("mite:iron_crafting_table", 140, "mite:ancient_metal_crafting_table", 130,
+                "mite:mithril_crafting_table", 122, "mite:adamantium_crafting_table", 115, "mite:vibranium_crafting_table", 115);
+    }
+
+    private static List<ItemStack> templateIngredients(int silverCorners, int count) {
+        List<ItemStack> result = new java.util.ArrayList<>(List.of(
+                new ItemStack(Items.COPPER_INGOT, count), new ItemStack(Items.IRON_INGOT, count), new ItemStack(Items.COPPER_INGOT, count),
+                new ItemStack(Items.GOLD_INGOT, count), new ItemStack(Items.DIAMOND, count), new ItemStack(Items.GOLD_INGOT, count),
+                new ItemStack(Items.COPPER_INGOT, count), new ItemStack(Items.IRON_INGOT, count), new ItemStack(Items.COPPER_INGOT, count)));
+        int[] corners = {0, 2, 6, 8};
+        for (int corner = 0; corner < corners.length; corner++) if ((silverCorners & (1 << corner)) != 0)
+            result.set(corners[corner], new ItemStack(MiteMaterials.SILVER_INGOT.get(), count));
+        return result;
     }
 
     private static void assertMaterialDefaults(GameTestHelper h, ItemStack actual, ItemStack target, String context) {
@@ -420,16 +544,19 @@ public final class MaterialEquipmentUpgradeGameTests {
     private static ResourceLocation id(String value) { return ResourceLocation.parse(value); }
     private static Item item(String value) { return BuiltInRegistries.ITEM.get(id(value)); }
 
-    private static final class SmithingSession implements AutoCloseable {
+    private static class MenuSession<T extends AbstractContainerMenu> implements AutoCloseable {
         private final GameTestHelper helper;
-        private final ServerPlayer player;
+        final ServerPlayer player;
         private final EmbeddedChannel channel;
-        private final SmithingMenu menu;
+        final T menu;
         private final BlockPos table;
         private final BlockState previous;
+        private final int inputSlots;
 
-        private SmithingSession(GameTestHelper helper) {
+        private MenuSession(GameTestHelper helper, BlockState tableState, int inputSlots,
+                BiFunction<ServerPlayer, ContainerLevelAccess, T> createMenu) {
             this.helper = helper;
+            this.inputSlots = inputSlots;
             var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "mite-upgrade-ui"), false);
             player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(), cookie.clientInformation());
             Connection connection = new Connection(PacketFlow.SERVERBOUND);
@@ -439,18 +566,21 @@ public final class MaterialEquipmentUpgradeGameTests {
             player.setGameMode(GameType.SURVIVAL);
             player.moveTo(helper.absolutePos(new BlockPos(1, 2, 2)).getCenter());
             player.setNoGravity(true);
+            player.setOnGround(true);
+            player.getFoodData().setFoodLevel(6);
             player.getInventory().clearContent();
             PlayerExperience.setTotal(player, 0);
             table = helper.absolutePos(new BlockPos(1, 1, 1));
             previous = helper.getLevel().getBlockState(table);
-            helper.getLevel().setBlockAndUpdate(table, Blocks.SMITHING_TABLE.defaultBlockState());
-            menu = new SmithingMenu(37, player.getInventory(), ContainerLevelAccess.create(helper.getLevel(), table));
+            helper.getLevel().setBlockAndUpdate(table, tableState);
+            menu = createMenu.apply(player, ContainerLevelAccess.create(helper.getLevel(), table));
             player.containerMenu = menu;
         }
 
         @Override public void close() {
             try {
-                for (int slot = 0; slot < 4; slot++) menu.getSlot(slot).set(ItemStack.EMPTY);
+                TimedCraftingController.forget(player);
+                for (int slot = 0; slot < inputSlots; slot++) menu.getSlot(slot).set(ItemStack.EMPTY);
                 menu.setCarried(ItemStack.EMPTY);
                 player.getInventory().clearContent();
                 player.containerMenu = player.inventoryMenu;
@@ -460,5 +590,36 @@ public final class MaterialEquipmentUpgradeGameTests {
                 channel.finishAndReleaseAll();
             }
         }
+    }
+
+    private static final class SmithingSession extends MenuSession<SmithingMenu> {
+        private SmithingSession(GameTestHelper helper) {
+            super(helper, Blocks.SMITHING_TABLE.defaultBlockState(), 4,
+                    (player, access) -> new SmithingMenu(37, player.getInventory(), access));
+        }
+    }
+
+    private static final class CraftingSession extends MenuSession<CraftingMenu> {
+        private final GameTestHelper helper;
+        final CraftingContainer grid;
+        private CraftingSession(GameTestHelper helper) {
+            this(helper, "iron");
+        }
+        private CraftingSession(GameTestHelper helper, String material) {
+            super(helper, MiteWorkbenches.TABLES.get(material).get().defaultBlockState(), 10,
+                    (player, access) -> new CraftingMenu(38, player.getInventory(), access));
+            this.helper = helper;
+            grid = (CraftingContainer) menu.getSlot(1).container;
+        }
+        void load(int silverCorners, int count) {
+            List<ItemStack> ingredients = templateIngredients(silverCorners, count);
+            for (int slot = 0; slot < ingredients.size(); slot++) grid.setItem(slot, ingredients.get(slot));
+            menu.slotsChanged(grid);
+            helper.assertTrue(menu.stillValid(player), "The template is made in a real nearby workbench");
+            helper.assertTrue(helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid.asCraftInput(), helper.getLevel())
+                    .map(holder -> holder.id().equals(id("mite:equipment_upgrade_smithing_template"))).orElse(false),
+                    "The actual grid matches the sole loaded template creation recipe");
+        }
+        void tick(int ticks) { for (int tick = 0; tick < ticks; tick++) TimedCraftingController.tick(player); }
     }
 }

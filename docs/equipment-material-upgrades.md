@@ -13,7 +13,9 @@
 | 金锭 | 钻石 | 金锭 |
 | 铜锭或银锭 | 铁锭 | 铜锭或银锭 |
 
-已有模板仍可按原版模板的九格布局复制：第一行“铁锭、模板、铁锭”，第二行“铁锭、石头、铁锭”，第三行3个铁锭，得到2个模板，即消耗1个旧模板、7个铁锭和1块石头。
+升级模板没有复制配方，只能使用上述材料逐个制作。原先“模板、7个铁锭和石头”的复制配方及其配方书解锁已移除，JEI不再显示复制入口。
+
+制作模板使用MITE合成耗时，整批难度为400，最低要求铁工作台；燧石、铜、银、金工作台不能制作。0级、无诅咒时铁工作台需140 tick（7秒），更高阶工作台、经验等级和笨拙诅咒继续按现有规则改变实际耗时。JEI仅在铁及更高阶工作台显示该配方及对应基准耗时；普通点击、Shift快速取出和自动合成器使用同一套耗时与工作台要求，等待完成后才消耗材料并产出1个模板。该时间用于工作台制作模板，不改变锻造台使用模板升级装备的操作。
 
 在原版锻造台依次放入升级模板、待升级装备和1个目标材质锭，取出对应高阶装备。模板、原装备及目标材质锭各消耗1个，支持原生预览与快速取出。
 
@@ -45,4 +47,6 @@
 
 上述历史发布版本为`1.1.10`，当时正式包为`build/libs/mite-1.1.10.jar`。历史验证日志为`build/verification/material-upgrade-diamond-datagen.log`、`build/verification/material-upgrade-build-regression.log`和`build/verification/material-upgrade-compat-tests.log`。
 
-2026-10-20验证：新九格配方和独立贴图的数据生成、构建、1670项JUnit、2205项本体服务端GameTest及168项Simply Swords/Better Combat专用兼容GameTest全部通过。模板用例覆盖16种铜银角落组合、缺料与错位、首次制作与原有复制配方、锻造菜单和组件继承。当前构建为`build/libs/mite-0.2.5.jar`；日志为`build/netherite-removal-data.log`、`build/netherite-removal-base-final.log`及`build/netherite-removal-compat-verified.log`。发布包资源检查通过，像素预览见[贴图记录](art/equipment-upgrade-template.md)。
+2026-10-20历史验证（移除复制配方及接入耗时前）：新九格配方和独立贴图的数据生成、构建、1670项JUnit、2205项本体服务端GameTest及168项Simply Swords/Better Combat专用兼容GameTest全部通过。模板用例覆盖16种铜银角落组合、缺料与错位、首次制作与当时保留的复制配方、锻造菜单和组件继承。历史构建为`build/libs/mite-0.2.5.jar`；日志为`build/netherite-removal-data.log`、`build/netherite-removal-base-final.log`及`build/netherite-removal-compat-verified.log`。发布包资源检查通过，像素预览见[贴图记录](art/equipment-upgrade-template.md)。
+
+复制与耗时调整验证：数据生成、0.2.5构建、1670项JUnit和15项`mite_upgrade`服务端GameTest全部通过。覆盖16种铜银配方组合、复制ID及旧布局失效、全部10种工作台的准入和预览、普通点击与Shift等待完整周期、精确消耗、换料取消、经验加速，以及JEI只列铁及以上工作台并显示正确耗时。发布包3682份JSON可解析，复制配方和解锁均不存在，新增耗时元数据为400难度、铁工作台门槛。日志为`build/template-timing-data.log`和`build/template-timing-build-tests.log`，包审计为`build/verification/template-timing-jar-audit.json`，产物为`build/libs/mite-0.2.5.jar`。
