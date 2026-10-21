@@ -61,8 +61,11 @@ class GearProgressionRulesTest {
         assertEquals(101_000, GearProgressionRules.killExperienceMillis(100.25));
         assertEquals(6_000, GearProgressionRules.miningExperienceMillis(1.5F, 2));
         assertEquals(250_000, GearProgressionRules.miningExperienceMillis(50F, 3));
-        assertEquals(1, GearProgressionRules.damageExperienceMillis(.00025F));
-        assertEquals(0, GearProgressionRules.damageExperienceMillis(.0001F));
+        assertEquals(4_000, GearProgressionRules.damageExperienceMillis(4F));
+        assertEquals(5_000, GearProgressionRules.damageExperienceMillis(5F));
+        assertEquals(1_250, GearProgressionRules.damageExperienceMillis(1.25F));
+        assertEquals(1, GearProgressionRules.damageExperienceMillis(.001F));
+        assertEquals(0, GearProgressionRules.damageExperienceMillis(.0005F));
         assertEquals(12_000, GearProgressionRules.TILL_EXPERIENCE_MILLIS);
         assertEquals(8_000, GearProgressionRules.shieldExperienceMillis(4F));
         assertEquals(4_000, GearProgressionRules.shieldExperienceMillis(2F));
@@ -74,6 +77,8 @@ class GearProgressionRulesTest {
         assertEquals(0, GearProgressionRules.miningExperienceMillis(-1, 5));
         assertEquals(0, GearProgressionRules.miningExperienceMillis(0, 5));
         assertEquals(0, GearProgressionRules.damageExperienceMillis(Float.POSITIVE_INFINITY));
+        assertEquals(0, GearProgressionRules.damageExperienceMillis(Float.NaN));
+        assertEquals(0, GearProgressionRules.damageExperienceMillis(-4F));
         assertEquals(Long.MAX_VALUE, GearProgressionRules.saturatedAdd(Long.MAX_VALUE - 10, 11));
         assertThrows(IllegalArgumentException.class, () -> GearProgressionRules.saturatedAdd(-1, 1));
     }

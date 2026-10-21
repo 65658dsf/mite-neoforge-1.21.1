@@ -52,7 +52,7 @@ public final class GearProgressionRules {
     }
 
     public static long damageExperienceMillis(float damage) {
-        return damage > 0 && Float.isFinite(damage) ? boundedMillis(4D * damage) : 0;
+        return damage > 0 && Float.isFinite(damage) ? boundedMillis(damage) : 0;
     }
 
     public static long shieldExperienceMillis(float blockedDamage) {

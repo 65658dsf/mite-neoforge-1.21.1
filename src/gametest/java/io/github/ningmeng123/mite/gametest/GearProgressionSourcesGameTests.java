@@ -283,31 +283,107 @@ public final class GearProgressionSourcesGameTests {
             player.setItemSlot(EquipmentSlot.CHEST, chest);
             player.setItemSlot(EquipmentSlot.FEET, boots);
             player.hurt(player.damageSources().generic(), 4F);
-            h.assertValueEqual(xp(chest), 8_000L, "Four incoming damage grants sixteen experience shared over two armor pieces");
-            h.assertValueEqual(xp(boots), 8_000L, "Each equipped armor piece receives the same share");
+            h.assertValueEqual(xp(chest), 2_000L, "Four incoming damage grants four total experience shared over two armor pieces");
+            h.assertValueEqual(xp(boots), 2_000L, "Each equipped armor piece receives the same two-point share");
             player.hurt(player.damageSources().generic(), 3F);
-            h.assertValueEqual(xp(chest), 8_000L, "The invulnerability cooldown rejects a smaller repeated hit");
+            h.assertValueEqual(xp(chest), 2_000L, "The invulnerability cooldown rejects a smaller repeated hit");
             player.hurt(player.damageSources().generic(), 6F);
-            h.assertValueEqual(xp(chest), 12_000L, "Only the stronger hit's two-point cooldown difference reaches the armor");
+            h.assertValueEqual(xp(chest), 3_000L, "Only the stronger hit's two-point cooldown difference contributes another point per piece");
             player.invulnerableTime = 0;
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 4));
             float health = player.getHealth();
             player.hurt(player.damageSources().generic(), 5F);
             h.assertValueEqual(player.getHealth(), health, "Full resistance absorbs all health damage");
-            h.assertValueEqual(xp(chest), 22_000L, "Fully mitigated hits still award their armor-before-reduction share");
-            h.assertValueEqual(GearProgression.state(boots).level(), 1,
-                    "The unchanged twenty-two-point armor share crosses the boots' approved twenty-point first threshold");
-            h.assertValueEqual(xp(boots), 2_000L, "The shorter boots curve consumes twenty points and preserves the two-point remainder");
-            h.assertValueEqual(GearProgression.state(boots).affixes().values().stream().mapToInt(Integer::intValue).sum(), 1,
-                    "The real incoming-damage reward grants one modifier when the boots reach their first level");
+            h.assertValueEqual(xp(chest), 5_500L, "Fully mitigated five-point damage still contributes its 2.5-point share before armor reduction");
+            h.assertValueEqual(GearProgression.state(boots).level(), 0,
+                    "The 5.5-point armor share stays below the unchanged twenty-point boots threshold");
+            h.assertValueEqual(xp(boots), 5_500L, "The boots retain the complete fractional reward without upgrading early");
+            h.assertTrue(GearProgression.state(boots).affixes().isEmpty(),
+                    "A below-threshold incoming-damage reward does not grant a modifier");
             var bootsBeforeCancellation = GearProgression.state(boots);
             player.invulnerableTime = 0;
             NeoForge.EVENT_BUS.addListener(cancel);
             try { player.hurt(player.damageSources().generic(), 5F); }
             finally { NeoForge.EVENT_BUS.unregister(cancel); }
-            h.assertValueEqual(xp(chest), 22_000L, "Cancelled incoming damage cannot train armor");
+            h.assertValueEqual(xp(chest), 5_500L, "Cancelled incoming damage cannot train armor");
             h.assertTrue(GearProgression.state(boots).equals(bootsBeforeCancellation),
-                    "Cancelling the next hit preserves the boots' reached level, exact remainder and awarded modifier");
+                    "Cancelling the next hit preserves the boots' level, exact fractional experience and empty modifier pool");
+        } finally { close(player); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void fractionalArmorDamageSharesEveryStoredUnitAcrossThreeAndFourPieces(GameTestHelper h) {
+        ServerPlayer player = player(h);
+        try {
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 4));
+            float health = player.getHealth();
+            ItemStack helmet = new ItemStack(Items.IRON_HELMET), chest = new ItemStack(Items.IRON_CHESTPLATE),
+                    boots = new ItemStack(Items.IRON_BOOTS);
+            player.setItemSlot(EquipmentSlot.HEAD, helmet);
+            player.setItemSlot(EquipmentSlot.CHEST, chest);
+            player.setItemSlot(EquipmentSlot.FEET, boots);
+            player.hurt(player.damageSources().generic(), 1F);
+            h.assertValueEqual(xp(helmet), 334L, "The first armor slot receives the single remainder unit from one experience split three ways");
+            h.assertValueEqual(xp(chest), 333L, "The second armor slot retains its exact fractional share without rounding up");
+            h.assertValueEqual(xp(boots), 333L, "The third armor slot retains the same unrounded fractional share");
+            h.assertValueEqual(xp(helmet) + xp(chest) + xp(boots), 1000L, "The three real armor rewards conserve all 1000 stored experience units");
+
+            helmet = new ItemStack(Items.IRON_HELMET);
+            chest = new ItemStack(Items.IRON_CHESTPLATE);
+            ItemStack leggings = new ItemStack(Items.IRON_LEGGINGS);
+            boots = new ItemStack(Items.IRON_BOOTS);
+            player.setItemSlot(EquipmentSlot.HEAD, helmet);
+            player.setItemSlot(EquipmentSlot.CHEST, chest);
+            player.setItemSlot(EquipmentSlot.LEGS, leggings);
+            player.setItemSlot(EquipmentSlot.FEET, boots);
+            player.invulnerableTime = 0;
+            player.hurt(player.damageSources().generic(), .25F);
+            h.assertValueEqual(xp(helmet), 63L, "The first of four pieces receives one of the two remainder units from 0.25 experience");
+            h.assertValueEqual(xp(chest), 63L, "The chest receives the other remainder unit from a quarter-damage hit");
+            h.assertValueEqual(xp(leggings), 62L, "The leggings retain their unrounded fractional share");
+            h.assertValueEqual(xp(boots), 62L, "The boots retain the same unrounded fractional share");
+            h.assertValueEqual(xp(helmet) + xp(chest) + xp(leggings) + xp(boots), 250L,
+                    "Fractional incoming damage conserves the total reward across all four pieces");
+            h.assertValueEqual(player.getHealth(), health,
+                    "Armor training still uses the effective incoming damage before full resistance, rather than health lost");
+        } finally { close(player); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void onePointPerDamageArmorExperienceAccumulatesThroughTheUnchangedBootsUpgradeBoundary(GameTestHelper h) {
+        ServerPlayer player = player(h);
+        try {
+            ItemStack boots = new ItemStack(Items.IRON_BOOTS);
+            player.setItemSlot(EquipmentSlot.FEET, boots);
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 4));
+            h.assertValueEqual(GearProgression.nextLevelExperienceMillis(boots, 0), 20_000L,
+                    "One experience per received damage does not change the boots' twenty-point first threshold");
+            for (int hit = 0; hit < 9; hit++) {
+                player.invulnerableTime = 0;
+                player.hurt(player.damageSources().generic(), 2F);
+            }
+            h.assertValueEqual(xp(boots), 18_000L, "Nine two-damage hits train the only armor piece by eighteen experience");
+            player.invulnerableTime = 0;
+            player.hurt(player.damageSources().generic(), 1.75F);
+            GearProgress before = GearProgression.state(boots);
+            h.assertValueEqual(before.experienceMillis(), 19_750L, "Another 1.75 damage accumulates the boots to exactly 19.75 experience");
+            h.assertTrue(before.level() == 0 && before.affixes().isEmpty(), "Fractional rewards do not upgrade or grant modifiers before the threshold");
+
+            player.invulnerableTime = 0;
+            player.hurt(player.damageSources().generic(), .25F);
+            GearProgress upgraded = GearProgression.state(boots);
+            h.assertTrue(upgraded.level() == 1 && upgraded.experienceMillis() == 0 && upgraded.id().equals(before.id()),
+                    "A quarter damage point grants the final quarter experience, consumes exactly twenty points and retains equipment identity");
+            h.assertValueEqual(upgraded.affixes().values().stream().mapToInt(Integer::intValue).sum(), 1,
+                    "The actual accumulated incoming-damage reward grants exactly one modifier at the first level");
+            player.invulnerableTime = 0;
+            player.hurt(player.damageSources().generic(), .25F);
+            GearProgress after = GearProgression.state(boots);
+            h.assertTrue(after.level() == 1 && after.experienceMillis() == 250L && after.id().equals(upgraded.id())
+                            && after.affixes().equals(upgraded.affixes()),
+                    "The next quarter-damage hit retains a quarter experience toward the unchanged next level without another modifier");
         } finally { close(player); }
         h.succeed();
     }
@@ -355,7 +431,7 @@ public final class GearProgressionSourcesGameTests {
             try { player.hurt(source, 4F); }
             finally { NeoForge.EVENT_BUS.unregister(partial); }
             h.assertValueEqual(xp(shield), 12_000L, "A partial shield block awards only the two blocked points");
-            h.assertValueEqual(xp(chest), 8_000L, "Armor trains on the remaining two points before its own mitigation");
+            h.assertValueEqual(xp(chest), 2_000L, "Armor receives two experience from the remaining two damage points before its own mitigation");
             attacker.discard();
         } finally { close(player); }
         h.succeed();
