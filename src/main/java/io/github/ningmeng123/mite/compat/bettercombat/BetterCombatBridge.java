@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.compat.bettercombat;
 
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
+import io.github.ningmeng123.mite.combat.MobWeaponReach;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
@@ -54,10 +55,15 @@ public final class BetterCombatBridge {
         return Loaded.profile(mob, stack, combo);
     }
 
+    public static double playerEquivalentRange(Mob mob, ItemStack weapon, double moveMultiplier) {
+        if (!enabled() || weapon.isEmpty() || !Double.isFinite(moveMultiplier) || moveMultiplier <= 0D) return 0D;
+        return Loaded.playerEquivalentRange(mob, weapon, moveMultiplier);
+    }
+
     public record Profile(double range, double angle, double upswing, String animation,
             double damageMultiplier, int cooldownTicks, boolean twoHanded, float movementSpeedMultiplier,
             String hitbox, double itemRange, double rangeMultiplier) {
-        /** Match the real player reach guard, including height and external item range modifiers. */
+        /** Retain the previous range as an additional ceiling beneath the current source limit. */
         public double reach(Mob mob, Entity target) {
             return reach(mob, target, mob.getY());
         }
@@ -66,7 +72,9 @@ public final class BetterCombatBridge {
             double sourceReach = SourcePlayerCombatRules.meleeReach(false, feetY - target.getY(),
                     SourcePlayerReach.baseMeleeReach(mob.getMainHandItem(), itemRange) - 1.5D, false, 0D,
                     MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled());
-            return Math.max(0D, Math.min(range, sourceReach));
+            double previousLimit = Math.max(0D, Math.min(range, sourceReach));
+            return MobWeaponReach.applies(mob)
+                    ? Math.min(previousLimit, MobWeaponReach.sourceLimit(mob, target, feetY)) : previousLimit;
         }
 
         public int windupTicks() { return Math.max(1, (int)Math.round(cooldownTicks * upswing)); }
@@ -91,6 +99,17 @@ public final class BetterCombatBridge {
 
     /** Loaded only after the mod-presence guard; all Better Combat references stay here. */
     private static final class Loaded {
+        private static double playerEquivalentRange(Mob mob, ItemStack weapon, double moveMultiplier) {
+            var attributes = net.bettercombat.logic.WeaponRegistry.getAttributes(weapon);
+            double itemRange = MobWeaponReach.itemRange(mob);
+            double range = net.bettercombat.logic.EntityAttributeHelper.itemHasRangeAttribute(weapon)
+                    ? itemRange : net.bettercombat.logic.PlayerAttackHelper.combineAttackRange(attributes, itemRange);
+            range *= moveMultiplier;
+            range *= net.bettercombat.BetterCombatMod.getConfig().getAttackRangeMultiplierForScale(mob.getScale());
+            if (!Double.isFinite(range) || range <= 0D) return 0D;
+            return SourcePlayerCombatRules.configuredWeaponReach(range, MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction());
+        }
+
         private static Double weaponBaseReach(ItemStack stack, double itemRange) {
             var attributes = net.bettercombat.logic.WeaponRegistry.getAttributes(stack);
             if (attributes == null) return null;
@@ -113,7 +132,8 @@ public final class BetterCombatBridge {
             if (attacks.isEmpty()) return null;
             var attack = attacks.get(Math.max(0, combo) % attacks.size());
             double speed = heldAttribute(mob, stack, Attributes.ATTACK_SPEED, 4D);
-            double itemRange = heldAttribute(mob, stack, Attributes.ENTITY_INTERACTION_RANGE, 3D);
+            double itemRange = MobWeaponReach.applies(mob) ? MobWeaponReach.itemRange(mob)
+                    : heldAttribute(mob, stack, Attributes.ENTITY_INTERACTION_RANGE, 3D);
             if (!Double.isFinite(speed) || speed <= 0D || !Double.isFinite(itemRange)) return null;
             var config = net.bettercombat.BetterCombatMod.getConfig();
             double duration = Math.max(20D / speed, config.attack_interval_cap);

@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
+import io.github.ningmeng123.mite.combat.MobWeaponReach;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
@@ -12,6 +13,7 @@ import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -20,16 +22,19 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -113,8 +118,8 @@ public final class BetterCombatMobGameTests {
         player.tick();
         player.setPos(attacker.position());
         double playerReach = SourcePlayerReach.meleeReach(player, target);
-        h.assertTrue(profile.reach(attacker, target) <= playerReach + .000001D,
-                "The mob's resolved weapon range cannot exceed the existing player MITE cap: " + id);
+        h.assertTrue(profile.reach(attacker, target) <= Math.max(0D, playerReach - .2D) + .000001D,
+                "The mob's resolved weapon range stays at least one fifth of a block beneath the same-weapon player cap: " + id);
     }
 
     private static void excludedToolProfile(GameTestHelper h, Mob attacker, ResourceLocation id) {
@@ -622,8 +627,10 @@ public final class BetterCombatMobGameTests {
             MiteConfig.WEAPON_REACH_REDUCTION.set(0D);
             MiteConfig.refreshEnchantmentRules();
             simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.5D, 2.5D, true);
+            simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.65D, 2.65D, false);
             simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.9D, 2.9D, false);
             simplySwordsDistanceCase(h, "glaive", 3.5D, 2.9D, 2.9D, true);
+            simplySwordsDistanceCase(h, "glaive", 3.5D, 3.4D, 3.4D, false);
             simplySwordsDistanceCase(h, "glaive", 3.5D, 3.7D, 3.7D, false);
             simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.5D, 2.9D, false);
             simplySwordsDistanceCase(h, "glaive", 3.5D, 2.9D, 3.7D, false);
@@ -646,11 +653,11 @@ public final class BetterCombatMobGameTests {
             var profile = profile(h, attacker);
             h.assertTrue(Math.abs(profile.range() - expectedRange) < .000001D,
                     "The actual Better Combat weapon registry retains its distinct native range: " + id);
-            h.assertTrue(Math.abs(profile.reach(attacker, target) - expectedRange) < .000001D,
-                    "The mob uses the weapon's own same-height range instead of the generic sword cap: " + id);
+            h.assertTrue(Math.abs(profile.reach(attacker, target) - (expectedRange - .2D)) < .000001D,
+                    "The mob retains this weapon's distinct player range minus the fixed margin: " + id);
             placeAtEyeDistance(attacker, target, startDistance);
             float health = target.getHealth();
-            if (startDistance > expectedRange) {
+            if (startDistance > expectedRange - .2D) {
                 h.assertFalse(BetterMobCombat.canStrike(attacker, target),
                         "A target outside this weapon's own range cannot begin a swing: " + id);
                 h.assertFalse(BetterMobCombat.request(attacker, target),
@@ -678,5 +685,168 @@ public final class BetterCombatMobGameTests {
         double vertical = Math.max(0D, attacker.getEyeHeight() - target.getBbHeight());
         double forward = Math.sqrt(distance * distance - vertical * vertical) + target.getBbWidth() * .5D;
         target.setPos(attacker.position().add(0D, 0D, forward));
+    }
+
+    @GameTest(template = "empty")
+    public static void shortComboRangeAppliesReductionBeforeTheMarginAndRechecksTheStoredMoveAtImpact(GameTestHelper helper) {
+        if (absent(helper)) return;
+        try (ReachSettings ignored = new ReachSettings(1D, .5D)) {
+            Loaded.shortCombo(helper);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void scaleChangesDuringWindupUseTheCurrentPlayerEquivalentWeaponLimit(GameTestHelper helper) {
+        if (absent(helper)) return;
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) {
+            Loaded.scaleChange(helper);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void oldToolReachCannotDoubleTheRangeButRealItemModifiersStillApply(GameTestHelper helper) {
+        if (absent(helper)) return;
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) {
+            Loaded.legacyRange(helper);
+        }
+        helper.succeed();
+    }
+
+    private static void placeAtShoulderDistance(Mob attacker, Mob target, double distance) {
+        double shoulderHeight = attacker.getEyeHeight() - attacker.getBbHeight() * .15D * attacker.getAgeScale();
+        double vertical = Math.max(0D, shoulderHeight - target.getBbHeight());
+        double forward = Math.sqrt(distance * distance - vertical * vertical) + target.getBbWidth() * .5D;
+        target.setPos(attacker.position().add(0D, 0D, forward));
+    }
+
+    private static final class ReachSettings implements AutoCloseable {
+        private final double multiplier = MiteConfig.WEAPON_REACH_MULTIPLIER.get();
+        private final double reduction = MiteConfig.WEAPON_REACH_REDUCTION.get();
+
+        private ReachSettings(double multiplier, double reduction) {
+            MiteConfig.WEAPON_REACH_MULTIPLIER.set(multiplier);
+            MiteConfig.WEAPON_REACH_REDUCTION.set(reduction);
+            MiteConfig.refreshEnchantmentRules();
+        }
+        @Override public void close() {
+            MiteConfig.WEAPON_REACH_MULTIPLIER.set(multiplier);
+            MiteConfig.WEAPON_REACH_REDUCTION.set(reduction);
+            MiteConfig.refreshEnchantmentRules();
+        }
+    }
+
+    private static final class Loaded {
+        private static net.bettercombat.api.WeaponAttributes.Attack move(float multiplier) {
+            return new net.bettercombat.api.WeaponAttributes.Attack(null,
+                    net.bettercombat.api.WeaponAttributes.HitBoxShape.FORWARD_BOX,
+                    1D, 1F, multiplier, 180D, .5D, "bettercombat:one_handed_stab", null, null, List.of());
+        }
+
+        private static net.bettercombat.api.WeaponAttributes attributes(net.bettercombat.api.WeaponAttributes.Attack... moves) {
+            return new net.bettercombat.api.WeaponAttributes(3D, 0D, null, null, false, "mite_mob_reach_test", moves, null);
+        }
+
+        private static void shortCombo(GameTestHelper helper) {
+            ResourceLocation id = BuiltInRegistries.ITEM.getKey(Items.IRON_SWORD);
+            var previous = net.bettercombat.logic.WeaponRegistry.getAttributes(new ItemStack(Items.IRON_SWORD));
+            net.bettercombat.logic.WeaponRegistry.register(id, attributes(move(.6F), move(1.25F)));
+            try {
+                shortCase(helper, .9D, 1.05D, true);
+                shortCase(helper, 1.2D, 1.2D, false);
+                shortCase(helper, .9D, 1.2D, false);
+            } finally { net.bettercombat.logic.WeaponRegistry.register(id, previous); }
+        }
+
+        private static void shortCase(GameTestHelper helper, double start, double finish, boolean hits) {
+            Mob attacker = armed(helper, EntityType.ZOMBIE);
+            Mob target = target(helper, attacker);
+            try {
+                var profile = profile(helper, attacker);
+                helper.assertTrue(Math.abs(profile.range() - 1.8D) < .000001D, "Native profile data retains the actual short-move multiplier");
+                helper.assertTrue(Math.abs(BetterCombatBridge.playerEquivalentRange(attacker, attacker.getMainHandItem(), profile.rangeMultiplier()) - 1.3D) < .000001D,
+                        "The half-block configured reduction follows the actual move multiplier before the monster margin");
+                helper.assertTrue(Math.abs(MobWeaponReach.sourceLimit(attacker, target, attacker.getY()) - 1.55D) < .000001D,
+                        "The independent source cap is wider than this short move and cannot substitute for its shoulder cap");
+                placeAtShoulderDistance(attacker, target, start);
+                float health = target.getHealth();
+                if (start > 1.1D) {
+                    helper.assertFalse(BetterMobCombat.canStrike(attacker, target), "A position in the player-only margin cannot begin the short move");
+                    helper.assertFalse(BetterMobCombat.request(attacker, target), "A remote short-move request starts no recovery or impact");
+                } else {
+                    begin(helper, attacker, target);
+                    placeAtShoulderDistance(attacker, target, finish);
+                    advance(attacker, target, profile.windupTicks() - 1);
+                    helper.assertValueEqual(target.getHealth(), health, "Short moves still wait their complete native windup");
+                    advance(attacker, target, 1);
+                }
+                if (hits) helper.assertTrue(target.getHealth() < health, "A short move inside its final 1.1-block cap damages through the real native path");
+                else helper.assertValueEqual(target.getHealth(), health, "The final impact cannot use the next combo's longer multiplier or the player's final fifth of a block");
+            } finally { BetterMobCombat.cancel(attacker); attacker.discard(); target.discard(); }
+        }
+
+        private static void scaleChange(GameTestHelper helper) {
+            float influence = net.bettercombat.BetterCombatMod.getConfig().entity_scale_attack_range_influence;
+            net.bettercombat.BetterCombatMod.getConfig().entity_scale_attack_range_influence = 1F;
+            ResourceLocation id = BuiltInRegistries.ITEM.getKey(Items.IRON_SWORD);
+            var previous = net.bettercombat.logic.WeaponRegistry.getAttributes(new ItemStack(Items.IRON_SWORD));
+            net.bettercombat.logic.WeaponRegistry.register(id, attributes(move(1F)));
+            Mob attacker = armed(helper, EntityType.ZOMBIE);
+            Mob target = target(helper, attacker);
+            try {
+                var profile = profile(helper, attacker);
+                placeAtShoulderDistance(attacker, target, 1.4D);
+                float health = target.getHealth();
+                begin(helper, attacker, target);
+                attacker.getAttribute(Attributes.SCALE).setBaseValue(.5D);
+                attacker.refreshDimensions();
+                helper.assertTrue(Math.abs(BetterCombatBridge.playerEquivalentRange(attacker, attacker.getMainHandItem(), profile.rangeMultiplier()) - 1.5D) < .000001D,
+                        "The current half-scale range replaces the range recorded before windup");
+                advance(attacker, target, profile.windupTicks());
+                helper.assertValueEqual(target.getHealth(), health, "Changing scale during windup prevents an otherwise out-of-range delayed impact");
+                advance(attacker, target, profile.cooldownTicks());
+                placeAtShoulderDistance(attacker, target, 1.25D);
+                helper.assertTrue(BetterMobCombat.request(attacker, target), "The same scaled attacker can begin a fresh move inside its final 1.3-block cap");
+                advance(attacker, target, profile.windupTicks());
+                helper.assertTrue(target.getHealth() < health, "The scaled range cap still allows legitimate nearby native damage");
+            } finally {
+                BetterMobCombat.cancel(attacker); attacker.discard(); target.discard();
+                net.bettercombat.logic.WeaponRegistry.register(id, previous);
+                net.bettercombat.BetterCombatMod.getConfig().entity_scale_attack_range_influence = influence;
+            }
+        }
+
+        private static void legacyRange(GameTestHelper helper) {
+            for (boolean simply : new boolean[]{false, true}) {
+                if (simply && !SimplySwordsCompat.enabled()) continue;
+                Mob attacker = armed(helper, EntityType.ZOMBIE);
+                Mob target = target(helper, attacker);
+                Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+                try {
+                    ItemStack weapon = simply ? new ItemStack(SimplySwordsCompat.weapon("vibranium", "glaive")) : new ItemStack(Items.IRON_SWORD);
+                    var modifiers = ItemAttributeModifiers.builder();
+                    weapon.forEachModifier(EquipmentSlot.MAINHAND, (attribute, modifier) -> modifiers.add(attribute, modifier, EquipmentSlotGroup.MAINHAND));
+                    modifiers.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(ResourceLocation.parse("mite:tool_reach"),
+                            .75D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+                    modifiers.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(ResourceLocation.parse("mite:mob_external_reach_test"),
+                            1.25D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+                    weapon.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers.build());
+                    attacker.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+                    player.setItemSlot(EquipmentSlot.MAINHAND, weapon.copy());
+                    player.setPos(attacker.position());
+                    player.tick();
+                    player.setPos(attacker.position());
+                    var profile = profile(helper, attacker);
+                    helper.assertTrue(Math.abs(MobWeaponReach.itemRange(attacker) - 4.25D) < .000001D,
+                            "The legacy three-quarter block is ignored while the real external five-quarter block survives");
+                    helper.assertTrue(Math.abs(profile.itemRange() - 4.25D) < .000001D
+                                    && Math.abs(BetterCombatBridge.playerEquivalentRange(attacker, weapon, 1D) - 4.25D) < .000001D,
+                            "Explicit real item range overrides metadata without restoring the obsolete modifier");
+                    helper.assertTrue(profile.reach(attacker, target) <= Math.max(0D, SourcePlayerReach.sourceMeleeReach(player, target) - .2D) + .000001D,
+                            "The same legacy-bearing item cannot give the monster a longer source cap than the real equipped player");
+                } finally { BetterMobCombat.cancel(attacker); attacker.discard(); target.discard(); player.discard(); }
+            }
+        }
     }
 }

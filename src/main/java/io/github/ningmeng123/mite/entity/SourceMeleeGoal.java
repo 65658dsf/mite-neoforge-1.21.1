@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.entity;
 
+import io.github.ningmeng123.mite.combat.MobWeaponReach;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import java.util.EnumSet;
 import javax.annotation.Nullable;
@@ -68,6 +69,7 @@ public final class SourceMeleeGoal extends Goal {
     /** Checks a planned standing position without moving the entity or changing the world. */
     public static boolean canStrikeFrom(PathfinderMob mob, LivingEntity target, Vec3 feet) {
         if (target == null || !target.isAlive()) return false;
+        if (!MobWeaponReach.canReachFrom(mob, target, feet)) return false;
         if (io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat.supported(mob))
             return io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat.canStrikeFrom(mob, target, feet);
         var definition = MiteTools.definition(mob.getMainHandItem());

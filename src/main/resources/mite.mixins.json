@@ -33,6 +33,7 @@
     "GearApplyBonusCountMixin",
     "GearLootProbabilityMixin",
     "GearEnchantedCountMixin",
+    "MobWeaponReachMixin",
     "BetterCombatMobMixin",
     "BetterCombatPlayerAttackMixin",
     "BetterCombatMeleeGoalMixin",

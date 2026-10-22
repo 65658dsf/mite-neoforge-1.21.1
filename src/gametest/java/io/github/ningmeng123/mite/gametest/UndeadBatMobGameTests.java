@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.combat.MobWeaponReach;
 import io.github.ningmeng123.mite.entity.BoneLordFrenzy;
 import io.github.ningmeng123.mite.entity.MobCombat;
 import io.github.ningmeng123.mite.entity.MobKind;
@@ -159,7 +160,14 @@ public final class UndeadBatMobGameTests {
         close(helper, ancient.getBbWidth(), .72, "Wither subtype width"); close(helper, ancient.getBbHeight(), 2.34, "Wither subtype height");
         helper.assertTrue(!ancient.hurt(helper.getLevel().damageSources().lava(), 4), "Wither subtype rejects lava");
         Cow target = new Cow(EntityType.COW, helper.getLevel());
+        target.setPos(ancient.position().add(0D, 0D, 1D));
+        helper.assertTrue(MobWeaponReach.applies(ancient)
+                        && MobWeaponReach.canReachFrom(ancient, target, ancient.position())
+                        && ancient.isWithinMeleeAttackRange(target),
+                "The real nearby wither target satisfies both the weapon cap and native attack range");
+        float before = target.getHealth();
         helper.assertTrue(ancient.doHurtTarget(target), "Wither melee damages a living target");
+        helper.assertTrue(target.getHealth() < before, "The legal native wither hit removes actual target health");
         helper.assertTrue(target.hasEffect(net.minecraft.world.effect.MobEffects.WITHER), "Source 200 tick wither is applied");
         helper.succeed();
     }

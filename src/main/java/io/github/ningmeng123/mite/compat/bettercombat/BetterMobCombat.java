@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.compat.bettercombat;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.combat.MobWeaponReach;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.network.MobAttackPayload;
 import java.lang.ref.WeakReference;
@@ -79,10 +80,17 @@ public final class BetterMobCombat {
     }
 
     private static boolean inReach(Mob mob, LivingEntity target, Vec3 feet, BetterCombatBridge.Profile attack, boolean facing) {
+        if (!MobWeaponReach.canReachFrom(mob, target, feet)) return false;
         Vec3 eye = feet.add(0, mob.getEyeHeight(), 0);
         Vec3 nearest = io.github.ningmeng123.mite.combat.SourcePlayerReach.closestPoint(target.getBoundingBox(), eye);
         double reach = attack.reach(mob, target, feet.y);
-        if (eye.distanceToSqr(nearest) > reach * reach) return false;
+        if (!Double.isFinite(reach) || reach <= 0D || eye.distanceToSqr(nearest) > reach * reach) return false;
+        if (MobWeaponReach.applies(mob)) {
+            double weaponLimit = Math.max(0D, BetterCombatBridge.playerEquivalentRange(mob, mob.getMainHandItem(), attack.rangeMultiplier()) - MobWeaponReach.MARGIN);
+            Vec3 shoulder = eye.add(0D, -mob.getBbHeight() * .15D * mob.getAgeScale(), 0D);
+            Vec3 weaponPoint = io.github.ningmeng123.mite.combat.SourcePlayerReach.closestPoint(target.getBoundingBox(), shoulder);
+            if (!Double.isFinite(weaponLimit) || weaponLimit <= 0D || shoulder.distanceToSqr(weaponPoint) > weaponLimit * weaponLimit) return false;
+        }
         // A single intended target: no incidental friendly-fire sweep around an AI mob.
         if (facing && attack.angle() < 360D) {
             Vec3 toward = target.getBoundingBox().getCenter().subtract(eye).multiply(1, 0, 1);
