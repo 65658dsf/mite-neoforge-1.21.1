@@ -116,7 +116,7 @@ neoForge {
             if (project.providers.gradleProperty('miteGameTestDirectory').isPresent()) {
                 gameDirectory = file(project.providers.gradleProperty('miteGameTestDirectory').get())
             }
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.providers.gradleProperty('miteGameTestNamespaces').getOrElse('mite,mite_feedback,mite_gameplay,mite_targeting,mite_trades,mite_simplyswords,mite_equipment_recycling,mite_bettercombat,mite_vibranium,mite_gear,mite_equipment_drop,mite_equipment_progression,mite_upgrade,mite_fortune,mite_enchanting,mite_enchanting_chance,mite_underworld_dungeon_mobs,mite_item_lifetime,mite_strongbox_announcement')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.providers.gradleProperty('miteGameTestNamespaces').getOrElse('mite,mite_caves,mite_feedback,mite_gameplay,mite_targeting,mite_trades,mite_simplyswords,mite_equipment_recycling,mite_bettercombat,mite_vibranium,mite_gear,mite_equipment_drop,mite_equipment_progression,mite_upgrade,mite_fortune,mite_enchanting,mite_enchanting_chance,mite_underworld_dungeon_mobs,mite_item_lifetime,mite_strongbox_announcement')
         }
         data {
             data()

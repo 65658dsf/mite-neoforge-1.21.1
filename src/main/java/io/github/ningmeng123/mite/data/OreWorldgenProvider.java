@@ -51,8 +51,25 @@ public final class OreWorldgenProvider implements DataProvider {
             String path = "data/minecraft/worldgen/noise_settings/" + preset + ".json";
             JsonObject vanilla = resource(path);
             vanilla.addProperty("ore_veins_enabled", false);
-            save(work, cache, path, vanilla.toString());
+            save(work, cache, path, UpperCaveNoise.apply(vanilla).toString());
         }
+        save(work, cache, "data/mite/worldgen/density_function/upper_cave_entrances.json",
+                UpperCaveNoise.applyEntrances(resource("data/minecraft/worldgen/density_function/overworld/caves/entrances.json")).toString());
+        save(work, cache, "data/mite/worldgen/configured_carver/upper_legacy_caves.json", """
+                {"type":"minecraft:cave","config":{
+                  "probability":0.28,
+                  "y":{"type":"minecraft:uniform","min_inclusive":{"absolute":8},"max_inclusive":{"absolute":96}},
+                  "yScale":{"type":"minecraft:uniform","min_inclusive":0.4,"max_exclusive":0.7},
+                  "lava_level":{"above_bottom":8},
+                  "replaceable":"#minecraft:overworld_carver_replaceables",
+                  "horizontal_radius_multiplier":{"type":"minecraft:uniform","min_inclusive":0.65,"max_exclusive":0.9},
+                  "vertical_radius_multiplier":{"type":"minecraft:uniform","min_inclusive":0.8,"max_exclusive":1.0},
+                  "floor_level":{"type":"minecraft:uniform","min_inclusive":-0.9,"max_exclusive":-0.5}}}
+                """);
+        save(work, cache, "data/mite/neoforge/biome_modifier/add_upper_legacy_caves.json", """
+                {"type":"neoforge:add_carvers","biomes":"#minecraft:is_overworld",
+                  "carvers":"mite:upper_legacy_caves","step":"air"}
+                """);
         // Keep the fossil feature/structure shape. Its independent coal/diamond overlay becomes bone,
         // so the preserved modern structure cannot bypass the source mineral rarity and depth.
         for (String fossil : List.of("fossil_coal", "fossil_diamonds")) {

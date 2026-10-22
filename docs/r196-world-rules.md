@@ -4,7 +4,7 @@
 
 本文件记录已检查的 R196 行为，**不代表 NeoForge 功能已实现或游戏内测试通过**。机器数据见 `spec/r196-world-rules.json`。来源位于 `.reference/r196/decompiled`，混淆名通过 `reference-data/class-index.json` 的 `SourceFile` 核对。关键歧义另用 JDK `javap -c -p` 检查原始 class。
 
-现代主世界必须完整保留 **1.21.1 原版 noise generator、biomes、caves、height**，不复制下面的旧主世界生成器。旧事实仅用于机制和资源适配。地下世界独立新增，不能覆盖现代主世界。
+现代主世界保留 **1.21.1 原版 noise generator、biomes 与 height**，不复制下面的旧主世界生成器。洞穴在现代基础上采用用户指定的[高层细通道、大洞及地下含水区域平衡](upper-cave-generation.md)，不再要求全部洞穴参数与原版相同。旧事实仅用于机制和资源适配。地下世界独立新增，不能覆盖现代主世界。
 
 ## 时间与月相
 

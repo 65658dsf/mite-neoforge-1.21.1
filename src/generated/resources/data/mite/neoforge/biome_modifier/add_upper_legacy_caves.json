@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_carvers",
+  "biomes": "#minecraft:is_overworld",
+  "carvers": "mite:upper_legacy_caves",
+  "step": "air"
+}

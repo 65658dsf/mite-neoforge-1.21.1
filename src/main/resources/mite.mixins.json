@@ -4,6 +4,10 @@
   "package": "io.github.ningmeng123.mite.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "RandomStateAquiferMixin",
+    "OverworldAquiferLevelMixin",
+    "NoiseChunkAquiferMixin",
+    "UndergroundWaterAquiferMixin",
     "ConfiguredEnchantmentMixin",
     "ConfiguredEnchantmentSelectionMixin",
     "ConfiguredItemEnchantmentsMixin",

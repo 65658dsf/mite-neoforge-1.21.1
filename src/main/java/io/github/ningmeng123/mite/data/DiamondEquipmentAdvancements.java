@@ -70,7 +70,8 @@ public final class DiamondEquipmentAdvancements {
         if (value.isJsonPrimitive() && value.getAsJsonPrimitive().isString()) {
             String item = value.getAsString();
             ResourceLocation id = ResourceLocation.tryParse(item);
-            if (item.startsWith("minecraft:") && id != null && RemovedDiamondEquipment.IDS.contains(id)) {
+            if (item.startsWith("minecraft:") && id != null && RemovedDiamondEquipment.IDS.contains(id)
+                    && (id.getPath().startsWith("diamond_") || id.getPath().startsWith("netherite_"))) {
                 String material = id.getPath().startsWith("diamond_") ? "diamond" : "netherite";
                 String replacement = material.equals("diamond") ? "ancient_metal" : "mithril";
                 return new JsonPrimitive("mite:" + replacement + "_" + id.getPath().substring(material.length() + 1));
