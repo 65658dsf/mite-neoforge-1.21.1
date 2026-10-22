@@ -1,16 +1,23 @@
 {
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "mite:copper_shears"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    }
   },
-  "base": {
-    "item": "mite:copper_shears"
-  },
+  "pattern": [
+    "AB",
+    "C "
+  ],
   "result": {
     "count": 1,
     "id": "minecraft:shears"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

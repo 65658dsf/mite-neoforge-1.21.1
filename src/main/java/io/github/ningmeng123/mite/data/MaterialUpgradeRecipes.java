@@ -40,6 +40,18 @@ public final class MaterialUpgradeRecipes {
 
     public static String nextMaterial(String material) { return NEXT_MATERIAL.get(material); }
 
+    public static boolean isWorkbenchUpgrade(Upgrade upgrade) {
+        if (!upgrade.fromMaterial().equals("copper") || !upgrade.toMaterial().equals("iron")) return false;
+        var tool = MiteTools.definition(new net.minecraft.world.item.ItemStack(upgrade.base()));
+        var armor = MiteArmorContent.definition(upgrade.base());
+        return tool != null || SimplySwordsCompat.definition(new net.minecraft.world.item.ItemStack(upgrade.base())) != null
+                || armor != null && !armor.chainmail() && !armor.horse();
+    }
+
+    public static List<Upgrade> smithingUpgrades() {
+        return upgrades().stream().filter(upgrade -> !isWorkbenchUpgrade(upgrade)).toList();
+    }
+
     /** Only registered items enter this runtime catalog; optional IDs never resolve to air. */
     public static List<Upgrade> upgrades() {
         List<Equipment> equipment = new ArrayList<>();
@@ -94,14 +106,19 @@ public final class MaterialUpgradeRecipes {
     public static void addRecipes(RecipeOutput output) {
         Item template = MiteUpgradeTemplates.UPGRADE_TEMPLATE.get();
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, template)
-                .pattern("CIC").pattern("GDG").pattern("CIC")
+                .pattern("CIC").pattern("GLG").pattern("CIC")
                 .define('C', Ingredient.of(Items.COPPER_INGOT, MiteMaterials.SILVER_INGOT.get())).define('I', Items.IRON_INGOT)
-                .define('G', Items.GOLD_INGOT).define('D', Items.DIAMOND)
+                .define('G', Items.GOLD_INGOT).define('L', Items.LAPIS_LAZULI)
                 .unlockedBy("has_iron_ingot", InventoryChangeTrigger.TriggerInstance.hasItems(Items.IRON_INGOT))
                 .save(output, ResourceLocation.parse("mite:equipment_upgrade_smithing_template"));
+        var ironShapes = CopperEquipmentUpgradeRecipes.ironShapes(output);
         for (Upgrade entry : upgrades()) {
             // Optional routes are emitted by the assets provider so runData never depends on the optional mod.
             if (entry.id().contains("/simplyswords_") || BuiltInRegistries.ITEM.getKey(entry.base()).getNamespace().equals(SimplySwordsCompat.MOD_ID)) continue;
+            if (isWorkbenchUpgrade(entry)) {
+                CopperEquipmentUpgradeRecipes.add(output, entry, ironShapes);
+                continue;
+            }
             SmithingTransformRecipeBuilder.smithing(Ingredient.of(template), Ingredient.of(entry.base()),
                             Ingredient.of(entry.addition()), RecipeCategory.COMBAT, entry.result())
                     .unlocks("has_upgrade_template", InventoryChangeTrigger.TriggerInstance.hasItems(template))

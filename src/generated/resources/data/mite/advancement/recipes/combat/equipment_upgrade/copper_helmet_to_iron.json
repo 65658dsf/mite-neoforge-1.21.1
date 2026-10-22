@@ -1,17 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "mite:equipment_upgrade/copper_helmet_to_iron"
-      },
-      "trigger": "minecraft:recipe_unlocked"
-    },
-    "has_upgrade_template": {
+    "has_copper_equipment": {
       "conditions": {
         "items": [
           {
-            "items": "mite:equipment_upgrade_smithing_template"
+            "items": "mite:copper_helmet"
           }
         ]
       },
@@ -20,8 +14,7 @@
   },
   "requirements": [
     [
-      "has_the_recipe",
-      "has_upgrade_template"
+      "has_copper_equipment"
     ]
   ],
   "rewards": {

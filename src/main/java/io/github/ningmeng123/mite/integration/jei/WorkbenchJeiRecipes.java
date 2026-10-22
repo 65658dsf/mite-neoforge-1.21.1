@@ -93,6 +93,7 @@ public final class WorkbenchJeiRecipes {
                 || recipe instanceof io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe
                 || recipe instanceof io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe
                 || recipe instanceof io.github.ningmeng123.mite.crafting.StackBatchShapedRecipe
+                || recipe instanceof io.github.ningmeng123.mite.crafting.VibraniumUpgradeRecipe
                 || recipe instanceof io.github.ningmeng123.mite.crafting.StackBatchShapelessRecipe;
     }
 

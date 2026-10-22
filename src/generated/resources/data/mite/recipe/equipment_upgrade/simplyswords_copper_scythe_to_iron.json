@@ -5,17 +5,26 @@
       "modid": "simplyswords"
     }
   ],
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "tag": "c:wood_sticks"
+    },
+    "U": {
+      "item": "mite:simplyswords_copper_scythe"
+    },
+    "X": {
+      "item": "minecraft:iron_ingot"
+    }
   },
-  "base": {
-    "item": "mite:simplyswords_copper_scythe"
-  },
+  "pattern": [
+    "XXU",
+    "X# ",
+    "#  "
+  ],
   "result": {
+    "count": 1,
     "id": "simplyswords:iron_scythe"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

@@ -5,17 +5,29 @@
       "modid": "simplyswords"
     }
   ],
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "tag": "c:wood_sticks"
+    },
+    "U": {
+      "item": "mite:simplyswords_copper_halberd"
+    },
+    "X": {
+      "item": "minecraft:iron_ingot"
+    },
+    "Y": {
+      "item": "minecraft:iron_nugget"
+    }
   },
-  "base": {
-    "item": "mite:simplyswords_copper_halberd"
-  },
+  "pattern": [
+    " XY",
+    "XUX",
+    "#  "
+  ],
   "result": {
+    "count": 1,
     "id": "simplyswords:iron_halberd"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

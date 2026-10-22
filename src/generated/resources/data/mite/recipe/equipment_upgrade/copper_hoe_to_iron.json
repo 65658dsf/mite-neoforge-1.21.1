@@ -1,16 +1,27 @@
 {
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "D": {
+      "item": "mite:copper_hoe"
+    },
+    "F": {
+      "item": "minecraft:stick"
+    }
   },
-  "base": {
-    "item": "mite:copper_hoe"
-  },
+  "pattern": [
+    "AB",
+    " D",
+    " F"
+  ],
   "result": {
     "count": 1,
     "id": "minecraft:iron_hoe"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

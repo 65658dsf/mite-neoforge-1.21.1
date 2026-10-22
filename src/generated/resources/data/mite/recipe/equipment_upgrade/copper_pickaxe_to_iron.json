@@ -1,16 +1,30 @@
 {
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "mite:copper_pickaxe"
+    },
+    "H": {
+      "item": "minecraft:stick"
+    }
   },
-  "base": {
-    "item": "mite:copper_pickaxe"
-  },
+  "pattern": [
+    "ABC",
+    " E ",
+    " H "
+  ],
   "result": {
     "count": 1,
     "id": "minecraft:iron_pickaxe"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

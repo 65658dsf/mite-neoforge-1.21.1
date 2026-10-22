@@ -174,9 +174,12 @@ public final class OreGenerationGameTests {
         final WorldGenRegion region;
         final boolean nether;
         GenerationFixture(ServerLevel source, ChunkPos origin, boolean nether) {
+            this(source, origin, nether, nether ? Biomes.NETHER_WASTES : Biomes.PLAINS);
+        }
+        GenerationFixture(ServerLevel source, ChunkPos origin, boolean nether, ResourceKey<Biome> biomeKey) {
             this.source = source; this.nether = nether;
             var biomes = source.registryAccess().registryOrThrow(Registries.BIOME);
-            var biome = biomes.getHolderOrThrow(nether ? Biomes.NETHER_WASTES : Biomes.PLAINS);
+            var biome = biomes.getHolderOrThrow(biomeKey);
             StaticCache2D<GenerationChunkHolder> chunks = StaticCache2D.create(origin.x, origin.z, 1, (x, z) -> {
                 ProtoChunk chunk = new ProtoChunk(new ChunkPos(x, z), UpgradeData.EMPTY, source, biomes, null);
                 chunk.setPersistedStatus(ChunkStatus.CARVERS);

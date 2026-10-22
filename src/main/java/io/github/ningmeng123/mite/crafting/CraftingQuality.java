@@ -139,6 +139,8 @@ public final class CraftingQuality {
         if (known != null) return known;
         var vibranium = VibraniumCrafting.rule(recipe.id(), output);
         if (vibranium != null) return vibranium;
+        if (recipe.value() instanceof VibraniumUpgradeRecipe) return new TimedCraftingRecipes.Rule(
+                MaterialUpgradeRequirements.difficulty(output), benchMaterial(output), -1);
         float difficulty = EquipmentDurability.isManaged(output) ? lowestDifficulty(output) : -1F;
         return difficulty < 0F ? null : new TimedCraftingRecipes.Rule(difficulty, benchMaterial(output), -1);
     }

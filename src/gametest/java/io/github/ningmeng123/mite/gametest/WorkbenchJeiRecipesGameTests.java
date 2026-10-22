@@ -426,11 +426,17 @@ public final class WorkbenchJeiRecipesGameTests {
                 io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe.class,
                 io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe.class,
                 io.github.ningmeng123.mite.crafting.StackBatchShapedRecipe.class,
+                io.github.ningmeng123.mite.crafting.VibraniumUpgradeRecipe.class,
                 io.github.ningmeng123.mite.crafting.StackBatchShapelessRecipe.class);
         for (Class<?> type : supported) {
             CraftingRecipe actual = loaded.stream().map(RecipeHolder::value).filter(recipe -> recipe.getClass() == type).findFirst().orElseThrow();
             helper.assertTrue(WorkbenchJeiRecipes.supports(actual), "The viewer supports each explicitly integrated recipe class actually loaded by the server");
         }
+        var copperUpgrade = loaded.stream().filter(holder -> holder.id().equals(ResourceLocation.parse("mite:equipment_upgrade/copper_pickaxe_to_iron")))
+                .findFirst().orElseThrow();
+        helper.assertTrue(copperUpgrade.value() instanceof io.github.ningmeng123.mite.crafting.VibraniumUpgradeRecipe
+                        && WorkbenchJeiRecipes.supports(copperUpgrade.value()),
+                "The explicitly integrated component-preserving copper upgrade wrapper uses the workbench viewer");
         ShapedRecipe shaped = (ShapedRecipe) loaded.stream().filter(holder -> holder.id().equals(ResourceLocation.parse("mite:copper_pickaxe")))
                 .findFirst().orElseThrow().value();
         ShapedRecipe differentAssembly = new ShapedRecipe(shaped.getGroup(), shaped.category(), shaped.pattern,

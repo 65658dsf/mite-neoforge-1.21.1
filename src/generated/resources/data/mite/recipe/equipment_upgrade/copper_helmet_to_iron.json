@@ -1,16 +1,32 @@
 {
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    },
+    "D": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "mite:copper_helmet"
+    },
+    "F": {
+      "item": "minecraft:iron_ingot"
+    }
   },
-  "base": {
-    "item": "mite:copper_helmet"
-  },
+  "pattern": [
+    "ABC",
+    "DEF"
+  ],
   "result": {
     "count": 1,
     "id": "minecraft:iron_helmet"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

@@ -5,17 +5,26 @@
       "modid": "simplyswords"
     }
   ],
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "U": {
+      "item": "mite:simplyswords_copper_claymore"
+    },
+    "X": {
+      "item": "minecraft:iron_ingot"
+    },
+    "Y": {
+      "item": "minecraft:iron_nugget"
+    }
   },
-  "base": {
-    "item": "mite:simplyswords_copper_claymore"
-  },
+  "pattern": [
+    " YX",
+    "YXY",
+    "UY "
+  ],
   "result": {
+    "count": 1,
     "id": "simplyswords:iron_claymore"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

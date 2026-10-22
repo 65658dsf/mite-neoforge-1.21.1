@@ -1,16 +1,39 @@
 {
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    },
+    "D": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "mite:copper_leggings"
+    },
+    "F": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "item": "minecraft:iron_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
   },
-  "base": {
-    "item": "mite:copper_leggings"
-  },
+  "pattern": [
+    "ABC",
+    "DEF",
+    "G I"
+  ],
   "result": {
     "count": 1,
     "id": "minecraft:iron_leggings"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

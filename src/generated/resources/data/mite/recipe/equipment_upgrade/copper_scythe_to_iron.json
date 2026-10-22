@@ -1,16 +1,30 @@
 {
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "mite:copper_scythe"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "D": {
+      "item": "minecraft:stick"
+    },
+    "F": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "item": "minecraft:stick"
+    }
   },
-  "base": {
-    "item": "mite:copper_scythe"
-  },
+  "pattern": [
+    "AB ",
+    "D F",
+    "G  "
+  ],
   "result": {
     "count": 1,
     "id": "mite:iron_scythe"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

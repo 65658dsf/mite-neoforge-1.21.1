@@ -1,16 +1,42 @@
 {
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "mite:copper_chestplate"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    },
+    "D": {
+      "item": "minecraft:iron_ingot"
+    },
+    "E": {
+      "item": "minecraft:iron_ingot"
+    },
+    "F": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "item": "minecraft:iron_ingot"
+    },
+    "H": {
+      "item": "minecraft:iron_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
   },
-  "base": {
-    "item": "mite:copper_chestplate"
-  },
+  "pattern": [
+    "ABC",
+    "DEF",
+    "GHI"
+  ],
   "result": {
     "count": 1,
     "id": "minecraft:iron_chestplate"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

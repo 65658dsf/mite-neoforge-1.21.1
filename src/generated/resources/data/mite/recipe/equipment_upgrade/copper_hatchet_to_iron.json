@@ -1,16 +1,23 @@
 {
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "mite:copper_hatchet"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:stick"
+    }
   },
-  "base": {
-    "item": "mite:copper_hatchet"
-  },
+  "pattern": [
+    "AB",
+    "C "
+  ],
   "result": {
     "count": 1,
     "id": "mite:iron_hatchet"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

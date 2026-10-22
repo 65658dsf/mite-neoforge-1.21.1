@@ -5,17 +5,23 @@
       "modid": "simplyswords"
     }
   ],
-  "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:iron_ingot"
+  "type": "mite:vibranium_upgrade",
+  "category": "equipment",
+  "key": {
+    "U": {
+      "item": "mite:simplyswords_copper_twinblade"
+    },
+    "X": {
+      "item": "minecraft:iron_ingot"
+    }
   },
-  "base": {
-    "item": "mite:simplyswords_copper_twinblade"
-  },
+  "pattern": [
+    "  X",
+    " U ",
+    "X  "
+  ],
   "result": {
+    "count": 1,
     "id": "simplyswords:iron_twinblade"
-  },
-  "template": {
-    "item": "mite:equipment_upgrade_smithing_template"
   }
 }

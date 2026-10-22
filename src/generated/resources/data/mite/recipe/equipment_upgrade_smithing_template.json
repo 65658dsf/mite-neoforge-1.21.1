@@ -10,19 +10,19 @@
         "item": "mite:silver_ingot"
       }
     ],
-    "D": {
-      "item": "minecraft:diamond"
-    },
     "G": {
       "item": "minecraft:gold_ingot"
     },
     "I": {
       "item": "minecraft:iron_ingot"
+    },
+    "L": {
+      "item": "minecraft:lapis_lazuli"
     }
   },
   "pattern": [
     "CIC",
-    "GDG",
+    "GLG",
     "CIC"
   ],
   "result": {

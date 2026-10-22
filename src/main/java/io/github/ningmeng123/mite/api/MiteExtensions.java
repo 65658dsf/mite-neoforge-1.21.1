@@ -58,6 +58,7 @@ public final class MiteExtensions {
         default boolean enchantmentApplicable(String id, ItemStack stack, boolean original) { return original; }
         default boolean enchantmentsCompatible(String left, String right, boolean original) { return original; }
         default float craftingDifficulty(ItemStack stack, float original) { return original; }
+        default int materialUpgradeIngots(ItemStack stack, int original) { return original; }
         default double mobHealthLimit(Mob mob, double original) { return original; }
         default double maximumHealthAttributeRange(double original) { return original; }
         default io.github.ningmeng123.mite.rules.R196FurnaceRules.Profile furnaceProfile(net.minecraft.world.level.block.state.BlockState state, io.github.ningmeng123.mite.rules.R196FurnaceRules.Profile original) { return original; }

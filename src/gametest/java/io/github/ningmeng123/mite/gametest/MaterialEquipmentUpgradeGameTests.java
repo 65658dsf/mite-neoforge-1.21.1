@@ -4,6 +4,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.JsonOps;
 import io.github.ningmeng123.mite.combat.ShieldGuard;
 import io.github.ningmeng123.mite.crafting.TimedCraftingController;
+import io.github.ningmeng123.mite.crafting.MaterialUpgradeRequirements;
+import io.github.ningmeng123.mite.crafting.TimedSmithingController;
 import io.github.ningmeng123.mite.data.MaterialUpgradeRecipes;
 import io.github.ningmeng123.mite.data.MaterialUpgradeRecipes.Upgrade;
 import io.github.ningmeng123.mite.integration.jei.WorkbenchJeiRecipes;
@@ -15,8 +17,10 @@ import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
+import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +39,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -84,7 +89,7 @@ public final class MaterialEquipmentUpgradeGameTests {
     public static void everyAvailableUpgradeLoadsAsNativeSmithingAndAdoptsItsNewMaterialDefaults(GameTestHelper h) {
         Set<String> recipeIds = new HashSet<>();
         Set<String> initialMaterials = new HashSet<>();
-        for (Upgrade upgrade : MaterialUpgradeRecipes.upgrades()) {
+        for (Upgrade upgrade : MaterialUpgradeRecipes.smithingUpgrades()) {
             h.assertTrue(recipeIds.add(upgrade.id()), "Every material/family transition has a unique recipe ID");
             h.assertValueEqual(upgrade.toMaterial(), nextMaterial(upgrade.fromMaterial()), "No recipe skips or reverses a material stage: " + upgrade.id());
             h.assertValueEqual(family(upgrade.base(), upgrade.fromMaterial()), family(upgrade.result(), upgrade.toMaterial()),
@@ -110,8 +115,8 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void allRecipesRequireExactlyTheTemplateBaseAndNextMaterialIngot(GameTestHelper h) {
-        for (Upgrade upgrade : MaterialUpgradeRecipes.upgrades()) {
+    public static void allSmithingRecipesRequireTheCorrectTemplateBaseAndNextMaterial(GameTestHelper h) {
+        for (Upgrade upgrade : MaterialUpgradeRecipes.smithingUpgrades()) {
             SmithingTransformRecipe recipe = recipe(h, upgrade);
             ItemStack template = template(), base = new ItemStack(upgrade.base()), ingot = new ItemStack(upgrade.addition());
             for (SmithingRecipeInput invalid : List.of(
@@ -135,7 +140,7 @@ public final class MaterialEquipmentUpgradeGameTests {
     @GameTest(template = "empty")
     public static void namedEnchantedToolsAndTrimmedArmorKeepPersonalComponentsButReplaceOldStats(GameTestHelper h) {
         for (String family : List.of("sword", "pickaxe", "chestplate")) {
-            Upgrade upgrade = upgrade("mite:copper_" + family, "iron");
+            Upgrade upgrade = upgrade("mite:silver_" + family, "iron");
             ItemStack source = personalEquipment(h, upgrade.base());
             source.set(DataComponents.MAX_DAMAGE, 400);
             source.set(DataComponents.MAX_STACK_SIZE, 2);
@@ -162,10 +167,10 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void fullCopperToVibraniumRouteKeepsIdentityLevelsExperienceAndLegacyAffixes(GameTestHelper h) {
-        ItemStack current = personalEquipment(h, item("mite:copper_sword"));
+    public static void fullIronToVibraniumSmithingRouteKeepsIdentityLevelsExperienceAndLegacyAffixes(GameTestHelper h) {
+        ItemStack current = personalEquipment(h, item("minecraft:iron_sword"));
         GearProgress original = GearProgression.state(current);
-        for (var step : List.of(Map.entry("iron", 25), Map.entry("ancient_metal", 25), Map.entry("mithril", 25),
+        for (var step : List.of(Map.entry("ancient_metal", 25), Map.entry("mithril", 25),
                 Map.entry("adamantium", 25), Map.entry("vibranium", 25))) {
             Upgrade upgrade = upgrade(BuiltInRegistries.ITEM.getKey(current.getItem()).toString(), step.getKey());
             ItemStack before = current.copy();
@@ -174,13 +179,13 @@ public final class MaterialEquipmentUpgradeGameTests {
             h.assertValueEqual(GearProgression.maxLevel(current), step.getValue(), "Standalone material upgrades retain the uniform growth cap");
             assertPersonalComponents(h, before, current);
         }
-        h.assertTrue(current.is(item("mite:vibranium_sword")), "Five consecutive smithing steps reach vibranium");
+        h.assertTrue(current.is(item("mite:vibranium_sword")), "Four consecutive smithing steps reach vibranium after the workbench upgrade to iron");
         h.succeed();
     }
 
     @GameTest(template = "empty")
     public static void proportionalDamageRoundsWithoutCreatingAnAlreadyBrokenOutput(GameTestHelper h) {
-        Upgrade upgrade = upgrade("mite:copper_pickaxe", "iron");
+        Upgrade upgrade = upgrade("mite:silver_pickaxe", "iron");
         ItemStack source = new ItemStack(upgrade.base());
         source.set(DataComponents.MAX_DAMAGE, 1_000_000);
         source.setDamageValue(999_999);
@@ -219,34 +224,47 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void actualSmithingMenuPreviewAndBothTakePathsConsumeOneTemplateAndOneIngot(GameTestHelper h) {
+    public static void actualSmithingMenuTimesBothTakePathsAndConsumesTheFullTargetCost(GameTestHelper h) {
         try (SmithingSession session = new SmithingSession(h)) {
-            Upgrade upgrade = upgrade("mite:copper_pickaxe", "iron");
+            Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
             ItemStack source = personalEquipment(h, upgrade.base()), before = source.copy();
             ItemStack templates = template(); templates.setCount(3);
             session.menu.getSlot(0).set(templates);
             session.menu.getSlot(1).set(source);
-            session.menu.getSlot(2).set(new ItemStack(upgrade.addition(), 3));
+            session.menu.getSlot(2).set(new ItemStack(upgrade.addition(), 6));
             h.assertTrue(session.menu.stillValid(session.player), "A physical smithing table backs the native menu");
             h.assertTrue(session.menu.getSlot(3).getItem().is(upgrade.result()), "The next material appears in the native result slot");
             h.assertTrue(ItemStack.matches(session.menu.getSlot(1).getItem(), before), "Preview consumes and changes no equipment");
             h.assertValueEqual(session.menu.getSlot(0).getItem().getCount(), 3, "Preview consumes no templates");
-            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 3, "Preview consumes no ingots");
+            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 6, "Preview consumes no ingots");
             session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+            int period = TimedSmithingController.period(session.player, session.menu);
+            h.assertTrue(period > 25, "A fine mithril helmet uses its real quality-adjusted manufacturing difficulty");
+            session.tick(period - 1);
+            h.assertTrue(session.menu.getCarried().isEmpty(), "A normal click cannot take an upgrade before the complete period");
+            h.assertTrue(ItemStack.matches(session.menu.getSlot(1).getItem(), before), "Waiting consumes no old equipment");
+            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 6, "Waiting consumes no metal");
+            session.tick(1);
             ItemStack taken = session.menu.getCarried();
             h.assertTrue(taken.is(upgrade.result()) && taken.getCount() == 1, "Normal click takes exactly one upgraded item");
             assertPersonalComponents(h, before, taken);
             h.assertTrue(session.menu.getSlot(1).getItem().isEmpty(), "Normal pickup consumes the old equipment");
             h.assertValueEqual(session.menu.getSlot(0).getItem().getCount(), 2, "Normal pickup consumes one template");
-            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 2, "Normal pickup consumes one ingot");
+            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 1, "Normal pickup consumes all five mithril ingots and preserves the extra ingot");
             session.menu.setCarried(ItemStack.EMPTY);
             session.menu.getSlot(1).set(before.copy());
+            session.menu.getSlot(2).set(new ItemStack(upgrade.addition(), 6));
             ItemStack moved = session.menu.quickMoveStack(session.player, 3);
-            h.assertTrue(moved.is(upgrade.result()) && session.player.getInventory().countItem(upgrade.result()) == 1,
-                    "Shift-click transfers exactly one upgraded item to the inventory");
+            h.assertTrue(moved.isEmpty() && session.player.getInventory().countItem(upgrade.result()) == 0,
+                    "Direct quick-move starts manufacturing rather than immediately transferring the preview");
+            session.tick(period - 1);
+            h.assertValueEqual(session.player.getInventory().countItem(upgrade.result()), 0, "Shift transfer also waits for the complete period");
+            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 6, "Shift waiting consumes none of the replenished metal");
+            session.tick(1);
+            h.assertValueEqual(session.player.getInventory().countItem(upgrade.result()), 1, "Shift manufacturing delivers exactly one upgraded item");
             h.assertTrue(session.menu.getSlot(1).getItem().isEmpty(), "Shift-click consumes exactly one previous item");
             h.assertValueEqual(session.menu.getSlot(0).getItem().getCount(), 1, "Shift-click consumes one more template");
-            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 1, "Shift-click consumes one more ingot");
+            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 1, "Shift manufacturing consumes five more ingots and preserves the extra ingot");
             ItemStack delivered = session.player.getInventory().items.stream().filter(stack -> stack.is(upgrade.result())).findFirst().orElseThrow();
             assertPersonalComponents(h, before, delivered);
             h.assertValueEqual(session.player.totalExperience, 0, "An inherited equipment quality requires no second manufacturing XP charge");
@@ -257,7 +275,7 @@ public final class MaterialEquipmentUpgradeGameTests {
     @GameTest(template = "empty")
     public static void smithingMenuRejectsMissingAndChangedIngredientsWithoutConsumingInputs(GameTestHelper h) {
         try (SmithingSession session = new SmithingSession(h)) {
-            Upgrade upgrade = upgrade("mite:copper_sword", "iron");
+            Upgrade upgrade = upgrade("mite:silver_sword", "iron");
             session.menu.getSlot(1).set(new ItemStack(upgrade.base()));
             session.menu.getSlot(2).set(new ItemStack(upgrade.addition(), 2));
             h.assertTrue(session.menu.getSlot(3).getItem().isEmpty(), "Equipment plus ingot cannot omit the template");
@@ -273,6 +291,208 @@ public final class MaterialEquipmentUpgradeGameTests {
             h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 2, "Invalid operations consume no extra material");
         }
         h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void mithrilHelmetRequiresFiveIngotsInBothNativeMatchingAndRealMenu(GameTestHelper helper) {
+        Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+        helper.assertValueEqual(MaterialUpgradeRequirements.ingots(new ItemStack(upgrade.result())), 5, "A mithril helmet costs its complete five-ingot recipe");
+        for (int available : new int[]{4, 5, 6}) {
+            try (SmithingSession session = new SmithingSession(helper)) {
+                ItemStack source = personalEquipment(helper, upgrade.base());
+                session.load(upgrade, source, available);
+                var nativeInput = new SmithingRecipeInput(template(), source, new ItemStack(upgrade.addition(), available));
+                helper.assertTrue(recipe(helper, upgrade).matches(nativeInput, helper.getLevel()) == (available >= 5),
+                        "Native recipe matching includes the full material quantity: " + available);
+                var before = TimedCraftingController.snapshot(session.menu.getSlot(0).container);
+                session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+                if (available < 5) {
+                    helper.assertTrue(session.menu.getSlot(3).getItem().isEmpty(), "Four ingots cannot advertise a valid helmet result");
+                    helper.assertFalse(TimedSmithingController.isActive(session.player), "Insufficient metal cannot start an upgrade");
+                    helper.assertTrue(session.menu.quickMoveStack(session.player, 3).isEmpty(), "Direct quick-move cannot bypass insufficient metal");
+                    session.tick(200);
+                    helper.assertTrue(TimedCraftingController.matches(before, session.menu.getSlot(0).container), "Insufficient metal leaves all three inputs unchanged");
+                    helper.assertTrue(session.menu.getCarried().isEmpty(), "Insufficient metal produces nothing");
+                } else {
+                    int period = TimedSmithingController.period(session.player, session.menu);
+                    session.tick(period - 1);
+                    helper.assertTrue(TimedCraftingController.matches(before, session.menu.getSlot(0).container), "Inputs remain intact until the final tick");
+                    session.tick(1);
+                    helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "The complete period produces the requested helmet");
+                    helper.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), available - 5, "Exactly five ingots are consumed, preserving any extra ingot");
+                    helper.assertTrue(session.menu.getSlot(0).getItem().isEmpty() && session.menu.getSlot(1).getItem().isEmpty(), "One template and one previous helmet are consumed");
+                    session.tick(period * 2);
+                    helper.assertValueEqual(session.menu.getCarried().getCount(), 1, "A completed request cannot manufacture a second item");
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void smithingAlternateClicksAndDirectSlotCallsCannotTakeTheUnfinishedPreview(GameTestHelper helper) {
+        try (SmithingSession session = new SmithingSession(helper)) {
+            Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+            session.load(upgrade, personalEquipment(helper, upgrade.base()), 6);
+            var before = TimedCraftingController.snapshot(session.menu.getSlot(0).container);
+            session.player.getInventory().setItem(0, new ItemStack(Items.DIAMOND));
+            for (ClickType click : List.of(ClickType.SWAP, ClickType.THROW, ClickType.PICKUP_ALL, ClickType.QUICK_CRAFT))
+                session.menu.clicked(3, 0, click, session.player);
+            session.menu.clicked(3, 40, ClickType.SWAP, session.player);
+            session.player.setGameMode(GameType.CREATIVE);
+            session.menu.clicked(3, 2, ClickType.CLONE, session.player);
+            session.player.setGameMode(GameType.SURVIVAL);
+            helper.assertFalse(session.menu.getSlot(3).mayPickup(session.player), "The anonymous native smithing result slot refuses unfinished pickup");
+            helper.assertTrue(session.menu.getSlot(3).safeTake(1, Integer.MAX_VALUE, session.player).isEmpty(), "Direct safeTake cannot bypass the native mayPickup gate");
+            session.menu.getSlot(3).onTake(session.player, session.menu.getSlot(3).getItem().copy());
+            helper.assertTrue(TimedCraftingController.matches(before, session.menu.getSlot(0).container), "Unscoped onTake cannot consume inputs or authorize an upgrade");
+            helper.assertTrue(session.menu.getCarried().isEmpty(), "Swap, throw, collect, drag and creative clone cannot take the preview");
+            helper.assertValueEqual(session.player.getInventory().countItem(upgrade.result()), 0, "No alternate click delivers an upgraded helmet");
+            helper.assertFalse(TimedSmithingController.isActive(session.player), "Unsupported result clicks do not queue manufacturing");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void repeatedSmithingRequestsDoNotAccelerateOrChangeTheOriginalDeliveryMode(GameTestHelper helper) {
+        try (SmithingSession session = new SmithingSession(helper)) {
+            Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+            session.load(upgrade, personalEquipment(helper, upgrade.base()), 8);
+            session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+            int period = TimedSmithingController.period(session.player, session.menu);
+            session.tick(1);
+            for (int duplicate = 0; duplicate < 10; duplicate++) {
+                session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+                session.menu.clicked(3, 0, ClickType.QUICK_MOVE, session.player);
+                session.menu.quickMoveStack(session.player, 3);
+            }
+            helper.assertValueEqual(TimedSmithingController.progress(session.player), 1, "Repeated clicks neither queue, reset nor advance the existing period");
+            session.tick(period - 1);
+            helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "The original ordinary click still delivers to the cursor");
+            helper.assertValueEqual(session.player.getInventory().countItem(upgrade.result()), 0, "Later Shift clicks cannot change the active transaction's destination");
+            helper.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 3, "Repeated requests consume only one complete five-ingot batch");
+            helper.assertFalse(TimedSmithingController.isActive(session.player), "Smithing never silently queues the next equipment item");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void changedSmithingComponentsQuantitiesAndClosedOrBrokenTablesCancelWithoutPayment(GameTestHelper helper) {
+        for (int mutation = 0; mutation < 4; mutation++) {
+            try (SmithingSession session = new SmithingSession(helper)) {
+                Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+                session.load(upgrade, personalEquipment(helper, upgrade.base()), 6);
+                session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+                int period = TimedSmithingController.period(session.player, session.menu);
+                session.tick(5);
+                if (mutation == 0) {
+                    ItemStack changed = session.menu.getSlot(1).getItem().copy();
+                    changed.set(DataComponents.CUSTOM_NAME, Component.literal("NingMeng123 changed during manufacturing"));
+                    session.menu.getSlot(1).set(changed);
+                } else if (mutation == 1) session.menu.getSlot(2).set(new ItemStack(upgrade.addition(), 4));
+                else if (mutation == 2) {
+                    session.menu.removed(session.player);
+                    session.player.containerMenu = session.player.inventoryMenu;
+                } else helper.getLevel().setBlockAndUpdate(helper.absolutePos(new BlockPos(1, 1, 1)), Blocks.AIR.defaultBlockState());
+                session.tick(period + 1);
+                helper.assertFalse(TimedSmithingController.isActive(session.player), "Changed inputs, a closed menu or a removed physical table cancel the original session");
+                helper.assertTrue(session.menu.getCarried().isEmpty(), "Canceled manufacture never delivers to the cursor");
+                helper.assertValueEqual(session.player.getInventory().countItem(upgrade.result()), 0, "Canceled manufacture never delivers an inventory output");
+                if (mutation != 2) {
+                    helper.assertValueEqual(session.menu.getSlot(0).getItem().getCount(), 1, "Cancellation consumes no template");
+                    helper.assertTrue(session.menu.getSlot(1).getItem().is(upgrade.base()), "Cancellation preserves the source equipment");
+                    helper.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), mutation == 1 ? 4 : 6, "Cancellation consumes no additional ingot");
+                } else {
+                    helper.assertValueEqual(session.player.getInventory().countItem(upgrade.base()), 1, "Closing returns the original equipment through the native menu cleanup");
+                    helper.assertValueEqual(session.player.getInventory().countItem(upgrade.addition()), 6, "Closing returns every unconsumed ingot");
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void rightClickCancelsAndHungerOrDamageCannotBypassSmithingTime(GameTestHelper helper) {
+        try (SmithingSession session = new SmithingSession(helper)) {
+            Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+            session.load(upgrade, personalEquipment(helper, upgrade.base()), 5);
+            session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+            int period = TimedSmithingController.period(session.player, session.menu);
+            session.tick(100);
+            TimedSmithingController.damaged(session.player, 1F);
+            helper.assertValueEqual(TimedSmithingController.progress(session.player), 50, "Damage applies the same fifty-tick setback as workbench manufacturing");
+            session.player.getFoodData().setFoodLevel(0);
+            ((DualFoodData)session.player.getFoodData()).mite$setNutrition(0);
+            session.tick(period);
+            helper.assertValueEqual(TimedSmithingController.progress(session.player), 50, "No food energy pauses rather than completing or consuming ingredients");
+            session.menu.clicked(3, 1, ClickType.PICKUP, session.player);
+            helper.assertFalse(TimedSmithingController.isActive(session.player), "Right-click cancels the paused upgrade");
+            session.player.getFoodData().setFoodLevel(6);
+            session.tick(period);
+            helper.assertTrue(session.menu.getCarried().isEmpty(), "Food returning cannot replay a canceled request");
+            session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+            helper.assertValueEqual(TimedSmithingController.progress(session.player), 0, "A new request starts its own complete period");
+            session.tick(period);
+            helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "A fresh full period completes after food returns");
+            helper.assertValueEqual(session.player.totalExperience, 0, "Preserved fine quality does not charge manufacturing XP a second time");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void smithingCannotConsumeInputsWithoutAnAvailableDeliveryDestination(GameTestHelper helper) {
+        try (SmithingSession session = new SmithingSession(helper)) {
+            Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+            session.load(upgrade, personalEquipment(helper, upgrade.base()), 5);
+            var before = TimedCraftingController.snapshot(session.menu.getSlot(0).container);
+            session.menu.setCarried(new ItemStack(Items.DIAMOND));
+            session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+            helper.assertFalse(TimedSmithingController.isActive(session.player), "An incompatible occupied cursor cannot start an upgrade");
+            session.menu.setCarried(ItemStack.EMPTY);
+            for (int slot = 0; slot < session.player.getInventory().items.size(); slot++)
+                session.player.getInventory().setItem(slot, new ItemStack(Items.DIAMOND, 64));
+            session.menu.clicked(3, 0, ClickType.QUICK_MOVE, session.player);
+            helper.assertFalse(TimedSmithingController.isActive(session.player), "A full inventory cannot start an immediate overflow-producing shift transaction");
+            helper.assertTrue(TimedCraftingController.matches(before, session.menu.getSlot(0).container), "Rejected delivery leaves every input untouched");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void actualContainerPacketsCannotDeclareAnUpgradeCompleteOrAccelerateIt(GameTestHelper helper) {
+        try (SmithingSession session = new SmithingSession(helper)) {
+            Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+            session.load(upgrade, personalEquipment(helper, upgrade.base()), 5);
+            int period = TimedSmithingController.period(session.player, session.menu);
+            session.player.connection.handleContainerClick(new ServerboundContainerClickPacket(session.menu.containerId,
+                    session.menu.getStateId(), 3, 0, ClickType.PICKUP, new ItemStack(upgrade.result()), Int2ObjectMaps.emptyMap()));
+            helper.assertTrue(TimedSmithingController.isActive(session.player), "The real server packet starts an authoritative timed transaction");
+            helper.assertTrue(session.menu.getCarried().isEmpty(), "A client-reported carried result cannot manufacture an output");
+            session.tick(period - 1);
+            session.player.connection.handleContainerClick(new ServerboundContainerClickPacket(session.menu.containerId,
+                    session.menu.getStateId(), 3, 0, ClickType.QUICK_MOVE, new ItemStack(upgrade.result()), Int2ObjectMaps.emptyMap()));
+            helper.assertTrue(session.menu.getCarried().isEmpty(), "A second real packet cannot bypass the final required tick");
+            session.tick(1);
+            helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "Only the authoritative final tick delivers the original single output");
+            helper.assertTrue(session.menu.getSlot(0).getItem().isEmpty() && session.menu.getSlot(1).getItem().isEmpty()
+                    && session.menu.getSlot(2).getItem().isEmpty(), "The packet transaction consumes one complete recipe exactly once");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void ordinaryArmorTrimKeepsItsNativeInstantSingleIngredientTransaction(GameTestHelper helper) {
+        try (SmithingSession session = new SmithingSession(helper)) {
+            session.menu.getSlot(0).set(new ItemStack(Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE));
+            session.menu.getSlot(1).set(new ItemStack(Items.IRON_CHESTPLATE));
+            session.menu.getSlot(2).set(new ItemStack(Items.QUARTZ, 2));
+            helper.assertTrue(session.menu.getSlot(3).getItem().has(DataComponents.TRIM), "An unrelated native armor-trim recipe still creates its normal preview");
+            session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+            helper.assertTrue(session.menu.getCarried().is(Items.IRON_CHESTPLATE) && session.menu.getCarried().has(DataComponents.TRIM), "Other smithing templates retain their immediate native transaction");
+            helper.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 1, "Native armor trim still consumes only its one matching material");
+            helper.assertFalse(TimedSmithingController.isActive(session.player), "Armor trim never starts a MITE equipment-upgrade timer");
+        }
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -329,6 +549,9 @@ public final class MaterialEquipmentUpgradeGameTests {
                 missing.set(slot, ItemStack.EMPTY);
                 h.assertFalse(first.matches(CraftingInput.of(3, 3, missing), h.getLevel()), "All nine ingredients are required: " + slot);
             }
+            List<ItemStack> diamondCenter = new java.util.ArrayList<>(ingredients);
+            diamondCenter.set(4, new ItemStack(Items.DIAMOND));
+            h.assertFalse(first.matches(CraftingInput.of(3, 3, diamondCenter), h.getLevel()), "A diamond cannot replace the required central lapis lazuli");
             java.util.Collections.swap(ingredients, 1, 3);
             h.assertFalse(first.matches(CraftingInput.of(3, 3, ingredients), h.getLevel()), "Iron and gold must occupy their pictured positions");
         }
@@ -343,7 +566,7 @@ public final class MaterialEquipmentUpgradeGameTests {
                 "An old template, seven iron ingots and stone cannot manufacture more templates");
         h.assertValueEqual(h.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream()
                 .filter(holder -> holder.value().getResultItem(h.getLevel().registryAccess()).is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get())).count(),
-                1L, "Only the copper/silver, iron, gold and diamond layout produces the template");
+                1L, "Only the copper/silver, iron, gold and lapis lazuli layout produces the template");
         h.succeed();
     }
 
@@ -402,6 +625,11 @@ public final class MaterialEquipmentUpgradeGameTests {
         for (var page : pages) {
             h.assertValueEqual(page.source().id(), id("mite:equipment_upgrade_smithing_template"),
                     "Every template page comes from its single surviving creation recipe");
+            h.assertValueEqual(page.inputs().size(), 9, "JEI retains the complete nine-slot template layout");
+            h.assertTrue(page.inputs().get(4).size() == 1 && page.inputs().get(4).getFirst().is(Items.LAPIS_LAZULI)
+                    && page.inputs().get(4).getFirst().getCount() == 1, "JEI displays one central lapis lazuli");
+            h.assertTrue(page.inputs().stream().flatMap(List::stream).noneMatch(stack -> stack.is(Items.DIAMOND)),
+                    "Template creation no longer advertises a diamond ingredient");
             h.assertTrue(page.rule() != null, "JEI receives manufacturing metadata instead of an instant-crafting page");
             h.assertValueEqual(page.rule().difficulty(), 400F, "JEI uses the template's actual manufacturing difficulty");
             h.assertValueEqual(page.rule().requiredBench(), "iron", "Template manufacturing has an iron workbench minimum");
@@ -460,7 +688,7 @@ public final class MaterialEquipmentUpgradeGameTests {
     private static List<ItemStack> templateIngredients(int silverCorners, int count) {
         List<ItemStack> result = new java.util.ArrayList<>(List.of(
                 new ItemStack(Items.COPPER_INGOT, count), new ItemStack(Items.IRON_INGOT, count), new ItemStack(Items.COPPER_INGOT, count),
-                new ItemStack(Items.GOLD_INGOT, count), new ItemStack(Items.DIAMOND, count), new ItemStack(Items.GOLD_INGOT, count),
+                new ItemStack(Items.GOLD_INGOT, count), new ItemStack(Items.LAPIS_LAZULI, count), new ItemStack(Items.GOLD_INGOT, count),
                 new ItemStack(Items.COPPER_INGOT, count), new ItemStack(Items.IRON_INGOT, count), new ItemStack(Items.COPPER_INGOT, count)));
         int[] corners = {0, 2, 6, 8};
         for (int corner = 0; corner < corners.length; corner++) if ((silverCorners & (1 << corner)) != 0)
@@ -539,7 +767,12 @@ public final class MaterialEquipmentUpgradeGameTests {
         };
     }
 
-    private static SmithingRecipeInput input(ItemStack source, Item ingot) { return new SmithingRecipeInput(template(), source, new ItemStack(ingot)); }
+    private static SmithingRecipeInput input(ItemStack source, Item ingot) {
+        int count = MaterialUpgradeRecipes.smithingUpgrades().stream()
+                .filter(upgrade -> upgrade.base() == source.getItem() && upgrade.addition() == ingot)
+                .findFirst().map(upgrade -> MaterialUpgradeRequirements.ingots(new ItemStack(upgrade.result()))).orElse(1);
+        return new SmithingRecipeInput(template(), source, new ItemStack(ingot, count));
+    }
     private static ItemStack template() { return new ItemStack(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get()); }
     private static ResourceLocation id(String value) { return ResourceLocation.parse(value); }
     private static Item item(String value) { return BuiltInRegistries.ITEM.get(id(value)); }
@@ -580,6 +813,7 @@ public final class MaterialEquipmentUpgradeGameTests {
         @Override public void close() {
             try {
                 TimedCraftingController.forget(player);
+                TimedSmithingController.cancel(player);
                 for (int slot = 0; slot < inputSlots; slot++) menu.getSlot(slot).set(ItemStack.EMPTY);
                 menu.setCarried(ItemStack.EMPTY);
                 player.getInventory().clearContent();
@@ -597,6 +831,12 @@ public final class MaterialEquipmentUpgradeGameTests {
             super(helper, Blocks.SMITHING_TABLE.defaultBlockState(), 4,
                     (player, access) -> new SmithingMenu(37, player.getInventory(), access));
         }
+        void load(Upgrade upgrade, ItemStack source, int ingots) {
+            menu.getSlot(0).set(template());
+            menu.getSlot(1).set(source);
+            menu.getSlot(2).set(new ItemStack(upgrade.addition(), ingots));
+        }
+        void tick(int ticks) { for (int tick = 0; tick < ticks; tick++) TimedSmithingController.tick(player); }
     }
 
     private static final class CraftingSession extends MenuSession<CraftingMenu> {

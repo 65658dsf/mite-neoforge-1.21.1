@@ -79,18 +79,13 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         }
         if (dimension == Dimension.OVERWORLD) {
             placed += surfaceInfestation(level, originX, originZ, random);
-            // Modern emerald-bearing mountain biomes include the source's windswept/extreme-hills successors.
-            int surfaceY = Math.max(level.getMinBuildHeight(), Math.min(level.getMaxBuildHeight() - 1,
-                    level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, originX + 8, originZ + 8) - 1));
-            if (level.getBiome(new BlockPos(originX + 8, surfaceY, originZ + 8)).is(EMERALD_BIOMES)) {
-                Access access = new Access(level, dimension, Kind.EMERALD);
-                int count = R196OreRules.candidateCount(Kind.EMERALD, dimension, random);
-                for (int attempt = 0; attempt < count; attempt++) {
-                    int x = originX + random.nextInt(16);
-                    int y = R196OreRules.modernY(dimension, R196OreRules.randomHeight(Kind.EMERALD, dimension, random));
-                    int z = originZ + random.nextInt(16);
-                    if (access.canReplace(x, y, z)) { access.replace(x, y, z); placed++; }
-                }
+            Access access = new Access(level, dimension, Kind.EMERALD);
+            int count = R196OreRules.candidateCount(Kind.EMERALD, dimension, random);
+            for (int attempt = 0; attempt < count; attempt++) {
+                int x = originX + random.nextInt(16);
+                int y = R196OreRules.modernY(dimension, R196OreRules.randomHeight(Kind.EMERALD, dimension, random));
+                int z = originZ + random.nextInt(16);
+                if (access.canReplace(x, y, z)) { access.replace(x, y, z); placed++; }
             }
         }
         return placed > 0;

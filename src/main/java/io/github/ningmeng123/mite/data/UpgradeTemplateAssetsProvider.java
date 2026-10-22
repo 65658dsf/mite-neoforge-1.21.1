@@ -26,6 +26,13 @@ public final class UpgradeTemplateAssetsProvider implements DataProvider {
         model.add("textures", textures);
         save(work, cache, "assets/mite/models/item/equipment_upgrade_smithing_template.json", model);
         for (var route : MaterialUpgradeRecipes.optionalUpgrades()) {
+            if (route.fromMaterial().equals("copper")) {
+                ResourceLocation id = ResourceLocation.parse(route.id());
+                save(work, cache, "data/mite/recipe/" + id.getPath() + ".json", CopperEquipmentUpgradeRecipes.optionalRecipe(route));
+                save(work, cache, "data/mite/advancement/recipes/combat/" + id.getPath() + ".json",
+                        advancement(route.id(), route.base().toString()));
+                continue;
+            }
             JsonObject recipe = new JsonObject();
             recipe.add("neoforge:conditions", conditions());
             recipe.addProperty("type", "minecraft:smithing_transform");
@@ -63,13 +70,15 @@ public final class UpgradeTemplateAssetsProvider implements DataProvider {
         JsonObject ingredient = new JsonObject(); ingredient.addProperty("item", id); return ingredient;
     }
 
-    private static JsonObject advancement(String id) {
+    private static JsonObject advancement(String id) { return advancement(id, "mite:equipment_upgrade_smithing_template"); }
+
+    private static JsonObject advancement(String id, String input) {
         JsonObject advancement = new JsonObject();
         advancement.add("neoforge:conditions", conditions());
         advancement.addProperty("parent", "minecraft:recipes/root");
         JsonObject criteria = new JsonObject(), criterion = new JsonObject(), criterionConditions = new JsonObject();
         JsonObject item = new JsonObject(); JsonArray items = new JsonArray(), ids = new JsonArray();
-        ids.add("mite:equipment_upgrade_smithing_template"); item.add("items", ids); items.add(item);
+        ids.add(input); item.add("items", ids); items.add(item);
         criterionConditions.add("items", items); criterion.addProperty("trigger", "minecraft:inventory_changed");
         criterion.add("conditions", criterionConditions); criteria.add("has_upgrade_template", criterion);
         JsonObject unlocked = new JsonObject(), unlockedConditions = new JsonObject();
