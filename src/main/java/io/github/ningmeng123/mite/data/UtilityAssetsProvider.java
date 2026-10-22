@@ -40,6 +40,11 @@ public final class UtilityAssetsProvider implements DataProvider {
             }
         } catch (Exception failure) { throw new IllegalStateException("Cannot generate source record metadata", failure); }
         MobAssetsProvider.soundDefinitions().entrySet().forEach(entry -> sounds.add(entry.getKey(), entry.getValue()));
+        JsonObject levelDrain = new JsonObject();
+        JsonArray levelDrainSounds = new JsonArray();
+        levelDrainSounds.add("mite:imported/random/level_drain");
+        levelDrain.add("sounds", levelDrainSounds);
+        sounds.add("imported.random.level_drain", levelDrain);
         work.add(DataProvider.saveStable(cache, sounds, output.resolve("assets/mite/sounds.json")));
         return CompletableFuture.allOf(work.toArray(CompletableFuture[]::new));
     }

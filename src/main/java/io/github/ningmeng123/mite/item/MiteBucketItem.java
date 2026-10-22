@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.survival.FoodConsumption;
 import io.github.ningmeng123.mite.survival.FoodVessels;
 import io.github.ningmeng123.mite.survival.LavaBucketFilling;
+import io.github.ningmeng123.mite.survival.WaterBucketFilling;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.stats.Stats;
@@ -65,6 +66,7 @@ public final class MiteBucketItem extends BucketItem {
             return InteractionResultHolder.consume(held);
         }
         var hit = getPlayerPOVHitResult(level, player, contents == Contents.EMPTY ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
+        if (contents == Contents.EMPTY) hit = WaterBucketFilling.includeFlowingWater(level, player, hit);
         if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(held);
         BlockPos pos = hit.getBlockPos();
         BlockPos neighbor = pos.relative(hit.getDirection());
@@ -75,7 +77,7 @@ public final class MiteBucketItem extends BucketItem {
             boolean lava = state.getFluidState().is(FluidTags.LAVA);
             if ((!lava && !state.getFluidState().is(FluidTags.WATER)) || !(state.getBlock() instanceof BucketPickup pickup))
                 return InteractionResultHolder.fail(held);
-            ItemStack picked = pickup.pickupBlock(player, level, pos, state);
+            ItemStack picked = WaterBucketFilling.pickup(level, pos, state, () -> pickup.pickupBlock(player, level, pos, state));
             if (picked.isEmpty()) return InteractionResultHolder.fail(held);
             ItemStack filled = new ItemStack(MiteFoods.get(metal + (lava ? "_lava_bucket" : "_water_bucket")));
             pickup.getPickupSound(state).ifPresent(sound -> player.playSound(sound, 1F, 1F));

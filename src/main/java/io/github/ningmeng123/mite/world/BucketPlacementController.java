@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.world;
 
 import io.github.ningmeng123.mite.crafting.CraftingQuality;
 import io.github.ningmeng123.mite.item.MiteBucketItem;
+import io.github.ningmeng123.mite.registry.MiteUtilityContent;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.github.ningmeng123.mite.worldgen.MantleHeat;
 import java.util.function.Supplier;
@@ -133,6 +134,7 @@ public final class BucketPlacementController {
                 refund(payer, payment);
                 payment = null;
             }
+            if (payment != null) playLevelDrain(payer);
             playEmpty(bucket, player, level, pos);
             return true;
         } finally {
@@ -143,6 +145,15 @@ public final class BucketPlacementController {
     private static void refund(ServerPlayer player, CraftingQuality.Payment payment) {
         PlayerExperience.setTotal(player, payment.before());
         player.increaseScore(payment.cost());
+    }
+
+    private static void playLevelDrain(ServerPlayer player) {
+        var level = player.serverLevel();
+        // R196 abw.playSoundAtEntity randomizes volume and pitch independently.
+        float volume = .9F + (level.random.nextFloat() + level.random.nextFloat()) / 10F;
+        float pitch = .9F + (level.random.nextFloat() + level.random.nextFloat()) / 10F;
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                MiteUtilityContent.LEVEL_DRAIN.get(), SoundSource.PLAYERS, volume, pitch);
     }
 
     private static void playEmpty(BucketItem bucket, Player player, Level level, BlockPos pos) {

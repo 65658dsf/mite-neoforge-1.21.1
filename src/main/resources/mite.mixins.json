@@ -169,6 +169,7 @@
     "FurnaceFrontMixin",
     "FurnaceExplosionMixin",
     "LavaBucketFillMixin",
+    "WaterBucketFillMixin",
     "FurnaceHardnessMixin",
     "FurnaceRecipeBookMixin",
     "FurnaceCampfireHeatMixin",

@@ -19,6 +19,7 @@ import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -31,6 +32,8 @@ public final class MiteUtilityContent {
     public static final String[] COIN_MATERIALS = {"copper", "silver", "gold", "ancient_metal", "mithril", "adamantium"};
     public static final String[] BUCKET_MATERIALS = {"copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium"};
     public static final String[] RECORD_NAMES = {"underworld", "descent", "wanderer", "legends"};
+    public static final DeferredHolder<SoundEvent, SoundEvent> LEVEL_DRAIN = SOUNDS.register("imported.random.level_drain",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "imported.random.level_drain")));
     public static final DeferredItem<R196DisenchantingBottleItem> BOTTLE_OF_DISENCHANTING = ITEMS.register("bottle_of_disenchanting", R196DisenchantingBottleItem::new);
     public static final java.util.function.Supplier<RecipeSerializer<UtilityShapelessRecipe>> UTILITY_SHAPELESS = RECIPES.register("utility_shapeless", UtilityShapelessRecipe.Serializer::new);
     static {

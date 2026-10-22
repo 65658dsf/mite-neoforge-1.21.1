@@ -135,6 +135,11 @@
       "mite:imported/mob/wolf/howl3"
     ]
   },
+  "imported.random.level_drain": {
+    "sounds": [
+      "mite:imported/random/level_drain"
+    ]
+  },
   "record.descent": {
     "sounds": [
       {
