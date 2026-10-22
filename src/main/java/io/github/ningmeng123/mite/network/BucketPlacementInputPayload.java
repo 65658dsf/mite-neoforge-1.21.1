@@ -12,7 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
-/** One use packet's Ctrl request; item, target, experience and placement stay server-owned. @author NingMeng123 */
+/** One use packet's bucket Ctrl state; collection, source placement and XP stay server-owned. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public record BucketPlacementInputPayload(InteractionHand hand, int sequence, boolean sourceRequested)
         implements CustomPacketPayload {

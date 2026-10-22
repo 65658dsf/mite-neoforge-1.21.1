@@ -949,6 +949,7 @@
   "jade.mite.campfire_meat": "Meat remaining: %s",
   "jade.mite.campfire_time": "Current fuel: %s s",
   "tooltip.mite.bucket_source": "Hold Ctrl to place a source: costs 100 XP (ordinary pour if insufficient)",
+  "tooltip.mite.bucket_pickup": "Right-click to collect without removing water or lava; hold Ctrl to remove the liquid block",
   "tooltip.mite.brightness_locked": "MITE locks brightness to Moody (0%).",
   "gui.mite.world_day": "Day %s",
   "jei.mite.anvil_material": "Material repair: one nugget example",

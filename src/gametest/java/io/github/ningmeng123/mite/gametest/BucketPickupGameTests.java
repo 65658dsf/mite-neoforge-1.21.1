@@ -23,6 +23,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.sounds.SoundSource;
@@ -59,7 +60,7 @@ public final class BucketPickupGameTests {
                     h.assertTrue(result.getResult().consumesAction(), "Real use targets flowing water level " + waterLevel + " with " + empty + " in " + hand);
                     h.assertTrue(result.getObject().is(filledWater(empty)), "One flowing cell fills the original metal vessel");
                     h.assertValueEqual(result.getObject().getCount(), 1, "Exactly one water bucket is obtained");
-                    h.assertTrue(h.getLevel().getBlockState(f.target).isAir(), "Pickup removes the targeted flowing cell");
+                    h.assertTrue(h.getLevel().getBlockState(f.target).equals(water(waterLevel)), "Ordinary pickup preserves the targeted flowing cell");
                     h.assertValueEqual(f.player.totalExperience, 1000, "Collecting water never charges source-placement experience");
                 }
             }
@@ -77,7 +78,7 @@ public final class BucketPickupGameTests {
                 var result = f.use(hand);
                 h.assertTrue(result.getResult().consumesAction() && result.getObject().is(filledWater(empty)),
                         "Source pickup retains the matching water bucket for " + empty + " in " + hand);
-                h.assertTrue(h.getLevel().getBlockState(f.target).isAir(), "Native source pickup still removes the source");
+                h.assertTrue(h.getLevel().getBlockState(f.target).equals(water(0)), "Ordinary pickup preserves the source");
             }
         }
         h.succeed();
@@ -91,7 +92,7 @@ public final class BucketPickupGameTests {
                 h.getLevel().setBlock(f.target.below(), water(0), 2);
                 h.getLevel().setBlock(f.target, water(4), 2);
                 f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(empty));
-                var result = f.use(InteractionHand.MAIN_HAND);
+                var result = f.use(InteractionHand.MAIN_HAND, true);
                 h.assertTrue(result.getResult().consumesAction() && result.getObject().is(filledWater(empty)),
                         "The real raycast selects the nearer flowing water for " + empty);
                 h.assertTrue(h.getLevel().getBlockState(f.target).isAir(), "The front flowing cell is collected");
@@ -102,17 +103,18 @@ public final class BucketPickupGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void flowingLavaCannotBeCollectedByTheWaterExtension(GameTestHelper h) {
+    public static void everyMetalAndHandCanCollectAllLavaLevelsWithoutRemovingThem(GameTestHelper h) {
         try (Fixture f = new Fixture(h)) {
-            for (Item empty : emptyBuckets()) for (int lavaLevel : new int[]{1, 4, 7, 8}) {
+            for (Item empty : emptyBuckets()) for (InteractionHand hand : InteractionHand.values()) for (int lavaLevel = 0; lavaLevel <= 15; lavaLevel++) {
                 f.clear();
-                BlockState lava = Blocks.LAVA.defaultBlockState().setValue(LiquidBlock.LEVEL, lavaLevel);
+                BlockState lava = liquid(false, lavaLevel);
                 h.getLevel().setBlock(f.target, lava, 2);
-                f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(empty));
-                var result = f.use(InteractionHand.MAIN_HAND);
-                h.assertFalse(result.getResult().consumesAction(), "Flowing lava remains ineligible for pickup with " + empty);
-                h.assertTrue(result.getObject().is(empty), "Rejected lava pickup retains the empty bucket");
-                h.assertTrue(h.getLevel().getBlockState(f.target).equals(lava), "Rejected lava pickup preserves the actual fluid cell");
+                f.player.setItemInHand(hand, new ItemStack(empty));
+                var result = f.use(hand);
+                h.assertTrue(result.getResult().consumesAction(), "Real use accepts source or flowing lava level " + lavaLevel + " with " + empty + " in " + hand);
+                h.assertTrue(result.getObject().is(filledLiquid(empty, false)), "Lava fills the matching vessel with the deterministic nonmelting roll");
+                h.assertTrue(h.getLevel().getBlockState(f.target).equals(lava), "Ordinary lava pickup preserves its original liquid cell");
+                h.assertValueEqual(f.player.totalExperience, 1000, "Collecting lava never charges source-placement experience");
             }
         }
         h.succeed();
@@ -156,16 +158,118 @@ public final class BucketPickupGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void collectedWaterCancelsItsOldTemporaryDecayRecord(GameTestHelper h) {
+    public static void onlyControlPickupCancelsTheCollectedLiquidsTemporaryDecayRecord(GameTestHelper h) {
         try (Fixture f = new Fixture(h)) {
-            for (int waterLevel : new int[]{0, 4, 8}) for (Item empty : emptyBuckets()) {
+            int sequence = 200;
+            for (boolean water : new boolean[]{true, false}) for (int fluidLevel : new int[]{0, 4, 8}) for (Item empty : emptyBuckets()) {
                 f.clear();
-                h.getLevel().setBlock(f.target, water(waterLevel), 2);
-                TemporaryFluidChanges.get(h.getLevel()).schedule(f.target, true, h.getLevel().getGameTime() + 16);
+                BlockState before = liquid(water, fluidLevel);
+                h.getLevel().setBlock(f.target, before, 2);
+                var changes = TemporaryFluidChanges.get(h.getLevel());
+                changes.schedule(f.target, water, h.getLevel().getGameTime() + 48);
+                var pending = changes.at(f.target);
                 f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(empty));
-                h.assertTrue(f.use(InteractionHand.MAIN_HAND).getResult().consumesAction(), "Pickup accepts a water cell carrying an old finite deadline");
-                h.assertTrue(TemporaryFluidChanges.get(h.getLevel()).at(f.target) == null,
-                        "Collected water leaves no deadline that could downgrade a later paid source");
+                f.networkUse(InteractionHand.MAIN_HAND, sequence++, false);
+                h.assertTrue(f.player.getMainHandItem().is(filledLiquid(empty, water)), "Ordinary pickup fills the original vessel");
+                h.assertTrue(h.getLevel().getBlockState(f.target).equals(before), "Ordinary pickup retains the liquid carrying the finite deadline");
+                h.assertTrue(pending.equals(changes.at(f.target)), "Ordinary pickup preserves the existing decay deadline exactly");
+                f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(empty));
+                f.networkUse(InteractionHand.MAIN_HAND, sequence++, true);
+                h.assertTrue(f.player.getMainHandItem().is(filledLiquid(empty, water)), "Ctrl pickup also fills the matching vessel");
+                h.assertTrue(h.getLevel().getBlockState(f.target).isAir(), "Ctrl pickup removes the liquid cell");
+                h.assertTrue(changes.at(f.target) == null, "Only actual removal clears the deadline that could affect a later source");
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void realControlPacketsCollectBothLiquidsInEitherHandWithoutExperience(GameTestHelper h) {
+        try (Fixture f = new Fixture(h)) {
+            int sequence = 400;
+            for (Item empty : emptyBuckets()) for (InteractionHand hand : InteractionHand.values()) {
+                for (boolean water : new boolean[]{true, false}) for (int fluidLevel : new int[]{0, 4, 8}) {
+                    for (boolean control : new boolean[]{false, true}) {
+                        f.clear();
+                        BlockState before = liquid(water, fluidLevel);
+                        h.getLevel().setBlock(f.target, before, 2);
+                        PlayerExperience.setTotal(f.player, 0);
+                        f.player.setItemInHand(hand, new ItemStack(empty));
+                        f.networkUse(hand, sequence++, control);
+                        h.assertTrue(f.player.getItemInHand(hand).is(filledLiquid(empty, water)),
+                                "The actual use packet fills " + empty + " in " + hand + " for liquid=" + water + ", level=" + fluidLevel + ", Ctrl=" + control);
+                        h.assertTrue(control ? h.getLevel().getBlockState(f.target).isAir() : h.getLevel().getBlockState(f.target).equals(before),
+                                "Only the matching Ctrl use packet removes the selected liquid cell");
+                        h.assertValueEqual(f.player.totalExperience, 0, "Ctrl collection is independent of the placement fee and cannot create experience debt");
+                        h.assertValueEqual(f.drainSounds().size(), 0, "Picking up either liquid never plays a source-payment sound");
+                    }
+                }
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void invalidOrReleasedControlRequestsCannotRemoveLiquidsOrArmTheFollowingUse(GameTestHelper h) {
+        try (Fixture f = new Fixture(h)) {
+            for (int scenario = 0; scenario < 4; scenario++) {
+                f.clear();
+                h.getLevel().setBlock(f.target, water(0), 2);
+                ItemStack original = new ItemStack(Items.BUCKET);
+                f.player.setItemInHand(InteractionHand.MAIN_HAND, original);
+                f.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.BUCKET));
+                int sequence = 900 + scenario * 10;
+                BucketPlacementIntent.receive(f.player, InteractionHand.MAIN_HAND, sequence, true);
+                InteractionHand usedHand = scenario == 1 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+                int usedSequence = scenario == 0 ? sequence + 1 : sequence;
+                if (scenario == 2) f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
+                if (scenario == 3) BucketPlacementIntent.receive(f.player, InteractionHand.MAIN_HAND, sequence, false);
+                f.packet(usedHand, usedSequence);
+                h.assertTrue(f.player.getItemInHand(usedHand).is(Items.WATER_BUCKET), "A mismatched or released request still permits ordinary water collection");
+                h.assertTrue(h.getLevel().getBlockState(f.target).equals(water(0)), "Sequence, hand, stack and released-key checks prevent unauthorized removal in scenario " + scenario);
+                f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
+                f.packet(InteractionHand.MAIN_HAND, sequence);
+                h.assertTrue(f.player.getMainHandItem().is(Items.WATER_BUCKET), "A later unarmed pickup remains available");
+                h.assertTrue(h.getLevel().getBlockState(f.target).equals(water(0)), "A consumed stale request cannot remove the source during a following use");
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 30)
+    public static void anExpiredControlRequestCannotRemoveTheSource(GameTestHelper h) {
+        Fixture f = new Fixture(h);
+        h.getLevel().setBlock(f.target, water(0), 2);
+        f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
+        BucketPlacementIntent.receive(f.player, InteractionHand.MAIN_HAND, 980, true);
+        h.runAfterDelay(7, () -> {
+            try {
+                f.packet(InteractionHand.MAIN_HAND, 980);
+                h.assertTrue(f.player.getMainHandItem().is(Items.WATER_BUCKET), "An expired modifier still allows ordinary pickup");
+                h.assertTrue(h.getLevel().getBlockState(f.target).equals(water(0)), "A request older than five ticks cannot remove the source");
+                h.assertValueEqual(f.player.totalExperience, 1000, "Expiring a pickup modifier cannot spend experience");
+                h.succeed();
+            } finally { f.close(); }
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void creativeBucketsRemoveLiquidsOnlyWithTheMatchingControlPacket(GameTestHelper h) {
+        try (Fixture f = new Fixture(h)) {
+            int sequence = 1000;
+            for (Item empty : emptyBuckets()) for (InteractionHand hand : InteractionHand.values()) {
+                for (boolean water : new boolean[]{true, false}) for (boolean control : new boolean[]{false, true}) {
+                    f.clear();
+                    f.player.setGameMode(GameType.CREATIVE);
+                    h.getLevel().setBlock(f.target, liquid(water, 0), 2);
+                    f.player.setItemInHand(hand, new ItemStack(empty));
+                    f.networkUse(hand, sequence++, control);
+                    h.assertTrue(f.player.getItemInHand(hand).is(empty), "Creative pickup preserves the held empty vessel");
+                    h.assertValueEqual(f.player.getInventory().countItem(filledLiquid(empty, water)), 1, "Creative collection grants the matching filled vessel exactly once");
+                    h.assertTrue(control ? h.getLevel().getBlockState(f.target).isAir() : h.getLevel().getBlockState(f.target).equals(liquid(water, 0)),
+                            "Creative mode obeys the same Ctrl-only removal rule");
+                    h.assertValueEqual(f.player.totalExperience, 1000, "Creative collection is free");
+                }
             }
         }
         h.succeed();
@@ -232,7 +336,11 @@ public final class BucketPickupGameTests {
     }
 
     private static BlockState water(int level) {
-        return Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL, level);
+        return liquid(true, level);
+    }
+
+    private static BlockState liquid(boolean water, int level) {
+        return (water ? Blocks.WATER : Blocks.LAVA).defaultBlockState().setValue(LiquidBlock.LEVEL, level);
     }
 
     private static List<Item> emptyBuckets() {
@@ -243,7 +351,12 @@ public final class BucketPickupGameTests {
     }
 
     private static Item filledWater(Item empty) {
-        return empty instanceof MiteBucketItem metal ? MiteFoods.get(metal.metal() + "_water_bucket") : Items.WATER_BUCKET;
+        return filledLiquid(empty, true);
+    }
+
+    private static Item filledLiquid(Item empty, boolean water) {
+        return empty instanceof MiteBucketItem metal ? MiteFoods.get(metal.metal() + (water ? "_water_bucket" : "_lava_bucket"))
+                : water ? Items.WATER_BUCKET : Items.LAVA_BUCKET;
     }
 
     private static final class Fixture implements AutoCloseable {
@@ -280,6 +393,7 @@ public final class BucketPickupGameTests {
             player.getInventory().clearContent();
             PlayerExperience.setTotal(player, 1000);
             PlacementDelay.clear(player);
+            BucketPlacementIntent.clear(player);
             TemporaryFluidChanges.get(helper.getLevel()).cancel(target);
             for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
                 helper.getLevel().setBlock(target.offset(x, -1, z), Blocks.STONE.defaultBlockState(), 2);
@@ -291,9 +405,25 @@ public final class BucketPickupGameTests {
         }
 
         private InteractionResultHolder<ItemStack> use(InteractionHand hand) {
-            var result = player.getItemInHand(hand).use(helper.getLevel(), player, hand);
+            return use(hand, false);
+        }
+
+        private InteractionResultHolder<ItemStack> use(InteractionHand hand, boolean control) {
+            helper.getLevel().random.setSeed(0L);
+            var result = BucketPlacementController.withIntent(player, control,
+                    () -> player.getItemInHand(hand).use(helper.getLevel(), player, hand));
             player.setItemInHand(hand, result.getObject());
             return result;
+        }
+
+        private void networkUse(InteractionHand hand, int sequence, boolean control) {
+            BucketPlacementIntent.receive(player, hand, sequence, control);
+            packet(hand, sequence);
+        }
+
+        private void packet(InteractionHand hand, int sequence) {
+            helper.getLevel().random.setSeed(0L);
+            player.connection.handleUseItem(new ServerboundUseItemPacket(hand, sequence, 0F, 90F));
         }
 
         private boolean pour(Item item, boolean source) {

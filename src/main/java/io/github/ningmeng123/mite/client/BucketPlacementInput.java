@@ -23,6 +23,8 @@ public final class BucketPlacementInput {
     @SubscribeEvent public static void tooltip(ItemTooltipEvent event) {
         if (BucketPlacementIntent.isPlacementBucket(event.getItemStack()))
             event.getToolTip().add(Component.translatable("tooltip.mite.bucket_source").withStyle(ChatFormatting.GRAY));
+        else if (BucketPlacementIntent.isEmptyBucket(event.getItemStack()))
+            event.getToolTip().add(Component.translatable("tooltip.mite.bucket_pickup").withStyle(ChatFormatting.GRAY));
     }
 
     /** Called from the prediction packet send hook, after vanilla synchronizes the selected slot. */
@@ -30,7 +32,7 @@ public final class BucketPlacementInput {
         if (!(packet instanceof ServerboundUseItemPacket use)) return;
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || minecraft.getConnection() == null) return;
-        // Prediction may already have replaced a full bucket with its empty peer. The server
+        // Prediction may already have exchanged empty and full buckets. The server
         // therefore checks the real held item instead of trusting a post-prediction client stack.
         PacketDistributor.sendToServer(new BucketPlacementInputPayload(
                 use.getHand(), use.getSequence(), Screen.hasControlDown()));

@@ -70,6 +70,23 @@ public final class BucketPlacementClientAudit implements DataProvider {
             MethodNode prediction = method(type, "startPrediction", "(Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/multiplayer/prediction/PredictiveAction;)V");
             check(reachable(type, use, mode), "The actual native useItem path reaches its merged prediction handler");
             check(reachable(type, prediction, input), "The actual native startPrediction path reaches its merged packet handler");
+            String bucketTarget = "net.minecraft.world.item.BucketItem";
+            Class.forName(bucketTarget, false, getClass().getClassLoader());
+            ClassNode bucket = new ClassNode();
+            new ClassReader(Files.readAllBytes(Path.of(".mixin.out", "class", bucketTarget.replace('.', '/') + ".class")))
+                    .accept(bucket, 0);
+            String pickupMixin = "io.github.ningmeng123.mite.mixin.LiquidBucketFillMixin";
+            MethodNode targeting = handler(bucket, "mite$targetFlowingLiquid", pickupMixin);
+            MethodNode collection = handler(bucket, "mite$collectLiquid", pickupMixin);
+            MethodNode bucketUse = method(bucket, "use", "(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;");
+            check(reachable(bucket, bucketUse, targeting)
+                            && calls(targeting, "io/github/ningmeng123/mite/survival/LiquidBucketFilling", "includeFlowingLiquids"),
+                    "The actual client bucket use targets source and flowing liquid through the shared helper");
+            check(reachable(bucket, bucketUse, collection)
+                            && calls(collection, "io/github/ningmeng123/mite/survival/LiquidBucketFilling", "pickup"),
+                    "Client bucket collection reaches the same Ctrl-only removal logic as the server");
+            report.addProperty("actual_client_bucket_reaches_flowing_liquid_targeting", true);
+            report.addProperty("actual_client_bucket_reaches_controlled_pickup", true);
             String minecraftTarget = "net.minecraft.client.Minecraft";
             Class.forName(minecraftTarget, false, getClass().getClassLoader());
             ClassNode minecraft = new ClassNode();

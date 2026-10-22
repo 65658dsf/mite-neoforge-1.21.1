@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.survival.CowFoodState;
 import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.github.ningmeng123.mite.survival.NutritionState;
+import io.github.ningmeng123.mite.world.BucketPlacementController;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -400,10 +401,11 @@ public final class FoodVesselGameTests {
         lookDownAt(helper, player);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteFoods.get("copper_bucket"), 2));
         assertSourceWaterInReach(helper, player);
-        var pickup = player.getMainHandItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
-        helper.assertTrue(pickup.getResult().consumesAction(), "Native metal bucket use collects source water");
+        var pickup = BucketPlacementController.withIntent(player, true,
+                () -> player.getMainHandItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND));
+        helper.assertTrue(pickup.getResult().consumesAction(), "Ctrl metal bucket use collects source water");
         player.setItemInHand(InteractionHand.MAIN_HAND, pickup.getObject());
-        helper.assertTrue(helper.getBlockState(CENTER).isAir(), "Unlike a bowl, bucket pickup removes the water source");
+        helper.assertTrue(helper.getBlockState(CENTER).isAir(), "Ctrl pickup removes the source before the same vessel pours it back");
         helper.assertValueEqual(player.getInventory().countItem(MiteFoods.get("copper_bucket")), 1, "Pickup consumes one of two empty copper buckets");
         helper.assertValueEqual(player.getInventory().countItem(MiteFoods.get("copper_water_bucket")), 1, "Pickup produces one copper water bucket");
         int fullSlot = slotContaining(player, MiteFoods.get("copper_water_bucket"));

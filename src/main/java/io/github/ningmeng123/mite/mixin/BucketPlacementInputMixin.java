@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-/** Only the corresponding real use packet may consume a pending Ctrl placement request. @author NingMeng123 */
+/** Only the corresponding real use packet may consume a pending bucket Ctrl request. @author NingMeng123 */
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class BucketPlacementInputMixin {
     @WrapOperation(method = "handleUseItem", at = @At(value = "INVOKE",
@@ -23,8 +23,8 @@ public abstract class BucketPlacementInputMixin {
     private InteractionResult mite$consumeBucketIntent(ServerPlayerGameMode gameMode, ServerPlayer player,
             Level level, ItemStack stack, InteractionHand hand, Operation<InteractionResult> original,
             ServerboundUseItemPacket packet) {
-        boolean sourceRequested = BucketPlacementIntent.consume(player, hand, packet.getSequence());
-        return BucketPlacementController.withIntent(player, sourceRequested,
+        boolean controlDown = BucketPlacementIntent.consume(player, hand, packet.getSequence());
+        return BucketPlacementController.withIntent(player, controlDown,
                 () -> original.call(gameMode, player, level, stack, hand));
     }
 }

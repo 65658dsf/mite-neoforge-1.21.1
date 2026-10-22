@@ -34,13 +34,13 @@ public final class BucketPlacementController {
     public static final int SOURCE_COST = 100;
     public static final int WATER_DECAY_TICKS = 16;
     public static final int LAVA_DECAY_TICKS = 48;
-    private record Intent(Player player, boolean sourceRequested) {}
+    private record Intent(Player player, boolean controlDown) {}
     private static final ThreadLocal<Intent> INTENT = new ThreadLocal<>();
     private BucketPlacementController() {}
 
-    public static <T> T withIntent(Player player, boolean sourceRequested, Supplier<T> action) {
+    public static <T> T withIntent(Player player, boolean controlDown, Supplier<T> action) {
         Intent previous = INTENT.get();
-        INTENT.set(new Intent(player, sourceRequested));
+        INTENT.set(new Intent(player, controlDown));
         try { return action.get(); }
         finally {
             if (previous == null) INTENT.remove();
@@ -55,10 +55,15 @@ public final class BucketPlacementController {
                 || metal.contents() == MiteBucketItem.Contents.LAVA);
     }
 
-    private static boolean sourceRequested(Player player) {
+    /** The matching use's raw Ctrl state; collection does not require source-placement XP. */
+    public static boolean controlDown(Player player) {
         Intent intent = INTENT.get();
+        return player != null && intent != null && intent.player() == player && intent.controlDown();
+    }
+
+    private static boolean sourceRequested(Player player) {
         return player != null && (player.hasInfiniteMaterials()
-                || intent != null && intent.player() == player && intent.sourceRequested() && player.totalExperience >= SOURCE_COST);
+                || controlDown(player) && player.totalExperience >= SOURCE_COST);
     }
 
     public static boolean empty(BucketItem bucket, Player player, Level level, BlockPos pos,

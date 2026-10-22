@@ -384,12 +384,23 @@ public final class BucketPlacementGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void onlySupportedFilledLiquidBucketsCanArmCtrlSourceIntent(GameTestHelper h) {
+    public static void supportedEmptyAndFilledLiquidBucketsCanArmCtrlIntent(GameTestHelper h) {
         try (Fixture f = new Fixture(h, 1000)) {
-            for (Item unsupported : new Item[]{Items.BUCKET, Items.MILK_BUCKET, Items.POWDER_SNOW_BUCKET, MiteFoods.get("water_bowl")}) {
+            for (Item unsupported : new Item[]{Items.MILK_BUCKET, Items.POWDER_SNOW_BUCKET, MiteFoods.get("water_bowl")}) {
                 f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(unsupported));
+                h.assertFalse(BucketPlacementIntent.isSupportedBucket(f.player.getMainHandItem()), "Only supported liquid vessels accept the shared Ctrl input: " + unsupported);
                 BucketPlacementIntent.receive(f.player, InteractionHand.MAIN_HAND, 40, true);
                 h.assertFalse(BucketPlacementIntent.consume(f.player, InteractionHand.MAIN_HAND, 40), "Unsupported item cannot request source placement: " + unsupported);
+            }
+            List<Item> empties = new ArrayList<>();
+            empties.add(Items.BUCKET);
+            for (String metal : MiteFoods.METALS) empties.add(MiteFoods.get(metal + "_bucket"));
+            for (Item empty : empties) {
+                f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(empty));
+                h.assertTrue(BucketPlacementIntent.isSupportedBucket(f.player.getMainHandItem()), "Every empty metal bucket accepts Ctrl pickup input: " + empty);
+                h.assertFalse(BucketPlacementIntent.isPlacementBucket(f.player.getMainHandItem()), "Empty buckets do not acquire paid-source placement semantics: " + empty);
+                BucketPlacementIntent.receive(f.player, InteractionHand.MAIN_HAND, 40, true);
+                h.assertTrue(BucketPlacementIntent.consume(f.player, InteractionHand.MAIN_HAND, 40), "A matching empty bucket can consume its Ctrl pickup intent: " + empty);
             }
             for (Item supported : new Item[]{Items.COD_BUCKET, Items.SALMON_BUCKET, Items.PUFFERFISH_BUCKET,
                     Items.TROPICAL_FISH_BUCKET, Items.TADPOLE_BUCKET, Items.AXOLOTL_BUCKET}) {

@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.world;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.item.MiteBucketItem;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.resources.ResourceKey;
@@ -9,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -25,33 +27,42 @@ public final class BucketPlacementIntent {
 
     private BucketPlacementIntent() {}
 
-    /** Milk, empty buckets and bowls retain their existing interactions. */
+    /** Filled water/lava buckets that support paid source placement. */
     public static boolean isPlacementBucket(ItemStack stack) {
         return stack.getItem() instanceof BucketItem bucket && BucketPlacementController.supports(bucket);
     }
 
-    public static void receive(ServerPlayer player, InteractionHand hand, int sequence, boolean sourceRequested) {
+    public static boolean isEmptyBucket(ItemStack stack) {
+        return stack.is(Items.BUCKET) || stack.getItem() instanceof MiteBucketItem metal
+                && metal.contents() == MiteBucketItem.Contents.EMPTY;
+    }
+
+    public static boolean isSupportedBucket(ItemStack stack) {
+        return isPlacementBucket(stack) || isEmptyBucket(stack);
+    }
+
+    public static void receive(ServerPlayer player, InteractionHand hand, int sequence, boolean controlDown) {
         PENDING.remove(player);
-        if (!sourceRequested || hand == null || sequence < 0 || !eligible(player)) return;
+        if (!controlDown || hand == null || sequence < 0 || !eligible(player)) return;
         ItemStack stack = player.getItemInHand(hand);
-        if (!isPlacementBucket(stack)) return;
+        if (!isSupportedBucket(stack)) return;
         PENDING.put(player, new Intent(hand, sequence, player.level().dimension(), now(player), stack,
                 hand == InteractionHand.MAIN_HAND ? player.getInventory().selected : -1));
     }
 
-    /** A mismatch also consumes the request, so no failed or intercepted use can arm a later placement. */
+    /** A mismatch also consumes the request, so no failed or intercepted use can arm a later bucket action. */
     public static boolean consume(ServerPlayer player, InteractionHand hand, int sequence) {
         Intent intent = PENDING.remove(player);
         if (intent == null || intent.hand() != hand || intent.sequence() != sequence || !eligible(player)) return false;
         long age = now(player) - intent.receivedAt();
         if (age < 0L || age > MAX_AGE_TICKS || intent.dimension() != player.level().dimension()) return false;
         ItemStack stack = player.getItemInHand(hand);
-        if (stack != intent.stack() || !isPlacementBucket(stack)) return false;
+        if (stack != intent.stack() || !isSupportedBucket(stack)) return false;
         return hand != InteractionHand.MAIN_HAND || player.getInventory().selected == intent.selectedSlot();
     }
 
     private static boolean eligible(ServerPlayer player) {
-        return player.isAlive() && !player.isSpectator() && !player.hasInfiniteMaterials();
+        return player.isAlive() && !player.isSpectator();
     }
 
     private static long now(ServerPlayer player) { return player.server.overworld().getGameTime(); }

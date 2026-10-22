@@ -949,6 +949,7 @@
   "jade.mite.campfire_meat": "当前燃料还能烤：%s 块肉",
   "jade.mite.campfire_time": "当前燃料剩余：%s 秒",
   "tooltip.mite.bucket_source": "按住 Ctrl 放置液体源：消耗 100 点经验（不足时普通倾倒）",
+  "tooltip.mite.bucket_pickup": "右键取液保留水或岩浆；按住 Ctrl 右键取走液体方块",
   "tooltip.mite.brightness_locked": "MITE 将亮度固定为最低，无法更改。",
   "gui.mite.world_day": "第 %s 天",
   "jei.mite.anvil_material": "金属粒修复：消耗 1 粒示例",
