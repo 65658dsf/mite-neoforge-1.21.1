@@ -1,5 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.world.PlacementDelay;
+
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.registry.MiteWorldBlocks;
@@ -201,12 +203,14 @@ public final class UnderworldBoundaryGameTests {
         for (String metal : MiteFoods.METALS) buckets.add((BucketItem)MiteFoods.get(metal + "_water_bucket"));
         for (BucketItem bucket : buckets) {
             for (Block boundary : new Block[]{MiteWorldBlocks.MANTLE.get(), MiteWorldBlocks.CORE.get()}) {
+                PlacementDelay.clear(player);
                 helper.getLevel().setBlockAndUpdate(target.below(), boundary.defaultBlockState());
                 helper.getLevel().setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
                 helper.assertTrue(bucket.emptyContents(player, helper.getLevel(), target, null, new ItemStack(bucket)), "The real inherited bucket method accepts the evaporated action");
                 helper.assertTrue(helper.getLevel().getFluidState(target).isEmpty(), "A boundary consumes placement without creating a water block");
             }
             helper.getLevel().setBlockAndUpdate(target.below(), Blocks.STONE.defaultBlockState());
+            PlacementDelay.clear(player);
             helper.assertTrue(bucket.emptyContents(player, helper.getLevel(), target, null, new ItemStack(bucket)), "The same bucket still places ordinary modern water on stone");
             helper.assertTrue(helper.getLevel().getFluidState(target).isSource(), "Ordinary pouring initially fills the whole liquid cell");
             var temporary = io.github.ningmeng123.mite.world.TemporaryFluidChanges.get(helper.getLevel());

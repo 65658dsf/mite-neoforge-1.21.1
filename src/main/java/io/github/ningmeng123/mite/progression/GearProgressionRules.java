@@ -59,6 +59,10 @@ public final class GearProgressionRules {
         return blockedDamage > 0 && Float.isFinite(blockedDamage) ? boundedMillis(2D * blockedDamage) : 0;
     }
 
+    public static long scaledAwardExperienceMillis(long experienceMillis) {
+        return Math.max(0L, experienceMillis) / 2L;
+    }
+
     private static long boundedMillis(double experience) {
         // Awards above the entire 25-level curve have no additional gameplay value.
         return (long)Math.floor(Math.min(experience, 1_000_000D) * SCALE);

@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.github.ningmeng123.mite.world.BucketPlacementController;
 import io.github.ningmeng123.mite.world.BucketPlacementIntent;
+import io.github.ningmeng123.mite.world.PlacementDelay;
 import io.github.ningmeng123.mite.world.TemporaryFluidChanges;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.ArrayList;
@@ -191,15 +192,18 @@ public final class BucketPlacementGameTests {
                 BucketItem bucket = (BucketItem)(water ? Items.WATER_BUCKET : Items.LAVA_BUCKET);
                 h.assertTrue(bucket.emptyContents(f.player, h.getLevel(), f.target, null, new ItemStack(bucket)), "Create the temporary cell first");
                 h.assertTrue(TemporaryFluidChanges.get(h.getLevel()).pending().containsKey(f.target.asLong()), "The temporary deadline exists");
+                PlacementDelay.clear(f.player);
                 h.assertTrue(BucketPlacementController.withIntent(f.player, true,
                         () -> bucket.emptyContents(f.player, h.getLevel(), f.target, null, new ItemStack(bucket))),
                         "Ctrl upgrades the pending liquid to a source");
                 h.assertValueEqual(f.player.totalExperience, 900, "Temporary-to-permanent upgrade costs once");
                 h.assertFalse(TemporaryFluidChanges.get(h.getLevel()).pending().containsKey(f.target.asLong()), "Upgrade removes the old deadline");
+                PlacementDelay.clear(f.player);
                 h.assertTrue(BucketPlacementController.withIntent(f.player, true,
                         () -> bucket.emptyContents(f.player, h.getLevel(), f.target, null, new ItemStack(bucket))),
                         "Pouring at an existing source retains native success behavior");
                 h.assertValueEqual(f.player.totalExperience, 900, "Existing permanent liquid does not charge a second time");
+                PlacementDelay.clear(f.player);
                 h.assertTrue(bucket.emptyContents(f.player, h.getLevel(), f.target, null, new ItemStack(bucket)), "Normal pouring at an existing source is harmless");
                 h.assertFalse(TemporaryFluidChanges.get(h.getLevel()).pending().containsKey(f.target.asLong()), "Normal pouring cannot schedule natural-source deletion");
                 h.assertValueEqual(f.player.totalExperience, 900, "Existing sources stay free for an ordinary pour too");
@@ -437,6 +441,7 @@ public final class BucketPlacementGameTests {
             var changes = TemporaryFluidChanges.get(level);
             h.assertTrue(changes.at(f.target) == null, "Freefall removes the old coordinate's pending downgrade");
             h.assertTrue(changes.at(f.target.below()) != null, "The moved cell has its independent source freefall deadline");
+            PlacementDelay.clear(f.player);
             h.assertTrue(BucketPlacementController.withIntent(f.player, true,
                     () -> bucket.emptyContents(f.player, level, f.target, null, new ItemStack(bucket))),
                     "A paid source can be placed back at the vacated coordinate");
@@ -473,6 +478,7 @@ public final class BucketPlacementGameTests {
         }
 
         private void clear() {
+            PlacementDelay.clear(player);
             TemporaryFluidChanges.get(helper.getLevel()).cancel(target);
             player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
@@ -485,6 +491,7 @@ public final class BucketPlacementGameTests {
 
         @Override public void close() {
             try {
+                PlacementDelay.clear(player);
                 TemporaryFluidChanges.get(helper.getLevel()).cancel(target);
                 BucketPlacementIntent.clear(player);
                 player.getInventory().clearContent();

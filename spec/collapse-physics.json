@@ -58,7 +58,6 @@
   },
   "enabled_blocks": [
     "minecraft:dirt",
-    "minecraft:grass_block",
     "minecraft:coarse_dirt",
     "minecraft:podzol",
     "minecraft:rooted_dirt",
@@ -70,6 +69,7 @@
     "minecraft:soul_sand"
   ],
   "excluded_modern_blocks": [
+    "minecraft:grass_block",
     "minecraft:mud",
     "minecraft:soul_soil",
     "minecraft:farmland",
@@ -185,7 +185,8 @@
   },
   "modern_adaptations": {
     "2026-10-17_user_request": "disturbed full surface soil shares dirt collapse; all falling blocks have native height-scaled impact damage, including old saves, preserving valid native/custom impact parameters",
-    "surface_state": "original BlockState retained, including grass and mycelium",
+    "2026-10-22_user_clarification": "grass blocks do not collapse; old grass pending checks are consumed without falling, while already-spawned grass falling entities finish native landing safely",
+    "surface_state": "original BlockState retained for managed soil, including mycelium",
     "minimum_height": "dimension minBuildHeight, includes negative Y",
     "pending_marker": "versioned per-chunk Data Attachment plus native saved scheduled ticks; no shared block-state rewrite",
     "native_soul_sand_tick": "earlier native tick executes first; later bubble-column tick retained separately from 2-tick collapse check",

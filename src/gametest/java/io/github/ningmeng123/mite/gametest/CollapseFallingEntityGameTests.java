@@ -182,10 +182,10 @@ public final class CollapseFallingEntityGameTests {
                 h.assertTrue(shortDamage > 0, "Native movement and landing physically damage an entity below falling dirt");
                 f.set(f.landed, Blocks.AIR.defaultBlockState());
                 target.setHealth(initial); target.invulnerableTime = 0;
-                FallingBlockEntity highFall = f.fall(Blocks.GRASS_BLOCK.defaultBlockState(), false);
+                FallingBlockEntity highFall = f.fall(Blocks.ROOTED_DIRT.defaultBlockState(), false);
                 f.finish(highFall);
                 h.assertTrue(initial - target.getHealth() > shortDamage, "A longer real fall does more damage than the three-block drop");
-                h.assertTrue(f.level.getBlockState(f.landed).is(Blocks.GRASS_BLOCK), "Damaging grass still settles as its original soil block");
+                h.assertTrue(f.level.getBlockState(f.landed).is(Blocks.ROOTED_DIRT), "Damaging rooted dirt still settles as its original soil block");
                 h.assertTrue(f.items().isEmpty(), "Impact damage cannot create an extra dropped soil item");
             } finally { target.discard(); }
         }
@@ -383,6 +383,34 @@ public final class CollapseFallingEntityGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 300)
+    public static void savedMidairGrassKeepsNativeLandingWithoutDuplicationOrRestartingCollapse(GameTestHelper helper) {
+        try (var fixture = new Fixture(helper)) {
+            for (boolean natural : new boolean[]{false, true}) {
+                FallingBlockEntity original = fixture.fall(Blocks.GRASS_BLOCK.defaultBlockState(), natural);
+                CompoundTag saved = original.saveWithoutId(new CompoundTag());
+                original.discard();
+                FallingBlockEntity loaded = new FallingBlockEntity(EntityType.FALLING_BLOCK, fixture.level);
+                loaded.load(saved);
+                fixture.entities.add(loaded);
+                helper.assertFalse(CollapsePhysics.managed(loaded.getBlockState()), "A legacy midair grass block is no longer managed collapse soil");
+                fixture.finish(loaded);
+                helper.assertTrue(fixture.level.getBlockState(fixture.source).isAir()
+                                && fixture.level.getBlockState(fixture.landed).is(Blocks.GRASS_BLOCK),
+                        "The pre-existing native entity completes one ordinary landing without recreating its old source");
+                helper.assertValueEqual(NaturalTrialBlocks.isNatural(fixture.level, fixture.landed), natural,
+                        "Legacy grass landing preserves its saved natural-trial provenance");
+                helper.assertTrue(fixture.items().isEmpty(), "Loading and settling legacy falling grass never produces a duplicate item");
+                fixture.set(fixture.floor, Blocks.AIR.defaultBlockState());
+                helper.assertFalse(CollapsePhysics.tryFall(fixture.level, fixture.landed), "Even after its new support is removed, settled legacy grass stays exempt");
+                helper.assertTrue(fixture.level.getBlockState(fixture.landed).is(Blocks.GRASS_BLOCK), "Compatibility never restarts the erroneous grass collapse lifecycle");
+                fixture.set(fixture.floor, Blocks.BEDROCK.defaultBlockState());
+                fixture.set(fixture.landed, Blocks.AIR.defaultBlockState());
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
     public static void oldMidairSoilSaveIsUpgradedAndImpactDamageIsCapped(GameTestHelper h) {
         try (var f = new Fixture(h)) {
             FallingBlockEntity original = f.fall(Blocks.DIRT.defaultBlockState(), true);
@@ -431,7 +459,7 @@ public final class CollapseFallingEntityGameTests {
             BlockPos upper = f.source.above();
             f.set(upper, Blocks.DIRT.defaultBlockState());
             for (BlockState state : List.of(Blocks.DIRT.defaultBlockState(), Blocks.SOUL_SAND.defaultBlockState(),
-                    Blocks.GRASS_BLOCK.defaultBlockState(), Blocks.ROOTED_DIRT.defaultBlockState())) {
+                    Blocks.ROOTED_DIRT.defaultBlockState())) {
                 for (boolean natural : new boolean[]{false, true}) {
                     f.set(f.source, state);
                     if (natural) NaturalTrialBlocks.record(f.level.getChunkAt(f.source), f.source);

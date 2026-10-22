@@ -92,6 +92,35 @@ public final class CollapseSecondaryTriggersGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void grassCapsSurviveActualExplosionAndLeafDecaySupportRemoval(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos position = support(helper);
+        column(level, position, Blocks.OAK_PLANKS.defaultBlockState());
+        put(level, position.above(), Blocks.GRASS_BLOCK.defaultBlockState());
+        try (var capture = new SpawnedEntityCapture(level, entity -> entity instanceof FallingBlockEntity)) {
+            var explosion = new Explosion(level, null, position.getX() + .5, position.getY() + .5, position.getZ() + .5,
+                    1F, false, Explosion.BlockInteraction.DESTROY);
+            explosion.getToBlow().add(position);
+            explosion.finalizeExplosion(false);
+            helper.assertTrue(level.getBlockState(position).isAir() && level.getBlockState(position.above()).is(Blocks.GRASS_BLOCK),
+                    "Native explosion support removal leaves its grass cap suspended");
+            helper.assertFalse(level.getBlockTicks().hasScheduledTick(position.above(), Blocks.GRASS_BLOCK),
+                    "Explosion does not schedule the excluded grass block");
+            BlockState leaves = Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, false).setValue(LeavesBlock.DISTANCE, 7);
+            column(level, position, leaves);
+            put(level, position.above(), Blocks.GRASS_BLOCK.defaultBlockState());
+            leaves.randomTick(level, position, level.random);
+            helper.assertTrue(!level.getBlockState(position).is(Blocks.OAK_LEAVES)
+                            && level.getBlockState(position.above()).is(Blocks.GRASS_BLOCK),
+                    "Native leaf decay also leaves grass suspended rather than starting an immediate collapse");
+            helper.assertFalse(level.getBlockTicks().hasScheduledTick(position.above(), Blocks.GRASS_BLOCK),
+                    "Leaf decay cannot leave a delayed grass collapse behind");
+            helper.assertTrue(capture.live(FallingBlockEntity.class).isEmpty(), "Neither secondary support-removal path creates a grass entity");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void persistentLeavesAndOrdinaryWorldEditsDoNotCauseCollapse(GameTestHelper h) {
         var level = h.getLevel(); BlockPos p = support(h);
         BlockState leaf = Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true).setValue(LeavesBlock.DISTANCE, 7);

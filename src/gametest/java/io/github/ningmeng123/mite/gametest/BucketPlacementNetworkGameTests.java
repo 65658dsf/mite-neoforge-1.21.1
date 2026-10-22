@@ -109,6 +109,7 @@ public final class BucketPlacementNetworkGameTests {
             h.assertTrue(f.player.getMainHandItem().is(Items.WATER_BUCKET), "The unrelated main-hand bucket remains full");
             TemporaryFluidChanges.get(h.getLevel()).cancel(f.target);
             h.getLevel().setBlock(f.target, Blocks.AIR.defaultBlockState(), 2);
+            PlacementDelay.clear(f.player);
             f.use(InteractionHand.MAIN_HAND, 100);
             h.assertTrue(f.temporary(), "The mismatched hand consumes the intent before a later main-hand packet can reuse it");
             h.assertValueEqual(f.player.totalExperience, 1000, "Reusing the original hand and sequence still cannot spend the discarded request");
@@ -129,6 +130,64 @@ public final class BucketPlacementNetworkGameTests {
             } finally { buffer.release(); }
         }
         h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void immediatePourSharesSixTickCooldownAndDiscardsRejectedControlPackets(GameTestHelper helper) {
+        Fixture fixture = new Fixture(helper);
+        try {
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
+            fixture.use(InteractionHand.MAIN_HAND, 300);
+            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).is(FluidTags.WATER),
+                    "The first real bucket packet pours immediately, without a preparation tick");
+            helper.assertTrue(fixture.temporary(), "An immediate ordinary pour still has its finite water deadline");
+            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 6,
+                    "A successful pour starts exactly six ticks of cooldown");
+            TemporaryFluidChanges.get(helper.getLevel()).cancel(fixture.target);
+            helper.getLevel().setBlock(fixture.target, Blocks.AIR.defaultBlockState(), 2);
+            fixture.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.LAVA_BUCKET));
+            BucketPlacementIntent.receive(fixture.player, InteractionHand.OFF_HAND, 301, true);
+            fixture.use(InteractionHand.OFF_HAND, 301);
+            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(),
+                    "Switching hand and liquid cannot bypass the shared cooldown");
+            helper.assertTrue(fixture.player.getOffhandItem().is(Items.LAVA_BUCKET), "A rejected pour retains its full bucket");
+            helper.assertValueEqual(fixture.player.totalExperience, 1000, "A rejected Ctrl request spends no source experience");
+            helper.runAfterDelay(5, () -> {
+                try {
+                    helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 1,
+                            "The original deadline still has one tick remaining");
+                    BucketPlacementIntent.receive(fixture.player, InteractionHand.OFF_HAND, 302, true);
+                    fixture.use(InteractionHand.OFF_HAND, 302);
+                    helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(),
+                            "A repeated request is still refused at tick five");
+                    helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 1,
+                            "Rejected requests do not extend the deadline");
+                    helper.runAfterDelay(1, () -> {
+                        try {
+                            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 0,
+                                    "Placement becomes available at tick six");
+                            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(),
+                                    "The elapsed cooldown never replays a refused placement");
+                            fixture.use(InteractionHand.OFF_HAND, 303);
+                            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).is(FluidTags.LAVA),
+                                    "A fresh request pours immediately at the deadline");
+                            helper.assertTrue(fixture.temporary(), "Rejected Ctrl requests cannot arm the later ordinary pour");
+                            helper.assertValueEqual(fixture.player.totalExperience, 1000,
+                                    "The later unarmed request cannot charge either rejected source intent");
+                            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 6,
+                                    "The new successful pour starts its own cooldown");
+                            helper.succeed();
+                        } finally { fixture.close(); }
+                    });
+                } catch (RuntimeException | Error failure) {
+                    fixture.close();
+                    throw failure;
+                }
+            });
+        } catch (RuntimeException | Error failure) {
+            fixture.close();
+            throw failure;
+        }
     }
 
     private static List<Item> filledBuckets(boolean water) {
@@ -166,12 +225,12 @@ public final class BucketPlacementNetworkGameTests {
 
         private void use(InteractionHand hand, int sequence) {
             player.connection.handleUseItem(new ServerboundUseItemPacket(hand, sequence, 0F, 90F));
-            PlacementDelay.tickPlayer(player, player.server.overworld().getGameTime() + PlacementDelay.DELAY_TICKS);
         }
 
         private boolean temporary() { return TemporaryFluidChanges.get(helper.getLevel()).pending().containsKey(target.asLong()); }
 
         private void clear() {
+            PlacementDelay.clear(player);
             TemporaryFluidChanges.get(helper.getLevel()).cancel(target);
             player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);

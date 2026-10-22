@@ -1,5 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.world.PlacementDelay;
+
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.portal.MitePortalFrame;
 import io.github.ningmeng123.mite.portal.MitePortalProperties;
@@ -208,6 +210,7 @@ public final class UnderworldDepthGameTests {
     }
 
     private static void placeObsidian(GameTestHelper helper, ServerPlayer player, ServerLevel level, BlockPos target) {
+        PlacementDelay.clear(player);
         if (!player.getMainHandItem().is(Items.OBSIDIAN) || player.getMainHandItem().isEmpty())
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.OBSIDIAN, 8));
         player.setPos(target.getX() + .5, target.getY(), target.getZ() - .5);

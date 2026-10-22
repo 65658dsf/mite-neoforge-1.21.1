@@ -232,12 +232,12 @@ public final class ShieldGuardGameTests {
             helper.assertTrue(session.defender.isUsingItem() && !ShieldGuard.disabled(session.defender),
                     "A twenty-four-damage first block does not disable the shield early");
             helper.assertValueEqual(session.shield.getDamageValue(), 25, "The large accepted hit keeps native1+floor24 wear");
-            helper.assertValueEqual(session.experience(), 48_000L, "Every blocked point grants two shield experience");
+            helper.assertValueEqual(session.experience(), 24_000L, "Every blocked point grants one shield experience after the earning reduction");
             session.hit(1F);
             helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
                     "Exactly twenty-five cumulative damage forces the shield down even with only two blocks");
             helper.assertValueEqual(session.defender.getHealth(), health, "The boundary-crossing hit is still fully blocked");
-            helper.assertValueEqual(session.experience(), 50_000L, "The final one-point block retains its doubled experience");
+            helper.assertValueEqual(session.experience(), 25_000L, "The final one-point block retains its halved shield experience");
             helper.assertValueEqual(session.shield.getDamageValue(), 25, "A sub-three terminal hit retains native zero wear");
             state(helper, session.shield, 0D, 0, "Guard pressure resets when the forced cooldown begins");
         }
@@ -251,7 +251,7 @@ public final class ShieldGuardGameTests {
             float health = session.defender.getHealth();
             session.hit(4F);
             helper.assertValueEqual(session.shield.getDamageValue(), 5, "The terminal hit spends its actual five durability points");
-            helper.assertValueEqual(session.experience(), 8_000L, "The terminal hit earns its complete doubled blocked-damage reward");
+            helper.assertValueEqual(session.experience(), 4_000L, "The terminal hit earns its complete halved blocked-damage reward");
             helper.assertValueEqual(session.defender.getHealth(), health, "Forced lowering happens after the accepted health block");
             helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(), "The terminal hit then starts cooldown");
         }
@@ -278,7 +278,7 @@ public final class ShieldGuardGameTests {
                     "The third one-point block disables both real survival players and shield-bearing monsters");
             helper.assertValueEqual(session.shield.getDamageValue(), 0, "All three small hits retain the native zero-durability rule");
             helper.assertValueEqual(session.defender.getHealth(), health, "The third small hit is still blocked");
-            if (player) helper.assertValueEqual(session.experience(), 6_000L, "Small blocks still grant their complete doubled experience");
+            if (player) helper.assertValueEqual(session.experience(), 3_000L, "Small blocks still grant their complete halved experience");
         }
         helper.succeed();
     }
@@ -326,7 +326,7 @@ public final class ShieldGuardGameTests {
             finally { NeoForge.EVENT_BUS.unregister(partial); }
             helper.assertTrue(seen[2] && session.defender.isAlive(), "The real partial event approves two blocked points and its unblocked remainder is nonlethal");
             state(helper, session.shield, 6D, 2, "The accepted partial block adds only two actual blocked points and one block");
-            helper.assertValueEqual(session.experience(), experience + 4_000L, "The partial block rewards only its approved two points");
+            helper.assertValueEqual(session.experience(), experience + 2_000L, "The partial block rewards only its approved two points at half efficiency");
         }
         helper.succeed();
     }

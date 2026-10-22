@@ -82,7 +82,7 @@ public final class GearModifierClientSmoke {
                         long threshold = (150L + 100L * level) * 1000L;
                         check(GearProgression.nextLevelExperienceMillis(sword, level) == threshold,
                                 "The live server sword uses the approved weapon threshold at L" + level);
-                        GearProgression.award(sword, threshold, player);
+                        GearProgression.award(sword, threshold * 2, player);
                         check(GearProgression.state(sword).level() == level + 1
                                 && GearProgression.state(sword).experienceMillis() == 0,
                                 "Each exact current-level threshold advances once without a remainder");

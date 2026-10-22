@@ -82,4 +82,24 @@ class GearProgressionRulesTest {
         assertEquals(Long.MAX_VALUE, GearProgressionRules.saturatedAdd(Long.MAX_VALUE - 10, 11));
         assertThrows(IllegalArgumentException.class, () -> GearProgressionRules.saturatedAdd(-1, 1));
     }
+
+    @Test void finalAwardsAreHalvedOnceWithoutDiscardingFractionalPoints() {
+        assertEquals(10_000, GearProgressionRules.scaledAwardExperienceMillis(20_000));
+        assertEquals(3_000, GearProgressionRules.scaledAwardExperienceMillis(6_000));
+        assertEquals(6_000, GearProgressionRules.scaledAwardExperienceMillis(12_000));
+        assertEquals(625, GearProgressionRules.scaledAwardExperienceMillis(1_250));
+        assertEquals(4_000, GearProgressionRules.scaledAwardExperienceMillis(8_000));
+        assertEquals(525, GearProgressionRules.scaledAwardExperienceMillis(1_050));
+        assertEquals(1_875, GearProgressionRules.scaledAwardExperienceMillis(3_750));
+        assertEquals(499, GearProgressionRules.scaledAwardExperienceMillis(999));
+        assertEquals(1, GearProgressionRules.scaledAwardExperienceMillis(2));
+        assertEquals(0, GearProgressionRules.scaledAwardExperienceMillis(1));
+    }
+
+    @Test void finalAwardScalingRejectsNegativeRewardsAndCannotOverflow() {
+        assertEquals(0, GearProgressionRules.scaledAwardExperienceMillis(0));
+        assertEquals(0, GearProgressionRules.scaledAwardExperienceMillis(-1));
+        assertEquals(0, GearProgressionRules.scaledAwardExperienceMillis(Long.MIN_VALUE));
+        assertEquals(Long.MAX_VALUE / 2, GearProgressionRules.scaledAwardExperienceMillis(Long.MAX_VALUE));
+    }
 }

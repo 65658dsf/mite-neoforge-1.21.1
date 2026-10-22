@@ -183,7 +183,8 @@ public final class GearProgression {
 
     public static void award(ItemStack stack, long experienceMillis, ServerPlayer player) {
         if (!canGain(player) || experienceMillis <= 0 || stack.isEmpty()) return;
-        experienceMillis = Math.max(0L,io.github.ningmeng123.mite.api.MiteExtensions.policy().gearExperience(stack,experienceMillis));
+        experienceMillis = GearProgressionRules.scaledAwardExperienceMillis(
+                io.github.ningmeng123.mite.api.MiteExtensions.policy().gearExperience(stack, experienceMillis));
         if (experienceMillis==0) return;
         int cap = maxLevel(stack);
         GearProgress before = state(stack);

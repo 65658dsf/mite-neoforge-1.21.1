@@ -154,7 +154,7 @@ public final class SourceModifierGameTests {
             ranks.put(id("armor/blessed"), 5);
             ranks.put(id("armor/indomitable"), 4);
             chestplate.set(GearProgression.PROGRESS.get(), new GearProgress(UUID.randomUUID(), 0, 0, ranks, 1));
-            GearProgression.award(chestplate, 360_123, session.player);
+            GearProgression.award(chestplate, 720_246, session.player);
             GearProgress state = GearProgression.state(chestplate);
             h.assertTrue(state.level() == 3 && state.experienceMillis() == 123 && state.affixes().get(id("armor/projectile_protection")) == 3,
                     "One award reaches three levels, grants all three modifier ranks and keeps its fractional remainder");
@@ -252,7 +252,7 @@ public final class SourceModifierGameTests {
                 ScriptedRandom random = session.random(start + offset);
                 ItemStack stack = new ItemStack(item);
                 long threshold = GearProgression.nextLevelExperienceMillis(stack, 0);
-                GearProgression.award(stack, threshold, session.player);
+                GearProgression.award(stack, threshold * 2, session.player);
                 h.assertTrue(GearProgression.state(stack).level() == 1
                                 && GearProgression.state(stack).affixes().equals(Map.of(id(path), 1)),
                         "Weighted roll " + (start + offset) + " selects the source interval for " + path);

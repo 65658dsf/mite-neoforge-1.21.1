@@ -70,6 +70,30 @@ public final class BucketPlacementClientAudit implements DataProvider {
             MethodNode prediction = method(type, "startPrediction", "(Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/multiplayer/prediction/PredictiveAction;)V");
             check(reachable(type, use, mode), "The actual native useItem path reaches its merged prediction handler");
             check(reachable(type, prediction, input), "The actual native startPrediction path reaches its merged packet handler");
+            String minecraftTarget = "net.minecraft.client.Minecraft";
+            Class.forName(minecraftTarget, false, getClass().getClassLoader());
+            ClassNode minecraft = new ClassNode();
+            new ClassReader(Files.readAllBytes(Path.of(".mixin.out", "class", minecraftTarget.replace('.', '/') + ".class")))
+                    .accept(minecraft, 0);
+            MethodNode repeat = handler(minecraft, "mite$synchronizePlacementRepeat",
+                    "io.github.ningmeng123.mite.mixin.client.PlacementCooldownMinecraftMixin");
+            check(reachable(minecraft, method(minecraft, "startUseItem", "()V"), repeat),
+                    "The native repeated-use path reaches placement-specific timing synchronization");
+            check(calls(repeat, "io/github/ningmeng123/mite/client/PlacementClickTiming", "rightClickDelay")
+                            && calls(repeat, "io/github/ningmeng123/mite/world/PlacementDelay", "remainingTicks"),
+                    "Placement repeat timing reads the actual shared deadline instead of creating a separate timer");
+            String delayTarget = "io.github.ningmeng123.mite.world.PlacementDelay";
+            Class.forName(delayTarget, false, getClass().getClassLoader());
+            ClassNode delay = new ClassNode();
+            new ClassReader(Files.readAllBytes(Path.of(".mixin.out", "class", delayTarget.replace('.', '/') + ".class")))
+                    .accept(delay, 0);
+            MethodNode attempt = handler(delay, "mite$recordBlockedPlacement",
+                    "io.github.ningmeng123.mite.mixin.client.PlacementCooldownAttemptMixin");
+            check(reachable(delay, method(delay, "blocked", "(Lnet/minecraft/world/entity/player/Player;)Z"), attempt)
+                            && calls(attempt, "io/github/ningmeng123/mite/client/PlacementClickTiming", "blocked"),
+                    "Only the shared placement gate records a rejected local placement attempt");
+            report.addProperty("native_start_use_reaches_placement_timing", true);
+            report.addProperty("shared_gate_reaches_client_attempt_recording", true);
             report.addProperty("transformed_export", export.toAbsolutePath().normalize().toString());
             report.addProperty("prediction_scope_handler", mode.name);
             report.addProperty("packet_order_handler", input.name);
@@ -87,19 +111,23 @@ public final class BucketPlacementClientAudit implements DataProvider {
     }
 
     private static MethodNode handler(ClassNode type, String name) {
+        return handler(type, name, MIXIN);
+    }
+
+    private static MethodNode handler(ClassNode type, String name, String mixin) {
         // Mixin also merges a lambda named lambda$mite$predictBucketMode$0. Only the
         // actual WrapMethod/WrapOperation handler ends with the original handler name.
         var matches = type.methods.stream().filter(method -> method.name.endsWith(name)
-                && (merged(method.visibleAnnotations) || merged(method.invisibleAnnotations))).toList();
+                && (merged(method.visibleAnnotations, mixin) || merged(method.invisibleAnnotations, mixin))).toList();
         check(matches.size() == 1, "Exactly one actual bucket Mixin handler is merged for " + name + "; found " + matches.size());
         return matches.getFirst();
     }
 
-    private static boolean merged(List<AnnotationNode> annotations) {
+    private static boolean merged(List<AnnotationNode> annotations, String mixin) {
         if (annotations == null) return false;
         for (AnnotationNode annotation : annotations) if (annotation.desc.equals("Lorg/spongepowered/asm/mixin/transformer/meta/MixinMerged;")
                 && annotation.values != null) for (int i = 0; i + 1 < annotation.values.size(); i += 2)
-            if (annotation.values.get(i).equals("mixin") && annotation.values.get(i + 1).equals(MIXIN)) return true;
+            if (annotation.values.get(i).equals("mixin") && annotation.values.get(i + 1).equals(mixin)) return true;
         return false;
     }
 

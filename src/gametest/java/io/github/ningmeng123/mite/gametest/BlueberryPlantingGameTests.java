@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.registry.MiteFoodPlants;
 import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.github.ningmeng123.mite.survival.NutritionState;
+import io.github.ningmeng123.mite.world.PlacementDelay;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
@@ -48,6 +49,7 @@ public final class BlueberryPlantingGameTests {
                 Player player = f.player(mode);
                 for (var soil : new net.minecraft.world.level.block.Block[]{Blocks.DIRT, Blocks.GRASS_BLOCK}) {
                     f.prepare(soil.defaultBlockState());
+                    PlacementDelay.clear(player);
                     ItemStack berries = new ItemStack(MiteFoods.BLUEBERRIES.get(), 3);
                     player.setItemInHand(InteractionHand.MAIN_HAND, berries);
                     helper.assertTrue(berries.useOn(f.context(player)).consumesAction(),

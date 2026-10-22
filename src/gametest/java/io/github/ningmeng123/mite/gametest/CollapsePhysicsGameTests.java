@@ -3,6 +3,8 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.github.ningmeng123.mite.world.CollapsePhysics;
+import io.github.ningmeng123.mite.world.CollapseSecondaryTriggers;
+import io.github.ningmeng123.mite.world.PlacementDelay;
 import io.github.ningmeng123.mite.worldgen.NaturalTrialBlocks;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.io.ByteArrayInputStream;
@@ -72,10 +74,10 @@ public final class CollapsePhysicsGameTests {
     private CollapsePhysicsGameTests() {}
 
     @GameTest(template = "empty", timeoutTicks = 200)
-    public static void realSurvivalMiningUnderminesEveryFullSurfaceSoilWithoutStrippingItsState(GameTestHelper helper) {
+    public static void realSurvivalMiningUnderminesOtherFullSurfaceSoilsWithoutStrippingTheirState(GameTestHelper helper) {
         run(helper, f -> {
             f.player.setPos(Vec3.atCenterOf(f.anchor).add(0D, 0D, 2D));
-            for (Block soil : List.of(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT,
+            for (Block soil : List.of(Blocks.DIRT, Blocks.COARSE_DIRT,
                     Blocks.PODZOL, Blocks.ROOTED_DIRT, Blocks.MYCELIUM)) {
                 f.set(f.anchor, Blocks.STONE);
                 f.set(f.anchor.above(), soil);
@@ -91,18 +93,18 @@ public final class CollapsePhysicsGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 200)
-    public static void disturbedDirtQueuesItsGrassCapAndRootedNeighborThroughTheNativeScheduler(GameTestHelper helper) {
+    public static void disturbedDirtKeepsItsGrassCapAndQueuesItsRootedNeighborThroughTheNativeScheduler(GameTestHelper helper) {
         run(helper, f -> {
             f.set(f.anchor, Blocks.DIRT);
             f.set(f.anchor.above(), Blocks.GRASS_BLOCK);
             f.set(f.anchor.east(), Blocks.ROOTED_DIRT);
             Blocks.DIRT.stepOn(f.level, f.anchor, f.state(f.anchor), f.player);
-            helper.assertTrue(f.check(f.anchor.above()) != null && f.check(f.anchor.east()) != null,
-                    "A disturbed column now marks both its formerly excluded surface cap and neighboring rooted soil");
+            helper.assertTrue(f.check(f.anchor.above()) == null && f.check(f.anchor.east()) != null,
+                    "A disturbed dirt column excludes its grass cap while still marking neighboring rooted soil");
             f.after(2, () -> {
-                helper.assertTrue(f.state(f.anchor.above()).isAir() && f.state(f.anchor.east()).isAir(),
-                        "The real two-tick queue collapses mixed natural soil instead of leaving a surface ceiling");
-                helper.assertValueEqual(f.falling().size(), 3, "Mixed soil chain creates exactly three native falling entities");
+                helper.assertTrue(f.state(f.anchor.above()).is(Blocks.GRASS_BLOCK) && f.state(f.anchor.east()).isAir(),
+                        "The real two-tick queue retains suspended grass while other disturbed soil still collapses");
+                helper.assertValueEqual(f.falling().size(), 2, "Only the dirt and rooted neighbor create native falling entities");
                 f.finish();
             });
         });
@@ -110,7 +112,7 @@ public final class CollapsePhysicsGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 200)
     public static void soilEnhancementLeavesFarmingShapesAndOtherSoftMaterialsOutsideTheCollapseSet(GameTestHelper helper) {
-        for (Block block : List.of(Blocks.FARMLAND, Blocks.DIRT_PATH, Blocks.MUD,
+        for (Block block : List.of(Blocks.GRASS_BLOCK, Blocks.FARMLAND, Blocks.DIRT_PATH, Blocks.MUD,
                 Blocks.SOUL_SOIL, Blocks.MOSS_BLOCK, Blocks.CLAY, Blocks.SAND, Blocks.GRAVEL))
             helper.assertFalse(CollapsePhysics.managed(block.defaultBlockState()),
                     "Surface fix does not silently include farming shapes, unrelated soils or ordinary falling blocks: " + block);
@@ -207,6 +209,7 @@ public final class CollapsePhysicsGameTests {
             Consumer<BlockEvent.EntityPlaceEvent> cancel = event -> {
                 if (event.getEntity() == f.player) event.setCanceled(true);
             };
+            PlacementDelay.clear(f.player);
             NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, BlockEvent.EntityPlaceEvent.class, cancel);
             try {
                 helper.assertFalse(f.place(f.anchor, Direction.EAST).consumesAction(), "A second real placement is rejected by NeoForge");
@@ -267,9 +270,115 @@ public final class CollapsePhysicsGameTests {
                     "World-generation-style writes and ordinary updates preserve natural overhangs");
             helper.assertTrue(f.check(f.anchor) == null && f.check(soul) == null && f.falling().isEmpty(),
                     "Dirt and soul sand keep their original disturbed-only lifecycle");
-            helper.assertTrue(f.check(f.anchor.west()) != null,
-                    "Grass schedules a collapse after its lower support changes even without a player mining callback");
+            helper.assertTrue(f.check(f.anchor.west()) == null,
+                    "Grass never acquires a collapse mark from an ordinary lower-support update");
             f.finish();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void survivalMiningLeavesUnsupportedGrassAboveAndOnEveryCardinalSide(GameTestHelper helper) {
+        run(helper, fixture -> {
+            fixture.set(fixture.anchor, Blocks.STONE);
+            fixture.set(fixture.anchor.above(), Blocks.GRASS_BLOCK);
+            for (Direction direction : Direction.Plane.HORIZONTAL) fixture.set(fixture.anchor.relative(direction), Blocks.GRASS_BLOCK);
+            fixture.player.setPos(Vec3.atCenterOf(fixture.anchor).add(0D, 0D, 2D));
+            helper.assertTrue(fixture.player.gameMode.destroyBlock(fixture.anchor), "The survival player genuinely mines the shared support");
+            fixture.after(3, () -> {
+                helper.assertTrue(fixture.state(fixture.anchor.above()).is(Blocks.GRASS_BLOCK), "Grass directly above the mined support remains suspended");
+                for (Direction direction : Direction.Plane.HORIZONTAL) {
+                    BlockPos position = fixture.anchor.relative(direction);
+                    helper.assertTrue(fixture.state(position).is(Blocks.GRASS_BLOCK) && fixture.check(position) == null,
+                            "Each cardinal grass neighbor remains intact without a queued collapse");
+                }
+                helper.assertTrue(fixture.check(fixture.anchor.above()) == null && fixture.falling().isEmpty(),
+                        "Mining support under grass never starts immediate or delayed falling entities");
+                fixture.finish();
+            });
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void realSurvivalAndCreativeGrassPlacementRemainSuspended(GameTestHelper helper) {
+        run(helper, fixture -> {
+            fixture.set(fixture.anchor, Blocks.STONE);
+            BlockPos destination = fixture.anchor.east();
+            for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE)) {
+                fixture.player.setGameMode(mode);
+                fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GRASS_BLOCK, 2));
+                helper.assertTrue(fixture.place(fixture.anchor, Direction.EAST).consumesAction(), "Real grass item placement succeeds in " + mode);
+                helper.assertTrue(fixture.state(destination).is(Blocks.GRASS_BLOCK) && fixture.check(destination) == null,
+                        "Committed unsupported grass does not enter the soil collapse lifecycle");
+                helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), mode == GameType.CREATIVE ? 2 : 1,
+                        "The exemption preserves ordinary creative and survival item consumption");
+                fixture.set(destination, Blocks.AIR);
+            }
+            helper.assertTrue(fixture.falling().isEmpty(), "Neither item-use transaction creates a falling grass entity");
+            fixture.finish();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void grassIgnoresWalkingContactAndEveryCoreCollapseEntryPoint(GameTestHelper helper) {
+        run(helper, fixture -> {
+            fixture.set(fixture.anchor, Blocks.GRASS_BLOCK);
+            for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE)) {
+                fixture.player.setGameMode(mode);
+                BlockState grass = fixture.state(fixture.anchor);
+                Blocks.GRASS_BLOCK.stepOn(fixture.level, fixture.anchor, grass, fixture.player);
+                grass.entityInside(fixture.level, fixture.anchor, fixture.player);
+                CollapsePhysics.undermine(fixture.level, fixture.anchor, fixture.player);
+                CollapsePhysics.playerPlaced(fixture.level, fixture.anchor, fixture.player);
+                CollapsePhysics.schedule(fixture.level, fixture.anchor);
+                CollapseSecondaryTriggers.removedSupport(fixture.level, fixture.anchor.below());
+                helper.assertFalse(CollapsePhysics.tryFall(fixture.level, fixture.anchor), "Direct tryFall rejects suspended grass in " + mode);
+            }
+            fixture.after(3, () -> {
+                helper.assertTrue(fixture.state(fixture.anchor).is(Blocks.GRASS_BLOCK) && fixture.check(fixture.anchor) == null,
+                        "Walking, entity contact, placement and secondary removal leave grass suspended without pending data");
+                helper.assertTrue(fixture.falling().isEmpty(), "No core collapse entry point creates a grass falling entity");
+                fixture.finish();
+            });
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void savedGrassPendingIsConsumedWithoutFallingAndPreservesItsDisplacedNativeDeadline(GameTestHelper helper) {
+        run(helper, fixture -> {
+            fixture.set(fixture.anchor, Blocks.GRASS_BLOCK);
+            long started = fixture.level.getGameTime();
+            fixture.legacyGrassCheck(fixture.anchor, started + 20);
+            fixture.level.scheduleTick(fixture.anchor, Blocks.GRASS_BLOCK, 2);
+            fixture.after(1, () -> helper.assertTrue(fixture.state(fixture.anchor).is(Blocks.GRASS_BLOCK)
+                            && fixture.check(fixture.anchor) != null,
+                    "A decoded legacy grass mark remains pending only until its original two-tick deadline"));
+            fixture.after(2, () -> {
+                helper.assertTrue(fixture.state(fixture.anchor).is(Blocks.GRASS_BLOCK) && fixture.check(fixture.anchor) == null,
+                        "The real native scheduler consumes an old grass collapse mark without moving the block");
+                ScheduledTick<Block> restored = fixture.scheduled(fixture.anchor);
+                helper.assertTrue(restored.triggerTick() == started + 20 && restored.priority() == TickPriority.HIGH,
+                        "Retiring legacy grass ownership restores any displaced native callback at its original deadline and priority");
+                helper.assertTrue(fixture.falling().isEmpty(), "Loading a legacy pending mark cannot re-enable grass collapse");
+                fixture.finish();
+            });
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void removingGrassClearsItsSavedPendingMarkBeforeReplacement(GameTestHelper helper) {
+        run(helper, fixture -> {
+            fixture.set(fixture.anchor, Blocks.GRASS_BLOCK);
+            fixture.legacyGrassCheck(fixture.anchor, Long.MIN_VALUE);
+            fixture.level.scheduleTick(fixture.anchor, Blocks.GRASS_BLOCK, 2);
+            fixture.set(fixture.anchor, Blocks.DIRT);
+            helper.assertTrue(fixture.check(fixture.anchor) == null, "Replacing legacy pending grass immediately retires its saved mark");
+            fixture.set(fixture.anchor, Blocks.GRASS_BLOCK);
+            fixture.after(2, () -> {
+                helper.assertTrue(fixture.state(fixture.anchor).is(Blocks.GRASS_BLOCK) && fixture.check(fixture.anchor) == null,
+                        "The old grass callback cannot transfer collapse ownership to a replacement block");
+                helper.assertTrue(fixture.falling().isEmpty(), "Removing old pending grass cannot publish a delayed falling entity");
+                fixture.finish();
+            });
         });
     }
 
@@ -525,6 +634,18 @@ public final class CollapsePhysicsGameTests {
         CollapsePhysics.Check check(BlockPos pos) {
             CollapsePhysics.Pending pending = level.getChunkAt(pos).getExistingDataOrNull(CollapsePhysics.PENDING.get());
             return pending == null ? null : pending.get(pos);
+        }
+
+        void legacyGrassCheck(BlockPos position, long nativeDue) {
+            LevelChunk chunk = level.getChunkAt(position);
+            CompoundTag saved = (CompoundTag) CollapsePhysics.Pending.CODEC.encodeStart(NbtOps.INSTANCE,
+                    chunk.getData(CollapsePhysics.PENDING.get())).getOrThrow();
+            CompoundTag check = (CompoundTag) CollapsePhysics.Check.CODEC.encodeStart(NbtOps.INSTANCE,
+                    new CollapsePhysics.Check(position.asLong(), level.getGameTime() + 2, nativeDue, TickPriority.HIGH.getValue())).getOrThrow();
+            saved.getList("checks", 10).add(check);
+            chunk.setData(CollapsePhysics.PENDING.get(), CollapsePhysics.Pending.CODEC.parse(NbtOps.INSTANCE, saved).getOrThrow());
+            chunk.setUnsaved(true);
+            helper.assertTrue(check(position) != null, "The fixture reloads a genuine version-one grass mark through its saved NBT codec");
         }
 
         List<FallingBlockEntity> falling() { return spawned.live(FallingBlockEntity.class); }

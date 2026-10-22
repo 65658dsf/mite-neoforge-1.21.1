@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.OreBlockRules;
+import io.github.ningmeng123.mite.world.PlacementDelay;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.HashSet;
 import java.util.List;
@@ -197,6 +198,7 @@ public final class OreHarvestGameTests {
                     helper.assertTrue(f.drops().stream().allMatch(entity -> entity.getItem().is(rawMetal(id))), "Source fortune copies the matching raw metal");
                     f.clearDrops();
                     session.player().setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ore));
+                    PlacementDelay.clear(session.player());
                     var placed = session.player().gameMode.useItemOn(session.player(), helper.getLevel(), session.player().getMainHandItem(), InteractionHand.MAIN_HAND,
                             new BlockHitResult(Vec3.atCenterOf(pos.below()).add(0, .5, 0), Direction.UP, pos.below(), false));
                     helper.assertTrue(placed.consumesAction() && session.player().getMainHandItem().isEmpty(), "Native survival BlockItem placement consumes one metal ore");

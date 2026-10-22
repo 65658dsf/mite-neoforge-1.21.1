@@ -1,5 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.world.PlacementDelay;
+
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.enchantment.EnduranceActions;
 import io.github.ningmeng123.mite.enchantment.R196Enchantments;
@@ -84,6 +86,7 @@ public final class EnduranceActionGameTests {
         player.getFoodData().setExhaustion(0F);
         helper.getLevel().setBlockAndUpdate(base.above(), Blocks.AIR.defaultBlockState());
         Consumer<BlockEvent.EntityPlaceEvent> cancel = event -> { if (event.getEntity() == player) event.setCanceled(true); };
+        PlacementDelay.clear(player);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, cancel);
         try {
             var denied = player.getMainHandItem().useOn(context(player, base));

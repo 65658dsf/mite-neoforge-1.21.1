@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.registry.MiteDecorativeContent;
+import io.github.ningmeng123.mite.world.PlacementDelay;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -56,6 +57,7 @@ public final class MaterialDoorPlacementGameTests {
         for (Direction facing : Direction.Plane.HORIZONTAL) {
             for (Direction side : new Direction[]{facing.getCounterClockWise(), facing.getClockWise()}) {
                 BlockPos pos = prepare(h, facing, side);
+                PlacementDelay.clear(player);
                 player.setYRot(facing.toYRot());
                 ItemStack held = new ItemStack(door);
                 player.setItemInHand(InteractionHand.MAIN_HAND, held);

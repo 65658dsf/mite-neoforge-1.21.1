@@ -9,6 +9,7 @@ import io.github.ningmeng123.mite.registry.MiteDecorativeContent;
 import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.world.DecorativeDoorFrames;
+import io.github.ningmeng123.mite.world.PlacementDelay;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -180,6 +181,7 @@ public final class DecorativeContentGameTests {
         BlockPos pos = helper.absolutePos(SITE);
         player.moveTo(Vec3.atCenterOf(pos).add(0, 0, 2));
         for (var row : MiteDecorativeContent.BARS.entrySet()) {
+            PlacementDelay.clear(player);
             var block = row.getValue().get(); helper.setBlock(SITE, Blocks.AIR);
             helper.setBlock(SITE.below(), Blocks.STONE); helper.setBlock(SITE.north(), Blocks.STONE);
             var held = new ItemStack(block); player.setItemInHand(InteractionHand.MAIN_HAND, held);
