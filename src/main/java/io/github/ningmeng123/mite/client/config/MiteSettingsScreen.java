@@ -43,10 +43,11 @@ public final class MiteSettingsScreen extends Screen {
         var spawnRates = addRenderableWidget(Button.builder(Component.translatable("mite.config.monster_spawning"),
                 button -> minecraft.setScreen(new MonsterSpawnSettingsScreen(this, Mite.MOD_ID,
                         () -> io.github.ningmeng123.mite.config.MiteConfig.effectiveSnapshot().monsterSpawnRates(),
-                        values -> {
-                            if (!io.github.ningmeng123.mite.config.MiteConfig.saveMonsterSpawnRates(values))
-                                throw new IllegalArgumentException("Invalid monster spawn multipliers");
-                        }))).bounds(width / 2 - 130, y + 48, 260, 20).build());
+                        () -> io.github.ningmeng123.mite.config.MiteConfig.effectiveSnapshot().monsterSpawnWeights(),
+                        (rates, weights) -> {
+                            if (!io.github.ningmeng123.mite.config.MiteConfig.saveMonsterSpawnSettings(rates, weights))
+                                throw new IllegalArgumentException("Invalid monster spawn weights or multipliers");
+                        }, null))).bounds(width / 2 - 130, y + 48, 260, 20).build());
         spawnRates.setTooltip(Tooltip.create(Component.translatable("mite.config.monster_spawning.tooltip")));
         var general = addRenderableWidget(Button.builder(Component.translatable("mite.config.gameplay"),
                 button -> minecraft.setScreen(gameplayScreen())).bounds(width / 2 - 130, y + 96, 260, 20).build());

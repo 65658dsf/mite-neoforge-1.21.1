@@ -42,6 +42,8 @@ public final class MiteExtensions {
         default List<R196MobSpawning.Entry> spawnPool(SpawnContext context, BlockPos pos, List<R196MobSpawning.Entry> original) { return original; }
         /** Return the addon's own saved natural-spawn rate for a registered entity. */
         default double monsterSpawnMultiplier(EntityType<?> type, double original) { return original; }
+        /** Absolute weight of an existing natural pool candidate, before per-species multipliers. */
+        default double monsterSpawnWeight(EntityType<?> type, double original) { return original; }
         /** Configuration screens use this to keep addon-owned creatures in their own menu. */
         default boolean ownsMonsterSpawnSettings(String entityId) { return false; }
         /** Include an addon's finalization replacements in the parent family's effective weight. */

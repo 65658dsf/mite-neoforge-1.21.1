@@ -40,6 +40,14 @@ public final class ConfiguredMonsterSpawns {
         return Double.isFinite(result) && result >= 0D && result <= 100D ? result : base;
     }
 
+    public static double weight(EntityType<?> type, double fallback) {
+        var policy = MiteExtensions.policy();
+        String id = BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
+        double base = policy.ownsMonsterSpawnSettings(id) ? fallback : MiteConfig.monsterSpawnWeight(id, fallback);
+        double result = policy.monsterSpawnWeight(type, base);
+        return Double.isFinite(result) && result >= 0D && result <= 1000000D && result == Math.rint(result) ? result : base;
+    }
+
     public static double replacementProbability(double probability, double parentRate, double replacementRate) {
         return MonsterSpawnRules.replacementProbability(probability, parentRate, replacementRate);
     }
@@ -93,8 +101,9 @@ public final class ConfiguredMonsterSpawns {
                 double extended = MiteExtensions.policy().monsterSpawnWeightMultiplier(context, pos, entry.type(), rate);
                 if (Double.isFinite(extended) && extended >= 0D && extended <= 100D) rate = extended;
             }
-            weights[index] = Math.max(0, entry.weight()) * rate;
-            nativeWeights &= rate == 1D;
+            double baseWeight = weight(entry.type(), Math.max(0, entry.weight()));
+            weights[index] = baseWeight * rate;
+            nativeWeights &= rate == 1D && baseWeight == Math.max(0, entry.weight());
             nativeTotal += Math.max(0, entry.weight());
         }
         if (nativeWeights && nativeTotal > 0L && nativeTotal <= Integer.MAX_VALUE) {

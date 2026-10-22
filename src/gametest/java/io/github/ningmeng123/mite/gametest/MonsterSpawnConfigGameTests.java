@@ -7,6 +7,8 @@ import io.github.ningmeng123.mite.config.GameplayConfigExport;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.config.MonsterSpawnCatalog;
 import io.github.ningmeng123.mite.network.GameplayConfigPayload;
+import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
+import io.github.ningmeng123.mite.rules.MonsterSpawningSettings.Option;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
 import io.netty.buffer.Unpooled;
 import java.nio.file.Files;
@@ -25,6 +27,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.config.ModConfigs;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -34,6 +37,181 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class MonsterSpawnConfigGameTests {
     private MonsterSpawnConfigGameTests() {}
+
+    @GameTest(template = "empty")
+    public static void directWeightsValidateAndSaveAtomicallyWithRates(GameTestHelper helper) throws Exception {
+        for (String value : List.of("minecraft:zombie=0", "minecraft:zombie=1", "future_pack:missing=1000000"))
+            helper.assertTrue(MiteConfig.validMonsterSpawnWeightOverride(value), "Whole candidate weights are accepted: " + value);
+        for (String value : List.of("minecraft:zombie=-1", "minecraft:zombie=1.5", "minecraft:zombie=1000001",
+                "minecraft:zombie=NaN", "minecraft:zombie=Infinity", "zombie=2", "bad namespace:zombie=2", "minecraft:zombie="))
+            helper.assertFalse(MiteConfig.validMonsterSpawnWeightOverride(value), "Invalid candidate weights are rejected: " + value);
+        helper.assertFalse(MiteConfig.validMonsterSpawnWeightOverride(null), "Null weight entries are rejected");
+        try (var ignored = new Settings()) {
+            var weights = Map.of("minecraft:zombie", 30D, "future_pack:missing", 1000000D, "mite:ghoul", 0D);
+            helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", .5D), weights),
+                    "A complete rate and direct weight revision saves together");
+            helper.assertValueEqual(MiteConfig.localSnapshot().monsterSpawnWeights(), weights, "Unknown entity weights remain saved");
+            helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 30D, "Direct weight replaces the current pool's native value immediately");
+            helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:spider", 25D), 25D, "Omitted weights preserve each original pool value");
+            var published = MiteConfig.localSnapshot();
+            var storedRates = List.copyOf(MiteConfig.NATURAL_SPAWN_RATES.get());
+            var storedWeights = List.copyOf(MiteConfig.NATURAL_SPAWN_WEIGHTS.get());
+            for (double rejected : new double[]{-1D, .5D, 1000001D, Double.NaN, Double.POSITIVE_INFINITY}) {
+                helper.assertFalse(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", 2D), Map.of("minecraft:zombie", rejected)),
+                        "Invalid direct weights cannot partially save a changed rate");
+                helper.assertTrue(MiteConfig.localSnapshot() == published, "Rejected weights do not publish a partial revision");
+                helper.assertValueEqual(MiteConfig.NATURAL_SPAWN_RATES.get(), storedRates, "Rejected weights preserve stored rates");
+                helper.assertValueEqual(MiteConfig.NATURAL_SPAWN_WEIGHTS.get(), storedWeights, "Rejected weights preserve all stored weights");
+            }
+            helper.assertFalse(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", Double.NaN), Map.of("minecraft:zombie", 200D)),
+                    "Invalid rates cannot partially save changed direct weights");
+            helper.assertFalse(MiteConfig.saveMonsterSpawnSettings(Map.of(), null), "A null weight draft is rejected");
+            helper.assertTrue(MiteConfig.saveMonsterSpawnRates(Map.of("minecraft:zombie", .75D)), "The existing rate-only API still saves");
+            helper.assertValueEqual(MiteConfig.localSnapshot().monsterSpawnWeights(), weights, "Rate-only saves preserve all direct weights");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void directWeightsUseTheRealPacketCodecAndRestoreLocalPreferences(GameTestHelper helper) throws Exception {
+        try (var ignored = new Settings()) {
+            var weights = Map.of("minecraft:zombie", 0D, "future_pack:missing", 12345D);
+            helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", 2D), weights), "Server candidate weights save");
+            var server = MiteConfig.localSnapshot();
+            var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+            try {
+                GameplayConfigPayload.CODEC.encode(buffer, new GameplayConfigPayload(server));
+                var decoded = GameplayConfigPayload.CODEC.decode(buffer).snapshot();
+                helper.assertValueEqual(decoded, server, "The actual packet codec preserves direct weights and every existing component");
+                helper.assertValueEqual(buffer.readableBytes(), 0, "The complete expanded packet is consumed");
+                helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of(), Map.of("minecraft:zombie", 17D)), "Separate local candidate preferences save");
+                var local = MiteConfig.localSnapshot();
+                MiteConfig.receiveServerSnapshot(decoded);
+                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 0D, "Connected gameplay reads the authoritative server weight");
+                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("future_pack:missing", 1D), 12345D, "Authoritative unknown entity weights survive serialization");
+                helper.assertValueEqual(MiteConfig.localSnapshot(), local, "Receiving weights never overwrites local preferences");
+                MiteConfig.clearServerSnapshot();
+                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 17D, "Disconnect restores the separate local weight");
+                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("future_pack:missing", 7D), 7D, "Remote-only weights disappear after disconnect");
+            } finally { buffer.release(); MiteConfig.clearServerSnapshot(); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void directWeightsExportWithTheirRateRevisionWithoutTouchingActiveFiles(GameTestHelper helper) throws Exception {
+        try (var ignored = new Settings()) {
+            var weights = Map.of("minecraft:zombie", 25D, "mite:ghoul", 0D, "future_pack:missing", 1000000D);
+            helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", .5D), weights), "Exportable direct weights save");
+            var published = MiteConfig.localSnapshot();
+            var bundle = GameplayConfigExport.exportBundle(Files.createTempDirectory("mite-direct-weight-export-"));
+            var parsed = new TomlParser().parse(Files.readString(bundle.primaryFile()));
+            helper.assertTrue(MiteConfig.SPEC.isCorrect(parsed), "The complete weight export passes the registered configuration specification");
+            helper.assertValueEqual(parsed.get(MiteConfig.NATURAL_SPAWN_WEIGHTS.getPath()), MiteConfig.NATURAL_SPAWN_WEIGHTS.get(),
+                    "The exact sorted direct weight list is included in the server export");
+            helper.assertValueEqual(parsed.get(MiteConfig.NATURAL_SPAWN_RATES.getPath()), MiteConfig.NATURAL_SPAWN_RATES.get(),
+                    "The matching rate revision is included beside direct weights");
+            helper.assertValueEqual(MiteConfig.localSnapshot(), published, "Exporting preserves the active weight revision");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void populationAndSchedulingEditsPublishImmediatelyAndRejectPartialInvalidDrafts(GameTestHelper helper) throws Exception {
+        try (var ignored = new Settings()) {
+            var values = new HashMap<>(MonsterSpawningSettings.DEFAULTS.values());
+            values.put(Option.BASE_CAP.key(), 12D);
+            values.put(Option.BLOOD_CAP.key(), 24D);
+            values.put(Option.HOSTILE_INTERVAL_TICKS.key(), 100D);
+            values.put(Option.SURFACE_CHANCE_PERCENT.key(), 75D);
+            helper.assertTrue(MiteConfig.saveMonsterSpawningSettings(values), "Valid population and scheduling controls save together");
+            helper.assertValueEqual(MiteConfig.monsterSpawningSettings().cap(289, false, 1), 12,
+                    "The runtime snapshot observes the saved base cap immediately");
+            helper.assertValueEqual(MiteConfig.monsterSpawningSettings().probability(false, 1F, false), .75F,
+                    "The next pass uses the new percentage without a config reload");
+            helper.assertFalse(MiteConfig.monsterSpawningSettings().ready(105, 100), "An active long interval is still waiting");
+            values.put(Option.HOSTILE_INTERVAL_TICKS.key(), 5D);
+            helper.assertTrue(MiteConfig.saveMonsterSpawningSettings(values), "The interval can change during an existing wait");
+            helper.assertTrue(MiteConfig.monsterSpawningSettings().ready(105, 100), "Shortening the interval releases the existing wait immediately");
+            if (!ModList.get().isLoaded("modern_ite")) {
+                helper.assertValueEqual(R196MobSpawning.monsterLimit(helper.getLevel(), false, 289, false), 12,
+                        "The real natural spawning runtime reads the edited cap");
+                helper.assertValueEqual(R196MobSpawning.monsterLimit(helper.getLevel(), true, 289, true), 24,
+                        "Both height passes read the edited blood population budget");
+            }
+            var before = MiteConfig.localSnapshot();
+            var persisted = new LinkedHashMap<Option, Object>();
+            MiteConfig.SPAWNING_CONTROLS.forEach((option, setting) -> persisted.put(option, setting.get()));
+            for (double rejected : new double[]{Double.NaN, Double.POSITIVE_INFINITY, -1D, 1.5D, 100001D}) {
+                var invalid = new HashMap<>(values);
+                invalid.put(Option.BASE_CAP.key(), rejected);
+                invalid.put(Option.BLOOD_CAP.key(), 99D);
+                helper.assertFalse(MiteConfig.saveMonsterSpawningSettings(invalid), "An invalid control cannot partially save: " + rejected);
+                helper.assertTrue(MiteConfig.localSnapshot() == before, "Rejected controls do not publish a new revision");
+                MiteConfig.SPAWNING_CONTROLS.forEach((option, setting) -> helper.assertValueEqual(setting.get(), persisted.get(option),
+                        "Rejected controls preserve every stored value: " + option.key()));
+            }
+            helper.assertFalse(MiteConfig.saveMonsterSpawningSettings(null), "A null control draft is rejected");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void populationAndSchedulingUseTheRealPacketCodecAndServerAuthority(GameTestHelper helper) throws Exception {
+        try (var ignored = new Settings()) {
+            var controls = new HashMap<>(MonsterSpawningSettings.DEFAULTS.values());
+            controls.put(Option.BASE_CAP.key(), 30D);
+            controls.put(Option.DAILY_CAP_INCREASE.key(), .5D);
+            controls.put(Option.MAXIMUM_CAP.key(), 50D);
+            controls.put(Option.HOSTILE_INTERVAL_TICKS.key(), 20D);
+            helper.assertTrue(MiteConfig.saveMonsterSpawningSettings(controls), "Server spawning controls save");
+            var authoritative = MiteConfig.localSnapshot();
+            var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+            try {
+                GameplayConfigPayload.CODEC.encode(buffer, new GameplayConfigPayload(authoritative));
+                var received = GameplayConfigPayload.CODEC.decode(buffer).snapshot();
+                helper.assertValueEqual(received, authoritative, "All population and scheduling controls survive the actual packet codec");
+                helper.assertValueEqual(buffer.readableBytes(), 0, "The packet decoder consumes the complete spawning snapshot");
+                helper.assertTrue(MiteConfig.saveMonsterSpawningSettings(MonsterSpawningSettings.DEFAULTS.values()), "Separate local defaults save");
+                var local = MiteConfig.localSnapshot();
+                MiteConfig.receiveServerSnapshot(received);
+                helper.assertValueEqual(MiteConfig.monsterSpawningSettings(), authoritative.spawningSettings(),
+                        "The connected settings browser reads the server's population and scheduling controls");
+                helper.assertValueEqual(MiteConfig.monsterSpawningSettings().cap(289, false, 101), 50,
+                        "Authoritative daily growth and its ceiling apply together");
+                helper.assertValueEqual(MiteConfig.localSnapshot(), local, "Server authority preserves the client's local preferences");
+                MiteConfig.clearServerSnapshot();
+                helper.assertValueEqual(MiteConfig.monsterSpawningSettings(), MonsterSpawningSettings.DEFAULTS,
+                        "Disconnect restores local population and scheduling preferences");
+            } finally { buffer.release(); MiteConfig.clearServerSnapshot(); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void exportedPopulationAndSchedulingControlsRetainExactValues(GameTestHelper helper) throws Exception {
+        try (var ignored = new Settings()) {
+            var controls = new HashMap<>(MonsterSpawningSettings.DEFAULTS.values());
+            controls.put(Option.BASE_CAP.key(), 180D);
+            controls.put(Option.DAILY_CAP_INCREASE.key(), 1.25D);
+            controls.put(Option.MAXIMUM_CAP.key(), 300D);
+            controls.put(Option.HOSTILE_INTERVAL_TICKS.key(), 40D);
+            controls.put(Option.DIMENSION_CHANCE_MULTIPLIER.key(), .375D);
+            helper.assertTrue(MiteConfig.saveMonsterSpawningSettings(controls), "Non-default population controls save");
+            var published = MiteConfig.localSnapshot();
+            Path directory = Files.createTempDirectory("mite-population-export-");
+            var bundle = GameplayConfigExport.exportBundle(directory);
+            var parsed = new TomlParser().parse(Files.readString(bundle.primaryFile()));
+            helper.assertTrue(MiteConfig.SPEC.isCorrect(parsed), "The export with population controls passes the actual configuration specification");
+            for (var option : Option.values()) {
+                Number exported = parsed.get(MiteConfig.SPAWNING_CONTROLS.get(option).getPath());
+                helper.assertValueEqual(exported.doubleValue(), controls.get(option.key()),
+                        "The exported control preserves its exact editor value: " + option.key());
+            }
+            helper.assertValueEqual(MiteConfig.localSnapshot(), published, "Exporting preserves the effective spawning revision");
+        }
+        helper.succeed();
+    }
 
     @GameTest(template = "empty")
     public static void spawnRatesValidateBoundariesAndPreserveUnregisteredEntityIds(GameTestHelper helper) throws Exception {

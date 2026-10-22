@@ -47,6 +47,78 @@ public final class MonsterSpawnRuntimeGameTests {
     private MonsterSpawnRuntimeGameTests() {}
 
     @GameTest(template = "empty")
+    public static void absoluteWeightsReplaceEachPoolsNativeWeightsAndStillMultiplyRates(GameTestHelper helper) {
+        try (var settings = new Settings(helper)) {
+            settings.rates(List.of());
+            settings.weights(List.of("minecraft:silverfish=2", "minecraft:spider=6"));
+            var firstPool = List.of(new R196MobSpawning.Entry(EntityType.SILVERFISH, "tq", Category.MONSTER, 1000, 1, 1, 1, false),
+                    new R196MobSpawning.Entry(EntityType.SPIDER, "tt", Category.MONSTER, 1, 1, 1, 1, false));
+            var secondPool = List.of(new R196MobSpawning.Entry(EntityType.SILVERFISH, "tq", Category.MONSTER, 3, 1, 1, 1, false),
+                    new R196MobSpawning.Entry(EntityType.SPIDER, "tt", Category.MONSTER, 400, 1, 1, 1, false));
+            var firstRandom = RandomSource.create(538297L); var secondRandom = RandomSource.create(538297L);
+            int silverfish = 0;
+            for (int draw = 0; draw < 4000; draw++) {
+                var first = ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER, firstPool, firstRandom, true);
+                var second = ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER, secondPool, secondRandom, true);
+                helper.assertTrue(first != null && second != null && first.type() == second.type(),
+                        "The same absolute overrides replace both pools' different native weights");
+                if (first.type() == EntityType.SILVERFISH) silverfish++;
+            }
+            helper.assertTrue(silverfish > 850 && silverfish < 1150, "Weights 2:6 produce a quarter pool share: " + silverfish);
+            helper.assertValueEqual(firstPool.getFirst().weight(), 1000, "Selecting with overrides preserves original source metadata");
+            helper.assertValueEqual(ConfiguredMonsterSpawns.weight(EntityType.SILVERFISH, 1000D), 2D, "Runtime weight resolution returns the direct override");
+            settings.rates(List.of("minecraft:silverfish=3"));
+            silverfish = 0;
+            var multiplied = RandomSource.create(934264L);
+            for (int draw = 0; draw < 4000; draw++)
+                if (ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER, firstPool, multiplied, true).type()
+                        == EntityType.SILVERFISH) silverfish++;
+            helper.assertTrue(silverfish > 1850 && silverfish < 2150, "Saved rate 3 multiplies the direct weight 2 into the expected 6:6 share: " + silverfish);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void zeroCandidateWeightsCloseFamiliesWithoutCreatingMissingNaturalEntries(GameTestHelper helper) {
+        try (var settings = new Settings(helper)) {
+            settings.rates(List.of("minecraft:creeper=0", "mite:infernal_creeper=1"));
+            var level = helper.getLevel().getServer().getLevel(MiteWorldDimensions.UNDERWORLD);
+            var entry = new R196MobSpawning.Entry(EntityType.CREEPER, "tf", Category.MONSTER, 100, 1, 1, 1, false);
+            var random = RandomSource.create(93254L);
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, new BlockPos(0, -32, 0), Category.MONSTER,
+                    List.of(entry), random, true) == entry, "An enabled variant keeps its parent candidate while only the parent rate is zero");
+            settings.weights(List.of("minecraft:creeper=0", "minecraft:zombie=1000000"));
+            var emptyRandom = RandomSource.create(81235L); var unchanged = RandomSource.create(81235L);
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, new BlockPos(0, -32, 0), Category.MONSTER,
+                    List.of(entry), emptyRandom, true) == null, "Zero candidate weight closes that entire family despite an enabled replacement rate");
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, BlockPos.ZERO, Category.MONSTER,
+                    List.of(), emptyRandom, true) == null, "A positive saved weight cannot invent an absent natural pool entry");
+            helper.assertValueEqual(emptyRandom.nextLong(), unchanged.nextLong(), "Zero and empty pools do not consume invalid lottery draws");
+            helper.assertValueEqual(ConfiguredMonsterSpawns.multiplier(MiteMobs.type(MobKind.INFERNAL_CREEPER)), 1D,
+                    "Candidate overrides preserve independent final-species rate semantics");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void explicitNativeWeightsRetainTheExistingIntegerRandomStream(GameTestHelper helper) {
+        try (var settings = new Settings(helper)) {
+            settings.rates(List.of());
+            settings.weights(List.of("minecraft:silverfish=40", "minecraft:spider=20"));
+            var entries = List.of(new R196MobSpawning.Entry(EntityType.SILVERFISH, "tq", Category.MONSTER, 40, 1, 1, 1, false),
+                    new R196MobSpawning.Entry(EntityType.SPIDER, "tt", Category.MONSTER, 20, 1, 1, 1, false));
+            var configured = RandomSource.create(78345L); var original = RandomSource.create(78345L);
+            for (int draw = 0; draw < 256; draw++) {
+                var expected = original.nextInt(60) < 40 ? entries.getFirst() : entries.getLast();
+                helper.assertTrue(ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER,
+                        entries, configured, true) == expected, "An override equal to the original weight retains the native integer lottery");
+            }
+            helper.assertValueEqual(configured.nextLong(), original.nextLong(), "Unchanged explicit weights introduce no additional random draws");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void defaultPoolUsesExactlyTheOriginalIntegerLottery(GameTestHelper helper) {
         try (var settings = new Settings(helper)) {
             settings.rates(List.of());
@@ -237,6 +309,7 @@ public final class MonsterSpawnRuntimeGameTests {
 
     private static final class Settings implements AutoCloseable {
         private final List<? extends String> original = List.copyOf(MiteConfig.NATURAL_SPAWN_RATES.get());
+        private final List<? extends String> originalWeights = List.copyOf(MiteConfig.NATURAL_SPAWN_WEIGHTS.get());
         private final MiteConfig.Snapshot remote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot()
                 ? null : MiteConfig.effectiveSnapshot();
         private final OptionalIte ite;
@@ -247,6 +320,7 @@ public final class MonsterSpawnRuntimeGameTests {
             var underworld = helper.getLevel().getServer().getLevel(MiteWorldDimensions.UNDERWORLD);
             if (underworld != null) underworld.getChunk(0, 0);
             ite = OptionalIte.create(helper);
+            MiteConfig.NATURAL_SPAWN_WEIGHTS.set(List.of()); MiteConfig.refreshEnchantmentRules();
         }
         private void rates(List<String> rates) {
             if (ite != null) ite.rates(rates);
@@ -255,8 +329,13 @@ public final class MonsterSpawnRuntimeGameTests {
             // local saving/reloading independently, including queued native file-watcher work.
             MiteConfig.receiveServerSnapshot(MiteConfig.localSnapshot());
         }
+        private void weights(List<String> weights) {
+            MiteConfig.NATURAL_SPAWN_WEIGHTS.set(List.copyOf(weights)); MiteConfig.refreshEnchantmentRules();
+            MiteConfig.receiveServerSnapshot(MiteConfig.localSnapshot());
+        }
         @Override public void close() {
-            MiteConfig.NATURAL_SPAWN_RATES.set(original); MiteConfig.refreshEnchantmentRules();
+            MiteConfig.NATURAL_SPAWN_RATES.set(original); MiteConfig.NATURAL_SPAWN_WEIGHTS.set(originalWeights);
+            MiteConfig.refreshEnchantmentRules();
             MiteConfig.clearServerSnapshot();
             if (remote != null) MiteConfig.receiveServerSnapshot(remote);
             if (ite != null) ite.close();

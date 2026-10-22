@@ -5,6 +5,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Independent mass, endpoint and fractional-weight checks for editable spawn rates. @author NingMeng123 */
 class MonsterSpawnRulesTest {
+    @Test void candidateWeightAndFinalSpeciesRatesComposeWithoutChangingTheReplacementLottery() {
+        double candidate = 40D, probability = .25D, parentRate = .5D, variantRate = 2D;
+        double total = candidate * MonsterSpawnRules.familyMultiplier(probability, parentRate, variantRate);
+        double replacement = MonsterSpawnRules.replacementProbability(probability, parentRate, variantRate);
+        assertEquals(15D, total * (1D - replacement), 1E-12D);
+        assertEquals(20D, total * replacement, 1E-12D);
+        assertEquals(0, MonsterSpawnRules.weightedIndex(new double[]{total, 35D}, .25D));
+        assertEquals(1, MonsterSpawnRules.weightedIndex(new double[]{total, 35D}, .75D));
+        assertEquals(-1, MonsterSpawnRules.weightedIndex(new double[]{0D * total}, .5D));
+    }
+
     @Test void replacementFamilyConservesEachSpeciesWeightedMass() {
         for (double probability : new double[]{0D, .05D, 1D / 6D, .5D, 1D})
             for (double parent : new double[]{0D, .000001D, 1D, 100D})

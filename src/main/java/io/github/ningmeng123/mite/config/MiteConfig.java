@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.rules.R196OreRules;
 import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.GrowthFormula;
 import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
+import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -44,6 +45,9 @@ public final class MiteConfig {
     public static final ModConfigSpec.BooleanValue HEIGHT_REACH_PENALTY, UNDERWORLD_TRIALS, OVERWORLD_TRIALS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS, ENCHANTMENT_CHANCES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_RATES;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_WEIGHTS;
+    public static final Map<MonsterSpawningSettings.Option, ModConfigSpec.ConfigValue<? extends Number>> SPAWNING_CONTROLS =
+            new EnumMap<>(MonsterSpawningSettings.Option.class);
     private static volatile Snapshot local;
     private static volatile Snapshot remote;
 
@@ -120,6 +124,16 @@ public final class MiteConfig {
         NATURAL_SPAWN_RATES = builder.translation("mite.config.natural_spawn_rates")
                 .comment("Natural spawn weight overrides: namespace:entity=multiplier (0..100). 1 preserves the original weight; 0 disables natural spawning of that entity. Unknown IDs are retained. Existing biome, date, depth, population and spawn rules still apply. ITE-owned entities use the ITE configuration instead.")
                 .defineListAllowEmpty(List.of("rates"), List::of, () -> "minecraft:zombie=1.0", MiteConfig::validMonsterSpawnOverride);
+        NATURAL_SPAWN_WEIGHTS = builder.translation("mite.config.natural_spawn_weights")
+                .comment("Absolute natural pool weight overrides: namespace:entity=integer (0..1000000). Omitted IDs retain each pool's original weight; overrides replace the weight in every existing candidate pool, before rate multipliers. 0 removes that candidate family, including its conversion branches. Does not add spawn entries or bypass date, biome, dimension or population rules. ITE-owned entities use ITE settings.")
+                .defineListAllowEmpty(List.of("weights"), List::of, () -> "minecraft:zombie=100", MiteConfig::validMonsterSpawnWeightOverride);
+        for (var option : MonsterSpawningSettings.Option.values()) {
+            builder.translation("mite.config.spawning_rules." + option.key())
+                    .comment("Live natural spawning control. Population caps are per 289 eligible chunks; day 1 has no daily increase. maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second). Chances are percentages. ITE owns population caps when installed.");
+            SPAWNING_CONTROLS.put(option, option.wholeNumber()
+                    ? builder.defineInRange(option.key(), (int)option.defaultValue(), (int)option.minimum(), (int)option.maximum())
+                    : builder.defineInRange(option.key(), option.defaultValue(), option.minimum(), option.maximum()));
+        }
         builder.pop();
         builder.translation("mite.config.combat").push("combat");
         WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Survival melee attack reach multiplier. Original MITE weapons keep source reach; Simply Swords weapons use their own Better Combat base range. Creative reach remains unchanged.");
@@ -222,16 +236,67 @@ public final class MiteConfig {
         return Map.copyOf(valid);
     }
 
+    public static boolean validMonsterSpawnWeightOverride(Object input) {
+        if (!(input instanceof String entry)) return false;
+        int separator = entry.indexOf('=');
+        if (separator < 0 || !validEnchantmentId(entry.substring(0, separator))) return false;
+        try { return validMonsterSpawnWeight(Double.parseDouble(entry.substring(separator + 1))); }
+        catch (NumberFormatException ignored) { return false; }
+    }
+
+    private static boolean validMonsterSpawnWeight(Double weight) {
+        return weight != null && Double.isFinite(weight) && weight >= 0D && weight <= 1000000D && weight == Math.rint(weight);
+    }
+
+    private static Map<String, Double> spawnWeightOverrides(Map<String, Double> values) {
+        if (values == null) return Map.of();
+        var valid = new HashMap<String, Double>();
+        values.forEach((id, weight) -> {
+            if (validEnchantmentId(id) && validMonsterSpawnWeight(weight)) valid.put(id, weight);
+        });
+        return Map.copyOf(valid);
+    }
+
     public static double monsterSpawnMultiplier(String entityId) {
         return effectiveSnapshot().monsterSpawnRates().getOrDefault(entityId, 1D);
     }
 
-    public static boolean saveMonsterSpawnRates(Map<String, Double> values) {
-        if (values == null || spawnRateOverrides(values).size() != values.size()) return false;
-        NATURAL_SPAWN_RATES.set(values.entrySet().stream().filter(entry -> entry.getValue() != 1D)
-                .sorted(Map.Entry.comparingByKey()).map(entry -> entry.getKey() + "=" + entry.getValue()).toList());
+    public static double monsterSpawnWeight(String entityId, double fallback) {
+        return effectiveSnapshot().monsterSpawnWeights().getOrDefault(entityId, fallback);
+    }
+
+    public static MonsterSpawningSettings.Settings monsterSpawningSettings() { return effectiveSnapshot().spawningSettings(); }
+
+    public static boolean saveMonsterSpawningSettings(Map<String, Double> values) {
+        if (values == null) return false;
+        final MonsterSpawningSettings.Settings settings;
+        try { settings = MonsterSpawningSettings.Settings.from(values); }
+        catch (IllegalArgumentException exception) { return false; }
+        for (var option : MonsterSpawningSettings.Option.values()) {
+            var setting = SPAWNING_CONTROLS.get(option);
+            if (setting instanceof ModConfigSpec.IntValue integer) integer.set((int)settings.value(option));
+            else if (setting instanceof ModConfigSpec.DoubleValue decimal) decimal.set(settings.value(option));
+        }
         refreshEnchantmentRules();
         SPEC.save();
+        GameplayConfigSync.broadcast();
+        return true;
+    }
+
+    public static boolean saveMonsterSpawnRates(Map<String, Double> values) {
+        return saveMonsterSpawnSettings(values, localSnapshot().monsterSpawnWeights());
+    }
+
+    public static boolean saveMonsterSpawnSettings(Map<String, Double> rates, Map<String, Double> weights) {
+        if (rates == null || weights == null || spawnRateOverrides(rates).size() != rates.size()
+                || spawnWeightOverrides(weights).size() != weights.size()) return false;
+        NATURAL_SPAWN_RATES.set(rates.entrySet().stream().filter(entry -> entry.getValue() != 1D)
+                .sorted(Map.Entry.comparingByKey()).map(entry -> entry.getKey() + "=" + entry.getValue()).toList());
+        NATURAL_SPAWN_WEIGHTS.set(weights.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .map(entry -> entry.getKey() + "=" + entry.getValue().longValue()).toList());
+        refreshEnchantmentRules();
+        SPEC.save();
+        GameplayConfigSync.broadcast();
         return true;
     }
 
@@ -358,7 +423,8 @@ public final class MiteConfig {
             MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
             Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
             Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
-            Map<String, String> oreHeights, Map<String, String> overworldOreHeights) {
+            Map<String, String> oreHeights, Map<String, String> overworldOreHeights,
+            MonsterSpawningSettings.Settings spawningSettings, Map<String, Double> monsterSpawnWeights) {
         public Snapshot {
             ores = Map.copyOf(ores);
             caps = Map.copyOf(caps);
@@ -373,6 +439,33 @@ public final class MiteConfig {
             monsterSpawnRates = spawnRateOverrides(monsterSpawnRates);
             oreHeights = heightOverrides(oreHeights);
             overworldOreHeights = heightOverrides(overworldOreHeights);
+            spawningSettings = spawningSettings == null ? MonsterSpawningSettings.DEFAULTS : spawningSettings;
+            monsterSpawnWeights = spawnWeightOverrides(monsterSpawnWeights);
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
+                Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
+                Map<String, String> oreHeights, Map<String, String> overworldOreHeights,
+                MonsterSpawningSettings.Settings spawningSettings) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, overworldOres, enchantmentChances, monsterSpawnRates,
+                    oreHeights, overworldOreHeights, spawningSettings, Map.of());
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
+                Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
+                Map<String, String> oreHeights, Map<String, String> overworldOreHeights) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, overworldOres, enchantmentChances, monsterSpawnRates,
+                    oreHeights, overworldOreHeights, MonsterSpawningSettings.DEFAULTS);
         }
         public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
                 double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
@@ -428,6 +521,11 @@ public final class MiteConfig {
     }
 
     private static Snapshot readLocalSnapshot() {
+        var spawnWeights = new HashMap<String, Double>();
+        for (String entry : value(NATURAL_SPAWN_WEIGHTS)) if (validMonsterSpawnWeightOverride(entry)) {
+            int split = entry.indexOf('=');
+            spawnWeights.put(entry.substring(0, split), Double.parseDouble(entry.substring(split + 1)));
+        }
         var spawnRates = new HashMap<String, Double>();
         for (String entry : value(NATURAL_SPAWN_RATES)) if (validMonsterSpawnOverride(entry)) {
             int split = entry.indexOf('=');
@@ -481,7 +579,13 @@ public final class MiteConfig {
                 value(UNDERWORLD_TRIALS), value(OVERWORLD_TRIALS), caps, new HashSet<>(value(DISABLED_ENCHANTMENTS)), growth, candidates, chances,
                 surfaceCandidates, surfaceChances, surfaceMultipliers, enchantmentChances, spawnRates,
                 readHeights(UNDERWORLD_ORE_HEIGHTS, UNDERWORLD_DEEPSLATE_ORE_HEIGHTS),
-                readHeights(OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS));
+                readHeights(OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS), readSpawningSettings(), spawnWeights);
+    }
+
+    private static MonsterSpawningSettings.Settings readSpawningSettings() {
+        var values = new HashMap<String, Double>();
+        SPAWNING_CONTROLS.forEach((option, setting) -> values.put(option.key(), value(setting).doubleValue()));
+        return MonsterSpawningSettings.Settings.from(values);
     }
 
     private static Map<String, String> readHeights(Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> regular,

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -30,17 +31,23 @@ public final class MonsterSpawnSettingsScreen extends Screen {
     private record VisibleRow(MonsterSpawnCatalog.Entry entry, int y) {}
     private final Screen parent;
     private final boolean editable;
-    private final Consumer<Map<String, Double>> saveValues;
+    private final boolean hasSpawningRules;
+    private final boolean weightMode;
+    private final BiConsumer<Map<String, Double>, Map<String, Double>> saveValues;
     private final List<MonsterSpawnCatalog.Entry> entries = new ArrayList<>();
     private final List<VisibleRow> visible = new ArrayList<>();
     private final Map<String, Double> values;
+    private final Map<String, Double> weightValues;
     private final Map<String, String> drafts = new HashMap<>();
+    private final Map<String, String> weightDrafts = new HashMap<>();
     private final Set<String> invalid = new HashSet<>();
+    private final Set<String> invalidWeights = new HashSet<>();
     private String query = "";
     private int page;
     private int pageCount;
     private EditBox search;
     private Button save;
+    private Button spawningRules;
     private Component failure;
 
     public MonsterSpawnSettingsScreen(Screen parent, String ownerModId,
@@ -51,38 +58,57 @@ public final class MonsterSpawnSettingsScreen extends Screen {
     public MonsterSpawnSettingsScreen(Screen parent, String ownerModId,
             Supplier<Map<String, Double>> values, Consumer<Map<String, Double>> save,
             Function<EntityType<?>, List<Integer>> nativeWeights) {
+        this(parent, ownerModId, values, null, (rates, weights) -> save.accept(rates), nativeWeights);
+    }
+
+    public MonsterSpawnSettingsScreen(Screen parent, String ownerModId,
+            Supplier<Map<String, Double>> rates, Supplier<Map<String, Double>> weights,
+            BiConsumer<Map<String, Double>, Map<String, Double>> save,
+            Function<EntityType<?>, List<Integer>> nativeWeights) {
         super(Component.translatable("mite.config.monster_spawn_title", ModList.get().getModContainerById(ownerModId)
                 .map(container -> container.getModInfo().getDisplayName()).orElse(ownerModId)));
         this.parent = parent;
         this.editable = MiteConfigClient.editable();
+        this.hasSpawningRules = "mite".equals(ownerModId);
+        this.weightMode = weights != null;
         this.saveValues = save;
-        this.values = new HashMap<>(values.get());
+        this.values = new HashMap<>(rates.get());
+        this.weightValues = new HashMap<>(weights == null ? Map.of() : weights.get());
         var level = Minecraft.getInstance().level;
         var known = new HashMap<String, MonsterSpawnCatalog.Entry>();
         for (var entry : MonsterSpawnCatalog.entries(ownerModId, level == null ? RegistryAccess.EMPTY : level.registryAccess())) {
-            List<Integer> weights = nativeWeights == null ? entry.baseWeights() : nativeWeights.apply(entry.type());
+            List<Integer> nativePoolWeights = nativeWeights == null ? entry.baseWeights() : nativeWeights.apply(entry.type());
             known.put(entry.id(), new MonsterSpawnCatalog.Entry(entry.id(), entry.name(), entry.type(),
-                    weights == null ? List.of() : weights.stream().distinct().sorted().toList()));
+                    nativePoolWeights == null ? List.of() : nativePoolWeights.stream().distinct().sorted().toList()));
         }
         this.values.keySet().stream().filter(id -> MonsterSpawnCatalog.ownedBy(ownerModId, id)).forEach(id ->
+                known.putIfAbsent(id, new MonsterSpawnCatalog.Entry(id, Component.literal(id), null, List.of())));
+        this.weightValues.keySet().stream().filter(id -> MonsterSpawnCatalog.ownedBy(ownerModId, id)).forEach(id ->
                 known.putIfAbsent(id, new MonsterSpawnCatalog.Entry(id, Component.literal(id), null, List.of())));
         entries.addAll(known.values());
         entries.sort(Comparator.comparing(MonsterSpawnCatalog.Entry::id));
     }
 
     @Override protected void init() {
-        search = addRenderableWidget(new EditBox(font, 12, 33, Math.max(100, width - 24), 20,
+        int searchY = 33;
+        search = addRenderableWidget(new EditBox(font, 12, searchY, Math.max(100, width - (hasSpawningRules ? 142 : 24)), 20,
                 Component.translatable("mite.config.monster_spawn_search")));
         search.setMaxLength(200);
         search.setHint(Component.translatable("mite.config.monster_spawn_search"));
         search.setValue(query);
         search.setResponder(value -> { query = value; page = 0; rebuildRows(); });
+        if (hasSpawningRules) {
+            spawningRules = addRenderableWidget(Button.builder(Component.translatable("mite.config.spawning_rules.button"),
+                    button -> minecraft.setScreen(new MonsterSpawningRulesScreen(this)))
+                    .bounds(width - 124, searchY, 112, 20).build());
+            spawningRules.setTooltip(Tooltip.create(Component.translatable("mite.config.spawning_rules.button.tooltip")));
+        }
         rebuildRows();
     }
 
     private void rebuildRows() {
         if (getFocused() != search) setFocused(null);
-        for (var child : List.copyOf(children())) if (child != search) removeWidget(child);
+        for (var child : List.copyOf(children())) if (child != search && child != spawningRules) removeWidget(child);
         visible.clear();
         String filter = query.toLowerCase(Locale.ROOT);
         var filtered = entries.stream().filter(entry -> entry.id().contains(filter)
@@ -95,37 +121,54 @@ public final class MonsterSpawnSettingsScreen extends Screen {
             var entry = filtered.get(index);
             int y = 75 + (index - page * rows) * 52;
             visible.add(new VisibleRow(entry, y));
-            var box = new EditBox(font, width - 124, y, 61, 20, Component.translatable("mite.config.monster_spawn_percent"));
+            boolean editingWeight = weightMode;
+            var activeValues = editingWeight ? weightValues : values;
+            var activeDrafts = editingWeight ? weightDrafts : drafts;
+            var activeInvalid = editingWeight ? invalidWeights : invalid;
+            String columnKey = editingWeight ? "mite.config.monster_spawn_weight" : "mite.config.monster_spawn_percent";
+            var box = new EditBox(font, width - 124, y, 61, 20, Component.translatable(columnKey));
             box.setMaxLength(32);
-            box.setValue(drafts.getOrDefault(entry.id(), number(this.values.getOrDefault(entry.id(), 1D) * 100D)));
-            box.setEditable(editable);
-            box.setTextColor(invalid.contains(entry.id()) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
-            box.setTooltip(Tooltip.create(Component.translatable("mite.config.monster_spawn_percent.tooltip")));
+            box.setValue(activeDrafts.getOrDefault(entry.id(), editingWeight
+                    ? weightValues.containsKey(entry.id()) ? number(weightValues.get(entry.id()) * values.getOrDefault(entry.id(), 1D)) : ""
+                    : number(values.getOrDefault(entry.id(), 1D) * 100D)));
+            if (editingWeight) box.setHint(Component.translatable(supportsWeight(entry)
+                    ? "mite.config.monster_spawn_weight_inherit" : "mite.config.monster_spawn_weight_unavailable"));
+            box.setEditable(editable && (!editingWeight || supportsWeight(entry)));
+            box.setTextColor(activeInvalid.contains(entry.id()) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
+            box.setTooltip(Tooltip.create(Component.translatable(editingWeight && !supportsWeight(entry)
+                    ? "mite.config.monster_spawn_weight_unavailable.tooltip" : columnKey + ".tooltip")));
             box.setResponder(value -> {
-                drafts.put(entry.id(), value);
+                activeDrafts.put(entry.id(), value);
                 failure = null;
                 try {
-                    double percent = Double.parseDouble(value);
-                    if (!Double.isFinite(percent) || percent < 0D || percent > 10000D) throw new NumberFormatException();
-                    if (percent == 100D) this.values.remove(entry.id());
-                    else this.values.put(entry.id(), percent / 100D);
-                    invalid.remove(entry.id());
+                    if (editingWeight && value.isBlank()) setWeight(entry.id(), null);
+                    else {
+                        double number = Double.parseDouble(value.trim());
+                        if (!Double.isFinite(number) || number < 0D || number > (editingWeight ? 1000000D : 10000D)
+                                || editingWeight && number != Math.rint(number)) throw new NumberFormatException();
+                        if (editingWeight) setWeight(entry.id(), number);
+                        else if (number == 100D) activeValues.remove(entry.id());
+                        else activeValues.put(entry.id(), number / 100D);
+                    }
+                    activeInvalid.remove(entry.id());
                     box.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
                 } catch (NumberFormatException exception) {
-                    invalid.add(entry.id());
+                    activeInvalid.add(entry.id());
                     box.setTextColor(0xFFFF5555);
                 }
                 updateSave();
             });
             addRenderableWidget(box);
             var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
-                this.values.remove(entry.id());
-                drafts.remove(entry.id());
-                invalid.remove(entry.id());
+                if (editingWeight) setWeight(entry.id(), null);
+                else activeValues.remove(entry.id());
+                activeDrafts.remove(entry.id());
+                activeInvalid.remove(entry.id());
                 failure = null;
                 rebuildRows();
             }).bounds(width - 58, y, 46, 20).build());
             reset.active = editable;
+            reset.setTooltip(Tooltip.create(Component.translatable("mite.config.monster_spawn_reset.tooltip")));
         }
         int pageButtonWidth = Math.min(90, Math.max(60, width / 4));
         var previous = addRenderableWidget(Button.builder(Component.literal("<"), button -> { page--; rebuildRows(); })
@@ -143,15 +186,16 @@ public final class MonsterSpawnSettingsScreen extends Screen {
 
     private void updateSave() {
         if (save == null) return;
-        save.active = editable && invalid.isEmpty() && failure == null;
+        save.active = editable && validDrafts() && failure == null;
         save.setTooltip(Tooltip.create(failure != null ? failure : Component.translatable(!editable
-                ? "mite.config.server_owned" : invalid.isEmpty() ? "mite.config.monster_spawn_save_hint" : "mite.config.monster_spawn_invalid")));
+                ? "mite.config.server_owned" : validDrafts() ? "mite.config.monster_spawn_save_hint"
+                        : weightMode ? "mite.config.monster_spawn_weight_invalid" : "mite.config.monster_spawn_invalid")));
     }
 
     private void save() {
-        if (!MiteConfigClient.editable() || !invalid.isEmpty()) return;
+        if (!MiteConfigClient.editable() || !validDrafts()) return;
         try {
-            saveValues.accept(Map.copyOf(values));
+            saveValues.accept(Map.copyOf(values), Map.copyOf(weightValues));
             minecraft.setScreen(parent);
         } catch (RuntimeException exception) {
             failure = Component.literal(exception.getMessage() == null ? exception.getClass().getSimpleName() : exception.getMessage());
@@ -162,20 +206,23 @@ public final class MonsterSpawnSettingsScreen extends Screen {
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         graphics.drawCenteredString(font, title, width / 2, 11, 0xFFFFFF);
-        graphics.drawString(font, Component.translatable("mite.config.monster_spawn_name"), 12, 60, 0xCCCCCC);
-        graphics.drawString(font, Component.translatable("mite.config.monster_spawn_percent"), width - 124, 60, 0xCCCCCC);
+        int headingY = 60;
+        graphics.drawString(font, Component.translatable("mite.config.monster_spawn_name"), 12, headingY, 0xCCCCCC);
+        graphics.drawString(font, Component.translatable(weightMode ? "mite.config.monster_spawn_weight" : "mite.config.monster_spawn_percent"), width - 124, headingY, 0xCCCCCC);
         for (var row : visible) {
             var entry = row.entry();
             int nameWidth = Math.max(20, width - 146);
             graphics.drawString(font, font.plainSubstrByWidth(entry.name().getString(), nameWidth), 12, row.y() + 2, 0xFFFFFF);
             graphics.drawString(font, font.plainSubstrByWidth(entry.id(), nameWidth), 12, row.y() + 14, 0x999999);
-            Component baseline = entry.baseWeights().isEmpty() ? Component.translatable("mite.config.monster_spawn_conditional")
+            Component baseline = !supportsWeight(entry) ? Component.translatable("mite.config.monster_spawn_conditional")
+                    : weightMode ? Component.translatable("mite.config.monster_spawn_effective_weight", effectiveWeights(entry),
+                            entry.baseWeights().stream().map(Object::toString).collect(java.util.stream.Collectors.joining(" / ")))
                     : Component.translatable("mite.config.monster_spawn_baseline", entry.baseWeights().stream()
                             .map(Object::toString).collect(java.util.stream.Collectors.joining(" / ")));
             graphics.drawString(font, font.plainSubstrByWidth(baseline.getString(), width - 24), 12, row.y() + 30, 0xBBBBBB);
         }
         int y = height - 86;
-        for (var line : font.split(Component.translatable("mite.config.monster_spawn_hint"), width - 24).stream().limit(2).toList()) {
+        for (var line : font.split(Component.translatable(weightMode ? "mite.config.monster_spawn_weight_hint" : "mite.config.monster_spawn_hint"), width - 24).stream().limit(2).toList()) {
             graphics.drawString(font, line, 12, y, 0xAAAAAA);
             y += font.lineHeight + 2;
         }
@@ -186,6 +233,22 @@ public final class MonsterSpawnSettingsScreen extends Screen {
                     .append(Component.translatable("mite.config.monster_spawn_details")), mouseX, mouseY);
     }
 
+    /** Editing or resetting a direct weight replaces this entity's legacy multiplier. */
+    private void setWeight(String id, Double weight) {
+        values.remove(id);
+        if (weight == null) weightValues.remove(id);
+        else weightValues.put(id, weight);
+    }
+
+    private String effectiveWeights(MonsterSpawnCatalog.Entry entry) {
+        double multiplier = values.getOrDefault(entry.id(), 1D);
+        if (weightValues.containsKey(entry.id())) return number(weightValues.get(entry.id()) * multiplier);
+        return entry.baseWeights().stream().map(weight -> number(weight * multiplier)).distinct()
+                .collect(java.util.stream.Collectors.joining(" / "));
+    }
+
+    private boolean validDrafts() { return invalid.isEmpty() && invalidWeights.isEmpty(); }
+    private static boolean supportsWeight(MonsterSpawnCatalog.Entry entry) { return entry.baseWeights().stream().anyMatch(weight -> weight > 0); }
     private static String number(double value) { return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString(); }
     @Override public void onClose() { minecraft.setScreen(parent); }
 }

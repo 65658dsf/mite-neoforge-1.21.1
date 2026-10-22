@@ -9,6 +9,7 @@ import com.google.gson.JsonParser;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.client.config.MiteSettingsScreen;
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -123,6 +125,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
                 MethodType.methodType(void.class, Screen.class, String.class, Supplier.class, Consumer.class));
         MethodHandles.publicLookup().findConstructor(spawnSettings,
                 MethodType.methodType(void.class, Screen.class, String.class, Supplier.class, Consumer.class, Function.class));
+        MethodHandles.publicLookup().findConstructor(spawnSettings,
+                MethodType.methodType(void.class, Screen.class, String.class, Supplier.class, Supplier.class, BiConsumer.class, Function.class));
         check(spawnSettings.getDeclaredMethod("init").getReturnType() == void.class, "Shared monster spawn screen init resolves");
         Class<?> spawnCatalog = Class.forName("io.github.ningmeng123.mite.config.MonsterSpawnCatalog", false, loader);
         Class<?> spawnEntry = Class.forName(spawnCatalog.getName() + "$Entry", false, loader);
@@ -140,6 +144,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
         check(entityRegistry, "Monster settings enumerate the actual entity registry without a UI entity allowlist");
         report.addProperty("shared_monster_spawn_screen_and_registry_catalog_linkage_verified", true);
         report.addProperty("monster_spawn_screen_constructor_or_init_invoked", false);
+        auditSpawnWeightEditor(report, landing, spawnSettings);
+        auditSpawningRulesScreen(report, spawnSettings);
         Class<?> exportResult = Class.forName(CLIENT + "ConfigExportResultScreen", false, loader);
         MethodHandles.publicLookup().findConstructor(exportResult,
                 MethodType.methodType(void.class, Screen.class, Path.class, String.class));
@@ -440,6 +446,76 @@ public final class GameplayConfigClientAudit implements DataProvider {
         report.addProperty("ore_screen_selected_dimension_localized_yellow_marker_verified", true);
     }
 
+    private static void auditSpawningRulesScreen(JsonObject report, Class<?> spawnSettings) throws Exception {
+        String rulesName = CLIENT + "MonsterSpawningRulesScreen";
+        String rulesOwner = rulesName.replace('.', '/');
+        Class<?> rules = Class.forName(rulesName, false, GameplayConfigClientAudit.class.getClassLoader());
+        MethodHandles.publicLookup().findConstructor(rules, MethodType.methodType(void.class, Screen.class));
+        check(rules.getDeclaredMethod("init").getReturnType() == void.class,
+                "Natural-spawn cap and timing screen init signature resolves");
+        check(callsOrLinkedLambda(bytecode(spawnSettings.getName()), "init", rulesOwner, "<init>"),
+                "The production spawn browser opens the cap and timing editor from its header control");
+        ClassNode code = bytecode(rulesName);
+        String configOwner = MiteConfig.class.getName().replace('.', '/');
+        check(calls(code, "<init>", configOwner, "monsterSpawningSettings")
+                        && calls(code, "save", configOwner, "saveMonsterSpawningSettings"),
+                "The cap editor reads the authoritative settings and saves through the validated production backend");
+        check(calls(code, "save", CLIENT.replace('.', '/') + "MiteConfigClient", "editable"),
+                "The cap editor rechecks local edit authority when saving");
+        report.addProperty("natural_spawn_cap_timing_screen_constructor_and_init_signatures_resolved", true);
+        report.addProperty("natural_spawn_cap_timing_screen_entry_and_backend_linkage_verified", true);
+        report.addProperty("natural_spawn_cap_timing_screen_constructor_or_init_invoked", false);
+        report.addProperty("natural_spawn_cap_timing_screen_initialization_limitation",
+                "Its constructor reads Minecraft connection state and its init requires native font/widgets. Datagen verifies linkage and native-parsed labels/tooltips for every runtime option without initializing or rendering the screen.");
+    }
+
+    private static void auditSpawnWeightEditor(JsonObject report, Class<?> landing, Class<?> spawnSettings) throws Exception {
+        ClassNode screen = bytecode(spawnSettings.getName());
+        ClassNode menu = bytecode(landing.getName());
+        String config = "io/github/ningmeng123/mite/config/MiteConfig";
+        String snapshot = config + "$Snapshot";
+        check(callsThroughLambdas(menu, "init", snapshot, "monsterSpawnRates", new java.util.HashSet<>())
+                        && callsThroughLambdas(menu, "init", snapshot, "monsterSpawnWeights", new java.util.HashSet<>()),
+                "The production settings entry supplies authoritative rate and absolute-weight snapshots separately");
+        check(callsThroughLambdas(menu, "init", config, "saveMonsterSpawnSettings", new java.util.HashSet<>()),
+                "The production settings entry saves both maps through one validated configuration operation");
+        check(callsOrLinkedLambda(menu, "init", screen.name, "<init>"),
+                "The settings menu opens the shared natural-spawn browser");
+        check(calls(screen, "save", "java/util/function/BiConsumer", "accept")
+                        && calls(screen, "save", CLIENT.replace('.', '/') + "MiteConfigClient", "editable")
+                        && calls(screen, "save", screen.name, "validDrafts"),
+                "Saving the shared editor rechecks authority and both draft sets before submitting the rate and weight maps");
+        check(screen.fields.stream().noneMatch(field -> field.name.equals("weightTab") || field.name.equals("rateTab"))
+                        && screen.methods.stream().noneMatch(method -> method.name.equals("switchMode"))
+                        && callsOrLinkedLambda(screen, "supportsWeight", "java/util/stream/Stream", "anyMatch"),
+                "The production weight editor has one page mode and requires a known native pool entry");
+        boolean legacyRateRemoved = false;
+        for (var method : screen.methods) if (method.name.equals("setWeight")) {
+            boolean readingRates = false;
+            for (var instruction : method.instructions) {
+                if (instruction instanceof FieldInsnNode field && field.owner.equals(screen.name)) readingRates = field.name.equals("values");
+                if (readingRates && instruction instanceof MethodInsnNode call && call.owner.equals("java/util/Map")
+                        && call.name.equals("remove")) legacyRateRemoved = true;
+            }
+        }
+        int setterLambdas = 0;
+        for (var method : screen.methods) if (method.name.startsWith("lambda$rebuildRows$")) {
+            boolean setsWeight = false;
+            for (var instruction : method.instructions)
+                if (instruction instanceof MethodInsnNode call && call.owner.equals(screen.name) && call.name.equals("setWeight")) setsWeight = true;
+            if (setsWeight) setterLambdas++;
+        }
+        check(legacyRateRemoved && setterLambdas >= 2,
+                "Both editing and resetting a direct weight clear that entity's old multiplier before saving");
+        check(callsOrLinkedLambda(screen, "effectiveWeights", "java/util/Map", "getOrDefault"),
+                "Untouched legacy multipliers remain represented in the displayed effective weight");
+        report.addProperty("natural_spawn_weight_and_multiplier_constructor_signatures_resolved", true);
+        report.addProperty("natural_spawn_weight_and_multiplier_snapshot_and_atomic_save_linkage_verified", true);
+        report.addProperty("natural_spawn_weight_editor_single_mode_and_draft_guard_verified", true);
+        report.addProperty("natural_spawn_weight_edit_and_reset_clear_legacy_multiplier_linkage_verified", true);
+        report.addProperty("natural_spawn_weight_editor_constructed_or_rendered", false);
+    }
+
     private static void auditLanguages(JsonObject report) throws Exception {
         Map<String, Map<String, String>> languages = new LinkedHashMap<>();
         Set<String> required = new TreeSet<>();
@@ -457,11 +533,20 @@ public final class GameplayConfigClientAudit implements DataProvider {
             facts.add(fact);
         }
         for (String name : List.of(CLIENT + "MiteSettingsScreen", CLIENT + "EnchantmentSettingsScreen",
-                CLIENT + "MonsterGrowthSettingsScreen", CLIENT + "MonsterSpawnSettingsScreen", CLIENT + "OreGenerationSettingsScreen",
+                CLIENT + "MonsterGrowthSettingsScreen", CLIENT + "MonsterSpawnSettingsScreen", CLIENT + "MonsterSpawningRulesScreen", CLIENT + "OreGenerationSettingsScreen",
                 CLIENT + "ConfigExportResultScreen", MiteConfig.class.getName()))
             for (var method : bytecode(name).methods) for (var instruction : method.instructions)
                 if (instruction instanceof LdcInsnNode constant && constant.cst instanceof String key && configKey(key)) required.add(key);
         collectSpecKeys(MiteConfig.SPEC.getSpec(), List.of(), required);
+        for (var option : MonsterSpawningSettings.Option.values()) {
+            required.add("mite.config.spawning_rules." + option.key());
+            required.add("mite.config.spawning_rules." + option.key() + ".tooltip");
+        }
+        for (String key : List.of("monster_spawn_weight", "monster_spawn_percent", "monster_spawn_weight_unavailable")) {
+            required.add("mite.config." + key);
+            required.add("mite.config." + key + ".tooltip");
+        }
+        required.add("mite.config.monster_spawn_reset.tooltip");
         for (var language : languages.entrySet()) {
             for (String key : required) {
                 String value = language.getValue().get(key);
@@ -475,12 +560,20 @@ public final class GameplayConfigClientAudit implements DataProvider {
                 String formatted = String.format(Locale.ROOT, value, java.util.stream.IntStream.rangeClosed(1, format.getValue()).boxed().toArray());
                 check(!formatted.contains("%s"), "Unresolved config placeholder in " + language.getKey() + ": " + format.getKey());
             }
+            for (var format : Map.of("mite.config.spawning_rules.range", 4, "mite.config.spawning_rules.invalid", 1,
+                    "mite.config.monster_spawn_effective_weight", 2).entrySet()) {
+                String formatted = String.format(Locale.ROOT, language.getValue().get(format.getKey()),
+                        java.util.stream.IntStream.rangeClosed(1, format.getValue()).boxed().toArray());
+                check(!formatted.contains("%s"), "Unresolved spawn-rule placeholder in " + language.getKey() + ": " + format.getKey());
+            }
         }
         var keys = new JsonArray(); required.forEach(keys::add);
         report.add("languages", facts);
         report.add("config_translation_keys", keys);
         report.addProperty("required_keys_checked_per_locale", required.size());
         report.addProperty("native_config_translations_and_placeholders_verified", true);
+        report.addProperty("natural_spawn_cap_timing_option_labels_and_tooltips_verified", MonsterSpawningSettings.Option.values().length);
+        report.addProperty("natural_spawn_weight_single_page_labels_and_tooltips_verified", true);
     }
 
     private static void collectSpecKeys(UnmodifiableConfig config, List<String> parent, Set<String> required) {
@@ -505,6 +598,15 @@ public final class GameplayConfigClientAudit implements DataProvider {
             if (instruction instanceof InvokeDynamicInsnNode dynamic) for (Object argument : dynamic.bsmArgs)
                 if (argument instanceof Handle handle && handle.getOwner().equals(type.name)
                         && calls(type, handle.getName(), owner, name)) return true;
+        return false;
+    }
+    private static boolean callsThroughLambdas(ClassNode type, String methodName, String owner, String name, Set<String> visited) {
+        if (!visited.add(methodName)) return false;
+        if (calls(type, methodName, owner, name)) return true;
+        for (var method : type.methods) if (method.name.equals(methodName)) for (var instruction : method.instructions)
+            if (instruction instanceof InvokeDynamicInsnNode dynamic) for (Object argument : dynamic.bsmArgs)
+                if (argument instanceof Handle handle && handle.getOwner().equals(type.name)
+                        && callsThroughLambdas(type, handle.getName(), owner, name, visited)) return true;
         return false;
     }
     private static boolean references(ClassNode type, String methodName, String owner, String name) {

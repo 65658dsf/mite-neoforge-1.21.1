@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.rules.MonsterSpawningSettings.Option;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.R196Mob;
 import io.github.ningmeng123.mite.entity.R196Bat;
@@ -89,8 +91,9 @@ public final class R196MobSpawning {
         return new io.github.ningmeng123.mite.api.MiteExtensions.SpawnContext(level, category, deep);
     }
     private static boolean isDeep(Mob mob, ServerLevel level) { return R196SpawnRules.sourceY(mob.getBlockY(), underworld(level)) < 60; }
-    private static int monsterLimit(ServerLevel level, boolean deep, int chunks, boolean blood) {
-        return Math.max(0, extension().monsterCap(level, deep, chunks, R196SpawnRules.monsterCap(chunks, blood)));
+    public static int monsterLimit(ServerLevel level, boolean deep, int chunks, boolean blood) {
+        int configured = MiteConfig.monsterSpawningSettings().cap(chunks, blood, BloodMoonInvasion.highestDay(level));
+        return Math.max(0, extension().monsterCap(level, deep, chunks, configured));
     }
     /** One transaction ledger per tick; passengers debit the height interval they actually occupy. */
     private static final class SpawnBudget {
@@ -117,6 +120,7 @@ public final class R196MobSpawning {
         final Random modulation = new Random();
         R196SpawnRules.RateState rate = new R196SpawnRules.RateState(0, 0, 0);
         long lastTick = Long.MIN_VALUE;
+        long lastHostileAttempt = Long.MIN_VALUE;
         List<ChunkPos> strongholds;
     }
     private static final class Tables {
@@ -292,6 +296,9 @@ public final class R196MobSpawning {
             if (hostile) {
                 int density = R196SpawnRules.density(R196SpawnRules.sourceY(player.getBlockY(), underworld(level)), level.dimension().equals(Level.OVERWORLD),
                         day, moon, strongholdProximity(level, player.blockPosition(), state));
+                // Preserve source crowd protection while allowing the live one-player budget to exceed 105/140.
+                density = Math.max(density, MiteConfig.monsterSpawningSettings().cap(
+                        R196SpawnRules.VANILLA_ELIGIBLE_CHUNKS, moon.blood(), BloodMoonInvasion.highestDay(level)));
                 density = Math.max(0, extension().localDensity(level, player, density));
                 if (level.getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(32, 8, 32), mob -> category(mob) == Category.MONSTER).size() > density) continue;
             }
@@ -337,9 +344,13 @@ public final class R196MobSpawning {
         boolean overworld = level.dimension().equals(Level.OVERWORLD);
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
         var step = R196SpawnRules.advanceRate(state.rate, overworld, moon.blood() || level.isThundering(), state.modulation::nextInt); state.rate = step.state();
-        boolean hostile = level.getDifficulty() != Difficulty.PEACEFUL && level.getServer().isSpawningMonsters();
-        boolean low = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, true, R196SpawnRules.hostilePassProbability(true, step.modifier(), moon.blood())),0F,1F);
-        boolean high = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, false, R196SpawnRules.hostilePassProbability(false, step.modifier(), moon.blood())),0F,1F);
+        var settings = MiteConfig.monsterSpawningSettings();
+        boolean hostile = level.getDifficulty() != Difficulty.PEACEFUL && level.getServer().isSpawningMonsters()
+                && settings.ready(level.getGameTime(), state.lastHostileAttempt);
+        if (hostile) state.lastHostileAttempt = level.getGameTime();
+        float modifier = overworld ? step.modifier() : (float)settings.value(Option.DIMENSION_CHANCE_MULTIPLIER);
+        boolean low = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, true, settings.probability(true, modifier, moon.blood())),0F,1F);
+        boolean high = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, false, settings.probability(false, modifier, moon.blood())),0F,1F);
         boolean periodic = Math.floorMod(level.getGameTime(), 400) == 0;
         if (low || high) {
             Map<Long, Boolean> chunks = eligibleChunks(level, true);
