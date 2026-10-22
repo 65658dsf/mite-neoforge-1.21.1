@@ -65,16 +65,17 @@ public final class SweetBerryGenerationGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void nativeRarityFiltersKeepExactlyOneOfFiveOriginalLotteryIntervals(GameTestHelper helper) {
+    public static void nativeRarityFiltersKeepExactlyOneOfTenOriginalBerryLotteryIntervals(GameTestHelper helper) {
         var placed = helper.getLevel().registryAccess().registryOrThrow(Registries.PLACED_FEATURE);
-        for (var entry : Map.of("patch_berry_common", 32, "patch_berry_rare", 384, "patch_berry_bush", 1).entrySet()) {
-            var feature = placed.get(ResourceLocation.withDefaultNamespace(entry.getKey()));
+        for (var entry : Map.of("minecraft:patch_berry_common", 32, "minecraft:patch_berry_rare", 384,
+                "minecraft:patch_berry_bush", 1, "mite:blueberry_patch", 5).entrySet()) {
+            var feature = placed.get(ResourceLocation.parse(entry.getKey()));
             helper.assertTrue(feature.placement().getFirst() instanceof RarityFilter, "The loaded entry uses native rarity: " + entry.getKey());
             RarityFilter reduced = (RarityFilter) feature.placement().getFirst();
-            int expectedChance = entry.getValue() * 5;
+            int expectedChance = entry.getValue() * 10;
             int loadedChance = RarityFilter.CODEC.codec().encodeStart(JsonOps.INSTANCE, reduced).getOrThrow()
                     .getAsJsonObject().get("chance").getAsInt();
-            helper.assertValueEqual(loadedChance, expectedChance, "The runtime registry loaded the fivefold rarity denominator");
+            helper.assertValueEqual(loadedChance, expectedChance, "The runtime registry loaded the tenfold rarity denominator");
             RarityFilter original = RarityFilter.onAverageOnceEvery(entry.getValue());
             int originalAccepted = 0;
             int reducedAccepted = 0;
@@ -84,8 +85,8 @@ public final class SweetBerryGenerationGameTests {
                 if (original.getPositions(null, random, BlockPos.ZERO).findAny().isPresent()) originalAccepted++;
                 if (reduced.getPositions(null, random, BlockPos.ZERO).findAny().isPresent()) reducedAccepted++;
             }
-            helper.assertValueEqual(originalAccepted, 5, "The original native lottery accepts five equally sized probe intervals");
-            helper.assertValueEqual(reducedAccepted, 1, "The reduced native lottery accepts only one of those five intervals");
+            helper.assertValueEqual(originalAccepted, 10, "The original native lottery accepts ten equally sized probe intervals");
+            helper.assertValueEqual(reducedAccepted, 1, "The reduced native lottery accepts only one of those ten intervals");
             random.value = Math.nextDown(1F / expectedChance);
             helper.assertTrue(reduced.getPositions(null, random, BlockPos.ZERO).findAny().isPresent(), "The native rarity threshold accepts the lower boundary");
             random.value = 1F / expectedChance;

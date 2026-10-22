@@ -142,6 +142,7 @@ public final class ShardAndGemGameTests {
         try (PlayerSession session = newServerPlayer(helper)) {
             ServerPlayer player = session.player();
             for (int index = 0; index < items.length; index++) {
+                if (index > 0) advanceSacrificeCooldown(player);
                 PlayerExperience.setTotal(player, 0);
                 player.setHealth(2.0F);
                 player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(items[index], 2));
@@ -168,6 +169,7 @@ public final class ShardAndGemGameTests {
             helper.assertValueEqual(player.experienceLevel, -5, "Remaining negative one hundred points are level minus five");
             helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "Debt repayment still spends one gem");
 
+            advanceSacrificeCooldown(player);
             PlayerExperience.setTotal(player, 203000);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND, 2));
             use(player, InteractionHand.MAIN_HAND);
@@ -175,12 +177,14 @@ public final class ShardAndGemGameTests {
             helper.assertValueEqual(player.experienceLevel, 200, "Additional total experience does not create level 201");
             helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "A sacrifice at level 200 still consumes one gem");
 
+            advanceSacrificeCooldown(player);
             PlayerExperience.setTotal(player, 2147483647);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND, 2));
             use(player, InteractionHand.MAIN_HAND);
             helper.assertValueEqual(player.totalExperience, 2147483647, "Only the native integer storage boundary limits further accumulation");
             helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "A sacrifice at the integer boundary still consumes its gem");
 
+            advanceSacrificeCooldown(player);
             player.setGameMode(GameType.CREATIVE);
             PlayerExperience.setTotal(player, 0);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND, 2));
@@ -188,6 +192,7 @@ public final class ShardAndGemGameTests {
             helper.assertValueEqual(player.totalExperience, 500, "Creative mode still receives the reward");
             helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "Creative mode does not restore the consumed gem");
 
+            advanceSacrificeCooldown(player);
             player.setGameMode(GameType.SURVIVAL);
             PlayerExperience.setTotal(player, 0);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STICK, 7));
@@ -223,6 +228,7 @@ public final class ShardAndGemGameTests {
                 helper.assertTrue(player.getMainHandItem().is(Items.DIAMOND) && player.getMainHandItem().getCount() == 2, "Canceled use keeps both gems");
                 helper.assertValueEqual(player.totalExperience, 71, "Canceled use changes no experience");
                 helper.assertValueEqual(player.getHealth(), 2.0F, "Canceled use changes no health");
+                helper.assertFalse(player.getCooldowns().isOnCooldown(Items.DIAMOND), "Canceled use never starts the sacrifice cooldown");
             } finally {
                 NeoForge.EVENT_BUS.unregister(cancel);
             }
@@ -305,6 +311,10 @@ public final class ShardAndGemGameTests {
 
     private static InteractionResult use(ServerPlayer player, InteractionHand hand) {
         return player.gameMode.useItem(player, player.serverLevel(), player.getItemInHand(hand), hand);
+    }
+
+    private static void advanceSacrificeCooldown(ServerPlayer player) {
+        for (int tick = 0; tick < 10; tick++) player.getCooldowns().tick();
     }
 
     private static void assertPassUnchanged(GameTestHelper helper, ServerPlayer player, Item item) {

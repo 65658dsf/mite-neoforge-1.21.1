@@ -38,6 +38,7 @@ public final class Mite {
         io.github.ningmeng123.mite.worldgen.UnderworldSpringGeneration.register(modBus);
         io.github.ningmeng123.mite.world.CollapsePhysics.register(modBus);
         io.github.ningmeng123.mite.worldgen.NaturalTrialBlocks.register(modBus);
+        io.github.ningmeng123.mite.worldgen.NaturalShriekerOres.register(modBus);
         io.github.ningmeng123.mite.progression.PlayerPlacedBlocks.register(modBus);
         MiteItems.register(modBus);
         MiteMaterials.register(modBus);
