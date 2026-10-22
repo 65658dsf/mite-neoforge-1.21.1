@@ -182,7 +182,7 @@ public final class VillageTemplateGameTests {
                 new StructureTemplate.StructureBlockInfo(new BlockPos(x, 1, z), Blocks.WHEAT.defaultBlockState(), null));
         for (var decoration : List.of(Blocks.HAY_BLOCK, Blocks.MELON, Blocks.PUMPKIN)) originals.add(
                 new StructureTemplate.StructureBlockInfo(new BlockPos(8, 1, originals.size() - 64), decoration.defaultBlockState(), null));
-        BlockPos origin = helper.absolutePos(new BlockPos(1, 2, 1));
+        BlockPos origin = BlockPos.ZERO;
         for (String biome : List.of("desert", "savanna", "taiga")) {
             var settings = new StructurePlaceSettings();
             level.registryAccess().registryOrThrow(Registries.PROCESSOR_LIST).get(ResourceLocation.withDefaultNamespace("farm_" + biome))

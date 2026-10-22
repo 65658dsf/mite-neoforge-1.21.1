@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MobBucketItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlockContainer;
@@ -48,6 +49,7 @@ public final class BucketPlacementController {
 
     public static boolean supports(BucketItem bucket) {
         return bucket == Items.WATER_BUCKET || bucket == Items.LAVA_BUCKET
+                || bucket instanceof MobBucketItem && bucket.content == Fluids.WATER
                 || bucket instanceof MiteBucketItem metal && (metal.contents() == MiteBucketItem.Contents.WATER
                 || metal.contents() == MiteBucketItem.Contents.LAVA);
     }

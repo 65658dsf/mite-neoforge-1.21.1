@@ -29,6 +29,7 @@ public final class MiningProgress {
         if (OreBlockRules.isManaged(state)) return OreBlockRules.hardness(state, raw);
         if (state.is(MiteOreBlocks.INFESTED_NETHERRACK.get())) return 0.75F;
         if (state.is(Blocks.FURNACE)) return 2F;
+        if (state.is(Blocks.SUGAR_CANE)) return 0.08F;
         if (state.is(Blocks.COPPER_BLOCK)) return 4.8F;
         if (io.github.ningmeng123.mite.registry.MiteDecorativeContent.isCopperDoor(state.getBlock())) return 2F;
         raw = FunctionalBlockMining.hardness(state, raw);

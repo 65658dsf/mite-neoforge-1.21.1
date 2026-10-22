@@ -147,6 +147,20 @@ class R196SpawnRulesTest {
     @Test void frozenInitialProbabilityKeepsSourceHalfRate() {
         assertEquals(.05F, R196SpawnRules.initialProbability(true)); assertEquals(.1F, R196SpawnRules.initialProbability(false));
     }
+    @Test void animalPopulationAttemptsIncreaseThirtyPercentWithoutChangingAquaticProbability() {
+        for (boolean freezing : List.of(false, true)) {
+            double source = R196SpawnRules.initialProbability(freezing);
+            double increased = R196SpawnRules.initialProbability(freezing, R196SpawnRules.Category.ANIMAL);
+            assertEquals(1.3 * source / (1 - source), increased / (1 - increased), .000001);
+            assertEquals((float)source, R196SpawnRules.initialProbability(freezing, R196SpawnRules.Category.AQUATIC));
+        }
+        long passes = java.util.stream.LongStream.range(0, 4000).filter(R196SpawnRules::animalSpawnTick).count();
+        assertEquals(13L, passes);
+        assertTrue(R196SpawnRules.animalSpawnTick(0));
+        assertTrue(R196SpawnRules.animalSpawnTick(4000));
+        for (long tick = 0; tick < 4000; tick++)
+            assertEquals(R196SpawnRules.animalSpawnTick(tick), R196SpawnRules.animalSpawnTick(tick + 4000));
+    }
     @Test void sourceBrightnessPathWeightKeepsNetherAndOverworldTablesSeparate() {
         assertTrue(R196SpawnRules.mobPathAllows(12, false, false));
         assertFalse(R196SpawnRules.mobPathAllows(13, false, false));

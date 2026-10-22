@@ -124,6 +124,7 @@ public final class Livestock032GameTests {
     @GameTest(template="empty") public static void injuredAdultMealHealsBeforeLaterBreedingMeal(GameTestHelper h) {
         var cow=mob(h,EntityType.COW); needs(cow,.1F,1,1); cow.setHealth(10); var player=h.makeMockPlayer(GameType.SURVIVAL); player.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Items.WHEAT,2));
         cow.mobInteract(player,InteractionHand.MAIN_HAND); h.assertTrue(cow.getHealth()==20 && !cow.isInLove() && Livestock032.needs(cow).food()==.6F,"Source call order: full-health breeding gate precedes half-health heal");
+        for(int tick=0;tick<LivestockRules032.RECOVERY_TICKS;tick++) Livestock032.tickRecovery(cow);
         cow.mobInteract(player,InteractionHand.MAIN_HAND); h.assertTrue(cow.isInLove() && cow.getInLoveTime()==600 && player.getMainHandItem().isEmpty(),"Next full healthy meal enters600 ticks love and spends once"); cow.discard();h.succeed();
     }
     @GameTest(template="empty") public static void waterDeficiencyAndBabyCannotBeBypassedWithInfiniteWheat(GameTestHelper h) {

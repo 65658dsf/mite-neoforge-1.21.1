@@ -1,0 +1,8 @@
+{
+  "author": "NingMeng123",
+  "source": "R196 aaf:43,65; yc:82-83: clay balls 4 * 25; sugar cane 100 * scaleDifficulty(8)",
+  "recipes": {
+    "minecraft:sugar_from_sugar_cane": {"difficulty": 800.0, "required_bench": null, "source_order": -1},
+    "minecraft:clay": {"difficulty": 100.0, "required_bench": null, "source_order": -1}
+  }
+}

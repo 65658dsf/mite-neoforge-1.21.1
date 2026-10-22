@@ -75,7 +75,7 @@ public final class LogHarvestGameTests {
         helper.assertValueEqual(BuiltInRegistries.BLOCK.stream().filter(block -> block.defaultBlockState().is(RESTRICTED_LOGS)).count(),
                 40L, "The default restriction tag contains only those forty targets");
         Item[] denied = {Items.AIR, Items.STICK, Items.WOODEN_AXE, Items.STONE_PICKAXE, Items.STONE_SWORD};
-        Item[] allowed = {MiteItems.FLINT_HATCHET.get(), Items.STONE_AXE, Items.GOLDEN_AXE,
+        Item[] allowed = {MiteItems.FLINT_HATCHET.get(), Items.GOLDEN_AXE,
                 Items.IRON_AXE, io.github.ningmeng123.mite.registry.MiteTools.get("mite:ancient_metal_axe"),
                 io.github.ningmeng123.mite.registry.MiteTools.get("mite:mithril_axe")};
         for (Block block : vanillaLogs) {
@@ -87,6 +87,9 @@ public final class LogHarvestGameTests {
                 helper.assertValueEqual(state.getDestroyProgress(player, helper.getLevel(), position), 0.0F,
                         "Rejected tools cannot accumulate progress on " + block);
             }
+            player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
+            helper.assertValueEqual(state.getDestroyProgress(player, helper.getLevel(), position), 0.0F,
+                    "Retired stone axes cannot accumulate progress even with native axe capabilities");
             for (Item item : allowed) {
                 player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(item));
                 helper.assertFalse(LogHarvestRules.isBlocked(player, state), "Qualified target/tool pair: " + block + "/" + item);

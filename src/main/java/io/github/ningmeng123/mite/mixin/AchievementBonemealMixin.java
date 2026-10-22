@@ -6,6 +6,8 @@ import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.SaplingBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,6 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /** xl awards Plant Doctor only after an actual successful crop treatment. @author NingMeng123 */
 @Mixin(BoneMealItem.class)
 public abstract class AchievementBonemealMixin {
+    @Inject(method="applyBonemeal",at=@At("HEAD"),cancellable=true)
+    private static void mite$noSaplingBonemeal(ItemStack stack,Level level,BlockPos pos,Player player,CallbackInfoReturnable<Boolean> cir){
+        var state=level.getBlockState(pos);
+        if(state.is(BlockTags.SAPLINGS)||state.getBlock() instanceof SaplingBlock) cir.setReturnValue(false);
+    }
     @Inject(method="applyBonemeal",at=@At("RETURN"))
     private static void mite$treated(ItemStack stack,Level level,BlockPos pos,Player player,CallbackInfoReturnable<Boolean> cir){
         if(Boolean.TRUE.equals(cir.getReturnValue())&&player!=null&&level.getBlockState(pos).getBlock() instanceof CropBlock)

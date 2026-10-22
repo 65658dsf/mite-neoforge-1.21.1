@@ -35,7 +35,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /** Literal qy/re/qx/qa boundaries exercised through actual source entities and native save/load. @author NingMeng123 */
-@GameTestHolder("mite")
+@GameTestHolder("mite_targeting")
 @PrefixGameTestTemplate(false)
 public final class MonsterTargetMeleeGameTests {
     private static <T extends Mob> T mob(GameTestHelper h, EntityType<T> type, double x, double y, double z) {
@@ -199,6 +199,7 @@ public final class MonsterTargetMeleeGameTests {
             var goal = nearest(skeleton, Player.class);
             for (double dy : new double[]{24D, -24D, 32D, -32D}) {
                 player.moveTo(skeleton.getX(), skeleton.getY() + dy, skeleton.getZ());
+                skeleton.restrictTo(player.blockPosition(), 1);
                 h.assertTrue(goal.canUse(), "Installed bow target goal finds an attackable player within true range in either vertical direction: " + dy);
                 goal.start();
                 h.assertTrue(skeleton.getTarget() == player && goal.canContinueToUse(), "Vertical acquisition and continued tracking agree on the same range");
@@ -206,9 +207,11 @@ public final class MonsterTargetMeleeGameTests {
             }
             for (double dy : new double[]{32.01D, -32.01D}) {
                 player.moveTo(skeleton.getX(), skeleton.getY() + dy, skeleton.getZ());
+                skeleton.restrictTo(player.blockPosition(), 1);
                 h.assertFalse(goal.canUse(), "Vertical search does not acquire targets beyond the actual follow range: " + dy);
             }
             player.moveTo(skeleton.getX() + 24D, skeleton.getY() + 24D, skeleton.getZ());
+            skeleton.restrictTo(player.blockPosition(), 1);
             h.assertFalse(goal.canUse(), "Separate horizontal and vertical limits cannot admit a diagonal target outside true follow range");
         } finally { skeleton.discard(); }
         h.succeed();
@@ -229,6 +232,7 @@ public final class MonsterTargetMeleeGameTests {
             for (var skeleton : skeletons) {
                 skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
                 fixture.player.moveTo(skeleton.getX() + 4D, skeleton.getY() + 10D, skeleton.getZ());
+                skeleton.restrictTo(fixture.player.blockPosition(), 1);
                 archerCurtain(h, skeleton, Blocks.OAK_LEAVES);
                 h.assertFalse(SourceMonsterTargeting.canSee(skeleton, fixture.player, false), "The canopy blocks the old two-leaf sight policy");
                 var goal = nearest(skeleton, Player.class);
@@ -258,6 +262,8 @@ public final class MonsterTargetMeleeGameTests {
         var wight = source(h, MobKind.WIGHT);
         try (var fixture = new SurvivalPlayer(h)) {
             fixture.player.moveTo(skeleton.getX() + 4D, skeleton.getY(), skeleton.getZ());
+            skeleton.restrictTo(fixture.player.blockPosition(), 1);
+            wight.restrictTo(fixture.player.blockPosition(), 1);
             archerCurtain(h, skeleton, Blocks.OAK_LEAVES);
             skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
             h.assertFalse(nearest(skeleton, Player.class).canUse(), "A melee skeleton retains ordinary foliage sight");
@@ -278,6 +284,7 @@ public final class MonsterTargetMeleeGameTests {
         try (var fixture = new SurvivalPlayer(h)) {
             var player = fixture.player;
             player.moveTo(skeleton.getX() + 2D, skeleton.getY() + 12D, skeleton.getZ());
+            skeleton.restrictTo(player.blockPosition(), 1);
             var goal = nearest(skeleton, Player.class);
             h.assertTrue(goal.canUse(), "Elevated survival player initially qualifies");
             player.getAbilities().invulnerable = true;
@@ -302,6 +309,7 @@ public final class MonsterTargetMeleeGameTests {
         skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
         try (var fixture = new SurvivalPlayer(h)) {
             fixture.player.moveTo(skeleton.getX() + 3D, skeleton.getY(), skeleton.getZ());
+            skeleton.restrictTo(fixture.player.blockPosition(), 1);
             wall(h, skeleton, Blocks.GLASS);
             h.assertFalse(SourceRangedAttackGoal.clearShot(skeleton, fixture.player), "Glass still blocks the actual shooting ray");
             var goal = nearest(skeleton, Player.class);

@@ -56,7 +56,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class DiamondEquipmentRemovalGameTests {
-    private static final List<Item> REMOVED = List.of(Items.DIAMOND_SWORD, Items.DIAMOND_AXE, Items.DIAMOND_PICKAXE,
+    private static final List<Item> REMOVED = List.of(Items.STONE_SWORD, Items.STONE_AXE, Items.STONE_PICKAXE,
+            Items.STONE_SHOVEL, Items.STONE_HOE, Items.DIAMOND_SWORD, Items.DIAMOND_AXE, Items.DIAMOND_PICKAXE,
             Items.DIAMOND_SHOVEL, Items.DIAMOND_HOE, Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE,
             Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS, Items.DIAMOND_HORSE_ARMOR,
             Items.NETHERITE_SWORD, Items.NETHERITE_AXE, Items.NETHERITE_PICKAXE, Items.NETHERITE_SHOVEL,

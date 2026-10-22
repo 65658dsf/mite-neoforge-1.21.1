@@ -68,6 +68,8 @@
     "StructureProgressGateMixin",
     "StructureClockMixin",
     "InitialStructureSpawnMixin",
+    "PlacementDelayPacketMixin",
+    "SaplingBonemealMixin",
     "StrongholdDistributionMixin",
     "MineshaftTorchMixin",
     "VillageStructurePlacementMixin",

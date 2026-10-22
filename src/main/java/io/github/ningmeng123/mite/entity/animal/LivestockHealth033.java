@@ -20,6 +20,7 @@ public final class LivestockHealth033 {
         ResourceLocation texture=SICK_SKINS.get(mob.getType());
         if(texture==null) return null;
         // Renderers consume only the values already synchronized by Livestock032; no client-side simulation.
-        return ((Livestock032View)mob).mite$livestockNeeds().well()?null:texture;
+        var view=(Livestock032View)mob;
+        return view.mite$livestockNeeds().well() && view.mite$recoveryTicks()==0?null:texture;
     }
 }

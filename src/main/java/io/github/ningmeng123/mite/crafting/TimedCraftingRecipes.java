@@ -50,7 +50,7 @@ public final class TimedCraftingRecipes {
                     "/mite/timed-crafting-027-ranged.json", "/mite/timed-crafting-027-functional.json",
                     "/mite/timed-crafting-027-storage.json", "/mite/timed-crafting-028-weapons.json",
                     "/mite/timed-crafting-028-utility.json", "/mite/timed-crafting-028-decorative.json",
-                    "/mite/timed-crafting-equipment-upgrades.json")) {
+                    "/mite/timed-crafting-equipment-upgrades.json", "/mite/timed-crafting-material-processing.json")) {
                 try (var reader027 = new InputStreamReader(Objects.requireNonNull(
                         TimedCraftingRecipes.class.getResourceAsStream(resource)), StandardCharsets.UTF_8)) {
                     JsonParser.parseReader(reader027).getAsJsonObject().getAsJsonObject("recipes").entrySet().forEach(entry -> {

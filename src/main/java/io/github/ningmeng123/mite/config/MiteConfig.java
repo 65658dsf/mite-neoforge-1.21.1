@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.config;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.rules.R196OreRules;
+import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.GrowthFormula;
 import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
 import java.util.ArrayList;
@@ -30,6 +31,10 @@ public final class MiteConfig {
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_ORE_CHANCES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_ORE_CANDIDATES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_ORE_CHANCES = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> UNDERWORLD_ORE_HEIGHTS = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> OVERWORLD_ORE_HEIGHTS = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> UNDERWORLD_DEEPSLATE_ORE_HEIGHTS = new EnumMap<>(R196OreRules.Kind.class);
+    public static final Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> OVERWORLD_DEEPSLATE_ORE_HEIGHTS = new EnumMap<>(R196OreRules.Kind.class);
     public static final ModConfigSpec.DoubleValue MONSTER_GROWTH, MONSTER_HEALTH_GROWTH, MONSTER_DAMAGE_GROWTH;
     public static final ModConfigSpec.DoubleValue MONSTER_HEALTH_BASE, MONSTER_DAMAGE_BASE, MONSTER_SKELETON_REFERENCE;
     public static final ModConfigSpec.DoubleValue MONSTER_HEALTH_DAILY_PERCENT, MONSTER_DAMAGE_DAILY_PERCENT;
@@ -72,6 +77,7 @@ public final class MiteConfig {
             UNDERWORLD_ORE_CHANCES.put(kind, builder.translation("mite.config.ore_chance")
                     .comment("Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.")
                     .defineInRange("chance_percent", 100D * R196OreRules.candidateChance(R196OreRules.Dimension.UNDERWORLD), 0D, 100D));
+            defineOreHeights(builder, kind, UNDERWORLD_ORE_HEIGHTS, UNDERWORLD_DEEPSLATE_ORE_HEIGHTS);
             builder.pop();
         }
         builder.pop();
@@ -84,6 +90,7 @@ public final class MiteConfig {
             OVERWORLD_ORE_CHANCES.put(kind, builder.translation("mite.config.ore_chance")
                     .comment("The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.")
                     .defineInRange("chance_percent", 100D * R196OreRules.candidateChance(R196OreRules.Dimension.OVERWORLD), 0D, 100D));
+            defineOreHeights(builder, kind, OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS);
             builder.pop();
         }
         builder.pop();
@@ -140,6 +147,37 @@ public final class MiteConfig {
     }
 
     private MiteConfig() {}
+
+    private static void defineOreHeights(ModConfigSpec.Builder builder, R196OreRules.Kind kind,
+            Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> regular,
+            Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> deepslate) {
+        regular.put(kind, builder.translation("mite.config.ore_height_range")
+                .comment("Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.")
+                .define("height_range", "", MiteConfig::validOreHeight));
+        if (R196OreRules.hasDeepslateOre(kind))
+            deepslate.put(kind, builder.translation("mite.config.ore_height_range")
+                    .comment("Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.")
+                    .define("deepslate_height_range", "", MiteConfig::validOreHeight));
+    }
+
+    public static boolean validOreHeight(Object input) {
+        if (!(input instanceof String text)) return false;
+        if (text.isBlank()) return true;
+        try { OreHeightRange.parse(text); return true; }
+        catch (IllegalArgumentException exception) { return false; }
+    }
+
+    public static OreHeightRange oreHeightOverride(R196OreRules.Kind kind, R196OreRules.Dimension dimension, boolean deepslate) {
+        var snapshot = effectiveSnapshot();
+        var heights = dimension == R196OreRules.Dimension.OVERWORLD ? snapshot.overworldOreHeights() : snapshot.oreHeights();
+        String text = heights.getOrDefault(deepslate ? R196OreRules.deepslateMultiplierKey(kind) : kind.name(), "");
+        return text.isBlank() ? null : OreHeightRange.parse(text);
+    }
+
+    public static OreHeightRange oreHeightRange(R196OreRules.Kind kind, R196OreRules.Dimension dimension, boolean deepslate) {
+        var override = oreHeightOverride(kind, dimension, deepslate);
+        return override == null ? OreHeightRange.defaults(kind, dimension) : override;
+    }
 
     private static void defineDeepslateMultipliers(ModConfigSpec.Builder builder, R196OreRules.Dimension dimension,
             Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> settings) {
@@ -319,7 +357,8 @@ public final class MiteConfig {
             boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
             MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
             Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
-            Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates) {
+            Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
+            Map<String, String> oreHeights, Map<String, String> overworldOreHeights) {
         public Snapshot {
             ores = Map.copyOf(ores);
             caps = Map.copyOf(caps);
@@ -332,6 +371,18 @@ public final class MiteConfig {
             overworldOres = overworldOres == null ? Map.of() : Map.copyOf(overworldOres);
             enchantmentChances = enchantmentChanceOverrides(enchantmentChances);
             monsterSpawnRates = spawnRateOverrides(monsterSpawnRates);
+            oreHeights = heightOverrides(oreHeights);
+            overworldOreHeights = heightOverrides(overworldOreHeights);
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
+                Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, overworldOres, enchantmentChances, monsterSpawnRates, Map.of(), Map.of());
         }
         public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
                 double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
@@ -428,7 +479,24 @@ public final class MiteConfig {
         return new Snapshot(ores, overall, healthMultiplier, damageMultiplier,
                 value(WEAPON_REACH_MULTIPLIER), value(WEAPON_REACH_REDUCTION), value(HEIGHT_REACH_PENALTY),
                 value(UNDERWORLD_TRIALS), value(OVERWORLD_TRIALS), caps, new HashSet<>(value(DISABLED_ENCHANTMENTS)), growth, candidates, chances,
-                surfaceCandidates, surfaceChances, surfaceMultipliers, enchantmentChances, spawnRates);
+                surfaceCandidates, surfaceChances, surfaceMultipliers, enchantmentChances, spawnRates,
+                readHeights(UNDERWORLD_ORE_HEIGHTS, UNDERWORLD_DEEPSLATE_ORE_HEIGHTS),
+                readHeights(OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS));
+    }
+
+    private static Map<String, String> readHeights(Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> regular,
+            Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> deepslate) {
+        var heights = new HashMap<String, String>();
+        regular.forEach((kind, setting) -> { if (!value(setting).isBlank()) heights.put(kind.name(), value(setting)); });
+        deepslate.forEach((kind, setting) -> { if (!value(setting).isBlank()) heights.put(R196OreRules.deepslateMultiplierKey(kind), value(setting)); });
+        return heights;
+    }
+
+    private static Map<String, String> heightOverrides(Map<String, String> values) {
+        if (values == null) return Map.of();
+        var result = new HashMap<String, String>();
+        values.forEach((key, text) -> { if (validOreHeight(text) && !text.isBlank()) result.put(key, OreHeightRange.parse(text).toString()); });
+        return Map.copyOf(result);
     }
     public static Snapshot localSnapshot() { return local; }
     public static Snapshot effectiveSnapshot() {
@@ -498,6 +566,13 @@ public final class MiteConfig {
     /** Save deep overrides atomically; omitted deep rows retain their previous override or inheritance. */
     public static boolean saveOreMultipliers(Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> multipliers,
             Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> deepslateMultipliers) {
+        return saveOreMultipliers(multipliers, deepslateMultipliers, Map.of(), Map.of());
+    }
+
+    public static boolean saveOreMultipliers(Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> multipliers,
+            Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, Double>> deepslateMultipliers,
+            Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, String>> heights,
+            Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, String>> deepslateHeights) {
         if (multipliers.isEmpty()) return false;
         for (var dimension : multipliers.keySet()) {
             var kinds = R196OreRules.configurableKinds(dimension);
@@ -517,6 +592,8 @@ public final class MiteConfig {
                         || multiplier == null || !Double.isFinite(multiplier) || multiplier > 100D || multiplier < 0D && multiplier != -1D) return false;
             }
         }
+        if (!validHeightDrafts(multipliers.keySet(), heights, false)
+                || !validHeightDrafts(multipliers.keySet(), deepslateHeights, true)) return false;
         for (var dimension : multipliers.keySet()) {
             var settings = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_ORES : UNDERWORLD_ORES;
             for (var kind : R196OreRules.configurableKinds(dimension)) settings.get(kind).set(multipliers.get(dimension).get(kind));
@@ -525,8 +602,24 @@ public final class MiteConfig {
             var settings = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_DEEPSLATE_ORES : UNDERWORLD_DEEPSLATE_ORES;
             values.forEach((kind, multiplier) -> settings.get(kind).set(multiplier));
         });
+        heights.forEach((dimension, values) -> values.forEach((kind, text) ->
+                (dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_ORE_HEIGHTS : UNDERWORLD_ORE_HEIGHTS).get(kind).set(text)));
+        deepslateHeights.forEach((dimension, values) -> values.forEach((kind, text) ->
+                (dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_DEEPSLATE_ORE_HEIGHTS : UNDERWORLD_DEEPSLATE_ORE_HEIGHTS).get(kind).set(text)));
         refreshEnchantmentRules();
         SPEC.save();
+        return true;
+    }
+
+    private static boolean validHeightDrafts(Set<R196OreRules.Dimension> dimensions,
+            Map<R196OreRules.Dimension, ? extends Map<R196OreRules.Kind, String>> heights, boolean deepslate) {
+        if (!dimensions.containsAll(heights.keySet())) return false;
+        for (var entry : heights.entrySet()) {
+            if (entry.getValue() == null) return false;
+            for (var height : entry.getValue().entrySet())
+                if (!R196OreRules.configurableKinds(entry.getKey()).contains(height.getKey())
+                        || deepslate && !R196OreRules.hasDeepslateOre(height.getKey()) || !validOreHeight(height.getValue())) return false;
+        }
         return true;
     }
 

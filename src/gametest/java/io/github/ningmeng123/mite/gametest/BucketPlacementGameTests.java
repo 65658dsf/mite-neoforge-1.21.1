@@ -244,18 +244,20 @@ public final class BucketPlacementGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void fishAndOtherMobBucketsRetainTheirModernNativePermanentWaterWithoutSourceFees(GameTestHelper h) {
+    public static void fishAndOtherMobBucketsUseTheOrdinaryTemporaryAndPaidSourceRules(GameTestHelper h) {
         try (Fixture f = new Fixture(h, 1000)) {
             for (Item item : new Item[]{Items.COD_BUCKET, Items.SALMON_BUCKET, Items.PUFFERFISH_BUCKET,
-                    Items.TROPICAL_FISH_BUCKET, Items.AXOLOTL_BUCKET, Items.TADPOLE_BUCKET}) {
+                    Items.TROPICAL_FISH_BUCKET, Items.AXOLOTL_BUCKET, Items.TADPOLE_BUCKET}) for (boolean source : new boolean[]{false, true}) {
                 f.clear();
+                PlayerExperience.setTotal(f.player, 1000);
                 BucketItem bucket = (BucketItem)item;
-                h.assertTrue(BucketPlacementController.withIntent(f.player, true,
+                h.assertTrue(BucketPlacementController.withIntent(f.player, source,
                         () -> bucket.emptyContents(f.player, h.getLevel(), f.target, null, new ItemStack(bucket))),
-                        "Out-of-scope modern mob-container placement stays native for " + item);
-                h.assertTrue(h.getLevel().getFluidState(f.target).isSource(), "Mob buckets retain their native water placement contract");
-                h.assertFalse(TemporaryFluidChanges.get(h.getLevel()).pending().containsKey(f.target.asLong()), "Native mob buckets do not acquire a finite deadline");
-                h.assertValueEqual(f.player.totalExperience, 1000, "Unsupported buckets are not charged by the ordinary water/lava controller");
+                        "The shared liquid controller accepts every aquatic mob bucket: " + item);
+                h.assertTrue(h.getLevel().getFluidState(f.target).isSource(), "Mob buckets initially place a complete cell before ordinary decay");
+                h.assertValueEqual(TemporaryFluidChanges.get(h.getLevel()).pending().containsKey(f.target.asLong()), !source,
+                        "Only Ctrl placement avoids the ordinary temporary deadline");
+                h.assertValueEqual(f.player.totalExperience, source ? 900 : 1000, "Only a requested permanent source pays the ordinary fee");
             }
         }
         h.succeed();
@@ -378,12 +380,18 @@ public final class BucketPlacementGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void onlyOrdinaryFilledLiquidBucketsCanArmCtrlSourceIntent(GameTestHelper h) {
+    public static void onlySupportedFilledLiquidBucketsCanArmCtrlSourceIntent(GameTestHelper h) {
         try (Fixture f = new Fixture(h, 1000)) {
-            for (Item unsupported : new Item[]{Items.BUCKET, Items.MILK_BUCKET, Items.COD_BUCKET, MiteFoods.get("water_bowl")}) {
+            for (Item unsupported : new Item[]{Items.BUCKET, Items.MILK_BUCKET, Items.POWDER_SNOW_BUCKET, MiteFoods.get("water_bowl")}) {
                 f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(unsupported));
                 BucketPlacementIntent.receive(f.player, InteractionHand.MAIN_HAND, 40, true);
                 h.assertFalse(BucketPlacementIntent.consume(f.player, InteractionHand.MAIN_HAND, 40), "Unsupported item cannot request source placement: " + unsupported);
+            }
+            for (Item supported : new Item[]{Items.COD_BUCKET, Items.SALMON_BUCKET, Items.PUFFERFISH_BUCKET,
+                    Items.TROPICAL_FISH_BUCKET, Items.TADPOLE_BUCKET, Items.AXOLOTL_BUCKET}) {
+                f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(supported));
+                BucketPlacementIntent.receive(f.player, InteractionHand.MAIN_HAND, 40, true);
+                h.assertTrue(BucketPlacementIntent.consume(f.player, InteractionHand.MAIN_HAND, 40), "Aquatic mob buckets share the supported Ctrl intent: " + supported);
             }
             f.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
             BucketPlacementIntent.receive(f.player, InteractionHand.MAIN_HAND, 41, true);

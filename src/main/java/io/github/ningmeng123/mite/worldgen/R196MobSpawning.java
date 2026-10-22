@@ -363,6 +363,9 @@ public final class R196MobSpawning {
                 spawnPass(level, Category.AMBIENT, null, chunks, false);
                 spawnPass(level, Category.AQUATIC, null, chunks, false);
             }
+        }
+        if (R196SpawnRules.animalSpawnTick(level.getGameTime())) {
+            Map<Long, Boolean> chunks = eligibleChunks(level, false);
             boolean blueAnimals = moon.blue() && !R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000));
             if (blueAnimals || level.getServer().isSpawningAnimals()) spawnPass(level, Category.ANIMAL, null, chunks, !blueAnimals);
         }
@@ -712,7 +715,7 @@ public final class R196MobSpawning {
                     entries.add(new Entry(type, null, category, extra.getWeight().asInt(), extra.minCount, extra.maxCount, 4, true));
                 }
             if (entries.isEmpty()) continue;
-            while (random.nextFloat() < R196SpawnRules.initialProbability(biome.value().getBaseTemperature() <= .15F)) {
+            while (random.nextFloat() < R196SpawnRules.initialProbability(biome.value().getBaseTemperature() <= .15F, category)) {
                 Entry selected = weighted(entries, selectionRandom);
                 if (selected.type() == EntityType.HORSE && random.nextFloat() < .8F || selected.type() == EntityType.WOLF && random.nextFloat() < .5F) continue;
                 int size = selected.minimum() + random.nextInt(1 + selected.maximum() - selected.minimum());

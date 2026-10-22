@@ -123,7 +123,7 @@ public final class SourcePetGoals032 {
         @Override public boolean requiresUpdateEveryTick() { return true; }
         @Override public boolean canUse() {
             if(cooldown>0) { --cooldown; return false; }
-            if(Livestock032.sourceLivestock(animal) && animal.getHealth()>=animal.getMaxHealth() && !Livestock032.needs(animal).well() && !Livestock032.isHungry(animal)) return false;
+            if(Livestock032.sourceLivestock(animal) && animal.getHealth()>=animal.getMaxHealth() && !Livestock032.well(animal) && !Livestock032.isHungry(animal)) return false;
             Player previous=player; double best=Double.MAX_VALUE; Player closest=null;
             for(Player p:animal.level().players()) {
                 double distance=animal.distanceTo(p); if(distance>10) continue;

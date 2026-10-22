@@ -1,7 +1,6 @@
 package io.github.ningmeng123.mite.world;
 
 import io.github.ningmeng123.mite.Mite;
-import io.github.ningmeng123.mite.item.MiteBucketItem;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.resources.ResourceKey;
@@ -9,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -26,11 +25,9 @@ public final class BucketPlacementIntent {
 
     private BucketPlacementIntent() {}
 
-    /** Milk, fish, empty buckets and bowls retain their existing interactions. */
+    /** Milk, empty buckets and bowls retain their existing interactions. */
     public static boolean isPlacementBucket(ItemStack stack) {
-        if (stack.is(Items.WATER_BUCKET) || stack.is(Items.LAVA_BUCKET)) return true;
-        if (!(stack.getItem() instanceof MiteBucketItem bucket)) return false;
-        return bucket.contents() == MiteBucketItem.Contents.WATER || bucket.contents() == MiteBucketItem.Contents.LAVA;
+        return stack.getItem() instanceof BucketItem bucket && BucketPlacementController.supports(bucket);
     }
 
     public static void receive(ServerPlayer player, InteractionHand hand, int sequence, boolean sourceRequested) {

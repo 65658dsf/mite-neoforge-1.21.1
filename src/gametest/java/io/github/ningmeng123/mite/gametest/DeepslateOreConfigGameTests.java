@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.network.GameplayConfigPayload;
 import io.github.ningmeng123.mite.rules.R196OreRules;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import io.github.ningmeng123.mite.rules.R196OreRules.Kind;
+import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.netty.buffer.Unpooled;
 import java.util.EnumMap;
 import java.util.List;
@@ -24,6 +25,59 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class DeepslateOreConfigGameTests {
     private DeepslateOreConfigGameTests() {}
+
+    @GameTest(template = "empty", timeoutTicks = 400)
+    public static void independentHeightRangesSaveSyncAndConstrainEntireGeneratedVeins(GameTestHelper helper) {
+        try (var ignored = new Settings()) {
+            var regular = regularValues();
+            helper.assertTrue(MiteConfig.saveOreMultipliers(regular, Map.of(),
+                    Map.of(Dimension.OVERWORLD, Map.of(Kind.COPPER, "[20,22]")),
+                    Map.of(Dimension.OVERWORLD, Map.of(Kind.COPPER, "[-40,-38]"))), "Separate actual Y ranges save atomically");
+            helper.assertValueEqual(MiteConfig.oreHeightRange(Kind.COPPER, Dimension.OVERWORLD, false), new OreHeightRange(20, 22), "Regular copper height");
+            helper.assertValueEqual(MiteConfig.oreHeightRange(Kind.COPPER, Dimension.OVERWORLD, true), new OreHeightRange(-40, -38), "Deep copper height");
+            var snapshot = MiteConfig.localSnapshot();
+            var bytes = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+            try {
+                GameplayConfigPayload.CODEC.encode(bytes, new GameplayConfigPayload(snapshot));
+                var decoded = GameplayConfigPayload.CODEC.decode(bytes).snapshot();
+                helper.assertValueEqual(decoded, snapshot, "Actual payload retains both height maps");
+                MiteConfig.receiveServerSnapshot(decoded);
+                helper.assertValueEqual(MiteConfig.oreHeightRange(Kind.COPPER, Dimension.OVERWORLD, true), new OreHeightRange(-40, -38), "Remote ore page sees server heights");
+            } finally { bytes.release(); MiteConfig.clearServerSnapshot(); }
+            helper.assertFalse(MiteConfig.saveOreMultipliers(regular, Map.of(),
+                    Map.of(Dimension.OVERWORLD, Map.of(Kind.COPPER, "[100,-100]")), Map.of()), "Reversed ranges are rejected before any settings mutate");
+            helper.assertTrue(MiteConfig.localSnapshot() == snapshot, "Rejected height draft cannot publish a partial revision");
+
+            MiteConfig.OVERWORLD_ORES.values().forEach(setting -> setting.set(0D));
+            MiteConfig.OVERWORLD_DEEPSLATE_ORES.values().forEach(setting -> setting.set(0D));
+            MiteConfig.OVERWORLD_ORES.get(Kind.COPPER).set(1D);
+            MiteConfig.OVERWORLD_DEEPSLATE_ORES.get(Kind.COPPER).set(1D);
+            MiteConfig.OVERWORLD_ORE_CANDIDATES.get(Kind.COPPER).set(1000D);
+            MiteConfig.OVERWORLD_ORE_CHANCES.get(Kind.COPPER).set(100D);
+            MiteConfig.refreshEnchantmentRules();
+            var fixture = new OreGenerationGameTests.GenerationFixture(helper.getLevel(), new ChunkPos(6412, -6410), false);
+            fixture.fill(-64, 129);
+            fixture.place("ores_overworld", 196L);
+            int regularCount = 0, deepCount = 0;
+            for (var chunk : fixture.all) {
+                var position = new BlockPos.MutableBlockPos();
+                int startX = chunk.getPos().getMinBlockX(), startZ = chunk.getPos().getMinBlockZ();
+                for (int offsetX = 0; offsetX < 16; offsetX++) for (int offsetZ = 0; offsetZ < 16; offsetZ++) for (int height = -64; height < 129; height++) {
+                    var state = chunk.getBlockState(position.set(startX + offsetX, height, startZ + offsetZ));
+                    if (state.is(Blocks.COPPER_ORE)) {
+                        helper.assertTrue(height >= 20 && height <= 22, "Entire regular vein stays inside inclusive configured bounds");
+                        regularCount++;
+                    }
+                    if (state.is(Blocks.DEEPSLATE_COPPER_ORE)) {
+                        helper.assertTrue(height >= -40 && height <= -38, "Entire deep vein stays inside inclusive configured bounds");
+                        deepCount++;
+                    }
+                }
+            }
+            helper.assertTrue(regularCount > 0 && deepCount > 0, "Different configured bands both generate real ore");
+        }
+        helper.succeed();
+    }
 
     @GameTest(template = "empty")
     public static void deepRatesInheritOldFilesUntilEditedAndSaveWithoutChangingAdvancedRules(GameTestHelper helper) {
@@ -109,6 +163,7 @@ public final class DeepslateOreConfigGameTests {
 
     private static final class Settings implements AutoCloseable {
         private final Map<ModConfigSpec.DoubleValue, Double> values = new java.util.HashMap<>();
+        private final Map<ModConfigSpec.ConfigValue<String>, String> heights = new java.util.HashMap<>();
         private Settings() {
             for (var settings : List.of(MiteConfig.OVERWORLD_ORES, MiteConfig.UNDERWORLD_ORES,
                     MiteConfig.OVERWORLD_DEEPSLATE_ORES, MiteConfig.UNDERWORLD_DEEPSLATE_ORES,
@@ -116,9 +171,13 @@ public final class DeepslateOreConfigGameTests {
                     MiteConfig.OVERWORLD_ORE_CHANCES, MiteConfig.UNDERWORLD_ORE_CHANCES)) {
                 settings.values().forEach(setting -> values.put(setting, setting.get()));
             }
+            for (var settings : List.of(MiteConfig.OVERWORLD_ORE_HEIGHTS, MiteConfig.UNDERWORLD_ORE_HEIGHTS,
+                    MiteConfig.OVERWORLD_DEEPSLATE_ORE_HEIGHTS, MiteConfig.UNDERWORLD_DEEPSLATE_ORE_HEIGHTS))
+                settings.values().forEach(setting -> heights.put(setting, setting.get()));
         }
         @Override public void close() {
             values.forEach((setting, value) -> setting.set(value));
+            heights.forEach((setting, value) -> setting.set(value));
             MiteConfig.clearServerSnapshot();
             MiteConfig.refreshEnchantmentRules();
             MiteConfig.SPEC.save();

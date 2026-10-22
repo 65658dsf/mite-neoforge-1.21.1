@@ -79,8 +79,13 @@ public final class Livestock032 {
     }
     public static void save(Mob mob, CompoundTag state) {
         if (mob.level().isClientSide) return;
+        if (Math.min(state.getFloat("food"), Math.min(state.getFloat("water"), state.getFloat("freedom"))) < .25F)
+            state.putInt("recovery_ticks", LivestockRules032.RECOVERY_TICKS);
         mob.getPersistentData().put(SourceVanillaMobLoot.STATE, state);
-        if(mob instanceof Livestock032View view) view.mite$setLivestockNeeds(new LivestockRules032.Needs(state.getFloat("food"),state.getFloat("water"),state.getFloat("freedom")));
+        if(mob instanceof Livestock032View view) {
+            view.mite$setLivestockNeeds(new LivestockRules032.Needs(state.getFloat("food"),state.getFloat("water"),state.getFloat("freedom")));
+            view.mite$setRecoveryTicks(Math.clamp(state.getInt("recovery_ticks"),0,LivestockRules032.RECOVERY_TICKS));
+        }
         if (mob instanceof Cow cow) {
             var synced=new CowFoodState(1, Math.clamp(state.getInt("milk"), 0, 100), state.getFloat("food"), state.getFloat("water"), state.getFloat("freedom"));
             if(!cow.hasData(MiteAttachments.COW_FOOD) || !cow.getData(MiteAttachments.COW_FOOD).equals(synced)) cow.setData(MiteAttachments.COW_FOOD,synced);
@@ -88,6 +93,18 @@ public final class Livestock032 {
         }
     }
     public static boolean isHungry(Mob mob) { return needs(mob).food() < .5F; }
+    public static boolean well(Mob mob) {
+        return needs(mob).well() && (mob.level().isClientSide && mob instanceof Livestock032View view
+                ? view.mite$recoveryTicks() == 0 : state(mob).getInt("recovery_ticks") <= 0);
+    }
+    public static void tickRecovery(Mob mob) {
+        var state = state(mob);
+        int recovery = state.getInt("recovery_ticks");
+        if (recovery > 0 && needs(mob).well()) {
+            state.putInt("recovery_ticks", recovery - 1);
+            save(mob, state);
+        }
+    }
     public static boolean isThirsty(Mob mob) { return needs(mob).water() < .5F; }
     public static boolean isVeryHungry(Mob mob) { return needs(mob).food() < .25F; }
     public static boolean isVeryThirsty(Mob mob) { return needs(mob).water() < .25F; }
@@ -137,20 +154,20 @@ public final class Livestock032 {
     }
     public static boolean canEat(Mob mob, ItemStack stack) {
         if (!sourceLivestock(mob) || !(mob instanceof Animal animal) || !mob.isAlive() || mob.isBaby() || !mob.level().isClientSide && (animal.getAge() != 0 || animal.isInLove()) || !foodItem(mob, stack)) return false;
-        return mob.getHealth() < mob.getMaxHealth() || needs(mob).well() || isHungry(mob);
+        return mob.getHealth() < mob.getMaxHealth() || well(mob) || isHungry(mob);
     }
     public static boolean shouldEat(Mob mob, ItemStack stack) { return canEat(mob, stack); }
     /** The love check happens before og's half-health heal; an injured adult needs a later meal to mate. */
     public static void onFoodEaten(Mob mob, ItemStack stack) {
         if (!sourceLivestock(mob) || mob.level().isClientSide) return;
         needs(mob, needs(mob).feed());
-        if (mob instanceof Animal animal && needs(mob).well() && mob.getHealth() >= mob.getMaxHealth() && !stack.is(Items.ROTTEN_FLESH)) animal.setInLove(null);
+        if (mob instanceof Animal animal && well(mob) && mob.getHealth() >= mob.getMaxHealth() && !stack.is(Items.ROTTEN_FLESH)) animal.setInLove(null);
         mob.heal(mob.getMaxHealth() * .5F);
     }
     public static void drink(Mob mob, int volume) { needs(mob, needs(mob).drink(volume)); }
     public static boolean updateWellness(Mob mob) {
         needs(mob, needs(mob).update(foodAt(mob, mob.blockPosition(), true), isNearWater(mob), mob.level().isRainingAt(mob.blockPosition()), isCrowded(mob)));
-        return needs(mob).well();
+        return well(mob);
     }
     public static void produceGoods(Mob mob) {
         var s = state(mob); int production = s.getInt("production_counter");
@@ -206,6 +223,7 @@ public final class Livestock032 {
     }
     @SubscribeEvent public static void tick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof Mob mob) || mob.level().isClientSide || !sourceLivestock(mob) || !mob.isAlive()) return;
+        tickRecovery(mob);
         if (mob.tickCount % 100 == 0) {
             if(mob.getRandom().nextInt(10)>0 && updateWellness(mob) && !mob.isBaby()) { var s=state(mob); s.putInt("production_counter",s.getInt("production_counter")+1); save(mob,s); }
             produceGoods(mob);

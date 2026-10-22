@@ -266,7 +266,9 @@ public final class CollapsePhysicsGameTests {
                             && f.state(f.anchor.west()).is(Blocks.GRASS_BLOCK),
                     "World-generation-style writes and ordinary updates preserve natural overhangs");
             helper.assertTrue(f.check(f.anchor) == null && f.check(soul) == null && f.falling().isEmpty(),
-                    "An unmarked native scheduled callback does not invent undermining");
+                    "Dirt and soul sand keep their original disturbed-only lifecycle");
+            helper.assertTrue(f.check(f.anchor.west()) != null,
+                    "Grass schedules a collapse after its lower support changes even without a player mining callback");
             f.finish();
         });
     }

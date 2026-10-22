@@ -19,7 +19,7 @@ public abstract class Livestock032MooshroomMixin {
         MushroomCow cow=(MushroomCow)(Object)this;
         if(!player.getItemInHand(hand).is(Items.BOWL)) return;
         CowFoodState state=CowFoodState.get(cow);
-        if(cow.isBaby() || !state.well() || cow.getHealth()<cow.getMaxHealth() || state.milk()<25) { cir.setReturnValue(InteractionResult.FAIL); return; }
+        if(cow.isBaby() || !io.github.ningmeng123.mite.entity.animal.Livestock032.well(cow) || cow.getHealth()<cow.getMaxHealth() || state.milk()<25) { cir.setReturnValue(InteractionResult.FAIL); return; }
         if(!cow.level().isClientSide) CowFoodState.set(cow,state.milk(state.milk()-25));
     }
 }

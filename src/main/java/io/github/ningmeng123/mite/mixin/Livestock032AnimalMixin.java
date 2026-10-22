@@ -41,7 +41,7 @@ public abstract class Livestock032AnimalMixin {
     private void mite$healthyLove(Player player,CallbackInfo ci) {
         Animal animal=(Animal)(Object)this;
         if(!animal.level().isClientSide && R196AnimalAi032.managed(animal) && (animal.getHealth()<animal.getMaxHealth()
-                || Livestock032.sourceLivestock(animal) && !Livestock032.needs(animal).well())) ci.cancel();
+                || Livestock032.sourceLivestock(animal) && !Livestock032.well(animal))) ci.cancel();
     }
     @Inject(method="mobInteract",at=@At("HEAD"),cancellable=true)
     private void mite$sourceFood(Player player,InteractionHand hand,CallbackInfoReturnable<InteractionResult> cir) {
@@ -53,7 +53,7 @@ public abstract class Livestock032AnimalMixin {
         cir.setReturnValue(accept?InteractionResult.sidedSuccess(animal.level().isClientSide):InteractionResult.PASS);
     }
     @ModifyConstant(method={"spawnChildFromBreeding","finalizeSpawnChildFromBreeding"},constant=@Constant(intValue=6000))
-    private int mite$sourceCooldown(int original) { return R196AnimalAi032.managed((Animal)(Object)this)?LivestockRules032.BREEDING_COOLDOWN:original; }
+    private int mite$sourceCooldown(int original) { return LivestockRules032.BREEDING_COOLDOWN; }
     @ModifyArg(method="finalizeSpawnChildFromBreeding",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/ExperienceOrb;<init>(Lnet/minecraft/world/level/Level;DDDI)V"),index=4)
     private int mite$extensionBreedingExperience(int original) { return Math.max(0,MiteExtensions.policy().breedingExperience((Animal)(Object)this,original)); }
     @Inject(method="finalizeSpawnChildFromBreeding",at=@At("TAIL"))

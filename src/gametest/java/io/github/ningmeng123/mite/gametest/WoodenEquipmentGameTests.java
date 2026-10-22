@@ -348,7 +348,9 @@ public final class WoodenEquipmentGameTests {
     }
 
     private static boolean isRetiredTool(ItemStack stack) {
-        return stack.is(Items.WOODEN_AXE) || stack.is(Items.WOODEN_PICKAXE);
+        return stack.is(Items.WOODEN_AXE) || stack.is(Items.WOODEN_PICKAXE)
+                || stack.is(Items.STONE_SWORD) || stack.is(Items.STONE_AXE) || stack.is(Items.STONE_PICKAXE)
+                || stack.is(Items.STONE_SHOVEL) || stack.is(Items.STONE_HOE);
     }
 
     private static void assertSameStack(GameTestHelper helper, ItemStack expected, ItemStack actual, String message) {

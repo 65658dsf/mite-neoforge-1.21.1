@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-/** Shared exclusion for retired diamond and netherite gear, retaining their raw materials. @author NingMeng123 */
+/** Shared exclusion for retired equipment, retaining its raw materials. @author NingMeng123 */
 public final class RemovedDiamondEquipment {
     public static final Set<ResourceLocation> IDS = retiredIds();
 
@@ -17,6 +17,8 @@ public final class RemovedDiamondEquipment {
 
     private static Set<ResourceLocation> retiredIds() {
         Set<ResourceLocation> ids = new LinkedHashSet<>();
+        for (String family : List.of("sword", "axe", "pickaxe", "shovel", "hoe"))
+            ids.add(ResourceLocation.withDefaultNamespace("stone_" + family));
         for (String family : List.of("sword", "axe", "pickaxe", "shovel", "hoe", "helmet", "chestplate", "leggings", "boots")) {
             ids.add(ResourceLocation.withDefaultNamespace("diamond_" + family));
             ids.add(ResourceLocation.withDefaultNamespace("netherite_" + family));

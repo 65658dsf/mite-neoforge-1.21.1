@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.client.config;
 
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.R196OreRules;
+import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import io.github.ningmeng123.mite.rules.R196OreRules.Kind;
 import io.github.ningmeng123.mite.worldgen.R196OreFeature;
@@ -25,7 +26,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-/** Simple per-dimension multipliers; source counts and chance are read-only references. @author NingMeng123 */
+/** Per-dimension multipliers and absolute ore heights. @author NingMeng123 */
 public final class OreGenerationSettingsScreen extends Screen {
     private record Mineral(Kind kind, boolean deepslate) {}
     private record Entry(Dimension dimension, Mineral mineral, ResourceLocation id, Component name, double base, double chance) {
@@ -37,6 +38,9 @@ public final class OreGenerationSettingsScreen extends Screen {
         final Map<Kind, Double> deepslateMultipliers = new EnumMap<>(Kind.class);
         final Map<Mineral, String> text = new HashMap<>();
         final Set<Mineral> invalid = new HashSet<>();
+        final Map<Mineral, String> heights = new HashMap<>();
+        final Map<Mineral, String> heightText = new HashMap<>();
+        final Set<Mineral> invalidHeights = new HashSet<>();
 
         double multiplier(Mineral mineral) {
             double override = mineral.deepslate() ? deepslateMultipliers.get(mineral.kind()) : -1D;
@@ -75,6 +79,11 @@ public final class OreGenerationSettingsScreen extends Screen {
                             MiteConfig.oreBaseCandidates(kind, selected), MiteConfig.orePassChance(kind, selected)));
                 }
             }
+            for (var entry : minerals) {
+                var override = MiteConfig.oreHeightOverride(entry.kind(), selected, entry.mineral().deepslate());
+                draft.heights.put(entry.mineral(), override == null ? "" : override.toString());
+                draft.heightText.put(entry.mineral(), MiteConfig.oreHeightRange(entry.kind(), selected, entry.mineral().deepslate()).toString());
+            }
             minerals.sort(Comparator.comparing(entry -> entry.id().toString()));
             drafts.put(selected, draft);
             entries.put(selected, List.copyOf(minerals));
@@ -110,14 +119,14 @@ public final class OreGenerationSettingsScreen extends Screen {
         underworld.active = dimension != Dimension.UNDERWORLD;
         visible.clear();
         List<Entry> filtered = filtered();
-        int rows = Math.max(1, (height - 170) / 54);
+        int rows = Math.max(1, (height - 170) / 78);
         pageCount = Math.max(1, (filtered.size() + rows - 1) / rows);
         page = Math.clamp(page, 0, pageCount - 1);
         Draft draft = drafts.get(dimension);
         int controlsX = width - 150;
         for (int index = page * rows; index < Math.min(filtered.size(), (page + 1) * rows); index++) {
             Entry entry = filtered.get(index);
-            int y = 100 + (index - page * rows) * 54;
+            int y = 100 + (index - page * rows) * 78;
             visible.add(new VisibleRow(entry, y));
             var box = addRenderableWidget(new EditBox(font, controlsX, y, 78, 20, Component.translatable("mite.config.ore_multiplier")));
             box.setMaxLength(24);
@@ -138,8 +147,31 @@ public final class OreGenerationSettingsScreen extends Screen {
                 saveFailed = false;
                 refreshSave();
             });
-            var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"),
-                    button -> box.setValue("1")).bounds(controlsX + 84, y, 54, 20).build());
+            var heightBox = addRenderableWidget(new EditBox(font, controlsX, y + 50, 138, 20,
+                    Component.translatable("mite.config.ore_height_range")));
+            heightBox.setMaxLength(32);
+            heightBox.setEditable(editable);
+            heightBox.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_height_range.tooltip")));
+            heightBox.setValue(draft.heightText.get(entry.mineral()));
+            if (draft.invalidHeights.contains(entry.mineral())) heightBox.setTextColor(0xFFFF5555);
+            heightBox.setResponder(text -> {
+                draft.heightText.put(entry.mineral(), text);
+                try {
+                    var range = OreHeightRange.parse(text);
+                    draft.heights.put(entry.mineral(), range.equals(OreHeightRange.defaults(entry.kind(), entry.dimension())) ? "" : range.toString());
+                    draft.invalidHeights.remove(entry.mineral());
+                    heightBox.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
+                } catch (IllegalArgumentException ignored) {
+                    draft.invalidHeights.add(entry.mineral());
+                    heightBox.setTextColor(0xFFFF5555);
+                }
+                saveFailed = false;
+                refreshSave();
+            });
+            var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
+                box.setValue("1");
+                heightBox.setValue(OreHeightRange.defaults(entry.kind(), entry.dimension()).toString());
+            }).bounds(controlsX + 84, y, 54, 20).build());
             reset.active = editable;
             reset.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_multiplier_reset")));
         }
@@ -153,9 +185,18 @@ public final class OreGenerationSettingsScreen extends Screen {
             if (!editable || !MiteConfigClient.editable() || invalidCount() != 0) return;
             var values = new EnumMap<Dimension, Map<Kind, Double>>(Dimension.class);
             var deepValues = new EnumMap<Dimension, Map<Kind, Double>>(Dimension.class);
+            var heights = new EnumMap<Dimension, Map<Kind, String>>(Dimension.class);
+            var deepHeights = new EnumMap<Dimension, Map<Kind, String>>(Dimension.class);
             drafts.forEach((selected, draftValues) -> values.put(selected, draftValues.multipliers));
             drafts.forEach((selected, draftValues) -> deepValues.put(selected, draftValues.deepslateMultipliers));
-            if (MiteConfig.saveOreMultipliers(values, deepValues)) minecraft.setScreen(parent);
+            drafts.forEach((selected, draftValues) -> {
+                var regular = new EnumMap<Kind, String>(Kind.class);
+                var deep = new EnumMap<Kind, String>(Kind.class);
+                draftValues.heights.forEach((mineral, text) -> (mineral.deepslate() ? deep : regular).put(mineral.kind(), text));
+                heights.put(selected, regular);
+                deepHeights.put(selected, deep);
+            });
+            if (MiteConfig.saveOreMultipliers(values, deepValues, heights, deepHeights)) minecraft.setScreen(parent);
             else { saveFailed = true; refreshSave(); }
         }).bounds(width / 2 - 104, height - 29, 100, 20).build());
         refreshSave();
@@ -163,7 +204,7 @@ public final class OreGenerationSettingsScreen extends Screen {
                 .bounds(width / 2 + 4, height - 29, 100, 20).build());
     }
 
-    private int invalidCount() { return drafts.values().stream().mapToInt(draft -> draft.invalid.size()).sum(); }
+    private int invalidCount() { return drafts.values().stream().mapToInt(draft -> draft.invalid.size() + draft.invalidHeights.size()).sum(); }
     private void refreshSave() {
         if (save == null) return;
         save.active = editable && MiteConfigClient.editable() && invalidCount() == 0;
@@ -194,6 +235,8 @@ public final class OreGenerationSettingsScreen extends Screen {
             graphics.drawString(font, font.plainSubstrByWidth(entry.id().toString(), controlsX - 24), 12, row.y() + 13, 0x999999);
             graphics.drawString(font, font.plainSubstrByWidth(baseline(entry).getString(), width - 24), 12, row.y() + 27, 0x999999);
             graphics.drawString(font, font.plainSubstrByWidth(effective(entry).getString(), width - 24), 12, row.y() + 39, 0xCCCCCC);
+            graphics.drawString(font, font.plainSubstrByWidth(Component.translatable("mite.config.ore_height_range").getString(), controlsX - 24),
+                    12, row.y() + 56, 0xBBBBBB);
             if (mouseX >= 12 && mouseX < controlsX - 4 && mouseY >= row.y() && mouseY < row.y() + 24) {
                 var lines = new ArrayList<Component>(List.of(entry.name(), Component.literal(entry.id().toString()), baseline(entry), effective(entry),
                         Component.translatable("mite.config.ore_multiplier.tooltip"), Component.translatable("mite.config.ore_multiplier_hint")));

@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.network.BucketPlacementInputPayload;
 import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.github.ningmeng123.mite.world.BucketPlacementIntent;
+import io.github.ningmeng123.mite.world.PlacementDelay;
 import io.github.ningmeng123.mite.world.TemporaryFluidChanges;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -133,6 +134,8 @@ public final class BucketPlacementNetworkGameTests {
     private static List<Item> filledBuckets(boolean water) {
         List<Item> result = new ArrayList<>();
         result.add(water ? Items.WATER_BUCKET : Items.LAVA_BUCKET);
+        if (water) result.addAll(List.of(Items.COD_BUCKET, Items.SALMON_BUCKET, Items.PUFFERFISH_BUCKET,
+                Items.TROPICAL_FISH_BUCKET, Items.TADPOLE_BUCKET, Items.AXOLOTL_BUCKET));
         for (String metal : MiteFoods.METALS) result.add(MiteFoods.get(metal + (water ? "_water_bucket" : "_lava_bucket")));
         return result;
     }
@@ -163,6 +166,7 @@ public final class BucketPlacementNetworkGameTests {
 
         private void use(InteractionHand hand, int sequence) {
             player.connection.handleUseItem(new ServerboundUseItemPacket(hand, sequence, 0F, 90F));
+            PlacementDelay.tickPlayer(player, player.server.overworld().getGameTime() + PlacementDelay.DELAY_TICKS);
         }
 
         private boolean temporary() { return TemporaryFluidChanges.get(helper.getLevel()).pending().containsKey(target.asLong()); }
@@ -180,6 +184,7 @@ public final class BucketPlacementNetworkGameTests {
 
         @Override public void close() {
             try {
+                PlacementDelay.clear(player);
                 TemporaryFluidChanges.get(helper.getLevel()).cancel(target);
                 helper.getLevel().setBlock(target, Blocks.AIR.defaultBlockState(), 2);
                 BucketPlacementIntent.clear(player);

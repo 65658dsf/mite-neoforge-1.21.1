@@ -118,6 +118,16 @@ public final class R196SpawnRules {
 
     public static float initialProbability(boolean freezing) { return freezing ? .05F : .1F; }
 
+    public static float initialProbability(boolean freezing, Category category) {
+        float probability = initialProbability(freezing);
+        return category == Category.ANIMAL ? 1.3F * probability / (1F + .3F * probability) : probability;
+    }
+
+    public static boolean animalSpawnTick(long gameTime) {
+        long phase = Math.floorMod(gameTime, 4000L);
+        return phase * 13 / 4000 != Math.floorDiv((phase - 1) * 13, 4000);
+    }
+
     public static RateStep advanceRate(RateState state, boolean overworld, boolean bloodOrThunder, IntUnaryOperator random) {
         if (!overworld) return new RateStep(state, .25F);
         int decreased = state.decreased(), increased = state.increased(), paused = state.paused();

@@ -8,6 +8,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,6 +18,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /** Keep collapse scheduling independent of native block overrides and block-state properties. @author NingMeng123 */
 @Mixin(BlockBehaviour.BlockStateBase.class)
 public abstract class CollapseBlockStateMixin {
+    @Inject(method = "handleNeighborChanged", at = @At("HEAD"))
+    private void mite$grassSupportChanged(Level level, BlockPos pos, Block neighbor, BlockPos source, boolean moved, CallbackInfo callback) {
+        BlockState state = (BlockState)(Object)this;
+        if (level instanceof ServerLevel server && state.is(Blocks.GRASS_BLOCK)
+                && source.equals(pos.below()) && CollapsePhysics.canFallInto(server, source, state))
+            CollapsePhysics.schedule(server, pos);
+    }
+
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void mite$pendingCollapse(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
         BlockState state = (BlockState)(Object)this;

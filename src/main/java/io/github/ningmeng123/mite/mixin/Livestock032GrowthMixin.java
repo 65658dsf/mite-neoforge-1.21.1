@@ -27,11 +27,14 @@ public abstract class Livestock032GrowthMixin implements Livestock032View {
     @Unique private static final EntityDataAccessor<Float> MITE_FOOD_032=SynchedEntityData.defineId(AgeableMob.class,EntityDataSerializers.FLOAT);
     @Unique private static final EntityDataAccessor<Float> MITE_WATER_032=SynchedEntityData.defineId(AgeableMob.class,EntityDataSerializers.FLOAT);
     @Unique private static final EntityDataAccessor<Float> MITE_FREEDOM_032=SynchedEntityData.defineId(AgeableMob.class,EntityDataSerializers.FLOAT);
+    @Unique private static final EntityDataAccessor<Integer> MITE_RECOVERY=SynchedEntityData.defineId(AgeableMob.class,EntityDataSerializers.INT);
     @Unique private net.minecraft.core.BlockPos mite$lastTrampled032=net.minecraft.core.BlockPos.ZERO;
     @Override public net.minecraft.core.BlockPos mite$lastTrampled() { return mite$lastTrampled032; }
     @Override public void mite$setLastTrampled(net.minecraft.core.BlockPos pos) { mite$lastTrampled032=pos.immutable(); }
     @Inject(method="defineSynchedData",at=@At("TAIL"))
-    private void mite$wellnessWatcher(SynchedEntityData.Builder builder,CallbackInfo ci) { builder.define(MITE_FOOD_032,1F);builder.define(MITE_WATER_032,1F);builder.define(MITE_FREEDOM_032,1F); }
+    private void mite$wellnessWatcher(SynchedEntityData.Builder builder,CallbackInfo ci) { builder.define(MITE_FOOD_032,1F);builder.define(MITE_WATER_032,1F);builder.define(MITE_FREEDOM_032,1F);builder.define(MITE_RECOVERY,0); }
+    @Override public int mite$recoveryTicks() { return ((AgeableMob)(Object)this).getEntityData().get(MITE_RECOVERY); }
+    @Override public void mite$setRecoveryTicks(int ticks) { ((AgeableMob)(Object)this).getEntityData().set(MITE_RECOVERY,ticks); }
     @Override public LivestockRules032.Needs mite$livestockNeeds() {
         var data=((AgeableMob)(Object)this).getEntityData();return new LivestockRules032.Needs(data.get(MITE_FOOD_032),data.get(MITE_WATER_032),data.get(MITE_FREEDOM_032));
     }
@@ -41,6 +44,7 @@ public abstract class Livestock032GrowthMixin implements Livestock032View {
     @ModifyVariable(method="setAge",at=@At("HEAD"),argsOnly=true)
     private int mite$growthGate(int age) {
         AgeableMob mob=(AgeableMob)(Object)this;
+        if(age==6000 && mob.getAge()==0 && mob instanceof net.minecraft.world.entity.animal.Animal) age=LivestockRules032.BREEDING_COOLDOWN;
         if(mob.level().isClientSide || !R196AnimalAi032.managed(mob) || !mob.isBaby()) return age;
         if(age>mob.getAge() && Livestock032.sourceLivestock(mob) && (Livestock032.isDesperateForFood(mob)||Livestock032.isDesperateForWater(mob))) return mob.getAge();
         var block=mob.level().getBlockState(mob.blockPosition());

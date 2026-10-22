@@ -63,7 +63,7 @@ public final class SourceVanillaMobLoot {
     public static void setLivestockNeeds(Mob mob,float food,float water,float freedom) {
         io.github.ningmeng123.mite.entity.animal.Livestock032.needs(mob,new io.github.ningmeng123.mite.entity.animal.LivestockRules032.Needs(food,water,freedom));
     }
-    public static boolean well(Mob mob) { initialize(mob); var s=mob.getPersistentData().getCompound(STATE); return Math.min(s.getFloat("food"),Math.min(s.getFloat("water"),s.getFloat("freedom")))>=.25F; }
+    public static boolean well(Mob mob) { return io.github.ningmeng123.mite.entity.animal.Livestock032.well(mob); }
     public static int feathers(Mob mob) { initialize(mob); return mob.getPersistentData().getCompound(STATE).getInt("feathers"); }
     public static void setFeathers(Mob mob,int feathers) { initialize(mob); var s=mob.getPersistentData().getCompound(STATE); s.putInt("feathers",Math.clamp(feathers,0,s.getInt("maximum_feathers"))); mob.getPersistentData().put(STATE,s); }
     public static int webStock(Mob mob) { initialize(mob); return mob.getPersistentData().getCompound(STATE).getInt("webs"); }

@@ -4,6 +4,7 @@ package io.github.ningmeng123.mite.entity.animal;
 public final class LivestockRules032 {
     public static final int NEWBORN_AGE = -64000;
     public static final int BREEDING_COOLDOWN = 16000;
+    public static final int RECOVERY_TICKS = 3 * 60 * 20;
     private LivestockRules032() {}
     public record Needs(float food, float water, float freedom) {
         public Needs { food = clamp(food); water = clamp(water); freedom = clamp(freedom); }

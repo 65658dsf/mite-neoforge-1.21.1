@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.R196OreRules;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import io.github.ningmeng123.mite.rules.R196OreRules.Kind;
+import io.github.ningmeng123.mite.rules.OreHeightRange;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.core.BlockPos;
@@ -42,13 +43,18 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         for (Kind kind : order) {
             int count = R196OreRules.candidateCount(kind, dimension, random);
             boolean configurable = R196OreRules.configurableKinds(dimension).contains(kind);
-            var batches = configurable && R196OreRules.hasDeepslateOre(kind)
+            OreHeightRange stoneHeight = configurable ? MiteConfig.oreHeightOverride(kind, dimension, false) : null;
+            OreHeightRange deepHeight = configurable && R196OreRules.hasDeepslateOre(kind) ? MiteConfig.oreHeightOverride(kind, dimension, true) : stoneHeight;
+            var batches = configurable && R196OreRules.hasDeepslateOre(kind) && !java.util.Objects.equals(stoneHeight, deepHeight)
+                    ? List.of(new OreGenerationRates.Batch(MiteConfig.oreCandidates(kind, dimension), true, false),
+                            new OreGenerationRates.Batch(MiteConfig.oreBaseCandidates(kind, dimension) * MiteConfig.oreMultiplier(kind, dimension, true), false, true))
+                    : configurable && R196OreRules.hasDeepslateOre(kind)
                     ? OreGenerationRates.batches(MiteConfig.oreBaseCandidates(kind, dimension),
                             MiteConfig.oreMultiplier(kind, dimension), MiteConfig.oreMultiplier(kind, dimension, true))
                     : List.of(new OreGenerationRates.Batch(configurable ? MiteConfig.oreCandidates(kind, dimension) : count, true, true));
             for (var batch : batches) {
                 count = OreGenerationRates.scaleCandidates(1, batch.candidates(), random);
-                Access access = new Access(level, dimension, kind, batch.stone(), batch.deepslate());
+                Access access = new Access(level, dimension, kind, batch.stone(), batch.deepslate(), stoneHeight, deepHeight);
                 for (int candidate = 0; candidate < count; candidate++) {
                     if (configurable) {
                         if (!OreGenerationRates.passesChance(MiteConfig.orePassChance(kind, dimension), dimension, random)) continue;
@@ -57,6 +63,15 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
                     int legacyY = R196OreRules.randomHeight(kind, dimension, random);
                     int z = originZ + random.nextInt(16);
                     int y = R196OreRules.modernY(dimension, legacyY);
+                    OreHeightRange height = batch.stone() ? stoneHeight : deepHeight;
+                    if (height != null) {
+                        Integer sampled = height.sample(random, level.getMinBuildHeight(), level.getMaxBuildHeight());
+                        if (sampled == null) continue;
+                        y = sampled;
+                        legacyY = dimension == Dimension.UNDERWORLD ? Math.floorDiv((y + 64) * 256, 384)
+                                : y <= 64 ? Math.floorDiv(y + 64, 2) : y;
+                        legacyY = Math.clamp(legacyY, R196OreRules.minHeight(kind, dimension), R196OreRules.maxHeight(kind, dimension));
+                    }
                     placed += R196OreRules.generateVein(kind, dimension, access, x, y, z, legacyY,
                             R196OreRules.depthScaled(kind, dimension), random);
                 }
@@ -116,13 +131,16 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         private final Dimension dimension;
         private final Kind kind;
         private final boolean stone, deepslate;
+        private final OreHeightRange stoneHeight, deepHeight;
         private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         private Access(WorldGenLevel level, Dimension dimension, Kind kind) {
-            this(level, dimension, kind, true, true);
+            this(level, dimension, kind, true, true, null, null);
         }
-        private Access(WorldGenLevel level, Dimension dimension, Kind kind, boolean stone, boolean deepslate) {
+        private Access(WorldGenLevel level, Dimension dimension, Kind kind, boolean stone, boolean deepslate,
+                OreHeightRange stoneHeight, OreHeightRange deepHeight) {
             this.level = level; this.dimension = dimension; this.kind = kind;
             this.stone = stone; this.deepslate = deepslate;
+            this.stoneHeight = stoneHeight; this.deepHeight = deepHeight;
         }
         @Override
         public boolean canReplace(int x, int y, int z) {
@@ -131,7 +149,8 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
             BlockState current = level.getBlockState(pos);
             // Existing ore, boundary blocks, structures, containers, fluids and air never become new ore.
             return dimension == Dimension.NETHER ? current.is(Blocks.NETHERRACK)
-                    : stone && current.is(Blocks.STONE) || deepslate && current.is(Blocks.DEEPSLATE);
+                    : stone && current.is(Blocks.STONE) && (stoneHeight == null || stoneHeight.contains(y))
+                            || deepslate && current.is(Blocks.DEEPSLATE) && (deepHeight == null || deepHeight.contains(y));
         }
         @Override
         public boolean supported(int x, int y, int z) {

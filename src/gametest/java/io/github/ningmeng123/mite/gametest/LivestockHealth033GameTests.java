@@ -62,6 +62,10 @@ public final class LivestockHealth033GameTests {
         Livestock032.needs(animal, new LivestockRules032.Needs(food, water, freedom));
     }
 
+    private static void recover(Mob animal) {
+        for (int tick = 0; tick < LivestockRules032.RECOVERY_TICKS; tick++) Livestock032.tickRecovery(animal);
+    }
+
     private static ResourceLocation skin(String species) {
         return ResourceLocation.fromNamespaceAndPath("mite", "textures/entity/livestock/" + species + "_sick.png");
     }
@@ -90,6 +94,7 @@ public final class LivestockHealth033GameTests {
         needs(cow, Math.nextDown(.25F), 1, 1);
         h.assertValueEqual(LivestockHealth033.sickBodyTexture(cow), skin("cow"), "The last float below 25% food is unwell");
         needs(cow, .25F, 1, 1);
+        recover(cow);
         h.assertTrue(LivestockHealth033.sickBodyTexture(cow) == null, "Exactly 25% food is well");
         cow.discard(); h.succeed();
     }
@@ -100,6 +105,7 @@ public final class LivestockHealth033GameTests {
         needs(pig, 1, Math.nextDown(.25F), 1);
         h.assertValueEqual(LivestockHealth033.sickBodyTexture(pig), skin("pig"), "Full food cannot hide water deficiency");
         needs(pig, 1, .25F, 1);
+        recover(pig);
         h.assertTrue(LivestockHealth033.sickBodyTexture(pig) == null, "Exactly 25% water restores the normal body");
         pig.discard(); h.succeed();
     }
@@ -110,6 +116,7 @@ public final class LivestockHealth033GameTests {
         needs(chicken, 1, 1, Math.nextDown(.25F));
         h.assertValueEqual(LivestockHealth033.sickBodyTexture(chicken), skin("chicken"), "Freedom alone changes the body skin");
         needs(chicken, 1, 1, .25F);
+        recover(chicken);
         h.assertTrue(LivestockHealth033.sickBodyTexture(chicken) == null, "Exactly 25% freedom is not sick");
         chicken.discard(); h.succeed();
     }
@@ -127,15 +134,17 @@ public final class LivestockHealth033GameTests {
     }
 
     @GameTest(template = "empty")
-    public static void actualWheatMealCuresFoodDeficiencyWithoutDiseaseTimer(GameTestHelper h) {
+    public static void actualWheatMealStartsThreeMinuteRecovery(GameTestHelper h) {
         var cow = mob(h, EntityType.COW);
         needs(cow, .1F, .8F, .8F);
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         player.setItemInHand(InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(Items.WHEAT));
         var result = cow.mobInteract(player, InteractionHand.MAIN_HAND);
         h.assertTrue(result.consumesAction() && player.getMainHandItem().isEmpty(), "A real accepted meal spends one wheat");
+        h.assertTrue(LivestockHealth033.sickBodyTexture(cow) != null && !Livestock032.well(cow), "Restored food starts recovery and cannot cure sickness instantly");
+        recover(cow);
         h.assertTrue(Livestock032.needs(cow).food() == .6F && LivestockHealth033.sickBodyTexture(cow) == null,
-                "Source +0.5 food immediately restores wellness without a separate sickness timer");
+                "Source +0.5 food restores wellness after three minutes of healthy needs");
         cow.discard(); h.succeed();
     }
 
@@ -147,9 +156,11 @@ public final class LivestockHealth033GameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(MiteFoods.WATER_BOWL.get()));
         var event = NeoForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteract(player, InteractionHand.MAIN_HAND, pig));
         h.assertTrue(event.isCanceled() && event.getCancellationResult().consumesAction(), "Registered water interaction accepts the bowl");
+        h.assertTrue(LivestockHealth033.sickBodyTexture(pig) != null, "Drinking starts recovery without immediately changing the sick body");
+        recover(pig);
         h.assertTrue(Livestock032.needs(pig).water() == .35F && Livestock032.needs(pig).food() == .8F
                         && LivestockHealth033.sickBodyTexture(pig) == null,
-                "Source one-volume +0.25 water immediately restores health status");
+                "Source one-volume +0.25 water restores health after recovery");
         h.assertTrue(player.getMainHandItem().is(Items.BOWL), "Drinking returns the same empty vessel");
         pig.discard(); h.succeed();
     }
@@ -173,6 +184,7 @@ public final class LivestockHealth033GameTests {
         h.getLevel().setBlock(pig.blockPosition().east(), Blocks.SNOW_BLOCK.defaultBlockState(), 3);
         h.assertTrue(Livestock032.isNearWater(pig), "Source snow counts as accessible water");
         Livestock032.updateWellness(pig);
+        recover(pig);
         h.assertTrue(Math.abs(Livestock032.needs(pig).water() - .3F) < .000001F
                         && LivestockHealth033.sickBodyTexture(pig) == null,
                 "Literal +0.1 accessible-water update restores wellness");
@@ -193,9 +205,10 @@ public final class LivestockHealth033GameTests {
         cow.discard(); chicken.discard();
         h.assertFalse(Livestock032.isCrowded(pig), "Open sky and one remaining animal provide source freedom");
         Livestock032.updateWellness(pig);
+        recover(pig);
         h.assertTrue(Math.abs(Livestock032.needs(pig).freedom() - .349F) < .000001F
                         && LivestockHealth033.sickBodyTexture(pig) == null,
-                "Literal +0.1 freedom update immediately restores the normal body");
+                "Literal +0.1 freedom update restores the normal body after recovery");
         pig.discard(); h.succeed();
     }
 
@@ -248,15 +261,18 @@ public final class LivestockHealth033GameTests {
                 "Body selection uses received watchers rather than the observer's unrelated server persistent data");
         needs(source, .25F, .25F, .25F);
         transferMetadata(h, source, observer);
-        h.assertTrue(LivestockHealth033.sickBodyTexture(observer) == null, "A second received metadata packet immediately shows exact-boundary recovery");
+        h.assertTrue(LivestockHealth033.sickBodyTexture(observer) != null, "Restored needs retain the sick body during recovery on observers");
+        recover(source);
+        transferMetadata(h, source, observer);
+        h.assertTrue(LivestockHealth033.sickBodyTexture(observer) == null, "Recovery completion reaches observers through real metadata");
         source.discard(); observer.discard(); h.succeed();
     }
 
     private static void transferMetadata(GameTestHelper h, Mob source, Mob observer) {
         var dirty = source.getEntityData().packDirty();
-        h.assertTrue(dirty != null && dirty.size() == 3
-                        && dirty.stream().allMatch(value -> value.serializer() == EntityDataSerializers.FLOAT),
-                "Wellness updates require exactly the existing three float watcher values");
+        h.assertTrue(dirty != null && !dirty.isEmpty()
+                        && dirty.stream().allMatch(value -> value.serializer() == EntityDataSerializers.FLOAT || value.serializer() == EntityDataSerializers.INT),
+                "Wellness and recovery updates travel through native float and integer metadata");
         var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), h.getLevel().registryAccess());
         try {
             ClientboundSetEntityDataPacket.STREAM_CODEC.encode(buffer, new ClientboundSetEntityDataPacket(source.getId(), dirty));
@@ -279,6 +295,9 @@ public final class LivestockHealth033GameTests {
             h.assertFalse(sheep.isInLove(), "Source setInLove rejects each independent unwell resource");
         }
         needs(sheep, .25F, .25F, .25F);
+        sheep.setInLove(null);
+        h.assertFalse(sheep.isInLove(), "Recovery countdown blocks new love even after restoring needs");
+        recover(sheep);
         sheep.setInLove(null);
         h.assertTrue(sheep.isInLove() && sheep.getInLoveTime() == 600, "Recovery permits source 600-tick love without disease medicine");
         sheep.discard(); h.succeed();
@@ -334,10 +353,11 @@ public final class LivestockHealth033GameTests {
         var goal = new LivestockGrazingGoal032(sheep);
         goal.start();
         for (int i = 0; i < 36; i++) goal.tick();
+        recover(sheep);
         h.assertTrue(!sheep.isSheared() && Livestock032.needs(sheep).food() == .6F
                         && LivestockHealth033.sickBodyTexture(sheep) == null
                         && h.getLevel().getBlockState(sheep.blockPosition().below()).is(Blocks.DIRT),
-                "Real source bite restores wool and half-food, thereby curing the body without blocking grazing");
+                "Real source bite restores wool and half-food and allows the body to recover after three minutes");
         sheep.discard(); h.succeed();
     }
 

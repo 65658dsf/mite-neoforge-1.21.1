@@ -37,7 +37,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /** Real registered items, native quotes, payment clicks, villager persistence and restock. @author NingMeng123 */
-@GameTestHolder("mite")
+@GameTestHolder("mite_trades")
 @PrefixGameTestTemplate(false)
 public final class SourceVillagerTradesGameTests {
     @GameTest(template="ranged_027")
@@ -69,16 +69,16 @@ public final class SourceVillagerTradesGameTests {
             Villager villager=new Villager(EntityType.VILLAGER,helper.getLevel());
             villager.setVillagerData(villager.getVillagerData().setProfession(BuiltInRegistries.VILLAGER_PROFESSION.get(ResourceLocation.withDefaultNamespace(profession))));
             MerchantOffers quotes=villager.getOffers();
-            helper.assertTrue(quotes.size()>=3,"Native initial stock and one source offer coexist for "+profession);
-            int count=quotes.size();MerchantOffer last=quotes.getLast();last.increaseUses();
+            MerchantOffer source=sourceOffer(helper,villager);
+            int count=quotes.size();source.increaseUses();
             for(int i=0;i<5;i++) helper.assertValueEqual(villager.getOffers().size(),count,"Repeated native reads never reroll source stock");
             CompoundTag saved=new CompoundTag();villager.saveWithoutId(saved);
             Villager loaded=new Villager(EntityType.VILLAGER,helper.getLevel());loaded.load(saved);
             helper.assertValueEqual(loaded.getOffers().size(),count,"Real entity NBT preserves the source-generation stamp and complete offers");
-            helper.assertValueEqual(loaded.getOffers().getLast().getUses(),1,"Offer uses survive an actual native save/load");
+            helper.assertValueEqual(sourceOffer(helper,loaded).getUses(),1,"The recorded source offer's uses survive an actual native save/load");
             loaded.restock();
             helper.assertValueEqual(loaded.getOffers().size(),count,"Restock refreshes existing goods without duplicating them");
-            helper.assertValueEqual(loaded.getOffers().getLast().getUses(),0,"Source offers use the ordinary modern restock lifecycle");
+            helper.assertValueEqual(sourceOffer(helper,loaded).getUses(),0,"Source offers use the ordinary modern restock lifecycle");
             villager.discard();loaded.discard();
         }
         helper.succeed();
@@ -105,7 +105,7 @@ public final class SourceVillagerTradesGameTests {
         for(boolean readWhileUnemployed:new boolean[]{false,true}) {
             Villager villager=new Villager(EntityType.VILLAGER,helper.getLevel());
             villager.setVillagerData(villager.getVillagerData().setProfession(VillagerProfession.TOOLSMITH));
-            helper.assertTrue(villager.getOffers().size()>=3,"First native toolsmith job contains its source supplement");
+            sourceOffer(helper,villager);
             helper.assertValueEqual(villager.getPersistentData().getCompound(SourceVillagerTrades.STATE).getList("known",8).size(),1,
                     "The original job has one generated source entry");
             villager.setVillagerData(villager.getVillagerData().setProfession(VillagerProfession.NONE));
@@ -114,12 +114,13 @@ public final class SourceVillagerTradesGameTests {
             if(readWhileUnemployed) helper.assertTrue(villager.getOffers().isEmpty(),"An unemployed villager has no native or source stock");
             villager.setVillagerData(villager.getVillagerData().setProfession(VillagerProfession.TOOLSMITH));
             int count=villager.getOffers().size();
-            helper.assertTrue(count>=3,"Reacquiring the same job supplements the newly generated native offers again");
+            sourceOffer(helper,villager);
             helper.assertValueEqual(villager.getPersistentData().getCompound(SourceVillagerTrades.STATE).getList("known",8).size(),1,
                     "The new employment gets one fresh source entry rather than inheriting an obsolete level stamp");
             Villager loaded=new Villager(EntityType.VILLAGER,helper.getLevel());
             loaded.load(villager.saveWithoutId(new CompoundTag()));
             helper.assertValueEqual(loaded.getOffers().size(),count,"Loading the new job preserves its generated stock without rerolling");
+            sourceOffer(helper,loaded);
             villager.discard();loaded.discard();
         }
         helper.succeed();
@@ -155,6 +156,27 @@ public final class SourceVillagerTradesGameTests {
             try(Fixture f=new Fixture(helper,quote)) { f.payAndTake(); }
         }
         villager.discard();helper.succeed();
+    }
+
+    private static MerchantOffer sourceOffer(GameTestHelper helper, Villager villager) {
+        MerchantOffers quotes=villager.getOffers();
+        var known=villager.getPersistentData().getCompound(SourceVillagerTrades.STATE).getList("known",8);
+        helper.assertValueEqual(known.size(),1,"A first-rank employment records exactly one source listing");
+        String selected=known.getString(0);
+        Listing listing=SourceVillagerTradeRules.listings().stream().filter(entry -> entry.id().equals(selected)).findFirst().orElse(null);
+        helper.assertTrue(listing!=null || selected.equals("fallback_gold"),"The saved source listing is reachable: "+selected);
+        var item=listing==null ? Items.GOLD_INGOT : BuiltInRegistries.ITEM.get(ResourceLocation.parse(listing.item()));
+        boolean purchase=listing==null || listing.kind()==Kind.BUY;
+        var matching=quotes.stream().filter(offer -> offer.getMaxUses()==7 && (purchase
+                ? offer.getBaseCostA().is(item) && offer.getResult().is(Items.EMERALD) : offer.getResult().is(item))).toList();
+        helper.assertValueEqual(matching.size(),1,"The saved source listing resolves one actual seven-use quote: "+describe(villager,quotes));
+        return matching.getFirst();
+    }
+
+    private static String describe(Villager villager, MerchantOffers quotes) {
+        return villager.getPersistentData().getCompound(SourceVillagerTrades.STATE)+" "+quotes.stream().map(offer ->
+                BuiltInRegistries.ITEM.getKey(offer.getBaseCostA().getItem())+"->"+BuiltInRegistries.ITEM.getKey(offer.getResult().getItem())
+                +" max="+offer.getMaxUses()+" uses="+offer.getUses()).toList();
     }
 
     private static final class Fixture implements AutoCloseable {

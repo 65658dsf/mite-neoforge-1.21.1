@@ -225,7 +225,7 @@ public final class EquipmentQualityMaintenanceGameTests {
     public static void specialUndeadWeaponsSpawnAtPoorQuality(GameTestHelper helper) {
         TestWitherSkeleton wither = new TestWitherSkeleton(helper.getLevel());
         wither.makeEquipment();
-        helper.assertTrue(wither.getMainHandItem().is(Items.STONE_SWORD), "Modern wither skeleton weapon type is retained");
+        helper.assertTrue(wither.getMainHandItem().is(Items.IRON_SWORD), "Wither skeletons use the available R196 iron sword instead of retired stone equipment");
         helper.assertValueEqual(EquipmentDurability.quality(wither.getMainHandItem()), Quality.POOR,
                 "The original wither-skeleton poor-quality override applies");
         TestZombifiedPiglin piglin = new TestZombifiedPiglin(helper.getLevel());
