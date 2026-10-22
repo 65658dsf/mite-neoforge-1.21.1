@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -52,7 +53,7 @@ public final class OreGenerationSettingsScreen extends Screen {
     private final Map<Dimension, Draft> drafts = new EnumMap<>(Dimension.class);
     private final Map<Dimension, List<Entry>> entries = new EnumMap<>(Dimension.class);
     private final List<VisibleRow> visible = new ArrayList<>();
-    private Dimension dimension = Dimension.UNDERWORLD;
+    private Dimension dimension = Dimension.OVERWORLD;
     private String query = "";
     private int page, pageCount = 1;
     private EditBox search;
@@ -92,9 +93,9 @@ public final class OreGenerationSettingsScreen extends Screen {
 
     @Override protected void init() {
         int tabWidth = (width - 30) / 2;
-        overworld = addRenderableWidget(Button.builder(Component.translatable("mite.config.ore_dimension.overworld"),
+        overworld = addRenderableWidget(Button.builder(dimensionLabel(Dimension.OVERWORLD),
                 button -> changeDimension(Dimension.OVERWORLD)).bounds(12, 34, tabWidth, 20).build());
-        underworld = addRenderableWidget(Button.builder(Component.translatable("mite.config.ore_dimension.underworld"),
+        underworld = addRenderableWidget(Button.builder(dimensionLabel(Dimension.UNDERWORLD),
                 button -> changeDimension(Dimension.UNDERWORLD)).bounds(18 + tabWidth, 34, tabWidth, 20).build());
         search = addRenderableWidget(new EditBox(font, 12, 60, width - 24, 20, Component.translatable("mite.config.ore_search")));
         search.setMaxLength(200);
@@ -105,6 +106,14 @@ public final class OreGenerationSettingsScreen extends Screen {
     }
 
     private void changeDimension(Dimension selected) { dimension = selected; page = 0; rebuildRows(); }
+
+    private Component dimensionLabel(Dimension selected) {
+        Component label = Component.translatable(selected == Dimension.OVERWORLD
+                ? "mite.config.ore_dimension.overworld" : "mite.config.ore_dimension.underworld");
+        return selected == dimension
+                ? Component.translatable("mite.config.ore_dimension.selected", label).withStyle(ChatFormatting.YELLOW)
+                : label;
+    }
 
     private List<Entry> filtered() {
         String filter = query.trim().toLowerCase(Locale.ROOT);
@@ -117,6 +126,8 @@ public final class OreGenerationSettingsScreen extends Screen {
             if (child != search && child != overworld && child != underworld) removeWidget(child);
         overworld.active = dimension != Dimension.OVERWORLD;
         underworld.active = dimension != Dimension.UNDERWORLD;
+        overworld.setMessage(dimensionLabel(Dimension.OVERWORLD));
+        underworld.setMessage(dimensionLabel(Dimension.UNDERWORLD));
         visible.clear();
         List<Entry> filtered = filtered();
         int rows = Math.max(1, (height - 170) / 78);

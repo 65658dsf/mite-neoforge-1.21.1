@@ -1306,6 +1306,7 @@
   "mite.config.overworld_generation": "Overworld ore generation",
   "mite.config.ore_dimension.overworld": "Overworld (8 minerals, including deepslate)",
   "mite.config.ore_dimension.underworld": "Underworld",
+  "mite.config.ore_dimension.selected": "▶ %s (Selected)",
   "mite.config.ore_candidates": "Candidates per chunk",
   "mite.config.ore_candidates.tooltip": "Candidate vein attempts before probability filtering in each new chunk. Range 0–100000; fractional attempts are probabilistic.",
   "mite.config.ore_chance": "Pass probability (%)",

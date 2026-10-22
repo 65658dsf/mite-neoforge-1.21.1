@@ -117,6 +117,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
             check(settings.getDeclaredMethod("init").getReturnType() == void.class, name + " init signature resolves");
         }
         report.addProperty("growth_formula_and_actual_ore_screen_linkage_verified", true);
+        auditOreDimensionSelection(report);
         Class<?> spawnSettings = Class.forName(CLIENT + "MonsterSpawnSettingsScreen", false, loader);
         MethodHandles.publicLookup().findConstructor(spawnSettings,
                 MethodType.methodType(void.class, Screen.class, String.class, Supplier.class, Consumer.class));
@@ -404,6 +405,41 @@ public final class GameplayConfigClientAudit implements DataProvider {
         return true;
     }
 
+    private static void auditOreDimensionSelection(JsonObject report) throws Exception {
+        ClassNode screen = bytecode(CLIENT + "OreGenerationSettingsScreen");
+        String dimension = "io/github/ningmeng123/mite/rules/R196OreRules$Dimension";
+        int assignments = 0;
+        boolean selectedLabel = false, selectedColor = false;
+        for (var method : screen.methods) {
+            if (method.name.equals("<init>")) for (var instruction : method.instructions) {
+                if (!(instruction instanceof FieldInsnNode field) || field.getOpcode() != Opcodes.PUTFIELD
+                        || !field.owner.equals(screen.name) || !field.name.equals("dimension")) continue;
+                assignments++;
+                var initial = instruction.getPrevious();
+                while (initial != null && initial.getOpcode() < 0) initial = initial.getPrevious();
+                check(initial instanceof FieldInsnNode value && value.getOpcode() == Opcodes.GETSTATIC
+                                && value.owner.equals(dimension) && value.name.equals("OVERWORLD"),
+                        "The ore screen constructor defaults to the overworld rather than the underworld");
+            }
+            if (method.name.equals("dimensionLabel")) for (var instruction : method.instructions) {
+                if (instruction instanceof LdcInsnNode constant
+                        && constant.cst.equals("mite.config.ore_dimension.selected")) selectedLabel = true;
+                if (instruction instanceof FieldInsnNode field && field.getOpcode() == Opcodes.GETSTATIC
+                        && field.owner.equals("net/minecraft/ChatFormatting") && field.name.equals("YELLOW")) selectedColor = true;
+            }
+        }
+        check(assignments == 1, "The ore screen has one explicit default dimension assignment");
+        check(calls(screen, "init", screen.name, "dimensionLabel")
+                        && calls(screen, "rebuildRows", screen.name, "dimensionLabel"),
+                "Both initial ore tabs and refreshed tabs use the explicit selection label");
+        check(selectedLabel && selectedColor
+                        && calls(screen, "dimensionLabel", "net/minecraft/network/chat/MutableComponent", "withStyle"),
+                "The selected ore dimension has a localized current marker styled yellow");
+        report.addProperty("ore_screen_default_overworld_bytecode_verified", true);
+        report.addProperty("ore_screen_initial_and_refreshed_selected_dimension_labels_verified", true);
+        report.addProperty("ore_screen_selected_dimension_localized_yellow_marker_verified", true);
+    }
+
     private static void auditLanguages(JsonObject report) throws Exception {
         Map<String, Map<String, String>> languages = new LinkedHashMap<>();
         Set<String> required = new TreeSet<>();
@@ -434,7 +470,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
             for (var format : Map.of("mite.config.page", 3, "mite.config.maximum.tooltip", 1, "mite.config.invalid_maximums", 1,
                     "mite.config.invalid_enchantment_entries", 1, "mite.config.enchantment_chance.tooltip", 0,
                     "mite.config.enchantment_chances.tooltip", 0, "mite.config.enchantment_reset.tooltip", 0,
-                    "mite.config.enchantment_hint", 0).entrySet()) {
+                    "mite.config.enchantment_hint", 0, "mite.config.ore_dimension.selected", 1).entrySet()) {
                 String value = language.getValue().get(format.getKey());
                 String formatted = String.format(Locale.ROOT, value, java.util.stream.IntStream.rangeClosed(1, format.getValue()).boxed().toArray());
                 check(!formatted.contains("%s"), "Unresolved config placeholder in " + language.getKey() + ": " + format.getKey());

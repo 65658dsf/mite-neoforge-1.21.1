@@ -1306,6 +1306,7 @@
   "mite.config.overworld_generation": "主世界矿物生成",
   "mite.config.ore_dimension.overworld": "主世界（8 种矿物，含深层变种）",
   "mite.config.ore_dimension.underworld": "地底世界",
+  "mite.config.ore_dimension.selected": "▶ %s（当前）",
   "mite.config.ore_candidates": "每区块候选次数",
   "mite.config.ore_candidates.tooltip": "每个新生成区块、概率过滤前的候选矿脉次数。范围 0–100000；小数部分按概率处理。",
   "mite.config.ore_chance": "通过率（%）",
