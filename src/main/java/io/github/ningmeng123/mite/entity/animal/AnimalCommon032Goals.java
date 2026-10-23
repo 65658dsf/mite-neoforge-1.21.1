@@ -127,7 +127,7 @@ public final class AnimalCommon032Goals {
             replanTicks=REPLAN_INTERVAL;
         }
         private boolean controlled() { return mob.isPassenger() || mob.getFirstPassenger() instanceof Player; }
-        @Override protected float movementSpeed() { return movementSpeed+(panicking() ? .2F : 0F); }
+        @Override protected float movementSpeed() { return (movementSpeed+(panicking() ? .2F : 0F))*.85F; }
         @Override public boolean canContinueToUse() {
             if(controlled()) return false;
             R196AnimalAi032.considerStopFleeing(mob);
