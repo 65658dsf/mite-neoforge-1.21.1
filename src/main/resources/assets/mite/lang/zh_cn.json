@@ -955,7 +955,7 @@
   "tooltip.mite.bucket_pickup": "右键取液保留水或岩浆；按住 Ctrl 右键取走液体方块",
   "tooltip.mite.brightness_locked": "MITE 将亮度固定为最低，无法更改。",
   "gui.mite.world_day": "第 %s 天",
-  "gui.mite.tab.level": "等级 %s",
+  "gui.mite.tab.level": "%s",
   "gui.mite.tab.latency": "%s ms",
   "jei.mite.anvil_material": "金属粒修复：消耗 1 粒示例",
   "jei.mite.anvil_combination": "同品质装备合并修复",

@@ -955,7 +955,7 @@
   "tooltip.mite.bucket_pickup": "Right-click to collect without removing water or lava; hold Ctrl to remove the liquid block",
   "tooltip.mite.brightness_locked": "MITE locks brightness to Moody (0%).",
   "gui.mite.world_day": "Day %s",
-  "gui.mite.tab.level": "Lv. %s",
+  "gui.mite.tab.level": "%s",
   "gui.mite.tab.latency": "%s ms",
   "jei.mite.anvil_material": "Material repair: one nugget example",
   "jei.mite.anvil_combination": "Combine equipment of the same quality",

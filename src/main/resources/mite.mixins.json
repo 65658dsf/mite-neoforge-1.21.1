@@ -354,6 +354,7 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.PlayerTabOverlayMixin",
     "client.LanPlayerListAccess",
     "client.ShareToLanScreenMixin",
     "client.GearGrowthHandMixin",
