@@ -39,6 +39,7 @@
     "BetterCombatMeleeGoalMixin",
     "BetterCombatMobSwingMixin",
     "SimplySwordsThrownSpearMixin",
+    "SimplySwordsUniqueLootMixin",
     "AnvilDurabilityMenuMixin",
     "BlazeChargeAccess",
     "SourceStatusEffectInstanceMixin",

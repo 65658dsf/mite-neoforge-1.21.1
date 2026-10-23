@@ -39,6 +39,13 @@ public final class SimplySwordsCompat {
     public static final List<String> MATERIALS = List.of("rusted_iron", "copper", "silver", "gold",
             "ancient_metal", "mithril", "adamantium", "vibranium");
     private static final Map<Item, Definition> DEFINITIONS = new IdentityHashMap<>();
+    private static final ClassValue<Boolean> UNIQUE_WEAPONS = new ClassValue<>() {
+        @Override protected Boolean computeValue(Class<?> type) {
+            for (Class<?> parent = type; parent != null; parent = parent.getSuperclass())
+                if (parent.getName().equals("net.sweenus.simplyswords.item.UniqueWeaponItem")) return true;
+            return false;
+        }
+    };
 
     public record Definition(String material, String family, ToolProfile profile, boolean added) {
         public float craftingDifficulty() {
@@ -52,6 +59,11 @@ public final class SimplySwordsCompat {
     public static List<String> families() { return FAMILIES; }
     public static String path(String material, String family) { return "simplyswords_" + material + "_" + family; }
     public static Definition definition(ItemStack stack) { return DEFINITIONS.get(stack.getItem()); }
+    /** Class ancestry is available before tags bind and covers awakened/evolved forms without optional linkage. */
+    public static boolean uniqueWeapon(Item item) {
+        return BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(MOD_ID)
+                && UNIQUE_WEAPONS.get(item.getClass());
+    }
     public static String material(ItemStack stack) {
         Definition definition = definition(stack);
         return definition == null ? null : definition.material();

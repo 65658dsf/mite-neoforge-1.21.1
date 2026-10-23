@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import java.util.Map;
 import net.minecraft.core.HolderLookup;
@@ -31,6 +32,9 @@ public abstract class RemovedDiamondRecipesMixin {
         var types = ImmutableMultimap.<RecipeType<?>, RecipeHolder<?>>builder();
         for (var holder : byName.values()) {
             if (RemovedDiamondEquipment.isRemoved(holder.value().getResultItem(registries))) continue;
+            // This otherwise-legal material recipe cycles through retired uniques in recipe viewers.
+            if (holder.id().getNamespace().equals(SimplySwordsCompat.MOD_ID)
+                    && holder.id().getPath().equals("unique_melting")) continue;
             names.put(holder.id(), holder);
             types.put(holder.value().getType(), holder);
         }

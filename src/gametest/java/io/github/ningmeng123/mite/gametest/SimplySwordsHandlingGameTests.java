@@ -86,7 +86,8 @@ public final class SimplySwordsHandlingGameTests {
     public static void repeatedAttributeQueriesRetainOriginalDamageAndNeverPersistOrDuplicatePenalties(GameTestHelper h) {
         if (absent(h)) return;
         for (ItemStack stack : List.of(new ItemStack(SimplySwordsCompat.weapon("vibranium", "claymore")),
-                new ItemStack(SimplySwordsCompat.weapon("gold", "katana")), nativeWeapon(h, "magiscythe"))) {
+                new ItemStack(SimplySwordsCompat.weapon("gold", "katana")),
+                new ItemStack(SimplySwordsCompat.weapon("runic", "scythe")))) {
             ItemStack before = stack.copy();
             List<Entry> originalDamage = defaults(stack, EquipmentSlot.MAINHAND).stream()
                     .filter(entry -> entry.attribute().equals(Attributes.ATTACK_DAMAGE)).toList();

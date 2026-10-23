@@ -64,3 +64,26 @@ SHA-256：`8adeaa922019d5aa207750cc8b271cd723aeb9d02d4f81e224dbe6558be1e690`。
 新增 5 项 `SimplySwordsHandlingGameTests` 实际验证 12 套材质与 15 族、独特武器特例、各装备槽、重复读取及保存重载；通过真实玩家装备 tick 检查攻速与移速下降、原伤害保留、切换双手武器不叠加、单手/空手恢复、副手不触发。Better Combat 分支还检查注册表一致、双向动作预设覆盖和同一武器基础属性下怪物实际攻击间隔延长。
 
 日志位于被忽略的 `build/verification/simplyswords-handling-{build,present,absent,bettercombat}.log`。本次构建产物为 `build/libs/mite-0.1.10.jar`。
+
+## 2026-10-23 禁用独特武器，保留符文系列
+
+开发与验证：NingMeng123。本节更新当前行为：所有继承 Simply Swords `UniqueWeaponItem` 的独特武器禁止获取和使用，普通武器、符文系列及材料保留。历史记录中“独特武器仍可用”的行为不再适用。
+
+统一排除规则覆盖创造分类及搜索、JEI、配方加载与替换、交易、最终掉落、存档读取、玩家和生物装备、深层容器以及攻击和交互。另拦截 `PityLootManager.chooseUnique`，阻止宝箱生成后的额外独特奖励，保留符文石板及其保底；移除 `simplyswords:unique_melting`，避免材料配方页轮播独特武器。
+
+| 验证 | 结果 |
+| --- | --- |
+| 独立构建目录执行 `build compileGametestJava` | 成功，1722 项 JUnit 测试全部通过 |
+| 加载 Simply Swords 的 `mite_simplyswords` 服务端 GameTest | 33 项全部通过，含新增 9 项独特武器禁用检查 |
+| 未加载 Simply Swords 的同一服务端测试集 | 33 项全部通过 |
+| 实际客户端创造分类、分类搜索及全局搜索 | 普通与管理员权限下均排除全部 57 把核心独特武器，保留 165 把普通/符文武器及 6 种材料 |
+| 实际 JEI 19.57.0.451 runtime | ingredient manager 和清空筛选的侧栏均排除全部 57 把独特武器，普通/符文武器和材料均保留 |
+| 发布包检查 | 新增 Mixin 及其注册齐全，包含独特熔炼配方过滤，不包含 GameTest 类 |
+
+独特武器完整名单由测试读取原模组 `tags/item/uniques.json` 独立核对；其中跨模组可选武器 `dreadtide` 未安装其依赖，当前环境没有注册。普通和符文系列还验证了实际配方匹配、存档保存和现有耐久规则。保底测试直接调用原模组容器掉落流程，在独特和符文石板同时达到保底时仍只得到符文石板。
+
+客户端使用独立目录及复制的测试世界，不操作用户游玩存档。检查真实已发布 JEI runtime 和物品集合，未声称完成截图视觉验证。日志及 JSON 位于被忽略的 `build/verification/simplyswords-unique-{build-isolated,present,absent,client}.log` 和 `build/verification/simplyswords-unique-client-audit.json`。
+
+测试包：`build/releases/mite-0.2.9-simplyswords-unique-disabled.jar`。
+
+SHA-256：`3c5453acae072936df139115231e7c7c097fe012b3429df0a2612e3ff09b1fc9`。

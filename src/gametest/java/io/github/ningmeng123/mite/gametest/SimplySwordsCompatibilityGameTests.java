@@ -190,8 +190,9 @@ public final class SimplySwordsCompatibilityGameTests {
         }
         for (String path : List.of("soulrender", "magiscythe", "hearthflame")) {
             ItemStack unique = new ItemStack(BuiltInRegistries.ITEM.get(id("simplyswords", path)));
-            h.assertFalse(unique.isEmpty() || RemovedDiamondEquipment.isRemoved(unique),
-                    "Unique weapons sharing a native netherite tier remain available: " + path);
+            h.assertFalse(unique.isEmpty(), "Retired uniques keep their registry identities: " + path);
+            h.assertTrue(RemovedDiamondEquipment.isRemoved(unique),
+                    "Unique weapons are retired independently of their native material tier: " + path);
         }
         h.succeed();
     }
