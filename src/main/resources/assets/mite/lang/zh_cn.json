@@ -1,4 +1,7 @@
 {
+  "mite.lan.max_players": "人数上限",
+  "mite.lan.max_players.tooltip": "允许 1–999 人同时在线（包含房主）。",
+  "mite.lan.max_players.invalid": "请输入 1–999 之间的人数（包含房主）。",
   "tooltip.mite.gear_level": "装备等级：%s / %s",
   "tooltip.mite.gear_experience": "成长经验：%s / %s",
   "tooltip.mite.gear_max_level": "已达装备等级上限",
@@ -952,6 +955,8 @@
   "tooltip.mite.bucket_pickup": "右键取液保留水或岩浆；按住 Ctrl 右键取走液体方块",
   "tooltip.mite.brightness_locked": "MITE 将亮度固定为最低，无法更改。",
   "gui.mite.world_day": "第 %s 天",
+  "gui.mite.tab.level": "等级 %s",
+  "gui.mite.tab.latency": "%s ms",
   "jei.mite.anvil_material": "金属粒修复：消耗 1 粒示例",
   "jei.mite.anvil_combination": "同品质装备合并修复",
   "jei.mite.anvil_restored": "恢复耐久：%s / %s",

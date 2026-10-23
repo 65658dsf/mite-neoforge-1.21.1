@@ -1,4 +1,7 @@
 {
+  "mite.lan.max_players": "Max Players",
+  "mite.lan.max_players.tooltip": "Allow 1–999 players online at once, including the host.",
+  "mite.lan.max_players.invalid": "Enter a player limit from 1 to 999, including the host.",
   "tooltip.mite.gear_level": "Equipment level: %s / %s",
   "tooltip.mite.gear_experience": "Growth experience: %s / %s",
   "tooltip.mite.gear_max_level": "Equipment level cap reached",
@@ -952,6 +955,8 @@
   "tooltip.mite.bucket_pickup": "Right-click to collect without removing water or lava; hold Ctrl to remove the liquid block",
   "tooltip.mite.brightness_locked": "MITE locks brightness to Moody (0%).",
   "gui.mite.world_day": "Day %s",
+  "gui.mite.tab.level": "Lv. %s",
+  "gui.mite.tab.latency": "%s ms",
   "jei.mite.anvil_material": "Material repair: one nugget example",
   "jei.mite.anvil_combination": "Combine equipment of the same quality",
   "jei.mite.anvil_restored": "Durability restored: %s / %s",

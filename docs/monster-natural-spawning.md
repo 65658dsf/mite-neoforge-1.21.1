@@ -102,6 +102,8 @@ natural_spawn_weights = ["modern_ite:zombie_chaos=30"]
 
 2026-10-23：本体编译、测试源编译与打包通过，1,722项JUnit无失败；独立参考与配置命名空间合计55项GameTest通过。固定seed将第1／8／32天各10,000tick夜晚加速执行，使用真实实体索引与附近拥挤门槛：分别新增9／11／13只后，后续2,290／2,817／2,536个已调度轮次全部因拥挤暂停新增。参考／旧自定义调度轮数为2,299／2,299、2,828／2,828、2,549／4,657。此夹具每轮只尝试加入1只，隔离验证补怪门槛与血月概率，不模拟地形、战斗或实际游玩密度。记录见`build/verification/reference-spawning-focused2.log`和`build/verification/reference-spawning-focused-run2/reference-spawning-three-nights.json`。
 
+本体默认全量2,341项服务端GameTest全部通过并正常保存退出，包含用户已有Tab功能测试；日志为`build/verification/reference-spawning-full-final.log`，隔离目录为`build/verification/reference-spawning-full-final-run`。首轮全量发现已有Tab测试的模板重复namespace问题，仅将5处测试注解改为`empty`并补其namespace的空模板资源，未修改Tab功能实现。最终生产包`build/libs/mite-0.2.8.jar`的SHA-256为`0731687e81e43039995c8fac4cbff02b42bea9dc5b07beb578bc7c76f79b31e9`，包内不包含开发测试类或测试模板。
+
 参考预设完成后再次执行`runData -PmiteGameplayConfigClientAudit=true`成功，入口、后端链接和中英文配置词条静态检查通过，日志为`build/verification/reference-spawning-ui-data.log`。该检查不初始化窗口或绘制界面，本轮未进行实际生存试玩。新版ITE组合环境另有34项JUnit、300项服务端GameTest全部通过，日志和双方最终包校验见ITE工程的`build/verification/reference-spawning/`；本体1,409个类及4,598个资源、ITE265个类及743个资源均与最终包逐字节一致。两个新版JAR应配套替换。
 
 2026-10-22（刷新权重更新）：本体 1,719 项 JUnit、单独安装与同时加载新版 ITE 的 51 项配置 GameTest 均通过；ITE 的 31 项 JUnit 与 285 项 GameTest 通过。验证了直接权重替换不同池的基础值、零候选族、不创建新入口、跨模组配置归属、旧配置兼容、同步和导出。最终界面仅有权重输入，静态客户端审计通过，并校验填写与还原会清除对应旧倍率。真实渲染仍受下述 GLFW 环境限制，本次未重跑图形客户端。日志为 `build/verification/spawn-weights-config.log`、`build/verification/spawn-weights-single-page-combined.log`、`build/verification/spawn-weights-single-page-data.log` 及 ITE 工程的 `build/verification/spawn-weights-final-config.log`。
