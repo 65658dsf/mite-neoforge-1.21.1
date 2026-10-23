@@ -86,6 +86,7 @@
     "NaturalShriekerPlacementMixin",
     "PlayerFoodMixin",
     "PlayerSluggishSwimmingMixin",
+    "PlayerBarrierCollisionMixin",
     "FoodDataMixin",
     "CompleteFoodUseMixin",
     "SpecialFoodFinishMixin",
