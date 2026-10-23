@@ -3,11 +3,14 @@ package io.github.ningmeng123.mite.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.github.ningmeng123.mite.combat.SourcePlayerCombat;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
+import java.util.function.Consumer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -51,9 +54,30 @@ public abstract class SourceEnchantmentPlayerMeleeMixin {
                 () -> original.call(target, source, damage));
     }
 
+    @WrapOperation(method = "attack", at = @At(value = "INVOKE", ordinal = 1,
+            target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
+    private void mite$deferSweepKnockback(LivingEntity target, double strength, double x, double z,
+            Operation<Void> original,
+            @Share("mite$sweepKnockback") LocalRef<Consumer<LivingEntity>> pendingKnockback) {
+        // Native sweeping pushes before hurt, even when reach or hurt immunity rejects the hit.
+        pendingKnockback.set(harmed -> {
+            if (harmed == target) original.call(target, strength, x, z);
+        });
+    }
+
     @WrapOperation(method = "attack", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/LivingEntity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    private boolean mite$sweepCannotBypassSourceReach(LivingEntity target, DamageSource source, float amount, Operation<Boolean> original) {
-        return SourcePlayerReach.canMelee((Player)(Object)this,target) && original.call(target,source,amount);
+    private boolean mite$sweepCannotBypassSourceReach(LivingEntity target, DamageSource source, float amount,
+            Operation<Boolean> original,
+            @Share("mite$sweepKnockback") LocalRef<Consumer<LivingEntity>> pendingKnockback) {
+        Consumer<LivingEntity> knockback = pendingKnockback.get();
+        // Consume before hurt: callbacks may recursively attack, and the next target needs its own operation.
+        pendingKnockback.set(null);
+        if (!SourcePlayerReach.canMelee((Player)(Object)this, target)) return false;
+        float health = target.getHealth(), absorption = target.getAbsorptionAmount();
+        boolean hit = original.call(target, source, amount);
+        if (hit && knockback != null && (target.getHealth() < health || target.getAbsorptionAmount() < absorption))
+            knockback.accept(target);
+        return hit;
     }
 }
