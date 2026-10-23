@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -21,6 +22,11 @@ public abstract class BetterCombatMobMixin {
     @Inject(method = "doHurtTarget", at = @At("HEAD"), cancellable = true)
     private void mite$weaponWindup(Entity target, CallbackInfoReturnable<Boolean> cir) {
         Mob mob = (Mob)(Object)this;
+        if (!MiteConfig.betterCombatMobsEnabled()) {
+            // Also cover a live config change after this entity's Pre event, before native brain melee.
+            if (!mob.level().isClientSide) BetterMobCombat.tick(mob);
+            return;
+        }
         if (!BetterMobCombat.executing(mob) && target instanceof LivingEntity living
                 && (BetterMobCombat.attacking(mob) || BetterMobCombat.supported(mob))) {
             if (BetterMobCombat.supported(mob)) BetterMobCombat.request(mob, living);

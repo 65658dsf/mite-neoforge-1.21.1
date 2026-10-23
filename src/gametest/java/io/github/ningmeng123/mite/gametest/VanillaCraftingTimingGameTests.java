@@ -1,0 +1,315 @@
+package io.github.ningmeng123.mite.gametest;
+
+import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.crafting.TimedCraftingController;
+import io.github.ningmeng123.mite.crafting.TimedCraftingRecipes;
+import io.github.ningmeng123.mite.crafting.TimedCraftingRules;
+import io.github.ningmeng123.mite.survival.PlayerExperience;
+import io.netty.channel.embedded.EmbeddedChannel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CrafterBlock;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+/** Loaded vanilla recipes must use the R196 clock through every real extraction path. @author NingMeng123 */
+@GameTestHolder("mite_crafting_audit")
+@PrefixGameTestTemplate(false)
+public final class VanillaCraftingTimingGameTests {
+    private record RecipeCase(String id, Item output, int outputCount, float difficulty,
+            int[] slots, Item[] ingredients) {}
+
+    private static RecipeCase chest() {
+        return planks("chest", Items.CHEST, 1, 640F, 0, 1, 2, 3, 5, 6, 7, 8);
+    }
+
+    private static RecipeCase stick(boolean workbench) {
+        return planks("stick", Items.STICK, 4, 160F, 0, workbench ? 3 : 2);
+    }
+
+    private static RecipeCase bowl() {
+        return planks("bowl", Items.BOWL, 4, 240F, 0, 2, 4);
+    }
+
+    private static RecipeCase planks(String id, Item output, int count, float difficulty, int... slots) {
+        Item[] inputs = new Item[slots.length];
+        java.util.Arrays.fill(inputs, Items.OAK_PLANKS);
+        return new RecipeCase(id, output, count, difficulty, slots, inputs);
+    }
+
+    private static RecipeCase bed(String color) {
+        Item wool = BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(color + "_wool"));
+        Item output = BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(color + "_bed"));
+        return new RecipeCase(color + "_bed", output, 1, 480F, new int[]{0, 1, 2, 3, 4, 5},
+                new Item[]{wool, wool, wool, Items.OAK_PLANKS, Items.OAK_PLANKS, Items.OAK_PLANKS});
+    }
+
+    private static List<RecipeCase> workbenchCases() {
+        return List.of(chest(), stick(true), bowl(), bed("white"));
+    }
+
+    @GameTest(template = "empty")
+    public static void ordinaryClicksWaitForTheWholeR196PeriodAndProduceOneBatch(GameTestHelper helper) {
+        for (RecipeCase recipe : workbenchCases()) checkOrdinary(helper, recipe, true);
+        checkOrdinary(helper, stick(false), false);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyVanillaBedColorUsesTheSameR196ManufacturingDifficulty(GameTestHelper helper) {
+        for (String color : new String[]{"white", "orange", "magenta", "light_blue", "yellow", "lime", "pink",
+                "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"}) {
+            checkOrdinary(helper, bed(color), true);
+        }
+        helper.succeed();
+    }
+
+    private static void checkOrdinary(GameTestHelper helper, RecipeCase recipe, boolean workbench) {
+        try (Fixture fixture = new Fixture(helper, recipe, workbench, 2)) {
+            fixture.menu.clicked(0, 0, ClickType.PICKUP, fixture.player);
+            fixture.assertAmounts(0);
+            helper.assertTrue(TimedCraftingController.isActive(fixture.player), "An ordinary result click starts manufacturing");
+            fixture.finishBatch(0);
+            fixture.tick(fixture.period * 2);
+            fixture.assertAmounts(1);
+            helper.assertFalse(TimedCraftingController.isActive(fixture.player), "An ordinary click cannot repeat a remaining recipe");
+        }
+    }
+
+    @GameTest(template = "empty")
+    public static void shiftClicksConsumeOneBatchOnlyAtEachCompletePeriod(GameTestHelper helper) {
+        for (RecipeCase recipe : workbenchCases()) checkContinuous(helper, recipe, true);
+        checkContinuous(helper, stick(false), false);
+        helper.succeed();
+    }
+
+    private static void checkContinuous(GameTestHelper helper, RecipeCase recipe, boolean workbench) {
+        try (Fixture fixture = new Fixture(helper, recipe, workbench, 3)) {
+            fixture.menu.clicked(0, 0, ClickType.QUICK_MOVE, fixture.player);
+            fixture.assertAmounts(0);
+            for (int completed = 0; completed < 3; completed++) fixture.finishBatch(completed);
+            fixture.tick(fixture.period * 2);
+            fixture.assertAmounts(3);
+            helper.assertFalse(TimedCraftingController.isActive(fixture.player), "Continuous manufacturing ends after the last input batch");
+        }
+    }
+
+    @GameTest(template = "empty")
+    public static void directQuickMoveCannotReturnOrConsumeAnInstantVanillaResult(GameTestHelper helper) {
+        for (RecipeCase recipe : workbenchCases()) checkQuickMove(helper, recipe, true);
+        checkQuickMove(helper, stick(false), false);
+        helper.succeed();
+    }
+
+    private static void checkQuickMove(GameTestHelper helper, RecipeCase recipe, boolean workbench) {
+        try (Fixture fixture = new Fixture(helper, recipe, workbench, 2)) {
+            helper.assertTrue(fixture.menu.quickMoveStack(fixture.player, 0).isEmpty(),
+                    "Calling the real menu quickMoveStack cannot return an unfinished result");
+            fixture.assertAmounts(0);
+            fixture.finishBatch(0);
+            fixture.tick(fixture.period * 2);
+            fixture.assertAmounts(1);
+        }
+    }
+
+    @GameTest(template = "empty")
+    public static void numberKeysAndOtherResultClicksCannotBypassTheManufacturingClock(GameTestHelper helper) {
+        for (RecipeCase recipe : workbenchCases()) checkOtherClicks(helper, recipe, true);
+        checkOtherClicks(helper, stick(false), false);
+        helper.succeed();
+    }
+
+    private static void checkOtherClicks(GameTestHelper helper, RecipeCase recipe, boolean workbench) {
+        try (Fixture fixture = new Fixture(helper, recipe, workbench, 2)) {
+            fixture.player.getInventory().setItem(0, new ItemStack(Items.DIRT));
+            for (int hotbar = 0; hotbar < 9; hotbar++) fixture.menu.clicked(0, hotbar, ClickType.SWAP, fixture.player);
+            fixture.menu.clicked(0, 40, ClickType.SWAP, fixture.player);
+            fixture.menu.clicked(0, 0, ClickType.THROW, fixture.player);
+            fixture.menu.clicked(0, 1, ClickType.THROW, fixture.player);
+            fixture.menu.clicked(0, 0, ClickType.PICKUP_ALL, fixture.player);
+            fixture.menu.clicked(0, 2, ClickType.CLONE, fixture.player);
+            fixture.tick(fixture.period + 1);
+            fixture.assertAmounts(0);
+            helper.assertTrue(fixture.player.getInventory().getItem(0).is(Items.DIRT), "Number keys do not exchange the result for a hotbar item");
+            helper.assertFalse(TimedCraftingController.isActive(fixture.player), "Unsupported result clicks cannot queue a batch");
+            helper.assertFalse(fixture.menu.getSlot(0).mayPickup(fixture.player), "The actual result slot cannot be picked up before manufacture");
+            fixture.menu.clicked(0, 0, ClickType.PICKUP, fixture.player);
+            fixture.tick(1);
+            fixture.menu.clicked(0, 0, ClickType.SWAP, fixture.player);
+            fixture.menu.clicked(0, 40, ClickType.SWAP, fixture.player);
+            fixture.menu.quickMoveStack(fixture.player, 0);
+            helper.assertValueEqual(TimedCraftingController.progress(fixture.player), 1, "Alternative extraction paths cannot advance or reset an active period");
+            fixture.finishBatch(0);
+            fixture.tick(fixture.period * 2);
+            fixture.assertAmounts(1);
+        }
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 700)
+    public static void redstoneCrafterAlsoWaitsForTheChestRuleAndManufacturesOneBatchPerPulse(GameTestHelper helper) {
+        BlockPos position = new BlockPos(1, 1, 1);
+        helper.setBlock(position, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
+        helper.setBlock(position.east(), Blocks.CHEST);
+        CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(position));
+        Container output = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(position.east()));
+        RecipeCase recipe = chest();
+        for (int slot : recipe.slots) crafter.setItem(slot, new ItemStack(Items.OAK_PLANKS, 2));
+        var actual = CrafterBlock.getPotentialResults(helper.getLevel(), crafter.asCraftInput()).orElseThrow();
+        helper.assertValueEqual(actual.id(), ResourceLocation.withDefaultNamespace("chest"), "Automation uses the actually loaded vanilla chest recipe");
+        int period = TimedCraftingRules.period(640F, 0, .2F, false);
+        helper.pulseRedstone(position.west(), 5);
+        helper.runAfterDelay(period, () -> {
+            helper.assertTrue(output.isEmpty(), "A real redstone crafter cannot instantly emit the chest preview");
+            assertMachineInputs(helper, crafter, recipe, 2);
+        });
+        helper.runAfterDelay(period + 9, () -> {
+            helper.assertValueEqual(count(output, Items.CHEST), 1, "The full R196 chest period emits exactly one real chest");
+            assertMachineInputs(helper, crafter, recipe, 1);
+        });
+        helper.runAfterDelay(period * 2 + 15, () -> {
+            helper.assertValueEqual(count(output, Items.CHEST), 1, "One redstone pulse does not consume a second chest batch");
+            assertMachineInputs(helper, crafter, recipe, 1);
+            helper.succeed();
+        });
+    }
+
+    private static void assertMachineInputs(GameTestHelper helper, CrafterBlockEntity crafter, RecipeCase recipe, int amount) {
+        for (int slot = 0; slot < 9; slot++) {
+            boolean occupied = false;
+            for (int input : recipe.slots) if (input == slot) occupied = true;
+            helper.assertValueEqual(crafter.getItem(slot).getCount(), occupied ? amount : 0,
+                    "The real crafter consumes inputs only for a completed batch (slot " + slot + ")");
+        }
+    }
+
+    private static int count(Container container, Item item) {
+        int result = 0;
+        for (int slot = 0; slot < container.getContainerSize(); slot++) {
+            if (container.getItem(slot).is(item)) result += container.getItem(slot).getCount();
+        }
+        return result;
+    }
+
+    private static final class Fixture implements AutoCloseable {
+        private final GameTestHelper helper;
+        private final RecipeCase recipe;
+        private final int batches;
+        private final ServerPlayer player;
+        private final EmbeddedChannel channel;
+        private final AbstractContainerMenu menu;
+        private final CraftingContainer grid;
+        private final BlockPos table;
+        private final BlockState original;
+        private final List<ItemStack> inputs = new ArrayList<>();
+        private final int period;
+
+        private Fixture(GameTestHelper helper, RecipeCase recipe, boolean workbench, int batches) {
+            this.helper = helper;
+            this.recipe = recipe;
+            this.batches = batches;
+            var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "mite-audit-test"), false);
+            player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(), cookie.clientInformation());
+            var connection = new Connection(PacketFlow.SERVERBOUND);
+            channel = new EmbeddedChannel(connection);
+            helper.getLevel().getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
+            player.setGameMode(GameType.SURVIVAL);
+            player.moveTo(helper.absolutePos(new BlockPos(1, 2, 2)).getCenter());
+            player.setNoGravity(true);
+            player.setOnGround(true);
+            player.getInventory().clearContent();
+            PlayerExperience.setTotal(player, 0);
+            player.getFoodData().setFoodLevel(6);
+            player.removeAllEffects();
+            table = helper.absolutePos(new BlockPos(1, 1, 1));
+            original = helper.getLevel().getBlockState(table);
+            if (workbench) {
+                helper.getLevel().setBlockAndUpdate(table, TimedCraftingTestSupport.flintTable().defaultBlockState());
+                menu = new CraftingMenu(42, player.getInventory(), ContainerLevelAccess.create(helper.getLevel(), table));
+            } else menu = player.inventoryMenu;
+            player.containerMenu = menu;
+            grid = (CraftingContainer) menu.getSlot(1).container;
+            for (int index = 0; index < recipe.slots.length; index++) {
+                menu.getSlot(recipe.slots[index] + 1).set(new ItemStack(recipe.ingredients[index], batches));
+            }
+            for (int slot = 0; slot < grid.getContainerSize(); slot++) inputs.add(grid.getItem(slot).copy());
+            var actual = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid.asCraftInput(), helper.getLevel()).orElseThrow();
+            ResourceLocation id = ResourceLocation.withDefaultNamespace(recipe.id);
+            helper.assertValueEqual(actual.id(), id, "The ingredients match the real loaded vanilla recipe " + id);
+            helper.assertTrue(menu.stillValid(player), "The player uses a valid inventory or physically placed workbench");
+            helper.assertTrue(menu.getSlot(0).getItem().is(recipe.output), "The real result slot previews the requested vanilla item");
+            helper.assertValueEqual(menu.getSlot(0).getItem().getCount(), recipe.outputCount, "The result preview preserves the vanilla batch size");
+            var rule = TimedCraftingRecipes.get(id);
+            helper.assertTrue(rule != null, "The vanilla recipe has an explicit R196 manufacturing rule");
+            helper.assertValueEqual(rule.difficulty(), recipe.difficulty, "R196 difficulty is calculated for the complete output batch");
+            helper.assertTrue(rule.requiredBench() == null, "These vanilla recipes need no special material workbench");
+            period = TimedCraftingRules.period(recipe.difficulty, 0, workbench ? .2F : 0F, false);
+            helper.assertValueEqual(TimedCraftingController.period(player, menu), period, "The real menu uses the R196 period, including its actual bench speed");
+            assertAmounts(0);
+        }
+
+        private void tick(int amount) {
+            for (int tick = 0; tick < amount; tick++) TimedCraftingController.tick(player);
+        }
+
+        private void finishBatch(int completed) {
+            tick(period - 1 - TimedCraftingController.progress(player));
+            helper.assertValueEqual(TimedCraftingController.progress(player), period - 1, "N-1 ticks cannot finish a vanilla recipe early");
+            assertAmounts(completed);
+            tick(1);
+            assertAmounts(completed + 1);
+            helper.assertValueEqual(TimedCraftingController.progress(player), 0, "The completed batch carries no progress into its successor");
+        }
+
+        private void assertAmounts(int completed) {
+            for (int slot = 0; slot < grid.getContainerSize(); slot++) {
+                ItemStack expected = inputs.get(slot).copy();
+                if (!expected.isEmpty()) expected.setCount(batches - completed);
+                helper.assertTrue(ItemStack.matches(grid.getItem(slot), expected),
+                        recipe.id + " consumes exactly one set of real inputs per completed batch (slot " + slot + ")");
+            }
+            helper.assertValueEqual(player.getInventory().countItem(recipe.output), completed * recipe.outputCount,
+                    recipe.id + " delivers exactly the whole vanilla output batch at completion");
+            helper.assertTrue(menu.getCarried().isEmpty(), "An unfinished or duplicated result is never placed on the cursor");
+            helper.assertTrue(player.getOffhandItem().isEmpty(), "An unfinished result is never delivered through offhand swapping");
+        }
+
+        @Override public void close() {
+            try {
+                TimedCraftingController.cancel(player);
+                grid.clearContent();
+                player.getInventory().clearContent();
+                player.containerMenu = player.inventoryMenu;
+                player.server.getPlayerList().remove(player);
+            } finally {
+                helper.getLevel().setBlockAndUpdate(table, original);
+                channel.finishAndReleaseAll();
+            }
+        }
+    }
+}

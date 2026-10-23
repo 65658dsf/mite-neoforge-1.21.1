@@ -55,16 +55,21 @@ public final class ProgressionRouteGameTests {
 
             grid.setItem(0, new ItemStack(Items.BLAZE_ROD));
             h.assertTrue(menu.getSlot(0).getItem().is(Items.BLAZE_POWDER), "The native recipe resolves in the real 2x2 menu");
-            h.assertFalse(TimedCraftingController.isTimed(player, menu), "The currently retained vanilla powder recipe uses the ordinary pickup path");
-            menu.clicked(0, 0, ClickType.PICKUP, player);
-            h.assertTrue(menu.getCarried().is(Items.BLAZE_POWDER) && menu.getCarried().getCount() == 2,
-                    "Actual result-slot pickup produces two powder");
-            h.assertTrue(grid.isEmpty(), "Actual native crafting consumed the blaze rod");
+            h.assertTrue(TimedCraftingController.isTimed(player, menu), "The native powder recipe uses the R196 manufacturing timer");
+            h.assertValueEqual(TimedCraftingController.period(player, menu), 140,
+                    "R196 whole-batch difficulty 200 requires 140 inventory ticks at level zero");
+            TimedCraftingTestSupport.craftOne(h, player, menu, ClickType.PICKUP);
+            h.assertTrue(menu.getCarried().isEmpty() && player.getInventory().countItem(Items.BLAZE_POWDER) == 2,
+                    "The completed timed batch places exactly two powder in the actual player inventory");
+            h.assertTrue(grid.isEmpty(), "Manufacturing completion consumes the blaze rod");
             h.assertValueEqual(player.getStats().getValue(Stats.ITEM_CRAFTED.get(Items.BLAZE_POWDER)), powderCrafts + 2,
                     "Native crafting statistics count the produced powder");
 
-            menu.clicked(9, 0, ClickType.PICKUP, player); // Store both powder in the native main inventory slot.
-            menu.clicked(9, 1, ClickType.PICKUP, player); // Pick up one of the two.
+            int powderSlot = -1;
+            for (int slot = 9; slot < 45; slot++)
+                if (menu.getSlot(slot).getItem().is(Items.BLAZE_POWDER)) powderSlot = slot;
+            h.assertTrue(powderSlot >= 9, "The completed powder batch occupies a real native inventory slot");
+            menu.clicked(powderSlot, 1, ClickType.PICKUP, player); // Pick up one of the two manufactured powder.
             menu.clicked(1, 0, ClickType.PICKUP, player); // Put it into the first crafting slot.
             menu.getSlot(10).set(new ItemStack(Items.ENDER_PEARL));
             menu.clicked(10, 0, ClickType.PICKUP, player);
@@ -72,11 +77,12 @@ public final class ProgressionRouteGameTests {
             h.assertTrue(menu.getCarried().isEmpty(), "Both ingredients are placed through native cursor transactions");
             h.assertTrue(menu.getSlot(0).getItem().is(Items.ENDER_EYE), "Powder and pearl resolve to the actual eye recipe");
             h.assertTrue(WorkbenchRules.allows(menu, menu.getSlot(0).getItem()), "A real inventory menu satisfies the eye's current equipment requirements");
-            menu.clicked(0, 0, ClickType.PICKUP, player);
-            h.assertTrue(menu.getCarried().is(Items.ENDER_EYE) && menu.getCarried().getCount() == 1,
-                    "Native result-slot pickup completes one eye without a workbench");
+            h.assertTrue(TimedCraftingController.isTimed(player, menu), "The native eye recipe also uses its extracted R196 manufacturing timer");
+            TimedCraftingTestSupport.craftOne(h, player, menu, ClickType.PICKUP);
+            h.assertTrue(menu.getCarried().isEmpty() && player.getInventory().countItem(Items.ENDER_EYE) == 1,
+                    "The actual timed result transaction completes one eye without a workbench");
             h.assertTrue(grid.isEmpty(), "Actual crafting consumes both the pearl and one powder");
-            h.assertTrue(menu.getSlot(9).getItem().is(Items.BLAZE_POWDER) && menu.getSlot(9).getItem().getCount() == 1,
+            h.assertTrue(menu.getSlot(powderSlot).getItem().is(Items.BLAZE_POWDER) && menu.getSlot(powderSlot).getItem().getCount() == 1,
                     "Exactly one unconsumed powder remains from the original rod");
             h.assertValueEqual(player.getStats().getValue(Stats.ITEM_CRAFTED.get(Items.ENDER_EYE)), eyeCrafts + 1,
                     "The native eye crafting statistic increments once");

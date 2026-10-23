@@ -138,107 +138,154 @@ public final class StackingBatchRecipeGameTests {
     }
 
     @GameTest(template = "ranged_027")
-    public static void shapedDoorsAndShapelessRawMetalInstantClicksConserveTheirWholeBatchAsLegalStacks(GameTestHelper helper) {
-        for (boolean doors : List.of(true, false)) for (ClickType click : List.of(ClickType.PICKUP, ClickType.QUICK_MOVE, ClickType.SWAP))
+    public static void shapelessRawMetalInstantClicksConserveTheirWholeBatchAsLegalStacks(GameTestHelper helper) {
+        for (ClickType click : List.of(ClickType.PICKUP, ClickType.QUICK_MOVE, ClickType.SWAP))
                 try (Fixture fixture = new Fixture(helper)) {
-            fixture.load(doors);
-            Item output = doors ? Items.BIRCH_DOOR : Items.RAW_COPPER;
-            helper.assertValueEqual(fixture.menu.getSlot(0).getItem().getCount(), doors ? 3 : 9, "The real result slot retains every item before production completes");
+            fixture.load(false);
+            helper.assertValueEqual(fixture.menu.getSlot(0).getItem().getCount(), 9, "The real result slot retains every item before production completes");
             helper.assertValueEqual(TimedCraftingController.period(fixture.player, fixture.menu), 0,
-                    "These native recipes have no extracted R196 timing rule, so the batch adapter does not invent one");
+                    "Native raw copper has no R196 counterpart, so the batch adapter does not invent a timing rule");
             fixture.menu.clicked(0, 0, click, fixture.player);
             helper.assertFalse(TimedCraftingController.isActive(fixture.player), "The unchanged immediate recipe path creates no manufacturing session");
             helper.assertTrue(fixture.grid.isEmpty(), "One real " + click + " consumes exactly one native batch's ingredients");
-            assertConservedAndBounded(helper, fixture, output, doors ? 3 : 9, "Immediate " + click);
+            assertConservedAndBounded(helper, fixture, Items.RAW_COPPER, 9, "Immediate " + click);
         }
         helper.succeed();
     }
 
     @GameTest(template = "ranged_027")
-    public static void immediateBatchOverflowWithFullInventoriesConservesEveryDoorAndRawMetalInBothGameModes(GameTestHelper helper) {
-        for (boolean doors : List.of(true, false)) for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE))
+    public static void immediateBatchOverflowWithFullInventoriesConservesEveryRawMetalInBothGameModes(GameTestHelper helper) {
+        for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE))
                 try (Fixture fixture = new Fixture(helper)) {
-            fixture.player.setGameMode(mode); fixture.load(doors);
+            fixture.player.setGameMode(mode); fixture.load(false);
             for (int slot = 0; slot < fixture.player.getInventory().items.size(); slot++)
                 fixture.player.getInventory().setItem(slot, new ItemStack(Items.IRON_SWORD));
             fixture.menu.clicked(0, 0, ClickType.PICKUP, fixture.player);
             helper.assertTrue(fixture.grid.isEmpty(), "A full backpack still consumes only one complete immediate batch");
-            assertConservedAndBounded(helper, fixture, doors ? Items.BIRCH_DOOR : Items.RAW_COPPER, doors ? 3 : 9,
+            assertConservedAndBounded(helper, fixture, Items.RAW_COPPER, 9,
                     "Full-backpack " + mode + " ordinary click");
         }
         helper.succeed();
     }
 
     @GameTest(template = "ranged_027")
-    public static void rightClickThrowAndOffhandSwapConsumeExactlyOneCompleteInstantBatch(GameTestHelper helper) {
+    public static void rightClickThrowAndOffhandSwapConsumeExactlyOneCompleteInstantRawMetalBatch(GameTestHelper helper) {
         record Action(ClickType type, int button) {}
-        for (boolean doors : List.of(true, false)) for (Action action : List.of(new Action(ClickType.PICKUP, 1),
+        for (Action action : List.of(new Action(ClickType.PICKUP, 1),
                 new Action(ClickType.THROW, 0), new Action(ClickType.THROW, 1), new Action(ClickType.SWAP, 40)))
                 try (Fixture fixture = new Fixture(helper)) {
-            fixture.load(doors, 2);
+            fixture.load(false, 2);
             fixture.menu.clicked(0, action.button(), action.type(), fixture.player);
             helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 1, "One " + action + " removes exactly one item from the first input stack");
-            if (doors) for (int slot : new int[]{0, 1, 3, 4, 6, 7}) {
-                helper.assertTrue(fixture.grid.getItem(slot).is(Items.BIRCH_PLANKS), "One batch preserves the second batch's matching planks");
-                helper.assertValueEqual(fixture.grid.getItem(slot).getCount(), 1, "One click cannot debit the door recipe twice");
-            }
-            helper.assertTrue(fixture.menu.getSlot(0).getItem().is(doors ? Items.BIRCH_DOOR : Items.RAW_COPPER),
+            helper.assertTrue(fixture.menu.getSlot(0).getItem().is(Items.RAW_COPPER),
                     "The unconsumed second batch retains a matching result preview");
             helper.assertFalse(TimedCraftingController.isActive(fixture.player), "The result click does not schedule another instant batch");
             if (action.type() == ClickType.PICKUP) helper.assertValueEqual(fixture.menu.getCarried().getCount(), 1,
                     "The explicit right-click batch adaptation leaves one legal item on the cursor");
             if (action.type() == ClickType.THROW) helper.assertTrue(fixture.menu.getCarried().isEmpty(), "Throwing a recipe batch leaves the cursor empty");
-            if (action.type() == ClickType.SWAP) helper.assertTrue(fixture.player.getInventory().getItem(40).is(doors ? Items.BIRCH_DOOR : Items.RAW_COPPER),
+            if (action.type() == ClickType.SWAP) helper.assertTrue(fixture.player.getInventory().getItem(40).is(Items.RAW_COPPER),
                     "The native offhand swap places a legal first stack in the actual offhand slot");
-            assertConservedAndBounded(helper, fixture, doors ? Items.BIRCH_DOOR : Items.RAW_COPPER, doors ? 3 : 9, action.toString());
+            assertConservedAndBounded(helper, fixture, Items.RAW_COPPER, 9, action.toString());
         }
         helper.succeed();
     }
 
     @GameTest(template = "ranged_027")
-    public static void instantQuickMoveWithOneFreeSlotStoresOneLegalStackAndDropsOnlyItsExactRemainder(GameTestHelper helper) {
-        for (boolean doors : List.of(true, false)) for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE))
+    public static void instantRawMetalQuickMoveWithOneFreeSlotStoresOneLegalStackAndDropsOnlyItsExactRemainder(GameTestHelper helper) {
+        for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE))
                 try (Fixture fixture = new Fixture(helper)) {
-            fixture.player.setGameMode(mode); fixture.load(doors, 2);
+            fixture.player.setGameMode(mode); fixture.load(false, 2);
             for (int slot = 0; slot < fixture.player.getInventory().items.size(); slot++)
                 fixture.player.getInventory().setItem(slot, slot == 35 ? ItemStack.EMPTY : new ItemStack(Items.IRON_SWORD));
             fixture.menu.clicked(0, 0, ClickType.QUICK_MOVE, fixture.player);
-            Item output = doors ? Items.BIRCH_DOOR : Items.RAW_COPPER;
+            Item output = Items.RAW_COPPER;
             helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 1, "The successful partial Shift transfer consumes exactly one input batch, and cannot consume the blocked next batch");
-            if (doors) for (int slot : new int[]{0, 1, 3, 4, 6, 7})
-                helper.assertValueEqual(fixture.grid.getItem(slot).getCount(), 1, "The native repeat loop leaves every second-batch ingredient untouched after filling the last free slot");
-            helper.assertValueEqual(fixture.player.getInventory().countItem(output), doors ? 1 : 8,
+            helper.assertValueEqual(fixture.player.getInventory().countItem(output), 8,
                     "The only free inventory slot receives precisely its source-limited capacity");
             int dropped = helper.getLevel().getEntitiesOfClass(ItemEntity.class, fixture.player.getBoundingBox().inflate(3),
                     entity -> entity.getItem().is(output)).stream().mapToInt(entity -> entity.getItem().getCount()).sum();
-            helper.assertValueEqual(dropped, doors ? 2 : 1, "Only the undelivered batch remainder is dropped, with no second debit");
-            assertConservedAndBounded(helper, fixture, output, doors ? 3 : 9, "One-free-slot Shift " + mode);
+            helper.assertValueEqual(dropped, 1, "Only the undelivered batch remainder is dropped, with no second debit");
+            assertConservedAndBounded(helper, fixture, output, 9, "One-free-slot Shift " + mode);
         }
         helper.succeed();
     }
 
     @GameTest(template = "ranged_027")
-    public static void blockedInstantQuickMoveAndOccupiedCursorLeaveAllIngredientsAndResultsUntouched(GameTestHelper helper) {
-        for (boolean doors : List.of(true, false)) try (Fixture fixture = new Fixture(helper)) {
-            fixture.load(doors, 2);
+    public static void blockedInstantRawMetalQuickMoveAndOccupiedCursorLeaveAllIngredientsAndResultsUntouched(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
+            fixture.load(false, 2);
             for (int slot = 0; slot < fixture.player.getInventory().items.size(); slot++)
                 fixture.player.getInventory().setItem(slot, new ItemStack(Items.IRON_SWORD));
             fixture.menu.clicked(0, 0, ClickType.QUICK_MOVE, fixture.player);
             helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 2, "A fully blocked Shift transfer cannot consume either input batch");
-            assertConservedAndBounded(helper, fixture, doors ? Items.BIRCH_DOOR : Items.RAW_COPPER, 0, "No-free-slot Shift");
+            assertConservedAndBounded(helper, fixture, Items.RAW_COPPER, 0, "No-free-slot Shift");
             fixture.menu.setCarried(new ItemStack(Items.IRON_SWORD));
             for (ClickType type : List.of(ClickType.PICKUP, ClickType.THROW)) {
                 fixture.menu.clicked(0, 0, type, fixture.player);
                 helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 2, "An incompatible occupied cursor prevents " + type + " from consuming a batch");
                 helper.assertTrue(fixture.menu.getCarried().is(Items.IRON_SWORD), "Blocked batch output preserves the unrelated cursor item");
-                assertConservedAndBounded(helper, fixture, doors ? Items.BIRCH_DOOR : Items.RAW_COPPER, 0, "Occupied cursor " + type);
+                assertConservedAndBounded(helper, fixture, Items.RAW_COPPER, 0, "Occupied cursor " + type);
             }
-            Item output = doors ? Items.BIRCH_DOOR : Items.RAW_COPPER;
-            int cap = doors ? 1 : 8;
+            Item output = Items.RAW_COPPER;
+            int cap = 8;
             fixture.menu.setCarried(new ItemStack(output, cap));
             fixture.menu.clicked(0, 0, ClickType.PICKUP, fixture.player);
             helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 2, "An already full matching cursor cannot debit the input batch");
             assertConservedAndBounded(helper, fixture, output, cap, "Full matching cursor");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "ranged_027")
+    public static void timedDoorBatchesWaitForTheirR196PeriodAndConserveLegalStacksWithAnyInventoryCapacity(GameTestHelper helper) {
+        for (GameType mode : List.of(GameType.SURVIVAL, GameType.CREATIVE))
+                for (int freeSlots : new int[]{0, 1, 36})
+                for (ClickType click : List.of(ClickType.PICKUP, ClickType.QUICK_MOVE))
+                for (ItemStack cursor : List.of(ItemStack.EMPTY, new ItemStack(Items.IRON_SWORD), new ItemStack(Items.BIRCH_DOOR)))
+                try (Fixture fixture = new Fixture(helper)) {
+            fixture.player.setGameMode(mode);
+            fixture.load(true, 2);
+            for (int slot = freeSlots; slot < fixture.player.getInventory().items.size(); slot++)
+                fixture.player.getInventory().setItem(slot, new ItemStack(Items.IRON_SWORD));
+            fixture.menu.setCarried(cursor.copy());
+            var rule = io.github.ningmeng123.mite.crafting.TimedCraftingRecipes.get(ResourceLocation.withDefaultNamespace("birch_door"));
+            helper.assertTrue(rule != null, "The original door operation has an explicit manufacturing rule");
+            helper.assertValueEqual(rule.difficulty(), 480F, "A complete three-door batch uses R196 difficulty 480");
+            helper.assertValueEqual(TimedCraftingController.period(fixture.player, fixture.menu),
+                    io.github.ningmeng123.mite.crafting.TimedCraftingRules.period(480F, 0, .2F, false),
+                    "The physical flint workbench applies its real speed to the R196 door period");
+            // This helper drives the production clock and checks every grid/inventory/cursor stack at N-1.
+            TimedCraftingTestSupport.craftOne(helper, fixture.player, fixture.menu, click);
+            for (int slot : new int[]{0, 1, 3, 4, 6, 7}) helper.assertValueEqual(fixture.grid.getItem(slot).getCount(), 1,
+                    "Only the completed batch consumes one of each door ingredient");
+            helper.assertTrue(ItemStack.matches(fixture.menu.getCarried(), cursor), "Timed manufacture preserves the preexisting cursor item");
+            helper.assertValueEqual(fixture.player.getInventory().countItem(Items.BIRCH_DOOR), Math.min(freeSlots, 3),
+                    "Completed doors occupy only the available legal one-item inventory stacks");
+            assertConservedAndBounded(helper, fixture, Items.BIRCH_DOOR, 3 + (cursor.is(Items.BIRCH_DOOR) ? 1 : 0),
+                    "Timed door " + mode + " " + click + " free slots=" + freeSlots);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "ranged_027")
+    public static void alternateDoorResultClicksCannotExtractOrQueueAnUnmanufacturedBatch(GameTestHelper helper) {
+        record Action(ClickType type, int button) {}
+        for (Action action : List.of(new Action(ClickType.PICKUP, 1), new Action(ClickType.THROW, 0),
+                new Action(ClickType.THROW, 1), new Action(ClickType.SWAP, 0), new Action(ClickType.SWAP, 40),
+                new Action(ClickType.CLONE, 2), new Action(ClickType.PICKUP_ALL, 0)))
+                try (Fixture fixture = new Fixture(helper)) {
+            fixture.load(true, 2);
+            fixture.menu.clicked(0, action.button(), action.type(), fixture.player);
+            helper.assertFalse(TimedCraftingController.isActive(fixture.player), "Alternative door action " + action + " cannot queue manufacturing");
+            for (int tick = 0; tick < TimedCraftingController.period(fixture.player, fixture.menu) * 2; tick++)
+                TimedCraftingController.tick(fixture.player);
+            for (int slot : new int[]{0, 1, 3, 4, 6, 7}) helper.assertValueEqual(fixture.grid.getItem(slot).getCount(), 2,
+                    "Alternative door actions preserve every plank in both input batches");
+            helper.assertTrue(fixture.menu.getSlot(0).getItem().is(Items.BIRCH_DOOR), "The unchanged door pattern retains its complete preview");
+            helper.assertTrue(fixture.menu.getCarried().isEmpty(), "An unfinished door cannot reach the cursor");
+            assertConservedAndBounded(helper, fixture, Items.BIRCH_DOOR, 0, "Unfinished door " + action);
+            TimedCraftingTestSupport.craftOne(helper, fixture.player, fixture.menu, ClickType.PICKUP);
+            assertConservedAndBounded(helper, fixture, Items.BIRCH_DOOR, 3, "Explicitly manufactured door after " + action);
         }
         helper.succeed();
     }

@@ -1,0 +1,1756 @@
+{
+  "author": "NingMeng123",
+  "source": "reference-data/runtime-registry.json final whole-batch difficulty; reviewed mappings in spec/r196-common-crafting-audit.json",
+  "recipes": {
+    "minecraft:acacia_boat": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:acacia_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:acacia_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:acacia_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:acacia_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:acacia_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:acacia_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:acacia_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 396
+    },
+    "minecraft:acacia_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 171
+    },
+    "minecraft:acacia_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:activator_rail": {
+      "difficulty": 4850.0,
+      "required_bench": "gold",
+      "source_order": 168
+    },
+    "minecraft:bamboo_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:bamboo_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:bamboo_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:bamboo_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:bamboo_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:bamboo_raft": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:bamboo_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:bamboo_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 396
+    },
+    "minecraft:bamboo_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 171
+    },
+    "minecraft:bamboo_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:beacon": {
+      "difficulty": 1820.0,
+      "required_bench": null,
+      "source_order": 106
+    },
+    "minecraft:birch_boat": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:birch_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:birch_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:birch_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:birch_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:birch_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:birch_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:birch_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 397
+    },
+    "minecraft:birch_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 172
+    },
+    "minecraft:birch_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:black_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:black_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 446
+    },
+    "minecraft:black_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 139
+    },
+    "minecraft:blaze_powder": {
+      "difficulty": 200.0,
+      "required_bench": null,
+      "source_order": 849
+    },
+    "minecraft:blue_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:blue_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 442
+    },
+    "minecraft:blue_dye_from_cornflower": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 896
+    },
+    "minecraft:blue_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 143
+    },
+    "minecraft:bone_meal": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 901
+    },
+    "minecraft:book": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 702
+    },
+    "minecraft:bookshelf": {
+      "difficulty": 1005.0,
+      "required_bench": null,
+      "source_order": 161
+    },
+    "minecraft:bowl": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 278
+    },
+    "minecraft:brewing_stand": {
+      "difficulty": 800.0,
+      "required_bench": "iron",
+      "source_order": 281
+    },
+    "minecraft:brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 392
+    },
+    "minecraft:brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 176
+    },
+    "minecraft:bricks": {
+      "difficulty": 840.0,
+      "required_bench": null,
+      "source_order": 162
+    },
+    "minecraft:brown_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:brown_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 443
+    },
+    "minecraft:brown_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 142
+    },
+    "minecraft:cauldron": {
+      "difficulty": 5600.0,
+      "required_bench": "iron",
+      "source_order": 170
+    },
+    "minecraft:cherry_boat": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:cherry_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:cherry_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:cherry_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:cherry_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:cherry_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:cherry_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:cherry_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 396
+    },
+    "minecraft:cherry_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 171
+    },
+    "minecraft:cherry_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:chest": {
+      "difficulty": 640.0,
+      "required_bench": null,
+      "source_order": 68
+    },
+    "minecraft:chest_minecart": {
+      "difficulty": 25.0,
+      "required_bench": "iron",
+      "source_order": 452
+    },
+    "minecraft:chiseled_quartz_block": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 429
+    },
+    "minecraft:chiseled_red_sandstone": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428
+    },
+    "minecraft:chiseled_sandstone": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428
+    },
+    "minecraft:clock": {
+      "difficulty": 380.55554,
+      "required_bench": "gold",
+      "source_order": 188
+    },
+    "minecraft:coal": {
+      "difficulty": 120.00001,
+      "required_bench": null,
+      "source_order": 474
+    },
+    "minecraft:coal_block": {
+      "difficulty": 225.0,
+      "required_bench": null,
+      "source_order": 52
+    },
+    "minecraft:cobblestone_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389
+    },
+    "minecraft:cobblestone_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175
+    },
+    "minecraft:cobblestone_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273
+    },
+    "minecraft:comparator": {
+      "difficulty": 1620.0,
+      "required_bench": null,
+      "source_order": 187
+    },
+    "minecraft:compass": {
+      "difficulty": 736.1111,
+      "required_bench": "iron",
+      "source_order": 189
+    },
+    "minecraft:crimson_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:crimson_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:crimson_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:crimson_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:crimson_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:crimson_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:crimson_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 396
+    },
+    "minecraft:crimson_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 171
+    },
+    "minecraft:crimson_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:cut_red_sandstone": {
+      "difficulty": 320.0,
+      "required_bench": null,
+      "source_order": 355
+    },
+    "minecraft:cut_red_sandstone_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 391
+    },
+    "minecraft:cut_sandstone": {
+      "difficulty": 320.0,
+      "required_bench": null,
+      "source_order": 355
+    },
+    "minecraft:cut_sandstone_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 391
+    },
+    "minecraft:cyan_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:cyan_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 440
+    },
+    "minecraft:cyan_dye": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 833
+    },
+    "minecraft:cyan_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 145
+    },
+    "minecraft:dark_oak_boat": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:dark_oak_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:dark_oak_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:dark_oak_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:dark_oak_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:dark_oak_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:dark_oak_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:dark_oak_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 396
+    },
+    "minecraft:dark_oak_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 171
+    },
+    "minecraft:dark_oak_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:daylight_detector": {
+      "difficulty": 3420.0,
+      "required_bench": null,
+      "source_order": 197
+    },
+    "minecraft:detector_rail": {
+      "difficulty": 4875.0,
+      "required_bench": "iron",
+      "source_order": 169
+    },
+    "minecraft:diamond": {
+      "difficulty": 14400.0,
+      "required_bench": null,
+      "source_order": 470
+    },
+    "minecraft:diamond_block": {
+      "difficulty": 14400.0,
+      "required_bench": null,
+      "source_order": 48
+    },
+    "minecraft:dispenser": {
+      "difficulty": 1575.0,
+      "required_bench": null,
+      "source_order": 191
+    },
+    "minecraft:dropper": {
+      "difficulty": 1425.0,
+      "required_bench": null,
+      "source_order": 192
+    },
+    "minecraft:dye_black_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 811
+    },
+    "minecraft:dye_black_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 811
+    },
+    "minecraft:dye_black_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 811
+    },
+    "minecraft:dye_blue_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 815
+    },
+    "minecraft:dye_blue_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 815
+    },
+    "minecraft:dye_blue_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 815
+    },
+    "minecraft:dye_brown_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 814
+    },
+    "minecraft:dye_brown_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 814
+    },
+    "minecraft:dye_brown_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 814
+    },
+    "minecraft:dye_cyan_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 817
+    },
+    "minecraft:dye_cyan_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 817
+    },
+    "minecraft:dye_cyan_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 817
+    },
+    "minecraft:dye_gray_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 819
+    },
+    "minecraft:dye_gray_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 819
+    },
+    "minecraft:dye_gray_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 819
+    },
+    "minecraft:dye_green_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 813
+    },
+    "minecraft:dye_green_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 813
+    },
+    "minecraft:dye_green_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 813
+    },
+    "minecraft:dye_light_blue_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 823
+    },
+    "minecraft:dye_light_blue_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 823
+    },
+    "minecraft:dye_light_blue_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 823
+    },
+    "minecraft:dye_light_gray_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 818
+    },
+    "minecraft:dye_light_gray_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 818
+    },
+    "minecraft:dye_light_gray_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 818
+    },
+    "minecraft:dye_lime_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 821
+    },
+    "minecraft:dye_lime_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 821
+    },
+    "minecraft:dye_lime_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 821
+    },
+    "minecraft:dye_magenta_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 824
+    },
+    "minecraft:dye_magenta_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 824
+    },
+    "minecraft:dye_magenta_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 824
+    },
+    "minecraft:dye_orange_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 825
+    },
+    "minecraft:dye_orange_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 825
+    },
+    "minecraft:dye_orange_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 825
+    },
+    "minecraft:dye_pink_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 820
+    },
+    "minecraft:dye_pink_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 820
+    },
+    "minecraft:dye_pink_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 820
+    },
+    "minecraft:dye_purple_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 816
+    },
+    "minecraft:dye_purple_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 816
+    },
+    "minecraft:dye_purple_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 816
+    },
+    "minecraft:dye_red_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 812
+    },
+    "minecraft:dye_red_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 812
+    },
+    "minecraft:dye_red_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 812
+    },
+    "minecraft:dye_white_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 826
+    },
+    "minecraft:dye_white_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 826
+    },
+    "minecraft:dye_white_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 826
+    },
+    "minecraft:dye_yellow_bed": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 822
+    },
+    "minecraft:dye_yellow_carpet": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 822
+    },
+    "minecraft:dye_yellow_wool": {
+      "difficulty": 105.0,
+      "required_bench": null,
+      "source_order": 822
+    },
+    "minecraft:emerald": {
+      "difficulty": 7200.0,
+      "required_bench": null,
+      "source_order": 471
+    },
+    "minecraft:emerald_block": {
+      "difficulty": 7200.0,
+      "required_bench": null,
+      "source_order": 49
+    },
+    "minecraft:enchanting_table": {
+      "difficulty": 4335.0,
+      "required_bench": null,
+      "source_order": 194
+    },
+    "minecraft:ender_chest": {
+      "difficulty": 2045.0,
+      "required_bench": null,
+      "source_order": 67
+    },
+    "minecraft:ender_eye": {
+      "difficulty": 125.0,
+      "required_bench": null,
+      "source_order": 762
+    },
+    "minecraft:fermented_spider_eye": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 706
+    },
+    "minecraft:fire_charge": {
+      "difficulty": 75.0,
+      "required_bench": null,
+      "source_order": 756
+    },
+    "minecraft:flower_pot": {
+      "difficulty": 300.0,
+      "required_bench": null,
+      "source_order": 283
+    },
+    "minecraft:furnace_minecart": {
+      "difficulty": 25.0,
+      "required_bench": "iron",
+      "source_order": 453
+    },
+    "minecraft:glass_bottle": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 279
+    },
+    "minecraft:glass_pane": {
+      "difficulty": 200.0,
+      "required_bench": null,
+      "source_order": 500
+    },
+    "minecraft:glistering_melon_slice": {
+      "difficulty": 380.55554,
+      "required_bench": "gold",
+      "source_order": 186
+    },
+    "minecraft:glowstone": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 359
+    },
+    "minecraft:gold_block": {
+      "difficulty": 3600.0,
+      "required_bench": "gold",
+      "source_order": 43
+    },
+    "minecraft:gray_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:gray_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 438
+    },
+    "minecraft:gray_dye": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 830
+    },
+    "minecraft:gray_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 147
+    },
+    "minecraft:green_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:green_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 444
+    },
+    "minecraft:green_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 141
+    },
+    "minecraft:hay_block": {
+      "difficulty": 225.0,
+      "required_bench": null,
+      "source_order": 53
+    },
+    "minecraft:heavy_weighted_pressure_plate": {
+      "difficulty": 1600.0,
+      "required_bench": "iron",
+      "source_order": 460
+    },
+    "minecraft:hopper": {
+      "difficulty": 4020.0,
+      "required_bench": "iron",
+      "source_order": 198
+    },
+    "minecraft:hopper_minecart": {
+      "difficulty": 100.0,
+      "required_bench": "iron",
+      "source_order": 455
+    },
+    "minecraft:iron_bars": {
+      "difficulty": 4800.0,
+      "required_bench": "iron",
+      "source_order": 233
+    },
+    "minecraft:iron_block": {
+      "difficulty": 7200.0,
+      "required_bench": "iron",
+      "source_order": 44
+    },
+    "minecraft:iron_door": {
+      "difficulty": 4800.0,
+      "required_bench": "iron",
+      "source_order": 222
+    },
+    "minecraft:item_frame": {
+      "difficulty": 300.0,
+      "required_bench": null,
+      "source_order": 183
+    },
+    "minecraft:jack_o_lantern": {
+      "difficulty": 60.000004,
+      "required_bench": null,
+      "source_order": 451
+    },
+    "minecraft:jukebox": {
+      "difficulty": 2240.0,
+      "required_bench": null,
+      "source_order": 157
+    },
+    "minecraft:jungle_boat": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:jungle_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:jungle_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:jungle_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:jungle_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:jungle_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:jungle_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:jungle_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 399
+    },
+    "minecraft:jungle_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 174
+    },
+    "minecraft:jungle_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:ladder": {
+      "difficulty": 175.0,
+      "required_bench": null,
+      "source_order": 165
+    },
+    "minecraft:lapis_block": {
+      "difficulty": 225.0,
+      "required_bench": null,
+      "source_order": 50
+    },
+    "minecraft:lapis_lazuli": {
+      "difficulty": 300.0,
+      "required_bench": null,
+      "source_order": 472
+    },
+    "minecraft:lead": {
+      "difficulty": 200.0,
+      "required_bench": null,
+      "source_order": 158
+    },
+    "minecraft:lever": {
+      "difficulty": 225.0,
+      "required_bench": null,
+      "source_order": 456
+    },
+    "minecraft:light_blue_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:light_blue_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 434
+    },
+    "minecraft:light_blue_dye_from_blue_white_dye": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 832
+    },
+    "minecraft:light_blue_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 151
+    },
+    "minecraft:light_gray_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:light_gray_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 439
+    },
+    "minecraft:light_gray_dye_from_azure_bluet": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 900
+    },
+    "minecraft:light_gray_dye_from_black_white_dye": {
+      "difficulty": 75.0,
+      "required_bench": null,
+      "source_order": 753
+    },
+    "minecraft:light_gray_dye_from_gray_white_dye": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 831
+    },
+    "minecraft:light_gray_dye_from_white_tulip": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 900
+    },
+    "minecraft:light_gray_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 146
+    },
+    "minecraft:light_weighted_pressure_plate": {
+      "difficulty": 800.0,
+      "required_bench": "gold",
+      "source_order": 461
+    },
+    "minecraft:lime_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:lime_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 436
+    },
+    "minecraft:lime_dye": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 829
+    },
+    "minecraft:lime_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 149
+    },
+    "minecraft:magenta_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:magenta_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 433
+    },
+    "minecraft:magenta_dye_from_blue_red_pink": {
+      "difficulty": 75.0,
+      "required_bench": null,
+      "source_order": 754
+    },
+    "minecraft:magenta_dye_from_blue_red_white_dye": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 701
+    },
+    "minecraft:magenta_dye_from_lilac": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 897
+    },
+    "minecraft:magenta_dye_from_purple_and_pink": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 835
+    },
+    "minecraft:magenta_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 152
+    },
+    "minecraft:magma_cream": {
+      "difficulty": 125.0,
+      "required_bench": null,
+      "source_order": 759
+    },
+    "minecraft:mangrove_boat": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:mangrove_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:mangrove_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:mangrove_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:mangrove_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:mangrove_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:mangrove_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:mangrove_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 396
+    },
+    "minecraft:mangrove_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 171
+    },
+    "minecraft:mangrove_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:map": {
+      "difficulty": 936.1111,
+      "required_bench": null,
+      "source_order": 190
+    },
+    "minecraft:minecart": {
+      "difficulty": 4000.0,
+      "required_bench": "iron",
+      "source_order": 280
+    },
+    "minecraft:mossy_cobblestone_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389
+    },
+    "minecraft:mossy_cobblestone_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175
+    },
+    "minecraft:mossy_cobblestone_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 274
+    },
+    "minecraft:mossy_stone_brick_slab": {
+      "difficulty": 450.0,
+      "required_bench": null,
+      "source_order": 393
+    },
+    "minecraft:mossy_stone_brick_stairs": {
+      "difficulty": 900.0,
+      "required_bench": null,
+      "source_order": 177
+    },
+    "minecraft:nether_brick_fence": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 275
+    },
+    "minecraft:nether_brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 394
+    },
+    "minecraft:nether_brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 178
+    },
+    "minecraft:nether_bricks": {
+      "difficulty": 850.0,
+      "required_bench": null,
+      "source_order": 163
+    },
+    "minecraft:note_block": {
+      "difficulty": 665.0,
+      "required_bench": null,
+      "source_order": 160
+    },
+    "minecraft:oak_boat": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:oak_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:oak_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:oak_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:oak_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:oak_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:oak_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:oak_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 396
+    },
+    "minecraft:oak_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 171
+    },
+    "minecraft:oak_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:orange_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:orange_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 432
+    },
+    "minecraft:orange_dye_from_red_yellow": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 828
+    },
+    "minecraft:orange_dye_from_torchflower": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 898
+    },
+    "minecraft:orange_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 153
+    },
+    "minecraft:painting": {
+      "difficulty": 280.0,
+      "required_bench": null,
+      "source_order": 182
+    },
+    "minecraft:paper": {
+      "difficulty": 300.0,
+      "required_bench": null,
+      "source_order": 388
+    },
+    "minecraft:pink_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:pink_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 437
+    },
+    "minecraft:pink_dye_from_peony": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 899
+    },
+    "minecraft:pink_dye_from_pink_tulip": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 899
+    },
+    "minecraft:pink_dye_from_red_white_dye": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 827
+    },
+    "minecraft:pink_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 148
+    },
+    "minecraft:piston": {
+      "difficulty": 1865.0,
+      "required_bench": "iron",
+      "source_order": 193
+    },
+    "minecraft:powered_rail": {
+      "difficulty": 2450.0,
+      "required_bench": "gold",
+      "source_order": 167
+    },
+    "minecraft:purple_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:purple_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 441
+    },
+    "minecraft:purple_dye": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 834
+    },
+    "minecraft:purple_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 144
+    },
+    "minecraft:quartz_block": {
+      "difficulty": 3600.0,
+      "required_bench": null,
+      "source_order": 304
+    },
+    "minecraft:quartz_pillar": {
+      "difficulty": 7200.0,
+      "required_bench": null,
+      "source_order": 430
+    },
+    "minecraft:quartz_slab": {
+      "difficulty": 10800.0,
+      "required_bench": null,
+      "source_order": 395
+    },
+    "minecraft:quartz_stairs": {
+      "difficulty": 21600.0,
+      "required_bench": null,
+      "source_order": 180
+    },
+    "minecraft:rail": {
+      "difficulty": 4825.0,
+      "required_bench": "iron",
+      "source_order": 166
+    },
+    "minecraft:red_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:red_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 445
+    },
+    "minecraft:red_dye_from_poppy": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 895
+    },
+    "minecraft:red_dye_from_rose_bush": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 895
+    },
+    "minecraft:red_dye_from_tulip": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 895
+    },
+    "minecraft:red_sandstone_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 391
+    },
+    "minecraft:red_sandstone_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 179
+    },
+    "minecraft:red_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 140
+    },
+    "minecraft:redstone": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 473
+    },
+    "minecraft:redstone_block": {
+      "difficulty": 225.0,
+      "required_bench": null,
+      "source_order": 51
+    },
+    "minecraft:redstone_lamp": {
+      "difficulty": 130.0,
+      "required_bench": null,
+      "source_order": 105
+    },
+    "minecraft:redstone_torch": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 457
+    },
+    "minecraft:repeater": {
+      "difficulty": 745.0,
+      "required_bench": null,
+      "source_order": 284
+    },
+    "minecraft:sandstone_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 391
+    },
+    "minecraft:sandstone_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 179
+    },
+    "minecraft:smooth_quartz_slab": {
+      "difficulty": 10800.0,
+      "required_bench": null,
+      "source_order": 395
+    },
+    "minecraft:smooth_quartz_stairs": {
+      "difficulty": 21600.0,
+      "required_bench": null,
+      "source_order": 180
+    },
+    "minecraft:smooth_red_sandstone_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 391
+    },
+    "minecraft:smooth_red_sandstone_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 179
+    },
+    "minecraft:smooth_sandstone_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 391
+    },
+    "minecraft:smooth_sandstone_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 179
+    },
+    "minecraft:smooth_stone_slab": {
+      "difficulty": 720.00006,
+      "required_bench": null,
+      "source_order": 390
+    },
+    "minecraft:snow": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 482
+    },
+    "minecraft:snow_block": {
+      "difficulty": 40.0,
+      "required_bench": null,
+      "source_order": 418
+    },
+    "minecraft:spruce_boat": {
+      "difficulty": 400.0,
+      "required_bench": null,
+      "source_order": 282
+    },
+    "minecraft:spruce_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:spruce_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:spruce_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:spruce_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:spruce_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:spruce_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:spruce_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 398
+    },
+    "minecraft:spruce_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 173
+    },
+    "minecraft:spruce_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:stick": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 448
+    },
+    "minecraft:stick_from_bamboo_item": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 448
+    },
+    "minecraft:sticky_piston": {
+      "difficulty": 150.0,
+      "required_bench": "iron",
+      "source_order": 462
+    },
+    "minecraft:stone_brick_slab": {
+      "difficulty": 450.0,
+      "required_bench": null,
+      "source_order": 393
+    },
+    "minecraft:stone_brick_stairs": {
+      "difficulty": 900.0,
+      "required_bench": null,
+      "source_order": 177
+    },
+    "minecraft:stone_bricks": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356
+    },
+    "minecraft:stone_button": {
+      "difficulty": 240.00002,
+      "required_bench": null,
+      "source_order": 507
+    },
+    "minecraft:stone_pressure_plate": {
+      "difficulty": 480.00003,
+      "required_bench": null,
+      "source_order": 458
+    },
+    "minecraft:stone_slab": {
+      "difficulty": 720.00006,
+      "required_bench": null,
+      "source_order": 390
+    },
+    "minecraft:tnt": {
+      "difficulty": 285.0,
+      "required_bench": null,
+      "source_order": 164
+    },
+    "minecraft:tnt_minecart": {
+      "difficulty": 4100.0,
+      "required_bench": "iron",
+      "source_order": 454
+    },
+    "minecraft:torch": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 449
+    },
+    "minecraft:trapped_chest": {
+      "difficulty": 20.0,
+      "required_bench": null,
+      "source_order": 427
+    },
+    "minecraft:tripwire_hook": {
+      "difficulty": 905.0,
+      "required_bench": null,
+      "source_order": 402
+    },
+    "minecraft:warped_button": {
+      "difficulty": 80.0,
+      "required_bench": null,
+      "source_order": 508
+    },
+    "minecraft:warped_door": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 218
+    },
+    "minecraft:warped_fence": {
+      "difficulty": 150.0,
+      "required_bench": null,
+      "source_order": 272
+    },
+    "minecraft:warped_fence_gate": {
+      "difficulty": 260.0,
+      "required_bench": null,
+      "source_order": 276
+    },
+    "minecraft:warped_pressure_plate": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 459
+    },
+    "minecraft:warped_sign": {
+      "difficulty": 65.0,
+      "required_bench": null,
+      "source_order": 447
+    },
+    "minecraft:warped_slab": {
+      "difficulty": 240.0,
+      "required_bench": null,
+      "source_order": 396
+    },
+    "minecraft:warped_stairs": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 171
+    },
+    "minecraft:warped_trapdoor": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 277
+    },
+    "minecraft:wheat": {
+      "difficulty": 50.0,
+      "required_bench": null,
+      "source_order": 475
+    },
+    "minecraft:white_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:white_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 431
+    },
+    "minecraft:white_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 154
+    },
+    "minecraft:white_wool_from_string": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 360
+    },
+    "minecraft:writable_book": {
+      "difficulty": 225.0,
+      "required_bench": null,
+      "source_order": 755
+    },
+    "minecraft:yellow_bed": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 285
+    },
+    "minecraft:yellow_carpet": {
+      "difficulty": 160.0,
+      "required_bench": null,
+      "source_order": 435
+    },
+    "minecraft:yellow_dye_from_dandelion": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 894
+    },
+    "minecraft:yellow_dye_from_sunflower": {
+      "difficulty": 0.0,
+      "required_bench": null,
+      "source_order": 894
+    },
+    "minecraft:yellow_terracotta": {
+      "difficulty": 1465.0,
+      "required_bench": null,
+      "source_order": 150
+    }
+  }
+}

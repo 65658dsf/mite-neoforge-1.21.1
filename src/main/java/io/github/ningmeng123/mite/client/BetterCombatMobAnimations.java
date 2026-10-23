@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Mob;
@@ -14,8 +15,15 @@ public final class BetterCombatMobAnimations {
         return ModList.get().isLoaded("bettercombat") && ModList.get().isLoaded("playeranimator");
     }
 
+    private static boolean enabled() {
+        if (!available()) return false;
+        if (MiteConfig.betterCombatMobsEnabled()) return true;
+        BetterCombatMobAnimationPlayer.clear();
+        return false;
+    }
+
     public static void start(Mob mob, String animation, int durationTicks, float upswing, boolean offhand) {
-        if (available()) BetterCombatMobAnimationPlayer.start(mob, animation, durationTicks, upswing, offhand);
+        if (enabled()) BetterCombatMobAnimationPlayer.start(mob, animation, durationTicks, upswing, offhand);
     }
 
     public static void stop(Mob mob) {
@@ -23,15 +31,16 @@ public final class BetterCombatMobAnimations {
     }
 
     public static boolean active(Mob mob) {
-        return available() && BetterCombatMobAnimationPlayer.active(mob);
+        return enabled() && BetterCombatMobAnimationPlayer.active(mob);
     }
 
     public static void apply(EntityModel<?> model, Mob mob, float partialTick, PoseStack pose) {
-        if (available()) BetterCombatMobAnimationPlayer.apply(model, mob, partialTick, pose);
+        if (enabled()) BetterCombatMobAnimationPlayer.apply(model, mob, partialTick, pose);
+        else finish(model);
     }
 
     public static void applyBody(Mob mob, float partialTick, PoseStack pose) {
-        if (available()) BetterCombatMobAnimationPlayer.applyBody(mob, partialTick, pose);
+        if (enabled()) BetterCombatMobAnimationPlayer.applyBody(mob, partialTick, pose);
     }
 
     public static void finish(EntityModel<?> model) {
@@ -39,6 +48,6 @@ public final class BetterCombatMobAnimations {
     }
 
     public static void applyHeldItem(Mob mob, HumanoidArm arm, PoseStack pose) {
-        if (available()) BetterCombatMobAnimationPlayer.applyHeldItem(mob, arm, pose);
+        if (enabled()) BetterCombatMobAnimationPlayer.applyHeldItem(mob, arm, pose);
     }
 }

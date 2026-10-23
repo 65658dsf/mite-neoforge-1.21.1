@@ -5,6 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.gametest.BetterCombatMobSettings;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.client.BetterCombatMobAnimations;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.entity.MobKind;
@@ -191,11 +193,12 @@ public final class BetterCombatMobClientAudit {
                 report.getAsJsonArray("entities").add(fact);
                 rows.add(new Row(mob, control, profile, fact));
             }
+            verifyCompatibilityToggle(rows.getFirst());
         }
 
         @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             if (done) return;
-            try {
+            try (var compatibility = new BetterCombatMobSettings(true)) {
                 graphics.fill(0, 0, width, height, 0xFF121924);
                 graphics.drawCenteredString(font, "Better Combat: native / windup / impact / recovery", width / 2, 8, 0xFFE8EEF8);
                 int top = 32, label = 86, cellWidth = Math.max(70, (width - label - 10) / 4);
@@ -289,6 +292,25 @@ public final class BetterCombatMobClientAudit {
         mob.setNoAi(true); mob.setAggressive(true);
         mob.setYRot(0F); mob.yRotO = 0F; mob.setXRot(0F); mob.xRotO = 0F;
         mob.yBodyRot = 0F; mob.yBodyRotO = 0F; mob.yHeadRot = 0F; mob.yHeadRotO = 0F;
+    }
+
+    private static void verifyCompatibilityToggle(Row row) {
+        Mob mob = row.mob();
+        var profile = row.profile();
+        check(!MiteConfig.BETTER_COMBAT_MOBS.getDefault(), "Monster animation compatibility defaults to disabled");
+        try (var disabled = new BetterCombatMobSettings(false)) {
+            BetterCombatMobAnimations.start(mob, profile.animation(), profile.cooldownTicks(), (float)profile.upswing(), false);
+            check(!BetterCombatMobAnimations.active(mob), "Disabled compatibility refuses an incoming monster animation");
+            try (var enabled = new BetterCombatMobSettings(true)) {
+                BetterCombatMobAnimations.start(mob, profile.animation(), profile.cooldownTicks(), (float)profile.upswing(), false);
+                check(BetterCombatMobAnimations.active(mob), "Explicitly enabled compatibility starts the real monster animation");
+                try (var offDuringWindup = new BetterCombatMobSettings(false)) {
+                    check(!BetterCombatMobAnimations.active(mob), "Disabling during windup immediately clears the real animation");
+                }
+                check(!BetterCombatMobAnimations.active(mob), "Reenabling does not revive an interrupted monster animation");
+            }
+            report.addProperty("default_disabled_animation_toggle_verified", true);
+        } finally { BetterCombatMobAnimations.stop(mob); }
     }
 
     private static boolean registeredKeyframes(ResourceLocation id) {

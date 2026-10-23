@@ -158,8 +158,8 @@ public final class MobWeaponReachGameTests {
 
     @GameTest(template = "empty", templateNamespace = "mite_targeting")
     public static void sourceGoalsKeepTheirHistoricalGateAndUseTheCapAtPlannedAttackPositions(GameTestHelper helper) {
-        if (BetterCombatBridge.enabled()) { helper.succeed(); return; }
-        try (ReachSettings ignored = new ReachSettings(1.5D, 0D, false);
+        try (var compatibility = new BetterCombatMobSettings(false);
+                ReachSettings ignored = new ReachSettings(1.5D, 0D, false);
                 Fixture fixture = new Fixture(helper, EntityType.ZOMBIE)) {
             fixture.equip(new ItemStack(Items.IRON_SWORD));
             fixture.target.setPos(fixture.attacker.position().add(0D, 0D, 1.96D));

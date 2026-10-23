@@ -26,6 +26,7 @@ import net.minecraft.world.item.crafting.ArmorDyeRecipe;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RepairItemRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShieldDecorationRecipe;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
@@ -137,6 +138,14 @@ public final class CraftingQuality {
         }
         TimedCraftingRecipes.Rule known = TimedCraftingRecipes.get(recipe.id());
         if (known != null) return known;
+        // R196's dynamic recipes have no fixed output identity: use their operation, not the result item.
+        var serializer = recipe.value().getSerializer();
+        if (recipe.id().equals(ResourceLocation.withDefaultNamespace("firework_rocket_simple"))
+                || serializer == RecipeSerializer.FIREWORK_ROCKET || serializer == RecipeSerializer.FIREWORK_STAR
+                || serializer == RecipeSerializer.FIREWORK_STAR_FADE)
+            return new TimedCraftingRecipes.Rule(100F, null, 1);
+        if (serializer == RecipeSerializer.MAP_CLONING) return new TimedCraftingRecipes.Rule(100F, null, 155);
+        if (serializer == RecipeSerializer.MAP_EXTENDING) return new TimedCraftingRecipes.Rule(300F, null, 156);
         var vibranium = VibraniumCrafting.rule(recipe.id(), output);
         if (vibranium != null) return vibranium;
         if (recipe.value() instanceof VibraniumUpgradeRecipe) return new TimedCraftingRecipes.Rule(

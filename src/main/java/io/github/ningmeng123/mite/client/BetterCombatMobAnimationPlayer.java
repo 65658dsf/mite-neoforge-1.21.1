@@ -52,6 +52,10 @@ final class BetterCombatMobAnimationPlayer {
         ATTACKS.remove(mob);
     }
 
+    static void clear() {
+        ATTACKS.clear();
+    }
+
     static boolean active(Mob mob) {
         Attack attack = ATTACKS.get(mob);
         if (attack == null) return false;

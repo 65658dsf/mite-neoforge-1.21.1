@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.gametest.BetterCombatMobSettings;
 import io.github.ningmeng123.mite.client.BetterCombatMobAnimations;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.entity.MobKind;
@@ -296,7 +297,7 @@ public final class FreshAnimationsCombatClientAudit {
 
         @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             if (done) return;
-            try {
+            try (var compatibility = new BetterCombatMobSettings(true)) {
                 graphics.fill(0, 0, width, height, 0xFF111923);
                 graphics.drawCenteredString(font, "Fresh Animations + Better Combat: idle / walk / windup / impact / recovery", width / 2, 6, 0xFFE8EEF8);
                 int label = Math.min(138, Math.max(85, width / 4));

@@ -43,6 +43,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_BLOOD_MOON_FORMULA, MONSTER_DAMAGE_BLOOD_MOON_FORMULA;
     public static final ModConfigSpec.DoubleValue WEAPON_REACH_MULTIPLIER, WEAPON_REACH_REDUCTION;
     public static final ModConfigSpec.BooleanValue HEIGHT_REACH_PENALTY, UNDERWORLD_TRIALS, OVERWORLD_TRIALS;
+    public static final ModConfigSpec.BooleanValue BETTER_COMBAT_MOBS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS, ENCHANTMENT_CHANCES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_RATES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_WEIGHTS;
@@ -139,6 +140,9 @@ public final class MiteConfig {
         WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Survival melee attack reach multiplier. Original MITE weapons keep source reach; Simply Swords weapons use their own Better Combat base range. Creative reach remains unchanged.");
         WEAPON_REACH_REDUCTION = number(builder, "weapon_reach_reduction", 0D, 16D, "Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.");
         HEIGHT_REACH_PENALTY = builder.translation("mite.config.height_reach_penalty").comment("Apply MITE target-height reach adjustments.").define("height_reach_penalty", true);
+        BETTER_COMBAT_MOBS = builder.translation("mite.config.better_combat_mobs")
+                .comment("Enable Better Combat weapon attacks and animations for hostile mobs when Better Combat is installed. False preserves their original attacks. Does not affect player compatibility.")
+                .define("better_combat_mobs", false);
         builder.pop();
         builder.translation("mite.config.structures").push("structures");
         UNDERWORLD_TRIALS = builder.translation("mite.config.underworld_trials").comment("Allow new underworld trial dungeons. Existing structures are retained.").define("underworld_trials", true);
@@ -402,6 +406,7 @@ public final class MiteConfig {
     public static double weaponReachMultiplier() { return effectiveSnapshot().reachMultiplier(); }
     public static double weaponReachReduction() { return effectiveSnapshot().reachReduction(); }
     public static boolean heightReachPenaltyEnabled() { return effectiveSnapshot().heightPenalty(); }
+    public static boolean betterCombatMobsEnabled() { return effectiveSnapshot().betterCombatMobs(); }
     public static boolean underworldTrialsEnabled() { return effectiveSnapshot().underworldTrials(); }
     public static boolean overworldTrialsEnabled() { return effectiveSnapshot().overworldTrials(); }
 
@@ -424,7 +429,8 @@ public final class MiteConfig {
             Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
             Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
             Map<String, String> oreHeights, Map<String, String> overworldOreHeights,
-            MonsterSpawningSettings.Settings spawningSettings, Map<String, Double> monsterSpawnWeights) {
+            MonsterSpawningSettings.Settings spawningSettings, Map<String, Double> monsterSpawnWeights,
+            boolean betterCombatMobs) {
         public Snapshot {
             ores = Map.copyOf(ores);
             caps = Map.copyOf(caps);
@@ -441,6 +447,19 @@ public final class MiteConfig {
             overworldOreHeights = heightOverrides(overworldOreHeights);
             spawningSettings = spawningSettings == null ? MonsterSpawningSettings.DEFAULTS : spawningSettings;
             monsterSpawnWeights = spawnWeightOverrides(monsterSpawnWeights);
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
+                Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
+                Map<String, String> oreHeights, Map<String, String> overworldOreHeights,
+                MonsterSpawningSettings.Settings spawningSettings, Map<String, Double> monsterSpawnWeights) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, overworldOres, enchantmentChances, monsterSpawnRates,
+                    oreHeights, overworldOreHeights, spawningSettings, monsterSpawnWeights, false);
         }
         public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
                 double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
@@ -579,7 +598,8 @@ public final class MiteConfig {
                 value(UNDERWORLD_TRIALS), value(OVERWORLD_TRIALS), caps, new HashSet<>(value(DISABLED_ENCHANTMENTS)), growth, candidates, chances,
                 surfaceCandidates, surfaceChances, surfaceMultipliers, enchantmentChances, spawnRates,
                 readHeights(UNDERWORLD_ORE_HEIGHTS, UNDERWORLD_DEEPSLATE_ORE_HEIGHTS),
-                readHeights(OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS), readSpawningSettings(), spawnWeights);
+                readHeights(OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS), readSpawningSettings(), spawnWeights,
+                value(BETTER_COMBAT_MOBS));
     }
 
     private static MonsterSpawningSettings.Settings readSpawningSettings() {

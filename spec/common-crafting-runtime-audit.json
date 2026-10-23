@@ -1,0 +1,2738 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.259",
+  "conditions": "Actual RecipeManager without optional mods; static declarations use CraftingQuality.rule; dynamic recipes require real-input tests.",
+  "source_sha256": {
+    "src/main/java/io/github/ningmeng123/mite/crafting/CraftingQuality.java": "d9953e001ef7697adc2081adcb5935944783dfe8d242dc292293a3a116deeaab",
+    "src/main/java/io/github/ningmeng123/mite/crafting/TimedCraftingRecipes.java": "43d42d9d29358be16f02d10823376cce8b7de42334a53d8c73e2ee1200cdae85",
+    "src/main/resources/mite/timed-crafting-r196-common.json": "aac31f326c6a8f27b9aaa76e276244873d6da2ce44dd92ca803c8a9bf3bf0170"
+  },
+  "loaded_common_recipe_count": 350,
+  "timed_static_count": 1072,
+  "remaining_instant_static_count": 444,
+  "dynamic_recipe_count": 12,
+  "common_ids_absent_from_active_recipe_manager": [],
+  "remaining_instant_static": [
+    {
+      "recipe": "minecraft:acacia_chest_boat",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:acacia_chest_boat",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:acacia_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:acacia_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:acacia_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:acacia_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:amethyst_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:amethyst_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:andesite",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:andesite",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:andesite_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:andesite_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:andesite_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:andesite_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:andesite_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:andesite_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:armor_stand",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:armor_stand",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:bamboo_block",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:bamboo_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:bamboo_chest_raft",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:bamboo_chest_raft",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:bamboo_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:bamboo_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:bamboo_mosaic",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:bamboo_mosaic",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:bamboo_mosaic_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:bamboo_mosaic_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:bamboo_mosaic_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:bamboo_mosaic_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:barrel",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:barrel",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:beehive",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:beehive",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:birch_chest_boat",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:birch_chest_boat",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:birch_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:birch_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:birch_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:birch_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:black_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:black_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:black_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:black_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:black_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:black_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:black_dye",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:black_dye",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:black_dye_from_wither_rose",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:black_dye",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:black_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:black_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:black_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:black_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:black_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:black_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:blackstone_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:blackstone_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:blackstone_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:blackstone_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:blackstone_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:blackstone_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:blast_furnace",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:blast_furnace",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:blue_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:blue_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:blue_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:blue_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:blue_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:blue_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:blue_dye",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:blue_dye",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:blue_ice",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:blue_ice",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:blue_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:blue_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:blue_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:blue_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:blue_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:blue_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:bolt_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:bolt_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:bone_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:bone_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:bone_meal_from_bone_block",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:bone_meal",
+      "count": 9
+    },
+    {
+      "recipe": "minecraft:brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:brown_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:brown_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:brown_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:brown_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:brown_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:brown_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:brown_dye",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:brown_dye",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:brown_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:brown_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:brown_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:brown_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:brown_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:brown_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:brush",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:brush",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:bundle",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:bundle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:calibrated_sculk_sensor",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:calibrated_sculk_sensor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:campfire",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:campfire",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:candle",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:cartography_table",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cartography_table",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:cherry_chest_boat",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:cherry_chest_boat",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:cherry_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cherry_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:cherry_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cherry_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:chiseled_bookshelf",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:chiseled_bookshelf",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:chiseled_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:chiseled_deepslate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:chiseled_deepslate",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:chiseled_nether_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:chiseled_nether_bricks",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:chiseled_polished_blackstone",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:chiseled_polished_blackstone",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:chiseled_stone_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:chiseled_stone_bricks",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:chiseled_tuff",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:chiseled_tuff",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:chiseled_tuff_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:chiseled_tuff_bricks",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:coarse_dirt",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:coarse_dirt",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:coast_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:coast_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:cobbled_deepslate_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cobbled_deepslate_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:cobbled_deepslate_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cobbled_deepslate_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:cobbled_deepslate_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cobbled_deepslate_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:composter",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:composter",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:conduit",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:conduit",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:copper_bulb",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:copper_bulb",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:copper_grate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:copper_grate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:crafter",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:crafter",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:creeper_banner_pattern",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:creeper_banner_pattern",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:crimson_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:crimson_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:crimson_hyphae",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:crimson_hyphae",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:crossbow",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:crossbow",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:cut_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cut_copper",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:cut_copper_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cut_copper_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:cut_copper_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cut_copper_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:cyan_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cyan_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:cyan_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:cyan_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:cyan_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:cyan_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:cyan_dye_from_pitcher_plant",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:cyan_dye",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:cyan_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:cyan_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:cyan_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cyan_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:cyan_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:cyan_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:dark_oak_chest_boat",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:dark_oak_chest_boat",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:dark_oak_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:dark_oak_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:dark_oak_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:dark_oak_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:dark_prismarine",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:dark_prismarine",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:dark_prismarine_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:dark_prismarine_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:dark_prismarine_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:dark_prismarine_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:decorated_pot_simple",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:decorated_pot",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:deepslate_brick_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:deepslate_brick_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:deepslate_brick_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:deepslate_brick_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:deepslate_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:deepslate_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:deepslate_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:deepslate_bricks",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:deepslate_tile_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:deepslate_tile_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:deepslate_tile_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:deepslate_tile_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:deepslate_tile_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:deepslate_tile_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:deepslate_tiles",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:deepslate_tiles",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:diorite",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:diorite",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:diorite_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:diorite_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:diorite_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:diorite_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:diorite_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:diorite_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:dried_kelp",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:dried_kelp",
+      "count": 9
+    },
+    {
+      "recipe": "minecraft:dried_kelp_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:dried_kelp_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:dripstone_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:dripstone_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:dune_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:dune_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:end_crystal",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:end_crystal",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:end_rod",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:end_rod",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:end_stone_brick_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:end_stone_brick_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:end_stone_brick_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:end_stone_brick_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:end_stone_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:end_stone_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:end_stone_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:end_stone_bricks",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:exposed_chiseled_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:exposed_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:exposed_copper_bulb",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:exposed_copper_bulb",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:exposed_copper_grate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:exposed_copper_grate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:exposed_cut_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:exposed_cut_copper",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:exposed_cut_copper_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:exposed_cut_copper_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:exposed_cut_copper_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:exposed_cut_copper_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:eye_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:eye_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:fletching_table",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:fletching_table",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:flow_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:flow_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:flower_banner_pattern",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:flower_banner_pattern",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:glow_item_frame",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:glow_item_frame",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:granite",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:granite",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:granite_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:granite_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:granite_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:granite_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:granite_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:granite_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:gray_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:gray_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:gray_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:gray_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:gray_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:gray_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:gray_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:gray_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:gray_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:gray_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:gray_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:gray_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:green_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:green_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:green_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:green_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:green_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:green_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:green_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:green_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:green_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:green_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:green_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:green_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:grindstone",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:grindstone",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:honey_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:honey_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:honey_bottle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:honey_bottle",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:honeycomb_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:honeycomb_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:host_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:host_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:iron_trapdoor",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:iron_trapdoor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:jungle_chest_boat",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:jungle_chest_boat",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:jungle_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:jungle_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:jungle_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:jungle_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:lantern",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:lantern",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:leather",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:leather",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:leather_horse_armor",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:leather_horse_armor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:lectern",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:lectern",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:light_blue_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:light_blue_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:light_blue_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:light_blue_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:light_blue_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:light_blue_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:light_blue_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:light_blue_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:light_blue_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:light_blue_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:light_blue_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:light_blue_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:light_gray_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:light_gray_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:light_gray_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:light_gray_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:light_gray_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:light_gray_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:light_gray_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:light_gray_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:light_gray_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:light_gray_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:light_gray_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:light_gray_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:lightning_rod",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:lightning_rod",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:lime_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:lime_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:lime_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:lime_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:lime_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:lime_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:lime_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:lime_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:lime_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:lime_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:lime_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:lime_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:lodestone",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:lodestone",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:loom",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:loom",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:mace",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:mace",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:magenta_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:magenta_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:magenta_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:magenta_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:magenta_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:magenta_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:magenta_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:magenta_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:magenta_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:magenta_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:magenta_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:magenta_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:magma_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:magma_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:mangrove_chest_boat",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:mangrove_chest_boat",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:mangrove_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:mangrove_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:mangrove_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:mangrove_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:melon",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:melon",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:mojang_banner_pattern",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:mojang_banner_pattern",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:moss_carpet",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:moss_carpet",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:mossy_cobblestone_from_moss_block",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:mossy_cobblestone",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:mossy_cobblestone_from_vine",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:mossy_cobblestone",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:mossy_stone_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:mossy_stone_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:mossy_stone_bricks_from_moss_block",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:mossy_stone_bricks",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:mossy_stone_bricks_from_vine",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:mossy_stone_bricks",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:mud_brick_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:mud_brick_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:mud_brick_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:mud_brick_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:mud_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:mud_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:mud_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:mud_bricks",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:muddy_mangrove_roots",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:muddy_mangrove_roots",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:music_disc_5",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:music_disc_5",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:nether_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:nether_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:nether_wart_block",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:nether_wart_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:netherite_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:netherite_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:netherite_ingot",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:netherite_ingot",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:netherite_ingot_from_netherite_block",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:netherite_ingot",
+      "count": 9
+    },
+    {
+      "recipe": "minecraft:netherite_upgrade_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:netherite_upgrade_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:oak_chest_boat",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:oak_chest_boat",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:oak_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:oak_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:oak_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:oak_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:observer",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:observer",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:orange_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:orange_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:orange_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:orange_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:orange_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:orange_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:orange_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:orange_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:orange_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:orange_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:orange_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:orange_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:oxidized_chiseled_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:oxidized_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:oxidized_copper_bulb",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:oxidized_copper_bulb",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:oxidized_copper_grate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:oxidized_copper_grate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:oxidized_cut_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:oxidized_cut_copper",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:oxidized_cut_copper_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:oxidized_cut_copper_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:oxidized_cut_copper_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:oxidized_cut_copper_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:packed_ice",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:packed_ice",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:packed_mud",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:packed_mud",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:pink_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:pink_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:pink_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:pink_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:pink_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:pink_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:pink_dye_from_pink_petals",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:pink_dye",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:pink_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:pink_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:pink_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:pink_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:pink_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:pink_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:polished_andesite",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_andesite",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_andesite_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_andesite_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_andesite_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_andesite_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_basalt",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_basalt",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_blackstone",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_brick_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone_brick_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_brick_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone_brick_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone_bricks",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_button",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:polished_blackstone_button",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_pressure_plate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone_pressure_plate",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_blackstone_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_blackstone_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_deepslate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_deepslate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_deepslate_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_deepslate_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_deepslate_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_deepslate_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_deepslate_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_deepslate_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_diorite",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_diorite",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_diorite_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_diorite_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_diorite_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_diorite_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_granite",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_granite",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_granite_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_granite_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_granite_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_granite_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_tuff",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_tuff",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_tuff_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_tuff_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:polished_tuff_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_tuff_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:polished_tuff_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:polished_tuff_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:prismarine",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:prismarine",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:prismarine_brick_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:prismarine_brick_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:prismarine_brick_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:prismarine_brick_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:prismarine_bricks",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:prismarine_bricks",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:prismarine_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:prismarine_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:prismarine_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:prismarine_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:prismarine_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:prismarine_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:purple_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:purple_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:purple_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:purple_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:purple_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:purple_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:purple_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:purple_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:purple_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:purple_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:purple_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:purple_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:purpur_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:purpur_block",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:purpur_pillar",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:purpur_pillar",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:purpur_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:purpur_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:purpur_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:purpur_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:quartz_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:quartz_bricks",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:raiser_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:raiser_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:raw_copper",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:raw_copper",
+      "count": 9
+    },
+    {
+      "recipe": "minecraft:raw_copper_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:raw_copper_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:raw_gold",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:raw_gold",
+      "count": 9
+    },
+    {
+      "recipe": "minecraft:raw_gold_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:raw_gold_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:raw_iron",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:raw_iron",
+      "count": 9
+    },
+    {
+      "recipe": "minecraft:raw_iron_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:raw_iron_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:recovery_compass",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:recovery_compass",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:red_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:red_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:red_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:red_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:red_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:red_dye_from_beetroot",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:red_dye",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:red_nether_brick_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_nether_brick_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:red_nether_brick_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_nether_brick_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:red_nether_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_nether_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:red_nether_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_nether_bricks",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:red_sandstone",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_sandstone",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:red_sandstone_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_sandstone_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:red_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:red_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:red_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:red_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:red_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:respawn_anchor",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:respawn_anchor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:rib_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:rib_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:sandstone",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:sandstone",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:sandstone_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:sandstone_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:scaffolding",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:scaffolding",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:sea_lantern",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:sea_lantern",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:sentry_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:sentry_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:shaper_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:shaper_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:shulker_box",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:shulker_box",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:silence_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:silence_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:skull_banner_pattern",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:skull_banner_pattern",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:slime_ball",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:slime_ball",
+      "count": 9
+    },
+    {
+      "recipe": "minecraft:slime_block",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:slime_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:smithing_table",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:smithing_table",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:smoker",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:smoker",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:snout_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:snout_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:soul_campfire",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:soul_campfire",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:soul_lantern",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:soul_lantern",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:soul_torch",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:soul_torch",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:spectral_arrow",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:spectral_arrow",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:spire_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:spire_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:spruce_chest_boat",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:spruce_chest_boat",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:spruce_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:spruce_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:spruce_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:spruce_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:spyglass",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:spyglass",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:stone_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stone_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:stone_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stone_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:stonecutter",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stonecutter",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:stripped_acacia_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_acacia_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_birch_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_birch_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_cherry_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_cherry_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_crimson_hyphae",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_crimson_hyphae",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_dark_oak_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_dark_oak_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_jungle_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_jungle_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_mangrove_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_mangrove_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_oak_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_oak_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_spruce_wood",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_spruce_wood",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:stripped_warped_hyphae",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:stripped_warped_hyphae",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:sugar_from_honey_bottle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:sugar",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:target",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:target",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:tide_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tide_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:tinted_glass",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tinted_glass",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:tuff_brick_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tuff_brick_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:tuff_brick_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tuff_brick_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:tuff_brick_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tuff_brick_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:tuff_bricks",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tuff_bricks",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:tuff_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tuff_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:tuff_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tuff_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:tuff_wall",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:tuff_wall",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:turtle_helmet",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:turtle_helmet",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:vex_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:vex_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:ward_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:ward_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:warped_fungus_on_a_stick",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:warped_fungus_on_a_stick",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:warped_hanging_sign",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:warped_hanging_sign",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:warped_hyphae",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:warped_hyphae",
+      "count": 3
+    },
+    {
+      "recipe": "minecraft:waxed_chiseled_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_chiseled_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_copper_block_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_copper_block",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_copper_bulb",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_copper_bulb",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_copper_bulb_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_copper_bulb",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_copper_door_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_copper_door",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_copper_grate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_copper_grate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_copper_grate_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_copper_grate",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_copper_trapdoor_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_copper_trapdoor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_cut_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_cut_copper",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_cut_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_cut_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_cut_copper_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_cut_copper_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:waxed_cut_copper_slab_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_cut_copper_slab",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_cut_copper_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_cut_copper_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_cut_copper_stairs_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_cut_copper_stairs",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_chiseled_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_exposed_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_chiseled_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_copper_bulb",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_exposed_copper_bulb",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_copper_bulb_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_copper_bulb",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_copper_door_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_copper_door",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_copper_grate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_exposed_copper_grate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_copper_grate_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_copper_grate",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_copper_trapdoor_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_copper_trapdoor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_cut_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_exposed_cut_copper",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_cut_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_cut_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_cut_copper_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_exposed_cut_copper_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_cut_copper_slab_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_cut_copper_slab",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_cut_copper_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_exposed_cut_copper_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_exposed_cut_copper_stairs_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_exposed_cut_copper_stairs",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_chiseled_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_oxidized_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_chiseled_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_copper_bulb",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_oxidized_copper_bulb",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_copper_bulb_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_copper_bulb",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_copper_door_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_copper_door",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_copper_grate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_oxidized_copper_grate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_copper_grate_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_copper_grate",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_copper_trapdoor_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_copper_trapdoor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_cut_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_oxidized_cut_copper",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_cut_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_cut_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_cut_copper_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_oxidized_cut_copper_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_cut_copper_slab_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_cut_copper_slab",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_cut_copper_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_oxidized_cut_copper_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_oxidized_cut_copper_stairs_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_oxidized_cut_copper_stairs",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_chiseled_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_weathered_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_chiseled_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_copper_bulb",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_weathered_copper_bulb",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_copper_bulb_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_copper_bulb",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_copper_door_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_copper_door",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_copper_grate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_weathered_copper_grate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_copper_grate_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_copper_grate",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_copper_trapdoor_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_copper_trapdoor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_cut_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_weathered_cut_copper",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_cut_copper_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_cut_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_cut_copper_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_weathered_cut_copper_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_cut_copper_slab_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_cut_copper_slab",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_cut_copper_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:waxed_weathered_cut_copper_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:waxed_weathered_cut_copper_stairs_from_honeycomb",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:waxed_weathered_cut_copper_stairs",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:wayfinder_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:wayfinder_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:weathered_chiseled_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:weathered_chiseled_copper",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:weathered_copper_bulb",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:weathered_copper_bulb",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:weathered_copper_grate",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:weathered_copper_grate",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:weathered_cut_copper",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:weathered_cut_copper",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:weathered_cut_copper_slab",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:weathered_cut_copper_slab",
+      "count": 6
+    },
+    {
+      "recipe": "minecraft:weathered_cut_copper_stairs",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:weathered_cut_copper_stairs",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:white_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:white_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:white_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:white_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:white_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:white_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:white_dye",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:white_dye",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:white_dye_from_lily_of_the_valley",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:white_dye",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:white_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:white_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:white_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:white_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:white_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:white_stained_glass_pane",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:wild_armor_trim_smithing_template",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:wild_armor_trim_smithing_template",
+      "count": 2
+    },
+    {
+      "recipe": "minecraft:wind_charge",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:wind_charge",
+      "count": 4
+    },
+    {
+      "recipe": "minecraft:wolf_armor",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:wolf_armor",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:yellow_banner",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:yellow_banner",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:yellow_candle",
+      "serializer": "minecraft:crafting_shapeless",
+      "output": "minecraft:yellow_candle",
+      "count": 1
+    },
+    {
+      "recipe": "minecraft:yellow_concrete_powder",
+      "serializer": "mite:stacking_shapeless",
+      "output": "minecraft:yellow_concrete_powder",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:yellow_stained_glass",
+      "serializer": "mite:stacking_shaped",
+      "output": "minecraft:yellow_stained_glass",
+      "count": 8
+    },
+    {
+      "recipe": "minecraft:yellow_stained_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:yellow_stained_glass_pane",
+      "count": 16
+    },
+    {
+      "recipe": "minecraft:yellow_stained_glass_pane_from_glass_pane",
+      "serializer": "minecraft:crafting_shaped",
+      "output": "minecraft:yellow_stained_glass_pane",
+      "count": 8
+    }
+  ],
+  "dynamic_requires_real_inputs": [
+    {
+      "recipe": "minecraft:armor_dye",
+      "serializer": "minecraft:crafting_special_armordye"
+    },
+    {
+      "recipe": "minecraft:banner_duplicate",
+      "serializer": "minecraft:crafting_special_bannerduplicate"
+    },
+    {
+      "recipe": "minecraft:book_cloning",
+      "serializer": "minecraft:crafting_special_bookcloning"
+    },
+    {
+      "recipe": "minecraft:decorated_pot",
+      "serializer": "minecraft:crafting_decorated_pot"
+    },
+    {
+      "recipe": "minecraft:firework_star_fade",
+      "serializer": "minecraft:crafting_special_firework_star_fade"
+    },
+    {
+      "recipe": "minecraft:map_cloning",
+      "serializer": "minecraft:crafting_special_mapcloning"
+    },
+    {
+      "recipe": "minecraft:repair_item",
+      "serializer": "minecraft:crafting_special_repairitem"
+    },
+    {
+      "recipe": "minecraft:shield_decoration",
+      "serializer": "minecraft:crafting_special_shielddecoration"
+    },
+    {
+      "recipe": "minecraft:shulker_box_coloring",
+      "serializer": "minecraft:crafting_special_shulkerboxcoloring"
+    },
+    {
+      "recipe": "minecraft:suspicious_stew",
+      "serializer": "mite:water_bowl_suspicious_stew"
+    },
+    {
+      "recipe": "minecraft:tipped_arrow",
+      "serializer": "minecraft:crafting_special_tippedarrow"
+    },
+    {
+      "recipe": "mite:leather_mending",
+      "serializer": "mite:leather_mending"
+    }
+  ],
+  "boundaries": [
+    "All 350 supplemental recipe IDs exist in the active manager.",
+    "The remaining static recipes were reviewed for identical R196 operations; modern-only recipes retain their prior behavior instead of receiving guessed source costs.",
+    "Operation-specific fireworks, map copying and map extending are separately tested with actual inputs. Dynamic output recipes are not counted as static instant recipes."
+  ]
+}

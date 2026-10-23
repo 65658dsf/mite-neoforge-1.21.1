@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.compat.bettercombat;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.combat.MobWeaponReach;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.network.MobAttackPayload;
 import java.lang.ref.WeakReference;
@@ -48,7 +49,7 @@ public final class BetterMobCombat {
     private BetterMobCombat() {}
 
     public static boolean supported(Mob mob) {
-        return BetterCombatBridge.enabled() && mob instanceof Enemy && !mob.getMainHandItem().isEmpty()
+        return MiteConfig.betterCombatMobsEnabled() && BetterCombatBridge.enabled() && mob instanceof Enemy && !mob.getMainHandItem().isEmpty()
                 && !(mob.getMainHandItem().getItem() instanceof ProjectileWeaponItem)
                 && BetterCombatBridge.profile(mob, 0) != null;
     }
@@ -56,6 +57,7 @@ public final class BetterMobCombat {
     public static boolean executing(Mob mob) { return IMPACT.get() == mob; }
 
     public static boolean attacking(Mob mob) {
+        if (!MiteConfig.betterCombatMobsEnabled()) return false;
         State state = STATES.get(mob);
         return state != null && mob.tickCount < state.readyAt;
     }
@@ -72,7 +74,7 @@ public final class BetterMobCombat {
 
     /** Shared with the source path planner, so it plans toward the actual weapon reach. */
     public static boolean canStrikeFrom(Mob mob, LivingEntity target, Vec3 feet) {
-        if (!valid(mob, target)) return false;
+        if (!MiteConfig.betterCombatMobsEnabled() || !valid(mob, target)) return false;
         State state = STATES.get(mob);
         var attack = state != null && state.attack != null ? state.attack
                 : BetterCombatBridge.profile(mob, state == null ? 0 : state.combo);
@@ -149,6 +151,14 @@ public final class BetterMobCombat {
 
     public static void tick(Mob mob) {
         State state = STATES.get(mob);
+        if (state != null && !MiteConfig.betterCombatMobsEnabled()) {
+            // Disabling compatibility also releases an interrupted swing's recovery and brain cooldown.
+            cancel(mob);
+            STATES.remove(mob);
+            if (mob.getBrain().checkMemory(MemoryModuleType.ATTACK_COOLING_DOWN, MemoryStatus.REGISTERED))
+                mob.getBrain().eraseMemory(MemoryModuleType.ATTACK_COOLING_DOWN);
+            return;
+        }
         if (state == null || state.attack == null) return;
         if (!mob.isAlive() || mob.isRemoved() || !supported(mob)
                 || !ItemStack.isSameItemSameComponents(state.weapon, mob.getMainHandItem()) || mob.isUsingItem()) {
@@ -187,7 +197,12 @@ public final class BetterMobCombat {
         }
     }
 
+    @SubscribeEvent public static void beforeTick(EntityTickEvent.Pre event) {
+        // Release old recovery before the brain can write a new native attack cooldown.
+        if (event.getEntity() instanceof Mob mob && !mob.level().isClientSide && !MiteConfig.betterCombatMobsEnabled()) tick(mob);
+    }
+
     @SubscribeEvent public static void afterTick(EntityTickEvent.Post event) {
-        if (event.getEntity() instanceof Mob mob && !mob.level().isClientSide) tick(mob);
+        if (event.getEntity() instanceof Mob mob && !mob.level().isClientSide && MiteConfig.betterCombatMobsEnabled()) tick(mob);
     }
 }

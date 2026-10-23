@@ -2,9 +2,17 @@
 
 作者：NingMeng123
 
-安装 Better Combat 后，持有已登记近战武器或斧头的敌对生物会按该物品的攻击配置战斗。没有安装时，继续使用项目原有的 Source AI 或原版攻击规则。本适配不会使 Better Combat 成为 MITE 的必装前置。
+模组设置新增「开启怪物更好战斗兼容」，默认关闭。入口为「模组 → MITE → 配置 → 其他玩法与高级设置 → 战斗设置」，也可在 `config/mite-common.toml` 的 `[combat]` 下设置 `better_combat_mobs = true`。联机时以服务端设置为准。
+
+关闭时，即使安装 Better Combat，怪物也使用项目原有的 Source AI 或原版攻击方式，不使用本适配的攻击前摇、连招、冷却或怪物动画。攻击中关闭会取消待命中的挥击、移除攻击减速与兼容冷却，恢复原本攻击；再次开启不会恢复已取消的攻击。玩家的 Better Combat 兼容不受此开关影响。
+
+安装 Better Combat 并开启该选项后，持有已登记近战武器或斧头的敌对生物会按该物品的攻击配置战斗。没有安装时，继续使用项目原有的 Source AI 或原版攻击规则。本适配不会使 Better Combat 成为 MITE 的必装前置。
 
 开发对照版本为 Minecraft 1.21.1 / NeoForge 的 Better Combat `2.4.0+1.21.1`。自行安装 Better Combat 时，还需按其要求安装 Player Animator（`player-animation-lib`，本地版本 `2.0.4+1.21.1`）和 Cloth Config 的对应 NeoForge 版本；这些依赖仅随可选 Better Combat 的安装需要提供。
+
+2026-10-23 开关验证：1722 项 JUnit、构建与打包通过；安装 Better Combat / Simply Swords 和未安装扩展的独立服务端各 71 项专项 GameTest 通过，覆盖默认关闭、原生立即命中、开启后的前摇、关闭清理、原生 Brain 新冷却保留、重新开启、真实网络编解码及配置导出。旧状态在实体 Pre 阶段清理，关闭时 Post 不再处理；若设置在 Pre 后改变，也会在原生攻击前清理，避免擦除原生 Brain 刚写入的冷却。
+
+真实客户端在新建测试世界中通过动画开关、关键帧、五种怪物模型、护甲层与共享模型恢复审核，确认关闭拒绝新动画、取消中的动画不会在重新开启后复活。报告与日志保留在 `build/verification/bettercombat-toggle-*`；此项未进行真实多人对打验收。
 
 ## 战斗范围与行为
 
@@ -39,7 +47,7 @@
 
 ## 手动检查
 
-在有权限的测试世界中切换生存模式，在夜间平地逐个召唤并观察；猪灵测试时不要穿金质护甲。每次检查后可清理带测试标签的生物。以下命令覆盖剑、斧头及不同 AI 路径：
+先保持默认关闭，确认持械怪物仍以原本方式立即攻击；随后开启「开启怪物更好战斗兼容」进行以下前摇、命中与动画检查，也应在前摇中关闭，确认立即恢复原攻击方式。在有权限的测试世界中切换生存模式，在夜间平地逐个召唤并观察；猪灵测试时不要穿金质护甲。每次检查后可清理带测试标签的生物。以下命令覆盖剑、斧头及不同 AI 路径：
 
 ```mcfunction
 /summon minecraft:zombie ~3 ~ ~ {Tags:["mite_bc_test"],PersistenceRequired:1b,CanPickUpLoot:0b,HandItems:[{id:"minecraft:iron_sword",count:1},{}]}
@@ -60,7 +68,7 @@
 
 另以不含 Better Combat 的独立实例启动 MITE，重复持械、空手和骷髅射箭检查，确认没有缺类错误，且继续使用项目原有规则。
 
-自动测试入口为 `BetterCombatMobGameTests`，命名空间 `mite_bettercombat`，使用该命名空间下的 `empty` 测试模板。可通过 `-PmiteGameTestNamespaces=mite_bettercombat` 选择；有模组、无模组测试均应使用各自独立的 `-PmiteGameTestDirectory`。
+自动测试入口为 `BetterCombatMobGameTests` 和 `BetterCombatMobConfigGameTests`，命名空间 `mite_bettercombat`，使用该命名空间下的 `empty` 测试模板。原兼容行为测试会临时开启并恢复选项；新增回归覆盖默认关闭、原生立即伤害、前摇中关闭、减速与猪灵脑冷却清理、重新开启、联机配置同步、旧快照与导出。可通过 `-PmiteGameTestNamespaces=mite_bettercombat` 选择；有模组、无模组测试均应使用各自独立的 `-PmiteGameTestDirectory`。
 
 ### 2026-10-22 持械距离回归
 
