@@ -318,8 +318,10 @@ public final class BloodMoonEquipmentGameTests {
                     armor = !troop.getItemBySlot(EquipmentSlot.HEAD).isEmpty();
                 }
                 h.assertTrue(armor, "The real finalize then initializeOrdinaryTroop sequence can still produce legacy armor before blood2");
-                var before = equipment(troop);
                 NeoForge.EVENT_BUS.post(new EntityJoinLevelEvent(troop, h.getLevel(), false));
+                h.assertTrue(Arrays.stream(EquipmentSlot.values()).allMatch(slot -> troop.getItemBySlot(slot).isEmpty()),
+                        "The pre-day35 birth restriction clears the completed legacy equipment result");
+                var before = equipment(troop);
                 set(h, 1152, 6000); BloodMoonEquipment.populate(troop); unchanged(h, troop, before);
             } finally { chunk.setInhabitedTime(inhabited); }
         }

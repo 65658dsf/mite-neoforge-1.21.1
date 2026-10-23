@@ -98,6 +98,7 @@ public final class R196Skeleton extends AbstractSkeleton implements R196Mob, Pla
     public int skeletonType() { return entityData.get(SKELETON_TYPE); }
     public int troopsSummoned() { return troopsSummoned; }
     public ItemStack stowedItem() { return stowed; }
+    public void clearStowedItem() { stowed = ItemStack.EMPTY; stowedDropChance = naturalWeaponDropChance; }
     public void forceSkeletonType(int type) { if (type < 0 || type > 2) throw new IllegalArgumentException("Skeleton type"); forcedType = type; }
     public void setSkeletonType(int type) {
         if (type < 0 || type > 2) throw new IllegalArgumentException("Skeleton type");

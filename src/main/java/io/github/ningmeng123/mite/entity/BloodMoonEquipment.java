@@ -9,9 +9,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -158,10 +160,26 @@ public final class BloodMoonEquipment {
         return false;
     }
 
+    /** A locked birth remains an empty equipment decision when delayed spawn rolls run later. */
+    public static boolean spawnEquipmentLocked(Mob mob) {
+        return mob.getPersistentData().getCompound(DATA_KEY).getBoolean("early_equipment_locked");
+    }
+
     /** Fill paths that never call the native armor hook, after source weapons/fixed sets are initialized. */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void join(EntityJoinLevelEvent event) {
-        if (event.isCanceled() || event.getLevel().isClientSide || !(event.getEntity() instanceof Mob mob) || !handles(mob)) return;
+        if (event.isCanceled() || event.getLevel().isClientSide || !(event.getEntity() instanceof Mob mob)) return;
+        if (event.loadedFromDisk() && mob.getType().getCategory() == MobCategory.MONSTER)
+            markLegacyEntity(mob, "existing_entity");
+        if (!event.loadedFromDisk() && mob.getType().getCategory() == MobCategory.MONSTER
+                && !mob.getPersistentData().contains(DATA_KEY)
+                && mob.level() instanceof ServerLevel level && BloodMoonInvasion.highestDay(level) < 35L) {
+            for (EquipmentSlot slot : EquipmentSlot.values()) mob.setItemSlot(slot, ItemStack.EMPTY);
+            if (mob instanceof R196Skeleton skeleton) skeleton.clearStowedItem();
+            markLegacyEntity(mob, "early_equipment_locked");
+            return;
+        }
+        if (!handles(mob)) return;
         if (event.loadedFromDisk()) {
             // Mark untouched old entities as already decided, without changing any equipment.
             // The marker also prevents an upgrade if that old entity later crosses dimensions.
