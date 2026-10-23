@@ -2,13 +2,12 @@ package io.github.ningmeng123.mite.client.config;
 
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.api.MiteExtensions;
-import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
 import io.github.ningmeng123.mite.rules.MonsterSpawningSettings.Option;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,12 +22,41 @@ import net.neoforged.fml.ModList;
 
 /** Live natural-spawn controls with persistent, validated page drafts. @author NingMeng123 */
 public final class MonsterSpawningRulesScreen extends Screen {
-    private record VisibleRow(Option option, int y) {}
+    private record Control(String key, String translationKey, Object defaultValue, double minimum,
+                           double maximum, boolean wholeNumber, Option baseOption) {
+        static Control base(Option option) {
+            return new Control(option.key(), "mite.config.spawning_rules." + option.key(), option.defaultValue(),
+                    option.minimum(), option.maximum(), option.wholeNumber(), option);
+        }
+        static Control addon(MiteExtensions.SpawningControl option) {
+            Object value = option.defaultValue();
+            if (!(value instanceof Boolean || value instanceof Number))
+                throw new IllegalArgumentException("Unsupported spawning control: " + option.key());
+            return new Control(option.key(), option.translationKey(), value, option.minimum(), option.maximum(),
+                    value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long, null);
+        }
+        boolean toggle() { return defaultValue instanceof Boolean; }
+        boolean preset() { return baseOption == Option.REFERENCE_RULES; }
+        boolean valid(double value) {
+            return Double.isFinite(value) && value >= minimum && value <= maximum && (!wholeNumber || value == Math.rint(value));
+        }
+        Object typed(double value) {
+            if (defaultValue instanceof Byte) return (byte)value;
+            if (defaultValue instanceof Short) return (short)value;
+            if (defaultValue instanceof Integer) return (int)value;
+            if (defaultValue instanceof Long) return (long)value;
+            if (defaultValue instanceof Float) return (float)value;
+            return value;
+        }
+    }
+    private record VisibleRow(Control control, int y) {}
     private final Screen parent;
     private final boolean editable;
-    private final Map<String, Double> values = new HashMap<>();
-    private final Map<Option, String> drafts = new EnumMap<>(Option.class);
-    private final Set<Option> invalid = EnumSet.noneOf(Option.class);
+    private final boolean addonControls;
+    private final List<Control> options;
+    private final Map<String, Object> values = new HashMap<>();
+    private final Map<String, String> drafts = new HashMap<>();
+    private final Set<String> invalid = new HashSet<>();
     private final List<VisibleRow> visible = new ArrayList<>();
     private int page;
     private int pageCount;
@@ -40,55 +68,72 @@ public final class MonsterSpawningRulesScreen extends Screen {
         super(Component.translatable("mite.config.spawning_rules.title"));
         this.parent = parent;
         editable = MiteConfigClient.editable();
-        values.putAll(MiteConfig.monsterSpawningSettings().values());
+        var supplied = List.copyOf(MiteExtensions.policy().spawningControls());
+        addonControls = !supplied.isEmpty();
+        if (addonControls) {
+            options = supplied.stream().map(Control::addon).toList();
+            var snapshot = MiteExtensions.policy().spawningControlValues();
+            for (var option : options) values.put(option.key(), snapshot.getOrDefault(option.key(), option.defaultValue()));
+        } else {
+            options = Arrays.stream(Option.values()).filter(option -> option != Option.REFERENCE_RULES
+                    || !ModList.get().isLoaded("modern_ite")).map(Control::base).toList();
+            values.putAll(MiteConfig.monsterSpawningSettings().values());
+        }
     }
 
     @Override protected void init() { rebuild(); }
 
     private void rebuild() {
+        setFocused(null);
         clearWidgets();
         visible.clear();
         int rows = Math.max(1, (height - 140) / 44);
-        var options = Option.values();
-        pageCount = Math.max(1, (options.length + rows - 1) / rows);
+        pageCount = Math.max(1, (options.size() + rows - 1) / rows);
         page = Math.clamp(page, 0, pageCount - 1);
-        for (int index = page * rows; index < Math.min(options.length, (page + 1) * rows); index++) {
-            Option option = options[index];
+        for (int index = page * rows; index < Math.min(options.size(), (page + 1) * rows); index++) {
+            Control option = options.get(index);
             int y = 60 + (index - page * rows) * 44;
             visible.add(new VisibleRow(option, y));
-            if (option == Option.REFERENCE_RULES) {
-                var toggle = addRenderableWidget(Button.builder(Component.translatable(reference()
-                        ? "mite.config.spawning_rules.reference_mode" : "mite.config.spawning_rules.custom_mode"), button -> {
-                    values.put(option.key(), reference() ? 0D : 1D);
-                    drafts.clear();
-                    invalid.clear();
-                    rebuild();
-                }).bounds(width - 156, y - 2, 144, 20).build());
-                toggle.active = editable && !ModList.get().isLoaded("modern_ite");
+            String key = option.key();
+            if (option.preset() || option.toggle()) {
+                int controlWidth = option.preset() ? 144 : 92;
+                var toggle = addRenderableWidget(Button.builder(toggleLabel(option), button -> {
+                    values.put(key, option.preset() ? reference() ? 0D : 1D : !Boolean.TRUE.equals(values.get(key)));
+                    failure = null;
+                    if (option.preset()) {
+                        drafts.clear();
+                        invalid.clear();
+                        rebuild();
+                    } else {
+                        button.setMessage(toggleLabel(option));
+                        updateStatus();
+                    }
+                }).bounds(width - controlWidth - 12, y - 2, controlWidth, 20).build());
+                toggle.active = editable;
                 toggle.setTooltip(Tooltip.create(description(option)));
                 continue;
             }
             var box = addRenderableWidget(new EditBox(font, width - 104, y - 2, 92, 20, label(option)));
             box.setMaxLength(32);
-            box.setValue(drafts.getOrDefault(option, number(values.getOrDefault(option.key(), option.defaultValue()))));
-            boolean iteOwnsCap = ModList.get().isLoaded("modern_ite") && switch (option) {
+            box.setValue(drafts.getOrDefault(key, number(((Number)values.getOrDefault(key, option.defaultValue())).doubleValue())));
+            boolean iteOwnsCap = !addonControls && ModList.get().isLoaded("modern_ite") && switch (option.baseOption()) {
                 case BASE_CAP, BLOOD_CAP, DAILY_CAP_INCREASE, MAXIMUM_CAP -> true;
                 default -> false;
             };
-            box.setEditable(editable && !reference() && !iteOwnsCap);
-            box.setTextColor(invalid.contains(option) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
+            box.setEditable(editable && (addonControls || !reference() || MiteExtensions.policy().configurableHostileSpawningSettings()) && !iteOwnsCap);
+            box.setTextColor(invalid.contains(key) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
             box.setTooltip(Tooltip.create(description(option)));
             box.setResponder(text -> {
-                drafts.put(option, text);
+                drafts.put(key, text);
                 failure = null;
                 try {
                     double value = Double.parseDouble(text.trim());
                     if (!option.valid(value)) throw new NumberFormatException();
-                    values.put(option.key(), value);
-                    invalid.remove(option);
+                    values.put(key, option.typed(value));
+                    invalid.remove(key);
                     box.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
                 } catch (NumberFormatException exception) {
-                    invalid.add(option);
+                    invalid.add(key);
                     box.setTextColor(0xFFFF5555);
                 }
                 updateStatus();
@@ -109,7 +154,7 @@ public final class MonsterSpawningRulesScreen extends Screen {
                 .bounds(actionLeft, height - 28, actionWidth, 20).build());
         var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
             values.clear();
-            values.putAll(MonsterSpawningSettings.DEFAULTS.values());
+            for (var option : options) values.put(option.key(), option.defaultValue());
             drafts.clear();
             invalid.clear();
             failure = null;
@@ -120,6 +165,11 @@ public final class MonsterSpawningRulesScreen extends Screen {
         addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
                 .bounds(actionLeft + actionWidth * 2 + 8, height - 28, actionWidth, 20).build());
         updateStatus();
+    }
+
+    private Component toggleLabel(Control option) {
+        return Component.translatable(option.preset() ? reference() ? "mite.config.spawning_rules.reference_mode"
+                : "mite.config.spawning_rules.custom_mode" : Boolean.TRUE.equals(values.get(option.key())) ? "options.on" : "options.off");
     }
 
     private void updateStatus() {
@@ -134,13 +184,21 @@ public final class MonsterSpawningRulesScreen extends Screen {
     }
 
     private boolean reference() {
-        return MiteExtensions.policy().referenceSpawningSettings(values.getOrDefault(Option.REFERENCE_RULES.key(), 1D) == 1D);
+        return MiteExtensions.policy().referenceSpawningSettings(((Number)values.getOrDefault(Option.REFERENCE_RULES.key(), 1D)).doubleValue() == 1D);
     }
 
     private void save() {
         if (!MiteConfigClient.editable() || !invalid.isEmpty()) return;
         try {
-            if (!MiteConfig.saveMonsterSpawningSettings(Map.copyOf(values))) {
+            boolean saved;
+            if (addonControls) {
+                saved = MiteExtensions.policy().saveSpawningControls(Map.copyOf(values));
+            } else {
+                var numeric = new HashMap<String, Double>();
+                values.forEach((key, value) -> numeric.put(key, ((Number)value).doubleValue()));
+                saved = MiteConfig.saveMonsterSpawningSettings(Map.copyOf(numeric));
+            }
+            if (!saved) {
                 failure = Component.translatable("mite.config.spawning_rules.invalid", 1);
                 updateStatus();
                 return;
@@ -152,16 +210,14 @@ public final class MonsterSpawningRulesScreen extends Screen {
         }
     }
 
-    private static Component label(Option option) {
-        return Component.translatable("mite.config.spawning_rules." + option.key());
+    private static Component label(Control option) { return Component.translatable(option.translationKey()); }
+
+    private static Component description(Control option) {
+        return label(option).copy().append("\n").append(Component.translatable(option.translationKey() + ".tooltip"));
     }
 
-    private static Component description(Option option) {
-        return label(option).copy().append("\n").append(Component.translatable("mite.config.spawning_rules." + option.key() + ".tooltip"));
-    }
-
-    private static Component scopeHint() {
-        return Component.translatable(ModList.get().isLoaded("modern_ite")
+    private Component scopeHint() {
+        return Component.translatable(addonControls ? "mite.config.spawning_rules.addon_hint" : ModList.get().isLoaded("modern_ite")
                 ? "mite.config.spawning_rules.ite_hint" : "mite.config.spawning_rules.hint");
     }
 
@@ -174,18 +230,19 @@ public final class MonsterSpawningRulesScreen extends Screen {
             hintY += font.lineHeight + 1;
         }
         for (var row : visible) {
-            Option option = row.option();
-            graphics.drawString(font, font.plainSubstrByWidth(label(option).getString(), width - 128), 12, row.y() + 3, 0xFFFFFF);
-            var range = option == Option.REFERENCE_RULES ? Component.translatable("mite.config.spawning_rules.reference_rules.tooltip")
+            Control option = row.control();
+            graphics.drawString(font, font.plainSubstrByWidth(label(option).getString(), width - (option.preset() ? 180 : 128)), 12, row.y() + 3, 0xFFFFFF);
+            Component range = option.preset() ? Component.translatable("mite.config.spawning_rules.reference_rules.tooltip")
+                    : option.toggle() ? Component.translatable("mite.config.spawning_rules.boolean", Component.translatable(Boolean.TRUE.equals(option.defaultValue()) ? "options.on" : "options.off"))
                     : Component.translatable("mite.config.spawning_rules.range", number(option.minimum()), number(option.maximum()),
-                    number(option.defaultValue()), Component.translatable(option.wholeNumber()
+                    number(((Number)option.defaultValue()).doubleValue()), Component.translatable(option.wholeNumber()
                             ? "mite.config.spawning_rules.integer" : "mite.config.spawning_rules.decimal"));
             graphics.drawString(font, font.plainSubstrByWidth(range.getString(), width - 24), 12, row.y() + 23, 0x999999);
         }
-        graphics.drawCenteredString(font, Component.translatable("mite.config.page", page + 1, pageCount, Option.values().length),
+        graphics.drawCenteredString(font, Component.translatable("mite.config.page", page + 1, pageCount, options.size()),
                 width / 2, height - 48, 0xCCCCCC);
         for (var row : visible) if (mouseX >= 12 && mouseX < width - 112 && mouseY >= row.y() && mouseY < row.y() + 36)
-            graphics.renderTooltip(font, description(row.option()), mouseX, mouseY);
+            graphics.renderTooltip(font, font.split(description(row.control()), Math.max(100, width - 32)), mouseX, mouseY);
     }
 
     private static String number(double value) { return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString(); }

@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.api;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.rules.LunarCalendar;
+import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
 import io.github.ningmeng123.mite.rules.ProgressionRules;
 import io.github.ningmeng123.mite.rules.R196SpawnRules.Category;
 import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
@@ -26,6 +27,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 /** Optional, common-side extension contract. Defaults preserve standalone MITE behavior. @author NingMeng123 */
 public final class MiteExtensions {
     public record SpawnContext(ServerLevel level, Category category, Boolean deep) {}
+    /** Optional settings contributed to the host's natural-spawn editor. */
+    public record SpawningControl(String key, String translationKey, Object defaultValue, double minimum, double maximum) {}
     public interface Policy {
         default LunarCalendar.State calendar(LunarCalendar.State original) { return original; }
         default long bloodMoonCount(long highestDay, long original) { return original; }
@@ -33,6 +36,15 @@ public final class MiteExtensions {
         default boolean referenceSpawningSettings(boolean original) { return original; }
         /** Resolve the active natural-spawn preset. Addons may supply their own server-side preset. */
         default boolean referenceHostileSpawning(ServerLevel level, boolean original) { return referenceSpawningSettings(original); }
+        /** Let an addon retain reference populations and habitats while exposing editable scheduling values. */
+        default boolean configurableHostileSpawningSettings() { return false; }
+        /** Supply authoritative scheduling values while retaining the host's saved settings independently. */
+        default MonsterSpawningSettings.Settings hostileSpawningSettings(MonsterSpawningSettings.Settings original) { return original; }
+        /** A nonempty list replaces the host editor's controls with the addon's complete spawning controls. */
+        default List<SpawningControl> spawningControls() { return List.of(); }
+        default Map<String, Object> spawningControlValues() { return Map.of(); }
+        /** Validate and persist a complete editor draft, then synchronize its authoritative values. */
+        default boolean saveSpawningControls(Map<String, Object> values) { return false; }
         default boolean independentHostileBudgets(ServerLevel level, boolean original) { return original; }
         default int monsterCap(ServerLevel level, boolean deep, int eligibleChunks, int original) { return original; }
         default int localDensity(ServerLevel level, Player player, int original) { return original; }

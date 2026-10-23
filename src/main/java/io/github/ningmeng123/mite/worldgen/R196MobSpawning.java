@@ -359,15 +359,16 @@ public final class R196MobSpawning {
         boolean overworld = level.dimension().equals(Level.OVERWORLD);
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
         var step = R196SpawnRules.advanceRate(state.rate, overworld, moon.blood() || level.isThundering(), state.modulation::nextInt); state.rate = step.state();
-        var settings = MiteConfig.monsterSpawningSettings();
+        var settings = extension().hostileSpawningSettings(MiteConfig.monsterSpawningSettings());
         boolean reference = referenceSpawning(level);
+        boolean fixedTiming = reference && !extension().configurableHostileSpawningSettings();
         boolean hostile = level.getDifficulty() != Difficulty.PEACEFUL && level.getServer().isSpawningMonsters()
-                && (reference || settings.ready(level.getGameTime(), state.lastHostileAttempt));
+                && (fixedTiming || settings.ready(level.getGameTime(), state.lastHostileAttempt));
         if (hostile) state.lastHostileAttempt = level.getGameTime();
-        float modifier = overworld ? step.modifier() : reference ? .25F : (float)settings.value(Option.DIMENSION_CHANCE_MULTIPLIER);
-        boolean low = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, true, reference
+        float modifier = overworld ? step.modifier() : fixedTiming ? .25F : (float)settings.value(Option.DIMENSION_CHANCE_MULTIPLIER);
+        boolean low = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, true, fixedTiming
                 ? R196SpawnRules.referenceHostilePassProbability(true, modifier) : settings.probability(true, modifier, moon.blood())),0F,1F);
-        boolean high = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, false, reference
+        boolean high = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, false, fixedTiming
                 ? R196SpawnRules.referenceHostilePassProbability(false, modifier) : settings.probability(false, modifier, moon.blood())),0F,1F);
         boolean periodic = Math.floorMod(level.getGameTime(), 400) == 0;
         if (low || high) {
