@@ -380,6 +380,7 @@
     "client.IllagerShieldPoseMixin",
     "client.GuiFoodMixin",
     "client.LocalPlayerFoodMixin",
+    "client.ClientIngestionUseMixin",
     "client.AppleSkinSaturationMixin",
     "client.AppleSkinSaturationMixin$Draw",
     "client.AppleSkinSaturationMixin$QueriedFoodResult",

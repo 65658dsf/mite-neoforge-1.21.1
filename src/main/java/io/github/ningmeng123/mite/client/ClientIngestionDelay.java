@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.rules.IngestionDelay;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ThrowablePotionItem;
 import net.minecraft.world.item.UseAnim;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,7 +20,7 @@ public final class ClientIngestionDelay {
     private ClientIngestionDelay() {}
 
     public static boolean ingestion(ItemStack stack) {
-        if (stack.isEmpty()) return false;
+        if (stack.isEmpty() || stack.getItem() instanceof ThrowablePotionItem) return false;
         UseAnim action = stack.getUseAnimation();
         return action == UseAnim.EAT || action == UseAnim.DRINK;
     }
@@ -27,11 +28,6 @@ public final class ClientIngestionDelay {
     public static boolean ready(Minecraft minecraft, ItemStack stack) {
         if (player != minecraft.player) { player = minecraft.player; DELAY.clear(); }
         return !ingestion(stack) || DELAY.ready(Util.getMillis());
-    }
-
-    @SubscribeEvent public static void start(LivingEntityUseItemEvent.Start event) {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (event.getEntity() == minecraft.player && !ready(minecraft, event.getItem())) event.setCanceled(true);
     }
 
     @SubscribeEvent public static void finished(LivingEntityUseItemEvent.Finish event) {

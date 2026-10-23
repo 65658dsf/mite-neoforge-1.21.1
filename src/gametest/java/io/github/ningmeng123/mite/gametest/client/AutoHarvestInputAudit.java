@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -46,6 +47,7 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 /** Checks actual client transformations without a Minecraft constructor, world, input device or window. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
@@ -68,6 +70,7 @@ public final class AutoHarvestInputAudit implements DataProvider {
     private static final String MINECRAFT_MIXIN = MIXINS + "AutoHarvestMinecraftMixin";
     private static final String MOUSE_MIXIN = MIXINS + "AutoHarvestMouseMixin";
     private static final String HOTBAR_MIXIN = MIXINS + "AutoModeHotbarMixin";
+    private static final String INGESTION_USE_MIXIN = MIXINS + "ClientIngestionUseMixin";
     private static final String CALLBACK = "org/spongepowered/asm/mixin/injection/callback/CallbackInfo";
     private static final String RETURN_CALLBACK = "org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable";
     private static final String OPERATION = "com/llamalad7/mixinextras/injector/wrapoperation/Operation";
@@ -100,6 +103,7 @@ public final class AutoHarvestInputAudit implements DataProvider {
             ClassNode minecraft = defined(MINECRAFT, exports);
             ClassNode mouse = defined(MOUSE, exports);
             ClassNode gui = defined(GUI, exports);
+            ClassNode mode = defined(MODE, exports);
             ClassNode input = resource(INPUT);
             auditHeldAttack(minecraft, report);
             auditUseInterception(minecraft, report);
@@ -109,6 +113,7 @@ public final class AutoHarvestInputAudit implements DataProvider {
             auditContextAndModeReset(input, report);
             auditGreenHotbar(gui, input, report);
             auditIngestionCadence(resource(INGESTION), report);
+            auditIngestionUseEntry(minecraft, mode, input, report);
             auditScreenPausePayload(minecraft, resource(SCREEN_PAYLOAD), report);
             auditNoSyntheticActions(minecraft, mouse, input, report);
             auditUseStateAndEligibility(report);
@@ -171,8 +176,12 @@ public final class AutoHarvestInputAudit implements DataProvider {
                 "AUM retries retain the native four-tick right-click throttle");
         check(hasOpcode(interception, Opcodes.IFEQ) || hasOpcode(interception, Opcodes.IFNE),
                 "Use cancellation is conditional so ordinary right-click use remains available");
-        check(calls(use, MODE, "isDestroying") == 1, "Native item-use destruction guard remains present");
-        check(indexOfCall(use, minecraft.name, interception.name) < indexOfCall(use, MODE, "isDestroying"),
+        var bodies = minecraft.methods.stream().filter(candidate -> reachable(minecraft, use, candidate)
+                && calls(candidate, MODE, "isDestroying") == 1).toList();
+        check(bodies.size() == 1, "Wrapped native item-use entry reaches exactly one original destruction guard");
+        MethodNode body = bodies.getFirst();
+        check(calls(body, minecraft.name, interception.name) == 1
+                        && indexOfCall(body, minecraft.name, interception.name) < indexOfCall(body, MODE, "isDestroying"),
                 "The combined-button interceptor executes before the original use-item body");
         report.addProperty("actual_conditional_use_handler", interception.name);
         report.addProperty("ordinary_native_use_body_preserved", true);
@@ -293,11 +302,10 @@ public final class AutoHarvestInputAudit implements DataProvider {
         check(calls(ready, "net/minecraft/Util", "getMillis") == 1 && calls(ready, INGESTION_DELAY, "ready") == 1
                         && calls(ready, INGESTION_DELAY, "clear") == 1,
                 "Client cadence uses real monotonic milliseconds and clears for a new player identity");
-        MethodNode start = method(ingestion, "start", "(Lnet/neoforged/neoforge/event/entity/living/LivingEntityUseItemEvent$Start;)V");
         MethodNode finish = method(ingestion, "finished", "(Lnet/neoforged/neoforge/event/entity/living/LivingEntityUseItemEvent$Finish;)V");
-        check(calls(start, INGESTION, "ready") == 1 && callsNamed(start, "setCanceled") == 1
-                        && field(start, MINECRAFT, "player", Opcodes.GETFIELD) && hasOpcode(start, Opcodes.IF_ACMPNE),
-                "The client start event rejects early ingestion only for the current local player");
+        check(ingestion.methods.stream().noneMatch(candidate -> candidate.desc.contains("LivingEntityUseItemEvent$Start;")
+                        || callsNamed(candidate, "setCanceled") > 0),
+                "Ingestion cadence cannot cancel the Start event after LocalPlayer has entered its use lifecycle");
         check(calls(finish, INGESTION, "ingestion") == 1 && calls(finish, INGESTION_DELAY, "finished") == 1
                         && calls(finish, "net/minecraft/Util", "getMillis") == 1
                         && field(finish, MINECRAFT, "player", Opcodes.GETFIELD) && hasOpcode(finish, Opcodes.IF_ACMPNE),
@@ -311,7 +319,72 @@ public final class AutoHarvestInputAudit implements DataProvider {
                 "The real client delay blocks through999ms and opens exactly at1000ms");
         delay.clear(); check(delay.ready(10L), "Changing player identity can discard the previous deadline");
         report.addProperty("client_ingestion_real_time_1000ms_boundary_executed", true);
-        report.addProperty("actual_local_ingestion_finish_and_start_hooks_verified", true);
+        report.addProperty("actual_local_ingestion_finish_hook_and_no_late_start_cancellation_verified", true);
+    }
+
+    private static void auditIngestionUseEntry(ClassNode minecraft, ClassNode mode, ClassNode input, JsonObject report) {
+        MethodNode use = method(mode, "useItem", "(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;");
+        var handlers = mode.methods.stream().filter(candidate -> mergedFrom(candidate, INGESTION_USE_MIXIN)
+                && calls(candidate, INGESTION, "ready") == 1).toList();
+        check(handlers.size() == 1, "Exactly one actual ingestion deadline handler is merged into the native use transaction");
+        MethodNode handler = handlers.getFirst();
+        var bodies = mode.methods.stream().filter(candidate -> reachable(mode, use, candidate)
+                && calls(candidate, MODE, "startPrediction") == 1 && callsNamed(candidate, "ensureHasSentCarriedItem") == 1).toList();
+        check(bodies.size() == 1, "The wrapped public useItem entry reaches exactly one native prediction body");
+        MethodNode body = bodies.getFirst();
+        check(reachable(mode, use, handler) && calls(body, MODE, handler.name) == 1,
+                "Both wrapped and ordinary native use reach the actual deadline handler");
+        int handlerIndex = indexOfCall(body, MODE, handler.name);
+        check(handlerIndex < indexOfCall(body, MODE, "ensureHasSentCarriedItem")
+                        && handlerIndex < indexOfCall(body, MODE, "startPrediction"),
+                "The ingestion gate runs before carried-item packets, prediction and the local item-use lambda");
+
+        check(calls(handler, MINECRAFT, "getInstance") == 1 && callsNamed(handler, "getItemInHand") == 1,
+                "The deadline checks the actual item in the hand supplied to this use transaction");
+        AbstractInsnNode itemRead = handler.instructions.get(indexOfCall(handler, "net/minecraft/world/entity/player/Player", "getItemInHand"));
+        AbstractInsnNode handArgument = previousExecutable(itemRead), playerArgument = previousExecutable(handArgument);
+        check(handArgument instanceof VarInsnNode hand && hand.getOpcode() == Opcodes.ALOAD && hand.var == 2
+                        && playerArgument instanceof VarInsnNode player && player.getOpcode() == Opcodes.ALOAD && player.var == 1
+                        && !field(handler, "net/minecraft/world/InteractionHand", "MAIN_HAND", Opcodes.GETSTATIC),
+                "The guard uses the supplied player and hand, covering main-hand and offhand food without hardcoding main hand");
+        AbstractInsnNode readiness = handler.instructions.get(indexOfCall(handler, INGESTION, "ready"));
+        AbstractInsnNode deadlineBranch = nextExecutable(readiness);
+        int cancelIndex = indexOfCall(handler, RETURN_CALLBACK, "setReturnValue");
+        check(deadlineBranch instanceof JumpInsnNode branch && branch.getOpcode() == Opcodes.IFNE
+                        && handler.instructions.indexOf(branch.label) > cancelIndex
+                        && field(handler, "net/minecraft/world/InteractionResult", "CONSUME", Opcodes.GETSTATIC)
+                        && calls(handler, RETURN_CALLBACK, "setReturnValue") == 1,
+                "Only an unexpired deadline consumes the input; a ready item continues to its original native use");
+        AbstractInsnNode consumed = previousExecutable(handler.instructions.get(cancelIndex));
+        check(consumed instanceof FieldInsnNode value && value.owner.equals("net/minecraft/world/InteractionResult")
+                        && value.name.equals("CONSUME") && value.getOpcode() == Opcodes.GETSTATIC,
+                "The blocked use consumes the input without starting an eating lifecycle or falling through to the offhand");
+        check(InteractionResult.CONSUME.consumesAction() && !InteractionResult.CONSUME.shouldSwing(),
+                "The actual blocked result stops native offhand fallback without swinging the hand");
+
+        int cancelledIndex = indexOfCall(body, RETURN_CALLBACK, "isCancelled");
+        int returnIndex = indexOfCall(body, RETURN_CALLBACK, "getReturnValue");
+        AbstractInsnNode cancellationBranch = nextExecutable(body.instructions.get(cancelledIndex));
+        check(handlerIndex < cancelledIndex && cancelledIndex < returnIndex
+                        && cancellationBranch instanceof JumpInsnNode branch && branch.getOpcode() == Opcodes.IFEQ
+                        && body.instructions.indexOf(branch.label) > returnIndex
+                        && body.instructions.indexOf(branch.label) < indexOfCall(body, MODE, "startPrediction"),
+                "The transformed cancellation branch returns the gate result before entering native prediction");
+        AbstractInsnNode returned = nextExecutable(body.instructions.get(returnIndex));
+        if (returned instanceof TypeInsnNode cast && cast.getOpcode() == Opcodes.CHECKCAST) returned = nextExecutable(returned);
+        check(returned != null && returned.getOpcode() == Opcodes.ARETURN,
+                "A blocked ingestion exits the actual native method, so no local start or use packet is sent");
+
+        MethodNode ordinary = method(minecraft, "startUseItem", "()V");
+        MethodNode automatic = method(input, "automaticUse", "(L" + MINECRAFT + ";)Z");
+        var ordinaryBodies = minecraft.methods.stream().filter(candidate -> reachable(minecraft, ordinary, candidate)
+                && calls(candidate, MODE, "useItem") == 1).toList();
+        check(ordinaryBodies.size() == 1 && calls(automatic, MODE, "useItem") == 1,
+                "Ordinary held right-click and AUM share the same guarded native useItem transaction");
+        report.addProperty("actual_ingestion_use_handler", handler.name);
+        report.addProperty("ingestion_gate_returns_before_native_prediction_packets_and_local_start", true);
+        report.addProperty("ordinary_and_automatic_ingestion_share_gate_for_supplied_hand", true);
+        report.addProperty("blocked_ingestion_consumes_input_without_swing_or_offhand_fallback", true);
     }
 
     private static void auditUseStateAndEligibility(JsonObject report) {
@@ -338,8 +411,10 @@ public final class AutoHarvestInputAudit implements DataProvider {
         check(!ClientIngestionDelay.ingestion(new ItemStack(Items.BOW))
                         && !ClientIngestionDelay.ingestion(new ItemStack(Items.SHIELD))
                         && !ClientIngestionDelay.ingestion(new ItemStack(Items.STONE))
+                        && !ClientIngestionDelay.ingestion(new ItemStack(Items.SPLASH_POTION))
+                        && !ClientIngestionDelay.ingestion(new ItemStack(Items.LINGERING_POTION))
                         && !ClientIngestionDelay.ingestion(ItemStack.EMPTY),
-                "The actual item-animation gate rejects bow, shield, placement and empty-stack actions");
+                "The actual ingestion gate rejects bow, shield, placement, throwable potions and empty-stack actions");
         report.addProperty("executed_aum_gesture_latch_cancel_reset_and_ingestion_item_cases", true);
     }
 
@@ -473,6 +548,12 @@ public final class AutoHarvestInputAudit implements DataProvider {
         AbstractInsnNode next = instruction.getNext();
         while (next != null && next.getOpcode() < 0) next = next.getNext();
         return next;
+    }
+
+    private static AbstractInsnNode previousExecutable(AbstractInsnNode instruction) {
+        AbstractInsnNode previous = instruction.getPrevious();
+        while (previous != null && previous.getOpcode() < 0) previous = previous.getPrevious();
+        return previous;
     }
 
     private static void auditTargetMatching(JsonObject report) {
