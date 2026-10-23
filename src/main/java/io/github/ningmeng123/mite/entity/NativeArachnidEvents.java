@@ -63,14 +63,14 @@ public final class NativeArachnidEvents {
             }
             if(nearest!=null) { spider.setTarget(nearest); return; }
         }
-        if (spider.getRandom().nextFloat()>=.01F) return;
+        if (!MonsterHunting.active(spider.level()) || spider.getRandom().nextFloat()>=.01F) return;
         Chicken nearest=null; double distance=Double.MAX_VALUE;
         for (Chicken chicken:spider.level().getEntitiesOfClass(Chicken.class,spider.getBoundingBox().inflate(range,range/4D,range))) {
             if (chicken.isAlive() && spider.getSensing().hasLineOfSight(chicken) && spider.distanceToSqr(chicken)<distance) {
                 nearest=chicken; distance=spider.distanceToSqr(chicken);
             }
         }
-        if(nearest!=null) spider.setTarget(nearest);
+        if(nearest!=null) { spider.setTarget(nearest); MonsterHunting.remember(spider, nearest); }
     }
     public static boolean peacefulHere(Spider spider) {
         return spider.getType()==EntityType.SPIDER && spider.getLightLevelDependentMagicValue()>.5F && isOutdoors(spider);

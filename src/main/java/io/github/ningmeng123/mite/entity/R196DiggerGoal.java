@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.entity.ai.MonsterFarmland;
 import io.github.ningmeng123.mite.mining.MiningProgress;
 import io.github.ningmeng123.mite.registry.MiteDecorativeContent;
 import io.github.ningmeng123.mite.registry.MiteMetalBlocks;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -133,6 +135,7 @@ public final class R196DiggerGoal extends Goal {
     public boolean canDestroyMaterial(BlockPos pos) {
         if(blockingWeapon()||!mob.level().hasChunkAt(pos)||pursuit.rejected(pos)) return false;
         BlockState state=mob.level().getBlockState(pos);
+        if(state.getBlock() instanceof FarmBlock&&!MonsterFarmland.allowed(mob)) return false;
         if(state.isAir()||!state.getFluidState().isEmpty()||state.getDestroySpeed(mob.level(),pos)<0F
                 || !state.canEntityDestroy(mob.level(),pos,mob)) return false;
         if(mob instanceof R196Elemental earth&&minimumHarvestLevel(state)<=earth.getBlockHarvestLevel()) return true;
@@ -363,6 +366,8 @@ public final class R196DiggerGoal extends Goal {
                 if(other.is(state.getBlock())&&(!other.canEntityDestroy(level,partner,mob)
                         ||!EventHooks.onEntityDestroyBlock(mob,partner,other))) {rejectDestruction(partner);stop();return;}
             }
+            // A protection callback may end the blood moon or disable griefing before the actual mutation.
+            if(state.getBlock() instanceof FarmBlock&&(!MonsterFarmland.allowed(mob)||!EventHooks.canEntityGrief(level,mob))) { stop();return; }
             if(!level.destroyBlock(broken,true,mob)) { stop();return; }
             if(!mob.getMainHandItem().isEmpty()) EquipmentDurability.mineBlock(mob.getMainHandItem(),level,state,broken,mob);
             active=false;

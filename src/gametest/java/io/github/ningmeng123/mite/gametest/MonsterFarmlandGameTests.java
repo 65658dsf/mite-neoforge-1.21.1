@@ -1,11 +1,14 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.entity.R196DiggerGoal;
+import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.R196MonsterAi;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
 import io.github.ningmeng123.mite.entity.ai.MonsterFarmland;
 import io.github.ningmeng123.mite.entity.ai.MonsterFarmlandGoal;
+import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
+import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
@@ -46,10 +50,11 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class MonsterFarmlandGameTests {
+    private static final long BLOOD_NIGHT = 31L * 24_000L + 18_000L;
     private MonsterFarmlandGameTests() {}
 
     @GameTest(template = "empty")
-    public static void groundMonstersReceiveOneIdleGoalWhileAnimalsAndFlyingMonstersDoNot(GameTestHelper helper) {
+    public static void vanillaGroundMonstersReceiveOneIdleGoalWhileModdedAndFlyingMonstersDoNot(GameTestHelper helper) {
         for (var type : List.of(EntityType.ZOMBIE, EntityType.SKELETON, EntityType.CREEPER, EntityType.HUSK,
                 EntityType.PIGLIN, EntityType.ENDERMAN, EntityType.SILVERFISH, EntityType.WITCH)) {
             Mob mob = type.create(helper.getLevel()); helper.getLevel().addFreshEntity(mob);
@@ -61,13 +66,77 @@ public final class MonsterFarmlandGameTests {
             } finally { mob.discard(); }
         }
         for (var type : List.of(EntityType.COW, EntityType.WOLF, EntityType.BAT, EntityType.BLAZE,
-                EntityType.VEX, EntityType.GHAST, EntityType.PHANTOM, EntityType.SHULKER)) {
+                EntityType.VEX, EntityType.GHAST, EntityType.PHANTOM, EntityType.SHULKER,
+                MiteMobs.type(MobKind.REVENANT), MiteMobs.type(MobKind.GHOUL))) {
             Mob mob = type.create(helper.getLevel()); helper.getLevel().addFreshEntity(mob);
             try {
                 helper.assertTrue(mob.goalSelector.getAvailableGoals().stream()
                         .noneMatch(wrapped -> wrapped.getGoal() instanceof MonsterFarmlandGoal),
-                        "Animals, ambient bats and floating/stationary monsters have no walking farm goal " + type);
+                        "Modded mobs, animals and floating/stationary monsters have no walking farm goal " + type);
             } finally { mob.discard(); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void onlyTheCurrentOverworldBloodMoonNightAllowsRaidingAndDawnCancelsWork(GameTestHelper helper) {
+        try (var fixture = new Fixture(helper)) {
+            fixture.field(true, false); var goal = fixture.ready();
+            for (long time : new long[]{18_000L, 31L * 24_000L + 6_000L, 127L * 24_000L + 18_000L}) {
+                fixture.level.setDayTime(time);
+                helper.assertFalse(goal.canUse(), "Ordinary nights, blood-date daylight and blue moons do not start raids");
+                helper.assertFalse(MonsterFarmland.flatten(fixture.mob, fixture.farm), "Direct flattening respects the current blood night");
+                fixture.assertIntact("An inactive blood moon");
+            }
+            fixture.level.setDayTime(BLOOD_NIGHT);
+            helper.assertTrue(goal.canUse(), "The actual current blood moon night enables the reachable raid");
+            goal.start(); fixture.mob.moveTo(fixture.farm.getX() + .5, fixture.farm.getY() + 1, fixture.farm.getZ() + .5);
+            for (int tick = 0; tick < 39; tick++) goal.tick();
+            fixture.level.setDayTime(32L * 24_000L + 6_000L); goal.tick();
+            helper.assertTrue(goal.targetBlock() == null && fixture.mob.getNavigation().isDone(), "Dawn cancels movement and clears work progress");
+            fixture.assertIntact("Dawn on the last work tick");
+            var nether = helper.getLevel().getServer().getLevel(Level.NETHER);
+            var netherZombie = EntityType.ZOMBIE.create(nether);
+            try { helper.assertFalse(MonsterFarmland.allowed(netherZombie), "Other dimensions never inherit the overworld blood moon"); }
+            finally { netherZombie.discard(); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void pursuitDiggingAndFallTramplingCannotBypassTheBloodNightOrVanillaRestriction(GameTestHelper helper) {
+        try (var fixture = new Fixture(helper)) {
+            fixture.field(true, false);
+            var digger = R196DiggerGoal.first(fixture.mob);
+            fixture.level.setDayTime(18_000L);
+            helper.assertFalse(digger.canDestroyMaterial(fixture.farm), "Source pursuit cannot dig farmland outside a blood moon");
+            fixture.set(fixture.farm.east(), Blocks.DIRT.defaultBlockState());
+            helper.assertTrue(digger.canDestroyMaterial(fixture.farm.east()), "Ordinary pursuit still permits its existing non-farmland materials");
+            Blocks.FARMLAND.fallOn(fixture.level, fixture.level.getBlockState(fixture.farm), fixture.farm, fixture.mob, 2F);
+            fixture.assertIntact("Ordinary-night landing");
+            fixture.level.setDayTime(BLOOD_NIGHT);
+            helper.assertTrue(digger.canDestroyMaterial(fixture.farm), "A vanilla zombie may dig farmland during the blood moon");
+            var revenant = (PathfinderMob) MiteMobs.type(MobKind.REVENANT).create(fixture.level);
+            revenant.setNoAi(true); fixture.level.addFreshEntity(revenant);
+            try {
+                revenant.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                helper.assertFalse(MonsterFarmland.flatten(revenant, fixture.farm), "Modded zombie subclasses cannot directly flatten farms");
+                helper.assertFalse(R196DiggerGoal.first(revenant).canDestroyMaterial(fixture.farm), "Source inheritance cannot grant modded mobs farmland digging");
+                Blocks.FARMLAND.fallOn(fixture.level, fixture.level.getBlockState(fixture.farm), fixture.farm, revenant, 2F);
+                fixture.assertIntact("A modded monster landing during blood moon");
+            } finally { revenant.discard(); }
+            var hostileBat = MiteMobs.type(MobKind.VAMPIRE_BAT).create(fixture.level);
+            try {
+                Blocks.FARMLAND.fallOn(fixture.level, fixture.level.getBlockState(fixture.farm), fixture.farm, hostileBat, 2F);
+                fixture.assertIntact("An ambient-category MITE hostile bat landing during blood moon");
+            } finally { hostileBat.discard(); }
+            fixture.grief(false);
+            Blocks.FARMLAND.fallOn(fixture.level, fixture.level.getBlockState(fixture.farm), fixture.farm, fixture.mob, 2F);
+            fixture.assertIntact("Disabled mobGriefing during blood moon landing");
+            fixture.grief(true);
+            Blocks.FARMLAND.fallOn(fixture.level, fixture.level.getBlockState(fixture.farm), fixture.farm, fixture.mob, 2F);
+            helper.assertTrue(fixture.level.getBlockState(fixture.farm).is(Blocks.DIRT)
+                    && fixture.level.getBlockState(fixture.farm.above()).isAir(), "Vanilla monster landing works on a permitted blood night");
         }
         helper.succeed();
     }
@@ -77,7 +146,8 @@ public final class MonsterFarmlandGameTests {
         try (var fixture = new Fixture(helper)) {
             for (boolean crop : new boolean[]{false, true}) for (boolean enriched : new boolean[]{false, true}) {
                 fixture.field(crop, enriched); var goal = fixture.ready();
-                helper.assertTrue(goal.canUse(), "A real reachable path exists to the selected soil");
+                helper.assertTrue(goal.canUse(), "A real reachable path exists to the selected soil; crop=" + crop
+                        + ", enriched=" + enriched + "; " + fixture.diagnostic());
                 helper.assertValueEqual(goal.targetBlock(), fixture.farm, "Nearest reachable farm is selected");
                 goal.start();
                 helper.assertTrue(!fixture.mob.getNavigation().isDone(), "Actual ground navigation receives the verified path");
@@ -240,8 +310,9 @@ public final class MonsterFarmlandGameTests {
             fixture.mob.setTarget(prey); fixture.mob.getRandom().setSeed(0L);
             helper.assertTrue(digger.canUse(), "Source pursuit selects the real reachable support below elevated prey");
             helper.assertValueEqual(digger.targetBlock(), obstacle, "The selected pursuit obstacle is farmland, not a general raid target");
-            digger.start(); for (int tick = 0; tick < 1_839; tick++) digger.tick();
-            helper.assertTrue(fixture.level.getBlockState(obstacle).is(Blocks.FARMLAND), "Source 40 + 10*180 tick breaking is not instant");
+            int breakTicks = 40 + 10 * digger.stageDelay(obstacle);
+            digger.start(); for (int tick = 0; tick < breakTicks - 1; tick++) digger.tick();
+            helper.assertTrue(fixture.level.getBlockState(obstacle).is(Blocks.FARMLAND), "Blood-moon pursuit preserves the source staged break delay");
             digger.tick();
             helper.assertTrue(fixture.level.getBlockState(obstacle).isAir() && fixture.level.getBlockState(obstacle.above()).isAir(),
                     "Actual source pursuit digging removes farmland and updates its supported crop");
@@ -283,18 +354,22 @@ public final class MonsterFarmlandGameTests {
 
     private static final class Fixture implements AutoCloseable {
         final GameTestHelper helper; final ServerLevel level; final BlockPos origin, farm;
-        final Zombie mob; final long oldTime; final boolean oldGrief;
+        final Zombie mob; final long oldTime, oldHighestDay; final boolean oldGrief;
         final Map<BlockPos, BlockState> oldBlocks = new LinkedHashMap<>();
         final List<ItemEntity> before;
         Fixture(GameTestHelper helper) {
             this.helper = helper; level = helper.getLevel(); origin = helper.absolutePos(new BlockPos(3, 4, 3)); farm = origin.east(4).below();
             oldTime = level.getDayTime(); oldGrief = level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            level.setDayTime(18_000L); grief(true);
+            oldHighestDay = BloodMoonInvasionData.get(level).highestDay();
+            level.setDayTime(BLOOD_NIGHT); grief(true);
             for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-2, -1, -3), origin.offset(9, -1, 3))) set(pos, Blocks.STONE.defaultBlockState());
+            // The walking fixture extends beyond the tiny template; do not inherit a neighbouring test's blocks.
+            for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-2, 0, -3), origin.offset(9, 3, 3))) set(pos, Blocks.AIR.defaultBlockState());
             before = new ArrayList<>(level.getEntitiesOfClass(ItemEntity.class, new AABB(origin).inflate(12)));
             mob = EntityType.ZOMBIE.create(level); mob.moveTo(origin.getX() + .25, origin.getY(), origin.getZ() + .5);
             mob.setNoAi(true); mob.setNoGravity(true); mob.setOnGround(true); mob.setPersistenceRequired();
             mob.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.IRON_HELMET)); level.addFreshEntity(mob);
+            mob.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
         void set(BlockPos pos, BlockState state) {
             oldBlocks.putIfAbsent(pos.immutable(), level.getBlockState(pos)); level.setBlock(pos, state, 2);
@@ -345,6 +420,7 @@ public final class MonsterFarmlandGameTests {
             if (goal != null) goal.stop(); var digger = R196DiggerGoal.first(mob); if (digger != null) digger.stop();
             mob.discard(); drops().forEach(ItemEntity::discard);
             oldBlocks.forEach((pos, state) -> level.setBlock(pos, state, 2)); level.setDayTime(oldTime); grief(oldGrief);
+            BloodMoonInvasionData.get(level).restoreProgress(oldHighestDay);
         }
     }
 }

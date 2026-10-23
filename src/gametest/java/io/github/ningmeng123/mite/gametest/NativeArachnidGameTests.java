@@ -11,6 +11,7 @@ import io.github.ningmeng123.mite.entity.SourceVanillaMobLoot;
 import io.github.ningmeng123.mite.entity.ai.NativeLeapAtTargetGoal;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
+import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
@@ -180,13 +181,17 @@ public final class NativeArachnidGameTests {
         target.discard(); immune.discard(); absorbed.discard(); h.succeed();
     }
     @GameTest(template="ranged_027") public static void nativeArachnidFindsVisibleChickenInsteadOfModernGolemPrey(GameTestHelper h) {
+        try (var clock = new BloodMoonHuntingTestClock(h.getLevel())) {
         Spider spider=spider(h,true); SourceVanillaMobLoot.setWebStock(spider,0);
         Chicken chicken=new Chicken(EntityType.CHICKEN,h.getLevel()); chicken.moveTo(spider.position().add(3,0,0)); chicken.setNoAi(true); h.getLevel().addFreshEntity(chicken);
         long seed=0; while(new Random(seed).nextFloat()>=.01F) seed++;
         clock(spider,1); spider.getRandom().setSeed(seed); NativeArachnidEvents.acquireTarget(spider);
         h.assertTrue(spider.getTarget()==chicken,"Source visible rq prey selected on independent one-percent draw"); chicken.discard(); h.succeed();
+
+        }
     }
     @GameTest(template="ranged_027") public static void vampirePreySelectionNeedsSightAndSourceInitialFlagsAndExcludesHellhound(GameTestHelper h) {
+        try (var clock = new BloodMoonHuntingTestClock(h.getLevel())) {
         R196Bat bat=(R196Bat)MiteMobs.type(MobKind.VAMPIRE_BAT).create(h.getLevel()); bat.moveTo(h.absolutePos(new BlockPos(1,3,1)).getCenter());
         h.assertTrue(!bat.isResting(),"Source initial BatFlags zero overrides modern resting constructor");
         Cow hidden=cow(h,bat.position().add(3,0,0)),visible=cow(h,bat.position().add(0,0,4));
@@ -197,12 +202,25 @@ public final class NativeArachnidGameTests {
         h.assertTrue(!bat.preysUpon(hellhound),"Source nn.isTrueAnimal explicitly excludes hellhound");
         hidden.discard(); visible.discard(); for(BlockPos p:BlockPos.betweenClosed(wall.offset(0,0,-1),wall.offset(0,2,1))) h.getLevel().setBlock(p,Blocks.AIR.defaultBlockState(),3);
         h.succeed();
+
+        }
     }
     private static long jockeySeed(boolean positive) {
         for(long seed=0;seed<10000;seed++) if((new Random(seed).nextInt(100)==0)==positive) return seed;
         throw new AssertionError("No independent source world-random jockey fixture");
     }
+    /** Check the source ranged kit after the user's first-34-days equipment lock has ended. */
+    private static final class EquippedRiderDate implements AutoCloseable {
+        final BloodMoonInvasionData progress;
+        final long oldHighestDay;
+        EquippedRiderDate(net.minecraft.server.level.ServerLevel level) {
+            progress = BloodMoonInvasionData.get(level);
+            oldHighestDay = progress.highestDay(); progress.restoreProgress(35L);
+        }
+        @Override public void close() { progress.restoreProgress(oldHighestDay); }
+    }
     @GameTest(template="ranged_027") public static void onlyNativeTtUsesWorldRandomOnePercentJockeyAndEveryRiderIsRanged(GameTestHelper h) {
+        try (var equipmentDate = new EquippedRiderDate(h.getLevel())) {
         for(boolean positive:new boolean[]{false,true}) {
             Spider spider=spider(h,false); spider.getRandom().setSeed(7); h.getLevel().getRandom().setSeed(jockeySeed(positive));
             EventHooks.finalizeMobSpawn(spider,h.getLevel(),h.getLevel().getCurrentDifficultyAt(spider.blockPosition()),MobSpawnType.SPAWN_EGG,null);
@@ -215,6 +233,7 @@ public final class NativeArachnidGameTests {
             h.assertTrue(spider.getSpawnType()==MobSpawnType.SPAWN_EGG,"Source callback retains native spawn reason");
         }
         h.succeed();
+        }
     }
     @GameTest(template="ranged_027") public static void fourNonTtSourceSpidersAndCaveReceiveOnlyBaseFollowCallback(GameTestHelper h) {
         for(MobKind kind:new MobKind[]{MobKind.WOOD_SPIDER,MobKind.BLACK_WIDOW_SPIDER,MobKind.DEMON_SPIDER,MobKind.PHASE_SPIDER}) {
@@ -235,6 +254,7 @@ public final class NativeArachnidGameTests {
         close(h,cave.getAttribute(Attributes.FOLLOW_RANGE).getModifier(SourceSpiderFinalization.FOLLOW_BONUS).amount(),new Random(17).nextGaussian()*.05,"Source te follow bonus is not skipped by modern CaveSpider no-op"); h.succeed();
     }
     @GameTest(template="ranged_027") public static void undergroundNativeSpiderJockeyIsLongdeadAndRanged(GameTestHelper h) {
+        try (var equipmentDate = new EquippedRiderDate(h.getLevel())) {
         var underground=h.getLevel().getServer().getLevel(MiteWorldDimensions.UNDERWORLD); h.assertTrue(underground!=null,"Registered underground level");
         underground.getChunk(0,0); Spider spider=new Spider(EntityType.SPIDER,underground); spider.moveTo(.5,underground.getSeaLevel(),.5,0,0);
         underground.getRandom().setSeed(jockeySeed(true));
@@ -243,6 +263,7 @@ public final class NativeArachnidGameTests {
         h.assertTrue(spider.getFirstPassenger() instanceof R196Skeleton rider && rider.miteKind()==MobKind.LONGDEAD && rider.skeletonType()==0
                 && rider.getMainHandItem().getItem() instanceof BowItem,"Underground source rider identity and rejected melee subtype");
         spider.getFirstPassenger().discard(); h.succeed();
+        }
     }
     @GameTest(template="ranged_027") public static void canceledSourceRiderFinalizationCannotBeRetriedAroundOrCreatePassenger(GameTestHelper h) {
         Spider spider=spider(h,false); h.getLevel().getRandom().setSeed(jockeySeed(true)); int[] callbacks={0};

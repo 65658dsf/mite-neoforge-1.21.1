@@ -2,9 +2,12 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.MonsterDayScaling;
+import io.github.ningmeng123.mite.entity.MonsterMeleeScaling;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -30,6 +33,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -325,6 +329,146 @@ public final class MonsterDayScalingGameTests {
                     else close(helper, raw[0] - bareStrike, weaponDelta, "Equipping a sword adds exactly its original attack modifier, without date multiplication");
                 }
             } finally { NeoForge.EVENT_BUS.unregister(capture); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bossesKeepNativeHealthAndDamageAtFarFutureDays(GameTestHelper helper) {
+        try (Progress ignored = new Progress(helper)) {
+            set(helper, 100_001L);
+            for (EntityType<?> type : List.of(EntityType.ENDER_DRAGON, EntityType.WITHER)) {
+                Mob boss = mob(helper, type);
+                float maximum = boss.getMaxHealth(); boss.setHealth(maximum / 2F);
+                helper.assertTrue(!MonsterDayScaling.handles(boss), "Native bosses are excluded from calendar growth: " + type);
+                for (int refresh = 0; refresh < 3; refresh++) MonsterDayScaling.refresh(boss);
+                health(helper, boss, maximum, maximum / 2F);
+                helper.assertTrue(!boss.getAttribute(Attributes.MAX_HEALTH).hasModifier(HEALTH),
+                        "A far-future date installs no boss health multiplier: " + type);
+                helper.assertTrue(!boss.getPersistentData().contains(MonsterDayScaling.DATA_KEY),
+                        "Excluded bosses receive no date snapshot: " + type);
+                close(helper, MonsterDayScaling.attackBase(boss, 7.5D), 7.5D, "Boss innate melee damage retains its native base");
+                close(helper, MonsterDayScaling.attackMultiplier(boss), 1D, "Boss attributed damage retains a neutral multiplier");
+                try (MonsterMeleeScaling.Scope scope = MonsterMeleeScaling.enter(boss)) {
+                    close(helper, MonsterMeleeScaling.attackValue(boss, 9D), 9D, "The native melee scope cannot grow an excluded boss");
+                }
+            }
+            Mob ordinary = mob(helper, EntityType.ZOMBIE);
+            MonsterDayScaling.refresh(ordinary);
+            helper.assertTrue(ordinary.getMaxHealth() > 20F && MonsterDayScaling.attackMultiplier(ordinary) > 1D,
+                    "The same far-future date still grows ordinary hostile monsters");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bossOwnedMeleeProjectilesExplosionsAndSpellsKeepIncomingDamage(GameTestHelper helper) {
+        try (Progress ignored = new Progress(helper)) {
+            set(helper, 100_001L);
+            Mob target = cow(helper);
+            for (EntityType<?> type : List.of(EntityType.ENDER_DRAGON, EntityType.WITHER)) {
+                Mob boss = mob(helper, type);
+                Arrow arrow = EntityType.ARROW.create(helper.getLevel());
+                helper.assertTrue(arrow != null, "A native projectile can carry the boss owner"); arrow.setOwner(boss);
+                try {
+                    for (DamageSource source : List.of(target.damageSources().mobAttack(boss), target.damageSources().arrow(arrow, boss),
+                            target.damageSources().explosion(boss, boss), target.damageSources().indirectMagic(arrow, boss))) {
+                        LivingIncomingDamageEvent event = new LivingIncomingDamageEvent(target, new DamageContainer(source, 20F));
+                        MonsterDayScaling.damage(event);
+                        close(helper, event.getAmount(), 20F, "Boss-owned incoming damage receives no calendar multiplier: " + source);
+                    }
+                } finally { arrow.discard(); boss.discard(); }
+            }
+            target.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void legacyBossHealthModifiersAreRemovedOnJoinAndTickWhilePreservingWoundsAndOtherData(GameTestHelper helper) {
+        try (Progress ignored = new Progress(helper)) {
+            set(helper, 100_001L);
+            for (EntityType<?> type : List.of(EntityType.ENDER_DRAGON, EntityType.WITHER)) {
+                for (boolean join : new boolean[]{true, false}) {
+                    Mob original = mob(helper, type);
+                    float nativeMaximum = original.getMaxHealth();
+                    var attribute = original.getAttribute(Attributes.MAX_HEALTH);
+                    attribute.addPermanentModifier(new AttributeModifier(LEADER, .5D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+                    attribute.addPermanentModifier(new AttributeModifier(HEALTH, 1D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+                    original.setHealth(original.getMaxHealth() / 4F);
+                    CompoundTag progress = new CompoundTag(); progress.putInt("version", 1); progress.putLong("day", 65L);
+                    original.getPersistentData().put(MonsterDayScaling.DATA_KEY, progress);
+                    original.getPersistentData().putInt("mite_test:boss_marker", 42);
+                    CompoundTag saved = new CompoundTag(); original.saveWithoutId(saved);
+                    saved.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+                    Mob restored = (Mob)EntityType.loadEntityRecursive(saved, helper.getLevel(), Function.identity());
+                    helper.assertTrue(restored != null, "The legacy boss reconstructs through native entity loading");
+                    helper.assertTrue(restored.getAttribute(Attributes.MAX_HEALTH).hasModifier(HEALTH),
+                            "The fixture really loads an old permanent calendar modifier");
+                    health(helper, restored, nativeMaximum * 3F, nativeMaximum * .75F);
+                    if (join) MonsterDayScaling.join(new EntityJoinLevelEvent(restored, helper.getLevel(), true));
+                    else for (int tick = 1; tick <= 20; tick++) {
+                        restored.tickCount = tick;
+                        MonsterDayScaling.tick(new EntityTickEvent.Post(restored));
+                    }
+                    health(helper, restored, nativeMaximum * 1.5F, nativeMaximum * .375F);
+                    helper.assertTrue(!restored.getAttribute(Attributes.MAX_HEALTH).hasModifier(HEALTH),
+                            "Boss migration removes only the calendar health modifier");
+                    helper.assertTrue(restored.getAttribute(Attributes.MAX_HEALTH).hasModifier(LEADER),
+                            "An independent permanent boss health modifier survives migration");
+                    helper.assertValueEqual(restored.getAttribute(Attributes.MAX_HEALTH).getModifiers().size(), 1,
+                            "Only the independent health modifier remains");
+                    helper.assertTrue(!restored.getPersistentData().contains(MonsterDayScaling.DATA_KEY),
+                            "Legacy boss date metadata is removed");
+                    helper.assertValueEqual(restored.getPersistentData().getInt("mite_test:boss_marker"), 42,
+                            "Unrelated persistent boss data survives migration");
+                    MonsterDayScaling.refresh(restored);
+                    health(helper, restored, nativeMaximum * 1.5F, nativeMaximum * .375F);
+                    CompoundTag cleaned = new CompoundTag(); restored.saveWithoutId(cleaned);
+                    cleaned.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+                    Mob reloaded = (Mob)EntityType.loadEntityRecursive(cleaned, helper.getLevel(), Function.identity());
+                    helper.assertTrue(reloaded != null, "The cleaned boss saves and loads natively");
+                    MonsterDayScaling.join(new EntityJoinLevelEvent(reloaded, helper.getLevel(), true));
+                    health(helper, reloaded, nativeMaximum * 1.5F, nativeMaximum * .375F);
+                    helper.assertTrue(!reloaded.getAttribute(Attributes.MAX_HEALTH).hasModifier(HEALTH),
+                            "A subsequent save and reload cannot restore boss calendar growth");
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void commonBossTagExcludesAnOtherwiseOrdinaryMonsterFromCalendarGrowth(GameTestHelper helper) throws ReflectiveOperationException {
+        try (Progress ignored = new Progress(helper)) {
+            set(helper, 65L);
+            Mob customBoss = mob(helper, EntityType.ZOMBIE);
+            customBoss.setHealth(10F); MonsterDayScaling.refresh(customBoss);
+            health(helper, customBoss, 26.912F, 13.456F);
+            var holder = EntityType.ZOMBIE.builtInRegistryHolder();
+            var originalTags = holder.tags().toList();
+            var bossTags = new ArrayList<>(originalTags); bossTags.add(Tags.EntityTypes.BOSSES);
+            Method bind = holder.getClass().getDeclaredMethod("bindTags", Collection.class); bind.setAccessible(true);
+            try {
+                bind.invoke(holder, bossTags);
+                helper.assertTrue(EntityType.ZOMBIE.is(Tags.EntityTypes.BOSSES), "The custom boss fixture is identified by the common boss tag");
+                helper.assertTrue(!MonsterDayScaling.handles(customBoss), "A common boss tag excludes an ordinary monster implementation");
+                MonsterDayScaling.refresh(customBoss); health(helper, customBoss, 20F, 10F);
+                helper.assertTrue(!customBoss.getAttribute(Attributes.MAX_HEALTH).hasModifier(HEALTH)
+                                && !customBoss.getPersistentData().contains(MonsterDayScaling.DATA_KEY),
+                        "A newly tagged boss loses its previous calendar health and date metadata");
+                close(helper, MonsterDayScaling.attackBase(customBoss, 7.5D), 7.5D, "Tagged boss melee keeps its native base");
+                close(helper, MonsterDayScaling.attackMultiplier(customBoss), 1D, "Tagged boss attributed damage has no date growth");
+                try (MonsterMeleeScaling.Scope scope = MonsterMeleeScaling.enter(customBoss)) {
+                    close(helper, MonsterMeleeScaling.attackValue(customBoss, 9D), 9D, "The native melee scope respects the common boss tag");
+                }
+                Mob target = cow(helper);
+                LivingIncomingDamageEvent event = new LivingIncomingDamageEvent(target,
+                        new DamageContainer(target.damageSources().explosion(customBoss, customBoss), 20F));
+                MonsterDayScaling.damage(event);
+                close(helper, event.getAmount(), 20F, "A tagged custom boss's owned attack retains native incoming damage");
+            } finally { bind.invoke(holder, originalTags); }
+            helper.assertTrue(MonsterDayScaling.handles(customBoss), "The shared fixture's original tags are restored after the check");
         }
         helper.succeed();
     }

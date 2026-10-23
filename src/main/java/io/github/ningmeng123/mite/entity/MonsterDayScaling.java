@@ -13,10 +13,13 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -30,8 +33,10 @@ public final class MonsterDayScaling {
     private MonsterDayScaling() {}
 
     public static boolean handles(Mob mob) {
-        return mob.getType().getCategory() == MobCategory.MONSTER
-                || mob instanceof R196Mob source && source.miteKind() != null && source.miteKind().family() == MobKind.Family.BAT;
+        return !(mob instanceof EnderDragon) && !(mob instanceof WitherBoss)
+                && !mob.getType().is(Tags.EntityTypes.BOSSES)
+                && (mob.getType().getCategory() == MobCategory.MONSTER
+                || mob instanceof R196Mob source && source.miteKind() != null && source.miteKind().family() == MobKind.Family.BAT);
     }
 
     private static long day(Mob mob, ServerLevel level) {
@@ -72,7 +77,19 @@ public final class MonsterDayScaling {
 
     /** A unique multiplier composes with equipment/leader attributes without compounding on refresh or load. */
     public static void refresh(Mob mob) {
-        if (!handles(mob) || !mob.isAlive() || !(mob.level() instanceof ServerLevel level)) return;
+        if (!mob.isAlive() || !(mob.level() instanceof ServerLevel level)) return;
+        if (!handles(mob)) {
+            // Old saves may still carry our permanent health modifier from before bosses were excluded.
+            var attribute = mob.getAttribute(Attributes.MAX_HEALTH);
+            if (attribute != null && attribute.hasModifier(HEALTH_MODIFIER)) {
+                float health = mob.getHealth(), maximum = mob.getMaxHealth();
+                attribute.removeModifier(HEALTH_MODIFIER);
+                float next = mob.getMaxHealth();
+                if (next != maximum) mob.setHealth(Math.min(next, health / maximum * next));
+            }
+            mob.getPersistentData().remove(DATA_KEY);
+            return;
+        }
         long day = day(mob, level);
         var attribute = mob.getAttribute(Attributes.MAX_HEALTH);
         if (attribute == null) return;

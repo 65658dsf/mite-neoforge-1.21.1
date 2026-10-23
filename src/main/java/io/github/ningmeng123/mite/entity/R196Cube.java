@@ -78,6 +78,7 @@ public final class R196Cube extends Slime implements R196Mob, CubeState {
         boolean magma=cube instanceof net.minecraft.world.entity.monster.MagmaCube;
         if (cube.level().isClientSide || !cube.isAlive() || cube.distanceToSqr(target)>contactRangeSquared(cube.getSize()) || !cube.hasLineOfSight(target)) return;
         if (!(target instanceof Player) && (magma || !(target instanceof Animal || target instanceof Villager))) return;
+        if (!MonsterHunting.mayAttackPrey(cube, target)) return;
         if (!magma && target instanceof Player player) player.makeStuckInBlock(net.minecraft.world.level.block.Blocks.SLIME_BLOCK.defaultBlockState(),new net.minecraft.world.phys.Vec3(.8,1,.8));
         int damage=cube.getSize()*(magma ? 2 : 1);
         if (!target.hurt(cube.damageSources().mobAttack(cube),damage) || !target.isAlive()) return;
@@ -138,10 +139,10 @@ public final class R196Cube extends Slime implements R196Mob, CubeState {
             @Override protected double getFollowDistance() { return kind==MobKind.OOZE ? 32 : 16; }
             @Override protected void findTarget() { targetConditions.range(getFollowDistance()); super.findTarget(); }
         });
-        targetSelector.addGoal(3,new NearestAttackableTargetGoal<>(this,Animal.class,true) {
+        targetSelector.addGoal(3,new MonsterHunting.PreyGoal<>(this,Animal.class,true) {
             @Override protected double getFollowDistance() { return 8; }
         });
-        targetSelector.addGoal(3,new NearestAttackableTargetGoal<>(this,Villager.class,true) {
+        targetSelector.addGoal(3,new MonsterHunting.PreyGoal<>(this,Villager.class,true) {
             @Override protected double getFollowDistance() { return 8; }
         });
     }
@@ -170,6 +171,7 @@ public final class R196Cube extends Slime implements R196Mob, CubeState {
     @Override protected void dealDamage(LivingEntity target) {
         if (level().isClientSide || !isAlive() || distanceToSqr(target)>contactRangeSquared(getSize()) || !hasLineOfSight(target)) return;
         if (!(target instanceof Player || target instanceof Animal || target instanceof Villager)) return;
+        if (!MonsterHunting.mayAttackPrey(this, target)) return;
         if (target instanceof Player player) player.makeStuckInBlock(net.minecraft.world.level.block.Blocks.SLIME_BLOCK.defaultBlockState(),new net.minecraft.world.phys.Vec3(.8,1,.8));
         float health=target.getHealth();
         if (!target.hurt(damageSources().mobAttack(this),getAttackDamage()) || !target.isAlive()) return;

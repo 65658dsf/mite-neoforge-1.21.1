@@ -27,6 +27,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.monster.Silverfish;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Snowball;
@@ -39,6 +40,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -125,7 +128,35 @@ public final class ElementalCubeSilverfishGameTests {
     }
     @GameTest(template="empty") public static void silverfishSubtypeEffects(GameTestHelper h) { for (MobKind kind:List.of(MobKind.COPPERSPINE,MobKind.HOARY_SILVERFISH)) { R196Silverfish fish=(R196Silverfish)mob(h,kind); Cow target=cow(h); fish.doHurtTarget(target); var effect=target.getEffect(kind==MobKind.COPPERSPINE ? MobEffects.POISON : MobEffects.MOVEMENT_SLOWDOWN); h.assertTrue(effect!=null && effect.getDuration()==(kind==MobKind.COPPERSPINE ? 480 : 50) && effect.getAmplifier()==(kind==MobKind.COPPERSPINE ? 0 : 5),"Source effects applied only after health loss"); } h.succeed(); }
     @GameTest(template="empty") public static void netherspawnFireLavaSeparation(GameTestHelper h) { R196Silverfish fish=(R196Silverfish)mob(h,MobKind.NETHERSPAWN); h.assertTrue(fish.isInvulnerableTo(fish.damageSources().inFire()),"Source fire immune"); h.assertTrue(!fish.isInvulnerableTo(fish.damageSources().lava()),"Source did not override lava susceptibility"); h.succeed(); }
-    @GameTest(template="empty") public static void silverfishRecruitRestoresHostWithoutGrief(GameTestHelper h) { R196Silverfish fish=(R196Silverfish)mob(h,MobKind.COPPERSPINE); BlockPos pos=fish.blockPosition().offset(1,0,0); h.getLevel().setBlockAndUpdate(pos,Blocks.INFESTED_STONE.defaultBlockState()); boolean previous=h.getLevel().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING); h.getLevel().getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(false,h.getLevel().getServer()); try { fish.recruit(); h.assertTrue(h.getLevel().getBlockState(pos).is(Blocks.STONE),"mobGriefing=false restores stone"); h.assertTrue(h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.monster.Silverfish.class,fish.getBoundingBox().inflate(2),e->e!=fish).size()==1,"Recruit still releases exactlyone inhabitant"); } finally { h.getLevel().getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(previous,h.getLevel().getServer()); } h.succeed(); }
+    @GameTest(template="empty") public static void silverfishRecruitRestoresHostWithoutGrief(GameTestHelper h) {
+        R196Silverfish fish=(R196Silverfish)mob(h,MobKind.COPPERSPINE);
+        var level=h.getLevel(); BlockPos pos=fish.blockPosition().offset(1,0,0);
+        var oldBlock=level.getBlockState(pos);
+        var existingIds=level.getEntitiesOfClass(Silverfish.class,fish.getBoundingBox().inflate(2)).stream()
+                .map(Entity::getId).collect(java.util.stream.Collectors.toSet());
+        var released=new java.util.ArrayList<Silverfish>();
+        java.util.function.Consumer<EntityJoinLevelEvent> capture=event -> {
+            if(event.getLevel()==level && event.getEntity() instanceof Silverfish child && child!=fish
+                    && !existingIds.contains(child.getId()) && child.blockPosition().equals(pos)) released.add(child);
+        };
+        boolean previous=level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+        level.setBlockAndUpdate(pos,Blocks.INFESTED_STONE.defaultBlockState());
+        level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(false,level.getServer());
+        NeoForge.EVENT_BUS.addListener(EntityJoinLevelEvent.class,capture);
+        try {
+            fish.recruit();
+            h.assertTrue(level.getBlockState(pos).is(Blocks.STONE),"mobGriefing=false restores stone");
+            // A same-tick spatial query may not see a freshly promoted chunk's entity section yet.
+            h.assertValueEqual(released.size(),1,"Recruit releases exactly one new inhabitant at the infested block");
+            h.assertTrue(level.getEntity(released.getFirst().getUUID())==released.getFirst(),
+                    "The captured new inhabitant is actually accepted by the world's entity manager");
+        } finally {
+            NeoForge.EVENT_BUS.unregister(capture); released.forEach(Silverfish::discard); fish.discard();
+            level.setBlockAndUpdate(pos,oldBlock);
+            level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(previous,level.getServer());
+        }
+        h.succeed();
+    }
     @GameTest(template="empty") public static void copperOreSelectsInfestedCopperspine(GameTestHelper h) { BlockPos pos=h.absolutePos(new BlockPos(2,3,2)); h.getLevel().setBlockAndUpdate(pos.offset(2,0,0),Blocks.COPPER_ORE.defaultBlockState()); var child=R196Silverfish.createInfestedChild(h.getLevel(),pos,Blocks.STONE.defaultBlockState()); h.assertTrue(child instanceof R196Silverfish fish && fish.miteKind()==MobKind.COPPERSPINE,"Source nearby copper changes plain-stone inhabitant"); h.succeed(); }
     private static net.minecraft.world.entity.monster.Slime vanilla(GameTestHelper h,boolean magma) {
         var cube=magma ? EntityType.MAGMA_CUBE.create(h.getLevel()) : EntityType.SLIME.create(h.getLevel());
@@ -135,7 +166,10 @@ public final class ElementalCubeSilverfishGameTests {
     @GameTest(template="empty") public static void nativeMagmaDamageDefenseExperience(GameTestHelper h) { var e=vanilla(h,true); e.setSize(2,true); near(h,e.getAttributeValue(Attributes.ATTACK_DAMAGE),4,"Source magma damage2size"); near(h,e.getAttributeValue(Attributes.ARMOR),0,"Native modern armor must not stack with source natural defense"); near(h,R196Cube.vanillaNaturalDefense(e,e.damageSources().generic()),4,"Source natural2size"); h.assertTrue(e.getExperienceReward(h.getLevel(),null)==6,"Source magma XP3size"); h.succeed(); }
     @GameTest(template="empty") public static void nativeMagmaUsesMineralDamageGate(GameTestHelper h) { var e=vanilla(h,true); h.assertTrue(e.isInvulnerableTo(e.damageSources().generic()) && !e.isInvulnerableTo(MobCombat.source(e,"water")),"Native magma gate water/ordinary"); Player p=player(h); p.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.IRON_PICKAXE)); h.assertTrue(!e.isInvulnerableTo(e.damageSources().playerAttack(p)),"Effective stone tool passes gate"); h.assertTrue(e.isInvulnerableTo(MobCombat.source(e,"acid")) && e.isInvulnerableTo(MobCombat.source(e,"pepsin")),"Both chemicals cannot harm magma"); h.succeed(); }
     @GameTest(template="empty") public static void nativeSlimeDissolutionSaves(GameTestHelper h) { var e=vanilla(h,false); e.setSize(1,true); BlockPos pos=e.blockPosition(); h.getLevel().setBlockAndUpdate(pos,Blocks.WHITE_WOOL.defaultBlockState()); e.tickCount=Math.floorMod(-e.getId()*47,20); ((CubeState)(Object)e).corrosion().contact(e,false); h.assertTrue(((CubeState)(Object)e).corrosion().progress(pos)==1,"Native slime has original pepsin ledger"); CompoundTag tag=new CompoundTag(); e.addAdditionalSaveData(tag); var restored=vanilla(h,false); restored.readAdditionalSaveData(tag); h.assertTrue(((CubeState)(Object)restored).corrosion().progress(pos)==1,"Native ledger survives native save path"); h.succeed(); }
-    @GameTest(template="empty") public static void nativeTinySlimeContactHurtsAnimals(GameTestHelper h) { var e=vanilla(h,false); e.setSize(1,true); Cow target=cow(h); target.moveTo(e.getX()+.2,e.getY(),e.getZ(),0,0); R196Cube.vanillaContact(e,target); near(h,target.getHealth(),99,"Tiny source slime attacks true animals"); h.succeed(); }
+    @GameTest(template="empty") public static void nativeTinySlimeContactHurtsAnimals(GameTestHelper h) {
+        try (var clock = new BloodMoonHuntingTestClock(h.getLevel())) { var e=vanilla(h,false); e.setSize(1,true); Cow target=cow(h); target.moveTo(e.getX()+.2,e.getY(),e.getZ(),0,0); R196Cube.vanillaContact(e,target); near(h,target.getHealth(),99,"Tiny source slime attacks true animals"); h.succeed();
+        }
+    }
     @GameTest(template="empty") public static void nativeMagmaDoesNotPreyOnAnimals(GameTestHelper h) { var e=vanilla(h,true); e.setSize(2,true); Cow target=cow(h); target.moveTo(e.getX()+.2,e.getY(),e.getZ(),0,0); R196Cube.vanillaContact(e,target); near(h,target.getHealth(),100,"Source magma attacks players only"); h.succeed(); }
     @GameTest(template="empty") public static void nativeBurningSlimeCannotSplit(GameTestHelper h) { var e=vanilla(h,false); e.setSize(4,true); e.setRemainingFireTicks(40); e.setHealth(0); e.remove(Entity.RemovalReason.KILLED); h.assertTrue(h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.monster.Slime.class,e.getBoundingBox().inflate(3),x->x!=e).isEmpty(),"Native family shares burning split guard"); h.succeed(); }
     @GameTest(template="empty") public static void nativeMagmaMeltsIceAndLosesAbsoluteHealth(GameTestHelper h) { var e=vanilla(h,true); e.setSize(2,true); BlockPos pos=e.blockPosition(); h.getLevel().setBlockAndUpdate(pos,Blocks.ICE.defaultBlockState()); R196Cube.magmaContactBlocks((net.minecraft.world.entity.monster.MagmaCube)e); h.assertTrue(!h.getLevel().getBlockState(pos).is(Blocks.ICE),"Source freezing material melts"); near(h,e.getHealth(),3,"Absolute melt damage ignores natural defense4"); h.succeed(); }

@@ -247,6 +247,7 @@ public final class SourceMonsterTargeting {
             return null;
         }
         @Override public boolean canUse() {
+            if (type != Player.class && !MonsterHunting.active(mob.level())) return false;
             var memory = (SourceMonsterTargetMemory)mob;
             LivingEntity queued = memory.mite$retarget();
             memory.mite$retarget(null);
@@ -255,7 +256,13 @@ public final class SourceMonsterTargeting {
             target = nearest();
             return target != null;
         }
-        @Override public void start() { target = mountedTarget(target); super.start(); }
+        @Override public boolean canContinueToUse() {
+            return (type == Player.class || MonsterHunting.active(mob.level())) && super.canContinueToUse();
+        }
+        @Override public void start() {
+            target = mountedTarget(target); super.start();
+            if (type != Player.class) MonsterHunting.remember(mob, target);
+        }
         @Override public void tick() {
             if (mob.getRandom().nextInt(40) == 0) {
                 LivingEntity candidate = nearest();
@@ -281,6 +288,7 @@ public final class SourceMonsterTargeting {
             return target != null && initiallySuitable(target);
         }
         @Override public void start() {
+            MonsterHunting.forget(mob);
             target = mob.getLastHurtByMob();
             timestamp = mob.getLastHurtByMobTimestamp();
             super.start();
@@ -289,20 +297,26 @@ public final class SourceMonsterTargeting {
             String source = R196MobSpawning.sourceClass(mob);
             var bounds = new AABB(mob.getX(), mob.getY(), mob.getZ(), mob.getX() + 1, mob.getY() + 1, mob.getZ() + 1).inflate(range, 10, range);
             for (PathfinderMob peer : mob.level().getEntitiesOfClass(PathfinderMob.class, bounds)) {
-                if (peer != mob && peer.getTarget() == null && sourceIs(peer, source) && !peer.isAlliedTo(target)) setGoalTarget(peer, target);
+                if (peer != mob && peer.getTarget() == null && sourceIs(peer, source) && !peer.isAlliedTo(target)) {
+                    MonsterHunting.forget(peer); setGoalTarget(peer, target);
+                }
             }
         }
     }
 
     /** Called only at the accepted Mob.target field assignment, after all cancelable NeoForge target listeners. */
     public static void acceptedTargetChange(Mob owner, @Nullable LivingEntity previous, @Nullable LivingEntity target) {
+        if (!GOAL_CHANGE.get()) MonsterHunting.acceptedTargetChange(owner, target);
         if (GOAL_CHANGE.get() || owner.level().isClientSide || !(owner instanceof PathfinderMob mob)
                 || !R196MonsterAi.managed(mob)) return;
         if (previous == null && target != null && target.isAlive()) ((SourceMonsterTargetMemory)mob).mite$retarget(target);
     }
 
     @SubscribeEvent public static void beforeTick(EntityTickEvent.Pre event) {
-        if (event.getEntity() instanceof Mob mob) restorePendingTarget(mob);
+        if (event.getEntity() instanceof Mob mob) {
+            MonsterHunting.stopExpired(mob);
+            restorePendingTarget(mob);
+        }
     }
 
     public static void restorePendingTarget(Mob mob) {
@@ -313,8 +327,13 @@ public final class SourceMonsterTargeting {
         for (LivingEntity nearby : mob.level().getEntitiesOfClass(LivingEntity.class, mob.getBoundingBox().inflate(32, 8, 32),
                 entity -> entity != mob && entity.getUUID().equals(uuid))) {
             if (!nearby.isAlive()) { memory.mite$pendingTarget(null); return; }
+            // Legacy saves only contain a target UUID; do not restart an old passive hunt outside a blood night.
+            if (!MonsterHunting.mayAttackPrey(mob, nearby)) { memory.mite$pendingTarget(null); return; }
             mob.setTarget(nearby);
-            if (mob.getTarget() != null) memory.mite$pendingTarget(null);
+            if (mob.getTarget() != null) {
+                memory.mite$pendingTarget(null);
+                MonsterHunting.remember(mob, mob.getTarget());
+            }
             return;
         }
         if (mob.tickCount > 0 && mob.tickCount % 1000 == 0) memory.mite$pendingTarget(null);

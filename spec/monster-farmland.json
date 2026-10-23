@@ -109,7 +109,13 @@
   "user_requested_modern_extension": {
     "explicitly_selected": true,
     "r196_exact_rule": false,
-    "eligible": "PathfinderMob with MobCategory.MONSTER and GroundPathNavigation",
+    "eligible": "minecraft-namespace PathfinderMob with MobCategory.MONSTER and GroundPathNavigation",
+    "active_period": "current overworld LunarCalendar.State.bloodNight(); blood-date daylight, ordinary nights, blue moons and other dimensions are inactive",
+    "damage_paths": [
+      "idle raiding",
+      "farmland-only restriction in source pursuit digging; other materials unchanged",
+      "monster landing trampling; player and animal landing rules unchanged"
+    ],
     "explicit_excluded_types": [
       "minecraft:blaze",
       "minecraft:vex",
@@ -120,6 +126,7 @@
       "ambient bats",
       "flying navigation",
       "water navigation",
+      "MITE and other mod namespaces, including subclasses of vanilla monsters",
       "passengers",
       "entities with live attack targets"
     ],
@@ -152,6 +159,7 @@
     "crop_result": "existing CropLifecycle.TRAMPLE path for managed crops; other herbaceous plants/stems removed without drops",
     "crop_source_exceptions": "existing poisonous-potato rules remain authoritative; no added harvest yield",
     "combat_priority": "live target blocks canUse and interrupts current work before any block mutation",
+    "period_transition": "ending the blood moon cancels movement/work before any crop or soil mutation",
     "ephemeral_state": "path/progress are not saved; join installation is idempotent",
     "authoritative_side": "server",
     "requires_clear_physical_work_ray": true
@@ -164,12 +172,15 @@
       "FarmlandTrampleEvent"
     ],
     "atomic_veto": "If either cell or the farmland event is vetoed, leave both crop and soil intact",
-    "listener_mutation_guard": "recheck grief/live target and both original states after event callbacks",
+    "listener_mutation_guard": "recheck current blood night, entity eligibility, grief/live target and both original states after event callbacks; pursuit digging and monster landing also recheck blood night and grief",
     "forced_chunk_loading": false
   },
   "verification_cases": [
     "real join installation and repeated installation do not duplicate the goal",
-    "ground modern/source monsters versus animals, bats and stationary/floating exclusions",
+    "vanilla ground monsters versus MITE zombie subclasses, animals, bats and stationary/floating exclusions",
+    "current blood night enables raiding; ordinary nights, blood-date daylight, blue moons and other dimensions reject it",
+    "dawn on the last work tick cancels navigation and preserves both cells",
+    "source pursuit digging and actual monster fallOn enforce the same blood night and namespace restriction",
     "real navigation path plus39/40tick cropped/empty and dry/fertilized mutation boundaries",
     "normal entity/controller ticks actually walk and flatten one field",
     "living target suppresses selection and interrupts ongoing work",

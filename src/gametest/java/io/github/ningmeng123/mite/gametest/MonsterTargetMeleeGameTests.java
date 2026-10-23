@@ -80,6 +80,7 @@ public final class MonsterTargetMeleeGameTests {
 
     @GameTest(template = "empty")
     public static void enabledDiggerCanAcquireThroughWallButSwordHoldingZombieCannot(GameTestHelper h) {
+        try (var clock = new BloodMoonHuntingTestClock(h.getLevel())) {
         var zombie = mob(h, EntityType.ZOMBIE, 0, 0, 0);
         zombie.getPersistentData().putBoolean("mite_zombie_smart_035", true);
         var target = mob(h, EntityType.VILLAGER, 3, 0, 0);
@@ -89,10 +90,13 @@ public final class MonsterTargetMeleeGameTests {
         zombie.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
         h.assertFalse(goal.canUse(), "Holding a source digging-blocking sword restores the actual sight requirement");
         zombie.discard(); target.discard(); h.succeed();
+
+        }
     }
 
     @GameTest(template = "empty")
     public static void ordinarySightTargetPersistsForSixtyUnseenUpdatesThenStops(GameTestHelper h) {
+        try (var clock = new BloodMoonHuntingTestClock(h.getLevel())) {
         var wight = source(h, MobKind.WIGHT);
         var target = mob(h, EntityType.VILLAGER, 3, 0, 0);
         var goal = new SourceMonsterTargeting.Nearest(wight, Villager.class, 0, true);
@@ -101,10 +105,13 @@ public final class MonsterTargetMeleeGameTests {
         for (int i = 0; i < 60; i++) h.assertTrue(goal.canContinueToUse(), "The first sixty source unseen updates retain the target");
         h.assertFalse(goal.canContinueToUse(), "Only the sixty-first unseen update ends tracking");
         goal.stop(); wight.discard(); target.discard(); h.succeed();
+
+        }
     }
 
     @GameTest(template = "empty")
     public static void renewedSightResetsTheUnseenCounter(GameTestHelper h) {
+        try (var clock = new BloodMoonHuntingTestClock(h.getLevel())) {
         var wight = source(h, MobKind.WIGHT);
         var target = mob(h, EntityType.VILLAGER, 3, 0, 0);
         var goal = new SourceMonsterTargeting.Nearest(wight, Villager.class, 0, true);
@@ -114,6 +121,8 @@ public final class MonsterTargetMeleeGameTests {
         for (int i = 0; i < 60; i++) h.assertTrue(goal.canContinueToUse(), "Restored sight grants a fresh sixty updates");
         h.assertFalse(goal.canContinueToUse(), "Fresh counter also expires at sixty-one");
         goal.stop(); wight.discard(); target.discard(); h.succeed();
+
+        }
     }
 
     @GameTest(template = "empty", timeoutTicks = 200)
@@ -163,7 +172,7 @@ public final class MonsterTargetMeleeGameTests {
                 h.assertTrue(level.getEntitiesOfClass(Villager.class, wight.getBoundingBox().inflate(40, 6, 40),
                         entity -> entity == target).contains(target), "The original nearest-target query can observe the forty-block fixture");
             }).thenExecute(() -> {
-                try {
+                try (var clock = new BloodMoonHuntingTestClock(level)) {
                     h.assertTrue(goal.canUse(), "R196 wight follow range is forty"); goal.start();
                     h.assertTrue(wight.getTarget() == target, "Boundary assertions use the actual forty-block target");
                     h.assertTrue(goal.canContinueToUse(), "Exactly forty blocks is within re range");
@@ -397,6 +406,7 @@ public final class MonsterTargetMeleeGameTests {
 
     @GameTest(template = "empty")
     public static void wholeNbtTargetRestoresOnlyAtRawTenTickBoundary(GameTestHelper h) {
+        try (var clock = new BloodMoonHuntingTestClock(h.getLevel())) {
         var zombie = mob(h, EntityType.ZOMBIE, 0, 0, 0);
         var target = mob(h, EntityType.VILLAGER, 3, 0, 0); zombie.setTarget(target);
         var tag = new CompoundTag(); zombie.saveWithoutId(tag);
@@ -409,10 +419,13 @@ public final class MonsterTargetMeleeGameTests {
         h.assertTrue(restored.getTarget() == target && ((SourceMonsterTargetMemory)restored).mite$pendingTarget() == null,
                 "Nearby living target resolves through the actual registered tick subscriber");
         zombie.discard(); restored.discard(); target.discard(); h.succeed();
+
+        }
     }
 
     @GameTest(template = "empty")
     public static void targetUuidDoesNotResolveOutsideSourceNearbyBounds(GameTestHelper h) {
+        try (var clock = new BloodMoonHuntingTestClock(h.getLevel())) {
         var zombie = mob(h, EntityType.ZOMBIE, 0, 0, 0);
         var target = mob(h, EntityType.VILLAGER, 33, 0, 0);
         try {
@@ -439,6 +452,8 @@ public final class MonsterTargetMeleeGameTests {
                     "A still-pending target can later reenter the nearby bounds");
         } finally { zombie.discard(); target.discard(); }
         h.succeed();
+
+        }
     }
 
     @GameTest(template = "empty")

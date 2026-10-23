@@ -1,10 +1,13 @@
 package io.github.ningmeng123.mite.survival;
 
 import net.minecraft.core.BlockPos;
+import io.github.ningmeng123.mite.entity.ai.MonsterFarmland;
+import io.github.ningmeng123.mite.entity.R196Bat;
 import io.github.ningmeng123.mite.rules.CropSoilRules;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.monster.Slime;
@@ -70,6 +73,8 @@ public final class CropSoil {
 
     /** Returns whether the native FarmBlock caller may replace this soil with dirt. */
     public static boolean trample(Level level, BlockPos soil, float fallDistance, Entity entity) {
+        if ((entity.getType().getCategory() == MobCategory.MONSTER || entity instanceof R196Bat)
+                && !MonsterFarmland.allowed(entity)) return false;
         if (!(level instanceof ServerLevel server) || entity instanceof Slime && !(entity instanceof MagmaCube)
                 || level.random.nextFloat() >= fallDistance - .5F) return false;
         if (entity instanceof Player player) {
@@ -78,6 +83,8 @@ public final class CropSoil {
         // Keep mod protection vetoes while deliberately using R196's probability/size rules.
         var event = new BlockEvent.FarmlandTrampleEvent(level, soil, Blocks.DIRT.defaultBlockState(), fallDistance, entity);
         if (NeoForge.EVENT_BUS.post(event).isCanceled()) return false;
+        if ((entity.getType().getCategory() == MobCategory.MONSTER || entity instanceof R196Bat)
+                && (!MonsterFarmland.allowed(entity) || !EventHooks.canEntityGrief(level, entity))) return false;
         BlockPos plant = soil.above();
         BlockState crop = level.getBlockState(plant);
         if (CropLifecycle.managed(crop)) CropLifecycle.trample(server, plant, entity);

@@ -38,7 +38,7 @@ public final class R196Wolf extends Wolf implements R196Mob {
             goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1));
             goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8)); goalSelector.addGoal(7, new RandomLookAroundGoal(this));
             targetSelector.addGoal(1, new HurtByTargetGoal(this)); targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-            targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.animal.Animal.class, 20, true, false,
+            targetSelector.addGoal(4, new MonsterHunting.PreyGoal<>(this, net.minecraft.world.entity.animal.Animal.class, 20, true, false,
                     e -> !(e instanceof R196Wolf wolf && wolf.miteKind() == MobKind.HELLHOUND)));
         }
     }

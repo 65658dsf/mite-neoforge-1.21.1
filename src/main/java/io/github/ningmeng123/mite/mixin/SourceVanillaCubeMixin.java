@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.entity.CubeState;
 import io.github.ningmeng123.mite.entity.MobCombat;
 import io.github.ningmeng123.mite.entity.MobCorrosion;
+import io.github.ningmeng123.mite.entity.MonsterHunting;
 import io.github.ningmeng123.mite.entity.R196Cube;
 import io.github.ningmeng123.mite.entity.VanillaCubeMoveControl;
 import net.minecraft.nbt.CompoundTag;
@@ -50,8 +51,8 @@ public abstract class SourceVanillaCubeMixin extends Mob implements CubeState {
         if ((Object)this instanceof R196Cube) return;
         targetSelector.addGoal(2,new NearestAttackableTargetGoal<>(this,Player.class,true));
         if (!((Object)this instanceof MagmaCube)) {
-            targetSelector.addGoal(3,new NearestAttackableTargetGoal<>(this,Animal.class,true) { @Override protected double getFollowDistance() { return 8; } });
-            targetSelector.addGoal(3,new NearestAttackableTargetGoal<>(this,Villager.class,true) { @Override protected double getFollowDistance() { return 8; } });
+            targetSelector.addGoal(3,new MonsterHunting.PreyGoal<>(this,Animal.class,true) { @Override protected double getFollowDistance() { return 8; } });
+            targetSelector.addGoal(3,new MonsterHunting.PreyGoal<>(this,Villager.class,true) { @Override protected double getFollowDistance() { return 8; } });
         }
         ci.cancel();
     }

@@ -1,12 +1,16 @@
 package io.github.ningmeng123.mite.entity.ai;
 
 import io.github.ningmeng123.mite.survival.CropLifecycle;
+import io.github.ningmeng123.mite.rules.LunarCalendar;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.FarmBlock;
@@ -15,19 +19,27 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
-/** User-requested modern farmland raiding; distinct from R196 pursuit digging and passive fall trampling. @author NingMeng123 */
+/** Blood-moon farmland raiding and the shared monster farmland-damage permission. @author NingMeng123 */
 public final class MonsterFarmland {
     private MonsterFarmland() {}
 
     public static boolean handles(PathfinderMob mob) {
         var type = mob.getType();
         // These stationary/flying monsters inherit a ground-navigation object but do not walk its paths.
-        return type != EntityType.BLAZE && type != EntityType.VEX && type != EntityType.SHULKER
+        return "minecraft".equals(BuiltInRegistries.ENTITY_TYPE.getKey(type).getNamespace())
+                && type != EntityType.BLAZE && type != EntityType.VEX && type != EntityType.SHULKER
                 && type.getCategory() == MobCategory.MONSTER && mob.getNavigation() instanceof GroundPathNavigation;
     }
 
+    /** Shared by deliberate raiding, pursuit digging and landing to prevent alternate farmland-damage paths. */
+    public static boolean allowed(Entity entity) {
+        return entity instanceof PathfinderMob mob && entity.level() instanceof ServerLevel && handles(mob)
+                && entity.level().dimension().equals(Level.OVERWORLD)
+                && LunarCalendar.state(entity.level().getDayTime(), true).bloodNight();
+    }
+
     public static boolean idleAndAllowed(PathfinderMob mob) {
-        return mob.level() instanceof ServerLevel && handles(mob) && mob.isAlive()
+        return allowed(mob) && mob.isAlive()
                 && (mob.getTarget() == null || !mob.getTarget().isAlive()) && !mob.isPassenger()
                 && EventHooks.canEntityGrief(mob.level(), mob);
     }

@@ -204,6 +204,7 @@ public final class UndeadBatMobGameTests {
     }
     @GameTest(template = "ranged_027")
     public static void VampireBatContactHealsOnlyRealHealthLossAndBegins1200TickFeedingCooldown(GameTestHelper helper) {
+        try (var clock = new BloodMoonHuntingTestClock(helper.getLevel())) {
         R196Bat bat = (R196Bat)mob(helper, MobKind.VAMPIRE_BAT); bat.setResting(false); bat.setHealth(2F);
         Cow target = new Cow(EntityType.COW, helper.getLevel()); target.moveTo(bat.position()); bat.setTarget(target);
         float before = target.getHealth();
@@ -218,9 +219,12 @@ public final class UndeadBatMobGameTests {
         helper.assertValueEqual(restored.feedCooldown(), 1200, "Source feed cooldown survives saving");
         restored.setHealth(2F); restored.tick();
         helper.assertValueEqual(restored.feedCooldown(), 0, "Damage ends the feeding cooldown on the next tick"); helper.succeed();
+
+        }
     }
     @GameTest(template = "ranged_027")
     public static void GiantVampireBatKeepsAnimalPreyWhenFullAndDoesNotHealBlockedDamage(GameTestHelper helper) {
+        try (var clock = new BloodMoonHuntingTestClock(helper.getLevel())) {
         R196Bat bat = (R196Bat)mob(helper, MobKind.GIANT_VAMPIRE_BAT); bat.setResting(false); bat.setHealth(5F);
         Cow target = new Cow(EntityType.COW, helper.getLevel()); target.moveTo(bat.position()); bat.setTarget(target);
         float before = target.getHealth(); helper.assertTrue(bat.tryContactAttack(target), "Giant bat contact hit");
@@ -229,6 +233,8 @@ public final class UndeadBatMobGameTests {
         R196Bat blocked = (R196Bat)mob(helper, MobKind.VAMPIRE_BAT); blocked.setResting(false); blocked.setHealth(2F);
         Cow invulnerable = new Cow(EntityType.COW, helper.getLevel()); invulnerable.moveTo(blocked.position()); invulnerable.setInvulnerable(true); blocked.setTarget(invulnerable);
         helper.assertTrue(!blocked.tryContactAttack(invulnerable), "Blocked damage is not vampiric gain"); close(helper, blocked.getHealth(), 2, "Blocked hit cannot heal bat"); helper.succeed();
+
+        }
     }
     @GameTest(template = "ranged_027")
     public static void NightwingRejectsMundaneAndFireDamageButAcceptsSilverMagicAndSunlight(GameTestHelper helper) {

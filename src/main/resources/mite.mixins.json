@@ -4,6 +4,12 @@
   "package": "io.github.ningmeng123.mite.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "MonsterPreyTargetMixin",
+    "MonsterPreyContinuationMixin",
+    "WitherPreyTargetMixin",
+    "PiglinRetaliationMixin",
+    "WardenPreyTargetMixin",
+    "VexPreyTargetMixin",
     "RandomStateAquiferMixin",
     "OverworldAquiferLevelMixin",
     "NoiseChunkAquiferMixin",

@@ -51,7 +51,7 @@ public final class R196Bat extends Bat implements R196Mob {
     public boolean preysUpon(LivingEntity entity) {
         if (!entity.isAlive()) return false;
         if (entity instanceof Player player) return !player.isCreative() && !player.isSpectator();
-        return feedCooldown <= 0 && (entity instanceof Villager || entity instanceof Animal
+        return MonsterHunting.active(level()) && feedCooldown <= 0 && (entity instanceof Villager || entity instanceof Animal
                 && !(entity instanceof R196Mob mob && mob.miteKind()==MobKind.HELLHOUND));
     }
     @Override public boolean hurt(DamageSource source, float amount) {
@@ -74,7 +74,8 @@ public final class R196Bat extends Bat implements R196Mob {
             else if (--feedCooldown > 0 && getTarget() != null && !preysUpon(getTarget())) setTarget(null);
         }
         if (MobCombat.ticksWithOffset(this) % 20 == 0) {
-            setTarget(closestVisiblePrey());
+            LivingEntity prey = closestVisiblePrey();
+            setTarget(prey); MonsterHunting.remember(this, prey);
         }
         if (getTarget() != null && getBoundingBox().intersects(getTarget().getBoundingBox())) tryContactAttack(getTarget());
     }
@@ -89,7 +90,7 @@ public final class R196Bat extends Bat implements R196Mob {
     }
     /** A source attack attempt consumes 20 ticks even when the narrower contact box misses. */
     public boolean tryContactAttack(LivingEntity target) {
-        if (level().isClientSide || attackCooldown > 0 || target != getTarget()) return false;
+        if (level().isClientSide || attackCooldown > 0 || target != getTarget() || !MonsterHunting.mayAttackPrey(this, target)) return false;
         attackCooldown = 20;
         if (soundCooldown <= 0) {
             level().levelEvent(null, 1025, blockPosition(), 0); soundCooldown = random.nextInt(31) + 30;

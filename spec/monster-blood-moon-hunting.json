@@ -1,0 +1,33 @@
+{
+  "author": "NingMeng123",
+  "adaptation_date": "2026-10-23",
+  "policy": "Monsters proactively hunt non-player living entities only during an actual Overworld blood moon night",
+  "calendar": "LunarCalendar.State.bloodNight()",
+  "inactive": ["ordinary_day", "ordinary_night", "blood_date_daylight", "blue_moon", "other_dimensions"],
+  "preserved": ["player_targeting", "ridden_player_mounts", "retaliation", "source_class_retaliation_assistance", "piglin_hurt_broadcast_assistance", "non_monster_predators"],
+  "integration": [
+    "SourceMonsterTargeting.Nearest",
+    "NearestAttackableTargetGoal.canUse/start",
+    "TargetGoal.canContinueToUse for nearest-prey goals",
+    "LivingChangeTargetEvent.BEHAVIOR_TARGET",
+    "NativeArachnidEvents.acquireTarget chicken branch",
+    "R196Bat.preysUpon/tryContactAttack",
+    "R196Cube.vanillaContact/dealDamage",
+    "MonsterHunting.PreyGoal",
+    "Warden.setAttackTarget",
+    "WitherBoss independent side-head selection and firing",
+    "Vex.VexCopyOwnerTargetGoal"
+  ],
+  "blood_night_end": "Clear remembered proactive prey before entity AI/contact attacks, stop navigation, discard matching pending UUID/retarget and brain attack memory",
+  "persistence": "Entity persistent UUID marks proactive prey; old UUID-only non-player hunts cannot restore outside blood nights",
+  "gametest_classes": [
+    "MonsterHuntingGameTests",
+    "MonsterTargetMeleeGameTests",
+    "NativeArachnidGameTests",
+    "UndeadBatMobGameTests",
+    "ElementalCubeSilverfishGameTests",
+    "PiglinHuntingGameTests",
+    "WitherHuntingGameTests"
+  ],
+  "gametest_helper": "BloodMoonHuntingTestClock"
+}

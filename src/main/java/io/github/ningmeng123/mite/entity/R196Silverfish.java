@@ -59,8 +59,8 @@ public final class R196Silverfish extends Silverfish implements R196Mob {
         targetSelector.addGoal(2,new NearestAttackableTargetGoal<>(this,Player.class,true) {
             @Override protected double getFollowDistance() { return 8; }
         });
-        targetSelector.addGoal(3,new NearestAttackableTargetGoal<>(this,Animal.class,true));
-        targetSelector.addGoal(3,new NearestAttackableTargetGoal<>(this,Villager.class,true));
+        targetSelector.addGoal(3,new MonsterHunting.PreyGoal<>(this,Animal.class,true));
+        targetSelector.addGoal(3,new MonsterHunting.PreyGoal<>(this,Villager.class,true));
     }
     @Override public boolean isInvulnerableTo(DamageSource source) {
         // Netherspawn overrides fire only, not lava, in its actual source.
