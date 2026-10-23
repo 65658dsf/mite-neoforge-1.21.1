@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -47,6 +49,127 @@ public final class HostilePopulationGameTests {
     private static final TicketType<Integer> TICKET = TicketType.<Integer>create("mite_population_test", Comparator.naturalOrder());
 
     private HostilePopulationGameTests() {}
+
+    public static void referencePresetRestoresIndependentR196HeightAllowances(GameTestHelper helper) {
+        ready(helper, true, arena -> {
+            helper.assertTrue(R196MobSpawning.referenceSpawning(arena.level), "The explicit reference preset reaches the runtime resolver");
+            helper.assertValueEqual(R196MobSpawning.monsterLimit(arena.level, false, 289, false), 56, "R196 shallow allowance");
+            helper.assertValueEqual(R196MobSpawning.monsterLimit(arena.level, true, 289, true), 112, "R196 deep allowance does not gain a blood multiplier");
+            int areas = Math.max(R196MobSpawning.count(arena.level, Category.MONSTER, true) / 112,
+                    R196MobSpawning.count(arena.level, Category.MONSTER, false) / 56) + 1;
+            int target = areas * 112;
+            while (R196MobSpawning.count(arena.level, Category.MONSTER, true) < target) arena.creeper(-12);
+            var traversals = new AtomicInteger();
+            Map<Long, Boolean> candidates = new AbstractMap<>() {
+                @Override public int size() { return 289 * areas; }
+                @Override public Set<Map.Entry<Long, Boolean>> entrySet() { traversals.incrementAndGet(); return Set.of(); }
+            };
+            helper.assertValueEqual(R196MobSpawning.spawnPass(arena.level, Category.MONSTER, true, candidates, false), 0,
+                    "A full deep band cannot add another monster");
+            helper.assertValueEqual(traversals.get(), 0, "A full band stops before candidate traversal");
+            R196MobSpawning.spawnPass(arena.level, Category.MONSTER, false, candidates, false);
+            helper.assertValueEqual(traversals.get(), 1, "The empty shallow band retains its own allowance despite full deep population");
+        });
+    }
+
+    public static void referenceNearbyCrowdGateUsesStrictEightTenAndTwelveThresholds(GameTestHelper helper) {
+        ready(helper, true, arena -> savedProgress(arena, () -> {
+            ServerPlayer player = helper.makeMockServerPlayerInLevel();
+            var added = new ArrayList<Mob>();
+            try {
+                player.moveTo(arena.position.getCenter());
+                for (int scenario = 0; scenario < 3; scenario++) {
+                    added.forEach(Mob::discard); added.clear();
+                    int threshold = scenario == 0 ? 8 : scenario == 1 ? 10 : 12;
+                    arena.level.setDayTime((scenario == 0 ? 0L : scenario == 1 ? 7L : 31L) * 24000L + 18000L);
+                    for (int index = 0; index < threshold; index++) added.add(arena.creeper(100));
+                    helper.assertTrue(R196MobSpawning.eligibleChunks(arena.level, true).containsKey(arena.chunk.toLong()),
+                            "Exactly the source threshold still permits the player's area: " + threshold);
+                    added.add(arena.creeper(100));
+                    helper.assertFalse(R196MobSpawning.eligibleChunks(arena.level, true).containsKey(arena.chunk.toLong()),
+                            "One beyond the source threshold excludes the player's area: " + threshold);
+                }
+            } finally {
+                added.forEach(Mob::discard);
+                arena.level.getServer().getPlayerList().remove(player);
+            }
+        }));
+    }
+
+    public static void referenceBloodDayStillRejectsOutdoorUndeadAndLateDaysDoNotExpandSourcePools(GameTestHelper helper) {
+        ready(helper, true, arena -> savedProgress(arena, () -> {
+            var first = R196MobSpawning.sourcePool(arena.level, arena.position, Category.MONSTER);
+            arena.level.setDayTime(31L * 24000L + 6000L);
+            Mob zombie = arena.fresh(EntityType.ZOMBIE, 100);
+            helper.assertFalse(R196MobSpawning.naturalDaylightAllows(zombie, arena.level),
+                    "Reference blood daylight retains the original outdoor undead rejection");
+            arena.level.setDayTime(200L * 24000L + 18000L);
+            helper.assertValueEqual(R196MobSpawning.sourcePool(arena.level, arena.position, Category.MONSTER), first,
+                    "Permanent invasion progress no longer appends entries to reference natural pools");
+            try {
+                var pool = R196MobSpawning.class.getDeclaredMethod("pool", ServerLevel.class, BlockPos.class, Category.class, boolean.class);
+                pool.setAccessible(true);
+                @SuppressWarnings("unchecked") var entries = (List<R196MobSpawning.Entry>)pool.invoke(null, arena.level, arena.position, Category.MONSTER, false);
+                for (var entry : entries) {
+                    String namespace = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(entry.type()).getNamespace();
+                    helper.assertTrue(entry.sourceClass() != null || !namespace.equals("minecraft") && !namespace.equals("mite"),
+                            "Reference pools retain authored source identities and third-party compatibility only");
+                }
+            } catch (ReflectiveOperationException failure) { throw new AssertionError(failure); }
+        }));
+    }
+
+    /** Simulate three scheduling nights without wall-clock waiting, using real indexed population and crowd eligibility. */
+    public static void referenceThreeSeededNightsStopReplenishingCrowdedAreas(GameTestHelper helper) {
+        ready(helper, true, arena -> savedProgress(arena, () -> {
+            ServerPlayer player = helper.makeMockServerPlayerInLevel();
+            var added = new ArrayList<Mob>();
+            var rows = new ArrayList<String>();
+            try {
+                player.moveTo(arena.position.getCenter());
+                for (int scenario = 0; scenario < 3; scenario++) {
+                    added.forEach(Mob::discard); added.clear();
+                    int day = scenario == 0 ? 1 : scenario == 1 ? 8 : 32;
+                    int threshold = scenario == 0 ? 8 : scenario == 1 ? 10 : 12;
+                    boolean blood = scenario == 2;
+                    var random = new Random(19620281023L + scenario);
+                    var rate = new R196SpawnRules.RateState(0, 0, 0);
+                    int scheduled = 0, customScheduled = 0, blocked = 0;
+                    for (int tick = 13000; tick < 23000; tick++) {
+                        arena.level.setDayTime((day - 1L) * 24000L + tick);
+                        var step = R196SpawnRules.advanceRate(rate, true, blood, random::nextInt);
+                        rate = step.state();
+                        double low = random.nextDouble(), high = random.nextDouble();
+                        if (low < R196SpawnRules.hostilePassProbability(true, step.modifier(), blood)
+                                || high < R196SpawnRules.hostilePassProbability(false, step.modifier(), blood)) customScheduled++;
+                        if (low >= R196SpawnRules.referenceHostilePassProbability(true, step.modifier())
+                                && high >= R196SpawnRules.referenceHostilePassProbability(false, step.modifier())) continue;
+                        scheduled++;
+                        if (!R196MobSpawning.eligibleChunks(arena.level, true).containsKey(arena.chunk.toLong())) { blocked++; continue; }
+                        // One attempted admission per round isolates crowd backpressure from terrain luck.
+                        added.add(arena.creeper(100));
+                    }
+                    helper.assertValueEqual(added.size(), threshold + 1, "Three-night accelerated fixture stops exactly after exceeding its crowd threshold");
+                    helper.assertTrue(blocked > 0 && scheduled == added.size() + blocked,
+                            "Every later scheduled round pauses admission while the nearby area stays crowded");
+                    helper.assertTrue(blood ? customScheduled > scheduled : customScheduled == scheduled,
+                            "Only the historical blood multiplier adds scheduling rounds compared with the reference preset");
+                    String row = "{\"day\":" + day + ",\"simulated_ticks\":10000,\"reference_rounds\":" + scheduled
+                            + ",\"custom_rounds\":" + customScheduled + ",\"admitted\":" + added.size() + ",\"crowded_rounds\":" + blocked + "}";
+                    rows.add(row);
+                    System.out.println("[reference-spawning three-night fixture] " + row);
+                }
+                try {
+                    Path output = Path.of("reference-spawning-three-nights.json").toAbsolutePath();
+                    Files.writeString(output, "{\"author\":\"NingMeng123\",\"kind\":\"accelerated scheduling and real crowd-gate fixture; terrain and combat are not simulated\",\"nights\":["
+                            + String.join(",", rows) + "]}");
+                } catch (java.io.IOException failure) { throw new AssertionError(failure); }
+            } finally {
+                added.forEach(Mob::discard);
+                arena.level.getServer().getPlayerList().remove(player);
+            }
+        }));
+    }
 
     @GameTest(template = "empty", timeoutTicks = 240)
     public static void ordinaryTotalCapIncludesTheOppositeHeightBandBeforeEitherPassConsidersChunks(GameTestHelper helper) {
@@ -307,6 +430,10 @@ public final class HostilePopulationGameTests {
     }
 
     private static void ready(GameTestHelper helper, Consumer<Arena> test) {
+        ready(helper, false, test);
+    }
+
+    private static void ready(GameTestHelper helper, boolean reference, Consumer<Arena> test) {
         Arena arena = new Arena(helper.getLevel());
         helper.testInfo.addListener(new GameTestListener() {
             @Override public void testStructureLoaded(GameTestInfo info) {}
@@ -320,7 +447,7 @@ public final class HostilePopulationGameTests {
             helper.assertTrue(arena.level.areEntitiesLoaded(arena.chunk.toLong()) && arena.level.isPositionEntityTicking(arena.position),
                     "The native isolated entity section is ready before real population accounting");
         }).thenExecute(() -> {
-            try { test.accept(arena); } finally { arena.close(); }
+            try (var preset = new SpawnPreset(reference)) { test.accept(arena); } finally { arena.close(); }
         }).thenSucceed();
     }
 

@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.client.config;
 
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
 import io.github.ningmeng123.mite.rules.MonsterSpawningSettings.Option;
 import java.math.BigDecimal;
@@ -55,10 +56,26 @@ public final class MonsterSpawningRulesScreen extends Screen {
             Option option = options[index];
             int y = 60 + (index - page * rows) * 44;
             visible.add(new VisibleRow(option, y));
+            if (option == Option.REFERENCE_RULES) {
+                var toggle = addRenderableWidget(Button.builder(Component.translatable(reference()
+                        ? "mite.config.spawning_rules.reference_mode" : "mite.config.spawning_rules.custom_mode"), button -> {
+                    values.put(option.key(), reference() ? 0D : 1D);
+                    drafts.clear();
+                    invalid.clear();
+                    rebuild();
+                }).bounds(width - 156, y - 2, 144, 20).build());
+                toggle.active = editable && !ModList.get().isLoaded("modern_ite");
+                toggle.setTooltip(Tooltip.create(description(option)));
+                continue;
+            }
             var box = addRenderableWidget(new EditBox(font, width - 104, y - 2, 92, 20, label(option)));
             box.setMaxLength(32);
             box.setValue(drafts.getOrDefault(option, number(values.getOrDefault(option.key(), option.defaultValue()))));
-            box.setEditable(editable);
+            boolean iteOwnsCap = ModList.get().isLoaded("modern_ite") && switch (option) {
+                case BASE_CAP, BLOOD_CAP, DAILY_CAP_INCREASE, MAXIMUM_CAP -> true;
+                default -> false;
+            };
+            box.setEditable(editable && !reference() && !iteOwnsCap);
             box.setTextColor(invalid.contains(option) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
             box.setTooltip(Tooltip.create(description(option)));
             box.setResponder(text -> {
@@ -116,6 +133,10 @@ public final class MonsterSpawningRulesScreen extends Screen {
         save.setTooltip(Tooltip.create(message));
     }
 
+    private boolean reference() {
+        return MiteExtensions.policy().referenceSpawningSettings(values.getOrDefault(Option.REFERENCE_RULES.key(), 1D) == 1D);
+    }
+
     private void save() {
         if (!MiteConfigClient.editable() || !invalid.isEmpty()) return;
         try {
@@ -155,7 +176,8 @@ public final class MonsterSpawningRulesScreen extends Screen {
         for (var row : visible) {
             Option option = row.option();
             graphics.drawString(font, font.plainSubstrByWidth(label(option).getString(), width - 128), 12, row.y() + 3, 0xFFFFFF);
-            var range = Component.translatable("mite.config.spawning_rules.range", number(option.minimum()), number(option.maximum()),
+            var range = option == Option.REFERENCE_RULES ? Component.translatable("mite.config.spawning_rules.reference_rules.tooltip")
+                    : Component.translatable("mite.config.spawning_rules.range", number(option.minimum()), number(option.maximum()),
                     number(option.defaultValue()), Component.translatable(option.wholeNumber()
                             ? "mite.config.spawning_rules.integer" : "mite.config.spawning_rules.decimal"));
             graphics.drawString(font, font.plainSubstrByWidth(range.getString(), width - 24), 12, row.y() + 23, 0x999999);

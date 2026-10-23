@@ -69,7 +69,7 @@ public final class ConfiguredMonsterSpawns {
                 int sourceY = R196SpawnRules.sourceY(pos.getY(), R196MobSpawning.underworld(level));
                 rate = mixture(entry.type(), MiteMobs.type(MobKind.INFERNAL_CREEPER), MonsterSpawnRules.infernalCreeperProbability(sourceY));
             } else if (finalizationTransforms && "EntityVampireBat".equals(entry.sourceClass())
-                    && (R196MobSpawning.underworld(level) || BloodMoonInvasion.unlocked(level))) {
+                    && (R196MobSpawning.underworld(level) || !R196MobSpawning.referenceSpawning(level) && BloodMoonInvasion.unlocked(level))) {
                 rate = mixture(entry.type(), MiteMobs.type(MobKind.GIANT_VAMPIRE_BAT), 1D / 6D);
             } else if (finalizationTransforms && "EntityLongdead".equals(entry.sourceClass())) {
                 rate = mixture(entry.type(), MiteMobs.type(MobKind.LONGDEAD_GUARDIAN), 1D / 6D);

@@ -368,6 +368,7 @@ public final class BloodMoonInvasionGameTests {
     }
 
     private static final class ProgressState implements AutoCloseable {
+        final SpawnPreset preset = new SpawnPreset(false);
         final ServerLevel level;
         final BloodMoonInvasionData data;
         private final long time, highestDay;
@@ -382,6 +383,7 @@ public final class BloodMoonInvasionGameTests {
             level.getDataStorage().set(BloodMoonInvasionData.NAME, data);
             data.restoreProgress(highestDay); data.setDirty(dirty); level.setDayTime(time); level.updateSkyBrightness();
             BloodMoonInvasionData.get(level); // Refresh the asynchronous read-only snapshot after replacing a loaded fixture.
+            preset.close();
         }
     }
 

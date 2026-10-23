@@ -120,6 +120,7 @@ public final class MonsterSpawnConfigGameTests {
     public static void populationAndSchedulingEditsPublishImmediatelyAndRejectPartialInvalidDrafts(GameTestHelper helper) throws Exception {
         try (var ignored = new Settings()) {
             var values = new HashMap<>(MonsterSpawningSettings.DEFAULTS.values());
+            values.put(Option.REFERENCE_RULES.key(), 0D);
             values.put(Option.BASE_CAP.key(), 12D);
             values.put(Option.BLOOD_CAP.key(), 24D);
             values.put(Option.HOSTILE_INTERVAL_TICKS.key(), 100D);
@@ -160,6 +161,7 @@ public final class MonsterSpawnConfigGameTests {
     public static void populationAndSchedulingUseTheRealPacketCodecAndServerAuthority(GameTestHelper helper) throws Exception {
         try (var ignored = new Settings()) {
             var controls = new HashMap<>(MonsterSpawningSettings.DEFAULTS.values());
+            controls.put(Option.REFERENCE_RULES.key(), 0D);
             controls.put(Option.BASE_CAP.key(), 30D);
             controls.put(Option.DAILY_CAP_INCREASE.key(), .5D);
             controls.put(Option.MAXIMUM_CAP.key(), 50D);

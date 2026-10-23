@@ -6,6 +6,7 @@ import java.util.Map;
 /** Live natural-spawn population and scheduling settings. @author NingMeng123 */
 public final class MonsterSpawningSettings {
     public enum Option {
+        REFERENCE_RULES("reference_rules", 1, 0, 1, true),
         BASE_CAP("base_cap", 105, 0, 100000, true),
         BLOOD_CAP("blood_cap", 140, 0, 100000, true),
         DAILY_CAP_INCREASE("daily_cap_increase", 0, 0, 10000, false),
@@ -54,6 +55,8 @@ public final class MonsterSpawningSettings {
         /** Missing fields inherit defaults so earlier configuration snapshots remain readable. */
         public static Settings from(Map<String, Double> values) { return new Settings(values); }
         public double value(Option option) { return values.get(option.key()); }
+        /** Reference mode ignores saved custom population and timing fields without deleting them. */
+        public boolean reference() { return value(Option.REFERENCE_RULES) == 1D; }
 
         /** One player's 17x17 area; fractions accumulate before the final population is rounded down. */
         public int cap(int eligibleChunks, boolean blood, long day) {

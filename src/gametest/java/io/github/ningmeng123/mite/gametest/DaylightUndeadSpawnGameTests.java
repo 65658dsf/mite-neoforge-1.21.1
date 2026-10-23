@@ -296,6 +296,7 @@ public final class DaylightUndeadSpawnGameTests {
     }
 
     private static final class Progress implements AutoCloseable {
+        final SpawnPreset preset = new SpawnPreset(false);
         final ServerLevel level;
         final BloodMoonInvasionData data;
         final long time, highestDay;
@@ -312,6 +313,7 @@ public final class DaylightUndeadSpawnGameTests {
         @Override public void close() {
             data.restoreProgress(highestDay); data.setDirty(dirty); time(time);
             BloodMoonInvasionData.get(level);
+            preset.close();
         }
     }
 

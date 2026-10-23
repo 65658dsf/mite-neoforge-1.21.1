@@ -129,7 +129,7 @@ public final class MiteConfig {
                 .defineListAllowEmpty(List.of("weights"), List::of, () -> "minecraft:zombie=100", MiteConfig::validMonsterSpawnWeightOverride);
         for (var option : MonsterSpawningSettings.Option.values()) {
             builder.translation("mite.config.spawning_rules." + option.key())
-                    .comment("Live natural spawning control. Population caps are per 289 eligible chunks; day 1 has no daily increase. maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second). Chances are percentages. ITE owns population caps when installed.");
+                    .comment("reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.");
             SPAWNING_CONTROLS.put(option, option.wholeNumber()
                     ? builder.defineInRange(option.key(), (int)option.defaultValue(), (int)option.minimum(), (int)option.maximum())
                     : builder.defineInRange(option.key(), option.defaultValue(), option.minimum(), option.maximum()));

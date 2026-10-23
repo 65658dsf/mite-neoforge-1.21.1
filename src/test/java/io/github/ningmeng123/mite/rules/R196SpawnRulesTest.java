@@ -10,6 +10,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Literal aci/js/tm arithmetic and independent guarded table evidence. @author NingMeng123 */
 class R196SpawnRulesTest {
+    @Test void referenceCapsTruncateBeforeDeepDoublingAndScaleTheAreaUnionOnce() {
+        assertEquals(56, R196SpawnRules.referenceMonsterCap(289, false));
+        assertEquals(112, R196SpawnRules.referenceMonsterCap(289, true));
+        assertEquals(43, R196SpawnRules.referenceMonsterCap(225, false));
+        assertEquals(86, R196SpawnRules.referenceMonsterCap(225, true));
+        assertEquals(112, R196SpawnRules.referenceMonsterCap(578, false));
+        assertEquals(224, R196SpawnRules.referenceMonsterCap(578, true));
+        assertEquals(0, R196SpawnRules.referenceMonsterCap(-1, true));
+        assertEquals(838860798, R196SpawnRules.referenceMonsterCap(Integer.MAX_VALUE, true));
+    }
+
+    @Test void referenceCrowdGateRetainsMoonDepthAndStrongholdCorrections() {
+        var ordinary = R196SpawnRules.moon(0, true);
+        var full = R196SpawnRules.moon(7L * 24000, true);
+        var blood = R196SpawnRules.moon(31L * 24000, true);
+        assertEquals(8, R196SpawnRules.referenceDensity(64, true, false, ordinary, 0));
+        assertEquals(10, R196SpawnRules.referenceDensity(64, true, false, full, 0));
+        assertEquals(12, R196SpawnRules.referenceDensity(64, true, false, blood, 0));
+        assertEquals(8, R196SpawnRules.referenceDensity(64, true, true, blood, 0));
+        assertEquals(24, R196SpawnRules.referenceDensity(0, true, true, ordinary, 0));
+        assertEquals(48, R196SpawnRules.referenceDensity(0, true, true, ordinary, 1));
+        assertEquals(8, R196SpawnRules.referenceDensity(0, false, false, blood, 0));
+        assertEquals(.1F, R196SpawnRules.referenceHostilePassProbability(true, 1), .000001F);
+        assertEquals(.17F, R196SpawnRules.referenceHostilePassProbability(false, 1), .000001F);
+        assertEquals(.025F, R196SpawnRules.referenceHostilePassProbability(true, .25F), .000001F);
+        assertEquals(1F, R196SpawnRules.referenceHostilePassProbability(false, 10));
+    }
     @Test void negativeOverworldAndScaledUnderworldHaveSeparateHeightMappings() {
         assertEquals(0, R196SpawnRules.sourceY(-64, false)); assertEquals(0, R196SpawnRules.sourceY(0, false));
         assertEquals(60, R196SpawnRules.sourceY(60, false)); assertEquals(319, R196SpawnRules.sourceY(319, false));

@@ -39,17 +39,29 @@ public final class R196SpawnRules {
     }
 
     public static int density(int sourceFootY, boolean overworld, boolean day, Moon moon, float strongholdProximity) {
+        return Math.max(referenceDensity(sourceFootY, overworld, day, moon, strongholdProximity),
+                monsterCap(VANILLA_ELIGIBLE_CHUNKS, moon.blood()));
+    }
+
+    /** Source aci crowd gate: strictly more than this population excludes the player's area. */
+    public static int referenceDensity(int sourceFootY, boolean overworld, boolean day, Moon moon, float strongholdProximity) {
         int density = 8;
         if (overworld) {
             density = (int)(8F * (1F + (64 - Math.max(0, sourceFootY)) / 32F));
             int minimum = !day && moon.blood() ? 12 : !day && moon.full() ? 10 : 8;
             density = Math.max(density, minimum);
         }
-        // The old surface floor of8/12 would stop a player's entire spawning area long
-        // before the adapted105/140 global allowance. Retain a crowd guard for multiple
-        // players, but never make it smaller than one full player's population budget.
-        int source = (int)(density + density * Math.clamp(strongholdProximity, 0F, 1F));
-        return Math.max(source, monsterCap(VANILLA_ELIGIBLE_CHUNKS, moon.blood()));
+        return (int)(density + density * Math.clamp(strongholdProximity, 0F, 1F));
+    }
+
+    /** Truncate the area allowance first, then double the independently counted deep band. */
+    public static int referenceMonsterCap(int eligibleChunks, boolean deep) {
+        long cap = 50L * Math.max(0, eligibleChunks) / 256L;
+        return (int)Math.min(Integer.MAX_VALUE, deep ? cap * 2L : cap);
+    }
+
+    public static float referenceHostilePassProbability(boolean deep, float modifier) {
+        return Math.clamp((deep ? .1F : .17F) * modifier, 0F, 1F);
     }
 
     public static int cap(Category category, int eligibleChunks, boolean deep, boolean tournamentAnimals) {

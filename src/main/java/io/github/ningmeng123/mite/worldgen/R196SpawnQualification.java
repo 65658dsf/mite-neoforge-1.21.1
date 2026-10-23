@@ -31,7 +31,7 @@ public final class R196SpawnQualification {
         boolean animal = R196MobSpawning.category(mob) == R196SpawnRules.Category.ANIMAL;
         boolean monster = R196MobSpawning.category(mob) == R196SpawnRules.Category.MONSTER;
         boolean cube = name.equals("ts") || name.equals("tl") || mob instanceof R196Mob r196 && r196.miteKind().family() == MobKind.Family.CUBE;
-        boolean overworldSlime = OverworldSlimeSpawns.applies(level, name);
+        boolean overworldSlime = !R196MobSpawning.referenceSpawning(level) && OverworldSlimeSpawns.applies(level, name);
         if (!level.isUnobstructed(mob)) return false;
         if (name.equals("sc")) {
             if (sourceHeight <= 45 || sourceHeight >= 63 || !onlyWater(access, mob.getBoundingBox().inflate(2))) return false;
@@ -55,7 +55,7 @@ public final class R196SpawnQualification {
         if (bat) {
             if (name.equals("EntityNightwing") && lightCheck && sunlight(mob, access)) return false;
             if (level.dimension().equals(Level.OVERWORLD) && pos.getY() >= 63
-                    && (name.equals("ro") || !BloodMoonInvasion.unlocked(level))) return false;
+                    && (name.equals("ro") || R196MobSpawning.referenceSpawning(level) || !BloodMoonInvasion.unlocked(level))) return false;
             LocalDate date = LocalDate.now(); boolean halloween = date.getMonthValue() == 10 && date.getDayOfMonth() >= 20 || date.getMonthValue() == 11 && date.getDayOfMonth() <= 3;
             if (!halloween && random.nextBoolean()) return false;
             int brightest = access.getMaxLocalRawBrightness(pos);

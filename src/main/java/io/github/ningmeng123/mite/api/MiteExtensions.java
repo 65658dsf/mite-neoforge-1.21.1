@@ -29,6 +29,10 @@ public final class MiteExtensions {
     public interface Policy {
         default LunarCalendar.State calendar(LunarCalendar.State original) { return original; }
         default long bloodMoonCount(long highestDay, long original) { return original; }
+        /** Resolve the synchronized preset without a world, including configuration screens. */
+        default boolean referenceSpawningSettings(boolean original) { return original; }
+        /** Resolve the active natural-spawn preset. Addons may supply their own server-side preset. */
+        default boolean referenceHostileSpawning(ServerLevel level, boolean original) { return referenceSpawningSettings(original); }
         default boolean independentHostileBudgets(ServerLevel level, boolean original) { return original; }
         default int monsterCap(ServerLevel level, boolean deep, int eligibleChunks, int original) { return original; }
         default int localDensity(ServerLevel level, Player player, int original) { return original; }

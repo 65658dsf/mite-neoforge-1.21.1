@@ -115,7 +115,7 @@ public final class OverworldSlimeSpawnGameTests {
 
     @GameTest(template = "empty")
     public static void physicalGroundWallsLeavesAndBothFluidsStillRejectInvalidNaturalHabitats(GameTestHelper helper) {
-        try (Site site = new Site(helper.getLevel(), 270, false)) {
+        try (var preset = new SpawnPreset(false); Site site = new Site(helper.getLevel(), 270, false)) {
             for (MobKind kind : KINDS) {
                 R196Cube cube = cube(site, kind);
                 try {
@@ -248,6 +248,7 @@ public final class OverworldSlimeSpawnGameTests {
     }
 
     private static final class Progress implements AutoCloseable {
+        final SpawnPreset preset = new SpawnPreset(false);
         final ServerLevel level;
         private final BloodMoonInvasionData data;
         private final long time, highestDay;
@@ -258,7 +259,7 @@ public final class OverworldSlimeSpawnGameTests {
             data.restoreProgress(0L); time(0L);
         }
         void time(long value) { level.setDayTime(value); level.updateSkyBrightness(); }
-        @Override public void close() { data.restoreProgress(highestDay); data.setDirty(dirty); time(time); BloodMoonInvasionData.get(level); }
+        @Override public void close() { data.restoreProgress(highestDay); data.setDirty(dirty); time(time); BloodMoonInvasionData.get(level); preset.close(); }
     }
 
     private static final class Site implements AutoCloseable {

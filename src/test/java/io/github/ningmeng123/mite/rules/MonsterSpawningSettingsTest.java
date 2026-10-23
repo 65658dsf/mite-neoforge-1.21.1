@@ -8,6 +8,12 @@ import static io.github.ningmeng123.mite.rules.MonsterSpawningSettings.Option.*;
 
 /** Population, probability and live interval boundaries independent of Minecraft. @author NingMeng123 */
 class MonsterSpawningSettingsTest {
+    @Test void newAndLegacyConfigurationsDefaultToReferenceWithoutLosingCustomNumbers() {
+        assertTrue(MonsterSpawningSettings.DEFAULTS.reference());
+        assertTrue(settings(BASE_CAP, 999D).reference());
+        assertEquals(999D, settings(BASE_CAP, 999D).value(BASE_CAP));
+        assertFalse(settings(REFERENCE_RULES, 0D).reference());
+    }
     @Test void defaultsPreserveExistingPopulationAndPassProbabilities() {
         var settings = MonsterSpawningSettings.DEFAULTS;
         for (int chunks : new int[]{-1, 0, 1, 225, 289, 306, 578, Integer.MAX_VALUE})

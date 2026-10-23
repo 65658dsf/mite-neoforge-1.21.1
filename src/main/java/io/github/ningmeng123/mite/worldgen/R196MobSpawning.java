@@ -91,8 +91,16 @@ public final class R196MobSpawning {
         return new io.github.ningmeng123.mite.api.MiteExtensions.SpawnContext(level, category, deep);
     }
     private static boolean isDeep(Mob mob, ServerLevel level) { return R196SpawnRules.sourceY(mob.getBlockY(), underworld(level)) < 60; }
+    /** Single effective preset resolver shared by scheduling, qualifications and optional addons. */
+    public static boolean referenceSpawning(ServerLevel level) {
+        return extension().referenceHostileSpawning(level, MiteConfig.monsterSpawningSettings().reference());
+    }
+    private static boolean independentBudgets(ServerLevel level) {
+        return extension().independentHostileBudgets(level, referenceSpawning(level));
+    }
     public static int monsterLimit(ServerLevel level, boolean deep, int chunks, boolean blood) {
-        int configured = MiteConfig.monsterSpawningSettings().cap(chunks, blood, BloodMoonInvasion.highestDay(level));
+        int configured = referenceSpawning(level) ? R196SpawnRules.referenceMonsterCap(chunks, deep)
+                : MiteConfig.monsterSpawningSettings().cap(chunks, blood, BloodMoonInvasion.highestDay(level));
         return Math.max(0, extension().monsterCap(level, deep, chunks, configured));
     }
     /** One transaction ledger per tick; passengers debit the height interval they actually occupy. */
@@ -272,8 +280,9 @@ public final class R196MobSpawning {
             var hut = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(BuiltinStructures.SWAMP_HUT);
             if (hut != null && level.structureManager().getStructureWithPieceAt(pos, hut).isValid()) return List.of();
         }
-        return OverworldSlimeSpawns.pool(level, category,
-                BloodMoonInvasion.pool(level, category, Tables.BIOMES.get(biomeId(sourceBiome(level, pos), level)).lists().get(category)));
+        var original = Tables.BIOMES.get(biomeId(sourceBiome(level, pos), level)).lists().get(category);
+        return referenceSpawning(level) ? original
+                : OverworldSlimeSpawns.pool(level, category, BloodMoonInvasion.pool(level, category, original));
     }
     private static List<Entry> pool(ServerLevel level, BlockPos pos, Category category, boolean modernOnly) {
         List<Entry> entries = new ArrayList<>();
@@ -281,6 +290,11 @@ public final class R196MobSpawning {
         var actual = level.getBiome(pos).value().getMobSettings();
         for (MobCategory vanilla : MobCategory.values()) if (category(vanilla) == category)
             for (var value : actual.getMobs(vanilla).unwrap()) if (!sourceType(value.type)) {
+                String namespace = BuiltInRegistries.ENTITY_TYPE.getKey(value.type).getNamespace();
+                // Keep third-party habitat compatibility, while the reference MONSTER pool
+                // uses only authored source identities from Minecraft and MITE themselves.
+                if (category == Category.MONSTER && referenceSpawning(level)
+                        && (namespace.equals("minecraft") || namespace.equals(Mite.MOD_ID))) continue;
                 @SuppressWarnings("unchecked") EntityType<? extends Mob> type = (EntityType<? extends Mob>) value.type;
                 entries.add(new Entry(type, null, category, value.getWeight().asInt(), value.minCount, value.maxCount, 4, true));
             }
@@ -294,11 +308,12 @@ public final class R196MobSpawning {
         for (Player player : level.players()) {
             if (player.isSpectator() || !player.isAlive()) continue;
             if (hostile) {
-                int density = R196SpawnRules.density(R196SpawnRules.sourceY(player.getBlockY(), underworld(level)), level.dimension().equals(Level.OVERWORLD),
-                        day, moon, strongholdProximity(level, player.blockPosition(), state));
-                // Preserve source crowd protection while allowing the live one-player budget to exceed 105/140.
-                density = Math.max(density, MiteConfig.monsterSpawningSettings().cap(
-                        R196SpawnRules.VANILLA_ELIGIBLE_CHUNKS, moon.blood(), BloodMoonInvasion.highestDay(level)));
+                int density = referenceSpawning(level)
+                        ? R196SpawnRules.referenceDensity(R196SpawnRules.sourceY(player.getBlockY(), underworld(level)), level.dimension().equals(Level.OVERWORLD),
+                                day, moon, strongholdProximity(level, player.blockPosition(), state))
+                        : Math.max(R196SpawnRules.density(R196SpawnRules.sourceY(player.getBlockY(), underworld(level)), level.dimension().equals(Level.OVERWORLD),
+                                day, moon, strongholdProximity(level, player.blockPosition(), state)), MiteConfig.monsterSpawningSettings().cap(
+                                R196SpawnRules.VANILLA_ELIGIBLE_CHUNKS, moon.blood(), BloodMoonInvasion.highestDay(level)));
                 density = Math.max(0, extension().localDensity(level, player, density));
                 if (level.getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(32, 8, 32), mob -> category(mob) == Category.MONSTER).size() > density) continue;
             }
@@ -345,19 +360,22 @@ public final class R196MobSpawning {
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
         var step = R196SpawnRules.advanceRate(state.rate, overworld, moon.blood() || level.isThundering(), state.modulation::nextInt); state.rate = step.state();
         var settings = MiteConfig.monsterSpawningSettings();
+        boolean reference = referenceSpawning(level);
         boolean hostile = level.getDifficulty() != Difficulty.PEACEFUL && level.getServer().isSpawningMonsters()
-                && settings.ready(level.getGameTime(), state.lastHostileAttempt);
+                && (reference || settings.ready(level.getGameTime(), state.lastHostileAttempt));
         if (hostile) state.lastHostileAttempt = level.getGameTime();
-        float modifier = overworld ? step.modifier() : (float)settings.value(Option.DIMENSION_CHANCE_MULTIPLIER);
-        boolean low = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, true, settings.probability(true, modifier, moon.blood())),0F,1F);
-        boolean high = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, false, settings.probability(false, modifier, moon.blood())),0F,1F);
+        float modifier = overworld ? step.modifier() : reference ? .25F : (float)settings.value(Option.DIMENSION_CHANCE_MULTIPLIER);
+        boolean low = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, true, reference
+                ? R196SpawnRules.referenceHostilePassProbability(true, modifier) : settings.probability(true, modifier, moon.blood())),0F,1F);
+        boolean high = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, false, reference
+                ? R196SpawnRules.referenceHostilePassProbability(false, modifier) : settings.probability(false, modifier, moon.blood())),0F,1F);
         boolean periodic = Math.floorMod(level.getGameTime(), 400) == 0;
         if (low || high) {
             Map<Long, Boolean> chunks = eligibleChunks(level, true);
             // Both height passes spend one dimension-wide allowance. Carry successful
             // additions explicitly because newly added hidden sections may not yet be
             // visible through getAllEntities during this same native server tick.
-            if (extension().independentHostileBudgets(level, false)) {
+            if (independentBudgets(level)) {
                 SpawnBudget budget = new SpawnBudget(monsterLimit(level,true,chunks.size(),moon.blood())-count(level,Category.MONSTER,true),
                         monsterLimit(level,false,chunks.size(),moon.blood())-count(level,Category.MONSTER,false));
                 if (low && budget.deep>0) spawnPass(level,Category.MONSTER,true,chunks,false,Integer.MAX_VALUE,budget);
@@ -386,7 +404,7 @@ public final class R196MobSpawning {
     }
     private static int spawnPass(ServerLevel level, Category category, Boolean deep, Map<Long, Boolean> chunks, boolean modernOnly, int allowance) {
         SpawnBudget budget = null;
-        if (category==Category.MONSTER && extension().independentHostileBudgets(level,false)) {
+        if (category==Category.MONSTER && independentBudgets(level)) {
             boolean blood=R196SpawnRules.moon(level.getDayTime(),level.dimension().equals(Level.OVERWORLD)).blood();
             budget=new SpawnBudget(monsterLimit(level,true,chunks.size(),blood)-count(level,category,true),monsterLimit(level,false,chunks.size(),blood)-count(level,category,false));
         }
@@ -535,14 +553,15 @@ public final class R196MobSpawning {
         int sourceY = R196SpawnRules.sourceY(pos.getY(), underworld(level));
         boolean overworld = level.dimension().equals(Level.OVERWORLD), day = R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000));
         var moon = R196SpawnRules.moon(level.getDayTime(), overworld);
-        boolean invasion = BloodMoonInvasion.unlocked(level);
+        boolean reference = referenceSpawning(level);
+        boolean invasion = !reference && BloodMoonInvasion.unlocked(level);
         for (int attempt = 0; attempt < 16; attempt++) {
             Entry entry = ConfiguredMonsterSpawns.choose(level, pos, category, entries, random, finalizationTransforms);
             if (entry == null) return null;
             if (entry.modern()) return entry;
             String name = entry.sourceClass();
-            if (OverworldSlimeSpawns.applies(level, name)) return entry;
-            if (!BloodMoonInvasionRules.depthAllows(name, sourceY, overworld, moon.blood(), surface.value().getBaseTemperature() <= .15F,
+            if (!reference && OverworldSlimeSpawns.applies(level, name)) return entry;
+            if (!BloodMoonInvasionRules.depthAllows(name, sourceY, overworld, moon.blood() && (!reference || !day), surface.value().getBaseTemperature() <= .15F,
                     biomeId(surface, level) == 2, invasion)) continue;
             boolean stoneAbove = firstAbove(level, pos).is(Blocks.STONE) || firstAbove(level, pos).is(Blocks.DEEPSLATE);
             if (name.equals("tf")) {
@@ -577,7 +596,7 @@ public final class R196MobSpawning {
     }
     /** The source natural pass chooses each member's rare identity before native placement checks. */
     public static Entry substituteNatural(ServerLevel level, Entry selected, RandomSource random) {
-        if ("EntityVampireBat".equals(selected.sourceClass()) && (underworld(level) || BloodMoonInvasion.unlocked(level))
+        if ("EntityVampireBat".equals(selected.sourceClass()) && (underworld(level) || !referenceSpawning(level) && BloodMoonInvasion.unlocked(level))
                 && ConfiguredMonsterSpawns.replacement(random, 1D / 6D, selected.type(), MiteMobs.type(MobKind.GIANT_VAMPIRE_BAT),
                         () -> random.nextInt(6) == 0)) return custom(MobKind.GIANT_VAMPIRE_BAT, selected);
         if ("EntityLongdead".equals(selected.sourceClass())
@@ -658,7 +677,7 @@ public final class R196MobSpawning {
     public static boolean naturalDaylightAllows(Mob mob, ServerLevel level) {
         if (!level.dimension().equals(Level.OVERWORLD) || !mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD)) return true;
         return !R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000L))
-                || R196SpawnRules.moon(level.getDayTime(), true).blood()
+                || !referenceSpawning(level) && R196SpawnRules.moon(level.getDayTime(), true).blood()
                 || !R196OutdoorChecks.surface(level, mob.blockPosition());
     }
     private static boolean undead(String name) {
