@@ -293,12 +293,12 @@ public final class AnimalHerdEscapeGameTests {
             R196AnimalAi032.rememberAttacker(cow, f.player);
             var goal = new AnimalCommon032Goals.Flee(cow, 1.6F, 0F);
             goal.startPanicking(); goal.start(); goal.tick(); cow.getNavigation().tick();
-            h.assertTrue(Math.abs(cow.getMoveControl().getSpeedModifier() - 1.53D) < .0001D,
-                    "Native navigation receives 85% of the original speed including the panic boost");
+            h.assertTrue(Math.abs(cow.getMoveControl().getSpeedModifier() - 1.62D) < .0001D,
+                    "Native navigation receives 90% of the original speed including the panic boost");
             R196AnimalAi032.state(cow).putInt("panic_countdown", 0);
             goal.tick(); cow.getNavigation().tick();
-            h.assertTrue(Math.abs(cow.getMoveControl().getSpeedModifier() - 1.36D) < .0001D,
-                    "Panic expiring immediately restores 85% of the original normal flee speed");
+            h.assertTrue(Math.abs(cow.getMoveControl().getSpeedModifier() - 1.44D) < .0001D,
+                    "Panic expiring immediately restores 90% of the original normal flee speed");
             goal.stop();
             // A sealed three-high cell guarantees that neither dry nor swimming path attempts can leave.
             for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) if (x != 0 || z != 0)
