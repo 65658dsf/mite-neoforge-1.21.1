@@ -674,12 +674,18 @@ public final class R196MobSpawning {
         return event.getResult() == MobSpawnEvent.PositionCheck.Result.SUCCEED || event.getResult() == MobSpawnEvent.PositionCheck.Result.DEFAULT
                 && R196SpawnQualification.qualifies(mob, accessor, light, reason == MobSpawnType.SPAWNER);
     }
-    /** Only the current blood date releases surface undead; underground habitats keep their own spawn checks. */
+    /** New natural hostiles cannot appear on the daytime surface or in connected shallow cave mouths. */
     public static boolean naturalDaylightAllows(Mob mob, ServerLevel level) {
-        if (!level.dimension().equals(Level.OVERWORLD) || !mob.getType().is(DAYLIGHT_RESTRICTED_UNDEAD)) return true;
+        if (!level.dimension().equals(Level.OVERWORLD) || !daylightHostile(mob)) return true;
         return !R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000L))
-                || !referenceSpawning(level) && R196SpawnRules.moon(level.getDayTime(), true).blood()
-                || !R196OutdoorChecks.surface(level, mob.blockPosition());
+                || !R196OutdoorChecks.daytimeSurfaceHabitat(level, mob.blockPosition());
+    }
+    private static boolean daylightHostile(Mob mob) {
+        if (mob.getType().getCategory() == MobCategory.MONSTER) return true;
+        // These source enemies intentionally occupy animal/ambient budgets.
+        return mob instanceof R196Mob source && (source.miteKind() == MobKind.DIRE_WOLF
+                || source.miteKind() == MobKind.VAMPIRE_BAT || source.miteKind() == MobKind.GIANT_VAMPIRE_BAT
+                || source.miteKind() == MobKind.NIGHTWING);
     }
     private static boolean undead(String name) {
         return name != null && (name.equals("tw") || name.equals("tr") || name.equals("tn") || name.equals("EntityGhoul") || name.equals("EntityWight")

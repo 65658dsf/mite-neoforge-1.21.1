@@ -121,7 +121,7 @@ public final class ConfiguredMonsterSpawns {
     }
 
     private static void naturalJoin(EntityJoinLevelEvent event) {
-        if (event.isCanceled() || !(event.getLevel() instanceof ServerLevel)
+        if (event.isCanceled() || !(event.getLevel() instanceof ServerLevel level)
                 || !(event.getEntity() instanceof Mob mob) || mob.getSpawnType() != MobSpawnType.NATURAL) return;
         if (event.loadedFromDisk() || mob.getPersistentData().getBoolean(ADMITTED)) {
             // NeoForge persists NATURAL as the mob's original reason. It is also restored on a
@@ -130,7 +130,7 @@ public final class ConfiguredMonsterSpawns {
             return;
         }
         // Check the final identity here; a disabled parent must not block its enabled replacement before finalization.
-        if (multiplier(mob.getType()) == 0D) {
+        if (multiplier(mob.getType()) == 0D || !R196MobSpawning.naturalDaylightAllows(mob, level)) {
             event.setCanceled(true);
         } else {
             mob.getPersistentData().putBoolean(ADMITTED, true);

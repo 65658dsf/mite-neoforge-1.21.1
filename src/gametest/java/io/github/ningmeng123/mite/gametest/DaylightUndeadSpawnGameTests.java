@@ -39,7 +39,7 @@ import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Current blood dates alone relax the shared outdoor undead daylight gate. @author NingMeng123 */
+/** Daytime surface habitats reject all natural hostiles, including shaded cave entrances. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class DaylightUndeadSpawnGameTests {
@@ -50,7 +50,7 @@ public final class DaylightUndeadSpawnGameTests {
     private DaylightUndeadSpawnGameTests() {}
 
     @GameTest(template = "empty")
-    public static void sourceAndModernUndeadShareTheCurrentBloodDateDaylightRestriction(GameTestHelper helper) {
+    public static void sourceAndModernHostilesShareTheDaylightRestriction(GameTestHelper helper) {
         try (Progress progress = new Progress(helper.getLevel()); Site site = new Site(helper.getLevel(), false)) {
             List<Mob> undead = new ArrayList<>();
             for (EntityType<? extends Mob> type : List.of(EntityType.ZOMBIE, EntityType.SKELETON,
@@ -74,12 +74,12 @@ public final class DaylightUndeadSpawnGameTests {
             helper.assertTrue(R196OutdoorChecks.outdoors(site.level, site.pos), "The shared habitat is genuinely outdoors");
             for (long time : List.of(6_000L, BLOOD_DAY + 6_000L, 18_000L)) {
                 progress.time(time);
-                boolean allowed = time != 6_000L;
+                boolean allowed = time == 18_000L;
                 for (Mob mob : undead)
                     helper.assertTrue(R196MobSpawning.naturalDaylightAllows(mob, site.level) == allowed,
                             "The actual time controls outdoor eligibility for " + mob.getType() + " at " + time);
-                helper.assertTrue(R196MobSpawning.naturalDaylightAllows(spider, site.level),
-                        "The undead restriction does not reject an ordinary spider at " + time);
+                helper.assertTrue(R196MobSpawning.naturalDaylightAllows(spider, site.level) == allowed,
+                        "The surface daylight restriction also covers ordinary spiders at " + time);
             }
         }
         helper.succeed();
@@ -90,7 +90,7 @@ public final class DaylightUndeadSpawnGameTests {
         try (Progress progress = new Progress(helper.getLevel()); Site site = new Site(helper.getLevel(), false)) {
             Mob zombie = site.mob(EntityType.ZOMBIE);
             progress.time(BLOOD_DAY + 6_000L);
-            helper.assertTrue(R196MobSpawning.naturalDaylightAllows(zombie, site.level), "Actual blood-date daylight is eligible");
+            helper.assertFalse(R196MobSpawning.naturalDaylightAllows(zombie, site.level), "A blood date does not release the daytime surface restriction");
             progress.time(32L * 24_000L + 6_000L);
             helper.assertFalse(R196MobSpawning.naturalDaylightAllows(zombie, site.level), "The next ordinary date immediately loses the exception");
             progress.time(96L * 24_000L + 6_000L);
@@ -102,7 +102,7 @@ public final class DaylightUndeadSpawnGameTests {
             helper.assertTrue(BloodMoonInvasion.unlocked(site.level), "Permanent progression survives the actual time rollback");
             helper.assertFalse(R196MobSpawning.naturalDaylightAllows(zombie, site.level), "Time rollback still uses the current ordinary date");
             progress.time(BLOOD_DAY + 6_000L);
-            helper.assertTrue(R196MobSpawning.naturalDaylightAllows(zombie, site.level), "Rolling back onto a blood date restores its current-date exception");
+            helper.assertFalse(R196MobSpawning.naturalDaylightAllows(zombie, site.level), "Rolling back onto a blood date still preserves the daytime surface restriction");
         }
         helper.succeed();
     }
@@ -152,12 +152,12 @@ public final class DaylightUndeadSpawnGameTests {
                             "Other spawn reasons retain their existing position-event contract: " + reason);
                 helper.assertValueEqual(checks.get(), 2, "Each unaffected reason still dispatches its original event");
                 progress.time(BLOOD_DAY + 6_000L);
-                helper.assertTrue(R196MobSpawning.qualifiesWithEvent(zombie, site.level, MobSpawnType.NATURAL, false, false),
-                        "Actual blood-date daylight reaches the original natural position event");
+                helper.assertFalse(R196MobSpawning.qualifiesWithEvent(zombie, site.level, MobSpawnType.NATURAL, false, false),
+                        "A blood date cannot bypass the daytime surface restriction through a position override");
                 progress.time(18_000L);
                 helper.assertTrue(R196MobSpawning.qualifiesWithEvent(zombie, site.level, MobSpawnType.NATURAL, false, false),
                         "Ordinary nighttime also reaches the original natural position event");
-                helper.assertValueEqual(checks.get(), 4, "Eligible natural checks retain their original event calls");
+                helper.assertValueEqual(checks.get(), 3, "Only the eligible nighttime natural check dispatches its original event");
             } finally { NeoForge.EVENT_BUS.unregister(allow); }
         }
         helper.succeed();
@@ -184,8 +184,8 @@ public final class DaylightUndeadSpawnGameTests {
                 helper.assertFalse(R196MobSpawning.naturalDaylightAllows(bogged, site.level),
                         "A branch cannot reopen ordinary daytime spawning");
                 progress.time(BLOOD_DAY + 6_000L);
-                helper.assertTrue(R196MobSpawning.naturalDaylightAllows(bogged, site.level),
-                        "The actual blood date releases the surface gate under both branches and leaves");
+                helper.assertFalse(R196MobSpawning.naturalDaylightAllows(bogged, site.level),
+                        "Blood-date daylight keeps the surface gate under both branches and leaves");
             }
         }
         helper.succeed();
@@ -202,17 +202,17 @@ public final class DaylightUndeadSpawnGameTests {
             helper.assertFalse(R196MobSpawning.naturalDaylightAllows(bogged, site.level),
                     "Ordinary daytime still applies the surface gate beneath water");
             progress.time(BLOOD_DAY + 6_000L);
-            helper.assertTrue(R196MobSpawning.naturalDaylightAllows(bogged, site.level),
-                    "Blood daylight releases only this gate; native bogged water-spawn qualification remains separate");
+            helper.assertFalse(R196MobSpawning.naturalDaylightAllows(bogged, site.level),
+                    "Blood daylight also keeps the surface gate beneath water");
         }
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void stoneRoofKeepsTheLowerCaveEligibleBesideAnEntranceAtBothElevations(GameTestHelper helper) {
+    public static void stoneRoofCannotHideTheLowerSurfaceCaveBesideAnEntranceAtBothElevations(GameTestHelper helper) {
         try (Progress progress = new Progress(helper.getLevel())) {
             progress.time(6_000L);
-            for (int height : List.of(40, 280)) try (Site site = new Site(helper.getLevel(), false, height)) {
+            for (int height : List.of(74, 200)) try (Site site = new Site(helper.getLevel(), false, height)) {
                 site.fill(site.pos.offset(-4, 3, -4), site.pos.offset(1, 3, 4), Blocks.STONE.defaultBlockState());
                 site.openColumn(site.pos.east(2));
                 Mob lower = site.mob(EntityType.BOGGED), upper = site.mob(EntityType.BOGGED);
@@ -221,8 +221,10 @@ public final class DaylightUndeadSpawnGameTests {
                         "The old short-path search can reach the nearby cave entrance at Y=" + height);
                 helper.assertFalse(R196OutdoorChecks.surface(site.level, lower.blockPosition()),
                         "The real stone ceiling keeps the lower point underground despite the nearby entrance");
-                helper.assertTrue(R196MobSpawning.naturalDaylightAllows(lower, site.level),
-                        "Ordinary daytime preserves underground eligibility at Y=" + height);
+                helper.assertTrue(R196OutdoorChecks.daytimeSurfaceHabitat(site.level, lower.blockPosition()),
+                        "A side entrance keeps this shaded rock-roof cavity in the surface habitat at Y=" + height);
+                helper.assertFalse(R196MobSpawning.naturalDaylightAllows(lower, site.level),
+                        "Ordinary daytime forbids natural spawning in the exposed surface cave at Y=" + height);
                 helper.assertTrue(R196OutdoorChecks.surface(site.level, upper.blockPosition()),
                         "The upper point in the same X/Z column stands on the terrain's surface");
                 helper.assertFalse(R196MobSpawning.naturalDaylightAllows(upper, site.level),
@@ -295,7 +297,7 @@ public final class DaylightUndeadSpawnGameTests {
         }).thenSucceed();
     }
 
-    private static final class Progress implements AutoCloseable {
+    static final class Progress implements AutoCloseable {
         final SpawnPreset preset = new SpawnPreset(false);
         final ServerLevel level;
         final BloodMoonInvasionData data;
@@ -317,7 +319,7 @@ public final class DaylightUndeadSpawnGameTests {
         }
     }
 
-    private static final class Site implements AutoCloseable {
+    static final class Site implements AutoCloseable {
         final ServerLevel level;
         final BlockPos pos;
         final Map<BlockPos, BlockState> previous = new LinkedHashMap<>();

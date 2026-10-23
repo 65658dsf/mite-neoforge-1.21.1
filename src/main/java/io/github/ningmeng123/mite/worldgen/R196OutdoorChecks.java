@@ -1,12 +1,21 @@
 package io.github.ningmeng123.mite.worldgen;
 
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 /** Source abw.isOutdoors follows short passable paths to an open column, including two head levels. @author NingMeng123 */
 public final class R196OutdoorChecks {
+    private static final int SURFACE_CAVE_PATH = 12;
+    private static final int SURFACE_CAVE_VERTICAL_RANGE = 3;
+    private static final Direction[] SURFACE_CAVE_DIRECTIONS = Direction.values();
     private R196OutdoorChecks() {}
     public static boolean openSky(ServerLevel level, BlockPos pos) {
         if (!level.dimensionType().hasSkyLight()) return false;
@@ -25,6 +34,56 @@ public final class R196OutdoorChecks {
             if (block.getLightBlock(level, above) > 0) return false;
         }
         return true;
+    }
+    /**
+     * Daylight also protects shallow cave mouths reached through a short air path.
+     * This is independent of local light and absolute altitude; walls and long tunnels
+     * keep underground habitats separate. All reads stay within already loaded chunks.
+     */
+    public static boolean daytimeSurfaceHabitat(ServerLevel level, BlockPos origin) {
+        if (!level.dimensionType().hasSkyLight() || !level.hasChunkAt(origin)
+                || level.isOutsideBuildHeight(origin)) return false;
+        int lowestY = Math.max(level.getMinBuildHeight(), origin.getY() - SURFACE_CAVE_VERTICAL_RANGE);
+        // Cache only this search: construction and excavation must take effect immediately.
+        Map<Long, Integer> opaqueColumns = new HashMap<>();
+        if (surfaceColumn(level, origin, lowestY, opaqueColumns)) return true;
+        if (!cavePassable(level, origin)) return false;
+        record Step(BlockPos pos, int distance) {}
+        ArrayDeque<Step> pending = new ArrayDeque<>();
+        Set<Long> visited = new HashSet<>();
+        pending.add(new Step(origin.immutable(), 0));
+        visited.add(origin.asLong());
+        while (!pending.isEmpty()) {
+            Step step = pending.removeFirst();
+            if (step.distance() >= SURFACE_CAVE_PATH) continue;
+            for (Direction direction : SURFACE_CAVE_DIRECTIONS) {
+                BlockPos next = step.pos().relative(direction);
+                if (Math.abs(next.getY() - origin.getY()) > SURFACE_CAVE_VERTICAL_RANGE
+                        || level.isOutsideBuildHeight(next) || !visited.add(next.asLong())
+                        || !level.hasChunkAt(next) || !cavePassable(level, next)) continue;
+                if (surfaceColumn(level, next, lowestY, opaqueColumns)) return true;
+                pending.addLast(new Step(next, step.distance() + 1));
+            }
+        }
+        return false;
+    }
+    private static boolean surfaceColumn(ServerLevel level, BlockPos pos, int lowestY, Map<Long, Integer> opaqueColumns) {
+        long column = (long)pos.getX() << 32 | pos.getZ() & 0xffffffffL;
+        int opaqueY = opaqueColumns.computeIfAbsent(column, ignored -> {
+            int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ());
+            BlockPos.MutableBlockPos above = new BlockPos.MutableBlockPos(pos.getX(), top - 1, pos.getZ());
+            for (; above.getY() >= lowestY; above.move(0, -1, 0)) {
+                var state = level.getBlockState(above);
+                if (!state.is(BlockTags.LEAVES) && !state.is(BlockTags.LOGS) && !state.liquid()
+                        && state.getLightBlock(level, above) > 0) return above.getY();
+            }
+            return Integer.MIN_VALUE;
+        });
+        return pos.getY() > opaqueY;
+    }
+    private static boolean cavePassable(ServerLevel level, BlockPos pos) {
+        var state = level.getBlockState(pos);
+        return state.getFluidState().isEmpty() && !state.blocksMotion();
     }
     public static boolean outdoors(ServerLevel level, BlockPos pos) {
         if (!level.dimensionType().hasSkyLight()) return false;

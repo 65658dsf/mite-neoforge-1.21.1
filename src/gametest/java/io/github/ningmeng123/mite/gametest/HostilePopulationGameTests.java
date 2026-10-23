@@ -258,7 +258,7 @@ public final class HostilePopulationGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 240)
-    public static void ordinaryDayRollsBackTheFinalizedUndeadRiderButBloodDayAdmitsTheSameJockey(GameTestHelper helper) {
+    public static void ordinaryAndBloodDayBothRejectTheFinalizedOutdoorJockey(GameTestHelper helper) {
         ready(helper, arena -> savedProgress(arena, () -> {
             helper.assertTrue(R196OutdoorChecks.outdoors(arena.level, arena.position), "The jockey fixture is actually outdoors");
             for (boolean blood : List.of(false, true)) {
@@ -268,12 +268,13 @@ public final class HostilePopulationGameTests {
                 try (var trace = new RiderTrace(spider, false, false)) {
                     arena.level.getRandom().setSeed(jockeySeed());
                     var result = R196MobSpawning.finalizeNaturalMonster(arena.level, spider, null, 2);
-                    helper.assertValueEqual(trace.riderJoins(), 1, "Source finalization really creates the otherwise unchecked skeleton rider");
-                    helper.assertValueEqual(result.monsters(), blood ? 2 : 0, "Only the current blood date admits the outdoor daylight jockey");
-                    helper.assertValueEqual(R196MobSpawning.count(arena.level, Category.MONSTER, null), before + (blood ? 2 : 0),
-                            "A rejected daylight tree leaves no orphan undead in the real population");
-                    if (!blood) helper.assertTrue(spider.isRemoved() && trace.acceptedRiders().stream().allMatch(Mob::isRemoved),
-                            "Ordinary daylight removes both the parent and its pre-added undead rider");
+                    helper.assertValueEqual(trace.candidates.size(), 1, "Source finalization really constructs its skeleton rider before natural admission");
+                    helper.assertValueEqual(trace.riderJoins(), 0, "The shared daylight join gate rejects the otherwise unchecked natural skeleton rider");
+                    helper.assertValueEqual(result.monsters(), 0, "Ordinary and blood dates both reject the outdoor daylight jockey");
+                    helper.assertValueEqual(R196MobSpawning.count(arena.level, Category.MONSTER, null), before,
+                            "A rejected daylight tree leaves no orphan hostile in the real population");
+                    helper.assertTrue(spider.isRemoved() && trace.candidates.stream().allMatch(Mob::isRemoved),
+                            "Daylight removes the parent and never leaves the constructed rider in the world");
                 }
             }
         }));

@@ -312,14 +312,22 @@ public final class MonsterSpawnRuntimeGameTests {
         private final List<? extends String> originalWeights = List.copyOf(MiteConfig.NATURAL_SPAWN_WEIGHTS.get());
         private final MiteConfig.Snapshot remote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot()
                 ? null : MiteConfig.effectiveSnapshot();
+        private final ServerLevel level;
+        private final long time;
         private final OptionalIte ite;
         private Settings(GameTestHelper helper) {
+            level = helper.getLevel();
+            time = level.getDayTime();
             MiteConfig.clearServerSnapshot();
             // Synchronous cross-dimension chunk creation can pump queued server reload work.
             // Finish the real source-pool column before publishing this test's rate revision.
             var underworld = helper.getLevel().getServer().getLevel(MiteWorldDimensions.UNDERWORLD);
             if (underworld != null) underworld.getChunk(0, 0);
             ite = OptionalIte.create(helper);
+            // Rate and admission tests need a legal natural-spawn control, independent of daylight.
+            long fixtureTime = level.getDayTime();
+            level.setDayTime(fixtureTime - Math.floorMod(fixtureTime, 24000L) + 18000L);
+            level.updateSkyBrightness();
             MiteConfig.NATURAL_SPAWN_WEIGHTS.set(List.of()); MiteConfig.refreshEnchantmentRules();
         }
         private void rates(List<String> rates) {
@@ -339,6 +347,8 @@ public final class MonsterSpawnRuntimeGameTests {
             MiteConfig.clearServerSnapshot();
             if (remote != null) MiteConfig.receiveServerSnapshot(remote);
             if (ite != null) ite.close();
+            level.setDayTime(time);
+            level.updateSkyBrightness();
         }
     }
 
@@ -373,7 +383,8 @@ public final class MonsterSpawnRuntimeGameTests {
             time = level.getServer().overworld().getDayTime();
             var history = BloodMoonInvasionData.get(level); highest = history.highestDay(); dirty = history.isDirty();
             grace = (boolean) call(world, "graceEnded", new Class<?>[]{ServerLevel.class}, level);
-            level.getServer().overworld().setDayTime(32L * 24000L + 1000L);
+            level.getServer().overworld().setDayTime(32L * 24000L + 18000L);
+            level.getServer().overworld().updateSkyBrightness();
             history.restoreProgress(33L);
             call(world, "restoreGraceEnded", new Class<?>[]{ServerLevel.class, boolean.class}, level, true);
             call(config, "clearServerSnapshot", new Class<?>[0]);
@@ -405,6 +416,7 @@ public final class MonsterSpawnRuntimeGameTests {
             call(config, "clearServerSnapshot", new Class<?>[0]);
             if (remote != null) call(config, "receiveServerSnapshot", new Class<?>[]{Map.class}, remote);
             level.getServer().overworld().setDayTime(time);
+            level.getServer().overworld().updateSkyBrightness();
             var history = BloodMoonInvasionData.get(level); history.restoreProgress(highest); history.setDirty(dirty);
             call(world, "restoreGraceEnded", new Class<?>[]{ServerLevel.class, boolean.class}, level, grace);
         }
