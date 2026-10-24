@@ -56,7 +56,7 @@ public final class SimplySwordsHandling {
         boolean twoHanded = twoHanded(stack);
         event.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID,
                 SimplySwordsCompat.damageBonus(stack), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
-        // Compensate exactly the existing 20% handler, including live Better Combat preset overrides.
+        // The base family rate stays unchanged; this is the sole two-handed20% speed multiplier.
         event.addModifier(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID,
                 SimplySwordsCompat.baseAttackSpeedBonus(stack, twoHanded), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
         if (twoHanded) event.addModifier(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED,

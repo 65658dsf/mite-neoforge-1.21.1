@@ -19,7 +19,7 @@ public final class SimplySwordsBalanceRules {
             new Profile("rapier", .8D, 1.8D, 1.5D, 1.8D, .15D, 0D, 2.2D, -1F, false),
             new Profile("katana", .95D, 1.55D, 1.3D, 1.7D, .15D, 0D, 2D, 0F, true),
             new Profile("sai", .65D, 1.8D, 1.5D, 1.8D, .15D, 0D, 2.5D, -3F, false),
-            new Profile("spear", .7D, 1.2D, 1D, 1.3D, .15D, .05D, 1.3D, 0F, false),
+            new Profile("spear", .7D, 1D, .85D, 1.1D, .15D, .05D, 1.3D, 0F, false),
             new Profile("glaive", .75D, 1D, .85D, 1.1D, .15D, .05D, 1.4D, 0F, true),
             new Profile("warglaive", .85D, 1.45D, 1.2D, 1.6D, .15D, .05D, 1.8D, 0F, false),
             new Profile("cutlass", .9D, 1.65D, 1.4D, 1.8D, .15D, 0D, 2D, 0F, false),
@@ -72,7 +72,8 @@ public final class SimplySwordsBalanceRules {
                 profile.minimumAttacksPerSecond(), profile.maximumAttacksPerSecond());
     }
     public static double baseAttackSpeedBonus(String family, double configuredRate, boolean twoHanded) {
-        return attackRate(family, configuredRate) / (twoHanded ? TWO_HANDED_ATTACK_SPEED_FACTOR : 1D) - 4D;
+        // Handedness applies once in the live handling modifier; base stats must not cancel it in advance.
+        return attackRate(family, configuredRate) - 4D;
     }
     public static double movementPenalty(String family, boolean twoHanded) {
         Profile profile = profile(family);

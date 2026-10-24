@@ -35,7 +35,7 @@ public final class SimplySwordsBalanceGameTests {
     public static void actualMaterialVariantsHaveIndependentDamageAndSpeedTargets(GameTestHelper h) {
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
         var expected=Map.of("longsword",7.2D,"spear",5.04D,"glaive",5.4D,"halberd",6.12D,"greathammer",7.92D);
-        var rates=Map.of("longsword",1.5D,"spear",1.2D,"glaive",1D,"halberd",.9D,"greathammer",.7D);
+        var rates=Map.of("longsword",1.5D,"spear",1D,"glaive",.8D,"halberd",.72D,"greathammer",.56D);
         for (var entry:expected.entrySet()) {
             var stack=new ItemStack(SimplySwordsCompat.weapon("ancient_metal",entry.getKey()));
             close(h, damage(stack), entry.getValue(), "The real nine-point ancient-metal material has its reviewed "+entry.getKey()+" damage");
@@ -60,7 +60,11 @@ public final class SimplySwordsBalanceGameTests {
             if (definition==null) continue;
             if (definition.added()) added++;
             h.assertTrue(Double.isFinite(damage(stack))&&damage(stack)>0D&&damage(stack)<65D,"Every native/unique/added registered family has finite bounded base damage: "+BuiltInRegistries.ITEM.getKey(item));
-            h.assertTrue(rate(stack)>=.64999D&&rate(stack)<=1.80001D,"Every native/unique/added registered family has a bounded effective base attack rate");
+            var speedProfile=io.github.ningmeng123.mite.rules.SimplySwordsBalanceRules.profile(definition.family());
+            double handling=SimplySwordsHandling.twoHanded(stack)?.8D:1D;
+            h.assertTrue(rate(stack)>=speedProfile.minimumAttacksPerSecond()*handling-.00001D
+                    &&rate(stack)<=speedProfile.maximumAttacksPerSecond()*handling+.00001D,
+                    "Every native/unique/added family keeps its bounded rate after exactly one real handedness cost");
             h.assertTrue(SimplySwordsHandling.movementPenalty(stack)>=0D&&SimplySwordsHandling.movementPenalty(stack)<=.25D,"Player-only movement weight stays within its reviewed quarter-speed maximum");
             h.assertFalse(stack.getAttributeModifiers().modifiers().stream().anyMatch(modifier->modifier.attribute().equals(Attributes.MOVEMENT_SPEED)
                     &&modifier.modifier().id().toString().equals("mite:simplyswords_two_handed_movement_speed")),"No registered weapon still supplies the removed item movement penalty");
@@ -89,7 +93,7 @@ public final class SimplySwordsBalanceGameTests {
         stack=ItemStack.parse(h.getLevel().registryAccess(),saved).orElseThrow();
         for (int query=0;query<8;query++) {
             close(h,damage(stack),9.92D,"Old 999 damage becomes reviewed 7.92 base plus the existing separate two-point affix");
-            close(h,rate(stack),.7D,"Old fast-heavy components cannot bypass the reviewed .7 attacks per second");
+            close(h,rate(stack),.56D,"Old fast-heavy components cannot bypass the heavy .7 family rate and its one20% handling cost");
             h.assertTrue(stack.getAttributeModifiers().modifiers().stream().anyMatch(entry->entry.modifier().id().equals(extra)&&entry.modifier().amount()==2D),"Separate affix IDs and amounts remain intact");
             h.assertFalse(stack.getAttributeModifiers().modifiers().stream().anyMatch(entry->entry.modifier().id().toString().equals("mite:simplyswords_two_handed_movement_speed")),"Old item-based movement components are excluded from effective attributes");
             for (var base:java.util.List.of(Item.BASE_ATTACK_DAMAGE_ID,Item.BASE_ATTACK_SPEED_ID,ResourceLocation.parse("mite:simplyswords_two_handed_attack_speed")))

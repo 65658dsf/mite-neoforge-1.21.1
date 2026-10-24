@@ -158,6 +158,44 @@ public final class SimplySwordsHandlingGameTests {
     }
 
     @GameTest(template = "empty", batch = "simplyswords_handling")
+    public static void spearsAndEveryTwoHandedFamilyPayActualPlayerRecoveryAndMainHandWeight(GameTestHelper h) {
+        if (absent(h)) return;
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        player.setNoGravity(true);
+        player.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(1.5D, 2D, 1.5D)));
+        player.tick();
+        double movement = player.getAttributeValue(Attributes.MOVEMENT_SPEED);
+        try {
+            for (String material : List.of("copper", "silver", "iron", "vibranium")) {
+                var spear = new ItemStack(SimplySwordsCompat.weapon(material, "spear"));
+                player.setItemSlot(EquipmentSlot.MAINHAND, spear); player.tick();
+                check(h, player.getAttributeValue(Attributes.ATTACK_SPEED), 1D, "A real equipped " + material + " spear attacks once per second");
+                check(h, player.getCurrentItemAttackStrengthDelay(), 20D, "The spear's actual vanilla recovery is twenty ticks");
+                check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement * .95D, "The spear retains its existing main-hand reach weight");
+            }
+            String[] families = {"twinblade", "katana", "glaive", "claymore", "greataxe", "greathammer", "scythe", "halberd"};
+            double[] rates = {1.2D, 1.24D, .8D, .76D, .64D, .56D, .8D, .72D};
+            double[] weights = {.15D, .15D, .15D, .2D, .22D, .25D, .15D, .2D};
+            for (int index = 0; index < families.length; index++) {
+                var weapon = new ItemStack(SimplySwordsCompat.weapon("copper", families[index]));
+                player.setItemSlot(EquipmentSlot.MAINHAND, weapon); player.tick();
+                check(h, player.getAttributeValue(Attributes.ATTACK_SPEED), rates[index], "The actual " + families[index] + " rate includes exactly one20% cost");
+                check(h, player.getCurrentItemAttackStrengthDelay(), 20D / rates[index], "The actual player's recovery follows the final two-handed rate");
+                check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement * (1D - weights[index]), "The existing " + families[index] + " movement weight is preserved");
+                for (int tick = 0; tick < 8; tick++) player.tick();
+                check(h, player.getAttributeValue(Attributes.ATTACK_SPEED), rates[index], "Repeated equipment queries never compound the two-handed attack cost");
+                check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement * (1D - weights[index]), "Repeated ticks never compound the main-hand movement cost");
+                player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                player.setItemSlot(EquipmentSlot.OFFHAND, weapon); player.tick();
+                check(h, player.getAttributeValue(Attributes.ATTACK_SPEED), 4D, "Offhand-only heavy equipment restores normal attack recovery");
+                check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement, "Offhand-only heavy equipment restores full movement");
+                player.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY); player.tick();
+            }
+        } finally { player.discard(); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "simplyswords_handling")
     public static void installedBetterCombatRegistryAndPresetOverridesControlRealMobCooldown(GameTestHelper h) throws ReflectiveOperationException {
         if (absent(h)) return;
         if (BetterCombatBridge.enabled()) Loaded.checkRegistryAndCooldown(h);
@@ -261,7 +299,11 @@ public final class SimplySwordsHandlingGameTests {
             mob.setNoAi(true);
             mob.setNoGravity(true);
             mob.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(1.5D, 2D, 1.5D)));
+            Object config = Class.forName("net.bettercombat.BetterCombatMod").getMethod("getConfig").invoke(null);
+            var cap = config.getClass().getField("attack_interval_cap");
+            int previousCap = cap.getInt(config);
             try {
+                cap.setInt(config, 2);
                 mob.setItemSlot(EquipmentSlot.MAINHAND, oneHandedPreset);
                 mob.tick();
                 var original = BetterCombatBridge.profile(mob, 0);
@@ -269,11 +311,18 @@ public final class SimplySwordsHandlingGameTests {
                 mob.tick();
                 var slowed = BetterCombatBridge.profile(mob, 0);
                 h.assertTrue(original != null && slowed != null, "Both same-item presets resolve through the real mob combat bridge");
-                h.assertTrue(slowed.cooldownTicks() == original.cooldownTicks(),
-                        "Changing handedness preserves the same bounded heavy attack rate instead of bypassing the balance with a one-handed preset");
+                h.assertValueEqual(original.cooldownTicks(),21,"The one-handed preset retains the .95 family rate in the actual Better Combat bridge");
+                h.assertValueEqual(slowed.cooldownTicks(),26,"The two-handed preset pays its real20% speed cost in the actual Better Combat cooldown");
+                h.assertTrue(slowed.cooldownTicks() > original.cooldownTicks(),
+                        "Changing the actual preset to two-handed now slows the same weapon instead of compensating away its cost");
                 h.assertValueEqual(claymore.get(DataComponents.ATTRIBUTE_MODIFIERS), oneHandedPreset.get(DataComponents.ATTRIBUTE_MODIFIERS),
                         "The cooldown comparison uses identical original weapon speed and damage components");
-            } finally { mob.discard(); }
+                mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(SimplySwordsCompat.weapon("copper", "spear")));
+                mob.tick();
+                var spear = BetterCombatBridge.profile(mob, 0);
+                h.assertTrue(spear != null, "The actual Better Combat registry resolves the throwable spear");
+                h.assertValueEqual(spear.cooldownTicks(), 20, "The installed Better Combat bridge retains the spear's twenty-tick cooldown");
+            } finally { cap.setInt(config, previousCap); mob.discard(); }
         }
 
         private static Boolean registeredHandedness(ItemStack stack) throws ReflectiveOperationException {

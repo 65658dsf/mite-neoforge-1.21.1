@@ -41,13 +41,23 @@ class SimplySwordsBalanceRulesTest {
         assertEquals(.25D, SimplySwordsBalanceRules.movementPenalty("greathammer", true));
         assertEquals(.05D, SimplySwordsBalanceRules.movementPenalty("spear", false));
     }
-    @Test void actualHandednessCompensationCannotTurnAHeavyWeaponIntoAFastOne() {
+    @Test void twoHandedHandlingReallyLowersTheFamilyRateExactlyOnce() {
         for (var profile : SimplySwordsBalanceRules.profiles()) {
             double oneHanded = 4D + SimplySwordsBalanceRules.baseAttackSpeedBonus(profile.family(), profile.upstreamAttacksPerSecond(), false);
             double twoHanded = (4D + SimplySwordsBalanceRules.baseAttackSpeedBonus(profile.family(), profile.upstreamAttacksPerSecond(), true)) * .8D;
             assertEquals(profile.attacksPerSecond(), oneHanded, 1E-9);
-            assertEquals(oneHanded, twoHanded, 1E-9);
+            assertEquals(oneHanded * .8D, twoHanded, 1E-9);
+            assertTrue(twoHanded < oneHanded);
         }
+    }
+    @Test void spearSpeedHasAnExplicitSlowerBudgetWithoutChangingItsDamageOrConfigurationBasis() {
+        var spear = SimplySwordsBalanceRules.profile("spear");
+        assertEquals(1.3D, spear.upstreamAttacksPerSecond());
+        assertEquals(1D, SimplySwordsBalanceRules.attackRate("spear", 1.3D), 1E-9);
+        assertEquals(.85D, SimplySwordsBalanceRules.attackRate("spear", .001D), 1E-9);
+        assertEquals(1.1D, SimplySwordsBalanceRules.attackRate("spear", 100D), 1E-9);
+        assertEquals(.8D, (4D + SimplySwordsBalanceRules.baseAttackSpeedBonus("spear", 1.3D, true)) * .8D, 1E-9);
+        assertEquals(5.04D, 1D + SimplySwordsBalanceRules.damageBonus("iron", "spear", 9D, 0D), 1E-5);
     }
     @Test void externalConfigurationsHaveFiniteExplicitBounds() {
         for (var profile : SimplySwordsBalanceRules.profiles()) for (double configured : new double[]{Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, -100D, 0D, .00001D, 1000000D}) {

@@ -82,7 +82,7 @@ public final class SimplySwordsCompat {
         return definition == null || baseline == null ? 4D : SimplySwordsBalanceRules.attackRate(definition.family(), baseline.attackRate());
     }
     public static double baseAttackSpeedBonus(ItemStack stack, boolean twoHanded) {
-        return attackRate(stack) / (twoHanded ? SimplySwordsBalanceRules.TWO_HANDED_ATTACK_SPEED_FACTOR : 1D) - 4D;
+        return attackRate(stack) - 4D;
     }
     /** Class ancestry is available before tags bind and covers awakened/evolved forms without optional linkage. */
     public static boolean uniqueWeapon(Item item) {

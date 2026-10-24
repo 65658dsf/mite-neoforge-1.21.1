@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.combat.WeaponEncumbrance;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.registry.MitePhantomBlades;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.UUID;
@@ -118,6 +119,33 @@ public final class WeaponEncumbranceGameTests {
             close(h, player.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), original,
                     "Returning dimensions without the weapon leaves no movement residue");
         }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void retainedTridentHasRealRecoveryWhileInventoryFormationCoresHaveNoWeight(GameTestHelper h) {
+        Player player = h.makeMockPlayer(GameType.SURVIVAL);
+        player.setNoGravity(true); player.tick();
+        double movement = player.getAttributeValue(Attributes.MOVEMENT_SPEED);
+        try {
+            int inventorySlot = 9;
+            for (String material : java.util.List.of("copper", "silver", "vibranium")) {
+                ItemStack core = new ItemStack(MitePhantomBlades.get(material));
+                close(h, WeaponEncumbrance.penalty(core), 0D, "A carried formation core is not treated as a held heavy weapon");
+                player.getInventory().setItem(inventorySlot++, core);
+                h.assertValueEqual(player.getInventory().countItem(MitePhantomBlades.get(material)), 1, "The formation core is genuinely present in the player's inventory");
+            }
+            h.assertTrue(player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty(), "All formation cores are in backpack slots rather than either hand");
+            NeoForge.EVENT_BUS.post(new PlayerTickEvent.Pre(player));
+            close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement, "Formation cores in the inventory never slow the player");
+            equip(player, EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT)); player.tick();
+            close(h, player.getAttributeValue(Attributes.ATTACK_SPEED), 1D, "The retained native reach weapon keeps its explicit one-attack-per-second rate");
+            close(h, player.getCurrentItemAttackStrengthDelay(), 20D, "The retained trident's actual player recovery remains twenty ticks");
+            close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement * .95D, "Only the currently held trident supplies the existing reach weight");
+            equip(player, EquipmentSlot.MAINHAND, ItemStack.EMPTY); player.tick();
+            close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement, "Removing the main-hand weapon restores movement while formation cores stay in the inventory");
+            close(h, player.getAttributeValue(Attributes.ATTACK_SPEED), 4D, "Removing the main-hand weapon restores the native attack rate");
+        } finally { WeaponEncumbrance.clear(player); player.discard(); }
         h.succeed();
     }
 
