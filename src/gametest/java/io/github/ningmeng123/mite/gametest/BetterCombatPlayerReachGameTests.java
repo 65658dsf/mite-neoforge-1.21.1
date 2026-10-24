@@ -206,6 +206,11 @@ public final class BetterCombatPlayerReachGameTests {
         target.setNoGravity(true);
         target.setOnGround(true);
         target.getPersistentData().putBoolean(MobShields.SPAWN_ROLL, true);
+        target.getPersistentData().putBoolean("modern_ite:explicit_command_spawn", true);
+        target.setPos(player.position());
+        h.assertTrue(h.getLevel().addFreshEntity(target) && target.isAddedToLevel(), "The deliberate reach-test target actually joins the world");
+        // Addons initialize their real health and body shape on join; set the measured fixture afterward.
+        target.setBaby(false);
         target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(200D);
         target.setHealth(200F);
         double halfWidth = target.getBbWidth() * .5D + target.getPickRadius();
@@ -218,7 +223,6 @@ public final class BetterCombatPlayerReachGameTests {
                 "The requested distance must contain the fixture's vertical separation");
         double horizontalGap = Math.sqrt(Math.max(0D, hitboxDistance * hitboxDistance - verticalGap * verticalGap));
         target.setPos(player.position().add(0D, feetOffset, horizontalGap + halfWidth));
-        h.getLevel().addFreshEntity(target);
         double actual = player.getEyePosition().distanceTo(SourcePlayerReach.closestPoint(
                 target.getBoundingBox().inflate(target.getPickRadius()), player.getEyePosition()));
         h.assertTrue(Math.abs(actual - hitboxDistance) < .00001D,
@@ -320,6 +324,13 @@ public final class BetterCombatPlayerReachGameTests {
                     new net.bettercombat.network.Packets.C2S_AttackRequest(combo, false,
                             player.getInventory().selected, target.getId(), new int[] { target.getId() }),
                     player.server, player, player.connection);
+            // executeIfPossible may queue even on the server thread while it is already running a task.
+            // Keep the real packet, target and player alive until the preceding FIFO attack transaction completes.
+            var completed = player.server.submit(() -> {});
+            long deadline = System.nanoTime() + 5_000_000_000L;
+            player.server.managedBlock(() -> completed.isDone() || System.nanoTime() >= deadline);
+            if (!completed.isDone()) throw new AssertionError("The queued Better Combat attack did not finish within five seconds");
+            completed.join();
         }
 
         private static void realSword(GameTestHelper h) {
