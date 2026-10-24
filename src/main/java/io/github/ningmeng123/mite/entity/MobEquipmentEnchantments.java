@@ -56,7 +56,7 @@ public final class MobEquipmentEnchantments {
         if (!(mob instanceof Enemy) || !(mob.level() instanceof ServerLevel) || mob.getPersistentData().contains(DATA_KEY)) return false;
         mob.getPersistentData().putBoolean(DATA_KEY, true);
         Set<ItemStack> source = GENERATED.remove(mob);
-        if (!MobShields.spawnReason(mob.getSpawnType())) return false;
+        if (BloodMoonEquipment.spawnEquipmentLocked(mob) || !MobShields.spawnReason(mob.getSpawnType())) return false;
         long day = highestDay(mob);
         float chance = MobEnchantmentRules.dateChance(day);
         if (!(chance > 0F)) return false;

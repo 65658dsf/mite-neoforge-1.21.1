@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
 import io.github.ningmeng123.mite.rules.LunarCalendar;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
@@ -8,12 +9,14 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -160,9 +163,31 @@ public final class BloodMoonEquipment {
         return false;
     }
 
-    /** A locked birth remains an empty equipment decision when delayed spawn rolls run later. */
+    /** A locked birth keeps its no-equipment decision; genuine archers receive only a plain bow. */
     public static boolean spawnEquipmentLocked(Mob mob) {
         return mob.getPersistentData().getCompound(DATA_KEY).getBoolean("early_equipment_locked");
+    }
+
+    public static boolean earlyEquipmentArcher(Mob mob) {
+        if (!(mob instanceof AbstractSkeleton)) return false;
+        boolean archer;
+        if (mob instanceof R196Skeleton source) archer = source.isLongdead() && source.skeletonType() == 0;
+        else if (mob.getType() == EntityType.SKELETON)
+            archer = mob instanceof OrdinarySkeletonState state && state.mite$sourceSkeletonType() == 0;
+        else archer = mob.getType() == EntityType.STRAY || mob.getType() == EntityType.BOGGED;
+        return MiteExtensions.policy().earlyEquipmentArcher(mob, archer);
+    }
+
+    private static void clearEarlyStoredEquipment(Mob mob) {
+        if (mob instanceof R196Skeleton skeleton) skeleton.clearStowedItem();
+        MiteExtensions.policy().clearEarlySpawnEquipment(mob);
+    }
+
+    private static void restoreEarlyArcherBow(Mob mob) {
+        if (mob.getMainHandItem().isEmpty() && earlyEquipmentArcher(mob)) {
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+            ((AbstractSkeleton)mob).reassessWeaponGoal();
+        }
     }
 
     /** Fill paths that never call the native armor hook, after source weapons/fixed sets are initialized. */
@@ -173,10 +198,18 @@ public final class BloodMoonEquipment {
             markLegacyEntity(mob, "existing_entity");
         if (!event.loadedFromDisk() && mob.getType().getCategory() == MobCategory.MONSTER
                 && !mob.getPersistentData().contains(DATA_KEY)
-                && mob.level() instanceof ServerLevel level && BloodMoonInvasion.highestDay(level) < 35L) {
-            for (EquipmentSlot slot : EquipmentSlot.values()) mob.setItemSlot(slot, ItemStack.EMPTY);
-            if (mob instanceof R196Skeleton skeleton) skeleton.clearStowedItem();
+                && mob.level() instanceof ServerLevel level && BloodMoonInvasion.highestDay(level) <= 35L) {
+            // Publish the decision before addon callbacks, so delayed listeners cannot re-equip this birth.
             markLegacyEntity(mob, "early_equipment_locked");
+            for (EquipmentSlot slot : EquipmentSlot.values()) mob.setItemSlot(slot, ItemStack.EMPTY);
+            clearEarlyStoredEquipment(mob);
+            restoreEarlyArcherBow(mob);
+            return;
+        }
+        if (spawnEquipmentLocked(mob)) {
+            // Old locked archers were saved empty. Repair only the missing bow, retaining visible picked-up/custom gear.
+            clearEarlyStoredEquipment(mob);
+            restoreEarlyArcherBow(mob);
             return;
         }
         if (!handles(mob)) return;

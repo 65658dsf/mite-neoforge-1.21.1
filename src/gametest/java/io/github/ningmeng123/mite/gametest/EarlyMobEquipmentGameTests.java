@@ -6,7 +6,10 @@ import io.github.ningmeng123.mite.entity.BloodMoonEquipment;
 import io.github.ningmeng123.mite.entity.MobEquipmentEnchantments;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.MobShields;
+import io.github.ningmeng123.mite.entity.OrdinarySkeletonState;
 import io.github.ningmeng123.mite.entity.R196Skeleton;
+import io.github.ningmeng123.mite.entity.SourceRangedAttackGoal;
+import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.util.Arrays;
@@ -16,6 +19,9 @@ import java.util.Map;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -24,6 +30,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.event.EventHooks;
@@ -31,11 +41,11 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Real early spawn restrictions and unchanged equipment behavior from day 35. @author NingMeng123 */
+/** Real first35-day restrictions, functional plain-bow archers and unchanged fresh equipment from day36. @author NingMeng123 */
 @GameTestHolder("mite_equipment_progression")
 @PrefixGameTestTemplate(false)
 public final class EarlyMobEquipmentGameTests {
-    private static final List<EntityType<?>> NATIVE = List.of(EntityType.ZOMBIE, EntityType.SKELETON,
+    private static final List<EntityType<?>> NATIVE = List.of(EntityType.ZOMBIE, EntityType.SKELETON, EntityType.STRAY, EntityType.BOGGED,
             EntityType.WITHER_SKELETON, EntityType.ZOMBIFIED_PIGLIN, EntityType.PIGLIN,
             EntityType.PIGLIN_BRUTE, EntityType.VINDICATOR, EntityType.PILLAGER);
     private static final List<MobKind> SOURCE = List.of(MobKind.LONGDEAD_GUARDIAN, MobKind.BONE_LORD,
@@ -72,6 +82,29 @@ public final class EarlyMobEquipmentGameTests {
         BloodMoonInvasionData.get(overworld).restoreProgress(day);
     }
 
+    private static List<EntityType<?>> archerTypes() {
+        return List.of(EntityType.SKELETON,EntityType.STRAY,EntityType.BOGGED,
+                MiteMobs.type(MobKind.LONGDEAD),MiteMobs.type(MobKind.LONGDEAD_GUARDIAN));
+    }
+
+    private static AbstractSkeleton archer(GameTestHelper helper,EntityType<?> type) {
+        var skeleton = (AbstractSkeleton)create(helper,type);
+        if (skeleton instanceof R196Skeleton source) source.forceSkeletonType(0);
+        var level = helper.getLevel();
+        EventHooks.finalizeMobSpawn(skeleton,level,level.getCurrentDifficultyAt(skeleton.blockPosition()),MobSpawnType.NATURAL,null);
+        if (type == EntityType.SKELETON) ((OrdinarySkeletonState)skeleton).mite$setSourceSkeletonType(0);
+        return skeleton;
+    }
+
+    private static void rangedGoal(GameTestHelper helper,AbstractSkeleton skeleton) {
+        helper.assertTrue(skeleton.goalSelector.getAvailableGoals().stream().anyMatch(wrapped ->
+                        wrapped.getGoal() instanceof SourceRangedAttackGoal || wrapped.getGoal() instanceof RangedBowAttackGoal<?>),
+                "The real archer has its ranged bow AI installed after equipment reassessment: "+skeleton.getType());
+        helper.assertFalse(skeleton.goalSelector.getAvailableGoals().stream().anyMatch(wrapped ->
+                        wrapped.getGoal() instanceof SourceMeleeGoal || wrapped.getGoal() instanceof MeleeAttackGoal),
+                "Restoring the plain bow removes the obsolete empty-hand melee AI: "+skeleton.getType());
+    }
+
     private static void suppliedEquipment(Mob mob) {
         for (EquipmentSlot slot : VISIBLE)
             if (mob.getItemBySlot(slot).isEmpty()) mob.setItemSlot(slot, new ItemStack(Items.STICK));
@@ -87,17 +120,21 @@ public final class EarlyMobEquipmentGameTests {
                 "Exact equipment survives for " + mob.getType() + "/" + slot);
     }
 
-    private static void empty(GameTestHelper helper, Mob mob) {
-        for (EquipmentSlot slot : EquipmentSlot.values()) helper.assertTrue(mob.getItemBySlot(slot).isEmpty(),
-                "Early monster equipment must be empty: " + mob.getType() + "/" + slot);
+    private static void restricted(GameTestHelper helper, Mob mob) {
+        boolean archer = mob instanceof R196Skeleton source ? source.isLongdead() && source.skeletonType() == 0
+                : mob.getType() == EntityType.STRAY || mob.getType() == EntityType.BOGGED
+                || mob.getType() == EntityType.SKELETON && ((OrdinarySkeletonState)mob).mite$sourceSkeletonType() == 0;
+        for (EquipmentSlot slot : EquipmentSlot.values()) helper.assertTrue(
+                slot == EquipmentSlot.MAINHAND && archer ? ItemStack.matches(mob.getMainHandItem(),new ItemStack(Items.BOW)) : mob.getItemBySlot(slot).isEmpty(),
+                "Early archers retain only one new plain bow; every other visible slot is empty: " + mob.getType() + "/" + slot);
         if (mob instanceof R196Skeleton skeleton) helper.assertTrue(skeleton.stowedItem().isEmpty(),
                 "An early guardian cannot restore its hidden weapon");
     }
 
     @GameTest(template = "empty")
-    public static void realOrdinaryAndFirstBloodSpawnsHaveNoHeldWornOrStowedItemsBeforeDay35(GameTestHelper helper) {
+    public static void first35DaysKeepOnlyArcherBowsAndClearAllOtherHeldWornAndStowedItems(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
-            for (long day : new long[]{1L, 32L, 34L}) {
+            for (long day : new long[]{1L, 32L, 34L, 35L}) {
                 date(helper, day, day == 34L ? 34L * 24_000L - 1L : (day - 1L) * 24_000L + 6_000L);
                 for (EntityType<?> type : types()) {
                     Mob mob = create(helper, type);
@@ -108,7 +145,7 @@ public final class EarlyMobEquipmentGameTests {
                         suppliedEquipment(mob);
                         helper.assertTrue(helper.getLevel().addFreshEntity(mob), "The finalized monster enters the real level");
                         helper.assertTrue(BloodMoonEquipment.spawnEquipmentLocked(mob), "The early spawn decision is saved");
-                        empty(helper, mob);
+                        restricted(helper, mob);
                     } finally { mob.discard(); }
                 }
             }
@@ -117,7 +154,7 @@ public final class EarlyMobEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void delayedSpawnRollsStayEmptyAndNeverEquipOldEarlyMobsAfterDay35(GameTestHelper helper) {
+    public static void delayedSpawnRollsStayLockedAndNeverUpgradeOldEarlyMobsAfterDay36(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             for (EntityType<?> type : types()) {
                 date(helper, 34L, 33L * 24_000L + 6_000L);
@@ -135,12 +172,12 @@ public final class EarlyMobEquipmentGameTests {
                             "The optional weapon spawn roll is permanently decided");
                     helper.assertValueEqual(mob.getRandom().nextLong(), RandomSource.create(196L).nextLong(),
                             "Skipped delayed equipment draws consume no RNG");
-                    empty(helper, mob);
-                    date(helper, 35L, 34L * 24_000L);
+                    restricted(helper, mob);
+                    date(helper, 36L, 35L * 24_000L);
                     BloodMoonEquipment.join(new EntityJoinLevelEvent(mob, helper.getLevel(), false));
-                    helper.assertFalse(MobShields.populate(mob), "Crossing day 35 never repeats the shield spawn roll");
-                    helper.assertFalse(SimplySwordsMobEquipment.populate(mob), "Crossing day 35 never repeats the optional weapon spawn roll");
-                    empty(helper, mob);
+                    helper.assertFalse(MobShields.populate(mob), "Crossing day36 never repeats the shield spawn roll");
+                    helper.assertFalse(SimplySwordsMobEquipment.populate(mob), "Crossing day36 never repeats the optional weapon spawn roll");
+                    restricted(helper, mob);
                     if (mob instanceof R196Skeleton skeleton) helper.assertFalse(skeleton.updateGuardianWeapon(),
                             "The cleared hidden guardian weapon cannot be restored later");
                 } finally { mob.discard(); }
@@ -150,10 +187,10 @@ public final class EarlyMobEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void exactDay35AndRememberedDay35KeepRealNativeAndSourceEquipment(GameTestHelper helper) {
+    public static void exactDay36AndRememberedDay36KeepRealNativeAndSourceEquipment(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
-            for (long time : new long[]{34L * 24_000L, 6_000L}) {
-                date(helper, 35L, time);
+            for (long time : new long[]{35L * 24_000L, 6_000L}) {
+                date(helper, 36L, time);
                 for (EntityType<?> type : types()) {
                     Mob mob = create(helper, type);
                     try {
@@ -165,10 +202,10 @@ public final class EarlyMobEquipmentGameTests {
                         if (type == EntityType.SKELETON || type == EntityType.ZOMBIFIED_PIGLIN || mob instanceof R196Skeleton)
                             helper.assertFalse(mob.getMainHandItem().isEmpty(), "The fixed finalizer supplied its normal weapon: " + type);
                         helper.assertTrue(helper.getLevel().addFreshEntity(mob), "The unlocked monster enters the real level");
-                        helper.assertFalse(BloodMoonEquipment.spawnEquipmentLocked(mob), "Day 35 keeps the original equipment path unlocked");
+                        helper.assertFalse(BloodMoonEquipment.spawnEquipmentLocked(mob), "Day36 keeps the original fresh equipment path unlocked");
                         unchanged(helper, mob, before);
                         if (mob instanceof R196Skeleton skeleton) helper.assertTrue(ItemStack.matches(stowed, skeleton.stowedItem()),
-                                "The guardian's exact hidden weapon survives from day 35");
+                                "The guardian's exact hidden weapon survives from day36");
                     } finally { mob.discard(); }
                 }
             }
@@ -177,9 +214,9 @@ public final class EarlyMobEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void earlyRestrictionAndDay35PassThroughDoNotConsumeEquipmentRandom(GameTestHelper helper) {
+    public static void earlyRestrictionAndDay36PassThroughDoNotConsumeEquipmentRandom(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
-            for (long day : new long[]{1L, 32L, 34L, 35L}) {
+            for (long day : new long[]{1L, 32L, 34L, 35L, 36L}) {
                 date(helper, day, (day - 1L) * 24_000L);
                 Mob mob = create(helper, EntityType.ZOMBIE);
                 try {
@@ -189,7 +226,7 @@ public final class EarlyMobEquipmentGameTests {
                     BloodMoonEquipment.join(new EntityJoinLevelEvent(mob, helper.getLevel(), false));
                     helper.assertValueEqual(mob.getRandom().nextLong(), RandomSource.create(196L).nextLong(),
                             "The date restriction does not draw or change existing equipment probabilities");
-                    if (day < 35L) empty(helper, mob);
+                    if (day <= 35L) restricted(helper, mob);
                     else unchanged(helper, mob, before);
                 } finally { mob.discard(); }
             }
@@ -213,6 +250,104 @@ public final class EarlyMobEquipmentGameTests {
                     helper.assertValueEqual(mob.getRandom().nextLong(), RandomSource.create(196L).nextLong(),
                             "Loaded monsters and nonmonsters do not consume a spawn equipment draw");
                 } finally { mob.discard(); }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void allFiveNativeAndSourceArcherRolesKeepPlainBowsAndActuallyLaunchArrows(GameTestHelper helper) {
+        try (Progress ignored = new Progress(helper)) {
+            date(helper,35L,34L*24_000L+6_000L);
+            for (EntityType<?> type : archerTypes()) {
+                AbstractSkeleton skeleton = archer(helper,type);
+                Mob target = create(helper,EntityType.COW);
+                var arrows = new java.util.ArrayList<AbstractArrow>();
+                try {
+                    suppliedEquipment(skeleton);
+                    helper.assertTrue(helper.getLevel().addFreshEntity(skeleton),"The actual archer enters on the inclusive35th day");
+                    restricted(helper,skeleton); rangedGoal(helper,skeleton);
+                    helper.assertFalse(MobEquipmentEnchantments.populate(skeleton),"Delayed birth enchantments cannot upgrade the plain early bow");
+                    target.setPos(skeleton.position().add(1D,0D,0D));
+                    helper.assertTrue(helper.getLevel().addFreshEntity(target),"The real ranged-attack fixture target enters the same clear chamber");
+                    skeleton.setTarget(target);
+                    var goal = skeleton.goalSelector.getAvailableGoals().stream().map(wrapped -> wrapped.getGoal())
+                            .filter(candidate -> candidate instanceof SourceRangedAttackGoal || candidate instanceof RangedBowAttackGoal<?>)
+                            .findFirst().orElseThrow();
+                    helper.assertTrue(goal.canUse(),"The installed ranged AI recognizes its target with the restored bow");
+                    skeleton.performRangedAttack(target,1F);
+                    for (var entity : helper.getLevel().getAllEntities())
+                        if (entity instanceof AbstractArrow arrow && arrow.getOwner() == skeleton) arrows.add(arrow);
+                    helper.assertFalse(arrows.isEmpty(),"The actual skeleton ranged callback launches an owned arrow, rather than only displaying a bow: "+type);
+                    helper.assertTrue(arrows.stream().allMatch(arrow -> arrow.getDeltaMovement().lengthSqr() > 0D),"The spawned arrows have real nonzero flight velocity");
+                    restricted(helper,skeleton);
+                } finally { arrows.forEach(AbstractArrow::discard); target.discard(); skeleton.discard(); }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void savedOldLockedEmptyArchersRepairOnlyTheirBowAndKeepVisibleCustomOrPickedUpGear(GameTestHelper helper) {
+        try (Progress ignored = new Progress(helper)) {
+            date(helper,1L,6_000L);
+            for (EntityType<?> type : archerTypes()) {
+                AbstractSkeleton original = archer(helper,type);
+                Mob restored = null;
+                try {
+                    helper.assertTrue(helper.getLevel().addFreshEntity(original),"The original archer receives the persisted early birth marker");
+                    original.setItemSlot(EquipmentSlot.MAINHAND,ItemStack.EMPTY); // The old release saved locked archers empty.
+                    ItemStack helmet = new ItemStack(Items.IRON_HELMET);
+                    helmet.set(DataComponents.CUSTOM_NAME,Component.literal("Kept picked-up helmet"));
+                    original.setItemSlot(EquipmentSlot.HEAD,helmet);
+                    original.setItemSlot(EquipmentSlot.OFFHAND,new ItemStack(Items.STICK));
+                    CompoundTag saved = new CompoundTag(); original.saveWithoutId(saved); original.discard();
+                    restored = create(helper,type); restored.load(saved);
+                    var before = equipment(restored);
+                    BloodMoonEquipment.join(new EntityJoinLevelEvent(restored,helper.getLevel(),true));
+                    helper.assertTrue(ItemStack.matches(restored.getMainHandItem(),new ItemStack(Items.BOW)),"A truly saved/loaded old locked empty archer regains exactly one plain bow");
+                    for (EquipmentSlot slot : EquipmentSlot.values()) if (slot != EquipmentSlot.MAINHAND)
+                        helper.assertTrue(ItemStack.matches(before.get(slot.ordinal()),restored.getItemBySlot(slot)),"The old-archer migration never globally clears visible picked-up/custom equipment: "+slot);
+                    rangedGoal(helper,(AbstractSkeleton)restored);
+                    ItemStack picked = new ItemStack(Items.IRON_SWORD);
+                    picked.set(DataComponents.CUSTOM_NAME,Component.literal("Kept custom main hand"));
+                    restored.setItemSlot(EquipmentSlot.MAINHAND,picked); before = equipment(restored);
+                    BloodMoonEquipment.join(new EntityJoinLevelEvent(restored,helper.getLevel(),true));
+                    unchanged(helper,restored,before);
+                    restored.getPersistentData().remove(BloodMoonEquipment.DATA_KEY);
+                    restored.setItemSlot(EquipmentSlot.MAINHAND,ItemStack.EMPTY); before = equipment(restored);
+                    BloodMoonEquipment.join(new EntityJoinLevelEvent(restored,helper.getLevel(),true));
+                    unchanged(helper,restored,before);
+                    helper.assertFalse(BloodMoonEquipment.spawnEquipmentLocked(restored),"An unrelated loaded empty archer without the old lock is not migrated or globally cleaned");
+                } finally { original.discard(); if (restored != null) restored.discard(); }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void meleeSkeletonMetadataAndBoneLordsDoNotReceiveTheArcherException(GameTestHelper helper) {
+        try (Progress ignored = new Progress(helper)) {
+            date(helper,35L,34L*24_000L+6_000L);
+            for (int subtype : new int[]{1,2}) {
+                var skeleton = (AbstractSkeleton)create(helper,EntityType.SKELETON);
+                try {
+                    finalizeSpawn(skeleton); ((OrdinarySkeletonState)skeleton).mite$setSourceSkeletonType(subtype);
+                    suppliedEquipment(skeleton); BloodMoonEquipment.join(new EntityJoinLevelEvent(skeleton,helper.getLevel(),false));
+                    helper.assertFalse(BloodMoonEquipment.earlyEquipmentArcher(skeleton),"Ordinary skeleton metadata1/2 denotes a melee role");
+                    restricted(helper,skeleton);
+                } finally { skeleton.discard(); }
+            }
+            for (MobKind kind : List.of(MobKind.LONGDEAD,MobKind.LONGDEAD_GUARDIAN,MobKind.BONE_LORD,MobKind.ANCIENT_BONE_LORD)) {
+                var skeleton = (R196Skeleton)create(helper,MiteMobs.type(kind));
+                try {
+                    skeleton.forceSkeletonType(kind == MobKind.BONE_LORD || kind == MobKind.ANCIENT_BONE_LORD ? 0 : 2);
+                    var level = helper.getLevel();
+                    EventHooks.finalizeMobSpawn(skeleton,level,level.getCurrentDifficultyAt(skeleton.blockPosition()),MobSpawnType.NATURAL,null);
+                    BloodMoonEquipment.join(new EntityJoinLevelEvent(skeleton,level,false));
+                    helper.assertFalse(BloodMoonEquipment.earlyEquipmentArcher(skeleton),"Melee longdead and bone-lord bosses never become archers merely by extending AbstractSkeleton");
+                    restricted(helper,skeleton);
+                } finally { skeleton.discard(); }
             }
         }
         helper.succeed();

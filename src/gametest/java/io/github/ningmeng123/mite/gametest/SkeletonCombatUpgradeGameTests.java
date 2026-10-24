@@ -197,6 +197,7 @@ public final class SkeletonCombatUpgradeGameTests {
             var skeleton = spawn(h, type); var target = spawn(h, EntityType.COW);
             ItemStack bow = new ItemStack(Items.BOW); bow.setDamageValue(31);
             ItemStack sword = new ItemStack(Items.IRON_SWORD); sword.setDamageValue(29);
+            skeleton.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY); // Both following stacks must really be picked up, rather than compared with the new unworn birth bow.
             skeleton.equipItemIfPossible(bow); skeleton.equipItemIfPossible(sword);
             moveTarget(skeleton, target, close ? 3 : 9); ((SkeletonDualWeapons)skeleton).mite$updateDualWeapons();
             boolean[] observed = {false};
@@ -220,6 +221,7 @@ public final class SkeletonCombatUpgradeGameTests {
     @GameTest(template = "empty")
     public static void emptyMainHandRecoversSpareAndPureMeleeVariantsRemainMelee(GameTestHelper h) {
         var archer = spawn(h, EntityType.SKELETON);
+        archer.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY); // Simulate a broken/disarmed bow, including early archers born with a plain bow.
         archer.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.BOW));
         h.assertTrue(((SkeletonDualWeapons)archer).mite$updateDualWeapons() && archer.getMainHandItem().is(Items.BOW),
                 "A broken or disarmed empty main hand can recover its spare weapon");

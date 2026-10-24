@@ -91,6 +91,10 @@ public final class MiteExtensions {
         default float creeperExplosionRadius(net.minecraft.world.entity.monster.Creeper creeper, float original) { return original; }
         default void villagerOffers(net.minecraft.world.entity.npc.Villager villager, net.minecraft.world.item.trading.MerchantOffers offers) {}
         default boolean mobDefense(Mob mob, boolean original) { return original; }
+        /** Identify the addon's actual archer roles without turning every skeleton subtype into an archer. */
+        default boolean earlyEquipmentArcher(Mob mob, boolean original) { return original; }
+        /** Clear addon-owned hidden birth weapons; the host handles visible slots only for fresh early spawns. */
+        default void clearEarlySpawnEquipment(Mob mob) {}
         default float playerInWallDamage(Player player, float original) { return original; }
         default int fishingExperience(Player player, int original) { return original; }
         default boolean canDisarmPlayer(Player attacker, Player target, boolean original) { return original; }
