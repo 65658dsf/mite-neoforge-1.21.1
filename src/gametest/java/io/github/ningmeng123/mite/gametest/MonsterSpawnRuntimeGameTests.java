@@ -33,6 +33,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.common.NeoForge;
@@ -50,7 +51,7 @@ public final class MonsterSpawnRuntimeGameTests {
     public static void absoluteWeightsReplaceEachPoolsNativeWeightsAndStillMultiplyRates(GameTestHelper helper) {
         try (var settings = new Settings(helper)) {
             settings.rates(List.of());
-            settings.weights(List.of("minecraft:silverfish=2", "minecraft:spider=6"));
+            settings.weights(List.of("minecraft:silverfish=0.25", "minecraft:spider=0.75"));
             var firstPool = List.of(new R196MobSpawning.Entry(EntityType.SILVERFISH, "tq", Category.MONSTER, 1000, 1, 1, 1, false),
                     new R196MobSpawning.Entry(EntityType.SPIDER, "tt", Category.MONSTER, 1, 1, 1, 1, false));
             var secondPool = List.of(new R196MobSpawning.Entry(EntityType.SILVERFISH, "tq", Category.MONSTER, 3, 1, 1, 1, false),
@@ -64,18 +65,36 @@ public final class MonsterSpawnRuntimeGameTests {
                         "The same absolute overrides replace both pools' different native weights");
                 if (first.type() == EntityType.SILVERFISH) silverfish++;
             }
-            helper.assertTrue(silverfish > 850 && silverfish < 1150, "Weights 2:6 produce a quarter pool share: " + silverfish);
+            helper.assertTrue(silverfish > 850 && silverfish < 1150, "Sub-unit weights0.25:0.75 produce a quarter pool share: " + silverfish);
             helper.assertValueEqual(firstPool.getFirst().weight(), 1000, "Selecting with overrides preserves original source metadata");
-            helper.assertValueEqual(ConfiguredMonsterSpawns.weight(EntityType.SILVERFISH, 1000D), 2D, "Runtime weight resolution returns the direct override");
+            helper.assertValueEqual(ConfiguredMonsterSpawns.weight(EntityType.SILVERFISH, 1000D), .25D, "Runtime resolution retains a positive sub-unit direct override exactly");
+            helper.assertValueEqual(ConfiguredMonsterSpawns.weight(EntityType.SPIDER, 1D), .75D, "Neither fractional candidate is rounded into zero or its native fallback");
+            for (double draw : new double[]{0D, Math.nextDown(.25D)})
+                helper.assertTrue(ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER, firstPool,
+                        fixedWeightDraw(draw), true) == firstPool.getFirst(), "Every exact draw below the quarter boundary selects the fractional first candidate: "+draw);
+            for (double draw : new double[]{.25D, Math.nextDown(1D)})
+                helper.assertTrue(ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER, firstPool,
+                        fixedWeightDraw(draw), true) == firstPool.getLast(), "The exact quarter boundary and final interval select the other fractional candidate: "+draw);
             settings.rates(List.of("minecraft:silverfish=3"));
             silverfish = 0;
             var multiplied = RandomSource.create(934264L);
             for (int draw = 0; draw < 4000; draw++)
                 if (ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER, firstPool, multiplied, true).type()
                         == EntityType.SILVERFISH) silverfish++;
-            helper.assertTrue(silverfish > 1850 && silverfish < 2150, "Saved rate 3 multiplies the direct weight 2 into the expected 6:6 share: " + silverfish);
+            helper.assertTrue(silverfish > 1850 && silverfish < 2150, "Saved rate3 multiplies direct weight0.25 into the expected0.75:0.75 share: " + silverfish);
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER, firstPool,
+                    fixedWeightDraw(Math.nextDown(.5D)), true) == firstPool.getFirst(), "A draw just below the multiplied half boundary still selects the first candidate");
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(helper.getLevel(), BlockPos.ZERO, Category.MONSTER, firstPool,
+                    fixedWeightDraw(.5D), true) == firstPool.getLast(), "The exact multiplied half boundary selects the second candidate without integer quantization");
         }
         helper.succeed();
+    }
+
+    private static RandomSource fixedWeightDraw(double draw) {
+        return new LegacyRandomSource(0L) {
+            @Override public double nextDouble() { return draw; }
+            @Override public int nextInt(int bound) { throw new AssertionError("Fractional configured weights must use the double lottery, not nextInt"); }
+        };
     }
 
     @GameTest(template = "empty")

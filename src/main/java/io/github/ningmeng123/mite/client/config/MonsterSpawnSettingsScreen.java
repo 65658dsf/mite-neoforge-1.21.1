@@ -28,6 +28,7 @@ import net.neoforged.fml.ModList;
 
 /** Shared registry browser; the owning mod supplies authoritative values and its save operation. @author NingMeng123 */
 public final class MonsterSpawnSettingsScreen extends Screen {
+    private static final int MAX_NUMBER_LENGTH = 32;
     private record VisibleRow(MonsterSpawnCatalog.Entry entry, int y) {}
     private final Screen parent;
     private final boolean editable;
@@ -138,7 +139,7 @@ public final class MonsterSpawnSettingsScreen extends Screen {
             var activeInvalid = editingWeight ? invalidWeights : invalid;
             String columnKey = editingWeight ? "mite.config.monster_spawn_weight" : "mite.config.monster_spawn_percent";
             var box = new EditBox(font, width - 124, y, 61, 20, Component.translatable(columnKey));
-            box.setMaxLength(32);
+            box.setMaxLength(MAX_NUMBER_LENGTH);
             box.setValue(activeDrafts.getOrDefault(entry.id(), editingWeight
                     ? weightValues.containsKey(entry.id()) ? number(weightValues.get(entry.id()) * values.getOrDefault(entry.id(), 1D)) : ""
                     : number(values.getOrDefault(entry.id(), 1D) * 100D)));
@@ -155,8 +156,8 @@ public final class MonsterSpawnSettingsScreen extends Screen {
                     if (editingWeight && value.isBlank()) setWeight(entry.id(), null);
                     else {
                         double number = Double.parseDouble(value.trim());
-                        if (!Double.isFinite(number) || number < 0D || number > (editingWeight ? 1000000D : 10000D)
-                                || editingWeight && number != Math.rint(number)) throw new NumberFormatException();
+                        if (!Double.isFinite(number) || number < 0D || number > (editingWeight ? 1000000D : 10000D))
+                            throw new NumberFormatException();
                         if (editingWeight) setWeight(entry.id(), number);
                         else if (number == 100D) activeValues.remove(entry.id());
                         else activeValues.put(entry.id(), number / 100D);
@@ -263,6 +264,10 @@ public final class MonsterSpawnSettingsScreen extends Screen {
 
     private boolean validDrafts() { return invalid.isEmpty() && invalidWeights.isEmpty(); }
     private static boolean supportsWeight(MonsterSpawnCatalog.Entry entry) { return entry.baseWeights().stream().anyMatch(weight -> weight > 0); }
-    private static String number(double value) { return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString(); }
+    private static String number(double value) {
+        String plain = BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
+        // Very small valid weights must not be truncated to zero by EditBox.setValue on reopening.
+        return plain.length() <= MAX_NUMBER_LENGTH ? plain : Double.toString(value);
+    }
     @Override public void onClose() { minecraft.setScreen(parent); }
 }

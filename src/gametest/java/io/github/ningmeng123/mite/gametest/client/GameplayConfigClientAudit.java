@@ -523,11 +523,19 @@ public final class GameplayConfigClientAudit implements DataProvider {
                 "Both editing and resetting a direct weight clear that entity's old multiplier before saving");
         check(callsOrLinkedLambda(screen, "effectiveWeights", "java/util/Map", "getOrDefault"),
                 "Untouched legacy multipliers remain represented in the displayed effective weight");
+        var formatWeight = spawnSettings.getDeclaredMethod("number", double.class);
+        formatWeight.setAccessible(true);
+        for (double value : new double[]{0D, .125D, 2.5D, 1000000D, 1E-40D, Double.MIN_VALUE}) {
+            String text = (String)formatWeight.invoke(null, value);
+            check(text.length() <= 32 && Double.parseDouble(text) == value,
+                    "The actual weight formatter preserves decimals and tiny positive values within the real EditBox limit: " + value);
+        }
         report.addProperty("natural_spawn_weight_and_multiplier_constructor_signatures_resolved", true);
         report.addProperty("natural_spawn_weight_and_multiplier_snapshot_and_atomic_save_linkage_verified", true);
         report.addProperty("natural_spawn_weight_editor_single_mode_and_draft_guard_verified", true);
         report.addProperty("natural_spawn_weight_edit_and_reset_clear_legacy_multiplier_linkage_verified", true);
         report.addProperty("natural_spawn_weight_editor_constructed_or_rendered", false);
+        report.addProperty("natural_spawn_fractional_weight_display_roundtrip_within_editbox_limit", true);
     }
 
     private static void auditLanguages(JsonObject report) throws Exception {

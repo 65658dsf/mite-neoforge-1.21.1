@@ -40,23 +40,27 @@ public final class MonsterSpawnConfigGameTests {
 
     @GameTest(template = "empty")
     public static void directWeightsValidateAndSaveAtomicallyWithRates(GameTestHelper helper) throws Exception {
-        for (String value : List.of("minecraft:zombie=0", "minecraft:zombie=1", "future_pack:missing=1000000"))
-            helper.assertTrue(MiteConfig.validMonsterSpawnWeightOverride(value), "Whole candidate weights are accepted: " + value);
-        for (String value : List.of("minecraft:zombie=-1", "minecraft:zombie=1.5", "minecraft:zombie=1000001",
+        for (String value : List.of("minecraft:zombie=0", "minecraft:zombie=1", "minecraft:zombie=2.5",
+                "minecraft:zombie=0.125", "minecraft:zombie=0.000001", "future_pack:missing=1000000"))
+            helper.assertTrue(MiteConfig.validMonsterSpawnWeightOverride(value), "Finite fractional and existing integer candidate weights are accepted: " + value);
+        for (String value : List.of("minecraft:zombie=-1", "minecraft:zombie=-0.125", "minecraft:zombie=1000000.125", "minecraft:zombie=1000001",
                 "minecraft:zombie=NaN", "minecraft:zombie=Infinity", "zombie=2", "bad namespace:zombie=2", "minecraft:zombie="))
             helper.assertFalse(MiteConfig.validMonsterSpawnWeightOverride(value), "Invalid candidate weights are rejected: " + value);
         helper.assertFalse(MiteConfig.validMonsterSpawnWeightOverride(null), "Null weight entries are rejected");
         try (var ignored = new Settings()) {
-            var weights = Map.of("minecraft:zombie", 30D, "future_pack:missing", 1000000D, "mite:ghoul", 0D);
+            var weights = Map.of("minecraft:zombie", 2.5D, "future_pack:missing", .125D, "mite:ghoul", 0D);
             helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", .5D), weights),
                     "A complete rate and direct weight revision saves together");
             helper.assertValueEqual(MiteConfig.localSnapshot().monsterSpawnWeights(), weights, "Unknown entity weights remain saved");
-            helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 30D, "Direct weight replaces the current pool's native value immediately");
+            helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 2.5D, "Fractional direct weight replaces the current pool's native value immediately");
             helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:spider", 25D), 25D, "Omitted weights preserve each original pool value");
             var published = MiteConfig.localSnapshot();
             var storedRates = List.copyOf(MiteConfig.NATURAL_SPAWN_RATES.get());
             var storedWeights = List.copyOf(MiteConfig.NATURAL_SPAWN_WEIGHTS.get());
-            for (double rejected : new double[]{-1D, .5D, 1000001D, Double.NaN, Double.POSITIVE_INFINITY}) {
+            var parsedWeights = storedWeights.stream().collect(java.util.stream.Collectors.toMap(
+                    entry -> entry.substring(0, entry.indexOf('=')), entry -> Double.parseDouble(entry.substring(entry.indexOf('=')+1))));
+            helper.assertValueEqual(parsedWeights, weights, "The real backing strings preserve2.5 and0.125 instead of rounding or truncating them");
+            for (double rejected : new double[]{-1D, -.125D, 1000000.125D, 1000001D, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
                 helper.assertFalse(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", 2D), Map.of("minecraft:zombie", rejected)),
                         "Invalid direct weights cannot partially save a changed rate");
                 helper.assertTrue(MiteConfig.localSnapshot() == published, "Rejected weights do not publish a partial revision");
@@ -75,7 +79,7 @@ public final class MonsterSpawnConfigGameTests {
     @GameTest(template = "empty")
     public static void directWeightsUseTheRealPacketCodecAndRestoreLocalPreferences(GameTestHelper helper) throws Exception {
         try (var ignored = new Settings()) {
-            var weights = Map.of("minecraft:zombie", 0D, "future_pack:missing", 12345D);
+            var weights = Map.of("minecraft:zombie", 2.5D, "future_pack:missing", .125D, "mite:ghoul", 0D);
             helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", 2D), weights), "Server candidate weights save");
             var server = MiteConfig.localSnapshot();
             var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
@@ -83,15 +87,16 @@ public final class MonsterSpawnConfigGameTests {
                 GameplayConfigPayload.CODEC.encode(buffer, new GameplayConfigPayload(server));
                 var decoded = GameplayConfigPayload.CODEC.decode(buffer).snapshot();
                 helper.assertValueEqual(decoded, server, "The actual packet codec preserves direct weights and every existing component");
+                helper.assertValueEqual(decoded.monsterSpawnWeights(), weights, "The real buffer and snapshot validation retain exact fractional and zero weights");
                 helper.assertValueEqual(buffer.readableBytes(), 0, "The complete expanded packet is consumed");
-                helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of(), Map.of("minecraft:zombie", 17D)), "Separate local candidate preferences save");
+                helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of(), Map.of("minecraft:zombie", 17.75D)), "Separate fractional local candidate preferences save");
                 var local = MiteConfig.localSnapshot();
                 MiteConfig.receiveServerSnapshot(decoded);
-                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 0D, "Connected gameplay reads the authoritative server weight");
-                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("future_pack:missing", 1D), 12345D, "Authoritative unknown entity weights survive serialization");
+                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 2.5D, "Connected gameplay reads the authoritative fractional server weight");
+                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("future_pack:missing", 1D), .125D, "Authoritative unknown sub-unit weights survive serialization");
                 helper.assertValueEqual(MiteConfig.localSnapshot(), local, "Receiving weights never overwrites local preferences");
                 MiteConfig.clearServerSnapshot();
-                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 17D, "Disconnect restores the separate local weight");
+                helper.assertValueEqual(MiteConfig.monsterSpawnWeight("minecraft:zombie", 100D), 17.75D, "Disconnect restores the separate fractional local weight");
                 helper.assertValueEqual(MiteConfig.monsterSpawnWeight("future_pack:missing", 7D), 7D, "Remote-only weights disappear after disconnect");
             } finally { buffer.release(); MiteConfig.clearServerSnapshot(); }
         }
@@ -101,7 +106,7 @@ public final class MonsterSpawnConfigGameTests {
     @GameTest(template = "empty")
     public static void directWeightsExportWithTheirRateRevisionWithoutTouchingActiveFiles(GameTestHelper helper) throws Exception {
         try (var ignored = new Settings()) {
-            var weights = Map.of("minecraft:zombie", 25D, "mite:ghoul", 0D, "future_pack:missing", 1000000D);
+            var weights = Map.of("minecraft:zombie", 2.5D, "mite:ghoul", 0D, "future_pack:missing", .125D, "minecraft:witch", 1000000D);
             helper.assertTrue(MiteConfig.saveMonsterSpawnSettings(Map.of("minecraft:zombie", .5D), weights), "Exportable direct weights save");
             var published = MiteConfig.localSnapshot();
             var bundle = GameplayConfigExport.exportBundle(Files.createTempDirectory("mite-direct-weight-export-"));
@@ -112,6 +117,12 @@ public final class MonsterSpawnConfigGameTests {
             helper.assertValueEqual(parsed.get(MiteConfig.NATURAL_SPAWN_RATES.getPath()), MiteConfig.NATURAL_SPAWN_RATES.get(),
                     "The matching rate revision is included beside direct weights");
             helper.assertValueEqual(MiteConfig.localSnapshot(), published, "Exporting preserves the active weight revision");
+            List<String> reloaded = parsed.get(MiteConfig.NATURAL_SPAWN_WEIGHTS.getPath());
+            MiteConfig.NATURAL_SPAWN_WEIGHTS.set(List.of()); MiteConfig.refreshEnchantmentRules();
+            helper.assertTrue(MiteConfig.localSnapshot().monsterSpawnWeights().isEmpty(), "The isolated runtime clears before a real TOML weight-list reload");
+            MiteConfig.NATURAL_SPAWN_WEIGHTS.set(reloaded); MiteConfig.refreshEnchantmentRules();
+            helper.assertValueEqual(MiteConfig.localSnapshot().monsterSpawnWeights(), weights,
+                    "Parsing the real exported TOML and rebuilding the runtime restores2.5,0.125,zero and the integer upper boundary exactly");
         }
         helper.succeed();
     }

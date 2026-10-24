@@ -45,7 +45,7 @@ public final class ConfiguredMonsterSpawns {
         String id = BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
         double base = policy.ownsMonsterSpawnSettings(id) ? fallback : MiteConfig.monsterSpawnWeight(id, fallback);
         double result = policy.monsterSpawnWeight(type, base);
-        return Double.isFinite(result) && result >= 0D && result <= 1000000D && result == Math.rint(result) ? result : base;
+        return Double.isFinite(result) && result >= 0D && result <= 1000000D ? result : base;
     }
 
     public static double replacementProbability(double probability, double parentRate, double replacementRate) {

@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.GrowthFormula;
 import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
 import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -127,7 +128,7 @@ public final class MiteConfig {
                 .comment("Natural spawn weight overrides: namespace:entity=multiplier (0..100). 1 preserves the original weight; 0 disables natural spawning of that entity. Unknown IDs are retained. Existing biome, date, depth, population and spawn rules still apply. ITE-owned entities use the ITE configuration instead.")
                 .defineListAllowEmpty(List.of("rates"), List::of, () -> "minecraft:zombie=1.0", MiteConfig::validMonsterSpawnOverride);
         NATURAL_SPAWN_WEIGHTS = builder.translation("mite.config.natural_spawn_weights")
-                .comment("Absolute natural pool weight overrides: namespace:entity=integer (0..1000000). Omitted IDs retain each pool's original weight; overrides replace the weight in every existing candidate pool, before rate multipliers. 0 removes that candidate family, including its conversion branches. Does not add spawn entries or bypass date, biome, dimension or population rules. ITE-owned entities use ITE settings.")
+                .comment("Absolute natural pool weight overrides: namespace:entity=number (0..1000000, decimals allowed). Omitted IDs retain each pool's original weight; overrides replace the weight in every existing candidate pool, before rate multipliers. 0 removes that candidate family, including its conversion branches. Does not add spawn entries or bypass date, biome, dimension or population rules. ITE-owned entities use ITE settings.")
                 .defineListAllowEmpty(List.of("weights"), () -> BundledGameplayDefaults.list("monster_spawning.weights"), () -> "minecraft:zombie=100", MiteConfig::validMonsterSpawnWeightOverride);
         for (var option : MonsterSpawningSettings.Option.values()) {
             builder.translation("mite.config.spawning_rules." + option.key())
@@ -272,7 +273,7 @@ public final class MiteConfig {
     }
 
     private static boolean validMonsterSpawnWeight(Double weight) {
-        return weight != null && Double.isFinite(weight) && weight >= 0D && weight <= 1000000D && weight == Math.rint(weight);
+        return weight != null && Double.isFinite(weight) && weight >= 0D && weight <= 1000000D;
     }
 
     private static Map<String, Double> spawnWeightOverrides(Map<String, Double> values) {
@@ -320,7 +321,7 @@ public final class MiteConfig {
         NATURAL_SPAWN_RATES.set(rates.entrySet().stream().filter(entry -> entry.getValue() != 1D)
                 .sorted(Map.Entry.comparingByKey()).map(entry -> entry.getKey() + "=" + entry.getValue()).toList());
         NATURAL_SPAWN_WEIGHTS.set(weights.entrySet().stream().sorted(Map.Entry.comparingByKey())
-                .map(entry -> entry.getKey() + "=" + entry.getValue().longValue()).toList());
+                .map(entry -> entry.getKey() + "=" + BigDecimal.valueOf(entry.getValue()).stripTrailingZeros().toPlainString()).toList());
         refreshEnchantmentRules();
         SPEC.save();
         GameplayConfigSync.broadcast();
