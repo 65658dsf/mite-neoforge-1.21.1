@@ -198,7 +198,13 @@ public final class DiamondEquipmentRemovalGameTests {
         ItemEntity gemDrop = new ItemEntity(helper.getLevel(), location.x, location.y, location.z, new ItemStack(Items.DIAMOND, 3));
         var zombie = EntityType.ZOMBIE.create(helper.getLevel());
         helper.assertTrue(zombie != null, "Native zombie is registered");
+        var world = helper.getLevel().getServer().overworld();
+        long time = world.getDayTime();
+        var progress = io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData.get(world);
+        long highest = progress.highestDay(); boolean dirty = progress.isDirty();
         try {
+            // This retirement test exercises equipment preservation after the independent day-35 unlock.
+            world.setDayTime(34L * 24000L); progress.restoreProgress(35L);
             boolean accepted = helper.getLevel().addFreshEntity(forbiddenDrop);
             helper.assertTrue(!accepted || forbiddenDrop.isRemoved() || forbiddenDrop.getItem().isEmpty(),
                     "A retired item entity never becomes a usable world drop");
@@ -213,7 +219,10 @@ public final class DiamondEquipmentRemovalGameTests {
             helper.assertTrue(zombie.getItemBySlot(EquipmentSlot.HEAD).isEmpty() && zombie.getItemBySlot(EquipmentSlot.CHEST).isEmpty()
                     && zombie.getMainHandItem().isEmpty(), "Equipment directly assigned before spawn/load cannot bypass the retirement rule");
             helper.assertTrue(zombie.getItemBySlot(EquipmentSlot.FEET).is(Items.IRON_BOOTS), "Legal explicitly equipped armor is preserved");
-        } finally { forbiddenDrop.discard(); gemDrop.discard(); zombie.discard(); }
+        } finally {
+            forbiddenDrop.discard(); gemDrop.discard(); zombie.discard();
+            world.setDayTime(time); progress.restoreProgress(highest); progress.setDirty(dirty);
+        }
         helper.succeed();
     }
 

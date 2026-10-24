@@ -61,6 +61,28 @@ public final class SimplySwordsCompatibilityGameTests {
     private SimplySwordsCompatibilityGameTests() {}
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
+    public static void everyCopperFamilySharesTheSixPointSwordBudgetAndStaysBelowSilverAndIron(GameTestHelper h) {
+        if (SimplySwordsCompat.enabled()) for (String family : SimplySwordsCompat.families()) {
+            var copper = new ItemStack(SimplySwordsCompat.weapon("copper", family));
+            var silver = new ItemStack(SimplySwordsCompat.weapon("silver", family));
+            var iron = new ItemStack(SimplySwordsCompat.weapon("iron", family));
+            double copperDamage = baseDamage(copper), silverDamage = baseDamage(silver);
+            h.assertTrue(Math.abs(copperDamage - silverDamage * .9375D) < .00001D,
+                    "Real copper/silver " + family + " share the source eight-point basis with the reviewed six/six-point-four budgets");
+            h.assertTrue(copperDamage < silverDamage && silverDamage < baseDamage(iron),
+                    "The actual native iron family stays above added copper and silver: " + family);
+        }
+        h.succeed();
+    }
+
+    private static double baseDamage(ItemStack stack) {
+        return 1D + stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS,
+                net.minecraft.world.item.component.ItemAttributeModifiers.EMPTY).modifiers().stream()
+                .filter(entry -> entry.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE))
+                .mapToDouble(entry -> entry.modifier().amount()).sum();
+    }
+
+    @GameTest(template = "empty", batch = "simplyswords_compat")
     public static void optionalModCreatesExactlyOneHundredFiveIdentitiesAndReusesNativeGold(GameTestHelper h) {
         long count = BuiltInRegistries.ITEM.keySet().stream().filter(id -> id.getNamespace().equals("mite")
                 && id.getPath().startsWith("simplyswords_")).count();

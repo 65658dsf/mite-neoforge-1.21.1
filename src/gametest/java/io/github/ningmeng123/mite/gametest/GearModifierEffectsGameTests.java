@@ -74,11 +74,14 @@ public final class GearModifierEffectsGameTests {
     private static void equip(TestPlayer player, EquipmentSlot slot, ItemStack stack) {
         player.setItemSlot(slot, stack); player.tick(); player.setOnGround(true);
     }
-    private static ItemAttributeModifiers zeroArmorAttributes() {
+    private static ItemAttributeModifiers zeroArmorAttributes(double toughness) {
         // An EMPTY component invokes NeoForge's fallback to the item's default armor attributes.
         return ItemAttributeModifiers.builder().add(Attributes.ARMOR,
                 new AttributeModifier(ResourceLocation.fromNamespaceAndPath("mite", "gametest_zero_armor"),
-                        0D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.CHEST).build();
+                        0D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.CHEST)
+                // Explicitly cancel the normalized material baseline while testing unrelated fractional armor effects.
+                .add(Attributes.ARMOR_TOUGHNESS,new AttributeModifier(ResourceLocation.fromNamespaceAndPath("mite","gametest_zero_toughness"),
+                        -toughness,AttributeModifier.Operation.ADD_VALUE),EquipmentSlotGroup.CHEST).build();
     }
 
     @GameTest(template = "empty")
@@ -164,7 +167,7 @@ public final class GearModifierEffectsGameTests {
     public static void protectionOneSurvivesNativeArmorFlooringWithoutChangingOrdinaryFractionalArmor(GameTestHelper h) {
         TestPlayer player = player(h);
         ItemStack chest = new ItemStack(Items.IRON_CHESTPLATE);
-        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes());
+        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes(1D));
         equip(player, EquipmentSlot.CHEST, chest);
         close(h, player.getAttributeValue(Attributes.ARMOR), 0D, "The explicit nonempty override removes default chestplate armor");
         close(h, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "The fractional armor fixture has no toughness");
@@ -191,7 +194,7 @@ public final class GearModifierEffectsGameTests {
     public static void specializedProtectionAndBlessedEnterTheNativeArmorComputation(GameTestHelper h) {
         TestPlayer player = player(h);
         ItemStack chest = new ItemStack(Items.LEATHER_CHESTPLATE);
-        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes());
+        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes(.25D));
         equip(player, EquipmentSlot.CHEST, chest);
         close(h, player.getAttributeValue(Attributes.ARMOR), 0D, "Specialized armor fixture has no ordinary armor contribution");
         close(h, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "Specialized armor fixture has no ordinary toughness contribution");
@@ -236,17 +239,17 @@ public final class GearModifierEffectsGameTests {
         equip(player, EquipmentSlot.CHEST, chest);
         RecordingCow target = new RecordingCow(h.getLevel(), player);
         player.setHealth(50F); player.attack(target);
-        close(h, target.received, 12.5F, "Half health enables the original 1.25 melee multiplier");
+        close(h, target.received, 20.25F, "Half health applies 1.25x to the ten-point fixture plus normalized 6.2 sword modifier");
         modifier(chest, GearModifier.ARMOR_INDOMITABLE, 4); player.tick(); player.setOnGround(true);
         player.setHealth(10F); player.attack(target);
-        close(h, target.received, 20F, "Ten percent health enables 2x at any Indomitable rank");
+        close(h, target.received, 32.4F, "Ten percent health enables 2x at any Indomitable rank");
         ServerLevel nether = h.getLevel().getServer().getLevel(Level.NETHER);
         h.assertTrue(nether != null, "The test server loads the Nether dimension");
         TestPlayer demon = new TestPlayer(nether, new BlockPos(0, 80, 0));
         equip(demon, EquipmentSlot.MAINHAND, modifier(sword.copy(), GearModifier.TOOL_DEMON_POWER, 1));
         RecordingCow netherTarget = new RecordingCow(nether, demon);
         demon.attack(netherTarget);
-        close(h, netherTarget.received, 12.5F, "Demon Power multiplies real melee damage by 1.25 outside the Overworld");
+        close(h, netherTarget.received, 20.25F, "Demon Power multiplies real normalized melee damage by 1.25 outside the Overworld");
         h.succeed();
     }
 

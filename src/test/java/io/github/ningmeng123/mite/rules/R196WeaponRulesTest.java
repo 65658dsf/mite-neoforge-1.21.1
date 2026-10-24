@@ -11,6 +11,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Independent source literals and archive bytes, not mirrors of the generated runtime data. @author NingMeng123 */
 class R196WeaponRulesTest {
+    @Test void theMaterialBudgetReplacesTheOldCopperPenaltyAndIncludesTheNativeBasePoint() {
+        for (float bonus : new float[]{0F, 3F, 5F, 6F, 7F, 10F, 11F}) {
+            assertEquals((bonus + 1F) * .75F, R196WeaponRules.meleeDamageBonus("copper", bonus) + 1F, .00001F);
+            assertEquals((bonus + 1F) * .8F, R196WeaponRules.meleeDamageBonus("silver", bonus) + 1F, .00001F);
+            assertEquals((bonus + 1F) * .8F, R196WeaponRules.meleeDamageBonus("iron", bonus) + 1F, .00001F);
+        }
+        assertEquals(6F, R196WeaponRules.meleeDamageBonus("copper", 7F) + 1F, .00001F);
+        assertEquals(6.4F, R196WeaponRules.meleeDamageBonus("silver", 7F) + 1F, .00001F);
+        assertEquals(7.2F, R196WeaponRules.meleeDamageBonus("iron", 8F) + 1F, .00001F);
+    }
     @Test void sphereImpactIncludesTheSourceProjectileExtraPoint() {
         assertArrayEquals(new int[]{2,3,4,4,5}, java.util.stream.IntStream.range(0,5).map(R196WeaponRules::sphereDamage).toArray());
         assertThrows(IllegalArgumentException.class, () -> R196WeaponRules.sphereDamage(5));

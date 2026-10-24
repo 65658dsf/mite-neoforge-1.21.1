@@ -82,15 +82,13 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
 
     public static ItemAttributeModifiers attributes(Definition definition) {
         // Cooldown is a 1.21 design choice, independent of R196's integer damage bonus.
-        double attackSpeed = switch (definition.family()) {
-            case AXE, HATCHET, BATTLE_AXE, WAR_HAMMER -> -3.0;
-            case PICKAXE, SHOVEL, MATTOCK -> -2.8;
-            case HOE -> -2.0;
-            default -> -2.4;
-        };
+        double attackSpeed = io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules
+                .attacksPerSecond(definition.family(), definition.material()) - 4D;
         return ItemAttributeModifiers.builder()
                 .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID,
-                        definition.damage(), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                        io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules.damageBonus(
+                                definition.family(), definition.material(), definition.damage()),
+                        AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
                 .add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID,
                         attackSpeed, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
                 .build();

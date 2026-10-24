@@ -123,7 +123,10 @@ public final class GearExperienceThresholdGameTests {
             if (RemovedDiamondEquipment.isRemoved(stack)) {
                 helper.assertValueEqual(GearProgression.maxLevel(stack), 0,
                         "Retired weapons cannot participate in available equipment growth: " + BuiltInRegistries.ITEM.getKey(item));
-                retired++;
+                var id = BuiltInRegistries.ITEM.getKey(item);
+                if (id.getNamespace().equals(SimplySwordsCompat.MOD_ID) && id.getPath().startsWith("netherite_")) retired++;
+                else helper.assertTrue(SimplySwordsCompat.uniqueWeapon(item),
+                        "Other retired compatibility definitions are independently disabled unique weapons: " + id);
                 continue;
             }
             assertMatrix(helper, stack, WEAPON);

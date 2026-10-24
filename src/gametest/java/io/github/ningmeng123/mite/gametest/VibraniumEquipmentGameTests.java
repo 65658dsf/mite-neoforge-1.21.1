@@ -53,8 +53,9 @@ public final class VibraniumEquipmentGameTests {
             helper.assertValueEqual(stack.getMaxStackSize(), 1, "Equipment is nonstacking");
             helper.assertValueEqual(stack.getItem().getEnchantmentValue(), 120, "Source enchantability is 120");
             helper.assertTrue(stack.has(DataComponents.FIRE_RESISTANT), "Vibranium resists fire and lava");
-            check(helper, amount(stack, Attributes.ATTACK_DAMAGE, EquipmentSlot.MAINHAND), definition.damage(),
-                    "Native attack component carries the family damage");
+            check(helper, amount(stack, Attributes.ATTACK_DAMAGE, EquipmentSlot.MAINHAND),
+                    io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules.damageBonus(definition.family(), definition.material(), definition.damage()),
+                    "Native attack component carries the rebalanced family damage while archival source values stay intact");
         }
         ItemStack pickaxe = new ItemStack(MiteTools.get("vibranium_pickaxe"));
         helper.assertValueEqual(pickaxe.getMaxDamage(), 614400, "Pickaxe retains source hundredfold tool capacity");
@@ -99,17 +100,17 @@ public final class VibraniumEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void armorRetainsFourDistinctToughnessValuesAfterDefaultComponentModification(GameTestHelper helper) {
+    public static void armorHasBalancedUniformToughnessAfterDefaultComponentModification(GameTestHelper helper) {
         String[] slots = {"helmet", "chestplate", "leggings", "boots"};
-        int[] defense = {5, 8, 7, 4}, durability = {5120, 8192, 7168, 4096};
-        double[] toughness = {3.3D, 5.3D, 4.7D, 2.7D};
+        int[] defense = {4, 8, 6, 4}, durability = {5120, 8192, 7168, 4096};
+        double[] toughness = {3D, 3D, 3D, 3D};
         double totalKnockbackResistance = 0D;
         for (int i = 0; i < slots.length; i++) {
             ItemStack stack = new ItemStack(MiteArmorContent.get("mite:vibranium_" + slots[i]));
             var armor = (ArmorItem)stack.getItem();
             helper.assertValueEqual(stack.getMaxDamage(), durability[i], "Armor capacity retains this project's source scale");
             check(helper, amount(stack, Attributes.ARMOR, armor.getEquipmentSlot()), defense[i], "Armor uses the requested version's slot defense");
-            check(helper, amount(stack, Attributes.ARMOR_TOUGHNESS, armor.getEquipmentSlot()), toughness[i], "Default components preserve slot-specific toughness");
+            check(helper, amount(stack, Attributes.ARMOR_TOUGHNESS, armor.getEquipmentSlot()), toughness[i], "Default components preserve balanced material toughness");
             totalKnockbackResistance += amount(stack, Attributes.KNOCKBACK_RESISTANCE, armor.getEquipmentSlot());
             EquipmentDurability.setQuality(stack, Quality.LEGENDARY);
             check(helper, amount(stack, Attributes.ARMOR_TOUGHNESS, armor.getEquipmentSlot()), toughness[i], "Quality increases capacity while intact toughness remains stable");

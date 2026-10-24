@@ -25,7 +25,7 @@ import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Real optional weapon attributes, equipment refresh and Better Combat cooldowns. @author NingMeng123 */
+/** Real optional weapon normalization, player-only weight and Better Combat cooldowns. @author NingMeng123 */
 @GameTestHolder("mite_simplyswords")
 @PrefixGameTestTemplate(false)
 public final class SimplySwordsHandlingGameTests {
@@ -83,7 +83,7 @@ public final class SimplySwordsHandlingGameTests {
     }
 
     @GameTest(template = "empty", batch = "simplyswords_handling")
-    public static void repeatedAttributeQueriesRetainOriginalDamageAndNeverPersistOrDuplicatePenalties(GameTestHelper h) {
+    public static void repeatedAttributeQueriesRetainBalancedDamageAndNeverPersistOrDuplicatePenalties(GameTestHelper h) {
         if (absent(h)) return;
         for (ItemStack stack : List.of(new ItemStack(SimplySwordsCompat.weapon("vibranium", "claymore")),
                 new ItemStack(SimplySwordsCompat.weapon("gold", "katana")),
@@ -96,7 +96,7 @@ public final class SimplySwordsHandlingGameTests {
                 assertPenalties(h, stack, true);
                 h.assertValueEqual(modifiers(stack, EquipmentSlot.MAINHAND).stream()
                                 .filter(entry -> entry.attribute().equals(Attributes.ATTACK_DAMAGE)).toList(), originalDamage,
-                        "Handling preserves the original weapon damage IDs, amounts and operations");
+                        "Repeated queries preserve normalized weapon damage IDs, amounts and operations");
             }
             h.assertTrue(ItemStack.matches(stack, before), "Attribute queries leave saved item components unchanged");
             ItemStack restored = ItemStack.parse(h.getLevel().registryAccess(), stack.save(h.getLevel().registryAccess())).orElseThrow();
@@ -123,13 +123,13 @@ public final class SimplySwordsHandlingGameTests {
         player.tick();
         check(h, player.getAttributeValue(Attributes.ATTACK_SPEED), originalSpeed * (1D - SimplySwordsHandling.ATTACK_SPEED_PENALTY),
                 "Native equipment refresh slows the real player's full configured attack speed");
-        check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), baseMovement * (1D - SimplySwordsHandling.MOVEMENT_SPEED_PENALTY),
+        check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), baseMovement * (1D - SimplySwordsHandling.movementPenalty(claymore)),
                 "Holding the two-handed weapon slows the real movement attribute before attacking");
         check(h, player.getAttributeValue(Attributes.ATTACK_DAMAGE), originalDamage, "The attack damage of the real equipped weapon is preserved");
         h.assertTrue(player.getCurrentItemAttackStrengthDelay() > 20D / originalSpeed,
                 "The native player attack recovery actually takes longer");
         for (int tick = 0; tick < 5; tick++) player.tick();
-        check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), baseMovement * (1D - SimplySwordsHandling.MOVEMENT_SPEED_PENALTY),
+        check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), baseMovement * (1D - SimplySwordsHandling.movementPenalty(claymore)),
                 "Repeated equipment ticks do not accumulate movement penalties");
         ItemStack katana = new ItemStack(SimplySwordsCompat.weapon("copper", "katana"));
         player.setItemSlot(EquipmentSlot.MAINHAND, katana);
@@ -178,10 +178,8 @@ public final class SimplySwordsHandlingGameTests {
     }
 
     private static List<Entry> defaults(ItemStack stack, EquipmentSlot slot) {
-        List<Entry> entries = new ArrayList<>();
-        stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY)
-                .forEach(slot, (attribute, modifier) -> entries.add(new Entry(attribute, modifier)));
-        return entries;
+        return modifiers(stack, slot).stream().filter(entry -> !entry.modifier().id().equals(ATTACK)
+                && !entry.modifier().id().equals(MOVEMENT)).toList();
     }
 
     private static void assertPenalties(GameTestHelper h, ItemStack stack, boolean twoHanded) {
@@ -189,7 +187,7 @@ public final class SimplySwordsHandlingGameTests {
             List<Entry> entries = modifiers(stack, slot);
             boolean active = twoHanded && slot == EquipmentSlot.MAINHAND;
             assertPenalty(h, entries, ATTACK, Attributes.ATTACK_SPEED, SimplySwordsHandling.ATTACK_SPEED_PENALTY, active);
-            assertPenalty(h, entries, MOVEMENT, Attributes.MOVEMENT_SPEED, SimplySwordsHandling.MOVEMENT_SPEED_PENALTY, active);
+            assertPenalty(h, entries, MOVEMENT, Attributes.MOVEMENT_SPEED, 0D, false);
         }
     }
 
@@ -271,8 +269,8 @@ public final class SimplySwordsHandlingGameTests {
                 mob.tick();
                 var slowed = BetterCombatBridge.profile(mob, 0);
                 h.assertTrue(original != null && slowed != null, "Both same-item presets resolve through the real mob combat bridge");
-                h.assertTrue(slowed.cooldownTicks() > original.cooldownTicks(),
-                        "The two-handed penalty lengthens the actual Better Combat mob cooldown while item speed components remain identical");
+                h.assertTrue(slowed.cooldownTicks() == original.cooldownTicks(),
+                        "Changing handedness preserves the same bounded heavy attack rate instead of bypassing the balance with a one-handed preset");
                 h.assertValueEqual(claymore.get(DataComponents.ATTRIBUTE_MODIFIERS), oneHandedPreset.get(DataComponents.ATTRIBUTE_MODIFIERS),
                         "The cooldown comparison uses identical original weapon speed and damage components");
             } finally { mob.discard(); }

@@ -261,8 +261,16 @@ public final class SourcePlayerCombatGameTests {
     public static void serverPacketsDistinguishShortMeleeGeneralInteractionAndUntrustedHitPoint(GameTestHelper h) {
         try (Session session=session(h)) {
             ServerPlayer player=session.player;
-            InteractionCow target=new InteractionCow(h); target.setPos(player.position().add(2.7D,0,0));
-            h.getLevel().addFreshEntity(target);
+            player.setItemInHand(InteractionHand.MAIN_HAND,ItemStack.EMPTY);
+            player.setItemInHand(InteractionHand.OFF_HAND,ItemStack.EMPTY);
+            player.setDeltaMovement(Vec3.ZERO);
+            InteractionCow target=new InteractionCow(h); target.setAge(0); target.setPos(player.position().add(2.7D,0,0));
+            h.getLevel().getChunkAt(target.blockPosition());
+            h.assertTrue(h.getLevel().addFreshEntity(target),"The packet target enters the real server level");
+            try {
+            h.assertTrue(h.getLevel().getEntity(target.getId())==target,"Native packet lookup resolves the same target before sending");
+            h.assertFalse(SourcePlayerReach.canMelee(player,target),"Fixture lies outside the unchanged short melee range");
+            h.assertTrue(SourcePlayerReach.canInteract(player,target),"Fixture lies inside the unchanged general interaction range");
             player.connection.handleInteract(ServerboundInteractPacket.createAttackPacket(target,false));
             h.assertValueEqual(target.hits,0,"Native padded packet range cannot bypass shorter melee reach");
             player.connection.handleInteract(ServerboundInteractPacket.createInteractionPacket(target,false,InteractionHand.MAIN_HAND));
@@ -271,7 +279,7 @@ public final class SourcePlayerCombatGameTests {
             h.assertValueEqual(target.specific,0,"Forged relative hit location outside target bounds is rejected");
             player.connection.handleInteract(ServerboundInteractPacket.createInteractionPacket(target,false,InteractionHand.MAIN_HAND,new Vec3(-.44,1.2,0)));
             h.assertValueEqual(target.specific,1,"An actual near-side collision point within interaction reach is accepted");
-            target.discard();
+            } finally { target.discard(); }
         }
         h.succeed();
     }

@@ -167,20 +167,22 @@ public final class MonsterEquipmentPickupGameTests {
     @GameTest(template = "empty", timeoutTicks = 240)
     public static void rejectedArmorCannotFallbackToEmptyHandAndBindingStillLocksTheArmorSlot(GameTestHelper h) {
         ready(h, f -> {
-            f.mob.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-            ItemStack current = quality(new ItemStack(Items.IRON_HELMET), Quality.FINE);
-            f.mob.setItemSlot(EquipmentSlot.HEAD, current);
-            ItemStack poor = quality(new ItemStack(Items.IRON_HELMET), Quality.POOR);
-            h.assertTrue(f.mob.equipItemIfPossible(poor).isEmpty() && f.mob.getMainHandItem().isEmpty()
-                            && f.mob.getItemBySlot(EquipmentSlot.HEAD) == current,
-                    "A refused low-quality helmet cannot fall through to native empty-mainhand storage");
-            current.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
-                    .getHolderOrThrow(Enchantments.BINDING_CURSE), 1);
-            ItemStack excellent = quality(new ItemStack(Items.IRON_HELMET), Quality.EXCELLENT);
-            h.assertFalse(MobEquipmentUpgrades.isUpgrade(f.mob, excellent), "The real armor-change-prevention enchantment blocks pursuit");
-            h.assertTrue(f.mob.equipItemIfPossible(excellent).isEmpty()
-                            && f.mob.getItemBySlot(EquipmentSlot.HEAD) == current && f.mob.getMainHandItem().isEmpty(),
-                    "Native pickup cannot replace bound armor or use its refused upgrade as a held item");
+            try (var source = new SourceConfigFixture(false, true)) {
+                f.mob.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                ItemStack current = quality(new ItemStack(Items.IRON_HELMET), Quality.FINE);
+                f.mob.setItemSlot(EquipmentSlot.HEAD, current);
+                ItemStack poor = quality(new ItemStack(Items.IRON_HELMET), Quality.POOR);
+                h.assertTrue(f.mob.equipItemIfPossible(poor).isEmpty() && f.mob.getMainHandItem().isEmpty()
+                                && f.mob.getItemBySlot(EquipmentSlot.HEAD) == current,
+                        "A refused low-quality helmet cannot fall through to native empty-mainhand storage");
+                current.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                        .getHolderOrThrow(Enchantments.BINDING_CURSE), 1);
+                ItemStack excellent = quality(new ItemStack(Items.IRON_HELMET), Quality.EXCELLENT);
+                h.assertFalse(MobEquipmentUpgrades.isUpgrade(f.mob, excellent), "The real armor-change-prevention enchantment blocks pursuit");
+                h.assertTrue(f.mob.equipItemIfPossible(excellent).isEmpty()
+                                && f.mob.getItemBySlot(EquipmentSlot.HEAD) == current && f.mob.getMainHandItem().isEmpty(),
+                        "Native pickup cannot replace bound armor or use its refused upgrade as a held item");
+            }
         });
     }
 

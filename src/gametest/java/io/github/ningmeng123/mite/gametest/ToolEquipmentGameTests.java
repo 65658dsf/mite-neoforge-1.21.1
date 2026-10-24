@@ -193,12 +193,12 @@ public final class ToolEquipmentGameTests {
         try (Session session = player(helper)) {
             ServerPlayer player = session.player();
             String[] paths = {"silver_dagger", "silver_war_hammer", "wooden_cudgel"};
-            float[] damage = {7.5F, 15.0F, 4.0F};
+            float[] damage = {6.0F, 12.0F, 4.0F}; // Balanced metal bases retain silver 1.25x and skeleton blunt 2x.
             int[] wear = {50, 66, 25};
             for (int i = 0; i < paths.length; i++) {
                 ItemStack stack = tool(paths[i]);
                 player.setItemInHand(InteractionHand.MAIN_HAND, stack);
-                for (int tick = 0; tick < 25; tick++) player.doTick();
+                for (int tick = 0; tick < 40; tick++) player.doTick(); // Includes the slower .75/s metal hammer cooldown.
                 player.setOnGround(true);
                 player.setSprinting(false);
                 player.fallDistance = 0;

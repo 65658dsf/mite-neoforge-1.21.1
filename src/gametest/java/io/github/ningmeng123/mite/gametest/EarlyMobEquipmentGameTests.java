@@ -11,6 +11,10 @@ import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -217,12 +221,28 @@ public final class EarlyMobEquipmentGameTests {
     private static final class Progress implements AutoCloseable {
         private final ServerLevel level;
         private final long time, highest;
+        private final boolean dirty;
+        private final SourceConfigFixture config = new SourceConfigFixture(true, false);
+        private final Map<BlockPos, BlockState> chamber = new HashMap<>();
         Progress(GameTestHelper helper) {
             level = helper.getLevel().getServer().overworld();
             time = level.getDayTime(); highest = BloodMoonInvasionData.get(level).highestDay();
+            dirty = BloodMoonInvasionData.get(level).isDirty();
+            // Equipment timing requires actual NATURAL joins at noon, inside a genuinely enclosed habitat.
+            // This keeps the daylight spawn restriction active while isolating the equipment lifecycle.
+            BlockPos origin = helper.absolutePos(new BlockPos(2, 3, 2));
+            for (int x=-2; x<=2; x++) for (int z=-2; z<=2; z++) for (int y=-1; y<=3; y++) {
+                BlockPos pos = origin.offset(x,y,z);
+                chamber.put(pos, level.getBlockState(pos));
+                boolean wall = Math.abs(x)==2 || Math.abs(z)==2 || y==-1 || y==3;
+                level.setBlockAndUpdate(pos, (wall ? Blocks.STONE : Blocks.AIR).defaultBlockState());
+            }
         }
         @Override public void close() {
+            chamber.forEach(level::setBlockAndUpdate);
             level.setDayTime(time); BloodMoonInvasionData.get(level).restoreProgress(highest);
+            BloodMoonInvasionData.get(level).setDirty(dirty);
+            config.close();
         }
     }
 }

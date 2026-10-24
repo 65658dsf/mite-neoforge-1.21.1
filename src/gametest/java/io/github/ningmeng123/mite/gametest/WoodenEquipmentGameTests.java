@@ -1,5 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.registry.MiteTools;
+
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -212,7 +214,7 @@ public final class WoodenEquipmentGameTests {
                 prepareTarget(swordTarget);
                 player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
                 neighbor.invulnerableTime = 0;
-                assertAttackDamage(helper, player, swordTarget, 9.0F, "R196 iron sword damage is player base one plus its source modifier eight");
+                assertAttackDamage(helper, player, swordTarget, 7.2F, "Balanced iron sword damage retains the ordinary sword sweep path");
                 helper.assertTrue(neighbor.getHealth() < neighbor.getMaxHealth(),
                         "The same fixture permits an ordinary sword to sweep, proving the club's negative check is meaningful");
                 helper.assertValueEqual(player.getMainHandItem().getDamageValue(), 50, "R196 sword attack wear is 100 times the source rate 0.5, applied once");
@@ -315,17 +317,18 @@ public final class WoodenEquipmentGameTests {
         helper.assertValueEqual(restored.getEnchantmentLevel(sharpness), 2, "Saving does not erase a forced or legacy incompatible enchantment");
         helper.assertValueEqual(restored.getDamageValue(), 75, "The legacy enchanted stack retains its wear");
         helper.assertValueEqual(restored.getMaxDamage(), 400, "The legacy enchanted stack retains the modern club defaults");
-        for (Item item : new Item[]{Items.STONE_SWORD, Items.IRON_SWORD}) {
+        for (Item item : new Item[]{MiteTools.get("copper_sword"), Items.IRON_SWORD}) {
             ItemStack sword = new ItemStack(item);
             helper.assertTrue(sword.is(ItemTags.SWORDS), "Ordinary swords retain their item tag");
             helper.assertTrue(sword.canPerformAction(ItemAbilities.SWORD_DIG) && sword.canPerformAction(ItemAbilities.SWORD_SWEEP),
                     "Ordinary swords retain digging and sweeping abilities");
-            helper.assertValueEqual(sword.getDestroySpeed(Blocks.COBWEB.defaultBlockState()), item == Items.STONE_SWORD ? 15.0F : 4.0F,
-                    "Modern stone retains speed fifteen; migrated iron sword uses R196 base efficiency two times iron efficiency two");
-            helper.assertValueEqual(sword.getMaxDamage(), item == Items.STONE_SWORD ? 800 : 6400,
-                    "Two-component swords use material factors one (modern stone) and eight (R196 iron)");
+            helper.assertValueEqual(sword.getDestroySpeed(Blocks.COBWEB.defaultBlockState()), item == Items.IRON_SWORD ? 4.0F : 3.5F,
+                    "Retained copper and iron swords preserve their source web-cutting efficiency");
+            helper.assertValueEqual(sword.getMaxDamage(), item == Items.IRON_SWORD ? 6400 : 3200,
+                    "Two-component swords use material factors four (copper) and eight (iron)");
             helper.assertTrue(sword.supportsEnchantment(sharpness), "Ordinary swords still support Sharpness");
         }
+        helper.assertFalse(new ItemStack(Items.STONE_SWORD).is(ItemTags.SWORDS), "Retired stone swords remain excluded from active equipment tags");
         ItemStack iron = new ItemStack(Items.IRON_SWORD);
         helper.assertTrue(iron.getItem().isValidRepairItem(iron, new ItemStack(Items.IRON_INGOT)), "Normal iron sword material repairs still work");
         helper.succeed();
@@ -386,7 +389,8 @@ public final class WoodenEquipmentGameTests {
         chargeAttack(player);
         float before = target.getHealth();
         player.attack(target);
-        helper.assertValueEqual(before - target.getHealth(), damage, message);
+        float actual = before - target.getHealth();
+        helper.assertTrue(Math.abs(actual - damage) < .00001F, message + ": " + actual + " vs " + damage);
     }
 
     private static PlayerSession newServerPlayer(GameTestHelper helper) {

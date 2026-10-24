@@ -8,6 +8,11 @@ import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolProfile;
+import io.github.ningmeng123.mite.rules.SimplySwordsBalanceRules;
+import com.google.gson.JsonParser;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,11 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -39,6 +49,9 @@ public final class SimplySwordsCompat {
     public static final List<String> MATERIALS = List.of("rusted_iron", "copper", "silver", "gold",
             "ancient_metal", "mithril", "adamantium", "vibranium");
     private static final Map<Item, Definition> DEFINITIONS = new IdentityHashMap<>();
+    private record CombatBaseline(double materialDamageTotal, double damageAdjustment, double attackRate) {}
+    private static final Map<Item, CombatBaseline> COMBAT_BASELINES = new IdentityHashMap<>();
+    private record WeaponProfile(String family, Boolean twoHanded) {}
     private static final ClassValue<Boolean> UNIQUE_WEAPONS = new ClassValue<>() {
         @Override protected Boolean computeValue(Class<?> type) {
             for (Class<?> parent = type; parent != null; parent = parent.getSuperclass())
@@ -59,6 +72,18 @@ public final class SimplySwordsCompat {
     public static List<String> families() { return FAMILIES; }
     public static String path(String material, String family) { return "simplyswords_" + material + "_" + family; }
     public static Definition definition(ItemStack stack) { return DEFINITIONS.get(stack.getItem()); }
+    public static double damageBonus(ItemStack stack) {
+        Definition definition = definition(stack); CombatBaseline baseline = COMBAT_BASELINES.get(stack.getItem());
+        return definition == null || baseline == null ? 0D : SimplySwordsBalanceRules.damageBonus(definition.material(),
+                definition.family(), baseline.materialDamageTotal(), baseline.damageAdjustment(), uniqueWeapon(stack.getItem()));
+    }
+    public static double attackRate(ItemStack stack) {
+        Definition definition = definition(stack); CombatBaseline baseline = COMBAT_BASELINES.get(stack.getItem());
+        return definition == null || baseline == null ? 4D : SimplySwordsBalanceRules.attackRate(definition.family(), baseline.attackRate());
+    }
+    public static double baseAttackSpeedBonus(ItemStack stack, boolean twoHanded) {
+        return attackRate(stack) / (twoHanded ? SimplySwordsBalanceRules.TWO_HANDED_ATTACK_SPEED_FACTOR : 1D) - 4D;
+    }
     /** Class ancestry is available before tags bind and covers awakened/evolved forms without optional linkage. */
     public static boolean uniqueWeapon(Item item) {
         return BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(MOD_ID)
@@ -127,8 +152,9 @@ public final class SimplySwordsCompat {
             @Override public int getEnchantmentValue() { return source.enchantability(); }
             @Override public Ingredient getRepairIngredient() { return Ingredient.of(ingot(material)); }
         };
+        float familyDamage = configured(family + "_damageModifier", damageModifier(family));
         properties.attributes(SwordItem.createAttributes(tier,
-                3 + configured(family + "_damageModifier", damageModifier(family)),
+                source.damage() + familyDamage - tier.getAttackDamageBonus(),
                 configured(family + "_attackSpeed", attackSpeed(family))));
         try {
             // No external classes occur in signatures: absent-mod dedicated servers never resolve them.
@@ -139,6 +165,8 @@ public final class SimplySwordsCompat {
                             .newInstance(tier, properties, new String[0])
                     : (Item)type.getConstructor(Tier.class, Item.Properties.class).newInstance(tier, properties);
             DEFINITIONS.put(item, new Definition(material, family, profile, true));
+            COMBAT_BASELINES.put(item, new CombatBaseline(source.damage() + 1D,
+                    familyDamage - damageModifier(family), 4D + configured(family + "_attackSpeed", attackSpeed(family))));
             return item;
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException("Simply Swords item API is incompatible; cannot create " + path(material, family), exception);
@@ -162,7 +190,8 @@ public final class SimplySwordsCompat {
         try {
             Object config = Class.forName("net.sweenus.simplyswords.config.Config").getField("weaponAttribute").get(null);
             Object group = config.getClass().getField(field.endsWith("_attackSpeed") ? "typeAttackSpeed" : "typeDamageModifier").get(config);
-            return ((Number)group.getClass().getField(field).get(group)).floatValue();
+            float value = ((Number)group.getClass().getField(field).get(group)).floatValue();
+            return Float.isFinite(value) ? value : fallback;
         } catch (ReflectiveOperationException | ClassCastException exception) {
             return fallback;
         }
@@ -211,21 +240,72 @@ public final class SimplySwordsCompat {
                 DEFINITIONS.put(item, new Definition(material, family, profile(material, family), false));
             }
             Definition definition = DEFINITIONS.get(item);
+            ItemAttributeModifiers original = item.components().getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
+            if (!COMBAT_BASELINES.containsKey(item)) {
+                double bonus = baseAttribute(original, Attributes.ATTACK_DAMAGE, Item.BASE_ATTACK_DAMAGE_ID);
+                double familyDamage = configured(definition.family() + "_damageModifier", damageModifier(definition.family()));
+                boolean unique = uniqueWeapon(item);
+                COMBAT_BASELINES.put(item, new CombatBaseline(Math.max(1D, 1D + bonus - (unique ? 0D : familyDamage)),
+                        unique ? 0D : familyDamage - damageModifier(definition.family()),
+                        4D + baseAttribute(original, Attributes.ATTACK_SPEED, Item.BASE_ATTACK_SPEED_ID)));
+            }
+            WeaponProfile weaponProfile = upstreamProfile(BuiltInRegistries.ITEM.getKey(item), definition.family(), new HashSet<>());
+            boolean twoHanded = weaponProfile.twoHanded() == null
+                    ? SimplySwordsBalanceRules.profile(definition.family()).defaultTwoHanded() : weaponProfile.twoHanded();
+            ItemStack baseStack = new ItemStack(item);
+            ItemAttributeModifiers.Builder balanced = ItemAttributeModifiers.builder();
+            for (var entry : original.modifiers()) {
+                AttributeModifier modifier = entry.modifier();
+                if (entry.attribute().equals(Attributes.ATTACK_DAMAGE) && modifier.id().equals(Item.BASE_ATTACK_DAMAGE_ID))
+                    modifier = new AttributeModifier(modifier.id(), damageBonus(baseStack), AttributeModifier.Operation.ADD_VALUE);
+                else if (entry.attribute().equals(Attributes.ATTACK_SPEED) && modifier.id().equals(Item.BASE_ATTACK_SPEED_ID))
+                    modifier = new AttributeModifier(modifier.id(), baseAttackSpeedBonus(baseStack, twoHanded), AttributeModifier.Operation.ADD_VALUE);
+                balanced.add(entry.attribute(), modifier, entry.slot());
+            }
             EquipmentDurability.registerTool(item, definition.profile());
             event.modify(item, components -> components.set(DataComponents.MAX_DAMAGE,
-                    EquipmentDurabilityRules.baseToolDurability(definition.profile())));
+                    EquipmentDurabilityRules.baseToolDurability(definition.profile()))
+                    .set(DataComponents.ATTRIBUTE_MODIFIERS, new ItemAttributeModifiers(balanced.build().modifiers(), original.showInTooltip())));
         }
         Mite.LOGGER.info("Simply Swords compatibility enabled: {} managed weapons, {} new metal variants",
                 DEFINITIONS.size(), (MATERIALS.size() - 1) * FAMILIES.size());
     }
 
     private static String nativeFamily(String path) {
-        return FAMILIES.stream().filter(f -> path.endsWith("_" + f)).findFirst().orElseGet(() -> switch (path) {
+        return FAMILIES.stream().filter(f -> path.endsWith("_" + f)).findFirst().orElseGet(() -> upstreamProfile(
+                ResourceLocation.fromNamespaceAndPath(MOD_ID, path), switch (path) {
             case "soulrender", "soulstalker", "magiscythe" -> "scythe";
             case "soulpyre", "molten_edge", "livyatan" -> "greataxe";
             case "frostfall", "mjolnir", "hearthflame", "soulkeeper", "hiveheart" -> "greathammer";
             case "icewhisper", "arcanethyst", "thunderbrand" -> "halberd";
             default -> "longsword";
-        });
+        }, new HashSet<>()).family());
+    }
+
+    private static double baseAttribute(ItemAttributeModifiers attributes,
+            net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute, ResourceLocation id) {
+        return attributes.modifiers().stream().filter(entry -> entry.attribute().equals(attribute)
+                        && entry.modifier().id().equals(id) && entry.slot().test(EquipmentSlot.MAINHAND))
+                .mapToDouble(entry -> entry.modifier().amount()).sum();
+    }
+
+    /** Read only bundled profile metadata; live Better Combat handedness is resolved on every attribute query. */
+    private static WeaponProfile upstreamProfile(ResourceLocation id, String fallback, java.util.Set<ResourceLocation> visited) {
+        if (!visited.add(id)) return new WeaponProfile(fallback, null);
+        try (var stream = SimplySwordsCompat.class.getClassLoader().getResourceAsStream(
+                "data/" + id.getNamespace() + "/weapon_attributes/" + id.getPath() + ".json")) {
+            if (stream == null) return new WeaponProfile(SimplySwordsBalanceRules.category(id.getPath(), fallback), null);
+            var json = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+            WeaponProfile parent = json.has("parent") ? upstreamProfile(ResourceLocation.parse(json.get("parent").getAsString()), fallback, visited)
+                    : new WeaponProfile(fallback, null);
+            var attributes = json.has("attributes") ? json.getAsJsonObject("attributes") : null;
+            String family = attributes != null && attributes.has("category")
+                    ? SimplySwordsBalanceRules.category(attributes.get("category").getAsString(), parent.family()) : parent.family();
+            Boolean twoHanded = attributes != null && attributes.has("two_handed") ? Boolean.valueOf(attributes.get("two_handed").getAsBoolean()) : parent.twoHanded();
+            return new WeaponProfile(family, twoHanded);
+        } catch (java.io.IOException | RuntimeException exception) {
+            Mite.LOGGER.warn("Could not inspect optional weapon profile {}", id, exception);
+            return new WeaponProfile(fallback, null);
+        }
     }
 }
