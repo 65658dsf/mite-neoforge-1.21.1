@@ -311,7 +311,7 @@ public final class R196SpawnGameTests {
             for (Mob mob : helper.getLevel().getEntitiesOfClass(Mob.class, bounds)) if (!before.contains(mob)) added.add(mob);
             helper.assertTrue(!added.isEmpty() && added.stream().allMatch(mob -> mob.getType() == EntityType.ZOMBIFIED_PIGLIN), "Real source spawner adds the qualified identity");
             int delay = spawner.save(new CompoundTag()).getShort("Delay");
-            helper.assertTrue(delay >= 200 && delay < 800, "Successful cycle uses source random delay200..799");
+            helper.assertTrue(delay == 180, "Successful cycle uses the requested fixed nine-second interval");
         } finally { added.forEach(Mob::discard); helper.getLevel().getServer().getPlayerList().remove(player); }
         helper.succeed();
     }

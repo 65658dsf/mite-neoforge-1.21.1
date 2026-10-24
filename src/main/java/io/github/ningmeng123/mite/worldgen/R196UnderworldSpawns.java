@@ -14,6 +14,8 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 public final class R196UnderworldSpawns {
     private R196UnderworldSpawns() {}
 
+    public static boolean ghastUnlocked(long highestOverworldDay) { return highestOverworldDay > 96L; }
+
     public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         event.register(EntityType.BAT, R196UnderworldSpawns::bat, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }

@@ -1,0 +1,152 @@
+{
+  "author": "NingMeng123",
+  "source": "R196 afp.java:9/92-97, xo.java:81-90 and mk.java:64-109; full replacement, eight draws and random 27-slot overwrites",
+  "rolls": 8,
+  "source_total_weight": 74,
+  "entries": [
+    {
+      "item": "mite:ancient_metal_nugget",
+      "minimum": 1,
+      "maximum": 4,
+      "weight": 10
+    },
+    {
+      "item": "mite:ancient_metal_ingot",
+      "minimum": 1,
+      "maximum": 4,
+      "weight": 10
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "minimum": 1,
+      "maximum": 4,
+      "weight": 10
+    },
+    {
+      "item": "minecraft:string",
+      "minimum": 1,
+      "maximum": 4,
+      "weight": 10
+    },
+    {
+      "item": "minecraft:bowl",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 3
+    },
+    {
+      "item": "mite:ancient_metal_bucket",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_coin",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 1
+    },
+    {
+      "item": "mite:music_disc_underworld",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 1
+    },
+    {
+      "item": "mite:music_disc_descent",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 1
+    },
+    {
+      "item": "mite:music_disc_wanderer",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 1
+    },
+    {
+      "item": "mite:music_disc_legends",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 1
+    },
+    {
+      "item": "minecraft:name_tag",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_horse_armor",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 1
+    },
+    {
+      "item": "mite:fishing_rod_ancient_metal_hook",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_pickaxe",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_shovel",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_dagger",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_sword",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_bow",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_chainmail_boots",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_chainmail_leggings",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_chainmail_chestplate",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "mite:ancient_metal_chainmail_helmet",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 2
+    },
+    {
+      "item": "minecraft:enchanted_book",
+      "minimum": 1,
+      "maximum": 1,
+      "weight": 1
+    }
+  ]
+}

@@ -8,12 +8,15 @@ import io.github.ningmeng123.mite.worldgen.R196MobSpawning;
 import io.github.ningmeng123.mite.worldgen.R196SpawnerAccess;
 import io.github.ningmeng123.mite.worldgen.UnderworldDungeonSpawns;
 import io.github.ningmeng123.mite.worldgen.UnderworldSpawnerMobs;
+import io.github.ningmeng123.mite.rules.SpawnerBalanceRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.SpawnData;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
@@ -43,6 +46,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BaseSpawner.class)
 public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     @Shadow private int spawnDelay;
+    @Shadow private int minSpawnDelay;
+    @Shadow private int maxSpawnDelay;
     @Shadow private int requiredPlayerRange;
     @Shadow private SpawnData nextSpawnData;
     @Shadow private SimpleWeightedRandomList<SpawnData> spawnPotentials;
@@ -53,6 +58,12 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     @Unique private boolean mite$managed;
     @Unique private boolean mite$dungeonConfigured;
     @Unique private boolean mite$loading;
+    @Unique private int mite$successfulSpawns;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void mite$initialNineSecondDelay(CallbackInfo ci) {
+        spawnDelay = minSpawnDelay = maxSpawnDelay = SpawnerBalanceRules.INTERVAL_TICKS;
+    }
 
     @Override public void mite$configureUnderworldDungeon(ServerLevel level, BlockPos pos) {
         if (!UnderworldSpawnerMobs.applies(level) || !UnderworldDungeonSpawns.canUpgrade(nextSpawnData, spawnPotentials)) return;
@@ -91,14 +102,41 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
         cir.setReturnValue(!mite$disabled && level.players().stream().anyMatch(player -> !player.isSpectator() && player.isAlive()
                 && player.distanceToSqr(pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5) < (double)requiredPlayerRange * requiredPlayerRange));
     }
-    @Inject(method = "serverTick", at = @At("HEAD"))
+    @Inject(method = "serverTick", at = @At("HEAD"), cancellable = true)
     private void mite$beginSourceCycle(ServerLevel level, BlockPos pos, CallbackInfo ci) {
+        minSpawnDelay = maxSpawnDelay = SpawnerBalanceRules.INTERVAL_TICKS;
+        if (SpawnerBalanceRules.exhausted(mite$successfulSpawns)) {
+            mite$destroyExhausted(level, pos);
+            ci.cancel();
+            return;
+        }
         mite$normalizeUnderworld(level, pos);
         mite$managed = R196MobSpawning.manages(level);
         mite$resetDelay = false;
         mite$attemptedCycle = R196MobSpawning.manages(level) && mite$sourceRules() && !mite$disabled && spawnDelay <= 0
                 && level.players().stream().anyMatch(player -> !player.isSpectator() && player.isAlive()
                     && player.distanceToSqr(pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5) < (double)requiredPlayerRange * requiredPlayerRange);
+    }
+    @WrapOperation(method = "serverTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tryAddFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)Z"))
+    private boolean mite$countSuccessfulSpawns(ServerLevel level, Entity entity, Operation<Boolean> original,
+            @Local(argsOnly = true) BlockPos pos) {
+        if (SpawnerBalanceRules.exhausted(mite$successfulSpawns)) return false;
+        boolean added = original.call(level, entity);
+        if (added && !entity.isRemoved() && entity.isAddedToLevel()) {
+            mite$successfulSpawns++;
+            var owner = ((BaseSpawner)(Object)this).getOwner();
+            if (owner != null) owner.ifLeft(net.minecraft.world.level.block.entity.BlockEntity::setChanged);
+            if (SpawnerBalanceRules.exhausted(mite$successfulSpawns)) mite$destroyExhausted(level, pos);
+        }
+        return added;
+    }
+    @Unique private void mite$destroyExhausted(ServerLevel level, BlockPos pos) {
+        mite$disabled = true;
+        var state = level.getBlockState(pos);
+        if (state.is(Blocks.SPAWNER)) {
+            level.levelEvent(2001, pos, Block.getId(state));
+            level.removeBlock(pos, false);
+        }
     }
     @WrapOperation(method = "serverTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/BaseSpawner;delay(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
     private void mite$rememberReset(BaseSpawner spawner, Level level, BlockPos pos, Operation<Void> original) {
@@ -150,6 +188,9 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     @Inject(method = "load", at = @At("RETURN"))
     private void mite$loadDisabled(Level level, BlockPos pos, CompoundTag tag, CallbackInfo ci) {
         mite$disabled = tag.getBoolean("mite:r196_disabled");
+        mite$successfulSpawns = SpawnerBalanceRules.count(tag.getInt(SpawnerBalanceRules.SPAWNED_TAG));
+        minSpawnDelay = maxSpawnDelay = SpawnerBalanceRules.INTERVAL_TICKS;
+        if (spawnDelay > SpawnerBalanceRules.INTERVAL_TICKS) spawnDelay = SpawnerBalanceRules.INTERVAL_TICKS;
         mite$loading = false;
         mite$normalizeUnderworld(level, pos);
     }
@@ -179,6 +220,7 @@ public abstract class R196SpawnerMixin implements R196SpawnerAccess {
     }
     @Inject(method = "save", at = @At("RETURN"))
     private void mite$saveDisabled(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+        cir.getReturnValue().putInt(SpawnerBalanceRules.SPAWNED_TAG, mite$successfulSpawns);
         if (mite$disabled) cir.getReturnValue().putBoolean("mite:r196_disabled", true);
         if (mite$dungeonConfigured) cir.getReturnValue().putBoolean(UnderworldDungeonSpawns.CONFIGURED_TAG, true);
     }

@@ -46,6 +46,9 @@ public final class ArmorStructureLootModifier extends LootModifier {
     public static Map<String, Pool> pools() { return POOLS; }
 
     @Override protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
+        if (context.getQueriedLootTableId().toString().equals("minecraft:chests/simple_dungeon")
+                && context.getLevel().dimension().equals(MiteWorldDimensions.UNDERWORLD))
+            return UnderworldDungeonLoot.generate(context, POOLS.get("dungeon_underworld"));
         ItemStack artifact=io.github.ningmeng123.mite.advancement.ReferencedBooks.artifact(context);
         if(!artifact.isEmpty())loot.add(artifact);
         String table = context.getQueriedLootTableId().toString();
@@ -91,12 +94,6 @@ public final class ArmorStructureLootModifier extends LootModifier {
         }
         if (!reservedRecord.isEmpty() && unique.mark(((io.github.ningmeng123.mite.item.R196RecordItem)reservedRecord.getItem()).recordName()))
             loot.add(reservedRecord);
-        // Modern balance bonus only fills underworld dungeon chests that did not already roll a coin.
-        if (pool == POOLS.get("dungeon_underworld")) {
-            var coin = MiteArmorContent.get("mite:ancient_metal_coin");
-            if (loot.stream().noneMatch(stack -> stack.is(coin)) && random.nextFloat() < .03F)
-                loot.add(new ItemStack(coin));
-        }
         return loot;
     }
     private static boolean replacedGear(ItemStack stack) {
@@ -135,6 +132,22 @@ public final class ArmorStructureLootModifier extends LootModifier {
                     pools.put(pair.getKey(), new Pool(original.modernTable(), original.minimumRolls(), original.maximumRolls(),
                             original.sourceTotalWeight(), entries));
                 });
+            }
+            try (var dungeonReader = new InputStreamReader(Objects.requireNonNull(ArmorStructureLootModifier.class.getResourceAsStream(
+                    "/mite/underworld-dungeon-loot-balance.json")), StandardCharsets.UTF_8)) {
+                Pool original = Objects.requireNonNull(pools.get("dungeon_underworld"));
+                List<Entry> entries = new ArrayList<>();
+                var reference = JsonParser.parseReader(dungeonReader).getAsJsonObject();
+                reference.getAsJsonArray("entries").forEach(value -> {
+                    var entry = value.getAsJsonObject();
+                    entries.add(new Entry(entry.get("item").getAsString(), entry.get("minimum").getAsInt(),
+                            entry.get("maximum").getAsInt(), entry.get("weight").getAsInt()));
+                });
+                int total = reference.get("source_total_weight").getAsInt();
+                int rolls = reference.get("rolls").getAsInt();
+                if (entries.stream().mapToInt(Entry::weight).sum() != total)
+                    throw new IllegalStateException("Underworld dungeon loot must exactly fill its reference denominator");
+                pools.put("dungeon_underworld", new Pool(original.modernTable(), rolls, rolls, total, entries));
             }
             return java.util.Collections.unmodifiableMap(pools);
         } catch (Exception exception) { throw new IllegalStateException("Cannot load R196 armor loot source weights", exception); }

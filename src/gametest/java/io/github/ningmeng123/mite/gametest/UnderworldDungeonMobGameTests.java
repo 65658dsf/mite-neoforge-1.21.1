@@ -157,7 +157,8 @@ public final class UnderworldDungeonMobGameTests {
         ServerLevel level = underworld(helper);
         BlockPos pos = jockeyPosition(level, 400);
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
-        try (Room room = new Room(level, pos); SpawnedEntityCapture capture = new SpawnedEntityCapture(level, e -> e instanceof Mob && e.blockPosition().distSqr(pos) < 100)) {
+        try (var equipmentDate = new SourceEquipmentDateFixture(helper);
+                Room room = new Room(level, pos); SpawnedEntityCapture capture = new SpawnedEntityCapture(level, e -> e instanceof Mob && e.blockPosition().distSqr(pos) < 100)) {
             player.teleportTo(level, pos.getX() + 3, pos.getY(), pos.getZ(), 0, 0);
             for (int attempt = 0; attempt < 20 && capture.live(Mob.class).isEmpty(); attempt++) {
                 BaseSpawner spawner = base();

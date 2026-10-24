@@ -212,7 +212,11 @@ public final class UnderworldTrialWaveGameTests {
             long now = level.getGameTime();
             waiting = "native_trial_tick";
             spawnTicks++;
-            spawner.tickServer(level, position, ominous);
+            // Both concurrent wave cases opt into equipment only for their synchronous native spawn transaction.
+            // Holding a global clock fixture across asynchronous ticks would make the two cases restore over each other.
+            try (var equipmentDate = new SourceEquipmentDateFixture(helper)) {
+                spawner.tickServer(level, position, ominous);
+            }
             switch (phase) {
                 case 0 -> {
                     if (data.total() == 0) return;

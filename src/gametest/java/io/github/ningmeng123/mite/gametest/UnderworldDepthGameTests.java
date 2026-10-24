@@ -1,6 +1,11 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.world.PlacementDelay;
+import io.github.ningmeng123.mite.config.MiteConfig;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.portal.MitePortalFrame;
@@ -70,7 +75,12 @@ public final class UnderworldDepthGameTests {
     @GameTest(template = "empty", timeoutTicks = 800)
     public static void survivalCanExcavateNaturalMantleAndBuildANegativeHeightNetherRoundTrip(GameTestHelper helper) {
         ServerLevel underworld = underworld(helper);
-        Descent descent = findDryDescent(helper, underworld, new ChunkPos(4800, -4800));
+        Descent descent;
+        // The original terrain/portal fixture needs an undecorated stone shaft under the historical ore rates.
+        // Richer user presets are independently tested; they must not make this terrain seed reject mineable ores.
+        try (var ignored = new LegacyOreRates()) {
+            descent = findDryDescent(helper, underworld, new ChunkPos(4800, -4800));
+        }
         BlockPos interior = descent.bottom();
         MitePortalFrame frame = new MitePortalFrame(interior, Direction.Axis.X);
         try (Session session = player(helper)) {
@@ -252,6 +262,24 @@ public final class UnderworldDepthGameTests {
             player.server.getPlayerList().remove(player);
             channel.finishAndReleaseAll();
             throw failure;
+        }
+    }
+
+    private static final class LegacyOreRates implements AutoCloseable {
+        private final Map<ModConfigSpec.DoubleValue, Double> original = new HashMap<>();
+        private LegacyOreRates() {
+            for (var settings : List.of(MiteConfig.UNDERWORLD_ORES, MiteConfig.UNDERWORLD_DEEPSLATE_ORES))
+                settings.values().forEach(setting -> original.put(setting, setting.get()));
+            MiteConfig.UNDERWORLD_ORES.values().forEach(setting -> setting.set(1D));
+            // Modern coal/emerald were absent from the source terrain fixture.
+            MiteConfig.UNDERWORLD_ORES.get(io.github.ningmeng123.mite.rules.R196OreRules.Kind.COAL).set(0D);
+            MiteConfig.UNDERWORLD_ORES.get(io.github.ningmeng123.mite.rules.R196OreRules.Kind.EMERALD).set(0D);
+            MiteConfig.UNDERWORLD_DEEPSLATE_ORES.values().forEach(setting -> setting.set(-1D));
+            MiteConfig.refreshEnchantmentRules();
+        }
+        @Override public void close() {
+            original.forEach(ModConfigSpec.DoubleValue::set);
+            MiteConfig.refreshEnchantmentRules();
         }
     }
 

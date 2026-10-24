@@ -374,6 +374,15 @@ public final class HostilePopulationGameTests {
         throw new AssertionError("Independent java.util.Random oracle produces a source spider jockey");
     }
 
+    private static long rangedRiderSeed() {
+        for (long seed = 0; seed < 10_000; seed++) {
+            Random random = new Random(seed);
+            random.nextGaussian(); // OrdinarySkeletonMixin's source follow-range variation precedes its subtype roll.
+            if (random.nextFloat() >= .25F) return seed;
+        }
+        throw new AssertionError("Independent source skeleton fixture selects the first ranged subtype");
+    }
+
     private static void savedProgress(Arena arena, Runnable test) {
         BloodMoonInvasionData progress = BloodMoonInvasionData.get(arena.level);
         long highestDay = progress.highestDay(); boolean dirty = progress.isDirty();
@@ -403,7 +412,12 @@ public final class HostilePopulationGameTests {
                     event.setCanceled(true); event.setSpawnCancelled(true);
                 }
                 if (event.getEntity().level() == parent.level() && event.getEntity() instanceof AbstractSkeleton skeleton
-                        && skeleton.position().distanceToSqr(parent.position()) < 1.0E-8) candidates.add(skeleton);
+                        && skeleton.position().distanceToSqr(parent.position()) < 1.0E-8) {
+                    candidates.add(skeleton);
+                    // Fix the newborn's own subtype RNG as well as the parent's world1% lottery.
+                    // Source rejection sampling may otherwise correctly construct multiple melee candidates.
+                    skeleton.getRandom().setSeed(rangedRiderSeed());
+                }
             };
             joining = event -> {
                 if (event.getEntity() == parent) {

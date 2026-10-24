@@ -579,6 +579,7 @@ public final class R196MobSpawning {
             else if (name.equals("EntityWoodSpider") && !woodCover(level, pos)) continue;
             else if (name.equals("EntityBlackWidowSpider") && random.nextFloat() < .5F) continue;
             else if (name.equals("tj")) {
+                if (underworld(level) && !R196UnderworldSpawns.ghastUnlocked(BloodMoonInvasion.highestDay(level))) continue;
                 boolean reject = false;
                 for (Entity entity : level.getAllEntities()) if (entity.getType() == EntityType.GHAST && entity.blockPosition().distSqr(pos) < 2304 && random.nextFloat() < .8F) reject = true;
                 if (reject) return null;
@@ -676,6 +677,8 @@ public final class R196MobSpawning {
     }
     /** New natural hostiles cannot appear on the daytime surface or in connected shallow cave mouths. */
     public static boolean naturalDaylightAllows(Mob mob, ServerLevel level) {
+        if (mob.getType() == EntityType.GHAST && underworld(level)
+                && !R196UnderworldSpawns.ghastUnlocked(BloodMoonInvasion.highestDay(level))) return false;
         if (!level.dimension().equals(Level.OVERWORLD) || !daylightHostile(mob)) return true;
         return !R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000L))
                 || !R196OutdoorChecks.daytimeSurfaceHabitat(level, mob.blockPosition());

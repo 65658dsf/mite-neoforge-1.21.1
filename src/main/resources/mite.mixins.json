@@ -9,6 +9,7 @@
     "WitherPreyTargetMixin",
     "PiglinRetaliationMixin",
     "WardenPreyTargetMixin",
+    "WardenSpawnTrackerMixin",
     "VexPreyTargetMixin",
     "RandomStateAquiferMixin",
     "OverworldAquiferLevelMixin",

@@ -138,9 +138,17 @@ public final class SkeletonFiringPositionGameTests {
         final AbstractSkeleton skeleton;
         final Player player;
         final GameTestHelper helper;
+        final net.minecraft.server.level.ServerLevel world;
+        final long previousTime, previousHighest;
+        final boolean previousDirty;
 
         Fixture(GameTestHelper h) {
             helper = h;
+            world = h.getLevel().getServer().overworld();
+            var progress = io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData.get(world);
+            previousTime = world.getDayTime(); previousHighest = progress.highestDay(); previousDirty = progress.isDirty();
+            // Firing-position tests require a post-unlock bow; early equipment clearing is tested separately.
+            world.setDayTime(34L * 24000L); progress.restoreProgress(35L);
             origin = new BlockPos(190_000 + IDS.getAndIncrement() * 64, h.absolutePos(BlockPos.ZERO).getY() + 12, 190_000);
             for (int x = -8; x <= 10; x++) for (int z = -8; z <= 8; z++) {
                 for (int y = -4; y <= 6; y++) h.getLevel().setBlock(origin.offset(x, y, z),
@@ -167,6 +175,9 @@ public final class SkeletonFiringPositionGameTests {
             skeleton.getNavigation().stop();
             skeleton.discard();
             player.discard();
+            world.setDayTime(previousTime);
+            var progress = io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData.get(world);
+            progress.restoreProgress(previousHighest); progress.setDirty(previousDirty);
         }
     }
 }
