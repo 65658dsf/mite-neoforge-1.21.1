@@ -1,0 +1,27 @@
+{
+  "type": "mite:phantom_blade",
+  "category": "equipment",
+  "group": "mite_phantom_blades",
+  "key": {
+    "C": [
+      {
+        "item": "mite:iron_phantom_blade"
+      },
+      {
+        "item": "mite:ancient_metal_phantom_blade"
+      }
+    ],
+    "S": {
+      "item": "mite:mithril_sword"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:mithril_phantom_blade"
+  }
+}

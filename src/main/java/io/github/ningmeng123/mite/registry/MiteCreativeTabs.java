@@ -90,6 +90,7 @@ public final class MiteCreativeTabs {
         if (io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(new ItemStack(item)) != null)
             return Group.COMBAT;
         if (item instanceof SpawnEggItem) return Group.SPAWN_EGGS;
+        if (item instanceof io.github.ningmeng123.mite.phantom.PhantomBladeItem) return Group.COMBAT;
         if (item instanceof R196StoneBucketItem || item == MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get()
                 || MiteFoods.entries().values().stream().anyMatch(entry -> entry.get() == item)) return Group.FOODS;
         var tool = MiteTools.definition(new ItemStack(item));

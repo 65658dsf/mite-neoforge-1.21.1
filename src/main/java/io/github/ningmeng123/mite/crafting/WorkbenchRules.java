@@ -38,6 +38,8 @@ public final class WorkbenchRules {
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
+        if (result.getItem() instanceof io.github.ningmeng123.mite.phantom.PhantomBladeItem blade)
+            return materialCapacity(blade.material());
         if (result.is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get())) return materialCapacity("iron");
         float vibranium = VibraniumCrafting.required(result);
         if (vibranium >= 0F) return vibranium;

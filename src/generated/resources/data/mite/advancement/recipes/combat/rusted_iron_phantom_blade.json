@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_previous_core_or_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:iron_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_previous_core_or_block"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mite:rusted_iron_phantom_blade"
+    ]
+  }
+}

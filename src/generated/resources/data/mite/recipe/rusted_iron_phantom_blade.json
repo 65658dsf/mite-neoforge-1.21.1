@@ -1,0 +1,22 @@
+{
+  "type": "mite:phantom_blade",
+  "category": "equipment",
+  "group": "mite_phantom_blades",
+  "key": {
+    "C": {
+      "item": "minecraft:iron_block"
+    },
+    "S": {
+      "item": "mite:rusted_iron_sword"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:rusted_iron_phantom_blade"
+  }
+}

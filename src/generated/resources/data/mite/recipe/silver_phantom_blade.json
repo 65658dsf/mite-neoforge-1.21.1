@@ -1,0 +1,22 @@
+{
+  "type": "mite:phantom_blade",
+  "category": "equipment",
+  "group": "mite_phantom_blades",
+  "key": {
+    "C": {
+      "item": "mite:silver_block"
+    },
+    "S": {
+      "item": "mite:silver_sword"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:silver_phantom_blade"
+  }
+}

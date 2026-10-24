@@ -43,6 +43,7 @@ public final class MiteRecipeProvider extends RecipeProvider {
         RangedRecipes.addRecipes(output);
         DecorativeRecipes.addRecipes(output);
         WeaponRecipes.addRecipes(output);
+        PhantomBladeRecipes.addRecipes(output);
         UtilityRecipes.addRecipes(output);
         SoupRecipes.addRecipes(output);
         DiamondEquipmentRecipes.addRecipes(output);

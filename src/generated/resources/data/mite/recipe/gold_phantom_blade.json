@@ -1,0 +1,22 @@
+{
+  "type": "mite:phantom_blade",
+  "category": "equipment",
+  "group": "mite_phantom_blades",
+  "key": {
+    "C": {
+      "item": "minecraft:gold_block"
+    },
+    "S": {
+      "item": "minecraft:golden_sword"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:gold_phantom_blade"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "type": "mite:phantom_blade",
+  "category": "equipment",
+  "group": "mite_phantom_blades",
+  "key": {
+    "C": [
+      {
+        "item": "mite:copper_phantom_blade"
+      },
+      {
+        "item": "mite:silver_phantom_blade"
+      },
+      {
+        "item": "mite:gold_phantom_blade"
+      },
+      {
+        "item": "mite:rusted_iron_phantom_blade"
+      }
+    ],
+    "S": {
+      "item": "minecraft:iron_sword"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:iron_phantom_blade"
+  }
+}

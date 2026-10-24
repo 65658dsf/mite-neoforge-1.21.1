@@ -1,0 +1,14 @@
+{
+  "author": "NingMeng123",
+  "recipes": {
+    "mite:rusted_iron_phantom_blade": { "difficulty": 10200, "required_bench": "copper", "source_order": -1 },
+    "mite:gold_phantom_blade": { "difficulty": 10200, "required_bench": "gold", "source_order": -1 },
+    "mite:copper_phantom_blade": { "difficulty": 10200, "required_bench": "copper", "source_order": -1 },
+    "mite:silver_phantom_blade": { "difficulty": 10200, "required_bench": "silver", "source_order": -1 },
+    "mite:iron_phantom_blade": { "difficulty": 13000, "required_bench": "iron", "source_order": -1 },
+    "mite:ancient_metal_phantom_blade": { "difficulty": 25800, "required_bench": "ancient_metal", "source_order": -1 },
+    "mite:mithril_phantom_blade": { "difficulty": 102600, "required_bench": "mithril", "source_order": -1 },
+    "mite:adamantium_phantom_blade": { "difficulty": 409800, "required_bench": "adamantium", "source_order": -1 },
+    "mite:vibranium_phantom_blade": { "difficulty": 819400, "required_bench": "vibranium", "source_order": -1 }
+  }
+}
