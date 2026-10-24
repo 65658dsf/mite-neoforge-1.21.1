@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.rules.R196OreRules;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.toml.TomlParser;
 import java.io.InputStreamReader;
@@ -36,12 +37,33 @@ public final class BundledDefaultsGameTests {
             var original = new TomlParser().parse(text);
             MiteConfig.SPEC.correct(legacy);
             preserve(helper, original, legacy, List.of());
-            helper.assertValueEqual(((Number)legacy.get("overworld_ores.coal")).doubleValue(), 4D, "Missing regular coal uses the latest requested default");
-            helper.assertValueEqual(((Number)legacy.get("overworld_ores.deepslate_coal")).doubleValue(), 4D, "Missing deep coal uses four");
+            helper.assertValueEqual(((Number)legacy.get("overworld_ores.coal")).doubleValue(), 2.8D, "Missing regular coal uses the latest requested default");
+            helper.assertValueEqual(((Number)legacy.get("overworld_ores.deepslate_coal")).doubleValue(), 2.8D, "Missing deep coal uses two point eight");
             helper.assertValueEqual(((Number)legacy.get("overworld_ores.emerald")).doubleValue(), 1.5D, "Missing regular emerald uses one point five");
             helper.assertValueEqual(((Number)legacy.get("overworld_ores.deepslate_emerald")).doubleValue(), 1.5D, "Missing deep emerald uses one point five");
             helper.assertValueEqual(((Number)legacy.get("underworld_generation.coal.candidates")).doubleValue(), 50D, "Old exports gain actual underworld coal candidates");
             helper.assertValueEqual(((Number)legacy.get("underworld_generation.emerald.chance_percent")).doubleValue(), 100D, "Underworld emerald preserves every singleton attempt");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void latestSurfaceOreRatesReachFactoryResetAndSnapshotWithoutChangingUnderworld(GameTestHelper helper) {
+        var kinds = new R196OreRules.Kind[]{R196OreRules.Kind.COAL, R196OreRules.Kind.COPPER, R196OreRules.Kind.SILVER};
+        double[] surface = {2.8D, 4.5D, 4.5D}, underworld = {1D, 3D, 3D};
+        for (int index = 0; index < kinds.length; index++) for (boolean deep : new boolean[]{false, true}) {
+            var kind = kinds[index];
+            String key = deep ? R196OreRules.deepslateMultiplierKey(kind) : kind.name();
+            var setting = (deep ? MiteConfig.OVERWORLD_DEEPSLATE_ORES : MiteConfig.OVERWORLD_ORES).get(kind);
+            helper.assertValueEqual(setting.getDefault(), surface[index], "New surface schema default covers " + key);
+            helper.assertValueEqual(MiteConfig.factoryOreMultiplier(kind, R196OreRules.Dimension.OVERWORLD, deep), surface[index],
+                    "The settings reset uses the latest surface rate for " + key);
+            helper.assertValueEqual(MiteConfig.factorySnapshot().overworldOres().get(key), surface[index],
+                    "The factory snapshot publishes the latest surface rate for " + key);
+            helper.assertValueEqual(MiteConfig.factoryOreMultiplier(kind, R196OreRules.Dimension.UNDERWORLD, deep), underworld[index],
+                    "An independently configured underworld rate is retained for " + key);
+            helper.assertValueEqual(MiteConfig.factorySnapshot().ores().get(key), underworld[index],
+                    "The underworld factory snapshot remains independent for " + key);
         }
         helper.succeed();
     }

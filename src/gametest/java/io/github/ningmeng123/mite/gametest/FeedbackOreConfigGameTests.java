@@ -40,6 +40,7 @@ public final class FeedbackOreConfigGameTests {
         helper.assertTrue(level != null, "The registered underworld generator is available");
         Map<ModConfigSpec.DoubleValue, Double> values = new HashMap<>();
         Map<ModConfigSpec.ConfigValue<String>, String> heights = new HashMap<>();
+        var previousRemote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot() ? null : MiteConfig.effectiveSnapshot();
         for (Kind kind : List.of(Kind.COAL, Kind.EMERALD)) {
             for (var settings : List.of(MiteConfig.UNDERWORLD_ORES, MiteConfig.UNDERWORLD_DEEPSLATE_ORES,
                     MiteConfig.UNDERWORLD_ORE_CANDIDATES, MiteConfig.UNDERWORLD_ORE_CHANCES))
@@ -58,7 +59,12 @@ public final class FeedbackOreConfigGameTests {
                 MiteConfig.UNDERWORLD_DEEPSLATE_ORE_HEIGHTS.get(kind).set("[-64,319]");
             }
             MiteConfig.refreshEnchantmentRules();
+            // Native cross-dimension generation can pump queued file-watcher reload work.
+            // Consume one explicit test revision while the real generator runs.
+            var revision = MiteConfig.localSnapshot();
+            MiteConfig.receiveServerSnapshot(revision);
             var chunk = level.getChunk(6690, -6690);
+            helper.assertTrue(MiteConfig.effectiveSnapshot() == revision, "Native chunk decoration retains the same intended ore revision instance");
             int[] count = new int[4];
             for (int x=0; x<16; x++) for (int z=0; z<16; z++) {
                 int bx=chunk.getPos().getMinBlockX()+x, bz=chunk.getPos().getMinBlockZ()+z;
@@ -76,6 +82,7 @@ public final class FeedbackOreConfigGameTests {
         } finally {
             values.forEach(ModConfigSpec.DoubleValue::set); heights.forEach(ModConfigSpec.ConfigValue::set);
             MiteConfig.clearServerSnapshot(); MiteConfig.refreshEnchantmentRules();
+            if (previousRemote != null) MiteConfig.receiveServerSnapshot(previousRemote);
         }
         helper.succeed();
     }
@@ -92,6 +99,7 @@ public final class FeedbackOreConfigGameTests {
         helper.assertTrue(level != null, "The actual target dimension is registered");
         Map<ModConfigSpec.DoubleValue, Double> saved = new HashMap<>();
         Map<ModConfigSpec.ConfigValue<String>, String> savedHeights = new HashMap<>();
+        var previousRemote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot() ? null : MiteConfig.effectiveSnapshot();
         for (var settings : List.of(rates, deepRates, candidates, chances))
             settings.values().forEach(setting -> saved.put(setting, setting.get()));
         for (var settings : List.of(heights, deepHeights))
@@ -110,12 +118,19 @@ public final class FeedbackOreConfigGameTests {
                     heights.get(kind).set("[20,22]");
                     deepHeights.get(kind).set("[-40,-38]");
                     MiteConfig.refreshEnchantmentRules();
+                    var revision = MiteConfig.localSnapshot();
                     var bytes = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
                     try {
-                        GameplayConfigPayload.CODEC.encode(bytes, new GameplayConfigPayload(MiteConfig.localSnapshot()));
+                        GameplayConfigPayload.CODEC.encode(bytes, new GameplayConfigPayload(revision));
                         var decoded = GameplayConfigPayload.CODEC.decode(bytes).snapshot();
-                        helper.assertValueEqual(decoded, MiteConfig.localSnapshot(), "Payload includes both dimensions and independent coal/emerald rates and bounds");
+                        helper.assertValueEqual(decoded, revision, "Payload includes both dimensions and independent coal/emerald rates and bounds");
                     } finally { bytes.release(); }
+                    // Other tests save actual configs; their queued native reloads must not replace this case mid-feature.
+                    MiteConfig.receiveServerSnapshot(revision);
+                    helper.assertValueEqual(MiteConfig.oreMultiplier(kind, dimension), deepOnly ? 0D : 1D,
+                            "The published regular rate matches this isolated variant case");
+                    helper.assertValueEqual(MiteConfig.oreMultiplier(kind, dimension, true), deepOnly ? 1D : 0D,
+                            "The published deep rate matches this isolated variant case");
                     var fixture = new OreGenerationGameTests.GenerationFixture(level, new ChunkPos(6490 + index++, -6490), false);
                     fixture.fill(-64, 129);
                     if (dimension == Dimension.UNDERWORLD) {
@@ -126,15 +141,19 @@ public final class FeedbackOreConfigGameTests {
                                 chunk.setBlockState(new BlockPos(x+dx,y,z+dz), Blocks.STONE.defaultBlockState(), false);
                         }
                     }
+                    helper.assertTrue(MiteConfig.effectiveSnapshot() == revision, "The same intended ore revision instance survives fixture preparation");
                     fixture.place(dimension == Dimension.OVERWORLD ? "ores_overworld" : "ores_underworld", 196L);
+                    helper.assertTrue(MiteConfig.effectiveSnapshot() == revision, "The entire feature consumes the same intended ore revision instance");
                     var regular = kind == Kind.COAL ? Blocks.COAL_ORE : Blocks.EMERALD_ORE;
                     var deep = kind == Kind.COAL ? Blocks.DEEPSLATE_COAL_ORE : Blocks.DEEPSLATE_EMERALD_ORE;
                     int found = 0;
                     for (var chunk : fixture.all) {
                         int x = chunk.getPos().getMinBlockX(), z = chunk.getPos().getMinBlockZ();
                         for (int dx=0; dx<16; dx++) for (int dz=0; dz<16; dz++) for (int y=-64; y<129; y++) {
-                            var state = chunk.getBlockState(new BlockPos(x+dx, y, z+dz));
-                            helper.assertFalse(state.is(deepOnly ? regular : deep), "Disabled variant stays empty in " + dimension + ": " + kind);
+                            var pos = new BlockPos(x+dx, y, z+dz);
+                            var state = chunk.getBlockState(pos);
+                            helper.assertFalse(state.is(deepOnly ? regular : deep), "Disabled variant stays empty in " + dimension + ": " + kind
+                                    + ", deepOnly=" + deepOnly + ", at=" + pos.toShortString() + ", state=" + state);
                             if (state.is(deepOnly ? deep : regular)) {
                                 found++;
                                 helper.assertTrue(deepOnly ? y>=-40 && y<=-38 : y>=20 && y<=22, "Configured height bounds the complete deposit");
@@ -148,6 +167,7 @@ public final class FeedbackOreConfigGameTests {
             saved.forEach(ModConfigSpec.DoubleValue::set);
             savedHeights.forEach(ModConfigSpec.ConfigValue::set);
             MiteConfig.clearServerSnapshot(); MiteConfig.refreshEnchantmentRules();
+            if (previousRemote != null) MiteConfig.receiveServerSnapshot(previousRemote);
         }
     }
 }
