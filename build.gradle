@@ -46,6 +46,12 @@ neoForge {
     runs {
         client {
             client()
+            if (project.providers.gradleProperty('mitePhantomBladeVisualSmoke').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.phantomBladeVisualSmoke', 'true'
+                programArguments.addAll '--width', '1600', '--height', '900'
+                systemProperty 'mite.phantomBladeVisualSmokeOutput', file(project.providers.gradleProperty('mitePhantomBladeVisualSmokeOutput')
+                        .getOrElse('build/verification/phantom-orientation-visual')).absolutePath
+            }
             if (project.providers.gradleProperty('miteFreshAnimationsCombatAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.freshAnimationsCombatAudit', 'true'
                 systemProperty 'mite.freshAnimationsCombatAuditOutput', file(project.providers.gradleProperty('miteFreshAnimationsCombatAuditOutput')

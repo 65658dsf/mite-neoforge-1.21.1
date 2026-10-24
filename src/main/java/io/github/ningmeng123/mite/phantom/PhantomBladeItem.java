@@ -20,10 +20,10 @@ public final class PhantomBladeItem extends Item {
     public String material() { return material; }
     @Override public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flags) {
         var profile = PhantomBladeRules.profile(material);
-        lines.add(Component.translatable("item.mite.phantom_blade.activation").withStyle(ChatFormatting.AQUA));
+        lines.add(Component.translatable("item.mite.phantom_blade.activation", profile.bladeCount()).withStyle(ChatFormatting.AQUA));
         lines.add(Component.translatable("item.mite.phantom_blade.stats", number(profile.damage()), number(profile.intervalTicks()/20D))
                 .withStyle(ChatFormatting.GRAY));
-        lines.add(Component.translatable("item.mite.phantom_blade.recharge", number(profile.rechargeTicks()/20D))
+        lines.add(Component.translatable("item.mite.phantom_blade.recharge", profile.bladeCount(), number(profile.rechargeTicks()/20D))
                 .withStyle(ChatFormatting.GRAY));
         lines.add(Component.translatable("item.mite.phantom_blade.selection").withStyle(ChatFormatting.DARK_GRAY));
     }

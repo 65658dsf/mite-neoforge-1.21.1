@@ -1,7 +1,6 @@
 package io.github.ningmeng123.mite.client.phantom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import io.github.ningmeng123.mite.phantom.PhantomBladeSwarm;
 import io.github.ningmeng123.mite.registry.MitePhantomBlades;
 import net.minecraft.client.renderer.LightTexture;
@@ -44,15 +43,16 @@ public final class PhantomBladeSwarmRenderer extends EntityRenderer<PhantomBlade
             pose.translate(adjustment.x, adjustment.y, adjustment.z);
         }
         PhantomBladeVisuals.formationRing(pose, buffers, time, color);
-        for (int index = 0; index < PhantomBladeVisuals.BLADE_COUNT; index++) {
+        int bladeCount = entity.bladeCount();
+        for (int index = 0; index < bladeCount; index++) {
             if ((entity.orbitBladeMask() & 1 << index) == 0) continue;
-            Vec3 offset = PhantomBladeVisuals.orbit(time, index);
+            Vec3 offset = PhantomBladeVisuals.orbit(time, index, bladeCount);
             pose.pushPose();
             pose.translate(offset.x, offset.y, offset.z);
-            pose.mulPose(Axis.YP.rotationDegrees((float) (-Math.toDegrees(PhantomBladeVisuals.orbitAngle(time, index)) + 90D)));
+            PhantomBladeVisuals.orientOrbit(pose, time, index, bladeCount);
             pose.scale(.82F, .82F, .82F);
             PhantomBladeVisuals.bladeAura(pose, buffers, color, .58F);
-            pose.mulPose(Axis.ZP.rotationDegrees(45F));
+            PhantomBladeVisuals.alignSwordSprite(pose);
             items.renderStatic(sword, ItemDisplayContext.FIXED, LightTexture.FULL_BRIGHT,
                     OverlayTexture.NO_OVERLAY, pose, buffers, entity.level(), entity.getId() + index);
             pose.popPose();

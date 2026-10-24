@@ -63,14 +63,70 @@ public final class PhantomBladeGameTests {
         h.assertTrue(first != null && first.isAddedToLevel(), "A real synchronized formation is added to the online player's level");
         h.assertValueEqual(first.material(), "copper", "Equal-strength copper and silver use the earliest occupied main-inventory slot");
         h.assertValueEqual(first.ownerId(), f.player.getId(), "The client receives the real owner entity ID");
-        h.assertValueEqual(first.orbitBladeMask(), 255, "All eight orbit swords are initially visible");
+        h.assertValueEqual(first.orbitBladeMask(), 15, "A fresh copper formation starts with exactly four visible swords");
         for (int slot = 2; slot < 36; slot++) f.core("copper", slot);
         PhantomBladeSystem.refresh(f.player);
         h.assertTrue(PhantomBladeSystem.swarm(f.player) == first, "Filling the main inventory never creates another controller");
         f.core("vibranium", 35); PhantomBladeSystem.refresh(f.player);
         PhantomBladeSwarm upgraded = PhantomBladeSystem.swarm(f.player);
         h.assertTrue(first.isRemoved() && upgraded != first && upgraded.material().equals("vibranium"), "The single strongest core replaces the former formation");
+        h.assertValueEqual(Integer.bitCount(upgraded.orbitBladeMask()), 4, "Switching to a larger formation does not refill the current four-charge budget");
         h.assertFalse(upgraded.save(new CompoundTag()), "Formation entities are excluded from normal world entity saves");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyFreshMaterialFormationUsesItsOwnCapacityAndFullMask(GameTestHelper h) {
+        Fixture f = new Fixture(h);
+        String[] materials = {"rusted_iron", "gold", "copper", "silver", "iron", "ancient_metal", "mithril", "adamantium", "vibranium"};
+        int[] counts = {4, 4, 4, 4, 5, 5, 6, 7, 8};
+        for (int index = 0; index < materials.length; index++) {
+            PhantomBladeSystem.clear(f.player); f.player.getInventory().clearContent();
+            f.player.getPersistentData().remove(PhantomBladeState.KEY); // Independent new-player fixture for each material.
+            f.core(materials[index], 0); PhantomBladeSystem.refresh(f.player);
+            var swarm = PhantomBladeSystem.swarm(f.player);
+            var state = PhantomBladeState.current(f.player, PhantomBladeRules.profile(materials[index]));
+            h.assertTrue(swarm != null && swarm.isAddedToLevel(), "Each material creates its real synchronized formation");
+            h.assertValueEqual(swarm.bladeCount(), counts[index], "The synchronized material resolves the requested capacity");
+            h.assertValueEqual(swarm.orbitBladeMask(), (1<<counts[index])-1, "Only the requested material's orbit slots exist initially");
+            h.assertValueEqual(state.charges(), counts[index], "A fresh player receives exactly the material's capacity");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void legacyEightSwordNbtShrinksBySpentShotsAndSwitchingReloadingCannotRefundThem(GameTestHelper h) {
+        Fixture f = new Fixture(h);
+        var copper = PhantomBladeRules.profile("copper");
+        var vibranium = PhantomBladeRules.profile("vibranium");
+        long now = PhantomBladeState.now(f.player), originalNext = now+17L;
+        for (int oldCharges = 8; oldCharges >= 0; --oldCharges) {
+            PhantomBladeSystem.clear(f.player); f.player.getInventory().clearContent();
+            CompoundTag legacy = new CompoundTag(); legacy.putInt("Charges", oldCharges); legacy.putLong("NextAttack", originalNext);
+            if (oldCharges == 0) legacy.putLong("RechargeEnd", now+200L);
+            f.player.getPersistentData().put(PhantomBladeState.KEY, legacy);
+            f.core("copper", 0); PhantomBladeSystem.refresh(f.player);
+            var state = PhantomBladeState.current(f.player, copper);
+            h.assertValueEqual(state.charges(), Math.max(0, oldCharges-4), "Old eight-sword saves retain the spent-shot debit when shrinking to four");
+            h.assertValueEqual(state.spent(), 8-oldCharges, "Migration derives the real old spent count exactly once");
+            h.assertValueEqual(Integer.bitCount(PhantomBladeSystem.swarm(f.player).orbitBladeMask()), state.charges(), "The migrated real formation shows only surviving charges");
+            if (oldCharges > 4) {
+                h.assertValueEqual(state.rechargeEnd(), 0L, "A surviving partial magazine does not start recharge early");
+                h.assertValueEqual(state.nextAttack(), originalNext, "Migration preserves an existing attack deadline");
+            } else h.assertValueEqual(state.rechargeEnd(), oldCharges == 0 ? now+200L : now+600L,
+                    "Already recharging saves retain their deadline; shrinking an exhausted budget starts exactly one normal copper recharge");
+            f.core("vibranium", 0); PhantomBladeSystem.refresh(f.player);
+            h.assertValueEqual(PhantomBladeState.current(f.player, vibranium), state, "Switching back to eight-slot vibranium cannot restore any discarded charge or reset a deadline");
+        }
+        PhantomBladeSystem.clear(f.player);
+        CompoundTag partial = new CompoundTag(); partial.putInt("Charges", 5); partial.putLong("NextAttack", originalNext);
+        f.player.getPersistentData().put(PhantomBladeState.KEY, partial);
+        f.core("copper", 0); PhantomBladeSystem.refresh(f.player);
+        var migrated = PhantomBladeState.current(f.player, copper);
+        h.assertValueEqual(migrated.charges(), 1, "Three spent legacy swords leave only one copper sword");
+        f.core("vibranium", 0); PhantomBladeSystem.refresh(f.player); f.relog(); PhantomBladeSystem.refresh(f.player);
+        h.assertValueEqual(PhantomBladeState.current(f.player, vibranium), migrated, "Saving and logging into a new real player preserve the versioned spent ledger without inflating the upgraded capacity");
+        h.assertValueEqual(f.player.getPersistentData().getCompound(PhantomBladeState.KEY).getInt("Version"), 2, "The migrated player saves the new ledger schema");
         h.succeed();
     }
 
@@ -270,32 +326,49 @@ public final class PhantomBladeGameTests {
         });
     }
 
-    @GameTest(template = "empty", timeoutTicks = 1180)
-    public static void copperSpendsEightSequentialSwordsThenRechargesForExactlyThirtySeconds(GameTestHelper h) {
-        rechargeCycle(h, "copper", 60, 600, false);
+    @GameTest(template = "empty", timeoutTicks = 930)
+    public static void copperSpendsFourSequentialSwordsThenRechargesForExactlyThirtySeconds(GameTestHelper h) {
+        rechargeCycle(h, "copper", 4, 60, 600, false);
     }
 
-    @GameTest(template = "empty", timeoutTicks = 1180)
-    public static void silverSpendsEightSequentialSwordsThenRechargesForExactlyThirtySeconds(GameTestHelper h) {
-        rechargeCycle(h, "silver", 60, 600, false);
+    @GameTest(template = "empty", timeoutTicks = 930)
+    public static void silverSpendsFourSequentialSwordsThenRechargesForExactlyThirtySeconds(GameTestHelper h) {
+        rechargeCycle(h, "silver", 4, 60, 600, false);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 870)
+    public static void ironSpendsFiveSequentialSwordsBeforeItsExistingRecharge(GameTestHelper h) {
+        rechargeCycle(h, "iron", 5, 50, 540, false);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 770)
+    public static void mithrilSpendsSixSequentialSwordsBeforeItsExistingRecharge(GameTestHelper h) {
+        rechargeCycle(h, "mithril", 6, 40, 460, false);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 650)
+    public static void adamantiumSpendsSevenSequentialSwordsBeforeItsExistingRecharge(GameTestHelper h) {
+        rechargeCycle(h, "adamantium", 7, 30, 380, false);
     }
 
     @GameTest(template = "empty", timeoutTicks = 530)
     public static void vibraniumRechargesForFifteenSecondsAcrossCoreSwitchesNbtRelogDeathCloneAndDimensions(GameTestHelper h) {
-        rechargeCycle(h, "vibranium", 20, 300, true);
+        rechargeCycle(h, "vibranium", 8, 20, 300, true);
     }
 
-    private static void rechargeCycle(GameTestHelper h, String material, int interval, int recharge, boolean persistence) {
+    private static void rechargeCycle(GameTestHelper h, String material, int capacity, int interval, int recharge, boolean persistence) {
         Fixture f = new Fixture(h); f.enemy(9, 3, 4);
+        h.assertValueEqual(PhantomBladeRules.profile(material).bladeCount(), capacity, "The real cycle uses the independently specified material capacity");
         f.core(material, 0); PhantomBladeSystem.refresh(f.player);
         f.onLaunch = shot -> {
-            if (f.shots.size() != 8) return;
-            long eighthTime = PhantomBladeState.now(f.player);
+            if (f.shots.size() != capacity) return;
+            long lastLaunchTime = PhantomBladeState.now(f.player);
             h.runAfterDelay(2, () -> {
                 var spent = PhantomBladeState.current(f.player, PhantomBladeRules.profile(material));
-                h.assertValueEqual(spent.charges(), 0, "The eighth accepted real launch consumes the final sword");
-                h.assertValueEqual(spent.rechargeEnd(), eighthTime+recharge, "Recharge begins at the eighth real launch using the shared overworld clock");
-                h.assertValueEqual(spent.nextAttack(), eighthTime+recharge+interval, "The next cycle waits the standard interval after all eight refill");
+                h.assertValueEqual(spent.charges(), 0, "The material's final accepted real launch consumes its last sword");
+                h.assertValueEqual(spent.spent(), capacity, "Only successful physical launches advance the persistent spent ledger");
+                h.assertValueEqual(spent.rechargeEnd(), lastLaunchTime+recharge, "Recharge begins at the material's final real launch using the shared overworld clock");
+                h.assertValueEqual(spent.nextAttack(), lastLaunchTime+recharge+interval, "The next cycle waits the standard interval after the full material capacity refills");
                 h.assertValueEqual(PhantomBladeSystem.swarm(f.player).orbitBladeMask(), 0, "An exhausted formation displays no remaining swords");
                 if (persistence) {
                     var before = spent;
@@ -329,24 +402,25 @@ public final class PhantomBladeGameTests {
             });
             h.runAfterDelay(recharge-1, () -> {
                 h.assertValueEqual(PhantomBladeState.current(f.player, PhantomBladeRules.profile(material)).charges(), 0,
-                        "One tick before the deadline, all eight remain spent");
-                h.assertValueEqual(f.shots.size(), 8, "No ninth launch occurs during recharge");
+                        "One tick before the deadline, the entire material capacity remains spent");
+                h.assertValueEqual(f.shots.size(), capacity, "No extra launch occurs during recharge");
                 h.assertValueEqual(PhantomBladeSystem.swarm(f.player).orbitBladeMask(), 0, "The synchronized orbit remains empty until the full deadline");
             });
             h.runAfterDelay(recharge+1, () -> {
-                h.assertValueEqual(PhantomBladeState.current(f.player, PhantomBladeRules.profile(material)).charges(), 8,
-                        "Passing the real deadline restores all eight swords together");
-                h.assertValueEqual(PhantomBladeSystem.swarm(f.player).orbitBladeMask(), 255, "The real formation synchronizes eight refilled orbit swords");
-                h.assertValueEqual(f.shots.size(), 8, "Refilling does not simultaneously fire the entire formation");
+                h.assertValueEqual(PhantomBladeState.current(f.player, PhantomBladeRules.profile(material)).charges(), capacity,
+                        "Passing the real deadline restores exactly this material's complete capacity");
+                h.assertValueEqual(PhantomBladeState.current(f.player, PhantomBladeRules.profile(material)).spent(), 0, "Only completing recharge clears the spent ledger");
+                h.assertValueEqual(PhantomBladeSystem.swarm(f.player).orbitBladeMask(), (1<<capacity)-1, "The real formation synchronizes its material-specific full mask");
+                h.assertValueEqual(f.shots.size(), capacity, "Refilling does not simultaneously fire the entire formation");
             });
-            h.runAfterDelay(recharge+interval-1, () -> h.assertValueEqual(f.shots.size(), 8,
+            h.runAfterDelay(recharge+interval-1, () -> h.assertValueEqual(f.shots.size(), capacity,
                     "After refilling, the normal per-sword interval must still finish"));
             h.runAfterDelay(recharge+interval+2, () -> {
-                h.assertValueEqual(f.shots.size(), 9, "Only the first sword of the refilled cycle launches after its normal interval");
-                h.assertValueEqual(f.launchTimes.get(8), eighthTime+recharge+interval, "The ninth real projectile obeys the recharge plus normal interval exactly");
-                for (int index = 1; index < 8; index++) h.assertValueEqual(f.launchTimes.get(index)-f.launchTimes.get(index-1), (long)interval,
-                        "Each of the first eight physical swords launches individually at the material's fixed interval");
-                h.assertValueEqual(PhantomBladeState.current(f.player, PhantomBladeRules.profile(material)).charges(), 7,
+                h.assertValueEqual(f.shots.size(), capacity+1, "Only the first sword of the refilled cycle launches after its normal interval");
+                h.assertValueEqual(f.launchTimes.get(capacity), lastLaunchTime+recharge+interval, "The first projectile of the refilled cycle obeys the recharge plus normal interval exactly");
+                for (int index = 1; index < capacity; index++) h.assertValueEqual(f.launchTimes.get(index)-f.launchTimes.get(index-1), (long)interval,
+                        "Every physical sword launches individually at the material's fixed interval");
+                h.assertValueEqual(PhantomBladeState.current(f.player, PhantomBladeRules.profile(material)).charges(), capacity-1,
                         "The refilled cycle consumes exactly one charge");
                 h.succeed();
             });

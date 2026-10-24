@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.client.phantom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import java.util.List;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -12,7 +13,6 @@ import net.minecraft.world.phys.Vec3;
 
 /** Small shared meshes for a material-colored formation and fading sword light. @author NingMeng123 */
 public final class PhantomBladeVisuals {
-    public static final int BLADE_COUNT = 8;
     public static final int TRAIL_TICKS = 12;
     public static final double ORBIT_RADIUS = 1.25D;
     public static final ResourceLocation LIGHT = ResourceLocation.fromNamespaceAndPath("mite", "textures/entity/phantom/blade_light.png");
@@ -34,14 +34,33 @@ public final class PhantomBladeVisuals {
         };
     }
 
-    public static double orbitAngle(double time, int index) {
-        return time * .035D + index * Math.PI * 2D / BLADE_COUNT;
+    public static double orbitAngle(double time, int index, int bladeCount) {
+        return time * .035D + index * Math.PI * 2D / bladeCount;
     }
 
-    public static Vec3 orbit(double time, int index) {
-        double angle = orbitAngle(time, index);
+    public static Vec3 orbit(double time, int index, int bladeCount) {
+        double angle = orbitAngle(time, index, bladeCount);
         return new Vec3(Math.cos(angle) * ORBIT_RADIUS, .09D * Math.sin(time * .085D + index * .9D),
                 Math.sin(angle) * ORBIT_RADIUS);
+    }
+
+    /** Turn the sword's face around the ring, keeping its tip on the local +Y axis. */
+    public static void orientOrbit(PoseStack pose, double time, int index, int bladeCount) {
+        pose.mulPose(Axis.YP.rotationDegrees((float) (-Math.toDegrees(orbitAngle(time, index, bladeCount)) + 90D)));
+    }
+
+    /** Rotate the upright sword frame so +Y points along the projectile's velocity. */
+    public static void orientProjectile(PoseStack pose, float facingYaw, float elevation) {
+        pose.mulPose(Axis.YP.rotationDegrees(facingYaw));
+        pose.mulPose(Axis.XP.rotationDegrees(90F - elevation));
+    }
+
+    /**
+     * Native handheld models inherit FIXED's Y=180 transform. Their diagonal tip axis is then
+     * (-X,+Y), so -45 degrees around Z makes the tip point up in the aura's local frame.
+     */
+    public static void alignSwordSprite(PoseStack pose) {
+        pose.mulPose(Axis.ZP.rotationDegrees(-45F));
     }
 
     public static float trailOpacity(double age) {

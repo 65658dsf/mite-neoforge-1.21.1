@@ -29,15 +29,18 @@ public final class PhantomBladeSwarm extends Entity {
 
     public void initialize(ServerPlayer owner, PhantomBladeRules.Profile profile) {
         entityData.set(OWNER, owner.getId()); entityData.set(MATERIAL, profile.material());
-        entityData.set(ORBIT_MASK, PhantomBladeState.current(owner, profile).orbitMask()); follow(owner);
+        entityData.set(ORBIT_MASK, PhantomBladeState.current(owner, profile).orbitMask(profile)); follow(owner);
     }
 
     @Override protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(OWNER, -1); builder.define(MATERIAL, "copper"); builder.define(ORBIT_MASK, 255);
+        builder.define(OWNER, -1); builder.define(MATERIAL, "copper"); builder.define(ORBIT_MASK, 0);
     }
     public int ownerId() { return entityData.get(OWNER); }
     @Nullable public Entity owner() { return level().getEntity(ownerId()); }
     public String material() { return entityData.get(MATERIAL); }
+    public int bladeCount() {
+        var profile = PhantomBladeRules.profile(material()); return profile == null ? 0 : profile.bladeCount();
+    }
     public int orbitBladeMask() { return entityData.get(ORBIT_MASK); }
     public int inFlightCount() { return projectiles.size(); }
 
@@ -53,16 +56,16 @@ public final class PhantomBladeSwarm extends Entity {
         follow(player);
         projectiles.removeIf(Entity::isRemoved);
         var state = PhantomBladeState.current(player, profile);
-        entityData.set(ORBIT_MASK, state.orbitMask());
+        entityData.set(ORBIT_MASK, state.orbitMask(profile));
         if (!PhantomBladeState.ready(player, state)) return;
         LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PhantomBladeSystem.RANGE),
                 candidate -> PhantomBladeSystem.validTarget(player, candidate) && player.hasLineOfSight(candidate))
                 .stream().min(Comparator.<LivingEntity>comparingDouble(player::distanceToSqr).thenComparingInt(Entity::getId)).orElse(null);
         if (target == null) return;
         PhantomBladeProjectile projectile = new PhantomBladeProjectile(MitePhantomBlades.PROJECTILE.get(), level());
-        projectile.initialize(this, player, target, 8-state.charges());
+        projectile.initialize(this, player, target, profile.bladeCount()-state.charges());
         if (level().addFreshEntity(projectile)) {
-            projectiles.add(projectile); entityData.set(ORBIT_MASK, PhantomBladeState.consume(player, profile).orbitMask());
+            projectiles.add(projectile); entityData.set(ORBIT_MASK, PhantomBladeState.consume(player, profile).orbitMask(profile));
         } else projectile.discard();
     }
 

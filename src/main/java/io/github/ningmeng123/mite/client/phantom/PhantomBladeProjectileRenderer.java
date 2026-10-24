@@ -1,7 +1,6 @@
 package io.github.ningmeng123.mite.client.phantom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import io.github.ningmeng123.mite.phantom.PhantomBladeProjectile;
 import io.github.ningmeng123.mite.registry.MitePhantomBlades;
 import java.util.ArrayDeque;
@@ -39,15 +38,24 @@ public final class PhantomBladeProjectileRenderer extends EntityRenderer<Phantom
     @Override public void render(PhantomBladeProjectile entity, float yaw, float partialTick, PoseStack pose,
             MultiBufferSource buffers, int light) {
         Vec3 current = entity.getPosition(partialTick);
+        Vec3 motion = entity.getDeltaMovement();
+        float facingYaw = motion.lengthSqr() > .000001D ? (float) Math.toDegrees(Math.atan2(motion.x, motion.z))
+                : Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot());
+        float elevation = motion.lengthSqr() > .000001D ? (float) Math.toDegrees(Math.atan2(motion.y, motion.horizontalDistance()))
+                : Mth.rotLerp(partialTick, entity.xRotO, entity.getXRot());
+        // Attach the ribbon at the hilt, behind the center of the tip-first flying sword.
+        double yawRadians = Math.toRadians(facingYaw), elevationRadians = Math.toRadians(elevation);
+        Vec3 hiltOffset = new Vec3(Math.sin(yawRadians) * Math.cos(elevationRadians), Math.sin(elevationRadians),
+                Math.cos(yawRadians) * Math.cos(elevationRadians)).scale(-.62D);
         int color = PhantomBladeVisuals.color(entity.material());
         Trail trail = trails.computeIfAbsent(entity, ignored -> new Trail());
-        Vec3 previous = new Vec3(entity.xo, entity.yo, entity.zo);
-        trail.sample(entity.tickCount - 1, previous.distanceToSqr(entity.position()) > 16D ? entity.position() : previous);
+        // Preserve each tick's actual hilt position, including its heading when turning.
+        trail.sample(entity.tickCount, entity.position().add(hiltOffset));
         Vec3 camera = entityRenderDispatcher.camera.getPosition().subtract(current);
-        Vec3 from = Vec3.ZERO;
+        Vec3 from = hiltOffset;
         double fromAge = 0D;
         for (TrailPoint point : trail.points()) {
-            double age = entity.tickCount + partialTick - point.tick();
+            double age = entity.tickCount - 1D + partialTick - point.tick();
             if (age < 0D) continue;
             Vec3 to = point.position().subtract(current);
             PhantomBladeVisuals.ribbon(pose, buffers, from, to, camera,
@@ -55,17 +63,11 @@ public final class PhantomBladeProjectileRenderer extends EntityRenderer<Phantom
                     color, PhantomBladeVisuals.trailOpacity(fromAge), PhantomBladeVisuals.trailOpacity(age));
             from = to; fromAge = age;
         }
-        Vec3 motion = entity.getDeltaMovement();
-        float facingYaw = motion.lengthSqr() > .000001D ? (float) Math.toDegrees(Math.atan2(motion.x, motion.z))
-                : Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot());
-        float elevation = motion.lengthSqr() > .000001D ? (float) Math.toDegrees(Math.atan2(motion.y, motion.horizontalDistance()))
-                : Mth.rotLerp(partialTick, entity.xRotO, entity.getXRot());
         pose.pushPose();
-        pose.mulPose(Axis.YP.rotationDegrees(facingYaw));
-        pose.mulPose(Axis.XP.rotationDegrees(90F - elevation));
+        PhantomBladeVisuals.orientProjectile(pose, facingYaw, elevation);
         pose.scale(.95F, .95F, .95F);
         PhantomBladeVisuals.bladeAura(pose, buffers, color, .9F);
-        pose.mulPose(Axis.ZP.rotationDegrees(45F));
+        PhantomBladeVisuals.alignSwordSprite(pose);
         items.renderStatic(new ItemStack(MitePhantomBlades.sword(entity.material())), ItemDisplayContext.FIXED,
                 LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, pose, buffers, entity.level(), entity.getId());
         pose.popPose();
