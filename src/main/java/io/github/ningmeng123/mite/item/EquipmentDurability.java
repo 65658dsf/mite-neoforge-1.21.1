@@ -119,25 +119,66 @@ public final class EquipmentDurability {
         ARMOR.forEach((item, profile) -> event.modify(item, b -> b
                 .set(DataComponents.MAX_DAMAGE, EquipmentDurabilityRules.baseArmorDurability(profile))
                 .set(DataComponents.ATTRIBUTE_MODIFIERS, armorAttributes(item))));
+        // Retained turtle/animal armor and addon humanoid armor share the same actual equipped attributes.
+        for (Item item : net.minecraft.core.registries.BuiltInRegistries.ITEM)
+            if (item instanceof ArmorItem && !ARMOR.containsKey(item))
+                event.modify(item, builder -> builder.set(DataComponents.ATTRIBUTE_MODIFIERS, armorAttributes(item)));
     }
 
     private static ItemAttributeModifiers armorAttributes(Item item) {
         if (!(item instanceof ArmorItem armor)) return item.getDefaultAttributeModifiers();
-        // Added materials may have different toughness in each slot (vibranium).
         if (item instanceof R196ArmorItem source) return R196ArmorItem.attributes(source.definition());
+        if (item instanceof net.minecraft.world.item.AnimalArmorItem animal) {
+            var definition = io.github.ningmeng123.mite.registry.MiteArmorContent.definition(item);
+            if (definition != null && definition.horse())
+                return io.github.ningmeng123.mite.registry.MiteArmorContent.horseAttributes(definition);
+            float toughness = materialStats(item, armor).toughness();
+            int protection = animal.getBodyType() == net.minecraft.world.item.AnimalArmorItem.BodyType.EQUESTRIAN
+                    ? io.github.ningmeng123.mite.registry.MiteArmorContent.horseProtection(new ItemStack(item))
+                    : armor.getMaterial().value().getDefense(ArmorItem.Type.BODY);
+            var id = ResourceLocation.withDefaultNamespace("armor.body");
+            var body = ItemAttributeModifiers.builder();
+            for (var entry : item.getDefaultAttributeModifiers().modifiers())
+                if (!entry.attribute().equals(Attributes.ARMOR) && !entry.attribute().equals(Attributes.ARMOR_TOUGHNESS))
+                    body.add(entry.attribute(), entry.modifier(), entry.slot());
+            return body.add(Attributes.ARMOR,
+                    new AttributeModifier(id, protection, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.BODY)
+                    .add(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(id, toughness, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.BODY).build();
+        }
+        var stats = materialStats(item, armor);
         var builder = ItemAttributeModifiers.builder();
-        // Use native material defense/toughness, retaining other defaults such as netherite knockback resistance.
+        // Keep independent native attributes, including netherite knockback resistance.
         for (var entry : item.getDefaultAttributeModifiers().modifiers())
             if (!entry.attribute().equals(Attributes.ARMOR) && !entry.attribute().equals(Attributes.ARMOR_TOUGHNESS))
                 builder.add(entry.attribute(), entry.modifier(), entry.slot());
         var id = ResourceLocation.withDefaultNamespace("armor." + armor.getType().getName());
         var slot = EquipmentSlotGroup.bySlot(armor.getEquipmentSlot());
-        builder.add(Attributes.ARMOR, new AttributeModifier(id, armor.getMaterial().value().getDefense(armor.getType()),
-                AttributeModifier.Operation.ADD_VALUE), slot);
-        float toughness = armor.getMaterial().value().toughness();
-        if (toughness > 0F) builder.add(Attributes.ARMOR_TOUGHNESS,
-                new AttributeModifier(id, toughness, AttributeModifier.Operation.ADD_VALUE), slot);
+        int components = switch (armor.getType()) {
+            case HELMET -> 5; case CHESTPLATE -> 8; case LEGGINGS -> 7; case BOOTS -> 4;
+            default -> throw new IllegalArgumentException("Unexpected humanoid armor type: " + armor.getType());
+        };
+        builder.add(Attributes.ARMOR, new AttributeModifier(id, stats.protection(components), AttributeModifier.Operation.ADD_VALUE), slot);
+        builder.add(Attributes.ARMOR_TOUGHNESS,
+                new AttributeModifier(id, stats.toughness(components), AttributeModifier.Operation.ADD_VALUE), slot);
         return builder.build();
+    }
+
+    private static io.github.ningmeng123.mite.rules.ArmorBalanceRules.Stats materialStats(Item item, ArmorItem armor) {
+        var definition = io.github.ningmeng123.mite.registry.MiteArmorContent.definition(item);
+        String material = definition == null ? armor.getMaterial().unwrapKey().map(key -> key.location().getPath()).orElse("") : definition.material();
+        boolean chain = definition == null ? material.equals("chainmail") : definition.chainmail();
+        if (material.equals("chainmail")) material = "iron";
+        try { return io.github.ningmeng123.mite.rules.ArmorBalanceRules.stats(material, chain); }
+        catch (IllegalArgumentException unsupported) {
+            // Unknown addon armor gets a conservative positive baseline without inventing armor on weapons.
+            var nativeMaterial = armor.getMaterial().value();
+            return new io.github.ningmeng123.mite.rules.ArmorBalanceRules.Stats(
+                    Math.min(4, nativeMaterial.getDefense(ArmorItem.Type.HELMET)),
+                    Math.min(8, nativeMaterial.getDefense(ArmorItem.Type.CHESTPLATE)),
+                    Math.min(6, nativeMaterial.getDefense(ArmorItem.Type.LEGGINGS)),
+                    Math.min(4, nativeMaterial.getDefense(ArmorItem.Type.BOOTS)),
+                    Math.clamp(nativeMaterial.toughness(), .25F, 3F));
+        }
     }
 
     public static ToolProfile toolProfile(ItemStack stack) {
@@ -305,19 +346,45 @@ public final class EquipmentDurability {
     @SubscribeEvent
     public static void wornArmorAttributes(ItemAttributeModifierEvent event) {
         ItemStack stack = event.getItemStack();
+        boolean explicit = stack.getComponentsPatch().get(DataComponents.ATTRIBUTE_MODIFIERS) != null;
+        if (explicit && stack.getItem() instanceof ArmorItem) normalizeSavedArmorBase(event);
         if (armorProfile(stack) == null) return;
-        // Commands and integrations can explicitly replace attributes; preserve those intentional overrides.
-        if (stack.getComponentsPatch().get(DataComponents.ATTRIBUTE_MODIFIERS) != null) return;
         LivingEntity wearer = ARMOR_WEARER.get();
         float factor = wearer != null && !(wearer instanceof Player) ? 1F
                 : EquipmentDurabilityRules.armorProtectionFactor(stack.getDamageValue(), stack.getMaxDamage(), true);
         for (var entry : List.copyOf(event.getModifiers())) {
-            if (entry.attribute().equals(Attributes.ARMOR) || entry.attribute().equals(Attributes.ARMOR_TOUGHNESS)) {
+            if ((entry.attribute().equals(Attributes.ARMOR) || entry.attribute().equals(Attributes.ARMOR_TOUGHNESS))
+                    && (!explicit || stack.getItem() instanceof ArmorItem armor && nativeArmorId(entry.modifier().id(), armor))) {
                 var modifier = entry.modifier();
                 event.replaceModifier(entry.attribute(), new AttributeModifier(modifier.id(),
                         modifier.amount() * factor, modifier.operation()), entry.slot());
             }
         }
+    }
+
+    private static boolean nativeArmorId(ResourceLocation id, ArmorItem armor) {
+        return id.equals(ResourceLocation.withDefaultNamespace("armor." + armor.getType().getName()));
+    }
+
+    /** Normalize recognized saved base stats without rewriting NBT or dropping custom modifier identities. */
+    private static void normalizeSavedArmorBase(ItemAttributeModifierEvent event) {
+        ArmorItem armor = (ArmorItem)event.getItemStack().getItem();
+        var defaults = armorAttributes(armor);
+        for (var base : defaults.modifiers()) {
+            if (!(base.attribute().equals(Attributes.ARMOR) || base.attribute().equals(Attributes.ARMOR_TOUGHNESS))
+                    || !nativeArmorId(base.modifier().id(), armor)) continue;
+            // A saved component can repeat one canonical ID in ANY, MAINHAND and the armor slot.
+            // replaceModifier only replaces the final indexed entry, so remove every recognized base first.
+            boolean removed = event.removeIf(entry -> entry.attribute().equals(base.attribute())
+                    && entry.modifier().id().equals(base.modifier().id())
+                    && entry.modifier().operation() == AttributeModifier.Operation.ADD_VALUE);
+            if (removed) event.addModifier(base.attribute(), base.modifier(), base.slot());
+        }
+        boolean positive = event.getModifiers().stream().anyMatch(entry -> entry.attribute().equals(Attributes.ARMOR_TOUGHNESS)
+                && entry.slot().test(armor.getEquipmentSlot()) && entry.modifier().operation() == AttributeModifier.Operation.ADD_VALUE
+                && entry.modifier().amount() > 0D);
+        if (!positive) defaults.modifiers().stream().filter(entry -> entry.attribute().equals(Attributes.ARMOR_TOUGHNESS))
+                .forEach(entry -> event.addModifier(entry.attribute(), entry.modifier(), entry.slot()));
     }
 
     private static boolean onlyManagedArmor(Player player) {

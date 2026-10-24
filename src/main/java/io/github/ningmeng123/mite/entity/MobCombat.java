@@ -81,8 +81,10 @@ public final class MobCombat {
         }
         // Damage.applyArmorCalculations only grants uf (players) the 20% full-block roll.
         // NPCs always retain the source one-point floor, even when protection exceeds the hit.
-        return flags.absolute() || incoming <= 0F ? incoming : Math.max(incoming - Math.max(defense.total() + natural
+        if (flags.absolute() || incoming <= 0F) return incoming;
+        float remaining = Math.max(incoming - Math.max(defense.total() + natural
                 - io.github.ningmeng123.mite.enchantment.R196Enchantments.level(weapon(source), entity.level(), "piercing"), 0F), 1F);
+        return Math.max(remaining - SourceArmorDefense.bardingToughnessBuffer(entity, source, incoming), 1F);
     }
 
     /** Species-specific flat defense precedes native equipment mitigation and never substitutes for armor attributes. */

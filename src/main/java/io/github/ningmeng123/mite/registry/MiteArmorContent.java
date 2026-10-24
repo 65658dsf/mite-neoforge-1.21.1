@@ -140,12 +140,17 @@ public final class MiteArmorContent {
                 () -> Ingredient.of(repairMaterial(definition)),
                 List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, definition.materialKey()))), stats.toughness(), 0F);
     }
-    private static net.minecraft.world.item.component.ItemAttributeModifiers horseAttributes(Definition definition) {
-        // Barding retains its source BODY protection; humanoid toughness is not added to horses.
+    public static net.minecraft.world.item.component.ItemAttributeModifiers horseAttributes(Definition definition) {
+        // BODY uses its own source armor amount and one material toughness contribution.
         return net.minecraft.world.item.component.ItemAttributeModifiers.builder().add(
                 net.minecraft.world.entity.ai.attributes.Attributes.ARMOR,
                 new net.minecraft.world.entity.ai.attributes.AttributeModifier(ResourceLocation.withDefaultNamespace("armor.body"),
                         definition.horseProtection(), net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
+                net.minecraft.world.entity.EquipmentSlotGroup.BODY).add(
+                net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS,
+                new net.minecraft.world.entity.ai.attributes.AttributeModifier(ResourceLocation.withDefaultNamespace("armor.body"),
+                        ArmorBalanceRules.stats(definition.material(), false).toughness(),
+                        net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
                 net.minecraft.world.entity.EquipmentSlotGroup.BODY).build();
     }
     public static Item repairMaterial(Definition definition) {
@@ -166,13 +171,6 @@ public final class MiteArmorContent {
     private static void modifyDefaults(ModifyDefaultComponentsEvent event) {
         // The retained BlockItem still places modern chains. Source chains are eight-stack metal components.
         event.modify(Items.CHAIN, builder -> builder.set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, 8));
-        // R196 gold barding is three, while modern gold is seven. Keep displayed attributes and damage in agreement.
-        var gold=net.minecraft.world.item.component.ItemAttributeModifiers.builder();
-        for (var entry:Items.GOLDEN_HORSE_ARMOR.getDefaultAttributeModifiers().modifiers()) {
-            var modifier=entry.modifier();
-            gold.add(entry.attribute(),entry.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR)
-                    ? new net.minecraft.world.entity.ai.attributes.AttributeModifier(modifier.id(),3D,modifier.operation()) : modifier,entry.slot());
-        }
-        event.modify(Items.GOLDEN_HORSE_ARMOR,builder->builder.set(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS,gold.build()));
+        // Barding armor and positive BODY toughness are normalized together by EquipmentDurability.
     }
 }

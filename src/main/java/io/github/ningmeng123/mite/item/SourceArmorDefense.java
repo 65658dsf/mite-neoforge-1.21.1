@@ -27,6 +27,16 @@ public final class SourceArmorDefense {
                 io.github.ningmeng123.mite.entity.MobCombat.weapon(source), target.level(), "piercing");
         return Math.max(armor - piercing, 0F);
     }
+    /** Barding retains source flat armor; only the additional native toughness benefit is added. */
+    public static float bardingToughnessBuffer(LivingEntity entity, DamageSource source, float incoming) {
+        if (!(entity instanceof net.minecraft.world.entity.animal.horse.AbstractHorse)
+                || !(entity.getItemBySlot(EquipmentSlot.BODY).getItem() instanceof net.minecraft.world.item.AnimalArmorItem)) return 0F;
+        Source flags = flags(source);
+        if (flags.absolute() || flags.unblockable() || flags.bypassesMundaneArmor()) return 0F;
+        float armor = armorAfterPiercing(entity, source, io.github.ningmeng123.mite.registry.MiteArmorContent.horseProtection(entity.getItemBySlot(EquipmentSlot.BODY)));
+        float toughness = (float)entity.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS);
+        return io.github.ningmeng123.mite.rules.ArmorBalanceRules.bardingToughnessBuffer(incoming, armor, toughness);
+    }
     public static Source flags(DamageSource source) {
         boolean absolute = source.is(DamageTypes.IN_WALL) || source.is(DamageTypes.FELL_OUT_OF_WORLD)
                 || source.is(DamageTypes.GENERIC_KILL) || source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);

@@ -40,7 +40,8 @@ import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 /** Source of/sm/tv literals verify actual health transactions and post-construction save loading. @author NingMeng123 */
 @GameTestHolder("mite") @PrefixGameTestTemplate(false)
 public final class SharedNpcRules031GameTests {
-    @GameTest(template="empty") public static void sourceHorseBardingContributesItsIntegerProtection(GameTestHelper h) {
+    @GameTest(template="empty") public static void sourceHorseBardingKeepsFlatProtectionAndAddsOnlyTheToughnessBenefit(GameTestHelper h) {
+        double[] loss={6D,6D,7D,5D,5D,3.68D,2.5238095238D};
         int[] defense={4,4,3,5,5,6,7}; String[] ids={"mite:copper_horse_armor","mite:silver_horse_armor","minecraft:golden_horse_armor","minecraft:iron_horse_armor","mite:ancient_metal_horse_armor","mite:mithril_horse_armor","mite:adamantium_horse_armor"};
         for(int i=0;i<ids.length;i++) {
             var horse=EntityType.HORSE.create(h.getLevel()); horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30); horse.setHealth(30);
@@ -49,8 +50,9 @@ public final class SharedNpcRules031GameTests {
                     .filter(e->e.attribute().equals(Attributes.ARMOR)).mapToDouble(e->e.modifier().amount()).sum();
             h.assertValueEqual(displayed,(double)defense[i],"Source horse armor display agrees with actual defense for "+ids[i]);
             // Modern generic damage bypasses armor; use an actual ordinary mob attack for barding.
+            horse.tick();
             horse.hurt(horse.damageSources().mobAttack(EntityType.COW.create(h.getLevel())),10);
-            h.assertValueEqual(horse.getHealth(),20F+defense[i],"ItemHorseArmor integer source defense once for "+ids[i]);
+            h.assertTrue(Math.abs(horse.getHealth()-(30F-loss[i]))<.0001,"Source flat BODY armor is preserved while toughness can only improve mitigation for "+ids[i]);
             h.assertValueEqual(barding.getDamageValue(),0,"Horse barding remains source nondamageable");
         }
         h.succeed();

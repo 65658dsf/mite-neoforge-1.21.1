@@ -245,10 +245,10 @@ public final class MonsterDayScalingGameTests {
             target.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.IRON_LEGGINGS));
             target.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
             equipment(target);
-            close(helper, target.getAttributeValue(Attributes.ARMOR), 15D, "The real NPC wears native iron armor");
-            // At day65 raw20 becomes23.328 before armor: effective armor15-23.328/2=3.336.
-            // The independent native formula gives23.328*(1-3.336/25)=20.21511168.
-            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 20.215112F);
+            close(helper, target.getAttributeValue(Attributes.ARMOR), 14D, "The real NPC wears balanced iron armor");
+            // At day65 raw20 becomes23.328 before iron14/toughness4: effective armor14-23.328/3=6.224.
+            // The independent native formula gives23.328*(1-6.224/25).
+            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 17.52026112F);
             for (EquipmentSlot slot : ARMOR) helper.assertValueEqual(target.getItemBySlot(slot).getDamageValue(), 0,
                     "Calendar growth does not change the established NPC equipment wear policy");
         }
