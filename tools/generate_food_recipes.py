@@ -37,6 +37,9 @@ for index, metal in enumerate(METALS):
 BOWL_OUTPUTS = {282, 1166, 1167, 1188, 1189, 1190, 1206, 1209, 1215, 1216, 1217, 1223, 1224, 1226, 1227}
 EMPTY_BUCKETS = {325, *range(1142, 1148)}
 WATER_BUCKETS = {326, *range(1148, 1154)}
+RETIRED_CRAFTING_ORDERS = {
+    773: "Golden apples are converted at an enchanting table for exactly200 experience points; the old bottle recipe is historical evidence only.",
+}
 
 
 def modern_id(stack: dict) -> str:
@@ -120,7 +123,11 @@ def main() -> None:
     for source in recipes:
         recipe = crafting_json(source)
         name = "food_019_" + str(source["order"])
-        write(RESOURCES / "data/mite/recipe" / (name + ".json"), recipe)
+        # Keep the extracted source record below intact, but never register the retired alternate acquisition.
+        live_recipe = recipe if source["order"] not in RETIRED_CRAFTING_ORDERS else {
+            "neoforge:conditions": [{"type": "neoforge:false"}], **recipe,
+        }
+        write(RESOURCES / "data/mite/recipe" / (name + ".json"), live_recipe)
         evidence["mite:" + name] = {
             **recipe["manufacturing"],
             "output": recipe["result"],
@@ -169,6 +176,9 @@ def main() -> None:
     write(RESOURCES / "mite/food-manufacturing-019.json", {
         "author": "NingMeng123", "archive_sha256": archive["archive_sha256"],
         "original_food_recipe_count": 202, "dependency_recipe_count": 52,
+        "active_source_crafting_recipe_count": len(recipes) - len(RETIRED_CRAFTING_ORDERS),
+        "excluded_modern_crafting_orders": list(RETIRED_CRAFTING_ORDERS),
+        "modern_crafting_exclusion_reasons": {str(order): reason for order, reason in RETIRED_CRAFTING_ORDERS.items()},
         "excluded_stone_bucket_dismantling_orders": list(range(887, 894)),
         "recipes": evidence, "cooking": cooking,
         "modern_adaptations": ["Source food recipes require heat1; furnace heat/fuel enforcement is provided by024.",
@@ -176,7 +186,7 @@ def main() -> None:
             "Native recipe history remains for unlocking; source cooking XP follows actual player and hopper withdrawals, without a duplicate bank. Unmapped modern results retain native experience.",
             "Skills remain disabled like the default R196 mode; skillsets remain recorded as evidence."]
     })
-    print(f"Generated {len(recipes)} crafting recipes, {len(furnace)} source cooking recipes across 3 devices, {len(disabled)} disabled conflicts")
+    print(f"Generated {len(recipes) - len(RETIRED_CRAFTING_ORDERS)} active crafting recipes, {len(recipes)} historical records, {len(furnace)} source cooking recipes across 3 devices, {len(disabled)} disabled conflicts")
 
 
 if __name__ == "__main__":

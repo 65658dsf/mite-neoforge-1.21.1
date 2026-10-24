@@ -33,6 +33,27 @@ class FoodRecipeEvidenceTest {
     }
 
     @Test
+    void retiredAppleBottleCraftRemainsEvidenceButCannotRegisterAsAnActiveRecipe() throws Exception {
+        JsonObject data = evidence();
+        assertEquals(253, data.get("active_source_crafting_recipe_count").getAsInt());
+        var retired = data.getAsJsonArray("excluded_modern_crafting_orders");
+        assertEquals(1, retired.size());
+        assertEquals(773, retired.get(0).getAsInt());
+        var source = data.getAsJsonObject("recipes").getAsJsonObject("mite:food_019_773");
+        assertEquals(773, source.get("source_order").getAsInt());
+        assertEquals("minecraft:enchanted_golden_apple", source.getAsJsonObject("output").get("id").getAsString());
+        assertEquals(2, source.getAsJsonArray("source_components").size());
+        assertEquals(50F, source.get("difficulty").getAsFloat());
+        try (var reader = new InputStreamReader(FoodRecipeEvidenceTest.class.getResourceAsStream(
+                "/data/mite/recipe/food_019_773.json"), StandardCharsets.UTF_8)) {
+            var live = JsonParser.parseReader(reader).getAsJsonObject();
+            assertEquals(1, live.getAsJsonArray("neoforge:conditions").size());
+            assertEquals("neoforge:false", live.getAsJsonArray("neoforge:conditions").get(0).getAsJsonObject().get("type").getAsString());
+            assertEquals(source.getAsJsonObject("output"), live.getAsJsonObject("result"));
+        }
+    }
+
+    @Test
     void cheeseCosts6400ForEachOfIts65DistinctMilkBatchRecipes() {
         var cheese = evidence().getAsJsonObject("recipes").entrySet().stream()
                 .map(Map.Entry::getValue).map(value -> value.getAsJsonObject())

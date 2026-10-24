@@ -3,6 +3,13 @@
   "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
   "original_food_recipe_count": 202,
   "dependency_recipe_count": 52,
+  "active_source_crafting_recipe_count": 253,
+  "excluded_modern_crafting_orders": [
+    773
+  ],
+  "modern_crafting_exclusion_reasons": {
+    "773": "Golden apples are converted at an enchanting table for exactly200 experience points; the old bottle recipe is historical evidence only."
+  },
   "excluded_stone_bucket_dismantling_orders": [
     887,
     888,

@@ -52,7 +52,7 @@ public final class FoodRecipeGameTests {
     public static void sourceFoodsAndModernWaterBowlSoupsLoadWithoutConflictingCrafts(GameTestHelper helper) {
         var foods = helper.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream()
                 .filter(holder -> holder.value() instanceof FoodManufacturingRecipe).toList();
-        helper.assertValueEqual(foods.size(), 259, "254 source recipes, four modern soups and the timed water-bowl salad load");
+        helper.assertValueEqual(foods.size(), 258, "253 active source recipes, four modern soups and the timed water-bowl salad load; retired apple order773 remains source evidence only");
         helper.assertValueEqual(foods.stream().filter(holder -> holder.value() instanceof FoodShapedRecipe).count(), 15L,
                 "Eight food/material patterns plus seven empty-bucket patterns retain their shaped form");
         helper.assertValueEqual(foods.stream().filter(holder -> holder.value().getResultItem(helper.getLevel().registryAccess())
@@ -63,6 +63,33 @@ public final class FoodRecipeGameTests {
                 "melon_seeds", "pumpkin_seeds", "sugar", "bucket"})
             helper.assertTrue(helper.getLevel().getRecipeManager().byKey(ResourceLocation.withDefaultNamespace(id)).isEmpty(),
                     "The modern default recipe cannot bypass the source ingredients or timing: " + id);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void retiredAppleBottleCraftCannotBypassTheFixedEnchantingTablePayment(GameTestHelper helper) {
+        var manager = helper.getLevel().getRecipeManager();
+        helper.assertTrue(manager.byKey(ResourceLocation.fromNamespaceAndPath("mite", "food_019_773")).isEmpty(),
+                "The old source773 bottle conversion is explicitly excluded from the actual loaded recipe manager");
+        helper.assertTrue(manager.getAllRecipesFor(RecipeType.CRAFTING).stream().noneMatch(holder ->
+                        holder.value().getResultItem(helper.getLevel().registryAccess()).is(Items.ENCHANTED_GOLDEN_APPLE)),
+                "No alternate registered crafting recipe yields an enchanted golden apple");
+        CraftingInput ingredients = CraftingInput.of(2, 1, List.of(new ItemStack(Items.GOLDEN_APPLE), new ItemStack(Items.EXPERIENCE_BOTTLE)));
+        helper.assertTrue(manager.getRecipeFor(RecipeType.CRAFTING, ingredients, helper.getLevel()).isEmpty(),
+                "The actual former ingredient pair has no matching recipe");
+        try (Fixture f = new Fixture(helper)) {
+            helper.getLevel().setBlockAndUpdate(f.table, MiteWorkbenches.TABLES.get("gold").get().defaultBlockState());
+            f.grid.setItem(0, new ItemStack(Items.GOLDEN_APPLE));
+            f.grid.setItem(1, new ItemStack(Items.EXPERIENCE_BOTTLE));
+            helper.assertTrue(f.menu.getSlot(0).getItem().isEmpty(), "Even the formerly required gold bench has no alternate result");
+            f.menu.clicked(0, 0, ClickType.PICKUP, f.player);
+            helper.assertFalse(TimedCraftingController.start(f.player, f.menu), "The excluded recipe cannot begin a hidden timed batch");
+            f.tick(100);
+            helper.assertValueEqual(f.count(Items.GOLDEN_APPLE), 1, "Failed alternate crafting retains the golden apple");
+            helper.assertValueEqual(f.count(Items.EXPERIENCE_BOTTLE), 1, "Failed alternate crafting retains the experience bottle");
+            helper.assertValueEqual(f.count(Items.ENCHANTED_GOLDEN_APPLE), 0, "The old route grants no enchanted apple");
+            helper.assertValueEqual(f.player.totalExperience, 0, "The unavailable craft does not consume or fabricate experience");
+        }
         helper.succeed();
     }
 
