@@ -12,11 +12,9 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.EnchantmentNames;
 import net.minecraft.client.gui.screens.inventory.EnchantmentScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.EnchantmentMenu;
-import net.minecraft.world.item.enchantment.Enchantment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -72,11 +70,8 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
         for (int slot = 0; slot < 3; slot++) {
             if (menu.costs[slot] <= 0 || !isHovering(60, 14 + slot * 19, 108, 19, mouseX, mouseY)) continue;
             List<Component> tooltip = new ArrayList<>();
-            var clue = minecraft.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(menu.enchantClue[slot]);
-            int rank = menu.levelClue[slot];
-            tooltip.add(Component.translatable("container.enchant.clue",
-                    clue.isEmpty() ? "" : Enchantment.getFullname(clue.get(), rank)).withStyle(ChatFormatting.WHITE));
-            if (clue.isEmpty()) tooltip.add(Component.translatable("neoforge.container.enchant.limitedEnchantability").withStyle(ChatFormatting.RED));
+            // Offer clues remain internal for validation; the player only sees requirements and costs.
+            if (menu.enchantClue[slot] < 0) tooltip.add(Component.translatable("neoforge.container.enchant.limitedEnchantability").withStyle(ChatFormatting.RED));
             boolean creative = minecraft.player.getAbilities().instabuild;
             tooltip.add(Component.translatable("container.enchant.level.requirement", menu.costs[slot])
                     .withStyle(creative || minecraft.player.experienceLevel >= menu.costs[slot] ? ChatFormatting.GRAY : ChatFormatting.RED));

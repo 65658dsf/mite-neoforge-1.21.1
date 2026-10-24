@@ -32,6 +32,17 @@ public final class R196EnchantmentCatalog {
             return io.github.ningmeng123.mite.config.MiteConfig.enchantmentMaxLevel(resourceId, fallback);
         }
 
+        /** Fixed R196 chest-book range; player configuration cannot rewrite the historical reward pool. */
+        public int sourceGeneratedLevel() {
+            return switch (legacyId) {
+                case 0, 1, 2, 3, 4, 87, 95 -> 4;
+                case 5, 7, 21, 35, 94 -> 3;
+                case 19, 20, 49 -> 2;
+                case 6, 33, 50 -> 1;
+                default -> 5; // aau.getNumLevels: also applies to source sharpness and unbreaking.
+            };
+        }
+
         public int minCost(int level) {
             if (level < 1 || level > maxLevel()) throw new IllegalArgumentException("Invalid source enchantment level: " + id + " " + level);
             // Preserve a single-level enchantment's original first-rank cost while charging for explicit extra ranks.
@@ -98,6 +109,8 @@ public final class R196EnchantmentCatalog {
         all.addAll(io.github.ningmeng123.mite.api.MiteExtensions.externalEnchantments());
         return List.copyOf(all);
     }
+
+    public static List<Definition> sourceDefinitions() { return DEFINITIONS; }
 
     /** Namespaced IDs are matched exactly, so minecraft:piercing is never confused with the source enchantment. */
     public static Definition definition(String id) {

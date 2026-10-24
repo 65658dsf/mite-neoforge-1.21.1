@@ -88,13 +88,34 @@ public final class EnchantmentClientAudit implements DataProvider {
             Set<String> tooltipKeys = translationKeys(screen, render);
             check(tooltipKeys.equals(Set.of("gui.mite.enchant.available", "gui.mite.enchant.points")),
                     "The custom tooltip keys describe available points and required points");
-            Set<String> nativeTooltipKeys = translationKeys(screen, render, "container.enchant.");
-            check(nativeTooltipKeys.containsAll(Set.of("container.enchant.clue", "container.enchant.level.requirement",
-                    "container.enchant.lapis.one", "container.enchant.lapis.many")),
-                    "The actual transformed tooltip restores native clues, required levels and lapis quantities");
-            requireCall(screen, render, "net/minecraft/world/item/enchantment/Enchantment", "getFullname");
+            MethodNode sourceTooltip = screen.methods.stream()
+                    .filter(m -> merged(m, MIXINS + "EnchantmentScreenMixin") && m.name.contains("mite$pointTooltip"))
+                    .findFirst().orElseThrow(() -> new IllegalStateException("Missing transformed source tooltip handler"));
+            Set<String> sourceNativeKeys = new LinkedHashSet<>();
+            boolean readsClueValidity = false, readsClueRank = false, namesEnchantment = false, rendersTooltip = false;
+            boolean limitedEnchantability = false;
+            // Inspect the actual merged handler, excluding the legitimate native fallback branch.
+            for (AbstractInsnNode instruction : sourceTooltip.instructions) {
+                if (instruction instanceof LdcInsnNode ldc && ldc.cst instanceof String key) {
+                    if (key.startsWith("container.enchant.")) sourceNativeKeys.add(key);
+                    if (key.equals("neoforge.container.enchant.limitedEnchantability")) limitedEnchantability = true;
+                }
+                if (instruction instanceof FieldInsnNode field) {
+                    if (field.name.equals("enchantClue")) readsClueValidity = true;
+                    if (field.name.equals("levelClue")) readsClueRank = true;
+                }
+                if (instruction instanceof MethodInsnNode call) {
+                    if (call.owner.equals("net/minecraft/world/item/enchantment/Enchantment") && call.name.equals("getFullname")) namesEnchantment = true;
+                    if (call.owner.equals("net/minecraft/client/gui/GuiGraphics") && call.name.equals("renderComponentTooltip")) rendersTooltip = true;
+                }
+            }
+            check(sourceNativeKeys.equals(Set.of("container.enchant.level.requirement", "container.enchant.lapis.one",
+                    "container.enchant.lapis.many")), "Source tooltip displays level and lapis requirements without an enchantment preview");
+            check(!readsClueRank && !namesEnchantment && rendersTooltip && readsClueValidity && limitedEnchantability,
+                    "The merged handler hides the enchantment name and rank while preserving validity errors and cost rendering");
             report.addProperty("point_tooltip_keys_exactly_two", true);
-            report.addProperty("native_clue_level_and_lapis_tooltip_paths", true);
+            report.addProperty("enchantment_result_preview_hidden", true);
+            report.addProperty("required_level_lapis_and_unavailable_offer_tooltip_paths", true);
             report.addProperty("server_quoted_point_prices_used", true);
             report.addProperty("native_lapis_affordability_checked", true);
             JsonArray screenKeys = new JsonArray(); keys.forEach(screenKeys::add); report.add("screen_translation_keys", screenKeys);

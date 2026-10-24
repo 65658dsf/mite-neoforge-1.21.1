@@ -119,15 +119,26 @@ public final class VanillaTableEnchanting {
     }
 
     public static List<EnchantmentInstance> select(RegistryAccess access, ItemStack stack, int selectionLevel, RandomSource random) {
+        return select(access, stack, selectionLevel, random, Integer.MAX_VALUE);
+    }
+
+    /** The quoted energy also bounds acquisition power; material bonuses cannot bypass payment. */
+    public static List<EnchantmentInstance> select(RegistryAccess access, ItemStack stack, int selectionLevel,
+            RandomSource random, int paidEnergy) {
         return access.registryOrThrow(Registries.ENCHANTMENT).getTag(EnchantmentTags.IN_ENCHANTING_TABLE)
-                .map(allowed -> select(stack, selectionLevel, random, allowed.stream().toList())).orElseGet(List::of);
+                .map(allowed -> select(stack, selectionLevel, random, allowed.stream().toList(), paidEnergy)).orElseGet(List::of);
     }
 
     /** Native candidate windows, primary item sets, weights and additional-enchantment trials. */
     public static List<EnchantmentInstance> select(ItemStack stack, int selectionLevel, RandomSource random,
             List<Holder<Enchantment>> allowed) {
-        if (stack.isEmpty() || selectionLevel < 1 || selectionEnchantability(stack) < 1) return List.of();
-        int power = modifiedPower(stack, selectionLevel, random);
+        return select(stack, selectionLevel, random, allowed, Integer.MAX_VALUE);
+    }
+
+    public static List<EnchantmentInstance> select(ItemStack stack, int selectionLevel, RandomSource random,
+            List<Holder<Enchantment>> allowed, int paidEnergy) {
+        if (stack.isEmpty() || selectionLevel < 1 || paidEnergy < 1 || selectionEnchantability(stack) < 1) return List.of();
+        int power = Math.min(modifiedPower(stack, selectionLevel, random), paidEnergy);
         List<Candidate> candidates = new ArrayList<>();
         Set<String> visited = new HashSet<>();
         for (Holder<Enchantment> holder : allowed) {
@@ -136,7 +147,10 @@ public final class VanillaTableEnchanting {
             if (!primaryItem(stack, holder) || !ConfiguredEnchantments.availableForRandomSelection(holder, random)) continue;
             Profile profile = profile(holder);
             if (profile.weight() <= 0) continue;
-            for (int level = maximumLevel(holder); level >= holder.value().getMinLevel(); level--) {
+            // Above-vanilla ranks require a full-strength offer as well as enough paid energy.
+            int maximum = selectionLevel >= MAXIMUM_SELECTION_LEVEL ? maximumLevel(holder)
+                    : Math.min(maximumLevel(holder), profile.maximumLevel());
+            for (int level = maximum; level >= holder.value().getMinLevel(); level--) {
                 if (power >= profile.minCost().calculate(level) && power <= profile.maxCost().calculate(level)) {
                     candidates.add(new Candidate(profile, new EnchantmentInstance(holder, level)));
                     break;

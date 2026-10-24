@@ -97,7 +97,7 @@ public final class GrindstoneExperienceGameTests {
 
     @GameTest(template = "empty")
     public static void bothInputsContributeNonCurseCostsBeforeTheSingleRandomDraw(GameTestHelper helper) {
-        try (Fixture f = new Fixture(helper, 203000)) {
+        try (var source = new SourceConfigFixture(false, true); Fixture f = new Fixture(helper, 203000)) {
             ItemStack top = enchanted(helper, Items.IRON_PICKAXE, Enchantments.EFFICIENCY, 3);
             ItemStack bottom = enchanted(helper, Items.IRON_PICKAXE, Enchantments.UNBREAKING, 2);
             enchant(helper, top, Enchantments.VANISHING_CURSE, 1);

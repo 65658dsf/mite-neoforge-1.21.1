@@ -92,7 +92,15 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
             CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
         // Match vanilla's int addition (including overflow), RNG consumption and book removal.
         random.setSeed((long)(enchantmentSeed.get() + slot));
-        List<EnchantmentInstance> selected = new ArrayList<>(VanillaTableEnchanting.select(registry, stack, level, random));
+        int paidEnergy = access.evaluate((world, pos) -> {
+            RandomSource priceRandom = RandomSource.create(enchantmentSeed.get());
+            float noise = .5F;
+            for (int current = 0; current <= slot && current < 2; current++) noise = priceRandom.nextFloat();
+            if (slot == 2) noise = .5F;
+            return FunctionalBlockRules.enchantmentLevels(R196EnchantmentTable.accessibleBookshelves(world, pos),
+                    R196EnchantmentTable.emerald(world, pos), R196EnchantmentTable.enchantability(stack), slot, noise);
+        }, Integer.MAX_VALUE);
+        List<EnchantmentInstance> selected = new ArrayList<>(VanillaTableEnchanting.select(registry, stack, level, random, paidEnergy));
         if (stack.is(Items.BOOK) && selected.size() > 1) selected.remove(random.nextInt(selected.size()));
         cir.setReturnValue(selected);
     }

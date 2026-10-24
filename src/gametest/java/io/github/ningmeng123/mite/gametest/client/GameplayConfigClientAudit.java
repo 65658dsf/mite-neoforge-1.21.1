@@ -89,6 +89,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
         report.addProperty("user_configuration_files_written", false);
         report.addProperty("full_client_setup_lifecycle_dispatched", false);
         try {
+            auditExperimentalWorldConfirmation(report);
             auditScreens(report);
             auditLanguages(report);
             report.addProperty("status", report.has("mod_menu_datagen_limitation")
@@ -102,6 +103,19 @@ public final class GameplayConfigClientAudit implements DataProvider {
             try { write(report); } catch (Exception secondary) { failure.addSuppressed(secondary); }
             return CompletableFuture.failedFuture(failure);
         }
+    }
+
+    private static void auditExperimentalWorldConfirmation(JsonObject report) {
+        var calls = new java.util.concurrent.atomic.AtomicInteger();
+        // Calling the transformed entry with no Minecraft instance proves the requested
+        // experimental path never attempts to construct or display its confirmation.
+        net.minecraft.client.gui.screens.worldselection.WorldOpenFlows.confirmWorldCreation(null, null,
+                com.mojang.serialization.Lifecycle.experimental(), calls::incrementAndGet, false);
+        check(calls.get() == 1, "Experimental world creation continues exactly once without a confirmation screen");
+        net.minecraft.client.gui.screens.worldselection.WorldOpenFlows.confirmWorldCreation(null, null,
+                com.mojang.serialization.Lifecycle.stable(), calls::incrementAndGet, false);
+        check(calls.get() == 2, "Stable world creation retains its ordinary callback");
+        report.addProperty("experimental_world_confirmation_skipped_by_actual_client_mixin", true);
     }
 
     private static void auditScreens(JsonObject report) throws Throwable {

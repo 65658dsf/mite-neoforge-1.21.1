@@ -47,12 +47,13 @@ public final class ConfiguredTableCapGameTests {
                     int price = ((R196EnchantmentMenuAccess)menu).mite$experienceCost(2);
                     helper.assertValueEqual(menu.costs[2], 30, "Native offer strength stays thirty");
                     helper.assertValueEqual(price, block == Blocks.ENCHANTING_TABLE ? 10000 : 5000, "Existing material and table prices are unchanged");
-                    helper.assertValueEqual(menu.levelClue[2], cap, "The actual preview uses the configured Sharpness cap");
+                    int expectedRank = block == Blocks.ENCHANTING_TABLE ? cap : 5;
+                    helper.assertValueEqual(menu.levelClue[2], expectedRank, "The preview honors both the configured cap and the paid energy budget");
                     var sharpness = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SHARPNESS);
                     helper.assertValueEqual(menu.enchantClue[2], helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap().getId(sharpness),
                             "The preview identifies Sharpness");
                     helper.assertTrue(menu.clickMenuButton(player, 2), "The native table accepts the funded high-rank offer");
-                    helper.assertValueEqual(EnchantmentHelper.getEnchantmentsForCrafting(menu.getSlot(0).getItem()).getLevel(sharpness), cap,
+                    helper.assertValueEqual(EnchantmentHelper.getEnchantmentsForCrafting(menu.getSlot(0).getItem()).getLevel(sharpness), expectedRank,
                             "The paid item contains exactly the previewed configured rank");
                     helper.assertValueEqual(player.totalExperience, 20000 - price, "High ranks keep point-only payment");
                     helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "The third offer consumes exactly three lapis");
