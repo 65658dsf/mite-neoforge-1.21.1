@@ -141,8 +141,8 @@ class NutritionRulesTest {
         assertEquals(0.00052F, regenerationIncrement(6, false, false, 0), 0.000000001F);
         assertEquals(0.0008F, regenerationIncrement(20, false, false, 0), 0.000000001F);
         assertEquals(0.00013F, regenerationIncrement(6, true, false, 0), 0.000000001F);
-        assertEquals(0.00208F, regenerationIncrement(6, false, true, 0), 0.000000001F);
-        assertEquals(0.00052F, regenerationIncrement(6, true, true, 0), 0.000000001F);
+        assertEquals(0.00416F, regenerationIncrement(6, false, true, 0), 0.000000001F);
+        assertEquals(0.00104F, regenerationIncrement(6, true, true, 0), 0.000000001F);
         assertEquals(0.0013F, regenerationIncrement(6, false, false, 3), 0.000000001F);
         assertEquals(0.0004F, regenerationIncrement(0, false, false, 0), 0.000000001F);
     }

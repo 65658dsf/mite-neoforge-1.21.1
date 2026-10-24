@@ -15,10 +15,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-/** Successful placement starts a shared six-tick cooldown without queuing future actions. @author NingMeng123 */
+/** Successful placement starts a shared eight-tick cooldown without queuing future actions. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class PlacementDelay {
-    public static final int DELAY_TICKS = 6;
+    public static final int DELAY_TICKS = 8;
     private static final Map<Player, Cooldown> COOLDOWNS = Collections.synchronizedMap(new WeakHashMap<>());
     private static final ThreadLocal<Attempt> ATTEMPT = new ThreadLocal<>();
 

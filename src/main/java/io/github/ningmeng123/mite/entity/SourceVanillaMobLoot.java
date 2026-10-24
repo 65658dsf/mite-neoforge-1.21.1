@@ -87,6 +87,9 @@ public final class SourceVanillaMobLoot {
         return mob.getRandom().nextFloat() < Math.clamp(chance, 0D, 1D);
     }
     private static boolean massive(Mob mob) { return mob.getPersistentData().getBoolean("mite_massive_fall_031"); }
+    private static boolean meatAnimal(EntityType<?> type) {
+        return livestock(type) || type == EntityType.HORSE || type == EntityType.DONKEY || type == EntityType.MULE;
+    }
     private static int reduced(Mob mob,int count,boolean recent) { return count>0 && !recent ? count-mob.getRandom().nextInt(count+1) : count; }
     /** One source drop call per item preserves both source random ordering and the low stack limits. */
     public static ItemEntity emit(Mob mob,ItemStack stack,float yOffset) {
@@ -114,7 +117,7 @@ public final class SourceVanillaMobLoot {
     }
     public static void fewItems(Mob mob,DamageSource source,boolean recent) {
         initialize(mob);
-        if (mob.isBaby() || massive(mob) && mob.getRandom().nextFloat()>=.1F) return;
+        if (mob.isBaby() || !meatAnimal(mob.getType()) && massive(mob) && mob.getRandom().nextFloat()>=.1F) return;
         var type=mob.getType(); var random=mob.getRandom(); int looting=looting(mob,source),butchering=butchering(mob,source);
         boolean cooked = shouldCookDrops(mob, source);
         if (type==EntityType.ZOMBIE || type==EntityType.ZOMBIE_VILLAGER) {
@@ -137,22 +140,22 @@ public final class SourceVanillaMobLoot {
             emit(mob,Items.BONE,reduced(mob,random.nextInt(3),recent));
         } else if (type==EntityType.COW || type==EntityType.MOOSHROOM) {
             emit(mob,Items.LEATHER,random.nextInt(3)+1);
-            if (well(mob)) { int meat=random.nextInt(3)+1+random.nextInt(1+butchering); if(meat==1 && random.nextInt(2)==0) meat++; emit(mob,cooked?Items.COOKED_BEEF:Items.BEEF,meat); }
+            emit(mob,cooked?Items.COOKED_BEEF:Items.BEEF,random.nextInt(3)+1);
         } else if (type==EntityType.PIG) {
             // The native installed saddle return is kept in dropEquipment, once, outside few-items suppression.
-            if(well(mob)) emit(mob,cooked?Items.COOKED_PORKCHOP:Items.PORKCHOP,random.nextInt(3)+1+random.nextInt(1+butchering));
+            emit(mob,cooked?Items.COOKED_PORKCHOP:Items.PORKCHOP,random.nextInt(3)+1);
         } else if (type==EntityType.SHEEP) {
             Sheep sheep=(Sheep)mob;
             if(!sheep.isSheared() && !cooked && random.nextInt(2)==0) emit(mob,item("minecraft:"+sheep.getColor().getName()+"_wool"),1);
-            if(well(mob)) emit(mob,cooked?Items.COOKED_MUTTON:Items.MUTTON,Math.max(1,random.nextInt(2)+random.nextInt(1+butchering)));
+            emit(mob,cooked?Items.COOKED_MUTTON:Items.MUTTON,random.nextInt(3)+1);
             if(random.nextInt(2)==0) emit(mob,Items.LEATHER,1);
         } else if (type==EntityType.CHICKEN) {
-            if(cooked) { if(well(mob)) emit(mob,Items.COOKED_CHICKEN,1); }
-            else { emit(mob,Items.FEATHER,feathers(mob)); if(well(mob)) emit(mob,Items.CHICKEN,1); }
+            if(cooked) emit(mob,Items.COOKED_CHICKEN,random.nextInt(3)+1);
+            else { emit(mob,Items.FEATHER,feathers(mob)); emit(mob,Items.CHICKEN,random.nextInt(3)+1); }
         } else if (type==EntityType.HORSE || type==EntityType.DONKEY || type==EntityType.MULE || type==EntityType.ZOMBIE_HORSE || type==EntityType.SKELETON_HORSE) {
             int count=random.nextInt(3)+1;
             for(int i=0;i<count;i++) { boolean blank=random.nextInt(4)==0; Item skin=type==EntityType.SKELETON_HORSE?Items.BONE:type==EntityType.ZOMBIE_HORSE?(blank?null:Items.ROTTEN_FLESH):Items.LEATHER; if(skin!=null) emit(mob,skin,1); }
-            if(type!=EntityType.ZOMBIE_HORSE && type!=EntityType.SKELETON_HORSE) { int meat=1+random.nextInt(1+butchering); if(type==EntityType.HORSE) meat+=random.nextInt(2); emit(mob,cooked?Items.COOKED_BEEF:Items.BEEF,meat); }
+            if(type!=EntityType.ZOMBIE_HORSE && type!=EntityType.SKELETON_HORSE) emit(mob,cooked?Items.COOKED_BEEF:Items.BEEF,random.nextInt(3)+1);
         } else if (type==EntityType.SQUID) { if(recent) emit(mob,new ItemStack(Items.INK_SAC),0F); }
         else if(type==EntityType.WOLF) emit(mob,Items.LEATHER,1);
         else if(type==EntityType.OCELOT || type==EntityType.CAT) { /* Source rx explicitly overrides few-items with no draws. */ }

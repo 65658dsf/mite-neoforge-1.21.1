@@ -76,6 +76,14 @@ public final class MaterialProcessingGameTests {
 
     @GameTest(template = "empty")
     public static void naturalWitherSkeletonRetainsItsSourceIronSwordAfterJoiningAndSaving(GameTestHelper helper) {
+        var savedRates = io.github.ningmeng123.mite.config.MiteConfig.NATURAL_SPAWN_RATES.get();
+        var savedWeights = io.github.ningmeng123.mite.config.MiteConfig.NATURAL_SPAWN_WEIGHTS.get();
+        try (var equipmentDate = new SourceEquipmentDateFixture(helper)) {
+        io.github.ningmeng123.mite.config.MiteConfig.NATURAL_SPAWN_RATES.set(savedRates.stream()
+                .filter(entry -> !entry.startsWith("minecraft:wither_skeleton=")).toList());
+        io.github.ningmeng123.mite.config.MiteConfig.NATURAL_SPAWN_WEIGHTS.set(savedWeights.stream()
+                .filter(entry -> !entry.startsWith("minecraft:wither_skeleton=")).toList());
+        io.github.ningmeng123.mite.config.MiteConfig.refreshEnchantmentRules();
         var skeleton = EntityType.WITHER_SKELETON.create(helper.getLevel());
         var position = helper.absolutePos(new net.minecraft.core.BlockPos(2, 3, 2));
         skeleton.moveTo(position.getCenter());
@@ -95,6 +103,11 @@ public final class MaterialProcessingGameTests {
                 "Loading the saved skeleton retains its exact generated sword without rerolling");
         skeleton.discard();
         restored.discard();
+        } finally {
+            io.github.ningmeng123.mite.config.MiteConfig.NATURAL_SPAWN_RATES.set(savedRates);
+            io.github.ningmeng123.mite.config.MiteConfig.NATURAL_SPAWN_WEIGHTS.set(savedWeights);
+            io.github.ningmeng123.mite.config.MiteConfig.refreshEnchantmentRules();
+        }
         helper.succeed();
     }
 

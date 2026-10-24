@@ -116,6 +116,9 @@ public final class CraftingQuality {
     public static TimedCraftingRecipes.Rule rule(RecipeHolder<CraftingRecipe> recipe, ItemStack output,
             net.minecraft.world.item.crafting.CraftingInput input) {
         if (output.isEmpty()) return null;
+        // Packing and unpacking torches are inventory operations, available through
+        // every native click mode and the Crafter without a manufacturing session.
+        if (instantTorchBundle(recipe.id())) return null;
         if (io.github.ningmeng123.mite.api.MiteExtensions.policy().isMaintenanceRecipe(recipe.value())) return new TimedCraftingRecipes.Rule(50F,null,-1);
         // Decorating an existing shield is a fixed-quality cosmetic operation, not manufacturing another metal shield.
         if (shieldDecoration(recipe, output)) return new TimedCraftingRecipes.Rule(100F, benchMaterial(output), -1);
@@ -152,6 +155,14 @@ public final class CraftingQuality {
                 MaterialUpgradeRequirements.difficulty(output), benchMaterial(output), -1);
         float difficulty = EquipmentDurability.isManaged(output) ? lowestDifficulty(output) : -1F;
         return difficulty < 0F ? null : new TimedCraftingRecipes.Rule(difficulty, benchMaterial(output), -1);
+    }
+
+    public static boolean instantTorchBundle(ResourceLocation recipe) {
+        return recipe.getNamespace().equals("modern_ite") && switch (recipe.getPath()) {
+            case "stack_torch_string_coal", "stack_torch_string_charcoal",
+                    "stack_torch_sinew_coal", "stack_torch_sinew_charcoal", "unpack_torches_1" -> true;
+            default -> false;
+        };
     }
 
     public static boolean shieldDecoration(RecipeHolder<CraftingRecipe> recipe, ItemStack result) {

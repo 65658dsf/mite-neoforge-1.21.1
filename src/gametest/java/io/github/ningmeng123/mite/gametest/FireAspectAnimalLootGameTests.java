@@ -46,7 +46,8 @@ public final class FireAspectAnimalLootGameTests {
             new Animal(EntityType.CHICKEN, Items.CHICKEN, Items.COOKED_CHICKEN),
             new Animal(EntityType.HORSE, Items.BEEF, Items.COOKED_BEEF),
             new Animal(EntityType.DONKEY, Items.BEEF, Items.COOKED_BEEF),
-            new Animal(EntityType.MULE, Items.BEEF, Items.COOKED_BEEF));
+            new Animal(EntityType.MULE, Items.BEEF, Items.COOKED_BEEF),
+            new Animal(EntityType.RABBIT, Items.RABBIT, Items.COOKED_RABBIT));
 
     private static Player player(GameTestHelper h, int fireAspect) {
         Player player = h.makeMockPlayer(GameType.SURVIVAL);

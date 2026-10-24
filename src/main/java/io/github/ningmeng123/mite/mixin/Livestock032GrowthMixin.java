@@ -29,6 +29,7 @@ public abstract class Livestock032GrowthMixin implements Livestock032View {
     @Unique private static final EntityDataAccessor<Float> MITE_FREEDOM_032=SynchedEntityData.defineId(AgeableMob.class,EntityDataSerializers.FLOAT);
     @Unique private static final EntityDataAccessor<Integer> MITE_RECOVERY=SynchedEntityData.defineId(AgeableMob.class,EntityDataSerializers.INT);
     @Unique private net.minecraft.core.BlockPos mite$lastTrampled032=net.minecraft.core.BlockPos.ZERO;
+    @Unique private boolean mite$loadingAge032;
     @Override public net.minecraft.core.BlockPos mite$lastTrampled() { return mite$lastTrampled032; }
     @Override public void mite$setLastTrampled(net.minecraft.core.BlockPos pos) { mite$lastTrampled032=pos.immutable(); }
     @Inject(method="defineSynchedData",at=@At("TAIL"))
@@ -44,7 +45,7 @@ public abstract class Livestock032GrowthMixin implements Livestock032View {
     @ModifyVariable(method="setAge",at=@At("HEAD"),argsOnly=true)
     private int mite$growthGate(int age) {
         AgeableMob mob=(AgeableMob)(Object)this;
-        if(age==6000 && mob.getAge()==0 && mob instanceof net.minecraft.world.entity.animal.Animal) age=LivestockRules032.BREEDING_COOLDOWN;
+        if(!mite$loadingAge032 && age==6000 && mob.getAge()==0 && mob instanceof net.minecraft.world.entity.animal.Animal) age=LivestockRules032.BREEDING_COOLDOWN;
         if(mob.level().isClientSide || !R196AnimalAi032.managed(mob) || !mob.isBaby()) return age;
         if(age>mob.getAge() && Livestock032.sourceLivestock(mob) && (Livestock032.isDesperateForFood(mob)||Livestock032.isDesperateForWater(mob))) return mob.getAge();
         var block=mob.level().getBlockState(mob.blockPosition());
@@ -52,6 +53,10 @@ public abstract class Livestock032GrowthMixin implements Livestock032View {
                 && mob.level().getBlockState(mob.blockPosition().above()).blocksMotion()) return -1;
         return age;
     }
+    @Inject(method="readAdditionalSaveData",at=@At("HEAD"))
+    private void mite$beginAgeLoad(net.minecraft.nbt.CompoundTag tag,CallbackInfo ci) { mite$loadingAge032=true; }
+    @Inject(method="readAdditionalSaveData",at=@At("TAIL"))
+    private void mite$finishAgeLoad(net.minecraft.nbt.CompoundTag tag,CallbackInfo ci) { mite$loadingAge032=false; }
     @WrapOperation(method="aiStep",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/AgeableMob;setAge(I)V"))
     private void mite$horseGrowth(AgeableMob mob,int age,Operation<Void> original) {
         if(!mob.level().isClientSide && R196AnimalAi032.managed(mob) && mob instanceof AbstractHorse && mob.getAge()<0) {

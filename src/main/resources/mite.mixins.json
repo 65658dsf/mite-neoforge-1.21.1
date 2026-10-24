@@ -372,6 +372,7 @@
     "client.FixedBrightnessOptionMixin",
     "client.SodiumBrightnessOptionMixin",
     "client.WorldCreationDifficultyMixin",
+    "client.ExperimentalWorldWarningMixin",
     "client.BucketPlacementInputMixin",
     "client.PlacementCooldownMinecraftMixin",
     "client.PlacementCooldownAttemptMixin",

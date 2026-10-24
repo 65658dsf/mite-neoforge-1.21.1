@@ -133,7 +133,7 @@ public final class BucketPlacementNetworkGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void immediatePourSharesSixTickCooldownAndDiscardsRejectedControlPackets(GameTestHelper helper) {
+    public static void immediatePourSharesEightTickCooldownAndDiscardsRejectedControlPackets(GameTestHelper helper) {
         Fixture fixture = new Fixture(helper);
         try {
             fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
@@ -141,8 +141,8 @@ public final class BucketPlacementNetworkGameTests {
             helper.assertTrue(helper.getLevel().getFluidState(fixture.target).is(FluidTags.WATER),
                     "The first real bucket packet pours immediately, without a preparation tick");
             helper.assertTrue(fixture.temporary(), "An immediate ordinary pour still has its finite water deadline");
-            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 6,
-                    "A successful pour starts exactly six ticks of cooldown");
+            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 8,
+                    "A successful pour starts exactly eight ticks of cooldown");
             TemporaryFluidChanges.get(helper.getLevel()).cancel(fixture.target);
             helper.getLevel().setBlock(fixture.target, Blocks.AIR.defaultBlockState(), 2);
             fixture.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.LAVA_BUCKET));
@@ -152,20 +152,20 @@ public final class BucketPlacementNetworkGameTests {
                     "Switching hand and liquid cannot bypass the shared cooldown");
             helper.assertTrue(fixture.player.getOffhandItem().is(Items.LAVA_BUCKET), "A rejected pour retains its full bucket");
             helper.assertValueEqual(fixture.player.totalExperience, 1000, "A rejected Ctrl request spends no source experience");
-            helper.runAfterDelay(5, () -> {
+            helper.runAfterDelay(7, () -> {
                 try {
                     helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 1,
                             "The original deadline still has one tick remaining");
                     BucketPlacementIntent.receive(fixture.player, InteractionHand.OFF_HAND, 302, true);
                     fixture.use(InteractionHand.OFF_HAND, 302);
                     helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(),
-                            "A repeated request is still refused at tick five");
+                            "A repeated request is still refused at tick seven");
                     helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 1,
                             "Rejected requests do not extend the deadline");
                     helper.runAfterDelay(1, () -> {
                         try {
                             helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 0,
-                                    "Placement becomes available at tick six");
+                                    "Placement becomes available at tick eight");
                             helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(),
                                     "The elapsed cooldown never replays a refused placement");
                             fixture.use(InteractionHand.OFF_HAND, 303);
@@ -174,7 +174,7 @@ public final class BucketPlacementNetworkGameTests {
                             helper.assertTrue(fixture.temporary(), "Rejected Ctrl requests cannot arm the later ordinary pour");
                             helper.assertValueEqual(fixture.player.totalExperience, 1000,
                                     "The later unarmed request cannot charge either rejected source intent");
-                            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 6,
+                            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 8,
                                     "The new successful pour starts its own cooldown");
                             helper.succeed();
                         } finally { fixture.close(); }

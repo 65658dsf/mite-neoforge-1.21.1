@@ -31,6 +31,18 @@ class TimedCraftingRulesTest {
             assertEquals(459, TimedCraftingRules.period(6400F, level, .2F, true));
         }
     }
+    @Test void veryNegativeLevelsNeverBecomeFasterThanZeroOrOverflowTheClock() {
+        for (float bench : new float[]{0F, .2F, .7F}) {
+            int zero = TimedCraftingRules.period(6400F, 0, bench, false);
+            int previous = zero;
+            for (int level : new int[]{-1, -40, -49, -50, -51, -60, -85, -100, Integer.MIN_VALUE}) {
+                int period = TimedCraftingRules.period(6400F, level, bench, false);
+                org.junit.jupiter.api.Assertions.assertTrue(period >= previous && period >= zero,
+                        "Negative levels cannot speed up manufacture: " + level);
+                previous = period;
+            }
+        }
+    }
     @Test void noMaterialRequirementAlwaysUsesPointTwoEvenAtHighestBench() {
         assertEquals(0F, TimedCraftingRules.benchModifier(0F, false));
         assertEquals(.2F, TimedCraftingRules.benchModifier(256F, false));

@@ -96,12 +96,12 @@ public final class NutritionRules {
         return 1F + wetness + (malnourished ? 0.5F : 0F);
     }
 
-    /** ux:74-85 and aaw:333-334; callers pass zero until the R196 regeneration enchantment exists. */
+    /** ux:74-85 and aaw:333-334; requested sleep balance doubles the source's fourfold bed recovery. */
     public static float regenerationIncrement(int nutrition, boolean malnourished, boolean inBed,
                                               int regenerationEnchantmentLevel) {
         return (0.0004F + nutrition * 0.00002F)
                 * (malnourished ? 0.25F : 1F)
-                * (inBed ? 4F : 1F)
+                * (inBed ? 8F : 1F)
                 * (1F + regenerationEnchantmentLevel * 0.5F);
     }
 

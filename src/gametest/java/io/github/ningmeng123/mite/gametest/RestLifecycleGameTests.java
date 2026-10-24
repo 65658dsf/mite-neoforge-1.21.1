@@ -44,6 +44,24 @@ public final class RestLifecycleGameTests {
     private RestLifecycleGameTests() {}
 
     @GameTest(template = "empty")
+    public static void sleepingHealsTwiceThePreviousBedRateThroughActualMetabolism(GameTestHelper h) {
+        try (var bed = new BedChamber(h); var session = new Session(h)) {
+            ServerPlayer player = session.player();
+            feed(player, 6, 6);
+            player.setHealth(player.getMaxHealth() - 2F);
+            float before = player.getHealth();
+            player.startSleeping(bed.head);
+            h.assertValueEqual(PlayerRest.simulate(h.getLevel(), 241, List.of(player), tick -> false), 241,
+                    "A fed sleeper forwards every requested food-update tick");
+            h.assertValueEqual(player.getHealth(), before + 1F,
+                    "Nutrition six heals one health after 241 sleeping updates, retaining the source food formula");
+            h.assertTrue(player.getFoodData().getExhaustionLevel() > 1F,
+                    "Accelerated recovery still spends the source one-exhaustion healing cost");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void sleepingSimulationAdvancesActualFoodAndMicronutrients(GameTestHelper h) {
         try (var bed = new BedChamber(h); var session = new Session(h)) {
             ServerPlayer player = session.player();

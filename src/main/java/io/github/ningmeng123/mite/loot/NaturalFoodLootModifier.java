@@ -41,6 +41,15 @@ public final class NaturalFoodLootModifier extends LootModifier {
         var origin = context.getParamOrNull(LootContextParams.ORIGIN);
         var entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
         var tool = context.getParamOrNull(LootContextParams.TOOL);
+        if (entity instanceof net.minecraft.world.entity.animal.Rabbit rabbit && !rabbit.isBaby()
+                && EntityType.RABBIT.getDefaultLootTable().location().equals(context.getQueriedLootTableId())) {
+            var damage = context.getParamOrNull(LootContextParams.DAMAGE_SOURCE);
+            boolean cooked = rabbit.isOnFire() || damage != null
+                    && damage.getDirectEntity() instanceof net.minecraft.world.entity.LivingEntity attacker
+                    && EnchantmentHelper.hasTag(attacker.getMainHandItem(), net.minecraft.tags.EnchantmentTags.SMELTS_LOOT);
+            loot.removeIf(stack -> stack.is(Items.RABBIT) || stack.is(Items.COOKED_RABBIT));
+            loot.add(new ItemStack(cooked ? Items.COOKED_RABBIT : Items.RABBIT, context.getRandom().nextInt(3) + 1));
+        }
         BlockPos pos = origin == null ? BlockPos.ZERO : BlockPos.containing(origin);
         if (state != null && (state.is(MiteFoodPlants.ONIONS.get()) || state.is(MiteFoodPlants.BLUEBERRY_BUSH.get()))
                 && context.hasParam(LootContextParams.EXPLOSION_RADIUS)) { loot.clear(); return loot; }
