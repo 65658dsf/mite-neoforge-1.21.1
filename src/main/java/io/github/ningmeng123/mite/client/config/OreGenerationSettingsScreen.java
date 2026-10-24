@@ -180,8 +180,8 @@ public final class OreGenerationSettingsScreen extends Screen {
                 refreshSave();
             });
             var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
-                box.setValue("1");
-                heightBox.setValue(OreHeightRange.defaults(entry.kind(), entry.dimension()).toString());
+                box.setValue(format(MiteConfig.factoryOreMultiplier(entry.kind(), entry.dimension(), entry.mineral().deepslate())));
+                heightBox.setValue(MiteConfig.factoryOreHeight(entry.kind(), entry.dimension(), entry.mineral().deepslate()).toString());
             }).bounds(controlsX + 84, y, 54, 20).build());
             reset.active = editable;
             reset.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_multiplier_reset")));
@@ -224,8 +224,8 @@ public final class OreGenerationSettingsScreen extends Screen {
     }
     private static String format(double value) { return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString(); }
     private static Component baseline(Entry entry) {
-        double count = R196OreRules.candidateCount(entry.kind(), entry.dimension());
-        double chance = R196OreRules.candidateChance(entry.dimension()) * 100D;
+        double count = R196OreRules.configuredCandidateCount(entry.kind(), entry.dimension());
+        double chance = R196OreRules.configuredCandidateChance(entry.kind(), entry.dimension()) * 100D;
         return Component.translatable("mite.config.ore_baseline", format(count), format(chance), format(count * chance / 100D));
     }
     private Component effective(Entry entry) {
@@ -254,6 +254,8 @@ public final class OreGenerationSettingsScreen extends Screen {
                 if (entry.dimension() == Dimension.OVERWORLD && entry.kind() == Kind.ADAMANTIUM)
                     lines.add(Component.translatable("mite.config.ore_surface_adamantium"));
                 if (entry.mineral().deepslate()) lines.add(Component.translatable("mite.config.ore_deepslate_hint"));
+                if (R196OreRules.modernUnderworldAddition(entry.kind(), entry.dimension()))
+                    lines.add(Component.translatable("mite.config.ore_underworld_modern_hint"));
                 graphics.renderTooltip(font, lines.stream().flatMap(line -> font.split(line, Math.min(360, width - 24)).stream()).toList(), mouseX, mouseY);
             }
         }

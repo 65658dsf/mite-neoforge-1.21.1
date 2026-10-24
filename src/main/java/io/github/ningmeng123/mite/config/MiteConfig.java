@@ -49,6 +49,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_WEIGHTS;
     public static final Map<MonsterSpawningSettings.Option, ModConfigSpec.ConfigValue<? extends Number>> SPAWNING_CONTROLS =
             new EnumMap<>(MonsterSpawningSettings.Option.class);
+    private static final Snapshot FACTORY;
     private static volatile Snapshot local;
     private static volatile Snapshot remote;
 
@@ -56,11 +57,11 @@ public final class MiteConfig {
         var builder = new ModConfigSpec.Builder();
         builder.translation("mite.config.underworld_ores").comment("Underworld ore vein attempt multipliers. Only newly generated chunks are affected. 0 disables; 1 preserves MITE defaults.").push("underworld_ores");
         // This is the generator's source of truth, not a second list of mineral names maintained by the GUI.
-        for (var kind : R196OreRules.UNDERWORLD) {
+        for (var kind : R196OreRules.configurableKinds(R196OreRules.Dimension.UNDERWORLD)) {
             String key = kind.name().toLowerCase(Locale.ROOT);
             UNDERWORLD_ORES.put(kind, builder.translation("mite.config.ore." + key)
                     .comment("Generation multiplier for " + key + "; not a percentage of existing blocks.")
-                    .defineInRange(key, 1D, 0D, 100D));
+                    .defineInRange(key, BundledGameplayDefaults.number("underworld_ores." + key, 1D), 0D, 100D));
         }
         defineDeepslateMultipliers(builder, R196OreRules.Dimension.UNDERWORLD, UNDERWORLD_DEEPSLATE_ORES);
         builder.pop();
@@ -69,20 +70,20 @@ public final class MiteConfig {
             String key = kind.name().toLowerCase(Locale.ROOT);
             OVERWORLD_ORES.put(kind, builder.translation("mite.config.ore." + key)
                     .comment("Candidate count multiplier for overworld " + key + "; applied once before probability filtering.")
-                    .defineInRange(key, 1D, 0D, 100D));
+                    .defineInRange(key, BundledGameplayDefaults.number("overworld_ores." + key, 1D), 0D, 100D));
         }
         defineDeepslateMultipliers(builder, R196OreRules.Dimension.OVERWORLD, OVERWORLD_DEEPSLATE_ORES);
         builder.pop();
         builder.translation("mite.config.ore_generation").push("underworld_generation");
-        for (var kind : R196OreRules.UNDERWORLD) {
+        for (var kind : R196OreRules.configurableKinds(R196OreRules.Dimension.UNDERWORLD)) {
             builder.push(kind.name().toLowerCase(Locale.ROOT));
             UNDERWORLD_ORE_CANDIDATES.put(kind, builder.translation("mite.config.ore_candidates")
                     .comment("Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.")
-                    .defineInRange("candidates", (double)R196OreRules.candidateCount(kind, R196OreRules.Dimension.UNDERWORLD), 0D, 100000D));
+                    .defineInRange("candidates", (double)R196OreRules.configuredCandidateCount(kind, R196OreRules.Dimension.UNDERWORLD), 0D, 100000D));
             UNDERWORLD_ORE_CHANCES.put(kind, builder.translation("mite.config.ore_chance")
-                    .comment("Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.")
-                    .defineInRange("chance_percent", 100D * R196OreRules.candidateChance(R196OreRules.Dimension.UNDERWORLD), 0D, 100D));
-            defineOreHeights(builder, kind, UNDERWORLD_ORE_HEIGHTS, UNDERWORLD_DEEPSLATE_ORE_HEIGHTS);
+                    .comment("Candidate pass chance in percent. Modern underworld emeralds use 3..8 singleton attempts at 100%; other ores default to 10%.")
+                    .defineInRange("chance_percent", 100D * R196OreRules.configuredCandidateChance(kind, R196OreRules.Dimension.UNDERWORLD), 0D, 100D));
+            defineOreHeights(builder, kind, R196OreRules.Dimension.UNDERWORLD, UNDERWORLD_ORE_HEIGHTS, UNDERWORLD_DEEPSLATE_ORE_HEIGHTS);
             builder.pop();
         }
         builder.pop();
@@ -91,11 +92,11 @@ public final class MiteConfig {
             builder.push(kind.name().toLowerCase(Locale.ROOT));
             OVERWORLD_ORE_CANDIDATES.put(kind, builder.translation("mite.config.ore_candidates")
                     .comment("Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.")
-                    .defineInRange("candidates", (double)R196OreRules.candidateCount(kind, R196OreRules.Dimension.OVERWORLD), 0D, 100000D));
+                    .defineInRange("candidates", (double)R196OreRules.configuredCandidateCount(kind, R196OreRules.Dimension.OVERWORLD), 0D, 100000D));
             OVERWORLD_ORE_CHANCES.put(kind, builder.translation("mite.config.ore_chance")
-                    .comment("The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.")
-                    .defineInRange("chance_percent", 100D * R196OreRules.candidateChance(R196OreRules.Dimension.OVERWORLD), 0D, 100D));
-            defineOreHeights(builder, kind, OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS);
+                    .comment("Complete candidate pass chance in percent. Emerald defaults to 100; other minerals default to 10. No second rarity roll is applied.")
+                    .defineInRange("chance_percent", 100D * R196OreRules.configuredCandidateChance(kind, R196OreRules.Dimension.OVERWORLD), 0D, 100D));
+            defineOreHeights(builder, kind, R196OreRules.Dimension.OVERWORLD, OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS);
             builder.pop();
         }
         builder.pop();
@@ -116,10 +117,10 @@ public final class MiteConfig {
                 .define("damage_formula", MonsterGrowthRules.DEFAULTS.damageFormula(), MiteConfig::validFormulaSyntax);
         MONSTER_HEALTH_BLOOD_MOON_FORMULA = builder.translation("mite.config.health_blood_moon_formula")
                 .comment("Health baseline settlement when each blood moon ends (after days 32/64/96/160). The result becomes both base and reference for the next growth period; blue moons are skipped. Uses the same variables as health_formula. Empty inherits health_formula, preserving existing custom configurations.")
-                .define("health_blood_moon_formula", "", MiteConfig::validOptionalFormulaSyntax);
+                .define("health_blood_moon_formula", BundledGameplayDefaults.text("monsters.health_blood_moon_formula", ""), MiteConfig::validOptionalFormulaSyntax);
         MONSTER_DAMAGE_BLOOD_MOON_FORMULA = builder.translation("mite.config.damage_blood_moon_formula")
                 .comment("Innate attack baseline settlement when each blood moon ends. The result becomes both base and reference for the next growth period; blue moons are skipped. Empty inherits damage_formula, preserving existing custom configurations.")
-                .define("damage_blood_moon_formula", "", MiteConfig::validOptionalFormulaSyntax);
+                .define("damage_blood_moon_formula", BundledGameplayDefaults.text("monsters.damage_blood_moon_formula", ""), MiteConfig::validOptionalFormulaSyntax);
         builder.pop();
         builder.translation("mite.config.monster_spawning").push("monster_spawning");
         NATURAL_SPAWN_RATES = builder.translation("mite.config.natural_spawn_rates")
@@ -127,13 +128,13 @@ public final class MiteConfig {
                 .defineListAllowEmpty(List.of("rates"), List::of, () -> "minecraft:zombie=1.0", MiteConfig::validMonsterSpawnOverride);
         NATURAL_SPAWN_WEIGHTS = builder.translation("mite.config.natural_spawn_weights")
                 .comment("Absolute natural pool weight overrides: namespace:entity=integer (0..1000000). Omitted IDs retain each pool's original weight; overrides replace the weight in every existing candidate pool, before rate multipliers. 0 removes that candidate family, including its conversion branches. Does not add spawn entries or bypass date, biome, dimension or population rules. ITE-owned entities use ITE settings.")
-                .defineListAllowEmpty(List.of("weights"), List::of, () -> "minecraft:zombie=100", MiteConfig::validMonsterSpawnWeightOverride);
+                .defineListAllowEmpty(List.of("weights"), () -> BundledGameplayDefaults.list("monster_spawning.weights"), () -> "minecraft:zombie=100", MiteConfig::validMonsterSpawnWeightOverride);
         for (var option : MonsterSpawningSettings.Option.values()) {
             builder.translation("mite.config.spawning_rules." + option.key())
                     .comment("reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.");
             SPAWNING_CONTROLS.put(option, option.wholeNumber()
-                    ? builder.defineInRange(option.key(), (int)option.defaultValue(), (int)option.minimum(), (int)option.maximum())
-                    : builder.defineInRange(option.key(), option.defaultValue(), option.minimum(), option.maximum()));
+                    ? builder.defineInRange(option.key(), (int)factorySpawningDefault(option), (int)option.minimum(), (int)option.maximum())
+                    : builder.defineInRange(option.key(), factorySpawningDefault(option), option.minimum(), option.maximum()));
         }
         builder.pop();
         builder.translation("mite.config.combat").push("combat");
@@ -151,31 +152,53 @@ public final class MiteConfig {
         builder.translation("mite.config.enchantments").push("enchantments");
         DISABLED_ENCHANTMENTS = builder.translation("mite.config.disabled_enchantments")
                 .comment("Disabled enchantment registry IDs. The registry browser fills these automatically. Existing item data is retained, but disabled effects and new acquisition are blocked.")
-                .defineListAllowEmpty(List.of("disabled"), List::of, () -> "minecraft:sharpness", MiteConfig::validEnchantmentId);
+                .defineListAllowEmpty(List.of("disabled"), () -> BundledGameplayDefaults.list("enchantments.disabled"), () -> "minecraft:sharpness", MiteConfig::validEnchantmentId);
         ENCHANTMENT_MAX_LEVELS = builder.translation("mite.config.enchantment_max_levels")
                 .comment("Only explicit overrides: namespace:enchantment=maximum (1..255). Omitted IDs retain their original rules. Unknown IDs are retained for temporarily removed mods.")
-                .defineListAllowEmpty(List.of("max_levels"), List::of, () -> "minecraft:sharpness=5", MiteConfig::validLevelOverride);
+                .defineListAllowEmpty(List.of("max_levels"), () -> BundledGameplayDefaults.list("enchantments.max_levels"), () -> "minecraft:sharpness=5", MiteConfig::validLevelOverride);
         ENCHANTMENT_CHANCES = builder.translation("mite.config.enchantment_chances")
                 .comment("Random enchanting candidate admission chance: namespace:enchantment=percent (0..100). Omitted IDs and 100 retain vanilla selection; 0 excludes the enchantment from random enchanting. This does not change existing enchantments, anvil application, or commands. Unknown IDs are retained for temporarily removed mods.")
-                .defineListAllowEmpty(List.of("chance_percent"), List::of, () -> "minecraft:sharpness=50", MiteConfig::validEnchantmentChanceOverride);
+                .defineListAllowEmpty(List.of("chance_percent"), () -> BundledGameplayDefaults.list("enchantments.chance_percent"), () -> "minecraft:sharpness=50", MiteConfig::validEnchantmentChanceOverride);
         builder.pop();
         SPEC = builder.build();
         // Publish defaults before configuration loading; workers never read ModConfigSpec's mutable caches.
         local = readLocalSnapshot();
+        FACTORY = local;
     }
 
     private MiteConfig() {}
 
-    private static void defineOreHeights(ModConfigSpec.Builder builder, R196OreRules.Kind kind,
+    private static String generationPath(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
+        return (dimension == R196OreRules.Dimension.OVERWORLD ? "overworld_generation." : "underworld_generation.")
+                + kind.name().toLowerCase(Locale.ROOT);
+    }
+    public static double factorySpawningDefault(MonsterSpawningSettings.Option option) {
+        return BundledGameplayDefaults.number("monster_spawning." + option.key(), option.defaultValue());
+    }
+    public static double factoryOreMultiplier(R196OreRules.Kind kind, R196OreRules.Dimension dimension, boolean deepslate) {
+        var regular = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_ORES : UNDERWORLD_ORES;
+        var deep = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_DEEPSLATE_ORES : UNDERWORLD_DEEPSLATE_ORES;
+        double override = deepslate && deep.containsKey(kind) ? deep.get(kind).getDefault() : -1D;
+        return override < 0D ? regular.get(kind).getDefault() : override;
+    }
+    public static OreHeightRange factoryOreHeight(R196OreRules.Kind kind, R196OreRules.Dimension dimension, boolean deepslate) {
+        var regular = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_ORE_HEIGHTS : UNDERWORLD_ORE_HEIGHTS;
+        var deep = dimension == R196OreRules.Dimension.OVERWORLD ? OVERWORLD_DEEPSLATE_ORE_HEIGHTS : UNDERWORLD_DEEPSLATE_ORE_HEIGHTS;
+        String text = (deepslate ? deep : regular).get(kind).getDefault();
+        return text.isBlank() ? OreHeightRange.defaults(kind, dimension) : OreHeightRange.parse(text);
+    }
+
+
+    private static void defineOreHeights(ModConfigSpec.Builder builder, R196OreRules.Kind kind, R196OreRules.Dimension dimension,
             Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> regular,
             Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> deepslate) {
         regular.put(kind, builder.translation("mite.config.ore_height_range")
                 .comment("Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.")
-                .define("height_range", "", MiteConfig::validOreHeight));
+                .define("height_range", BundledGameplayDefaults.text(generationPath(kind, dimension) + ".height_range", ""), MiteConfig::validOreHeight));
         if (R196OreRules.hasDeepslateOre(kind))
             deepslate.put(kind, builder.translation("mite.config.ore_height_range")
                     .comment("Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.")
-                    .define("deepslate_height_range", "", MiteConfig::validOreHeight));
+                    .define("deepslate_height_range", BundledGameplayDefaults.text(generationPath(kind, dimension) + ".deepslate_height_range", ""), MiteConfig::validOreHeight));
     }
 
     public static boolean validOreHeight(Object input) {
@@ -204,7 +227,7 @@ public final class MiteConfig {
             String key = "deepslate_" + kind.name().toLowerCase(Locale.ROOT);
             settings.put(kind, builder.translation("mite.config.ore_deepslate_multiplier")
                     .comment("Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.")
-                    .defineInRange(key, -1D, -1D, 100D));
+                    .defineInRange(key, BundledGameplayDefaults.number((dimension == R196OreRules.Dimension.OVERWORLD ? "overworld_ores." : "underworld_ores.") + key, -1D), -1D, 100D));
         }
     }
 
@@ -377,16 +400,16 @@ public final class MiteConfig {
         var snapshot = effectiveSnapshot();
         var configured = dimension == R196OreRules.Dimension.OVERWORLD ? snapshot.overworldOreCandidates()
                 : dimension == R196OreRules.Dimension.UNDERWORLD ? snapshot.oreCandidates() : Map.<String, Double>of();
-        return configured.getOrDefault(kind.name(), (double)R196OreRules.candidateCount(kind, dimension));
+        return configured.getOrDefault(kind.name(), (double)R196OreRules.configuredCandidateCount(kind, dimension));
     }
     public static double oreCandidates(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
         var snapshot = effectiveSnapshot();
         if (dimension == R196OreRules.Dimension.OVERWORLD)
-            return snapshot.overworldOreCandidates().getOrDefault(kind.name(), (double)R196OreRules.candidateCount(kind, dimension))
+            return snapshot.overworldOreCandidates().getOrDefault(kind.name(), (double)R196OreRules.configuredCandidateCount(kind, dimension))
                     * snapshot.overworldOres().getOrDefault(kind.name(), 1D);
-        if (dimension != R196OreRules.Dimension.UNDERWORLD) return R196OreRules.candidateCount(kind, dimension);
+        if (dimension != R196OreRules.Dimension.UNDERWORLD) return R196OreRules.configuredCandidateCount(kind, dimension);
         return snapshot.oreCandidates().getOrDefault(kind.name(),
-                (double)R196OreRules.candidateCount(kind, R196OreRules.Dimension.UNDERWORLD))
+                (double)R196OreRules.configuredCandidateCount(kind, R196OreRules.Dimension.UNDERWORLD))
                 * snapshot.ores().getOrDefault(kind.name(), 1D);
     }
     public static double underworldOrePassChance(R196OreRules.Kind kind) {
@@ -394,10 +417,10 @@ public final class MiteConfig {
     }
     public static double orePassChance(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
         if (dimension == R196OreRules.Dimension.OVERWORLD)
-            return effectiveSnapshot().overworldOreChances().getOrDefault(kind.name(), R196OreRules.candidateChance(dimension));
+            return effectiveSnapshot().overworldOreChances().getOrDefault(kind.name(), R196OreRules.configuredCandidateChance(kind, dimension));
         if (dimension != R196OreRules.Dimension.UNDERWORLD) return R196OreRules.candidateChance(dimension);
         return effectiveSnapshot().oreChances().getOrDefault(kind.name(),
-                R196OreRules.candidateChance(R196OreRules.Dimension.UNDERWORLD));
+                R196OreRules.configuredCandidateChance(kind, R196OreRules.Dimension.UNDERWORLD));
     }
     public static MonsterGrowthRules.Settings monsterGrowthSettings() { return effectiveSnapshot().monsterSettings(); }
     public static double monsterGrowthMultiplier() { return effectiveSnapshot().growth(); }
@@ -622,6 +645,7 @@ public final class MiteConfig {
         values.forEach((key, text) -> { if (validOreHeight(text) && !text.isBlank()) result.put(key, OreHeightRange.parse(text).toString()); });
         return Map.copyOf(result);
     }
+    public static Snapshot factorySnapshot() { return FACTORY; }
     public static Snapshot localSnapshot() { return local; }
     public static Snapshot effectiveSnapshot() {
         Snapshot received = remote;

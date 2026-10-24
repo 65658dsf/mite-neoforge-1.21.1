@@ -1,0 +1,527 @@
+#Underworld ore vein attempt multipliers. Only newly generated chunks are affected. 0 disables; 1 preserves MITE defaults.
+[underworld_ores]
+	#Generation multiplier for gravel; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	gravel = 1.0
+	#Generation multiplier for copper; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	copper = 3.0
+	#Generation multiplier for silver; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	silver = 3.0
+	#Generation multiplier for gold; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	gold = 2.0
+	#Generation multiplier for iron; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	iron = 2.5
+	#Generation multiplier for mithril; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	mithril = 2.0
+	#Generation multiplier for adamantium; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	adamantium = 1.3
+	#Generation multiplier for redstone; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	redstone = 1.0
+	#Generation multiplier for diamond; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	diamond = 2.0
+	#Generation multiplier for lapis; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	lapis = 2.0
+	#Generation multiplier for infested; not a percentage of existing blocks.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	infested = 3.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_copper = 3.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_silver = 3.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_gold = 2.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_iron = 2.5
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_mithril = 2.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_adamantium = 1.3
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_redstone = 1.5
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_diamond = 2.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_lapis = 2.0
+
+#Overworld mineral generation multipliers. 1 preserves the original rate, 2 doubles attempts, 0.5 halves them, and 0 disables. Existing advanced candidate/probability values are preserved.
+[overworld_ores]
+	#Candidate count multiplier for overworld copper; applied once before probability filtering.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	copper = 6.0
+	#Candidate count multiplier for overworld silver; applied once before probability filtering.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	silver = 6.0
+	#Candidate count multiplier for overworld iron; applied once before probability filtering.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	iron = 3.0
+	#Candidate count multiplier for overworld gold; applied once before probability filtering.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	gold = 4.0
+	#Candidate count multiplier for overworld mithril; applied once before probability filtering.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	mithril = 2.0
+	#Candidate count multiplier for overworld lapis; applied once before probability filtering.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	lapis = 2.0
+	#Candidate count multiplier for overworld diamond; applied once before probability filtering.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	diamond = 3.0
+	#Candidate count multiplier for overworld adamantium; applied once before probability filtering.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	adamantium = 0.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_copper = 6.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_silver = 6.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_iron = 5.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_gold = 4.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_mithril = 3.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_lapis = 4.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_diamond = 3.0
+	#Independent deepslate ore multiplier, 0..100. -1 inherits the original mineral multiplier for compatibility with existing configurations; saving the multiplier screen writes the displayed independent rate.
+	# Default: -1.0
+	# Range: -1.0 ~ 100.0
+	deepslate_adamantium = 1.0
+
+	[underworld_generation.gravel]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 300.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 300.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+
+	[underworld_generation.copper]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 320.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 320.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.silver]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 80.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 80.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.gold]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 160.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 160.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.iron]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 480.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 480.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.mithril]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 80.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 80.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.adamantium]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 80.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 80.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.redstone]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 80.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 80.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.diamond]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 40.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 40.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.lapis]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 40.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 40.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[underworld_generation.infested]
+		#Actual candidate vein attempts before the probability filter, per new chunk. The original generator supplies the default.
+		# Default: 400.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 400.0
+		#Chance in percent that each candidate proceeds to a vein attempt. Terrain and vein size still determine placed blocks.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+
+	[overworld_generation.copper]
+		#Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.
+		# Default: 40.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 40.0
+		#The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = "[-64,168]"
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = "[-64,168]"
+
+	[overworld_generation.silver]
+		#Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.
+		# Default: 10.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 10.0
+		#The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = "[-64,168]"
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[overworld_generation.iron]
+		#Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.
+		# Default: 60.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 60.0
+		#The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = "[-64,168]"
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[overworld_generation.gold]
+		#Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.
+		# Default: 20.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 20.0
+		#The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = "[-64,168]"
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = "[-64,64]"
+
+	[overworld_generation.mithril]
+		#Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.
+		# Default: 10.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 10.0
+		#The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = "[-64,68]"
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[overworld_generation.lapis]
+		#Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.
+		# Default: 5.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 5.0
+		#The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = "[-64,168]"
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = "[-48,64]"
+
+	[overworld_generation.diamond]
+		#Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.
+		# Default: 5.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 5.0
+		#The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+	[overworld_generation.adamantium]
+		#Actual candidate vein attempts per new overworld chunk, before chance_percent; not a relative weight. Surface adamantium defaults to 0, preserving its original absence.
+		# Default: 0.0
+		# Range: 0.0 ~ 100000.0
+		candidates = 0.0
+		#The complete candidate pass chance in percent; no second rarity roll is applied. 10 preserves the current generator, not the old JSON's sample value of 100.
+		# Default: 10.0
+		# Range: 0.0 ~ 100.0
+		chance_percent = 10.0
+		#Absolute inclusive Y range, for example [-100,100]. Empty preserves the original height distribution. Values are clipped to dimension build limits; applies to new chunks and the entire vein.
+		height_range = ""
+		#Independent absolute inclusive Y range for deepslate ore. Empty preserves the original height distribution.
+		deepslate_height_range = ""
+
+[monsters]
+	#Overall multiplier of the formula's rate variable; 0 disables rate-based growth in the default formula. Custom formulas may also use day or days directly. Existing monsters refresh periodically.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	growth_multiplier = 1.0
+	#Daily health growth multiplier, multiplied by the overall growth multiplier.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	health_growth_multiplier = 1.0
+	#Daily attack damage growth multiplier, multiplied by the overall growth multiplier.
+	# Default: 1.0
+	# Range: 0.0 ~ 100.0
+	damage_growth_multiplier = 1.0
+	#Initial unscaled maximum health. 0 preserves each entity's native health, including independent modifiers.
+	# Default: 0.0
+	# Range: 0.0 ~ 1024.0
+	health_base = 0.0
+	#Initial innate melee attack damage. 0 preserves each entity's native base; weapon bonuses are added afterward.
+	# Default: 0.0
+	# Range: 0.0 ~ 2048.0
+	damage_base = 0.0
+	#Minimum initial health growth reference for skeletons. After each blood moon the actual settled value becomes the new reference.
+	# Default: 20.0
+	# Range: 0.0 ~ 1024.0
+	skeleton_reference = 20.0
+	#Daily health growth in percent of the current blood-moon baseline: 0.5 means 0.5%, or rate=0.005 in the formula.
+	# Default: 0.5
+	# Range: 0.0 ~ 100.0
+	health_daily_percent = 0.5
+	#Daily innate attack growth in percent of the current blood-moon baseline; 0.25 means rate=0.0025.
+	# Default: 0.25
+	# Range: 0.0 ~ 100.0
+	damage_daily_percent = 0.25
+	#Health within the current growth period. Variables: base, initial, reference, rate, days, day, blood_moons. The separate health_blood_moon_formula settles the new base/reference when a blood moon ends. Only validated arithmetic is accepted.
+	health_formula = "base + reference * rate * days"
+	#Innate attack within the current growth period. The separate damage_blood_moon_formula settles the next period's base/reference. Saved and reloaded formulas are validated before publication.
+	damage_formula = "base + reference * rate * days"
+	#Health baseline settlement when each blood moon ends (after days 32/64/96/160). The result becomes both base and reference for the next growth period; blue moons are skipped. Uses the same variables as health_formula. Empty inherits health_formula, preserving existing custom configurations.
+	health_blood_moon_formula = "base + reference * rate * days"
+	#Innate attack baseline settlement when each blood moon ends. The result becomes both base and reference for the next growth period; blue moons are skipped. Empty inherits damage_formula, preserving existing custom configurations.
+	damage_blood_moon_formula = "base + reference * rate * days"
+
+[monster_spawning]
+	#Natural spawn weight overrides: namespace:entity=multiplier (0..100). 1 preserves the original weight; 0 disables natural spawning of that entity. Unknown IDs are retained. Existing biome, date, depth, population and spawn rules still apply. ITE-owned entities use the ITE configuration instead.
+	rates = []
+	#Absolute natural pool weight overrides: namespace:entity=integer (0..1000000). Omitted IDs retain each pool's original weight; overrides replace the weight in every existing candidate pool, before rate multipliers. 0 removes that candidate family, including its conversion branches. Does not add spawn entries or bypass date, biome, dimension or population rules. ITE-owned entities use ITE settings.
+	weights = ["minecraft:ghast=5"]
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 1
+	# Range: 0 ~ 1
+	reference_rules = 1
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 105
+	# Range: 0 ~ 100000
+	base_cap = 100
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 140
+	# Range: 0 ~ 100000
+	blood_cap = 200
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 0.0
+	# Range: 0.0 ~ 10000.0
+	daily_cap_increase = 0.0
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 0
+	# Range: 0 ~ 100000
+	maximum_cap = 0
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 1
+	# Range: 1 ~ 72000
+	hostile_interval_ticks = 5
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 10.0
+	# Range: 0.0 ~ 100.0
+	deep_chance_percent = 10.0
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 17.0
+	# Range: 0.0 ~ 100.0
+	surface_chance_percent = 17.0
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 2.0
+	# Range: 0.0 ~ 100.0
+	blood_chance_multiplier = 2.0
+	#reference_rules=1 (default) restores R196 natural caps, crowd guards and timing; 0 enables the saved custom controls. Reference mode retains but ignores custom numbers. Custom caps are per 289 chunks; day 1 has no daily increase; maximum_cap=0 means unlimited growth. Interval is in ticks (20 ticks/second); chances are percentages. ITE can supply its own preset.
+	# Default: 0.25
+	# Range: 0.0 ~ 100.0
+	dimension_chance_multiplier = 0.25
+
+[combat]
+	#Survival melee attack reach multiplier. Original MITE weapons keep source reach; Simply Swords weapons use their own Better Combat base range. Creative reach remains unchanged.
+	# Default: 1.0
+	# Range: 0.0 ~ 10.0
+	weapon_reach_multiplier = 1.0
+	#Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.
+	# Default: 0.0
+	# Range: 0.0 ~ 16.0
+	weapon_reach_reduction = 0.0
+	#Apply MITE target-height reach adjustments.
+	height_reach_penalty = true
+	#Enable Better Combat weapon attacks and animations for hostile mobs when Better Combat is installed. False preserves their original attacks. Does not affect player compatibility.
+	better_combat_mobs = false
+
+[structures]
+	#Allow new underworld trial dungeons. Existing structures are retained.
+	underworld_trials = true
+	#Allow new overworld trial chambers. Existing structures are retained.
+	overworld_trials = true
+
+[enchantments]
+	#Disabled enchantment registry IDs. The registry browser fills these automatically. Existing item data is retained, but disabled effects and new acquisition are blocked.
+	disabled = ["minecraft:binding_curse", "minecraft:loyalty"]
+	#Only explicit overrides: namespace:enchantment=maximum (1..255). Omitted IDs retain their original rules. Unknown IDs are retained for temporarily removed mods.
+	max_levels = ["modern_ite:extend=1"]
+	#Random enchanting candidate admission chance: namespace:enchantment=percent (0..100). Omitted IDs and 100 retain vanilla selection; 0 excludes the enchantment from random enchanting. This does not change existing enchantments, anvil application, or commands. Unknown IDs are retained for temporarily removed mods.
+	chance_percent = ["minecraft:loyalty=0.0"]

@@ -41,6 +41,10 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         List<Kind> order = R196OreRules.generationKinds(dimension);
         int placed = 0;
         for (Kind kind : order) {
+            if (kind == Kind.EMERALD) {
+                placed += emeralds(level, dimension, originX, originZ, random);
+                continue;
+            }
             int count = R196OreRules.candidateCount(kind, dimension, random);
             boolean configurable = R196OreRules.configurableKinds(dimension).contains(kind);
             OreHeightRange stoneHeight = configurable ? MiteConfig.oreHeightOverride(kind, dimension, false) : null;
@@ -79,17 +83,43 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         }
         if (dimension == Dimension.OVERWORLD) {
             placed += surfaceInfestation(level, originX, originZ, random);
-            Access access = new Access(level, dimension, Kind.EMERALD);
-            int count = R196OreRules.candidateCount(Kind.EMERALD, dimension, random);
-            for (int attempt = 0; attempt < count; attempt++) {
-                int x = originX + random.nextInt(16);
-                int y = R196OreRules.modernY(dimension, R196OreRules.randomHeight(Kind.EMERALD, dimension, random));
-                int z = originZ + random.nextInt(16);
-                if (access.canReplace(x, y, z)) { access.replace(x, y, z); placed++; }
-            }
+            placed += emeralds(level, dimension, originX, originZ, random);
         }
         return placed > 0;
     }
+    /** Emerald keeps its source 3..8 singleton attempts, now subject to the same editable rates and heights. */
+    private static int emeralds(WorldGenLevel level, Dimension dimension, int originX, int originZ, Random random) {
+        Kind kind = Kind.EMERALD;
+        int sourceCount = R196OreRules.candidateCount(kind, Dimension.OVERWORLD, random);
+        double candidates = sourceCount * MiteConfig.oreBaseCandidates(kind, dimension)
+                / R196OreRules.configuredCandidateCount(kind, dimension);
+        OreHeightRange stoneHeight = MiteConfig.oreHeightOverride(kind, dimension, false);
+        OreHeightRange deepHeight = MiteConfig.oreHeightOverride(kind, dimension, true);
+        var batches = !java.util.Objects.equals(stoneHeight, deepHeight)
+                ? List.of(new OreGenerationRates.Batch(candidates * MiteConfig.oreMultiplier(kind, dimension), true, false),
+                        new OreGenerationRates.Batch(candidates * MiteConfig.oreMultiplier(kind, dimension, true), false, true))
+                : OreGenerationRates.batches(candidates, MiteConfig.oreMultiplier(kind, dimension), MiteConfig.oreMultiplier(kind, dimension, true));
+        int placed = 0;
+        for (var batch : batches) {
+            int count = OreGenerationRates.scaleCandidates(1, batch.candidates(), random);
+            Access access = new Access(level, dimension, kind, batch.stone(), batch.deepslate(), stoneHeight, deepHeight);
+            for (int attempt = 0; attempt < count; attempt++) {
+                if (!OreGenerationRates.passesChance(MiteConfig.orePassChance(kind, dimension), dimension, random)) continue;
+                int x = originX + random.nextInt(16);
+                int y = R196OreRules.modernY(dimension, R196OreRules.randomHeight(kind, dimension, random));
+                int z = originZ + random.nextInt(16);
+                OreHeightRange height = batch.stone() ? stoneHeight : deepHeight;
+                if (height != null) {
+                    Integer sample = height.sample(random, level.getMinBuildHeight(), level.getMaxBuildHeight());
+                    if (sample == null) continue;
+                    y = sample;
+                }
+                if (access.canReplace(x, y, z)) { access.replace(x, y, z); placed++; }
+            }
+        }
+        return placed;
+    }
+
     private static boolean matches(WorldGenLevel level, Dimension dimension) {
         return switch (dimension) {
             case OVERWORLD -> level.getLevel().dimension().equals(Level.OVERWORLD);
@@ -143,9 +173,16 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
             if (level.isOutsideBuildHeight(pos) || !level.getWorldBorder().isWithinBounds(pos) || !level.ensureCanWrite(pos)) return false;
             BlockState current = level.getBlockState(pos);
             // Existing ore, boundary blocks, structures, containers, fluids and air never become new ore.
-            return dimension == Dimension.NETHER ? current.is(Blocks.NETHERRACK)
-                    : stone && current.is(Blocks.STONE) && (stoneHeight == null || stoneHeight.contains(y))
-                            || deepslate && current.is(Blocks.DEEPSLATE) && (deepHeight == null || deepHeight.contains(y));
+            if (dimension == Dimension.NETHER) return current.is(Blocks.NETHERRACK);
+            if (!current.is(Blocks.STONE) && !current.is(Blocks.DEEPSLATE)) return false;
+            boolean deep = deepHost(current, y);
+            return deep ? deepslate && (deepHeight == null || deepHeight.contains(y))
+                    : stone && (stoneHeight == null || stoneHeight.contains(y));
+        }
+        /** R196 underworld rock is stone even below zero; only the two modern additions gain deep variants there. */
+        private boolean deepHost(BlockState current, int y) {
+            return current.is(Blocks.DEEPSLATE) || current.is(Blocks.STONE) && y < 0
+                    && R196OreRules.modernUnderworldAddition(kind, dimension);
         }
         @Override
         public boolean supported(int x, int y, int z) {
@@ -156,7 +193,7 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         @Override
         public void replace(int x, int y, int z) {
             pos.set(x, y, z);
-            boolean deep = level.getBlockState(pos).is(Blocks.DEEPSLATE);
+            boolean deep = deepHost(level.getBlockState(pos), y);
             BlockState target = block(kind, deep).defaultBlockState();
             if (kind == Kind.DIRT && y + 1 >= level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z)) {
                 target = (level.getBiome(pos).is(Biomes.DESERT) ? Blocks.SAND : Blocks.GRASS_BLOCK).defaultBlockState();

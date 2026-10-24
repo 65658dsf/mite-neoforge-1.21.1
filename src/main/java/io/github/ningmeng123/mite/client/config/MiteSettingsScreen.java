@@ -47,7 +47,9 @@ public final class MiteSettingsScreen extends Screen {
                         (rates, weights) -> {
                             if (!io.github.ningmeng123.mite.config.MiteConfig.saveMonsterSpawnSettings(rates, weights))
                                 throw new IllegalArgumentException("Invalid monster spawn weights or multipliers");
-                        }, null))).bounds(width / 2 - 130, y + 48, 260, 20).build());
+                        }, null,
+                        () -> io.github.ningmeng123.mite.config.MiteConfig.factorySnapshot().monsterSpawnRates(),
+                        () -> io.github.ningmeng123.mite.config.MiteConfig.factorySnapshot().monsterSpawnWeights()))).bounds(width / 2 - 130, y + 48, 260, 20).build());
         spawnRates.setTooltip(Tooltip.create(Component.translatable("mite.config.monster_spawning.tooltip")));
         var general = addRenderableWidget(Button.builder(Component.translatable("mite.config.gameplay"),
                 button -> minecraft.setScreen(gameplayScreen())).bounds(width / 2 - 130, y + 96, 260, 20).build());

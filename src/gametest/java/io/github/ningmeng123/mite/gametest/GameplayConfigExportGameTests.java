@@ -176,7 +176,7 @@ public final class GameplayConfigExportGameTests {
             surfaceIndex++;
         }
         int index = 0;
-        for (var kind : R196OreRules.UNDERWORLD) {
+        for (var kind : R196OreRules.configurableKinds(R196OreRules.Dimension.UNDERWORLD)) {
             MiteConfig.UNDERWORLD_ORES.get(kind).set(1.25D + index * .125D);
             MiteConfig.UNDERWORLD_ORE_CANDIDATES.get(kind).set(10.25D + index * 7.5D);
             MiteConfig.UNDERWORLD_ORE_CHANCES.get(kind).set(5.5D + index * 3.25D);

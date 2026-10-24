@@ -52,6 +52,7 @@ class OreGenerationRatesTest {
             for (long seed : new long[]{0L, 196L, -1L, Long.MAX_VALUE}) {
                 Random actual = new Random(seed), expected = new Random(seed);
                 for (var kind : R196OreRules.generationKinds(dimension)) {
+                    if (R196OreRules.modernUnderworldAddition(kind, dimension)) continue; // Separate modern-default tests own the added passes.
                     int source = R196OreRules.candidateCount(kind, dimension);
                     int count = R196OreRules.configurableKinds(dimension).contains(kind)
                             ? OreGenerationRates.scaleCandidates(1, source, actual) : source;
@@ -77,10 +78,11 @@ class OreGenerationRatesTest {
         assertEquals(1L, R196OreRules.generationKinds(R196OreRules.Dimension.OVERWORLD).stream()
                 .filter(kind -> kind == R196OreRules.Kind.ADAMANTIUM).count());
         assertEquals(R196OreRules.OVERWORLD, R196OreRules.generationKinds(R196OreRules.Dimension.OVERWORLD).subList(0, R196OreRules.OVERWORLD.size()));
-        assertEquals(8, R196OreRules.CONFIGURABLE_OVERWORLD.size());
-        assertTrue(R196OreRules.UNDERWORLD.containsAll(R196OreRules.CONFIGURABLE_OVERWORLD));
-        assertTrue(R196OreRules.generationKinds(R196OreRules.Dimension.OVERWORLD).containsAll(R196OreRules.CONFIGURABLE_OVERWORLD));
-        assertEquals(8, new java.util.HashSet<>(R196OreRules.CONFIGURABLE_OVERWORLD).size());
+        assertEquals(10, R196OreRules.CONFIGURABLE_OVERWORLD.size());
+        assertTrue(R196OreRules.CONFIGURABLE_OVERWORLD.containsAll(java.util.List.of(R196OreRules.Kind.COAL, R196OreRules.Kind.EMERALD)));
+        assertTrue(R196OreRules.configurableKinds(R196OreRules.Dimension.UNDERWORLD).containsAll(java.util.List.of(R196OreRules.Kind.COAL, R196OreRules.Kind.EMERALD)));
+        assertTrue(R196OreRules.CONFIGURABLE_OVERWORLD.stream().allMatch(kind -> kind == R196OreRules.Kind.EMERALD || R196OreRules.generationKinds(R196OreRules.Dimension.OVERWORLD).contains(kind)));
+        assertEquals(10, new java.util.HashSet<>(R196OreRules.CONFIGURABLE_OVERWORLD).size());
         Random actual = new Random(196), expected = new Random(196);
         assertEquals(0, OreGenerationRates.scaleCandidates(1, 0D, actual));
         assertEquals(expected.nextLong(), actual.nextLong());
@@ -89,7 +91,7 @@ class OreGenerationRatesTest {
     @Test void zeroHalfOriginalAndDoubleMultipliersScaleCandidatesOnceInEitherDimension() {
         for (var dimension : java.util.List.of(R196OreRules.Dimension.OVERWORLD, R196OreRules.Dimension.UNDERWORLD)) {
             for (var kind : R196OreRules.configurableKinds(dimension)) {
-                int original = R196OreRules.candidateCount(kind, dimension);
+                int original = R196OreRules.configuredCandidateCount(kind, dimension);
                 for (double multiplier : new double[]{0D, .5D, 1D, 2D}) {
                     double scaled = original * multiplier;
                     assertEquals((int)Math.ceil(scaled), OreGenerationRates.scaleCandidates(1, scaled, draw(.25D)), dimension + "/" + kind);

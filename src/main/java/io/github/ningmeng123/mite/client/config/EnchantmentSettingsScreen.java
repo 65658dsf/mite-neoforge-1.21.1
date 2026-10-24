@@ -158,7 +158,10 @@ public final class EnchantmentSettingsScreen extends Screen {
                 refreshSave();
             });
             var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
-                caps.remove(id); disabled.remove(id); chances.remove(id);
+                var factory = MiteConfig.factorySnapshot();
+                if (factory.caps().containsKey(id)) caps.put(id, factory.caps().get(id)); else caps.remove(id);
+                if (factory.disabled().contains(id)) disabled.add(id); else disabled.remove(id);
+                if (factory.enchantmentChances().containsKey(id)) chances.put(id, factory.enchantmentChances().get(id)); else chances.remove(id);
                 invalidMaximums.remove(id); invalidChances.remove(id);
                 maximumDrafts.remove(id); chanceDrafts.remove(id);
                 restoring = true;

@@ -58,7 +58,7 @@ public final class MiteConfigGameTests {
                 var counts = dimension == R196OreRules.Dimension.OVERWORLD ? MiteConfig.OVERWORLD_ORE_CANDIDATES : MiteConfig.UNDERWORLD_ORE_CANDIDATES;
                 var chances = dimension == R196OreRules.Dimension.OVERWORLD ? MiteConfig.OVERWORLD_ORE_CHANCES : MiteConfig.UNDERWORLD_ORE_CHANCES;
                 int mineral = 0;
-                for (var kind : R196OreRules.CONFIGURABLE_OVERWORLD) {
+                for (var kind : R196OreRules.configurableKinds(dimension)) {
                     counts.get(kind).set(17.5D + mineral);
                     chances.get(kind).set(23D + mineral++);
                 }
@@ -66,7 +66,7 @@ public final class MiteConfigGameTests {
             MiteConfig.refreshEnchantmentRules();
             for (var dimension : List.of(R196OreRules.Dimension.OVERWORLD, R196OreRules.Dimension.UNDERWORLD)) {
                 int mineral = 0;
-                for (var kind : R196OreRules.CONFIGURABLE_OVERWORLD) {
+                for (var kind : R196OreRules.configurableKinds(dimension)) {
                     close(helper, MiteConfig.oreBaseCandidates(kind, dimension), 17.5D + mineral, "Each legacy frequency maps to a real candidate base: " + dimension + "/" + kind);
                     close(helper, MiteConfig.orePassChance(kind, dimension), (23D + mineral++) / 100D, "Each legacy chance maps to the only runtime pass filter: " + dimension + "/" + kind);
                 }
@@ -237,7 +237,7 @@ public final class MiteConfigGameTests {
             close(helper, MiteConfig.underworldOreCandidates(R196OreRules.Kind.COPPER), 720D, "An existing multiplier is reflected in actual candidates");
             Map<R196OreRules.Kind, Double> candidates = new EnumMap<>(R196OreRules.Kind.class);
             Map<R196OreRules.Kind, Double> chancePercent = new EnumMap<>(R196OreRules.Kind.class);
-            for (var kind : R196OreRules.UNDERWORLD) {
+            for (var kind : R196OreRules.configurableKinds(R196OreRules.Dimension.UNDERWORLD)) {
                 candidates.put(kind, MiteConfig.underworldOreCandidates(kind));
                 chancePercent.put(kind, 100D * MiteConfig.underworldOrePassChance(kind));
             }
@@ -437,6 +437,9 @@ public final class MiteConfigGameTests {
         private final String damageBloodMoonFormula = MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.get();
 
         private Settings() {
+            // These legacy multiplier tests explicitly select inherited deep rates; the new preset has independent rates.
+            MiteConfig.OVERWORLD_DEEPSLATE_ORES.values().forEach(setting -> setting.set(-1D));
+            MiteConfig.UNDERWORLD_DEEPSLATE_ORES.values().forEach(setting -> setting.set(-1D));
             MiteConfig.OVERWORLD_ORES.forEach((kind, setting) -> surfaceMultipliers.put(kind, setting.get()));
             MiteConfig.OVERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> surfaceCandidates.put(kind, setting.get()));
             MiteConfig.OVERWORLD_ORE_CHANCES.forEach((kind, setting) -> surfaceChances.put(kind, setting.get()));
@@ -445,6 +448,8 @@ public final class MiteConfigGameTests {
         }
 
         @Override public void close() {
+            MiteConfig.OVERWORLD_DEEPSLATE_ORES.forEach((kind, setting) -> setting.set(original.overworldOres().get(R196OreRules.deepslateMultiplierKey(kind))));
+            MiteConfig.UNDERWORLD_DEEPSLATE_ORES.forEach((kind, setting) -> setting.set(original.ores().get(R196OreRules.deepslateMultiplierKey(kind))));
             MiteConfig.OVERWORLD_ORES.forEach((kind, setting) -> setting.set(surfaceMultipliers.get(kind)));
             MiteConfig.OVERWORLD_ORE_CANDIDATES.forEach((kind, setting) -> setting.set(surfaceCandidates.get(kind)));
             MiteConfig.OVERWORLD_ORE_CHANCES.forEach((kind, setting) -> setting.set(surfaceChances.get(kind)));

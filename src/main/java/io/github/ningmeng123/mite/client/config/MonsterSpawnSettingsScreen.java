@@ -38,6 +38,7 @@ public final class MonsterSpawnSettingsScreen extends Screen {
     private final List<VisibleRow> visible = new ArrayList<>();
     private final Map<String, Double> values;
     private final Map<String, Double> weightValues;
+    private final Map<String, Double> defaultRates, defaultWeights;
     private final Map<String, String> drafts = new HashMap<>();
     private final Map<String, String> weightDrafts = new HashMap<>();
     private final Set<String> invalid = new HashSet<>();
@@ -65,6 +66,14 @@ public final class MonsterSpawnSettingsScreen extends Screen {
             Supplier<Map<String, Double>> rates, Supplier<Map<String, Double>> weights,
             BiConsumer<Map<String, Double>, Map<String, Double>> save,
             Function<EntityType<?>, List<Integer>> nativeWeights) {
+        this(parent, ownerModId, rates, weights, save, nativeWeights, Map::of, Map::of);
+    }
+
+    public MonsterSpawnSettingsScreen(Screen parent, String ownerModId,
+            Supplier<Map<String, Double>> rates, Supplier<Map<String, Double>> weights,
+            BiConsumer<Map<String, Double>, Map<String, Double>> save,
+            Function<EntityType<?>, List<Integer>> nativeWeights,
+            Supplier<Map<String, Double>> defaultRates, Supplier<Map<String, Double>> defaultWeights) {
         super(Component.translatable("mite.config.monster_spawn_title", ModList.get().getModContainerById(ownerModId)
                 .map(container -> container.getModInfo().getDisplayName()).orElse(ownerModId)));
         this.parent = parent;
@@ -72,6 +81,8 @@ public final class MonsterSpawnSettingsScreen extends Screen {
         this.hasSpawningRules = "mite".equals(ownerModId);
         this.weightMode = weights != null;
         this.saveValues = save;
+        this.defaultRates = Map.copyOf(defaultRates.get());
+        this.defaultWeights = Map.copyOf(defaultWeights.get());
         this.values = new HashMap<>(rates.get());
         this.weightValues = new HashMap<>(weights == null ? Map.of() : weights.get());
         var level = Minecraft.getInstance().level;
@@ -160,7 +171,10 @@ public final class MonsterSpawnSettingsScreen extends Screen {
             });
             addRenderableWidget(box);
             var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
-                if (editingWeight) setWeight(entry.id(), null);
+                if (editingWeight) {
+                    setWeight(entry.id(), defaultWeights.get(entry.id()));
+                    if (defaultRates.containsKey(entry.id())) values.put(entry.id(), defaultRates.get(entry.id()));
+                } else if (defaultRates.containsKey(entry.id())) activeValues.put(entry.id(), defaultRates.get(entry.id()));
                 else activeValues.remove(entry.id());
                 activeDrafts.remove(entry.id());
                 activeInvalid.remove(entry.id());

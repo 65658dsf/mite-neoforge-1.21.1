@@ -25,7 +25,7 @@ public final class MonsterSpawningRulesScreen extends Screen {
     private record Control(String key, String translationKey, Object defaultValue, double minimum,
                            double maximum, boolean wholeNumber, Option baseOption) {
         static Control base(Option option) {
-            return new Control(option.key(), "mite.config.spawning_rules." + option.key(), option.defaultValue(),
+            return new Control(option.key(), "mite.config.spawning_rules." + option.key(), MiteConfig.factorySpawningDefault(option),
                     option.minimum(), option.maximum(), option.wholeNumber(), option);
         }
         static Control addon(MiteExtensions.SpawningControl option) {

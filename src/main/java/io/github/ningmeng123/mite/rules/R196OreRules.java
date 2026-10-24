@@ -17,9 +17,12 @@ public final class R196OreRules {
             Kind.GOLD, Kind.IRON, Kind.MITHRIL, Kind.ADAMANTIUM, Kind.REDSTONE,
             Kind.DIAMOND, Kind.LAPIS, Kind.INFESTED);
     public static final List<Kind> NETHER = List.of(Kind.QUARTZ, Kind.NETHER_GOLD, Kind.NETHER_INFESTED);
-    /** The eight legacy configurable minerals; surface adamantium remains disabled by default. */
+    /** Editable overworld minerals, including coal and the independent emerald pass. */
     public static final List<Kind> CONFIGURABLE_OVERWORLD = List.of(Kind.COPPER, Kind.SILVER, Kind.IRON,
-            Kind.GOLD, Kind.MITHRIL, Kind.LAPIS, Kind.DIAMOND, Kind.ADAMANTIUM);
+            Kind.GOLD, Kind.MITHRIL, Kind.LAPIS, Kind.DIAMOND, Kind.ADAMANTIUM, Kind.COAL, Kind.EMERALD);
+    /** User-requested modern additions; the archived UNDERWORLD source table remains unchanged. */
+    public static final List<Kind> CONFIGURABLE_UNDERWORLD = java.util.stream.Stream.concat(
+            UNDERWORLD.stream(), java.util.stream.Stream.of(Kind.COAL, Kind.EMERALD)).toList();
     private static final List<Kind> OVERWORLD_GENERATION = java.util.stream.Stream.concat(
             OVERWORLD.stream(), java.util.stream.Stream.of(Kind.ADAMANTIUM)).toList();
 
@@ -35,7 +38,7 @@ public final class R196OreRules {
     public static List<Kind> generationKinds(Dimension dimension) {
         return switch (dimension) {
             case OVERWORLD -> OVERWORLD_GENERATION;
-            case UNDERWORLD -> UNDERWORLD;
+            case UNDERWORLD -> CONFIGURABLE_UNDERWORLD;
             case NETHER -> NETHER;
         };
     }
@@ -43,9 +46,22 @@ public final class R196OreRules {
     public static List<Kind> configurableKinds(Dimension dimension) {
         return switch (dimension) {
             case OVERWORLD -> CONFIGURABLE_OVERWORLD;
-            case UNDERWORLD -> UNDERWORLD;
+            case UNDERWORLD -> CONFIGURABLE_UNDERWORLD;
             case NETHER -> List.of();
         };
+    }
+
+    public static boolean modernUnderworldAddition(Kind kind, Dimension dimension) {
+        return dimension == Dimension.UNDERWORLD && (kind == Kind.COAL || kind == Kind.EMERALD);
+    }
+
+    /** Keep archival candidate counts intact while exposing explicit defaults for modern additions. */
+    public static int configuredCandidateCount(Kind kind, Dimension dimension) {
+        if (modernUnderworldAddition(kind, dimension)) return kind == Kind.COAL ? 50 : 3;
+        return candidateCount(kind, dimension);
+    }
+    public static double configuredCandidateChance(Kind kind, Dimension dimension) {
+        return kind == Kind.EMERALD && dimension != Dimension.NETHER ? 1D : candidateChance(dimension);
     }
 
     /** Real ore variants only; legacy gravel and infested-stone settings retain their original scope. */
