@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentMenuAccess;
+import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.enchantment.VanillaTableEnchanting;
 import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.registry.MiteTools;
@@ -55,7 +56,7 @@ public final class FeedbackEnchantingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void highRanksRequireFullOffersAndTheirMinimumPaidEnergy(GameTestHelper helper) {
+    public static void highRanksRespectSourcePaidEnergyAndMaterialCeilings(GameTestHelper helper) {
         try (var settings = new Settings(helper)) {
             var protection = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                     .getHolderOrThrow(Enchantments.PROTECTION);
@@ -65,14 +66,15 @@ public final class FeedbackEnchantingGameTests {
                 for (int energy : new int[]{2, 10, 30, 44, 45, 100}) {
                     var entries = VanillaTableEnchanting.select(input, 30, RandomSource.create(seed), List.of(protection), energy);
                     for (var entry : entries) {
-                        helper.assertTrue(VanillaTableEnchanting.profile(protection).minCost().calculate(entry.level) <= energy,
-                                "No selected rank exceeds the exact quoted energy budget");
+                        helper.assertTrue(R196EnchantmentCatalog.definition("minecraft:protection").minCost(entry.level) <= (int)(energy * 1.25F),
+                                "Each rank fits the source budget including its bounded initial variation");
                         if (energy == 2) helper.assertValueEqual(entry.level, 1, "200 XP only funds protection I");
                         if (entry.level == 5) foundFive = true;
                     }
                 }
-                for (var entry : VanillaTableEnchanting.select(input, 29, RandomSource.create(seed), List.of(protection), 100))
-                    helper.assertTrue(entry.level <= 4, "Above-vanilla protection requires a full-strength offer");
+                for (var entry : VanillaTableEnchanting.select(new ItemStack(MiteTools.get("mithril_chestplate")), 30,
+                        RandomSource.create(seed), List.of(protection), 100))
+                    helper.assertTrue(entry.level <= 4, "Mithril cannot acquire vibranium's Protection V exception");
             }
             helper.assertTrue(foundFive, "Protection V remains attainable with sufficient offer strength and payment");
         }

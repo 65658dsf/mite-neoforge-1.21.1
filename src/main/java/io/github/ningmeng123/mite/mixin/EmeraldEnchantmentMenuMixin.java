@@ -4,7 +4,6 @@ import io.github.ningmeng123.mite.crafting.CraftingQuality;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentMenuAccess;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
 import io.github.ningmeng123.mite.enchantment.VanillaTableEnchanting;
-import io.github.ningmeng123.mite.rules.FunctionalBlockRules;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Native offers and previews with independent, existing point prices. @author NingMeng123 */
+/** Atomic source-point payment, material-aware selection and the source golden-apple conversion. @author NingMeng123 */
 @Mixin(EnchantmentMenu.class)
 public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu implements R196EnchantmentMenuAccess {
     @Shadow @Final private ContainerLevelAccess access;
@@ -64,7 +63,19 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
 
     @Inject(method = "slotsChanged", at = @At("HEAD"), cancellable = true)
     private void mite$serverOffersOnly(Container changed, CallbackInfo ci) {
-        if (access == ContainerLevelAccess.NULL && mite$usesSourceEnchanting()) ci.cancel();
+        if (access == ContainerLevelAccess.NULL && mite$usesSourceEnchanting()) { ci.cancel(); return; }
+        if (changed != enchantSlots || access == ContainerLevelAccess.NULL || !mite$goldenApple(enchantSlots.getItem(0))) return;
+        // Source vm: special energy two is independent of shelves, table tier and ordinary candidate pools.
+        Arrays.fill(costs, 2);
+        Arrays.fill(enchantClue, -1);
+        Arrays.fill(levelClue, -1);
+        Arrays.fill(mite$pointCosts, 200);
+        broadcastChanges();
+        ci.cancel();
+    }
+
+    @Unique private static boolean mite$goldenApple(ItemStack stack) {
+        return stack.is(Items.GOLDEN_APPLE) && stack.getCount() == 1 && !stack.isEnchanted();
     }
 
     @Inject(method = "slotsChanged", at = @At("TAIL"))
@@ -79,8 +90,7 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
             for (int slot = 0; slot < 3; slot++) {
                 float noise = slot < 2 ? priceRandom.nextFloat() : .5F;
                 int energy = costs[slot] > 0 && stack.isEnchantable()
-                        ? FunctionalBlockRules.enchantmentLevels(shelves, emerald,
-                                R196EnchantmentTable.enchantability(stack), slot, noise) : 0;
+                        ? R196EnchantmentTable.tableEnergy(stack, shelves, emerald, slot, noise) : 0;
                 mite$pointCosts[slot] = R196EnchantmentTable.experienceCost(energy);
             }
             broadcastChanges();
@@ -90,27 +100,28 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
     @Inject(method = "getEnchantmentList", at = @At("HEAD"), cancellable = true)
     private void mite$nativeTableSelection(RegistryAccess registry, ItemStack stack, int slot, int level,
             CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
-        // Match vanilla's int addition (including overflow), RNG consumption and book removal.
+        // Preserve native seed addition (including overflow), while using the identical source payment budget.
         random.setSeed((long)(enchantmentSeed.get() + slot));
         int paidEnergy = access.evaluate((world, pos) -> {
             RandomSource priceRandom = RandomSource.create(enchantmentSeed.get());
             float noise = .5F;
             for (int current = 0; current <= slot && current < 2; current++) noise = priceRandom.nextFloat();
             if (slot == 2) noise = .5F;
-            return FunctionalBlockRules.enchantmentLevels(R196EnchantmentTable.accessibleBookshelves(world, pos),
-                    R196EnchantmentTable.emerald(world, pos), R196EnchantmentTable.enchantability(stack), slot, noise);
+            return R196EnchantmentTable.tableEnergy(stack, R196EnchantmentTable.accessibleBookshelves(world, pos),
+                    R196EnchantmentTable.emerald(world, pos), slot, noise);
         }, Integer.MAX_VALUE);
         List<EnchantmentInstance> selected = new ArrayList<>(VanillaTableEnchanting.select(registry, stack, level, random, paidEnergy));
-        if (stack.is(Items.BOOK) && selected.size() > 1) selected.remove(random.nextInt(selected.size()));
+        if (stack.is(Items.BOOK) && selected.size() > 1) selected = List.of(selected.get(random.nextInt(selected.size())));
         cir.setReturnValue(selected);
     }
 
     @Inject(method = "clickMenuButton", at = @At("HEAD"), cancellable = true)
     private void mite$payPoints(Player owner, int slot, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(false);
-        if (slot < 0 || slot >= 3 || costs[slot] < 1 || mite$pointCosts[slot] < 1 || enchantClue[slot] < 0) return;
+        if (slot < 0 || slot >= 3 || costs[slot] < 1 || mite$pointCosts[slot] < 1) return;
         ItemStack input = enchantSlots.getItem(0);
-        if (!input.isEnchantable()) return;
+        boolean conversion = mite$goldenApple(input);
+        if (!conversion && (!input.isEnchantable() || enchantClue[slot] < 0)) return;
         int offerLevel = costs[slot], payment = mite$pointCosts[slot], seed = enchantmentSeed.get();
         if (!owner.getAbilities().instabuild && (owner.experienceLevel < offerLevel || owner.totalExperience < payment
                 || !R196EnchantmentTable.hasLapis(enchantSlots.getItem(1), slot))) return;
@@ -123,9 +134,10 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
             if (!Arrays.equals(offers, costs) || !Arrays.equals(clues, enchantClue)
                     || !Arrays.equals(ranks, levelClue) || !Arrays.equals(prices, mite$pointCosts)) return;
             ItemStack before = input.copy(), lapisBefore = enchantSlots.getItem(1).copy();
-            List<EnchantmentInstance> selected = getEnchantmentList(level.registryAccess(), before, slot, offerLevel);
-            if (selected.isEmpty()) return;
-            ItemStack output = before.getItem().applyEnchantments(before.copy(), selected);
+            List<EnchantmentInstance> selected = conversion ? List.of() : getEnchantmentList(level.registryAccess(), before, slot, offerLevel);
+            if (!conversion && selected.isEmpty()) return;
+            ItemStack output = conversion ? new ItemStack(Items.ENCHANTED_GOLDEN_APPLE)
+                    : before.getItem().applyEnchantments(before.copy(), selected);
             if (output.isEmpty()) return;
             if (!owner.getAbilities().instabuild) {
                 if (!(owner instanceof ServerPlayer server)) return;

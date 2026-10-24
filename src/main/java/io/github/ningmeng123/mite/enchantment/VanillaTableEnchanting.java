@@ -34,7 +34,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
-/** Vanilla 1.21.1 acquisition profiles and selection; existing enchantment effects stay unchanged. @author NingMeng123 */
+/** Source-budget table selection with native profiles for modern-only enchantments. @author NingMeng123 */
 public final class VanillaTableEnchanting {
     public static final String RESOURCE = "/mite/vanilla_table_enchantments.json";
     public static final int MAXIMUM_SELECTION_LEVEL = 30;
@@ -54,7 +54,7 @@ public final class VanillaTableEnchanting {
             this(maximumLevel, weight, minCost, maxCost, List.of(), List.of(), List.of());
         }
     }
-    private record Candidate(Profile profile, EnchantmentInstance enchantment) {}
+    private record Candidate(int weight, int cost, int maximum, EnchantmentInstance enchantment) {}
 
     private VanillaTableEnchanting() {}
 
@@ -74,6 +74,15 @@ public final class VanillaTableEnchanting {
         int registered = enchantment.value().getMaxLevel();
         return enchantment.unwrapKey()
                 .map(key -> MiteConfig.enchantmentMaxLevel(key.location().toString(), registered)).orElse(registered);
+    }
+
+    /** Material ceilings affect newly selected table results only, never saved components or global configuration. */
+    public static int maximumLevel(ItemStack stack, Holder<Enchantment> enchantment) {
+        String id = enchantment.unwrapKey().map(key -> key.location().toString()).orElse("");
+        var source = R196EnchantmentCatalog.definition(id);
+        int materialCap = source == null ? profile(enchantment).maximumLevel()
+                : source.sourceTableLevel(R196EnchantmentTable.vibranium(stack));
+        return Math.min(materialCap, MiteConfig.enchantmentMaxLevel(id, materialCap));
     }
 
     /** Vanilla caps effective bookshelf power at fifteen. */
@@ -129,7 +138,7 @@ public final class VanillaTableEnchanting {
                 .map(allowed -> select(stack, selectionLevel, random, allowed.stream().toList(), paidEnergy)).orElseGet(List::of);
     }
 
-    /** Native candidate windows, primary item sets, weights and additional-enchantment trials. */
+    /** Source remaining-budget draws; modern-only candidates retain their native primary sets and costs. */
     public static List<EnchantmentInstance> select(ItemStack stack, int selectionLevel, RandomSource random,
             List<Holder<Enchantment>> allowed) {
         return select(stack, selectionLevel, random, allowed, Integer.MAX_VALUE);
@@ -138,36 +147,53 @@ public final class VanillaTableEnchanting {
     public static List<EnchantmentInstance> select(ItemStack stack, int selectionLevel, RandomSource random,
             List<Holder<Enchantment>> allowed, int paidEnergy) {
         if (stack.isEmpty() || selectionLevel < 1 || paidEnergy < 1 || selectionEnchantability(stack) < 1) return List.of();
-        int power = Math.min(modifiedPower(stack, selectionLevel, random), paidEnergy);
-        List<Candidate> candidates = new ArrayList<>();
+        int energy = paidEnergy == Integer.MAX_VALUE ? selectionLevel : paidEnergy;
+        int remaining = Math.max(1, (int)(energy * (1F + (random.nextFloat() - .5F) * .5F)));
+        List<Holder<Enchantment>> participating = new ArrayList<>();
         Set<String> visited = new HashSet<>();
         for (Holder<Enchantment> holder : allowed) {
             String id = holder.unwrapKey().map(key -> key.location().toString()).orElse(null);
             if (id == null || !visited.add(id)) continue;
             if (!primaryItem(stack, holder) || !ConfiguredEnchantments.availableForRandomSelection(holder, random)) continue;
-            Profile profile = profile(holder);
-            if (profile.weight() <= 0) continue;
-            // Above-vanilla ranks require a full-strength offer as well as enough paid energy.
-            int maximum = selectionLevel >= MAXIMUM_SELECTION_LEVEL ? maximumLevel(holder)
-                    : Math.min(maximumLevel(holder), profile.maximumLevel());
-            for (int level = maximum; level >= holder.value().getMinLevel(); level--) {
-                if (power >= profile.minCost().calculate(level) && power <= profile.maxCost().calculate(level)) {
-                    candidates.add(new Candidate(profile, new EnchantmentInstance(holder, level)));
+            participating.add(holder);
+        }
+        List<Candidate> selected = new ArrayList<>();
+        while (remaining > 0 && selected.size() < 3) {
+            List<Candidate> candidates = new ArrayList<>();
+            for (Holder<Enchantment> holder : participating) {
+                if (selected.stream().anyMatch(previous -> !tableCompatible(previous.enchantment().enchantment, holder))) continue;
+                var source = R196EnchantmentCatalog.definition(holder.unwrapKey().orElseThrow().location().toString());
+                var profile = profile(holder);
+                int weight = source == null ? profile.weight() : source.weight();
+                if (weight <= 0) continue;
+                int maximum = maximumLevel(stack, holder);
+                for (int level = maximum; level >= holder.value().getMinLevel(); level--) {
+                    int cost = source == null ? profile.minCost().calculate(level) : source.sourceMinCost(level);
+                    if (cost > remaining) continue;
+                    candidates.add(new Candidate(weight, cost, maximum, new EnchantmentInstance(holder, level)));
                     break;
                 }
             }
-        }
-        if (candidates.isEmpty()) return List.of();
-        List<Candidate> selected = new ArrayList<>();
-        selected.add(weighted(candidates, random));
-        while (random.nextInt(50) <= power) {
-            Candidate previous = selected.getLast();
-            candidates.removeIf(candidate -> !compatible(previous.enchantment().enchantment, candidate.enchantment().enchantment));
             if (candidates.isEmpty()) break;
-            selected.add(weighted(candidates, random));
-            power /= 2;
+            Candidate chosen = weighted(candidates, random);
+            if (selected.size() < 2 && candidates.size() > 1 && chosen.maximum() > 1 && random.nextInt(2) == 0) {
+                int level = random.nextInt(chosen.enchantment().level) + 1;
+                var source = R196EnchantmentCatalog.definition(chosen.enchantment().enchantment.unwrapKey().orElseThrow().location().toString());
+                int cost = source == null ? profile(chosen.enchantment().enchantment).minCost().calculate(level) : source.sourceMinCost(level);
+                chosen = new Candidate(chosen.weight(), cost, chosen.maximum(), new EnchantmentInstance(chosen.enchantment().enchantment, level));
+            }
+            selected.add(chosen);
+            remaining -= chosen.cost() + 5;
+            if (remaining < 5) break;
         }
-        return selected.stream().map(Candidate::enchantment).toList();
+        List<EnchantmentInstance> shuffled = new ArrayList<>();
+        while (!selected.isEmpty()) shuffled.add(selected.remove(random.nextInt(selected.size())).enchantment());
+        return shuffled;
+    }
+
+    private static boolean tableCompatible(Holder<Enchantment> left, Holder<Enchantment> right) {
+        return compatible(left, right) && R196EnchantmentCatalog.compatible(
+                left.unwrapKey().orElseThrow().location().toString(), right.unwrapKey().orElseThrow().location().toString());
     }
 
     /** Source registry overrides must not remove a native item's ordinary table enchantments. */
@@ -239,10 +265,10 @@ public final class VanillaTableEnchanting {
 
     private static Candidate weighted(List<Candidate> candidates, RandomSource random) {
         int weight = 0;
-        for (Candidate candidate : candidates) weight = Math.addExact(weight, candidate.profile().weight());
+        for (Candidate candidate : candidates) weight = Math.addExact(weight, candidate.weight());
         int roll = random.nextInt(weight);
         for (Candidate candidate : candidates) {
-            roll -= candidate.profile().weight();
+            roll -= candidate.weight();
             if (roll < 0) return candidate;
         }
         throw new IllegalStateException("Missing table weighted candidate");

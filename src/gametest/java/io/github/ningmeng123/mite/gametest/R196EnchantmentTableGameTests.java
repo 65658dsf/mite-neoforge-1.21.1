@@ -148,18 +148,18 @@ public final class R196EnchantmentTableGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void nativeTablesRejectWaterAndAppleConversionsWithoutPayment(GameTestHelper helper) {
+    public static void nativeTablesRejectWaterAndAlreadyEnchantedAppleInputsWithoutPayment(GameTestHelper helper) {
         var owner = owner(helper, 10000);
         for (Block block : new Block[] {Blocks.ENCHANTING_TABLE, MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get()}) {
             for (boolean water : new boolean[] {true, false}) {
                 var menu = table(helper, owner, block, true);
-                ItemStack input = water ? PotionContents.createItemStack(Items.POTION, Potions.WATER) : new ItemStack(Items.GOLDEN_APPLE);
+                ItemStack input = water ? PotionContents.createItemStack(Items.POTION, Potions.WATER) : new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);
                 menu.getSlot(0).set(input.copy());
                 menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 4));
                 for (int slot = 0; slot < 3; slot++) {
                     helper.assertValueEqual(menu.costs[slot], 0, "Native non-enchantable inputs have no offer");
                     helper.assertValueEqual(((R196EnchantmentMenuAccess)menu).mite$experienceCost(slot), 0, "Rejected inputs have no point quote");
-                    helper.assertFalse(menu.clickMenuButton(owner, slot), "Native enchanting does not convert water or apples");
+                    helper.assertFalse(menu.clickMenuButton(owner, slot), "Only a plain golden apple has the requested conversion path");
                 }
                 helper.assertTrue(ItemStack.matches(menu.getSlot(0).getItem(), input), "Rejected conversion preserves its input");
                 helper.assertValueEqual(owner.totalExperience, 10000, "Rejected conversion consumes no points");
@@ -262,31 +262,28 @@ public final class R196EnchantmentTableGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void selectionVariesCountsWithoutThreeEnchantmentCeilingAndBooksCanKeepMultiple(GameTestHelper helper) {
+    public static void sourceTableEquipmentHasAtMostThreeAndBooksKeepExactlyOne(GameTestHelper helper) {
         var random = RandomSource.create(196L);
         var registry = helper.getLevel().registryAccess();
-        boolean foundSingle = false, foundMoreThanThree = false, foundMultipleBook = false;
+        boolean foundMultiple = false;
         for (int run = 0; run < 1024; run++) {
             var book = R196EnchantmentTable.output(registry, new ItemStack(Items.BOOK), 53, random);
             int bookCount = book.getOrDefault(DataComponents.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY).size();
-            helper.assertTrue(bookCount >= 1, "Book trimming always leaves at least one enchantment");
-            foundMultipleBook |= bookCount > 1;
+            helper.assertValueEqual(bookCount, 1, "R196 chooses exactly one selected entry for the final book");
             var selected = R196EnchantmentTable.select(registry, new ItemStack(Items.IRON_SWORD), 200, random);
             helper.assertFalse(selected.isEmpty(), "High-energy equipment has an eligible initial enchantment");
-            foundSingle |= selected.size() == 1;
-            foundMoreThanThree |= selected.size() > 3;
+            foundMultiple |= selected.size() > 1;
+            helper.assertTrue(selected.size() <= 3, "The remaining-budget loop has the source three-entry ceiling");
             HashSet<Holder<Enchantment>> chosen = new HashSet<>();
             for (var entry : selected) {
                 String id = entry.enchantment.unwrapKey().orElseThrow().location().toString();
                 helper.assertTrue(VanillaTableEnchanting.primaryItem(new ItemStack(Items.IRON_SWORD), entry.enchantment), "Every candidate supports the native sword table route: " + id);
-                helper.assertTrue(entry.level >= 1 && entry.level <= VanillaTableEnchanting.maximumLevel(entry.enchantment), "Native table level bound respected");
+                helper.assertTrue(entry.level >= 1 && entry.level <= VanillaTableEnchanting.maximumLevel(new ItemStack(Items.IRON_SWORD), entry.enchantment), "Material-specific table level bound respected");
                 for (var previous : chosen) helper.assertTrue(VanillaTableEnchanting.compatible(previous, entry.enchantment), "Every pair passes native table compatibility");
                 helper.assertTrue(chosen.add(entry.enchantment), "Self duplicates are rejected");
             }
         }
-        helper.assertTrue(foundSingle, "High-energy equipment can receive only one enchantment");
-        helper.assertTrue(foundMoreThanThree, "Random additional rolls have no artificial three-enchantment ceiling");
-        helper.assertTrue(foundMultipleBook, "Books can retain multiple compatible enchantments after native trimming");
+        helper.assertTrue(foundMultiple, "Equipment can spend its remaining budget on compatible additional entries");
         helper.succeed();
     }
 

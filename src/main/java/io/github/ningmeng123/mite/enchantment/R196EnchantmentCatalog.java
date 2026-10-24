@@ -43,8 +43,25 @@ public final class R196EnchantmentCatalog {
             };
         }
 
+        /** Immutable acquisition ceilings; configuration may lower, but cannot lift a material's source table cap. */
+        public int sourceTableLevel(boolean vibranium) {
+            if (vibranium) {
+                if (legacyId >= 0 && legacyId <= 4) return 5;
+                if (legacyId >= 16 && legacyId <= 18) return 7;
+                if (legacyId == 7 || legacyId == 21 || legacyId == 35) return 5;
+                if (resourceId.equals("modern_ite:conqueror")) return 7;
+            }
+            return legacyId < 2000 ? sourceGeneratedLevel() : maxLevel;
+        }
+
         public int minCost(int level) {
             if (level < 1 || level > maxLevel()) throw new IllegalArgumentException("Invalid source enchantment level: " + id + " " + level);
+            return sourceMinCost(level);
+        }
+
+        /** Original cost arithmetic, independent of configured/material rank ceilings. */
+        public int sourceMinCost(int level) {
+            if (level < 1) throw new IllegalArgumentException("Invalid source enchantment level: " + id + " " + level);
             // Preserve a single-level enchantment's original first-rank cost while charging for explicit extra ranks.
             return Math.max(difficulty - 10, 0) + difficulty * (level - 1 + (maxLevel == 1 ? 2 : 0)) + 1;
         }

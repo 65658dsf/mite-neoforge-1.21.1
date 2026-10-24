@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -45,7 +46,8 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
         EnchantmentNames.getInstance().initSeed(menu.getEnchantmentSeed());
         for (int slot = 0; slot < 3; slot++) {
             int energy = menu.costs[slot], points = ((R196EnchantmentMenuAccess)menu).mite$experienceCost(slot);
-            boolean affordable = energy > 0 && menu.enchantClue[slot] >= 0 && minecraft.player != null
+            boolean conversion = menu.getSlot(0).getItem().is(Items.GOLDEN_APPLE);
+            boolean affordable = energy > 0 && (conversion || menu.enchantClue[slot] >= 0) && minecraft.player != null
                     && (minecraft.player.getAbilities().instabuild || minecraft.player.experienceLevel >= energy && minecraft.player.totalExperience >= points
                             && R196EnchantmentTable.hasLapis(menu.getSlot(1).getItem(), slot));
             boolean hovered = mouseX >= x + 60 && mouseX < x + 168 && mouseY >= y + 14 + slot * 19 && mouseY < y + 33 + slot * 19;
@@ -71,7 +73,8 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
             if (menu.costs[slot] <= 0 || !isHovering(60, 14 + slot * 19, 108, 19, mouseX, mouseY)) continue;
             List<Component> tooltip = new ArrayList<>();
             // Offer clues remain internal for validation; the player only sees requirements and costs.
-            if (menu.enchantClue[slot] < 0) tooltip.add(Component.translatable("neoforge.container.enchant.limitedEnchantability").withStyle(ChatFormatting.RED));
+            if (menu.enchantClue[slot] < 0 && !menu.getSlot(0).getItem().is(Items.GOLDEN_APPLE))
+                tooltip.add(Component.translatable("neoforge.container.enchant.limitedEnchantability").withStyle(ChatFormatting.RED));
             boolean creative = minecraft.player.getAbilities().instabuild;
             tooltip.add(Component.translatable("container.enchant.level.requirement", menu.costs[slot])
                     .withStyle(creative || minecraft.player.experienceLevel >= menu.costs[slot] ? ChatFormatting.GRAY : ChatFormatting.RED));

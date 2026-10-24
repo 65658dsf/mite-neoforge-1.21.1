@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.enchantment.ConfiguredEnchantments;
 import io.github.ningmeng123.mite.enchantment.R196BookAnvil;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentTable;
+import io.github.ningmeng123.mite.enchantment.VanillaTableEnchanting;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -72,18 +73,21 @@ public final class EnchantmentChanceSelectionGameTests {
                 var holder = candidates.get(route);
                 var item = route == 0 ? Items.IRON_SWORD : Items.CROSSBOW;
                 String id = holder.unwrapKey().orElseThrow().location().toString();
-                for (double percent : new double[]{50D, 37.5D}) {
+                for (boolean sourceTable : new boolean[]{false, true}) for (double percent : new double[]{50D, 37.5D}) {
                     settings.set(Map.of(id, percent));
                     var random = RandomSource.create(196L);
                     int admitted = 0;
                     for (int trial = 0; trial < samples; trial++) {
-                        var selected = select(holder, new ItemStack(item), 30, random);
+                        var selected = sourceTable
+                                ? VanillaTableEnchanting.select(new ItemStack(item), 100, random, List.of(holder))
+                                : select(holder, new ItemStack(item), 30, random);
                         helper.assertTrue(selected.size() <= 1, "A single-candidate pool can select at most one enchantment");
                         if (!selected.isEmpty()) admitted++;
                     }
                     double fraction = admitted / (double)samples;
                     helper.assertTrue(Math.abs(fraction - percent / 100D) < .06D,
-                            "Each source/native selection admits a candidate only once at " + percent + "%; " + id + " selected=" + admitted + "/" + samples);
+                            "Each selector admits a candidate only once at " + percent + "%; sourceTable=" + sourceTable
+                                    + "; " + id + " selected=" + admitted + "/" + samples);
                 }
             }
         }

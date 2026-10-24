@@ -3,7 +3,6 @@ package io.github.ningmeng123.mite.gametest;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.enchantment.VanillaTableEnchanting;
 import io.github.ningmeng123.mite.item.WoodenClubBehavior;
-import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,7 +20,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Compare table acquisition with official 1.21.1 item rules and a small independent seeded oracle. @author NingMeng123 */
+/** Native item eligibility and source-budget acquisition through the actual table selector. @author NingMeng123 */
 @GameTestHolder("mite_enchanting_chance")
 @PrefixGameTestTemplate(false)
 public final class NativeTableSelectionGameTests {
@@ -124,25 +123,58 @@ public final class NativeTableSelectionGameTests {
     }
 
     @GameTest(template = "empty", templateNamespace = "mite")
-    public static void seededSwordSelectionMatchesOfficialWindowsWeightsAndRandomSequence(GameTestHelper helper) {
+    public static void seededSwordSelectionRespectsSourceBudgetsWeightsAndMaterialCeilings(GameTestHelper helper) {
         try (var settings = new Settings()) {
-            // Match the oracle's vanilla limits explicitly; normal table limits follow configuration.
-            MiteConfig.ENCHANTMENT_MAX_LEVELS.set(ORACLE.stream().map(entry -> entry.key().location() + "=" + entry.maximum()).toList());
+            // Deliberately permissive configuration cannot override ordinary materials' source ceilings.
+            MiteConfig.ENCHANTMENT_MAX_LEVELS.set(SOURCE_SWORD_CAPS.stream().map(entry -> entry.key().location() + "=99").toList());
             MiteConfig.refreshEnchantmentRules();
-            List<Holder<Enchantment>> allowed = ORACLE.stream().map(entry -> holder(helper, entry.key())).toList();
+            List<Holder<Enchantment>> allowed = SOURCE_SWORD_CAPS.stream().map(entry -> holder(helper, entry.key())).toList();
+            int firstRankDraws = 0, firstRankSharpness = 0;
+            boolean multiple = false, maximumRank = false;
             for (var input : List.of(new ItemStack(Items.IRON_SWORD), new ItemStack(Items.GOLDEN_SWORD))) {
-                int enchantability = input.is(Items.IRON_SWORD) ? 14 : 22;
-                for (int level : new int[]{1, 5, 15, 30}) for (int seed = 0; seed < 128; seed++) {
-                    RandomSource expectedRandom = RandomSource.create(seed), actualRandom = RandomSource.create(seed);
-                    var expected = oracle(enchantability, level, expectedRandom);
-                    var actual = VanillaTableEnchanting.select(input, level, actualRandom, allowed).stream()
-                            .map(NativeTableSelectionGameTests::signature).toList();
-                    helper.assertTrue(actual.equals(expected),
-                            "Native windows, weights, conflicts and extra draws match for " + input + ", level=" + level + ", seed=" + seed);
-                    helper.assertTrue(actualRandom.nextLong() == expectedRandom.nextLong(),
-                            "The next RNG state matches native selection for seed " + seed);
+                for (int energy : new int[]{1, 5, 15, 30, 53, 100}) for (int sample = 0; sample < 256; sample++) {
+                    long seed = 196L + sample * 0x9E3779B97F4A7C15L;
+                    RandomSource actualRandom = RandomSource.create(seed), repeatedRandom = RandomSource.create(seed);
+                    var actual = VanillaTableEnchanting.select(input, energy, actualRandom, allowed);
+                    var repeated = VanillaTableEnchanting.select(input, energy, repeatedRandom, allowed);
+                    helper.assertTrue(actual.stream().map(NativeTableSelectionGameTests::signature).toList()
+                                    .equals(repeated.stream().map(NativeTableSelectionGameTests::signature).toList())
+                                    && actualRandom.nextLong() == repeatedRandom.nextLong(),
+                            "The same material, budget and seed preserve the selected ranks, order and following RNG state");
+                    helper.assertTrue(!actual.isEmpty() && actual.size() <= 3,
+                            "An eligible source sword pool produces one to three entries: energy=" + energy + ", seed=" + seed);
+                    var identities = new java.util.HashSet<ResourceKey<Enchantment>>();
+                    int damageKinds = 0, rankCosts = 0;
+                    for (var selected : actual) {
+                        var key = selected.enchantment.unwrapKey().orElseThrow();
+                        var source = SOURCE_SWORD_CAPS.stream().filter(entry -> entry.key().equals(key)).findFirst().orElseThrow();
+                        helper.assertTrue(identities.add(key), "A selected identity never occurs twice");
+                        helper.assertTrue(selected.level >= 1 && selected.level <= source.maximum(),
+                                "Neither iron nor gold inherits configured99 or the vibranium rank exception: " + signature(selected));
+                        if (key.equals(Enchantments.SHARPNESS) || key.equals(Enchantments.SMITE)
+                                || key.equals(Enchantments.BANE_OF_ARTHROPODS)) damageKinds++;
+                        // These six R196 identities all have difficulty10, hence rank costs1,11,21,31,41.
+                        rankCosts += 1 + 10 * (selected.level - 1);
+                        maximumRank |= selected.level == 5;
+                    }
+                    helper.assertTrue(damageKinds <= 1, "Different damage enchantments remain mutually exclusive");
+                    helper.assertTrue(rankCosts + 5 * (actual.size() - 1) <= energy * 5 / 4,
+                            "All ranks and intermediate five-energy debits fit the strongest possible paid budget: energy="
+                                    + energy + ", result=" + actual.stream().map(NativeTableSelectionGameTests::signature).toList());
+                    multiple |= actual.size() > 1;
+                    if (energy == 1) {
+                        helper.assertValueEqual(actual.size(), 1, "One energy cannot fund any second draw");
+                        helper.assertValueEqual(actual.getFirst().level, 1, "One energy cannot buy a second rank");
+                        firstRankDraws++;
+                        if (actual.getFirst().enchantment.is(Enchantments.SHARPNESS)) firstRankSharpness++;
+                    }
                 }
             }
+            helper.assertTrue(multiple && maximumRank, "Funded samples exercise multi-entry results and ordinary rankV");
+            double sharpnessFraction = firstRankSharpness / (double)firstRankDraws;
+            helper.assertTrue(sharpnessFraction > .37D && sharpnessFraction < .52D,
+                    "R196 common weight100 versus five uncommon weights25 is observable in actual single-rank draws: "
+                            + firstRankSharpness + "/" + firstRankDraws);
         }
         helper.succeed();
     }
@@ -162,54 +194,13 @@ public final class NativeTableSelectionGameTests {
         helper.succeed();
     }
 
-    // Values independently transcribed from official 1.21.1 data/minecraft/enchantment/*.json.
-    private static final List<NativeEntry> ORACLE = List.of(
-            new NativeEntry(Enchantments.SHARPNESS, 5, 10, 1, 21, 11, true),
-            new NativeEntry(Enchantments.SMITE, 5, 5, 5, 25, 8, true),
-            new NativeEntry(Enchantments.BANE_OF_ARTHROPODS, 5, 5, 5, 25, 8, true),
-            new NativeEntry(Enchantments.UNBREAKING, 3, 5, 5, 55, 8, false),
-            new NativeEntry(Enchantments.KNOCKBACK, 2, 5, 5, 55, 20, false),
-            new NativeEntry(Enchantments.LOOTING, 3, 2, 15, 65, 9, false));
+    // Immutable ceilings from R196 aau/aar, abe and abd, independent of editable configuration.
+    private static final List<SourceCap> SOURCE_SWORD_CAPS = List.of(
+            new SourceCap(Enchantments.SHARPNESS, 5), new SourceCap(Enchantments.SMITE, 5),
+            new SourceCap(Enchantments.BANE_OF_ARTHROPODS, 5), new SourceCap(Enchantments.UNBREAKING, 5),
+            new SourceCap(Enchantments.KNOCKBACK, 2), new SourceCap(Enchantments.LOOTING, 3));
 
-    private record NativeEntry(ResourceKey<Enchantment> key, int maximum, int weight, int minimumCost,
-            int maximumCost, int perLevel, boolean damage) {}
-    private record NativeChoice(NativeEntry entry, int level) {}
-
-    private static List<String> oracle(int enchantability, int level, RandomSource random) {
-        int power = level + 1 + random.nextInt(enchantability / 4 + 1) + random.nextInt(enchantability / 4 + 1);
-        float variance = (random.nextFloat() + random.nextFloat() - 1F) * .15F;
-        power = Math.max(1, Math.round(power + power * variance));
-        List<NativeChoice> available = new ArrayList<>();
-        for (var entry : ORACLE) for (int rank = entry.maximum(); rank >= 1; rank--) {
-            int increment = (rank - 1) * entry.perLevel();
-            if (power >= entry.minimumCost() + increment && power <= entry.maximumCost() + increment) {
-                available.add(new NativeChoice(entry, rank));
-                break;
-            }
-        }
-        List<NativeChoice> selected = new ArrayList<>();
-        if (!available.isEmpty()) {
-            selected.add(weighted(available, random));
-            while (random.nextInt(50) <= power) {
-                var previous = selected.getLast().entry();
-                available.removeIf(candidate -> candidate.entry().key().equals(previous.key())
-                        || candidate.entry().damage() && previous.damage());
-                if (available.isEmpty()) break;
-                selected.add(weighted(available, random));
-                power /= 2;
-            }
-        }
-        return selected.stream().map(choice -> choice.entry().key().location() + "=" + choice.level()).toList();
-    }
-
-    private static NativeChoice weighted(List<NativeChoice> available, RandomSource random) {
-        int roll = random.nextInt(available.stream().mapToInt(choice -> choice.entry().weight()).sum());
-        for (var choice : available) {
-            roll -= choice.entry().weight();
-            if (roll < 0) return choice;
-        }
-        throw new AssertionError("Oracle weight sum did not select a candidate");
-    }
+    private record SourceCap(ResourceKey<Enchantment> key, int maximum) {}
 
     private static String signature(EnchantmentInstance instance) {
         return instance.enchantment.unwrapKey().orElseThrow().location() + "=" + instance.level;

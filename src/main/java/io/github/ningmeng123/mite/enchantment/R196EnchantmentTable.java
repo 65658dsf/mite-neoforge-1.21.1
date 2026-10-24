@@ -30,7 +30,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
-/** Source table structure/payment, vanilla-strength player results and independent source rewards. @author NingMeng123 */
+/** Source table budgets, material-aware player acquisition and independent natural reward rules. @author NingMeng123 */
 public final class R196EnchantmentTable {
     private R196EnchantmentTable() {}
 
@@ -110,14 +110,35 @@ public final class R196EnchantmentTable {
     public static int energy(ItemStack stack, int shelves, boolean emerald, int slot, float noise) {
         if (!enchantable(stack)) return 0;
         if (special(stack)) return 2;
-        return FunctionalBlockRules.enchantmentLevels(shelves, emerald, enchantability(stack), slot, noise);
+        return tableEnergy(stack, shelves, emerald, slot, noise);
+    }
+
+    /** Only actual vibranium equipment receives ITE's extra two bookshelf layers. */
+    public static boolean vibranium(ItemStack stack) {
+        var tool = io.github.ningmeng123.mite.registry.MiteTools.definition(stack);
+        if (tool != null) return tool.material().equals("vibranium");
+        var armor = MiteArmorContent.definition(stack.getItem());
+        if (armor != null) return armor.material().equals("vibranium");
+        var shield = io.github.ningmeng123.mite.registry.MiteShields.definition(stack);
+        if (shield != null) return shield.material().equals("vibranium");
+        if (stack.getItem() instanceof io.github.ningmeng123.mite.item.R196ReinforcedBowItem bow)
+            return bow.material().equals("vibranium");
+        return "vibranium".equals(io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.material(stack));
+    }
+
+    /** Payment and selection share this exact budget, including optional modern equipment. */
+    public static int tableEnergy(ItemStack stack, int shelves, boolean emerald, int slot, float noise) {
+        boolean vibranium = vibranium(stack);
+        int energy = FunctionalBlockRules.enchantmentLevels(Math.min(shelves, vibranium ? 48 : 24),
+                emerald, enchantability(stack), slot, noise);
+        return Math.min(energy, vibranium ? 158 : 100);
     }
 
     private record Candidate(R196EnchantmentCatalog.Definition definition, EnchantmentInstance enchantment) {}
 
-    /** Compatibility API: the supplied strength is bounded to the vanilla table range, independently of payment. */
+    /** Player tables use the actual quoted source energy, rather than the native display-level cap. */
     public static List<EnchantmentInstance> select(RegistryAccess access, ItemStack stack, int energy, RandomSource random) {
-        return VanillaTableEnchanting.select(access, stack, Math.min(energy, VanillaTableEnchanting.MAXIMUM_SELECTION_LEVEL), random);
+        return VanillaTableEnchanting.select(access, stack, energy, random);
     }
 
     /** Generated rewards keep source material compression and natural level ceilings. */
@@ -184,7 +205,7 @@ public final class R196EnchantmentTable {
         if (input.is(Items.GOLDEN_APPLE)) return new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);
         List<EnchantmentInstance> selected = new ArrayList<>(select(access, input, selectionLevel, random));
         if (selected.isEmpty()) return ItemStack.EMPTY;
-        if (input.is(Items.BOOK) && selected.size() > 1) selected.remove(random.nextInt(selected.size()));
+        if (input.is(Items.BOOK) && selected.size() > 1) selected = List.of(selected.get(random.nextInt(selected.size())));
         ItemStack result = input.is(Items.BOOK) ? input.transmuteCopy(Items.ENCHANTED_BOOK, 1) : input.copyWithCount(1);
         ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
         for (var entry : selected) enchantments.set(entry.enchantment, entry.level);

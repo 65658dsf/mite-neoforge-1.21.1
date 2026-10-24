@@ -80,6 +80,7 @@ public final class EnchantmentClientAudit implements DataProvider {
             requireCall(screen, background, ROOT + "enchantment/R196EnchantmentMenuAccess", "mite$usesSourceEnchanting");
             requireCall(screen, render, ROOT + "enchantment/R196EnchantmentMenuAccess", "mite$experienceCost");
             requireCall(screen, background, ROOT + "enchantment/R196EnchantmentTable", "hasLapis");
+            requireField(screen, background, "net/minecraft/world/item/Items", "GOLDEN_APPLE");
             requireCall(screen, render, "net/minecraft/client/gui/GuiGraphics", "renderComponentTooltip");
             Set<String> keys = translationKeys(screen, background);
             keys.addAll(translationKeys(screen, render));
@@ -93,7 +94,7 @@ public final class EnchantmentClientAudit implements DataProvider {
                     .findFirst().orElseThrow(() -> new IllegalStateException("Missing transformed source tooltip handler"));
             Set<String> sourceNativeKeys = new LinkedHashSet<>();
             boolean readsClueValidity = false, readsClueRank = false, namesEnchantment = false, rendersTooltip = false;
-            boolean limitedEnchantability = false;
+            boolean limitedEnchantability = false, appleConversion = false;
             // Inspect the actual merged handler, excluding the legitimate native fallback branch.
             for (AbstractInsnNode instruction : sourceTooltip.instructions) {
                 if (instruction instanceof LdcInsnNode ldc && ldc.cst instanceof String key) {
@@ -103,6 +104,7 @@ public final class EnchantmentClientAudit implements DataProvider {
                 if (instruction instanceof FieldInsnNode field) {
                     if (field.name.equals("enchantClue")) readsClueValidity = true;
                     if (field.name.equals("levelClue")) readsClueRank = true;
+                    if (field.owner.equals("net/minecraft/world/item/Items") && field.name.equals("GOLDEN_APPLE")) appleConversion = true;
                 }
                 if (instruction instanceof MethodInsnNode call) {
                     if (call.owner.equals("net/minecraft/world/item/enchantment/Enchantment") && call.name.equals("getFullname")) namesEnchantment = true;
@@ -113,6 +115,8 @@ public final class EnchantmentClientAudit implements DataProvider {
                     "container.enchant.lapis.many")), "Source tooltip displays level and lapis requirements without an enchantment preview");
             check(!readsClueRank && !namesEnchantment && rendersTooltip && readsClueValidity && limitedEnchantability,
                     "The merged handler hides the enchantment name and rank while preserving validity errors and cost rendering");
+            check(appleConversion, "The transformed source tooltip distinguishes golden-apple conversions from unavailable enchantment results");
+            report.addProperty("golden_apple_render_affordability_and_tooltip_exception", true);
             report.addProperty("point_tooltip_keys_exactly_two", true);
             report.addProperty("enchantment_result_preview_hidden", true);
             report.addProperty("required_level_lapis_and_unavailable_offer_tooltip_paths", true);
@@ -226,6 +230,12 @@ public final class EnchantmentClientAudit implements DataProvider {
         for (MethodNode method : reachable(type, start)) for (AbstractInsnNode instruction : method.instructions)
             if (instruction instanceof MethodInsnNode call && call.owner.equals(owner) && call.name.equals(name)) return;
         throw new IllegalStateException("Missing reachable transformed call " + type.name + "." + start.name + " -> " + owner + "." + name);
+    }
+
+    private static void requireField(ClassNode type, MethodNode start, String owner, String name) {
+        for (MethodNode method : reachable(type, start)) for (AbstractInsnNode instruction : method.instructions)
+            if (instruction instanceof FieldInsnNode field && field.owner.equals(owner) && field.name.equals(name)) return;
+        throw new IllegalStateException("Missing reachable transformed field " + type.name + "." + start.name + " -> " + owner + "." + name);
     }
 
     private static List<MethodNode> reachable(ClassNode type, MethodNode start) {
