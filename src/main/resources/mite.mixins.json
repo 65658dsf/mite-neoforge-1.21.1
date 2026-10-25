@@ -380,6 +380,7 @@
     "client.PlacementCooldownAttemptMixin",
     "client.CreateWorldDifficultyButtonMixin",
     "client.BloodMoonAtmosphereMixin",
+    "client.BloodRainParticleMixin",
     "EnchantmentScreenMixin",
     "client.EnchantedBowFovMixin",
     "client.SkeletonBowModelMixin",

@@ -120,6 +120,17 @@ class LunarVisualsTest {
         color(LunarVisuals.bloodRainAtmosphere(day, 2F, original), .16F, .024F, .036F);
         color(LunarVisuals.bloodRainAtmosphere(day, -1F, original), .1F, .2F, .3F);
     }
+    @Test void bloodRainDropletsAreRedOnlyOnBloodDaysIncludingDawnAndDuskBoundaries() {
+        for (int day : new int[]{32, 64, 96}) {
+            for (int tick : new int[]{0, 6000, 12999, 23001, 23999})
+                color(LunarVisuals.bloodRainTint(LunarCalendar.state(time(day, tick), true)), 1F, .08F, .08F);
+            for (int tick : new int[]{13000, 18000, 23000})
+                color(LunarVisuals.bloodRainTint(LunarCalendar.state(time(day, tick), true)), 1F, 1F, 1F);
+        }
+        for (int day : new int[]{1, 24, 120, 128})
+            color(LunarVisuals.bloodRainTint(LunarCalendar.state(time(day, 6000), true)), 1F, 1F, 1F);
+        color(LunarVisuals.bloodRainTint(LunarCalendar.state(time(32, 6000), false)), 1F, 1F, 1F);
+    }
     @Test void daytimeAtmosphereExtensionDoesNotReplaceMoonNightsOtherEventsOrDimensions() {
         var original = new LunarVisuals.Color(.1F, .2F, .3F);
         for (int day : new int[]{1, 24, 120, 128})

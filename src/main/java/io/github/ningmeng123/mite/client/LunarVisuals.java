@@ -15,6 +15,7 @@ public final class LunarVisuals {
     public record LightState(LunarCalendar.State calendar, float skyMultiplier, float ascension) {}
 
     private static final Color WHITE = new Color(1F, 1F, 1F);
+    private static final Color BLOOD_RAIN = new Color(1F, .08F, .08F);
     private static final Color BLOOD = new Color(.6F, .2F, .1F);
     private static final Color BLUE = new Color(.66F, .74F, 1F);
     private static final Color HARVEST = new Color(1F, .8F, .45F);
@@ -85,6 +86,11 @@ public final class LunarVisuals {
         var tint = lightTint(frame, skyLight, blockLight);
         return new Color(clamp(red * tint.red(), 0F, 1F), clamp(green * tint.green(), 0F, 1F),
                 clamp(blue * tint.blue(), 0F, 1F));
+    }
+
+    /** Shared RGB multiplier for rain curtains and impact droplets, restricted to blood daylight. */
+    public static Color bloodRainTint(LunarCalendar.State state) {
+        return state.overworld() && state.bloodPeriod() && !state.night() ? BLOOD_RAIN : WHITE;
     }
 
     /** User-requested modern extension; native night lightmap and underwater/lava fog remain independent. */

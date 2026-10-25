@@ -16,6 +16,10 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
 public final class BloodMoonAtmosphere {
     private BloodMoonAtmosphere() {}
 
+    public static LunarVisuals.Color rainColor(ClientLevel level) {
+        return LunarVisuals.bloodRainTint(LunarCalendar.state(level.getDayTime(), level.dimension().equals(Level.OVERWORLD)));
+    }
+
     public static Vec3 color(ClientLevel level, float partialTick, Vec3 original) {
         return color(level, partialTick, original, false);
     }

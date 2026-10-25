@@ -31,6 +31,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -93,6 +94,7 @@ public final class LunarVisualAudit implements DataProvider {
             requireReachable(sky, rain, ROOT + "world/LunarWeather", "precipitation");
             requireReachable(sky, rainTick, ROOT + "world/LunarWeather", "precipitation");
             requireReachable(sky, rain, ROOT + "rules/LunarCalendar", "state");
+            auditBloodRain(sky, rain, rainTick, targets, report);
 
             ClassNode atmosphere = transformed("net.minecraft.client.multiplayer.ClientLevel", targets);
             check(hasMerged(atmosphere, "BloodMoonAtmosphereMixin"), "Missing requested daytime blood-rain atmosphere Mixin");
@@ -176,6 +178,75 @@ public final class LunarVisualAudit implements DataProvider {
         report.addProperty("daytime_blood_rain_atmosphere", "passed_native_sky_cloud_hooks_and_air_fog_event");
         report.addProperty("daytime_atmosphere_is_user_requested_modern_extension", true);
         report.addProperty("existing_moon_disk_glow_and_night_lightmap_preserved", true);
+    }
+    private static void auditBloodRain(ClassNode renderer, MethodNode rain, MethodNode rainTick,
+            JsonArray targets, JsonObject report) throws Exception {
+        requireDryNightCancellation(renderer, rain);
+        requireDryNightCancellation(renderer, rainTick);
+        int rainVertices = 0, snowVertices = 0;
+        String precipitation = "";
+        boolean tintPending = false;
+        for (AbstractInsnNode instruction : rain.instructions) {
+            if (instruction instanceof FieldInsnNode field && field.owner.equals(renderer.name)
+                    && (field.name.equals("RAIN_LOCATION") || field.name.equals("SNOW_LOCATION"))) {
+                precipitation = field.name;
+                tintPending = false;
+            } else if (instruction instanceof MethodInsnNode call) {
+                if (call.owner.equals(renderer.name)) {
+                    MethodNode hook = method(renderer, call.name, call.desc);
+                    if (reachesCall(renderer, hook, ROOT + "client/BloodMoonAtmosphere", "rainColor")) tintPending = true;
+                }
+                if (call.owner.equals("com/mojang/blaze3d/vertex/VertexConsumer") && call.name.equals("setColor")
+                        && call.desc.equals("(FFFF)Lcom/mojang/blaze3d/vertex/VertexConsumer;")) {
+                    if (precipitation.equals("RAIN_LOCATION")) {
+                        check(tintPending, "Each of the four native rain vertices must receive its own blood-rain tint");
+                        rainVertices++;
+                    } else if (precipitation.equals("SNOW_LOCATION")) {
+                        check(!tintPending, "Native snow vertices must not receive the blood-rain tint");
+                        snowVertices++;
+                    }
+                    tintPending = false;
+                }
+            }
+        }
+        check(rainVertices == 4 && snowVertices == 4, "Expected four tinted rain vertices and four untouched snow vertices");
+
+        ClassNode provider = transformed("net.minecraft.client.particle.WaterDropParticle$Provider", targets);
+        check(hasMerged(provider, "BloodRainParticleMixin"), "Missing blood-rain splash particle Mixin");
+        MethodNode create = method(provider, "createParticle", "(Lnet/minecraft/core/particles/SimpleParticleType;"
+                + "Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)Lnet/minecraft/client/particle/Particle;");
+        requireReachable(provider, create, ROOT + "client/BloodMoonAtmosphere", "rainColor");
+        requireReachable(provider, create, "net/minecraft/client/particle/Particle", "setColor");
+        ClassNode atmosphere = resourceClass(ROOT + "client/BloodMoonAtmosphere");
+        requireReachable(atmosphere, method(atmosphere, "rainColor", "(Lnet/minecraft/client/multiplayer/ClientLevel;)"
+                + "Lio/github/ningmeng123/mite/client/LunarVisuals$Color;"), ROOT + "client/LunarVisuals", "bloodRainTint");
+        var red = LunarVisuals.bloodRainTint(LunarCalendar.state(31L * 24000L + 6000L, true));
+        check(Math.abs(red.red() - 1F) < .00001F && Math.abs(red.green() - .08F) < .00001F
+                && Math.abs(red.blue() - .08F) < .00001F, "Blood daylight rain and splashes share the red RGB fixture");
+        JsonObject fact = new JsonObject();
+        fact.addProperty("rain_vertices_tinted", rainVertices);
+        fact.addProperty("snow_vertices_untouched", snowVertices);
+        fact.addProperty("dry_night_cancels_rain_rendering_and_tick_before_native_body", true);
+        fact.addProperty("rain_splash_provider_uses_same_color", true);
+        report.add("blood_rain_rendering", fact);
+    }
+    private static void requireDryNightCancellation(ClassNode type, MethodNode entrypoint) {
+        boolean guarded = false, checkedCancellation = false, earlyReturn = false;
+        for (AbstractInsnNode instruction : entrypoint.instructions) {
+            if (instruction instanceof MethodInsnNode call) {
+                // The HEAD callback must cancel before either the dimension effect hook or native weather rendering runs.
+                if (call.owner.equals("net/minecraft/client/multiplayer/ClientLevel") && call.name.equals("effects")) break;
+                if (call.owner.equals(type.name)) {
+                    MethodNode hook = method(type, call.name, call.desc);
+                    if (reachesCall(type, hook, ROOT + "world/LunarWeather", "dryBloodStorm")
+                            && reachesCall(type, hook, "org/spongepowered/asm/mixin/injection/callback/CallbackInfo", "cancel"))
+                        guarded = true;
+                } else if (guarded && call.owner.equals("org/spongepowered/asm/mixin/injection/callback/CallbackInfo")
+                        && call.name.equals("isCancelled")) checkedCancellation = true;
+            } else if (checkedCancellation && instruction.getOpcode() == Opcodes.RETURN) earlyReturn = true;
+        }
+        check(guarded && checkedCancellation && earlyReturn,
+                "Blood-night cancellation must run before the native " + entrypoint.name + " body, including dimension effects");
     }
     private static void requireReachable(ClassNode type, MethodNode start, String owner, String name) {
         check(reachesCall(type, start, owner, name), "Missing reachable injected call " + type.name + "." + start.name + " -> " + owner + "." + name);

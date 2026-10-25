@@ -5,6 +5,8 @@ import io.github.ningmeng123.mite.world.LunarWeather;
 import io.github.ningmeng123.mite.world.LunarWeatherState;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -212,6 +214,58 @@ public final class LunarWeatherSleepGameTests {
             level.getServer().getPlayerList().remove(player); channel.finishAndReleaseAll();
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void nativeBloodNightTransitionStopsClientRainAndDawnStartsItExactlyOnce(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "blood-rain-transition"), false);
+        ServerPlayer player = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation());
+        Connection connection = new Connection(PacketFlow.SERVERBOUND);
+        EmbeddedChannel channel = new EmbeddedChannel(connection);
+        try (WeatherSnapshot saved = new WeatherSnapshot(level)) {
+            level.setDayTime(31L * 24000L + 6000L);
+            level.setRainLevel(1F); level.setThunderLevel(1F); advanceWeather(level);
+            level.getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
+            drainWeatherPackets(channel);
+            for (long offset : new long[]{13000L, 23001L}) {
+                boolean daylight = offset == 23001L;
+                level.setDayTime(31L * 24000L + offset);
+                for (int tick = 0; tick < 120; tick++) advanceWeather(level);
+                List<ClientboundGameEventPacket> transition = drainWeatherPackets(channel);
+                var expected = daylight ? ClientboundGameEventPacket.START_RAINING : ClientboundGameEventPacket.STOP_RAINING;
+                var unexpected = daylight ? ClientboundGameEventPacket.STOP_RAINING : ClientboundGameEventPacket.START_RAINING;
+                helper.assertValueEqual(transition.stream().filter(packet -> packet.getEvent() == expected).count(), 1L,
+                        "The native rain threshold sends exactly one client weather transition at tick" + offset);
+                helper.assertTrue(transition.stream().noneMatch(packet -> packet.getEvent() == unexpected),
+                        "The blood transition never sends the opposite client rain flag at tick" + offset);
+                var lastRain = transition.stream().filter(packet -> packet.getEvent() == ClientboundGameEventPacket.RAIN_LEVEL_CHANGE)
+                        .reduce((previous, current) -> current).orElseThrow();
+                helper.assertTrue(lastRain.getParam() == (daylight ? 1F : 0F),
+                        "The final strength packet replaces START/STOP_RAINING's native reset value at tick" + offset);
+                helper.assertTrue(level.isThundering() && level.getThunderLevel(1F) == 1F,
+                        "The full rain transition leaves blood thunder active at tick" + offset);
+                for (int tick = 0; tick < 20; tick++) advanceWeather(level);
+                helper.assertTrue(drainWeatherPackets(channel).isEmpty(),
+                        "Settled weather sends no packets that could restart client rain at tick" + offset);
+            }
+        } finally {
+            level.getServer().getPlayerList().remove(player); channel.finishAndReleaseAll();
+        }
+        helper.succeed();
+    }
+
+    private static List<ClientboundGameEventPacket> drainWeatherPackets(EmbeddedChannel channel) {
+        channel.runPendingTasks(); channel.flushOutbound();
+        List<ClientboundGameEventPacket> packets = new ArrayList<>();
+        Object packet;
+        while ((packet = channel.readOutbound()) != null) {
+            if (packet instanceof ClientboundGameEventPacket event && (event.getEvent() == ClientboundGameEventPacket.START_RAINING
+                    || event.getEvent() == ClientboundGameEventPacket.STOP_RAINING
+                    || event.getEvent() == ClientboundGameEventPacket.RAIN_LEVEL_CHANGE
+                    || event.getEvent() == ClientboundGameEventPacket.THUNDER_LEVEL_CHANGE)) packets.add(event);
+        }
+        return packets;
     }
 
     @GameTest(template = "empty")
