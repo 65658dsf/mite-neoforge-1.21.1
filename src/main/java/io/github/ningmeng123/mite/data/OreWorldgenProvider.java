@@ -70,6 +70,16 @@ public final class OreWorldgenProvider implements DataProvider {
                 {"type":"neoforge:add_carvers","biomes":"#minecraft:is_overworld",
                   "carvers":"mite:upper_legacy_caves","step":"air"}
                 """);
+        save(work, cache, "data/mite/worldgen/configured_feature/surface_cave_connections.json", """
+                {"type":"mite:surface_cave_connections","config":{}}
+                """);
+        save(work, cache, "data/mite/worldgen/placed_feature/surface_cave_connections.json", """
+                {"feature":"mite:surface_cave_connections","placement":[]}
+                """);
+        save(work, cache, "data/mite/neoforge/biome_modifier/add_surface_cave_connections.json", """
+                {"type":"neoforge:add_features","biomes":"#minecraft:is_overworld",
+                  "features":["mite:surface_cave_connections"],"step":"local_modifications"}
+                """);
         // Keep the fossil feature/structure shape. Its independent coal/diamond overlay becomes bone,
         // so the preserved modern structure cannot bypass the source mineral rarity and depth.
         for (String fossil : List.of("fossil_coal", "fossil_diamonds")) {
