@@ -38,7 +38,7 @@ public final class BundledDefaultsGameTests {
             MiteConfig.SPEC.correct(legacy);
             preserve(helper, original, legacy, List.of());
             helper.assertValueEqual(((Number)legacy.get("overworld_ores.coal")).doubleValue(), 2.8D, "Missing regular coal uses the latest requested default");
-            helper.assertValueEqual(((Number)legacy.get("overworld_ores.deepslate_coal")).doubleValue(), 2.8D, "Missing deep coal uses two point eight");
+            helper.assertValueEqual(((Number)legacy.get("overworld_ores.deepslate_coal")).doubleValue(), 2.8D, "Missing deep coal uses the latest requested default");
             helper.assertValueEqual(((Number)legacy.get("overworld_ores.emerald")).doubleValue(), 1.5D, "Missing regular emerald uses one point five");
             helper.assertValueEqual(((Number)legacy.get("overworld_ores.deepslate_emerald")).doubleValue(), 1.5D, "Missing deep emerald uses one point five");
             helper.assertValueEqual(((Number)legacy.get("underworld_generation.coal.candidates")).doubleValue(), 50D, "Old exports gain actual underworld coal candidates");
@@ -50,7 +50,7 @@ public final class BundledDefaultsGameTests {
     @GameTest(template="empty")
     public static void latestSurfaceOreRatesReachFactoryResetAndSnapshotWithoutChangingUnderworld(GameTestHelper helper) {
         var kinds = new R196OreRules.Kind[]{R196OreRules.Kind.COAL, R196OreRules.Kind.COPPER, R196OreRules.Kind.SILVER};
-        double[] surface = {2.8D, 4.5D, 4.5D}, underworld = {1D, 3D, 3D};
+        double[] surface = {2.8D, 3.69D, 4.77D}, underworld = {1D, 3D, 3D};
         for (int index = 0; index < kinds.length; index++) for (boolean deep : new boolean[]{false, true}) {
             var kind = kinds[index];
             String key = deep ? R196OreRules.deepslateMultiplierKey(kind) : kind.name();

@@ -27,26 +27,27 @@
 	deepslate_lapis = 2.0
 
 [overworld_ores]
+	# Pre-adjustment defaults multiplied by the user-selected comparison factors (2026-10-25).
 	coal = 2.8
 	emerald = 1.5
 	deepslate_coal = 2.8
 	deepslate_emerald = 1.5
-	copper = 4.5
-	silver = 4.5
-	iron = 3.0
-	gold = 4.0
-	mithril = 2.0
-	lapis = 2.0
+	copper = 3.69
+	silver = 4.77
+	iron = 2.01
+	gold = 6.32
+	mithril = 1.68
+	lapis = 2.28
 	diamond = 3.0
 	adamantium = 0.0
-	deepslate_copper = 4.5
-	deepslate_silver = 4.5
-	deepslate_iron = 5.0
-	deepslate_gold = 4.0
-	deepslate_mithril = 3.0
-	deepslate_lapis = 4.0
+	deepslate_copper = 3.69
+	deepslate_silver = 4.77
+	deepslate_iron = 3.35
+	deepslate_gold = 6.32
+	deepslate_mithril = 2.52
+	deepslate_lapis = 4.56
 	deepslate_diamond = 3.0
-	deepslate_adamantium = 1.0
+	deepslate_adamantium = 0.0
 
 	[underworld_generation.gravel]
 		candidates = 300.0
@@ -113,40 +114,41 @@
 		height_range = ""
 
 	[overworld_generation.copper]
+		# Empty height overrides preserve source sampling before the modern Y mapping.
 		candidates = 40.0
 		chance_percent = 10.0
-		height_range = "[-64,168]"
-		deepslate_height_range = "[-64,168]"
+		height_range = ""
+		deepslate_height_range = ""
 
 	[overworld_generation.silver]
 		candidates = 10.0
 		chance_percent = 10.0
-		height_range = "[-64,168]"
+		height_range = ""
 		deepslate_height_range = ""
 
 	[overworld_generation.iron]
 		candidates = 60.0
 		chance_percent = 10.0
-		height_range = "[-64,168]"
+		height_range = ""
 		deepslate_height_range = ""
 
 	[overworld_generation.gold]
 		candidates = 20.0
 		chance_percent = 10.0
-		height_range = "[-64,168]"
-		deepslate_height_range = "[-64,64]"
+		height_range = ""
+		deepslate_height_range = ""
 
 	[overworld_generation.mithril]
 		candidates = 10.0
 		chance_percent = 10.0
-		height_range = "[-64,68]"
+		height_range = ""
 		deepslate_height_range = ""
 
 	[overworld_generation.lapis]
 		candidates = 5.0
 		chance_percent = 10.0
-		height_range = "[-64,168]"
-		deepslate_height_range = "[-48,64]"
+		height_range = ""
+		deepslate_height_range = ""
 
 	[overworld_generation.diamond]
 		candidates = 5.0
