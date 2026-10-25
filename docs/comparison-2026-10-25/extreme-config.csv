@@ -1,0 +1,31 @@
+﻿key,default,registered_for_file,description,declared_range,source,note
+BlnGravel,true,True,是否增加燧石概率,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:147,min/max仅元数据，setConfigValue不强制范围
+isOpenStrongBoxBreakRecord,true,True,是否开启私人箱子破坏记录,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:148,min/max仅元数据，setConfigValue不强制范围
+isRecipeGATorch,true,True,是否有一捆火把配方,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:149,min/max仅元数据，setConfigValue不强制范围
+isRecipeRingKiller,true,True,是否有魔灵刃配方,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:150,min/max仅元数据，setConfigValue不强制范围
+isSpawnExchanger,true,True,是否生成转移骷髅,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:151,min/max仅元数据，setConfigValue不强制范围
+fancyRedExp,500,True,红钻经验,"0, 10000",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:152,min/max仅元数据，setConfigValue不强制范围
+emeraldFrequencyBigHills,6,True,全主世界群系绿宝石矿每区块最少生成个数,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:153,min/max仅元数据，setConfigValue不强制范围
+fancyRedFrequencyUnderworld,1,True,地底世界红钻矿生成频率,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:154,min/max仅元数据，setConfigValue不强制范围
+plantGrowthRate,Float.valueOf(0.5f),True,作物生长速度倍率,"Float.valueOf(0.0f), Float.valueOf(1.0f)",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:155,min/max仅元数据，setConfigValue不强制范围
+whichDayGenVillage,60,True,多少天生成村庄,"1, 500",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:156,min/max仅元数据，setConfigValue不强制范围
+maxLevelLimit,300,True,玩家最大限制等级,"0, 1000",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:157,min/max仅元数据，setConfigValue不强制范围
+zombieBossSpawnPercent,Float.valueOf(0.5f),False,挖掘刷怪笼多大几率刷出僵尸BOSS,"Float.valueOf(0.0f), Float.valueOf(1.0f)",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:158,仅声明；loadConfigs未注册，文件无法配置
+zombieBossHealthIncrement,45,True,僵尸BOSS每阶段血量增量,"0, 1000",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:159,min/max仅元数据，setConfigValue不强制范围
+creeperFuseTime,30,True,苦力怕蓄力时间(tick),"10, 1000",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:160,min/max仅元数据，setConfigValue不强制范围
+skeletonRideBat,true,True,骷髅有概率骑蝙蝠,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:161,min/max仅元数据，setConfigValue不强制范围
+creeperRideBat,true,True,苦力怕有概率骑蝙蝠,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:162,min/max仅元数据，setConfigValue不强制范围
+highLightLevelSpawn,true,True,亮度大于等于12才能阻止怪物刷新,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:163,min/max仅元数据，setConfigValue不强制范围
+witchLordSpawnFrequency,1,True,女巫领主生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:164,min/max仅元数据，setConfigValue不强制范围
+witchLordSpawnLimitDay,96,True,女巫领主最早生成天数,"0, 1000",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:165,min/max仅元数据，setConfigValue不强制范围
+invisibleReversedCreeperSpawnFrequency,2,True,隐形颠倒苦力怕生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:166,min/max仅元数据，setConfigValue不强制范围
+skeletonFloatingSpawnFrequency,3,True,漂浮骷髅生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:167,min/max仅元数据，setConfigValue不强制范围
+skeletonKnockbackSpawnFrequency,5,True,击飞骷髅生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:168,min/max仅元数据，setConfigValue不强制范围
+zombieKnockbackSpawnFrequency,6,True,击退僵尸生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:169,min/max仅元数据，setConfigValue不强制范围
+chaosCreeperSpawnFrequency,2,True,混乱苦力怕生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:170,min/max仅元数据，setConfigValue不强制范围
+revenantGhastSpawnFrequency,1,True,亡灵恶魂生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:171,min/max仅元数据，setConfigValue不强制范围
+skeletonLightningSpawnFrequency,1,True,闪电骷髅生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:172,min/max仅元数据，setConfigValue不强制范围
+zombieInvisibleLookUpSpawnFrequency,10,True,仰头僵尸生成权重,"0, 100",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:173,min/max仅元数据，setConfigValue不强制范围
+whichDayLongerDayTime,96,True,多少天之前白天时间延长,,.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:174,min/max仅元数据，setConfigValue不强制范围
+underworldPenaltyTriggerTicks,54000,True,地底世界惩罚触发累计时间(tick),"1, Integer.MAX_VALUE",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:175,min/max仅元数据，setConfigValue不强制范围
+underworldPenaltyRecoveryTicks,24000,True,地底世界惩罚恢复所需非地底停留时间(tick),"1, Integer.MAX_VALUE",.reference/extreme/decompiled/cn/wensc/mitemod/extreme/util/EXConfigs.java:176,min/max仅元数据，setConfigValue不强制范围

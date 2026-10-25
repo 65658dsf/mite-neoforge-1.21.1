@@ -1,0 +1,6816 @@
+[
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/achievement/MITEITEAchievementRegistryInit.java",
+    "line": 14,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "4个新成就：振金锭、全套振金甲、振金砧、振金炉。",
+    "methods": [
+      {
+        "name": "registerAchievements",
+        "line": 20
+      },
+      {
+        "name": "getNextAchievementID",
+        "line": 27
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEAnimal.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getBreedExp",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEArrowAttack.java",
+    "line": 8,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getEntityHost",
+        "line": 9
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEBat.java",
+    "line": 8,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "setSpawnedByWitch",
+        "line": 9
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEBeacon.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "clearAllPlayersBoost",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEBlock.java",
+    "line": 8,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getItemDisplayName",
+        "line": 9
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITECart.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "isInPortal",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEClientPlayer.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getPhytonutrients",
+        "line": 7
+      },
+      {
+        "name": "setPhytonutrients",
+        "line": 11
+      },
+      {
+        "name": "getProtein",
+        "line": 15
+      },
+      {
+        "name": "setProtein",
+        "line": 19
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEDamage.java",
+    "line": 8,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getResponsibleEntityP",
+        "line": 9
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEEnchantment.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getNumLevelsForVibranium",
+        "line": 7
+      },
+      {
+        "name": "enchantIndividually",
+        "line": 11
+      },
+      {
+        "name": "enchantIndividualChance",
+        "line": 15
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEGuiIngame.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "setOverlayMsg",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEIronGolem.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "isBoosted",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEItem.java",
+    "line": 19,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getMaterials",
+        "line": 21
+      },
+      {
+        "name": "addExpForTool",
+        "line": 24
+      },
+      {
+        "name": "setSugarContent",
+        "line": 27
+      },
+      {
+        "name": "addModifierLevelFor",
+        "line": 29
+      },
+      {
+        "name": "getAttrModifiers",
+        "line": 31
+      },
+      {
+        "name": "getCookTime",
+        "line": 35
+      },
+      {
+        "name": "getExpReqForLevel",
+        "line": 38
+      },
+      {
+        "name": "getMeleeDamageBonus",
+        "line": 40
+      },
+      {
+        "name": "getResourceLocationPrefix",
+        "line": 42
+      },
+      {
+        "name": "getToolLevel",
+        "line": 44
+      },
+      {
+        "name": "hasExpAndLevel",
+        "line": 46
+      },
+      {
+        "name": "isMaxToolLevel",
+        "line": 49
+      },
+      {
+        "name": "isWeapon",
+        "line": 51
+      },
+      {
+        "name": "onItemLevelUp",
+        "line": 53
+      },
+      {
+        "name": "getStrVsBlock",
+        "line": 55
+      },
+      {
+        "name": "isMeat",
+        "line": 57
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEItemEntity.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "canBePickUpByPlayer",
+        "line": 7
+      },
+      {
+        "name": "setCanBePickUpByPlayer",
+        "line": 9
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITELivingBase.java",
+    "line": 11,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "canBeTargetTo",
+        "line": 12
+      },
+      {
+        "name": "checkForAfterDamage",
+        "line": 16
+      },
+      {
+        "name": "tryDamageArmorP",
+        "line": 20
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITELivingEntity.java",
+    "line": 11,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getPickedUpAHeldItemArray",
+        "line": 13
+      },
+      {
+        "name": "canBeDisarmed",
+        "line": 15
+      },
+      {
+        "name": "getWeaponDamageBoost",
+        "line": 17
+      },
+      {
+        "name": "getDisarmingChance",
+        "line": 19
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEMaterial.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getMinHarvestLevel",
+        "line": 7
+      },
+      {
+        "name": "getDurability",
+        "line": 11
+      },
+      {
+        "name": "getName",
+        "line": 15
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEMob.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getChanceOfCausingFire",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITENetHandler.java",
+    "line": 14,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "handleCraftingBoost",
+        "line": 15
+      },
+      {
+        "name": "handleOverlayMessage",
+        "line": 18
+      },
+      {
+        "name": "handleSyncItems",
+        "line": 21
+      },
+      {
+        "name": "processFinishForgingPacket",
+        "line": 24
+      },
+      {
+        "name": "processForgingTableInfoPacket",
+        "line": 27
+      },
+      {
+        "name": "processStartForgingPacket",
+        "line": 30
+      },
+      {
+        "name": "handleUpdateDefense",
+        "line": 33
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEPlayer.java",
+    "line": 9,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "displayGUIForgingTable",
+        "line": 10
+      },
+      {
+        "name": "setCraftingBoostFactor",
+        "line": 14
+      },
+      {
+        "name": "setCraftingBoostTimer",
+        "line": 18
+      },
+      {
+        "name": "getCraftingBoostFactor",
+        "line": 22
+      },
+      {
+        "name": "canDefense",
+        "line": 26
+      },
+      {
+        "name": "setDefenseCooldown",
+        "line": 30
+      },
+      {
+        "name": "itemsSynced",
+        "line": 34
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEPlugin.java",
+    "line": 8,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "register",
+        "line": 9
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEPortal.java",
+    "line": 8,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "setRuneTypeOverride",
+        "line": 9
+      },
+      {
+        "name": "setPortalSeedOverride",
+        "line": 11
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITERecipe.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "isExtendsNBT",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITERegistry.java",
+    "line": 11,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "registerExpForLevel",
+        "line": 12
+      },
+      {
+        "name": "registerWeaponCriteria",
+        "line": 14
+      },
+      {
+        "name": "registerMeatCriteria",
+        "line": 16
+      },
+      {
+        "name": "registerForgingRecipe",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITERenderer.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "forceGlowOverride",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITESkeleton.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "initStockedWeapon",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEStack.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getForgingGrade",
+        "line": 7
+      },
+      {
+        "name": "getEnhanceFactor",
+        "line": 11
+      },
+      {
+        "name": "getEmergencyCooldown",
+        "line": 15
+      },
+      {
+        "name": "setEmergencyCooldown",
+        "line": 19
+      },
+      {
+        "name": "setForgingGrade",
+        "line": 23
+      },
+      {
+        "name": "fixNBT",
+        "line": 27
+      },
+      {
+        "name": "setIsArtifact",
+        "line": 31
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEWitch.java",
+    "line": 8,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getSummon_wolf_target",
+        "line": 9
+      },
+      {
+        "name": "setSummon_wolf_target",
+        "line": 13
+      },
+      {
+        "name": "getSummon_wolf_countdown",
+        "line": 17
+      },
+      {
+        "name": "setSummon_wolf_countdown",
+        "line": 21
+      },
+      {
+        "name": "isHas_summoned_wolves",
+        "line": 25
+      },
+      {
+        "name": "setHas_summoned_wolves",
+        "line": 29
+      },
+      {
+        "name": "getCurse_random_seed",
+        "line": 33
+      },
+      {
+        "name": "summonWolvesITE",
+        "line": 37
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEWorld.java",
+    "line": 8,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": [
+      {
+        "name": "getDayOfOverworld",
+        "line": 9
+      },
+      {
+        "name": "anySolidBlockIn",
+        "line": 13
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/ITEWorldInfoShared.java",
+    "line": 6,
+    "entry": "接口契约",
+    "mechanism": "跨mixin/父类的接口契约与默认方法；调用入口由对应事件/实现类提供，不独立注册玩法。",
+    "methods": []
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/api/IUpgradableItem.java",
+    "line": 10,
+    "entry": "接口契约",
+    "mechanism": "成长接口；锻造经验奖励g(g+1)*.025，工具/护甲调用各有截断与护甲额外倍数。",
+    "methods": [
+      {
+        "name": "getExpReqForLevel",
+        "line": 11
+      },
+      {
+        "name": "isMaxToolLevel",
+        "line": 13
+      },
+      {
+        "name": "getMaxToolLevel",
+        "line": 15
+      },
+      {
+        "name": "getEquipmentExpBounce",
+        "line": 17
+      },
+      {
+        "name": "addExpForTool",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/block/BlockAnvilMITEITE.java",
+    "line": 11,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "振金铁砧贴图/材质，保留父类铁砧行为。",
+    "methods": [
+      {
+        "name": "registerIcons",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/block/BlockForgingTable.java",
+    "line": 33,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "四阶单人独占9槽强化台；上方可通过才打开；便携，拆除掉库存，工具材质材料为铁。",
+    "methods": [
+      {
+        "name": "isValidMetadata",
+        "line": 47
+      },
+      {
+        "name": "getBlockSubtypeUnchecked",
+        "line": 51
+      },
+      {
+        "name": "getItemDisplayName",
+        "line": 56
+      },
+      {
+        "name": "getMetadataNotes",
+        "line": 60
+      },
+      {
+        "name": "getIcon",
+        "line": 64
+      },
+      {
+        "name": "registerIcons",
+        "line": 74
+      },
+      {
+        "name": "breakBlock",
+        "line": 84
+      },
+      {
+        "name": "createNewTileEntity",
+        "line": 91
+      },
+      {
+        "name": "getItemStacks",
+        "line": 95
+      },
+      {
+        "name": "addItemBlockMaterials",
+        "line": 99
+      },
+      {
+        "name": "getTextures",
+        "line": 103
+      },
+      {
+        "name": "getNames",
+        "line": 107
+      },
+      {
+        "name": "isPortable",
+        "line": 111
+      },
+      {
+        "name": "onBlockActivated",
+        "line": 115
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/block/BlockFurnaceVibranium.java",
+    "line": 11,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "振金熔炉最大热量5，切换亮/灭身份及贴图。",
+    "methods": [
+      {
+        "name": "registerIcons",
+        "line": 17
+      },
+      {
+        "name": "getMaxHeatLevel",
+        "line": 23
+      },
+      {
+        "name": "getActiveBlockID",
+        "line": 27
+      },
+      {
+        "name": "getIdleBlockID",
+        "line": 31
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/block/BlockNetherAdamantiumOre.java",
+    "line": 12,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "下界艾德曼矿，最低工具4；烟雾显示。",
+    "methods": [
+      {
+        "name": "randomDisplayTick",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/block/BlockWorkbenchMITEITE.java",
+    "line": 12,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "振金工作台的材质、贴图与图标；制造速度0.55由注册参数提供。",
+    "methods": [
+      {
+        "name": "getIcon",
+        "line": 20
+      },
+      {
+        "name": "registerIcons",
+        "line": 30
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/block/MITEITEBlockRegistryInit.java",
+    "line": 30,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "8个方块身份（炉亮/灭分开）、4阶强化台、振金砧/块/工作台/私人箱/炉及下界艾德曼矿；所有配方。",
+    "methods": [
+      {
+        "name": "getNextBlockID",
+        "line": 45
+      },
+      {
+        "name": "registerItemBlocks",
+        "line": 49
+      },
+      {
+        "name": "registerRecipes",
+        "line": 61
+      },
+      {
+        "name": "registerForgingTableUpgradeRecipes",
+        "line": 74
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/command/CommandForging.java",
+    "line": 18,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "权限2命令/forging 玩家 set 数字，直接改手持装备forging_grade；缺少完整参数/范围保护。",
+    "methods": [
+      {
+        "name": "getCommandName",
+        "line": 20
+      },
+      {
+        "name": "getCommandUsage",
+        "line": 24
+      },
+      {
+        "name": "getRequiredPermissionLevel",
+        "line": 28
+      },
+      {
+        "name": "processCommand",
+        "line": 32
+      },
+      {
+        "name": "getAllUsernames",
+        "line": 48
+      },
+      {
+        "name": "addTabCompletionOptions",
+        "line": 52
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/command/CommandItemLevel.java",
+    "line": 21,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "权限2命令/itemlevel 玩家 set level|xp 数字，直接改手持装备等级/经验。",
+    "methods": [
+      {
+        "name": "getCommandName",
+        "line": 23
+      },
+      {
+        "name": "getCommandUsage",
+        "line": 27
+      },
+      {
+        "name": "getRequiredPermissionLevel",
+        "line": 31
+      },
+      {
+        "name": "processCommand",
+        "line": 35
+      },
+      {
+        "name": "getAllUsernames",
+        "line": 60
+      },
+      {
+        "name": "addTabCompletionOptions",
+        "line": 64
+      },
+      {
+        "name": "getArmorModifierTypeText",
+        "line": 77
+      },
+      {
+        "name": "getToolModifierTypeText",
+        "line": 81
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/compat/MITEITEEmiPlugin.java",
+    "line": 19,
+    "entry": "fml.mod.json入口",
+    "mechanism": "可选EMI工作站展示、锻造侧栏遮挡区；未注册完整独立锻造配方分类。",
+    "methods": [
+      {
+        "name": "register",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/config/EditorLauncher.java",
+    "line": 12,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "独立Java主函数打开旧配置编辑器，不是游戏内菜单入口。",
+    "methods": [
+      {
+        "name": "main",
+        "line": 13
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/creativetab/CreativeTabsITE.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "ITE独立创造页及振金图标。",
+    "methods": [
+      {
+        "name": "getTabIconItemIndex",
+        "line": 15
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/EarlyRiser.java",
+    "line": 10,
+    "entry": "fml.mod.json入口",
+    "mechanism": "预加载扩展5种聊天颜色与振金装备材料枚举；振金512耐久倍率/120附魔能力/传奇品质上限。",
+    "methods": [
+      {
+        "name": "onPreLaunch",
+        "line": 12
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/entity/EntityAncientDragon.java",
+    "line": 10,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "注册为EntityTest的测试古代龙：600生命/15攻击/体型6×10；无自然生成池入口。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/entity/EntityAnnihilationSkeleton.java",
+    "line": 30,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "湮灭骷髅：30血、约21亿攻击、振金匕首击退V、玩家近战且高差<3才受伤、免火/岩浆/击退/网/药水、交战3600tick消失、掉5振金粒+2钻石。",
+    "methods": [
+      {
+        "name": "canCatchFire",
+        "line": 46
+      },
+      {
+        "name": "calcFallDamage",
+        "line": 50
+      },
+      {
+        "name": "setAttackTarget",
+        "line": 55
+      },
+      {
+        "name": "setEntityToAttack",
+        "line": 60
+      },
+      {
+        "name": "addPotionEffect",
+        "line": 65
+      },
+      {
+        "name": "addRandomWeapon",
+        "line": 68
+      },
+      {
+        "name": "writeEntityToNBT",
+        "line": 72
+      },
+      {
+        "name": "readEntityFromNBT",
+        "line": 77
+      },
+      {
+        "name": "addRandomArmor",
+        "line": 84
+      },
+      {
+        "name": "onLivingUpdate",
+        "line": 87
+      },
+      {
+        "name": "isHarmedByLava",
+        "line": 106
+      },
+      {
+        "name": "isPushedByWater",
+        "line": 110
+      },
+      {
+        "name": "setInWeb",
+        "line": 114
+      },
+      {
+        "name": "handleWaterMovement",
+        "line": 117
+      },
+      {
+        "name": "canPickUpLoot",
+        "line": 121
+      },
+      {
+        "name": "canBeKnockedBack",
+        "line": 125
+      },
+      {
+        "name": "handleLavaMovement",
+        "line": 129
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 133
+      },
+      {
+        "name": "attackEntityFrom",
+        "line": 140
+      },
+      {
+        "name": "dropFewItems",
+        "line": 154
+      },
+      {
+        "name": "getCanSpawnHere",
+        "line": 161
+      },
+      {
+        "name": "onSpawnWithEgg",
+        "line": 165
+      },
+      {
+        "name": "addRandomEquipment",
+        "line": 169
+      },
+      {
+        "name": "getMaxSpawnedInChunk",
+        "line": 173
+      },
+      {
+        "name": "canBeDisarmed",
+        "line": 178
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/entity/EntityLargeFireballNB.java",
+    "line": 16,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "恶魂不可反弹火球：直击6，爆炸仅下界破坏地形。",
+    "methods": [
+      {
+        "name": "onImpact",
+        "line": 22
+      },
+      {
+        "name": "canBeCollidedWith",
+        "line": 32
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/entity/EntityWanderingWitch.java",
+    "line": 41,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "80血流浪女巫、逃跑/近距泼药减速、视线32格一次诅咒、最多8夜翼/巨吸血蝠援军；出生概率/日期门槛；NBT读写方向异常。",
+    "methods": [
+      {
+        "name": "cursePlayer",
+        "line": 56
+      },
+      {
+        "name": "canBeTargetTo",
+        "line": 60
+      },
+      {
+        "name": "cursePlayerSpecial",
+        "line": 64
+      },
+      {
+        "name": "getAggressive",
+        "line": 74
+      },
+      {
+        "name": "getCanSpawnHere",
+        "line": 88
+      },
+      {
+        "name": "onAllyBatsDeath",
+        "line": 106
+      },
+      {
+        "name": "onLivingUpdate",
+        "line": 110
+      },
+      {
+        "name": "attackEntityWithRangedAttack",
+        "line": 133
+      },
+      {
+        "name": "summonWolvesITE",
+        "line": 159
+      },
+      {
+        "name": "considerStopFleeing",
+        "line": 192
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 196
+      },
+      {
+        "name": "readEntityFromNBT",
+        "line": 202
+      },
+      {
+        "name": "dropFewItems",
+        "line": 208
+      },
+      {
+        "name": "writeEntityToNBT",
+        "line": 214
+      },
+      {
+        "name": "getMaxSpawnedInChunk",
+        "line": 224
+      },
+      {
+        "name": "shouldExecute",
+        "line": 234
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/entity/EntityZombieLord.java",
+    "line": 19,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "振金全装僵尸领主、常驻速度/力量I、防缴械/燃烧、生命50+d/14攻击12+d/48，玩家击杀3钻石。",
+    "methods": [
+      {
+        "name": "addRandomEquipment",
+        "line": 27
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 38
+      },
+      {
+        "name": "canBeDisarmed",
+        "line": 47
+      },
+      {
+        "name": "dropFewItems",
+        "line": 51
+      },
+      {
+        "name": "canCatchFire",
+        "line": 60
+      },
+      {
+        "name": "onUpdate",
+        "line": 64
+      },
+      {
+        "name": "getMaxSpawnedInChunk",
+        "line": 76
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/entity/EntityZombiePigmanLord.java",
+    "line": 23,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "猪人领主同振金装/属性/掉落，并保留猪人行为与熔岩粒子。",
+    "methods": [
+      {
+        "name": "addRandomEquipment",
+        "line": 31
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 42
+      },
+      {
+        "name": "handleHealthUpdate",
+        "line": 50
+      },
+      {
+        "name": "dropFewItems",
+        "line": 57
+      },
+      {
+        "name": "canBeDisarmed",
+        "line": 67
+      },
+      {
+        "name": "canCatchFire",
+        "line": 71
+      },
+      {
+        "name": "onUpdate",
+        "line": 75
+      },
+      {
+        "name": "getMaxSpawnedInChunk",
+        "line": 87
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/EventListeners.java",
+    "line": 10,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "将Fish事件监听器加入MITE事件总线，并调用RIC事件安装。",
+    "methods": [
+      {
+        "name": "registerAllEvents",
+        "line": 11
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/listener/AchievementListener.java",
+    "line": 17,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "制造振金炉、冶炼振金锭/振金砧的成就触发（触发入口与配方获得方式未完全一致）。",
+    "methods": [
+      {
+        "name": "onItemCrafted",
+        "line": 19
+      },
+      {
+        "name": "onItemSmelt",
+        "line": 28
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/listener/CraftingRegistry.java",
+    "line": 11,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "实际调用ITE物品与方块配方注册。",
+    "methods": [
+      {
+        "name": "accept",
+        "line": 14
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/listener/FurnaceExtend.java",
+    "line": 17,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "煤块→钻石碎块、下界艾德曼→锭；无extreme/extreme-lh时金属升级；special注册疑似误把烹饪tick当堆数。",
+    "methods": [
+      {
+        "name": "accept",
+        "line": 20
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/listener/PlayerAttributeListener.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "生命至少clamp(6+2*floor(level/5),6,40)，与原上限取max。",
+    "methods": [
+      {
+        "name": "onHealthLimitModify",
+        "line": 11
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/listener/PlayerCombatListener.java",
+    "line": 21,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "范围附魔每级+0.25格、稳固抗击退、不屈低血增伤、异界猎魔增伤、效率/水动力/不自然/锻造挖速。",
+    "methods": [
+      {
+        "name": "onPlayerBlockReachModify",
+        "line": 23
+      },
+      {
+        "name": "onPlayerEntityReachModify",
+        "line": 32
+      },
+      {
+        "name": "onPlayerReceiveKnockBackModify",
+        "line": 41
+      },
+      {
+        "name": "onPlayerRawMeleeDamageModify",
+        "line": 50
+      },
+      {
+        "name": "getIndomitableAmp",
+        "line": 71
+      },
+      {
+        "name": "onPlayerRawStrVsBlockModify",
+        "line": 87
+      },
+      {
+        "name": "getMultipliedHarvestEfficiency",
+        "line": 94
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/listener/TickListener.java",
+    "line": 16,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "第一天总时间等于12000时一次性回拨至0；持久标记防重复。",
+    "methods": [
+      {
+        "name": "onServerTick",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/MITEITEFishEvents.java",
+    "line": 61,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "注册物品、方块物品、实体/渲染、附魔、成就、方块实体、两条管理命令和7类自定义包；sleep列未睡玩家；开发命令；登录提示。",
+    "methods": [
+      {
+        "name": "handleChatCommand",
+        "line": 63
+      },
+      {
+        "name": "onPacketRegister",
+        "line": 126
+      },
+      {
+        "name": "onItemRegister",
+        "line": 137
+      },
+      {
+        "name": "onRecipeRegister",
+        "line": 143
+      },
+      {
+        "name": "onEnchantmentRegister",
+        "line": 147
+      },
+      {
+        "name": "onAchievementRegister",
+        "line": 152
+      },
+      {
+        "name": "onPlayerLoggedIn",
+        "line": 157
+      },
+      {
+        "name": "onEntityRegister",
+        "line": 163
+      },
+      {
+        "name": "onEntityRendererRegister",
+        "line": 172
+      },
+      {
+        "name": "onTileEntityRegister",
+        "line": 179
+      },
+      {
+        "name": "onCommandRegister",
+        "line": 184
+      },
+      {
+        "name": "onRecipesModify",
+        "line": 190
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/MITEITERICEvents.java",
+    "line": 40,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "RIC冶炼、烧制加速、振金额外附魔数、碎石振金粒、信标振金支付/底座、生成条件、配方、战斗、交易、生命、护甲贴图、tick与成就入口。",
+    "methods": [
+      {
+        "name": "register",
+        "line": 44
+      },
+      {
+        "name": "onFurnaceCookTimeTargetModify",
+        "line": 47
+      },
+      {
+        "name": "onMaxEnchantNumModify",
+        "line": 61
+      },
+      {
+        "name": "onBlockValidModify",
+        "line": 68
+      },
+      {
+        "name": "onItemValidModify",
+        "line": 72
+      },
+      {
+        "name": "getArmorTexture",
+        "line": 98
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/events/MITEITESpawnConditions.java",
+    "line": 14,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "恶魂主世界血月且128日起；巨人血月；远古骷髅公爵主世界血月；湮灭骷髅排除满水方块。",
+    "methods": [
+      {
+        "name": "accept",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/gui/GuiForgingTable.java",
+    "line": 25,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "开始按钮、进度条、失败率/失败惩罚/耗时/斧锤耐久的侧栏展示。",
+    "methods": [
+      {
+        "name": "initGui",
+        "line": 53
+      },
+      {
+        "name": "drawGuiContainerBackgroundLayer",
+        "line": 65
+      },
+      {
+        "name": "sendProgressBarUpdate",
+        "line": 94
+      },
+      {
+        "name": "updateScreen",
+        "line": 98
+      },
+      {
+        "name": "setWorldAndResolution",
+        "line": 108
+      },
+      {
+        "name": "sendSlotContents",
+        "line": 116
+      },
+      {
+        "name": "sendContainerAndContentsToPlayer",
+        "line": 119
+      },
+      {
+        "name": "drawScreen",
+        "line": 122
+      },
+      {
+        "name": "actionPerformed",
+        "line": 126
+      },
+      {
+        "name": "enableButton",
+        "line": 134
+      },
+      {
+        "name": "setInfo",
+        "line": 138
+      },
+      {
+        "name": "setEnhanceInfo",
+        "line": 144
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/inventory/container/ContainerForgingTable.java",
+    "line": 30,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "服务端强化容器、shift移动、距离8格检查、成功失败/材料需求/进度同步。",
+    "methods": [
+      {
+        "name": "addSlot",
+        "line": 61
+      },
+      {
+        "name": "canInteractWith",
+        "line": 65
+      },
+      {
+        "name": "detectAndSendChanges",
+        "line": 72
+      },
+      {
+        "name": "getInventory",
+        "line": 98
+      },
+      {
+        "name": "updateProgressBar",
+        "line": 106
+      },
+      {
+        "name": "onContainerClosed",
+        "line": 112
+      },
+      {
+        "name": "addCraftingToCrafters",
+        "line": 119
+      },
+      {
+        "name": "onCraftMatrixChanged",
+        "line": 124
+      },
+      {
+        "name": "sendToolInfo",
+        "line": 137
+      },
+      {
+        "name": "sendTableInfo",
+        "line": 143
+      },
+      {
+        "name": "startForging",
+        "line": 150
+      },
+      {
+        "name": "transferStackInSlot",
+        "line": 161
+      },
+      {
+        "name": "getForgingTime",
+        "line": 193
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/inventory/container/ForgingTableSlots.java",
+    "line": 30,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "5材料+装备+斧+战锤+输出九槽；完整匹配消耗；高阶斧/锤减少失败率并缩短时间；序列化库存。",
+    "methods": [
+      {
+        "name": "getSize",
+        "line": 45
+      },
+      {
+        "name": "getAxeSlotIndex",
+        "line": 49
+      },
+      {
+        "name": "getHammerSlotIndex",
+        "line": 53
+      },
+      {
+        "name": "getOutputIndex",
+        "line": 57
+      },
+      {
+        "name": "isItemValid",
+        "line": 72
+      },
+      {
+        "name": "isItemValid",
+        "line": 78
+      },
+      {
+        "name": "isItemValid",
+        "line": 84
+      },
+      {
+        "name": "costItems",
+        "line": 90
+      },
+      {
+        "name": "damageHammerAndAxe",
+        "line": 106
+      },
+      {
+        "name": "damageItem",
+        "line": 111
+      },
+      {
+        "name": "writeToNBT",
+        "line": 121
+      },
+      {
+        "name": "getChanceOfFailure",
+        "line": 133
+      },
+      {
+        "name": "getToolItemSlotIndex",
+        "line": 147
+      },
+      {
+        "name": "dropItems",
+        "line": 151
+      },
+      {
+        "name": "getAxeItem",
+        "line": 183
+      },
+      {
+        "name": "getEffectivityFactorFromTool",
+        "line": 187
+      },
+      {
+        "name": "getHammerItem",
+        "line": 191
+      },
+      {
+        "name": "getNeedItems",
+        "line": 195
+      },
+      {
+        "name": "onItemsChanged",
+        "line": 202
+      },
+      {
+        "name": "getOutput",
+        "line": 212
+      },
+      {
+        "name": "setOutput",
+        "line": 216
+      },
+      {
+        "name": "getRecipeFromTool",
+        "line": 221
+      },
+      {
+        "name": "updateInfo",
+        "line": 225
+      },
+      {
+        "name": "onFinishForging",
+        "line": 231
+      },
+      {
+        "name": "getToolItem",
+        "line": 237
+      },
+      {
+        "name": "updateSlots",
+        "line": 241
+      },
+      {
+        "name": "updateTime",
+        "line": 247
+      },
+      {
+        "name": "setToolItem",
+        "line": 253
+      },
+      {
+        "name": "getUsedRecipe",
+        "line": 257
+      },
+      {
+        "name": "initSlots",
+        "line": 284
+      },
+      {
+        "name": "readFromNBT",
+        "line": 306
+      },
+      {
+        "name": "getForgingTime",
+        "line": 318
+      },
+      {
+        "name": "tryWriteSlotStack",
+        "line": 322
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/inventory/container/SlotTool.java",
+    "line": 12,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "仅工具和护甲进入强化装备槽。",
+    "methods": [
+      {
+        "name": "isItemValid",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/ArmorModifierTypes.java",
+    "line": 19,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "9个护甲成长词条、权重、数值、上限与互斥；非普通附魔。",
+    "methods": [
+      {
+        "name": "addValue",
+        "line": 54
+      },
+      {
+        "name": "values",
+        "line": 58
+      },
+      {
+        "name": "valueOf",
+        "line": 62
+      },
+      {
+        "name": "hasNotOtherProtectionModifier",
+        "line": 70
+      },
+      {
+        "name": "canApplyTo",
+        "line": 101
+      },
+      {
+        "name": "getMaxLevel",
+        "line": 106
+      },
+      {
+        "name": "getModifierValue",
+        "line": 111
+      },
+      {
+        "name": "getModifierLevel",
+        "line": 116
+      },
+      {
+        "name": "getWeight",
+        "line": 126
+      },
+      {
+        "name": "getNbtName",
+        "line": 131
+      },
+      {
+        "name": "getDisplayName",
+        "line": 135
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/enchantment/EnchantmentBeheading.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "斩首V，仅斧，每级默认5%头颅。",
+    "methods": [
+      {
+        "name": "getNumLevels",
+        "line": 19
+      },
+      {
+        "name": "getNameSuffix",
+        "line": 23
+      },
+      {
+        "name": "canEnchantItem",
+        "line": 27
+      },
+      {
+        "name": "isOnCreativeTab",
+        "line": 31
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/enchantment/EnchantmentConqueror.java",
+    "line": 12,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "征服者V/振金VII，武器同目标连续攻击追加伤害。",
+    "methods": [
+      {
+        "name": "getNameSuffix",
+        "line": 18
+      },
+      {
+        "name": "getNumLevels",
+        "line": 22
+      },
+      {
+        "name": "getNumLevelsForVibranium",
+        "line": 26
+      },
+      {
+        "name": "canEnchantItem",
+        "line": 30
+      },
+      {
+        "name": "isOnCreativeTab",
+        "line": 34
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/enchantment/EnchantmentCrit.java",
+    "line": 14,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "暴击V，剑/棍棒，默认每级20%额外暴击判定和+.4伤害。",
+    "methods": [
+      {
+        "name": "getNumLevels",
+        "line": 20
+      },
+      {
+        "name": "getNameSuffix",
+        "line": 24
+      },
+      {
+        "name": "canEnchantItem",
+        "line": 28
+      },
+      {
+        "name": "isOnCreativeTab",
+        "line": 32
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/enchantment/EnchantmentDefence.java",
+    "line": 14,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "格挡I，振金耐久档工具；独立附魔概率规则。",
+    "methods": [
+      {
+        "name": "getNumLevels",
+        "line": 20
+      },
+      {
+        "name": "enchantIndividualChance",
+        "line": 24
+      },
+      {
+        "name": "enchantIndividually",
+        "line": 28
+      },
+      {
+        "name": "getNameSuffix",
+        "line": 32
+      },
+      {
+        "name": "canEnchantItem",
+        "line": 36
+      },
+      {
+        "name": "isOnCreativeTab",
+        "line": 40
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/enchantment/EnchantmentEmergency.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "紧急守备I，护甲；低血/致死救回10血与抗性II60tick，冷却可配。",
+    "methods": [
+      {
+        "name": "getNumLevels",
+        "line": 19
+      },
+      {
+        "name": "enchantIndividually",
+        "line": 23
+      },
+      {
+        "name": "enchantIndividualChance",
+        "line": 27
+      },
+      {
+        "name": "getNameSuffix",
+        "line": 31
+      },
+      {
+        "name": "canEnchantItem",
+        "line": 35
+      },
+      {
+        "name": "isOnCreativeTab",
+        "line": 39
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/enchantment/EnchantmentExtend.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "范围V，工具方块/实体触及每级+.25。",
+    "methods": [
+      {
+        "name": "getNumLevels",
+        "line": 19
+      },
+      {
+        "name": "getNameSuffix",
+        "line": 23
+      },
+      {
+        "name": "canEnchantItem",
+        "line": 27
+      },
+      {
+        "name": "isOnCreativeTab",
+        "line": 31
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/enchantment/MITEITEEnchantmentRegistryInit.java",
+    "line": 19,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "正式注册6附魔，收集enchantIndividually附魔。",
+    "methods": [
+      {
+        "name": "registerEnchantments",
+        "line": 28
+      },
+      {
+        "name": "getNextEnchantmentID",
+        "line": 36
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/ItemBlazeCoalPowder.java",
+    "line": 11,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "烈焰煤粉身份/贴图；RIC赋燃烧6800tick、热量5。",
+    "methods": [
+      {
+        "name": "getBurnTime",
+        "line": 19
+      },
+      {
+        "name": "getHeatLevel",
+        "line": 23
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/ItemEnhanceStone.java",
+    "line": 11,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "铁35%、秘银55%、艾德曼65%、万能50%失败率四类石；万能石无旧十段强化配方直接引用。",
+    "methods": [
+      {
+        "name": "getFailChance",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/ItemModifierTypes.java",
+    "line": 11,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "成长词条接口与hasModifier判断。",
+    "methods": [
+      {
+        "name": "hasModifier",
+        "line": 12
+      },
+      {
+        "name": "hasModifier",
+        "line": 17
+      },
+      {
+        "name": "getModifierValue",
+        "line": 22
+      },
+      {
+        "name": "getModifierLevel",
+        "line": 24
+      },
+      {
+        "name": "getWeight",
+        "line": 26
+      },
+      {
+        "name": "getNbtName",
+        "line": 28
+      },
+      {
+        "name": "canApplyTo",
+        "line": 30
+      },
+      {
+        "name": "getMaxLevel",
+        "line": 32
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/material/EnumEquipmentMaterials.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "取得扩展的MITE_ITE_VIBRANIUM枚举。",
+    "methods": []
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/material/Materials.java",
+    "line": 12,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "创建振金Material唯一实例。",
+    "methods": []
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/material/MaterialVibranium.java",
+    "line": 19,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "采集6、攻击9、保护15、挖速3.5、弓+75%、不受岩浆损坏；修理用振金粒。",
+    "methods": [
+      {
+        "name": "getChanceOfRecovery",
+        "line": 33
+      },
+      {
+        "name": "getDamageVsEntity",
+        "line": 37
+      },
+      {
+        "name": "getProtection",
+        "line": 41
+      },
+      {
+        "name": "getRepairItem",
+        "line": 45
+      },
+      {
+        "name": "getHarvestEfficiency",
+        "line": 49
+      },
+      {
+        "name": "getExperienceValue",
+        "line": 53
+      },
+      {
+        "name": "getForInstance",
+        "line": 57
+      },
+      {
+        "name": "getNuggetPeer",
+        "line": 61
+      },
+      {
+        "name": "velocityBonus",
+        "line": 65
+      },
+      {
+        "name": "maxDamage",
+        "line": 69
+      },
+      {
+        "name": "getMeltingChance",
+        "line": 73
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/MITEITEItemRegistryInit.java",
+    "line": 43,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "21种物品与振金升级、合金、强化石、钻石碎块、煤粉、绿宝石4碎片互转等配方。",
+    "methods": [
+      {
+        "name": "registerItems",
+        "line": 68
+      },
+      {
+        "name": "registerRecipes",
+        "line": 93
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/ModifierUtils.java",
+    "line": 16,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "按适用性/未满阶筛选后加权抽取成长词条。",
+    "methods": [
+      {
+        "name": "getModifierWithWeight",
+        "line": 18
+      },
+      {
+        "name": "getAllCanBeAppliedToolModifiers",
+        "line": 35
+      },
+      {
+        "name": "getAllCanBeAppliedArmorModifiers",
+        "line": 44
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/recipe/BreakFeedback.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "破坏装备的失败策略，当前十段注册配方无引用。",
+    "methods": [
+      {
+        "name": "accept",
+        "line": 12
+      },
+      {
+        "name": "getName",
+        "line": 17
+      },
+      {
+        "name": "getData",
+        "line": 22
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/recipe/DowngradeFeedback.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "失败降低指定锻造等级，实际4→5起配方引用。",
+    "methods": [
+      {
+        "name": "of",
+        "line": 17
+      },
+      {
+        "name": "accept",
+        "line": 22
+      },
+      {
+        "name": "getName",
+        "line": 28
+      },
+      {
+        "name": "getData",
+        "line": 33
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/recipe/DurabilityFeedback.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "失败按剩余耐久百分比或固定值损坏。",
+    "methods": [
+      {
+        "name": "of",
+        "line": 17
+      },
+      {
+        "name": "accept",
+        "line": 22
+      },
+      {
+        "name": "getName",
+        "line": 33
+      },
+      {
+        "name": "getData",
+        "line": 38
+      },
+      {
+        "name": "ofPercentage",
+        "line": 43
+      },
+      {
+        "name": "acceptDurability",
+        "line": 47
+      },
+      {
+        "name": "getData",
+        "line": 52
+      },
+      {
+        "name": "getSuffix",
+        "line": 57
+      },
+      {
+        "name": "ofAmount",
+        "line": 63
+      },
+      {
+        "name": "acceptDurability",
+        "line": 67
+      },
+      {
+        "name": "getData",
+        "line": 72
+      },
+      {
+        "name": "getSuffix",
+        "line": 77
+      },
+      {
+        "name": "acceptDurability",
+        "line": 83
+      },
+      {
+        "name": "getData",
+        "line": 85
+      },
+      {
+        "name": "getSuffix",
+        "line": 87
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/recipe/ForgingRecipe.java",
+    "line": 1,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "锻造配方不可变记录与Builder，保存材料/失败率/品质/耐久/时间要求。",
+    "methods": [
+      {
+        "name": "ForgingRecipe",
+        "line": 16
+      },
+      {
+        "name": "of",
+        "line": 36
+      },
+      {
+        "name": "setTimeReq",
+        "line": 40
+      },
+      {
+        "name": "setQualityReward",
+        "line": 45
+      },
+      {
+        "name": "setAxeDurabilityCost",
+        "line": 50
+      },
+      {
+        "name": "setHammerDurabilityCost",
+        "line": 55
+      },
+      {
+        "name": "addMaterials",
+        "line": 60
+      },
+      {
+        "name": "addFaultFeedback",
+        "line": 68
+      },
+      {
+        "name": "setChanceOfFailure",
+        "line": 73
+      },
+      {
+        "name": "build",
+        "line": 78
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/recipe/ForgingTableLevel.java",
+    "line": 6,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "铁/秘银/艾德曼/振金四台阶枚举。",
+    "methods": [
+      {
+        "name": "getLevel",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/recipe/ForgingTableRecipes.java",
+    "line": 22,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "十段锻造配方、材料、时间、品质和失败耐久/掉级；注册按材质决定最大档。",
+    "methods": [
+      {
+        "name": "getRecipe",
+        "line": 29
+      },
+      {
+        "name": "registerForgingRecipe",
+        "line": 33
+      },
+      {
+        "name": "equals",
+        "line": 75
+      },
+      {
+        "name": "hashCode",
+        "line": 86
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/recipe/IFaultFeedback.java",
+    "line": 8,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "失败策略编解码及GUI消息接口。",
+    "methods": [
+      {
+        "name": "accept",
+        "line": 9
+      },
+      {
+        "name": "getName",
+        "line": 11
+      },
+      {
+        "name": "getData",
+        "line": 13
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/item/ToolModifierTypes.java",
+    "line": 19,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "8个工具/武器成长词条、权重、数值、上限与适用谓词。",
+    "methods": [
+      {
+        "name": "addValue",
+        "line": 53
+      },
+      {
+        "name": "values",
+        "line": 57
+      },
+      {
+        "name": "valueOf",
+        "line": 61
+      },
+      {
+        "name": "isWeapon",
+        "line": 69
+      },
+      {
+        "name": "getModifierValue",
+        "line": 75
+      },
+      {
+        "name": "getModifierLevel",
+        "line": 80
+      },
+      {
+        "name": "getWeight",
+        "line": 90
+      },
+      {
+        "name": "getNbtName",
+        "line": 95
+      },
+      {
+        "name": "canApplyTo",
+        "line": 100
+      },
+      {
+        "name": "getMaxLevel",
+        "line": 105
+      },
+      {
+        "name": "getDisplayName",
+        "line": 109
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/MITEITEMod.java",
+    "line": 14,
+    "entry": "fml.mod.json入口",
+    "mechanism": "主入口注册FML/RIC事件，添加miteite资源域，导出JSON配置注册器。",
+    "methods": [
+      {
+        "name": "onInitialize",
+        "line": 20
+      },
+      {
+        "name": "createConfig",
+        "line": 25
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/network/BiPacketUpdateDefense.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "双向防御冷却时间包，服务器只有空默认处理器。",
+    "methods": [
+      {
+        "name": "getPacketSize",
+        "line": 24
+      },
+      {
+        "name": "getTime",
+        "line": 28
+      },
+      {
+        "name": "processPacket",
+        "line": 32
+      },
+      {
+        "name": "readPacketData",
+        "line": 36
+      },
+      {
+        "name": "writePacketData",
+        "line": 40
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/network/CPacketStartForging.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "客户端发起强化，服务端只在已开强化容器处理。",
+    "methods": [
+      {
+        "name": "getPacketSize",
+        "line": 15
+      },
+      {
+        "name": "processPacket",
+        "line": 19
+      },
+      {
+        "name": "readPacketData",
+        "line": 23
+      },
+      {
+        "name": "writePacketData",
+        "line": 26
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/network/CPacketSyncItems.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "客户端请求当前容器物品重同步。",
+    "methods": [
+      {
+        "name": "getPacketSize",
+        "line": 15
+      },
+      {
+        "name": "processPacket",
+        "line": 19
+      },
+      {
+        "name": "readPacketData",
+        "line": 23
+      },
+      {
+        "name": "writePacketData",
+        "line": 26
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/network/SPacketCraftingBoost.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "同步制造加成浮点值。",
+    "methods": [
+      {
+        "name": "getFactor",
+        "line": 24
+      },
+      {
+        "name": "getPacketSize",
+        "line": 28
+      },
+      {
+        "name": "processPacket",
+        "line": 32
+      },
+      {
+        "name": "readPacketData",
+        "line": 36
+      },
+      {
+        "name": "writePacketData",
+        "line": 40
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/network/SPacketFinishForging.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "强化成功/失败/取消三状态包。",
+    "methods": [
+      {
+        "name": "getPacketSize",
+        "line": 24
+      },
+      {
+        "name": "processPacket",
+        "line": 28
+      },
+      {
+        "name": "readPacketData",
+        "line": 32
+      },
+      {
+        "name": "writePacketData",
+        "line": 36
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/network/SPacketForgingTableInfo.java",
+    "line": 23,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "强化概率、材料/工具、失败反馈、台阶/耗时的可序列化消息。",
+    "methods": [
+      {
+        "name": "getInfo",
+        "line": 36
+      },
+      {
+        "name": "getPacketSize",
+        "line": 40
+      },
+      {
+        "name": "processPacket",
+        "line": 44
+      },
+      {
+        "name": "readPacketData",
+        "line": 48
+      },
+      {
+        "name": "writePacketData",
+        "line": 61
+      },
+      {
+        "name": "asString",
+        "line": 67
+      },
+      {
+        "name": "getColor",
+        "line": 69
+      },
+      {
+        "name": "getDataLength",
+        "line": 71
+      },
+      {
+        "name": "getType",
+        "line": 73
+      },
+      {
+        "name": "readData",
+        "line": 75
+      },
+      {
+        "name": "writeData",
+        "line": 77
+      },
+      {
+        "name": "getCtor",
+        "line": 94
+      },
+      {
+        "name": "of",
+        "line": 110
+      },
+      {
+        "name": "asString",
+        "line": 115
+      },
+      {
+        "name": "getColor",
+        "line": 120
+      },
+      {
+        "name": "getDataLength",
+        "line": 125
+      },
+      {
+        "name": "readData",
+        "line": 130
+      },
+      {
+        "name": "writeData",
+        "line": 135
+      },
+      {
+        "name": "getType",
+        "line": 140
+      },
+      {
+        "name": "getTranslationKey",
+        "line": 155
+      },
+      {
+        "name": "asString",
+        "line": 166
+      },
+      {
+        "name": "of",
+        "line": 177
+      },
+      {
+        "name": "getColor",
+        "line": 182
+      },
+      {
+        "name": "getDataLength",
+        "line": 187
+      },
+      {
+        "name": "readData",
+        "line": 192
+      },
+      {
+        "name": "writeData",
+        "line": 197
+      },
+      {
+        "name": "getType",
+        "line": 202
+      },
+      {
+        "name": "getInstance",
+        "line": 212
+      },
+      {
+        "name": "asString",
+        "line": 217
+      },
+      {
+        "name": "getColor",
+        "line": 222
+      },
+      {
+        "name": "getDataLength",
+        "line": 227
+      },
+      {
+        "name": "readData",
+        "line": 232
+      },
+      {
+        "name": "writeData",
+        "line": 236
+      },
+      {
+        "name": "getType",
+        "line": 240
+      },
+      {
+        "name": "of",
+        "line": 252
+      },
+      {
+        "name": "asString",
+        "line": 259
+      },
+      {
+        "name": "getColor",
+        "line": 271
+      },
+      {
+        "name": "getDataLength",
+        "line": 276
+      },
+      {
+        "name": "readData",
+        "line": 285
+      },
+      {
+        "name": "getType",
+        "line": 293
+      },
+      {
+        "name": "writeData",
+        "line": 298
+      },
+      {
+        "name": "getInstance",
+        "line": 311
+      },
+      {
+        "name": "asString",
+        "line": 316
+      },
+      {
+        "name": "getColor",
+        "line": 321
+      },
+      {
+        "name": "getDataLength",
+        "line": 326
+      },
+      {
+        "name": "getType",
+        "line": 331
+      },
+      {
+        "name": "readData",
+        "line": 336
+      },
+      {
+        "name": "writeData",
+        "line": 340
+      },
+      {
+        "name": "getInstance",
+        "line": 368
+      },
+      {
+        "name": "getAxeDurabilityCost",
+        "line": 372
+      },
+      {
+        "name": "getChanceOfFailure",
+        "line": 376
+      },
+      {
+        "name": "getDataLength",
+        "line": 381
+      },
+      {
+        "name": "getType",
+        "line": 386
+      },
+      {
+        "name": "getDuration",
+        "line": 390
+      },
+      {
+        "name": "getFaultFeedbacks",
+        "line": 394
+      },
+      {
+        "name": "asString",
+        "line": 399
+      },
+      {
+        "name": "getColor",
+        "line": 404
+      },
+      {
+        "name": "getHammerDurabilityCost",
+        "line": 408
+      },
+      {
+        "name": "readData",
+        "line": 413
+      },
+      {
+        "name": "writeData",
+        "line": 425
+      },
+      {
+        "name": "getDataLength",
+        "line": 446
+      },
+      {
+        "name": "getData",
+        "line": 450
+      },
+      {
+        "name": "getName",
+        "line": 454
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/network/SPacketOverlayMessage.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "环境及传送倒计时文字、颜色、时长包。",
+    "methods": [
+      {
+        "name": "getColor",
+        "line": 28
+      },
+      {
+        "name": "getMsg",
+        "line": 32
+      },
+      {
+        "name": "getPacketSize",
+        "line": 36
+      },
+      {
+        "name": "getTime",
+        "line": 40
+      },
+      {
+        "name": "processPacket",
+        "line": 44
+      },
+      {
+        "name": "readPacketData",
+        "line": 48
+      },
+      {
+        "name": "writePacketData",
+        "line": 54
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/registry/ITERegistryImpl.java",
+    "line": 18,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "公开材料经验函数、武器/肉类谓词和锻造配方注册API。",
+    "methods": [
+      {
+        "name": "registerExpForLevel",
+        "line": 25
+      },
+      {
+        "name": "createExpForLevel",
+        "line": 29
+      },
+      {
+        "name": "registerWeaponCriteria",
+        "line": 34
+      },
+      {
+        "name": "registerMeatCriteria",
+        "line": 39
+      },
+      {
+        "name": "registerForgingRecipe",
+        "line": 44
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/registry/ITEVanillaPlugin.java",
+    "line": 16,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "基础武器/肉类判定、逐材料工具经验曲线与铁3/远古3/秘银5/艾德曼7/振金10锻造注册。",
+    "methods": [
+      {
+        "name": "register",
+        "line": 19
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/render/block/SideIconHolder.java",
+    "line": 8,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "强化台顶/底/侧图标容器。",
+    "methods": [
+      {
+        "name": "getTexture_back",
+        "line": 15
+      },
+      {
+        "name": "setTexture_back",
+        "line": 19
+      },
+      {
+        "name": "getTexture_bottom",
+        "line": 23
+      },
+      {
+        "name": "setTexture_bottom",
+        "line": 27
+      },
+      {
+        "name": "getTexture_front",
+        "line": 31
+      },
+      {
+        "name": "setTexture_front",
+        "line": 35
+      },
+      {
+        "name": "getTexture_side",
+        "line": 39
+      },
+      {
+        "name": "setTexture_side",
+        "line": 43
+      },
+      {
+        "name": "getTexture_top",
+        "line": 47
+      },
+      {
+        "name": "setTexture_top",
+        "line": 51
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/render/entity/model/ModelAncientDragon.java",
+    "line": 12,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "测试龙静态模型及部件姿态。",
+    "methods": [
+      {
+        "name": "render",
+        "line": 306
+      },
+      {
+        "name": "setRotationAngles",
+        "line": 323
+      },
+      {
+        "name": "setRotationAngle",
+        "line": 339
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/render/entity/RenderAncientDragon.java",
+    "line": 15,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "测试龙模型/贴图渲染。",
+    "methods": [
+      {
+        "name": "preRenderScale",
+        "line": 21
+      },
+      {
+        "name": "getEntityTexture",
+        "line": 25
+      },
+      {
+        "name": "preRenderCallback",
+        "line": 29
+      },
+      {
+        "name": "setTextures",
+        "line": 33
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/render/entity/RenderAnnihilationSkeleton.java",
+    "line": 15,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "湮灭骷髅专用贴图。",
+    "methods": [
+      {
+        "name": "forceGlowOverride",
+        "line": 21
+      },
+      {
+        "name": "setTextures",
+        "line": 25
+      },
+      {
+        "name": "func_110856_a",
+        "line": 29
+      },
+      {
+        "name": "func_82422_c",
+        "line": 33
+      },
+      {
+        "name": "getEntityTexture",
+        "line": 37
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/render/entity/RenderWanderingWitch.java",
+    "line": 8,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "流浪女巫专用贴图。",
+    "methods": [
+      {
+        "name": "setTextures",
+        "line": 10
+      },
+      {
+        "name": "forceGlowOverride",
+        "line": 14
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/tileentity/TileEntityForgingTable.java",
+    "line": 19,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "强化开始/随机失败时点/实际失败掷骰/消耗/输出；关闭中断；NBT只存库存名与槽位。",
+    "methods": [
+      {
+        "name": "setItem",
+        "line": 32
+      },
+      {
+        "name": "closeChest",
+        "line": 36
+      },
+      {
+        "name": "completeForging",
+        "line": 41
+      },
+      {
+        "name": "decrStackSize",
+        "line": 58
+      },
+      {
+        "name": "dropAllItems",
+        "line": 75
+      },
+      {
+        "name": "failForging",
+        "line": 79
+      },
+      {
+        "name": "finishForging",
+        "line": 93
+      },
+      {
+        "name": "getInventoryStackLimit",
+        "line": 101
+      },
+      {
+        "name": "getItem",
+        "line": 105
+      },
+      {
+        "name": "b",
+        "line": 109
+      },
+      {
+        "name": "getSizeInventory",
+        "line": 113
+      },
+      {
+        "name": "getSlots",
+        "line": 117
+      },
+      {
+        "name": "getStackInSlot",
+        "line": 121
+      },
+      {
+        "name": "getStackInSlotOnClosing",
+        "line": 125
+      },
+      {
+        "name": "isItemValidForSlot",
+        "line": 134
+      },
+      {
+        "name": "isUseableByPlayer",
+        "line": 138
+      },
+      {
+        "name": "onInventoryChanged",
+        "line": 145
+      },
+      {
+        "name": "openChest",
+        "line": 161
+      },
+      {
+        "name": "readFromNBT",
+        "line": 165
+      },
+      {
+        "name": "setInventorySlotContents",
+        "line": 170
+      },
+      {
+        "name": "startForging",
+        "line": 174
+      },
+      {
+        "name": "destroyInventory",
+        "line": 185
+      },
+      {
+        "name": "updateEntity",
+        "line": 189
+      },
+      {
+        "name": "writeToNBT",
+        "line": 208
+      },
+      {
+        "name": "isUsing",
+        "line": 216
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/BlockBeaconTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "拆信标清周围玩家制造加成。",
+    "methods": [
+      {
+        "name": "createNewTileEntity",
+        "line": 20
+      },
+      {
+        "name": "breakBlock",
+        "line": 28
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/BlockCropTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "粪便只治疗枯萎作物，不直接催熟。",
+    "methods": [
+      {
+        "name": "isBlighted",
+        "line": 19
+      },
+      {
+        "name": "setBlighted",
+        "line": 22
+      },
+      {
+        "name": "injectUseManure",
+        "line": 25
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/BlockGlowingStoneTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "荧石不隐藏相邻面，渲染修正。",
+    "methods": [
+      {
+        "name": "hidesAdjacentSide",
+        "line": 20
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/BlockLeavesTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "树叶不隐藏相邻面，渲染修正。",
+    "methods": [
+      {
+        "name": "hidesAdjacentSide",
+        "line": 20
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/BlockPortalTrans.java",
+    "line": 32,
+    "entry": "必需mixin已注册",
+    "mechanism": "地底传送落点偏移+5、地幔底部门判定、一次性符文种子覆盖、全服传送门交互提示。",
+    "methods": [
+      {
+        "name": "getFrameMinY",
+        "line": 41
+      },
+      {
+        "name": "getFrameMinX",
+        "line": 44
+      },
+      {
+        "name": "getFrameMaxX",
+        "line": 47
+      },
+      {
+        "name": "getFrameMinZ",
+        "line": 50
+      },
+      {
+        "name": "getFrameMaxZ",
+        "line": 53
+      },
+      {
+        "name": "getRunegateType",
+        "line": 56
+      },
+      {
+        "name": "getRunegateSeed",
+        "line": 59
+      },
+      {
+        "name": "redirectOverrideRuneType",
+        "line": 66
+      },
+      {
+        "name": "redirectOverrideRuneSeed",
+        "line": 76
+      },
+      {
+        "name": "modifyUnderworldRunegateDestinationMinY",
+        "line": 86
+      },
+      {
+        "name": "injectTeleportTips",
+        "line": 101
+      },
+      {
+        "name": "isTouchingBottomBedrock",
+        "line": 108
+      },
+      {
+        "name": "setRuneTypeOverride",
+        "line": 126
+      },
+      {
+        "name": "setPortalSeedOverride",
+        "line": 132
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/BlockStrongboxTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金私人箱图标。",
+    "methods": [
+      {
+        "name": "injectTextureInit",
+        "line": 25
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/tileentity/MobSpawnerTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "有玩家在生成范围两倍水平/一倍垂直内时额外扣2次延迟，两个分支注入。",
+    "methods": [
+      {
+        "name": "canRun",
+        "line": 34
+      },
+      {
+        "name": "func_98265_a",
+        "line": 37
+      },
+      {
+        "name": "func_98273_j",
+        "line": 40
+      },
+      {
+        "name": "getEntityNameToSpawn",
+        "line": 44
+      },
+      {
+        "name": "getSpawnerWorld",
+        "line": 47
+      },
+      {
+        "name": "getSpawnerX",
+        "line": 50
+      },
+      {
+        "name": "getSpawnerY",
+        "line": 53
+      },
+      {
+        "name": "getSpawnerZ",
+        "line": 56
+      },
+      {
+        "name": "playerBoost",
+        "line": 59
+      },
+      {
+        "name": "playerBoost_1",
+        "line": 68
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/tileentity/TileEntityBeaconTrans.java",
+    "line": 24,
+    "entry": "必需mixin已注册",
+    "mechanism": "1–4层信标制造加成25/40/60/85%，每次赋160tick有效期；多信标取较大。",
+    "methods": [
+      {
+        "name": "addBlockPos",
+        "line": 33
+      },
+      {
+        "name": "addCraftingBoostToPlayer",
+        "line": 40
+      },
+      {
+        "name": "clearAllPlayersBoost",
+        "line": 46
+      },
+      {
+        "name": "getCraftingBoostFactor",
+        "line": 56
+      },
+      {
+        "name": "injectReadNBT",
+        "line": 75
+      },
+      {
+        "name": "injectUpdatePos",
+        "line": 80
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/tileentity/TileEntityFurnaceTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "煤块需热5、下界艾德曼矿需热4，金属升级热量兼容条件。",
+    "methods": [
+      {
+        "name": "getHeatLevelRequired",
+        "line": 20
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/block/tileentity/TileEntityHopperTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "漏斗也无法拾取玩家不可拾取的缴械原生装备。",
+    "methods": [
+      {
+        "name": "injectCheckCanPick",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/container/ContainerAnvilTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "移除铁砧质量修理经验门槛失败标记。",
+    "methods": [
+      {
+        "name": "canInteractWith",
+        "line": 24
+      },
+      {
+        "name": "removeRepairExpReq",
+        "line": 27
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/container/ContainerEnchantmentTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金附魔槽等级上限改MAX_INT、普通基础翻倍、每书架计3而非1。",
+    "methods": [
+      {
+        "name": "canInteractWith",
+        "line": 21
+      },
+      {
+        "name": "vibraniumMaxLevel",
+        "line": 28
+      },
+      {
+        "name": "modifyCommon",
+        "line": 36
+      },
+      {
+        "name": "modifyNumAccessibleBookshelvesn",
+        "line": 41
+      },
+      {
+        "name": "modifyNumAccessibleBookshelvesn_1",
+        "line": 46
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/container/ContainerMerchantTrans.java",
+    "line": 23,
+    "entry": "必需mixin已注册",
+    "mechanism": "交易关界面/shift取物后服务器库存强制同步。",
+    "methods": [
+      {
+        "name": "canInteractWith",
+        "line": 30
+      },
+      {
+        "name": "injectSyncWhenClose",
+        "line": 33
+      },
+      {
+        "name": "injectSyncWhenTransferItems",
+        "line": 38
+      },
+      {
+        "name": "updatePlayerInventory",
+        "line": 46
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/container/PlayerInventoryTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "切换/补货前请求容器物品重同步。",
+    "methods": [
+      {
+        "name": "injectItemsSync",
+        "line": 22
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/container/SlotMerchantTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "禁止客户端重复执行交易取物逻辑。",
+    "methods": [
+      {
+        "name": "injectPreventClientSideTrading",
+        "line": 24
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/container/SlotResultTrans.java",
+    "line": 22,
+    "entry": "必需mixin已注册",
+    "mechanism": "不重设合成结果品质；允许继承NBT配方使用受损装备。",
+    "methods": [
+      {
+        "name": "redirectRemoveSetQuality",
+        "line": 29
+      },
+      {
+        "name": "removeDamageLimitation",
+        "line": 34
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/ai/PathfinderGoalArrowAttackTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "远程AI宿主访问器，供流浪女巫AI判断。",
+    "methods": [
+      {
+        "name": "getEntityHost",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/ai/PathfinderGoalBreedTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "繁殖经验球改读物种getBreedExp。",
+    "methods": [
+      {
+        "name": "redirectSpawnEntity",
+        "line": 23
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/ClientPlayerTrans.java",
+    "line": 36,
+    "entry": "必需mixin已注册",
+    "mechanism": "客户端强化GUI、材质工作台10–55%加速、等级制造加速最高60%、信标除数、最低25tick。",
+    "methods": [
+      {
+        "name": "sendChatToPlayer",
+        "line": 43
+      },
+      {
+        "name": "canCommandSenderUseCommand",
+        "line": 47
+      },
+      {
+        "name": "getPlayerCoordinates",
+        "line": 50
+      },
+      {
+        "name": "displayGUIForgingTable",
+        "line": 57
+      },
+      {
+        "name": "injectModifyWorkbenchModifier",
+        "line": 62
+      },
+      {
+        "name": "modifyCraftingPeriod",
+        "line": 83
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityAncientBoneLordTrans.java",
+    "line": 27,
+    "entry": "必需mixin已注册",
+    "mechanism": "公爵属性/远古全装到日成长、25%换武器、主世界192日血月/64格互斥生成及额外经验。",
+    "methods": [
+      {
+        "name": "addRandomEquipment",
+        "line": 34
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 51
+      },
+      {
+        "name": "enchantEquipment",
+        "line": 62
+      },
+      {
+        "name": "getCanSpawnHere",
+        "line": 68
+      },
+      {
+        "name": "injectExpVal",
+        "line": 77
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityAnimalTrans.java",
+    "line": 13,
+    "entry": "必需mixin已注册",
+    "mechanism": "默认繁殖经验1–7接口。",
+    "methods": [
+      {
+        "name": "getBreedExp",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityArachnidTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "蛛形生物基础10生命/6攻击/28追踪/速度1。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 23
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityArrowTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "玩家振金弓箭速×1.75。",
+    "methods": [
+      {
+        "name": "getLauncher",
+        "line": 24
+      },
+      {
+        "name": "applyVibraniumBowVelocity",
+        "line": 31
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityBatTrans.java",
+    "line": 22,
+    "entry": "必需mixin已注册",
+    "mechanism": "女巫援军身份/维度与来源保存、免负面药水与间接魔法，0经验，死亡通知召唤者。",
+    "methods": [
+      {
+        "name": "injectCtor",
+        "line": 37
+      },
+      {
+        "name": "addPotionEffect",
+        "line": 52
+      },
+      {
+        "name": "getExperienceValue",
+        "line": 58
+      },
+      {
+        "name": "getNaturalDefense",
+        "line": 65
+      },
+      {
+        "name": "injectReadNBT",
+        "line": 73
+      },
+      {
+        "name": "injectWriteNBT",
+        "line": 88
+      },
+      {
+        "name": "onDeath",
+        "line": 96
+      },
+      {
+        "name": "setSpawnedByWitch",
+        "line": 104
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityBlazeTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "烈焰人40生命/6攻击。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 23
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityBoneLordTrans.java",
+    "line": 25,
+    "entry": "必需mixin已注册",
+    "mechanism": "骷髅爵士35+d/16生命/10+d/20攻击、铁全装到日成长、25%换武器、经验增强。",
+    "methods": [
+      {
+        "name": "addRandomWeapon",
+        "line": 28
+      },
+      {
+        "name": "addRandomEquipment",
+        "line": 35
+      },
+      {
+        "name": "willChangeWeapon",
+        "line": 52
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 58
+      },
+      {
+        "name": "enchantEquipment",
+        "line": 67
+      },
+      {
+        "name": "getExperienceValue",
+        "line": 74
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityChickenTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "鸡繁殖经验默认8。",
+    "methods": [
+      {
+        "name": "getBreedExp",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityCowTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "牛繁殖经验默认25。",
+    "methods": [
+      {
+        "name": "getBreedExp",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityCreeperTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "苦力怕生命20+d/8、64追踪、爆炸半径1.25、引线max(旧值*3-floor(.6d),40)。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 31
+      },
+      {
+        "name": "injectInit",
+        "line": 39
+      },
+      {
+        "name": "getExplosionTime",
+        "line": 46
+      },
+      {
+        "name": "setExplosionTime",
+        "line": 51
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityCubicTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "立方类攻击追加伤害扩展钩子。",
+    "methods": [
+      {
+        "name": "getAttackDamageBonus",
+        "line": 26
+      },
+      {
+        "name": "getExperienceValue",
+        "line": 31
+      },
+      {
+        "name": "redirectAttackEntity",
+        "line": 34
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityEarthElementalTrans.java",
+    "line": 28,
+    "entry": "必需mixin已注册",
+    "mechanism": "木元素类型、石头出生有一半转木、木易燃火伤×2且不转岩浆；攻击12、血30/下界60；非木对爆炸免疫分支调整。",
+    "methods": [
+      {
+        "name": "getType",
+        "line": 38
+      },
+      {
+        "name": "injectTypeRegister",
+        "line": 43
+      },
+      {
+        "name": "attackEntityFrom",
+        "line": 47
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 54
+      },
+      {
+        "name": "preventWoodConvert",
+        "line": 67
+      },
+      {
+        "name": "getBlock",
+        "line": 74
+      },
+      {
+        "name": "getType",
+        "line": 79
+      },
+      {
+        "name": "isHarmedByFire",
+        "line": 84
+      },
+      {
+        "name": "isHarmedByLava",
+        "line": 89
+      },
+      {
+        "name": "modifyWoodImmune",
+        "line": 94
+      },
+      {
+        "name": "injectWoodValid",
+        "line": 102
+      },
+      {
+        "name": "isWood",
+        "line": 109
+      },
+      {
+        "name": "injectWoodSpawn",
+        "line": 114
+      },
+      {
+        "name": "setType",
+        "line": 120
+      },
+      {
+        "name": "entityInit",
+        "line": 125
+      },
+      {
+        "name": "setTypeForBlock",
+        "line": 128
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityEnderCrystalTrans.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "末影水晶保护底座从秘银块升为艾德曼块。",
+    "methods": [
+      {
+        "name": "isImmuneTo",
+        "line": 22
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityEnderDragonTrans.java",
+    "line": 35,
+    "entry": "必需mixin已注册",
+    "mechanism": "龙1250血；半血全员虚弱、接触缓慢、20/濒死28伤、20%凋零反击、30%血免箭、濒死减伤/追人、48格水晶/2回血。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 48
+      },
+      {
+        "name": "readEntityFromNBT",
+        "line": 52
+      },
+      {
+        "name": "writeEntityToNBT",
+        "line": 59
+      },
+      {
+        "name": "injectUpdate",
+        "line": 65
+      },
+      {
+        "name": "applyWeaknessOnAttack",
+        "line": 79
+      },
+      {
+        "name": "modifyCrushDamage",
+        "line": 87
+      },
+      {
+        "name": "injectAttackEffect",
+        "line": 92
+      },
+      {
+        "name": "modifyDamageScale",
+        "line": 106
+      },
+      {
+        "name": "modifyDamageFloor",
+        "line": 111
+      },
+      {
+        "name": "redirectExpandAttackRange",
+        "line": 116
+      },
+      {
+        "name": "injectSelectTarget",
+        "line": 121
+      },
+      {
+        "name": "modifyRegenerationRadius",
+        "line": 128
+      },
+      {
+        "name": "modifyRegenerationSpeed",
+        "line": 133
+      },
+      {
+        "name": "modifyExplodeDamage",
+        "line": 138
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityEndermanTrans.java",
+    "line": 23,
+    "entry": "必需mixin已注册",
+    "mechanism": "末影人60+d/20生命15+d/20攻击；有效击退追加0.6纵向速度。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 30
+      },
+      {
+        "name": "attackEntityAsMob",
+        "line": 37
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityExperienceOrbTrans.java",
+    "line": 13,
+    "entry": "必需mixin已注册",
+    "mechanism": "大额经验球新增4000到256000的分割档，减少大量小球。",
+    "methods": [
+      {
+        "name": "injectModifyMaxClamp",
+        "line": 15
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityFireElementalTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "火元素追踪40/攻击5/速度.25、下界额外30血。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 24
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityFishingHookTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "钓鱼经验固定可配默认10。",
+    "methods": [
+      {
+        "name": "ctorFishingExp",
+        "line": 28
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityGhastTrans.java",
+    "line": 27,
+    "entry": "必需mixin已注册",
+    "mechanism": "恶魂15血、爆炸强度6、加快攻击/火球加速度、主世界128日血月与64格同类排斥；主世界强度存在每发累乘风险。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 38
+      },
+      {
+        "name": "canSpawnInShallowWater",
+        "line": 44
+      },
+      {
+        "name": "getCanSpawnHere",
+        "line": 49
+      },
+      {
+        "name": "modifyAttackInterval",
+        "line": 57
+      },
+      {
+        "name": "modifyAttackInterval2",
+        "line": 62
+      },
+      {
+        "name": "modifyAttackInterval3",
+        "line": 67
+      },
+      {
+        "name": "redirectNoExplodingBall",
+        "line": 72
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityGiantZombieTrans.java",
+    "line": 48,
+    "entry": "必需mixin已注册",
+    "mechanism": "巨人100+d/16血25+d/16攻击、体型/触及×2.5、主动攻击玩家村民牲畜、每1200tick召1僵尸、免击退，96格排斥。",
+    "methods": [
+      {
+        "name": "canBeKnockedBack",
+        "line": 57
+      },
+      {
+        "name": "addDefaultArmor",
+        "line": 62
+      },
+      {
+        "name": "getRandomItemTier",
+        "line": 74
+      },
+      {
+        "name": "addRandomArmor",
+        "line": 81
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 104
+      },
+      {
+        "name": "considerFleeing",
+        "line": 111
+      },
+      {
+        "name": "dropEquipment",
+        "line": 115
+      },
+      {
+        "name": "dropFewItems",
+        "line": 124
+      },
+      {
+        "name": "enchantEquipment",
+        "line": 135
+      },
+      {
+        "name": "findPlayerToAttack",
+        "line": 141
+      },
+      {
+        "name": "getCanSpawnHere",
+        "line": 149
+      },
+      {
+        "name": "getCreatureAttribute",
+        "line": 154
+      },
+      {
+        "name": "getDeathSound",
+        "line": 158
+      },
+      {
+        "name": "getHurtSound",
+        "line": 162
+      },
+      {
+        "name": "getLivingSound",
+        "line": 166
+      },
+      {
+        "name": "getReach",
+        "line": 170
+      },
+      {
+        "name": "injectAI",
+        "line": 175
+      },
+      {
+        "name": "isAIEnabled",
+        "line": 192
+      },
+      {
+        "name": "onLivingUpdate",
+        "line": 196
+      },
+      {
+        "name": "playStepSound",
+        "line": 214
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityInfernalCreeperTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "地狱苦力怕爆炸半径×2、防御+2+.075*日数（该防御日数未用366封顶）。",
+    "methods": [
+      {
+        "name": "getNaturalDefense",
+        "line": 26
+      },
+      {
+        "name": "injectCtorModifyExplosion",
+        "line": 41
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityInvisibleStalkerTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "潜行者20+d/16生命6+d/16攻击、追踪40。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 24
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityIronGolemTrans.java",
+    "line": 27,
+    "entry": "必需mixin已注册",
+    "mechanism": "傀儡200+d/26生命25+原日/16攻击，秘银块一次升级+20血+3伤且体型增大/回血。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 38
+      },
+      {
+        "name": "redirectModifyDamage",
+        "line": 46
+      },
+      {
+        "name": "entityInit",
+        "line": 52
+      },
+      {
+        "name": "isBoosted",
+        "line": 58
+      },
+      {
+        "name": "onEntityRightClicked",
+        "line": 62
+      },
+      {
+        "name": "readEntityFromNBT",
+        "line": 78
+      },
+      {
+        "name": "writeEntityToNBT",
+        "line": 88
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityItemTrans.java",
+    "line": 24,
+    "entry": "必需mixin已注册",
+    "mechanism": "限制玩家拾取标志与保存、掉落物防重复爆炸处理，供缴械使用。",
+    "methods": [
+      {
+        "name": "injectInit",
+        "line": 37
+      },
+      {
+        "name": "injectPlayerCannotPickup",
+        "line": 42
+      },
+      {
+        "name": "getEntityItem",
+        "line": 50
+      },
+      {
+        "name": "injectCancelExplosionCopy",
+        "line": 55
+      },
+      {
+        "name": "readEntityFromNBT",
+        "line": 65
+      },
+      {
+        "name": "injectUpdateExploded",
+        "line": 72
+      },
+      {
+        "name": "setCanBePickUpByPlayer",
+        "line": 79
+      },
+      {
+        "name": "canBePickUpByPlayer",
+        "line": 85
+      },
+      {
+        "name": "tryRemoveFromWorldUniques",
+        "line": 90
+      },
+      {
+        "name": "writeEntityToNBT",
+        "line": 94
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityLivestockTrans.java",
+    "line": 21,
+    "entry": "必需mixin已注册",
+    "mechanism": "疾病累计144000tick死亡，健康每tick缓慢扣累计，持久化死亡计数。",
+    "methods": [
+      {
+        "name": "createChild",
+        "line": 30
+      },
+      {
+        "name": "injectIllnessToDeath",
+        "line": 35
+      },
+      {
+        "name": "injectReadNBT",
+        "line": 48
+      },
+      {
+        "name": "injectWriteNBT",
+        "line": 53
+      },
+      {
+        "name": "isWell",
+        "line": 58
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityLivingBaseTrans.java",
+    "line": 36,
+    "entry": "必需mixin已注册",
+    "mechanism": "伤后钩子、玩家墙内伤10、斩首每级5%头颅掉落，目标资格接口。",
+    "methods": [
+      {
+        "name": "checkForAfterDamage",
+        "line": 44
+      },
+      {
+        "name": "injectAfterDamageCallback",
+        "line": 48
+      },
+      {
+        "name": "canBeTargetTo",
+        "line": 54
+      },
+      {
+        "name": "tryDamageArmorP",
+        "line": 59
+      },
+      {
+        "name": "tryDamageArmor",
+        "line": 64
+      },
+      {
+        "name": "injectDropHead",
+        "line": 68
+      },
+      {
+        "name": "injectModifyPlayerInWallDamage",
+        "line": 102
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityLivingTrans.java",
+    "line": 45,
+    "entry": "必需mixin已注册",
+    "mechanism": "按玩家-目标累积征服者/等级伤害、旧非致死近战成长经验、减速词条；拾获装备来源标记与保存。",
+    "methods": [
+      {
+        "name": "getPickedUpAHeldItemArray",
+        "line": 59
+      },
+      {
+        "name": "canBeDisarmed",
+        "line": 65
+      },
+      {
+        "name": "getWeaponDamageBoost",
+        "line": 71
+      },
+      {
+        "name": "injectEntityAttributes",
+        "line": 76
+      },
+      {
+        "name": "injectMeleeAttacked",
+        "line": 81
+      },
+      {
+        "name": "injectAttackEntityFrom",
+        "line": 107
+      },
+      {
+        "name": "injectPickUpItems",
+        "line": 126
+      },
+      {
+        "name": "injectReadNBT",
+        "line": 133
+      },
+      {
+        "name": "injectWriteNBT",
+        "line": 158
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityLongdeadGuardianTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "守卫改沿远古亡魂武器/更新，补装备附魔概率。",
+    "methods": [
+      {
+        "name": "addRandomWeapon",
+        "line": 24
+      },
+      {
+        "name": "onLivingUpdate",
+        "line": 29
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 33
+      },
+      {
+        "name": "enchantEquipment",
+        "line": 38
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityLongdeadTrans.java",
+    "line": 24,
+    "entry": "必需mixin已注册",
+    "mechanism": "远古亡魂15/守卫26+d/16血，8/10+d/20攻击，铁全装/成长、25%武器切换。",
+    "methods": [
+      {
+        "name": "addRandomWeapon",
+        "line": 27
+      },
+      {
+        "name": "addRandomEquipment",
+        "line": 34
+      },
+      {
+        "name": "willChangeWeapon",
+        "line": 50
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 56
+      },
+      {
+        "name": "enchantEquipment",
+        "line": 64
+      },
+      {
+        "name": "isGuardian",
+        "line": 72
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityMagmaCubeTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "岩浆怪额外30血/速度.2、50%点燃100秒。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 26
+      },
+      {
+        "name": "attackEntityAsMob",
+        "line": 31
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityMonsterTrans.java",
+    "line": 51,
+    "entry": "必需mixin已注册",
+    "mechanism": "怪物通用属性翻倍入口（子类可覆盖）、10%持械格挡半伤/缴械、装备日期/药水/附魔进阶、近战触及、火焰攻击与装备掉落限制。",
+    "methods": [
+      {
+        "name": "redirectEntityDamageGet",
+        "line": 65
+      },
+      {
+        "name": "redirectEntityDamageGetStatic",
+        "line": 73
+      },
+      {
+        "name": "attackEntityFrom",
+        "line": 81
+      },
+      {
+        "name": "setTarget",
+        "line": 91
+      },
+      {
+        "name": "setAttackTarget",
+        "line": 97
+      },
+      {
+        "name": "setRevengeTarget",
+        "line": 103
+      },
+      {
+        "name": "dropEquipment",
+        "line": 109
+      },
+      {
+        "name": "addRandomArmor",
+        "line": 118
+      },
+      {
+        "name": "enchantEquipment",
+        "line": 140
+      },
+      {
+        "name": "getChanceOfCausingFire",
+        "line": 149
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 154
+      },
+      {
+        "name": "injectCritAttack",
+        "line": 168
+      },
+      {
+        "name": "injectDisarming",
+        "line": 186
+      },
+      {
+        "name": "canSpawnInShallowWater",
+        "line": 193
+      },
+      {
+        "name": "dropContainedItems",
+        "line": 197
+      },
+      {
+        "name": "injectUpdate",
+        "line": 201
+      },
+      {
+        "name": "isTargetWithinStrikingDistance",
+        "line": 209
+      },
+      {
+        "name": "getReach",
+        "line": 224
+      },
+      {
+        "name": "onLivingUpdate",
+        "line": 233
+      },
+      {
+        "name": "onSpawnWithEgg",
+        "line": 239
+      },
+      {
+        "name": "readEntityFromNBT",
+        "line": 246
+      },
+      {
+        "name": "tryDisarmTarget",
+        "line": 254
+      },
+      {
+        "name": "writeEntityToNBT",
+        "line": 276
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityPigTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "猪繁殖经验15。",
+    "methods": [
+      {
+        "name": "getBreedExp",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityPlayerTrans.java",
+    "line": 74,
+    "entry": "必需mixin已注册",
+    "mechanism": "玩家渐进伤害/缴械/暴击/不屈/免疫/紧急守备、雨弱化、地底疲劳/定时传送、下界疲劳代码、制造信标加成、格挡冷却及NBT保存。",
+    "methods": [
+      {
+        "name": "getCurrentArmor",
+        "line": 107
+      },
+      {
+        "name": "canBeDisarmed",
+        "line": 114
+      },
+      {
+        "name": "getPickedUpAHeldItemArray",
+        "line": 119
+      },
+      {
+        "name": "getWeaponDamageBoost",
+        "line": 124
+      },
+      {
+        "name": "activeEmergency",
+        "line": 129
+      },
+      {
+        "name": "tryDisarmTarget",
+        "line": 142
+      },
+      {
+        "name": "redirectCheckCriticalStrike",
+        "line": 171
+      },
+      {
+        "name": "modifyApplyITEBonusDamage",
+        "line": 183
+      },
+      {
+        "name": "redirectCancelOldDisarming",
+        "line": 206
+      },
+      {
+        "name": "injectNewDisarming",
+        "line": 211
+      },
+      {
+        "name": "getIndomitableAmp",
+        "line": 216
+      },
+      {
+        "name": "addPotionEffect",
+        "line": 232
+      },
+      {
+        "name": "canDefense",
+        "line": 242
+      },
+      {
+        "name": "checkForAfterDamage",
+        "line": 249
+      },
+      {
+        "name": "calcRawMeleeDamageVs",
+        "line": 265
+      },
+      {
+        "name": "injectReadNBT",
+        "line": 268
+      },
+      {
+        "name": "checkForArmorAchievements",
+        "line": 290
+      },
+      {
+        "name": "displayGUIForgingTable",
+        "line": 309
+      },
+      {
+        "name": "getCraftingBoostFactor",
+        "line": 313
+      },
+      {
+        "name": "getHeldItemStack",
+        "line": 318
+      },
+      {
+        "name": "setHeldItemStack",
+        "line": 323
+      },
+      {
+        "name": "injectReachEnchantment",
+        "line": 327
+      },
+      {
+        "name": "injectReachEnchantment",
+        "line": 333
+      },
+      {
+        "name": "injectReachEnchantment",
+        "line": 338
+      },
+      {
+        "name": "getWornItems",
+        "line": 343
+      },
+      {
+        "name": "randomRuneTeleport",
+        "line": 348
+      },
+      {
+        "name": "aqua",
+        "line": 360
+      },
+      {
+        "name": "redirectEntityAttack",
+        "line": 366
+      },
+      {
+        "name": "injectTick",
+        "line": 396
+      },
+      {
+        "name": "injectWriteNBT",
+        "line": 495
+      },
+      {
+        "name": "itemsSynced",
+        "line": 514
+      },
+      {
+        "name": "knockBack",
+        "line": 518
+      },
+      {
+        "name": "setDefenseCooldown",
+        "line": 528
+      },
+      {
+        "name": "sendPacket",
+        "line": 533
+      },
+      {
+        "name": "setCraftingBoostFactor",
+        "line": 538
+      },
+      {
+        "name": "setCraftingBoostTimer",
+        "line": 562
+      },
+      {
+        "name": "triggerAchievement",
+        "line": 567
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityRevenantTrans.java",
+    "line": 24,
+    "entry": "必需mixin已注册",
+    "mechanism": "亡魂35+d/16血12+d/24攻击，128日前锈铁全装，后日期装备。",
+    "methods": [
+      {
+        "name": "addRandomEquipment",
+        "line": 31
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 45
+      },
+      {
+        "name": "enchantEquipment",
+        "line": 54
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntitySheepTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "羊繁殖经验10。",
+    "methods": [
+      {
+        "name": "getBreedExp",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntitySkeletonTrans.java",
+    "line": 53,
+    "entry": "必需mixin已注册",
+    "mechanism": "普通/凋零属性、20%近战型、火箭与14%三连射、15%持弓近战、3%压缩死亡生4只、武器切换、箭伤/击退按日进阶。",
+    "methods": [
+      {
+        "name": "addRandomEquipment",
+        "line": 83
+      },
+      {
+        "name": "addRandomArmor",
+        "line": 90
+      },
+      {
+        "name": "addRandomWeapon",
+        "line": 98
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 125
+      },
+      {
+        "name": "attackEntityWithRangedAttack",
+        "line": 140
+      },
+      {
+        "name": "getChanceOfCausingFire",
+        "line": 158
+      },
+      {
+        "name": "modifyNormalSkeletonMeleeAttackChance",
+        "line": 163
+      },
+      {
+        "name": "getWeapon",
+        "line": 168
+      },
+      {
+        "name": "getWeaponDamageBoost",
+        "line": 173
+      },
+      {
+        "name": "injectAddWeapon",
+        "line": 178
+      },
+      {
+        "name": "setForceMeleeAttack",
+        "line": 183
+      },
+      {
+        "name": "injectLivingUpdate",
+        "line": 193
+      },
+      {
+        "name": "injectReadNBT",
+        "line": 214
+      },
+      {
+        "name": "initStockedWeapon",
+        "line": 233
+      },
+      {
+        "name": "injectWriteNBT",
+        "line": 244
+      },
+      {
+        "name": "entityInit",
+        "line": 258
+      },
+      {
+        "name": "isHoldingRangedWeapon",
+        "line": 265
+      },
+      {
+        "name": "getSkeletonType",
+        "line": 270
+      },
+      {
+        "name": "setSkeletonType",
+        "line": 275
+      },
+      {
+        "name": "onDeath",
+        "line": 285
+      },
+      {
+        "name": "injectOnArrowSkeletonSpawn",
+        "line": 309
+      },
+      {
+        "name": "injectOnWitherSkeletonSpawn",
+        "line": 317
+      },
+      {
+        "name": "injectCreateCompressedSkeleton",
+        "line": 325
+      },
+      {
+        "name": "injectUpdateCombatTask",
+        "line": 332
+      },
+      {
+        "name": "isCompressed",
+        "line": 337
+      },
+      {
+        "name": "isLongdead",
+        "line": 342
+      },
+      {
+        "name": "isAIEnabled",
+        "line": 347
+      },
+      {
+        "name": "setCombatTask",
+        "line": 350
+      },
+      {
+        "name": "swapHeldItemStackWithStowed",
+        "line": 353
+      },
+      {
+        "name": "processArrow",
+        "line": 360
+      },
+      {
+        "name": "willChangeWeapon",
+        "line": 379
+      },
+      {
+        "name": "injectAlwaysReloadTasks",
+        "line": 384
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntitySlimeTrans.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "史莱姆攻击额外4、攻击类型倍率可配默认1。",
+    "methods": [
+      {
+        "name": "getAttackDamageBonus",
+        "line": 22
+      },
+      {
+        "name": "getAttackStrengthMultiplierForType",
+        "line": 27
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntitySpiderTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "蜘蛛生命×1.5+d/24、攻击+d/24、追踪64。",
+    "methods": [
+      {
+        "name": "applyEntityAttributes",
+        "line": 24
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "96日起下界接触地狱岩超过20次检测判定为火区；影响可燃实体。",
+    "methods": [
+      {
+        "name": "canCatchFire",
+        "line": 30
+      },
+      {
+        "name": "injectNetherFire",
+        "line": 33
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityVampireBatTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "吸血蝠命中吸血后50%给予毒I 480tick。",
+    "methods": [
+      {
+        "name": "injectAttack",
+        "line": 26
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityWitchTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "女巫召狼目标/倒计时/诅咒随机种子访问桥与可覆盖召援入口。",
+    "methods": [
+      {
+        "name": "summonWolves",
+        "line": 35
+      },
+      {
+        "name": "summonWolvesITE",
+        "line": 41
+      },
+      {
+        "name": "onLivingUpdate",
+        "line": 46
+      },
+      {
+        "name": "getSummon_wolf_target",
+        "line": 51
+      },
+      {
+        "name": "setSummon_wolf_target",
+        "line": 56
+      },
+      {
+        "name": "getSummon_wolf_countdown",
+        "line": 61
+      },
+      {
+        "name": "setSummon_wolf_countdown",
+        "line": 66
+      },
+      {
+        "name": "isHas_summoned_wolves",
+        "line": 71
+      },
+      {
+        "name": "setHas_summoned_wolves",
+        "line": 76
+      },
+      {
+        "name": "getCurse_random_seed",
+        "line": 81
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityWolfTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "野狼64格搜寻主手带肉玩家；空手未防null，hotbar分支没有真正遍历快捷栏（持肉已提前return，非肉不会进while）。",
+    "methods": [
+      {
+        "name": "createChild",
+        "line": 25
+      },
+      {
+        "name": "findPlayerToAttack",
+        "line": 29
+      },
+      {
+        "name": "getTamingOutcome",
+        "line": 44
+      },
+      {
+        "name": "hasMeatInHotbar",
+        "line": 49
+      },
+      {
+        "name": "isHostileToPlayers",
+        "line": 65
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityZombiePigmanTrans.java",
+    "line": 57,
+    "entry": "必需mixin已注册",
+    "mechanism": "猪人主动玩家/村民AI、10%弓、2.5%光环种、128日后群体速度力量、50%命中点燃，日期箭击退/火箭。",
+    "methods": [
+      {
+        "name": "injectInit",
+        "line": 71
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 81
+      },
+      {
+        "name": "attackEntityAsMob",
+        "line": 90
+      },
+      {
+        "name": "attackEntityWithRangedAttack",
+        "line": 97
+      },
+      {
+        "name": "injectInit",
+        "line": 119
+      },
+      {
+        "name": "injectInitArmor",
+        "line": 142
+      },
+      {
+        "name": "canCatchFire",
+        "line": 146
+      },
+      {
+        "name": "entityInit",
+        "line": 150
+      },
+      {
+        "name": "onSpawnWithEgg",
+        "line": 156
+      },
+      {
+        "name": "onUpdate",
+        "line": 172
+      },
+      {
+        "name": "randomUseBow",
+        "line": 191
+      },
+      {
+        "name": "reCalcProfession",
+        "line": 195
+      },
+      {
+        "name": "canBeTargetTo",
+        "line": 207
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/EntityZombieTrans.java",
+    "line": 27,
+    "entry": "必需mixin已注册",
+    "mechanism": "僵尸15+d/16生命8+d/24攻击、64追踪，地底前64日装备保底、日增长火焰武器概率。",
+    "methods": [
+      {
+        "name": "addRandomArmor",
+        "line": 38
+      },
+      {
+        "name": "applyEntityAttributes",
+        "line": 46
+      },
+      {
+        "name": "enchantEquipment",
+        "line": 55
+      },
+      {
+        "name": "getChanceOfCausingFire",
+        "line": 63
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/PlayerInventoryTrans.java",
+    "line": 25,
+    "entry": "必需mixin已注册",
+    "mechanism": "按分摊护甲损耗应用耐久词条；有效生命损失clamp1–4×2为原始经验，再走护甲额外×2/锻造加成。",
+    "methods": [
+      {
+        "name": "injectDamageArmor",
+        "line": 30
+      },
+      {
+        "name": "removeApplyArmorDamageResult",
+        "line": 43
+      },
+      {
+        "name": "removeTryDamageItemStack",
+        "line": 48
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/RemotePlayerTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "联机客户端蛋白质/植物营养计数访问字段。",
+    "methods": [
+      {
+        "name": "getPhytonutrients",
+        "line": 31
+      },
+      {
+        "name": "setPhytonutrients",
+        "line": 37
+      },
+      {
+        "name": "getProtein",
+        "line": 43
+      },
+      {
+        "name": "setProtein",
+        "line": 49
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/entity/ServerPlayerTrans.java",
+    "line": 23,
+    "entry": "必需mixin已注册",
+    "mechanism": "服务器打开强化GUI/窗口同步，格挡冷却包同步。",
+    "methods": [
+      {
+        "name": "incrementWindowID",
+        "line": 33
+      },
+      {
+        "name": "displayGUIForgingTable",
+        "line": 40
+      },
+      {
+        "name": "setDefenseCooldown",
+        "line": 51
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/gui/GuiCraftingTableTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "移除选择品质图标，显示信标制造加成百分比。",
+    "methods": [
+      {
+        "name": "drawGuiContainerBackgroundLayer",
+        "line": 28
+      },
+      {
+        "name": "injectRemoveChooseQualityIcon",
+        "line": 32
+      },
+      {
+        "name": "drawGuiContainerForegroundLayer",
+        "line": 37
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/gui/GuiCraftingTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "受损装备且继承NBT的配方不提示禁止。",
+    "methods": [
+      {
+        "name": "redirectRemoveDamageLimitation",
+        "line": 25
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/gui/GuiMainMenuMixin.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "主菜单旧版名称/版本与原作者字样。",
+    "methods": [
+      {
+        "name": "drawScreen",
+        "line": 19
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/gui/GuiPlayerInventoryTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "打开背包向服务端请求物品同步。",
+    "methods": [
+      {
+        "name": "injectSyncItems",
+        "line": 25
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/gui/GuiPlayerOverlayTrans.java",
+    "line": 24,
+    "entry": "必需mixin已注册",
+    "mechanism": "环境/传送倒计时叠字、按实际生命上限绘心；提示按渲染帧倒计数。",
+    "methods": [
+      {
+        "name": "drawTexturedModalRect",
+        "line": 34
+      },
+      {
+        "name": "injectRenderOverlayMessage",
+        "line": 39
+      },
+      {
+        "name": "redirectHealthLimit",
+        "line": 59
+      },
+      {
+        "name": "setOverlayMsg",
+        "line": 65
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentButcheringMixin.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "宰杀允许刀/匕首。",
+    "methods": [
+      {
+        "name": "fixModTool",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentDiggingMixin.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "效率允许模组镐。",
+    "methods": [
+      {
+        "name": "fixModTool",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentDisarmingMixin.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "缴械允许模组剑。",
+    "methods": [
+      {
+        "name": "fixModTool",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentLootBonusMixin.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "时运仅镐/铲。",
+    "methods": [
+      {
+        "name": "fixModTool",
+        "line": 20
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentLootBonusTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金时运/抢夺最高V。",
+    "methods": [
+      {
+        "name": "canEnchantItem",
+        "line": 19
+      },
+      {
+        "name": "getNameSuffix",
+        "line": 22
+      },
+      {
+        "name": "isOnCreativeTab",
+        "line": 25
+      },
+      {
+        "name": "getNumLevelsForVibranium",
+        "line": 32
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentManagerTrans.java",
+    "line": 23,
+    "entry": "必需mixin已注册",
+    "mechanism": "附魔随机常数.5→.75、振金使用扩展等级、允许多个不同伤害附魔并存。",
+    "methods": [
+      {
+        "name": "modify",
+        "line": 25
+      },
+      {
+        "name": "vibraniumMaterialBetterLevel",
+        "line": 30
+      },
+      {
+        "name": "vibraniumDamageEnchantmentCompatible",
+        "line": 38
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentPiercingMixin.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "穿刺允许战斧/镐。",
+    "methods": [
+      {
+        "name": "fixModTool",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentProtectionTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金保护最高V。",
+    "methods": [
+      {
+        "name": "canEnchantItem",
+        "line": 17
+      },
+      {
+        "name": "getNumLevelsForVibranium",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentThornsTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金荆棘最高V。",
+    "methods": [
+      {
+        "name": "canEnchantItem",
+        "line": 17
+      },
+      {
+        "name": "getNumLevelsForVibranium",
+        "line": 21
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentTrans.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "单独附魔接口/振金等级接口，最低消耗用扩展等级。",
+    "methods": [
+      {
+        "name": "injectClinit",
+        "line": 20
+      },
+      {
+        "name": "redirectGetVibraniumLevels",
+        "line": 24
+      },
+      {
+        "name": "enchantIndividualChance",
+        "line": 30
+      },
+      {
+        "name": "enchantIndividually",
+        "line": 36
+      },
+      {
+        "name": "getNumLevels",
+        "line": 41
+      },
+      {
+        "name": "getNumLevelsForVibranium",
+        "line": 47
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentUntouchingMixin.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "精准采集允许镐/铲/刀/匕首。",
+    "methods": [
+      {
+        "name": "fixModTool",
+        "line": 20
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/enchantment/EnchantmentWeaponDamageXTrans.java",
+    "line": 22,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金剑允许亡灵杀手/战斧允许锋利，振金伤害附魔VII。",
+    "methods": [
+      {
+        "name": "isOnCreativeTab",
+        "line": 29
+      },
+      {
+        "name": "getNameSuffix",
+        "line": 32
+      },
+      {
+        "name": "injectVibraniumCheck",
+        "line": 35
+      },
+      {
+        "name": "getNumLevelsForVibranium",
+        "line": 45
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/EnumQualityTrans.java",
+    "line": 12,
+    "entry": "必需mixin已注册",
+    "mechanism": "所有品质耐久倍率强制1。",
+    "methods": [
+      {
+        "name": "getDurabilityModifier",
+        "line": 14
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemArmorTrans.java",
+    "line": 41,
+    "entry": "必需mixin已注册",
+    "mechanism": "按材料和部位经验、护甲经验额外×2、成长/锻造防御、祝福对亡灵，成长上限采集级*3+锻造。",
+    "methods": [
+      {
+        "name": "injectInitExpForLevel",
+        "line": 54
+      },
+      {
+        "name": "createExpForLevel",
+        "line": 58
+      },
+      {
+        "name": "redirectAddTotalDefense",
+        "line": 63
+      },
+      {
+        "name": "addInformation",
+        "line": 75
+      },
+      {
+        "name": "addExpForTool",
+        "line": 110
+      },
+      {
+        "name": "getExpReqForLevel",
+        "line": 115
+      },
+      {
+        "name": "getEnhancedProtection",
+        "line": 126
+      },
+      {
+        "name": "getExpReqForLevel",
+        "line": 131
+      },
+      {
+        "name": "getMaxDamage",
+        "line": 135
+      },
+      {
+        "name": "getMultipliedProtection",
+        "line": 140
+      },
+      {
+        "name": "getProtectionAfterDamageFactor",
+        "line": 152
+      },
+      {
+        "name": "getRawProtection",
+        "line": 155
+      },
+      {
+        "name": "getRepairCost",
+        "line": 160
+      },
+      {
+        "name": "getMaterialProtection",
+        "line": 163
+      },
+      {
+        "name": "getArmorType",
+        "line": 166
+      },
+      {
+        "name": "hasExpAndLevel",
+        "line": 168
+      },
+      {
+        "name": "getMaxToolLevel",
+        "line": 173
+      },
+      {
+        "name": "isMaxToolLevel",
+        "line": 178
+      },
+      {
+        "name": "isWeapon",
+        "line": 182
+      },
+      {
+        "name": "onItemLevelUp",
+        "line": 186
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemAxeTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "原木2经验，其他有效方块至少1。",
+    "methods": [
+      {
+        "name": "getExpForBlockBreak",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemBowTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金弓耐久512，提示箭速75%。",
+    "methods": [
+      {
+        "name": "injectInit",
+        "line": 25
+      },
+      {
+        "name": "injectAddInfo",
+        "line": 34
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemGemsTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "献祭钻400/绿300/青40/石英35，石英55级封顶。",
+    "methods": [
+      {
+        "name": "modifyLapisExp",
+        "line": 22
+      },
+      {
+        "name": "modifyQuartzExp",
+        "line": 27
+      },
+      {
+        "name": "modifyDiamondExp",
+        "line": 32
+      },
+      {
+        "name": "modifyEmeraldExp",
+        "line": 37
+      },
+      {
+        "name": "injectNetherQuartzLimit",
+        "line": 42
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemGoldenAppleTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "金苹果20tick附魔苹果10tick、糖1500、额外恢复/吸收/抗火/抗性。",
+    "methods": [
+      {
+        "name": "getMaxItemUseDuration",
+        "line": 22
+      },
+      {
+        "name": "injectCtor",
+        "line": 27
+      },
+      {
+        "name": "onEnchantGoldenAppleOnEaten",
+        "line": 32
+      },
+      {
+        "name": "onGoldenAppleEaten",
+        "line": 41
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemHoeTrans.java",
+    "line": 22,
+    "entry": "必需mixin已注册",
+    "mechanism": "成熟作物8经验、有效对象3、耕地1。",
+    "methods": [
+      {
+        "name": "getExpForBlockBreak",
+        "line": 26
+      },
+      {
+        "name": "injectAddExpForTilling",
+        "line": 38
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemManureTrans.java",
+    "line": 25,
+    "entry": "必需mixin已注册",
+    "mechanism": "右键治枯萎、实际消耗/粒子与植物医生成就。",
+    "methods": [
+      {
+        "name": "injectHealCrops",
+        "line": 28
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemMattockTrans.java",
+    "line": 13,
+    "entry": "必需mixin已注册",
+    "mechanism": "挖掘经验固定2。",
+    "methods": [
+      {
+        "name": "getExpForBlockBreak",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemReferencedBookTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "参考书经验奖励0，创造栏列1–9号书。",
+    "methods": [
+      {
+        "name": "getXPReward",
+        "line": 26
+      },
+      {
+        "name": "getSubItems",
+        "line": 30
+      },
+      {
+        "name": "generateBookT",
+        "line": 38
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemScytheTrans.java",
+    "line": 13,
+    "entry": "必需mixin已注册",
+    "mechanism": "有效破坏经验固定1。",
+    "methods": [
+      {
+        "name": "getExpForBlockBreak",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemShovelTrans.java",
+    "line": 13,
+    "entry": "必需mixin已注册",
+    "mechanism": "有效破坏经验固定3。",
+    "methods": [
+      {
+        "name": "getExpForBlockBreak",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemStackTrans.java",
+    "line": 29,
+    "entry": "必需mixin已注册",
+    "mechanism": "保存/复制成长锻造紧急冷却/品质/磨损，NBT兼容，实时装备属性重定向，移除改品质提示。",
+    "methods": [
+      {
+        "name": "setItemSubtype",
+        "line": 45
+      },
+      {
+        "name": "setTagCompound",
+        "line": 48
+      },
+      {
+        "name": "getQuality",
+        "line": 52
+      },
+      {
+        "name": "getItem",
+        "line": 56
+      },
+      {
+        "name": "getEnhanceFactor",
+        "line": 65
+      },
+      {
+        "name": "getForgingGrade",
+        "line": 70
+      },
+      {
+        "name": "getEmergencyCooldown",
+        "line": 75
+      },
+      {
+        "name": "setEmergencyCooldown",
+        "line": 80
+      },
+      {
+        "name": "setForgingGrade",
+        "line": 88
+      },
+      {
+        "name": "setIsArtifact",
+        "line": 96
+      },
+      {
+        "name": "fixNBT",
+        "line": 101
+      },
+      {
+        "name": "removeChangeQualityInfo",
+        "line": 106
+      },
+      {
+        "name": "copy",
+        "line": 111
+      },
+      {
+        "name": "injectFixNBT",
+        "line": 123
+      },
+      {
+        "name": "getAttributeModifiers",
+        "line": 130
+      },
+      {
+        "name": "redirectMeleeDamage",
+        "line": 135
+      },
+      {
+        "name": "injectCtorFix",
+        "line": 140
+      },
+      {
+        "name": "injectSetTagFix",
+        "line": 147
+      },
+      {
+        "name": "injectFixNBT",
+        "line": 154
+      },
+      {
+        "name": "injectAddDefaultForgingGrade",
+        "line": 167
+      },
+      {
+        "name": "writeToNBT",
+        "line": 174
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemToolTrans.java",
+    "line": 56,
+    "entry": "必需mixin已注册",
+    "mechanism": "工具成长/伤害/挖速/耐久与地质经验、格挡附魔和2秒时长8秒冷却、振金挖速3.5。",
+    "methods": [
+      {
+        "name": "getExpReqForLevel",
+        "line": 71
+      },
+      {
+        "name": "getMeleeDamageBonus",
+        "line": 75
+      },
+      {
+        "name": "getStrVsBlock",
+        "line": 80
+      },
+      {
+        "name": "hasExpAndLevel",
+        "line": 84
+      },
+      {
+        "name": "addExpForTool",
+        "line": 89
+      },
+      {
+        "name": "isMaxToolLevel",
+        "line": 94
+      },
+      {
+        "name": "getMaxToolLevel",
+        "line": 99
+      },
+      {
+        "name": "isWeapon",
+        "line": 103
+      },
+      {
+        "name": "onItemLevelUp",
+        "line": 107
+      },
+      {
+        "name": "getAttrModifiers",
+        "line": 120
+      },
+      {
+        "name": "addInformation",
+        "line": 126
+      },
+      {
+        "name": "applyCalculateDurabilityModifier",
+        "line": 166
+      },
+      {
+        "name": "getAttackDamageBounce",
+        "line": 172
+      },
+      {
+        "name": "getBaseHarvestEfficiency",
+        "line": 177
+      },
+      {
+        "name": "getCombinedDamageVsEntity",
+        "line": 182
+      },
+      {
+        "name": "getEnhancedDamage",
+        "line": 187
+      },
+      {
+        "name": "getItemInUseAction",
+        "line": 192
+      },
+      {
+        "name": "getMaterialHarvestEfficiency",
+        "line": 203
+      },
+      {
+        "name": "modifyMaxItemUseDuration",
+        "line": 210
+      },
+      {
+        "name": "getMultipliedHarvestEfficiency",
+        "line": 215
+      },
+      {
+        "name": "getToolDecayFromAttackingEntity",
+        "line": 230
+      },
+      {
+        "name": "isEffectiveAgainstBlock",
+        "line": 235
+      },
+      {
+        "name": "getMaterialHarvestEfficiency",
+        "line": 240
+      },
+      {
+        "name": "injectTriggerGeology",
+        "line": 243
+      },
+      {
+        "name": "injectAddToolExp",
+        "line": 256
+      },
+      {
+        "name": "applyDurability",
+        "line": 264
+      },
+      {
+        "name": "getExpForBlockBreak",
+        "line": 269
+      },
+      {
+        "name": "onItemRightClick",
+        "line": 274
+      },
+      {
+        "name": "onItemUseFinish",
+        "line": 283
+      },
+      {
+        "name": "onPlayerStoppedUsing",
+        "line": 289
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/ItemTrans.java",
+    "line": 30,
+    "entry": "必需mixin已注册",
+    "mechanism": "成长升级一次且经验清零、默认接口、材料/食谱烧制时间、取消品质耐久倍率。",
+    "methods": [
+      {
+        "name": "getAsItemBlock",
+        "line": 41
+      },
+      {
+        "name": "isBlock",
+        "line": 46
+      },
+      {
+        "name": "getMaterialForRepairs",
+        "line": 51
+      },
+      {
+        "name": "setSugarContent",
+        "line": 56
+      },
+      {
+        "name": "addExpForTool",
+        "line": 61
+      },
+      {
+        "name": "getMaterials",
+        "line": 92
+      },
+      {
+        "name": "addModifierLevelFor",
+        "line": 97
+      },
+      {
+        "name": "getAttrModifiers",
+        "line": 104
+      },
+      {
+        "name": "getCookTime",
+        "line": 109
+      },
+      {
+        "name": "getExpReqForLevel",
+        "line": 123
+      },
+      {
+        "name": "getMeleeDamageBonus",
+        "line": 128
+      },
+      {
+        "name": "getResourceLocationPrefix",
+        "line": 133
+      },
+      {
+        "name": "getStrVsBlock",
+        "line": 138
+      },
+      {
+        "name": "getToolLevel",
+        "line": 143
+      },
+      {
+        "name": "hasExpAndLevel",
+        "line": 148
+      },
+      {
+        "name": "isMaxToolLevel",
+        "line": 153
+      },
+      {
+        "name": "getMaxToolLevel",
+        "line": 158
+      },
+      {
+        "name": "isWeapon",
+        "line": 163
+      },
+      {
+        "name": "onItemLevelUp",
+        "line": 168
+      },
+      {
+        "name": "isMeat",
+        "line": 172
+      },
+      {
+        "name": "redirectDisableQuality",
+        "line": 177
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/MaterialTrans.java",
+    "line": 13,
+    "entry": "必需mixin已注册",
+    "mechanism": "耐久/最低采集级/材料名的接口访问器。",
+    "methods": [
+      {
+        "name": "getDurability",
+        "line": 24
+      },
+      {
+        "name": "getMinHarvestLevel",
+        "line": 30
+      },
+      {
+        "name": "getName",
+        "line": 36
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/recipe/CraftingManagerHelper.java",
+    "line": 17,
+    "entry": "必需mixin已注册",
+    "mechanism": "普通金苹果改6金粒+2金锭+苹果（另事件构造未提交不影响本入口）。",
+    "methods": [
+      {
+        "name": "injectModifyGoldenAppleRecipe",
+        "line": 24
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/recipe/CraftingManagerInvoker.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "注册有序/无序配方访问桥。",
+    "methods": [
+      {
+        "name": "addRecipe",
+        "line": 18
+      },
+      {
+        "name": "addShapelessRecipe",
+        "line": 22
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/recipe/IRecipeMixin.java",
+    "line": 11,
+    "entry": "必需mixin已注册",
+    "mechanism": "默认配方不继承NBT。",
+    "methods": [
+      {
+        "name": "isExtendsNBT",
+        "line": 14
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/recipe/RecipeIngotsTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "移除旧3×3绿宝石碎片互转，使4碎片配方生效。",
+    "methods": [
+      {
+        "name": "smallerEmeraldRecipe_0",
+        "line": 27
+      },
+      {
+        "name": "smallerEmeraldRecipe_1",
+        "line": 32
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/recipe/RecipesArmorTrans.java",
+    "line": 24,
+    "entry": "必需mixin已注册",
+    "mechanism": "重建基础甲配方；铁甲→秘银、远古甲→艾德曼，保留NBT的升级配方。",
+    "methods": [
+      {
+        "name": "addBootsRecipe",
+        "line": 29
+      },
+      {
+        "name": "addCuirassRecipe",
+        "line": 32
+      },
+      {
+        "name": "addHelmetRecipe",
+        "line": 35
+      },
+      {
+        "name": "addLeggingsRecipe",
+        "line": 38
+      },
+      {
+        "name": "addRecipes",
+        "line": 41
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/recipe/ShapedRecipeTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "继承NBT配方同时保留原始damage整数。",
+    "methods": [
+      {
+        "name": "isExtendsNBT",
+        "line": 26
+      },
+      {
+        "name": "injectInheritDamage",
+        "line": 31
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/item/recipe/ShapelessRecipeTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "无序继承NBT配方保留原始damage整数（并无方法名暗示的降锻造行为）。",
+    "methods": [
+      {
+        "name": "isExtendsNBT",
+        "line": 26
+      },
+      {
+        "name": "injectDowngradeForgingGrade",
+        "line": 31
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/network/ClientNetworkManagerTrans.java",
+    "line": 29,
+    "entry": "必需mixin已注册",
+    "mechanism": "客户端处理强化/环境叠字/制造加成/格挡冷却，库存同步完成标记，异常生物包警告。",
+    "methods": [
+      {
+        "name": "handleCraftingBoost",
+        "line": 37
+      },
+      {
+        "name": "injectDenyBadSpawn",
+        "line": 42
+      },
+      {
+        "name": "handleOverlayMessage",
+        "line": 50
+      },
+      {
+        "name": "handleWindowItems",
+        "line": 55
+      },
+      {
+        "name": "processFinishForgingPacket",
+        "line": 61
+      },
+      {
+        "name": "handleUpdateDefense",
+        "line": 69
+      },
+      {
+        "name": "processForgingTableInfoPacket",
+        "line": 75
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/network/NetworkManagerTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "网络处理器接口默认空实现。",
+    "methods": [
+      {
+        "name": "handleCraftingBoost",
+        "line": 21
+      },
+      {
+        "name": "handleOverlayMessage",
+        "line": 25
+      },
+      {
+        "name": "handleSyncItems",
+        "line": 29
+      },
+      {
+        "name": "processFinishForgingPacket",
+        "line": 33
+      },
+      {
+        "name": "processForgingTableInfoPacket",
+        "line": 37
+      },
+      {
+        "name": "processStartForgingPacket",
+        "line": 41
+      },
+      {
+        "name": "handleUpdateDefense",
+        "line": 45
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/network/PacketOpenWindowTrans.java",
+    "line": 21,
+    "entry": "必需mixin已注册",
+    "mechanism": "窗口类型14强化台，名字读入长度32→32767。",
+    "methods": [
+      {
+        "name": "handleOpenWindow",
+        "line": 42
+      },
+      {
+        "name": "readPacketData",
+        "line": 51
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/network/ServerNetworkManagerTrans.java",
+    "line": 22,
+    "entry": "必需mixin已注册",
+    "mechanism": "服务端处理重同步物品和开始强化。",
+    "methods": [
+      {
+        "name": "getNetManager",
+        "line": 29
+      },
+      {
+        "name": "handleSyncItems",
+        "line": 33
+      },
+      {
+        "name": "isServerHandler",
+        "line": 42
+      },
+      {
+        "name": "processStartForgingPacket",
+        "line": 48
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/network/SPacketMobSpawnTrans.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "处理生物包时捕获NullPointerException，避免该异常直接中断。",
+    "methods": [
+      {
+        "name": "processPacket",
+        "line": 18
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/render/BaseRenderTrans.java",
+    "line": 17,
+    "entry": "未列入mixin清单",
+    "mechanism": "发光贴图强制覆盖接口，但此类未列入miteite.mixin.json，不能算启用机制。",
+    "methods": [
+      {
+        "name": "forceGlowOverride",
+        "line": 25
+      },
+      {
+        "name": "captureGlowingAndSet",
+        "line": 30
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/render/ChestRenderTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金私人箱专用纹理。",
+    "methods": [
+      {
+        "name": "renderTileEntityAt",
+        "line": 23
+      },
+      {
+        "name": "injectGetVibraniumTexture",
+        "line": 27
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/render/RenderEarthElementalTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "木元素纹理。",
+    "methods": [
+      {
+        "name": "setTextures",
+        "line": 23
+      },
+      {
+        "name": "setTexture",
+        "line": 26
+      },
+      {
+        "name": "injectGetPlankTexture",
+        "line": 33
+      },
+      {
+        "name": "injectTexture",
+        "line": 40
+      },
+      {
+        "name": "setTexture",
+        "line": 45
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/render/RenderIronGolemTrans.java",
+    "line": 18,
+    "entry": "必需mixin已注册",
+    "mechanism": "秘银升级傀儡模型缩放。",
+    "methods": [
+      {
+        "name": "injectApplyBoosted",
+        "line": 25
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/render/RenderLightningBoltTrans.java",
+    "line": 14,
+    "entry": "必需mixin已注册",
+    "mechanism": "无天空维度或不下雨时仍渲染闪电。",
+    "methods": [
+      {
+        "name": "allowRenderLightningInNoSky",
+        "line": 16
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/util/ChestItemRenderHelperTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "振金箱物品方块实体渲染。",
+    "methods": [
+      {
+        "name": "ChestItemRenderHelper",
+        "line": 25
+      },
+      {
+        "name": "renderChest",
+        "line": 30
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/util/DamageTrans.java",
+    "line": 22,
+    "entry": "必需mixin已注册",
+    "mechanism": "四件普通保护V额外减伤10%，伤害责任实体接口。",
+    "methods": [
+      {
+        "name": "applyTargetDefenseModifiers",
+        "line": 30
+      },
+      {
+        "name": "getResponsibleEntityP",
+        "line": 48
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/util/DataWatcherTrans.java",
+    "line": 13,
+    "entry": "必需mixin已注册",
+    "mechanism": "数字型同步对象读取改用Number转换，字符串toString兼容。",
+    "methods": [
+      {
+        "name": "getWatchedObject",
+        "line": 15
+      },
+      {
+        "name": "getWatchableObjectByte",
+        "line": 18
+      },
+      {
+        "name": "getWatchableObjectShort",
+        "line": 23
+      },
+      {
+        "name": "getWatchableObjectInt",
+        "line": 28
+      },
+      {
+        "name": "getWatchableObjectFloat",
+        "line": 33
+      },
+      {
+        "name": "getWatchableObjectString",
+        "line": 38
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/util/DispenseBehaviorItemTrans.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "发射器拒绝0/负数物品堆。",
+    "methods": [
+      {
+        "name": "fixNegativeCountItem",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/util/EntityDamageResultAccessor.java",
+    "line": 11,
+    "entry": "必需mixin已注册",
+    "mechanism": "可撤销致死标志，供紧急守备。",
+    "methods": [
+      {
+        "name": "setEntity_was_destroyed",
+        "line": 13
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/BiomeBaseTrans.java",
+    "line": 23,
+    "entry": "必需mixin已注册",
+    "mechanism": "全生物群系增加巨人/恶魂/公爵(各权重10)、僵尸领主2、湮灭1、流浪1。",
+    "methods": [
+      {
+        "name": "injectInit",
+        "line": 28
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/BiomeDecoratorTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "主世界/地底矿物频率×概率后Math.round，非每矿脉独立概率骰。",
+    "methods": [
+      {
+        "name": "getWeightedFrequency",
+        "line": 18
+      },
+      {
+        "name": "modifyCopperOverworldFreq",
+        "line": 29
+      },
+      {
+        "name": "modifySilverOverworldFreq",
+        "line": 34
+      },
+      {
+        "name": "modifyGoldOverworldFreq",
+        "line": 39
+      },
+      {
+        "name": "modifyIronOverworldFreq",
+        "line": 44
+      },
+      {
+        "name": "modifyMithrilOverworldFreq",
+        "line": 49
+      },
+      {
+        "name": "modifyDiamondOverworldFreq",
+        "line": 54
+      },
+      {
+        "name": "modifyLapisOverworldFreq",
+        "line": 59
+      },
+      {
+        "name": "modifyCopperUnderworldFreq",
+        "line": 64
+      },
+      {
+        "name": "modifySilverUnderworldFreq",
+        "line": 69
+      },
+      {
+        "name": "modifyGoldUnderworldFreq",
+        "line": 74
+      },
+      {
+        "name": "modifyIronUnderworldFreq",
+        "line": 79
+      },
+      {
+        "name": "modifyMithrilUnderworldFreq",
+        "line": 84
+      },
+      {
+        "name": "modifyAdamantiteUnderworldFreq",
+        "line": 89
+      },
+      {
+        "name": "modifyDiamondUnderworldFreq",
+        "line": 94
+      },
+      {
+        "name": "modifyLapisUnderworldFreq",
+        "line": 99
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/BiomeGenUnderworldTrans.java",
+    "line": 20,
+    "entry": "必需mixin已注册",
+    "mechanism": "地底追加僵尸领主2/湮灭1/流浪1/地狱犬15组1–2。",
+    "methods": [
+      {
+        "name": "injectCtor",
+        "line": 27
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/BiomeHellTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "下界追加猪人领主1/湮灭1/地狱犬20组1–2。",
+    "methods": [
+      {
+        "name": "injectCtor",
+        "line": 26
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/ChunkProviderHellTrans.java",
+    "line": 24,
+    "entry": "必需mixin已注册",
+    "mechanism": "下界艾德曼每区块1–3次/矿脉参数2，起点y35–114；其他下界矿起点常数也改。",
+    "methods": [
+      {
+        "name": "injectGenAdamantium",
+        "line": 31
+      },
+      {
+        "name": "modifyNetherOreHeightRandom",
+        "line": 45
+      },
+      {
+        "name": "modifyNetherOreHeight",
+        "line": 50
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/ChunkProviderUnderworldTrans.java",
+    "line": 13,
+    "entry": "必需mixin已注册",
+    "mechanism": "取消地底replaceBlocksForBiome整个阶段。",
+    "methods": [
+      {
+        "name": "replaceBlocksForBiome",
+        "line": 15
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/ChunkTrans.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "地底地幔层随机偏移改固定75（可配置）。",
+    "methods": [
+      {
+        "name": "redirectRandomBedrockNum",
+        "line": 17
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/IWorldInfoTrans.java",
+    "line": 12,
+    "entry": "必需mixin已注册",
+    "mechanism": "共享世界信息访问器。",
+    "methods": [
+      {
+        "name": "getShared",
+        "line": 14
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/SpawnerCreatureTrans.java",
+    "line": 15,
+    "entry": "必需mixin已注册",
+    "mechanism": "血月分母256→128，怪物额度在原预算之后+日数；保持原R196层级刷怪器。",
+    "methods": [
+      {
+        "name": "modifyMaxHostileFraction",
+        "line": 17
+      },
+      {
+        "name": "modifyCreatureLimit",
+        "line": 22
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/WorldClientTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "只声明继承与构造函数，无新增行为。",
+    "methods": []
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/WorldGenMinableTrans.java",
+    "line": 19,
+    "entry": "必需mixin已注册",
+    "mechanism": "地底普通矿140–225，艾德曼130–225（230被覆盖）；下界35–115，下界/地底低于最低Y拒生成。",
+    "methods": [
+      {
+        "name": "getMinVeinHeight",
+        "line": 24
+      },
+      {
+        "name": "getMaxVeinHeight",
+        "line": 27
+      },
+      {
+        "name": "wrapNetherAdamantiumSetError",
+        "line": 30
+      },
+      {
+        "name": "injectMinVeinHeight",
+        "line": 40
+      },
+      {
+        "name": "injectMinableGenerate",
+        "line": 54
+      },
+      {
+        "name": "injectMaxVeinHeight",
+        "line": 62
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/WorldInfoSharedTrans.java",
+    "line": 16,
+    "entry": "必需mixin已注册",
+    "mechanism": "持久化第一日一次回拨标记ite:time_back。",
+    "methods": [
+      {
+        "name": "onNBTWrite",
+        "line": 22
+      },
+      {
+        "name": "onNBTRead",
+        "line": 27
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/world/WorldTrans.java",
+    "line": 21,
+    "entry": "必需mixin已注册",
+    "mechanism": "全维度取主世界日；128日前32天/之后16天血月；蓝月仅128日、丰收月提前3天。",
+    "methods": [
+      {
+        "name": "isBlueMoon",
+        "line": 27
+      },
+      {
+        "name": "isBlueMoon",
+        "line": 30
+      },
+      {
+        "name": "getDayOfWorld",
+        "line": 35
+      },
+      {
+        "name": "getBlock",
+        "line": 40
+      },
+      {
+        "name": "getBlockMetadata",
+        "line": 43
+      },
+      {
+        "name": "getTotalWorldTime",
+        "line": 48
+      },
+      {
+        "name": "getDayOfOverworld",
+        "line": 52
+      },
+      {
+        "name": "anySolidBlockIn",
+        "line": 58
+      },
+      {
+        "name": "modifyBloodMoonTime",
+        "line": 78
+      },
+      {
+        "name": "injectOneBlueMoon",
+        "line": 86
+      },
+      {
+        "name": "modifyHarvestMoonTime",
+        "line": 94
+      },
+      {
+        "name": "modifyBloodMoonTime",
+        "line": 99
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/BiLazyValue.java",
+    "line": 8,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "双参数惰性缓存辅助。",
+    "methods": [
+      {
+        "name": "get",
+        "line": 16
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/BlockPos.java",
+    "line": 8,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "信标位置值对象。",
+    "methods": [
+      {
+        "name": "toString",
+        "line": 19
+      },
+      {
+        "name": "equals",
+        "line": 23
+      },
+      {
+        "name": "hashCode",
+        "line": 34
+      },
+      {
+        "name": "getX",
+        "line": 38
+      },
+      {
+        "name": "getY",
+        "line": 42
+      },
+      {
+        "name": "getZ",
+        "line": 46
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/CompatUtil.java",
+    "line": 16,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "旧NBT浮点词条迁为等级，工具上限15+锻造；targetIsNotZombieBoss当前总true。",
+    "methods": [
+      {
+        "name": "targetIsNotZombieBoss",
+        "line": 19
+      },
+      {
+        "name": "fixNBT",
+        "line": 29
+      },
+      {
+        "name": "getMaxToolLevel",
+        "line": 66
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/Configs.java",
+    "line": 13,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "旧JSON配置所有默认值与公开配置树；全量默认值另附CSV/JSON。",
+    "methods": []
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/Constant.java",
+    "line": 16,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "装备阶梯数组、锻造增幅pow(1.028,2.28g)-1、资源与版本常量。",
+    "methods": [
+      {
+        "name": "getNextItemID",
+        "line": 29
+      },
+      {
+        "name": "initItemArray",
+        "line": 33
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/EnchantmentUtil.java",
+    "line": 22,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "随机附魔池/冲突过滤、振金额外等级与兼容；独立附魔循环/上限代码有异常，不把形参当实际限制。",
+    "methods": [
+      {
+        "name": "removeEnchantmentsFromMapThatConflict",
+        "line": 23
+      },
+      {
+        "name": "buildEnchantmentList",
+        "line": 40
+      },
+      {
+        "name": "mapEnchantmentData",
+        "line": 100
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/EntityUtil.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "生成实体周围粒子。",
+    "methods": [
+      {
+        "name": "generateRandomParticles",
+        "line": 10
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/EnumChatFormats.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "取预加载的5种扩展颜色。",
+    "methods": []
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/ItemUtil.java",
+    "line": 15,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "按伤害类型计算防火/防爆/弹射成长保护，振金不同伤害附魔兼容。",
+    "methods": [
+      {
+        "name": "getProtectionForDamage",
+        "line": 16
+      },
+      {
+        "name": "isDamageEnchantmentCompatibleWith",
+        "line": 26
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/MathUtil.java",
+    "line": 6,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "数值范围判断辅助，供近战高差限制。",
+    "methods": [
+      {
+        "name": "isInRange",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/MobSpawnerGetter.java",
+    "line": 8,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "反射取得net.minecraft.MobSpawnerBaseLogic类的辅助，不独立增加刷怪机制。",
+    "methods": [
+      {
+        "name": "dangerGet",
+        "line": 10
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/MonsterUtil.java",
+    "line": 17,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "按日随机装备材质/槽位/附魔，366日封顶；独立随机附魔生成桥。",
+    "methods": [
+      {
+        "name": "addDefaultArmor",
+        "line": 18
+      },
+      {
+        "name": "addRandomEnchantment",
+        "line": 31
+      },
+      {
+        "name": "getRandomItemTier",
+        "line": 41
+      },
+      {
+        "name": "getRandomItemTier",
+        "line": 48
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/SkillUtil.java",
+    "line": 9,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "反射技能id辅助；当前源码无实际调用者，不新增玩家技能系统。",
+    "methods": [
+      {
+        "name": "getSkillID",
+        "line": 12
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/StringUtil.java",
+    "line": 6,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "罗马数字显示辅助。",
+    "methods": [
+      {
+        "name": "intToRoman",
+        "line": 7
+      }
+    ]
+  },
+  {
+    "source": ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/util/WorldUtil.java",
+    "line": 6,
+    "entry": "被注册入口或机制实现引用；见说明",
+    "mechanism": "血月日期纯函数。",
+    "methods": [
+      {
+        "name": "isBloodMoonDay",
+        "line": 7
+      }
+    ]
+  }
+]

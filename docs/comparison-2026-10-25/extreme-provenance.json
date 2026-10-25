@@ -1,0 +1,11 @@
+{
+  "author": "NingMeng123",
+  "cfr": "0.152",
+  "input": ".reference/[极难柳昊定制]Extreme-lh-0.6.6 (3).jar",
+  "sha256": "594c152bb7cfe655f9b0744aea2ed45d71696779cd842c71be2501189c540d98",
+  "source_count": 374,
+  "compared_after_stripping_only_leading_cfr_comment": true,
+  "matches": 374,
+  "different": [],
+  "method": "java -jar .reference/downloads/cfr-0.152.jar <original.jar> --outputdir .reference/audit-20261025/extreme-fresh --silent true"
+}

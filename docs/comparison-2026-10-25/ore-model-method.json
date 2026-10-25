@@ -1,0 +1,25 @@
+{
+  "author": "NingMeng123",
+  "date": "2026-10-25",
+  "overworld_samples_per_case": 1000000,
+  "underworld_legacy_samples_per_case": 3000000,
+  "underworld_terrain_seeds": [
+    0,
+    196,
+    20261025,
+    123456789
+  ],
+  "underworld_terrain_chunks": 64,
+  "basis": "Production R196OreRules.java plus explicitly copied legacy afq vein-budget float arithmetic",
+  "excludes": [
+    "real whole-world ore counts",
+    "connected vein growth truncation",
+    "overlap",
+    "structures",
+    "decoration",
+    "user live instance config",
+    "ITE mantle offset terrain in the all-rock legacy model"
+  ],
+  "flat_model": "old stone Y0..63; modern deepslate Y-64..-1 and stone Y0..63; above Y63 air; current height overrides retained",
+  "rounding": "present estimates to 2-3 significant digits; output CSV retains raw calculations"
+}

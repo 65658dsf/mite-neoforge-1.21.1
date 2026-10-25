@@ -1,0 +1,273 @@
+﻿source,key,bundled_default,path,meaning
+Modern_main,underworld_ores.coal,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.emerald,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_coal,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_emerald,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.gravel,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.copper,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.silver,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.gold,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.iron,2.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.mithril,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.adamantium,1.3,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.redstone,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.diamond,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.lapis,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.infested,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_copper,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_silver,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_gold,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_iron,2.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_mithril,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_adamantium,1.3,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_redstone,1.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_diamond,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_ores.deepslate_lapis,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.coal,2.8,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.emerald,1.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_coal,2.8,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_emerald,1.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.copper,4.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.silver,4.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.iron,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.gold,4.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.mithril,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.lapis,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.diamond,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.adamantium,0.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_copper,4.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_silver,4.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_iron,5.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_gold,4.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_mithril,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_lapis,4.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_diamond,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_ores.deepslate_adamantium,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.gravel.candidates,300.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.gravel.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.gravel.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.copper.candidates,320.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.copper.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.copper.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.copper.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.silver.candidates,80.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.silver.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.silver.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.silver.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.gold.candidates,160.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.gold.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.gold.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.gold.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.iron.candidates,480.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.iron.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.iron.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.iron.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.mithril.candidates,80.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.mithril.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.mithril.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.mithril.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.adamantium.candidates,80.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.adamantium.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.adamantium.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.adamantium.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.redstone.candidates,80.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.redstone.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.redstone.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.redstone.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.diamond.candidates,40.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.diamond.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.diamond.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.diamond.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.lapis.candidates,40.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.lapis.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.lapis.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.lapis.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.infested.candidates,400.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.infested.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.infested.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.coal.candidates,50.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.coal.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.coal.height_range,"""[-64,319]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.coal.deepslate_height_range,"""[-64,319]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.emerald.candidates,3.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.emerald.chance_percent,100.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.emerald.height_range,"""[-64,319]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,underworld_generation.emerald.deepslate_height_range,"""[-64,319]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.copper.candidates,40.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.copper.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.copper.height_range,"""[-64,168]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.copper.deepslate_height_range,"""[-64,168]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.silver.candidates,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.silver.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.silver.height_range,"""[-64,168]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.silver.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.iron.candidates,60.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.iron.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.iron.height_range,"""[-64,168]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.iron.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.gold.candidates,20.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.gold.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.gold.height_range,"""[-64,168]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.gold.deepslate_height_range,"""[-64,64]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.mithril.candidates,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.mithril.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.mithril.height_range,"""[-64,68]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.mithril.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.lapis.candidates,5.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.lapis.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.lapis.height_range,"""[-64,168]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.lapis.deepslate_height_range,"""[-48,64]""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.diamond.candidates,5.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.diamond.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.diamond.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.diamond.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.adamantium.candidates,0.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.adamantium.chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.adamantium.height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,overworld_generation.adamantium.deepslate_height_range,"""""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.growth_multiplier,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.health_growth_multiplier,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.damage_growth_multiplier,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.health_base,0.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.damage_base,0.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.skeleton_reference,20.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.health_daily_percent,0.5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.damage_daily_percent,0.25,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.health_formula,"""base + reference * rate * days""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.damage_formula,"""base + reference * rate * days""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.health_blood_moon_formula,"""base + reference * rate * days""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monsters.damage_blood_moon_formula,"""base + reference * rate * days""",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.rates,[],D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.weights,"[""minecraft:ghast=5""]",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.reference_rules,1,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.base_cap,100,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.blood_cap,200,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.daily_cap_increase,0.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.maximum_cap,0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.hostile_interval_ticks,5,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.deep_chance_percent,10.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.surface_chance_percent,17.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.blood_chance_multiplier,2.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,monster_spawning.dimension_chance_multiplier,0.25,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,combat.weapon_reach_multiplier,1.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,combat.weapon_reach_reduction,0.0,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,combat.height_reach_penalty,true,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,combat.better_combat_mobs,false,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,structures.underworld_trials,true,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,structures.overworld_trials,true,D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,enchantments.disabled,"[""minecraft:binding_curse"", ""minecraft:loyalty""]",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,enchantments.max_levels,"[""modern_ite:extend=1""]",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_main,enchantments.chance_percent,"[""minecraft:loyalty=0.0""]",D:\Coding\LemonDev\minecraft\miteto1.21.1neoforge\src\main\resources\mite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.first_day_longer_day_time,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.in_rain_debuff_time,3600,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.player_enchant_defense,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.player_defense_cooldown,160,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.player_defence_max_time,40,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.in_wall_damage_for_player,1.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.stepped_mob_damage_factor,0.5,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.stepped_mob_damage_progress_max,2.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.stepped_mob_damage_progress_increase_day,50,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.stepped_player_damage_progress,2.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.stepped_player_damage_increase_per_lvl,0.1,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.fishing_xp,30,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.player_disarm_player,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Underworld.underworld_random_teleport,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Underworld.underworld_random_teleport_time_new,132000,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Underworld.underworld_debuff,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Underworld.underworld_debuff_period1,54000,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Underworld.underworld_debuff_period2,108000,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Nether.netherrack_damage,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Nether.netherrack_damage_limit_day,96,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Nether.nether_debuff,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.Nether.nether_debuff_time,72000,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.extreme_mob_spawn_limit_day,3,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.ghast_spawn_limit_day,128,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.annihilation_skeleton_spawn_in_light,false,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.wandering_witch_spawn_chance_overworld,33,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.wandering_witch_spawn_limit_day_overworld,65,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.wandering_witch_spawn_limit_day_other,65,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.wandering_witch_spawn_chance_underworld,50,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.zombie_lord_spawn_frequency,2,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.zombie_pigman_lord_spawn_frequency,1,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.annihilation_skeleton_spawn_frequency,1,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.wandering_witch_spawn_frequency,1,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.blood_moon_max_hostile_fraction,3.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.ancient_bone_lord_spawn_limit_day,33,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.mob_max_spawn_count_increase_per_day,1.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.mob_max_spawn_count_chunk_base,25,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.mob_max_spawn_count_day_minimum,100,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.mob_max_spawn_count_day_maximum,0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.deep_hostile_cap_multiplier,2.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.natural_local_hostile_limit,5,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.full_moon_natural_local_hostile_limit,10,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.blood_moon_natural_local_hostile_limit,12,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.local_hostile_limit,32,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.blood_moon_local_hostile_limit,48,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.hostile_spawn_groups,3,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.blood_moon_hostile_spawn_groups,4,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.hostile_spawn_attempts,4,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.hostile_spawn_interval_ticks,5,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.deep_spawn_chance_percent,10.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.surface_spawn_chance_percent,17.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.blood_moon_spawn_chance_multiplier,1.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.other_dimension_spawn_chance_multiplier,0.25,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.natural_spawn_rates,[],D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,GameMechanics.MobSpawning.natural_spawn_weights,"[""modern_ite:dragon_zombie=1"", ""modern_ite:skeleton_elite_lord=1"", ""modern_ite:skeleton_zombie=10""]",D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.quartz_max_exp_level,55,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.diamond_exp,500,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.emerald_exp,250,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.quartz_exp,50,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.lapis_exp,25,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.golden_apple_eat_time,32,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.enchanted_golden_apple_eat_time,32,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Enchantment.crit_enchantment_chance_boost_per_lvl,20.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Enchantment.crit_enchantment_damage_boost_per_lvl,0.4,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Enchantment.emergency_cooldown_,120000,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Enchantment.emergency_cooldown_reduce_every_armor,0.2,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Enchantment.emergency_health_recover_amount,10.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Enchantment.conqueror_damage_boost_per_lvl,1.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Enchantment.beheading_chance_boost_per_lvl,0.05,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Enchantment.all_protection_v_defence_fraction,0.1,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Recipes.iron_to_mithril_cook_time,6000,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Recipes.iron_block_count_to_mithril,2,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Recipes.mithril_to_adamantium_cook_time,9000,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Item.Recipes.mithril_block_count_to_adamantium,1,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Block.mob_spawner_speed_up_with_players,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Block.mob_spawner_extra_delay_reduction,2,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.enhance_limit,366,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.skeleton_triple_shot,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.compressed_skeleton,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.compressed_skeleton_crack_stand_time,20,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.compressed_skeleton_expand_count,7,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.skeleton_force_melee_attack,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.bone_lord_and_longdead_change_weapon_chance,0.25,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.bat_poison_attack,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.zombie_pigman_use_bow,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.zombie_pigman_boost_chance,0.025,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.ghast_overworld_boost,1.25,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.wolves_attack_players_with_meat,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.can_boost_iron_golem,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.annihilation_skeleton_despawn_time,3600,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.ender_dragon_attack_wither_chance,0.2,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.ender_dragon_immune_to_arrow_health_percent,0.3,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.ender_dragon_attack_slowness,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.nether_mod_attack_fire_chance,0.5,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.slime_attack_damage_multiplier,1.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.slime_attack_damage_bonus,4.0,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.giant_zombie_spawn_zombie_cooldown,1200,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.zombie_pigman_attack_animails,false,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.bone_lord_tweak,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.infernal_creeper_boost,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.villager_wool_to_emerald_shard_count,4,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.villager_wool_to_emerald_shard_shard_count,1,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.mob_defense,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.mob_attack_cause_fire,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.mob_disarm_when_defence,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.Animals.animal_ill_to_death_time,144000,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.Animals.breed_xp_chicken,15,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.Animals.breed_xp_sheep,30,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.Animals.breed_xp_pig,25,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Entities.Animals.breed_xp_cow,45,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,WorldGen.Nether.nether_adamantium_max_count_per_chunk,4,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,WorldGen.Nether.nether_adamantium_max_count_per_vein,3,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值
+Modern_ITE,Misc.log_players_interact_with_portal,true,D:\Coding\LemonDev\minecraft\MITE Modern ITE\src\main\resources\modern_ite\gameplay-defaults.toml,打包的工厂覆盖值；不等于已有存档或运行实例的生效值

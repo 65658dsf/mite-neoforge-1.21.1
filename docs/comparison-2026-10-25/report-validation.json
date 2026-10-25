@@ -1,0 +1,31 @@
+{
+  "author": "NingMeng123",
+  "scope": "Document structure, local links, inventories, resource hashes; no gameplay execution",
+  "errors": [],
+  "table_warnings": [],
+  "counts": {
+    "bundled-defaults.csv": 272,
+    "entity-comparison.csv": 45,
+    "extreme-config.csv": 30,
+    "extreme-source-index.csv": 374,
+    "ite-config-defaults.csv": 127,
+    "ore-equivalence-overworld.csv": 8,
+    "ore-equivalence-underworld.csv": 9,
+    "ore-model-overworld.csv": 8,
+    "ore-model-underworld-legacy.csv": 27,
+    "ore-model-underworld-terrain.csv": 9,
+    "resource-inventory.csv": 5383,
+    "source-inventory.csv": 3057,
+    "source_counts": {
+      "R196": 1185,
+      "ITE_2.0.28": 252,
+      "Extreme_LH_0.6.6": 374,
+      "Modern_main": 1072,
+      "Modern_ITE": 174
+    },
+    "resource_counts": {
+      "Modern_main": 4638,
+      "Modern_ITE": 745
+    }
+  }
+}

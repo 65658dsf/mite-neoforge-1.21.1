@@ -1,0 +1,10 @@
+﻿dimension,kind,model,r196_equal_chunk_budget_multiplier,ite_equal_chunk_budget_multiplier,extreme_equal_chunk_budget_multiplier,r196_equal_geometric_density_multiplier,ite_equal_geometric_density_multiplier,extreme_equal_geometric_density_multiplier
+underworld,COPPER,all_replaceable_rock_budget_excludes_terrain,1.0,0.077455875,0.077455875,1.5,0.11618381249999998,0.11618381249999998
+underworld,SILVER,all_replaceable_rock_budget_excludes_terrain,1.0,0.07754743,0.07754743,1.5,0.116321145,0.116321145
+underworld,GOLD,all_replaceable_rock_budget_excludes_terrain,1.0,0.07674908999999999,0.07674908999999999,1.5,0.11512363499999999,0.11512363499999999
+underworld,IRON,all_replaceable_rock_budget_excludes_terrain,1.0,0.077398545,0.077398545,1.5,0.1160978175,0.1160978175
+underworld,MITHRIL,all_replaceable_rock_budget_excludes_terrain,1.0,0.07547356,0.07547356,1.5,0.11321033999999999,0.11321033999999999
+underworld,ADAMANTIUM,all_replaceable_rock_budget_excludes_terrain,1.0,0.08574935,0.54157868,1.5,0.128624025,0.81236802
+underworld,DIAMOND,all_replaceable_rock_budget_excludes_terrain,1.0,0.11333935,0.11333935,1.5,0.170009025,0.170009025
+underworld,LAPIS,all_replaceable_rock_budget_excludes_terrain,1.0,0.113314725,0.113314725,1.5,0.1699720875,0.1699720875
+underworld,REDSTONE,all_replaceable_rock_budget_excludes_terrain,1.0,0.45340632,0.45340632,1.5,0.6801094799999999,0.6801094799999999

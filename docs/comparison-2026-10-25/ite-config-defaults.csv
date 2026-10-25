@@ -1,0 +1,128 @@
+﻿field,json_key,type,default,Configs.java_line,uses
+GameMechanics.FIRST_DAY_LONGER_DAY_TIME,first_day_longer_day_time,Boolean,true,18,events/listener/TickListener.java:19
+GameMechanics.FISHING_XP_SCALE,fishing_xp,Integer,10,19,trans/entity/EntityFishingHookTrans.java:29
+GameMechanics.IN_RAIN_DEBUFF_TIME,in_rain_debuff_time,Integer,3600,20,trans/entity/EntityPlayerTrans.java:406
+GameMechanics.IN_WALL_DAMAGE_FOR_PLAYER,in_wall_damage_for_player,Double,10.0,21,trans/entity/EntityLivingBaseTrans.java:103
+GameMechanics.PLAYER_DEFENCE_MAX_TIME,player_defence_max_time,Integer,40,22,trans/item/ItemToolTrans.java:211
+GameMechanics.PLAYER_DEFENSE_COOLDOWN,player_defense_cooldown,Integer,160,23,trans/item/ItemToolTrans.java:285; trans/item/ItemToolTrans.java:292
+GameMechanics.PLAYER_ENCHANT_DEFENSE,player_enchant_defense,Boolean,true,24,trans/item/ItemToolTrans.java:193; trans/item/ItemToolTrans.java:196
+GameMechanics.PLAYER_DISARM_PLAYER,player_disarm_player,Boolean,true,25,trans/entity/EntityPlayerTrans.java:158
+GameMechanics.STEPPED_MOB_DAMAGE_PROGRESS_BASE,stepped_mob_damage_factor,Double,1.0,26,trans/entity/EntityPlayerTrans.java:369
+GameMechanics.STEPPED_MOB_DAMAGE_PROGRESS_INCREASE_DAY,stepped_mob_damage_progress_increase_day,Integer,24,27,trans/entity/EntityPlayerTrans.java:369
+GameMechanics.STEPPED_MOB_DAMAGE_PROGRESS_MAX,stepped_mob_damage_progress_max,Double,4.0,28,trans/entity/EntityPlayerTrans.java:369
+GameMechanics.STEPPED_PLAYER_BASE_DAMAGE_MAX,stepped_player_damage_progress,Double,2.0,29,trans/entity/EntityLivingTrans.java:109
+GameMechanics.STEPPED_PLAYER_DAMAGE_INCREASE_PER_LVL,stepped_player_damage_increase_per_lvl,Double,0.1,30,trans/entity/EntityLivingTrans.java:116
+GameMechanics.Underworld.UNDERWORLD_DEBUFF,underworld_debuff,Boolean,true,33,trans/entity/EntityPlayerTrans.java:440; trans/entity/EntityPlayerTrans.java:442; trans/entity/EntityPlayerTrans.java:443
+GameMechanics.Underworld.UNDERWORLD_DEBUFF_PERIOD1,underworld_debuff_period1,Integer,72000,34,trans/entity/EntityPlayerTrans.java:442
+GameMechanics.Underworld.UNDERWORLD_DEBUFF_PERIOD2,underworld_debuff_period2,Integer,108000,35,trans/entity/EntityPlayerTrans.java:443
+GameMechanics.Underworld.UNDERWORLD_RANDOM_TELEPORT,underworld_random_teleport,Boolean,true,36,trans/entity/EntityPlayerTrans.java:456; trans/entity/EntityPlayerTrans.java:457
+GameMechanics.Underworld.UNDERWORLD_RANDOM_TELEPORT_TIME,underworld_random_teleport_time_new,Integer,132000,37,trans/entity/EntityPlayerTrans.java:457
+GameMechanics.Nether.NETHERRACK_DAMAGE,netherrack_damage,Boolean,true,41,trans/entity/EntityTrans.java:34
+GameMechanics.Nether.NETHERRACK_DAMAGE_LIMIT_DAY,netherrack_damage_limit_day,Integer,96,42,trans/entity/EntityTrans.java:34
+GameMechanics.Nether.NETHER_DEBUFF,nether_debuff,Boolean,true,43,trans/entity/EntityPlayerTrans.java:416; trans/entity/EntityPlayerTrans.java:417
+GameMechanics.Nether.NETHER_DEBUFF_TIME,nether_debuff_time,Integer,72000,44,trans/entity/EntityPlayerTrans.java:417
+GameMechanics.MobSpawning.ANCIENT_BONE_LORD_SPAWN_LIMIT_DAY,ancient_bone_lord_spawn_limit_day,Integer,192,48,trans/entity/EntityAncientBoneLordTrans.java:73
+GameMechanics.MobSpawning.BLOOD_MOON_MAX_HOSTILE_FRACTION,blood_moon_max_hostile_fraction,Double,128.0,49,trans/world/SpawnerCreatureTrans.java:18
+GameMechanics.MobSpawning.GHAST_SPAWN_LIMIT_DAY,ghast_spawn_limit_day,Integer,128,50,events/MITEITESpawnConditions.java:20; trans/entity/EntityGhastTrans.java:51
+GameMechanics.MobSpawning.ANNIHILATION_SKELETON_SPAWN_IN_LIGHT,annihilation_skeleton_spawn_in_light,Boolean,false,51,entity/EntityAnnihilationSkeleton.java:162
+GameMechanics.MobSpawning.MOB_MAX_SPAWN_COUNT_INCREASE_PER_DAY,mob_max_spawn_count_increase_per_day,Double,1.0,52,trans/world/SpawnerCreatureTrans.java:23
+GameMechanics.MobSpawning.WANDERING_WITCH_SPAWN_LIMIT_DAY_OTHER,wandering_witch_spawn_limit_day_other,Integer,64,53,entity/EntityWanderingWitch.java:101
+GameMechanics.MobSpawning.WANDERING_WITCH_SPAWN_LIMIT_DAY_OVERWORLD,wandering_witch_spawn_limit_day_overworld,Integer,64,54,entity/EntityWanderingWitch.java:99
+GameMechanics.MobSpawning.WANDERING_WITCH_SPAWN_CHANCE_OVERWORLD,wandering_witch_spawn_chance_overworld,Integer,33,55,entity/EntityWanderingWitch.java:91
+GameMechanics.MobSpawning.WANDERING_WITCH_SPAWN_CHANCE_UNDERWORLD,wandering_witch_spawn_chance_underworld,Integer,50,56,entity/EntityWanderingWitch.java:94
+GameMechanics.MobSpawning.ZOMBIE_LORD_SPWAN_FREQUENCY,zombie_lord_spawn_frequency,Integer,2,57,trans/world/BiomeBaseTrans.java:32; trans/world/BiomeGenUnderworldTrans.java:28
+GameMechanics.MobSpawning.ZOMBIE_PIGMAN_LORD_SPWAN_FREQUENCY,zombie_pigman_lord_spawn_frequency,Integer,1,58,trans/world/BiomeHellTrans.java:27
+GameMechanics.MobSpawning.ANNIHILATION_SKELETON_SPWAN_FREQUENCY,annihilation_skeleton_spawn_frequency,Integer,1,59,trans/world/BiomeBaseTrans.java:33; trans/world/BiomeGenUnderworldTrans.java:29; trans/world/BiomeHellTrans.java:28
+GameMechanics.MobSpawning.WANDERING_WITCH_SPAWN_FREQUENCY,wandering_witch_spawn_frequency,Integer,1,60,trans/world/BiomeBaseTrans.java:34; trans/world/BiomeGenUnderworldTrans.java:30
+Item.DIAMOND_EXP,diamond_exp,Integer,400,65,trans/item/ItemGemsTrans.java:33
+Item.EMERALD_EXP,emerald_exp,Integer,300,66,trans/item/ItemGemsTrans.java:38
+Item.ENCHANTED_GOLDEN_APPLE_EAT_TIME,enchanted_golden_apple_eat_time,Integer,10,67,trans/item/ItemGoldenAppleTrans.java:23
+Item.QUARTZ_MAX_EXP_LEVEL,quartz_max_exp_level,Integer,55,68,trans/item/ItemGemsTrans.java:43
+Item.GOLDEN_APPLE_EAT_TIME,golden_apple_eat_time,Integer,20,69,trans/item/ItemGoldenAppleTrans.java:23
+Item.QUARTZ_EXP,quartz_exp,Integer,35,70,trans/item/ItemGemsTrans.java:28
+Item.LAPIS_EXP,lapis_exp,Integer,40,71,trans/item/ItemGemsTrans.java:23
+Item.Recipes.IRON_TO_MITHRIL_COOK_TIME,iron_to_mithril_cook_time,Integer,6000,74,trans/item/ItemTrans.java:114; events/listener/FurnaceExtend.java:26
+Item.Recipes.IRON_BLOCK_COUNT_TO_MITHRIL,iron_block_count_to_mithril,Integer,2,75,
+Item.Recipes.MITHRIL_BLOCK_COUNT_TO_ADAMANTIUM,mithril_block_count_to_adamantium,Integer,1,76,
+Item.Recipes.MITHRIL_TO_ADAMANTIUM_COOK_TIME,mithril_to_adamantium_cook_time,Integer,9000,77,trans/item/ItemTrans.java:111; events/listener/FurnaceExtend.java:27
+Item.Enchantment.ALL_PROTECTION_V_DEFENCE_FRACTION,all_protection_v_defence_fraction,Double,0.1,81,trans/util/DamageTrans.java:42
+Item.Enchantment.CRIT_ENCHANTMENT_CHANCE_BOOST_PER_LVL,crit_enchantment_chance_boost_per_lvl,Integer,2,82,trans/entity/EntityMonsterTrans.java:173; trans/entity/EntityPlayerTrans.java:175
+Item.Enchantment.CRIT_ENCHANTMENT_DAMAGE_BOOST_PER_LVL,crit_enchantment_damage_boost_per_lvl,Double,0.4,83,trans/entity/EntityMonsterTrans.java:174; trans/entity/EntityPlayerTrans.java:191; events/listener/PlayerCombatListener.java:57
+Item.Enchantment.EMERGENCY_COOLDOWN,emergency_cooldown_,Integer,120000,84,trans/entity/EntityPlayerTrans.java:135; trans/entity/EntityPlayerTrans.java:137
+Item.Enchantment.EMERGENCY_COOLDOWN_REDUCE_EVERY_ARMOR,emergency_cooldown_reduce_every_armor,Double,0.2,85,trans/entity/EntityPlayerTrans.java:135
+Item.Enchantment.EMERGENCY_HEALTH_RECOVER_AMOUNT,emergency_health_recover_amount,Integer,10,86,trans/entity/EntityPlayerTrans.java:131
+Item.Enchantment.CONQUEROR_DAMAGE_BOOST_PER_LVL,conqueror_damage_boost_per_lvl,Double,1.0,87,trans/entity/EntityLivingTrans.java:116
+Item.Enchantment.BEHEADING_CHANCE_BOOST_PER_LVL,beheading_chance_boost_per_lvl,Float,Float.valueOf(0.05f),88,trans/entity/EntityLivingBaseTrans.java:71
+Block.MOB_SPAWNER_SPEED_UP_WITH_PLAYERS,mob_spawner_speed_up_with_players,Boolean,true,93,trans/block/tileentity/MobSpawnerTrans.java:61; trans/block/tileentity/MobSpawnerTrans.java:70
+Entities.ENHANCE_LIMIT,enhance_limit,Integer,366,97,entity/EntityZombieLord.java:28; entity/EntityZombieLord.java:40; entity/EntityZombiePigmanLord.java:44; util/MonsterUtil.java:20; util/MonsterUtil.java:21; util/MonsterUtil.java:42; util/MonsterUtil.java:43; util/MonsterUtil.java:50; util/MonsterUtil.java:51; trans/entity/EntityAncientBoneLordTrans.java:54; trans/entity/EntityBoneLordTrans.java:60; trans/entity/EntityCreeperTrans.java:32; trans/entity/EntityCreeperTrans.java:40; trans/entity/EntityEndermanTrans.java:31; trans/entity/EntityGiantZombieTrans.java:105; trans/entity/EntityInvisibleStalkerTrans.java:25; trans/entity/EntityIronGolemTrans.java:39; trans/entity/EntityLongdeadTrans.java:36; trans/entity/EntityLongdeadTrans.java:57; trans/entity/EntityLongdeadTrans.java:65; trans/entity/EntityMonsterTrans.java:120; trans/entity/EntityMonsterTrans.java:141; trans/entity/EntityRevenantTrans.java:33; trans/entity/EntityRevenantTrans.java:46; trans/entity/EntitySkeletonTrans.java:99; trans/entity/EntitySkeletonTrans.java:126; trans/entity/EntitySkeletonTrans.java:235; trans/entity/EntitySkeletonTrans.java:361; trans/entity/EntitySpiderTrans.java:25; trans/entity/EntityZombiePigmanTrans.java:82; trans/entity/EntityZombieTrans.java:47; trans/entity/EntityZombieTrans.java:64
+Entities.BAT_POISON_ATTACK,bat_poison_attack,Boolean,true,98,trans/entity/EntityVampireBatTrans.java:27
+Entities.BONE_LORD_TWEAK,bone_lord_tweak,Boolean,true,99,trans/entity/EntityAncientBoneLordTrans.java:53; trans/entity/EntityAncientBoneLordTrans.java:78; trans/entity/EntityBoneLordTrans.java:59; trans/entity/EntityBoneLordTrans.java:75
+Entities.CAN_BOOST_IRON_GOLEM,can_boost_iron_golem,Boolean,true,100,trans/entity/EntityIronGolemTrans.java:63
+Entities.COMPRESSED_SKELETON,compressed_skeleton,Boolean,true,101,trans/entity/EntitySkeletonTrans.java:287; trans/entity/EntitySkeletonTrans.java:300; trans/entity/EntitySkeletonTrans.java:326
+Entities.COMPRESSED_SKELETON_EXPAND_COUNT,compressed_skeleton_expand_count,Integer,4,102,trans/entity/EntitySkeletonTrans.java:287
+Entities.GHAST_OVERWORLD_BOOST,ghast_overworld_boost,Double,1.25,103,trans/entity/EntityGhastTrans.java:78
+Entities.GIANT_ZOMBIE_SPAWN_ZOMBIE_COOLDOWN,giant_zombie_spawn_zombie_cooldown,Integer,1200,104,trans/entity/EntityGiantZombieTrans.java:199
+Entities.INFERNAL_CREEPER_BOOST,infernal_creeper_boost,Boolean,true,105,trans/entity/EntityInfernalCreeperTrans.java:27; trans/entity/EntityInfernalCreeperTrans.java:42
+Entities.SKELETON_FORCE_MELEE_ATTACK,skeleton_force_melee_attack,Boolean,true,106,trans/entity/EntitySkeletonTrans.java:185
+Entities.SKELETON_TRIPLE_SHOT,skeleton_triple_shot,Boolean,true,107,trans/entity/EntitySkeletonTrans.java:143
+Entities.COMPRESSED_SKELETON_CRACK_STAND_TIME,compressed_skeleton_crack_stand_time,Integer,20,108,trans/entity/EntitySkeletonTrans.java:300
+Entities.BONE_LORD_AND_LONGDEAD_CHANGE_WEAPON_CHANCE,bone_lord_and_longdead_change_weapon_chance,Float,Float.valueOf(0.25f),109,trans/entity/EntityBoneLordTrans.java:53; trans/entity/EntityLongdeadTrans.java:51
+Entities.VILLAGER_WOOL_TO_EMERALD_SHARD_COUNT,villager_wool_to_emerald_shard_count,Integer,4,110,events/MITEITERICEvents.java:91
+Entities.VILLAGER_WOOL_TO_EMERALD_SHARD_SHARD_COUNT,villager_wool_to_emerald_shard_shard_count,Integer,1,111,events/MITEITERICEvents.java:91
+Entities.WOLVES_ATTACK_PLAYERS_WITH_MEAT,wolves_attack_players_with_meat,Boolean,true,112,trans/entity/EntityWolfTrans.java:30
+Entities.MOB_ATTACK_CAUSE_FIRE,mob_attack_cause_fire,Boolean,true,113,trans/entity/EntityMonsterTrans.java:240
+Entities.MOB_DEFENSE,mob_defense,Boolean,true,114,trans/entity/EntityMonsterTrans.java:82
+Entities.MOB_DISARM_WHEN_ATTACK,mob_disarm_when_defence,Boolean,true,115,trans/entity/EntityMonsterTrans.java:187
+Entities.MOB_DISARM_WHEN_DEFENCE,mob_disarm_when_defence,Boolean,true,116,trans/entity/EntityMonsterTrans.java:84
+Entities.ZOMBIE_PIGMAN_BOOST_CHANCE,zombie_pigman_boost_chance,Double,0.025,117,trans/entity/EntityZombiePigmanTrans.java:157
+Entities.ZOMBIE_PIGMAN_USE_BOW,zombie_pigman_use_bow,Boolean,true,118,trans/entity/EntityZombiePigmanTrans.java:159
+Entities.ZOMBIE_PIGMAN_ATTACK_ANIMAILS,zombie_pigman_attack_animails,Boolean,false,119,trans/entity/EntityZombiePigmanTrans.java:134
+Entities.ANNIHILATION_SKELETON_DESPAWN_TIME,annihilation_skeleton_despawn_time,Integer,3600,120,entity/EntityAnnihilationSkeleton.java:90
+Entities.ENDER_DRAGON_HURT_WITHER_CHANCE,ender_dragon_attack_wither_chance,Float,Float.valueOf(0.2f),121,trans/entity/EntityEnderDragonTrans.java:94
+Entities.ENDER_DRAGON_IMMUNE_TO_ARROW_HEALTH_PERCENT,ender_dragon_immune_to_arrow_health_percent,Float,Float.valueOf(0.3f),122,trans/entity/EntityEnderDragonTrans.java:97
+Entities.ENDER_DRAGON_ATTACK_SLOWNESS,ender_dragon_attack_slowness,Boolean,true,123,trans/entity/EntityEnderDragonTrans.java:81
+Entities.NETHER_MOD_ATTACK_FIRE_CHANCE,nether_mod_attack_fire_chance,Float,Float.valueOf(0.5f),124,trans/entity/EntityMagmaCubeTrans.java:32; trans/entity/EntityZombiePigmanTrans.java:91
+Entities.SLIME_ATTACK_DAMAGE_BONUS,slime_attack_damage_bonus,Float,Float.valueOf(4.0f),125,trans/entity/EntitySlimeTrans.java:23
+Entities.SLIME_ATTACK_DAMAGE_MULTIPLIER,slime_attack_damage_multiplier,Integer,1,126,trans/entity/EntitySlimeTrans.java:28
+Entities.Animals.ANIMAL_ILL_TO_DEATH_TIME,animal_ill_to_death_time,Integer,144000,129,trans/entity/EntityLivestockTrans.java:38
+Entities.Animals.BREED_XP_CHICKEN,breed_xp_chicken,Integer,8,130,trans/entity/EntityChickenTrans.java:22
+Entities.Animals.BREED_XP_COW,breed_xp_cow,Integer,25,131,trans/entity/EntityCowTrans.java:22
+Entities.Animals.BREED_XP_PIG,breed_xp_pig,Integer,15,132,trans/entity/EntityPigTrans.java:22
+Entities.Animals.BREED_XP_SHEEP,breed_xp_sheep,Integer,10,133,trans/entity/EntitySheepTrans.java:22
+WorldGen.Nether.NETHER_ADAMANTIUM_MAX_COUNT_PER_CHUNK,nether_adamantium_max_count_per_chunk,Integer,3,140,trans/world/ChunkProviderHellTrans.java:35
+WorldGen.Nether.NETHER_ADAMANTIUM_MAX_COUNT_PER_VEIN,nether_adamantium_max_count_per_vein,Integer,2,141,trans/world/ChunkProviderHellTrans.java:34
+WorldGen.Underworld.ADAMANTIUM_FREQUENCY_UNDERWORLD,adamantium_frequency_underworld,Integer,8,145,trans/world/BiomeDecoratorTrans.java:90
+WorldGen.Underworld.ADAMANTIUM_CHANCE_UNDERWORLD,adamantium_chance_underworld,Integer,100,146,trans/world/BiomeDecoratorTrans.java:90
+WorldGen.Underworld.COPPER_FREQUENCY_UNDERWORLD,copper_frequency_underworld,Integer,40,147,trans/world/BiomeDecoratorTrans.java:65
+WorldGen.Underworld.COPPER_CHANCE_UNDERWORLD,copper_chance_underworld,Integer,100,148,trans/world/BiomeDecoratorTrans.java:65
+WorldGen.Underworld.DIAMOND_FREQUENCY_UNDERWORLD,diamond_frequency_underworld,Integer,5,149,trans/world/BiomeDecoratorTrans.java:95
+WorldGen.Underworld.DIAMOND_CHANCE_UNDERWORLD,diamond_chance_underworld,Integer,100,150,trans/world/BiomeDecoratorTrans.java:95
+WorldGen.Underworld.GOLD_FREQUENCY_UNDERWORLD,gold_frequency_underworld,Integer,20,151,trans/world/BiomeDecoratorTrans.java:75
+WorldGen.Underworld.GOLD_CHANCE_UNDERWORLD,gold_chance_underworld,Integer,100,152,trans/world/BiomeDecoratorTrans.java:75
+WorldGen.Underworld.IRON_FREQUENCY_UNDERWORLD,iron_frequency_underworld,Integer,60,153,trans/world/BiomeDecoratorTrans.java:80
+WorldGen.Underworld.IRON_CHANCE_UNDERWORLD,iron_chance_underworld,Integer,100,154,trans/world/BiomeDecoratorTrans.java:80
+WorldGen.Underworld.LAPIS_FREQUENCY_UNDERWORLD,lapis_frequency_underworld,Integer,5,155,trans/world/BiomeDecoratorTrans.java:100
+WorldGen.Underworld.LAPIS_CHANCE_UNDERWORLD,lapis_chance_underworld,Integer,100,156,trans/world/BiomeDecoratorTrans.java:100
+WorldGen.Underworld.MITHRIL_FREQUENCY_UNDERWORLD,mithril_frequency_underworld,Integer,10,157,trans/world/BiomeDecoratorTrans.java:85
+WorldGen.Underworld.MITHRIL_CHANCE_UNDERWORLD,mithril_chance_underworld,Integer,100,158,trans/world/BiomeDecoratorTrans.java:85
+WorldGen.Underworld.SILVER_FREQUENCY_UNDERWORLD,silver_frequency_underworld,Integer,10,159,trans/world/BiomeDecoratorTrans.java:70
+WorldGen.Underworld.SILVER_CHANCE_UNDERWORLD,silver_chance_underworld,Integer,100,160,trans/world/BiomeDecoratorTrans.java:70
+WorldGen.Underworld.UNDERWORLD_MANTLE_BLOCK_OFFSET,underworld_mantle_block_offset,Integer,75,161,trans/block/BlockPortalTrans.java:88; trans/block/BlockPortalTrans.java:93; trans/block/BlockPortalTrans.java:110; trans/world/ChunkTrans.java:18
+WorldGen.Overworld.ADAMANTIUM_FREQUENCY_OVERWORLD,adamantium_frequency_overworld,Integer,1,165,
+WorldGen.Overworld.ADAMANTIUM_CHANCE_OVERWORLD,adamantium_chance_overworld,Integer,100,166,
+WorldGen.Overworld.COPPER_FREQUENCY_OVERWORLD,copper_frequency_overworld,Integer,40,167,trans/world/BiomeDecoratorTrans.java:30
+WorldGen.Overworld.COPPER_CHANCE_OVERWORLD,copper_chance_overworld,Integer,100,168,trans/world/BiomeDecoratorTrans.java:30
+WorldGen.Overworld.DIAMOND_FREQUENCY_OVERWORLD,diamond_frequency_overworld,Integer,5,169,trans/world/BiomeDecoratorTrans.java:55
+WorldGen.Overworld.DIAMOND_CHANCE_OVERWORLD,diamond_chance_overworld,Integer,100,170,trans/world/BiomeDecoratorTrans.java:55
+WorldGen.Overworld.GOLD_FREQUENCY_OVERWORLD,gold_frequency_overworld,Integer,20,171,trans/world/BiomeDecoratorTrans.java:40
+WorldGen.Overworld.GOLD_CHANCE_OVERWORLD,gold_chance_overworld,Integer,100,172,trans/world/BiomeDecoratorTrans.java:40
+WorldGen.Overworld.IRON_FREQUENCY_OVERWORLD,iron_frequency_overworld,Integer,40,173,trans/world/BiomeDecoratorTrans.java:45
+WorldGen.Overworld.IRON_CHANCE_OVERWORLD,iron_chance_overworld,Integer,100,174,trans/world/BiomeDecoratorTrans.java:45
+WorldGen.Overworld.LAPIS_FREQUENCY_OVERWORLD,lapis_frequency_overworld,Integer,4,175,trans/world/BiomeDecoratorTrans.java:60
+WorldGen.Overworld.LAPIS_CHANCE_OVERWORLD,lapis_chance_overworld,Integer,100,176,trans/world/BiomeDecoratorTrans.java:60
+WorldGen.Overworld.MITHRIL_FREQUENCY_OVERWORLD,mithril_frequency_overworld,Integer,10,177,trans/world/BiomeDecoratorTrans.java:50
+WorldGen.Overworld.MITHRIL_CHANCE_OVERWORLD,mithril_chance_overworld,Integer,100,178,trans/world/BiomeDecoratorTrans.java:50
+WorldGen.Overworld.OVERWORLD_ADAMANTITE_ORE,overworld_adamantite_ore,Boolean,false,179,
+WorldGen.Overworld.SILVER_FREQUENCY_OVERWORLD,silver_frequency_overworld,Integer,10,180,trans/world/BiomeDecoratorTrans.java:35
+WorldGen.Overworld.SILVER_CHANCE_OVERWORLD,silver_chance_overworld,Integer,100,181,trans/world/BiomeDecoratorTrans.java:35
+Misc.LOG_PLAYERS_INTERACT_WITH_PORTAL,log_players_interact_with_portal,Boolean,true,186,trans/block/BlockPortalTrans.java:102

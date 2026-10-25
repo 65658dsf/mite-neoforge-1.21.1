@@ -1,0 +1,25 @@
+{
+  "author": "NingMeng123",
+  "jar": "D:\\Coding\\LemonDev\\minecraft\\miteto1.21.1neoforge\\.reference\\[MITE不可能这么简单]MITE-ITE-2.0.28.jar",
+  "sha256": "b891dc495379e0d503207d1a44eb01a9661db42dba31831d77a32dd5162ff798",
+  "class_count": 293,
+  "java_count": 252,
+  "registered_mixins": 133,
+  "unregistered_mixins": [
+    ".reference/ite/decompiled/net/xiaoyu233/mitemod/miteite/trans/render/BaseRenderTrans.java"
+  ],
+  "config_fields": 127,
+  "public_config_entries": 127,
+  "fresh_cfr_semantic_text_differences_ignoring_comments": [],
+  "unmapped_descriptions": [],
+  "archive_resource_types": {
+    ".mf": 1,
+    ".class": 293,
+    ".lang": 2,
+    ".png": 96,
+    ".mcmeta": 46,
+    ".json": 2,
+    ".accesswidener": 1,
+    "": 1
+  }
+}

@@ -1,0 +1,746 @@
+{
+  "author": "NingMeng123",
+  "date": "2026-10-25",
+  "sources": {
+    "R196": {
+      "java_files": 1185,
+      "directories": {
+        ".": 1183,
+        "net\\minecraft\\client\\main": 1,
+        "net\\minecraft\\server": 1
+      }
+    },
+    "ITE_2.0.28": {
+      "java_files": 252,
+      "directories": {
+        "net\\xiaoyu233\\mitemod\\miteite\\achievement": 1,
+        "net\\xiaoyu233\\mitemod\\miteite\\api": 30,
+        "net\\xiaoyu233\\mitemod\\miteite\\block": 6,
+        "net\\xiaoyu233\\mitemod\\miteite\\command": 2,
+        "net\\xiaoyu233\\mitemod\\miteite\\compat": 1,
+        "net\\xiaoyu233\\mitemod\\miteite\\config": 1,
+        "net\\xiaoyu233\\mitemod\\miteite\\creativetab": 1,
+        "net\\xiaoyu233\\mitemod\\miteite": 2,
+        "net\\xiaoyu233\\mitemod\\miteite\\entity": 6,
+        "net\\xiaoyu233\\mitemod\\miteite\\events": 4,
+        "net\\xiaoyu233\\mitemod\\miteite\\events\\listener": 6,
+        "net\\xiaoyu233\\mitemod\\miteite\\gui": 1,
+        "net\\xiaoyu233\\mitemod\\miteite\\inventory\\container": 3,
+        "net\\xiaoyu233\\mitemod\\miteite\\item": 7,
+        "net\\xiaoyu233\\mitemod\\miteite\\item\\enchantment": 7,
+        "net\\xiaoyu233\\mitemod\\miteite\\item\\material": 3,
+        "net\\xiaoyu233\\mitemod\\miteite\\item\\recipe": 7,
+        "net\\xiaoyu233\\mitemod\\miteite\\network": 7,
+        "net\\xiaoyu233\\mitemod\\miteite\\registry": 2,
+        "net\\xiaoyu233\\mitemod\\miteite\\render\\block": 1,
+        "net\\xiaoyu233\\mitemod\\miteite\\render\\entity\\model": 1,
+        "net\\xiaoyu233\\mitemod\\miteite\\render\\entity": 3,
+        "net\\xiaoyu233\\mitemod\\miteite\\tileentity": 1,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\block": 6,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\block\\tileentity": 4,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\container": 6,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\entity\\ai": 2,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\entity": 48,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\gui": 5,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\item\\enchantment": 12,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\item": 16,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\item\\recipe": 7,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\network": 5,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\render": 5,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\util": 5,
+        "net\\xiaoyu233\\mitemod\\miteite\\trans\\world": 13,
+        "net\\xiaoyu233\\mitemod\\miteite\\util": 15
+      }
+    },
+    "Extreme_LH_0.6.6": {
+      "java_files": 374,
+      "directories": {
+        "cn\\wensc\\mitemod\\extreme\\api": 7,
+        "cn\\wensc\\mitemod\\extreme\\block": 19,
+        "cn\\wensc\\mitemod\\extreme\\compat": 5,
+        "cn\\wensc\\mitemod\\extreme\\compat\\itf": 3,
+        "cn\\wensc\\mitemod\\extreme\\entity\\ai": 1,
+        "cn\\wensc\\mitemod\\extreme\\entity\\damage": 1,
+        "cn\\wensc\\mitemod\\extreme\\entity": 46,
+        "cn\\wensc\\mitemod\\extreme\\entity\\manager": 3,
+        "cn\\wensc\\mitemod\\extreme\\events": 3,
+        "cn\\wensc\\mitemod\\extreme\\events\\listener": 9,
+        "cn\\wensc\\mitemod\\extreme": 2,
+        "cn\\wensc\\mitemod\\extreme\\gui": 1,
+        "cn\\wensc\\mitemod\\extreme\\inventory\\container": 2,
+        "cn\\wensc\\mitemod\\extreme\\item\\enchantment": 5,
+        "cn\\wensc\\mitemod\\extreme\\item": 13,
+        "cn\\wensc\\mitemod\\extreme\\item\\recipe": 1,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\block": 12,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\block\\tileentity": 1,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\client\\gui": 7,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\client": 1,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\compat": 17,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\compat\\itf": 59,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\container": 8,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\entity\\ai": 4,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\entity": 38,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\item\\enchantment": 5,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\item": 9,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\item\\recipe": 4,
+        "cn\\wensc\\mitemod\\extreme\\mixin": 1,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\network": 3,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\render": 9,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\util": 4,
+        "cn\\wensc\\mitemod\\extreme\\mixin\\world": 11,
+        "cn\\wensc\\mitemod\\extreme\\model": 2,
+        "cn\\wensc\\mitemod\\extreme\\network": 1,
+        "cn\\wensc\\mitemod\\extreme\\network\\packet": 1,
+        "cn\\wensc\\mitemod\\extreme\\potion": 1,
+        "cn\\wensc\\mitemod\\extreme\\register": 9,
+        "cn\\wensc\\mitemod\\extreme\\render\\entity": 31,
+        "cn\\wensc\\mitemod\\extreme\\render": 1,
+        "cn\\wensc\\mitemod\\extreme\\tileentity": 1,
+        "cn\\wensc\\mitemod\\extreme\\util": 11,
+        "cn\\wensc\\mitemod\\extreme\\world": 2
+      }
+    },
+    "Modern_main": {
+      "java_files": 1072,
+      "directories": {
+        "io\\github\\ningmeng123\\mite\\advancement": 6,
+        "io\\github\\ningmeng123\\mite\\api": 1,
+        "io\\github\\ningmeng123\\mite\\block": 15,
+        "io\\github\\ningmeng123\\mite\\block\\entity": 4,
+        "io\\github\\ningmeng123\\mite\\campfire": 6,
+        "io\\github\\ningmeng123\\mite\\client": 44,
+        "io\\github\\ningmeng123\\mite\\client\\config": 8,
+        "io\\github\\ningmeng123\\mite\\client\\mob": 8,
+        "io\\github\\ningmeng123\\mite\\client\\phantom": 4,
+        "io\\github\\ningmeng123\\mite\\combat": 6,
+        "io\\github\\ningmeng123\\mite\\command": 3,
+        "io\\github\\ningmeng123\\mite\\compat\\bettercombat": 3,
+        "io\\github\\ningmeng123\\mite\\compat\\simplyswords": 3,
+        "io\\github\\ningmeng123\\mite\\config": 7,
+        "io\\github\\ningmeng123\\mite\\crafting": 41,
+        "io\\github\\ningmeng123\\mite\\curse": 7,
+        "io\\github\\ningmeng123\\mite\\data": 52,
+        "io\\github\\ningmeng123\\mite\\enchantment": 13,
+        "io\\github\\ningmeng123\\mite\\entity\\ai": 7,
+        "io\\github\\ningmeng123\\mite\\entity\\animal": 17,
+        "io\\github\\ningmeng123\\mite\\entity": 66,
+        "io\\github\\ningmeng123\\mite\\furnace": 6,
+        "io\\github\\ningmeng123\\mite\\integration": 1,
+        "io\\github\\ningmeng123\\mite\\integration\\jade": 4,
+        "io\\github\\ningmeng123\\mite\\integration\\jei": 15,
+        "io\\github\\ningmeng123\\mite\\item": 26,
+        "io\\github\\ningmeng123\\mite\\loot": 8,
+        "io\\github\\ningmeng123\\mite\\mining": 10,
+        "io\\github\\ningmeng123\\mite": 1,
+        "io\\github\\ningmeng123\\mite\\mixin": 351,
+        "io\\github\\ningmeng123\\mite\\mixin\\client": 51,
+        "io\\github\\ningmeng123\\mite\\network": 18,
+        "io\\github\\ningmeng123\\mite\\phantom": 6,
+        "io\\github\\ningmeng123\\mite\\portal": 3,
+        "io\\github\\ningmeng123\\mite\\progression": 13,
+        "io\\github\\ningmeng123\\mite\\ranged": 8,
+        "io\\github\\ningmeng123\\mite\\registry": 37,
+        "io\\github\\ningmeng123\\mite\\rules": 76,
+        "io\\github\\ningmeng123\\mite\\survival": 46,
+        "io\\github\\ningmeng123\\mite\\utility": 6,
+        "io\\github\\ningmeng123\\mite\\world": 24,
+        "io\\github\\ningmeng123\\mite\\worldgen": 41
+      },
+      "bundled_default_keys": 159,
+      "head": "81e3219b9f100a9e770affe38da8b4775346b37b",
+      "git_status": "?? docs/comparison-2026-10-25/\n",
+      "resource_files": 4638
+    },
+    "Modern_ITE": {
+      "java_files": 174,
+      "directories": {
+        "io\\github\\ningmeng123\\modernite\\client": 10,
+        "io\\github\\ningmeng123\\modernite\\client\\compat": 1,
+        "io\\github\\ningmeng123\\modernite\\client\\entity": 22,
+        "io\\github\\ningmeng123\\modernite\\client\\gear": 3,
+        "io\\github\\ningmeng123\\modernite\\config": 4,
+        "io\\github\\ningmeng123\\modernite\\config\\client": 4,
+        "io\\github\\ningmeng123\\modernite\\content": 20,
+        "io\\github\\ningmeng123\\modernite\\content\\metal": 5,
+        "io\\github\\ningmeng123\\modernite\\economy": 3,
+        "io\\github\\ningmeng123\\modernite\\enchantment": 1,
+        "io\\github\\ningmeng123\\modernite\\entity": 28,
+        "io\\github\\ningmeng123\\modernite": 3,
+        "io\\github\\ningmeng123\\modernite\\gear": 13,
+        "io\\github\\ningmeng123\\modernite\\integration\\jei": 7,
+        "io\\github\\ningmeng123\\modernite\\item": 2,
+        "io\\github\\ningmeng123\\modernite\\mixin\\client": 10,
+        "io\\github\\ningmeng123\\modernite\\mixin": 16,
+        "io\\github\\ningmeng123\\modernite\\mixin\\entity": 15,
+        "io\\github\\ningmeng123\\modernite\\mixin\\entity\\client": 1,
+        "io\\github\\ningmeng123\\modernite\\survival": 3,
+        "io\\github\\ningmeng123\\modernite\\world": 3
+      },
+      "bundled_default_keys": 113,
+      "head": "c638852c87103c64e2d9f15f6437550ec729f36d",
+      "git_status": "",
+      "resource_files": 745
+    }
+  },
+  "archives": [
+    {
+      "source": "R196",
+      "name": "MITE 1.6.4 R196.zip",
+      "bytes": 9562880,
+      "sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+      "entries": 1202,
+      "class_entries": 1186,
+      "metadata": {}
+    },
+    {
+      "source": "ITE_2.0.28",
+      "name": "[MITE不可能这么简单]MITE-ITE-2.0.28.jar",
+      "bytes": 798636,
+      "sha256": "b891dc495379e0d503207d1a44eb01a9661db42dba31831d77a32dd5162ff798",
+      "entries": 521,
+      "class_entries": 293,
+      "metadata": {
+        "fml.mod.json": {
+          "schemaVersion": 1,
+          "id": "mite_ite",
+          "version": "2.0.28",
+          "depends": {
+            "minecraft": "1.6.4-mite",
+            "fishmodloader": ">=3.4.0",
+            "rusted_iron_core": ">=1.3.5"
+          },
+          "environment": "*",
+          "name": "MITE-ITE",
+          "description": "A hard mod for MITE",
+          "authors": [
+            "XiaoYu233",
+            "Xy_Lose"
+          ],
+          "entrypoints": {
+            "preLaunch": [
+              "net.xiaoyu233.mitemod.miteite.EarlyRiser"
+            ],
+            "main": [
+              "net.xiaoyu233.mitemod.miteite.MITEITEMod"
+            ],
+            "emi": [
+              "net.xiaoyu233.mitemod.miteite.compat.MITEITEEmiPlugin"
+            ]
+          },
+          "mixins": [
+            "miteite.mixin.json"
+          ],
+          "icon": "miteite_icon.png",
+          "accessWidener": "miteite.accessWidener",
+          "contact": {
+            "homepage": "https://github.com/ysesiq/MITE-ITE",
+            "issues": "https://github.com/ysesiq/MITE-ITE/issues",
+            "sources": "https://github.com/ysesiq/MITE-ITE"
+          },
+          "custom": {
+            "loom:injected_interfaces": {
+              "net/minecraft/Item": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEItem"
+              ],
+              "net/minecraft/EntityAnimal": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEAnimal"
+              ],
+              "net/minecraft/EntityAIArrowAttack": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEArrowAttack"
+              ],
+              "net/minecraft/EntityBat": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEBat"
+              ],
+              "net/minecraft/TileEntityBeacon": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEBeacon"
+              ],
+              "net/minecraft/Block": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEBlock"
+              ],
+              "net/minecraft/EntityMinecartChest": [
+                "net/xiaoyu233/mitemod/miteite/api/ITECart"
+              ],
+              "net/minecraft/Damage": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEDamage"
+              ],
+              "net/minecraft/Material": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEMaterial"
+              ],
+              "net/minecraft/EntityPlayer": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEPlayer"
+              ],
+              "net/minecraft/ItemStack": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEStack"
+              ],
+              "net/minecraft/EntityWitch": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEWitch"
+              ],
+              "net/minecraft/World": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEWorld"
+              ],
+              "net/minecraft/Enchantment": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEEnchantment"
+              ],
+              "net/minecraft/ItemArmor": [
+                "net/xiaoyu233/mitemod/miteite/api/IUpgradableItem"
+              ],
+              "net/minecraft/ItemTool": [
+                "net/xiaoyu233/mitemod/miteite/api/IUpgradableItem"
+              ],
+              "net/minecraft/EntityClientPlayerMP": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEClientPlayer"
+              ],
+              "net/minecraft/GuiIngame": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEGuiIngame"
+              ]
+            }
+          }
+        },
+        "miteite.mixin.json": {
+          "compatibilityLevel": "JAVA_17",
+          "package": "net.xiaoyu233.mitemod.miteite.trans",
+          "required": true,
+          "target": "DEFAULT",
+          "minVersion": "0.8.3",
+          "mixins": [
+            "block.BlockBeaconTrans",
+            "block.BlockCropTrans",
+            "block.BlockGlowingStoneTrans",
+            "block.BlockLeavesTrans",
+            "block.BlockPortalTrans",
+            "block.BlockStrongboxTrans",
+            "block.tileentity.MobSpawnerTrans",
+            "block.tileentity.TileEntityBeaconTrans",
+            "block.tileentity.TileEntityFurnaceTrans",
+            "block.tileentity.TileEntityHopperTrans",
+            "container.ContainerAnvilTrans",
+            "container.ContainerEnchantmentTrans",
+            "container.ContainerMerchantTrans",
+            "container.PlayerInventoryTrans",
+            "container.SlotMerchantTrans",
+            "container.SlotResultTrans",
+            "entity.ClientPlayerTrans",
+            "entity.EntityAncientBoneLordTrans",
+            "entity.EntityAnimalTrans",
+            "entity.EntityArachnidTrans",
+            "entity.EntityArrowTrans",
+            "entity.EntityBatTrans",
+            "entity.EntityBlazeTrans",
+            "entity.EntityBoneLordTrans",
+            "entity.EntityChickenTrans",
+            "entity.EntityCowTrans",
+            "entity.EntityCreeperTrans",
+            "entity.EntityCubicTrans",
+            "entity.EntityEarthElementalTrans",
+            "entity.EntityEnderCrystalTrans",
+            "entity.EntityEnderDragonTrans",
+            "entity.EntityEndermanTrans",
+            "entity.EntityExperienceOrbTrans",
+            "entity.EntityFireElementalTrans",
+            "entity.EntityFishingHookTrans",
+            "entity.EntityGhastTrans",
+            "entity.EntityGiantZombieTrans",
+            "entity.EntityInfernalCreeperTrans",
+            "entity.EntityInvisibleStalkerTrans",
+            "entity.EntityIronGolemTrans",
+            "entity.EntityItemTrans",
+            "entity.EntityLivestockTrans",
+            "entity.EntityLivingBaseTrans",
+            "entity.EntityLivingTrans",
+            "entity.EntityLongdeadGuardianTrans",
+            "entity.EntityLongdeadTrans",
+            "entity.EntityMagmaCubeTrans",
+            "entity.EntityMonsterTrans",
+            "entity.EntityPigTrans",
+            "entity.EntityPlayerTrans",
+            "entity.EntityRevenantTrans",
+            "entity.EntitySheepTrans",
+            "entity.EntitySkeletonTrans",
+            "entity.EntitySlimeTrans",
+            "entity.EntitySpiderTrans",
+            "entity.EntityTrans",
+            "entity.EntityVampireBatTrans",
+            "entity.EntityWitchTrans",
+            "entity.EntityWolfTrans",
+            "entity.EntityZombiePigmanTrans",
+            "entity.EntityZombieTrans",
+            "entity.PlayerInventoryTrans",
+            "entity.RemotePlayerTrans",
+            "entity.ServerPlayerTrans",
+            "entity.ai.PathfinderGoalArrowAttackTrans",
+            "entity.ai.PathfinderGoalBreedTrans",
+            "gui.GuiCraftingTableTrans",
+            "gui.GuiCraftingTrans",
+            "gui.GuiMainMenuMixin",
+            "gui.GuiPlayerInventoryTrans",
+            "gui.GuiPlayerOverlayTrans",
+            "item.EnumQualityTrans",
+            "item.ItemArmorTrans",
+            "item.ItemAxeTrans",
+            "item.ItemBowTrans",
+            "item.ItemGemsTrans",
+            "item.ItemGoldenAppleTrans",
+            "item.ItemHoeTrans",
+            "item.ItemManureTrans",
+            "item.ItemMattockTrans",
+            "item.ItemReferencedBookTrans",
+            "item.ItemScytheTrans",
+            "item.ItemShovelTrans",
+            "item.ItemStackTrans",
+            "item.ItemToolTrans",
+            "item.ItemTrans",
+            "item.MaterialTrans",
+            "item.enchantment.EnchantmentButcheringMixin",
+            "item.enchantment.EnchantmentDiggingMixin",
+            "item.enchantment.EnchantmentDisarmingMixin",
+            "item.enchantment.EnchantmentLootBonusMixin",
+            "item.enchantment.EnchantmentLootBonusTrans",
+            "item.enchantment.EnchantmentManagerTrans",
+            "item.enchantment.EnchantmentPiercingMixin",
+            "item.enchantment.EnchantmentProtectionTrans",
+            "item.enchantment.EnchantmentThornsTrans",
+            "item.enchantment.EnchantmentTrans",
+            "item.enchantment.EnchantmentUntouchingMixin",
+            "item.enchantment.EnchantmentWeaponDamageXTrans",
+            "item.recipe.CraftingManagerHelper",
+            "item.recipe.CraftingManagerInvoker",
+            "item.recipe.IRecipeMixin",
+            "item.recipe.RecipeIngotsTrans",
+            "item.recipe.RecipesArmorTrans",
+            "item.recipe.ShapedRecipeTrans",
+            "item.recipe.ShapelessRecipeTrans",
+            "network.ClientNetworkManagerTrans",
+            "network.NetworkManagerTrans",
+            "network.PacketOpenWindowTrans",
+            "network.ServerNetworkManagerTrans",
+            "network.SPacketMobSpawnTrans",
+            "render.ChestRenderTrans",
+            "render.RenderEarthElementalTrans",
+            "render.RenderIronGolemTrans",
+            "render.RenderLightningBoltTrans",
+            "util.ChestItemRenderHelperTrans",
+            "util.DamageTrans",
+            "util.DataWatcherTrans",
+            "util.DispenseBehaviorItemTrans",
+            "util.EntityDamageResultAccessor",
+            "world.BiomeBaseTrans",
+            "world.BiomeDecoratorTrans",
+            "world.BiomeGenUnderworldTrans",
+            "world.BiomeHellTrans",
+            "world.ChunkProviderHellTrans",
+            "world.ChunkProviderUnderworldTrans",
+            "world.ChunkTrans",
+            "world.IWorldInfoTrans",
+            "world.SpawnerCreatureTrans",
+            "world.WorldClientTrans",
+            "world.WorldGenMinableTrans",
+            "world.WorldInfoSharedTrans",
+            "world.WorldTrans"
+          ]
+        }
+      }
+    },
+    {
+      "source": "Extreme_LH_0.6.6",
+      "name": "[极难柳昊定制]Extreme-lh-0.6.6 (3).jar",
+      "bytes": 2396143,
+      "sha256": "594c152bb7cfe655f9b0744aea2ed45d71696779cd842c71be2501189c540d98",
+      "entries": 844,
+      "class_entries": 391,
+      "metadata": {
+        "extreme-lh.mixins.json": {
+          "required": true,
+          "package": "cn.wensc.mitemod.extreme.mixin",
+          "compatibilityLevel": "JAVA_17",
+          "target": "DEFAULT",
+          "minVersion": "0.8.3",
+          "mixins": [
+            "MovementInputFromOptionsMixin",
+            "block.BlockBedMixin",
+            "block.BlockCropMixin",
+            "block.BlockGrassMixin",
+            "block.BlockGrowingPlantMixin",
+            "block.BlockMixin",
+            "block.BlockMobSpawnerMixin",
+            "block.BlockMountedMixin",
+            "block.BlockPistonMovingTrans",
+            "block.BlockSilverFishMixin",
+            "block.BlockStrongboxMixin",
+            "block.BlockVineMixin",
+            "block.tileentity.TileEntityFurnaceMixin",
+            "client.MinecraftMixin",
+            "client.gui.ContainerRepairAccessor",
+            "client.gui.GuiContainerCreativeMixin",
+            "client.gui.GuiContainerMixin",
+            "client.gui.GuiIngameMixin",
+            "client.gui.GuiMainMenuMixin",
+            "client.gui.GuiPlayerInventoryMixin",
+            "client.gui.GuiRepairMixin",
+            "compat.ArmorModifierTypesMixin",
+            "compat.BlockNetherAdamantiumOreMixin",
+            "compat.CompatUtilMixin",
+            "compat.EnchantmentExtendMixin",
+            "compat.EntityPlayerUnderworldPenaltyMixin",
+            "compat.EntityAnnihilationSkeletonMixin",
+            "compat.EntityWanderingWitchMixin",
+            "compat.EntityZombieLordMixin",
+            "compat.EntityZombiePigmanLordMixin",
+            "compat.ForgingTableRecipesMixin",
+            "compat.ITEConfigMixin",
+            "compat.ITEConfigMixin$GameMechanicsMixin",
+            "compat.ITEConfigMixin$NetherMixin",
+            "compat.ITEConfigMixin$UnderworldMixin",
+            "compat.ITECraftingMixin",
+            "compat.ItemToolMixin",
+            "compat.MITEITEModDisableDefenseDisarmMixin",
+            "compat.PlayerAttributeHandlerHealthLimitMixin",
+            "compat.TickListenerMixin",
+            "compat.ToolModifierTypesMixin",
+            "container.ContainerEnchantmentDisableWaterBottleMixin",
+            "container.ContainerPlayerMixin",
+            "container.ContainerRepairINNER2Mixin",
+            "container.ContainerRepairMixin",
+            "container.InventoryMerchantMixin",
+            "container.SlotCraftingMixin",
+            "container.SlotMixin",
+            "container.SlotRepairOrEnchantConsumableMixin",
+            "entity.ClientPlayerMixin",
+            "entity.EntityAncientBoneLordTrans",
+            "entity.EntityAnimalWatcherMixin",
+            "entity.EntityArachnidMixin",
+            "entity.EntityArrowMixin",
+            "entity.EntityBatMixin",
+            "entity.EntityBoneLordMixin",
+            "entity.EntityChickenMixin",
+            "entity.EntityClientPlayerMPMixin",
+            "entity.EntityCowMixin",
+            "entity.EntityCreeperMixin",
+            "entity.EntityDragonMixin",
+            "entity.EntityEarthElementalMixin",
+            "entity.EntityEnderEyeMixin",
+            "entity.EntityEndermanMixin",
+            "entity.EntityFishingHookMixin",
+            "entity.EntityGhastMixin",
+            "entity.EntityInfernalCreeperMixin",
+            "entity.EntityItemMixin",
+            "entity.EntityLightningBoltMixin",
+            "entity.EntityLivestockMixin",
+            "entity.EntityLivingBaseMixin",
+            "entity.EntityLivingMixin",
+            "entity.EntityMixin",
+            "entity.EntityMonsterMixin",
+            "entity.EntityPhaseSpiderMixin",
+            "entity.EntityPlayerMixin",
+            "entity.EntityRendererMixin",
+            "entity.EntityRevenantMixin",
+            "entity.EntitySkeletonMixin",
+            "entity.EntitySpiderMixin",
+            "entity.EntityVillagerMixin",
+            "entity.EntityWitherMixin",
+            "entity.EntityWitherSkullMixin",
+            "entity.EntityZombieMixin",
+            "entity.EntityZombiePigmanMixin",
+            "entity.PlayerCapabilitiesMixin",
+            "entity.ServerPlayerMixin",
+            "entity.ai.EntityAIAttackOnCollideMixin",
+            "entity.ai.EntityAIMoveToTreeMixin",
+            "entity.ai.EntityAINearestAttackableTargetMixin",
+            "entity.ai.EntityAIOcelotSitMixin",
+            "item.ItemArmorMixin",
+            "item.ItemBedMixin",
+            "item.ItemBlockMixin",
+            "item.ItemEnchantedBookMixin",
+            "item.ItemMixin",
+            "item.ItemMattockMixin",
+            "item.ItemRockMixin",
+            "item.ItemStackMixin",
+            "item.ItemToolMixin",
+            "item.enchantment.EnchantmentDamageMixin",
+            "item.enchantment.EnchantmentProtectionMixin",
+            "item.enchantment.EnchantmentUntouchingMixin",
+            "item.enchantment.EnchantmentVampiricMixin",
+            "item.enchantment.MerchantRecipeMixin",
+            "item.recipe.RecipeHelperMixin",
+            "item.recipe.RecipesArmorMixin",
+            "item.recipe.RecipesToolsMixin",
+            "item.recipe.RecipesWeaponsMixin",
+            "network.NetServerHandlerMixin",
+            "network.Packet70GameEventMixin",
+            "network.PacketOpenWindowMixin",
+            "render.EffectRendererMixin",
+            "render.ModelBipedMixin",
+            "render.RenderDragonMixin",
+            "render.RenderEarthElementalMixin",
+            "render.RendererLivingEntityMixin",
+            "render.RenderGlobalMixin",
+            "render.RenderManagerMixin",
+            "render.RenderPlayerMixin",
+            "util.CommandHandlerMixin",
+            "util.EnumGameTypeMixin",
+            "util.FoodStatsMixin",
+            "util.ItemInWorldManagerMixin",
+            "world.BiomeDecoratorMixin",
+            "world.BiomeForestMixin",
+            "world.BiomeGenBaseMixin",
+            "world.BiomeGenHellMixin",
+            "world.BiomeGenUnderworldMixin",
+            "world.ChunkProviderHellMixin",
+            "world.MapGenCavesMixin",
+            "world.MapGenVillageMixin",
+            "world.SpawnerAnimalsMixin",
+            "world.WorldGenMinableMixin",
+            "world.WorldServerMixin"
+          ],
+          "injectors": {
+            "defaultRequire": 1
+          }
+        },
+        "extreme.itf.mixins.json": {
+          "required": false,
+          "package": "cn.wensc.mitemod.extreme.mixin.compat.itf",
+          "plugin": "cn.wensc.mitemod.extreme.compat.EXITFMixinPlugin",
+          "compatibilityLevel": "JAVA_17",
+          "target": "DEFAULT",
+          "minVersion": "0.8.3",
+          "mixins": [
+            "BiomeDecorationRegistryEmeraldMixin",
+            "BiomeGenBaseDisableRetinueZombieMixin",
+            "BiomeGenerateListenerDisableWindsweptMixin",
+            "AnvilSystemDisableMixin",
+            "BlockBushRestoreMiteGrowthMixin",
+            "BlockCropsRestoreMiteGrowthMixin",
+            "BlockRelightExtinguishedTorchMixin",
+            "BlockStemRestoreMiteGrowthMixin",
+            "ContainerEnchantmentEnhanceDisableMixin",
+            "CraftingManagerDisableITFContentMixin",
+            "CraftingManagerPruneITFContentRecipesMixin",
+            "ShapedRecipesCompatMixin",
+            "DiarrheaManagerMixin",
+            "EntityArachnidITFDropMixin",
+            "EntityDropDisableITFContentMixin",
+            "EnchantPredictionDisableMixin",
+            "EnchantmentHelperDisableITFInfinityMixin",
+            "EnchantmentITFDisableMixin",
+            "EntityLivingStripITFEquipmentMixin",
+            "EntityLivingDimensionInvadeEquipmentDropMixin",
+            "EntityLichMixin",
+            "EntityPlayerITFWaterDisableMixin",
+            "EntityRevenantDisableRetinueSummonMixin",
+            "EntitySkeletonInfiniteArrowsMixin",
+            "EntityWitchBanStretchPotionMixin",
+            "EternalRainingSeasonlessMixin",
+            "FoodWaterRawFoodMixin",
+            "FurnaceRecipesDisableITFContentMixin",
+            "FurnaceListenerMixin",
+            "GuiInGameDrawerWaterDisableMixin",
+            "GuiIngameITFWaterHudMixin",
+            "ITFConfigMixin",
+            "ItemAppleGoldITFCompatMixin",
+            "ItemBowITFInfinityDisableMixin",
+            "ItemLootPackDisableITFLootMixin",
+            "ItemInWorldManagerLichCastleMixin",
+            "ItemMinePocketMixin",
+            "ItemRockRightClickRestoreMixin",
+            "ItemTotemDisableMixin",
+            "ItemWandDisableMixin",
+            "PlayerAttributeListenerRestoreNutritionMixin",
+            "PlayerCapabilitiesRestoreWalkSpeedMixin",
+            "LootTableRegistryDisableITFContentMixin",
+            "OreGenerationRegistryDisableOresMixin",
+            "OreMiningHooksMixin",
+            "PotionHelperBanStretchMixin",
+            "SpawnConditionsRegistryDisableRetinueZombieMixin",
+            "ServerPlayerRestoreMiteNutritionMixin",
+            "ServerPlayerRestoreNutritionMixin",
+            "TileEntityStrongboxLichCastleMixin",
+            "WeightedRandomChestContentAccessor",
+            "WorldGenDungeonsMixin",
+            "WorldGenAzuriteDisableMixin",
+            "WorldGenMinableDisableITFOresMixin",
+            "WorldGenStoneConeDisableAzuriteMixin",
+            "WorldGenSulphurDisableMixin",
+            "WorldGenUnderworldCastleDisableITFLootMixin",
+            "WeatherEventSeasonlessMixin",
+            "WorldSeasonlessMixin"
+          ],
+          "injectors": {
+            "defaultRequire": 0
+          }
+        },
+        "fml.mod.json": {
+          "schemaVersion": 1,
+          "id": "extreme-lh",
+          "version": "0.6.6",
+          "depends": {
+            "minecraft": "1.6.4-mite",
+            "fishmodloader": ">=3.4.1",
+            "mite_ite": ">=2.0.25",
+            "rusted_iron_core": ">=1.5.0"
+          },
+          "environment": "*",
+          "name": "Extreme-lh",
+          "icon": "assets/extreme/extreme_icon.png",
+          "description": "MITE-ITE Addon Mod",
+          "authors": [
+            "Wensc",
+            "洛小雨",
+            "Xy_Lose",
+            "Huix",
+            "Inf1nlty"
+          ],
+          "contributors": [
+            "YueZhuXue",
+            "Debris"
+          ],
+          "contact": {
+            "homepage": "https://github.com/MinecraftIsTooEasy/MITE-Extreme",
+            "issues": "https://github.com/MinecraftIsTooEasy/MITE-Extreme/issues"
+          },
+          "entrypoints": {
+            "preLaunch": [
+              "cn.wensc.mitemod.extreme.EXEarlyRiser"
+            ],
+            "main": [
+              "cn.wensc.mitemod.extreme.ExtremeInit"
+            ],
+            "mite_ite": [
+              "cn.wensc.mitemod.extreme.compat.ITEEXPlugin"
+            ],
+            "newshop": [
+              "cn.wensc.mitemod.extreme.compat.ShopExtremePlugin"
+            ],
+            "emi": [
+              "cn.wensc.mitemod.extreme.compat.EXEmiPlugin"
+            ]
+          },
+          "mixins": [
+            "extreme-lh.mixins.json",
+            "extreme.itf.mixins.json"
+          ],
+          "accessWidener": "extreme-lh.accesswidener",
+          "custom": {
+            "loom:injected_interfaces": {
+              "net/minecraft/ItemStack": [
+                "cn/wensc/mitemod/extreme/api/IEXItemStack",
+                "net/xiaoyu233/mitemod/miteite/api/ITEStack"
+              ],
+              "net/minecraft/BlockBed": [
+                "cn/wensc/mitemod/extreme/api/IEXBlockBed"
+              ],
+              "net/minecraft/EntityPlayer": [
+                "cn/wensc/mitemod/extreme/api/IEXPlayer"
+              ],
+              "net/minecraft/EntityAIArrowAttack": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEArrowAttack"
+              ],
+              "net/minecraft/World": [
+                "net/xiaoyu233/mitemod/miteite/api/ITEWorld"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "scope": "Static inventory and evidence review; inventory is not a proof that every path executes."
+}
