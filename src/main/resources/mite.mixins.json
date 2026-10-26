@@ -356,6 +356,8 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.EmfPartTextureCompatibilityMixin",
+    "client.AcceleratedEmfPartTextureMixin",
     "client.PlayerTabOverlayMixin",
     "client.LanPlayerListAccess",
     "client.ShareToLanScreenMixin",

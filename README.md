@@ -6,6 +6,8 @@
 
 ## 当前状态
 
+2026-10-26 子部件贴图兼容：修复 Accelerated Rendering 与 EMF 同时启用时，FA+Details 掠夺者头盔和羊毛误用父模型贴图的问题。MITE 仅为带独立贴图的模型恢复 EMF 的逐部件渲染，保留资源包模型、随机外观和动画；见[独立子贴图兼容](docs/emf-part-textures.md)。
+
 2026-10-26 后续模型补丁 0.2.14：修复两个地狱苦力怕在 FA+Creepers 随机模型下的皮肤与红眼错位，保留原六部件与图集并借用资源包动作；扩展同步适配大力士僵尸、恶魂僵尸和红色食尸鬼。需配套更新两个 JAR，设计与复核见[特殊生物模型兼容](docs/source-model-compatibility.md)。
 
 2026-10-26 模型兼容修复：四种 MITE 蜘蛛接入 Fresh Animations / FA+Spiders 的模型、双节腿及口器动画，动态适配图集并保留变种颜色与发光眼睛。黏土魔像、隐形潜行者、暗影、亡魂和地元素等共用人形模型借用僵尸动画，保留原皮肤、透明度和发光层；见[蜘蛛资源包兼容](docs/spider-resource-pack-compatibility.md)与[类僵尸动画适配](docs/zombie-variant-animations.md)。
