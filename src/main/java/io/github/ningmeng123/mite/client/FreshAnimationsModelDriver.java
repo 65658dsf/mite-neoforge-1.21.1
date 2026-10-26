@@ -11,6 +11,17 @@ public final class FreshAnimationsModelDriver {
 
     private FreshAnimationsModelDriver() {}
 
+    public static boolean hasAnimation(EntityModel<?> model) {
+        if (failed || !ModList.get().isLoaded("entity_model_features")) return false;
+        try {
+            return Loaded.hasAnimation(model);
+        } catch (Exception | LinkageError failure) {
+            failed = true;
+            Mite.LOGGER.warn("Cannot inspect optional EMF animation for a custom model", failure);
+            return false;
+        }
+    }
+
     public static boolean animate(LivingEntity entity, EntityModel<?> model) {
         if (failed || !ModList.get().isLoaded("entity_model_features")) return false;
         try {
@@ -23,6 +34,10 @@ public final class FreshAnimationsModelDriver {
     }
 
     private static final class Loaded {
+        private static boolean hasAnimation(EntityModel<?> model) {
+            return traben.entity_model_features.EMFAnimationApi.isModelAnimatedByEMF(model);
+        }
+
         private static boolean animate(LivingEntity entity, EntityModel<?> model) {
             return traben.entity_model_features.EMFAnimationApi.animateModelForEntity(
                     traben.entity_model_features.EMFAnimationApi.emfEntityOf(entity), model, false);

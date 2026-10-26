@@ -2,6 +2,10 @@
 
 审计：NingMeng123，2026-10-20。
 
+2026-10-26 后续：本页下表和数量记录保留 0.2.6 审计时的分类。四种蜘蛛现已通过专用模型与动态贴图适配接入资源包；七种共用旧人形模型现借用僵尸动画。最新实现及验证见[蜘蛛资源包兼容](spider-resource-pack-compatibility.md)和[类僵尸动画适配](zombie-variant-animations.md)，不再按下表旧分类视为待适配项。
+
+同日 0.2.14 后续补丁进一步修复两种地狱苦力怕的随机 CEM 图集冲突，并为大力士、恶魂僵尸和红色食尸鬼补齐保形动画，见[特殊生物模型兼容](source-model-compatibility.md)。
+
 ## 范围与判定
 
 检查主模组 `MobKind` 注册的 29 种生物及普通骷髅渲染器覆盖，以及扩展 `ExtremeKind` 注册的全部 45 种生物。依据当前渲染器、实际烘焙的 `ModelLayerLocation`、原模型网格和 UV，以及用户提供的 FreshAnimations 1.10.4 / FA+Player 1.1 ZIP。EMF 为 3.3.12。

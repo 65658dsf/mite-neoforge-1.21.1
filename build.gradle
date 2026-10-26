@@ -46,6 +46,18 @@ neoForge {
     runs {
         client {
             client()
+            if (project.providers.gradleProperty('miteSpiderResourcePackAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.spiderResourcePackAudit', 'true'
+                programArguments.addAll '--width', '1280', '--height', '900'
+                systemProperty 'mite.spiderResourcePackAuditOutput', file(project.providers.gradleProperty('miteSpiderResourcePackAuditOutput')
+                        .getOrElse('build/verification/spider-resource-pack-client-audit.json')).absolutePath
+            }
+            if (project.providers.gradleProperty('miteZombieVariantAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.zombieVariantAudit', 'true'
+                programArguments.addAll '--width', '1280', '--height', '900'
+                systemProperty 'mite.zombieVariantAuditOutput', file(project.providers.gradleProperty('miteZombieVariantAuditOutput')
+                        .getOrElse('build/verification/zombie-variant-client-audit.json')).absolutePath
+            }
             if (project.providers.gradleProperty('mitePhantomBladeVisualSmoke').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.phantomBladeVisualSmoke', 'true'
                 programArguments.addAll '--width', '1600', '--height', '900'

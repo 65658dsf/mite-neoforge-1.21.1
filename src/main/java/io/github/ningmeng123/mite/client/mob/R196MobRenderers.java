@@ -78,7 +78,8 @@ public final class R196MobRenderers {
         private final float opacity;
         SourceHumanoidRenderer(EntityRendererProvider.Context context, Function<T,ResourceLocation> textures, float opacity,
                 Function<T,ResourceLocation> glow) {
-            super(context, new LegacyStalkerModel<>(context.bakeLayer(MobModelLayers.STALKER), opacity), opacity == 0 ? 0F : .5F);
+            super(context, new LegacyStalkerModel<>(context.bakeLayer(MobModelLayers.STALKER), opacity,
+                    () -> context.bakeLayer(ModelLayers.ZOMBIE)), opacity == 0 ? 0F : .5F);
             this.textures = textures; this.opacity = opacity; shadowStrength = opacity;
             addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<T>(context.bakeLayer(MobModelLayers.INNER_ARMOR)),
                     new HumanoidModel<T>(context.bakeLayer(MobModelLayers.OUTER_ARMOR)), context.getModelManager()));
@@ -104,11 +105,13 @@ public final class R196MobRenderers {
         private final ResourceLocation body;
         private final float scale;
         SourceSpiderRenderer(EntityRendererProvider.Context context, MobKind kind) {
-            super(context, new LegacyArachnidModel(context.bakeLayer(MobModelLayers.SPIDER)), kind == MobKind.WOOD_SPIDER
+            this(context, kind, SpiderResourcePackModel.create(context, kind));
+        }
+        private SourceSpiderRenderer(EntityRendererProvider.Context context, MobKind kind, SpiderResourcePackModel.Selected selected) {
+            super(context, selected.model(), kind == MobKind.WOOD_SPIDER
                     || kind == MobKind.BLACK_WIDOW_SPIDER || kind == MobKind.PHASE_SPIDER ? .6F : 1F);
-            String name = kind == MobKind.BLACK_WIDOW_SPIDER ? "black_widow" : kind.path();
-            body = texture("spider/" + name); scale = kind == MobKind.WOOD_SPIDER || kind == MobKind.BLACK_WIDOW_SPIDER || kind == MobKind.PHASE_SPIDER ? .6F : 1F;
-            addLayer(new SourceGlowLayer<>(this, entity -> texture("spider/" + name + "_glow")));
+            body = selected.body(); scale = kind == MobKind.WOOD_SPIDER || kind == MobKind.BLACK_WIDOW_SPIDER || kind == MobKind.PHASE_SPIDER ? .6F : 1F;
+            addLayer(new SourceGlowLayer<>(this, entity -> selected.glow()));
         }
         @Override public ResourceLocation getTextureLocation(R196Spider entity) { return body; }
         @Override protected void scale(R196Spider entity, PoseStack pose, float partial) { pose.scale(scale, scale, scale); }
@@ -185,6 +188,8 @@ public final class R196MobRenderers {
     private static final class SourceCreeperRenderer extends CreeperRenderer {
         SourceCreeperRenderer(EntityRendererProvider.Context context) {
             super(context); layers.removeIf(layer -> layer instanceof CreeperPowerLayer);
+            model = new SourceCreeperModel(context.bakeLayer(MobModelLayers.SOURCE_CREEPER),
+                    () -> context.bakeLayer(ModelLayers.CREEPER));
             addLayer(new SourceCreeperPower(this,context));
         }
         @Override public ResourceLocation getTextureLocation(Creeper entity) { return texture("creeper/infernal_creeper"); }
@@ -192,7 +197,8 @@ public final class R196MobRenderers {
     private static final class SourceCreeperPower extends EnergySwirlLayer<Creeper,CreeperModel<Creeper>> {
         private final CreeperModel<Creeper> model;
         SourceCreeperPower(RenderLayerParent<Creeper,CreeperModel<Creeper>> parent, EntityRendererProvider.Context context) {
-            super(parent); model = new CreeperModel<>(context.bakeLayer(ModelLayers.CREEPER_ARMOR));
+            super(parent); model = new SourceCreeperModel(context.bakeLayer(MobModelLayers.SOURCE_CREEPER_ARMOR),
+                    () -> context.bakeLayer(ModelLayers.CREEPER));
         }
         @Override protected float xOffset(float age) { return age * .01F; }
         @Override protected ResourceLocation getTextureLocation() { return texture("creeper/creeper_armor"); }
