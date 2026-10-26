@@ -7,10 +7,8 @@ import com.mojang.blaze3d.platform.NativeImage;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.client.phantom.PhantomBladeProjectileRenderer;
 import io.github.ningmeng123.mite.phantom.PhantomBladeProjectile;
-import io.github.ningmeng123.mite.phantom.PhantomBladeSwarm;
 import io.github.ningmeng123.mite.phantom.PhantomBladeSystem;
 import io.github.ningmeng123.mite.registry.MitePhantomBlades;
-import io.github.ningmeng123.mite.rules.PhantomBladeRules;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -52,14 +50,14 @@ import org.lwjgl.opengl.GL11;
 /** Opt-in screenshots from a disposable, genuinely synchronized world; pixels require human review. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT)
 public final class PhantomBladeVisualSmoke {
-    private enum Phase { TITLE, LOADING, SETUP, ORBIT, TARGET, FLIGHT, DONE }
+    private enum Phase { TITLE, LOADING, SETUP, PARKED, TARGET, FLIGHT, RETURNING, DOCKED, DONE }
     private static final Vec3 HOME = new Vec3(.5D, 128D, .5D);
     private static final float YAW = -25F, PITCH = 16F;
     private static final JsonObject REPORT = new JsonObject();
     private static Phase phase = Phase.TITLE;
     private static CompletableFuture<Integer> pending;
     private static UUID ownerUuid;
-    private static int targetId = -1, orbitFrames, worldFrames, clientTicks;
+    private static int targetId = -1, bladeId = -1, restingFrames, worldFrames, clientTicks;
     private static boolean isolated;
 
     private PhantomBladeVisualSmoke() {}
@@ -80,7 +78,7 @@ public final class PhantomBladeVisualSmoke {
                 REPORT.addProperty("existing_worlds_opened", false);
                 REPORT.addProperty("visual_verdict", "not_automatically_assessed");
                 REPORT.addProperty("manual_pixel_review_required", true);
-                String world = "phantom-orientation-"+System.currentTimeMillis();
+                String world = "phantom-single-blade-"+System.currentTimeMillis();
                 REPORT.addProperty("disposable_world", world);
                 mc.options.pauseOnLostFocus = false;
                 mc.options.hideGui = true;
@@ -133,7 +131,7 @@ public final class PhantomBladeVisualSmoke {
                 REPORT.addProperty("world_created", true);
                 REPORT.addProperty("camera", "third_person_back");
                 REPORT.addProperty("camera_yaw", YAW); REPORT.addProperty("camera_pitch", PITCH);
-                phase = Phase.ORBIT;
+                phase = Phase.PARKED;
             } else if (phase == Phase.TARGET && pending.isDone()) {
                 targetId = pending.join();
                 if (mc.level.getEntity(targetId) != null) phase = Phase.FLIGHT;
@@ -147,11 +145,11 @@ public final class PhantomBladeVisualSmoke {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.screen != null) return;
         ++worldFrames;
-        if (phase != Phase.ORBIT) return;
-        for (Entity entity : mc.level.entitiesForRendering()) if (entity instanceof PhantomBladeSwarm swarm
-                && swarm.ownerId() == mc.player.getId() && swarm.orbitBladeMask() == PhantomBladeRules.profile("copper").fullMask()) {
+        if (phase != Phase.PARKED) return;
+        for (Entity entity : mc.level.entitiesForRendering()) if (entity instanceof PhantomBladeProjectile blade
+                && blade.ownerId() == mc.player.getId() && blade.isDocked()) {
             Vec3 camera = event.getCamera().getPosition();
-            if (mc.getEntityRenderDispatcher().shouldRender(swarm, event.getFrustum(), camera.x, camera.y, camera.z)) ++orbitFrames;
+            if (mc.getEntityRenderDispatcher().shouldRender(blade, event.getFrustum(), camera.x, camera.y, camera.z)) ++restingFrames;
         }
     }
 
@@ -160,16 +158,17 @@ public final class PhantomBladeVisualSmoke {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.screen != null || mc.getOverlay() != null) return;
         try {
-            if (phase == Phase.ORBIT && orbitFrames >= 40) {
-                PhantomBladeSwarm swarm = null;
-                for (Entity entity : mc.level.entitiesForRendering()) if (entity instanceof PhantomBladeSwarm candidate
-                        && candidate.ownerId() == mc.player.getId() && candidate.orbitBladeMask() == PhantomBladeRules.profile("copper").fullMask()) { swarm = candidate; break; }
-                if (swarm == null) return;
-                JsonObject orbit = state(swarm);
-                orbit.addProperty("orbit_mask", swarm.orbitBladeMask());
-                orbit.addProperty("capacity", swarm.bladeCount());
-                orbit.addProperty("frustum_eligible_world_frames", orbitFrames);
-                capture(mc, "orbit.png", orbit); REPORT.add("orbit", orbit);
+            if (phase == Phase.PARKED && restingFrames >= 40) {
+                PhantomBladeProjectile resting = null; int blades = 0;
+                for (Entity entity : mc.level.entitiesForRendering()) if (entity instanceof PhantomBladeProjectile candidate
+                        && candidate.ownerId() == mc.player.getId()) { resting = candidate; ++blades; }
+                if (resting == null || !resting.isDocked()) return;
+                check(blades == 1, "The normal carried core renders precisely one persistent sword");
+                bladeId = resting.getId();
+                JsonObject parked = state(resting);
+                parked.addProperty("swords", blades); parked.addProperty("docked", resting.isDocked());
+                parked.addProperty("frustum_eligible_world_frames", restingFrames);
+                capture(mc, "resting.png", parked); REPORT.add("resting", parked);
                 var server = mc.getSingleplayerServer();
                 pending = CompletableFuture.supplyAsync(() -> {
                     var owner = server.getPlayerList().getPlayer(ownerUuid);
@@ -194,7 +193,8 @@ public final class PhantomBladeVisualSmoke {
                 phase = Phase.TARGET;
             } else if (phase == Phase.FLIGHT) {
                 for (Entity entity : mc.level.entitiesForRendering()) if (entity instanceof PhantomBladeProjectile blade
-                        && blade.ownerId() == mc.player.getId() && blade.tickCount >= 6) {
+                        && blade.ownerId() == mc.player.getId() && !blade.isDocked() && !blade.isReturning()) {
+                    check(blade.getId() == bladeId, "The parked entity itself flies out instead of spawning a replacement sword");
                     var renderer = mc.getEntityRenderDispatcher().getRenderer(blade);
                     if (!(renderer instanceof PhantomBladeProjectileRenderer)) continue;
                     Field field = PhantomBladeProjectileRenderer.class.getDeclaredField("trails"); field.setAccessible(true);
@@ -217,8 +217,26 @@ public final class PhantomBladeVisualSmoke {
                     JsonArray points = new JsonArray();
                     history.points().forEach(point -> points.add(vector(point.position()))); flight.add("rendered_trajectory", points);
                     capture(mc, "flight.png", flight); REPORT.add("flight", flight);
-                    finish(mc, null); return;
+                    phase = Phase.RETURNING; return;
                 }
+            } else if (phase == Phase.RETURNING) {
+                Entity entity = mc.level.getEntity(bladeId);
+                check(entity instanceof PhantomBladeProjectile, "The same sword remains synchronized after impact");
+                var blade = (PhantomBladeProjectile)entity;
+                if (!blade.isReturning()) return;
+                JsonObject returning = state(blade); returning.addProperty("returning", blade.isReturning());
+                returning.add("velocity", vector(blade.getDeltaMovement()));
+                capture(mc, "return.png", returning); REPORT.add("returning", returning);
+                phase = Phase.DOCKED;
+            } else if (phase == Phase.DOCKED) {
+                Entity entity = mc.level.getEntity(bladeId);
+                check(entity instanceof PhantomBladeProjectile, "The same sword survives its entire return flight");
+                var blade = (PhantomBladeProjectile)entity;
+                if (!blade.isDocked()) return;
+                JsonObject cooldown = state(blade); cooldown.addProperty("docked", blade.isDocked());
+                cooldown.addProperty("same_entity_through_full_cycle", true);
+                capture(mc, "cooldown.png", cooldown); REPORT.add("cooldown", cooldown);
+                finish(mc, null); return;
             }
         } catch (Throwable failure) { finish(mc, failure); }
     }
@@ -243,7 +261,7 @@ public final class PhantomBladeVisualSmoke {
         REPORT.addProperty("native_framebuffer_captured", true);
     }
     private static Path output() {
-        return Path.of(System.getProperty("mite.phantomBladeVisualSmokeOutput", "build/verification/phantom-orientation-visual"))
+        return Path.of(System.getProperty("mite.phantomBladeVisualSmokeOutput", "build/verification/phantom-single-blade-visual"))
                 .toAbsolutePath().normalize();
     }
     private static void check(boolean condition, String message) { if (!condition) throw new IllegalStateException(message); }

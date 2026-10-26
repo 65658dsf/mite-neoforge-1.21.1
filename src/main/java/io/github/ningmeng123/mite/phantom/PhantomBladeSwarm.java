@@ -3,8 +3,6 @@ package io.github.ningmeng123.mite.phantom;
 import io.github.ningmeng123.mite.registry.MitePhantomBlades;
 import io.github.ningmeng123.mite.rules.PhantomBladeRules;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -15,13 +13,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
-/** A single synchronized visual formation launches real, event-respecting projectiles. @author NingMeng123 */
+/** An invisible controller owns exactly one reusable, synchronized sword. @author NingMeng123 */
 public final class PhantomBladeSwarm extends Entity {
     private static final EntityDataAccessor<Integer> OWNER = SynchedEntityData.defineId(PhantomBladeSwarm.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> MATERIAL = SynchedEntityData.defineId(PhantomBladeSwarm.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> ORBIT_MASK = SynchedEntityData.defineId(PhantomBladeSwarm.class, EntityDataSerializers.INT);
-    private final Set<PhantomBladeProjectile> projectiles = new HashSet<>();
+    @Nullable private PhantomBladeProjectile blade;
 
     public PhantomBladeSwarm(EntityType<? extends PhantomBladeSwarm> type, Level level) {
         super(type, level); noPhysics = true; setNoGravity(true);
@@ -29,7 +28,8 @@ public final class PhantomBladeSwarm extends Entity {
 
     public void initialize(ServerPlayer owner, PhantomBladeRules.Profile profile) {
         entityData.set(OWNER, owner.getId()); entityData.set(MATERIAL, profile.material());
-        entityData.set(ORBIT_MASK, PhantomBladeState.current(owner, profile).orbitMask(profile)); follow(owner);
+        PhantomBladeState.current(owner, profile);
+        entityData.set(ORBIT_MASK, 1); follow(owner);
     }
 
     @Override protected void defineSynchedData(SynchedEntityData.Builder builder) {
@@ -38,13 +38,19 @@ public final class PhantomBladeSwarm extends Entity {
     public int ownerId() { return entityData.get(OWNER); }
     @Nullable public Entity owner() { return level().getEntity(ownerId()); }
     public String material() { return entityData.get(MATERIAL); }
-    public int bladeCount() {
-        var profile = PhantomBladeRules.profile(material()); return profile == null ? 0 : profile.bladeCount();
-    }
+    public int bladeCount() { return 1; }
     public int orbitBladeMask() { return entityData.get(ORBIT_MASK); }
-    public int inFlightCount() { return projectiles.size(); }
+    public int inFlightCount() { return blade != null && !blade.isRemoved() && !blade.isDocked() ? 1 : 0; }
 
-    private void follow(Entity owner) { setPos(owner.getX(), owner.getY() + owner.getBbHeight() * .6D, owner.getZ()); }
+    /** Shared by flight logic and rendering so the waiting sword stays behind the player's facing. */
+    public static Vec3 restingOffset(float yaw, double ownerHeight) {
+        double radians = Math.toRadians(yaw);
+        return new Vec3(Math.sin(radians) * 1.1D, ownerHeight * .65D, -Math.cos(radians) * 1.1D);
+    }
+    public static Vec3 restingPosition(Entity owner) {
+        return owner.position().add(restingOffset(owner.getYRot(), owner.getBbHeight()));
+    }
+    private void follow(Entity owner) { setPos(restingPosition(owner)); }
 
     @Override public void tick() {
         super.tick();
@@ -54,25 +60,28 @@ public final class PhantomBladeSwarm extends Entity {
         var profile = PhantomBladeSystem.selected(player);
         if (profile == null || !profile.material().equals(material())) { discard(); return; }
         follow(player);
-        projectiles.removeIf(Entity::isRemoved);
-        var state = PhantomBladeState.current(player, profile);
-        entityData.set(ORBIT_MASK, state.orbitMask(profile));
-        if (!PhantomBladeState.ready(player, state)) return;
+        if (blade == null || blade.isRemoved()) {
+            PhantomBladeProjectile replacement = new PhantomBladeProjectile(MitePhantomBlades.PROJECTILE.get(), level());
+            replacement.initialize(this, player);
+            if (level().addFreshEntity(replacement)) blade = replacement;
+            else { replacement.discard(); return; }
+        }
+        entityData.set(ORBIT_MASK, blade.isDocked() ? 1 : 0);
+        if (!blade.isDocked() || !PhantomBladeState.ready(player, PhantomBladeState.current(player, profile))) return;
         LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PhantomBladeSystem.RANGE),
                 candidate -> PhantomBladeSystem.validTarget(player, candidate) && player.hasLineOfSight(candidate))
                 .stream().min(Comparator.<LivingEntity>comparingDouble(player::distanceToSqr).thenComparingInt(Entity::getId)).orElse(null);
         if (target == null) return;
-        PhantomBladeProjectile projectile = new PhantomBladeProjectile(MitePhantomBlades.PROJECTILE.get(), level());
-        projectile.initialize(this, player, target, profile.bladeCount()-state.charges());
-        if (level().addFreshEntity(projectile)) {
-            projectiles.add(projectile); entityData.set(ORBIT_MASK, PhantomBladeState.consume(player, profile).orbitMask(profile));
-        } else projectile.discard();
+        PhantomBladeState.consume(player, profile);
+        blade.launch(target);
+        entityData.set(ORBIT_MASK, 0);
     }
 
     @Override public void remove(RemovalReason reason) {
         super.remove(reason);
-        for (var projectile : Set.copyOf(projectiles)) projectile.discard();
-        projectiles.clear(); PhantomBladeSystem.removed(this);
+        if (blade != null) blade.discard();
+        blade = null;
+        PhantomBladeSystem.removed(this);
     }
     @Override protected void readAdditionalSaveData(CompoundTag tag) {}
     @Override protected void addAdditionalSaveData(CompoundTag tag) {}

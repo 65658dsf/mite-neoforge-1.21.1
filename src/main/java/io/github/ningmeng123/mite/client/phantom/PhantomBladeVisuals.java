@@ -11,10 +11,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
-/** Small shared meshes for a material-colored formation and fading sword light. @author NingMeng123 */
+/** Shared orientation and fading light for the one returning material sword. @author NingMeng123 */
 public final class PhantomBladeVisuals {
     public static final int TRAIL_TICKS = 12;
-    public static final double ORBIT_RADIUS = 1.25D;
     public static final ResourceLocation LIGHT = ResourceLocation.fromNamespaceAndPath("mite", "textures/entity/phantom/blade_light.png");
     public static final List<String> MATERIALS = List.of("rusted_iron", "copper", "silver", "gold", "iron",
             "ancient_metal", "mithril", "adamantium", "vibranium");
@@ -34,19 +33,9 @@ public final class PhantomBladeVisuals {
         };
     }
 
-    public static double orbitAngle(double time, int index, int bladeCount) {
-        return time * .035D + index * Math.PI * 2D / bladeCount;
-    }
-
-    public static Vec3 orbit(double time, int index, int bladeCount) {
-        double angle = orbitAngle(time, index, bladeCount);
-        return new Vec3(Math.cos(angle) * ORBIT_RADIUS, .09D * Math.sin(time * .085D + index * .9D),
-                Math.sin(angle) * ORBIT_RADIUS);
-    }
-
-    /** Turn the sword's face around the ring, keeping its tip on the local +Y axis. */
-    public static void orientOrbit(PoseStack pose, double time, int index, int bladeCount) {
-        pose.mulPose(Axis.YP.rotationDegrees((float) (-Math.toDegrees(orbitAngle(time, index, bladeCount)) + 90D)));
+    /** Follow the owner's horizontal facing, keeping the parked sword's tip on local +Y. */
+    public static void orientResting(PoseStack pose, float ownerYaw) {
+        pose.mulPose(Axis.YP.rotationDegrees(-ownerYaw));
     }
 
     /** Rotate the upright sword frame so +Y points along the projectile's velocity. */
@@ -57,7 +46,7 @@ public final class PhantomBladeVisuals {
 
     /**
      * Native handheld models inherit FIXED's Y=180 transform. Their diagonal tip axis is then
-     * (-X,+Y), so -45 degrees around Z makes the tip point up in the aura's local frame.
+     * (-X,+Y), so -45 degrees around Z makes the tip point up in the sword's local frame.
      */
     public static void alignSwordSprite(PoseStack pose) {
         pose.mulPose(Axis.ZP.rotationDegrees(-45F));
@@ -66,20 +55,6 @@ public final class PhantomBladeVisuals {
     public static float trailOpacity(double age) {
         double remaining = Math.clamp(1D - age / TRAIL_TICKS, 0D, 1D);
         return (float) (remaining * remaining * .8D);
-    }
-
-    public static void formationRing(PoseStack pose, MultiBufferSource buffers, double time, int color) {
-        VertexConsumer vertices = buffers.getBuffer(RenderType.entityTranslucentEmissive(LIGHT));
-        int segments = 64;
-        for (int i = 0; i < segments; i++) {
-            double from = i * Math.PI * 2D / segments + time * .012D;
-            double to = (i + 1) * Math.PI * 2D / segments + time * .012D;
-            double inner = ORBIT_RADIUS - .018D, outer = ORBIT_RADIUS + .018D;
-            quad(vertices, pose.last(), new Vec3(Math.cos(from) * inner, -.32D, Math.sin(from) * inner),
-                    new Vec3(Math.cos(from) * outer, -.32D, Math.sin(from) * outer),
-                    new Vec3(Math.cos(to) * outer, -.32D, Math.sin(to) * outer),
-                    new Vec3(Math.cos(to) * inner, -.32D, Math.sin(to) * inner), color, .28F, .28F);
-        }
     }
 
     /** A soft blade-shaped aura in the same local plane as the native sword sprite. */

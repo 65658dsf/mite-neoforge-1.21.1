@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.client.phantom;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.ningmeng123.mite.phantom.PhantomBladeProjectile;
+import io.github.ningmeng123.mite.phantom.PhantomBladeSwarm;
 import io.github.ningmeng123.mite.registry.MitePhantomBlades;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-/** The real flying material sword follows its velocity; old world positions form a fading light ribbon. @author NingMeng123 */
+/** One persistent sword rests upright behind its owner and points along either leg of its flight. @author NingMeng123 */
 public final class PhantomBladeProjectileRenderer extends EntityRenderer<PhantomBladeProjectile> {
     private final ItemRenderer items;
     private final Map<PhantomBladeProjectile, Trail> trails = new WeakHashMap<>();
@@ -46,26 +47,41 @@ public final class PhantomBladeProjectileRenderer extends EntityRenderer<Phantom
         // Attach the ribbon at the hilt, behind the center of the tip-first flying sword.
         double yawRadians = Math.toRadians(facingYaw), elevationRadians = Math.toRadians(elevation);
         Vec3 hiltOffset = new Vec3(Math.sin(yawRadians) * Math.cos(elevationRadians), Math.sin(elevationRadians),
-                Math.cos(yawRadians) * Math.cos(elevationRadians)).scale(-.62D);
+                Math.cos(yawRadians) * Math.cos(elevationRadians)).scale(-.31D);
         int color = PhantomBladeVisuals.color(entity.material());
-        Trail trail = trails.computeIfAbsent(entity, ignored -> new Trail());
-        // Preserve each tick's actual hilt position, including its heading when turning.
-        trail.sample(entity.tickCount, entity.position().add(hiltOffset));
-        Vec3 camera = entityRenderDispatcher.camera.getPosition().subtract(current);
-        Vec3 from = hiltOffset;
-        double fromAge = 0D;
-        for (TrailPoint point : trail.points()) {
-            double age = entity.tickCount - 1D + partialTick - point.tick();
-            if (age < 0D) continue;
-            Vec3 to = point.position().subtract(current);
-            PhantomBladeVisuals.ribbon(pose, buffers, from, to, camera,
-                    .115D * PhantomBladeVisuals.trailOpacity(fromAge), .115D * PhantomBladeVisuals.trailOpacity(age),
-                    color, PhantomBladeVisuals.trailOpacity(fromAge), PhantomBladeVisuals.trailOpacity(age));
-            from = to; fromAge = age;
+        if (entity.isDocked()) {
+            // A walking or turning owner must not drag a flight ribbon behind the parked sword.
+            trails.remove(entity);
+        } else {
+            Trail trail = trails.computeIfAbsent(entity, ignored -> new Trail());
+            // Preserve each tick's actual hilt position, including its heading when turning.
+            trail.sample(entity.tickCount, entity.position().add(hiltOffset));
+            Vec3 camera = entityRenderDispatcher.camera.getPosition().subtract(current);
+            Vec3 from = hiltOffset;
+            double fromAge = 0D;
+            for (TrailPoint point : trail.points()) {
+                double age = entity.tickCount - 1D + partialTick - point.tick();
+                if (age < 0D) continue;
+                Vec3 to = point.position().subtract(current);
+                PhantomBladeVisuals.ribbon(pose, buffers, from, to, camera,
+                        .0575D * PhantomBladeVisuals.trailOpacity(fromAge), .0575D * PhantomBladeVisuals.trailOpacity(age),
+                        color, PhantomBladeVisuals.trailOpacity(fromAge), PhantomBladeVisuals.trailOpacity(age));
+                from = to; fromAge = age;
+            }
         }
         pose.pushPose();
-        PhantomBladeVisuals.orientProjectile(pose, facingYaw, elevation);
-        pose.scale(.95F, .95F, .95F);
+        if (entity.isDocked()) {
+            var owner = entity.owner();
+            if (owner != null) {
+                float ownerYaw = Mth.rotLerp(partialTick, owner.yRotO, owner.getYRot());
+                Vec3 resting = owner.getPosition(partialTick)
+                        .add(PhantomBladeSwarm.restingOffset(ownerYaw, owner.getBbHeight()));
+                Vec3 adjustment = resting.subtract(current);
+                pose.translate(adjustment.x, adjustment.y, adjustment.z);
+                PhantomBladeVisuals.orientResting(pose, ownerYaw);
+            }
+        } else PhantomBladeVisuals.orientProjectile(pose, facingYaw, elevation);
+        pose.scale(.475F, .475F, .475F);
         PhantomBladeVisuals.bladeAura(pose, buffers, color, .9F);
         PhantomBladeVisuals.alignSwordSprite(pose);
         items.renderStatic(new ItemStack(MitePhantomBlades.sword(entity.material())), ItemDisplayContext.FIXED,

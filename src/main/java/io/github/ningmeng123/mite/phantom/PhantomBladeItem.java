@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
-/** A carried formation core; swords are its visual projectiles, not duplicated inventory items. @author NingMeng123 */
+/** A carried core controlling one returning sword, without duplicating inventory items. @author NingMeng123 */
 public final class PhantomBladeItem extends Item {
     private final String material;
     public PhantomBladeItem(String material, Properties properties) {
@@ -20,11 +20,10 @@ public final class PhantomBladeItem extends Item {
     public String material() { return material; }
     @Override public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flags) {
         var profile = PhantomBladeRules.profile(material);
-        lines.add(Component.translatable("item.mite.phantom_blade.activation", profile.bladeCount()).withStyle(ChatFormatting.AQUA));
+        lines.add(Component.translatable("item.mite.phantom_blade.activation").withStyle(ChatFormatting.AQUA));
         lines.add(Component.translatable("item.mite.phantom_blade.stats", number(profile.damage()), number(profile.intervalTicks()/20D))
                 .withStyle(ChatFormatting.GRAY));
-        lines.add(Component.translatable("item.mite.phantom_blade.recharge", profile.bladeCount(), number(profile.rechargeTicks()/20D))
-                .withStyle(ChatFormatting.GRAY));
+        lines.add(Component.translatable("item.mite.phantom_blade.recharge").withStyle(ChatFormatting.GRAY));
         lines.add(Component.translatable("item.mite.phantom_blade.selection").withStyle(ChatFormatting.DARK_GRAY));
     }
     private static String number(double value) { return String.format(Locale.ROOT, "%.2f", value).replaceAll("0+$", "").replaceAll("\\.$", ""); }

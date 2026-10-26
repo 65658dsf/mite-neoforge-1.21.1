@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.client.phantom.PhantomBladeProjectileRenderer.Trail;
 import io.github.ningmeng123.mite.client.phantom.PhantomBladeVisuals;
+import io.github.ningmeng123.mite.phantom.PhantomBladeSwarm;
 import io.github.ningmeng123.mite.registry.MitePhantomBlades;
 import io.github.ningmeng123.mite.rules.PhantomBladeRules;
 import java.io.InputStream;
@@ -66,7 +67,7 @@ public final class PhantomBladeClientAudit implements DataProvider {
         report.addProperty("world_created", false);
         report.addProperty("opengl_or_render_invoked", false);
         report.addProperty("visual_appearance_passed", false);
-        report.addProperty("scope", "decoded RGBA sprites, inherited native FIXED item transforms and actual texture-frame axes, orbit/projectile orientation, actual emitted formation/aura/trail vertices, trail history and compiled renderer wiring; not rendered pixels");
+        report.addProperty("scope", "decoded RGBA sprites, inherited native FIXED item transforms and actual texture-frame axes, parked and flying sword orientation, actual emitted aura/trail vertices, behind-owner attachment, trail history and compiled renderer wiring; not rendered pixels");
         try {
             resources(report); orientations(report); meshes(report); wiring(report);
             report.addProperty("status", "passed_client_assets_actual_mesh_and_renderer_wiring_without_rendering");
@@ -192,8 +193,8 @@ public final class PhantomBladeClientAudit implements DataProvider {
     }
 
     private static void orientations(JsonObject report) throws Exception {
-        JsonArray models = new JsonArray(); int orbitCases = 0, flightCases = 0;
-        double[] times = {0D, 42.5D, 180.75D, 10_000D};
+        JsonArray models = new JsonArray(); int restingCases = 0, flightCases = 0;
+        float[] ownerYaws = {0F, 45F, 90F, 180F, -90F};
         Vec3[] directions = {new Vec3(1D, 0D, 0D), new Vec3(-1D, 0D, 0D), new Vec3(0D, 1D, 0D),
                 new Vec3(0D, -1D, 0D), new Vec3(0D, 0D, 1D), new Vec3(0D, 0D, -1D), new Vec3(3D, -4D, 5D)};
         for (String material : PhantomBladeVisuals.MATERIALS) {
@@ -215,11 +216,11 @@ public final class PhantomBladeClientAudit implements DataProvider {
                     "The actual inherited FIXED display transform includes its hidden180-degree Y rotation: " + material);
             for (int frame = 0; frame < frames; frame++) {
                 BladeAxis axis = textureAxis(image, frame, size);
-                for (double time : times) for (int index = 0; index < PhantomBladeRules.profile(material).bladeCount(); index++) {
-                    var pose = new PoseStack(); PhantomBladeVisuals.orientOrbit(pose, time, index, PhantomBladeRules.profile(material).bladeCount());
-                    auraAligned(pose, new Vec3(0D, 1D, 0D), "The actual orbit aura points upward at every blade index and time");
-                    swordAligned(pose, model, axis, new Vec3(0D, 1D, 0D), "The native model grip-to-tip axis is vertical and points up: " + material + "/frame" + frame + "/blade" + index + "/time" + time);
-                    orbitCases++;
+                for (float ownerYaw : ownerYaws) {
+                    var pose = new PoseStack(); PhantomBladeVisuals.orientResting(pose, ownerYaw);
+                    auraAligned(pose, new Vec3(0D, 1D, 0D), "The actual parked aura stays vertical at every owner facing");
+                    swordAligned(pose, model, axis, new Vec3(0D, 1D, 0D), "The native parked sword points up: " + material + "/frame" + frame + "/ownerYaw" + ownerYaw);
+                    restingCases++;
                 }
                 for (Vec3 direction : directions) {
                     float yaw = (float) Math.toDegrees(Math.atan2(direction.x, direction.z));
@@ -237,30 +238,27 @@ public final class PhantomBladeClientAudit implements DataProvider {
             entry.add("inherited_fixed_rotation", rotation); models.add(entry);
         }
         report.add("native_sword_model_orientation", models);
-        report.addProperty("actual_native_orbit_grip_to_tip_orientation_cases", orbitCases);
+        report.addProperty("actual_native_resting_grip_to_tip_orientation_cases", restingCases);
         report.addProperty("actual_native_projectile_grip_to_tip_orientation_cases", flightCases);
         report.addProperty("actual_aura_direction_matches_native_sword_tip", true);
     }
 
     private static void meshes(JsonObject report) {
-        JsonArray capacities = new JsonArray();
+        JsonArray blades = new JsonArray();
         for (var profile : PhantomBladeRules.profiles()) {
-            var positions = new HashSet<Vec3>();
-            int count = profile.bladeCount();
-            for (int index = 0; index < count; index++) {
-                Vec3 point = PhantomBladeVisuals.orbit(42.5D, index, count); positions.add(point);
-                Vec3 next = PhantomBladeVisuals.orbit(42.5D, (index+1)%count, count);
-                check(Math.abs(point.horizontalDistance() - PhantomBladeVisuals.ORBIT_RADIUS) < 1E-8D, "Each blade stays on the owner-centered orbit");
-                double gap = Math.atan2(point.x*next.z-point.z*next.x, point.x*next.x+point.z*next.z);
-                check(Math.abs(gap-2D*Math.PI/count) < 1E-8D, "Every adjacent pair, including the closing pair, has equal material-specific angular spacing");
-            }
-            check(positions.size() == count && !PhantomBladeVisuals.orbit(42.5D, 0, count).equals(PhantomBladeVisuals.orbit(43.5D, 0, count)),
-                    "The actual material capacity forms a complete moving ring: "+profile.material());
-            JsonObject capacity = new JsonObject(); capacity.addProperty("material", profile.material()); capacity.addProperty("orbit_blades", count); capacities.add(capacity);
+            check(profile.bladeCount() == 1, "Every material controls exactly one persistent blade: " + profile.material());
+            JsonObject blade = new JsonObject(); blade.addProperty("material", profile.material()); blade.addProperty("swords", 1); blades.add(blade);
         }
-        report.add("material_orbit_capacities_and_equal_spacing", capacities);
-        Capture ring = new Capture(); PhantomBladeVisuals.formationRing(new PoseStack(), ring.buffers(), 42.5D, 0x8AE4FF); ring.finish();
-        check(ring.vertices == 256, "The actual formation ring emits 64 complete quads");
+        report.add("single_blade_per_material", blades);
+        for (float yaw : new float[] {0F, 45F, 90F, 180F, -90F, 360F}) {
+            Vec3 offset = PhantomBladeSwarm.restingOffset(yaw, 1.8D);
+            Vec3 facing = new Vec3(-Math.sin(Math.toRadians(yaw)), 0D, Math.cos(Math.toRadians(yaw)));
+            check(Math.abs(offset.horizontalDistance() - 1.1D) < 1E-8D && Math.abs(offset.y - 1.17D) < 1E-8D,
+                    "Parked blade keeps its horizontal distance and upper-body height at every owner yaw");
+            check(Math.abs(new Vec3(offset.x, 0D, offset.z).normalize().dot(facing) + 1D) < 1E-8D,
+                    "The actual shared gameplay/render attachment remains directly behind the owner's facing");
+        }
+        report.addProperty("behind_owner_attachment_matches_all_facing_directions", true);
         Capture aura = new Capture(); PhantomBladeVisuals.bladeAura(new PoseStack(), aura.buffers(), 0x8AE4FF, .8F); aura.finish();
         check(aura.vertices == 4, "The actual native-sword aura emits one soft quad");
         Capture ribbon = new Capture();
@@ -282,7 +280,7 @@ public final class PhantomBladeClientAudit implements DataProvider {
         check(trail.points().size() == 1, "A teleport cannot draw a world-spanning light streak");
         for (int tick = 21; tick <= 32; tick++) trail.sample(tick, new Vec3(1000D, 0D, 0D));
         check(trail.points().isEmpty(), "The real old trajectory expires even while a projectile stops moving");
-        report.addProperty("actual_ring_vertices", ring.vertices); report.addProperty("actual_aura_vertices", aura.vertices);
+        report.addProperty("actual_aura_vertices", aura.vertices);
         report.addProperty("actual_ribbon_vertices", ribbon.vertices); report.addProperty("all_new_entity_vertex_attributes_written", true);
         report.addProperty("bounded_motion_history_fades_and_rejects_teleport_streaks", true);
     }
@@ -293,52 +291,40 @@ public final class PhantomBladeClientAudit implements DataProvider {
                 "Both synchronized entities are wired to real client renderers");
         ClassNode swarm = compiled(CLIENT + "PhantomBladeSwarmRenderer");
         ClassNode projectile = compiled(CLIENT + "PhantomBladeProjectileRenderer");
-        for (ClassNode renderer : List.of(swarm, projectile)) {
-            check(calls(renderer, "net/minecraft/client/renderer/entity/ItemRenderer", "renderStatic") == 1,
-                    "Actual native ItemRenderer draws the corresponding material sword: " + renderer.name);
-            check(calls(renderer, "io/github/ningmeng123/mite/registry/MitePhantomBlades", "sword") == 1,
-                    "Each rendered sword resolves its actual material rather than the formation core");
-            String orientation = renderer == swarm ? "orientOrbit" : "orientProjectile";
-            check(calls(renderer, CLIENT + "PhantomBladeVisuals", orientation) == 1
-                    && calls(renderer, CLIENT + "PhantomBladeVisuals", "alignSwordSprite") == 1,
-                    "The real renderer uses both the verified world-facing helper and native sprite alignment: " + renderer.name);
-            check(calls(renderer, "com/mojang/blaze3d/vertex/PoseStack", "mulPose") == 0,
-                    "No old renderer-local rotation overrides the audited orientation helpers: " + renderer.name);
-            var draw = renderer.methods.stream().filter(method -> method.name.equals("render")
-                    && method.desc.contains(renderer == swarm ? "Lio/github/ningmeng123/mite/phantom/PhantomBladeSwarm;"
-                            : "Lio/github/ningmeng123/mite/phantom/PhantomBladeProjectile;")).findFirst().orElseThrow();
-            int orient = -1, aura = -1, align = -1, item = -1, index = 0;
-            for (var instruction : draw.instructions) {
-                if (instruction instanceof MethodInsnNode call) {
-                    if (call.owner.equals(CLIENT + "PhantomBladeVisuals")) {
-                        if (call.name.equals(orientation)) orient = index;
-                        if (call.name.equals("bladeAura")) aura = index;
-                        if (call.name.equals("alignSwordSprite")) align = index;
-                    }
-                    if (call.owner.equals("net/minecraft/client/renderer/entity/ItemRenderer") && call.name.equals("renderStatic")) item = index;
-                }
-                index++;
-            }
-            check(orient >= 0 && orient < aura && aura < align && align < item,
-                    "Actual call order is world orientation, matching aura, native sprite alignment, then FIXED item rendering: " + renderer.name);
-        }
-        report.addProperty("actual_renderers_use_verified_orientation_then_aura_then_native_fixed_sprite_alignment", true);
-        check(calls(swarm, "io/github/ningmeng123/mite/phantom/PhantomBladeSwarm", "orbitBladeMask") == 1,
-                "Launching a sword actually hides that sword from the orbit formation");
-        check(calls(swarm, "io/github/ningmeng123/mite/phantom/PhantomBladeSwarm", "bladeCount") == 1,
-                "The actual renderer obtains its slot count from the synchronized material's profile capacity");
-        var drawSwarm = swarm.methods.stream().filter(method -> method.name.equals("render")
-                && method.desc.contains("Lio/github/ningmeng123/mite/phantom/PhantomBladeSwarm;")).findFirst().orElseThrow();
-        int ringCall = -1, maskCall = -1, instructionIndex = 0;
-        for (var instruction : drawSwarm.instructions) {
+        check(calls(swarm, "net/minecraft/client/renderer/entity/ItemRenderer", "renderStatic") == 0,
+                "The invisible controller never draws a second sword");
+        check(calls(projectile, "net/minecraft/client/renderer/entity/ItemRenderer", "renderStatic") == 1
+                && calls(projectile, "io/github/ningmeng123/mite/registry/MitePhantomBlades", "sword") == 1,
+                "One native material sword is drawn by the persistent projectile renderer");
+        check(calls(projectile, CLIENT + "PhantomBladeVisuals", "orientResting") == 1
+                && calls(projectile, CLIENT + "PhantomBladeVisuals", "orientProjectile") == 1
+                && calls(projectile, CLIENT + "PhantomBladeVisuals", "alignSwordSprite") == 1,
+                "The actual renderer uses the verified parked/flight helpers and native sprite alignment");
+        check(calls(projectile, "io/github/ningmeng123/mite/phantom/PhantomBladeSwarm", "restingOffset") == 1,
+                "The parked sword uses the same behind-owner attachment as the gameplay entity");
+        check(calls(projectile, "io/github/ningmeng123/mite/phantom/PhantomBladeProjectile", "isDocked") >= 2
+                && calls(projectile, "java/util/Map", "remove") == 1,
+                "Docking changes orientation and removes all old motion-trail history");
+        check(calls(projectile, "com/mojang/blaze3d/vertex/PoseStack", "mulPose") == 0,
+                "No renderer-local rotation overrides the audited orientation helpers");
+        var draw = projectile.methods.stream().filter(method -> method.name.equals("render")
+                && method.desc.contains("Lio/github/ningmeng123/mite/phantom/PhantomBladeProjectile;")).findFirst().orElseThrow();
+        int resting = -1, flight = -1, aura = -1, align = -1, item = -1, index = 0;
+        for (var instruction : draw.instructions) {
             if (instruction instanceof MethodInsnNode call) {
-                if (call.owner.equals(CLIENT + "PhantomBladeVisuals") && call.name.equals("formationRing")) ringCall = instructionIndex;
-                if (call.owner.equals("io/github/ningmeng123/mite/phantom/PhantomBladeSwarm") && call.name.equals("orbitBladeMask")) maskCall = instructionIndex;
+                if (call.owner.equals(CLIENT + "PhantomBladeVisuals")) {
+                    if (call.name.equals("orientResting")) resting = index;
+                    if (call.name.equals("orientProjectile")) flight = index;
+                    if (call.name.equals("bladeAura")) aura = index;
+                    if (call.name.equals("alignSwordSprite")) align = index;
+                }
+                if (call.owner.equals("net/minecraft/client/renderer/entity/ItemRenderer") && call.name.equals("renderStatic")) item = index;
             }
-            instructionIndex++;
+            index++;
         }
-        check(ringCall >= 0 && ringCall < maskCall, "The actual formation light is drawn before any blade-mask gate, so an empty eight-shot magazine keeps its ring throughout recharge");
-        report.addProperty("empty_magazine_keeps_formation_light_during_recharge", true);
+        check(resting >= 0 && flight >= 0 && resting < aura && flight < aura && aura < align && align < item,
+                "Both real orientations precede matching aura, sprite alignment and the single native item draw");
+        report.addProperty("one_persistent_sword_renderer_with_resting_and_return_flight_orientation", true);
         check(calls(projectile, CLIENT + "PhantomBladeProjectileRenderer$Trail", "sample") == 1
                 && calls(projectile, CLIENT + "PhantomBladeVisuals", "ribbon") == 1, "Flying renderer actually draws its sampled trajectory");
         ClassNode mesh = compiled(CLIENT + "PhantomBladeVisuals");
@@ -346,7 +332,7 @@ public final class PhantomBladeClientAudit implements DataProvider {
                 "Soft geometry uses the native full-bright translucent emission shader");
         check(hasField(registration, "io/github/ningmeng123/mite/registry/MitePhantomBlades", "SWARM")
                 && hasField(registration, "io/github/ningmeng123/mite/registry/MitePhantomBlades", "PROJECTILE"), "The registered types are the actual synchronized gameplay entities");
-        report.addProperty("real_entity_registration_native_swords_masks_and_motion_trail_wired", true);
+        report.addProperty("real_entity_registration_single_native_sword_and_motion_trail_wired", true);
     }
 
     private static final class Capture implements VertexConsumer {
