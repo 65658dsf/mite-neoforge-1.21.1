@@ -1,10 +1,9 @@
 package io.github.ningmeng123.mite.world;
 
+import com.google.common.collect.MapMaker;
 import io.github.ningmeng123.mite.Mite;
 import java.lang.ref.WeakReference;
-import java.util.Collections;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +18,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class PlacementDelay {
     public static final int DELAY_TICKS = 8;
-    private static final Map<Player, Cooldown> COOLDOWNS = Collections.synchronizedMap(new WeakHashMap<>());
+    // Entity equality uses its network ID, shared by the integrated client and server.
+    // Weak identity keys keep their deadlines separate without retaining old players.
+    private static final Map<Player, Cooldown> COOLDOWNS = new MapMaker().weakKeys().makeMap();
     private static final ThreadLocal<Attempt> ATTEMPT = new ThreadLocal<>();
 
     private record Cooldown(WeakReference<Level> level, long due) {}

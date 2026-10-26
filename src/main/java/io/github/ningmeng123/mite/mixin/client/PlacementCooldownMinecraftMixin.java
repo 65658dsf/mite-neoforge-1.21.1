@@ -9,7 +9,7 @@ import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-/** Keeps held placement at six ticks without changing ordinary interactions. @author NingMeng123 */
+/** Keeps held placement aligned with the shared cooldown without changing ordinary interactions. @author NingMeng123 */
 @Mixin(Minecraft.class)
 public abstract class PlacementCooldownMinecraftMixin {
     @Shadow public LocalPlayer player;
