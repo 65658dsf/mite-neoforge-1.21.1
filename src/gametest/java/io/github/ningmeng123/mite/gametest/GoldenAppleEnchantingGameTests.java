@@ -38,57 +38,57 @@ public final class GoldenAppleEnchantingGameTests {
 
     @GameTest(template = "empty")
     public static void everyChoiceConvertsExactlyOneGoldenAppleForTwoHundredPointsAtEitherTable(GameTestHelper h) {
-        for (Block block : tables()) for (int layers : new int[]{0, 4}) for (int slot = 0; slot < 3; slot++) {
+        for (Block block : tables()) for (int layers : new int[]{0, 4}) for (int slot = 0; slot < 3; slot++) for (int lapis : new int[]{0, 1, 4}) {
             var player = owner(h, 200);
             player.getInventory().setItem(8, new ItemStack(Items.GOLDEN_APPLE, 17));
             var menu = menu(h, player, block, layers);
             menu.setData(3, slot * 196 + layers);
             h.assertTrue(menu.getSlot(0).mayPlace(new ItemStack(Items.GOLDEN_APPLE)), "The actual native input slot accepts a golden apple");
             menu.getSlot(0).set(new ItemStack(Items.GOLDEN_APPLE));
-            menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 4));
+            ItemStack lapisBefore = lapis == 0 ? ItemStack.EMPTY : new ItemStack(Items.LAPIS_LAZULI, lapis);
+            menu.getSlot(1).set(lapisBefore.copy());
             for (int offer = 0; offer < 3; offer++) {
-                h.assertValueEqual(access(menu).mite$experienceCost(offer), 200, "All apple choices quote exactly200 points regardless of shelves or seed");
+                h.assertValueEqual(access(menu).mite$experienceCost(offer), 200, "All apple choices quote exactly 200 points regardless of shelves or seed");
                 h.assertValueEqual(menu.costs[offer], 2, "Source special input uses energy two");
                 h.assertValueEqual(menu.enchantClue[offer], -1, "Conversion does not invent an ordinary preview enchantment");
                 h.assertValueEqual(menu.levelClue[offer], -1, "Conversion has no ordinary preview rank");
             }
-            h.assertTrue(menu.clickMenuButton(player, slot), "The real special-input transaction accepts an exact200-point balance");
+            h.assertTrue(menu.clickMenuButton(player, slot), "The real special-input transaction accepts exactly 200 points regardless of lapis");
             h.assertTrue(menu.getSlot(0).getItem().is(Items.ENCHANTED_GOLDEN_APPLE), "The actual menu replaces the plain apple with the enchanted item");
             h.assertValueEqual(menu.getSlot(0).getItem().getCount(), 1, "Exactly one input becomes exactly one enchanted apple");
             h.assertValueEqual(player.getInventory().getItem(8).getCount(), 17, "The conversion cannot consume unrelated inventory apples");
-            h.assertValueEqual(player.totalExperience, 0, "Exactly200 experience points are charged");
-            h.assertValueEqual(menu.getSlot(1).getItem().getCount(), 3 - slot, "The selected modern lapis fee is charged once");
+            h.assertValueEqual(player.totalExperience, 0, "Exactly 200 experience points are charged");
+            h.assertTrue(ItemStack.matches(lapisBefore, menu.getSlot(1).getItem()), "Apple conversion requires and consumes no lapis");
             for (int again = 0; again < 3; again++) h.assertFalse(menu.clickMenuButton(player, again), "The enchanted result cannot be converted repeatedly");
             h.assertValueEqual(player.totalExperience, 0, "Repeated clicks cannot create debt");
-            h.assertValueEqual(menu.getSlot(1).getItem().getCount(), 3 - slot, "Repeated clicks cannot consume additional lapis");
+            h.assertTrue(ItemStack.matches(lapisBefore, menu.getSlot(1).getItem()), "Repeated clicks cannot consume lapis");
         }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void oneMissingPointOrLapisAndInvalidInputsNeverConsumeOrConvert(GameTestHelper h) {
-        for (int slot = 0; slot < 3; slot++) {
+    public static void oneMissingPointAndInvalidInputsNeverConsumeOrConvert(GameTestHelper h) {
+        for (Block block : tables()) for (int slot = 0; slot < 3; slot++) for (int lapis : new int[]{0, 3}) {
             var player = owner(h, 199);
-            var menu = menu(h, player, Blocks.ENCHANTING_TABLE, 0);
+            var menu = menu(h, player, block, 0);
             menu.getSlot(0).set(new ItemStack(Items.GOLDEN_APPLE));
-            menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
-            h.assertFalse(menu.clickMenuButton(player, slot), "199 points cannot fund the fixed200-point conversion");
+            ItemStack lapisBefore = lapis == 0 ? ItemStack.EMPTY : new ItemStack(Items.LAPIS_LAZULI, lapis);
+            menu.getSlot(1).set(lapisBefore.copy());
+            h.assertFalse(menu.clickMenuButton(player, slot), "199 points cannot fund the fixed 200-point conversion");
+            h.assertTrue(menu.getSlot(0).getItem().is(Items.GOLDEN_APPLE), "A failed point check preserves the plain apple");
             h.assertValueEqual(player.totalExperience, 199, "A failed point check is atomic");
-            h.assertValueEqual(menu.getSlot(1).getItem().getCount(), 3, "A failed point check consumes no lapis");
+            h.assertTrue(ItemStack.matches(lapisBefore, menu.getSlot(1).getItem()), "A failed point check consumes no lapis");
             PlayerExperience.setTotal(player, 200);
-            menu.getSlot(1).set(slot == 0 ? ItemStack.EMPTY : new ItemStack(Items.LAPIS_LAZULI, slot));
-            h.assertFalse(menu.clickMenuButton(player, slot), "One missing lapis rejects the selected choice");
-            h.assertTrue(menu.getSlot(0).getItem().is(Items.GOLDEN_APPLE), "Rejected checks preserve the plain apple");
-            h.assertValueEqual(player.totalExperience, 200, "Missing lapis consumes no points");
-            h.assertValueEqual(menu.getSlot(1).getItem().getCount(), slot, "Missing lapis is not partially charged");
-            menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
             for (int invalid : new int[]{-1, 3, Integer.MAX_VALUE}) h.assertFalse(menu.clickMenuButton(player, invalid), "Invalid buttons do not convert");
+            h.assertTrue(menu.getSlot(0).getItem().is(Items.GOLDEN_APPLE), "Invalid buttons preserve the plain apple");
+            h.assertValueEqual(player.totalExperience, 200, "Invalid buttons consume no points");
+            h.assertTrue(ItemStack.matches(lapisBefore, menu.getSlot(1).getItem()), "Invalid buttons consume no lapis");
             for (ItemStack invalid : List.of(new ItemStack(Items.APPLE), new ItemStack(Items.ENCHANTED_GOLDEN_APPLE), new ItemStack(Items.GOLDEN_APPLE, 2))) {
                 menu.getSlot(0).set(invalid.copy());
                 h.assertFalse(menu.clickMenuButton(player, slot), "Only one plain golden apple is a legal special input");
                 h.assertTrue(ItemStack.matches(invalid, menu.getSlot(0).getItem()), "Invalid input is preserved exactly");
                 h.assertValueEqual(player.totalExperience, 200, "Invalid input consumes no points");
-                h.assertValueEqual(menu.getSlot(1).getItem().getCount(), 3, "Invalid input consumes no lapis");
+                h.assertTrue(ItemStack.matches(lapisBefore, menu.getSlot(1).getItem()), "Invalid input consumes no lapis");
             }
         }
         h.succeed();
@@ -138,16 +138,18 @@ public final class GoldenAppleEnchantingGameTests {
             }
         });
         server.getSlot(0).set(new ItemStack(Items.GOLDEN_APPLE));
-        server.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
         server.broadcastChanges();
         h.assertTrue(access(client).mite$usesSourceEnchanting(), "The client receives source point-payment mode");
         h.assertTrue(client.getSlot(0).getItem().is(Items.GOLDEN_APPLE), "The client receives the actual special input");
+        h.assertTrue(client.getSlot(1).getItem().isEmpty(), "The client receives an empty lapis slot");
         for (int slot = 0; slot < 3; slot++) {
             h.assertValueEqual(access(client).mite$experienceCost(slot), 200, "The client receives the exact fixed point price");
             h.assertValueEqual(client.costs[slot], 2, "The client receives the special energy requirement");
             h.assertValueEqual(client.enchantClue[slot], -1, "The client receives no invented preview enchantment");
             h.assertValueEqual(client.levelClue[slot], -1, "The client receives no invented preview rank");
+            h.assertTrue(client.clickMenuButton(player, slot), "The synchronized client accepts every apple choice without lapis");
         }
+        h.assertValueEqual(player.totalExperience, 200, "Client click prediction never charges experience");
         h.succeed();
     }
 

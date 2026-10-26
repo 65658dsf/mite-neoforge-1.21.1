@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.integration.jei;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
+import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.rules.R196FurnaceRules;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -32,6 +33,8 @@ public final class MiteJeiPlugin implements IModPlugin {
             RecipeType.create(Mite.MOD_ID, "equipment_repair", AnvilJeiRecipe.class);
     private static final RecipeType<SmithingJeiRecipe> SMITHING_TYPE =
             RecipeType.create(Mite.MOD_ID, "material_upgrade", SmithingJeiRecipe.class);
+    private static final RecipeType<EnchantingJeiRecipe> ENCHANTING_TYPE =
+            RecipeType.create(Mite.MOD_ID, "enchanting", EnchantingJeiRecipe.class);
     private List<FurnaceJeiRecipe> recipes = List.of();
     private AnvilJeiRecipes.Index anvilIndex = new AnvilJeiRecipes.Index(List.of(), java.util.Set.of());
     private WorkbenchJeiRecipes.Index workbenchIndex = new WorkbenchJeiRecipes.Index(List.of(), List.of());
@@ -73,6 +76,7 @@ public final class MiteJeiPlugin implements IModPlugin {
         registration.addRecipeCategories(new AnvilJeiCategory(ANVIL_TYPE,
                 new ItemStack(Items.ANVIL), registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SmithingJeiCategory(SMITHING_TYPE, registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new EnchantingJeiCategory(ENCHANTING_TYPE, registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -82,6 +86,8 @@ public final class MiteJeiPlugin implements IModPlugin {
         anvilIndex = new AnvilJeiRecipes.Index(List.of(), java.util.Set.of());
         smithingIndex = new SmithingJeiRecipes.Index(List.of(), List.of());
         recipeLevel = null;
+        // This is a menu operation rather than a RecipeManager recipe, so JEI cannot discover it automatically.
+        registration.addRecipes(ENCHANTING_TYPE, List.of(EnchantingJeiRecipe.goldenApple()));
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
         recipeLevel = level;
@@ -123,6 +129,8 @@ public final class MiteJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalysts(SMITHING_TYPE, new ItemStack(Items.SMITHING_TABLE));
+        registration.addRecipeCatalysts(ENCHANTING_TYPE, new ItemStack(Items.ENCHANTING_TABLE),
+                new ItemStack(MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get()));
         TYPES.forEach((id, type) -> registration.addRecipeCatalysts(type, furnace(id)));
         WORKBENCH_TYPES.forEach((id, type) -> {
             for (String workstation : WorkbenchJeiRecipes.categoryWorkstations(id))

@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Retain the modern book animation while displaying actual source point costs and native lapis requirements. @author NingMeng123 */
+/** Retain the modern book animation while displaying source point costs and each input's lapis requirements. @author NingMeng123 */
 @Mixin(EnchantmentScreen.class)
 public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<EnchantmentMenu> {
     @Unique private static final ResourceLocation MITE_BACKGROUND = ResourceLocation.withDefaultNamespace("textures/gui/container/enchanting_table.png");
@@ -49,7 +49,7 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
             boolean conversion = menu.getSlot(0).getItem().is(Items.GOLDEN_APPLE);
             boolean affordable = energy > 0 && (conversion || menu.enchantClue[slot] >= 0) && minecraft.player != null
                     && (minecraft.player.getAbilities().instabuild || minecraft.player.experienceLevel >= energy && minecraft.player.totalExperience >= points
-                            && R196EnchantmentTable.hasLapis(menu.getSlot(1).getItem(), slot));
+                            && (conversion || R196EnchantmentTable.hasLapis(menu.getSlot(1).getItem(), slot)));
             boolean hovered = mouseX >= x + 60 && mouseX < x + 168 && mouseY >= y + 14 + slot * 19 && mouseY < y + 33 + slot * 19;
             graphics.blitSprite(!affordable ? MITE_DISABLED : hovered ? MITE_HOVERED : MITE_ENABLED, x + 60, y + 14 + slot * 19, 108, 19);
             if (energy == 0) continue;
@@ -82,7 +82,7 @@ public abstract class EnchantmentScreenMixin extends AbstractContainerScreen<Enc
             boolean affordable = minecraft.player.getAbilities().instabuild || minecraft.player.totalExperience >= points;
             tooltip.add(Component.translatable("gui.mite.enchant.available", minecraft.player.totalExperience).withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("gui.mite.enchant.points", points).withStyle(affordable ? ChatFormatting.GREEN : ChatFormatting.RED));
-            tooltip.add((slot == 0 ? Component.translatable("container.enchant.lapis.one")
+            if (!menu.getSlot(0).getItem().is(Items.GOLDEN_APPLE)) tooltip.add((slot == 0 ? Component.translatable("container.enchant.lapis.one")
                     : Component.translatable("container.enchant.lapis.many", slot + 1))
                     .withStyle(creative || R196EnchantmentTable.hasLapis(menu.getSlot(1).getItem(), slot) ? ChatFormatting.GRAY : ChatFormatting.RED));
             graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);

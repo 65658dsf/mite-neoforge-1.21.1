@@ -124,7 +124,7 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
         if (!conversion && (!input.isEnchantable() || enchantClue[slot] < 0)) return;
         int offerLevel = costs[slot], payment = mite$pointCosts[slot], seed = enchantmentSeed.get();
         if (!owner.getAbilities().instabuild && (owner.experienceLevel < offerLevel || owner.totalExperience < payment
-                || !R196EnchantmentTable.hasLapis(enchantSlots.getItem(1), slot))) return;
+                || !conversion && !R196EnchantmentTable.hasLapis(enchantSlots.getItem(1), slot))) return;
         if (access == ContainerLevelAccess.NULL) { cir.setReturnValue(true); return; }
         access.execute((level, pos) -> {
             if (level.isClientSide || !R196EnchantmentTable.isTable(level, pos) || !stillValid(owner)) return;
@@ -146,9 +146,9 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
                         || enchantmentSeed.get() != seed || owner.experienceLevel < offerLevel
                         || !ItemStack.matches(before, enchantSlots.getItem(0))
                         || !ItemStack.matches(lapisBefore, enchantSlots.getItem(1))
-                        || !R196EnchantmentTable.hasLapis(enchantSlots.getItem(1), slot)
+                        || !conversion && !R196EnchantmentTable.hasLapis(enchantSlots.getItem(1), slot)
                         || !CraftingQuality.pay(server, approved, true)) return;
-                enchantSlots.getItem(1).shrink(slot + 1);
+                if (!conversion) enchantSlots.getItem(1).shrink(slot + 1);
             }
             // Refresh the seed without charging native levels a second time.
             owner.onEnchantmentPerformed(before, 0);
