@@ -55,8 +55,8 @@ public final class RestLifecycleGameTests {
                     "A fed sleeper forwards every requested food-update tick");
             h.assertValueEqual(player.getHealth(), before + 1F,
                     "Nutrition six heals one health after 241 sleeping updates, retaining the source food formula");
-            h.assertTrue(player.getFoodData().getExhaustionLevel() > 1F,
-                    "Accelerated recovery still spends the source one-exhaustion healing cost");
+            h.assertTrue(player.getFoodData().getExhaustionLevel() > 1.15F,
+                    "Accelerated recovery spends the increased 1.15-exhaustion healing cost");
         }
         h.succeed();
     }
@@ -71,8 +71,8 @@ public final class RestLifecycleGameTests {
             int elapsed = PlayerRest.simulate(h.getLevel(), 10, List.of(player));
             h.assertValueEqual(elapsed, 10, "Ten forwarded ticks perform ten real metabolism updates");
             h.assertTrue(player.isSleeping(), "A fed sheltered sleeper remains in bed");
-            h.assertTrue(Math.abs(player.getFoodData().getExhaustionLevel() - .02F) < .000001F,
-                    "Dry, nourished sleep accumulates source 0.002 exhaustion per forwarded tick");
+            h.assertTrue(Math.abs(player.getFoodData().getExhaustionLevel() - .023F) < .000001F,
+                    "Dry, nourished sleep accumulates 0.0023 exhaustion per forwarded tick");
             h.assertValueEqual(NutritionState.get(player).protein(), 159990, "Protein decays during forwarded time");
             h.assertValueEqual(NutritionState.get(player).plants(), 159990, "Plant nutrition decays during forwarded time");
             h.assertValueEqual(player.getFoodData().getFoodLevel(), 6, "Sub-threshold metabolism keeps satiation");

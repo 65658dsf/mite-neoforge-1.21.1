@@ -313,7 +313,7 @@ public final class RangedAndUtilityEnchantmentGameTests {
             float exhaustion = player.getFoodData().getExhaustionLevel();
             player.getFoodData().tick(player);
             h.assertTrue(player.getHealth() == 5F, "Native source heal progress crossing one heals exactly one point");
-            close(h, player.getFoodData().getExhaustionLevel() - exhaustion, 1.002D, "Regeneration still charges one source hunger plus this tick's metabolism");
+            close(h, player.getFoodData().getExhaustionLevel() - exhaustion, 1.1523D, "Regeneration charges 1.15 exhaustion plus this tick's 0.0023 metabolism");
         } finally { natural.set(previous, h.getLevel().getServer()); }
         h.succeed();
     }

@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** Source food values and metabolism with the requested saturation-before-satiation order. @author NingMeng123 */
@@ -30,6 +31,7 @@ public abstract class FoodDataMixin implements DualFoodData {
     @Shadow private int lastFoodLevel;
     @Shadow private float saturationLevel;
     @Shadow private float exhaustionLevel;
+    @Shadow public abstract void addExhaustion(float amount);
     @Unique private Player mite$player;
     @Unique private int mite$nutrition = 20;
     // Retained for version-one saves; it no longer selects which food reserve to spend.
@@ -104,7 +106,7 @@ public abstract class FoodDataMixin implements DualFoodData {
         lastFoodLevel = foodLevel;
         NutritionState state = NutritionState.get(player);
         if (!player.isCreative()) {
-            state = state.tick();
+            state = state.tick(player.isSprinting());
             NutritionState.set(player,state);
         }
         if (!player.getAbilities().invulnerable && !player.isCreative()) {
@@ -114,7 +116,7 @@ public abstract class FoodDataMixin implements DualFoodData {
             float multiplier = NutritionRules.metabolicMultiplier(player.level().isRainingAt(pos),
                     player.level().isThundering(),immersion,
                     player.level().getBiome(pos).value().getBaseTemperature(),state.malnourished());
-            exhaustionLevel = Math.min(exhaustionLevel + .002F*multiplier,40F);
+            addExhaustion(.002F*multiplier);
         }
         if (exhaustionLevel >= 4F) {
             exhaustionLevel -= 4F;
@@ -149,12 +151,15 @@ public abstract class FoodDataMixin implements DualFoodData {
             if (player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION) && player.isHurt()) {
                 if (mite$healProgress>=1F) {
                     player.heal(1F);
-                    if(!player.getAbilities().invulnerable) exhaustionLevel=Math.min(exhaustionLevel+1F,40F);
+                    if(!player.getAbilities().invulnerable) addExhaustion(1F);
                     mite$healProgress-=1F;
                 }
             } else mite$healProgress=0F;
         }
     }
+    // Apply the requested 15% increase once, including metabolism and regeneration.
+    @ModifyVariable(method="addExhaustion(F)V",at=@At("HEAD"),argsOnly=true,ordinal=0,require=1,allow=1)
+    private float mite$increaseHungerRate(float amount) { return amount*1.15F; }
     @Inject(method="addExhaustion",at=@At("HEAD"),cancellable=true)
     private void mite$ignoreInvulnerableHunger(float amount,CallbackInfo ci) {
         if(mite$player!=null && (mite$player.isCreative() || mite$player.isSpectator() || mite$player.getAbilities().invulnerable))

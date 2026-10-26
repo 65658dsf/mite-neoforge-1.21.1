@@ -45,10 +45,10 @@ public final class EnduranceActionGameTests {
     public static void ordinaryExhaustionIsNotDiscountedAndCreativePaysNothing(GameTestHelper helper) {
         Player player = player(helper); equip(player, 4);
         player.causeFoodExhaustion(1F);
-        effort(helper, player, 1F, "Ordinary movement/metabolism exhaustion is not globally discounted");
+        effort(helper, player, 1.15F, "Ordinary exhaustion receives the global 15 percent increase without an Endurance discount");
         player.getFoodData().setExhaustion(0F);
         EnduranceActions.melee(player);
-        effort(helper, player, .06F, "Only the explicit source .3 melee fee gets the IV .2 multiplier");
+        effort(helper, player, .069F, "The source .3 melee fee receives the IV .2 multiplier and global 15 percent increase once");
         Player creative = helper.makeMockPlayer(GameType.CREATIVE);
         EnduranceActions.melee(creative); EnduranceActions.throwing(creative); EnduranceActions.mining(creative);
         effort(helper, creative, 0F, "Creative actions stay free");
@@ -64,12 +64,12 @@ public final class EnduranceActionGameTests {
         float before=victim.getHealth();
         player.attack(victim);
         helper.assertTrue(victim.getHealth()<before,"First attempt really harms the non-invulnerable native target");
-        effort(helper, player, .06F, "A successful native attack pays .3*.2 exactly once");
+        effort(helper, player, .069F, "A successful native attack pays the increased .3*.2 fee exactly once");
         float afterSuccess=victim.getHealth();
         player.getFoodData().setExhaustion(0F); victim.setInvulnerable(true);
         player.attack(victim);
         helper.assertTrue(victim.getHealth()==afterSuccess,"Invulnerable second attack really leaves health unchanged while charging attempt effort");
-        effort(helper, player, .06F, "An allowed failed hit still pays the source attempt fee");
+        effort(helper, player, .069F, "An allowed failed hit still pays the increased source attempt fee");
         helper.succeed();
     }
 
@@ -82,7 +82,7 @@ public final class EnduranceActionGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.OBSIDIAN, 2));
         var result = player.getMainHandItem().useOn(context(player, base));
         helper.assertTrue(result.consumesAction() && helper.getLevel().getBlockState(base.above()).is(Blocks.OBSIDIAN), "Native placement succeeds");
-        effort(helper, player, 4F, "Obsidian caps its source placement hardness at20 before Endurance IV");
+        effort(helper, player, 4.6F, "Obsidian caps its source placement hardness at20 before Endurance IV and the global increase");
         player.getFoodData().setExhaustion(0F);
         helper.getLevel().setBlockAndUpdate(base.above(), Blocks.AIR.defaultBlockState());
         Consumer<BlockEvent.EntityPlaceEvent> cancel = event -> { if (event.getEntity() == player) event.setCanceled(true); };
@@ -107,7 +107,7 @@ public final class EnduranceActionGameTests {
             player.getFoodData().setExhaustion(0F);
             var result = player.getMainHandItem().useOn(context(player, soil));
             helper.assertTrue(result.consumesAction() && helper.getLevel().getBlockState(soil).is(Blocks.FARMLAND), "Both registered tool paths till successfully");
-            effort(helper, player, .05F, "Grass hardness.5 /2 * Endurance IV.2 = .05");
+            effort(helper, player, .0575F, "Grass hardness.5 /2 * Endurance IV.2 receives the global 15 percent increase");
             player.getFoodData().setExhaustion(0F);
             player.getMainHandItem().useOn(context(player, soil));
             effort(helper, player, 0F, "A repeated failed till operation is free");
@@ -124,12 +124,12 @@ public final class EnduranceActionGameTests {
         player.getFoodData().setExhaustion(0F);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SLIME_BALL, 2));
         SphereThrowing.use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
-        effort(helper, player, .05F, "Existing sphere .25 gets discounted once");
+        effort(helper, player, .0575F, "Existing sphere .25 gets discounted and globally increased once");
         player.getFoodData().setExhaustion(0F);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
         player.startUsingItem(InteractionHand.MAIN_HAND);
         NeoForge.EVENT_BUS.post(new PlayerTickEvent.Post(player));
-        effort(helper, player, .002F, "An actual bow-use server tick pays.01*.2");
+        effort(helper, player, .0023F, "An actual bow-use server tick pays the increased .01*.2 fee");
         player.stopUsingItem(); player.getFoodData().setExhaustion(0F);
         NeoForge.EVENT_BUS.post(new PlayerTickEvent.Post(player));
         effort(helper, player, 0F, "A bow held but not being used is free");
@@ -146,12 +146,12 @@ public final class EnduranceActionGameTests {
         player.setOnGround(true); player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_PICKAXE));
         equip(player, 4); player.getFoodData().setExhaustion(0F);
         player.gameMode.handleBlockBreakAction(ore, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, Direction.UP, helper.getLevel().getMaxBuildHeight(), 1);
-        effort(helper, player, .002F, "The first allowed source mining request pays.01*.2");
+        effort(helper, player, .0023F, "The first allowed source mining request pays the increased .01*.2 fee");
         player.gameMode.tick(); player.gameMode.tick();
-        effort(helper, player, .006F, "Two active native progress ticks each pay.01*.2");
+        effort(helper, player, .0069F, "Two active native progress ticks each add the increased .01*.2 fee");
         player.gameMode.handleBlockBreakAction(ore, ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, Direction.UP, helper.getLevel().getMaxBuildHeight(), 2);
         player.gameMode.tick();
-        effort(helper, player, .006F, "An aborted mining operation stops charging");
+        effort(helper, player, .0069F, "An aborted mining operation stops charging");
         helper.succeed();
     }
 

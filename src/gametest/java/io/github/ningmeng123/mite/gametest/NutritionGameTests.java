@@ -300,6 +300,8 @@ public final class NutritionGameTests {
     public static void nutritionSixRegeneratesAfter1924UpdatesAndFullHealthClearsProgress(GameTestHelper helper) {
         Player player = player(helper);
         setEnergy(player, 6, 6);
+        // Keep nutrition six available while the increased metabolism spends its first food unit.
+        player.getFoodData().setSaturation(1F);
         player.setHealth(4F);
         MinecraftServer server = helper.getLevel().getServer();
         GameRules.BooleanValue natural = helper.getLevel().getGameRules().getRule(GameRules.RULE_NATURAL_REGENERATION);
@@ -308,6 +310,8 @@ public final class NutritionGameTests {
             natural.set(true, server);
             for (int i = 0; i < 1_923; i++) player.getFoodData().tick(player);
             helper.assertValueEqual(player.getHealth(), 4F, "Nutrition six does not use modern fast regeneration");
+            assertEnergy(helper, player, 6, 6, "The native buffer preserves the nutrition used to test healing speed");
+            player.getFoodData().setExhaustion(3F);
             player.getFoodData().tick(player);
             helper.assertValueEqual(player.getHealth(), 5F, "The one-thousand nine-hundred twenty-fourth update heals one health");
             assertEnergy(helper, player, 6, 6, "Regeneration's extra hunger is queued after this tick's deduction stage");
@@ -332,21 +336,38 @@ public final class NutritionGameTests {
     @GameTest(template = "empty")
     public static void survivalMicronutrientsDecayOncePerUpdateButCreativeDoesNot(GameTestHelper helper) {
         Player survival = player(helper);
-        NutritionState.set(survival, new NutritionState(1, 2, 1, 0, 2, 0));
+        NutritionState.set(survival, new NutritionState(1, 20, 12, 8, 8, 0));
+        survival.setSprinting(false);
         survival.getFoodData().tick(survival);
-        NutritionState state = NutritionState.get(survival);
-        helper.assertValueEqual(state.protein(), 1, "One survival update consumes one protein");
-        helper.assertValueEqual(state.fat(), 0, "One survival update consumes one essential-fat point");
-        helper.assertValueEqual(state.plants(), 0, "Depleted plant nutrients do not become negative");
-        helper.assertValueEqual(state.resistance(), 1, "One survival update removes one resistance point");
-        helper.assertValueEqual(state.resistanceLevel(), 0, "Residual mild resistance remains active");
+        helper.assertValueEqual(NutritionState.get(survival), new NutritionState(1, 19, 11, 7, 7, 0),
+                "Walking consumes one of each micronutrient and recovers one resistance point per update");
+        survival.setSprinting(true);
+        survival.getFoodData().tick(survival);
+        helper.assertValueEqual(NutritionState.get(survival), new NutritionState(1, 14, 6, 2, 6, 0),
+                "Sprinting consumes five of each micronutrient but still recovers only one resistance point");
+        survival.setSprinting(false);
+        survival.getFoodData().tick(survival);
+        helper.assertValueEqual(NutritionState.get(survival), new NutritionState(1, 13, 5, 1, 5, 0),
+                "Stopping sprinting immediately restores ordinary nutrient decay and preserves mild resistance");
+        survival.setSprinting(true);
+        survival.getFoodData().tick(survival);
+        helper.assertValueEqual(NutritionState.get(survival), new NutritionState(1, 8, 0, 0, 4, 0),
+                "Sprinting clamps depleted nutrients to zero without accelerating resistance recovery");
         Player creative = helper.makeMockPlayer(GameType.CREATIVE);
         NutritionState unchanged = new NutritionState(1, 2, 1, 0, 2, 0);
         NutritionState.set(creative, unchanged);
+        creative.setSprinting(true);
         creative.getFoodData().addExhaustion(8F);
         creative.getFoodData().tick(creative);
         helper.assertValueEqual(NutritionState.get(creative), unchanged, "Creative updates preserve every micronutrient and resistance field");
         assertEnergy(helper, creative, 6, 6, "Creative hunger requests do not drain either food resource");
+        Player spectator = helper.makeMockPlayer(GameType.SPECTATOR);
+        NutritionState.set(spectator, unchanged);
+        spectator.setSprinting(true);
+        spectator.getFoodData().addExhaustion(8F);
+        spectator.getFoodData().tick(spectator);
+        helper.assertValueEqual(NutritionState.get(spectator), unchanged, "Spectator updates preserve every micronutrient and resistance field");
+        assertEnergy(helper, spectator, 6, 6, "Spectator hunger requests do not drain either food resource");
         helper.succeed();
     }
 

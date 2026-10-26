@@ -46,9 +46,9 @@ public final class MovementHungerGameTests {
     public static void nativeWalkSprintCrouchAndJumpPayOnlyTheSourceMovementFee(GameTestHelper h) {
         var p=player(h);
         try {
-            p.checkMovementStatistics(1D,0D,0D);effort(h,p,.01F,"Walking has a source fee even though modern walking was free");
-            p.setSprinting(true);p.checkMovementStatistics(1D,0D,0D);effort(h,p,.05F,"Sprinting replaces the modern.1 rather than adding to it");
-            p.setSprinting(false);p.setShiftKeyDown(true);p.checkMovementStatistics(1D,0D,0D);effort(h,p,.01F,"Crouching uses ordinary source walking cost");
+            p.checkMovementStatistics(1D,0D,0D);effort(h,p,.0115F,"Walking pays its source fee with the global 15% increase once");
+            p.setSprinting(true);p.checkMovementStatistics(1D,0D,0D);effort(h,p,.0575F,"Sprinting replaces the modern fee before the global 15% increase");
+            p.setSprinting(false);p.setShiftKeyDown(true);p.checkMovementStatistics(1D,0D,0D);effort(h,p,.0115F,"Crouching uses the increased ordinary walking cost");
             p.setShiftKeyDown(false);p.jumpFromGround();effort(h,p,0F,"Native jump statistic and motion do not add a modern-only fee");
             p.setOnGround(false);p.checkMovementStatistics(1D,1D,0D);effort(h,p,0F,"Falling and modern airborne movement keep their native zero fee");
             p.setGameMode(GameType.CREATIVE);p.setOnGround(true);p.checkMovementStatistics(1D,0D,0D);effort(h,p,0F,"Creative invulnerability still exempts exhaustion");
@@ -61,10 +61,10 @@ public final class MovementHungerGameTests {
             h.getLevel().setBlock(pos,Blocks.WATER.defaultBlockState(),2);h.getLevel().setBlock(pos.above(),Blocks.WATER.defaultBlockState(),2);
             p.setPos(pos.getX()+.5D,pos.getY(),pos.getZ()+.5D);p.baseTick();p.getFoodData().setExhaustion(0F);
             h.assertTrue(p.isEyeInFluid(FluidTags.WATER),"Fixture eyes are actually submerged");
-            p.checkMovementStatistics(3D,4D,0D);effort(h,p,.075F,"Underwater fee uses the full three-dimensional five meters once");
+            p.checkMovementStatistics(3D,4D,0D);effort(h,p,.08625F,"Underwater fee uses the full three-dimensional five meters with the global increase once");
             h.getLevel().setBlock(pos,Blocks.LADDER.defaultBlockState(),2);h.getLevel().setBlock(pos.above(),Blocks.AIR.defaultBlockState(),2);
             p.baseTick();p.getFoodData().setExhaustion(0F);h.assertTrue(p.onClimbable()&&!p.isInWater(),"Fixture leaves water for the ladder");
-            p.checkMovementStatistics(0D,.025D,0D);effort(h,p,.0025F,"Climbing uses unrounded positive vertical distance");
+            p.checkMovementStatistics(0D,.025D,0D);effort(h,p,.002875F,"Climbing uses unrounded positive vertical distance with the global increase once");
             p.checkMovementStatistics(0D,-.5D,0D);effort(h,p,0F,"Descending a ladder costs no climbing effort");
         } finally { cleanup(h,p);h.getLevel().setBlock(pos,Blocks.AIR.defaultBlockState(),2);h.getLevel().setBlock(pos.above(),Blocks.AIR.defaultBlockState(),2); }h.succeed();
     }
@@ -73,8 +73,8 @@ public final class MovementHungerGameTests {
         var p=player(h);Boat boat=EntityType.BOAT.create(h.getLevel());boat.setNoGravity(true);boat.moveTo(p.position());h.getLevel().addFreshEntity(boat);
         try {
             h.assertTrue(p.startRiding(boat,true)&&boat.getControllingPassenger()==p,"The actual boat has its native controlling passenger");
-            p.zza=1F;boat.tick();effort(h,p,.01F,"Forward rowing costs.01 per boat tick");
-            p.zza=-.5F;boat.tick();effort(h,p,.005F,"Reverse effort follows absolute native forward input");
+            p.zza=1F;boat.tick();effort(h,p,.0115F,"Forward rowing includes the global 15% increase per boat tick");
+            p.zza=-.5F;boat.tick();effort(h,p,.00575F,"Reverse effort follows absolute native forward input with the global increase");
             p.zza=0F;boat.setDeltaMovement(1D,0D,0D);boat.tick();effort(h,p,0F,"Coasting costs no rowing effort regardless of displacement");
             p.zza=1F;p.checkMovementStatistics(1D,0D,0D);effort(h,p,0F,"Passenger statistics cannot duplicate a rowing charge");
         } finally { cleanup(h,p);boat.discard(); }h.succeed();
@@ -90,7 +90,7 @@ public final class MovementHungerGameTests {
             LiquidJumpEffort.setInput(p,false);LiquidJumpEffort.tick(p);effort(h,p,0F,"Being in water without upward input is free");
             LiquidJumpEffort.setInput(p,true);LiquidJumpEffort.tick(p);LiquidJumpEffort.tick(p);
             LiquidJumpEffort.setInput(p,false);LiquidJumpEffort.setInput(p,true);LiquidJumpEffort.tick(p);
-            effort(h,p,.01F,"Repeated packets and callbacks cannot multiply the one source liquid-jump fee");
+            effort(h,p,.0115F,"Repeated packets and callbacks cannot duplicate the globally increased liquid-jump fee");
             LiquidJumpEffort.clear(p);LiquidJumpEffort.tick(p);effort(h,p,0F,"Clearing intent prevents a stale dimension/reconnect charge");
         } finally { cleanup(h,p);h.getLevel().setBlock(pos,Blocks.AIR.defaultBlockState(),2);h.getLevel().setBlock(pos.above(),Blocks.AIR.defaultBlockState(),2); }h.succeed();
     }

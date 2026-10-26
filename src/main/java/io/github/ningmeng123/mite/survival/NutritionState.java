@@ -22,9 +22,10 @@ public record NutritionState(int version, int protein, int fat, int plants, int 
     public static NutritionState get(Player player) { return player.getData(MiteAttachments.NUTRITION); }
     public static void set(Player player, NutritionState state) { player.setData(MiteAttachments.NUTRITION, state); }
     public boolean malnourished() { return protein == 0 || plants == 0; }
-    public NutritionState tick() {
+    public NutritionState tick(boolean sprinting) {
+        int nutrientCost = sprinting ? 5 : 1;
         int next = Math.max(0, resistance - 1);
-        return new NutritionState(VERSION, Math.max(0, protein-1), Math.max(0,fat-1), Math.max(0,plants-1), next,
+        return new NutritionState(VERSION, Math.max(0, protein-nutrientCost), Math.max(0,fat-nutrientCost), Math.max(0,plants-nutrientCost), next,
                 NutritionRules.resistanceLevel(next, resistanceLevel));
     }
     public NutritionState ingest(FoodProfile p) {
