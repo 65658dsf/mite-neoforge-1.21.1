@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.survival.DeathOrbQueue;
+import io.github.ningmeng123.mite.rules.StructureUnlockRules.Metric;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
 import io.github.ningmeng123.mite.worldgen.R196StructureGeneration;
 import io.github.ningmeng123.mite.worldgen.StructureProgressData;
@@ -66,8 +67,8 @@ public final class StructureUnlockAnnouncementGameTests {
             }
             h.assertTrue(hasVillage&&hasStronghold,"The real overworld generator enables village and stronghold structure sets");
             world.at(0L,0);
-            h.assertValueEqual(StructureUnlockAnnouncements.available(world.level,options),StructureUnlockAnnouncements.END_PORTAL,
-                    "The source end portal has no invented date, equipment, or world-achievement lock");
+            h.assertValueEqual(StructureUnlockAnnouncements.available(world.level,options),0,
+                    "A stronghold cannot announce before the new day-32 gate even with the crafted-eye fixture complete");
             world.at(1_409_999L,16);
             h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),59L,"The last locked tick belongs to display day59");
             h.assertValueEqual(StructureUnlockAnnouncements.available(world.level,options),StructureUnlockAnnouncements.END_PORTAL,
@@ -99,20 +100,23 @@ public final class StructureUnlockAnnouncementGameTests {
             }
             h.assertTrue(hasPortal&&hasOutpost,"The real overworld generator enables ruined portals and pillager outposts");
             session.drain();world.at(0L,0);
-            StructureUnlockAnnouncements.deliver(session.player(),world.available(),1L);
-            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,1L);
-            world.at(689_999L,StructureProgressData.ALL_CONDITIONS);
-            h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),29L,"The last portal-locked tick is day29");
-            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,29L);
-            world.at(690_000L,StructureProgressData.ALL_CONDITIONS&~StructureProgressData.UNDERWORLD_VISITED);
-            h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),30L,"The ruined portal threshold starts on day30");
-            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,30L);
-            world.at(690_000L,StructureProgressData.ALL_CONDITIONS);
+            assertNoNewNotice(h,world,session,0,1L);
+            world.at(737_999L,StructureProgressData.ALL_CONDITIONS);
+            h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),31L,"The last portal-locked tick is day31");
+            assertNoNewNotice(h,world,session,0,31L);
+            world.at(738_000L,0);
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),32L),1,
+                    "The crafted eye and day 32 independently release the stronghold notice");
+            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,32L);
+            world.at(738_000L,StructureProgressData.ALL_CONDITIONS&~StructureProgressData.UNDERWORLD_VISITED);
+            h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),32L,"The ruined portal threshold starts on day32");
+            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,32L);
+            world.at(738_000L,StructureProgressData.ALL_CONDITIONS);
             int beforeOutpost=StructureUnlockAnnouncements.END_PORTAL|StructureUnlockAnnouncements.RUINED_PORTAL;
-            h.assertValueEqual(world.available(),beforeOutpost,"Only the portal gate completes exactly on day30");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),30L),1,
+            h.assertValueEqual(world.available(),beforeOutpost,"Only the portal gate completes exactly on day32");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),32L),1,
                     "Completing both portal prerequisites sends exactly its new notice");
-            assertPacket(h,only(h,session.drain()),"ruined_portal",ChatFormatting.GOLD,30L);
+            assertPacket(h,only(h,session.drain()),"ruined_portal",ChatFormatting.GOLD,32L);
             world.at(1_049_999L,StructureProgressData.ALL_CONDITIONS);
             h.assertValueEqual(R196StructureGeneration.displayDay(world.level.getDayTime()),44L,"The last outpost-locked tick is day44");
             assertNoNewNotice(h,world,session,beforeOutpost,44L);
@@ -153,18 +157,18 @@ public final class StructureUnlockAnnouncementGameTests {
             h.assertTrue((StructureUnlockAnnouncements.enabled(world.level,world.enabledOptions())
                     &StructureUnlockAnnouncements.RUINED_PORTAL)!=0,"A native nether portal enables the shared notice independently of overworld sets");
             session.drain();world.at(0L,0);
-            StructureUnlockAnnouncements.deliver(session.player(),world.available(),1L);
-            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,1L);
-            world.at(689_999L,StructureProgressData.UNDERWORLD_VISITED);
-            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,29L);
-            world.at(690_000L,0);
-            assertNoNewNotice(h,world,session,StructureUnlockAnnouncements.END_PORTAL,30L);
-            world.at(690_000L,StructureProgressData.UNDERWORLD_VISITED);
+            assertNoNewNotice(h,world,session,0,1L);
+            world.at(737_999L,StructureProgressData.UNDERWORLD_VISITED);
+            assertNoNewNotice(h,world,session,0,31L);
+            world.at(738_000L,0);
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),32L),1,"The completed eye releases only the stronghold at day32");
+            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,32L);
+            world.at(738_000L,StructureProgressData.UNDERWORLD_VISITED);
             h.assertValueEqual(world.available(),StructureUnlockAnnouncements.END_PORTAL|StructureUnlockAnnouncements.RUINED_PORTAL,
                     "Only a native nether portal set is enough once the shared date and visit gates are complete");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),30L),1,
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),32L),1,
                     "Nether-only eligibility delivers the new shared portal notice");
-            assertPacket(h,only(h,session.drain()),"ruined_portal",ChatFormatting.GOLD,30L);
+            assertPacket(h,only(h,session.drain()),"ruined_portal",ChatFormatting.GOLD,32L);
             var disabled=new WorldOptions(world.level.getSeed(),false,false);
             h.assertValueEqual(StructureUnlockAnnouncements.enabled(world.level,disabled),0,"Disabled structure options hide even native nether portal sets");
             h.assertValueEqual(StructureUnlockAnnouncements.available(world.level,disabled),0,"Disabled generation suppresses the unlocked nether portal notice");
@@ -223,9 +227,9 @@ public final class StructureUnlockAnnouncementGameTests {
             session.player().getPersistentData().put(Player.PERSISTED_NBT_TAG,persisted);
             h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),1<<12,1L),0,
                     "Unknown snapshot bits cannot send or consume a structure notice");
-            world.at(0L,0);
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),1L),1,"The first eligible structure sends one packet");
-            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,1L);
+            world.at(738_000L,0);
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),32L),1,"The first eligible structure sends one packet");
+            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,32L);
             h.assertValueEqual(marker(session.player()).getInt("seen"),StructureUnlockAnnouncements.END_PORTAL,
                     "Only the delivered end portal bit is persisted");
             world.at(1_410_000L,16);
@@ -323,23 +327,20 @@ public final class StructureUnlockAnnouncementGameTests {
             world.at(0L,0);nether.setDayTime(1_410_000L);session.drain();
             session.player().teleportTo(nether,.5D,160D,.5D,0F,0F);
             h.assertTrue(session.player().serverLevel()==nether,"A native dimension teleport moves the connected player to the nether");
-            h.assertValueEqual(StructureUnlockAnnouncements.available(nether,world.enabledOptions()),StructureUnlockAnnouncements.END_PORTAL,
+            h.assertValueEqual(StructureUnlockAnnouncements.available(nether,world.enabledOptions()),0,
                     "A locally late dimension cannot unlock overworld villages while overworld prerequisites are missing");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),1L),1,
-                    "The connected off-world player can receive the overworld end-portal eligibility fact");
-            assertPacket(h,only(h,session.drain()),"end_portal",ChatFormatting.AQUA,1L);
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),1L),0,
+                    "The connected off-world player cannot bypass the overworld stronghold date");
+            h.assertTrue(session.drain().isEmpty(),"No off-world packet is sent before the shared date");
             world.at(1_410_000L,StructureProgressData.ALL_CONDITIONS);nether.setDayTime(0L);
             h.assertValueEqual(StructureUnlockAnnouncements.available(nether,world.enabledOptions()),ALL,
                     "A locally early dimension cannot hide any overworld structure eligibility");
             h.assertValueEqual(StructureUnlockAnnouncements.available(underworld,world.enabledOptions()),ALL,
                     "The same shared overworld generator and progress are used for the underworld");
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),3,
-                    "All three newly eligible facts reach the off-world player");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),4,
+                    "All four newly eligible facts reach the off-world player");
             List<ClientboundSystemChatPacket> packets=session.drain();
-            h.assertValueEqual(packets.size(),3,"The off-world player receives all newly unlocked structure packets");
-            assertPacket(h,packets.get(0),"village",ChatFormatting.GREEN,60L);
-            assertPacket(h,packets.get(1),"ruined_portal",ChatFormatting.GOLD,60L);
-            assertPacket(h,packets.get(2),"pillager_outpost",ChatFormatting.RED,60L);
+            assertAll(h,packets,60L);
             session.player().teleportTo(world.level,.5D,160D,.5D,0F,0F);
             h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),60L),0,
                     "Returning dimensions cannot replay already delivered personal notices");
@@ -388,9 +389,12 @@ public final class StructureUnlockAnnouncementGameTests {
         final ChunkGeneratorStructureState generator;
         final Field structureSetsField;
         final List<Holder<StructureSet>> originalStructureSets;
+        final StructureUnlockTestState explorationState;
         WorldState(GameTestHelper h) {
             level=h.getLevel().getServer().overworld();progress=StructureProgressData.get(level);
             dayTime=level.getDayTime();conditions=progress.conditions();
+            explorationState=new StructureUnlockTestState(level);
+            explorationState.values(java.util.Map.of(Metric.EYE_CRAFTED,1L));
             generator=level.getChunkSource().getGeneratorState();
             originalStructureSets=generator.possibleStructureSets();
             // The native flat GameTest preset includes villages/strongholds only. Temporarily enable the
@@ -418,7 +422,7 @@ public final class StructureUnlockAnnouncementGameTests {
             } catch (IllegalAccessException e) {
                 throw new IllegalStateException("Cannot restore the original structure sets",e);
             } finally {
-                progress.restoreConditions(conditions);level.setDayTime(dayTime);R196StructureGeneration.refresh(level);
+                explorationState.close();
             }
         }
     }

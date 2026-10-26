@@ -2,10 +2,6 @@
   "replace": false,
   "values": [
     {
-      "id": "simplyswords:diamond_greathammer",
-      "required": false
-    },
-    {
       "id": "simplyswords:frostfall",
       "required": false
     },

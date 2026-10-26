@@ -116,6 +116,22 @@
   ],
   "remove": [
     {
+      "id": "simplyswords:diamond_chakram",
+      "required": false
+    },
+    {
+      "id": "simplyswords:diamond_cutlass",
+      "required": false
+    },
+    {
+      "id": "simplyswords:diamond_rapier",
+      "required": false
+    },
+    {
+      "id": "simplyswords:diamond_sai",
+      "required": false
+    },
+    {
       "id": "simplyswords:netherite_chakram",
       "required": false
     },

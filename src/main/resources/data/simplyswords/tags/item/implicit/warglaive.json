@@ -32,6 +32,10 @@
   ],
   "remove": [
     {
+      "id": "simplyswords:diamond_warglaive",
+      "required": false
+    },
+    {
       "id": "simplyswords:netherite_warglaive",
       "required": false
     }

@@ -32,6 +32,10 @@
   ],
   "remove": [
     {
+      "id": "simplyswords:diamond_sai",
+      "required": false
+    },
+    {
       "id": "simplyswords:netherite_sai",
       "required": false
     }

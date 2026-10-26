@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -43,6 +44,9 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -58,7 +62,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
-/** Independent native acquisition and gameplay checks for retired unique weapons. @author NingMeng123 */
+/** Independent native acquisition and gameplay checks for retired diamond and unique weapons. @author NingMeng123 */
 @GameTestHolder("mite_simplyswords")
 @PrefixGameTestTemplate(false)
 public final class SimplySwordsUniqueRemovalGameTests {
@@ -86,7 +90,7 @@ public final class SimplySwordsUniqueRemovalGameTests {
     @GameTest(template = "empty", batch = "simplyswords_compat")
     public static void ordinaryFamiliesRunicFamiliesAndCraftingMaterialsRemainAvailable(GameTestHelper h) {
         if (absent(h)) return;
-        for (String material : List.of("iron", "gold", "diamond", "runic")) for (String family : FAMILIES) {
+        for (String material : List.of("iron", "gold", "runic")) for (String family : FAMILIES) {
             ItemStack stack = new ItemStack(item(material + "_" + family));
             stack.set(DataComponents.CUSTOM_NAME, Component.literal("Allowed NingMeng123 weapon"));
             h.assertFalse(RemovedDiamondEquipment.isRemoved(stack), "Every ordinary/runic weapon type remains available: " + material + "/" + family);
@@ -97,25 +101,29 @@ public final class SimplySwordsUniqueRemovalGameTests {
             h.assertFalse(RemovedDiamondEquipment.isRemoved(stack), "Unrelated material and ordinary starter items are retained: " + path);
             h.assertTrue(ItemStack.matches(stack, load(h, stack)), "Allowed starter/material item survives native saved-stack load: " + path);
         }
-        for (String family : FAMILIES) h.assertTrue(RemovedDiamondEquipment.isRemoved(item("netherite_" + family)),
-                "The previous ordinary-netherite retirement still applies: " + family);
+        for (String material : List.of("diamond", "netherite")) for (String family : FAMILIES) {
+            ItemStack retired = new ItemStack(item(material + "_" + family));
+            h.assertTrue(RemovedDiamondEquipment.isRemoved(retired.getItem()) && RemovedDiamondEquipment.isRemoved(retired),
+                    "Both item and stack boundaries retire every diamond/netherite family: " + material + "/" + family);
+            h.assertTrue(load(h, retired).isEmpty(), "Saved retired ordinary weapons cannot return: " + material + "/" + family);
+        }
         h.succeed();
     }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void everyCreativeCategoryAndSearchExcludeUniquesButRetainRunicAndOrdinaryWeapons(GameTestHelper h) throws IOException {
+    public static void everyCreativeCategoryAndSearchExcludeRetiredWeaponsButRetainRunicAndOrdinaryWeapons(GameTestHelper h) throws IOException {
         if (absent(h)) return;
-        Set<Item> uniques = officialUniqueItems(h);
+        Set<Item> retired = retiredItems(h);
         for (boolean permissions : new boolean[]{false, true}) {
             CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(), permissions, h.getLevel().registryAccess());
             for (var tab : CreativeModeTabs.allTabs()) {
-                h.assertTrue(tab.getDisplayItems().stream().noneMatch(stack -> uniques.contains(stack.getItem())),
-                        "Every creative category excludes unique weapons with either permission level: " + tab.getDisplayName().getString());
-                h.assertTrue(tab.getSearchTabDisplayItems().stream().noneMatch(stack -> uniques.contains(stack.getItem())),
-                        "Every creative category's search entries exclude unique weapons");
+                h.assertTrue(tab.getDisplayItems().stream().noneMatch(stack -> retired.contains(stack.getItem())),
+                        "Every creative category excludes diamond and unique weapons with either permission level: " + tab.getDisplayName().getString());
+                h.assertTrue(tab.getSearchTabDisplayItems().stream().noneMatch(stack -> retired.contains(stack.getItem())),
+                        "Every creative category's search entries exclude diamond and unique weapons");
             }
             var search = CreativeModeTabs.searchTab().getDisplayItems();
-            for (String family : FAMILIES) for (String material : List.of("iron", "gold", "diamond", "runic")) {
+            for (String family : FAMILIES) for (String material : List.of("iron", "gold", "runic")) {
                 Item allowed = item(material + "_" + family);
                 h.assertTrue(search.stream().anyMatch(stack -> stack.is(allowed)), "Allowed family remains visible in global creative search: " + material + "/" + family);
             }
@@ -124,46 +132,72 @@ public final class SimplySwordsUniqueRemovalGameTests {
     }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void nativeRecipeLoadAndDynamicReplacementCannotProduceUniqueWeapons(GameTestHelper h) throws IOException {
+    public static void nativeRecipeLoadAndDynamicReplacementCannotProduceRetiredWeapons(GameTestHelper h) throws IOException {
         if (absent(h)) return;
         h.assertTrue(h.getLevel().getRecipeManager().byKey(id("unique_melting")).isEmpty(),
                 "Unique-only melting cannot expose disabled weapons in material recipe pages");
-        Set<Item> uniques = officialUniqueItems(h);
+        Set<Item> retired = retiredItems(h);
         for (var recipe : h.getLevel().getRecipeManager().getRecipes()) h.assertTrue(
-                !uniques.contains(recipe.value().getResultItem(h.getLevel().registryAccess()).getItem()),
-                "The actual loaded recipe manager exposes no unique output: " + recipe.id());
+                !retired.contains(recipe.value().getResultItem(h.getLevel().registryAccess()).getItem()),
+                "The actual loaded recipe manager exposes no diamond or unique output: " + recipe.id());
         RecipeManager manager = new RecipeManager(h.getLevel().registryAccess());
         List<RecipeHolder<?>> fixtures = new ArrayList<>();
-        for (Item item : uniques) fixtures.add(recipe(BuiltInRegistries.ITEM.getKey(item).getPath(), item));
+        for (Item item : retired) fixtures.add(recipe(BuiltInRegistries.ITEM.getKey(item).getPath(), item));
         fixtures.add(recipe("allowed_runic", item("runic_longsword")));
         fixtures.add(recipe("allowed_ordinary", item("iron_longsword")));
         fixtures.add(recipe("allowed_material", item("runic_tablet")));
         manager.replaceRecipes(fixtures);
-        h.assertValueEqual(manager.getRecipes().size(), 3, "Runtime recipe replacement filters every official unique result");
+        h.assertValueEqual(manager.getRecipes().size(), 3, "Runtime recipe replacement filters every diamond and unique result");
         h.assertValueEqual(manager.getAllRecipesFor(RecipeType.CRAFTING).size(), 3, "Both the ID index and crafting-type index remain filtered");
-        for (Item item : uniques) h.assertTrue(manager.byKey(testId(BuiltInRegistries.ITEM.getKey(item).getPath())).isEmpty(),
-                "No dynamically introduced unique recipe remains addressable by ID");
+        for (Item item : retired) h.assertTrue(manager.byKey(testId(BuiltInRegistries.ITEM.getKey(item).getPath())).isEmpty(),
+                "No dynamically introduced retired recipe remains addressable by ID");
         for (String name : List.of("allowed_runic", "allowed_ordinary", "allowed_material")) h.assertTrue(manager.byKey(testId(name)).isPresent(),
                 "Allowed recipes remain addressable after runtime replacement: " + name);
         h.succeed();
     }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void finalNativeLootReturnRejectsEveryUniqueAndPreservesAllowedLoot(GameTestHelper h) throws IOException {
+    public static void finalNativeLootReturnRejectsEveryDiamondAndUniqueAndPreservesAllowedLoot(GameTestHelper h) throws IOException {
         if (absent(h)) return;
-        Set<Item> uniques = officialUniqueItems(h);
+        Set<Item> retired = retiredItems(h);
         var builder = LootTable.lootTable().setParamSet(LootContextParamSets.CHEST);
-        for (Item item : uniques) builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(item)));
+        for (Item item : retired) builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(item)));
         for (String path : List.of("runic_longsword", "iron_longsword", "runic_tablet"))
             builder.withPool(LootPool.lootPool().add(LootItem.lootTableItem(item(path))));
         var table = builder.build();
         table.setLootTableId(testId("loot"));
         var params = new LootParams.Builder(h.getLevel()).withParameter(LootContextParams.ORIGIN, location(h)).create(LootContextParamSets.CHEST);
         var actual = table.getRandomItems(params, 8132L);
-        h.assertValueEqual(actual.size(), 3, "The final loot boundary removes every unique entry while retaining legal outputs");
-        h.assertTrue(actual.stream().noneMatch(stack -> uniques.contains(stack.getItem())), "No unique reaches native loot consumers");
+        h.assertValueEqual(actual.size(), 3, "The final loot boundary removes every diamond and unique entry while retaining legal outputs");
+        h.assertTrue(actual.stream().noneMatch(stack -> retired.contains(stack.getItem())), "No retired weapon reaches native loot consumers");
         for (String path : List.of("runic_longsword", "iron_longsword", "runic_tablet")) h.assertTrue(actual.stream().anyMatch(stack -> stack.is(item(path))),
                 "Allowed native loot survives the same final boundary: " + path);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "simplyswords_compat")
+    public static void diamondWeaponsCannotBeSoldOrRequiredByRestoredTrades(GameTestHelper h) {
+        if (absent(h)) return;
+        var villager = EntityType.VILLAGER.create(h.getLevel());
+        h.assertTrue(villager != null, "The native merchant fixture exists");
+        try {
+            MerchantOffers offers = new MerchantOffers();
+            for (String family : FAMILIES) {
+                Item diamond = item("diamond_" + family);
+                offers.add(offer(Items.EMERALD, null, diamond));
+                offers.add(offer(diamond, null, Items.EMERALD));
+                offers.add(offer(Items.EMERALD, diamond, item("iron_" + family)));
+            }
+            MerchantOffer gems = offer(Items.EMERALD, null, Items.DIAMOND);
+            MerchantOffer runic = offer(Items.EMERALD, null, item("runic_longsword"));
+            offers.add(gems); offers.add(runic);
+            villager.setOffers(offers);
+            var actual = villager.getOffers();
+            h.assertTrue(actual.size() == 2 && actual.contains(gems) && actual.contains(runic),
+                    "All fifteen diamond families are removed from either trade cost and result while gems and runic weapons remain");
+            actual.add(offer(Items.EMERALD, null, item("diamond_halberd")));
+            h.assertValueEqual(villager.getOffers().size(), 2, "A later-added diamond sale is also filtered on native access");
+        } finally { villager.discard(); }
         h.succeed();
     }
 
@@ -191,81 +225,93 @@ public final class SimplySwordsUniqueRemovalGameTests {
     }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void actualPlayerTickClearsInventoryCursorEnderChestAndDeepContainerUniques(GameTestHelper h) {
+    public static void actualPlayerTickClearsInventoryCursorEnderChestAndDeepContainerRetiredWeapons(GameTestHelper h) {
         if (absent(h)) return;
         try (Session session = newPlayer(h)) {
             var player = session.player();
-            player.getInventory().setItem(0, new ItemStack(item("stormbringer")));
+            player.getInventory().setItem(0, new ItemStack(item("diamond_katana")));
             player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(item("soulrender")));
-            player.getEnderChestInventory().setItem(0, new ItemStack(item("awakened_lichblade")));
-            player.containerMenu.setCarried(new ItemStack(item("chompolotl")));
+            player.getEnderChestInventory().setItem(0, new ItemStack(item("diamond_spear")));
+            player.containerMenu.setCarried(new ItemStack(item("diamond_scythe")));
             ItemStack legal = new ItemStack(item("runic_longsword"));
             legal.set(DataComponents.CUSTOM_NAME, Component.literal("Allowed NingMeng123 runic"));
             ItemStack bundle = new ItemStack(Items.BUNDLE);
-            bundle.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(List.of(new ItemStack(item("magiscythe")), legal)));
+            List<ItemStack> bundleContents = new ArrayList<>();
+            for (String family : FAMILIES) bundleContents.add(new ItemStack(item("diamond_" + family)));
+            bundleContents.add(new ItemStack(item("magiscythe")));
+            bundleContents.add(legal);
+            bundle.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(bundleContents));
             ItemStack shulker = new ItemStack(Items.SHULKER_BOX);
             shulker.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.of(new ItemStack(item("dormant_relic")), bundle,
                     new ItemStack(item("runic_tablet"), 3))));
             player.getInventory().setItem(1, shulker);
             player.doTick();
-            h.assertTrue(player.getInventory().getItem(0).isEmpty() && player.getOffhandItem().isEmpty(), "The native player tick removes held and inventory unique weapons");
-            h.assertTrue(player.getEnderChestInventory().getItem(0).isEmpty() && player.containerMenu.getCarried().isEmpty(), "Ender chest and active cursor cannot retain unique weapons");
+            h.assertTrue(player.getInventory().getItem(0).isEmpty() && player.getOffhandItem().isEmpty(), "The native player tick removes held and inventory retired weapons");
+            h.assertTrue(player.getEnderChestInventory().getItem(0).isEmpty() && player.containerMenu.getCarried().isEmpty(), "Ender chest and active cursor cannot retain diamond weapons");
             List<ItemStack> slots = player.getInventory().getItem(1).get(DataComponents.CONTAINER).stream().toList();
             h.assertTrue(slots.get(0).isEmpty(), "Nested container retirement retains the original empty slot");
             List<ItemStack> remaining = new ArrayList<>();
             slots.get(1).get(DataComponents.BUNDLE_CONTENTS).items().forEach(remaining::add);
-            h.assertTrue(remaining.size() == 1 && ItemStack.matches(remaining.getFirst(), legal), "Deep bundle cleanup preserves the exact legal runic stack");
+            h.assertTrue(remaining.size() == 1 && ItemStack.matches(remaining.getFirst(), legal), "Deep bundle cleanup removes all fifteen diamond families and uniques while preserving the exact legal runic stack");
             h.assertTrue(slots.get(2).is(item("runic_tablet")) && slots.get(2).getCount() == 3, "Nested materials retain their original slots and counts");
         }
         h.succeed();
     }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void worldJoinAndNativeEntityTickRejectUniqueDropsAndLateMobEquipment(GameTestHelper h) {
+    public static void worldJoinAndNativeEntityTickRejectRetiredDropsAndLateMobEquipment(GameTestHelper h) {
         if (absent(h)) return;
         var level = h.getLevel();
         Vec3 pos = location(h);
-        var forbidden = new ItemEntity(level, pos.x, pos.y, pos.z, new ItemStack(item("stormbringer")));
+        var forbidden = new ItemEntity(level, pos.x, pos.y, pos.z, new ItemStack(item("diamond_chakram")));
         var allowed = new ItemEntity(level, pos.x, pos.y, pos.z, new ItemStack(item("runic_longsword")));
         // Neutral mobs exercise the same equipment boundary without hostile spawn-loadout replacement.
         var mob = EntityType.PIG.create(level);
         h.assertTrue(mob != null, "The native neutral mob fixture exists");
         try {
-            h.assertTrue(!level.addFreshEntity(forbidden) || forbidden.isRemoved() || forbidden.getItem().isEmpty(), "Directly spawned unique drops cannot enter the world");
+            h.assertTrue(!level.addFreshEntity(forbidden) || forbidden.isRemoved() || forbidden.getItem().isEmpty(), "Directly spawned diamond drops cannot enter the world");
             h.assertTrue(level.addFreshEntity(allowed), "The legal runic drop enters the world normally");
             mob.moveTo(pos); mob.setNoAi(true); mob.setNoGravity(true);
-            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(item("hearthflame")));
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(item("diamond_greathammer")));
             mob.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(item("iron_longsword")));
             h.assertTrue(level.addFreshEntity(mob), "An otherwise legal mob still enters the world");
-            h.assertTrue(mob.getMainHandItem().isEmpty() && mob.getOffhandItem().is(item("iron_longsword")), "Entity join strips unique equipment and keeps ordinary equipment");
+            h.assertTrue(mob.getMainHandItem().isEmpty() && mob.getOffhandItem().is(item("iron_longsword")), "Entity join strips diamond equipment and keeps ordinary equipment");
             mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(item("soulrender")));
-            allowed.setItem(new ItemStack(item("magispear")));
+            allowed.setItem(new ItemStack(item("diamond_halberd")));
             level.tickNonPassenger(mob); level.tickNonPassenger(allowed);
             h.assertTrue(mob.getMainHandItem().isEmpty() && mob.getOffhandItem().is(item("iron_longsword")), "Late unique equipment assignments are cleared on the native entity tick");
-            h.assertTrue(allowed.isRemoved(), "Replacing an existing drop with a unique cannot bypass the entity tick");
+            h.assertTrue(allowed.isRemoved(), "Replacing an existing drop with a diamond weapon cannot bypass the entity tick");
         } finally { forbidden.discard(); allowed.discard(); mob.discard(); }
         h.succeed();
     }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void uniqueWeaponsCannotAttackOrActivateBeforeTheNextCleanupTick(GameTestHelper h) {
+    public static void diamondAndUniqueWeaponsCannotAttackOrActivateBeforeTheNextCleanupTick(GameTestHelper h) {
         if (absent(h)) return;
         var target = EntityType.PIG.create(h.getLevel());
         h.assertTrue(target != null, "The native target fixture exists");
         try (Session session = newPlayer(h)) {
             var player = session.player();
-            for (String path : List.of("stormbringer", "magiscythe", "chompolotl")) {
+            List<String> retiredPaths = new ArrayList<>(List.of("stormbringer", "magiscythe", "chompolotl"));
+            for (String family : FAMILIES) retiredPaths.add("diamond_" + family);
+            for (String path : retiredPaths) {
                 player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item(path)));
                 h.assertTrue(NeoForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickItem(player, InteractionHand.MAIN_HAND)).isCanceled(),
-                        "Unique active abilities are vetoed before the next player tick: " + path);
-                h.assertTrue(NeoForge.EVENT_BUS.post(new AttackEntityEvent(player, target)).isCanceled(), "A just-injected unique cannot attack: " + path);
-                h.assertTrue(player.getMainHandItem().isEmpty(), "The rejected attack immediately purges the unique");
+                        "Retired weapon use is vetoed before the next player tick: " + path);
+                h.assertTrue(NeoForge.EVENT_BUS.post(new AttackEntityEvent(player, target)).isCanceled(), "A just-injected retired weapon cannot attack: " + path);
+                h.assertTrue(player.getMainHandItem().isEmpty(), "The rejected attack immediately purges the retired weapon");
             }
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item("runic_longsword")));
             h.assertFalse(NeoForge.EVENT_BUS.post(new AttackEntityEvent(player, target)).isCanceled(), "The same registered attack boundary still accepts runic weapons");
             h.assertTrue(player.getMainHandItem().is(item("runic_longsword")), "Runic equipment survives the attack check");
         } finally { target.discard(); }
         h.succeed();
+    }
+
+    private static Set<Item> retiredItems(GameTestHelper h) throws IOException {
+        Set<Item> result = officialUniqueItems(h);
+        for (String family : FAMILIES) result.add(item("diamond_" + family));
+        return result;
     }
 
     /** Read the mod's original declaration rather than the production classifier or filtered runtime tag. */
@@ -289,6 +335,11 @@ public final class SimplySwordsUniqueRemovalGameTests {
     private static RecipeHolder<?> recipe(String path, Item result) {
         return new RecipeHolder<>(testId(path), new ShapelessRecipe("", CraftingBookCategory.MISC,
                 new ItemStack(result), NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.COBBLESTONE))));
+    }
+
+    private static MerchantOffer offer(Item first, Item second, Item result) {
+        return new MerchantOffer(new ItemCost(first, 1), second == null ? Optional.empty() : Optional.of(new ItemCost(second, 1)),
+                new ItemStack(result), 12, 1, .05F);
     }
 
     private static ItemStack load(GameTestHelper h, ItemStack stack) {

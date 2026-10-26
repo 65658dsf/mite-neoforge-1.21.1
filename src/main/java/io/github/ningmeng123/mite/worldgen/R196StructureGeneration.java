@@ -7,6 +7,9 @@ import io.github.ningmeng123.mite.item.R196ReinforcedBowItem;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
+import io.github.ningmeng123.mite.rules.StructureUnlockRules;
+import io.github.ningmeng123.mite.rules.StructureUnlockRules.Metric;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import net.minecraft.core.BlockPos;
@@ -40,8 +43,8 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 /** Dynamic gates use immutable world snapshots; generation workers never open save files. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class R196StructureGeneration {
-    public static final long RUINED_PORTAL_DAY = 30L, PILLAGER_OUTPOST_DAY = 45L, VILLAGE_DAY = 60L;
-    private record State(long time, int spawnX, int spawnZ, int conditions) {}
+    public static final long RUINED_PORTAL_DAY = StructureUnlockRules.MINIMUM_DAY, PILLAGER_OUTPOST_DAY = 45L, VILLAGE_DAY = 60L;
+    private record State(long time, int spawnX, int spawnZ, int conditions, Map<Metric, Long> exploration) {}
     private static final ConcurrentMap<MinecraftServer, State> STATES = new ConcurrentHashMap<>();
     private static final TagKey<Biome> MINESHAFT_HILLS = TagKey.create(Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "has_structure/r196_mineshaft_hills"));
@@ -57,7 +60,7 @@ public final class R196StructureGeneration {
         if (overworld == null) return;
         BlockPos spawn = overworld.getSharedSpawnPos();
         STATES.put(level.getServer(), new State(overworld.getDayTime(), spawn.getX(), spawn.getZ(),
-                StructureProgressData.get(overworld).conditions()));
+                StructureProgressData.get(overworld).conditions(), StructureExplorationData.get(overworld).snapshot()));
     }
 
     private static String vanillaId(Holder<Structure> structure) {
@@ -88,16 +91,23 @@ public final class R196StructureGeneration {
         ResourceLocation location = structure.unwrapKey().map(key -> key.location()).orElse(null);
         if (UNDERWORLD_TRIAL.equals(location) && !MiteConfig.underworldTrialsEnabled()) return false;
         if (OVERWORLD_TRIAL.equals(location) && !MiteConfig.overworldTrialsEnabled()) return false;
-        String id = vanillaId(structure);
-        boolean village = level.dimension().equals(Level.OVERWORLD) && id.startsWith("village_");
-        boolean portal = id.equals("ruined_portal") || id.startsWith("ruined_portal_");
-        boolean outpost = id.equals("pillager_outpost");
-        if (!village && !portal && !outpost) return true;
+        if (location != null && StructureUnlockRules.exempt(location.getNamespace(), location.getPath())) return true;
         State state = STATES.get(level.getServer());
         if (state == null) return false;
-        if (portal) return ruinedPortalUnlocked(state.time(), state.conditions());
-        if (outpost) return pillagerOutpostUnlocked(state.time(), state.conditions());
-        return villageUnlocked(state.time(), state.conditions());
+        String namespace = location == null ? "" : location.getNamespace();
+        String path = location == null ? "" : location.getPath();
+        if (!StructureUnlockRules.dayUnlocked(namespace, path, displayDay(state.time()))) return false;
+        var definition = StructureUnlockRules.forStructure(namespace, path);
+        return definition == null || StructureUnlockRules.requirementsMet(definition, state.conditions(), state.exploration());
+    }
+
+    /** Fossils are features rather than structures; monster rooms deliberately retain their original generation. */
+    public static boolean fossilUnlocked(ServerLevel level) {
+        State state = STATES.get(level.getServer());
+        var definition = StructureUnlockRules.find("overworld_fossil");
+        return state != null && level.getServer().getWorldData().worldGenOptions().generateStructures()
+                && displayDay(state.time()) >= definition.minimumDay()
+                && StructureUnlockRules.requirementsMet(definition, state.conditions(), state.exploration());
     }
 
     public static boolean canGenerate(ServerLevel level, Holder<Structure> structure, ChunkPos coordinate) {
@@ -149,6 +159,7 @@ public final class R196StructureGeneration {
 
     /** Called after an actual crafting transaction; merely owning, previewing or automating equipment does not qualify. */
     public static void crafted(ServerPlayer player, ItemStack output) {
+        StructureExplorationProgress.crafted(player, output);
         int bits = craftingConditions(output);
         if (bits != 0) StructureProgressData.get(player.serverLevel()).fulfill(bits);
     }

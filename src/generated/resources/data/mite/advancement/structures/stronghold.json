@@ -1,6 +1,12 @@
 {
   "parent": "mite:structures/root",
   "criteria": {
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "eye_crafted": {
+      "trigger": "minecraft:impossible"
+    },
     "structures_enabled": {
       "trigger": "minecraft:impossible"
     }
@@ -8,6 +14,41 @@
   "display": {
     "announce_to_chat": false,
     "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            32
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_count",
+          "with": [
+            {
+              "translate": "structure_progress.mite.eye_crafted"
+            },
+            1
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
       "translate": "advancement.mite.structures.stronghold.description"
     },
     "frame": "task",
@@ -23,6 +64,12 @@
   "requirements": [
     [
       "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "eye_crafted"
     ]
   ]
 }

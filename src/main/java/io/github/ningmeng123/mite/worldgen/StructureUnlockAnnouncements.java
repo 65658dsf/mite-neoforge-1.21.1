@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.worldgen;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.advancement.StructureAdvancements;
+import io.github.ningmeng123.mite.rules.StructureUnlockRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -44,18 +45,26 @@ public final class StructureUnlockAnnouncements {
             for(var set:generationLevel.getChunkSource().getGeneratorState().possibleStructureSets()) {
                 for(var entry:set.value().structures()) {
                     var key=entry.structure().unwrapKey();
-                    if(key.isEmpty() || !key.get().location().getNamespace().equals("minecraft"))continue;
-                    String id=key.get().location().getPath();
-                    boolean portal=id.equals("ruined_portal")||id.startsWith("ruined_portal_");
-                    if(generationLevel!=overworld&&!portal)continue;
+                    if(key.isEmpty())continue;
+                    var location=key.get().location();
+                    var definition=StructureUnlockRules.forStructure(location.getNamespace(),location.getPath());
+                    if(definition==null)continue;
+                    var guide=StructureAdvancements.entry(definition.path());
+                    if(guide==null)continue;
                     if(requireUnlocked&&!R196StructureGeneration.unlocked(generationLevel,entry.structure()))continue;
-                    if(id.startsWith("village_"))result|=VILLAGE;
-                    else if(id.equals("stronghold"))result|=END_PORTAL;
-                    else if(portal)result|=RUINED_PORTAL;
-                    else if(id.equals("pillager_outpost"))result|=PILLAGER_OUTPOST;
+                    result|=guide.enabledBit();
                 }
             }
         }
+        // Overworld fossils are placed features and never appear in structure sets.
+        boolean fossils=overworld.getChunkSource().getGenerator().getBiomeSource().possibleBiomes().stream()
+                .flatMap(biome->biome.value().getGenerationSettings().features().stream())
+                .flatMap(net.minecraft.core.HolderSet::stream)
+                .anyMatch(feature->feature.unwrapKey().map(key->key.location()).filter(id->
+                        id.getNamespace().equals("minecraft")&&(id.getPath().equals("fossil_upper")
+                                ||id.getPath().equals("fossil_lower"))).isPresent());
+        if(fossils&&(!requireUnlocked||R196StructureGeneration.fossilUnlocked(overworld)))
+            result|=StructureAdvancements.Entry.OVERWORLD_FOSSIL.enabledBit();
         return result;
     }
 
@@ -105,9 +114,10 @@ public final class StructureUnlockAnnouncements {
         int available=available(level);
         int enabled=enabled(level,level.getServer().getWorldData().worldGenOptions());
         int conditions=StructureProgressData.get(level).conditions();
+        var exploration=StructureExplorationData.get(level).snapshot();
         long day=R196StructureGeneration.displayDay(level.getDayTime());
         for(ServerPlayer player:players) {
-            StructureAdvancements.sync(player,enabled,level.getDayTime(),conditions);
+            StructureAdvancements.sync(player,enabled,level.getDayTime(),conditions,exploration);
             if(available!=0)deliver(player,available,day);
         }
     }

@@ -32,6 +32,10 @@
   ],
   "remove": [
     {
+      "id": "simplyswords:diamond_scythe",
+      "required": false
+    },
+    {
       "id": "simplyswords:netherite_scythe",
       "required": false
     }

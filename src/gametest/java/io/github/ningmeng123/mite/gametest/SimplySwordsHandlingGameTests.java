@@ -55,7 +55,7 @@ public final class SimplySwordsHandlingGameTests {
     @GameTest(template = "empty", batch = "simplyswords_handling")
     public static void nativeAddedRunicAndUniqueWeaponsUseTheirActualHandedness(GameTestHelper h) {
         if (absent(h)) return;
-        for (String material : List.of("rusted_iron", "copper", "silver", "gold", "iron", "diamond",
+        for (String material : List.of("rusted_iron", "copper", "silver", "gold", "iron",
                 "runic", "ancient_metal", "mithril", "adamantium", "vibranium")) {
             for (String family : SimplySwordsCompat.families()) {
                 ItemStack stack = new ItemStack(SimplySwordsCompat.weapon(material, family));

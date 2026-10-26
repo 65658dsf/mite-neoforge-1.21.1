@@ -32,6 +32,10 @@
   ],
   "remove": [
     {
+      "id": "simplyswords:diamond_spear",
+      "required": false
+    },
+    {
       "id": "simplyswords:netherite_spear",
       "required": false
     }

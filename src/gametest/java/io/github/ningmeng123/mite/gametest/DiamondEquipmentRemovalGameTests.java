@@ -292,7 +292,7 @@ public final class DiamondEquipmentRemovalGameTests {
         manager.replaceRecipes(fixtures);
         helper.assertValueEqual(manager.getRecipes().size(), 2, "The native recipe map contains only allowed static outputs");
         helper.assertValueEqual(manager.getAllRecipesFor(RecipeType.CRAFTING).size(), 2, "The recipe type lookup is filtered together with the ID lookup");
-        for (int index = 0; index < REMOVED.size(); index++) helper.assertTrue(manager.byKey(id("retired_" + index)).isEmpty(),
+        for (int index = 0; index < retiredItems.size(); index++) helper.assertTrue(manager.byKey(id("retired_" + index)).isEmpty(),
                 "A dynamically replaced forbidden recipe cannot be found by ID");
         helper.assertTrue(manager.byKey(id("diamond_resource")).isPresent() && manager.byKey(id("other_equipment")).isPresent(),
                 "Valid recipes remain registered after runtime replacement");
@@ -328,9 +328,11 @@ public final class DiamondEquipmentRemovalGameTests {
         if (SimplySwordsCompat.enabled()) {
             for (String family : List.of("longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive", "warglaive",
                     "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd")) {
-                Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("simplyswords", "netherite_" + family));
-                if (item == Items.AIR) throw new IllegalStateException("Missing native netherite fixture: " + family);
-                items.add(item);
+                for (String material : List.of("diamond", "netherite")) {
+                    Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("simplyswords", material + "_" + family));
+                    if (item == Items.AIR) throw new IllegalStateException("Missing native retired fixture: " + material + "/" + family);
+                    items.add(item);
+                }
             }
         }
         return items;

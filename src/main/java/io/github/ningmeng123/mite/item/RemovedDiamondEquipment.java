@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-/** Shared exclusion for retired equipment and Simply Swords uniques, retaining ordinary/runic gear and materials. @author NingMeng123 */
+/** Shared exclusion for retired equipment and Simply Swords diamond/netherite/unique weapons. @author NingMeng123 */
 public final class RemovedDiamondEquipment {
     public static final Set<ResourceLocation> IDS = retiredIds();
 
@@ -25,8 +25,8 @@ public final class RemovedDiamondEquipment {
         }
         ids.add(ResourceLocation.withDefaultNamespace("diamond_horse_armor"));
         // Stable optional IDs keep filtering independent of mod loading. Runic weapons remain available.
-        for (String family : SimplySwordsCompat.families())
-            ids.add(ResourceLocation.fromNamespaceAndPath(SimplySwordsCompat.MOD_ID, "netherite_" + family));
+        for (String material : List.of("diamond", "netherite")) for (String family : SimplySwordsCompat.families())
+            ids.add(ResourceLocation.fromNamespaceAndPath(SimplySwordsCompat.MOD_ID, material + "_" + family));
         return Set.copyOf(ids);
     }
 

@@ -182,18 +182,22 @@ public final class SimplySwordsCompatibilityGameTests {
     }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void runicUpgradesUseMithrilWhileOrdinaryNetheriteWeaponsRemainRetired(GameTestHelper h) {
+    public static void runicUpgradesUseMithrilWhileDiamondAndNetheriteWeaponsRemainRetired(GameTestHelper h) {
         if (absent(h)) return;
         ItemStack tablet = new ItemStack(BuiltInRegistries.ITEM.get(id("simplyswords", "runic_tablet")));
         h.assertFalse(tablet.isEmpty(), "The native runic tablet remains available");
         for (String family : SimplySwordsCompat.families()) {
             ItemStack netherite = new ItemStack(SimplySwordsCompat.weapon("netherite", family));
             ItemStack runic = new ItemStack(SimplySwordsCompat.weapon("runic", family));
-            h.assertTrue(RemovedDiamondEquipment.isRemoved(netherite), "Every ordinary netherite weapon is retired: " + family);
-            assertRetiredTags(h, netherite, family);
+            for (String material : List.of("diamond", "netherite")) {
+                ItemStack retired = new ItemStack(SimplySwordsCompat.weapon(material, family));
+                h.assertFalse(retired.isEmpty(), "Retired weapons retain their registry identities: " + material + "/" + family);
+                h.assertTrue(RemovedDiamondEquipment.isRemoved(retired), "Every diamond/netherite weapon is retired: " + material + "/" + family);
+                assertRetiredTags(h, retired, material + "/" + family);
+                h.assertTrue(ItemStack.parse(h.getLevel().registryAccess(), retired.save(h.getLevel().registryAccess()))
+                        .map(ItemStack::isEmpty).orElse(true), "Saved retired weapons cannot return: " + material + "/" + family);
+            }
             h.assertFalse(RemovedDiamondEquipment.isRemoved(runic), "Runic weapons retain their own progression: " + family);
-            h.assertTrue(ItemStack.parse(h.getLevel().registryAccess(), netherite.save(h.getLevel().registryAccess()))
-                    .map(ItemStack::isEmpty).orElse(true), "Saved ordinary netherite weapons cannot return: " + family);
             h.assertTrue(ItemStack.matches(runic, ItemStack.parse(h.getLevel().registryAccess(), runic.save(h.getLevel().registryAccess()))
                     .orElse(ItemStack.EMPTY)), "Saved runic weapons remain available: " + family);
             var holder = h.getLevel().getRecipeManager().byKey(id("simplyswords", "runic_" + family)).orElseThrow();
@@ -206,6 +210,9 @@ public final class SimplySwordsCompatibilityGameTests {
                     "Each mithril family upgrades to the matching native runic weapon: " + family);
             h.assertFalse(recipe.matches(new SmithingRecipeInput(tablet, netherite, new ItemStack(Items.DIAMOND)), h.getLevel()),
                     "The runic route no longer requires retired netherite: " + family);
+            h.assertFalse(recipe.matches(new SmithingRecipeInput(tablet,
+                    new ItemStack(SimplySwordsCompat.weapon("diamond", family)), new ItemStack(Items.DIAMOND)), h.getLevel()),
+                    "Retired diamond weapons cannot bypass the mithril runic prerequisite: " + family);
             h.assertFalse(recipe.matches(new SmithingRecipeInput(tablet,
                     new ItemStack(SimplySwordsCompat.weapon("iron", family)), new ItemStack(Items.DIAMOND)), h.getLevel()),
                     "Low-tier weapons cannot skip the mithril prerequisite: " + family);
@@ -329,8 +336,9 @@ public final class SimplySwordsCompatibilityGameTests {
             ItemStack output = holder.value().getResultItem(h.getLevel().registryAccess());
             if (output.isEmpty()) continue;
             ResourceLocation outputId = BuiltInRegistries.ITEM.getKey(output.getItem());
-            h.assertFalse(outputId.getNamespace().equals("simplyswords") && outputId.getPath().startsWith("netherite_"),
-                    "No loaded crafting or smithing recipe produces retired Simply Swords netherite: " + holder.id());
+            h.assertFalse(outputId.getNamespace().equals("simplyswords")
+                            && (outputId.getPath().startsWith("diamond_") || outputId.getPath().startsWith("netherite_")),
+                    "No loaded crafting or smithing recipe produces retired Simply Swords diamond/netherite: " + holder.id());
             if (holder.value().getType() != net.minecraft.world.item.crafting.RecipeType.CRAFTING) continue;
             var definition = SimplySwordsCompat.definition(output);
             if (definition == null || !definition.added()) continue;
@@ -369,11 +377,12 @@ public final class SimplySwordsCompatibilityGameTests {
                 h.assertTrue(stack.is(ItemTags.SHARP_WEAPON_ENCHANTABLE) && stack.is(ItemTags.DURABILITY_ENCHANTABLE),
                         "Actual enchantment eligibility includes damage and durability enchantments");
             }
-            for (var tab : CreativeModeTabs.allTabs()) for (String family : SimplySwordsCompat.families()) {
-                Item retired = SimplySwordsCompat.weapon("netherite", family);
+            for (var tab : CreativeModeTabs.allTabs()) for (String family : SimplySwordsCompat.families())
+                    for (String material : List.of("diamond", "netherite")) {
+                Item retired = SimplySwordsCompat.weapon(material, family);
                 h.assertTrue(tab.getDisplayItems().stream().noneMatch(entry -> entry.is(retired))
                                 && tab.getSearchTabDisplayItems().stream().noneMatch(entry -> entry.is(retired)),
-                        "Every creative category and search excludes retired Simply Swords netherite: " + family);
+                        "Every creative category and search excludes retired Simply Swords weapons: " + material + "/" + family);
             }
         }
         h.succeed();
@@ -387,10 +396,10 @@ public final class SimplySwordsCompatibilityGameTests {
                 ItemTags.SWORD_ENCHANTABLE, ItemTags.FIRE_ASPECT_ENCHANTABLE, ItemTags.SHARP_WEAPON_ENCHANTABLE,
                 ItemTags.WEAPON_ENCHANTABLE, ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE,
                 ItemTags.DURABILITY_ENCHANTABLE, ItemTags.EQUIPPABLE_ENCHANTABLE, ItemTags.VANISHING_ENCHANTABLE))
-            h.assertFalse(stack.is(tag), "Retired Simply Swords netherite " + family + " is absent from " + tag.location());
+            h.assertFalse(stack.is(tag), "Retired Simply Swords " + family + " is absent from " + tag.location());
         for (var definition : R196EnchantmentCatalog.definitions()) {
             var tag = TagKey.create(Registries.ITEM, id("mite", "enchantable/" + definition.id()));
-            h.assertFalse(stack.is(tag), "Retired Simply Swords netherite " + family + " is absent from source support " + definition.id());
+            h.assertFalse(stack.is(tag), "Retired Simply Swords " + family + " is absent from source support " + definition.id());
         }
     }
 

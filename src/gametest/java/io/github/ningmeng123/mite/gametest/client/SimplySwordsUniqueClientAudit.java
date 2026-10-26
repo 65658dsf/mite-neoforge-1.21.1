@@ -112,12 +112,19 @@ public final class SimplySwordsUniqueClientAudit {
             check(uniques.contains(required("simplyswords", "stormbringer")), "Screenshot weapon Stormbringer belongs to the unique registry");
             report.addProperty("unique_weapon_count", uniques.size());
             report.add("unique_weapon_ids", ids(uniques));
+            List<Item> diamonds = new ArrayList<>();
+            for (String family : FAMILIES) diamonds.add(required("simplyswords", "diamond_" + family));
+            report.addProperty("diamond_weapon_count", diamonds.size());
+            report.add("diamond_weapon_ids", ids(diamonds));
+            List<Item> retired = new ArrayList<>(uniques);
+            retired.addAll(diamonds);
+            report.addProperty("retired_weapon_count", retired.size());
             List<Item> retained = retainedItems();
-            report.addProperty("retained_weapon_count", FAMILIES.size() * (4 + ADDED_MATERIALS.size()));
+            report.addProperty("retained_weapon_count", FAMILIES.size() * (3 + ADDED_MATERIALS.size()));
             report.addProperty("retained_material_count", MATERIAL_ITEMS.size());
             report.add("retained_item_ids", ids(retained));
-            auditCreative(minecraft, uniques, retained, report, failures);
-            auditJei(runtime.orElseThrow(), uniques, retained, report, failures);
+            auditCreative(minecraft, retired, retained, report, failures);
+            auditJei(runtime.orElseThrow(), retired, retained, report, failures);
             report.addProperty("status", failures.isEmpty() ? "passed" : "failed");
         } catch (Throwable failure) {
             if (report == null) report = report(minecraft);
@@ -161,7 +168,7 @@ public final class SimplySwordsUniqueClientAudit {
 
     private static List<Item> retainedItems() {
         List<Item> result = new ArrayList<>();
-        for (String material : List.of("iron", "gold", "diamond", "runic"))
+        for (String material : List.of("iron", "gold", "runic"))
             for (String family : FAMILIES) result.add(required("simplyswords", material + "_" + family));
         for (String material : ADDED_MATERIALS)
             for (String family : FAMILIES) result.add(required("mite", "simplyswords_" + material + "_" + family));
@@ -169,7 +176,7 @@ public final class SimplySwordsUniqueClientAudit {
         return List.copyOf(result);
     }
 
-    private static void auditCreative(Minecraft minecraft, List<Item> uniques, List<Item> retained,
+    private static void auditCreative(Minecraft minecraft, List<Item> retired, List<Item> retained,
             JsonObject report, JsonArray failures) {
         JsonArray builds = new JsonArray();
         report.add("creative_builds", builds);
@@ -189,9 +196,9 @@ public final class SimplySwordsUniqueClientAudit {
                 fact.addProperty("displayed_stack_count", tab.getDisplayItems().size());
                 fact.addProperty("search_stack_count", tab.getSearchTabDisplayItems().size());
                 tabs.add(fact);
-                for (Item unique : uniques) {
-                    expect(!displayed.contains(unique), failures, "Unique visible in creative tab " + fact.get("tab") + ": " + id(unique));
-                    expect(!searchable.contains(unique), failures, "Unique visible in creative search entries " + fact.get("tab") + ": " + id(unique));
+                for (Item item : retired) {
+                    expect(!displayed.contains(item), failures, "Retired weapon visible in creative tab " + fact.get("tab") + ": " + id(item));
+                    expect(!searchable.contains(item), failures, "Retired weapon visible in creative search entries " + fact.get("tab") + ": " + id(item));
                 }
                 if (tab.getType() == CreativeModeTab.Type.CATEGORY) categories.addAll(displayed);
             }
@@ -200,12 +207,12 @@ public final class SimplySwordsUniqueClientAudit {
                 expect(categories.contains(item), failures, "Retained item missing from creative categories (permissions=" + permissions + "): " + id(item));
                 expect(globalSearch.contains(item), failures, "Retained item missing from global creative search (permissions=" + permissions + "): " + id(item));
             }
-            build.addProperty("checked_unique_count", uniques.size());
+            build.addProperty("checked_retired_weapon_count", retired.size());
             build.addProperty("checked_retained_count", retained.size());
         }
     }
 
-    private static void auditJei(Object runtime, List<Item> uniques, List<Item> retained,
+    private static void auditJei(Object runtime, List<Item> retired, List<Item> retained,
             JsonObject report, JsonArray failures) throws ReflectiveOperationException {
         Class<?> runtimeApi = api("mezz.jei.api.runtime.IJeiRuntime");
         Object manager = runtimeApi.getMethod("getIngredientManager").invoke(runtime);
@@ -228,9 +235,9 @@ public final class SimplySwordsUniqueClientAudit {
         report.addProperty("jei_registered_item_id_count", registered.size());
         report.addProperty("jei_unfiltered_sidebar_item_id_count", filtered.size());
         report.addProperty("jei_original_filter_text_restored", originalText.equals(filterApi.getMethod("getFilterText").invoke(filter)));
-        for (Item unique : uniques) {
-            expect(!registered.contains(unique), failures, "Unique remains registered in actual JEI ingredient manager: " + id(unique));
-            expect(!filtered.contains(unique), failures, "Unique visible in actual JEI unfiltered sidebar: " + id(unique));
+        for (Item item : retired) {
+            expect(!registered.contains(item), failures, "Retired weapon remains registered in actual JEI ingredient manager: " + id(item));
+            expect(!filtered.contains(item), failures, "Retired weapon visible in actual JEI unfiltered sidebar: " + id(item));
         }
         for (Item item : retained) {
             expect(registered.contains(item), failures, "Retained item missing from actual JEI ingredient manager: " + id(item));

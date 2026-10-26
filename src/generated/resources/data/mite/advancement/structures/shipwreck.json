@@ -1,0 +1,75 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "ocean_sail_cm": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            32
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_distance",
+          "with": [
+            {
+              "translate": "structure_progress.mite.ocean_sail_cm"
+            },
+            "500.01"
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
+      "translate": "advancement.mite.structures.shipwreck.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:oak_boat"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.shipwreck.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "ocean_sail_cm"
+    ]
+  ]
+}

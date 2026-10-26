@@ -32,6 +32,10 @@
   ],
   "remove": [
     {
+      "id": "simplyswords:diamond_twinblade",
+      "required": false
+    },
+    {
       "id": "simplyswords:netherite_twinblade",
       "required": false
     }

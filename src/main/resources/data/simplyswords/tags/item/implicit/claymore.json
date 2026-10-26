@@ -32,6 +32,10 @@
   ],
   "remove": [
     {
+      "id": "simplyswords:diamond_claymore",
+      "required": false
+    },
+    {
       "id": "simplyswords:netherite_claymore",
       "required": false
     }

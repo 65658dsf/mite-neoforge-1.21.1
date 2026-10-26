@@ -2,10 +2,6 @@
   "replace": false,
   "values": [
     {
-      "id": "simplyswords:diamond_sai",
-      "required": false
-    },
-    {
       "id": "simplyswords:gobber_compat/gobber/gobber_sai",
       "required": false
     },

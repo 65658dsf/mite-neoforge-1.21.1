@@ -87,3 +87,21 @@ SHA-256：`8adeaa922019d5aa207750cc8b271cd723aeb9d02d4f81e224dbe6558be1e690`。
 测试包：`build/releases/mite-0.2.9-simplyswords-unique-disabled.jar`。
 
 SHA-256：`3c5453acae072936df139115231e7c7c097fe012b3429df0a2612e3ff09b1fc9`。
+
+## 2026-10-26 禁用全部钻石制武器
+
+开发与验证：NingMeng123。全部 15 类 `simplyswords:diamond_<类型>` 接入统一装备禁用规则，覆盖创造分类与搜索、JEI、配方加载和动态替换、交易双方材料与产物、最终掉落、存档、实体装备、深层容器和攻击／交互。钻石材料以及铁、金、MITE 金属和符文武器保留，符文仍由对应秘银武器、符文石板和钻石升级。兼容资源及原版生成标签同步排除钻石武器。
+
+旧存档中已投出的钻石／下界合金长矛在读档时销毁；运行中的禁用长矛在 tick、命中和拾取前销毁。恢复为空的投射物不能回退为原模组默认独特武器，重复拾取空投射物也被拒绝。
+
+| 验证 | 结果 |
+| --- | --- |
+| `build compileGametestJava` 与最终构建 | 成功，1763 项 JUnit 全部通过 |
+| 加载 Simply Swords 的 `mite_simplyswords` 服务端测试集 | 41 项全部通过 |
+| 未加载 Simply Swords 的同一测试集 | 41 项全部通过，验证可选模组缺失路径 |
+| 数据生成、资源生成器 `--check` 与独立资源审核 | 通过，含全部 15 类钻石武器及 24 个原版装备标签 |
+| 发布包审核 | 包含钻石标签排除及投射物修复，不含 GameTest 类 |
+
+测试复用现有原生边界验证，新增真实村民交易与两项投射物回归。客户端审计代码同步检查钻石武器不进入创造栏与 JEI，并将保留武器数更新为 150；本轮未运行客户端画面与 JEI runtime 审计。
+
+使用独立测试目录，未修改游玩存档。日志为被忽略的 `build/verification/simplyswords-diamond-{build,datagen,present,absent}-20261026.log`。产物为 `build/libs/mite-0.2.14.jar`。遗迹生成规则本轮仅提供建议表，未修改。

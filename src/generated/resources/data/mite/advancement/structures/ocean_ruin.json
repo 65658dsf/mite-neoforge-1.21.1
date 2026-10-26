@@ -1,0 +1,75 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "ocean_dive_cm": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            32
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_distance",
+          "with": [
+            {
+              "translate": "structure_progress.mite.ocean_dive_cm"
+            },
+            "100.01"
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
+      "translate": "advancement.mite.structures.ocean_ruin.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:prismarine_shard"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.ocean_ruin.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "ocean_dive_cm"
+    ]
+  ]
+}

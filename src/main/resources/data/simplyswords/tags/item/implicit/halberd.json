@@ -32,6 +32,10 @@
   ],
   "remove": [
     {
+      "id": "simplyswords:diamond_halberd",
+      "required": false
+    },
+    {
       "id": "simplyswords:netherite_halberd",
       "required": false
     }

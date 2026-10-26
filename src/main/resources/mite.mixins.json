@@ -80,6 +80,7 @@
     "CollapseSilverfishWakeMixin",
     "StructureManagerAccess",
     "StructureProgressGateMixin",
+    "FossilProgressGateMixin",
     "StructureClockMixin",
     "InitialStructureSpawnMixin",
     "PlacementDelayPacketMixin",
@@ -412,7 +413,8 @@
     "client.SourceReachSelectionMixin",
     "client.SourceReachActionsMixin",
     "client.SourceSleepOverlayMixin",
-    "client.MiteAdvancementsTitleMixin"
+    "client.MiteAdvancementsTitleMixin",
+    "client.StructureAdvancementTooltipMixin"
   ],
   "injectors": {
     "defaultRequire": 1

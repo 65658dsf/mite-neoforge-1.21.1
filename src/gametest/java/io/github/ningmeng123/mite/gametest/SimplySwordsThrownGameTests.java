@@ -127,4 +127,49 @@ public final class SimplySwordsThrownGameTests {
         }
         h.succeed();
     }
+
+    @GameTest(template = "empty")
+    public static void savedDiamondAndNetheriteSpearsAreDiscardedInsteadOfRestoringTheDefaultWeapon(GameTestHelper h) throws ReflectiveOperationException {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        for (String material : List.of("diamond", "netherite")) {
+            Player owner = owner(h, GameType.SURVIVAL);
+            AbstractArrow original = spear(h, owner, new ItemStack(SimplySwordsCompat.weapon(material, "spear")));
+            AbstractArrow restored = (AbstractArrow)original.getType().create(h.getLevel());
+            try {
+                CompoundTag saved = original.saveWithoutId(new CompoundTag());
+                h.assertTrue(saved.contains("item"), "The original SS projectile writes its native saved weapon: " + material);
+                restored.load(saved); restored.setOwner(owner);
+                h.assertTrue(restored.isRemoved(), "Loading a retired saved spear discards the projectile immediately: " + material);
+                h.assertTrue(((ItemStack)Class.forName(SPEAR).getField("stack").get(restored)).isEmpty(),
+                        "Filtered saved weapon cannot leave SS's fallback unique spear in the synchronized field: " + material);
+                h.assertFalse(pickup(restored, owner), "The discarded saved spear cannot return a fallback weapon through native pickup: " + material);
+                h.assertTrue(owner.getInventory().isEmpty(), "Loading and pickup cannot introduce any retired or fallback weapon: " + material);
+            } finally { original.discard(); restored.discard(); owner.discard(); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void directlyConstructedRetiredSpearsCannotTickDamageOrEnterThePickupInventory(GameTestHelper h) throws ReflectiveOperationException {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        for (String material : List.of("diamond", "netherite")) {
+            Player owner = owner(h, GameType.SURVIVAL); Mob target = target(h);
+            AbstractArrow ticking = spear(h, owner, new ItemStack(SimplySwordsCompat.weapon(material, "spear")));
+            AbstractArrow attacking = spear(h, owner, new ItemStack(SimplySwordsCompat.weapon(material, "spear")));
+            AbstractArrow recovered = spear(h, owner, new ItemStack(SimplySwordsCompat.weapon(material, "spear")));
+            try {
+                ticking.setPos(h.absolutePos(new BlockPos(1, 12, 1)).getCenter());
+                ticking.setDeltaMovement(Vec3.ZERO); ticking.tick();
+                h.assertTrue(ticking.isRemoved(), "The native projectile tick retires a directly injected spear: " + material);
+                float health = target.getHealth();
+                hit(attacking, target);
+                h.assertValueEqual(target.getHealth(), health, "A retired spear hit is rejected before native damage: " + material);
+                h.assertTrue(attacking.isRemoved(), "Rejected retired spear attacks discard the projectile: " + material);
+                h.assertFalse(pickup(recovered, owner), "Native pickup rejects a retired spear before adding it to inventory: " + material);
+                h.assertTrue(recovered.isRemoved() && owner.getInventory().isEmpty(),
+                        "Native pickup discards the spear and never adds its original or default weapon: " + material);
+            } finally { ticking.discard(); attacking.discard(); recovered.discard(); target.discard(); owner.discard(); }
+        }
+        h.succeed();
+    }
 }

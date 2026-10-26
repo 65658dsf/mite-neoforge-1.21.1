@@ -14,6 +14,35 @@
   "display": {
     "announce_to_chat": false,
     "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            32
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.visited_underworld"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
       "translate": "advancement.mite.structures.ruined_portal.description"
     },
     "frame": "task",

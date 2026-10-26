@@ -48,7 +48,7 @@ public final class StructureProgressGateGameTests {
     private static final List<String> VILLAGES = List.of("village_plains", "village_desert", "village_savanna", "village_snowy", "village_taiga");
     private static final List<String> RUINED_PORTALS = List.of("ruined_portal", "ruined_portal_desert", "ruined_portal_jungle",
             "ruined_portal_swamp", "ruined_portal_mountain", "ruined_portal_ocean", "ruined_portal_nether");
-    private static final long DAY_THIRTY_START = 690000L;
+    private static final long DAY_THIRTY_TWO_START = 738000L;
     private static final long DAY_FORTY_FIVE_START = 1050000L;
     private static final ChunkPos COORDINATE = new ChunkPos(18400, -18600);
 
@@ -56,19 +56,19 @@ public final class StructureProgressGateGameTests {
 
     @GameTest(template = "empty")
     public static void portalAndOutpostGatesRequireTheirOwnBitsAtTheExactDisplayedDate(GameTestHelper helper) {
-        long[] dates = {-1L, 0L, DAY_THIRTY_START - 1L, DAY_THIRTY_START, DAY_THIRTY_START + 1L,
+        long[] dates = {-1L, 0L, DAY_THIRTY_TWO_START - 1L, DAY_THIRTY_TWO_START, DAY_THIRTY_TWO_START + 1L,
                 DAY_FORTY_FIVE_START - 1L, DAY_FORTY_FIVE_START, DAY_FORTY_FIVE_START + 1L, 3000000L};
-        helper.assertValueEqual(R196StructureGeneration.displayDay(DAY_THIRTY_START - 1L), 29L,
-                "The final locked portal tick displays day 29");
-        helper.assertValueEqual(R196StructureGeneration.displayDay(DAY_THIRTY_START), 30L,
-                "The portal unlock tick displays day 30 rather than waiting for another midnight");
+        helper.assertValueEqual(R196StructureGeneration.displayDay(DAY_THIRTY_TWO_START - 1L), 31L,
+                "The final locked portal tick displays day 31");
+        helper.assertValueEqual(R196StructureGeneration.displayDay(DAY_THIRTY_TWO_START), 32L,
+                "The portal unlock tick displays day 32 rather than waiting for another midnight");
         helper.assertValueEqual(R196StructureGeneration.displayDay(DAY_FORTY_FIVE_START - 1L), 44L,
                 "The final locked outpost tick displays day 44");
         helper.assertValueEqual(R196StructureGeneration.displayDay(DAY_FORTY_FIVE_START), 45L,
                 "The outpost unlock tick displays day 45");
         for (long date : dates) {
             for (int conditions = 0; conditions < 256; conditions++) {
-                boolean portalExpected = date >= DAY_THIRTY_START
+                boolean portalExpected = date >= DAY_THIRTY_TWO_START
                         && (conditions & StructureProgressData.UNDERWORLD_VISITED) != 0;
                 int outpostBits = StructureProgressData.BOW_CRAFTED | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED;
                 boolean outpostExpected = date >= DAY_FORTY_FIVE_START && (conditions & outpostBits) == outpostBits;
@@ -141,7 +141,7 @@ public final class StructureProgressGateGameTests {
             int complete = StructureProgressData.UNDERWORLD_VISITED | StructureProgressData.BOW_CRAFTED
                     | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED;
             for (String name : RUINED_PORTALS) {
-                assertDateBoundaryRecoversCandidate(helper, state, name, DAY_THIRTY_START, complete);
+                assertDateBoundaryRecoversCandidate(helper, state, name, DAY_THIRTY_TWO_START, complete);
             }
             assertDateBoundaryRecoversCandidate(helper, state, "pillager_outpost", DAY_FORTY_FIVE_START, complete);
         }
@@ -187,7 +187,7 @@ public final class StructureProgressGateGameTests {
             helper.assertTrue(nether != null && underworld != null, "Both actual dimensions are registered");
             Holder<Structure> portal = structure(nether, "ruined_portal_nether");
             CachedPresentManager manager = new CachedPresentManager(nether);
-            state.set(DAY_THIRTY_START, 0);
+            state.set(DAY_THIRTY_TWO_START, 0);
             helper.assertFalse(R196StructureGeneration.unlocked(nether, portal),
                     "The Nether portal variant cannot bypass the shared underworld visit requirement");
             helper.assertTrue(candidate(nether, manager, Set.of(portal)) == null,
@@ -249,9 +249,9 @@ public final class StructureProgressGateGameTests {
     public static void aMixedCandidateSetKeepsItsNativeModernStructureResult(GameTestHelper helper) throws ReflectiveOperationException {
         ServerLevel level = helper.getLevel();
         try (FirstDate ignored = new FirstDate(level)) {
-            Holder<Structure> igloo = structure(level, "igloo");
+            Holder<Structure> igloo = structure(level, "trial_chambers");
             helper.assertTrue(R196StructureGeneration.unlocked(level, igloo)
-                    && R196StructureGeneration.canGenerate(level, igloo, COORDINATE), "The independent modern igloo remains available");
+                    && R196StructureGeneration.canGenerate(level, igloo, COORDINATE), "The explicitly exempt modern trial chamber remains available");
             Set<Holder<Structure>> mixed = new LinkedHashSet<>();
             mixed.add(structure(level, "village_plains"));
             mixed.add(structure(level, "ruined_portal"));
@@ -261,7 +261,7 @@ public final class StructureProgressGateGameTests {
             Pair<BlockPos, Holder<Structure>> found = candidate(level, manager, mixed);
             helper.assertTrue(found != null && found.getSecond().equals(igloo), "Native locate returns the permitted modern structure");
             helper.assertTrue(found.getFirst().equals(placement().getLocatePos(COORDINATE)), "Native placement retains the exact original locate position");
-            helper.assertValueEqual(manager.checks, 1, "The locked village, portal and outpost never reach the cache while the igloo uses the native path once");
+            helper.assertValueEqual(manager.checks, 1, "The locked village, portal and outpost never reach the cache while the exempt trial chamber uses the native path once");
         }
         helper.succeed();
     }
@@ -299,7 +299,8 @@ public final class StructureProgressGateGameTests {
         BlockPos previousSpawn = level.getSharedSpawnPos();
         float previousAngle = level.getSharedSpawnAngle();
         WritableLevelData worldData = (WritableLevelData) level.getLevelData();
-        try {
+        try (StructureUnlockTestState state = new StructureUnlockTestState(level)) {
+            state.complete();
             Holder<Structure> temple = structure(level, "desert_pyramid");
             BlockPos candidateCenter = new BlockPos(COORDINATE.getMiddleBlockX(), 64, COORDINATE.getMiddleBlockZ());
             CachedPresentManager manager = new CachedPresentManager(level);

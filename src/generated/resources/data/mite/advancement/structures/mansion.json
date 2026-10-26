@@ -1,0 +1,87 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "crafted_mithril_equipment": {
+      "trigger": "minecraft:impossible"
+    },
+    "dark_forest_walk_cm": {
+      "trigger": "minecraft:impossible"
+    },
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            32
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.crafted_mithril_equipment"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_distance",
+          "with": [
+            {
+              "translate": "structure_progress.mite.dark_forest_walk_cm"
+            },
+            "1000.01"
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
+      "translate": "advancement.mite.structures.mansion.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:dark_oak_log"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.mansion.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "crafted_mithril_equipment"
+    ],
+    [
+      "dark_forest_walk_cm"
+    ]
+  ]
+}

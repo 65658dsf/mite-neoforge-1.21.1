@@ -40,7 +40,9 @@ FAMILIES = {
     "scythe": ("Scythe", "战镰"),
     "halberd": ("Halberd", "戟"),
 }
-RETIRED_NATIVE_IDS = {f"simplyswords:netherite_{family}" for family in FAMILIES}
+RETIRED_NATIVE_MATERIALS = ("diamond", "netherite")
+RETIRED_NATIVE_IDS = {f"simplyswords:{material}_{family}"
+                      for material in RETIRED_NATIVE_MATERIALS for family in FAMILIES}
 MATERIALS = {
     "rusted_iron": ("Rusted Iron", "锈铁"),
     "copper": ("Copper", "铜"),
@@ -322,19 +324,22 @@ def main() -> None:
         put("data/mite/tags/item/simplyswords_weapons.json", optional(ids))
         put("data/mite/tags/item/simplyswords/two_handed.json", optional(sorted(two_handed_ids)))
         put("data/simplyswords/tags/item/swords.json", optional(ids, RETIRED_NATIVE_IDS))
-        put("data/simplyswords/tags/item/netherite_gear.json", optional([], RETIRED_NATIVE_IDS))
+        for material in RETIRED_NATIVE_MATERIALS:
+            put(f"data/simplyswords/tags/item/{material}_gear.json", optional([],
+                    {f"simplyswords:{material}_{family}" for family in FAMILIES}))
         put("data/simplyswords/tags/item/spears.json", optional([item for item in ids if item.endswith("_spear")],
-                {"simplyswords:netherite_spear"}))
+                {f"simplyswords:{material}_spear" for material in RETIRED_NATIVE_MATERIALS}))
         for family in FAMILIES:
             put(f"data/simplyswords/tags/item/implicit/{family}.json", optional(
-                [item for item in ids if item.endswith("_" + family)], {f"simplyswords:netherite_{family}"}))
+                [item for item in ids if item.endswith("_" + family)],
+                {f"simplyswords:{material}_{family}" for material in RETIRED_NATIVE_MATERIALS}))
         for weight in ("light", "medium", "heavy"):
             upstream = json.loads(archive.read(f"data/simplyswords/tags/item/{weight}_weapons.json"))
             iron_ids = {value for value in upstream["values"] if isinstance(value, str) and value.startswith("simplyswords:iron_")}
             families = {value.removeprefix("simplyswords:iron_") for value in iron_ids}
             put(f"data/simplyswords/tags/item/{weight}_weapons.json", optional(
                 [item for item in ids if item.split("_")[-1] in families],
-                {f"simplyswords:netherite_{family}" for family in families}))
+                {f"simplyswords:{material}_{family}" for material in RETIRED_NATIVE_MATERIALS for family in families}))
 
         # The source enchantments replace vanilla support tags with exact source
         # families. Keep this optional union stable whether runData has SS or not.
@@ -383,7 +388,7 @@ def main() -> None:
             "Rusted iron weapons are loot equipment and have no crafting recipes.",
             "Recipe ingot and nugget costs match the original iron weapon recipe.",
             "Weapon models are used only when Simply Swords is loaded; recipes have a NeoForge mod-loaded condition.",
-            "Native netherite weapons are retired; optional tag removals preserve all other native weapon materials and unique weapons.",
+            "Native diamond and netherite weapons are retired; optional tag removals retain iron, gold and runic weapons. Unique weapons are excluded separately at runtime.",
         ],
         "optional_native_weapon_ids": len(native_ids),
         "retired_native_weapon_ids": sorted(RETIRED_NATIVE_IDS),

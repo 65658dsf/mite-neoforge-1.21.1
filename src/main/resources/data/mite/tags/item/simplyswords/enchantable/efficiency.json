@@ -6,14 +6,6 @@
       "required": false
     },
     {
-      "id": "simplyswords:diamond_greataxe",
-      "required": false
-    },
-    {
-      "id": "simplyswords:diamond_halberd",
-      "required": false
-    },
-    {
       "id": "simplyswords:gobber_compat/gobber/gobber_greataxe",
       "required": false
     },

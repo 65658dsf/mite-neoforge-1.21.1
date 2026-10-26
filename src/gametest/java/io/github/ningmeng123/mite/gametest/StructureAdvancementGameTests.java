@@ -5,6 +5,10 @@ import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.advancement.StructureAdvancements;
 import io.github.ningmeng123.mite.advancement.StructureAdvancements.Entry;
 import io.github.ningmeng123.mite.survival.DeathOrbQueue;
+import io.github.ningmeng123.mite.network.StructureProgressPayload;
+import io.github.ningmeng123.mite.rules.StructureUnlockRules.Metric;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.DecoderException;
 import io.github.ningmeng123.mite.worldgen.R196StructureGeneration;
 import io.github.ningmeng123.mite.worldgen.StructureProgressData;
 import io.github.ningmeng123.mite.worldgen.StructureUnlockAnnouncements;
@@ -23,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
@@ -45,14 +50,15 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class StructureAdvancementGameTests {
-    private static final int ALL = StructureUnlockAnnouncements.VILLAGE | StructureUnlockAnnouncements.END_PORTAL
-            | StructureUnlockAnnouncements.RUINED_PORTAL | StructureUnlockAnnouncements.PILLAGER_OUTPOST;
-    private static final long DAY_30 = 690_000L, DAY_45 = 1_050_000L, DAY_60 = 1_410_000L;
+    private static final int ALL = StructureAdvancements.ALL_ENABLED;
+    private static final long DAY_60 = 1_410_000L;
+    private static final Map<Metric, Long> COMPLETE = java.util.Arrays.stream(Metric.values())
+            .collect(java.util.stream.Collectors.toUnmodifiableMap(metric -> metric, Metric::cap));
 
     private StructureAdvancementGameTests() {}
 
     @GameTest(template = "empty")
-    public static void actualLoginShowsFourIncompleteStructureNodesWhenWorldStructuresAreDisabled(GameTestHelper h) {
+    public static void actualLoginShowsAllTwentyOneIncompleteStructureNodesWhenWorldStructuresAreDisabled(GameTestHelper h) {
         try (WorldState world = new WorldState(h); Session session = new Session(h)) {
             h.assertFalse(world.level.getServer().getWorldData().worldGenOptions().generateStructures(),
                     "The actual test world disables natural structures");
@@ -82,12 +88,9 @@ public final class StructureAdvancementGameTests {
                             "No criterion can be skipped through OR requirements: " + entry + "/" + criterion);
                 }
                 assertQuietDisplay(h, advancement);
-                h.assertTrue(advancement.value().display().orElseThrow().getIcon().is(switch (entry) {
-                    case RUINED_PORTAL -> Items.CRYING_OBSIDIAN;
-                    case PILLAGER_OUTPOST -> Items.CROSSBOW;
-                    case VILLAGE -> Items.BELL;
-                    case STRONGHOLD -> Items.END_PORTAL_FRAME;
-                }), "The real node uses its intended structure icon: " + entry);
+                h.assertValueEqual(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(
+                        advancement.value().display().orElseThrow().getIcon().getItem()), ResourceLocation.parse(entry.icon()),
+                        "The real node uses the icon from the shared structure definition: " + entry);
                 h.assertTrue(advancement.value().display().orElseThrow().getDescription().getContents()
                         instanceof TranslatableContents description
                         && description.getKey().equals("advancement.mite.structures." + entry.path() + ".description"),
@@ -114,28 +117,43 @@ public final class StructureAdvancementGameTests {
     public static void sharedPrerequisitesRespectEveryDateBoundaryAndMissingCondition(GameTestHelper h) {
         try (WorldState world = new WorldState(h); Session session = new Session(h)) {
             ServerPlayer player = session.player();
-            StructureAdvancements.sync(player, ALL, 0L, 0);
-            h.assertTrue(progress(h, player, Entry.STRONGHOLD).isDone(),
-                    "Strongholds keep the source behavior without an invented date or equipment gate");
-            assertGate(h, player, Entry.RUINED_PORTAL, DAY_30, StructureProgressData.UNDERWORLD_VISITED,
-                    Map.of("visited_underworld", StructureProgressData.UNDERWORLD_VISITED));
-            assertGate(h, player, Entry.PILLAGER_OUTPOST, DAY_45,
-                    StructureProgressData.BOW_CRAFTED | StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED,
-                    Map.of("crafted_bow", StructureProgressData.BOW_CRAFTED,
-                            "crafted_mithril_equipment", StructureProgressData.MITHRIL_EQUIPMENT_CRAFTED));
-            assertGate(h, player, Entry.VILLAGE, DAY_60, StructureProgressData.OBSIDIAN_TOOL,
-                    Map.of("crafted_obsidian_tool", StructureProgressData.OBSIDIAN_TOOL));
-            StructureAdvancements.sync(player, 0, DAY_60, StructureProgressData.ALL_CONDITIONS);
+            h.assertValueEqual(Entry.values().length, 21, "All 21 non-exempt structure families have visible unlock nodes");
+            for (Entry entry : Entry.values()) {
+                long firstTick = (entry.minimumDay() - 1L) * 24_000L - 6_000L;
+                StructureAdvancements.sync(player, ALL, firstTick - 1L, StructureProgressData.ALL_CONDITIONS, COMPLETE);
+                h.assertFalse(criterion(h, player, entry, "date"), "Last tick before its date is locked: " + entry);
+                h.assertFalse(progress(h, player, entry).isDone(), "Exploration cannot bypass the date: " + entry);
+                for (var missing : entry.flagRequirements()) {
+                    StructureAdvancements.sync(player, ALL, firstTick,
+                            StructureProgressData.ALL_CONDITIONS & ~missing.bit(), COMPLETE);
+                    h.assertFalse(criterion(h, player, entry, missing.criterion()), "Missing shared craft/visit stays locked: " + entry);
+                    h.assertFalse(progress(h, player, entry).isDone(), "Every legacy condition is independently required: " + entry);
+                }
+                for (var missing : entry.definition().requirements()) {
+                    var below = new java.util.EnumMap<Metric, Long>(Metric.class);
+                    below.putAll(COMPLETE);
+                    below.put(missing.metric(), missing.target() - 1L);
+                    StructureAdvancements.sync(player, ALL, firstTick, StructureProgressData.ALL_CONDITIONS, below);
+                    h.assertFalse(criterion(h, player, entry, missing.criterion()), "One centimeter/count below remains locked: " + entry);
+                    h.assertFalse(progress(h, player, entry).isDone(), "Every exploration condition is independently required: " + entry);
+                    below.put(missing.metric(), missing.target());
+                    StructureAdvancements.sync(player, ALL, firstTick, StructureProgressData.ALL_CONDITIONS, below);
+                    h.assertTrue(progress(h, player, entry).isDone(), "Exact metric target completes with all other prerequisites: " + entry);
+                }
+                StructureAdvancements.sync(player, ALL, firstTick, StructureProgressData.ALL_CONDITIONS, COMPLETE);
+                h.assertTrue(progress(h, player, entry).isDone(), "The first allowed tick completes every exact prerequisite: " + entry);
+            }
+            StructureAdvancements.sync(player, 0, DAY_60, StructureProgressData.ALL_CONDITIONS, COMPLETE);
             for (Entry entry : Entry.values()) {
                 h.assertFalse(progress(h, player, entry).isDone(), "Disabling structures revokes completion: " + entry);
                 h.assertFalse(criterion(h, player, entry, "structures_enabled"), "The enabled criterion is revoked: " + entry);
             }
             for (Entry enabled : Entry.values()) {
-                StructureAdvancements.sync(player, bit(enabled), DAY_60, StructureProgressData.ALL_CONDITIONS);
+                StructureAdvancements.sync(player, enabled.enabledBit(), DAY_60, StructureProgressData.ALL_CONDITIONS, COMPLETE);
                 for (Entry candidate : Entry.values()) h.assertValueEqual(progress(h, player, candidate).isDone(), candidate == enabled,
-                        "Only its actual enabled structure set can complete a node: enabled=" + enabled + ", candidate=" + candidate);
+                        "Only its enabled structure set can complete a node: enabled=" + enabled + ", candidate=" + candidate);
             }
-            StructureAdvancements.sync(player, ALL, DAY_60, StructureProgressData.ALL_CONDITIONS);
+            StructureAdvancements.sync(player, ALL, DAY_60, StructureProgressData.ALL_CONDITIONS, COMPLETE);
             var clock = (ServerLevelData) world.level.getLevelData();
             long gameTime = world.level.getGameTime();
             try {
@@ -157,12 +175,12 @@ public final class StructureAdvancementGameTests {
             var unrelated = holder(h, original, ResourceLocation.withDefaultNamespace("story/mine_stone"));
             for (String criterion : unrelated.value().criteria().keySet()) original.getAdvancements().award(unrelated, criterion);
             session.drain();
-            StructureAdvancements.sync(original, ALL, DAY_60, StructureProgressData.ALL_CONDITIONS);
+            StructureAdvancements.sync(original, ALL, DAY_60, StructureProgressData.ALL_CONDITIONS, COMPLETE);
             original.getAdvancements().flushDirty(original);
             assertNoChat(h, session.drain());
             for (Entry entry : Entry.values()) h.assertTrue(progress(h, original, entry).isDone(),
                     "The shared snapshot completes the structure for a player who did not personally fulfill it: " + entry);
-            for (int repeat = 0; repeat < 3; repeat++) StructureAdvancements.sync(original, ALL, DAY_60, StructureProgressData.ALL_CONDITIONS);
+            for (int repeat = 0; repeat < 3; repeat++) StructureAdvancements.sync(original, ALL, DAY_60, StructureProgressData.ALL_CONDITIONS, COMPLETE);
             original.getAdvancements().flushDirty(original);
             List<Object> repeated = session.drain();
             assertNoChat(h, repeated);
@@ -189,13 +207,13 @@ public final class StructureAdvancementGameTests {
             for (Entry entry : Entry.values()) {
                 h.assertFalse(progress(h, reloaded, entry).isDone(),
                         "Production login corrects the saved completion using the disabled, rolled-back world: " + entry);
-                if (entry != Entry.STRONGHOLD) h.assertFalse(criterion(h, reloaded, entry, "date"),
+                h.assertFalse(criterion(h, reloaded, entry, "date"),
                         "A saved date milestone is revoked after calendar rollback: " + entry);
             }
             h.assertTrue(reloaded.getAdvancements().getOrStartProgress(unrelated).isDone(),
                     "Structure synchronization preserves an unrelated saved advancement");
             assertNoChat(h, session.drain());
-            StructureAdvancements.sync(reloaded, ALL, DAY_60, StructureProgressData.ALL_CONDITIONS);
+            StructureAdvancements.sync(reloaded, ALL, DAY_60, StructureProgressData.ALL_CONDITIONS, COMPLETE);
             for (Entry entry : Entry.values()) h.assertTrue(progress(h, reloaded, entry).isDone(),
                     "Meeting the prerequisites again restores current completion: " + entry);
             assertNoChat(h, session.drain());
@@ -203,28 +221,31 @@ public final class StructureAdvancementGameTests {
         h.succeed();
     }
 
-    private static void assertGate(GameTestHelper h, ServerPlayer player, Entry entry, long firstTick, int allBits,
-            Map<String, Integer> conditions) {
-        StructureAdvancements.sync(player, ALL, firstTick - 1L, allBits);
-        h.assertFalse(criterion(h, player, entry, "date"), "The last tick before the unlock date stays locked: " + entry);
-        h.assertFalse(progress(h, player, entry).isDone(), "Shared prerequisites cannot bypass the date: " + entry);
-        for (var missing : conditions.entrySet()) {
-            StructureAdvancements.sync(player, ALL, firstTick, allBits & ~missing.getValue());
-            h.assertTrue(criterion(h, player, entry, "date"), "The date criterion completes exactly at the first allowed tick: " + entry);
-            h.assertFalse(criterion(h, player, entry, missing.getKey()), "A missing shared condition stays incomplete: " + missing.getKey());
-            h.assertFalse(progress(h, player, entry).isDone(), "A missing shared condition prevents completion: " + entry);
-        }
-        StructureAdvancements.sync(player, ALL, firstTick, allBits);
-        h.assertTrue(progress(h, player, entry).isDone(), "The date and all shared conditions complete exactly on the boundary: " + entry);
-    }
-
-    private static int bit(Entry entry) {
-        return switch (entry) {
-            case RUINED_PORTAL -> StructureUnlockAnnouncements.RUINED_PORTAL;
-            case PILLAGER_OUTPOST -> StructureUnlockAnnouncements.PILLAGER_OUTPOST;
-            case VILLAGE -> StructureUnlockAnnouncements.VILLAGE;
-            case STRONGHOLD -> StructureUnlockAnnouncements.END_PORTAL;
-        };
+    @GameTest(template = "empty")
+    public static void progressSnapshotCodecIsBoundedAndPreservesAllCurrentTargets(GameTestHelper h) {
+        var mutable = new java.util.EnumMap<Metric, Long>(Metric.class);
+        mutable.putAll(COMPLETE);
+        var payload = new StructureProgressPayload(ALL, 60L, StructureProgressData.ALL_CONDITIONS, mutable);
+        mutable.clear();
+        h.assertValueEqual(payload.values(), COMPLETE, "Snapshot owns an immutable copy of every metric");
+        var bytes = new RegistryFriendlyByteBuf(Unpooled.buffer(), h.getLevel().registryAccess());
+        try {
+            StructureProgressPayload.CODEC.encode(bytes, payload);
+            h.assertTrue(bytes.readableBytes() < 200, "Fixed 18 bounded counters have a compact maximum wire size");
+            h.assertValueEqual(StructureProgressPayload.CODEC.decode(bytes), payload, "Every shared flag, date and counter survives actual wire encoding");
+            h.assertFalse(bytes.isReadable(), "The decoder consumes exactly the fixed snapshot");
+            for (long invalid : new long[]{-1L, Metric.values()[0].cap() + 1L}) {
+                bytes.clear(); bytes.writeVarInt(ALL); bytes.writeVarLong(32L); bytes.writeVarInt(0); bytes.writeVarLong(invalid);
+                boolean rejected = false;
+                try { StructureProgressPayload.CODEC.decode(bytes); } catch (DecoderException expected) { rejected = true; }
+                h.assertTrue(rejected, "Negative or over-cap counters are rejected before becoming client state");
+            }
+            bytes.clear(); bytes.writeVarInt(-1); bytes.writeVarLong(32L); bytes.writeVarInt(0);
+            boolean rejected = false;
+            try { StructureProgressPayload.CODEC.decode(bytes); } catch (DecoderException expected) { rejected = true; }
+            h.assertTrue(rejected, "Unknown structure bits are rejected");
+        } finally { bytes.release(); }
+        h.succeed();
     }
 
     private static AdvancementHolder holder(GameTestHelper h, ServerPlayer player, ResourceLocation id) {

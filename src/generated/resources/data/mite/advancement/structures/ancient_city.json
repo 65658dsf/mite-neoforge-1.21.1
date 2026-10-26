@@ -1,0 +1,87 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "crafted_mithril_equipment": {
+      "trigger": "minecraft:impossible"
+    },
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "deep_sneak_cm": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            32
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.crafted_mithril_equipment"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_distance",
+          "with": [
+            {
+              "translate": "structure_progress.mite.deep_sneak_cm"
+            },
+            "300.01"
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
+      "translate": "advancement.mite.structures.ancient_city.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:sculk"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.ancient_city.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "crafted_mithril_equipment"
+    ],
+    [
+      "deep_sneak_cm"
+    ]
+  ]
+}

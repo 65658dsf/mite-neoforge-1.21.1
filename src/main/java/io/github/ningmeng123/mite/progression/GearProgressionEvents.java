@@ -77,6 +77,8 @@ public final class GearProgressionEvents {
         MiningAction action = MINING.get();
         if (action == null || action.rewarded || action.player != player || !action.pos.equals(pos)) return;
         action.rewarded = true;
+        if (canHarvest && GearProgression.canGain(player))
+            io.github.ningmeng123.mite.worldgen.StructureExplorationProgress.mined(player, action.state, action.placed);
         if (!canHarvest || action.placed || !GearProgression.canGain(player)
                 || !(action.hardness > 0F) || !GearProgression.canMine(action.tool, action.state, player.level(), pos)) return;
         GearProgression.award(action.tool, GearProgressionRules.miningExperienceMillis(action.hardness,

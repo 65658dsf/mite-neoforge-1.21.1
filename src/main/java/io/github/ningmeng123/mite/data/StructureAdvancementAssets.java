@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import io.github.ningmeng123.mite.advancement.StructureAdvancements;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -32,7 +33,7 @@ public final class StructureAdvancementAssets {
         icon.addProperty("id", item);
         display.add("icon", icon);
         display.add("title", translated("advancement.mite.structures." + path + ".title"));
-        display.add("description", translated("advancement.mite.structures." + path + ".description"));
+        display.add("description", description(path));
         display.addProperty("frame", "task");
         display.addProperty("show_toast", false);
         display.addProperty("announce_to_chat", false);
@@ -54,9 +55,44 @@ public final class StructureAdvancementAssets {
                 output.resolve("data/" + id.getNamespace() + "/advancement/" + id.getPath() + ".json")));
     }
 
-    private static JsonObject translated(String key) {
+    private static JsonObject description(String path) {
+        var text = translated("advancement.mite.structures." + path + ".description");
+        var entry = StructureAdvancements.entry(path);
+        if (entry == null) return text;
+        var extra = new JsonArray();
+        line(extra, translated("structure_progress.mite.enabled"));
+        line(extra, translated("structure_progress.mite.required_date", entry.minimumDay()));
+        for (var need : entry.flagRequirements()) line(extra, translated("structure_progress.mite." + need.criterion()));
+        for (var need : entry.definition().requirements()) {
+            var label = translated("structure_progress.mite." + need.metric().key());
+            line(extra, need.metric().distance()
+                    ? translated("structure_progress.mite.required_distance", label, String.format(Locale.ROOT, "%.2f", need.target() / 100D))
+                    : translated("structure_progress.mite.required_count", label, need.target()));
+        }
+        line(extra, translated("structure_progress.mite.new_chunks"));
+        text.add("extra", extra);
+        return text;
+    }
+
+    private static void line(JsonArray lines, JsonObject text) {
+        var newline = new JsonObject();
+        newline.addProperty("text", "\n");
+        lines.add(newline);
+        lines.add(text);
+    }
+
+    private static JsonObject translated(String key, Object... arguments) {
         var component = new JsonObject();
         component.addProperty("translate", key);
+        if (arguments.length > 0) {
+            var values = new JsonArray();
+            for (Object argument : arguments) {
+                if (argument instanceof JsonObject object) values.add(object);
+                else if (argument instanceof Number number) values.add(number);
+                else values.add(argument.toString());
+            }
+            component.add("with", values);
+        }
         return component;
     }
 }

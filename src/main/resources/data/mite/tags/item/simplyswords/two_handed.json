@@ -250,38 +250,6 @@
       "required": false
     },
     {
-      "id": "simplyswords:diamond_claymore",
-      "required": false
-    },
-    {
-      "id": "simplyswords:diamond_glaive",
-      "required": false
-    },
-    {
-      "id": "simplyswords:diamond_greataxe",
-      "required": false
-    },
-    {
-      "id": "simplyswords:diamond_greathammer",
-      "required": false
-    },
-    {
-      "id": "simplyswords:diamond_halberd",
-      "required": false
-    },
-    {
-      "id": "simplyswords:diamond_katana",
-      "required": false
-    },
-    {
-      "id": "simplyswords:diamond_scythe",
-      "required": false
-    },
-    {
-      "id": "simplyswords:diamond_twinblade",
-      "required": false
-    },
-    {
       "id": "simplyswords:dreadtide",
       "required": false
     },

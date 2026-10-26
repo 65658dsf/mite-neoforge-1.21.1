@@ -143,7 +143,7 @@ neoForge {
             }
             systemProperty 'mite.craftingCoverageOutput', file(project.providers.gradleProperty('miteCraftingCoverageOutput')
                     .getOrElse('build/verification/common-crafting-coverage.json')).absolutePath
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.providers.gradleProperty('miteGameTestNamespaces').getOrElse('mite,mite_defaults,mite_bucket_pickup,mite_caves,mite_cave_links,mite_emerald,mite_shrieker_ores,mite_gem_sacrifice,mite_feedback,mite_gameplay,mite_targeting,mite_mob_reach,mite_trades,mite_simplyswords,mite_equipment_recycling,mite_bettercombat,mite_vibranium,mite_gear,mite_equipment_drop,mite_equipment_progression,mite_upgrade,mite_fortune,mite_enchanting,mite_enchanting_chance,mite_underworld_dungeon_mobs,mite_item_lifetime,mite_strongbox_announcement,mite_tab_list,mite_spawning,mite_surface_caves,mite_crafting_audit,mite_damage_audit,mite_barrier,mite_hunting,mite_phantom')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.providers.gradleProperty('miteGameTestNamespaces').getOrElse('mite,mite_defaults,mite_bucket_pickup,mite_caves,mite_cave_links,mite_emerald,mite_shrieker_ores,mite_gem_sacrifice,mite_feedback,mite_gameplay,mite_targeting,mite_mob_reach,mite_trades,mite_simplyswords,mite_equipment_recycling,mite_bettercombat,mite_vibranium,mite_gear,mite_equipment_drop,mite_equipment_progression,mite_upgrade,mite_fortune,mite_enchanting,mite_enchanting_chance,mite_underworld_dungeon_mobs,mite_item_lifetime,mite_strongbox_announcement,mite_tab_list,mite_spawning,mite_surface_caves,mite_crafting_audit,mite_damage_audit,mite_barrier,mite_hunting,mite_phantom,mite_structure_exploration')
         }
         data {
             data()

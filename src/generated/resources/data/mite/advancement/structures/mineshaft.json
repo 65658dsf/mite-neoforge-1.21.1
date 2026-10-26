@@ -1,0 +1,75 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    },
+    "underground_walk_cm": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            32
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_distance",
+          "with": [
+            {
+              "translate": "structure_progress.mite.underground_walk_cm"
+            },
+            "500.01"
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
+      "translate": "advancement.mite.structures.mineshaft.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:rail"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.mineshaft.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "underground_walk_cm"
+    ]
+  ]
+}

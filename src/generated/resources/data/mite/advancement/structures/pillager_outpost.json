@@ -17,6 +17,41 @@
   "display": {
     "announce_to_chat": false,
     "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            45
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.crafted_bow"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.crafted_mithril_equipment"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
       "translate": "advancement.mite.structures.pillager_outpost.description"
     },
     "frame": "task",

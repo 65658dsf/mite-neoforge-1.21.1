@@ -2,10 +2,6 @@
   "replace": false,
   "values": [
     {
-      "id": "simplyswords:diamond_scythe",
-      "required": false
-    },
-    {
       "id": "simplyswords:gobber_compat/gobber/gobber_scythe",
       "required": false
     },

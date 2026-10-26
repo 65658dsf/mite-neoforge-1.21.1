@@ -54,7 +54,8 @@ public final class WorldgenConfigGameTests {
         Holder<Structure> deepTrial = structure(underworld, "mite:underworld_trial_chambers");
         boolean oldSurface = MiteConfig.OVERWORLD_TRIALS.get();
         boolean oldDeep = MiteConfig.UNDERWORLD_TRIALS.get();
-        try {
+        try (StructureUnlockTestState state = new StructureUnlockTestState(overworld)) {
+            state.complete();
             MiteConfig.OVERWORLD_TRIALS.set(true);
             MiteConfig.UNDERWORLD_TRIALS.set(false);
             MiteConfig.refreshEnchantmentRules();

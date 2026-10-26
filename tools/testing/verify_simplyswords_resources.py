@@ -16,7 +16,8 @@ RESOURCES = ROOT / "src/main/resources"
 MATERIALS = {"rusted_iron", "copper", "silver", "ancient_metal", "mithril", "adamantium", "vibranium"}
 FAMILIES = {"longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive", "warglaive",
             "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd"}
-RETIRED_NATIVE_IDS = {f"simplyswords:netherite_{family}" for family in FAMILIES}
+RETIRED_NATIVE_IDS = {f"simplyswords:{material}_{family}"
+                      for material in ("diamond", "netherite") for family in FAMILIES}
 TWO_HANDED_FAMILIES = {"twinblade", "katana", "glaive", "claymore", "greataxe", "greathammer", "scythe", "halberd"}
 
 
@@ -86,11 +87,15 @@ def verify_retired_native_tags(archive):
 
     targets = {f"data/c/tags/item/{tag}.json": RETIRED_NATIVE_IDS
                for tag in ("swords", "tools", "tools/melee_weapon")}
-    targets.update({f"data/simplyswords/tags/item/{tag}.json": RETIRED_NATIVE_IDS
-                    for tag in ("swords", "netherite_gear")})
-    targets["data/simplyswords/tags/item/spears.json"] = {"simplyswords:netherite_spear"}
+    targets["data/simplyswords/tags/item/swords.json"] = RETIRED_NATIVE_IDS
+    for material in ("diamond", "netherite"):
+        targets[f"data/simplyswords/tags/item/{material}_gear.json"] = {
+            f"simplyswords:{material}_{family}" for family in FAMILIES}
+    targets["data/simplyswords/tags/item/spears.json"] = {
+        "simplyswords:diamond_spear", "simplyswords:netherite_spear"}
     for family in FAMILIES:
-        targets[f"data/simplyswords/tags/item/implicit/{family}.json"] = {f"simplyswords:netherite_{family}"}
+        targets[f"data/simplyswords/tags/item/implicit/{family}.json"] = {
+            f"simplyswords:diamond_{family}", f"simplyswords:netherite_{family}"}
     for weight in ("light", "medium", "heavy"):
         path = f"data/simplyswords/tags/item/{weight}_weapons.json"
         upstream = json.loads(archive.read(path))
@@ -98,7 +103,7 @@ def verify_retired_native_tags(archive):
     for path, expected in targets.items():
         tag = read(path)
         removed = tag.get("remove", [])
-        assert {value["id"] for value in removed} == expected, f"Native netherite exclusion: {path}"
+        assert {value["id"] for value in removed} == expected, f"Native diamond/netherite exclusion: {path}"
         assert all(value.get("required") is False for value in removed), f"Optional mod removal must be optional: {path}"
 
 

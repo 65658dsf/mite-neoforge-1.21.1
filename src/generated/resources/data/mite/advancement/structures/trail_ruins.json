@@ -1,0 +1,75 @@
+{
+  "parent": "mite:structures/root",
+  "criteria": {
+    "brush_crafted": {
+      "trigger": "minecraft:impossible"
+    },
+    "date": {
+      "trigger": "minecraft:impossible"
+    },
+    "structures_enabled": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "extra": [
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.enabled"
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_date",
+          "with": [
+            32
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.required_count",
+          "with": [
+            {
+              "translate": "structure_progress.mite.brush_crafted"
+            },
+            1
+          ]
+        },
+        {
+          "text": "\n"
+        },
+        {
+          "translate": "structure_progress.mite.new_chunks"
+        }
+      ],
+      "translate": "advancement.mite.structures.trail_ruins.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "minecraft:brush"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.mite.structures.trail_ruins.title"
+    }
+  },
+  "requirements": [
+    [
+      "structures_enabled"
+    ],
+    [
+      "date"
+    ],
+    [
+      "brush_crafted"
+    ]
+  ]
+}
