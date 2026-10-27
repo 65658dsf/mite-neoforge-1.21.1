@@ -49,4 +49,6 @@
 
 使用新本体的附属回归完成 369 项 GameTest：366 项通过，3 项早期装备阶段断言失败。随后改用用户安装的原始 0.2.15 本体重跑，完整复现同样的 3 项失败，分别是 `loadedEarlyLocksClearHiddenCachesAndRestoreMissingBowsWithoutWashingCustomGear`、`sevenFinalizedEarlyArchersKeepPlainBowsEmptyStockAndRealRangedAiThroughDay35`、`earlyMeleeBossesStayEmptyAndFreshDay36RestoresTheirInternalEquipment`。本轮未改写这些既有断言，也不宣称附属全量通过；对照日志为 `extension.log` 和 `extension-baseline.log`。附属 38 项 JUnit 全部通过且无跳过。
 
-交付包针对用户当前安装版本，通过 `-Pmod_version=0.2.15` 构建；仓库原有配套默认版本不变。JAR 逐文件与用户原包比较，只有本体寻路相关生产类发生变化，附属 JAR 与用户原附属校验值相同。包名为 `build/releases/mite-modern-0.2.15-slow-tick-fix.zip`，内含安装说明、SHA-256 和完整 `verification.json`。生产类与参与验证的编译输出一致，未打入开发测试。
+当次修复交付包针对用户安装版本，通过 `-Pmod_version=0.2.15` 构建，仓库当时原有配套默认版本不变。该 JAR 逐文件与用户原包比较，只有本体寻路相关生产类发生变化，附属 JAR 与用户原附属校验值相同。包名为 `build/releases/mite-modern-0.2.15-slow-tick-fix.zip`，内含安装说明、SHA-256 和完整 `verification.json`。生产类与参与验证的编译输出一致，未打入开发测试。
+
+随后按用户要求形成[正式 0.2.15 配套版本](../release-0.2.15.md)：两个仓库默认版本、本体 JAR 路径及附属最低依赖统一为 0.2.15。正式本体与已验证的第二轮修复 JAR 一致；正式附属仅调整模组元数据中的最低本体版本，生产类不变。两仓库再次 `build` 通过，未因纯版本配置调整重复运行全量游戏行为测试；既有装备阶段的 3 项基线失败仍按上述记录披露。
