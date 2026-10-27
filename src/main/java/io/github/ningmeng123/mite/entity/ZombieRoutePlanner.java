@@ -27,6 +27,7 @@ import net.neoforged.neoforge.event.EventHooks;
 /** Bounded pursuit compares real walking routes with verified, short ground-level openings. @author NingMeng123 */
 public final class ZombieRoutePlanner {
     public static final int REPLAN_TICKS = 10;
+    private static final int FAILED_REPLAN_TICKS = 40;
     private static final int MAX_BLOCKS = 8;
     private final PathfinderMob mob;
     private final R196DiggerGoal digger;
@@ -36,6 +37,8 @@ public final class ZombieRoutePlanner {
     private LivingEntity prey;
     private ItemStack held = ItemStack.EMPTY;
     private boolean griefing, frenzy;
+    private boolean attackPosition;
+    @Nullable private BlockState openingState;
     private final java.util.LinkedHashMap<BlockPos,Long> rejected=new java.util.LinkedHashMap<>();
 
     public record Plan(@Nullable Path path, @Nullable BlockPos firstBlock, boolean portal, double walkingTicks, double breakingTicks) {
@@ -45,13 +48,16 @@ public final class ZombieRoutePlanner {
 
     public ZombieRoutePlanner(PathfinderMob mob, R196DiggerGoal digger) { this.mob = mob; this.digger = digger; }
 
-    public void invalidate() { cached = null; }
+    public void invalidate() {
+        cached = null; attackPosition = false;
+        MeleePursuitPaths.invalidate(mob);
+    }
 
     /** A real protection veto is remembered briefly; speculative path queries never fire destroy events. */
     public void reject(BlockPos pos) {
         rejected.put(pos.immutable(),mob.level().getGameTime()+200L);
         while(rejected.size()>32)rejected.remove(rejected.keySet().iterator().next());
-        cached=null;
+        invalidate();
     }
 
     public boolean rejected(BlockPos pos) {
@@ -67,16 +73,43 @@ public final class ZombieRoutePlanner {
 
     public Plan plan() {
         LivingEntity target = mob.getTarget();
-        if (target == null) return new Plan(null, null, false, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        if (target == null) {
+            invalidate();
+            return new Plan(null, null, false, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        }
         long now = mob.level().getGameTime();
         boolean permitted = EventHooks.canEntityGrief(mob.level(), mob), frenzied = R196MonsterAi.frenzied(mob);
-        int lifetime = cached != null && !cached.completeWalkingRoute() && !cached.choosesBreaking() ? 20 : REPLAN_TICKS;
+        // Equipment, permissions and an opening changing must also bypass the shared failed-route
+        // backoff. Expiring an unchanged plan alone intentionally keeps that backoff intact.
+        if (cached != null && (prey != target || griefing != permitted || frenzy != frenzied
+                || !ItemStack.isSameItemSameComponents(held, mob.getMainHandItem())
+                || cached.firstBlock() != null && !mob.level().getBlockState(cached.firstBlock()).equals(openingState)))
+            invalidate();
+        // All three pursuit goals ask for a plan even while a zombie can already attack. Checking
+        // the actual weapon reach and physical rays avoids an otherwise unnecessary path search.
+        if (SourceMeleeGoal.canStrike(mob, target)) {
+            if (cached == null || !attackPosition || prey != target || !origin.equals(mob.position())
+                    || griefing != permitted || frenzy != frenzied
+                    || !ItemStack.isSameItemSameComponents(held, mob.getMainHandItem())) {
+                remember(target, now, permitted, frenzied);
+                attackPosition = true;
+                cached = new Plan(new Path(java.util.List.of(new Node(mob.getBlockX(), mob.getBlockY(), mob.getBlockZ())),
+                        mob.blockPosition(), true), null, false, 0D, Double.POSITIVE_INFINITY);
+            }
+            return cached;
+        }
+        // A target can leave melee reach without moving a whole block. Never retain the zero-step
+        // plan after that happens, even while the ordinary movement cache would still be valid.
+        if (attackPosition) invalidate();
+        long retryAt = MeleePursuitPaths.failedRetryAt(mob);
+        long lifetime = cached != null && !cached.completeWalkingRoute() && !cached.choosesBreaking()
+                ? Math.max(FAILED_REPLAN_TICKS + Math.floorMod(mob.getId(), MeleePursuitPaths.RETRY_STAGGER_TICKS),
+                        retryAt > plannedAt ? retryAt - plannedAt : 0L) : REPLAN_TICKS;
         if (cached != null && prey == target && now >= plannedAt && now - plannedAt < lifetime
                 && origin.distanceToSqr(mob.position()) < 1D && destination.distanceToSqr(target.position()) < 1D
                 && griefing == permitted && frenzy == frenzied && ItemStack.isSameItemSameComponents(held, mob.getMainHandItem())
-                && (cached.firstBlock() == null || !mob.level().getBlockState(cached.firstBlock()).isAir())) return cached;
-        prey = target; origin = mob.position(); destination = target.position(); plannedAt = now;
-        held = mob.getMainHandItem().copy(); griefing = permitted; frenzy = frenzied;
+                && (cached.firstBlock() == null || mob.level().getBlockState(cached.firstBlock()).equals(openingState))) return cached;
+        remember(target, now, permitted, frenzied);
         Path walk = MeleePursuitPaths.find(mob, target, cached == null ? null : cached.path());
         double walking = reaches(walk, target) ? pathTicks(walk) : Double.POSITIVE_INFINITY;
         Opening opening = permitted ? directOpening(target) : null;
@@ -87,10 +120,18 @@ public final class ZombieRoutePlanner {
             Path approach = reachable ? new Path(java.util.List.of(new Node(mob.getBlockX(),mob.getBlockY(),mob.getBlockZ())),
                     mob.blockPosition(),true) : findPath(opening.approach(), 0);
             // A speculative opening never directs the mob through an intervening wall.
-            if (reachable || approach != null && approach.canReach())
+            if (reachable || approach != null && approach.canReach()) {
+                openingState = mob.level().getBlockState(opening.first());
                 return cached = new Plan(approach, opening.first(), opening.portal(), walking, breaking);
+            }
         }
         return cached = new Plan(walk, null, false, walking, breaking);
+    }
+
+    private void remember(LivingEntity target, long now, boolean permitted, boolean frenzied) {
+        prey = target; origin = mob.position(); destination = target.position(); plannedAt = now;
+        held = mob.getMainHandItem().copy(); griefing = permitted; frenzy = frenzied;
+        attackPosition = false; openingState = null;
     }
 
     /** Never loads a chunk, and closed portals are obstacles rather than imaginary open doorways. */

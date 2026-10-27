@@ -161,7 +161,7 @@ public final class SourceMonsterTargeting {
                 : canSee(mob, target, ignoreLeaves);
     }
 
-    private static boolean suitable(PathfinderMob owner, LivingEntity target) {
+    static boolean suitable(PathfinderMob owner, LivingEntity target) {
         if (target == owner || !target.isAlive() || !owner.canAttack(target) || owner.isAlliedTo(target)
                 || !owner.isWithinRestriction(target.blockPosition())) return false;
         if (target instanceof Player player && (player.isCreative() || player.isSpectator() || player.getAbilities().invulnerable)) return false;
@@ -169,7 +169,7 @@ public final class SourceMonsterTargeting {
         return true;
     }
 
-    private static LivingEntity mountedTarget(LivingEntity entity) {
+    static LivingEntity mountedTarget(LivingEntity entity) {
         return entity.getVehicle() instanceof LivingEntity mount && !mount.isInvulnerable() ? mount : entity;
     }
 
@@ -204,8 +204,9 @@ public final class SourceMonsterTargeting {
             return true;
         }
         @Override public void stop() { previous = mob.getTarget(); setGoalTarget(mob, null); target = null; }
+        boolean requiresInitialSight(LivingEntity candidate) { return checksSight(mob, candidate, sight); }
         boolean initiallySuitable(LivingEntity candidate) {
-            if (!suitable(mob, candidate) || checksSight(mob, candidate, sight) && !targetVisible(mob, candidate, previous == candidate)) return false;
+            if (!suitable(mob, candidate) || requiresInitialSight(candidate) && !targetVisible(mob, candidate, previous == candidate)) return false;
             if (mob instanceof Witch witch && candidate instanceof ServerPlayer player) WitchCursing.tryCurse(witch, player);
             return true;
         }
@@ -219,6 +220,11 @@ public final class SourceMonsterTargeting {
             super(mob, sight); this.type = type; this.chance = chance;
         }
         public Class<? extends LivingEntity> targetType() { return type; }
+        @Override boolean requiresInitialSight(LivingEntity candidate) {
+            // Digging and nearby bats may preserve an existing pursuit, but neither establishes
+            // first-hand sight of a new player. Revenge and accepted target memory use other paths.
+            return candidate instanceof Player || super.requiresInitialSight(candidate);
+        }
         private LivingEntity nearest() {
             double range = effectiveRange(mob), vertical = 6D;
             boolean archer = bowArcher(mob);
@@ -231,11 +237,10 @@ public final class SourceMonsterTargeting {
             if ((candidates.isEmpty() || archer) && type == Player.class && mob.level() instanceof ServerLevel level) {
                 boolean digger = R196MonsterAi.diggingEnabled(mob) && R196OutdoorChecks.outdoors(level, mob.blockPosition());
                 if (digger || archer) for (Player player : level.players()) {
-                    if (!suitable(mob, player)) continue;
                     double dx = player.getX() - mob.getX(), dy = player.getY() - mob.getY(), dz = player.getZ() - mob.getZ();
-                    if (digger && dy >= vertical && dy <= 14D && dx * dx + dz * dz < 16D
-                            || archer && Math.abs(dy) >= vertical && mob.distanceToSqr(player) <= rangeSquared
-                            && targetVisible(mob, player, player == mob.getTarget())) candidates.add(player);
+                    boolean elevatedDigger = digger && dy >= vertical && dy <= 14D && dx * dx + dz * dz < 16D;
+                    boolean elevatedArcher = archer && Math.abs(dy) >= vertical && mob.distanceToSqr(player) <= rangeSquared;
+                    if ((elevatedDigger || elevatedArcher) && initiallySuitable(player)) candidates.add(player);
                 }
             }
             candidates.sort(Comparator.comparingDouble(mob::distanceToSqr));
@@ -243,6 +248,10 @@ public final class SourceMonsterTargeting {
                 if (candidate instanceof R196Wolf wolf && wolf.miteKind() == MobKind.HELLHOUND && type == Animal.class) continue;
                 if (zombieAnimals && candidate instanceof Wolf && mob.distanceTo(candidate) > 8F) continue;
                 return mountedTarget(candidate);
+            }
+            if (type == Player.class) {
+                Player discovered = CavePlayerDiscovery.find(mob);
+                if (discovered != null) return mountedTarget(discovered);
             }
             return null;
         }

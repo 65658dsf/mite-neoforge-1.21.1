@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.entity.MobKind;
+import io.github.ningmeng123.mite.entity.R196MonsterAi;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
 import io.github.ningmeng123.mite.entity.SourceMonsterTargetMemory;
 import io.github.ningmeng123.mite.entity.SourceMonsterTargeting;
@@ -333,6 +334,184 @@ public final class MonsterTargetMeleeGameTests {
             skeleton.discard();
         }
         h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "initial_player_sight", timeoutTicks = 160)
+    public static void smartZombieMustSeeANewPlayerBeforeTrackingThroughStone(GameTestHelper h) {
+        var zombie = initiallyHiddenMob(h, EntityType.ZOMBIE);
+        zombie.getPersistentData().putBoolean(R196MonsterAi.SMART, true);
+        zombie.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        var fixture = new SurvivalPlayer(h);
+        fixture.player.moveTo(zombie.getX() + 3D, zombie.getY(), zombie.getZ());
+        afterInitialSightFixturesAreIndexed(h, fixture, java.util.List.of(zombie), () -> {
+            h.assertTrue(R196MonsterAi.diggingEnabled(zombie), "The actual smart zombie has the former sight-bypassing digging ability");
+            assertOwnSightBeforePlayerAcquisition(h, zombie, fixture.player);
+        });
+    }
+
+    @GameTest(template = "empty", batch = "initial_player_sight", timeoutTicks = 160)
+    public static void bowAndWitherSkeletonsFirstSeeThePlayerAndThenKeepHiddenMemory(GameTestHelper h) {
+        var skeleton = initiallyHiddenMob(h, EntityType.SKELETON);
+        var wither = initiallyHiddenMob(h, EntityType.WITHER_SKELETON);
+        skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+        wither.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+        var fixture = new SurvivalPlayer(h);
+        fixture.player.moveTo(skeleton.getX() + 3D, skeleton.getY(), skeleton.getZ());
+        afterInitialSightFixturesAreIndexed(h, fixture, java.util.List.of(skeleton, wither), () -> {
+            assertOwnSightBeforePlayerAcquisition(h, skeleton, fixture.player);
+            assertOwnSightBeforePlayerAcquisition(h, wither, fixture.player);
+        });
+    }
+
+    @GameTest(template = "empty", batch = "initial_player_sight", timeoutTicks = 160)
+    public static void sourceZombieAndSkeletonVariantsInheritInitialPlayerSight(GameTestHelper h) {
+        var revenant = (PathfinderMob)initiallyHiddenMob(h, MiteMobs.type(MobKind.REVENANT));
+        var longdead = (PathfinderMob)initiallyHiddenMob(h, MiteMobs.type(MobKind.LONGDEAD));
+        var boneLord = (PathfinderMob)initiallyHiddenMob(h, MiteMobs.type(MobKind.BONE_LORD));
+        longdead.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+        boneLord.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+        var fixture = new SurvivalPlayer(h);
+        fixture.player.moveTo(revenant.getX() + 3D, revenant.getY(), revenant.getZ());
+        afterInitialSightFixturesAreIndexed(h, fixture, java.util.List.of(revenant, longdead, boneLord), () -> {
+            for (var owner : java.util.List.of(revenant, longdead, boneLord))
+                assertOwnSightBeforePlayerAcquisition(h, owner, fixture.player);
+        });
+    }
+
+    @GameTest(template = "empty", batch = "initial_player_sight", timeoutTicks = 160)
+    public static void elevatedDiggerAndArcherFallbackCannotDiscoverAPlayerThroughStone(GameTestHelper h) {
+        var zombie = initiallyHiddenMob(h, EntityType.ZOMBIE);
+        var skeleton = initiallyHiddenMob(h, EntityType.SKELETON);
+        zombie.getPersistentData().putBoolean(R196MonsterAi.SMART, true);
+        zombie.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        skeleton.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+        var fixture = new SurvivalPlayer(h);
+        fixture.player.moveTo(zombie.getX() + 2D, zombie.getY() + 10D, zombie.getZ());
+        afterInitialSightFixturesAreIndexed(h, fixture, java.util.List.of(zombie, skeleton), () -> {
+            h.assertTrue(R196MonsterAi.diggingEnabled(zombie)
+                            && io.github.ningmeng123.mite.worldgen.R196OutdoorChecks.outdoors(h.getLevel(), zombie.blockPosition()),
+                    "The hidden elevated fixture really enters the outdoor digging fallback");
+            h.assertFalse(zombie.getBoundingBox().inflate(40D, 6D, 40D).intersects(fixture.player.getBoundingBox()),
+                    "The player is outside the ordinary vertical nearby-target query");
+            assertOwnSightBeforePlayerAcquisition(h, zombie, fixture.player);
+            assertOwnSightBeforePlayerAcquisition(h, skeleton, fixture.player);
+        });
+    }
+
+    @GameTest(template = "empty", batch = "initial_player_sight", timeoutTicks = 160)
+    public static void nearbyBatCannotGiveAWitchFirstSightOfAHiddenPlayer(GameTestHelper h) {
+        var witch = initiallyHiddenMob(h, EntityType.WITCH);
+        var bat = mob(h, EntityType.BAT, 2D, 0D, 0D);
+        var fixture = new SurvivalPlayer(h);
+        fixture.player.moveTo(witch.getX() + 3D, witch.getY(), witch.getZ());
+        afterInitialSightFixturesAreIndexed(h, fixture, java.util.List.of(witch, bat), () -> {
+            h.assertTrue(SourceMonsterTargeting.sourceIs(witch, "tv"), "The real witch uses the bat-assisted source sight policy");
+            h.assertTrue(SourceMonsterTargeting.canSee(bat, fixture.player, false), "The nearby bat is on the player's side of the stone divider");
+            h.assertTrue(h.getLevel().getEntitiesOfClass(Mob.class, witch.getBoundingBox().inflate(32D), entity -> entity == bat).contains(bat),
+                    "The source bat query can actually find the visible bat");
+            h.assertFalse(SourceMonsterTargeting.canSee(witch, fixture.player, false), "The witch itself has never had a ray through the stone wall");
+            h.assertFalse(nearest(witch, Player.class).canUse(), "Bat-assisted memory cannot passively acquire a player that the witch has not seen");
+            witch.targetSelector.tick();
+            h.assertTrue(witch.getTarget() == null, "The installed target selector does not assign the hidden player");
+            initialSightCurtain(h, witch.blockPosition(), Blocks.AIR);
+            var goal = nearest(witch, Player.class);
+            h.assertTrue(goal.canUse(), "The same player can be acquired once exposed to the witch");
+            goal.start();
+            h.assertTrue(witch.getTarget() == fixture.player, "Own sight assigns the actual player target");
+            initialSightCurtain(h, witch.blockPosition(), Blocks.STONE);
+            h.assertTrue(goal.canContinueToUse(), "Bat-assisted continuation of an already acquired target remains available");
+            goal.stop();
+        });
+    }
+
+    @GameTest(template = "empty", batch = "initial_player_sight", timeoutTicks = 160)
+    public static void hiddenPlayerDamageAndAcceptedAggroRemainValidWithoutFreshSight(GameTestHelper h) {
+        var zombie = initiallyHiddenMob(h, EntityType.ZOMBIE);
+        var fixture = new SurvivalPlayer(h);
+        fixture.player.moveTo(zombie.getX() + 3D, zombie.getY(), zombie.getZ());
+        afterInitialSightFixturesAreIndexed(h, fixture, java.util.List.of(zombie), () -> {
+            h.assertFalse(SourceMonsterTargeting.canSee(zombie, fixture.player, false), "The damage source remains behind the original stone wall");
+            h.assertFalse(nearest(zombie, Player.class).canUse(), "The unprovoked zombie cannot initially acquire the hidden player");
+            zombie.tickCount = 17;
+            zombie.hurt(zombie.damageSources().playerAttack(fixture.player), 3F);
+            var revenge = new SourceMonsterTargeting.Revenge(zombie, true);
+            h.assertTrue(revenge.canUse(), "An actual player hit still establishes revenge through the wall");
+            revenge.start();
+            h.assertTrue(zombie.getTarget() == fixture.player && revenge.canContinueToUse(), "Damage retaliation retains the actual hidden attacker");
+            revenge.stop();
+            zombie.setTarget(fixture.player);
+            var goal = nearest(zombie, Player.class);
+            h.assertTrue(goal.canUse(), "Accepted external aggro memory is consumed without a new passive visibility check");
+            goal.start();
+            h.assertTrue(zombie.getTarget() == fixture.player && ((SourceMonsterTargetMemory)zombie).mite$retarget() == null,
+                    "Queued target restoration keeps the legitimate aggro and consumes the queue once");
+            goal.stop();
+        });
+    }
+
+    private static <T extends Mob> T initiallyHiddenMob(GameTestHelper h, EntityType<T> type) {
+        // Build the opaque divider before adding the entity, so the player is never exposed at birth.
+        initialSightCurtain(h, h.absolutePos(new BlockPos(1, 10, 1)), Blocks.STONE);
+        return mob(h, type, 0D, 0D, 0D);
+    }
+
+    private static void initialSightCurtain(GameTestHelper h, BlockPos origin, net.minecraft.world.level.block.Block block) {
+        for (int y = 0; y <= 16; y++) for (int z = -2; z <= 2; z++)
+            h.getLevel().setBlock(origin.offset(1, y, z), block.defaultBlockState(), 2);
+    }
+
+    private static void assertOwnSightBeforePlayerAcquisition(GameTestHelper h, PathfinderMob owner, ServerPlayer player) {
+        var goal = nearest(owner, Player.class);
+        h.assertFalse(SourceMonsterTargeting.canSee(owner, player, false), "The player is initially completely hidden by stone");
+        h.assertFalse(goal.canUse(), "A new passive player target needs the owner's own sight");
+        owner.targetSelector.tick();
+        h.assertTrue(owner.getTarget() == null, "The installed target selector never assigns the unseen player");
+        initialSightCurtain(h, owner.blockPosition(), Blocks.AIR);
+        h.assertTrue(SourceMonsterTargeting.canSee(owner, player, false) && goal.canUse(), "Removing the wall exposes the actual player and allows acquisition");
+        goal.start();
+        h.assertTrue(owner.getTarget() == player, "Own sight assigns the actual survival player");
+        initialSightCurtain(h, owner.blockPosition(), Blocks.STONE);
+        h.assertFalse(SourceMonsterTargeting.canSee(owner, player, false), "The same player is hidden again after being seen");
+        for (int update = 0; update < 60; update++)
+            h.assertTrue(goal.canContinueToUse(), "Hiding after acquisition preserves the existing unseen-target memory");
+        h.assertTrue(owner.getTarget() == player, "Losing sight does not immediately clear the accepted target");
+        goal.stop();
+    }
+
+    private static void afterInitialSightFixturesAreIndexed(GameTestHelper h, SurvivalPlayer fixture,
+            java.util.List<? extends Mob> owners, Runnable assertions) {
+        // These regressions exercise the ordinary outdoor sight policy, independently of the
+        // complete-route cave discovery exception. Keep their own/player columns open to the sky.
+        for (Mob owner : owners) for (int y = owner.blockPosition().getY() + 2; y < h.getLevel().getMaxBuildHeight(); y++)
+            h.getLevel().setBlock(new BlockPos(owner.blockPosition().getX(), y, owner.blockPosition().getZ()), Blocks.AIR.defaultBlockState(), 2);
+        for (int y = fixture.player.blockPosition().getY() + 2; y < h.getLevel().getMaxBuildHeight(); y++)
+            h.getLevel().setBlock(new BlockPos(fixture.player.blockPosition().getX(), y, fixture.player.blockPosition().getZ()), Blocks.AIR.defaultBlockState(), 2);
+        owners.forEach(owner -> owner.restrictTo(fixture.player.blockPosition(), 1));
+        boolean[] closed = {false};
+        Runnable cleanup = () -> {
+            if (closed[0]) return;
+            closed[0] = true;
+            initialSightCurtain(h, owners.getFirst().blockPosition(), Blocks.AIR);
+            fixture.close();
+            owners.forEach(Mob::discard);
+        };
+        h.testInfo.addListener(new net.minecraft.gametest.framework.GameTestListener() {
+            @Override public void testStructureLoaded(net.minecraft.gametest.framework.GameTestInfo info) {}
+            @Override public void testAddedForRerun(net.minecraft.gametest.framework.GameTestInfo original,
+                    net.minecraft.gametest.framework.GameTestInfo rerun, net.minecraft.gametest.framework.GameTestRunner runner) {}
+            @Override public void testPassed(net.minecraft.gametest.framework.GameTestInfo info,
+                    net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+            @Override public void testFailed(net.minecraft.gametest.framework.GameTestInfo info,
+                    net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+        });
+        h.startSequence().thenWaitUntil(() -> {
+            for (int tasks = 0; tasks < 64 && h.getLevel().getChunkSource().pollTask(); tasks++) {}
+            h.assertTrue(owners.stream().allMatch(owner -> h.getLevel().getEntity(owner.getUUID()) == owner), "All real mob fixtures are indexed before target selection");
+            h.assertTrue(h.getLevel().getEntitiesOfClass(Player.class, fixture.player.getBoundingBox().inflate(1D),
+                    player -> player == fixture.player).contains(fixture.player), "The native target query can actually observe the registered survival player");
+        }).thenExecute(() -> {
+            try { assertions.run(); } finally { cleanup.run(); }
+        }).thenSucceed();
     }
 
     private static final class SurvivalPlayer implements AutoCloseable {

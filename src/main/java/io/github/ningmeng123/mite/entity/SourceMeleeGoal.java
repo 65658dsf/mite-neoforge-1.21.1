@@ -179,7 +179,9 @@ public final class SourceMeleeGoal extends Goal {
         if (MeleePursuitPaths.applies(mob) && stalledTicks > 0 && stalledTicks % 60 == 0) {
             mob.getNavigation().stop();
             var digger = R196DiggerGoal.first(mob);
-            if (digger != null) digger.invalidatePursuit();
+            // A failed route already retries with backoff. Only a previously complete route
+            // needs forced invalidation here; resetting failures would synchronize stuck mobs.
+            if (digger != null && MeleePursuitPaths.reaches(mob, path, target)) digger.invalidatePursuit();
             recalculate = 0;
         }
         mob.getLookControl().setLookAt(target, 30, 30);
