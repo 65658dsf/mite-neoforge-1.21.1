@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.entity.BloodMoonEquipment;
+import io.github.ningmeng123.mite.entity.MobEquipmentEnchantments;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.R196MobEquipment;
 import io.github.ningmeng123.mite.entity.R196Skeleton;
@@ -318,15 +319,12 @@ public final class BloodMoonEquipmentGameTests {
                     armor = !troop.getItemBySlot(EquipmentSlot.HEAD).isEmpty();
                 }
                 h.assertTrue(armor, "The real finalize then initializeOrdinaryTroop sequence can still produce legacy armor before blood2");
-                NeoForge.EVENT_BUS.post(new EntityJoinLevelEvent(troop, h.getLevel(), false));
-                h.assertTrue(ItemStack.matches(troop.getMainHandItem(),new ItemStack(Items.BOW)),
-                        "The actual early type0 archer keeps exactly one plain bow after its completed legacy equipment result is restricted");
-                h.assertTrue(Arrays.stream(EquipmentSlot.values()).filter(slot -> slot != EquipmentSlot.MAINHAND)
-                                .allMatch(slot -> troop.getItemBySlot(slot).isEmpty()),
-                        "The first35-day restriction still clears every other held/worn legacy equipment slot");
-                if (troop instanceof R196Skeleton source) h.assertTrue(source.stowedItem().isEmpty(),
-                        "The early archer exception cannot preserve a hidden guardian weapon");
+                MobEquipmentEnchantments.populate(troop);
                 var before = equipment(troop);
+                NeoForge.EVENT_BUS.post(new EntityJoinLevelEvent(troop, h.getLevel(), false));
+                unchanged(h, troop, before);
+                h.assertFalse(BloodMoonEquipment.spawnEquipmentLocked(troop),
+                        "At the first blood moon the first16-day restriction has ended and preserves the completed legacy equipment");
                 set(h, 1152, 6000); BloodMoonEquipment.populate(troop); unchanged(h, troop, before);
             } finally { chunk.setInhabitedTime(inhabited); }
         }

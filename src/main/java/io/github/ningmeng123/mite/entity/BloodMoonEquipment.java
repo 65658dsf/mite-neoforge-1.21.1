@@ -6,8 +6,11 @@ import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
 import io.github.ningmeng123.mite.rules.LunarCalendar;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -26,6 +29,9 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class BloodMoonEquipment {
     public static final String DATA_KEY = "mite:blood_moon_equipment";
+    public static final long EARLY_EQUIPMENT_LAST_DAY = 16L;
+    public static final TagKey<EntityType<?>> EARLY_EQUIPMENT_EXEMPT = TagKey.create(Registries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "early_equipment_exempt"));
     private static final int VERSION = 3;
     private static final EquipmentSlot[] SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private static final String[] SUFFIXES = {"helmet", "chestplate", "leggings", "boots"};
@@ -165,7 +171,13 @@ public final class BloodMoonEquipment {
 
     /** A locked birth keeps its no-equipment decision; genuine archers receive only a plain bow. */
     public static boolean spawnEquipmentLocked(Mob mob) {
-        return mob.getPersistentData().getCompound(DATA_KEY).getBoolean("early_equipment_locked");
+        return !earlyEquipmentExempt(mob)
+                && mob.getPersistentData().getCompound(DATA_KEY).getBoolean("early_equipment_locked");
+    }
+
+    /** Explicit lord/boss identities retain their own equipment, including when old saves carry a birth lock. */
+    public static boolean earlyEquipmentExempt(Mob mob) {
+        return mob.getType().is(EARLY_EQUIPMENT_EXEMPT);
     }
 
     public static boolean earlyEquipmentArcher(Mob mob) {
@@ -197,8 +209,9 @@ public final class BloodMoonEquipment {
         if (event.loadedFromDisk() && mob.getType().getCategory() == MobCategory.MONSTER)
             markLegacyEntity(mob, "existing_entity");
         if (!event.loadedFromDisk() && mob.getType().getCategory() == MobCategory.MONSTER
+                && !earlyEquipmentExempt(mob)
                 && !mob.getPersistentData().contains(DATA_KEY)
-                && mob.level() instanceof ServerLevel level && BloodMoonInvasion.highestDay(level) <= 35L) {
+                && mob.level() instanceof ServerLevel level && BloodMoonInvasion.highestDay(level) <= EARLY_EQUIPMENT_LAST_DAY) {
             // Publish the decision before addon callbacks, so delayed listeners cannot re-equip this birth.
             markLegacyEntity(mob, "early_equipment_locked");
             for (EquipmentSlot slot : EquipmentSlot.values()) mob.setItemSlot(slot, ItemStack.EMPTY);

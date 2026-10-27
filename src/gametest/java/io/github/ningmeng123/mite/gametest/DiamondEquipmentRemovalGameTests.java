@@ -204,7 +204,7 @@ public final class DiamondEquipmentRemovalGameTests {
         long highest = progress.highestDay(); boolean dirty = progress.isDirty();
         try {
             // This retirement test exercises equipment preservation after the independent day-35 unlock.
-            world.setDayTime(35L * 24000L); progress.restoreProgress(36L); // Isolate retired-item filtering after the inclusive first35-day equipment restriction.
+            world.setDayTime(35L * 24000L); progress.restoreProgress(36L); // Isolate retired-item filtering safely after the first16-day equipment restriction.
             boolean accepted = helper.getLevel().addFreshEntity(forbiddenDrop);
             helper.assertTrue(!accepted || forbiddenDrop.isRemoved() || forbiddenDrop.getItem().isEmpty(),
                     "A retired item entity never becomes a usable world drop");

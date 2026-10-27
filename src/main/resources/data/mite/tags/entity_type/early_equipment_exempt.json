@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "mite:bone_lord",
+    "mite:ancient_bone_lord",
+    { "id": "modern_ite:zombie_lord", "required": false },
+    { "id": "modern_ite:zombie_elite_lord", "required": false },
+    { "id": "modern_ite:skeleton_elite_lord", "required": false },
+    { "id": "modern_ite:zombie_pigman_lord", "required": false },
+    { "id": "modern_ite:witch_lord", "required": false },
+    { "id": "modern_ite:zombie_boss", "required": false },
+    { "id": "modern_ite:undying_zombie_emperor", "required": false },
+    { "id": "modern_ite:annihilation_skeleton", "required": false }
+  ]
+}

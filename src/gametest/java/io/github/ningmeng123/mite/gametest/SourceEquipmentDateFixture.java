@@ -4,7 +4,7 @@ import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 
-/** Equipment finalization tests opt into day36, after the inclusive first35-day birth restriction. @author NingMeng123 */
+/** Equipment finalization tests opt into day36, safely after the first16-day birth restriction. @author NingMeng123 */
 final class SourceEquipmentDateFixture implements AutoCloseable {
     private final ServerLevel level;
     private final long time;
