@@ -218,7 +218,7 @@ public final class MonsterDayScalingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void attributedMeleeArrowsExplosionsAndSpellsScaleActualHealthLossExactlyOnce(GameTestHelper helper) {
+    public static void attributedMeleeArrowsExplosionsAndSpellsKeepTheirDamageAcrossDates(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 65L);
             Mob attacker = mob(helper, EntityType.ZOMBIE), target = cow(helper);
@@ -226,9 +226,11 @@ public final class MonsterDayScalingGameTests {
             helper.assertTrue(arrow != null, "Native arrow source exists"); arrow.setOwner(attacker);
             for (DamageSource source : List.of(target.damageSources().mobAttack(attacker), target.damageSources().arrow(arrow, attacker),
                     target.damageSources().explosion(attacker, attacker), target.damageSources().indirectMagic(arrow, attacker)))
-                hit(helper, target, source, 20F, 23.328F);
+                hit(helper, target, source, 20F, 20F);
             set(helper, 97L);
-            hit(helper, target, target.damageSources().arrow(arrow, attacker), 20F, 25.19424F);
+            hit(helper, target, target.damageSources().arrow(arrow, attacker), 20F, 20F);
+            set(helper, 100_001L);
+            hit(helper, target, target.damageSources().arrow(arrow, attacker), 20F, 20F);
             helper.assertTrue(!attacker.getAttribute(Attributes.ATTACK_DAMAGE).hasModifier(HEALTH), "No health multiplier is installed on attack damage");
             arrow.discard(); target.discard(); attacker.discard();
         }
@@ -236,7 +238,7 @@ public final class MonsterDayScalingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void incomingGrowthRunsBeforeNativeNpcArmorRatherThanAfterItsReduction(GameTestHelper helper) throws ReflectiveOperationException {
+    public static void incomingDamageKeepsNativeNpcArmorWithoutCalendarGrowth(GameTestHelper helper) throws ReflectiveOperationException {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 65L);
             Mob attacker = mob(helper, EntityType.ZOMBIE), target = cow(helper);
@@ -246,9 +248,8 @@ public final class MonsterDayScalingGameTests {
             target.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
             equipment(target);
             close(helper, target.getAttributeValue(Attributes.ARMOR), 14D, "The real NPC wears balanced iron armor");
-            // At day65 raw20 becomes23.328 before iron14/toughness4: effective armor14-23.328/3=6.224.
-            // The independent native formula gives23.328*(1-6.224/25).
-            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 17.52026112F);
+            // Raw20 remains20 before iron14/toughness4: effective armor14-20/3.
+            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 14.133333333F);
             for (EquipmentSlot slot : ARMOR) helper.assertValueEqual(target.getItemBySlot(slot).getDamageValue(), 0,
                     "Calendar growth does not change the established NPC equipment wear policy");
         }
@@ -278,7 +279,7 @@ public final class MonsterDayScalingGameTests {
             set(helper, 65L);
             Mob attacker = mob(helper, EntityType.ZOMBIE), target = cow(helper);
             MonsterDayScaling.refresh(attacker); set(helper, 1L);
-            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 23.328F);
+            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 20F);
             LivingIncomingDamageEvent canceled = new LivingIncomingDamageEvent(target,
                     new DamageContainer(target.damageSources().mobAttack(attacker), 20F));
             canceled.setCanceled(true); MonsterDayScaling.damage(canceled);
@@ -292,7 +293,7 @@ public final class MonsterDayScalingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void actualZombieBareAttackGrowsBeforeUnscaledWeaponDamageIsAdded(GameTestHelper helper) throws ReflectiveOperationException {
+    public static void actualZombieBareAttackAndWeaponDamageStayFixedAfterCalendarProgress(GameTestHelper helper) throws ReflectiveOperationException {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 65L);
             Zombie attacker = (Zombie)mob(helper, EntityType.ZOMBIE);
@@ -320,11 +321,11 @@ public final class MonsterDayScalingGameTests {
                     helper.assertTrue(attacker.doHurtTarget(target), "Actual zombie melee with the current held stack succeeds");
                     helper.assertValueEqual(calls[0], 1, "A native melee strike enters the common incoming-damage pipeline once");
                     double weaponDelta = combined - bareDamage;
-                    double expected = 6D * 1.1664D + weaponDelta;
-                    close(helper, raw[0], expected, "Only the naked base attack grows; current weapon modifiers are then added unchanged");
+                    double expected = 6D + weaponDelta;
+                    close(helper, raw[0], expected, "The original body attack and current weapon modifiers remain unchanged by the date");
                     close(helper, incoming[0], expected, "A real melee transaction is not multiplied again at the common incoming boundary");
-                    close(helper, 200F - target.getHealth(), expected, "Native melee health loss includes grown bare attack plus unscaled weapon damage");
-                    close(helper, MonsterDayScaling.attackMultiplier(attacker), 1.1664D, "The current attacker uses the second thirty-two-day reset basis");
+                    close(helper, 200F - target.getHealth(), expected, "Native melee health loss includes fixed bare attack plus weapon damage");
+                    close(helper, MonsterDayScaling.attackMultiplier(attacker), 1D, "The current attacker receives no calendar damage multiplier");
                     if (!armed) bareStrike = raw[0];
                     else close(helper, raw[0] - bareStrike, weaponDelta, "Equipping a sword adds exactly its original attack modifier, without date multiplication");
                 }
@@ -355,8 +356,8 @@ public final class MonsterDayScalingGameTests {
             }
             Mob ordinary = mob(helper, EntityType.ZOMBIE);
             MonsterDayScaling.refresh(ordinary);
-            helper.assertTrue(ordinary.getMaxHealth() > 20F && MonsterDayScaling.attackMultiplier(ordinary) > 1D,
-                    "The same far-future date still grows ordinary hostile monsters");
+            helper.assertTrue(ordinary.getMaxHealth() > 20F && MonsterDayScaling.attackMultiplier(ordinary) == 1D,
+                    "The same far-future date still grows ordinary monster health while keeping damage fixed");
         }
         helper.succeed();
     }

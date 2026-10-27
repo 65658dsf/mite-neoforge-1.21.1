@@ -7,7 +7,6 @@ import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -24,7 +23,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-/** Calendar health and attributed attack damage, shared by native and MITE monsters. @author NingMeng123 */
+/** Calendar health and a fixed innate attack base, shared by native and MITE monsters. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class MonsterDayScaling {
     public static final String DATA_KEY = "mite:day_scaling";
@@ -44,27 +43,16 @@ public final class MonsterDayScaling {
                 mob.getPersistentData().getCompound(DATA_KEY).getLong("day"));
     }
 
-    /** Other owned attacks retain their native damage and use only the formula's relative growth. */
+    /** Kept for extension compatibility; calendar progression no longer increases owned attack damage. */
     public static double attackMultiplier(Mob mob) {
-        if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return 1D;
-        var settings = MiteConfig.monsterGrowthSettings();
-        // A configured melee base is not the damage of an arrow, explosion, spell or other owned attack.
-        var relative = new MonsterGrowthRules.Settings(settings.healthBase(), 0D, settings.skeletonReference(),
-                settings.healthRate(), settings.damageRate(), settings.healthFormula(), settings.damageFormula(),
-                settings.healthBloodMoonFormula(), settings.damageBloodMoonFormula());
-        var result = MonsterGrowthRules.damagePreview(day(mob, level), 1D, relative,
-                MiteConfig.monsterGrowthMultiplier() * MiteConfig.monsterDamageGrowthMultiplier());
-        reportFallback(result);
-        return result.value();
+        return 1D;
     }
 
     /** The innate attribute is evaluated before the native weapon, equipment and effect modifiers. */
     public static double attackBase(Mob mob, double nativeBase) {
-        if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return nativeBase;
-        var result = MonsterGrowthRules.damagePreview(day(mob, level), nativeBase, MiteConfig.monsterGrowthSettings(),
-                MiteConfig.monsterGrowthMultiplier() * MiteConfig.monsterDamageGrowthMultiplier());
-        reportFallback(result);
-        return result.value();
+        if (!handles(mob) || !(mob.level() instanceof ServerLevel)) return nativeBase;
+        double configured = MiteConfig.monsterGrowthSettings().damageBase();
+        return configured > 0D ? configured : nativeBase;
     }
 
     private static void reportFallback(MonsterGrowthRules.Result result) {
@@ -136,15 +124,7 @@ public final class MonsterDayScaling {
                 && Math.floorMod(mob.tickCount + mob.getId(), 20) == 0) refresh(mob);
     }
 
-    /** Native melee already grew its body attribute; other owned attacks grow at the common pre-mitigation boundary. */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    /** Legacy extension entry point; incoming damage is no longer changed by the world calendar. */
     public static void damage(LivingIncomingDamageEvent event) {
-        if (event.isCanceled() || !(event.getAmount() > 0F) || !Float.isFinite(event.getAmount())
-                || !(event.getSource().getEntity() instanceof Mob attacker) || !handles(attacker)
-                || !(attacker.level() instanceof ServerLevel) || event.getEntity().level().isClientSide) return;
-        if (MonsterMeleeScaling.active(attacker) && event.getSource().getDirectEntity() == attacker
-                && event.getSource().is(DamageTypes.MOB_ATTACK)) return;
-        double scaled = event.getAmount() * attackMultiplier(attacker);
-        event.setAmount((float)Math.min(Float.MAX_VALUE, scaled));
     }
 }

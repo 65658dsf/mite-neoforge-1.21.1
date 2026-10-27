@@ -59,11 +59,11 @@ public final class MonsterGrowthFormulaGameTests {
             NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, LivingIncomingDamageEvent.class, capture);
             try {
                 helper.assertTrue(attacker.doHurtTarget(target), "A real native zombie melee transaction succeeds");
-                close(helper, raw[0], 6.48D + weapon, "Formula grows the configured six-damage body, then retains the sword's original bonus");
-                close(helper, 200D - target.getHealth(), 6.48D + weapon, "The damage event does not apply growth twice");
+                close(helper, raw[0], 6D + weapon, "The configured six-damage body stays fixed, then retains the sword's original bonus");
+                close(helper, 200D - target.getHealth(), 6D + weapon, "The damage event adds no calendar growth");
             } finally { NeoForge.EVENT_BUS.unregister(capture); }
             close(helper, attacker.getAttributeValue(Attributes.ATTACK_DAMAGE), nativeAttack, "The actual melee attribute remains unchanged");
-            close(helper, MonsterDayScaling.attackMultiplier(attacker), 1.08D, "Other owned attacks use relative growth without replacing their damage with the melee base");
+            close(helper, MonsterDayScaling.attackMultiplier(attacker), 1D, "Other owned attacks ignore legacy growth settings and the fixed melee base");
 
             apply(MonsterGrowthRules.DEFAULTS);
             MonsterDayScaling.refresh(attacker);
@@ -103,8 +103,8 @@ public final class MonsterGrowthFormulaGameTests {
             MonsterDayScaling.refresh(monster);
             close(helper, monster.getMaxHealth(), 30D,
                     "The first blood moon installs the independent health settlement result as the new basis");
-            close(helper, MonsterDayScaling.attackMultiplier(monster), 2D,
-                    "The independent attack settlement expression reaches owned-attack scaling");
+            close(helper, MonsterDayScaling.attackMultiplier(monster), 1D,
+                    "A legacy attack settlement expression cannot restore calendar damage growth");
             day(helper, 34L);
             MonsterDayScaling.refresh(monster);
             close(helper, monster.getMaxHealth(), 30.15D,
@@ -113,14 +113,14 @@ public final class MonsterGrowthFormulaGameTests {
             MonsterDayScaling.refresh(monster);
             close(helper, monster.getMaxHealth(), 58D,
                     "The blue moon leaves three completed blood settlements and thirty-two days of period growth");
-            close(helper, MonsterDayScaling.attackMultiplier(monster), 8.64D,
-                    "The blue moon cannot run the custom attack settlement expression");
+            close(helper, MonsterDayScaling.attackMultiplier(monster), 1D,
+                    "The blue moon also leaves owned damage unchanged");
             day(helper, 161L);
             MonsterDayScaling.refresh(monster);
             close(helper, monster.getMaxHealth(), 60D,
                     "The next blood moon applies the custom health settlement after the extended period");
-            close(helper, MonsterDayScaling.attackMultiplier(monster), 16D,
-                    "The following blood moon doubles the attack basis exactly once");
+            close(helper, MonsterDayScaling.attackMultiplier(monster), 1D,
+                    "Later blood moons cannot grow the attack basis through the old formula");
         }
         helper.succeed();
     }

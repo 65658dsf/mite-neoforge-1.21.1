@@ -344,8 +344,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
         }
         check(hidden.equals(expectedHidden) && visible.equals(expectedVisible),
                 "Dedicated ore and monster-spawn sections are suppressed; all four other gameplay sections remain");
-        check(monsterValues.equals(Set.of("growth_multiplier", "health_growth_multiplier", "damage_growth_multiplier"))
-                && suppressedMonsterValues > 0, "Only the three monster multipliers remain in the advanced page");
+        check(monsterValues.equals(Set.of("growth_multiplier", "health_growth_multiplier"))
+                && suppressedMonsterValues > 0, "Only the two active health growth multipliers remain in the advanced page");
         check(originalValues.equals(MiteConfig.SPEC.getValues().valueMap()) && originalSpecs.equals(MiteConfig.SPEC.getSpec().valueMap())
                 && config.getLoadedConfig() == originalLoadedConfig && MiteConfig.SPEC.isLoaded() == originallyLoaded,
                 "Section visibility checks do not modify the registered spec, config values or loaded config");

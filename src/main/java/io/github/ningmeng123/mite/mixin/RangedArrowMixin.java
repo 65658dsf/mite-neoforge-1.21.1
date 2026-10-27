@@ -14,9 +14,11 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.BowItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -83,6 +85,11 @@ public abstract class RangedArrowMixin implements MaterialArrowView {
                 arrow.getWeaponItem() != null && (arrow.getWeaponItem().isEnchanted()
                         || io.github.ningmeng123.mite.progression.EnchantmentSources.hasAffixes(arrow.getWeaponItem())), arrow.isCritArrow(),
                 arrow.isCritArrow() ? arrow.getRandom().nextFloat() : 0F);
+        // Halve mob bow damage after material minima and criticals, preserving fractional hits.
+        var weapon = arrow.getWeaponItem();
+        if (arrow.getOwner() instanceof AbstractSkeleton
+                || arrow.getOwner() instanceof Mob && weapon != null && weapon.getItem() instanceof BowItem)
+            damage *= .5F;
         if (!(damage > 0F)) return false;
         var snapshot = target instanceof LivingEntity living
                 ? new io.github.ningmeng123.mite.enchantment.SourceEnchantmentCombat.HarmSnapshot(living) : null;

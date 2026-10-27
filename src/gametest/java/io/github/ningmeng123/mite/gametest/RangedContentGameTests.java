@@ -25,6 +25,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -130,6 +131,34 @@ public final class RangedContentGameTests {
         arrow.setDeltaMovement(3D, 0D, 0D); arrow.setCritArrow(true); arrow.getRandom().setSeed(196L);
         float expected = 7.5F * (1.5F + RandomSource.create(196L).nextFloat() * .5F);
         helper.assertValueEqual(hit(helper, arrow, new Cow(EntityType.COW, helper.getLevel())), expected, "Native critical transaction uses source 1.5..2 multiplier rather than integer additive critical damage");
+        helper.succeed();
+    }
+    @GameTest(template = "ranged_027")
+    public static void mobBowHitsKeepHalfDamageIncludingFractionsAndModernArrows(GameTestHelper helper) {
+        for (EntityType<?> type : List.of(EntityType.SKELETON, EntityType.STRAY, EntityType.BOGGED, EntityType.ZOMBIFIED_PIGLIN)) {
+            Mob shooter = (Mob)type.create(helper.getLevel());
+            helper.assertTrue(shooter != null, "The bow-wielding mob fixture exists");
+            for (boolean modern : new boolean[]{false, true}) {
+                ItemStack ammo = modern ? new ItemStack(Items.TIPPED_ARROW) : new ItemStack(MiteRangedItems.arrow(Material.RUSTED_IRON));
+                Arrow arrow = (Arrow)((ArrowItem)ammo.getItem()).createArrow(helper.getLevel(), ammo, shooter, new ItemStack(Items.BOW));
+                arrow.setDeltaMovement(3D, 0D, 0D); arrow.setCritArrow(false);
+                Cow target = new Cow(EntityType.COW, helper.getLevel());
+                float before = target.getHealth();
+                // Skeleton rusty arrows used to deal5; other mobs retain velocity damage before the half multiplier.
+                float expected = modern ? 3F : type == EntityType.ZOMBIFIED_PIGLIN ? 2.25F : 2.5F;
+                helper.assertValueEqual(hit(helper, arrow, target), expected, "The native hit halves mob bow damage for " + type);
+                helper.assertValueEqual(before - target.getHealth(), expected, "The target loses the exact fractional health");
+                arrow.discard(); target.discard();
+            }
+            shooter.discard();
+        }
+        Mob shooter = EntityType.PILLAGER.create(helper.getLevel());
+        ItemStack ammo = new ItemStack(MiteRangedItems.arrow(Material.RUSTED_IRON));
+        Arrow arrow = (Arrow)((ArrowItem)ammo.getItem()).createArrow(helper.getLevel(), ammo, shooter, new ItemStack(Items.CROSSBOW));
+        arrow.setDeltaMovement(3D, 0D, 0D); arrow.setCritArrow(false);
+        helper.assertValueEqual(hit(helper, arrow, new Cow(EntityType.COW, helper.getLevel())), 4.5F,
+                "A non-skeleton mob crossbow retains its original damage");
+        arrow.discard(); shooter.discard();
         helper.succeed();
     }
     @GameTest(template = "ranged_027")

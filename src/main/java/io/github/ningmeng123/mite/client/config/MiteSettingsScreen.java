@@ -90,7 +90,8 @@ public final class MiteSettingsScreen extends Screen {
 
         private static Element filterValue(Context context, String key, Element original) {
             // Formula edits go through the dedicated page's full validation and trial calculations.
-            if (context.keylist().equals(java.util.List.of("monsters")) && !key.endsWith("_multiplier")) return null;
+            if (context.keylist().equals(java.util.List.of("monsters"))
+                    && (!key.endsWith("_multiplier") || key.equals("damage_growth_multiplier"))) return null;
             return original;
         }
 

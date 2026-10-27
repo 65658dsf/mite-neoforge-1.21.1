@@ -63,12 +63,16 @@ public final class GameplayConfigExportGameTests {
         try (var ignored = new Settings()) {
             restoreDefaults();
             String health = "base + reference * rate * days * 2";
-            String damage = "base + reference * rate * days * 3";
+            String damage = "unknown_legacy_attack + day / 0";
             MiteConfig.MONSTER_HEALTH_FORMULA.set(health);
             MiteConfig.MONSTER_DAMAGE_FORMULA.set(damage);
             MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA.set("");
             MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.set("  ");
             MiteConfig.refreshEnchantmentRules();
+            helper.assertValueEqual(MiteConfig.localSnapshot().monsterSettings().healthFormula(), health,
+                    "An inactive legacy attack expression cannot reject a valid health configuration");
+            helper.assertTrue(MiteConfig.validateMonsterGrowth(MiteConfig.localSnapshot().monsterSettings()).valid(),
+                    "Only active health formulas and the fixed attack base participate in configuration validation");
             byte[] source = sourceBytes();
             var editorValues = currentValues();
             Path directory = Files.createTempDirectory("mite-config-repeat-export-");
@@ -89,7 +93,7 @@ public final class GameplayConfigExportGameTests {
                 helper.assertValueEqual(parsed.get(List.of("monsters", "health_blood_moon_formula")), health,
                         "An omitted health settlement exports its effective inherited formula");
                 helper.assertValueEqual(parsed.get(List.of("monsters", "damage_blood_moon_formula")), damage,
-                        "A whitespace-only attack settlement exports its effective inherited formula");
+                        "Inactive attack expressions remain exportable as compatibility data without execution");
             }
             helper.assertValueEqual(currentValues(), editorValues, "Resolving inheritance for export does not mutate the client configuration");
             helper.assertTrue(Arrays.equals(sourceBytes(), source), "Repeated export never saves the loaded client config");

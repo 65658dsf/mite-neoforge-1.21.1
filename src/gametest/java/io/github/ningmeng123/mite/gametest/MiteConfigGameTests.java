@@ -388,8 +388,8 @@ public final class MiteConfigGameTests {
             long day = monster.getPersistentData().getCompound(MonsterDayScaling.DATA_KEY).getLong("day");
             close(helper, monster.getMaxHealth(), Math.min(1024D, 20D * MonsterDayScalingRules.healthMultiplier(day, 6D)),
                     "Overall and health growth multiply in the runtime attribute update");
-            close(helper, MonsterDayScaling.attackMultiplier(monster), MonsterDayScalingRules.damageMultiplier(day, 8D),
-                    "Overall and damage growth multiply in the runtime attributed attack");
+            close(helper, MonsterDayScaling.attackMultiplier(monster), 1D,
+                    "Legacy damage growth multipliers cannot restore calendar damage growth");
 
             var player = helper.makeMockPlayer(GameType.SURVIVAL);
             var position = helper.absolutePos(new BlockPos(2, 3, 2));
