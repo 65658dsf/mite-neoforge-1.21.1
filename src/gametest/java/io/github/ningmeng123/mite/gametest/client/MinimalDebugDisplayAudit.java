@@ -40,6 +40,7 @@ import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 /** Actual client transforms and safe toggle execution, without a game, constructor, window or rendering. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
@@ -83,6 +84,7 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
             ClassNode keyboard = defined("net/minecraft/client/KeyboardHandler", exports, false);
             auditRender(debug, report);
             auditWorldDay(debug, report);
+            auditWorldTime(debug, report);
             auditHardwareScope(debug, report);
             auditHardwareSummary(debug, report);
             auditOptionalPerformancePaths(debug, exports, report);
@@ -108,9 +110,9 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
         check(calls(parts, MINECRAFT, "getFps") == 1 && calls(parts, "java/lang/Integer", "toString") == 1,
                 "Replacement displays the actual native FPS as a bare number");
         String fpsDescriptor = "(Lnet/minecraft/client/gui/Font;Ljava/lang/String;IIIZ)I";
-        check(calls(parts, GRAPHICS, "drawString") == 2
+        check(calls(parts, GRAPHICS, "drawString") == 3
                         && calls(parts, GRAPHICS, "drawString", fpsDescriptor) == 1,
-                "Exactly one bare FPS draw and one localized day draw are used on the left");
+                "Exactly one bare FPS draw and localized day and game-time draws are used on the left");
         MethodInsnNode draw = call(parts, GRAPHICS, "drawString", fpsDescriptor);
         AbstractInsnNode shadow = previous(draw), color = previous(shadow), y = previous(color), x = previous(y);
         check(integer(x) == 2 && integer(y) == 2 && integer(color) == 0xE0E0E0 && integer(shadow) == 1,
@@ -154,17 +156,20 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
         check(calls(parts, "net/minecraft/client/multiplayer/ClientLevel", "getDayTime")
                         + calls(parts, "net/minecraft/world/level/Level", "getDayTime") == 1,
                 "The day label reads the real synchronized client dayTime");
-        AbstractInsnNode clock = previous(call(parts, DEBUG, day.name));
-        check(clock instanceof MethodInsnNode call && call.name.equals("getDayTime") && call.desc.equals("()J")
-                        && List.of("net/minecraft/client/multiplayer/ClientLevel", "net/minecraft/world/level/Level").contains(call.owner),
-                "Synchronized dayTime directly feeds the actual display-day formatter");
+        MethodInsnNode read = calls(parts, "net/minecraft/client/multiplayer/ClientLevel", "getDayTime") == 1
+                ? call(parts, "net/minecraft/client/multiplayer/ClientLevel", "getDayTime")
+                : call(parts, "net/minecraft/world/level/Level", "getDayTime");
+        AbstractInsnNode stored = next(read), clock = previous(call(parts, DEBUG, day.name));
+        check(stored instanceof VarInsnNode store && store.getOpcode() == Opcodes.LSTORE
+                        && clock instanceof VarInsnNode load && load.getOpcode() == Opcodes.LLOAD && load.var == store.var,
+                "Synchronized dayTime is stored once and feeds the actual display-day formatter");
         check(parts.stream().anyMatch(part -> fieldAccess(part, MINECRAFT, "level", Opcodes.GETFIELD)),
                 "The day label reads the current client level");
         check(parts.stream().anyMatch(part -> hasString(part, "gui.mite.world_day"))
-                        && calls(parts, "net/minecraft/network/chat/Component", "translatable") == 1,
+                        && calls(parts, "net/minecraft/network/chat/Component", "translatable") == 3,
                 "The day label uses the localized world-day component");
         String descriptor = "(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIIZ)I";
-        check(calls(parts, GRAPHICS, "drawString", descriptor) == 1, "Exactly one localized component draw is used for day count");
+        check(calls(parts, GRAPHICS, "drawString", descriptor) == 2, "Localized components are used for day count and game time");
         MethodInsnNode draw = call(parts, GRAPHICS, "drawString", descriptor);
         AbstractInsnNode shadow = previous(draw), color = previous(shadow), y = previous(color), x = previous(y);
         check(integer(x) == 2 && integer(y) == 12 && integer(color) == 0xE0E0E0 && integer(shadow) == 1,
@@ -191,6 +196,70 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
         report.addProperty("localized_day_reads_synchronized_client_day_time", true);
         report.addProperty("actual_display_day_matches_shared_mite_rule_including_rollover_and_long_limits", true);
         report.addProperty("localized_day_at_2_12_preserves_only_requested_time_information", true);
+    }
+
+    private static void auditWorldTime(ClassNode debug, JsonObject report) throws Exception {
+        List<MethodNode> parts = lambdaParts(debug, merged(debug, "MinimalDebugOverlayMixin", "mite$drawFpsAndPerformance"));
+        MethodNode time = merged(debug, "MinimalDebugOverlayMixin", "mite$displayTime");
+        MethodNode day = merged(debug, "MinimalDebugOverlayMixin", "mite$displayDay");
+        check(time.desc.equals("(J)Ljava/lang/String;") && (time.access & Opcodes.ACC_STATIC) != 0
+                        && calls(parts, DEBUG, time.name) == 1,
+                "The game-time row uses the actual merged static tick-to-time formatter once");
+        AbstractInsnNode timeInput = previous(call(parts, DEBUG, time.name));
+        AbstractInsnNode dayInput = previous(call(parts, DEBUG, day.name));
+        check(timeInput instanceof VarInsnNode timeLoad && timeLoad.getOpcode() == Opcodes.LLOAD
+                        && dayInput instanceof VarInsnNode dayLoad && dayLoad.getOpcode() == Opcodes.LLOAD
+                        && timeLoad.var == dayLoad.var,
+                "Game time and day count use the same synchronized client dayTime value");
+        check(parts.stream().anyMatch(part -> hasString(part, "gui.mite.world_time")),
+                "The game-time row uses a localized label");
+        AbstractInsnNode instruction = next(call(parts, DEBUG, time.name));
+        while (instruction != null && !(instruction instanceof MethodInsnNode draw
+                && draw.owner.equals(GRAPHICS) && draw.name.equals("drawString"))) instruction = next(instruction);
+        check(instruction instanceof MethodInsnNode, "Formatted game time reaches an actual text draw");
+        AbstractInsnNode shadow = previous(instruction), color = previous(shadow), y = previous(color), x = previous(y);
+        check(integer(x) == 2 && integer(y) == 22 && integer(color) == 0xE0E0E0 && integer(shadow) == 1,
+                "The localized game time is positioned under the day at (2,22) with the same color and shadow");
+        Method actual = DebugScreenOverlay.class.getDeclaredMethod(time.name, long.class); actual.setAccessible(true);
+        long[] inputs = {Long.MIN_VALUE, -1L, 0L, 16L, 17L, 999L, 1000L, 6000L,
+                12000L, 17999L, 18000L, 23999L, 24000L, Long.MAX_VALUE};
+        String[] expected = {"22:11", "05:59", "06:00", "06:00", "06:01", "06:59", "07:00", "12:00",
+                "18:00", "23:59", "00:00", "05:59", "06:00", "13:48"};
+        JsonArray results = new JsonArray();
+        for (int i = 0; i < inputs.length; i++) {
+            String displayed = (String)actual.invoke(null, inputs[i]);
+            check(expected[i].equals(displayed), "Actual merged game-time formatter matches the independent clock case at " + inputs[i]);
+            JsonObject result = new JsonObject(); result.addProperty("day_time", inputs[i]); result.addProperty("displayed_time", displayed); results.add(result);
+        }
+        report.add("real_display_time_boundary_cases", results);
+        report.addProperty("localized_game_time_hh_mm_at_2_22_uses_shared_synchronized_day_time", true);
+        MethodNode period = merged(debug, "MinimalDebugOverlayMixin", "mite$displayTimePeriod");
+        check(period.desc.equals("(J)Ljava/lang/String;") && (period.access & Opcodes.ACC_STATIC) != 0
+                        && calls(parts, DEBUG, period.name) == 1
+                        && calls(period, "io/github/ningmeng123/mite/rules/LunarCalendar", "daytime") == 1,
+                "The displayed day/night period uses the shared MITE lunar-calendar daytime rule");
+        AbstractInsnNode periodInput = previous(call(parts, DEBUG, period.name));
+        check(periodInput instanceof VarInsnNode periodLoad && periodLoad.getOpcode() == Opcodes.LLOAD
+                        && dayInput instanceof VarInsnNode dayLoad && periodLoad.var == dayLoad.var,
+                "Day/night and the clock use the same synchronized client dayTime value");
+        AbstractInsnNode localized = next(call(parts, DEBUG, period.name));
+        check(localized instanceof MethodInsnNode label && label.owner.equals("net/minecraft/network/chat/Component")
+                        && label.name.equals("translatable"),
+                "The period translation key is localized before inclusion in the game-time row");
+        Method actualPeriod = DebugScreenOverlay.class.getDeclaredMethod(period.name, long.class); actualPeriod.setAccessible(true);
+        long[] periodInputs = {Long.MIN_VALUE, -1000L, -999L, -1L, 0L, 12999L, 13000L,
+                18000L, 23000L, 23001L, 23999L, 24000L, 37000L, Long.MAX_VALUE};
+        boolean[] daytime = {false, false, true, true, true, true, false,
+                false, false, true, true, true, false, true};
+        JsonArray periods = new JsonArray();
+        for (int i = 0; i < periodInputs.length; i++) {
+            String displayed = (String)actualPeriod.invoke(null, periodInputs[i]);
+            check((daytime[i] ? "gui.mite.time.day" : "gui.mite.time.night").equals(displayed),
+                    "Actual merged day/night formatter matches the independent boundary case at " + periodInputs[i]);
+            JsonObject result = new JsonObject(); result.addProperty("day_time", periodInputs[i]); result.addProperty("displayed_period_key", displayed); periods.add(result);
+        }
+        report.add("real_display_time_period_boundary_cases", periods);
+        report.addProperty("localized_day_night_uses_shared_day_time_and_mite_calendar_boundaries", true);
     }
 
     private static void auditHardwareScope(ClassNode debug, JsonObject report) throws Exception {

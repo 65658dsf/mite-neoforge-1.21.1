@@ -1,8 +1,10 @@
 package io.github.ningmeng123.mite.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import io.github.ningmeng123.mite.rules.LunarCalendar;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Retain FPS, the displayed world day and the requested hardware summary. @author NingMeng123 */
+/** Retain FPS, the displayed world day and time, and the requested hardware summary. @author NingMeng123 */
 @Mixin(DebugScreenOverlay.class)
 public abstract class MinimalDebugOverlayMixin {
     @Shadow @Final private Minecraft minecraft;
@@ -45,8 +47,12 @@ public abstract class MinimalDebugOverlayMixin {
                 // R196 GuiIngame -> Gui.drawString -> FontRenderer.drawStringWithShadow.
                 graphics.drawString(minecraft.font, Integer.toString(minecraft.getFps()), 2, 2, 0xE0E0E0, true);
                 if (minecraft.level != null) {
+                    long dayTime = minecraft.level.getDayTime();
                     graphics.drawString(minecraft.font, Component.translatable("gui.mite.world_day",
-                            mite$displayDay(minecraft.level.getDayTime())), 2, 12, 0xE0E0E0, true);
+                            mite$displayDay(dayTime)), 2, 12, 0xE0E0E0, true);
+                    graphics.drawString(minecraft.font, Component.translatable("gui.mite.world_time",
+                            mite$displayTime(dayTime), Component.translatable(mite$displayTimePeriod(dayTime))),
+                            2, 22, 0xE0E0E0, true);
                 }
             });
         }
@@ -60,6 +66,19 @@ public abstract class MinimalDebugOverlayMixin {
         // Keep this distinct from LunarCalendar's unadjusted special-moon day; avoid time + 6000 overflow.
         long safe = Math.max(time, 0L);
         return safe / 24_000L + (safe % 24_000L + 6_000L) / 24_000L + 1L;
+    }
+
+    @Unique
+    private static String mite$displayTime(long time) {
+        // World tick zero is 06:00. Reduce before adding the offset to avoid long overflow.
+        int ticks = (int)((Math.floorMod(time, 24_000L) + 6_000L) % 24_000L);
+        return String.format(Locale.ROOT, "%02d:%02d", ticks / 1_000, ticks % 1_000 * 60 / 1_000);
+    }
+
+    @Unique
+    private static String mite$displayTimePeriod(long time) {
+        return LunarCalendar.daytime((int)Math.floorMod(time, 24_000L))
+                ? "gui.mite.time.day" : "gui.mite.time.night";
     }
 
     @Unique
