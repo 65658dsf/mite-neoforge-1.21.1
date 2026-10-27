@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.combat.SourcePlayerReach;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerReach;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsReach;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.survival.DualFoodData;
@@ -51,20 +52,143 @@ public final class BetterCombatPlayerReachGameTests {
     }
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void bundledSimplySwordsLengthsMatchEveryLiveProfile(GameTestHelper h) {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        String[] families = {"longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive",
+                "warglaive", "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd"};
+        double[] expected = {3.1D, 3.5D, 3D, 3.1D, 2.3D, 4D, 3.5D, 3.1D, 2.75D, 4D, 4D, 4D, 5.5D, 3.5D, 4.5D};
+        for (String material : List.of("copper", "vibranium", "gold", "iron", "runic")) {
+            for (int index = 0; index < families.length; ++index) {
+                var stack = new ItemStack(SimplySwordsCompat.weapon(material, families[index]));
+                h.assertFalse(stack.isEmpty(), "The actual weapon is registered: " + material + "/" + families[index]);
+                double range = SimplySwordsReach.baseReach(stack, 3D);
+                h.assertTrue(Math.abs(range - expected[index]) < .00001D,
+                        "Bundled weapon length survives absent parents: " + stack + " = " + range);
+            }
+        }
+        if (BetterCombatBridge.enabled()) {
+            for (var item : BuiltInRegistries.ITEM) {
+                var stack = new ItemStack(item);
+                if (SimplySwordsCompat.definition(stack) == null) continue;
+                Double live = BetterCombatBridge.weaponBaseReach(stack, 3D);
+                Double bundled = SimplySwordsReach.baseReach(stack, 3D);
+                h.assertTrue(live == null ? bundled == null : bundled != null && Math.abs(bundled - live) < .00001D,
+                        "Every managed normal/unique weapon agrees with the actual Better Combat registry: " + stack
+                                + " bundled=" + bundled + " live=" + live);
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void absentBetterCombatStillHitsWithSavedRapierGlaiveAndSpear(GameTestHelper h) {
+        if (BetterCombatBridge.enabled() || !SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+            String[] families = {"rapier", "glaive", "spear"};
+            double[] reaches = {3D, 3.5D, 4D};
+            for (int index = 0; index < families.length; ++index) {
+                ItemStack stack = new ItemStack(SimplySwordsCompat.weapon("copper", families[index]));
+                // Old explicit damage/speed components have no range; no new item or component migration is needed.
+                stack.set(DataComponents.ATTRIBUTE_MODIFIERS, stack.getAttributeModifiers());
+                stack = ItemStack.parse(h.getLevel().registryAccess(), stack.save(h.getLevel().registryAccess())).orElseThrow();
+                equip(session.player(), stack, ItemStack.EMPTY);
+                try (Target near = target(h, session.player(), reaches[index] - .1D);
+                        Target far = target(h, session.player(), reaches[index] + .1D)) {
+                    h.assertTrue(Math.abs(SourcePlayerReach.meleeReach(session.player(), near.entity()) - reaches[index]) < .00001D,
+                            "The saved weapon keeps its full length without Better Combat: " + families[index]);
+                    vanillaAttack(session.player(), near.entity());
+                    h.assertTrue(near.entity().getHealth() < 200F, "The actual vanilla packet damages within the restored length");
+                    vanillaAttack(session.player(), far.entity());
+                    h.assertValueEqual(far.entity().getHealth(), 200F, "The actual vanilla packet rejects targets outside the weapon's length");
+                }
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void absentBetterCombatPreservesRangeComponentsAndIndependentInteractions(GameTestHelper h) {
+        if (BetterCombatBridge.enabled() || !SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+            var stack = new ItemStack(SimplySwordsCompat.weapon("copper", "glaive"));
+            stack.set(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.builder()
+                    .add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(ResourceLocation.parse("mite:reach_component_test"),
+                            .4D, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND).build());
+            equip(session.player(), stack, ItemStack.EMPTY);
+            var attribute = session.player().getAttribute(Attributes.ENTITY_INTERACTION_RANGE);
+            var bonus = ResourceLocation.parse("mite:reach_external_test");
+            attribute.addTransientModifier(new AttributeModifier(bonus, .5D, AttributeModifier.Operation.ADD_VALUE));
+            try (Target near = target(h, session.player(), 3.8D); Target far = target(h, session.player(), 4D)) {
+                h.assertTrue(Math.abs(SourcePlayerReach.meleeReach(session.player(), near.entity()) - 3.9D) < .00001D,
+                        "Explicit components replace metadata and external entity-range modifiers are counted once");
+                h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(stack) - 3.4D) < .00001D,
+                        "The hovered weapon preview includes its component without borrowing the held player's modifier");
+                vanillaAttack(session.player(), near.entity());
+                h.assertTrue(near.entity().getHealth() < 200F, "An actual attack uses the explicit component and external modifier");
+                vanillaAttack(session.player(), far.entity());
+                h.assertValueEqual(far.entity().getHealth(), 200F, "The same attack still enforces the final cap");
+            } finally { attribute.removeModifier(bonus); }
+            stack = new ItemStack(SimplySwordsCompat.weapon("copper", "spear"));
+            equip(session.player(), stack, ItemStack.EMPTY);
+            try (Target target = target(h, session.player(), 3.8D)) {
+                h.assertValueEqual(attribute.getValue(), 3D, "Restoring weapon length does not extend the entity interaction attribute");
+                h.assertValueEqual(SourcePlayerReach.interactionReach(session.player(), target.entity()), 2.5D,
+                        "The long spear does not extend right-click interactions");
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void absentBetterCombatSharesConfiguredLengthWithTooltipSelectionAndMobs(GameTestHelper h) {
+        if (BetterCombatBridge.enabled() || !SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        boolean height = MiteConfig.HEIGHT_REACH_PENALTY.get();
+        MiteConfig.HEIGHT_REACH_PENALTY.set(true);
+        try (ReachSettings ignored = new ReachSettings(1.5D, .25D); Session session = session(h)) {
+            var spear = new ItemStack(SimplySwordsCompat.weapon("copper", "spear"));
+            equip(session.player(), spear, ItemStack.EMPTY);
+            try (Target target = target(h, session.player(), 5D, 0D)) {
+                h.assertValueEqual(SourcePlayerReach.meleeReach(session.player(), target.entity()), 5.75D,
+                        "Weapon length receives the configured multiplier and then the reduction");
+                h.assertValueEqual(SourcePlayerReach.tooltipMeleeReach(spear), 5.75D, "The neutral-height tooltip reports the actual configured reach");
+                target.entity().setPos(target.entity().position().add(0D, -1.5D, 0D));
+                h.assertValueEqual(SourcePlayerReach.meleeReach(session.player(), target.entity()), 6.5D,
+                        "Height adjustment remains part of the same configured calculation");
+                target.entity().setItemInHand(InteractionHand.MAIN_HAND, spear.copy());
+                h.assertTrue(Math.abs(io.github.ningmeng123.mite.combat.MobWeaponReach.sourceLimit(target.entity(),
+                        session.player(), session.player().getY()) - 5.55D) < .00001D,
+                        "An armed monster uses the same weapon length before its existing .2-block margin");
+            }
+            MiteConfig.WEAPON_REACH_MULTIPLIER.set(10D);
+            MiteConfig.refreshEnchantmentRules();
+            h.assertTrue(SourcePlayerReach.selectionRange(session.player()) >= 40D,
+                    "The client selection ray includes configured long weapons beyond the old 16-block ray");
+        } finally {
+            MiteConfig.HEIGHT_REACH_PENALTY.set(height);
+            MiteConfig.refreshEnchantmentRules();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
     public static void absentBetterCombatKeepsSourceSwordRangeAndPacketRejection(GameTestHelper h) {
         if (BetterCombatBridge.enabled()) { h.succeed(); return; }
         try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
             ServerPlayer player = session.player();
-            equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
-            try (Target near = target(h, player, 2.1D); Target far = target(h, player, 2.8D)) {
-                h.assertTrue(Math.abs(SourcePlayerReach.meleeReach(player, near.entity()) - 2.25D) < .00001D,
-                        "Without the optional mod, a sword retains the source 2.25 block reach");
-                vanillaAttack(player, near.entity());
-                h.assertTrue(near.entity().getHealth() < 200F,
-                        "The actual vanilla attack packet still damages a target inside source reach");
-                vanillaAttack(player, far.entity());
-                h.assertValueEqual(far.entity().getHealth(), 200F,
-                        "Without Better Combat, the same packet still rejects a target 2.8 blocks from its hitbox");
+            for (var item : List.of(Items.IRON_SWORD, io.github.ningmeng123.mite.registry.MiteTools.get("mite:copper_sword"))) {
+                equip(player, new ItemStack(item), ItemStack.EMPTY);
+                try (Target near = target(h, player, 2.1D); Target far = target(h, player, 2.8D)) {
+                    h.assertTrue(Math.abs(SourcePlayerReach.meleeReach(player, near.entity()) - 2.25D) < .00001D,
+                            "Without the optional mod, iron/copper swords retain the source 2.25 block reach");
+                    h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(player.getMainHandItem()) - 2.25D) < .00001D,
+                            "The native sword tooltip matches the actual neutral-height attack range");
+                    vanillaAttack(player, near.entity());
+                    h.assertTrue(near.entity().getHealth() < 200F,
+                            "The actual vanilla attack packet still damages a target inside source reach");
+                    vanillaAttack(player, far.entity());
+                    h.assertValueEqual(far.entity().getHealth(), 200F,
+                            "Without Better Combat, the same packet still rejects a target 2.8 blocks from its hitbox");
+                }
             }
         }
         h.succeed();

@@ -1,12 +1,20 @@
 package io.github.ningmeng123.mite.client;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.combat.SourcePlayerReach;
+import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.item.GemSacrifice;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,6 +28,14 @@ public final class CraftingTooltips {
     @SubscribeEvent
     public static void explainEquipment(ItemTooltipEvent event) {
         var stack = event.getItemStack();
+        if (!BetterCombatBridge.enabled() && !(stack.getItem() instanceof ProjectileWeaponItem)
+                && !(stack.getItem() instanceof ShieldItem)
+                && (stack.is(Items.STICK) || stack.is(Items.BONE) || stack.getAttributeModifiers().modifiers().stream().anyMatch(entry ->
+                        entry.attribute().is(Attributes.ATTACK_DAMAGE) && entry.slot().test(EquipmentSlot.MAINHAND)))) {
+            event.getToolTip().add(Component.translatable("tooltip.mite.attack_reach",
+                    ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(SourcePlayerReach.tooltipMeleeReach(stack)))
+                    .withStyle(ChatFormatting.DARK_GREEN));
+        }
         if (EquipmentDurability.isManaged(stack)) {
             event.getToolTip().add(Component.translatable("tooltip.mite.quality",
                     Component.translatable("quality.mite." + EquipmentDurability.quality(stack).name().toLowerCase(java.util.Locale.ROOT)))

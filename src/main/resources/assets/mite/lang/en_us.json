@@ -1,4 +1,5 @@
 {
+  "tooltip.mite.attack_reach": "%s Attack Reach (same height)",
   "item.mite.rusted_iron_phantom_blade": "Rusted Iron Phantom Blade",
   "item.mite.gold_phantom_blade": "Golden Phantom Blade",
   "item.mite.copper_phantom_blade": "Copper Phantom Blade",
@@ -1230,7 +1231,7 @@
   "mite.config.better_combat_mobs": "Enable Better Combat for mobs",
   "mite.config.better_combat_mobs.tooltip": "Disabled by default: mobs use their original attacks. Enable to give armed hostile mobs Better Combat windups, combos, cooldowns and animations. Requires Better Combat. Player compatibility is unaffected.",
   "mite.config.weapon_reach_multiplier": "Attack reach multiplier",
-  "mite.config.weapon_reach_multiplier.tooltip": "Multiply survival melee reach before subtracting the fixed reduction. 1 keeps defaults; creative is unchanged. Original MITE weapons retain source reach; Simply Swords weapons use their own Better Combat base range when installed.",
+  "mite.config.weapon_reach_multiplier.tooltip": "Multiply survival melee reach before subtracting the fixed reduction. 1 keeps defaults; creative is unchanged. Original MITE weapons retain source reach; Simply Swords weapons retain their own length with or without Better Combat.",
   "mite.config.weapon_reach_reduction": "Attack reach reduction (blocks)",
   "mite.config.weapon_reach_reduction.tooltip": "Subtract from multiplied melee reach, with a minimum of 0. Default 0. This setting does not change damage.",
   "mite.config.height_reach_penalty": "Apply target-height reach adjustment",

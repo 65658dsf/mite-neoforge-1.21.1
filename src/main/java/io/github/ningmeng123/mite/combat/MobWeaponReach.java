@@ -1,7 +1,6 @@
 package io.github.ningmeng123.mite.combat;
 
 import io.github.ningmeng123.mite.Mite;
-import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
@@ -77,8 +76,7 @@ public final class MobWeaponReach {
 
     public static double sourceLimit(Mob mob, Entity target, double feetY) {
         double base = SourcePlayerReach.baseMeleeReach(mob.getMainHandItem(), itemRange(mob));
-        if (!Double.isFinite(base) || base <= 0D && BetterCombatBridge.enabled()
-                && SimplySwordsCompat.definition(mob.getMainHandItem()) != null) return 0D;
+        if (!Double.isFinite(base) || base <= 0D && SimplySwordsCompat.definition(mob.getMainHandItem()) != null) return 0D;
         double playerReach = SourcePlayerCombatRules.meleeReach(false, feetY - target.getY(), base - 1.5D,
                 target instanceof AbstractHurtingProjectile, 0D, MiteConfig.weaponReachMultiplier(),
                 MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled());
