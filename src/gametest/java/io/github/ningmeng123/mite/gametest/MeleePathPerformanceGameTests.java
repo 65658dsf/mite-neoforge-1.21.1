@@ -106,7 +106,7 @@ public final class MeleePathPerformanceGameTests {
     }
 
     @GameTest(template = "empty", batch = "melee_path_performance_target", timeoutTicks = 400)
-    public static void movingOrReplacingTheTargetAndMovingTheMobInvalidateFailure(GameTestHelper h) {
+    public static void movementRespectsShortQueryIntervalAndReplacingTargetInvalidatesFailure(GameTestHelper h) {
         Fixture f = new Fixture(h);
         f.closeWithTest();
         f.whenReady(() -> {
@@ -114,8 +114,8 @@ public final class MeleePathPerformanceGameTests {
             long searches = MeleePursuitPaths.searchStats(f.mob).searches();
             f.player.moveTo(Vec3.atBottomCenterOf(f.origin.offset(10, 0, 0)));
             f.find();
-            h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > searches,
-                    "Moving the target to another block invalidates the shared failed result immediately");
+            h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
+                    "Moving the same target cannot trigger another expensive search within the short interval");
             searches = MeleePursuitPaths.searchStats(f.mob).searches();
             Player replacement = h.makeMockPlayer(GameType.SURVIVAL);
             f.players.add(replacement);
@@ -128,10 +128,17 @@ public final class MeleePathPerformanceGameTests {
             searches = MeleePursuitPaths.searchStats(f.mob).searches();
             f.mob.moveTo(Vec3.atBottomCenterOf(f.origin.offset(0, 0, 2)));
             f.find();
-            h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > searches,
-                    "Moving the pursuer to another approach also invalidates the failed result");
-            f.close();
-            h.succeed();
+            h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
+                    "Moving the pursuer also respects the same short native-query interval");
+            final long beforeRetry = searches;
+            h.runAfterDelay(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS, () -> {
+                try {
+                    f.find();
+                    h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > beforeRetry,
+                            "Changed geometry permits a new native query as soon as the short interval expires");
+                    h.succeed();
+                } finally { f.close(); }
+            });
         });
     }
 

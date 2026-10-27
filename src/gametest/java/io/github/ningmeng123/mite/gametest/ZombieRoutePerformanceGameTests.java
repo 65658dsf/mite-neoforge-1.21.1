@@ -4,6 +4,8 @@ import io.github.ningmeng123.mite.entity.R196DiggerGoal;
 import io.github.ningmeng123.mite.entity.R196MonsterAi;
 import io.github.ningmeng123.mite.entity.R196NpcNeeds;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
+import io.github.ningmeng123.mite.entity.MobCombat;
+import io.github.ningmeng123.mite.entity.MeleePursuitPaths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,16 +16,21 @@ import net.minecraft.gametest.framework.GameTestInfo;
 import net.minecraft.gametest.framework.GameTestListener;
 import net.minecraft.gametest.framework.GameTestRunner;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.pathfinder.Path;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -96,13 +103,151 @@ public final class ZombieRoutePerformanceGameTests {
         });
     }
 
+    @GameTest(template = "empty", batch = "zombie_route_cache", timeoutTicks = 400)
+    public static void movingUnreachablePlayerCannotResetTheNativeQueryCooldown(GameTestHelper h) {
+        Fixture f = new Fixture(h);
+        f.whenReady(() -> {
+            f.player.moveTo(f.origin.getX() + 8.5D, f.origin.getY() + 12D, f.origin.getZ() + .5D, 0F, 0F);
+            h.getLevel().setBlock(f.player.blockPosition().below(), Blocks.BEDROCK.defaultBlockState(), 2);
+            var failed = f.digger.pursuitPlan();
+            h.assertFalse(failed.completeWalkingRoute() || failed.choosesBreaking(),
+                    "The elevated isolated player has no walking or excavation route");
+            long searches = MeleePursuitPaths.searchStats(f.mob).searches();
+            h.assertTrue(searches > 0, "The initial failure executes a real native search");
+            var melee = new SourceMeleeGoal(f.mob, Player.class, 1D, false);
+            // Both endpoints repeatedly cross the old one-block cache boundary. Different goal
+            // entrypoints must still share one minimum retry interval for this unchanged target.
+            for (int request = 0; request < 12; ++request) {
+                f.player.moveTo(f.origin.getX() + 8.5D + (request % 2) * 2.2D,
+                        f.origin.getY() + 12D, f.origin.getZ() + .5D, 0F, 0F);
+                f.mob.moveTo(f.origin.getX() + .5D + (request % 2) * 1.1D,
+                        f.origin.getY(), f.origin.getZ() + .5D, 0F, 0F);
+                f.digger.canUse(); melee.canUse();
+            }
+            h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
+                    "Movement and repeated digging/melee requests cannot force another same-tick native query");
+            h.runAfterDelay(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS - 1, () -> {
+                f.player.moveTo(f.origin.getX() + 8.5D, f.origin.getY() + 12D,
+                        f.origin.getZ() + .5D, 0F, 0F);
+                f.digger.canUse(); melee.canUse();
+                h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
+                        "A moving unreachable target cannot bypass the final tick of the minimum retry interval");
+                h.runAfterDelay(1, () -> {
+                    try {
+                        // Ensure both original search positions have changed when the deadline
+                        // arrives, so this is moving-target recovery rather than stationary backoff.
+                        f.player.moveTo(f.origin.getX() + 10.7D, f.origin.getY() + 12D,
+                                f.origin.getZ() + .5D, 0F, 0F);
+                        f.mob.moveTo(f.origin.getX() + 1.6D, f.origin.getY(),
+                                f.origin.getZ() + .5D, 0F, 0F);
+                        f.digger.canUse();
+                        h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > searches,
+                                "Moving-target pursuit resumes a real query as soon as its short minimum cooldown expires");
+                        h.succeed();
+                    } finally { f.close(); }
+                });
+            });
+        });
+    }
+
+    @GameTest(template = "empty", batch = "zombie_route_cache", timeoutTicks = 400)
+    public static void playerStoppingAfterMovementStillRetriesAtTheShortDeadline(GameTestHelper h) {
+        Fixture f = new Fixture(h);
+        f.whenReady(() -> {
+            f.player.moveTo(f.origin.getX() + 8.5D, f.origin.getY() + 12D, f.origin.getZ() + .5D, 0F, 0F);
+            h.getLevel().setBlock(f.player.blockPosition().below(), Blocks.BEDROCK.defaultBlockState(), 2);
+            var failed = f.digger.pursuitPlan();
+            h.assertFalse(failed.completeWalkingRoute() || failed.choosesBreaking(),
+                    "The first query genuinely fails to reach the isolated high player");
+            long searches = MeleePursuitPaths.searchStats(f.mob).searches();
+            h.assertTrue(searches > 0, "A real native query establishes the original cooldown");
+            f.player.moveTo(f.player.getX() + 2.2D, f.player.getY(), f.player.getZ(), 0F, 0F);
+            f.digger.pursuitPlan();
+            h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
+                    "The initial player movement is deferred instead of starting another search immediately");
+            // The player and zombie now stay exactly still. Requiring another position change
+            // at the deadline would hide a deferred plan being cached as a new 40-tick failure.
+            h.runAfterDelay(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS - 1, () -> {
+                f.digger.pursuitPlan();
+                h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
+                        "Stopping after the movement does not shorten the minimum query cooldown");
+                h.runAfterDelay(1, () -> {
+                    try {
+                        f.digger.pursuitPlan();
+                        h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > searches,
+                                "The unchanged moved position is queried at tick ten rather than cached for forty more ticks");
+                        h.succeed();
+                    } finally { f.close(); }
+                });
+            });
+        });
+    }
+
+    @GameTest(template = "empty", batch = "zombie_route_cache", timeoutTicks = 400)
+    public static void activeAndPausedDiggingChecksShareThePursuitQueryBudget(GameTestHelper h) {
+        Fixture f = new Fixture(h);
+        f.whenReady(() -> {
+            // No complete walking alternative exists, while both adjacent plank blocks are
+            // genuinely reachable excavation work. Non-collapsing planks keep the second
+            // block intact during the real follow-up pause. Keep the player outside strike range.
+            for (int z = -16; z <= 16; z++) for (int y = 0; y <= 3; y++)
+                h.getLevel().setBlock(f.origin.offset(1, y, z), Blocks.OAK_PLANKS.defaultBlockState(), 2);
+            h.assertTrue(f.digger.canUse(), "The actual digging goal selects a physically reachable opening");
+            f.digger.start();
+            while (MobCombat.ticksWithOffset(f.mob) % 10 != 0) ++f.mob.tickCount;
+            int initial = f.mob.navigationQueries;
+            for (int request = 0; request < 12; ++request)
+                h.assertTrue(f.digger.canContinueToUse(), "Unfinished valid digging remains active at the route-check cadence");
+            h.assertTrue(f.mob.navigationQueries == initial,
+                    "Active digging reuses the shared pursuit result instead of issuing independent native queries");
+
+            // Finish the first block through the real break path, then reach the one-tick
+            // pause branch which checks whether walking now makes better progress.
+            BlockPos opening = f.digger.targetBlock();
+            f.digger.stop();
+            CompoundTag saved = new CompoundTag();
+            saved.putLong("position", opening.asLong()); saved.putInt("progress", 9); saved.putInt("cooldown", 1);
+            f.mob.getPersistentData().put("mite_digging_031", saved);
+            var resumed = new R196DiggerGoal(f.mob);
+            h.assertTrue(resumed.canUse(), "Saved final-stage work is restored through the actual goal");
+            resumed.start(); resumed.tick();
+            h.assertTrue(h.getLevel().isEmptyBlock(opening) && resumed.pauseTicks() == 10,
+                    "Finishing one plank block leaves genuine follow-up digging work and its normal pause");
+            h.assertTrue(resumed.targetBlock() != null && !h.getLevel().isEmptyBlock(resumed.targetBlock()),
+                    "The paused goal has a real remaining block rather than only waiting for collapsing terrain");
+            for (int tick = 0; tick < 9; ++tick) resumed.tick();
+            h.assertTrue(resumed.pauseTicks() == 1, "The real pause reaches its final route-check tick");
+            for (int request = 0; request < 12; ++request)
+                h.assertTrue(resumed.canContinueToUse(),
+                        "The final pause checks its actual route while preserving valid follow-up digging");
+            h.assertTrue(f.mob.navigationQueries == initial,
+                    "Paused digging also respects the shared route budget after a real terrain change");
+            resumed.stop();
+            f.close();
+            h.succeed();
+        });
+    }
+
+    private static final class QueryCountingZombie extends Zombie {
+        int navigationQueries;
+        QueryCountingZombie(Level level) { super(EntityType.ZOMBIE, level); }
+        @Override protected PathNavigation createNavigation(Level level) {
+            return new GroundPathNavigation(this, level) {
+                @Override public Path createPath(BlockPos target, int accuracy, int range) {
+                    ++navigationQueries;
+                    return super.createPath(target, accuracy, range);
+                }
+            };
+        }
+    }
+
     private static final class Fixture implements AutoCloseable {
         final GameTestHelper helper;
         final int ticketKey;
         final List<ChunkPos> chunks = new ArrayList<>();
         boolean closed;
         final BlockPos origin;
-        final Zombie mob;
+        final QueryCountingZombie mob;
         final Player player;
         final R196DiggerGoal digger;
 
@@ -115,7 +260,7 @@ public final class ZombieRoutePerformanceGameTests {
                 h.getLevel().setBlock(origin.offset(x, -1, z), Blocks.BEDROCK.defaultBlockState(), 2);
                 for (int y = 0; y < 4; y++) h.getLevel().setBlock(origin.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
             }
-            mob = EntityType.ZOMBIE.create(h.getLevel());
+            mob = new QueryCountingZombie(h.getLevel());
             mob.moveTo(origin.getX() + .5D, origin.getY(), origin.getZ() + .5D, 0F, 0F);
             mob.setNoAi(true); mob.setNoGravity(true); mob.setOnGround(true);
             // Exercise the actual installed goals without depending on a ticking entity surviving

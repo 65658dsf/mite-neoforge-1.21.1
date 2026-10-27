@@ -287,7 +287,11 @@ public final class R196DiggerGoal extends Goal {
         return false;
     }
     private Path pathToTarget() {
-        var prey=mob.getTarget();return prey==null?null:mob.getNavigation().createPath(prey.blockPosition(),0,16);
+        var prey=mob.getTarget();
+        // The active digging checks must share the same route and retry budget as melee and
+        // portal breaking; a second vanilla query here bypasses failed-route backoff.
+        if(ZombieRoutePlanner.applies(mob)) return pursuit.plan().path();
+        return prey==null?null:mob.getNavigation().createPath(prey.blockPosition(),0,16);
     }
     private boolean pathIsCloser() {
         var path=pathToTarget();var prey=mob.getTarget();

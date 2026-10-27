@@ -11,9 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -33,6 +31,7 @@ public final class MeleePursuitPaths {
     private static final int DETOUR_LENGTH = 96;
     private static final int DETOUR_NODES = 8192;
     private static final int COMPLETE_REUSE_TICKS = 10;
+    public static final int MIN_MOVING_RETRY_TICKS = 10;
     public static final int MAX_FAILURE_RETRY_TICKS = 80;
     public static final int RETRY_STAGGER_TICKS = 10;
     private static final Map<PathfinderMob, SearchCache> SEARCHES = new WeakHashMap<>();
@@ -40,6 +39,7 @@ public final class MeleePursuitPaths {
     /** Values never retain their weak entity key or its level. Server thread only. */
     private static final class SearchCache {
         long searches, cacheHits, searchedAt = Long.MIN_VALUE, retryAt = Long.MIN_VALUE, completeUntil;
+        long movingRetryAt = Long.MIN_VALUE;
         int targetId, failures;
         ResourceKey<Level> dimension;
         Vec3 origin, destination;
@@ -48,18 +48,23 @@ public final class MeleePursuitPaths {
         ItemStack held = ItemStack.EMPTY;
         Path partial, complete;
 
-        boolean matches(PathfinderMob mob, LivingEntity target, long now) {
+        boolean samePursuit(PathfinderMob mob, LivingEntity target, long now) {
             return origin != null && now >= searchedAt && dimension == mob.level().dimension()
-                    && targetId == target.getId() && origin.distanceToSqr(mob.position()) < 1D
-                    && destination.distanceToSqr(target.position()) < 1D
+                    && targetId == target.getId()
                     && width == mob.getBbWidth() && height == mob.getBbHeight() && step == mob.maxUpStep()
                     && floats == mob.getNavigation().getNodeEvaluator().canFloat()
                     && ItemStack.isSameItemSameComponents(held, mob.getMainHandItem());
         }
 
+        boolean matches(PathfinderMob mob, LivingEntity target, long now) {
+            return samePursuit(mob, target, now) && origin.distanceToSqr(mob.position()) < 1D
+                    && destination.distanceToSqr(target.position()) < 1D;
+        }
+
         void clear() {
             failures = 0; partial = null; complete = null; held = ItemStack.EMPTY;
             origin = null; destination = null; retryAt = Long.MIN_VALUE;
+            movingRetryAt = Long.MIN_VALUE;
         }
 
         void remember(PathfinderMob mob, LivingEntity target, long now) {
@@ -96,6 +101,11 @@ public final class MeleePursuitPaths {
         return cache == null || cache.failures == 0 ? Long.MIN_VALUE : cache.retryAt;
     }
 
+    static long movingRetryAt(PathfinderMob mob) {
+        SearchCache cache = SEARCHES.get(mob);
+        return cache == null ? Long.MIN_VALUE : cache.movingRetryAt;
+    }
+
     private MeleePursuitPaths() {}
 
     public static boolean applies(PathfinderMob mob) {
@@ -127,6 +137,16 @@ public final class MeleePursuitPaths {
             ++cache.cacheHits;
             return cache.partial;
         }
+        // Moving players used to reset failure backoff on every block crossed. Keep a
+        // short real-query interval for a failed pursuit, even across geometry changes.
+        // Never hand a moved monster an unverified stale path; other goals can retry soon.
+        if (!matches && cache.failures > 0 && cache.samePursuit(mob, target, now)
+                && now - cache.searchedAt < MIN_MOVING_RETRY_TICKS) {
+            ++cache.cacheHits;
+            cache.movingRetryAt = cache.searchedAt + MIN_MOVING_RETRY_TICKS;
+            return null;
+        }
+        cache.movingRetryAt = Long.MIN_VALUE;
         if (!sameFailure) cache.clear();
         Path direct = find(mob, Set.of(target.blockPosition()), 1, false);
         if (reaches(mob, direct, target)) return cache.rememberComplete(mob, target, now, direct);
@@ -245,13 +265,8 @@ public final class MeleePursuitPaths {
             if (start.distSqr(target) <= RANGE * RANGE && mob.level().hasChunkAt(target)) loaded.add(target);
         }
         if (loaded.isEmpty()) return null;
-        PathNavigationRegion region = new PathNavigationRegion(mob.level(), start.offset(-RANGE - 8, -RANGE - 8, -RANGE - 8),
-                start.offset(RANGE + 8, RANGE + 8, RANGE + 8)) {
-            @Override public BlockState getBlockState(BlockPos pos) {
-                return !mob.level().hasChunkAt(pos) || isOutsideBuildHeight(pos)
-                        ? Blocks.BEDROCK.defaultBlockState() : super.getBlockState(pos);
-            }
-        };
+        var region = new LoadedPathNavigationRegion(mob.level(), start.offset(-RANGE - 8, -RANGE - 8, -RANGE - 8),
+                start.offset(RANGE + 8, RANGE + 8, RANGE + 8));
         WalkNodeEvaluator nodes = new WalkNodeEvaluator() {
             @Override public int getNeighbors(Node[] neighbors, Node node) {
                 int count = super.getNeighbors(neighbors, node), accepted = 0;

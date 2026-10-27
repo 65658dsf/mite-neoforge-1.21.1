@@ -105,6 +105,10 @@ public final class ZombieRoutePlanner {
         long lifetime = cached != null && !cached.completeWalkingRoute() && !cached.choosesBreaking()
                 ? Math.max(FAILED_REPLAN_TICKS + Math.floorMod(mob.getId(), MeleePursuitPaths.RETRY_STAGGER_TICKS),
                         retryAt > plannedAt ? retryAt - plannedAt : 0L) : REPLAN_TICKS;
+        // A short movement deferral is not a failed search. Do not extend it into
+        // the much longer failed-plan lifetime when the player stops moving.
+        long movingRetryAt = MeleePursuitPaths.movingRetryAt(mob);
+        if (movingRetryAt > plannedAt) lifetime = Math.min(lifetime, movingRetryAt - plannedAt);
         if (cached != null && prey == target && now >= plannedAt && now - plannedAt < lifetime
                 && origin.distanceToSqr(mob.position()) < 1D && destination.distanceToSqr(target.position()) < 1D
                 && griefing == permitted && frenzy == frenzied && ItemStack.isSameItemSameComponents(held, mob.getMainHandItem())
@@ -118,7 +122,7 @@ public final class ZombieRoutePlanner {
             boolean reachable = opening.portal() ? mob.distanceToSqr(opening.first().getCenter()) < 4D
                     : digger.canDestroy(opening.first(), true);
             Path approach = reachable ? new Path(java.util.List.of(new Node(mob.getBlockX(),mob.getBlockY(),mob.getBlockZ())),
-                    mob.blockPosition(),true) : findPath(opening.approach(), 0);
+                    mob.blockPosition(),true) : MeleePursuitPaths.movingRetryAt(mob) > now ? null : findPath(opening.approach(), 0);
             // A speculative opening never directs the mob through an intervening wall.
             if (reachable || approach != null && approach.canReach()) {
                 openingState = mob.level().getBlockState(opening.first());
