@@ -48,7 +48,7 @@ public final class GemSacrificeGameTests {
 
     @GameTest(template = "empty")
     public static void nativePacketsSendOneGlassSoundAndFiveOrientedGemFragmentsToSelfAndObservers(GameTestHelper helper) {
-        for (Item gem : List.of(Items.DIAMOND, Items.EMERALD)) for (float yaw : new float[]{0F, 90F}) {
+        for (Item gem : GEMS) for (float yaw : new float[]{0F, 90F}) {
             try (Fixture user = new Fixture(helper); Fixture observer = new Fixture(helper)) {
                 float pitch = yaw == 0F ? 0F : 30F;
                 user.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(gem));
@@ -57,7 +57,8 @@ public final class GemSacrificeGameTests {
                 observer.clearPackets();
                 user.use(InteractionHand.MAIN_HAND, 1, yaw, pitch);
                 helper.assertTrue(user.player.getMainHandItem().isEmpty(), "Even the last held gem is consumed exactly once");
-                helper.assertValueEqual(user.player.totalExperience, gem == Items.DIAMOND ? 500 : 250, "One real packet awards the independently specified whole-gem value");
+                int expectedExperience = gem == Items.LAPIS_LAZULI ? 25 : gem == Items.QUARTZ ? 50 : gem == Items.EMERALD ? 250 : 500;
+                helper.assertValueEqual(user.player.totalExperience, expectedExperience, "One real packet awards the independently specified whole-gem value");
                 helper.assertValueEqual(user.player.getHealth(), 2F, "Breaking feedback never turns sacrifice into healing");
                 verifyFeedback(helper, user, user.player, gem);
                 verifyFeedback(helper, observer, user.player, gem);
@@ -138,8 +139,8 @@ public final class GemSacrificeGameTests {
         helper.assertValueEqual(sounds.size(), 1, "Self and nearby observers each receive exactly one break sound");
         var sound = sounds.getFirst();
         helper.assertTrue(sound.getSound().value() == SoundEvents.GLASS_BREAK && sound.getSource() == SoundSource.PLAYERS
-                        && sound.getVolume() == 0.25F && sound.getPitch() >= 0.8F && sound.getPitch() <= 1.2F,
-                "The actual packet uses R196's glass source, volume and random pitch rather than experience or food sounds");
+                        && sound.getVolume() == 0.375F && sound.getPitch() >= 0.8F && sound.getPitch() <= 1.2F,
+                "Every gem sends the original glass sound at 1.5 times its former volume with unchanged random pitch");
         helper.assertValueEqual(particles.size(), 5, "Self and nearby observers each receive the five individual item fragments");
         float pitch = -user.getXRot() * (float) (Math.PI / 180D);
         float yaw = -user.getYRot() * (float) (Math.PI / 180D);

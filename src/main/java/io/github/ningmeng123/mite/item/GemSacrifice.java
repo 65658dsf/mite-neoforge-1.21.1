@@ -50,7 +50,7 @@ public final class GemSacrifice {
             PlayerExperience.addPoints(player, value);
             player.awardStat(Stats.ITEM_USED.get(item));
             event.getLevel().playSound(null, player.getX(), player.getY() + player.getBbHeight() * 0.5D, player.getZ(),
-                    SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 0.25F, 0.8F + player.getRandom().nextFloat() * 0.4F);
+                    SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 0.375F, 0.8F + player.getRandom().nextFloat() * 0.4F);
             if (event.getLevel() instanceof ServerLevel level) breakingParticles(level, player, broken);
             player.getInventory().setChanged();
             player.containerMenu.broadcastChanges();
