@@ -297,36 +297,73 @@ public final class MaterialEquipmentUpgradeGameTests {
     public static void mithrilHelmetRequiresFiveIngotsInBothNativeMatchingAndRealMenu(GameTestHelper helper) {
         Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
         helper.assertValueEqual(MaterialUpgradeRequirements.ingots(new ItemStack(upgrade.result())), 5, "A mithril helmet costs its complete five-ingot recipe");
-        for (int available : new int[]{4, 5, 6}) {
+        assertSmithingMaterialCost(helper, upgrade, 5, false);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyAncientMetalUpgradeRequiresExactlyTwoIngots(GameTestHelper helper) {
+        var upgrades = MaterialUpgradeRecipes.smithingUpgrades().stream()
+                .filter(upgrade -> upgrade.toMaterial().equals("ancient_metal")).toList();
+        helper.assertTrue(upgrades.size() >= 20, "Ancient metal routes cover the registered tools, armor, horse armor, shields and fishing equipment");
+        for (Upgrade upgrade : upgrades) {
+            helper.assertValueEqual(MaterialUpgradeRequirements.ingots(new ItemStack(upgrade.result())), 2,
+                    "Every ancient metal target uses the fixed two-ingot cost: " + upgrade.id());
+            for (int available : new int[]{1, 2, 3}) {
+                var input = new SmithingRecipeInput(template(), new ItemStack(upgrade.base()), new ItemStack(upgrade.addition(), available));
+                helper.assertTrue(recipe(helper, upgrade).matches(input, helper.getLevel()) == (available >= 2),
+                        "One ingot is insufficient and two or three match: " + upgrade.id() + " / " + available);
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void ancientMetalChestplateAndHorseArmorConsumeTwoIngotsAfterBothTimedTakePaths(GameTestHelper helper) {
+        for (String base : List.of("minecraft:iron_chestplate", "minecraft:iron_horse_armor"))
+            for (boolean inventory : new boolean[]{false, true})
+                assertSmithingMaterialCost(helper, upgrade(base, "ancient_metal"), 2, inventory);
+        helper.succeed();
+    }
+
+    private static void assertSmithingMaterialCost(GameTestHelper helper, Upgrade upgrade, int required, boolean inventory) {
+        for (int available : new int[]{required - 1, required, required + 1}) {
             try (SmithingSession session = new SmithingSession(helper)) {
                 ItemStack source = personalEquipment(helper, upgrade.base());
                 session.load(upgrade, source, available);
                 var nativeInput = new SmithingRecipeInput(template(), source, new ItemStack(upgrade.addition(), available));
-                helper.assertTrue(recipe(helper, upgrade).matches(nativeInput, helper.getLevel()) == (available >= 5),
-                        "Native recipe matching includes the full material quantity: " + available);
+                helper.assertTrue(recipe(helper, upgrade).matches(nativeInput, helper.getLevel()) == (available >= required),
+                        "Native recipe matching enforces the required material quantity: " + upgrade.id() + " / " + available);
                 var before = TimedCraftingController.snapshot(session.menu.getSlot(0).container);
-                session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
-                if (available < 5) {
-                    helper.assertTrue(session.menu.getSlot(3).getItem().isEmpty(), "Four ingots cannot advertise a valid helmet result");
+                session.menu.clicked(3, 0, inventory ? ClickType.QUICK_MOVE : ClickType.PICKUP, session.player);
+                if (available < required) {
+                    helper.assertTrue(session.menu.getSlot(3).getItem().isEmpty(), "Insufficient ingots cannot advertise a valid upgrade result");
                     helper.assertFalse(TimedSmithingController.isActive(session.player), "Insufficient metal cannot start an upgrade");
                     helper.assertTrue(session.menu.quickMoveStack(session.player, 3).isEmpty(), "Direct quick-move cannot bypass insufficient metal");
                     session.tick(200);
                     helper.assertTrue(TimedCraftingController.matches(before, session.menu.getSlot(0).container), "Insufficient metal leaves all three inputs unchanged");
-                    helper.assertTrue(session.menu.getCarried().isEmpty(), "Insufficient metal produces nothing");
+                    helper.assertTrue(session.menu.getCarried().isEmpty() && session.player.getInventory().countItem(upgrade.result()) == 0,
+                            "Insufficient metal produces nothing through either take path");
                 } else {
                     int period = TimedSmithingController.period(session.player, session.menu);
+                    helper.assertTrue(period > 0, "Valid materials start a complete timed upgrade");
                     session.tick(period - 1);
                     helper.assertTrue(TimedCraftingController.matches(before, session.menu.getSlot(0).container), "Inputs remain intact until the final tick");
+                    helper.assertTrue(session.menu.getCarried().isEmpty() && session.player.getInventory().countItem(upgrade.result()) == 0,
+                            "Neither take path delivers an unfinished result");
                     session.tick(1);
-                    helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "The complete period produces the requested helmet");
-                    helper.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), available - 5, "Exactly five ingots are consumed, preserving any extra ingot");
-                    helper.assertTrue(session.menu.getSlot(0).getItem().isEmpty() && session.menu.getSlot(1).getItem().isEmpty(), "One template and one previous helmet are consumed");
+                    if (inventory) helper.assertValueEqual(session.player.getInventory().countItem(upgrade.result()), 1,
+                            "Shift pickup delivers exactly one completed upgrade to the inventory");
+                    else helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "Normal pickup delivers the completed upgrade to the cursor");
+                    helper.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), available - required,
+                            "Only the required ingots are consumed, preserving every extra ingot: " + upgrade.id());
+                    helper.assertTrue(session.menu.getSlot(0).getItem().isEmpty() && session.menu.getSlot(1).getItem().isEmpty(), "One template and one previous equipment item are consumed");
                     session.tick(period * 2);
-                    helper.assertValueEqual(session.menu.getCarried().getCount(), 1, "A completed request cannot manufacture a second item");
+                    helper.assertValueEqual(inventory ? session.player.getInventory().countItem(upgrade.result()) : session.menu.getCarried().getCount(),
+                            1, "A completed request cannot manufacture a second item");
                 }
             }
         }
-        helper.succeed();
     }
 
     @GameTest(template = "empty")

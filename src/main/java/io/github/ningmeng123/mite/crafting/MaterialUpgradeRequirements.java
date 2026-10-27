@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.crafting;
 import com.google.gson.JsonParser;
 import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
+import io.github.ningmeng123.mite.furnace.EquipmentRecycling;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
 import io.github.ningmeng123.mite.rules.MaterialUpgradeCostRules;
@@ -14,7 +15,7 @@ import java.util.Objects;
 import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ItemStack;
 
-/** Shared full-material requirements for server smithing, previews and optional addons. @author NingMeng123 */
+/** Shared material requirements for server smithing, previews and optional addons. @author NingMeng123 */
 public final class MaterialUpgradeRequirements {
     private static final Map<String, Integer> SIMPLY_SWORDS_COSTS = simplySwordsCosts();
 
@@ -25,6 +26,7 @@ public final class MaterialUpgradeRequirements {
     }
 
     public static int ingots(ItemStack result) {
+        if ("ancient_metal".equals(EquipmentRecycling.material(result))) return 2;
         int original = 1;
         var simply = SimplySwordsCompat.definition(result);
         var armor = EquipmentDurability.armorProfile(result);

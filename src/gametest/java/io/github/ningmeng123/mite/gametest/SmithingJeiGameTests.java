@@ -22,6 +22,7 @@ public final class SmithingJeiGameTests {
         helper.assertTrue(!index.recipes().isEmpty(), "Loaded native smithing upgrades produce display pages");
         helper.assertValueEqual(index.originals().size(), index.recipes().size(), "Only replaced native pages are hidden");
         boolean helmet = false;
+        int ancientMetalPages = 0;
         for (var page : index.recipes()) {
             int required = MaterialUpgradeRequirements.ingots(page.output());
             helper.assertTrue(page.additions().stream().allMatch(stack -> stack.getCount() == required),
@@ -43,10 +44,16 @@ public final class SmithingJeiGameTests {
                 helper.assertValueEqual(required, 5, "The mithril helmet page shows five mithril ingots");
                 helmet = true;
             }
+            if (page.source().id().getPath().endsWith("_to_ancient_metal")) {
+                helper.assertTrue(page.additions().stream().allMatch(stack -> stack.getCount() == 2),
+                        "Every ancient metal upgrade page independently displays exactly two ingots");
+                ancientMetalPages++;
+            }
             helper.assertTrue(MaterialUpgradeRequirements.usesTemplate(template), "The replacement category never hides other templates");
             helper.assertTrue(!page.output().isEmpty() && page.output().getCount() == 1, "Each timed upgrade produces one item");
         }
         helper.assertTrue(helmet, "The full-cost mithril helmet example is part of the loaded catalog");
+        helper.assertTrue(ancientMetalPages >= 20, "The loaded catalog displays the fixed cost for all ancient metal equipment families");
         helper.succeed();
     }
 }
