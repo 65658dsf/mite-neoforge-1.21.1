@@ -343,23 +343,12 @@ public final class EquipmentDurability {
         return true;
     }
 
+    /** Armor and toughness retain full material values at every remaining durability. */
     @SubscribeEvent
     public static void wornArmorAttributes(ItemAttributeModifierEvent event) {
         ItemStack stack = event.getItemStack();
         boolean explicit = stack.getComponentsPatch().get(DataComponents.ATTRIBUTE_MODIFIERS) != null;
         if (explicit && stack.getItem() instanceof ArmorItem) normalizeSavedArmorBase(event);
-        if (armorProfile(stack) == null) return;
-        LivingEntity wearer = ARMOR_WEARER.get();
-        float factor = wearer != null && !(wearer instanceof Player) ? 1F
-                : EquipmentDurabilityRules.armorProtectionFactor(stack.getDamageValue(), stack.getMaxDamage(), true);
-        for (var entry : List.copyOf(event.getModifiers())) {
-            if ((entry.attribute().equals(Attributes.ARMOR) || entry.attribute().equals(Attributes.ARMOR_TOUGHNESS))
-                    && (!explicit || stack.getItem() instanceof ArmorItem armor && nativeArmorId(entry.modifier().id(), armor))) {
-                var modifier = entry.modifier();
-                event.replaceModifier(entry.attribute(), new AttributeModifier(modifier.id(),
-                        modifier.amount() * factor, modifier.operation()), entry.slot());
-            }
-        }
     }
 
     private static boolean nativeArmorId(ResourceLocation id, ArmorItem armor) {

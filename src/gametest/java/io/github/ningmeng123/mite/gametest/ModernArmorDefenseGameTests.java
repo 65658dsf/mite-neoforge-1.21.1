@@ -5,6 +5,8 @@ import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.R196Mob;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteMobs;
+import io.github.ningmeng123.mite.registry.MiteRangedItems;
+import io.github.ningmeng123.mite.rules.R196RangedRules.Material;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.UUID;
@@ -31,11 +33,16 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.EntityHitResult;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -130,7 +137,7 @@ public final class ModernArmorDefenseGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void theSameWornArmorChangesDefenseWhenTransferredBetweenNpcAndPlayer(GameTestHelper helper) {
+    public static void theSameWornArmorKeepsFullDefenseWhenTransferredBetweenNpcAndPlayer(GameTestHelper helper) {
         try (Session session = newPlayer(helper)) {
             var player = session.player();
             var zombie = mob(helper, EntityType.ZOMBIE);
@@ -138,8 +145,6 @@ public final class ModernArmorDefenseGameTests {
             helper.assertValueEqual(chest.getMaxDamage(), 1024, "Transfer uses the same average-quality chestpiece");
             try {
                 for (int damage : new int[]{768, 1023}) {
-                    double playerArmor = damage == 768 ? 3.5D : 0D;
-                    double playerToughness = damage == 768 ? 1D : 0D;
                     chest.setDamageValue(damage);
                     zombie.setItemSlot(EquipmentSlot.CHEST, chest); refresh(zombie);
                     helper.assertTrue(zombie.getItemBySlot(EquipmentSlot.CHEST) == chest, "NPC owns the original stack identity");
@@ -150,20 +155,20 @@ public final class ModernArmorDefenseGameTests {
                         if (attribute.equals(Attributes.ARMOR)) outsideAttributes[0] += modifier.amount();
                         if (attribute.equals(Attributes.ARMOR_TOUGHNESS)) outsideAttributes[1] += modifier.amount();
                     });
-                    close(helper, outsideAttributes[0], playerArmor, "NPC equipment scope cannot leak into later standalone item queries");
-                    close(helper, outsideAttributes[1], playerToughness, "NPC toughness scope cannot leak into later standalone item queries");
+                    close(helper, outsideAttributes[0], 7D, "Worn item queries retain full armor independently of the wearer");
+                    close(helper, outsideAttributes[1], 2D, "Worn item queries retain full toughness independently of the wearer");
 
                     zombie.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY); refresh(zombie);
                     close(helper, zombie.getAttributeValue(Attributes.ARMOR), 0D, "NPC unequip removes the full armor modifier");
                     close(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "NPC unequip removes the full toughness modifier");
                     player.setItemSlot(EquipmentSlot.CHEST, chest); refresh(player);
                     helper.assertTrue(player.getItemBySlot(EquipmentSlot.CHEST) == chest, "Player receives exactly the same stack without copying");
-                    close(helper, player.getAttributeValue(Attributes.ARMOR), playerArmor, "Player applies its own wear factor at damage " + damage);
-                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), playerToughness, "Player applies its own toughness wear factor at damage " + damage);
+                    close(helper, player.getAttributeValue(Attributes.ARMOR), 7D, "Player retains full armor at damage " + damage);
+                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Player retains full toughness at damage " + damage);
 
                     player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY); refresh(player);
-                    close(helper, player.getAttributeValue(Attributes.ARMOR), 0D, "Player unequip removes its own scaled armor modifier");
-                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "Player unequip removes its own scaled toughness modifier");
+                    close(helper, player.getAttributeValue(Attributes.ARMOR), 0D, "Player unequip removes the full armor modifier");
+                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "Player unequip removes the full toughness modifier");
                     zombie.setItemSlot(EquipmentSlot.CHEST, chest); refresh(zombie);
                     helper.assertTrue(zombie.getItemBySlot(EquipmentSlot.CHEST) == chest, "Return transfer preserves the original stack identity");
                     close(helper, zombie.getAttributeValue(Attributes.ARMOR), 7D, "Returned NPC armor is full rather than cached from the player");
@@ -171,6 +176,57 @@ public final class ModernArmorDefenseGameTests {
                     helper.assertValueEqual(chest.getDamageValue(), damage, "Transfers do not repair or damage the stack to obtain the result");
                 }
             } finally { zombie.discard(); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void copperArmorAtEveryWearStageAbsorbsRealSkeletonArrowsIdentically(GameTestHelper helper)
+            throws ReflectiveOperationException {
+        var impact = AbstractArrow.class.getDeclaredMethod("onHitEntity", EntityHitResult.class);
+        impact.setAccessible(true);
+        try (Session session = newPlayer(helper)) {
+            var player = session.player();
+            for (int wear : new int[]{0, 75, 99, 100}) {
+                equip(player, "copper", false);
+                for (var slot : SLOTS) {
+                    ItemStack piece = player.getItemBySlot(slot);
+                    piece.setDamageValue(wear == 100 ? piece.getMaxDamage() - 1 : piece.getMaxDamage() * wear / 100);
+                }
+                refresh(player);
+                close(helper, player.getAttributeValue(Attributes.ARMOR), 12D, "Copper retains armor twelve at wear " + wear);
+                close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 3D, "Copper retains toughness three at wear " + wear);
+                // A new shooter keeps extension combo histories independent between wear stages.
+                var shooter = mob(helper, EntityType.SKELETON);
+                shooter.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+                var arrow = ProjectileUtil.getMobArrow(shooter, new ItemStack(MiteRangedItems.arrow(Material.RUSTED_IRON)),
+                        1F, shooter.getMainHandItem());
+                arrow.setDeltaMovement(3D, 0D, 0D); arrow.setCritArrow(false);
+                player.setHealth(player.getMaxHealth()); player.invulnerableTime = 0;
+                player.setAbsorptionAmount(0F); player.clearFire(); player.removeAllEffects();
+                float before = player.getHealth();
+                float[] incoming = {Float.NaN, Float.NaN};
+                Consumer<LivingIncomingDamageEvent> capture = event -> {
+                    if (event.getEntity() == player && event.getSource().getDirectEntity() == arrow) {
+                        incoming[0] = event.getOriginalAmount(); incoming[1] = event.getAmount();
+                    }
+                };
+                NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, LivingIncomingDamageEvent.class, capture);
+                try {
+                    impact.invoke(arrow, new EntityHitResult(player));
+                    close(helper, incoming[0], 2.5D, "A real skeleton arrow enters with the exact half damage");
+                    close(helper, incoming[1], 2.5D, "No prior-shooter combo changes the wear comparison");
+                    close(helper, before - player.getHealth(), 1.39090909D,
+                            "Copper twelve and toughness three reduce the real arrow equally at wear " + wear);
+                    refresh(player);
+                    close(helper, player.getAttributeValue(Attributes.ARMOR), 12D, "The real hit does not weaken copper armor");
+                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 3D, "The real hit does not weaken copper toughness");
+                    for (var slot : SLOTS) helper.assertFalse(player.getItemBySlot(slot).isEmpty(),
+                            "Ordinary arrow wear retains equipped armor, including the last durability point");
+                } finally {
+                    NeoForge.EVENT_BUS.unregister(capture); arrow.discard(); shooter.discard();
+                }
+            }
         }
         helper.succeed();
     }
