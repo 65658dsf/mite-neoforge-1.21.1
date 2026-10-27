@@ -1,6 +1,6 @@
 {
   "pack": {
     "pack_format": 34,
-    "description": "深层石头化 | NingMeng123\n深板岩、深板岩圆石及深层矿石显示为对应浅层材质"
+    "description": "深层石头化 | NingMeng123\n深层方块使用浅层材质，粗矿物显示为对应浅层矿石方块"
   }
 }
