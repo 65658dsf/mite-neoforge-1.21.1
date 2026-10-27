@@ -65,3 +65,19 @@
 ## 正式 0.2.16 构建
 
 用户随后要求正式版本号为 0.2.16。`gradle.properties` 已更新，重新执行完整构建和 1,770 项 JUnit 全部通过；正式 JAR 与上方验收包逐项比较，仅本体版本元数据改变，所有游戏类和资源一致。正式文件为 `build/libs/mite-0.2.16.jar`，SHA-256 为 `086683f00d4c531e54d005b9090298b080ca40f9ab5cc75a1ad767e9c1672260`，包内版本及作者分别为 0.2.16 和 NingMeng123，未混入测试类。日志与校验结果为 `build/verification/release-0.2.16/build.log` 和 `package-verification.json`；安装见 [0.2.16 发布说明](../release-0.2.16.md)。
+
+## 石锥地形修复验证
+
+用户追加反馈怪物追到石锥附近停住／往返，敲掉石锥后恢复。已修复原版零代价 `DAMAGE_CAUTIOUS` 安全邻格被整条路线否决的问题；真实碰撞在聚合节点类型前参与寻路，原有硬危险保护及搜索预算保留，见[实现说明](../zombie-route-ai.md#石锥地形修复)。
+
+| 检查 | 结果 | 本地记录 |
+|---|---|---|
+| 修复前基线 | 10 项中 4 项失败，成功复现谨慎窄路、谨慎起点、动态石锥和玫瑰旁路被拒 | `build/verification/dripstone-20261027-baseline-runtime.log` |
+| 普通相关寻路回归 | 176 项必需测试全部通过，覆盖来源／原版近战、绕路、开门、遮挡记忆、性能退避和武器触及 | `build/verification/dripstone-20261027-verified-runtime.log` |
+| 最新普通石锥定向复测 | 10 项全部通过 | `build/verification/dripstone-20261027-verified-focused-runtime.log` |
+| 实际 Modern ITE 0.2.15 | 同一 10 项全部通过，未安装 Better Combat | `build/verification/dripstone-20261027-verified-ite-runtime.log` |
+| 构建与 JUnit | 1,770 项通过，0 失败、0 错误 | `build/verification/dripstone-20261027-build.log` |
+
+定向场景使用真实注册的服务器玩家、完整世界 tick 和实际伤害事件，既测试安全绕路，也测试不可通通道不会穿锥、移除后恢复。低悬场景的旧直线确实被石锥遮挡，已将目标初始侧移一格并验证起始视线通畅，避免依赖怪物随机闲逛来首次发现；没有修改生产首次视线规则或手动设置目标。测试累计怪物真实 `LivingDamageEvent.Post` 伤害为零，防止生命成长掩盖石锥受伤。用户确认 Better Combat 已卸载后，排队的专用运行明确 `SKIPPED`，不把该进程退出成功计作行为测试通过。
+
+修复包为 `build/verification/dripstone-20261027-build/libs/mite-0.2.16.jar`，9,898,598 字节，SHA-256：`586dfe12d6c0f925a34c782f60f023dd71edb139b7aeb8385247acde0f141639`。已核对包内版本 0.2.16、作者 NingMeng123、四个寻路主类／内部类与实际编译输出一致，且无 GameTest 类混入；汇总为 `build/verification/dripstone-20261027-acceptance.json`。多人环境需更新服务端本体，并让客户端使用同一修复包；本轮没有操作实际客户端或改写用户存档。

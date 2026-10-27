@@ -12,6 +12,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.pathfinder.PathfindingContext;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -356,6 +358,25 @@ public final class MeleePursuitPaths {
                 && !collisionFree(mob, body.move(0D, -.0625D, 0D), vanilla);
     }
 
+    /** Cautious includes harmless cells beside dripstone, not just the actual obstacle. */
+    private static boolean cautiousPositionFits(PathfinderMob mob, BlockPos feet, boolean vanilla) {
+        Vec3 point = entityPosition(mob, feet);
+        if (!loadedBody(mob, point)) return false;
+        AABB body = bodyAt(mob, point);
+        if (!collisionFree(mob, body, vanilla)) return false;
+        // A wither rose has no collision, but entering its occupied cell still causes damage.
+        for (BlockPos position : BlockPos.betweenClosed(BlockPos.containing(body.minX, body.minY, body.minZ),
+                BlockPos.containing(body.maxX, body.maxY, body.maxZ))) {
+            if (mob.level().getBlockState(position).is(Blocks.WITHER_ROSE)) return false;
+        }
+        return true;
+    }
+
+    private static boolean forbiddenTerrain(PathType type) {
+        return type == PathType.LAVA || type == PathType.DAMAGE_FIRE || type == PathType.DAMAGE_OTHER
+                || type == PathType.POWDER_SNOW;
+    }
+
     /** Fresh native evaluator avoids navigation's cached same-target partial path. No chunk is loaded. */
     @Nullable static Path find(PathfinderMob mob, Set<BlockPos> targets, int accuracy, boolean detour) {
         return find(mob, targets, accuracy, detour, false);
@@ -370,13 +391,25 @@ public final class MeleePursuitPaths {
         if (loaded.isEmpty()) return null;
         var region = new LoadedPathNavigationRegion(mob.level(), start.offset(-RANGE - 8, -RANGE - 8, -RANGE - 8),
                 start.offset(RANGE + 8, RANGE + 8, RANGE + 8));
+        PathfinderMob pursuitMob = mob;
         WalkNodeEvaluator nodes = new WalkNodeEvaluator() {
+            @Override public Set<PathType> getPathTypeWithinMobBB(PathfindingContext context, int x, int y, int z) {
+                Set<PathType> types = super.getPathTypeWithinMobBB(context, x, y, z);
+                // Keep the native cautious cost on safe neighboring cells. Actual obstructions
+                // must participate in step-up and diagonal decisions before A* chooses a route.
+                // Native getCachedPathType caches this result for this one bounded search.
+                if (types.contains(PathType.DAMAGE_CAUTIOUS)
+                        && !cautiousPositionFits(pursuitMob, new BlockPos(x, y, z), vanilla)) types.add(PathType.BLOCKED);
+                return types;
+            }
+
             @Override public int getNeighbors(Node[] neighbors, Node node) {
                 int count = super.getNeighbors(neighbors, node), accepted = 0;
                 for (int i = 0; i < count; i++) {
                     Node next = neighbors[i];
                     if (Math.abs(next.x - start.getX()) <= RANGE && Math.abs(next.y - start.getY()) <= RANGE
-                            && Math.abs(next.z - start.getZ()) <= RANGE) neighbors[accepted++] = next;
+                            && Math.abs(next.z - start.getZ()) <= RANGE
+                            && !forbiddenTerrain(next.type)) neighbors[accepted++] = next;
                 }
                 return accepted;
             }
@@ -394,8 +427,7 @@ public final class MeleePursuitPaths {
             Node node = path.getNode(i);
             if (Math.abs(node.x - start.getX()) > RANGE || Math.abs(node.y - start.getY()) > RANGE
                     || Math.abs(node.z - start.getZ()) > RANGE || !mob.level().hasChunkAt(node.asBlockPos())
-                    || node.type == PathType.LAVA || node.type == PathType.DAMAGE_FIRE || node.type == PathType.DAMAGE_OTHER
-                    || node.type == PathType.DAMAGE_CAUTIOUS || node.type == PathType.POWDER_SNOW) return null;
+                    || forbiddenTerrain(node.type)) return null;
             Vec3 point = standingPoint(mob, path, i);
             if (!loadedBody(mob, point) || !doorPolicyAllows(mob, node.asBlockPos(), vanilla)
                     || !collisionFree(mob, bodyAt(mob, point), vanilla)) return null;
