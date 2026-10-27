@@ -21,10 +21,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class SourceMonsterTargetMixin implements SourceMonsterTargetMemory {
     @Unique private UUID mite$targetUuid;
     @Unique private LivingEntity mite$retarget;
+    @Unique private UUID mite$recentPlayerThreat;
+    @Unique private long mite$recentPlayerThreatUntil;
     @Override @Nullable public UUID mite$pendingTarget() { return mite$targetUuid; }
     @Override public void mite$pendingTarget(@Nullable UUID uuid) { mite$targetUuid = uuid; }
     @Override @Nullable public LivingEntity mite$retarget() { return mite$retarget; }
     @Override public void mite$retarget(@Nullable LivingEntity target) { mite$retarget = target; }
+    @Override @Nullable public UUID mite$recentPlayerThreat() { return mite$recentPlayerThreat; }
+    @Override public long mite$recentPlayerThreatUntil() { return mite$recentPlayerThreatUntil; }
+    @Override public void mite$recentPlayerThreat(@Nullable UUID uuid, long until) {
+        mite$recentPlayerThreat = uuid;
+        mite$recentPlayerThreatUntil = until;
+    }
 
     @WrapOperation(method = "setTarget", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/Mob;target:Lnet/minecraft/world/entity/LivingEntity;", opcode = org.objectweb.asm.Opcodes.PUTFIELD))
     private void mite$acceptedRetarget(Mob mob, LivingEntity target, Operation<Void> original) {
@@ -52,6 +60,8 @@ public abstract class SourceMonsterTargetMixin implements SourceMonsterTargetMem
         Mob mob = (Mob)(Object)this;
         mite$targetUuid = null;
         mite$retarget = null;
+        mite$recentPlayerThreat = null;
+        mite$recentPlayerThreatUntil = 0L;
         if (!R196MonsterAi.monster(mob)) return;
         CompoundTag state = tag.getCompound(SourceMonsterTargeting.SAVE);
         if (state.getInt("version") == 1 && state.hasUUID("target")) mite$targetUuid = state.getUUID("target");

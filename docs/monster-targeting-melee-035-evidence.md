@@ -34,6 +34,19 @@
 
 ## 现代适配
 
+- 2026-10-27 按用户反馈加入受击转火：已有目标的来源怪物和使用常规报复目标任务的原版怪物，受到同世界、可见、合法玩家的有效伤害时，优先反击新攻击者。创造、旁观、同队、无效或取消的伤害不触发；猪灵等 Brain/中立物种继续使用专有仇恨规则。
+- 目标切换仍通过可取消的 `Mob.setTarget`；只记录最终接受的玩家目标，停止旧导航并取消对旧目标尚未命中的武器攻击，保留已消耗的攻击恢复时间。新反击目标获得 100 游戏刻的短期保持，防止来源最近目标的随机刷新立即抢回；新的合法命中仍可再次转火，不按单纯距离每刻反复争抢目标。该保持状态不写入存档，目标失效后不继续保护。
+
+本次 `MonsterRetaliationGameTests` 验证正在运行的报复任务从 A 转 B 后连续选择器更新、C 再次命中、玩家箭命中且保留远程任务、短期保持到期、取消/零伤/完全吸收、创造/旁观/同队/遮挡、目标事件取消与重定向，以及 Better Combat 转火取消旧蓄力且保留原恢复边界。2026-10-27 普通与 Better Combat 模式各 165 项必需 GameTest 全部通过，完整日志见 `build/verification/monster-ai-20261027-verified-runtime.log` 和 `build/verification/monster-ai-20261027-verified-bc-runtime.log`。双人手测时让 A 先被追击，再由近处 B 实际命中；怪物应转向 B，B 停止攻击后不应因旧任务立即回到 A，C 再命中仍可触发新的反击。真实客户端联机尚未手测。
+
+- 2026-10-27 用户追加反馈的存档快照确认了主动发现阶段的两个问题：卫道士与生存玩家相距约 14.74 格，实际 `FOLLOW_RANGE=12.13668`；掠夺者被当时的早期出生装备锁清空弩，原生弩攻击任务无法启动。两者均为 `NoAI=0`，玩家脚底高两格。
+- `NativeIllagerCombat.join` 将新生成及旧存档卫道士的跟随范围基础值补到至少 32，保留更大的自定义基础值与原有属性修正。`NativeVindicatorTargetRangeMixin` 在现有原版 `findTarget` 入口刷新原有 `TargetingConditions.range`，使构造时缓存的旧范围跟随真实属性；不替换选择谓词、视线、隐身可见比例和队伍规则。
+- 用户随后要求完全取消早期禁装备。从首日起保留原生装备、已有概率和隐藏备用武器，旧锁入场退役并有限修复明确缺失的原生武器，见 [装备规则](blood-moon-equipment.md)。掠夺者失去弩时仍保留唯一的 `UnarmedPillagerMeleeGoal`，接入既有原版地面近战追击；任一手持真实 `CrossbowItem` 即停用近战回退，使用原有弩攻击任务，重复加入世界不重复安装回退。
+
+新增 `VanillaMonsterAcquisitionGameTests` 八项覆盖真实注册玩家创造转生存后的自然主动发现与实际伤害：卫道士 14/16/24 格、旧存档基础值 12 的修复、更大基础值 48 在 40 格的发现、实际范围内外及实心墙首次视线边界、首日自然持弩的掠夺者实际远程攻击、重复加入世界的回退唯一性，以及明确卸下弩、经两级真实一格台阶登上两格高台近战击中玩家并重新持弩恢复原生远程。新生实体经完整 FinalizeSpawn 事件，旧 NBT 经实际 `addLegacyChunkEntities` 加载事件；主链执行完整世界 tick，不手动赋予目标。
+
+最终构建与 1,770 项 JUnit 通过，普通模式及 Better Combat 2.4.0 模式各 206 项必需 GameTest 通过，实际 Modern ITE 0.2.15 下 18 项自然索敌、旧档加载和装备兼容测试通过。对应日志为 `build/verification/native-aggro-20261027-verified-runtime.log`、`native-aggro-20261027-verified-bc-runtime.log` 和 `native-aggro-20261027-verified-ite-runtime.log`，产物及逐类校验记录为 `build/verification/native-aggro-20261027-acceptance.json`。此前两种模式各 165 项的日志保留为前一轮增强追击验证记录。
+
 - 保留现代世界负数高度、当前方块形状、已加载区块和现代寻路器；显式传入来源寻路距离，而不是传错现代 `createPath` 的到达精度参数。
 - 使用现代方块族映射草、作物、树叶、门、玻璃与栏杆。新加入的遮光玻璃保留现代遮挡，不因为其透明方块基类而被误当作 R196 普通玻璃。
 - 近战靠近由现代 MoveControl 执行；不在 `Goal.canUse` 中额外执行一次实体物理移动，避免单刻重复移动。

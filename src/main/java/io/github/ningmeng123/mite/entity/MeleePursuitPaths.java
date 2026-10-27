@@ -22,6 +22,9 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.item.ItemStack;
 
 /** Real walking routes to reachable attack positions, including routes that first lead away. @author NingMeng123 */
@@ -45,19 +48,23 @@ public final class MeleePursuitPaths {
         Vec3 origin, destination;
         float width, height, step;
         boolean floats;
+        boolean vanillaEndpoint;
+        boolean opensDoors, passesDoors;
         ItemStack held = ItemStack.EMPTY;
         Path partial, complete;
 
-        boolean samePursuit(PathfinderMob mob, LivingEntity target, long now) {
+        boolean samePursuit(PathfinderMob mob, LivingEntity target, long now, boolean vanilla) {
             return origin != null && now >= searchedAt && dimension == mob.level().dimension()
-                    && targetId == target.getId()
+                    && targetId == target.getId() && vanillaEndpoint == vanilla
+                    && (!vanilla || opensDoors == mob.getNavigation().getNodeEvaluator().canOpenDoors()
+                    && passesDoors == mob.getNavigation().getNodeEvaluator().canPassDoors())
                     && width == mob.getBbWidth() && height == mob.getBbHeight() && step == mob.maxUpStep()
                     && floats == mob.getNavigation().getNodeEvaluator().canFloat()
                     && ItemStack.isSameItemSameComponents(held, mob.getMainHandItem());
         }
 
-        boolean matches(PathfinderMob mob, LivingEntity target, long now) {
-            return samePursuit(mob, target, now) && origin.distanceToSqr(mob.position()) < 1D
+        boolean matches(PathfinderMob mob, LivingEntity target, long now, boolean vanilla) {
+            return samePursuit(mob, target, now, vanilla) && origin.distanceToSqr(mob.position()) < 1D
                     && destination.distanceToSqr(target.position()) < 1D;
         }
 
@@ -72,6 +79,8 @@ public final class MeleePursuitPaths {
             origin = mob.position(); destination = target.position();
             width = mob.getBbWidth(); height = mob.getBbHeight(); step = mob.maxUpStep();
             floats = mob.getNavigation().getNodeEvaluator().canFloat();
+            opensDoors = mob.getNavigation().getNodeEvaluator().canOpenDoors();
+            passesDoors = mob.getNavigation().getNodeEvaluator().canPassDoors();
             held = mob.getMainHandItem().copy();
         }
 
@@ -118,17 +127,35 @@ public final class MeleePursuitPaths {
     }
 
     @Nullable public static Path find(PathfinderMob mob, LivingEntity target, @Nullable Path previous) {
+        return find(mob, target, previous, false);
+    }
+
+    /** Same loaded-terrain search, with the native goal's actual attack volume and weapon limits. */
+    @Nullable public static Path findVanilla(PathfinderMob mob, LivingEntity target, @Nullable Path previous) {
+        return find(mob, target, previous, true);
+    }
+
+    @Nullable private static Path find(PathfinderMob mob, LivingEntity target, @Nullable Path previous, boolean vanilla) {
+        SearchCache cache = SEARCHES.computeIfAbsent(mob, ignored -> new SearchCache());
+        if (cache.targetId != target.getId() || cache.vanillaEndpoint != vanilla
+                || vanilla && (cache.opensDoors != mob.getNavigation().getNodeEvaluator().canOpenDoors()
+                || cache.passesDoors != mob.getNavigation().getNodeEvaluator().canPassDoors())) {
+            cache.clear();
+            cache.targetId = target.getId(); cache.vanillaEndpoint = vanilla;
+            cache.opensDoors = mob.getNavigation().getNodeEvaluator().canOpenDoors();
+            cache.passesDoors = mob.getNavigation().getNodeEvaluator().canPassDoors();
+            previous = null;
+        }
         Path active = mob.getNavigation().getPath();
         // Other goals may supply a path that assumes doors can be opened. Only retain our verified route.
-        if (active == previous && !mob.getNavigation().isDone() && !mob.getNavigation().isStuck() && reaches(mob, active, target)
-                && clearNextNodes(mob, active)) { invalidate(mob); return active; }
-        SearchCache cache = SEARCHES.computeIfAbsent(mob, ignored -> new SearchCache());
+        if (active == previous && !mob.getNavigation().isDone() && !mob.getNavigation().isStuck() && reaches(mob, active, target, vanilla)
+                && clearNextNodes(mob, active, vanilla)) { invalidate(mob); return active; }
         long now = mob.level().getGameTime();
-        boolean matches = cache.matches(mob, target, now);
+        boolean matches = cache.matches(mob, target, now, vanilla);
         // Discovery probes do not start navigation. Share their complete route with the
         // subsequent target/attack/digging goals instead of searching again on acquisition.
         if (matches && cache.complete != null && now < cache.completeUntil
-                && reaches(mob, cache.complete, target) && clearNextNodes(mob, cache.complete)) {
+                && reaches(mob, cache.complete, target, vanilla) && clearNextNodes(mob, cache.complete, vanilla)) {
             ++cache.cacheHits;
             return cache.complete;
         }
@@ -140,7 +167,7 @@ public final class MeleePursuitPaths {
         // Moving players used to reset failure backoff on every block crossed. Keep a
         // short real-query interval for a failed pursuit, even across geometry changes.
         // Never hand a moved monster an unverified stale path; other goals can retry soon.
-        if (!matches && cache.failures > 0 && cache.samePursuit(mob, target, now)
+        if (!matches && cache.failures > 0 && cache.samePursuit(mob, target, now, vanilla)
                 && now - cache.searchedAt < MIN_MOVING_RETRY_TICKS) {
             ++cache.cacheHits;
             cache.movingRetryAt = cache.searchedAt + MIN_MOVING_RETRY_TICKS;
@@ -148,13 +175,13 @@ public final class MeleePursuitPaths {
         }
         cache.movingRetryAt = Long.MIN_VALUE;
         if (!sameFailure) cache.clear();
-        Path direct = find(mob, Set.of(target.blockPosition()), 1, false);
-        if (reaches(mob, direct, target)) return cache.rememberComplete(mob, target, now, direct);
+        Path direct = find(mob, Set.of(target.blockPosition()), 1, false, vanilla);
+        if (reaches(mob, direct, target, vanilla)) return cache.rememberComplete(mob, target, now, direct);
         // Accuracy zero only helps when the looser goal was reached outside physical attack range.
         // A failed looser search need not explore the same region again before the larger detour.
         if (direct != null && direct.canReach()) {
-            Path exact = find(mob, Set.of(target.blockPosition()), 0, false);
-            if (reaches(mob, exact, target)) return cache.rememberComplete(mob, target, now, exact);
+            Path exact = find(mob, Set.of(target.blockPosition()), 0, false, vanilla);
+            if (reaches(mob, exact, target, vanilla)) return cache.rememberComplete(mob, target, now, exact);
             if (distance(mob, exact, target) < distance(mob, direct, target)) direct = exact;
         }
 
@@ -162,15 +189,17 @@ public final class MeleePursuitPaths {
         // attack positions together, so the closest failed endpoint cannot hide a side entrance.
         Set<BlockPos> positions = new LinkedHashSet<>();
         BlockPos center = target.blockPosition();
-        for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) for (int y = -2; y <= 1; y++) {
+        int radius = vanilla ? VanillaMeleePursuit.attackPositionRadius(mob, target) : 2;
+        int below = vanilla ? Math.max(2, (int)Math.ceil(mob.getBbHeight())) : 2;
+        for (int x = -radius; x <= radius; x++) for (int z = -radius; z <= radius; z++) for (int y = -below; y <= 1; y++) {
             BlockPos feet = center.offset(x, y, z);
-            if (!mob.isWithinRestriction(feet) || !standingPosition(mob, feet)) continue;
+            if (!mob.isWithinRestriction(feet) || !standingPosition(mob, feet, vanilla)) continue;
             Vec3 point = entityPosition(mob, feet);
-            if (SourceMeleeGoal.canStrikeFrom(mob, target, point)) positions.add(feet);
+            if (canStrikeFrom(mob, target, point, vanilla)) positions.add(feet);
         }
         if (!positions.isEmpty()) {
-            Path detour = find(mob, positions, 0, true);
-            if (reaches(mob, detour, target)) return cache.rememberComplete(mob, target, now, detour);
+            Path detour = find(mob, positions, 0, true, vanilla);
+            if (reaches(mob, detour, target, vanilla)) return cache.rememberComplete(mob, target, now, detour);
         }
         cache.failures = Math.min(3, cache.failures + 1);
         cache.remember(mob, target, now);
@@ -181,21 +210,41 @@ public final class MeleePursuitPaths {
     }
 
     public static boolean reaches(PathfinderMob mob, @Nullable Path path, LivingEntity target) {
+        return reaches(mob, path, target, false);
+    }
+
+    public static boolean reachesVanilla(PathfinderMob mob, @Nullable Path path, LivingEntity target) {
+        return reaches(mob, path, target, true);
+    }
+
+    private static boolean reaches(PathfinderMob mob, @Nullable Path path, LivingEntity target, boolean vanilla) {
         return path != null && path.canReach() && path.getEndNode() != null
-                && SourceMeleeGoal.canStrikeFrom(mob, target, standingPoint(mob, path, path.getNodeCount() - 1));
+                && canStrikeFrom(mob, target, standingPoint(mob, path, path.getNodeCount() - 1), vanilla);
+    }
+
+    private static boolean canStrikeFrom(PathfinderMob mob, LivingEntity target, Vec3 feet, boolean vanilla) {
+        return vanilla ? VanillaMeleePursuit.canStrikeFrom(mob, target, feet) : SourceMeleeGoal.canStrikeFrom(mob, target, feet);
     }
 
     /** Hidden first acquisition must verify the entire current route, including a cached far end. */
     public static boolean completeRouteClear(PathfinderMob mob, @Nullable Path path, LivingEntity target) {
-        if (!reaches(mob, path, target)) return false;
+        return completeRouteClear(mob, path, target, false);
+    }
+
+    public static boolean completeVanillaRouteClear(PathfinderMob mob, @Nullable Path path, LivingEntity target) {
+        return completeRouteClear(mob, path, target, true);
+    }
+
+    private static boolean completeRouteClear(PathfinderMob mob, @Nullable Path path, LivingEntity target, boolean vanilla) {
+        if (!reaches(mob, path, target, vanilla)) return false;
         for (int i = path.getNextNodeIndex(); i < path.getNodeCount(); i++) {
             Vec3 point = standingPoint(mob, path, i);
-            if (!loadedBody(mob, point)) return false;
+            if (!loadedBody(mob, point) || !doorPolicyAllows(mob, path.getNode(i).asBlockPos(), vanilla)) return false;
             AABB body = bodyAt(mob, point);
-            if (!mob.level().noCollision(mob, body)) return false;
+            if (!collisionFree(mob, body, vanilla)) return false;
             // Recheck supporting terrain too: removing a bridge must not leave an imaginary
             // complete ground route. Native water nodes retain their existing swimming rules.
-            if (mob.level().noCollision(mob, body.move(0D, -.0625D, 0D))
+            if (collisionFree(mob, body.move(0D, -.0625D, 0D), vanilla)
                     && path.getNode(i).type != PathType.WATER && path.getNode(i).type != PathType.WATER_BORDER) return false;
         }
         return true;
@@ -223,14 +272,16 @@ public final class MeleePursuitPaths {
         return onFloor(mob, new Vec3(feet.getX() + offset, feet.getY(), feet.getZ() + offset));
     }
 
-    private static boolean clearNextNodes(PathfinderMob mob, Path path) {
+    private static boolean clearNextNodes(PathfinderMob mob, Path path, boolean vanilla) {
         for (int i = path.getNextNodeIndex(); i < Math.min(path.getNodeCount(), path.getNextNodeIndex() + 6); i++) {
             Vec3 point = standingPoint(mob, path, i);
-            if (!loadedBody(mob, point) || !mob.level().noCollision(mob, bodyAt(mob, point))) return false;
+            if (!loadedBody(mob, point) || !doorPolicyAllows(mob, path.getNode(i).asBlockPos(), vanilla)
+                    || !collisionFree(mob, bodyAt(mob, point), vanilla)) return false;
             for (BlockPos pos : new BlockPos[]{path.getNode(i).asBlockPos(), path.getNode(i).asBlockPos().above()}) {
                 BlockState state = mob.level().getBlockState(pos);
                 if ((state.getBlock() instanceof DoorBlock || SourceBreakPortalGoal.woodenPortal(state))
-                        && state.hasProperty(BlockStateProperties.OPEN) && !state.getValue(BlockStateProperties.OPEN)) return false;
+                        && state.hasProperty(BlockStateProperties.OPEN) && !state.getValue(BlockStateProperties.OPEN)
+                        && !mayOpenDoor(mob, state, vanilla)) return false;
             }
         }
         return true;
@@ -238,6 +289,54 @@ public final class MeleePursuitPaths {
 
     private static AABB bodyAt(PathfinderMob mob, Vec3 point) {
         return mob.getBoundingBox().move(point.subtract(mob.position())).deflate(.001D);
+    }
+
+    private static boolean mayOpenDoor(PathfinderMob mob, BlockState state, boolean vanilla) {
+        return vanilla && mob.getNavigation().getNodeEvaluator().canOpenDoors()
+                && mob.getNavigation().getNodeEvaluator().canPassDoors() && DoorBlock.isWoodenDoor(state);
+    }
+
+    private static boolean doorPolicyAllows(PathfinderMob mob, BlockPos feet, boolean vanilla) {
+        if (!vanilla) return true;
+        for (BlockPos position : new BlockPos[]{feet, feet.above()}) {
+            if (!mob.level().hasChunkAt(position)) return false;
+            BlockState state = mob.level().getBlockState(position);
+            if (state.getBlock() instanceof DoorBlock) {
+                if (!mob.getNavigation().getNodeEvaluator().canPassDoors()) return false;
+                if (!state.getValue(DoorBlock.OPEN) && !mayOpenDoor(mob, state, true)) return false;
+            }
+        }
+        return true;
+    }
+
+    /** Native open-door routes keep the door node and test the real open shape, never air. */
+    private static boolean collisionFree(PathfinderMob mob, AABB body, boolean vanilla) {
+        if (!vanilla || !mob.getNavigation().getNodeEvaluator().canOpenDoors()
+                || !mob.getNavigation().getNodeEvaluator().canPassDoors()) return mob.level().noCollision(mob, body);
+        var minimum = BlockPos.containing(body.minX - 1D, body.minY - 1D, body.minZ - 1D);
+        var maximum = BlockPos.containing(body.maxX + 1D, body.maxY + 1D, body.maxZ + 1D);
+        boolean hasClosedDoor = false;
+        for (BlockPos position : BlockPos.betweenClosed(minimum, maximum)) {
+            if (mob.level().isOutsideBuildHeight(position) || !mob.level().hasChunkAt(position)) continue;
+            BlockState state = mob.level().getBlockState(position);
+            if (mayOpenDoor(mob, state, true) && !state.getValue(DoorBlock.OPEN)) { hasClosedDoor = true; break; }
+        }
+        if (!hasClosedDoor) return mob.level().noCollision(mob, body);
+        if (!mob.level().getEntityCollisions(mob, body).isEmpty()) return false;
+        var volume = Shapes.create(body);
+        var border = mob.level().getWorldBorder();
+        if (border.isInsideCloseToBorder(mob, body)
+                && Shapes.joinIsNotEmpty(border.getCollisionShape(), volume, BooleanOp.AND)) return false;
+        var context = CollisionContext.of(mob);
+        for (BlockPos position : BlockPos.betweenClosed(minimum, maximum)) {
+            if (mob.level().isOutsideBuildHeight(position)) continue;
+            if (!mob.level().hasChunkAt(position)) return false;
+            BlockState state = mob.level().getBlockState(position);
+            if (mayOpenDoor(mob, state, true)) state = state.setValue(DoorBlock.OPEN, true);
+            var shape = state.getCollisionShape(mob.level(), position, context).move(position.getX(), position.getY(), position.getZ());
+            if (Shapes.joinIsNotEmpty(shape, volume, BooleanOp.AND)) return false;
+        }
+        return true;
     }
 
     private static boolean loadedBody(PathfinderMob mob, Vec3 point) {
@@ -249,16 +348,20 @@ public final class MeleePursuitPaths {
         return true;
     }
 
-    private static boolean standingPosition(PathfinderMob mob, BlockPos feet) {
+    private static boolean standingPosition(PathfinderMob mob, BlockPos feet, boolean vanilla) {
         Vec3 point = entityPosition(mob, feet);
         if (!loadedBody(mob, point)) return false;
         AABB body = bodyAt(mob, point);
-        return mob.level().noCollision(mob, body) && !mob.level().containsAnyLiquid(body)
-                && !mob.level().noCollision(mob, body.move(0D, -.0625D, 0D));
+        return collisionFree(mob, body, vanilla) && !mob.level().containsAnyLiquid(body)
+                && !collisionFree(mob, body.move(0D, -.0625D, 0D), vanilla);
     }
 
     /** Fresh native evaluator avoids navigation's cached same-target partial path. No chunk is loaded. */
     @Nullable static Path find(PathfinderMob mob, Set<BlockPos> targets, int accuracy, boolean detour) {
+        return find(mob, targets, accuracy, detour, false);
+    }
+
+    @Nullable private static Path find(PathfinderMob mob, Set<BlockPos> targets, int accuracy, boolean detour, boolean vanilla) {
         BlockPos start = mob.blockPosition();
         Set<BlockPos> loaded = new LinkedHashSet<>();
         for (BlockPos target : targets) {
@@ -278,8 +381,8 @@ public final class MeleePursuitPaths {
                 return accepted;
             }
         };
-        nodes.setCanOpenDoors(false);
-        nodes.setCanPassDoors(true);
+        nodes.setCanOpenDoors(vanilla && mob.getNavigation().getNodeEvaluator().canOpenDoors());
+        nodes.setCanPassDoors(!vanilla || mob.getNavigation().getNodeEvaluator().canPassDoors());
         nodes.setCanFloat(mob.getNavigation().getNodeEvaluator().canFloat());
         ++SEARCHES.computeIfAbsent(mob, ignored -> new SearchCache()).searches;
         Path path = new PathFinder(nodes, detour ? DETOUR_NODES : MAX_NODES)
@@ -294,7 +397,8 @@ public final class MeleePursuitPaths {
                     || node.type == PathType.LAVA || node.type == PathType.DAMAGE_FIRE || node.type == PathType.DAMAGE_OTHER
                     || node.type == PathType.DAMAGE_CAUTIOUS || node.type == PathType.POWDER_SNOW) return null;
             Vec3 point = standingPoint(mob, path, i);
-            if (!loadedBody(mob, point) || !mob.level().noCollision(mob, bodyAt(mob, point))) return null;
+            if (!loadedBody(mob, point) || !doorPolicyAllows(mob, node.asBlockPos(), vanilla)
+                    || !collisionFree(mob, bodyAt(mob, point), vanilla)) return null;
             length += previous.distanceTo(point);
             previous = point;
         }

@@ -102,7 +102,7 @@ public final class SimplySwordsMobEquipment {
         CompoundTag result = decision(mob);
         if (result.getBoolean("decided")) return false;
         result.putBoolean("decided", true);
-        if (BloodMoonEquipment.spawnEquipmentLocked(mob) || !MobShields.spawnReason(mob.getSpawnType())
+        if (!MobShields.spawnReason(mob.getSpawnType())
                 || !replaceable(mob, mob.getMainHandItem())) return false;
         var families = SimplySwordsCompat.families();
         if (families.isEmpty() || mob.getRandom().nextFloat() >= SimplySwordsMobRules.EQUIP_CHANCE) return false;

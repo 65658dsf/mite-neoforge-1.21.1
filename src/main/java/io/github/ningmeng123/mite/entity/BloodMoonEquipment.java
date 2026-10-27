@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.api.MiteExtensions;
+import io.github.ningmeng123.mite.enchantment.SourceEnchantmentCombat;
 import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
 import io.github.ningmeng123.mite.rules.LunarCalendar;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.EventPriority;
@@ -29,7 +31,9 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class BloodMoonEquipment {
     public static final String DATA_KEY = "mite:blood_moon_equipment";
+    /** Legacy addon constant; world age no longer suppresses birth equipment. */
     public static final long EARLY_EQUIPMENT_LAST_DAY = 16L;
+    /** Legacy addon tag; retained for data-pack and binary compatibility. */
     public static final TagKey<EntityType<?>> EARLY_EQUIPMENT_EXEMPT = TagKey.create(Registries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "early_equipment_exempt"));
     private static final int VERSION = 3;
@@ -169,13 +173,12 @@ public final class BloodMoonEquipment {
         return false;
     }
 
-    /** A locked birth keeps its no-equipment decision; genuine archers receive only a plain bow. */
+    /** Compatibility entry point for existing addons: birth equipment is never age-locked. */
     public static boolean spawnEquipmentLocked(Mob mob) {
-        return !earlyEquipmentExempt(mob)
-                && mob.getPersistentData().getCompound(DATA_KEY).getBoolean("early_equipment_locked");
+        return false;
     }
 
-    /** Explicit lord/boss identities retain their own equipment, including when old saves carry a birth lock. */
+    /** Legacy tag query retained for addons; it no longer controls equipment generation. */
     public static boolean earlyEquipmentExempt(Mob mob) {
         return mob.getType().is(EARLY_EQUIPMENT_EXEMPT);
     }
@@ -190,15 +193,24 @@ public final class BloodMoonEquipment {
         return MiteExtensions.policy().earlyEquipmentArcher(mob, archer);
     }
 
-    private static void clearEarlyStoredEquipment(Mob mob) {
-        if (mob instanceof R196Skeleton skeleton) skeleton.clearStowedItem();
-        MiteExtensions.policy().clearEarlySpawnEquipment(mob);
-    }
-
-    private static void restoreEarlyArcherBow(Mob mob) {
-        if (mob.getMainHandItem().isEmpty() && earlyEquipmentArcher(mob)) {
+    /** Retire old birth locks without re-rolling equipment or replacing anything the mob now owns. */
+    private static void retireEarlyEquipmentLock(Mob mob) {
+        CompoundTag equipment = mob.getPersistentData().getCompound(DATA_KEY);
+        boolean locked = equipment.getBoolean("early_equipment_locked");
+        equipment.remove("early_equipment_locked");
+        if (!locked) return;
+        equipment.putBoolean("existing_entity", true);
+        if (!mob.getMainHandItem().isEmpty() || SourceEnchantmentCombat.disarmed(mob)) return;
+        // These native identities require their ordinary birth weapon. Custom/source roles
+        // retain their own equipment and hidden storage instead of receiving a guessed loadout.
+        if (mob.getType() == EntityType.PILLAGER
+                && !mob.isHolding(stack -> stack.getItem() instanceof CrossbowItem))
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.CROSSBOW));
+        else if (mob.getType() == EntityType.VINDICATOR)
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
+        else if (mob instanceof AbstractSkeleton skeleton && earlyEquipmentArcher(mob)) {
             mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-            ((AbstractSkeleton)mob).reassessWeaponGoal();
+            skeleton.reassessWeaponGoal();
         }
     }
 
@@ -206,25 +218,9 @@ public final class BloodMoonEquipment {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void join(EntityJoinLevelEvent event) {
         if (event.isCanceled() || event.getLevel().isClientSide || !(event.getEntity() instanceof Mob mob)) return;
+        retireEarlyEquipmentLock(mob);
         if (event.loadedFromDisk() && mob.getType().getCategory() == MobCategory.MONSTER)
             markLegacyEntity(mob, "existing_entity");
-        if (!event.loadedFromDisk() && mob.getType().getCategory() == MobCategory.MONSTER
-                && !earlyEquipmentExempt(mob)
-                && !mob.getPersistentData().contains(DATA_KEY)
-                && mob.level() instanceof ServerLevel level && BloodMoonInvasion.highestDay(level) <= EARLY_EQUIPMENT_LAST_DAY) {
-            // Publish the decision before addon callbacks, so delayed listeners cannot re-equip this birth.
-            markLegacyEntity(mob, "early_equipment_locked");
-            for (EquipmentSlot slot : EquipmentSlot.values()) mob.setItemSlot(slot, ItemStack.EMPTY);
-            clearEarlyStoredEquipment(mob);
-            restoreEarlyArcherBow(mob);
-            return;
-        }
-        if (spawnEquipmentLocked(mob)) {
-            // Old locked archers were saved empty. Repair only the missing bow, retaining visible picked-up/custom gear.
-            clearEarlyStoredEquipment(mob);
-            restoreEarlyArcherBow(mob);
-            return;
-        }
         if (!handles(mob)) return;
         if (event.loadedFromDisk()) {
             // Mark untouched old entities as already decided, without changing any equipment.

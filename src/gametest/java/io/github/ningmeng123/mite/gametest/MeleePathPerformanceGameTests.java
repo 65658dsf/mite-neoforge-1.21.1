@@ -68,8 +68,9 @@ public final class MeleePathPerformanceGameTests {
         });
     }
 
-    // The overall test also waits for remote chunks; route retry assertions use their own unchanged world-clock deadlines.
-    @GameTest(template = "empty", batch = "melee_path_performance_backoff", timeoutTicks = 640)
+    // Allow remote chunk publication to finish before the four real, independently timed retry attempts.
+    // The larger outer budget does not change any search deadline, backoff or query-count assertion below.
+    @GameTest(template = "empty", batch = "melee_path_performance_backoff", timeoutTicks = 1200)
     public static void stationaryFailureRetriesAtItsDeadlineAndBacksOffWithinTheBound(GameTestHelper h) {
         Fixture f = new Fixture(h);
         f.closeWithTest();
@@ -317,6 +318,9 @@ public final class MeleePathPerformanceGameTests {
 
         GameTestSequence whenReady(Runnable action) {
             return helper.startSequence().thenWaitUntil(() -> {
+                // A completed chunk future may still await its native main-thread publication callback.
+                // Drain only a bounded amount of that work before reading the real holder/ticking state.
+                for (int tasks = 0; tasks < 64 && helper.getLevel().getChunkSource().pollTask(); tasks++) {}
                 helper.assertTrue(chunks.stream().allMatch(chunk -> helper.getLevel().getChunkSource().getChunkNow(chunk.x, chunk.z) != null),
                         "Every fixture chunk is published in the nonblocking loaded-chunk map before native queries start");
                 // Level.setBlock only sends the update that invalidates native PathTypeCache once

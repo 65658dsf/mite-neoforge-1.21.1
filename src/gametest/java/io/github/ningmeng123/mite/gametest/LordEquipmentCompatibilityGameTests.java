@@ -52,7 +52,7 @@ public final class LordEquipmentCompatibilityGameTests {
                     helper.assertTrue(BloodMoonEquipment.earlyEquipmentExempt(lord), "The actual registered lord is tagged: " + id);
                     site.join(lord);
                     helper.assertFalse(lord.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY)
-                            .getBoolean("early_equipment_locked"), "The first16-day rule never records a birth lock for " + id);
+                            .getBoolean("early_equipment_locked"), "The retired rule never records a new birth lock for " + id);
                     helper.assertFalse(BloodMoonEquipment.spawnEquipmentLocked(lord), "The lord remains available to its own equipment callbacks: " + id);
                     if (!id.equals("modern_ite:witch_lord")) {
                         helper.assertFalse(lord.getMainHandItem().isEmpty(), "The lord's real native/addon initializer supplies a weapon on day " + day + ": " + id);
@@ -100,7 +100,7 @@ public final class LordEquipmentCompatibilityGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void installedAddonOrdinaryEquipmentLocksThroughDaySixteenAndUnlocksAtSeventeen(GameTestHelper helper) {
+    public static void installedAddonOrdinaryEquipmentRemainsAvailableOnDaysSixteenAndSeventeen(GameTestHelper helper) {
         try (var site = new Site(helper)) {
             for (long day : new long[]{16L, 17L}) {
                 site.date(day);
@@ -111,13 +111,12 @@ public final class LordEquipmentCompatibilityGameTests {
                         ordinary.setItemSlot(slot, new ItemStack(Items.STICK));
                     List<ItemStack> before = equipment(ordinary);
                     site.join(ordinary);
-                    helper.assertValueEqual(BloodMoonEquipment.spawnEquipmentLocked(ordinary), day == 16L,
-                            "The real installed-addon spawn uses the inclusive16-day boundary: " + id);
-                    if (day == 16L) empty(helper, ordinary);
-                    else if (id.equals("minecraft:zombie")) unchanged(helper, ordinary, before);
+                    helper.assertFalse(BloodMoonEquipment.spawnEquipmentLocked(ordinary),
+                            "Ordinary native and addon equipment remains unlocked on every date: " + id);
+                    if (id.equals("minecraft:zombie")) unchanged(helper, ordinary, before);
                     else helper.assertTrue(BuiltInRegistries.ITEM.getKey(ordinary.getItemBySlot(EquipmentSlot.HEAD).getItem())
                                     .equals(ResourceLocation.parse("modern_ite:iron_bucket_helmet")),
-                            "The addon's own ordinary helmet is restored for a new day17 spawn");
+                            "The addon's own ordinary helmet survives an early spawn too");
                     ordinary.discard();
                 }
             }
@@ -126,19 +125,22 @@ public final class LordEquipmentCompatibilityGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void previouslyLockedOrdinaryAddonMobsDoNotRerollGearWhenTheCalendarReachesSeventeen(GameTestHelper helper) {
+    public static void oldOrdinaryAddonLocksRetireWithoutClearingOrRerollingTheirEquipment(GameTestHelper helper) {
         try (var site = new Site(helper)) {
             for (String id : List.of("minecraft:zombie", "modern_ite:zombie_iron_bucket")) {
                 site.date(16L);
                 Mob ordinary = site.finalized(id); site.join(ordinary);
-                helper.assertTrue(BloodMoonEquipment.spawnEquipmentLocked(ordinary), "The real ordinary spawn records its early birth decision");
-                empty(helper, ordinary);
+                ordinary.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY).putBoolean("early_equipment_locked", true);
+                List<ItemStack> before = equipment(ordinary);
+                helper.assertFalse(BloodMoonEquipment.spawnEquipmentLocked(ordinary), "A stored old flag cannot suppress addon callbacks before migration");
                 site.date(17L);
-                var joinedAgain = new EntityJoinLevelEvent(ordinary, site.level, false);
+                var joinedAgain = new EntityJoinLevelEvent(ordinary, site.level, true);
                 NeoForge.EVENT_BUS.post(joinedAgain);
                 helper.assertFalse(joinedAgain.isCanceled(), "An already admitted mob can re-enter after the date boundary");
-                helper.assertTrue(BloodMoonEquipment.spawnEquipmentLocked(ordinary), "Only new births unlock at day17");
-                empty(helper, ordinary); ordinary.discard();
+                helper.assertFalse(BloodMoonEquipment.spawnEquipmentLocked(ordinary), "Old ordinary addon equipment is unlocked after re-entry");
+                helper.assertFalse(ordinary.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY).getBoolean("early_equipment_locked"),
+                        "The obsolete ordinary birth flag is removed");
+                unchanged(helper, ordinary, before); ordinary.discard();
             }
         }
         helper.succeed();
@@ -152,11 +154,6 @@ public final class LordEquipmentCompatibilityGameTests {
         for (EquipmentSlot slot : EquipmentSlot.values()) helper.assertTrue(
                 ItemStack.matches(before.get(slot.ordinal()), mob.getItemBySlot(slot)),
                 "Every saved equipment component survives the installed-addon event: " + mob.getType() + "/" + slot);
-    }
-
-    private static void empty(GameTestHelper helper, Mob mob) {
-        for (EquipmentSlot slot : EquipmentSlot.values()) helper.assertTrue(mob.getItemBySlot(slot).isEmpty(),
-                "The actual early ordinary birth retains no equipment: " + mob.getType() + "/" + slot);
     }
 
     private static final class Site implements AutoCloseable {
@@ -193,7 +190,7 @@ public final class LordEquipmentCompatibilityGameTests {
 
         Mob finalized(String id) {
             Mob mob = create(id);
-            // Eggs use the full production finalizer and still receive early-equipment restrictions.
+            // Eggs use the full production finalizer and preserve its ordinary equipment on every date.
             // The addon's separate automatic-spawn opening dates do not reject this explicit birth.
             EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.SPAWN_EGG, null);
             helper.assertFalse(mob.isSpawnCancelled(), "The explicit real spawn reaches equipment initialization: " + id);

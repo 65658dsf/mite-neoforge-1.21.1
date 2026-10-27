@@ -10,4 +10,7 @@ public interface SourceMonsterTargetMemory {
     void mite$pendingTarget(@Nullable UUID uuid);
     @Nullable LivingEntity mite$retarget();
     void mite$retarget(@Nullable LivingEntity target);
+    @Nullable UUID mite$recentPlayerThreat();
+    long mite$recentPlayerThreatUntil();
+    void mite$recentPlayerThreat(@Nullable UUID uuid, long until);
 }

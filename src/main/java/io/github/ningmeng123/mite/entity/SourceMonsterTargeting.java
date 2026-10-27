@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat;
 import io.github.ningmeng123.mite.curse.WitchCursing;
 import io.github.ningmeng123.mite.mixin.SourceMonsterLivingAccess;
 import io.github.ningmeng123.mite.rules.R196MobRules;
@@ -21,8 +22,11 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -51,8 +55,10 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 /** qy/re/qx source target selection, source-class cooperation and og UUID restoration. @author NingMeng123 */
@@ -162,7 +168,8 @@ public final class SourceMonsterTargeting {
     }
 
     static boolean suitable(PathfinderMob owner, LivingEntity target) {
-        if (target == owner || !target.isAlive() || !owner.canAttack(target) || owner.isAlliedTo(target)
+        if (target == owner || target.isRemoved() || target.level() != owner.level() || !target.isAlive()
+                || !owner.canAttack(target) || owner.isAlliedTo(target)
                 || !owner.isWithinRestriction(target.blockPosition())) return false;
         if (target instanceof Player player && (player.isCreative() || player.isSpectator() || player.getAbilities().invulnerable)) return false;
         if (target instanceof Mob mob && (sourceIs(mob, "tf") || mob.getType() == EntityType.GHAST)) return false;
@@ -179,6 +186,44 @@ public final class SourceMonsterTargeting {
         try { mob.setTarget(target); } finally { GOAL_CHANGE.set(previous); }
     }
 
+    /** New accepted player damage may interrupt an existing goal, without replacing brain or anger policies. */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void hurtByPlayer(LivingDamageEvent.Post event) {
+        if (!(event.getNewDamage() > 0F) || event.getEntity().level().isClientSide
+                || !(event.getEntity() instanceof PathfinderMob mob) || !mob.isAlive()
+                || !MonsterHunting.monster(mob) || mob instanceof NeutralMob
+                || mob.getBrain().checkMemory(MemoryModuleType.ATTACK_TARGET, MemoryStatus.REGISTERED)
+                || mob.targetSelector.getAvailableGoals().stream().noneMatch(w -> w.getGoal() instanceof Revenge || w.getGoal() instanceof HurtByTargetGoal)
+                || !(event.getSource().getEntity() instanceof Player player) || mob.getTarget() == null
+                || !validPlayerThreat(mob, player)) return;
+        LivingEntity previous = mob.getTarget();
+        if (previous != player) mob.setTarget(player);
+        // Target listeners can cancel or replace the request. Only the actual player assignment earns protection.
+        LivingEntity accepted = mob.getTarget();
+        if (accepted != previous) {
+            mob.getNavigation().stop();
+            BetterMobCombat.cancel(mob);
+        }
+        if (accepted == player) ((SourceMonsterTargetMemory)mob).mite$recentPlayerThreat(player.getUUID(), mob.level().getGameTime() + 100L);
+    }
+
+    private static boolean validPlayerThreat(PathfinderMob mob, Player player) {
+        return player.level() == mob.level() && suitable(mob, player)
+                && mob.distanceToSqr(player) <= Math.pow(effectiveRange(mob), 2D)
+                && (R196MonsterAi.managed(mob) ? targetVisible(mob, player, false) : mob.hasLineOfSight(player));
+    }
+
+    private static boolean keepsRecentPlayerThreat(PathfinderMob mob, @Nullable LivingEntity target) {
+        var memory = (SourceMonsterTargetMemory)mob;
+        if (memory.mite$recentPlayerThreat() == null) return false;
+        if (!(target instanceof Player player) || !memory.mite$recentPlayerThreat().equals(target.getUUID())
+                || mob.level().getGameTime() >= memory.mite$recentPlayerThreatUntil() || !suitable(mob, player)) {
+            memory.mite$recentPlayerThreat(null, 0L);
+            return false;
+        }
+        return true;
+    }
+
     private abstract static class SourceTarget extends Goal {
         final PathfinderMob mob;
         final boolean sight;
@@ -187,10 +232,14 @@ public final class SourceMonsterTargeting {
         int unseen;
         SourceTarget(PathfinderMob mob, boolean sight) { this.mob = mob; this.sight = sight; setFlags(EnumSet.of(Flag.TARGET)); }
         @Override public boolean requiresUpdateEveryTick() { return true; }
-        @Override public void start() { unseen = 0; setGoalTarget(mob, target); mob.setNoActionTime(-1200); }
+        @Override public void start() {
+            unseen = 0;
+            if (((SourceMonsterTargetMemory)mob).mite$retarget() == target) ((SourceMonsterTargetMemory)mob).mite$retarget(null);
+            setGoalTarget(mob, target); mob.setNoActionTime(-1200);
+        }
         @Override public boolean canContinueToUse() {
             target = mob.getTarget();
-            if (target == null || !target.isAlive() || mob.distanceToSqr(target) > Math.pow(effectiveRange(mob), 2D)) return false;
+            if (target == null || !suitable(mob, target) || mob.distanceToSqr(target) > Math.pow(effectiveRange(mob), 2D)) return false;
             if (checksSight(mob, target, sight)) {
                 if (targetVisible(mob, target, false)) unseen = 0;
                 else if (++unseen > 60) {
@@ -260,7 +309,7 @@ public final class SourceMonsterTargeting {
             var memory = (SourceMonsterTargetMemory)mob;
             LivingEntity queued = memory.mite$retarget();
             memory.mite$retarget(null);
-            if (queued != null && queued.isAlive()) { target = queued; return true; }
+            if (queued != null && suitable(mob, queued)) { target = queued; return true; }
             if (chance > 0 && mob.getRandom().nextInt(chance) != 0) return false;
             target = nearest();
             return target != null;
@@ -273,7 +322,8 @@ public final class SourceMonsterTargeting {
             if (type != Player.class) MonsterHunting.remember(mob, target);
         }
         @Override public void tick() {
-            if (mob.getRandom().nextInt(40) == 0) {
+            target = mob.getTarget();
+            if (!keepsRecentPlayerThreat(mob, mob.getTarget()) && mob.getRandom().nextInt(40) == 0) {
                 LivingEntity candidate = nearest();
                 if (candidate != null && candidate != target && targetVisible(mob, candidate, false)) {
                     stop(); target = candidate; start(); return;
@@ -318,11 +368,12 @@ public final class SourceMonsterTargeting {
         if (!GOAL_CHANGE.get()) MonsterHunting.acceptedTargetChange(owner, target);
         if (GOAL_CHANGE.get() || owner.level().isClientSide || !(owner instanceof PathfinderMob mob)
                 || !R196MonsterAi.managed(mob)) return;
-        if (previous == null && target != null && target.isAlive()) ((SourceMonsterTargetMemory)mob).mite$retarget(target);
+        if (previous != target) ((SourceMonsterTargetMemory)mob).mite$retarget(target != null && target.isAlive() ? target : null);
     }
 
     @SubscribeEvent public static void beforeTick(EntityTickEvent.Pre event) {
         if (event.getEntity() instanceof Mob mob) {
+            if (mob instanceof PathfinderMob pathfinder) keepsRecentPlayerThreat(pathfinder, mob.getTarget());
             MonsterHunting.stopExpired(mob);
             restorePendingTarget(mob);
         }

@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MonsterPreyTargetMixin",
+    "NativeVindicatorTargetRangeMixin",
     "MonsterPreyContinuationMixin",
+    "NativeMeleeTargetMemoryMixin",
     "WitherPreyTargetMixin",
     "PiglinRetaliationMixin",
     "WardenPreyTargetMixin",
@@ -45,6 +47,8 @@
     "BetterCombatMobMixin",
     "BetterCombatPlayerAttackMixin",
     "BetterCombatMeleeGoalMixin",
+    "MeleeAttackPursuitMixin",
+    "MobAttackBoundsMixin",
     "BetterCombatMobSwingMixin",
     "SimplySwordsThrownSpearMixin",
     "SimplySwordsUniqueLootMixin",

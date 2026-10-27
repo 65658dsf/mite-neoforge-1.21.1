@@ -79,7 +79,7 @@ public final class MobShields {
     public static boolean populate(Mob mob) {
         if (!handles(mob) || mob.level().isClientSide || mob.getPersistentData().getBoolean(SPAWN_ROLL)) return false;
         mob.getPersistentData().putBoolean(SPAWN_ROLL, true);
-        if (BloodMoonEquipment.spawnEquipmentLocked(mob) || !MiteExtensions.policy().mobDefense(mob,true)
+        if (!MiteExtensions.policy().mobDefense(mob,true)
                 || !spawnReason(mob.getSpawnType()) || !mob.getOffhandItem().isEmpty()
                 || !mob.getMainHandItem().isEmpty() && !melee(mob.getMainHandItem())
                 || mob.getRandom().nextFloat() >= SPAWN_CHANCE) return false;
