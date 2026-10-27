@@ -24,7 +24,7 @@ public final class PhantomBladeItem extends Item {
         lines.add(Component.translatable("item.mite.phantom_blade.stats", number(profile.damage()), number(profile.intervalTicks()/20D))
                 .withStyle(ChatFormatting.GRAY));
         lines.add(Component.translatable("item.mite.phantom_blade.recharge").withStyle(ChatFormatting.GRAY));
-        lines.add(Component.translatable("item.mite.phantom_blade.selection").withStyle(ChatFormatting.DARK_GRAY));
+        lines.add(Component.translatable("item.mite.phantom_blade.selection", number(profile.targetRange())).withStyle(ChatFormatting.DARK_GRAY));
     }
     private static String number(double value) { return String.format(Locale.ROOT, "%.2f", value).replaceAll("0+$", "").replaceAll("\\.$", ""); }
 }

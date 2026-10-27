@@ -19,7 +19,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 
-/** One reusable sword: dock behind its owner, attack once, then return harmlessly. @author NingMeng123 */
+/** One reusable sword: orbit its owner upright, attack once, then return harmlessly. @author NingMeng123 */
 public final class PhantomBladeProjectile extends Projectile {
     private static final EntityDataAccessor<String> MATERIAL = SynchedEntityData.defineId(PhantomBladeProjectile.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> OWNER = SynchedEntityData.defineId(PhantomBladeProjectile.class, EntityDataSerializers.INT);
@@ -110,7 +110,7 @@ public final class PhantomBladeProjectile extends Projectile {
     private void returnTo(ServerPlayer player) {
         Vec3 destination = PhantomBladeSwarm.restingPosition(player);
         Vec3 offset = destination.subtract(position());
-        // Recover behind an owner who teleported, without discarding the sword or tracing across the map.
+            // Recover into the orbit after an owner teleport without tracing across the map.
         if (offset.lengthSqr() <= RETURN_SPEED * RETURN_SPEED || offset.lengthSqr() > 64D * 64D) { dock(player); return; }
         aimReturn(player);
         setPos(position().add(getDeltaMovement()));
@@ -120,7 +120,7 @@ public final class PhantomBladeProjectile extends Projectile {
         entityData.set(PHASE, DOCKED); entityData.set(TARGET, -1);
         setPos(PhantomBladeSwarm.restingPosition(player));
         setDeltaMovement(Vec3.ZERO); hasImpulse = true;
-        setYRot(player.getYRot()); setXRot(0F);
+        setYRot(PhantomBladeSwarm.restingYaw(player, 0F)); setXRot(0F);
     }
 
     @Override protected boolean canHitEntity(Entity entity) {

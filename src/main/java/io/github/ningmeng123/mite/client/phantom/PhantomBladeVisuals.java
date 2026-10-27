@@ -33,9 +33,9 @@ public final class PhantomBladeVisuals {
         };
     }
 
-    /** Follow the owner's horizontal facing, keeping the parked sword's tip on local +Y. */
-    public static void orientResting(PoseStack pose, float ownerYaw) {
-        pose.mulPose(Axis.YP.rotationDegrees(-ownerYaw));
+    /** Follow the continuous orbit angle while keeping the sword's tip on local +Y. */
+    public static void orientResting(PoseStack pose, float orbitYaw) {
+        pose.mulPose(Axis.YP.rotationDegrees(-orbitYaw));
     }
 
     /** Rotate the upright sword frame so +Y points along the projectile's velocity. */

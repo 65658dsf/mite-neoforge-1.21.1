@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.client.phantom.PhantomBladeParticles;
 import io.github.ningmeng123.mite.client.phantom.PhantomBladeProjectileRenderer.Trail;
 import io.github.ningmeng123.mite.client.phantom.PhantomBladeVisuals;
 import io.github.ningmeng123.mite.phantom.PhantomBladeSwarm;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import javax.imageio.ImageIO;
+import net.minecraft.client.ParticleStatus;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -67,9 +69,9 @@ public final class PhantomBladeClientAudit implements DataProvider {
         report.addProperty("world_created", false);
         report.addProperty("opengl_or_render_invoked", false);
         report.addProperty("visual_appearance_passed", false);
-        report.addProperty("scope", "decoded RGBA sprites, inherited native FIXED item transforms and actual texture-frame axes, parked and flying sword orientation, actual emitted aura/trail vertices, behind-owner attachment, trail history and compiled renderer wiring; not rendered pixels");
+        report.addProperty("scope", "decoded RGBA sprites, inherited native FIXED item transforms and actual texture-frame axes, orbiting and flying sword orientation, actual emitted aura/trail vertices, continuous owner orbit, trail history and compiled renderer wiring; not rendered pixels");
         try {
-            resources(report); orientations(report); meshes(report); wiring(report);
+            resources(report); orientations(report); meshes(report); particles(report); wiring(report);
             report.addProperty("status", "passed_client_assets_actual_mesh_and_renderer_wiring_without_rendering");
             write(report); return CompletableFuture.completedFuture(null);
         } catch (Throwable failure) {
@@ -194,7 +196,7 @@ public final class PhantomBladeClientAudit implements DataProvider {
 
     private static void orientations(JsonObject report) throws Exception {
         JsonArray models = new JsonArray(); int restingCases = 0, flightCases = 0;
-        float[] ownerYaws = {0F, 45F, 90F, 180F, -90F};
+        float[] orbitYaws = {0F, 45F, 90F, 180F, -90F};
         Vec3[] directions = {new Vec3(1D, 0D, 0D), new Vec3(-1D, 0D, 0D), new Vec3(0D, 1D, 0D),
                 new Vec3(0D, -1D, 0D), new Vec3(0D, 0D, 1D), new Vec3(0D, 0D, -1D), new Vec3(3D, -4D, 5D)};
         for (String material : PhantomBladeVisuals.MATERIALS) {
@@ -216,10 +218,10 @@ public final class PhantomBladeClientAudit implements DataProvider {
                     "The actual inherited FIXED display transform includes its hidden180-degree Y rotation: " + material);
             for (int frame = 0; frame < frames; frame++) {
                 BladeAxis axis = textureAxis(image, frame, size);
-                for (float ownerYaw : ownerYaws) {
-                    var pose = new PoseStack(); PhantomBladeVisuals.orientResting(pose, ownerYaw);
-                    auraAligned(pose, new Vec3(0D, 1D, 0D), "The actual parked aura stays vertical at every owner facing");
-                    swordAligned(pose, model, axis, new Vec3(0D, 1D, 0D), "The native parked sword points up: " + material + "/frame" + frame + "/ownerYaw" + ownerYaw);
+                for (float orbitYaw : orbitYaws) {
+                    var pose = new PoseStack(); PhantomBladeVisuals.orientResting(pose, orbitYaw);
+                    auraAligned(pose, new Vec3(0D, 1D, 0D), "The actual orbiting aura stays vertical at every orbit angle");
+                    swordAligned(pose, model, axis, new Vec3(0D, 1D, 0D), "The native orbiting sword points up: " + material + "/frame" + frame + "/orbitYaw" + orbitYaw);
                     restingCases++;
                 }
                 for (Vec3 direction : directions) {
@@ -250,15 +252,23 @@ public final class PhantomBladeClientAudit implements DataProvider {
             JsonObject blade = new JsonObject(); blade.addProperty("material", profile.material()); blade.addProperty("swords", 1); blades.add(blade);
         }
         report.add("single_blade_per_material", blades);
-        for (float yaw : new float[] {0F, 45F, 90F, 180F, -90F, 360F}) {
-            Vec3 offset = PhantomBladeSwarm.restingOffset(yaw, 1.8D);
-            Vec3 facing = new Vec3(-Math.sin(Math.toRadians(yaw)), 0D, Math.cos(Math.toRadians(yaw)));
-            check(Math.abs(offset.horizontalDistance() - 1.1D) < 1E-8D && Math.abs(offset.y - 1.17D) < 1E-8D,
-                    "Parked blade keeps its horizontal distance and upper-body height at every owner yaw");
-            check(Math.abs(new Vec3(offset.x, 0D, offset.z).normalize().dot(facing) + 1D) < 1E-8D,
-                    "The actual shared gameplay/render attachment remains directly behind the owner's facing");
+        var orbitOwner = java.util.UUID.fromString("12345678-1234-5678-9abc-123456789abc");
+        check(PhantomBladeSwarm.ORBIT_PERIOD_TICKS == 160, "The idle sword completes one orbit every eight seconds");
+        for (double time = 0D; time <= 320D; time += .25D) {
+            Vec3 offset = PhantomBladeSwarm.restingOffset(orbitOwner, 1.8D, time);
+            Vec3 nextFrame = PhantomBladeSwarm.restingOffset(orbitOwner, 1.8D, time + .25D);
+            Vec3 repeated = PhantomBladeSwarm.restingOffset(orbitOwner, 1.8D, time + 160D);
+            check(Math.abs(offset.horizontalDistance() - 1.1D) < 1E-8D && Math.abs(offset.y - 1.17D) <= .08000001D,
+                    "The shared orbit keeps its radius and gently bobs around upper-body height");
+            check(offset.distanceTo(nextFrame) > 0D && offset.distanceTo(nextFrame) < .012D,
+                    "Fractional render frames move continuously, including the orbit wrap boundary");
+            check(offset.distanceTo(repeated) < 1E-8D, "World-clock orbit phase repeats without depending on entity age or owner yaw");
         }
-        report.addProperty("behind_owner_attachment_matches_all_facing_directions", true);
+        Vec3 quarterA = PhantomBladeSwarm.restingOffset(orbitOwner, 1.8D, 0D);
+        Vec3 quarterB = PhantomBladeSwarm.restingOffset(orbitOwner, 1.8D, 40D);
+        check(Math.abs(new Vec3(quarterA.x, 0D, quarterA.z).normalize().dot(new Vec3(quarterB.x, 0D, quarterB.z).normalize())) < 1E-8D,
+                "One quarter period moves the upright sword through ninety degrees around its owner");
+        report.addProperty("continuous_eight_second_orbit_uses_stable_owner_phase_and_partial_ticks", true);
         Capture aura = new Capture(); PhantomBladeVisuals.bladeAura(new PoseStack(), aura.buffers(), 0x8AE4FF, .8F); aura.finish();
         check(aura.vertices == 4, "The actual native-sword aura emits one soft quad");
         Capture ribbon = new Capture();
@@ -285,6 +295,82 @@ public final class PhantomBladeClientAudit implements DataProvider {
         report.addProperty("bounded_motion_history_fades_and_rejects_teleport_streaks", true);
     }
 
+    private static void particles(JsonObject report) throws Exception {
+        int normal = 0, reduced = 0, minimal = 0;
+        for (int tick = 0; tick < 20; tick++) {
+            var full = PhantomBladeParticles.emission(tick, 0, ParticleStatus.ALL, false, 1D, .49D);
+            var lower = PhantomBladeParticles.emission(tick, 0, ParticleStatus.DECREASED, false, 1D, .49D);
+            normal += full.total(); reduced += lower.total();
+            minimal += PhantomBladeParticles.emission(tick, 0, ParticleStatus.MINIMAL, false, 1D, .49D).total();
+            check(full.motes() == 2 && full.stars() <= 1 && full.total() <= 3,
+                    "An ordinary flight tick has two tiny colored motes and at most one star");
+            check(lower.motes() <= 1 && lower.stars() <= 1 && lower.total() <= 2,
+                    "Reduced particles use a lower deterministic tick cadence");
+            for (ParticleStatus quality : ParticleStatus.values()) {
+                check(PhantomBladeParticles.emission(tick, 0, quality, true, 1D, .49D).total() == 0,
+                        "A parked or orbiting sword cannot drag a particle trail");
+                check(PhantomBladeParticles.emission(tick, 0, quality, false, 576.01D, .49D).total() == 0,
+                        "Particle work stops beyond twenty-four blocks");
+                check(PhantomBladeParticles.emission(tick, 0, quality, false, 1D, 0D).total() == 0,
+                        "A stopped sword produces no accumulating particles");
+            }
+        }
+        check(normal == 45 && reduced == 13 && minimal == 0,
+                "Twenty flying ticks have bounded material dust and sparse luminous stars for each quality setting");
+        Vec3 hilt = PhantomBladeParticles.hilt(new Vec3(2D, 3D, 4D), new Vec3(0D, 0D, .7D));
+        check(hilt.distanceTo(new Vec3(2D, 3D, 3.69D)) < 1E-8D,
+                "Particle attachment follows the real flight ribbon's hilt offset behind the sword");
+        var track = new PhantomBladeParticles.Track();
+        check(track.sample(0, Vec3.ZERO) == null, "The first observation cannot invent a preceding path");
+        var segment = track.sample(1, new Vec3(.7D, 0D, 0D));
+        check(segment != null && segment.at(.5D).distanceTo(new Vec3(.35D, 0D, 0D)) < 1E-8D,
+                "Particles are distributed along the actual sampled hilt path");
+        check(track.sample(1, new Vec3(1000D, 0D, 0D)) == null,
+                "A repeated callback in one tick produces no second emission or changed sample");
+        check(track.sample(2, new Vec3(1.4D, 0D, 0D)).from().distanceTo(new Vec3(.7D, 0D, 0D)) < 1E-8D,
+                "Duplicate tick callbacks cannot corrupt the following particle segment");
+        check(track.sample(4, new Vec3(2.8D, 0D, 0D)) == null
+                && track.sample(5, new Vec3(1000D, 0D, 0D)) == null
+                && track.sample(6, new Vec3(1000D, 0D, 0D)) == null,
+                "Missed ticks, teleports and stationary samples cannot draw long or stacked particle trails");
+        var budget = new PhantomBladeParticles.Budget();
+        check(budget.claim(0L, 40, 48) == 40 && budget.claim(0L, 40, 48) == 8
+                && budget.claim(0L, 1, 48) == 0, "All local swords share a strict forty-eight-particle tick budget");
+        check(budget.claim(1L, 3, 48) == 3 && budget.claim(1L, 48, 24) == 21
+                && budget.claim(1L, 1, 24) == 0, "A lower quality setting shares twenty-four slots including particles already emitted that tick");
+        JsonArray colors = new JsonArray();
+        for (String material : PhantomBladeVisuals.MATERIALS) {
+            JsonObject row = new JsonObject(); row.addProperty("material", material);
+            row.addProperty("color", String.format("#%06X", PhantomBladeVisuals.color(material))); colors.add(row);
+        }
+        for (String type : List.of("dust", "end_rod")) {
+            var definition = JsonParser.parseString(new String(bytes("assets/minecraft/particles/" + type + ".json"), StandardCharsets.UTF_8)).getAsJsonObject();
+            check(!definition.getAsJsonArray("textures").isEmpty(), "The native particle has actual sprite resources: " + type);
+            for (var value : definition.getAsJsonArray("textures")) {
+                var texture = ResourceLocation.parse(value.getAsString());
+                var sprite = ImageIO.read(new java.io.ByteArrayInputStream(bytes("assets/" + texture.getNamespace()
+                        + "/textures/particle/" + texture.getPath() + ".png")));
+                check(sprite != null && sprite.getWidth() > 0, "Every particle animation sprite decodes: " + texture);
+            }
+        }
+        ClassNode actual = compiled(CLIENT + "PhantomBladeParticles");
+        check(actual.methods.stream().anyMatch(method -> method.name.equals("afterTick")
+                        && method.desc.equals("(Lnet/neoforged/neoforge/event/tick/EntityTickEvent$Post;)V"))
+                && calls(actual, "net/minecraft/client/particle/ParticleEngine", "createParticle") == 2
+                && calls(actual, CLIENT + "PhantomBladeParticles$Track", "sample") == 1
+                && calls(actual, CLIENT + "PhantomBladeParticles$Budget", "claim") == 1,
+                "The actual client entity-tick listener uses the audited path, shared limit, dust and luminous star emission");
+        check(calls(actual, CLIENT + "PhantomBladeVisuals", "color") == 1
+                && hasField(actual, "net/minecraft/core/particles/ParticleTypes", "END_ROD"),
+                "Production particles use the same material colors as the flight ribbon and the native fine-star sprite");
+        report.add("flight_particle_material_colors", colors);
+        report.addProperty("flight_particles_per_twenty_ticks_all", normal);
+        report.addProperty("flight_particles_per_twenty_ticks_decreased", reduced);
+        report.addProperty("flight_particles_per_twenty_ticks_minimal", minimal);
+        report.addProperty("particle_tick_deduplication_path_and_shared_budget_passed", true);
+        report.addProperty("particle_resources_and_actual_client_tick_wiring_passed", true);
+    }
+
     private static void wiring(JsonObject report) throws Exception {
         ClassNode registration = compiled(CLIENT + "PhantomBladeClientRegistration");
         check(calls(registration, "net/neoforged/neoforge/client/event/EntityRenderersEvent$RegisterRenderers", "registerEntityRenderer") == 2,
@@ -300,8 +386,9 @@ public final class PhantomBladeClientAudit implements DataProvider {
                 && calls(projectile, CLIENT + "PhantomBladeVisuals", "orientProjectile") == 1
                 && calls(projectile, CLIENT + "PhantomBladeVisuals", "alignSwordSprite") == 1,
                 "The actual renderer uses the verified parked/flight helpers and native sprite alignment");
-        check(calls(projectile, "io/github/ningmeng123/mite/phantom/PhantomBladeSwarm", "restingOffset") == 1,
-                "The parked sword uses the same behind-owner attachment as the gameplay entity");
+        check(calls(projectile, "io/github/ningmeng123/mite/phantom/PhantomBladeSwarm", "restingPosition") == 1
+                        && calls(projectile, "io/github/ningmeng123/mite/phantom/PhantomBladeSwarm", "restingYaw") == 1,
+                "The orbiting renderer uses the shared gameplay position and orientation with partial ticks");
         check(calls(projectile, "io/github/ningmeng123/mite/phantom/PhantomBladeProjectile", "isDocked") >= 2
                 && calls(projectile, "java/util/Map", "remove") == 1,
                 "Docking changes orientation and removes all old motion-trail history");

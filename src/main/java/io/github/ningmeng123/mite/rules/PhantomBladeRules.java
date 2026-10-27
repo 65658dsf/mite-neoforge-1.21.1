@@ -4,9 +4,9 @@ import java.util.List;
 
 /** One persistent sword per player, with material-specific damage and per-attack cooldowns. @author NingMeng123 */
 public final class PhantomBladeRules {
-    public static final double TARGET_RANGE = 10D;
     public record Profile(String material, double damage, int intervalTicks, int rank, int rechargeTicks, int bladeCount) {
         public int fullMask() { return (1 << bladeCount)-1; }
+        public double targetRange() { return 2D + rank * .5D; }
     }
     private static final List<Profile> PROFILES = List.of(
             new Profile("rusted_iron", .4D, 70, 0, 70, 1), new Profile("gold", .45D, 65, 1, 65, 1),

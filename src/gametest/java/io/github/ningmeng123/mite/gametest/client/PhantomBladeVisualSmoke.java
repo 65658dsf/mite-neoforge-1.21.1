@@ -117,7 +117,7 @@ public final class PhantomBladeVisualSmoke {
                     owner.setGameMode(GameType.CREATIVE); owner.setNoGravity(true); owner.setInvulnerable(true);
                     owner.teleportTo(level, HOME.x, HOME.y, HOME.z, YAW, PITCH);
                     owner.getInventory().clearContent();
-                    owner.getInventory().items.set(9, new ItemStack(MitePhantomBlades.get("copper")));
+                    owner.getInventory().items.set(0, new ItemStack(MitePhantomBlades.get("copper")));
                     owner.getInventory().setChanged(); owner.containerMenu.broadcastChanges();
                     PhantomBladeSystem.refresh(owner);
                     check(PhantomBladeSystem.swarm(owner) != null, "The real carried copper core creates its normal synchronized formation");
@@ -178,7 +178,7 @@ public final class PhantomBladeVisualSmoke {
                     check(zombie != null, "A native zombie target can be created");
                     zombie.setNoAi(true); zombie.setNoGravity(true); zombie.setBaby(false);
                     zombie.getPersistentData().putBoolean("modern_ite:explicit_command_spawn", true);
-                    zombie.moveTo(HOME.add(6D, 0D, 4D));
+                    zombie.moveTo(HOME.add(2.1D, 0D, 1.4D));
                     check(level.addFreshEntity(zombie) && zombie.isAddedToLevel(), "The scene target really enters the integrated server level");
                     for (EquipmentSlot slot : EquipmentSlot.values()) zombie.setItemSlot(slot, ItemStack.EMPTY);
                     zombie.getAttribute(Attributes.ARMOR).setBaseValue(0D);
@@ -186,7 +186,7 @@ public final class PhantomBladeVisualSmoke {
                     zombie.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1D);
                     zombie.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(0D);
                     zombie.setHealth(zombie.getMaxHealth());
-                    for (BlockPos pos : BlockPos.betweenClosed(5, 132, 3, 7, 132, 5))
+                    for (BlockPos pos : BlockPos.betweenClosed(1, 132, 0, 3, 132, 2))
                         level.setBlock(pos, Blocks.SMOOTH_STONE.defaultBlockState(), 2);
                     return zombie.getId();
                 }, server);

@@ -52,16 +52,17 @@ import net.neoforged.neoforge.network.registration.NetworkRegistry;
 @PrefixGameTestTemplate(false)
 public final class PhantomBladeGameTests {
     @GameTest(template = "empty", timeoutTicks = 30)
-    public static void onlyTheStrongestMainInventoryCoreOwnsExactlyOneSword(GameTestHelper h) {
+    public static void onlyTheStrongestHotbarCoreOwnsExactlyOneSword(GameTestHelper h) {
         Fixture f = new Fixture(h);
         f.player.getInventory().offhand.set(0, new ItemStack(MitePhantomBlades.get("vibranium")));
         f.player.getInventory().armor.set(0, new ItemStack(MitePhantomBlades.get("adamantium")));
+        f.core("vibranium", 9); f.core("adamantium", 35);
         PhantomBladeSystem.refresh(f.player);
-        h.assertTrue(PhantomBladeSystem.swarm(f.player) == null, "Offhand and armor slots cannot activate a sword");
+        h.assertTrue(PhantomBladeSystem.swarm(f.player) == null, "Backpack, offhand and armor slots cannot activate a sword");
         f.core("copper", 0); f.core("silver", 1); PhantomBladeSystem.refresh(f.player);
         PhantomBladeSwarm first = PhantomBladeSystem.swarm(f.player);
         h.assertTrue(first != null && first.isAddedToLevel(), "The synchronized controller belongs to the real online player");
-        h.assertValueEqual(first.material(), "copper", "Equal-rank copper and silver select the earliest main-inventory slot");
+        h.assertValueEqual(first.material(), "copper", "Equal-rank copper and silver select the earliest hotbar slot");
         for (int slot = 2; slot < 36; slot++) f.core("copper", slot);
         PhantomBladeSystem.refresh(f.player);
         h.assertTrue(PhantomBladeSystem.swarm(f.player) == first, "Thirty-six cores share the same controller");
@@ -69,6 +70,9 @@ public final class PhantomBladeGameTests {
             h.assertValueEqual(f.swords.size(), 1, "The entire inventory creates exactly one physical sword");
             PhantomBladeProjectile original = f.swords.getFirst();
             f.core("vibranium", 35); PhantomBladeSystem.refresh(f.player);
+            h.assertTrue(PhantomBladeSystem.swarm(f.player) == first && !original.isRemoved(),
+                    "A stronger core in the backpack cannot replace the active hotbar sword");
+            f.core("vibranium", 8); PhantomBladeSystem.refresh(f.player);
             var upgraded = PhantomBladeSystem.swarm(f.player);
             h.assertTrue(first.isRemoved() && original.isRemoved() && upgraded != first && upgraded.material().equals("vibranium"),
                     "Changing the strongest material replaces its controller and removes the former sword");
@@ -146,7 +150,9 @@ public final class PhantomBladeGameTests {
     public static void vibraniumHasATwentyTickCooldown(GameTestHelper h) { attackCycle(h, "vibranium", 3D, 20); }
 
     private static void attackCycle(GameTestHelper h, String material, double damage, int cooldown) {
-        Fixture f = new Fixture(h); var target = f.enemy(9, 3, 4); float initial = target.getHealth();
+        Fixture f = new Fixture(h); double distance = PhantomBladeRules.profile(material).targetRange() - .1D;
+        var target = f.enemy((int)Math.round(4D + distance), 3, 4);
+        target.setPos(f.player.position().add(distance, 0D, 0D)); float initial = target.getHealth();
         f.core(material, 0); PhantomBladeSystem.refresh(f.player);
         f.damageListener(event -> {
             close(h, event.getAmount(), damage, "The ordinary incoming-damage event receives the material's exact base damage");
@@ -157,7 +163,7 @@ public final class PhantomBladeGameTests {
             long firstHit = PhantomBladeState.now(f.player);
             PhantomBladeProjectile sword = f.swords.getFirst();
             h.runAfterDelay(1, () -> {
-                h.assertTrue(!sword.isRemoved() && sword.isReturning(), "A physical hit starts a visible return without discarding the sword");
+                h.assertTrue(!sword.isRemoved() && (sword.isReturning() || sword.isDocked()), "A physical hit returns the same sword into its orbit without discarding it");
                 h.assertValueEqual(PhantomBladeState.current(f.player, PhantomBladeRules.profile(material)).nextAttack(), firstHit+cooldown,
                         "Cooldown begins when the attack finishes rather than when the outbound flight launches");
             });
@@ -165,7 +171,7 @@ public final class PhantomBladeGameTests {
                 h.assertValueEqual(f.launches.size(), 1, "No second attack starts one tick before cooldown ends");
                 h.assertTrue(sword.isDocked() && !sword.isRemoved(), "The very same sword waits visibly behind its owner");
                 h.assertValueEqual(PhantomBladeSystem.swarm(f.player).orbitBladeMask(), 1, "A waiting sword stays visible during cooldown");
-                h.assertTrue(sword.position().distanceTo(PhantomBladeSwarm.restingPosition(f.player)) < .01D, "The docked sword uses the player's actual back position");
+                h.assertTrue(sword.position().distanceTo(PhantomBladeSwarm.restingPosition(f.player)) < .08D, "The docked sword follows the player's current orbit position within one tick");
                 h.assertTrue(!PhantomBladeState.ready(f.player, PhantomBladeState.current(f.player, PhantomBladeRules.profile(material))), "The persisted deadline remains authoritative");
             });
             h.runAfterDelay(cooldown+15, () -> {
@@ -181,7 +187,7 @@ public final class PhantomBladeGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 130)
     public static void manyLowAndHighTierCoresStillReuseOneVibraniumSword(GameTestHelper h) {
-        Fixture f = new Fixture(h); f.enemy(11, 3, 4);
+        Fixture f = new Fixture(h); f.enemy(9, 3, 4);
         for (int slot = 0; slot < 36; slot++) f.core(slot%2 == 0 ? "vibranium" : "copper", slot);
         PhantomBladeSystem.refresh(f.player);
         h.runAtTickTime(110, () -> {
@@ -192,12 +198,38 @@ public final class PhantomBladeGameTests {
         });
     }
 
+    @GameTest(template = "empty")
+    public static void everyMaterialUsesItsOwnRangeBoundaryAndOnlyHotbarUpgradesExtendIt(GameTestHelper h) {
+        Fixture f = new Fixture(h); var target = f.enemy(7, 3, 4);
+        h.assertFalse(PhantomBladeSystem.validTarget(f.player, target), "No core means no automatic target range");
+        String[] materials = {"rusted_iron", "gold", "copper", "silver", "iron", "ancient_metal", "mithril", "adamantium", "vibranium"};
+        double[] radii = {2D, 2.5D, 3D, 3D, 3.5D, 4D, 4.5D, 5D, 5.5D};
+        for (int index = 0; index < materials.length; index++) {
+            f.core(materials[index], 0);
+            target.setPos(f.player.position().add(radii[index], 0D, 0D));
+            h.assertTrue(PhantomBladeSystem.validTarget(f.player, target), "The exact material boundary is in range: " + materials[index]);
+            target.setPos(f.player.position().add(radii[index] + .01D, 0D, 0D));
+            h.assertFalse(PhantomBladeSystem.validTarget(f.player, target), "Any greater distance is excluded: " + materials[index]);
+        }
+        target.setPos(f.player.position().add(3.25D, 0D, 0D));
+        f.core("copper", 0); f.core("vibranium", 9);
+        h.assertFalse(PhantomBladeSystem.validTarget(f.player, target), "A backpack upgrade cannot extend copper's three-block radius");
+        f.core("iron", 8);
+        h.assertTrue(PhantomBladeSystem.validTarget(f.player, target), "A hotbar iron upgrade immediately extends the radius to three and a half blocks");
+        f.player.getInventory().items.set(8, ItemStack.EMPTY);
+        h.assertFalse(PhantomBladeSystem.validTarget(f.player, target), "Removing the iron core immediately restores copper's shorter radius");
+        f.player.getInventory().items.set(0, ItemStack.EMPTY);
+        target.setPos(f.player.position().add(1D, 0D, 0D));
+        h.assertFalse(PhantomBladeSystem.validTarget(f.player, target), "A remaining backpack core grants no range even for nearby enemies");
+        h.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 70)
     public static void neutralMobsPetsAlliesOutOfRangeEnemiesAndOpaqueWallsAreNotAutomaticTargets(GameTestHelper h) {
         Fixture f = new Fixture(h); f.core("vibranium", 0);
-        var enderman = f.mob(EntityType.ENDERMAN, 7, 3, 7);
-        var pig = f.mob(EntityType.PIG, 7, 3, 8);
-        var wolf = f.mob(EntityType.WOLF, 7, 3, 9); wolf.tame(f.player);
+        var enderman = f.mob(EntityType.ENDERMAN, 7, 3, 6);
+        var pig = f.mob(EntityType.PIG, 7, 3, 7);
+        var wolf = f.mob(EntityType.WOLF, 7, 3, 8); wolf.tame(f.player);
         var far = f.enemy(15, 3, 4); var ally = f.enemy(8, 3, 2);
         var scoreboard = h.getLevel().getScoreboard(); var team = scoreboard.addPlayerTeam("phantom_"+f.player.getId());
         scoreboard.addPlayerToTeam(f.player.getScoreboardName(), team); scoreboard.addPlayerToTeam(ally.getScoreboardName(), team);
@@ -206,8 +238,8 @@ public final class PhantomBladeGameTests {
         h.assertFalse(PhantomBladeSystem.validTarget(f.player, pig), "Livestock is excluded");
         h.assertFalse(PhantomBladeSystem.validTarget(f.player, wolf), "Pets are excluded");
         h.assertFalse(PhantomBladeSystem.validTarget(f.player, ally), "Allies are excluded");
-        h.assertFalse(PhantomBladeSystem.validTarget(f.player, far), "The range remains ten blocks");
-        var blocked = f.enemy(10, 3, 4); f.wall(7);
+        h.assertFalse(PhantomBladeSystem.validTarget(f.player, far), "Enemies beyond the active material radius remain out of range");
+        var blocked = f.enemy(9, 3, 4); f.wall(7);
         h.assertFalse(f.player.hasLineOfSight(blocked), "A real wall blocks target visibility");
         PhantomBladeSystem.refresh(f.player);
         h.runAtTickTime(45, () -> {
@@ -218,9 +250,9 @@ public final class PhantomBladeGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 80)
     public static void aWallPlacedAfterLaunchReturnsTheSameSwordWithoutThroughWallDamage(GameTestHelper h) {
-        Fixture f = new Fixture(h); var target = f.enemy(13, 3, 4); float initial = target.getHealth();
+        Fixture f = new Fixture(h); var target = f.enemy(9, 3, 4); float initial = target.getHealth();
         f.onLaunch = sword -> {
-            f.wall(9);
+            f.wall(8);
             h.runAfterDelay(24, () -> {
                 h.assertValueEqual(f.launches.size(), 1, "The new wall prevents subsequent automatic launches");
                 h.assertTrue(sword.isDocked() && !sword.isRemoved(), "Collision returns the original sword to the player's back");
@@ -234,7 +266,7 @@ public final class PhantomBladeGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 130)
     public static void incomingDamageAndProjectileImpactCancellationStillReturnThePermanentSword(GameTestHelper h) {
-        Fixture f = new Fixture(h); var target = f.enemy(10, 3, 4); float initial = target.getHealth();
+        Fixture f = new Fixture(h); var target = f.enemy(9, 3, 4); float initial = target.getHealth();
         f.damageListener(event -> event.setCanceled(true));
         Consumer<ProjectileImpactEvent> impact = event -> {
             if (event.getProjectile() instanceof PhantomBladeProjectile blade && blade.getOwner() == f.player && f.hits > 0) event.setCanceled(true);
@@ -251,8 +283,10 @@ public final class PhantomBladeGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 80)
     public static void aFriendlyBodyBlocksTheSwordAndReturnFlightNeverCausesCollateralDamage(GameTestHelper h) {
-        Fixture f = new Fixture(h); var target = f.enemy(13, 3, 4); var cow = f.mob(EntityType.COW, 8, 3, 4);
+        Fixture f = new Fixture(h); var target = f.enemy(9, 3, 4); var cow = f.mob(EntityType.COW, 7, 3, 4);
         float enemyHealth = target.getHealth(), animalHealth = cow.getHealth();
+        f.onLaunch = sword -> cow.setPos(sword.position().lerp(target.getBoundingBox().getCenter(), .5D)
+                .subtract(0D, cow.getBbHeight() * .5D, 0D));
         f.core("vibranium", 0); PhantomBladeSystem.refresh(f.player);
         h.runAtTickTime(65, () -> {
             h.assertTrue(!f.launches.isEmpty() && f.swords.size() == 1 && !f.swords.getFirst().isRemoved(), "Interception sends the existing sword back instead of consuming it");
@@ -264,7 +298,7 @@ public final class PhantomBladeGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 80)
     public static void losingAnOutboundTargetReturnsTheSameSwordWithoutDamage(GameTestHelper h) {
-        Fixture f = new Fixture(h); var target = f.enemy(13, 3, 4);
+        Fixture f = new Fixture(h); var target = f.enemy(9, 3, 4);
         f.onLaunch = sword -> {
             target.discard();
             h.runAfterDelay(20, () -> {
@@ -278,27 +312,76 @@ public final class PhantomBladeGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 260)
-    public static void waitingSwordNeverTimesOutAndFollowsTheOwnersBackWhenTurning(GameTestHelper h) {
+    public static void waitingSwordOrbitsContinuouslyAndTurningCannotJumpItsPosition(GameTestHelper h) {
         Fixture f = new Fixture(h); f.core("vibranium", 0); PhantomBladeSystem.refresh(f.player);
-        h.runAtTickTime(90, () -> { f.player.setYRot(90F); f.player.yBodyRot = 90F; });
+        Vec3[] previous = {null}, firstQuarter = {null};
+        h.onEachTick(() -> {
+            var live = f.liveSwords(); if (f.closed || live.isEmpty()) return;
+            Vec3 position = live.getFirst().position(); Vec3 offset = position.subtract(f.player.position());
+            close(h, offset.horizontalDistance(), 1.1D, "The idle sword keeps its circular radius");
+            h.assertTrue(Math.abs(offset.y - f.player.getBbHeight() * .65D) <= .08001D, "The orbit bobs gently at upper-body height");
+            if (previous[0] != null) h.assertTrue(previous[0].distanceTo(position) < .08D, "Idle movement stays continuous across owner turns");
+            previous[0] = position;
+        });
+        h.runAtTickTime(20, () -> firstQuarter[0] = f.swords.getFirst().position().subtract(f.player.position()));
+        h.runAtTickTime(60, () -> {
+            Vec3 offset = f.swords.getFirst().position().subtract(f.player.position());
+            h.assertTrue(Math.abs(new Vec3(firstQuarter[0].x, 0D, firstQuarter[0].z).normalize()
+                    .dot(new Vec3(offset.x, 0D, offset.z).normalize())) < .08D, "Forty ticks move the same sword through one quarter of its eight-second orbit");
+        });
+        h.runAtTickTime(90, () -> {
+            Vec3 before = PhantomBladeSwarm.restingPosition(f.player);
+            f.player.setYRot(90F); f.player.yBodyRot = 90F;
+            close(h, before.distanceTo(PhantomBladeSwarm.restingPosition(f.player)), 0D, "Turning does not reset or rotate the orbit phase");
+        });
         h.runAtTickTime(150, () -> { f.player.setYRot(210F); f.player.yBodyRot = 210F; });
+        h.runAtTickTime(180, () -> h.assertTrue(f.swords.getFirst().position().subtract(f.player.position()).distanceTo(firstQuarter[0]) < .08D,
+                "The sword returns to its earlier orbit point after exactly one hundred and sixty ticks"));
         h.runAtTickTime(240, () -> {
             h.assertTrue(f.swords.size() == 1 && f.swords.getFirst().isDocked() && !f.swords.getFirst().isRemoved(), "Idle lifetime never removes or replaces the sword");
-            Vec3 back = PhantomBladeSwarm.restingPosition(f.player);
-            h.assertTrue(f.swords.getFirst().position().distanceTo(back) < .01D, "The docked sword follows the rotated back position");
-            h.assertTrue(back.subtract(f.player.position()).multiply(1D, 0D, 1D).dot(f.player.getLookAngle().multiply(1D, 0D, 1D)) < 0D,
-                    "The resting position is physically behind the player's facing direction");
+            h.assertTrue(f.swords.getFirst().position().distanceTo(PhantomBladeSwarm.restingPosition(f.player)) < .08D,
+                    "The actual docked sword follows the shared server orbit formula");
             h.assertTrue(f.launches.isEmpty(), "Waiting without enemies never creates an attack"); h.succeed();
         });
     }
 
+    @GameTest(template = "empty")
+    public static void orbitPhaseSurvivesRealPlayerNbtRelogAndCoreRecreation(GameTestHelper h) {
+        Fixture f = new Fixture(h); f.core("copper", 0); PhantomBladeSystem.refresh(f.player);
+        Vec3 before = PhantomBladeSwarm.restingPosition(f.player); float yawBefore = PhantomBladeSwarm.restingYaw(f.player, 0F);
+        f.relog(); PhantomBladeSystem.refresh(f.player);
+        close(h, before.distanceTo(PhantomBladeSwarm.restingPosition(f.player)), 0D, "A real player save and relog preserves the world-clock orbit phase");
+        close(h, PhantomBladeSwarm.restingYaw(f.player, 0F), yawBefore, "The upright sword also preserves its orbital orientation");
+        PhantomBladeSystem.clear(f.player); f.core("vibranium", 0); PhantomBladeSystem.refresh(f.player);
+        close(h, before.distanceTo(PhantomBladeSwarm.restingPosition(f.player)), 0D, "Changing the core or recreating the controller cannot reset the orbit");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 80)
+    public static void movingBeyondTheActiveMaterialRadiusReturnsTheOutboundSwordWithoutDamage(GameTestHelper h) {
+        Fixture f = new Fixture(h); var target = f.enemy(9, 3, 4); float initial = target.getHealth();
+        f.onLaunch = sword -> {
+            target.setPos(f.player.position().add(5.51D, 0D, 0D));
+            h.runAfterDelay(20, () -> {
+                h.assertTrue(sword.isDocked() && !sword.isRemoved(), "Crossing the active vibranium radius returns the same sword");
+                h.assertValueEqual(f.launches.size(), 1, "An out-of-range target cannot start another attack");
+                h.assertValueEqual(f.hits, 0, "Flight validation rejects a target that moved outside the material radius");
+                close(h, target.getHealth(), initial, "The abandoned attack causes no damage"); h.succeed();
+            });
+        };
+        f.core("vibranium", 0); PhantomBladeSystem.refresh(f.player);
+    }
+
     @GameTest(template = "empty", timeoutTicks = 90)
-    public static void removingTheCoreIntoAContainerRemovesItsOutboundSword(GameTestHelper h) {
-        Fixture f = new Fixture(h); var target = f.enemy(13, 3, 4); float initial = target.getHealth();
+    public static void movingTheCoreIntoTheBackpackOrAContainerRemovesItsOutboundSword(GameTestHelper h) {
+        Fixture f = new Fixture(h); var target = f.enemy(9, 3, 4); float initial = target.getHealth();
         f.onLaunch = sword -> {
             var swarm = PhantomBladeSystem.swarm(f.player);
+            f.player.getInventory().items.set(9, f.player.getInventory().removeItemNoUpdate(0)); PhantomBladeSystem.refresh(f.player);
+            h.assertTrue(swarm.isRemoved() && sword.isRemoved() && PhantomBladeSystem.swarm(f.player) == null,
+                    "Moving the core from the hotbar into the backpack removes the controller and its outbound sword");
             h.setBlock(3, 3, 3, Blocks.CHEST); var chest = (ChestBlockEntity)h.getBlockEntity(new BlockPos(3, 3, 3));
-            chest.setItem(0, f.player.getInventory().removeItemNoUpdate(0)); PhantomBladeSystem.refresh(f.player);
+            chest.setItem(0, f.player.getInventory().removeItemNoUpdate(9)); PhantomBladeSystem.refresh(f.player);
             h.assertTrue(swarm.isRemoved() && sword.isRemoved() && PhantomBladeSystem.swarm(f.player) == null, "Removing the carried core cleans both controller and physical sword");
             f.player.getInventory().offhand.set(0, chest.removeItemNoUpdate(0)); PhantomBladeSystem.refresh(f.player);
             h.runAfterDelay(30, () -> {
@@ -333,7 +416,7 @@ public final class PhantomBladeGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 160)
     public static void cooldownSurvivesCoreSwitchNbtRelogDeathCloneAndRealDimensionTransfers(GameTestHelper h) {
-        Fixture f = new Fixture(h); f.enemy(9, 3, 4); f.core("copper", 0); PhantomBladeSystem.refresh(f.player);
+        Fixture f = new Fixture(h); f.enemy(7, 3, 4); f.core("copper", 0); PhantomBladeSystem.refresh(f.player);
         f.damageListener(event -> {
             if (f.hits != 1) return;
             h.runAfterDelay(2, () -> {
@@ -424,7 +507,11 @@ public final class PhantomBladeGameTests {
             };
             NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, EntityJoinLevelEvent.class, join); cleanup.add(() -> NeoForge.EVENT_BUS.unregister(join));
             Consumer<LivingIncomingDamageEvent> damage = event -> {
-                if (event.getSource().getDirectEntity() instanceof PhantomBladeProjectile sword && sword.getOwner() == player) { ++hits; incoming.accept(event); }
+                if (event.getSource().getDirectEntity() instanceof PhantomBladeProjectile sword && sword.getOwner() == player) {
+                    // A nearby orbit point can launch and hit before the next GameTest observation tick.
+                    if (lastOutbound != sword) { launches.add(sword); lastOutbound = sword; onLaunch.accept(sword); }
+                    ++hits; incoming.accept(event);
+                }
             };
             NeoForge.EVENT_BUS.addListener(LivingIncomingDamageEvent.class, damage); cleanup.add(() -> NeoForge.EVENT_BUS.unregister(damage));
             h.onEachTick(() -> {

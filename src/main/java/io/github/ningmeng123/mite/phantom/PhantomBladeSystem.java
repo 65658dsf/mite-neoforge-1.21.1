@@ -14,6 +14,7 @@ import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,17 +24,17 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-/** One temporary sword formation per online player's main inventory. @author NingMeng123 */
+/** One temporary sword formation per online player's hotbar. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class PhantomBladeSystem {
-    public static final double RANGE = 10D;
     private static final Map<UUID, PhantomBladeSwarm> ACTIVE = new HashMap<>();
 
     private PhantomBladeSystem() {}
 
     @Nullable public static PhantomBladeRules.Profile selected(ServerPlayer player) {
         PhantomBladeRules.Profile strongest = null;
-        for (ItemStack stack : player.getInventory().items) {
+        for (int slot = 0; slot < Inventory.getSelectionSize(); slot++) {
+            ItemStack stack = player.getInventory().items.get(slot);
             if (stack.isEmpty() || !(stack.getItem() instanceof PhantomBladeItem item)) continue;
             var profile = PhantomBladeRules.profile(item.material());
             if (profile != null && (strongest == null || profile.rank() > strongest.rank())) strongest = profile;
@@ -48,9 +49,11 @@ public final class PhantomBladeSystem {
 
     /** Neutral enemies require actual anger at this owner; allies and pets are never collateral targets. */
     public static boolean validTarget(ServerPlayer owner, LivingEntity target) {
-        if (!(target instanceof Mob mob) || !target.isAlive() || target.isSpectator() || !target.isAttackable()
+        var profile = selected(owner);
+        if (profile == null || !(target instanceof Mob mob) || !target.isAlive() || target.isSpectator() || !target.isAttackable()
                 || !target.canBeHitByProjectile() || target.level() != owner.level()
-                || owner.distanceToSqr(target) > RANGE * RANGE || owner.isAlliedTo(target) || target.isAlliedTo(owner)
+                || owner.distanceToSqr(target) > profile.targetRange() * profile.targetRange()
+                || owner.isAlliedTo(target) || target.isAlliedTo(owner)
                 || target instanceof TamableAnimal tame && tame.isTame()
                 || target instanceof OwnableEntity owned && owned.getOwnerUUID() != null) return false;
         if (target instanceof NeutralMob neutral) return neutral.isAngryAt(owner) || mob.getTarget() == owner;

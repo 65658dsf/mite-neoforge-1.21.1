@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.phantom;
 import io.github.ningmeng123.mite.registry.MitePhantomBlades;
 import io.github.ningmeng123.mite.rules.PhantomBladeRules;
 import java.util.Comparator;
+import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -17,6 +18,8 @@ import net.minecraft.world.phys.Vec3;
 
 /** An invisible controller owns exactly one reusable, synchronized sword. @author NingMeng123 */
 public final class PhantomBladeSwarm extends Entity {
+    public static final int ORBIT_PERIOD_TICKS = 160;
+    public static final double ORBIT_RADIUS = 1.1D, ORBIT_BOB_AMPLITUDE = .08D;
     private static final EntityDataAccessor<Integer> OWNER = SynchedEntityData.defineId(PhantomBladeSwarm.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> MATERIAL = SynchedEntityData.defineId(PhantomBladeSwarm.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> ORBIT_MASK = SynchedEntityData.defineId(PhantomBladeSwarm.class, EntityDataSerializers.INT);
@@ -42,13 +45,25 @@ public final class PhantomBladeSwarm extends Entity {
     public int orbitBladeMask() { return entityData.get(ORBIT_MASK); }
     public int inFlightCount() { return blade != null && !blade.isRemoved() && !blade.isDocked() ? 1 : 0; }
 
-    /** Shared by flight logic and rendering so the waiting sword stays behind the player's facing. */
-    public static Vec3 restingOffset(float yaw, double ownerHeight) {
-        double radians = Math.toRadians(yaw);
-        return new Vec3(Math.sin(radians) * 1.1D, ownerHeight * .65D, -Math.cos(radians) * 1.1D);
+    /** World time and the owner's saved identity keep the orbit continuous across turns and recreation. */
+    public static double restingAngle(UUID ownerId, double gameTime) {
+        double phase = (ownerId.hashCode() & 65535) / 65536D;
+        return Math.PI * 2D * (gameTime % ORBIT_PERIOD_TICKS / ORBIT_PERIOD_TICKS + phase);
+    }
+    /** Shared by server docking, return flight and partial-tick client rendering. */
+    public static Vec3 restingOffset(UUID ownerId, double ownerHeight, double gameTime) {
+        double angle = restingAngle(ownerId, gameTime);
+        return new Vec3(Math.sin(angle) * ORBIT_RADIUS, ownerHeight * .65D + Math.sin(angle * 2D) * ORBIT_BOB_AMPLITUDE,
+                -Math.cos(angle) * ORBIT_RADIUS);
     }
     public static Vec3 restingPosition(Entity owner) {
-        return owner.position().add(restingOffset(owner.getYRot(), owner.getBbHeight()));
+        return owner.position().add(restingOffset(owner.getUUID(), owner.getBbHeight(), owner.level().getGameTime()));
+    }
+    public static Vec3 restingPosition(Entity owner, float partialTick) {
+        return owner.getPosition(partialTick).add(restingOffset(owner.getUUID(), owner.getBbHeight(), owner.level().getGameTime() + (double)partialTick));
+    }
+    public static float restingYaw(Entity owner, float partialTick) {
+        return (float)Math.toDegrees(restingAngle(owner.getUUID(), owner.level().getGameTime() + (double)partialTick));
     }
     private void follow(Entity owner) { setPos(restingPosition(owner)); }
 
@@ -68,7 +83,7 @@ public final class PhantomBladeSwarm extends Entity {
         }
         entityData.set(ORBIT_MASK, blade.isDocked() ? 1 : 0);
         if (!blade.isDocked() || !PhantomBladeState.ready(player, PhantomBladeState.current(player, profile))) return;
-        LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PhantomBladeSystem.RANGE),
+        LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(profile.targetRange()),
                 candidate -> PhantomBladeSystem.validTarget(player, candidate) && player.hasLineOfSight(candidate))
                 .stream().min(Comparator.<LivingEntity>comparingDouble(player::distanceToSqr).thenComparingInt(Entity::getId)).orElse(null);
         if (target == null) return;

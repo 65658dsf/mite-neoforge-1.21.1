@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-/** One persistent sword rests upright behind its owner and points along either leg of its flight. @author NingMeng123 */
+/** One persistent sword orbits upright around its owner and points along either leg of its flight. @author NingMeng123 */
 public final class PhantomBladeProjectileRenderer extends EntityRenderer<PhantomBladeProjectile> {
     private final ItemRenderer items;
     private final Map<PhantomBladeProjectile, Trail> trails = new WeakHashMap<>();
@@ -73,12 +73,10 @@ public final class PhantomBladeProjectileRenderer extends EntityRenderer<Phantom
         if (entity.isDocked()) {
             var owner = entity.owner();
             if (owner != null) {
-                float ownerYaw = Mth.rotLerp(partialTick, owner.yRotO, owner.getYRot());
-                Vec3 resting = owner.getPosition(partialTick)
-                        .add(PhantomBladeSwarm.restingOffset(ownerYaw, owner.getBbHeight()));
+                Vec3 resting = PhantomBladeSwarm.restingPosition(owner, partialTick);
                 Vec3 adjustment = resting.subtract(current);
                 pose.translate(adjustment.x, adjustment.y, adjustment.z);
-                PhantomBladeVisuals.orientResting(pose, ownerYaw);
+                PhantomBladeVisuals.orientResting(pose, PhantomBladeSwarm.restingYaw(owner, partialTick));
             }
         } else PhantomBladeVisuals.orientProjectile(pose, facingYaw, elevation);
         pose.scale(.475F, .475F, .475F);
