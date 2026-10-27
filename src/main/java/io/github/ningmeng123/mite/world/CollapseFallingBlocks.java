@@ -1,10 +1,15 @@
 package io.github.ningmeng123.mite.world;
 
+import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.BaseTorchBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /** Source soil collision rules and requested impact damage for all falling blocks. @author NingMeng123 */
 public final class CollapseFallingBlocks {
@@ -25,11 +30,19 @@ public final class CollapseFallingBlocks {
      * Run after native movement, before the native landing decision. Native gravity, velocity,
      * world-height bounds, save data, trial provenance and native fall-damage dispatch remain intact.
      */
-    public static void afterMove(FallingBlockEntity falling) {
-        if (!(falling.level() instanceof ServerLevel level) || falling.isRemoved()
-                || !CollapsePhysics.managed(falling.getBlockState())) return;
+    public static void afterMove(FallingBlockEntity falling, Vec3 movementStart) {
+        if (!(falling.level() instanceof ServerLevel level) || falling.isRemoved()) return;
         BlockState carried = falling.getBlockState();
         BlockPos occupied = falling.blockPosition();
+        if (crushesTorches(carried)) {
+            // Traverse the actual movement so a fast fall cannot skip a wall torch's cell.
+            BlockGetter.traverseBlocks(movementStart, falling.position(), falling, (entity, pos) -> {
+                if (level.hasChunkAt(pos) && level.getBlockState(pos).getBlock() instanceof BaseTorchBlock)
+                    destroy(level, pos, false, entity);
+                return null;
+            }, entity -> null);
+        }
+        if (!CollapsePhysics.managed(carried)) return;
         dislodge(level, occupied, carried, falling);
         if (falling.onGround()) {
             BlockPos support = occupied.below();
@@ -40,6 +53,11 @@ public final class CollapseFallingBlocks {
                 falling.setOnGround(false);
             }
         }
+    }
+
+    public static boolean crushesTorches(BlockState carried) {
+        return CollapsePhysics.managed(carried) || carried.is(Blocks.SAND) || carried.is(Blocks.RED_SAND)
+                || carried.is(Blocks.GRAVEL) || carried.is(MiteResourceBlocks.NETHER_GRAVEL.get());
     }
 
     private static void dislodge(ServerLevel level, BlockPos pos, BlockState carried, FallingBlockEntity falling) {

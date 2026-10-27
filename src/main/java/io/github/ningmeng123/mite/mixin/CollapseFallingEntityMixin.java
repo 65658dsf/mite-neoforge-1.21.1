@@ -8,9 +8,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,11 +49,12 @@ public abstract class CollapseFallingEntityMixin implements FallingBlockImpact {
         CollapseFallingBlocks.configureImpact((FallingBlockEntity)(Object)this);
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target =
-            "Lnet/minecraft/world/entity/item/FallingBlockEntity;move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V",
-            shift = At.Shift.AFTER))
-    private void mite$sourceCollapseCollision(CallbackInfo ci) {
-        CollapseFallingBlocks.afterMove((FallingBlockEntity)(Object)this);
+    @WrapOperation(method = "tick", at = @At(value = "INVOKE", target =
+            "Lnet/minecraft/world/entity/item/FallingBlockEntity;move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V"))
+    private void mite$sourceCollapseCollision(FallingBlockEntity falling, MoverType type, Vec3 motion, Operation<Void> original) {
+        Vec3 movementStart = falling.position();
+        original.call(falling, type, motion);
+        CollapseFallingBlocks.afterMove(falling, movementStart);
     }
 
     @WrapOperation(method = "tick", at = @At(value = "INVOKE", target =

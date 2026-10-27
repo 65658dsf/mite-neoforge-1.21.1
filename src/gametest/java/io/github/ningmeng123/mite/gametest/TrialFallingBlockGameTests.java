@@ -95,13 +95,35 @@ public final class TrialFallingBlockGameTests {
         for (ServerLevel level : levels(helper)) {
             try (Fixture fixture = new Fixture(helper, level, 3)) {
                 for (boolean natural : new boolean[]{true, false}) {
-                    level.setBlock(fixture.landed, Blocks.TORCH.defaultBlockState(), 2);
+                    level.setBlock(fixture.landed, Blocks.RAIL.defaultBlockState(), 2);
                     FallingBlockEntity falling = fixture.fall(Blocks.SAND.defaultBlockState(), natural);
                     fixture.finish(falling);
-                    helper.assertTrue(level.getBlockState(fixture.landed).is(Blocks.TORCH), "The native torch obstruction prevents sand from placing a block");
+                    helper.assertTrue(level.getBlockState(fixture.landed).is(Blocks.RAIL), "The native rail obstruction prevents sand from placing a block");
                     helper.assertFalse(NaturalTrialBlocks.isNatural(level, fixture.landed), "A failed landing cannot mark the obstruction as a natural trial block");
                     helper.assertValueEqual(fixture.count(Items.SAND), natural ? 0 : 1,
                             "Native failed-landing conversion is suppressed only for natural sand");
+                    fixture.clearItems();
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 400)
+    public static void naturalAndPlayerSandCrushTorchesWhileKeepingTheirLandingProvenance(GameTestHelper helper) {
+        for (ServerLevel level : levels(helper)) {
+            try (Fixture fixture = new Fixture(helper, level, 6)) {
+                for (boolean natural : new boolean[]{true, false}) {
+                    level.setBlock(fixture.landed, Blocks.TORCH.defaultBlockState(), 2);
+                    fixture.finish(fixture.fall(Blocks.SAND.defaultBlockState(), natural));
+                    helper.assertTrue(level.getBlockState(fixture.landed).is(Blocks.SAND), "Both sand origins crush the torch and settle normally");
+                    helper.assertValueEqual(NaturalTrialBlocks.isNatural(level, fixture.landed), natural,
+                            "Crushing a torch preserves the sand's original trial provenance");
+                    helper.assertTrue(fixture.items().isEmpty(), "Neither sand nor crushed torches create duplicate items");
+                    helper.assertTrue(level.destroyBlock(fixture.landed, true), "The settled block can be removed normally");
+                    helper.assertValueEqual(fixture.count(Items.SAND), natural ? 0 : 1,
+                            "Natural trial sand remains protected while player sand still drops after crushing a torch");
+                    helper.assertValueEqual(fixture.count(Items.TORCH), 0, "A crushed torch is never returned as loot");
                     fixture.clearItems();
                 }
             }

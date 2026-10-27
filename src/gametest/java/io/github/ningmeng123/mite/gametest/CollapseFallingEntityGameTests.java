@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.world.CollapsePhysics;
+import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import io.github.ningmeng123.mite.worldgen.NaturalTrialBlocks;
 import io.github.ningmeng123.mite.worldgen.NaturalTrialFallingBlock;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
+import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -42,7 +44,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Actual falling ticks verify source collision behavior without replacing sand physics. @author NingMeng123 */
+/** Actual falling ticks verify soil collisions and sand/gravel torch crushing. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class CollapseFallingEntityGameTests {
@@ -109,13 +111,108 @@ public final class CollapseFallingEntityGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 300)
-    public static void ordinarySandStillUsesItsNativeTorchObstructionInsteadOfSourceDirtCrushing(GameTestHelper h) {
+    public static void sandGravelAndSoilCrushEveryStandingTorchWithoutDroppingEitherItem(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            for (BlockState falling : List.of(Blocks.SAND.defaultBlockState(), Blocks.RED_SAND.defaultBlockState(),
+                    Blocks.GRAVEL.defaultBlockState(), MiteResourceBlocks.NETHER_GRAVEL.get().defaultBlockState(),
+                    Blocks.DIRT.defaultBlockState(), Blocks.COARSE_DIRT.defaultBlockState(), Blocks.PODZOL.defaultBlockState(),
+                    Blocks.ROOTED_DIRT.defaultBlockState(), Blocks.MYCELIUM.defaultBlockState(), Blocks.SOUL_SAND.defaultBlockState())) {
+                for (BlockState torch : List.of(Blocks.TORCH.defaultBlockState(), Blocks.SOUL_TORCH.defaultBlockState(),
+                        Blocks.REDSTONE_TORCH.defaultBlockState())) {
+                    f.set(f.landed, torch);
+                    f.finish(f.fall(falling, false));
+                    h.assertValueEqual(f.level.getBlockState(f.landed), falling,
+                            "The falling block settles in the crushed standing torch's cell: " + falling + " / " + torch);
+                    h.assertTrue(f.items().isEmpty(), "Neither the crushed torch nor the settled falling block drops an item");
+                    f.set(f.landed, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void sandGravelAndDirtCrushWallTorchesOverOpenSpaceWithoutLoot(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            BlockPos pos = f.landed.above(3);
+            f.set(pos.west(), Blocks.STONE.defaultBlockState());
+            for (BlockState falling : List.of(Blocks.SAND.defaultBlockState(), Blocks.RED_SAND.defaultBlockState(),
+                    Blocks.GRAVEL.defaultBlockState(), Blocks.DIRT.defaultBlockState())) {
+                for (BlockState torch : List.of(Blocks.WALL_TORCH.defaultBlockState(), Blocks.SOUL_WALL_TORCH.defaultBlockState(),
+                        Blocks.REDSTONE_WALL_TORCH.defaultBlockState())) {
+                    f.set(pos, torch.setValue(WallTorchBlock.FACING, Direction.EAST));
+                    h.assertTrue(f.level.getBlockState(pos).canSurvive(f.level, pos), "The wall torch has valid side support");
+                    f.finish(f.fall(falling, false));
+                    h.assertTrue(f.level.getBlockState(pos).isAir(), "Falling sand, gravel and dirt clear wall torches above air");
+                    h.assertValueEqual(f.level.getBlockState(f.landed), falling, "The falling material continues down to the floor");
+                    h.assertTrue(f.items().isEmpty(), "Crushing a wall torch above air does not produce torch loot");
+                    f.set(f.landed, Blocks.AIR.defaultBlockState());
+                }
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void fastSandGravelAndDirtCannotSkipWallTorchesBetweenTicks(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            BlockPos torch = f.landed.above(3);
+            f.set(torch.west(), Blocks.STONE.defaultBlockState());
+            for (BlockState material : List.of(Blocks.SAND.defaultBlockState(), Blocks.GRAVEL.defaultBlockState(),
+                    Blocks.DIRT.defaultBlockState())) {
+                f.set(torch, Blocks.WALL_TORCH.defaultBlockState().setValue(WallTorchBlock.FACING, Direction.EAST));
+                FallingBlockEntity falling = f.fall(material, false);
+                falling.setPos(Vec3.atBottomCenterOf(torch.above(2)));
+                falling.setDeltaMovement(0D, -3D, 0D);
+                falling.tick();
+                h.assertTrue(falling.blockPosition().getY() < torch.getY(), "One actual tick travels past the entire torch cell");
+                h.assertTrue(f.level.getBlockState(torch).isAir(), "Fast movement still crushes the wall torch along its path");
+                f.finish(falling);
+                h.assertValueEqual(f.level.getBlockState(f.landed), material, "A fast fall still settles as the original material");
+                h.assertTrue(f.items().isEmpty(), "Crossing a torch between ticks creates no item drops");
+                f.set(f.landed, Blocks.AIR.defaultBlockState());
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void torchesCannotSupportSandOrGravelDuringTheirNativeScheduledTick(GameTestHelper h) {
+        try (var f = new Fixture(h)) {
+            BlockPos aboveTorch = f.landed.above();
+            for (BlockState material : List.of(Blocks.SAND.defaultBlockState(), Blocks.RED_SAND.defaultBlockState(),
+                    Blocks.GRAVEL.defaultBlockState(), MiteResourceBlocks.NETHER_GRAVEL.get().defaultBlockState())) {
+                for (BlockState torch : List.of(Blocks.TORCH.defaultBlockState(), Blocks.SOUL_TORCH.defaultBlockState(),
+                        Blocks.REDSTONE_TORCH.defaultBlockState())) {
+                    f.set(f.landed, torch); f.set(aboveTorch, material);
+                    material.tick(f.level, aboveTorch, RandomSource.create(196L));
+                    var falls = f.spawned.live(FallingBlockEntity.class).stream()
+                            .filter(entity -> entity.getStartPos().equals(aboveTorch)).toList();
+                    h.assertValueEqual(falls.size(), 1, "The native scheduled tick starts one fall directly above a torch: " + material);
+                    FallingBlockEntity falling = falls.getFirst(); f.entities.add(falling);
+                    h.assertTrue(f.level.getBlockState(aboveTorch).isAir(), "A torch cannot leave sand or gravel suspended above it");
+                    f.finish(falling);
+                    h.assertValueEqual(f.level.getBlockState(f.landed), material, "The native fall replaces the crushed torch with its original material");
+                    h.assertTrue(f.items().isEmpty(), "Neither the torch nor the falling material produces an item");
+                    f.set(f.landed, Blocks.AIR.defaultBlockState());
+                }
+            }
+            BlockState powder = Blocks.WHITE_CONCRETE_POWDER.defaultBlockState();
+            f.set(f.landed, Blocks.TORCH.defaultBlockState()); f.set(aboveTorch, powder);
+            powder.tick(f.level, aboveTorch, RandomSource.create(196L));
+            h.assertValueEqual(f.level.getBlockState(aboveTorch), powder, "Other falling materials retain the native torch support rule");
+            h.assertTrue(f.spawned.live(FallingBlockEntity.class).isEmpty(), "The concrete powder control starts no falling entity");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 300)
+    public static void concretePowderRetainsItsNativeTorchObstruction(GameTestHelper h) {
         try (var f = new Fixture(h)) {
             f.set(f.landed, Blocks.TORCH.defaultBlockState());
-            f.finish(f.fall(Blocks.SAND.defaultBlockState(), false));
-            h.assertTrue(f.level.getBlockState(f.landed).is(Blocks.TORCH), "The collapse mixin does not change ordinary sand's established torch interaction");
-            h.assertValueEqual(f.count(Items.SAND), 1, "The ordinary native obstruction branch still converts sand into its item");
-            h.assertValueEqual(f.count(Items.TORCH), 0, "An unmanaged falling entity cannot invoke source crushing");
+            f.finish(f.fall(Blocks.WHITE_CONCRETE_POWDER.defaultBlockState(), false));
+            h.assertTrue(f.level.getBlockState(f.landed).is(Blocks.TORCH), "The requested material change leaves other falling blocks alone");
+            h.assertValueEqual(f.count(Items.WHITE_CONCRETE_POWDER), 1, "Other falling materials still use their native obstruction drop");
         }
         h.succeed();
     }
