@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.crafting.TimedCraftingController;
 import io.github.ningmeng123.mite.crafting.TimedCraftingRecipes;
 import io.github.ningmeng123.mite.crafting.TimedCraftingRules;
+import io.github.ningmeng123.mite.integration.jei.WorkbenchJeiRecipes;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.ArrayList;
@@ -72,6 +73,69 @@ public final class VanillaCraftingTimingGameTests {
 
     private static List<RecipeCase> workbenchCases() {
         return List.of(chest(), stick(true), bowl(), bed("white"));
+    }
+
+    private static RecipeCase stone(String id, Item input, Item output, int count, float difficulty, int... slots) {
+        Item[] ingredients = new Item[slots.length];
+        java.util.Arrays.fill(ingredients, input);
+        return new RecipeCase(id, output, count, difficulty, slots, ingredients);
+    }
+
+    private static List<RecipeCase> deepslateCases() {
+        List<RecipeCase> result = new ArrayList<>();
+        for (String family : List.of("cobbled_deepslate", "polished_deepslate", "deepslate_brick", "deepslate_tile")) {
+            String block = family.equals("deepslate_brick") || family.equals("deepslate_tile") ? family + "s" : family;
+            Item input = BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(block));
+            for (String shape : List.of("slab", "stairs", "wall")) {
+                String id = family + "_" + shape;
+                Item output = BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(id));
+                result.add(switch (shape) {
+                    case "slab" -> stone(id, input, output, 6, 600F, 0, 1, 2);
+                    case "stairs" -> stone(id, input, output, 4, 1200F, 0, 3, 4, 6, 7, 8);
+                    default -> stone(id, input, output, 6, 1200F, 0, 1, 2, 3, 4, 5);
+                });
+            }
+        }
+        result.add(stone("polished_deepslate", Items.COBBLED_DEEPSLATE, Items.POLISHED_DEEPSLATE, 4, 960.00006F, 0, 1, 3, 4));
+        result.add(stone("deepslate_bricks", Items.POLISHED_DEEPSLATE, Items.DEEPSLATE_BRICKS, 4, 960.00006F, 0, 1, 3, 4));
+        result.add(stone("deepslate_tiles", Items.DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES, 4, 960.00006F, 0, 1, 3, 4));
+        result.add(stone("chiseled_deepslate", Items.COBBLED_DEEPSLATE_SLAB, Items.CHISELED_DEEPSLATE, 1, 100F, 0, 3));
+        return result;
+    }
+
+    @GameTest(template = "empty")
+    public static void cobblestoneWallVariantsProduceEightOnlyAfterTheCompletePeriod(GameTestHelper helper) {
+        checkOrdinary(helper, stone("cobblestone_wall", Items.COBBLESTONE, Items.COBBLESTONE_WALL, 8,
+                1200F, 0, 1, 2, 3, 4, 5), true);
+        checkContinuous(helper, stone("mossy_cobblestone_wall", Items.MOSSY_COBBLESTONE, Items.MOSSY_COBBLESTONE_WALL, 8,
+                1200F, 0, 1, 2, 3, 4, 5), true);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyLoadedDeepslateCraftWaitsAndItsViewerShowsTheSameTime(GameTestHelper helper) {
+        var recipes = deepslateCases();
+        long loaded = helper.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream()
+                .filter(holder -> BuiltInRegistries.ITEM.getKey(holder.value().getResultItem(helper.getLevel().registryAccess())
+                        .getItem()).getPath().contains("deepslate")).count();
+        helper.assertValueEqual(loaded, (long) recipes.size(), "The cases cover every loaded deepslate crafting output");
+        var pages = WorkbenchJeiRecipes.build(helper.getLevel());
+        for (RecipeCase recipe : recipes) {
+            checkOrdinary(helper, recipe, true);
+            var page = pages.stream().filter(value -> value.source().id().equals(ResourceLocation.withDefaultNamespace(recipe.id))
+                    && value.workstationId().equals("mite:flint_crafting_table")).findFirst().orElseThrow();
+            helper.assertValueEqual(page.baselineTicks(), TimedCraftingRules.period(recipe.difficulty, 0, .2F, false),
+                    "JEI exposes the same nonzero whole-batch period as the real menu: " + recipe.id);
+            helper.assertValueEqual(page.output().getCount(), recipe.outputCount, "Deepslate keeps its real output batch");
+        }
+        checkContinuous(helper, recipes.getFirst(), true);
+        checkQuickMove(helper, recipes.get(1), true);
+        checkOtherClicks(helper, recipes.get(2), true);
+        checkOrdinary(helper, stone("polished_deepslate", Items.COBBLED_DEEPSLATE, Items.POLISHED_DEEPSLATE,
+                4, 960.00006F, 0, 1, 2, 3), false);
+        checkOrdinary(helper, stone("chiseled_deepslate", Items.COBBLED_DEEPSLATE_SLAB, Items.CHISELED_DEEPSLATE,
+                1, 100F, 0, 2), false);
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -173,27 +237,37 @@ public final class VanillaCraftingTimingGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 700)
     public static void redstoneCrafterAlsoWaitsForTheChestRuleAndManufacturesOneBatchPerPulse(GameTestHelper helper) {
+        checkRedstoneCrafter(helper, chest());
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 700)
+    public static void redstoneCrafterCannotBypassTheDeepslatePeriod(GameTestHelper helper) {
+        checkRedstoneCrafter(helper, stone("deepslate_tiles", Items.DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES,
+                4, 960.00006F, 0, 1, 3, 4));
+    }
+
+    private static void checkRedstoneCrafter(GameTestHelper helper, RecipeCase recipe) {
         BlockPos position = new BlockPos(1, 1, 1);
         helper.setBlock(position, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
         helper.setBlock(position.east(), Blocks.CHEST);
         CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(position));
         Container output = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(position.east()));
-        RecipeCase recipe = chest();
-        for (int slot : recipe.slots) crafter.setItem(slot, new ItemStack(Items.OAK_PLANKS, 2));
+        for (int index = 0; index < recipe.slots.length; index++)
+            crafter.setItem(recipe.slots[index], new ItemStack(recipe.ingredients[index], 2));
         var actual = CrafterBlock.getPotentialResults(helper.getLevel(), crafter.asCraftInput()).orElseThrow();
-        helper.assertValueEqual(actual.id(), ResourceLocation.withDefaultNamespace("chest"), "Automation uses the actually loaded vanilla chest recipe");
-        int period = TimedCraftingRules.period(640F, 0, .2F, false);
+        helper.assertValueEqual(actual.id(), ResourceLocation.withDefaultNamespace(recipe.id), "Automation uses the actually loaded recipe");
+        int period = TimedCraftingRules.period(recipe.difficulty, 0, .2F, false);
         helper.pulseRedstone(position.west(), 5);
         helper.runAfterDelay(period, () -> {
-            helper.assertTrue(output.isEmpty(), "A real redstone crafter cannot instantly emit the chest preview");
+            helper.assertTrue(output.isEmpty(), "A real redstone crafter cannot instantly emit the preview");
             assertMachineInputs(helper, crafter, recipe, 2);
         });
         helper.runAfterDelay(period + 9, () -> {
-            helper.assertValueEqual(count(output, Items.CHEST), 1, "The full R196 chest period emits exactly one real chest");
+            helper.assertValueEqual(count(output, recipe.output), recipe.outputCount, "The full manufacturing period emits exactly one batch");
             assertMachineInputs(helper, crafter, recipe, 1);
         });
         helper.runAfterDelay(period * 2 + 15, () -> {
-            helper.assertValueEqual(count(output, Items.CHEST), 1, "One redstone pulse does not consume a second chest batch");
+            helper.assertValueEqual(count(output, recipe.output), recipe.outputCount, "One redstone pulse does not consume a second batch");
             assertMachineInputs(helper, crafter, recipe, 1);
             helper.succeed();
         });

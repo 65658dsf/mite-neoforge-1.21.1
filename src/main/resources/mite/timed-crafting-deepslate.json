@@ -1,0 +1,86 @@
+{
+  "author": "NingMeng123",
+  "source": "Modern deepslate crafting policy: reuse existing stone whole-batch operation benchmarks; deepslate did not exist in R196. source_order identifies the benchmark, not an original deepslate recipe.",
+  "recipes": {
+    "minecraft:chiseled_deepslate": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428
+    },
+    "minecraft:cobbled_deepslate_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389
+    },
+    "minecraft:cobbled_deepslate_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175
+    },
+    "minecraft:cobbled_deepslate_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273
+    },
+    "minecraft:deepslate_brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389
+    },
+    "minecraft:deepslate_brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175
+    },
+    "minecraft:deepslate_brick_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273
+    },
+    "minecraft:deepslate_bricks": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356
+    },
+    "minecraft:deepslate_tile_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389
+    },
+    "minecraft:deepslate_tile_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175
+    },
+    "minecraft:deepslate_tile_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273
+    },
+    "minecraft:deepslate_tiles": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356
+    },
+    "minecraft:polished_deepslate": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356
+    },
+    "minecraft:polished_deepslate_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389
+    },
+    "minecraft:polished_deepslate_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175
+    },
+    "minecraft:polished_deepslate_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273
+    }
+  }
+}
