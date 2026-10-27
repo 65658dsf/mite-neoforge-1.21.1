@@ -66,6 +66,11 @@ public final class MiningProgress {
             // a canceled BreakSpeed event (or zero speed) must still prevent progress.
             return 0.0F;
         }
+        // Iron already has diamond's vanilla strength (8) and the required harvest tier.
+        // Keep obsidian's vanilla timing without changing its hardness or tool wear.
+        if (state.is(Blocks.OBSIDIAN)) {
+            return strength / rawHardness / 30.0F;
+        }
         strength = FunctionalBlockMining.portableStrength(player, state, level, pos, strength);
         return MiningRules.destroyProgress(strength, effectiveHardness(state, rawHardness));
     }
