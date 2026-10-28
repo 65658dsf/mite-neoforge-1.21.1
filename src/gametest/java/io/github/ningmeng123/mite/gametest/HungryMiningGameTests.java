@@ -103,7 +103,7 @@ public final class HungryMiningGameTests {
         player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 200, 0));
         assertBits(helper, player.getDigSpeed(stone, position), 0x3f271de7,
                 "Haste remains inside the completed modern strength input");
-        assertBits(helper, stone.getDestroyProgress(player, helper.getLevel(), position), 0x3a5ed289,
+        assertBits(helper, stone.getDestroyProgress(player, helper.getLevel(), position), 0x3a0b4396,
                 "Progress does not apply the environment or hunger penalties again");
 
         player.removeEffect(MobEffects.DIG_SPEED);

@@ -272,7 +272,7 @@ public final class WoodenEquipmentGameTests {
             helper.getLevel().setBlockAndUpdate(position, pane);
             helper.assertTrue(player.gameMode.destroyBlock(position), "Normal server destruction removes the pane");
             helper.assertTrue(helper.getLevel().getBlockState(position).isAir(), "The pane was actually removed");
-            helper.assertValueEqual(club.getDamageValue(), 7, "Modern pane hardness 0.3 costs trunc(0.3 * 25) = 7 durability exactly once");
+            helper.assertValueEqual(club.getDamageValue(), 2, "R196 pane hardness 0.1 costs trunc(0.1 * 25) = 2 durability exactly once");
             helper.assertFalse(club.canPerformAction(ItemAbilities.SWORD_DIG), "The club does not inherit sword digging");
             helper.assertFalse(club.canPerformAction(ItemAbilities.SWORD_SWEEP), "The club does not inherit sword sweeping");
             helper.assertFalse(club.is(ItemTags.SWORDS), "The retained registry ID does not leave the club in the sword item tag");
@@ -283,10 +283,10 @@ public final class WoodenEquipmentGameTests {
             helper.assertValueEqual(log.getDestroyProgress(player, helper.getLevel(), position), 0.0F, "The log axe requirement blocks club mining progress");
             helper.assertFalse(player.gameMode.destroyBlock(position), "Final server destruction also refuses a club-held log harvest");
             helper.assertTrue(helper.getLevel().getBlockState(position).is(Blocks.OAK_LOG), "The protected log remains");
-            helper.assertValueEqual(club.getDamageValue(), 7, "A rejected log harvest spends no extra durability");
+            helper.assertValueEqual(club.getDamageValue(), 2, "A rejected log harvest spends no extra durability");
             player.setGameMode(GameType.CREATIVE);
             helper.assertTrue(player.gameMode.destroyBlock(position), "Unlike a normal sword, a creative-held club can actually break blocks");
-            helper.assertValueEqual(club.getDamageValue(), 7, "Creative mining does not spend club durability");
+            helper.assertValueEqual(club.getDamageValue(), 2, "Creative mining does not spend club durability");
         } finally {
             helper.getLevel().setBlockAndUpdate(position, previous);
         }

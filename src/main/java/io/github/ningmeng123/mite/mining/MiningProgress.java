@@ -47,7 +47,7 @@ public final class MiningProgress {
         if (state.is(BlockTags.LOGS) && BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().equals("minecraft")) {
             return 1.2F;
         }
-        return raw;
+        return SourceBlockHardness.effectiveHardness(state, raw);
     }
 
     public static float destroyProgress(Player player, BlockState state, BlockGetter level, BlockPos pos) {
@@ -67,7 +67,7 @@ public final class MiningProgress {
             return 0.0F;
         }
         // Iron already has diamond's vanilla strength (8) and the required harvest tier.
-        // Keep obsidian's vanilla timing without changing its hardness or tool wear.
+        // Timing uses modern hardness 50; tool wear separately uses R196 hardness 2.4.
         if (state.is(Blocks.OBSIDIAN)) {
             return strength / rawHardness / 30.0F;
         }

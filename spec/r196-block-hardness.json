@@ -1,0 +1,1491 @@
+{
+  "schema_version": 1,
+  "author": "NingMeng123",
+  "archive_sha256": "fb7ad265d05749e0cd1e54938f6c36ecbe9ea1d4d90d4a04c519615e1e0218c3",
+  "source_registry": "reference-data/runtime-registry.json",
+  "source_field": "blocks[].scalars.aqz.cG",
+  "purpose": "R196 actual registered and state-derived effective hardness for direct modern counterparts. Registered raw hardness and explosion resistance are not mutated.",
+  "scope": "Exact minecraft identifiers only; third-party namespaces and unmatched modern blocks retain fallback.",
+  "fallbacks": [
+    "Modern stone variants including granite, andesite, diorite and deepslate; modern stone_slab (classic R196 stone slab maps to smooth_stone_slab).",
+    "Stained glass and tinted glass did not exist in this R196 registry.",
+    "New wood species, stripped wood, new wood doors/fences/sign variants, modern slab and stair materials.",
+    "Fluids retain existing modern state behavior; crops retain the existing lifecycle-specific hardness adapter.",
+    "Existing red-sand, minecraft-log-family, ore and functional-block adapters remain explicit modern extensions; they are not broadened by this table.",
+    "R196 log metadata 12..15 (all-bark form) is invalid; modern wood/stripped forms are covered only by the existing explicit minecraft log-family adapter."
+  ],
+  "registration_source": "aqz.java:2260-2453; actual runtime values take precedence over unused BlockHardness constants.",
+  "rules": [
+    {
+      "kind": "registered",
+      "legacy_id": 1,
+      "hardness": 2.4,
+      "modern_ids": [
+        "minecraft:stone"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 2,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:grass_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 3,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:dirt"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 4,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:cobblestone"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 5,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:oak_planks",
+        "minecraft:spruce_planks",
+        "minecraft:birch_planks",
+        "minecraft:jungle_planks"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 6,
+      "hardness": 0.02,
+      "modern_ids": [
+        "minecraft:oak_sapling",
+        "minecraft:spruce_sapling",
+        "minecraft:birch_sapling",
+        "minecraft:jungle_sapling"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 7,
+      "hardness": -1,
+      "modern_ids": [
+        "minecraft:bedrock"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 12,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:sand"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 13,
+      "hardness": 0.6,
+      "modern_ids": [
+        "minecraft:gravel"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 14,
+      "hardness": 2.4,
+      "modern_ids": [
+        "minecraft:gold_ore"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 15,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:iron_ore"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 16,
+      "hardness": 1.2,
+      "modern_ids": [
+        "minecraft:coal_ore"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 17,
+      "hardness": 1.2,
+      "modern_ids": [
+        "minecraft:oak_log",
+        "minecraft:spruce_log",
+        "minecraft:birch_log",
+        "minecraft:jungle_log"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 18,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:oak_leaves",
+        "minecraft:spruce_leaves",
+        "minecraft:birch_leaves",
+        "minecraft:jungle_leaves"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 19,
+      "hardness": 0.6,
+      "modern_ids": [
+        "minecraft:sponge"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 20,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:glass"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 21,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:lapis_ore"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 22,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:lapis_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 23,
+      "hardness": 3.5,
+      "modern_ids": [
+        "minecraft:dispenser"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 24,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:sandstone",
+        "minecraft:chiseled_sandstone",
+        "minecraft:cut_sandstone"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 25,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:note_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 26,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:red_bed"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 27,
+      "hardness": 0.7,
+      "modern_ids": [
+        "minecraft:powered_rail"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 28,
+      "hardness": 0.7,
+      "modern_ids": [
+        "minecraft:detector_rail"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 29,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:sticky_piston"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 30,
+      "hardness": 0.1,
+      "modern_ids": [
+        "minecraft:cobweb"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 31,
+      "hardness": 0.02,
+      "modern_ids": [
+        "minecraft:short_grass",
+        "minecraft:fern"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 32,
+      "hardness": 0.02,
+      "modern_ids": [
+        "minecraft:dead_bush"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 33,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:piston"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 34,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:piston_head"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 35,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:white_wool",
+        "minecraft:orange_wool",
+        "minecraft:magenta_wool",
+        "minecraft:light_blue_wool",
+        "minecraft:yellow_wool",
+        "minecraft:lime_wool",
+        "minecraft:pink_wool",
+        "minecraft:gray_wool",
+        "minecraft:light_gray_wool",
+        "minecraft:cyan_wool",
+        "minecraft:purple_wool",
+        "minecraft:blue_wool",
+        "minecraft:brown_wool",
+        "minecraft:green_wool",
+        "minecraft:red_wool",
+        "minecraft:black_wool"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 36,
+      "hardness": -1,
+      "modern_ids": [
+        "minecraft:moving_piston"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 37,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:dandelion"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 38,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:poppy",
+        "minecraft:blue_orchid",
+        "minecraft:allium",
+        "minecraft:orange_tulip",
+        "minecraft:oxeye_daisy"
+      ],
+      "note": "Only direct surviving flowers; removed dahlia has no modern mapping."
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 39,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:brown_mushroom"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 40,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:red_mushroom"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 41,
+      "hardness": 4.8,
+      "modern_ids": [
+        "minecraft:gold_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 42,
+      "hardness": 9.6,
+      "modern_ids": [
+        "minecraft:iron_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 45,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:bricks"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 46,
+      "hardness": 1,
+      "modern_ids": [
+        "minecraft:tnt"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 47,
+      "hardness": 1.5,
+      "modern_ids": [
+        "minecraft:bookshelf"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 48,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:mossy_cobblestone"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 49,
+      "hardness": 2.4,
+      "modern_ids": [
+        "minecraft:obsidian"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 50,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:torch",
+        "minecraft:wall_torch"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 51,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:fire"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 52,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:spawner"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 53,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:oak_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 54,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:chest"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 55,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:redstone_wire"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 56,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:diamond_ore"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 57,
+      "hardness": 19.2,
+      "modern_ids": [
+        "minecraft:diamond_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 58,
+      "hardness": 1.6,
+      "modern_ids": [
+        "minecraft:crafting_table"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 60,
+      "hardness": 0.6,
+      "modern_ids": [
+        "minecraft:farmland"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 61,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:furnace"
+      ],
+      "note": "LIT is a modern property; both R196 furnace IDs 61/62 have hardness 2."
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 63,
+      "hardness": 0.1,
+      "modern_ids": [
+        "minecraft:oak_sign"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 64,
+      "hardness": 0.25,
+      "modern_ids": [
+        "minecraft:oak_door"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 65,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:ladder"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 66,
+      "hardness": 0.7,
+      "modern_ids": [
+        "minecraft:rail"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 67,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:cobblestone_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 68,
+      "hardness": 0.1,
+      "modern_ids": [
+        "minecraft:oak_wall_sign"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 69,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:lever"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 70,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:stone_pressure_plate"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 71,
+      "hardness": 4,
+      "modern_ids": [
+        "minecraft:iron_door"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 72,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:oak_pressure_plate"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 73,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:redstone_ore"
+      ],
+      "note": "LIT is a modern property; both R196 redstone IDs 73/74 have hardness 3."
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 75,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:redstone_torch",
+        "minecraft:redstone_wall_torch"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 77,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:stone_button"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 79,
+      "hardness": 1,
+      "modern_ids": [
+        "minecraft:ice"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 80,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:snow_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 81,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:cactus"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 82,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:clay"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 83,
+      "hardness": 0.08,
+      "modern_ids": [
+        "minecraft:sugar_cane"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 84,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:jukebox"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 85,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:oak_fence"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 86,
+      "hardness": 0.6,
+      "modern_ids": [
+        "minecraft:pumpkin",
+        "minecraft:carved_pumpkin"
+      ],
+      "note": "The existing modern agriculture mapping pairs uncarved pumpkin with carved_pumpkin; both follow the R196 unlit pumpkin hardness. This is an explicit modern correspondence extension, not a claim that uncarved pumpkin existed in R196."
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 87,
+      "hardness": 1.6,
+      "modern_ids": [
+        "minecraft:netherrack"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 88,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:soul_sand"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 89,
+      "hardness": 0.3,
+      "modern_ids": [
+        "minecraft:glowstone"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 90,
+      "hardness": -1,
+      "modern_ids": [
+        "minecraft:nether_portal"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 91,
+      "hardness": 1,
+      "modern_ids": [
+        "minecraft:jack_o_lantern"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 92,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:cake"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 93,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:repeater"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 96,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:oak_trapdoor"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 97,
+      "hardness": 0.75,
+      "modern_ids": [
+        "minecraft:infested_stone",
+        "minecraft:infested_cobblestone",
+        "minecraft:infested_stone_bricks"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 98,
+      "hardness": 1.5,
+      "modern_ids": [
+        "minecraft:stone_bricks",
+        "minecraft:mossy_stone_bricks",
+        "minecraft:cracked_stone_bricks",
+        "minecraft:chiseled_stone_bricks"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 99,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:brown_mushroom_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 100,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:red_mushroom_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 101,
+      "hardness": 5,
+      "modern_ids": [
+        "minecraft:iron_bars"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 102,
+      "hardness": 0.1,
+      "modern_ids": [
+        "minecraft:glass_pane"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 103,
+      "hardness": 0.6,
+      "modern_ids": [
+        "minecraft:melon"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 104,
+      "hardness": 0.02,
+      "modern_ids": [
+        "minecraft:pumpkin_stem",
+        "minecraft:attached_pumpkin_stem"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 105,
+      "hardness": 0.02,
+      "modern_ids": [
+        "minecraft:melon_stem",
+        "minecraft:attached_melon_stem"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 107,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:oak_fence_gate"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 108,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:brick_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 109,
+      "hardness": 1.5,
+      "modern_ids": [
+        "minecraft:stone_brick_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 110,
+      "hardness": 0.6,
+      "modern_ids": [
+        "minecraft:mycelium"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 111,
+      "hardness": 0.02,
+      "modern_ids": [
+        "minecraft:lily_pad"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 112,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:nether_bricks"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 113,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:nether_brick_fence"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 114,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:nether_brick_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 115,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:nether_wart"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 116,
+      "hardness": 2.4,
+      "modern_ids": [
+        "minecraft:enchanting_table"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 117,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:brewing_stand"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 118,
+      "hardness": 2,
+      "modern_ids": [
+        "minecraft:cauldron",
+        "minecraft:water_cauldron"
+      ],
+      "note": "Only empty/water forms existed; lava and powder-snow cauldrons retain modern fallback."
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 119,
+      "hardness": -1,
+      "modern_ids": [
+        "minecraft:end_portal"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 120,
+      "hardness": -1,
+      "modern_ids": [
+        "minecraft:end_portal_frame"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 121,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:end_stone"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 122,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:dragon_egg"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 123,
+      "hardness": 0.3,
+      "modern_ids": [
+        "minecraft:redstone_lamp"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 127,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:cocoa"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 128,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:sandstone_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 129,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:emerald_ore"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 130,
+      "hardness": 22.5,
+      "modern_ids": [
+        "minecraft:ender_chest"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 131,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:tripwire_hook"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 132,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:tripwire"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 133,
+      "hardness": 9.6,
+      "modern_ids": [
+        "minecraft:emerald_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 134,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:spruce_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 135,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:birch_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 136,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:jungle_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 137,
+      "hardness": -1,
+      "modern_ids": [
+        "minecraft:command_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 138,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:beacon"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 139,
+      "hardness": 1.5,
+      "modern_ids": [
+        "minecraft:cobblestone_wall",
+        "minecraft:mossy_cobblestone_wall"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 140,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:flower_pot",
+        "minecraft:potted_oak_sapling",
+        "minecraft:potted_spruce_sapling",
+        "minecraft:potted_birch_sapling",
+        "minecraft:potted_jungle_sapling",
+        "minecraft:potted_fern",
+        "minecraft:potted_dead_bush",
+        "minecraft:potted_dandelion",
+        "minecraft:potted_poppy",
+        "minecraft:potted_brown_mushroom",
+        "minecraft:potted_red_mushroom",
+        "minecraft:potted_cactus"
+      ],
+      "note": "Explicit source flower-pot contents only; modern additional potted plants keep fallback."
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 143,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:oak_button"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 144,
+      "hardness": 1,
+      "modern_ids": [
+        "minecraft:skeleton_skull",
+        "minecraft:skeleton_wall_skull",
+        "minecraft:wither_skeleton_skull",
+        "minecraft:wither_skeleton_wall_skull",
+        "minecraft:zombie_head",
+        "minecraft:zombie_wall_head",
+        "minecraft:player_head",
+        "minecraft:player_wall_head",
+        "minecraft:creeper_head",
+        "minecraft:creeper_wall_head"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 145,
+      "hardness": 9.6,
+      "modern_ids": [
+        "minecraft:anvil",
+        "minecraft:chipped_anvil",
+        "minecraft:damaged_anvil"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 146,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:trapped_chest"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 147,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:light_weighted_pressure_plate"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 148,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:heavy_weighted_pressure_plate"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 149,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:comparator"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 151,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:daylight_detector"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 152,
+      "hardness": 5,
+      "modern_ids": [
+        "minecraft:redstone_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 153,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:nether_quartz_ore"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 154,
+      "hardness": 3,
+      "modern_ids": [
+        "minecraft:hopper"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 155,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:quartz_block",
+        "minecraft:chiseled_quartz_block",
+        "minecraft:quartz_pillar"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 156,
+      "hardness": 0.8,
+      "modern_ids": [
+        "minecraft:quartz_stairs"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 157,
+      "hardness": 0.7,
+      "modern_ids": [
+        "minecraft:activator_rail"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 158,
+      "hardness": 3.5,
+      "modern_ids": [
+        "minecraft:dropper"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 159,
+      "hardness": 1.8,
+      "modern_ids": [
+        "minecraft:white_terracotta",
+        "minecraft:orange_terracotta",
+        "minecraft:magenta_terracotta",
+        "minecraft:light_blue_terracotta",
+        "minecraft:yellow_terracotta",
+        "minecraft:lime_terracotta",
+        "minecraft:pink_terracotta",
+        "minecraft:gray_terracotta",
+        "minecraft:light_gray_terracotta",
+        "minecraft:cyan_terracotta",
+        "minecraft:purple_terracotta",
+        "minecraft:blue_terracotta",
+        "minecraft:brown_terracotta",
+        "minecraft:green_terracotta",
+        "minecraft:red_terracotta",
+        "minecraft:black_terracotta"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 170,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:hay_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 171,
+      "hardness": 0.1,
+      "modern_ids": [
+        "minecraft:white_carpet",
+        "minecraft:orange_carpet",
+        "minecraft:magenta_carpet",
+        "minecraft:light_blue_carpet",
+        "minecraft:yellow_carpet",
+        "minecraft:lime_carpet",
+        "minecraft:pink_carpet",
+        "minecraft:gray_carpet",
+        "minecraft:light_gray_carpet",
+        "minecraft:cyan_carpet",
+        "minecraft:purple_carpet",
+        "minecraft:blue_carpet",
+        "minecraft:brown_carpet",
+        "minecraft:green_carpet",
+        "minecraft:red_carpet",
+        "minecraft:black_carpet"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 172,
+      "hardness": 1.8,
+      "modern_ids": [
+        "minecraft:terracotta"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 173,
+      "hardness": 1.2,
+      "modern_ids": [
+        "minecraft:coal_block"
+      ]
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 204,
+      "hardness": 4.8,
+      "modern_ids": [
+        "minecraft:copper_block"
+      ]
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 44,
+      "legacy_metadata": 0,
+      "hardness": 1.2,
+      "modern_ids": [
+        "minecraft:smooth_stone_slab"
+      ],
+      "source_model": "stone",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 44,
+      "legacy_metadata": 1,
+      "hardness": 0.5,
+      "modern_ids": [
+        "minecraft:sandstone_slab"
+      ],
+      "source_model": "sandstone",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 44,
+      "legacy_metadata": 3,
+      "hardness": 1,
+      "modern_ids": [
+        "minecraft:cobblestone_slab"
+      ],
+      "source_model": "cobblestone",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 44,
+      "legacy_metadata": 4,
+      "hardness": 1,
+      "modern_ids": [
+        "minecraft:brick_slab"
+      ],
+      "source_model": "bricks",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 44,
+      "legacy_metadata": 5,
+      "hardness": 1,
+      "modern_ids": [
+        "minecraft:stone_brick_slab"
+      ],
+      "source_model": "stone_bricks",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 44,
+      "legacy_metadata": 6,
+      "hardness": 1,
+      "modern_ids": [
+        "minecraft:nether_brick_slab"
+      ],
+      "source_model": "nether_bricks",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 44,
+      "legacy_metadata": 7,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:quartz_slab"
+      ],
+      "source_model": "quartz_block",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 126,
+      "legacy_metadata": 0,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:oak_slab"
+      ],
+      "source_model": "oak_planks",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 126,
+      "legacy_metadata": 1,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:spruce_slab"
+      ],
+      "source_model": "spruce_planks",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 126,
+      "legacy_metadata": 2,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:birch_slab"
+      ],
+      "source_model": "birch_planks",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "slab",
+      "legacy_id": 126,
+      "legacy_metadata": 3,
+      "hardness": 0.4,
+      "modern_ids": [
+        "minecraft:jungle_slab"
+      ],
+      "source_model": "jungle_planks",
+      "source": "BlockSlab.java:98-123; BlockDoubleSlab.java:94-95",
+      "double_multiplier": 2
+    },
+    {
+      "kind": "layers",
+      "legacy_id": 78,
+      "hardness": 0.05,
+      "modern_ids": [
+        "minecraft:snow"
+      ],
+      "source": "arf.java:166-167",
+      "formula": "0.05F * layers (1..8)"
+    },
+    {
+      "kind": "vine_faces",
+      "legacy_id": 106,
+      "hardness": 0.2,
+      "modern_ids": [
+        "minecraft:vine"
+      ],
+      "source": "arm.java:287-308",
+      "formula": "0.2F * max(1, number of NORTH/EAST/SOUTH/WEST attachments); UP does not contribute"
+    },
+    {
+      "kind": "registered",
+      "legacy_id": 248,
+      "hardness": 0,
+      "modern_ids": [
+        "minecraft:potted_blue_orchid",
+        "minecraft:potted_allium",
+        "minecraft:potted_orange_tulip",
+        "minecraft:potted_oxeye_daisy"
+      ],
+      "source": "BlockFlowerPotMulti.java:25-26; aqz.java:2472",
+      "note": "The project R196 tulip correspondence is orange_tulip (MiteDecorativeContent.flowerSubtype); dahlia remains a separately registered mite block."
+    }
+  ],
+  "placement_metadata_zero": {
+    "source": "uf.java:2405-2412; aqz.java:1844-1850; BlockSlab.java:98-123; arf.java:166-167; arm.java:287-308",
+    "behavior": "Placement hunger reads getBlockHardness(metadata=0) of the original legacy block ID, independent of the placed state or subtype. The fallback is the existing effective hardness for non-state-derived entries.",
+    "namespace": "minecraft only; third-party and unmatched IDs keep fallback",
+    "overrides": [
+      {
+        "legacy_id": 78,
+        "hardness": 0.05,
+        "modern_ids": [
+          "minecraft:snow"
+        ],
+        "reason": "Metadata zero is one snow layer."
+      },
+      {
+        "legacy_id": 106,
+        "hardness": 0.2,
+        "modern_ids": [
+          "minecraft:vine"
+        ],
+        "reason": "Metadata zero still counts as one vine face."
+      },
+      {
+        "legacy_id": 126,
+        "hardness": 0.4,
+        "modern_ids": [
+          "minecraft:oak_slab",
+          "minecraft:spruce_slab",
+          "minecraft:birch_slab",
+          "minecraft:jungle_slab"
+        ],
+        "reason": "Metadata zero is a single oak slab; all four subtypes share hardness."
+      },
+      {
+        "legacy_id": 44,
+        "hardness": 1.2,
+        "modern_ids": [
+          "minecraft:smooth_stone_slab",
+          "minecraft:sandstone_slab",
+          "minecraft:cobblestone_slab",
+          "minecraft:brick_slab",
+          "minecraft:stone_brick_slab",
+          "minecraft:nether_brick_slab",
+          "minecraft:quartz_slab"
+        ],
+        "reason": "Every listed modern ID was a subtype of the same old slab block. Metadata zero selects the stone model even for a sandstone, brick or quartz placement."
+      }
+    ]
+  }
+}

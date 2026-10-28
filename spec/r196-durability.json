@@ -273,7 +273,7 @@
           ]
         }
       ],
-      "modern": "沿用当前MiningProgress.effectiveHardness；刀的布/植物/藤蔓、镰刀草/小麦、砂岩家族明确映射到现代块集合；工具有效性由现代Tool组件提供。requiresCorrectToolForDrops目标还要求isCorrectToolForDrops，弱镐有速度加成而等级不足时不扣耐久；不宣称已完整封堵所有非法破坏。"
+      "modern": "使用MiningProgress.effectiveHardness及spec/r196-block-hardness.json中实际注册硬度；黑曜石2.4与石头2.4均令镐每块损耗240，黑曜石计时所用现代硬度50不得用于损耗；刀的布/植物/藤蔓、镰刀草/小麦、砂岩家族明确映射到现代块集合；工具有效性由现代Tool组件提供。requiresCorrectToolForDrops目标还要求isCorrectToolForDrops，弱镐有速度加成而等级不足时不扣耐久；不宣称已完整封堵所有非法破坏。"
     },
     {
       "id": "durability.tool.attack_wear",

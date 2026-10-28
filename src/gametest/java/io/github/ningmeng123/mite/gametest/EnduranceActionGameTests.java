@@ -26,6 +26,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
@@ -80,9 +83,10 @@ public final class EnduranceActionGameTests {
         helper.getLevel().setBlockAndUpdate(base, Blocks.STONE.defaultBlockState());
         helper.getLevel().setBlockAndUpdate(base.above(), Blocks.AIR.defaultBlockState());
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.OBSIDIAN, 2));
+        PlacementDelay.clear(player);
         var result = player.getMainHandItem().useOn(context(player, base));
         helper.assertTrue(result.consumesAction() && helper.getLevel().getBlockState(base.above()).is(Blocks.OBSIDIAN), "Native placement succeeds");
-        effort(helper, player, 4.6F, "Obsidian caps its source placement hardness at20 before Endurance IV and the global increase");
+        effort(helper, player, .552F, "Obsidian source hardness 2.4 receives Endurance IV and the global 15 percent increase once");
         player.getFoodData().setExhaustion(0F);
         helper.getLevel().setBlockAndUpdate(base.above(), Blocks.AIR.defaultBlockState());
         Consumer<BlockEvent.EntityPlaceEvent> cancel = event -> { if (event.getEntity() == player) event.setCanceled(true); };
@@ -93,6 +97,42 @@ public final class EnduranceActionGameTests {
             helper.assertTrue(!denied.consumesAction() && helper.getLevel().getBlockState(base.above()).isAir(), "NeoForge cancellation restores the placement snapshot");
             effort(helper, player, 0F, "A rolled-back placement pays no action fee");
         } finally { NeoForge.EVENT_BUS.unregister(cancel); }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void addedSnowLayersAndMergedSlabsPayTheirLegacyMetadataZeroPlacementFee(GameTestHelper helper) {
+        Player player = player(helper); equip(player, 4);
+        BlockPos base = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos placed = base.above();
+        helper.getLevel().setBlockAndUpdate(base, Blocks.STONE.defaultBlockState());
+        helper.getLevel().setBlockAndUpdate(placed, Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, 3));
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SNOW, 2));
+        PlacementDelay.clear(player);
+        var snow = player.getMainHandItem().useOn(context(player, placed));
+        helper.assertTrue(snow.consumesAction() && helper.getLevel().getBlockState(placed).is(Blocks.SNOW)
+                && helper.getLevel().getBlockState(placed).getValue(SnowLayerBlock.LAYERS) == 4,
+                "Native snow placement successfully adds a fourth layer to the existing snow");
+        effort(helper, player, .0115F, "Adding snow pays .05 metadata-zero hardness rather than the four-layer hardness");
+
+        var slabs = new net.minecraft.world.level.block.Block[]{Blocks.OAK_SLAB, Blocks.STONE_BRICK_SLAB, Blocks.QUARTZ_SLAB};
+        var items = new net.minecraft.world.item.Item[]{Items.OAK_SLAB, Items.STONE_BRICK_SLAB, Items.QUARTZ_SLAB};
+        float[] expected = {.092F, .276F, .276F};
+        for (int i = 0; i < slabs.length; i++) {
+            helper.getLevel().setBlockAndUpdate(placed, slabs[i].defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM));
+            helper.getLevel().setBlockAndUpdate(placed.above(), Blocks.AIR.defaultBlockState());
+            player.getFoodData().setExhaustion(0F);
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(items[i], 2));
+            PlacementDelay.clear(player);
+            var merged = player.getMainHandItem().useOn(context(player, placed));
+            helper.assertTrue(merged.consumesAction() && helper.getLevel().getBlockState(placed).is(slabs[i])
+                    && helper.getLevel().getBlockState(placed).getValue(SlabBlock.TYPE) == SlabType.DOUBLE,
+                    "Native slab placement merges the existing bottom slab into a double slab: " + slabs[i]);
+            helper.assertValueEqual(player.getMainHandItem().getCount(), 1, "Exactly one new slab was placed");
+            effort(helper, player, expected[i],
+                    "A merged slab pays old metadata-zero placement hardness, independent of subtype and final double state: " + slabs[i]);
+        }
+        PlacementDelay.clear(player);
         helper.succeed();
     }
 

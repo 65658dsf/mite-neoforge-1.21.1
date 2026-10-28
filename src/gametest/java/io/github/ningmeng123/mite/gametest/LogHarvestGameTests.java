@@ -142,8 +142,8 @@ public final class LogHarvestGameTests {
             helper.assertTrue(state.getDestroyProgress(player, helper.getLevel(), position) > 0.0F,
                     "Existing empty-hand progress survives for " + state);
         }
-        assertBits(helper, Blocks.OAK_PLANKS.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0x3a800000,
-                "Level-zero empty-hand planks keep their existing progress");
+        assertBits(helper, Blocks.OAK_PLANKS.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0x3b200000,
+                "Level-zero empty-hand planks use the original hardness 0.8");
         assertBits(helper, Blocks.DIRT.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0x3b800000,
                 "Dirt remains on the established base-progress vector");
         assertBits(helper, Blocks.OAK_LEAVES.defaultBlockState().getDestroyProgress(player, helper.getLevel(), position), 0x3c200000,

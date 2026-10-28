@@ -237,7 +237,7 @@ public final class MiningSpeedGameTests {
                 assertClose(helper, player.getDestroySpeed(Blocks.STONE.defaultBlockState()), baseline * multiplier,
                         "Level 35 mining in " + mode);
                 float progress = Blocks.STONE.defaultBlockState().getDestroyProgress(player, helper.getLevel(), helper.absolutePos(BlockPos.ZERO));
-                assertClose(helper, progress, mode == GameType.CREATIVE || mode == GameType.SPECTATOR ? 0.17777778F : 0.017708333F,
+                assertClose(helper, progress, mode == GameType.CREATIVE || mode == GameType.SPECTATOR ? 0.17777778F : 0.011067708F,
                         "Creative/spectator keep modern progress while survival/adventure use R196 progress");
                 PlayerExperience.setTotal(player, 819520);
                 helper.assertValueEqual(player.experienceLevel, 403, "Every game mode retains levels above 200");
@@ -259,7 +259,7 @@ public final class MiningSpeedGameTests {
             assertClose(helper, restored.getDestroySpeed(Blocks.STONE.defaultBlockState()), baseline * 1.7F,
                     "Reloaded player uses the restored level without a separate mining cache");
             assertClose(helper, Blocks.STONE.defaultBlockState().getDestroyProgress(restored, helper.getLevel(), helper.absolutePos(BlockPos.ZERO)),
-                    0.017708333F, "Reloaded player uses R196 progress as well as the level multiplier");
+                    0.011067708F, "Reloaded player uses R196 progress as well as the level multiplier");
             PlayerExperience.setTotal(player, 819520);
             Player highLevelRestored = helper.makeMockPlayer(GameType.SURVIVAL);
             highLevelRestored.load(player.saveWithoutId(new CompoundTag()));
@@ -292,21 +292,21 @@ public final class MiningSpeedGameTests {
             helper.getLevel().setBlockAndUpdate(fastPos, Blocks.STONE.defaultBlockState());
             float slowProgress = Blocks.STONE.defaultBlockState().getDestroyProgress(slow, helper.getLevel(), slowPos);
             float fastProgress = Blocks.STONE.defaultBlockState().getDestroyProgress(fast, helper.getLevel(), fastPos);
-            assertClose(helper, slowProgress, 0.010416667F, "Zero-level iron mining of stone uses R196 1/96 progress");
-            assertClose(helper, fastProgress, 0.017708333F, "Level 35 uses its strength multiplier exactly once");
+            assertClose(helper, slowProgress, 0.0065104165F, "Zero-level iron mining uses R196 stone hardness 2.4");
+            assertClose(helper, fastProgress, 0.011067708F, "Level 35 uses its strength multiplier exactly once");
             action(helper, slow, slowPos, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, 1);
             action(helper, fast, fastPos, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, 2);
-            for (int tick = 0; tick < 39; tick++) {
+            for (int tick = 0; tick < 63; tick++) {
                 slow.gameMode.tick();
                 fast.gameMode.tick();
             }
             action(helper, slow, slowPos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, 3);
             action(helper, fast, fastPos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, 4);
             helper.assertTrue(helper.getLevel().getBlockState(slowPos).is(Blocks.STONE),
-                    "Level zero has not reached the retained modern STOP threshold after 39 ticks");
+                    "Level zero has not reached the retained modern STOP threshold after 63 ticks");
             helper.assertTrue(helper.getLevel().getBlockState(fastPos).isAir(),
                     "Level 35 reaches the modern STOP threshold earlier");
-            for (int tick = 0; tick < 55; tick++) slow.gameMode.tick();
+            for (int tick = 0; tick < 89; tick++) slow.gameMode.tick();
             helper.assertTrue(helper.getLevel().getBlockState(slowPos).is(Blocks.STONE),
                     "The delayed level-zero path still respects its unfinished progress");
             slow.gameMode.tick();

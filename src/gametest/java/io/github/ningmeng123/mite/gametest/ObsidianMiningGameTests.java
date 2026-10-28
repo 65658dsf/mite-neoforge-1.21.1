@@ -31,7 +31,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Obsidian iron-pick timing, actual drops and preserved mining modifiers. @author NingMeng123 */
+/** Obsidian iron-pick timing, R196 tool wear, actual drops and mining modifiers. @author NingMeng123 */
 @GameTestHolder("mite_obsidian")
 @PrefixGameTestTemplate(false)
 public final class ObsidianMiningGameTests {
@@ -62,7 +62,7 @@ public final class ObsidianMiningGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void actualIronHarvestDropsOneObsidianWhileLowerToolsCannotRemoveIt(GameTestHelper helper) {
+    public static void actualIronHarvestWears240PerObsidianWhileLowerToolsCannotRemoveIt(GameTestHelper helper) {
         BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockState previous = helper.getLevel().getBlockState(pos);
         GameRules.BooleanValue tileDrops = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS);
@@ -80,6 +80,16 @@ public final class ObsidianMiningGameTests {
             helper.assertTrue(player.gameMode.destroyBlock(pos), "Actual survival server harvest accepts the iron pick");
             helper.assertTrue(helper.getLevel().getBlockState(pos).isAir(), "The server removes the harvested obsidian");
             helper.assertValueEqual(countObsidian(drops), 1, "The iron pick produces exactly one obsidian item");
+            helper.assertValueEqual(player.getMainHandItem().getDamageValue(), 240,
+                    "R196 obsidian hardness 2.4 costs 240 iron-pick durability per actual harvest");
+            helper.assertValueEqual(player.getMainHandItem().getMaxDamage() - player.getMainHandItem().getDamageValue(), 9360,
+                    "A fresh ordinary iron pick retains 9360 durability after one obsidian");
+
+            helper.getLevel().setBlockAndUpdate(pos, obsidian);
+            helper.assertTrue(player.gameMode.destroyBlock(pos), "The same iron pick can harvest another obsidian");
+            helper.assertValueEqual(player.getMainHandItem().getDamageValue(), 480,
+                    "Two actual obsidian harvests apply the 240-point cost exactly twice");
+            helper.assertValueEqual(countObsidian(drops), 2, "Two harvested blocks produce two obsidian items");
 
             PlayerExperience.setLevels(player, 200);
             for (ItemStack tool : new ItemStack[]{new ItemStack(MiteTools.get("mite:copper_pickaxe")), ItemStack.EMPTY}) {
@@ -90,11 +100,46 @@ public final class ObsidianMiningGameTests {
                 helper.assertFalse(player.gameMode.destroyBlock(pos), "The final server harvest rejects insufficient tools");
                 helper.assertTrue(helper.getLevel().getBlockState(pos).is(Blocks.OBSIDIAN),
                         "Rejected harvesting retains the obsidian block");
-                helper.assertValueEqual(countObsidian(drops), 1, "Rejected tools produce no additional obsidian drops");
+                helper.assertValueEqual(countObsidian(drops), 2, "Rejected tools produce no additional obsidian drops");
+                helper.assertValueEqual(tool.getDamageValue(), 0, "Rejected tools do not lose durability");
             }
         } finally {
             tileDrops.set(previousTileDrops, helper.getLevel().getServer());
             helper.getLevel().setBlockAndUpdate(pos, previous);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vanillaAndProfiledPickCallbacksUseR196ObsidianWearAndRespectExemptions(GameTestHelper helper) {
+        try (PlayerSession session = newServerPlayer(helper)) {
+            ServerPlayer player = session.player();
+            prepare(player);
+            BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+            BlockState obsidian = Blocks.OBSIDIAN.defaultBlockState();
+            for (ItemStack pick : new ItemStack[]{new ItemStack(Items.IRON_PICKAXE),
+                    new ItemStack(MiteTools.get("mite:ancient_metal_pickaxe")),
+                    new ItemStack(MiteTools.get("mite:mithril_pickaxe"))}) {
+                player.setItemSlot(EquipmentSlot.MAINHAND, pick);
+                helper.assertTrue(pick.isCorrectToolForDrops(obsidian), "The tested pick can harvest obsidian");
+                pick.mineBlock(helper.getLevel(), obsidian, pos, player);
+                helper.assertValueEqual(pick.getDamageValue(), 240,
+                        "Vanilla and profiled picks both use R196 obsidian wear exactly once");
+                pick.mineBlock(helper.getLevel(), Blocks.STONE.defaultBlockState(), pos, player);
+                helper.assertValueEqual(pick.getDamageValue(), 480,
+                        "The adjacent stone also uses its source hardness 2.4 and costs 240");
+            }
+
+            ItemStack weakPick = new ItemStack(MiteTools.get("mite:copper_pickaxe"));
+            player.setItemSlot(EquipmentSlot.MAINHAND, weakPick);
+            weakPick.mineBlock(helper.getLevel(), obsidian, pos, player);
+            helper.assertValueEqual(weakPick.getDamageValue(), 0, "An insufficient profiled pick does not spend durability");
+
+            ItemStack creativePick = new ItemStack(Items.IRON_PICKAXE);
+            player.setItemSlot(EquipmentSlot.MAINHAND, creativePick);
+            player.setGameMode(GameType.CREATIVE);
+            creativePick.mineBlock(helper.getLevel(), obsidian, pos, player);
+            helper.assertValueEqual(creativePick.getDamageValue(), 0, "Creative mining remains exempt from obsidian wear");
         }
         helper.succeed();
     }

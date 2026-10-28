@@ -53,7 +53,7 @@ public final class FunctionalBlockMining {
         var affinity = player.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.AQUA_AFFINITY);
         boolean aqua = java.util.stream.StreamSupport.stream(player.getArmorSlots().spliterator(), false)
                 .anyMatch(stack -> stack.getEnchantmentLevel(affinity) > 0);
-        return PortableBlockRules.strength(hardness(state, state.getDestroySpeed(level, pos)), player.experienceLevel, haste, fatigue,
+        return PortableBlockRules.strength(MiningProgress.effectiveHardness(state, state.getDestroySpeed(level, pos)), player.experienceLevel, haste, fatigue,
                 player.isEyeInFluid(net.minecraft.tags.FluidTags.WATER) && !aqua, player.onGround(), io.github.ningmeng123.mite.survival.FoodConsumption.hasEnergy(player));
     }
     public static int requiredHarvest(StrongboxBlock block) {

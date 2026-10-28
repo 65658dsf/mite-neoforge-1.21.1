@@ -92,23 +92,23 @@ public final class ToolEquipmentGameTests {
             helper.assertTrue(!pick.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()), "Copper cannot collect diamond ore");
             helper.getLevel().setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
             helper.assertTrue(player.gameMode.destroyBlock(pos), "Actual survival server mining removes stone");
-            helper.assertValueEqual(pick.getDamageValue(), 150, "One raw hardness-1.5 stone costs exactly 150, not a duplicate modern charge");
+            helper.assertValueEqual(pick.getDamageValue(), 240, "One R196 hardness-2.4 stone costs exactly 240 without a duplicate modern charge");
             // A successful synchronous spawn can precede visibility in the chunk entity-section index.
             helper.assertValueEqual(drops.live(ItemEntity.class).stream().filter(item -> item.getItem().is(Items.COBBLESTONE))
                     .mapToInt(item -> item.getItem().getCount()).sum(), 1, "The successful ordinary harvest produced one cobblestone");
             ItemStack restored = ItemStack.parse(helper.getLevel().registryAccess(), pick.save(helper.getLevel().registryAccess())).orElseThrow();
-            helper.assertValueEqual(restored.getDamageValue(), 150, "Persistence preserves spent durability");
+            helper.assertValueEqual(restored.getDamageValue(), 240, "Persistence preserves spent durability");
             helper.assertValueEqual(restored.getMaxDamage(), 4800, "Persistence preserves the source capacity");
             player.setItemInHand(InteractionHand.MAIN_HAND, restored);
             PlayerExperience.setTotal(player, 203000);
             helper.getLevel().setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
             helper.assertValueEqual(player.getDigSpeed(Blocks.STONE.defaultBlockState(), pos), 35.0F, "The level multiplier applies once above tool strength");
             player.gameMode.destroyBlock(pos);
-            helper.assertValueEqual(restored.getDamageValue(), 300, "Level speed does not multiply per-block wear");
+            helper.assertValueEqual(restored.getDamageValue(), 480, "Level speed does not multiply per-block wear");
             player.setGameMode(GameType.CREATIVE);
             helper.getLevel().setBlockAndUpdate(pos, Blocks.STONE.defaultBlockState());
             player.gameMode.destroyBlock(pos);
-            helper.assertValueEqual(restored.getDamageValue(), 300, "Creative mining leaves durability unchanged");
+            helper.assertValueEqual(restored.getDamageValue(), 480, "Creative mining leaves durability unchanged");
             player.setGameMode(GameType.SURVIVAL);
             PlayerExperience.setTotal(player, 0);
             player.setItemInHand(InteractionHand.MAIN_HAND, tool("copper_hatchet"));

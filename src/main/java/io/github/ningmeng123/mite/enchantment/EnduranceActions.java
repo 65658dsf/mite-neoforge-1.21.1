@@ -2,7 +2,9 @@ package io.github.ningmeng123.mite.enchantment;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.mining.MiningProgress;
+import io.github.ningmeng123.mite.rules.BlockHardnessRules;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +34,8 @@ public final class EnduranceActions {
 
     public static void placing(Player player, BlockState placed, BlockPos pos) {
         float hardness = MiningProgress.effectiveHardness(placed, placed.getDestroySpeed(player.level(), pos));
+        var id = BuiltInRegistries.BLOCK.getKey(placed.getBlock());
+        hardness = BlockHardnessRules.placementHardness(id.getNamespace(), id.getPath(), hardness);
         spend(player, Math.min(hardness, 20F));
     }
 
