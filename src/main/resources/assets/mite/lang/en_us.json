@@ -753,6 +753,7 @@
   "enchantment.mite.endurance": "Endurance",
   "enchantment.mite.endurance.desc": "Reduces hunger costs from mining, melee attacks, placing blocks, tilling, drawing bows, and throwing gelatinous spheres while worn.",
   "gui.mite.enchant.cost": "%s XP",
+  "gui.mite.anvil.experience_cost": "Enchantment cost: %s XP",
   "gui.mite.enchant.points": "Requires %s experience points",
   "gui.mite.enchant.energy": "Enchantment energy: %s",
   "gui.mite.enchant.available": "Current experience: %s",

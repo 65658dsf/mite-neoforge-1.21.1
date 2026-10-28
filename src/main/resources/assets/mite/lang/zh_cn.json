@@ -753,6 +753,7 @@
   "enchantment.mite.endurance": "耐力",
   "enchantment.mite.endurance.desc": "穿戴时减少挖掘、近战、放置、锄地、拉弓和投掷胶质球的饥饿消耗。",
   "gui.mite.enchant.cost": "%s XP",
+  "gui.mite.anvil.experience_cost": "附魔花费：%s XP",
   "gui.mite.enchant.points": "需要 %s 点经验",
   "gui.mite.enchant.energy": "附魔能量：%s",
   "gui.mite.enchant.available": "当前经验：%s",

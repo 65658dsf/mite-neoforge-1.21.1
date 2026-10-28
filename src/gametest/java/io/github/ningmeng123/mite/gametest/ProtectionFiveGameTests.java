@@ -81,19 +81,19 @@ public final class ProtectionFiveGameTests {
             helper.assertTrue(preview.is(Items.ENCHANTED_BOOK), "Two Protection IV books preview an enchanted book");
             helper.assertValueEqual(EnchantmentHelper.getEnchantmentsForCrafting(preview).getLevel(protection(helper)), 5,
                     "Protection IV plus IV creates a stored Protection V enchantment");
-            helper.assertValueEqual(menu.getCost(), 5, "A fresh Protection V merge costs five player levels");
+            helper.assertValueEqual(menu.getCost(), 8000, "A Protection V book merge costs a fixed 8000 XP");
             menu.clicked(2, 0, shift ? ClickType.QUICK_MOVE : ClickType.PICKUP, owner);
             helper.assertTrue(menu.getCarried().isEmpty() && !menu.getSlot(0).getItem().isEmpty()
                     && !menu.getSlot(1).getItem().isEmpty(), "Insufficient XP cannot consume either book or take the result");
             helper.assertFalse(owner.getInventory().items.stream().anyMatch(stack -> ItemStack.matches(stack, preview)),
                     "Insufficient XP cannot insert the result into the inventory through shift pickup");
             PlayerExperience.setTotal(owner, 10000);
-            int beforeLevel = owner.experienceLevel;
+            int beforePoints = owner.totalExperience;
             menu.clicked(2, 0, shift ? ClickType.QUICK_MOVE : ClickType.PICKUP, owner);
             boolean obtained = shift ? owner.getInventory().items.stream().anyMatch(stack -> ItemStack.matches(stack, preview))
                     : ItemStack.matches(menu.getCarried(), preview);
             helper.assertTrue(obtained, "Funded normal and shift pickup receive the Protection V book");
-            helper.assertValueEqual(owner.experienceLevel, beforeLevel - 5, "The completed merge charges five levels once");
+            helper.assertValueEqual(owner.totalExperience, beforePoints - 8000, "The completed book merge charges 8000 XP once");
             helper.assertTrue(menu.getSlot(0).getItem().isEmpty() && menu.getSlot(1).getItem().isEmpty(), "The merge consumes both books");
         }
         helper.succeed();
@@ -110,7 +110,7 @@ public final class ProtectionFiveGameTests {
         first.set(DataComponents.STORED_ENCHANTMENTS, stored.toImmutable());
         menu.getSlot(0).set(first);
         menu.getSlot(1).set(book(helper, 4));
-        helper.assertValueEqual(menu.getCost(), 5, "Preserved entries do not add a second transfer charge");
+        helper.assertValueEqual(menu.getCost(), 8000, "A multi-enchantment book result retains the fixed 8000 XP fee");
         menu.clicked(2, 0, ClickType.PICKUP, owner);
         var result = EnchantmentHelper.getEnchantmentsForCrafting(menu.getCarried());
         helper.assertValueEqual(result.getLevel(protection(helper)), 5, "The protection entry upgrades to V");
@@ -121,7 +121,7 @@ public final class ProtectionFiveGameTests {
 
     @GameTest(template = "empty")
     public static void protectionFiveBooksApplyToArmorAndAllPlayerUpgradesStopAtFive(GameTestHelper helper) {
-        var owner = owner(helper, 10000);
+        var owner = owner(helper, 20000);
         var menu = anvil(helper, owner);
         for (boolean upgrade : new boolean[] {false, true}) {
             ItemStack armor = new ItemStack(Items.IRON_CHESTPLATE);

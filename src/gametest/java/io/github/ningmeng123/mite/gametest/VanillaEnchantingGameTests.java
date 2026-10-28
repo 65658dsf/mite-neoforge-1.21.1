@@ -44,15 +44,15 @@ public final class VanillaEnchantingGameTests {
     private VanillaEnchantingGameTests() {}
 
     @GameTest(template = "empty", templateNamespace = "mite")
-    public static void sourceBooksAndEquipmentKeepOriginalPointFeesAndLapisCosts(GameTestHelper helper) {
+    public static void sourceEquipmentKeepsOriginalPointFeesAndLapisCosts(GameTestHelper helper) {
         try (var settings = new Settings()) {
-            for (Block block : tables()) for (var item : List.of(Items.BOOK, Items.IRON_SWORD)) {
+            for (Block block : tables()) for (var item : List.of(Items.IRON_CHESTPLATE, Items.IRON_SWORD)) {
                 var player = owner(helper, 45);
                 var menu = menu(helper, player, block);
                 var input = new ItemStack(item);
                 menu.getSlot(0).set(input);
                 menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 6));
-                helper.assertTrue(access(menu).mite$usesSourceEnchanting(), "Books and equipment use point payment");
+                helper.assertTrue(access(menu).mite$usesSourceEnchanting(), "Source equipment uses point payment");
                 int energy = R196EnchantmentTable.energy(input, 24, block != Blocks.ENCHANTING_TABLE, 2, .5F);
                 helper.assertValueEqual(menu.costs[2], 30, "Offer strength follows the native fifteen-shelf maximum");
                 helper.assertValueEqual(access(menu).mite$experienceCost(2), energy * 100, "The old material and table price is preserved independently");
@@ -60,7 +60,7 @@ public final class VanillaEnchantingGameTests {
                 int clue = menu.enchantClue[2], clueLevel = menu.levelClue[2], points = player.totalExperience;
                 helper.assertTrue(menu.clickMenuButton(player, 2), "The funded source offer succeeds");
                 var result = menu.getSlot(0).getItem();
-                helper.assertTrue(result.is(input.is(Items.BOOK) ? Items.ENCHANTED_BOOK : input.getItem()), "Enchanting preserves the intended result type");
+                helper.assertTrue(result.is(input.getItem()), "Enchanting preserves the intended equipment type");
                 assertClueInResult(helper, result, clue, clueLevel);
                 helper.assertValueEqual(player.totalExperience, points - energy * 100, "Enchanting consumes the quoted point price exactly once");
                 helper.assertValueEqual(menu.getSlot(1).getItem().getCount(), 3, "The third option consumes three lapis");
@@ -200,7 +200,7 @@ public final class VanillaEnchantingGameTests {
             MiteConfig.ENCHANTMENT_CHANCES.set(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
                     .holders().map(holder -> holder.key().location() + "=0").toList());
             MiteConfig.refreshEnchantmentRules();
-            for (Block block : tables()) for (var item : List.of(Items.BOOK, Items.IRON_SWORD, Items.CROSSBOW)) {
+            for (Block block : tables()) for (var item : List.of(Items.IRON_CHESTPLATE, Items.IRON_SWORD, Items.CROSSBOW)) {
                 var player = owner(helper, 45);
                 int points = player.totalExperience;
                 var menu = menu(helper, player, block);
@@ -223,7 +223,7 @@ public final class VanillaEnchantingGameTests {
     @GameTest(template = "empty", templateNamespace = "mite")
     public static void creativeSourceAndModernEnchantingRemainFree(GameTestHelper helper) {
         try (var settings = new Settings()) {
-            for (Block block : tables()) for (var item : List.of(Items.BOOK, Items.IRON_SWORD, Items.CROSSBOW)) {
+            for (Block block : tables()) for (var item : List.of(Items.IRON_CHESTPLATE, Items.IRON_SWORD, Items.CROSSBOW)) {
                 var player = owner(helper, 0);
                 player.setGameMode(GameType.CREATIVE);
                 var menu = menu(helper, player, block);

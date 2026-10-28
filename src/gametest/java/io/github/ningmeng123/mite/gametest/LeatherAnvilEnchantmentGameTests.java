@@ -60,7 +60,7 @@ public final class LeatherAnvilEnchantmentGameTests {
                 helper.assertFalse(preview.isEmpty(), "Unbreaking IV produces leather armor on " + anvil + " via " + click + ": " + item);
                 assertTransferred(helper, unchanged, preview, 4);
                 helper.assertTrue(ItemStack.matches(input, unchanged), "Preview never mutates the source leather armor");
-                helper.assertValueEqual(f.menu.getCost(), 4, "A fresh Unbreaking IV book costs four levels");
+                helper.assertValueEqual(f.menu.getCost(), 8000, "A fresh Unbreaking IV equipment operation costs 8000 XP");
                 helper.assertTrue(f.menu.getSlot(2).mayPickup(f.owner), "A funded survival player may take fine-quality enchanted leather");
                 helper.assertValueEqual(f.entity().damage(), wear, "Preparing an enchantment preview does not consume anvil durability");
 
@@ -70,8 +70,8 @@ public final class LeatherAnvilEnchantmentGameTests {
                 helper.assertTrue(f.menu.getSlot(0).getItem().isEmpty(), "A real pickup consumes the original armor exactly once");
                 helper.assertTrue(f.menu.getSlot(1).getItem().isEmpty(), "A real pickup consumes the Unbreaking IV book");
                 helper.assertTrue(f.menu.getSlot(2).getItem().isEmpty(), "No duplicate enchanted result remains after pickup");
-                helper.assertValueEqual(f.owner.totalExperience, 270, "Four levels are deducted using the R196 experience curve");
-                helper.assertValueEqual(f.owner.experienceLevel, 6, "The initial ten-level player pays four levels exactly once");
+                helper.assertValueEqual(f.owner.totalExperience, 2000, "8000 XP is deducted from the initial 10000 points exactly once");
+                helper.assertValueEqual(f.owner.experienceLevel, 18, "The displayed level is recomputed from the remaining 2000 XP");
                 helper.assertValueEqual(f.entity().damage(), wear + 400, "A final Unbreaking IV item consumes 400 anvil durability");
                 helper.assertValueEqual(helper.getLevel().getBlockState(f.pos), state, "Enchantment preserves the physical anvil material and damage stage");
             }
@@ -137,13 +137,13 @@ public final class LeatherAnvilEnchantmentGameTests {
             helper.assertTrue(ItemStack.matches(f.menu.getSlot(2).getItem(), expected),
                     "Existing Blast Protection IV adamantium leggings gain Unbreaking IV without losing any components on " + anvil);
             helper.assertTrue(ItemStack.matches(input, original), "Adding a book never mutates existing enchantments in the input preview");
-            helper.assertValueEqual(f.menu.getCost(), 4, "Adding Unbreaking IV costs four levels, excluding retained Blast Protection IV");
+            helper.assertValueEqual(f.menu.getCost(), 8000, "Adding Unbreaking IV costs 8000 XP regardless of retained Blast Protection IV");
             f.menu.clicked(2, 0, click, f.owner);
             ItemStack result = click == ClickType.PICKUP ? f.menu.getCarried() : f.inventoryResult(leggings);
             helper.assertTrue(ItemStack.matches(result, expected), "Actual pickup preserves Blast Protection IV alongside Unbreaking IV");
             helper.assertTrue(f.menu.getSlot(0).getItem().isEmpty() && f.menu.getSlot(1).getItem().isEmpty(),
                     "The actual compatible-book transaction consumes the leggings and book once");
-            helper.assertValueEqual(f.owner.experienceLevel, 6, "The compatible book addition deducts four levels once");
+            helper.assertValueEqual(f.owner.totalExperience, 2000, "The compatible book addition deducts 8000 XP once");
             helper.assertValueEqual(f.entity().damage(), wear + 880, "The final Blast Protection IV plus Unbreaking IV charges 800 durability plus the second type's ten percent surcharge");
         }
         helper.succeed();
@@ -192,7 +192,7 @@ public final class LeatherAnvilEnchantmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void sourceBooksPreserveModernEnchantmentsAndModernBooksKeepNativePayment(GameTestHelper helper) {
+    public static void sourceBooksPreserveModernEnchantmentsAndModernBooksUseTheSamePointPayment(GameTestHelper helper) {
         try (Fixture f = new Fixture(helper, Blocks.ANVIL)) {
             ItemStack input = leather(Items.LEATHER_CHESTPLATE);
             input.enchant(enchantment(helper, Enchantments.MENDING), 1);
@@ -218,12 +218,12 @@ public final class LeatherAnvilEnchantmentGameTests {
                     "The modern path adds Mending I");
             helper.assertValueEqual(EnchantmentHelper.getItemEnchantmentLevel(enchantment(helper, Enchantments.UNBREAKING), preview), 4,
                     "The modern path preserves source Unbreaking IV");
-            helper.assertTrue(f.menu.getCost() > 0, "Modern-only books retain native XP payment even when the target has source enchantments");
+            helper.assertValueEqual(f.menu.getCost(), 8000, "Modern-only books use the fixed 8000 XP equipment fee even when the target has source enchantments");
             helper.assertFalse(f.menu.getSlot(2).mayPickup(f.owner), "A zero-XP player cannot take a modern result for free");
             PlayerExperience.setTotal(f.owner, 10000);
             f.menu.clicked(2, 0, ClickType.PICKUP, f.owner);
             helper.assertTrue(ItemStack.matches(f.menu.getCarried(), preview), "A funded player can take the modern result through the real menu");
-            helper.assertTrue(f.owner.totalExperience < 10000, "The modern transaction actually charges XP");
+            helper.assertValueEqual(f.owner.totalExperience, 2000, "The modern transaction actually charges exactly 8000 XP");
         }
         helper.succeed();
     }
@@ -306,7 +306,7 @@ public final class LeatherAnvilEnchantmentGameTests {
             helper.getLevel().setBlock(pos, anvil.defaultBlockState(), 3);
             owner = helper.makeMockPlayer(GameType.SURVIVAL);
             owner.moveTo(pos.getCenter());
-            PlayerExperience.setTotal(owner, 650);
+            PlayerExperience.setTotal(owner, 10000);
             menu = new AnvilMenu(71, owner.getInventory(), ContainerLevelAccess.create(helper.getLevel(), pos));
         }
 

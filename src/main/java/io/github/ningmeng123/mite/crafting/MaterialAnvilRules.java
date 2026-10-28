@@ -66,6 +66,12 @@ public final class MaterialAnvilRules {
         return state.getBlock() instanceof MaterialAnvilBlock anvil ? WorkbenchRules.materialCapacity(anvil.material())
                 : state.getBlock() instanceof AnvilBlock ? 8F : 0F;
     }
+    /** Native repairs remain payable after repeated work, without the vanilla forty-level cutoff. */
+    public static boolean isEquipmentRepair(ItemStack first, ItemStack second) {
+        return first.isDamageableItem() && first.isDamaged() && !second.isEmpty()
+                && !second.has(net.minecraft.core.component.DataComponents.STORED_ENCHANTMENTS)
+                && (second.is(first.getItem()) || first.getItem().isValidRepairItem(first, second));
+    }
     public static Material material(ItemStack stack) {
         var simply = io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.definition(stack);
         if (simply != null && !simply.material().equals("runic") && !simply.material().equals("unique")

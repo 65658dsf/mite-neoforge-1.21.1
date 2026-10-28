@@ -59,8 +59,8 @@ public final class AnvilEnchantmentWearGameTests {
             f.menu.createResult();
             f.menu.broadcastChanges();
             helper.assertValueEqual(f.entity().damage(), before, "Repeated preview and synchronization consume no anvil durability");
-            helper.assertTrue(c.source ? f.menu.getCost() == 4 : f.menu.getCost() > 0,
-                    "Durability charging retains positive source and native level fees");
+            helper.assertValueEqual(f.menu.getCost(), 8000,
+                    "Source and native equipment book operations both quote 8000 XP separately from durability");
             f.menu.clicked(2, 0, click, f.owner);
             ItemStack result = f.result(click, c.item);
             helper.assertValueEqual(level(helper, result, c.enchantment), c.level, "The real transaction applies the requested enchantment");

@@ -64,7 +64,18 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
     @Inject(method = "slotsChanged", at = @At("HEAD"), cancellable = true)
     private void mite$serverOffersOnly(Container changed, CallbackInfo ci) {
         if (access == ContainerLevelAccess.NULL && mite$usesSourceEnchanting()) { ci.cancel(); return; }
-        if (changed != enchantSlots || access == ContainerLevelAccess.NULL || !mite$goldenApple(enchantSlots.getItem(0))) return;
+        if (changed != enchantSlots || access == ContainerLevelAccess.NULL) return;
+        if (enchantSlots.getItem(0).is(Items.BOOK)) {
+            // Player tables cannot create enchanted books; loot/trades and shared generation helpers remain available.
+            Arrays.fill(costs, 0);
+            Arrays.fill(enchantClue, -1);
+            Arrays.fill(levelClue, -1);
+            Arrays.fill(mite$pointCosts, 0);
+            broadcastChanges();
+            ci.cancel();
+            return;
+        }
+        if (!mite$goldenApple(enchantSlots.getItem(0))) return;
         // Source vm: special energy two is independent of shelves, table tier and ordinary candidate pools.
         Arrays.fill(costs, 2);
         Arrays.fill(enchantClue, -1);
@@ -120,6 +131,7 @@ public abstract class EmeraldEnchantmentMenuMixin extends AbstractContainerMenu 
         cir.setReturnValue(false);
         if (slot < 0 || slot >= 3 || costs[slot] < 1 || mite$pointCosts[slot] < 1) return;
         ItemStack input = enchantSlots.getItem(0);
+        if (input.is(Items.BOOK)) return;
         boolean conversion = mite$goldenApple(input);
         if (!conversion && (!input.isEnchantable() || enchantClue[slot] < 0)) return;
         int offerLevel = costs[slot], payment = mite$pointCosts[slot], seed = enchantmentSeed.get();

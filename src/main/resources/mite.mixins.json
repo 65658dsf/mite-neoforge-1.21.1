@@ -377,6 +377,7 @@
     "client.BetterCombatCollisionMixin",
     "client.BetterCombatMobHeldItemMixin",
     "client.JeiAnvilSidebarMixin",
+    "client.AnvilExperienceScreenMixin",
     "client.AutoHarvestMinecraftMixin",
     "client.AutoModeHotbarMixin",
     "client.AutoHarvestMouseMixin",

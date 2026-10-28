@@ -204,17 +204,18 @@ public final class VanillaTableStrengthGameTests {
     }
 
     @GameTest(template = "empty", templateNamespace = "mite")
-    public static void realEmptyBookshelfTableCannotUseThePointFeeAsHighLevelPower(GameTestHelper h) {
+    public static void realEmptyBookshelfTableCannotEnchantOrdinaryBooks(GameTestHelper h) {
         try (var settings = new Settings()) {
             ServerPlayer player = owner(h, 20000);
             EnchantmentMenu menu = table(h, player, Blocks.ENCHANTING_TABLE, 0);
             menu.getSlot(0).set(new ItemStack(Items.BOOK));
             menu.getSlot(1).set(new ItemStack(Items.LAPIS_LAZULI, 3));
-            h.assertTrue(menu.clickMenuButton(player, 2), "A table without shelves still offers a valid low-level enchantment");
-            var result = EnchantmentHelper.getEnchantmentsForCrafting(menu.getSlot(0).getItem());
-            h.assertTrue(!result.isEmpty(), "Low-power actual menu output is not empty");
-            for (var entry : result.entrySet())
-                h.assertValueEqual(entry.getIntValue(), 1, "No-shelf book power cannot reach second-rank costs");
+            h.assertFalse(menu.clickMenuButton(player, 2), "A table without shelves cannot create an enchanted book");
+            h.assertTrue(menu.getSlot(0).getItem().is(Items.BOOK), "The rejected table operation preserves the ordinary book");
+            h.assertValueEqual(menu.costs[2], 0, "The rejected book has no native offer");
+            h.assertValueEqual(((R196EnchantmentMenuAccess)menu).mite$experienceCost(2), 0, "The rejected book has no point price");
+            h.assertValueEqual(player.totalExperience, 20000, "The rejected book consumes no points");
+            h.assertValueEqual(menu.getSlot(1).getItem().getCount(), 3, "The rejected book consumes no lapis");
         }
         h.succeed();
     }
