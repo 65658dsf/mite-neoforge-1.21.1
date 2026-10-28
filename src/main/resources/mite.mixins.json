@@ -362,6 +362,9 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.EnderDragonGlowCompatibilityMixin",
+    "client.EnderDragonSegmentsMixin",
+    "client.EmfDragonJemCompatibilityMixin",
     "client.EmfPartTextureCompatibilityMixin",
     "client.AcceleratedEmfPartTextureMixin",
     "client.PlayerTabOverlayMixin",
