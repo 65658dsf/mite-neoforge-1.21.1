@@ -67,7 +67,7 @@ public final class ArmorBalanceRules {
             case "rusted_iron" -> new Stats(1, 3, 2, 1, .28125F);
             case "gold" -> new Stats(1, 3, 2, 1, .375F);
             case "copper", "silver" -> new Stats(1, 4, 3, 1, .5625F);
-            case "iron" -> new Stats(2, 4, 4, 1, .75F);
+            case "iron" -> new Stats(3, 5, 5, 2, 1F);
             case "ancient_metal" -> new Stats(2, 5, 4, 2, .9375F);
             case "mithril" -> new Stats(2, 6, 5, 2, 1.5F);
             case "adamantium" -> new Stats(3, 6, 5, 3, 1.875F);
@@ -78,7 +78,7 @@ public final class ArmorBalanceRules {
             case "rusted_iron" -> new Stats(1, 4, 3, 1, .375F);
             case "gold" -> new Stats(2, 4, 3, 1, .5F);
             case "copper", "silver" -> new Stats(2, 5, 3, 2, .75F);
-            case "iron" -> new Stats(2, 5, 5, 2, 1F);
+            case "iron" -> new Stats(3, 6, 6, 3, 1.25F);
             case "ancient_metal" -> new Stats(2, 6, 5, 3, 1.25F);
             case "diamond", "mithril" -> new Stats(3, 7, 5, 3, 2F);
             case "netherite", "adamantium" -> new Stats(3, 8, 6, 3, 2.5F);

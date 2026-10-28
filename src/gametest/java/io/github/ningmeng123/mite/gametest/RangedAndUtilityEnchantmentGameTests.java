@@ -331,14 +331,14 @@ public final class RangedAndUtilityEnchantmentGameTests {
         float[] losses = new float[2];
         for (int index = 0; index < 2; index++) {
             armor(target); target.tick(); target.setHealth(100F); target.invulnerableTime = 0;
-            close(h, target.getAttributeValue(Attributes.ARMOR), 14D, "Real native equipment refresh installs modern full iron armor");
+            close(h, target.getAttributeValue(Attributes.ARMOR), 18D, "Real native equipment refresh installs modern full iron armor");
             attacker.setItemInHand(InteractionHand.MAIN_HAND, index == 0 ? new ItemStack(Items.IRON_PICKAXE)
                     : enchanted(h, Items.IRON_PICKAXE, "piercing", 5));
             target.hurt(attacker.damageSources().playerAttack(attacker), 14F);
             losses[index] = 100F - target.getHealth();
         }
-        close(h, losses[0], 8.7733333333D, "Raw14 versus iron14/toughness4 uses effective armor9.333333");
-        close(h, losses[1], 11.5733333333D, "PiercingV makes armor9, effective armor4.333333 while retaining toughness");
+        close(h, losses[0], 6.3323076923D, "Raw14 versus iron18/toughness5 uses effective armor13.692308");
+        close(h, losses[1], 9.1323076923D, "PiercingV makes armor13, effective armor8.692308 while retaining toughness");
         var cow = cow(h, 200F);
         cow.hurt(attacker.damageSources().playerAttack(attacker), 10F);
         close(h, 200F - cow.getHealth(), 10D, "Unarmored targets do not receive additional raw damage from Piercing");
@@ -352,15 +352,15 @@ public final class RangedAndUtilityEnchantmentGameTests {
         target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(200D); target.setHealth(200F); target.setNoAi(true);
         armor(target);
         target.tick();
-        close(h, target.getAttributeValue(Attributes.ARMOR), 14D, "Managed native mob installs real iron armor fourteen");
+        close(h, target.getAttributeValue(Attributes.ARMOR), 18D, "Managed native mob installs real iron armor eighteen");
         attacker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_PICKAXE));
         target.hurt(attacker.damageSources().playerAttack(attacker), 10F);
         float plain = 200F - target.getHealth();
         armor(target); target.tick(); target.setHealth(200F); target.invulnerableTime = 0;
         attacker.setItemInHand(InteractionHand.MAIN_HAND, enchanted(h, Items.IRON_PICKAXE, "piercing", 5));
         target.hurt(attacker.damageSources().playerAttack(attacker), 10F);
-        close(h, plain, 5.7333333333D, "Raw10 versus iron14/toughness4 gives effective armor10.666667");
-        close(h, 200F - target.getHealth(), 7.7333333333D, "PiercingV makes armor9 and retains toughness4 without adding raw damage");
+        close(h, plain, 4.0307692308D, "Raw10 versus iron18/toughness5 gives effective armor14.923077");
+        close(h, 200F - target.getHealth(), 6.0307692308D, "PiercingV makes armor13 and retains toughness5 without adding raw damage");
         target.discard(); h.succeed();
     }
 

@@ -379,6 +379,7 @@
     "client.AutoHarvestMouseMixin",
     "client.MinimalDebugOverlayMixin",
     "client.MinimalDebugCrosshairMixin",
+    "client.DisabledHitboxDebugKeyMixin",
     "client.FixedBrightnessOptionMixin",
     "client.SodiumBrightnessOptionMixin",
     "client.WorldCreationDifficultyMixin",

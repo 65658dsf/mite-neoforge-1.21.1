@@ -14,7 +14,7 @@ class ArmorBalanceRulesTest {
             "gold,false,2,4,3,1,0.5",
             "copper,false,2,5,3,2,0.75",
             "silver,false,2,5,3,2,0.75",
-            "iron,false,2,5,5,2,1",
+            "iron,false,3,6,6,3,1.25",
             "ancient_metal,false,2,6,5,3,1.25",
             "diamond,false,3,7,5,3,2",
             "mithril,false,3,7,5,3,2",
@@ -24,7 +24,7 @@ class ArmorBalanceRulesTest {
             "gold,true,1,3,2,1,0.375",
             "copper,true,1,4,3,1,0.5625",
             "silver,true,1,4,3,1,0.5625",
-            "iron,true,2,4,4,1,0.75",
+            "iron,true,3,5,5,2,1",
             "ancient_metal,true,2,5,4,2,0.9375",
             "mithril,true,2,6,5,2,1.5",
             "adamantium,true,3,6,5,3,1.875"
@@ -49,10 +49,10 @@ class ArmorBalanceRulesTest {
         }
     }
 
-    @Test void addedHighTierSetsKeepTheirMaterialProgressionAndNeverWeakenPlateToChain() {
+    @Test void otherHighTierSetsKeepTheirMaterialProgressionAndNeverWeakenPlateToChain() {
         int previousTotal = 0;
         float previousToughness = 0F;
-        for (String material : new String[]{"copper", "iron", "ancient_metal", "mithril", "adamantium"}) {
+        for (String material : new String[]{"copper", "ancient_metal", "mithril", "adamantium"}) {
             var plate = ArmorBalanceRules.stats(material, false);
             var chain = ArmorBalanceRules.stats(material, true);
             int total = 0;

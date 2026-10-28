@@ -247,9 +247,10 @@ public final class MonsterDayScalingGameTests {
             target.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.IRON_LEGGINGS));
             target.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.IRON_BOOTS));
             equipment(target);
-            close(helper, target.getAttributeValue(Attributes.ARMOR), 14D, "The real NPC wears balanced iron armor");
-            // Raw20 remains20 before iron14/toughness4: effective armor14-20/3.
-            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 14.133333333F);
+            close(helper, target.getAttributeValue(Attributes.ARMOR), 18D, "The real NPC wears balanced iron armor");
+            close(helper, target.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 5D, "The real NPC gains one quarter toughness from each iron piece");
+            // Raw20 remains20 before iron18/toughness5: effective armor18-20/3.25.
+            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 10.523076923F);
             for (EquipmentSlot slot : ARMOR) helper.assertValueEqual(target.getItemBySlot(slot).getDamageValue(), 0,
                     "Calendar growth does not change the established NPC equipment wear policy");
         }

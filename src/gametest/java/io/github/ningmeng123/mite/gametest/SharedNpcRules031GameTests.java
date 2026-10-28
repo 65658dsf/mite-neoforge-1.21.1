@@ -41,8 +41,8 @@ import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 @GameTestHolder("mite") @PrefixGameTestTemplate(false)
 public final class SharedNpcRules031GameTests {
     @GameTest(template="empty") public static void sourceHorseBardingKeepsFlatProtectionAndAddsOnlyTheToughnessBenefit(GameTestHelper h) {
-        double[] loss={6D,6D,7D,5D,5D,3.68D,2.5238095238D};
-        int[] defense={4,4,3,5,5,6,7}; String[] ids={"mite:copper_horse_armor","mite:silver_horse_armor","minecraft:golden_horse_armor","minecraft:iron_horse_armor","mite:ancient_metal_horse_armor","mite:mithril_horse_armor","mite:adamantium_horse_armor"};
+        double[] loss={6D,6D,7D,3.8097297297D,5D,3.68D,2.5238095238D};
+        int[] defense={4,4,3,6,5,6,7}; String[] ids={"mite:copper_horse_armor","mite:silver_horse_armor","minecraft:golden_horse_armor","minecraft:iron_horse_armor","mite:ancient_metal_horse_armor","mite:mithril_horse_armor","mite:adamantium_horse_armor"};
         for(int i=0;i<ids.length;i++) {
             var horse=EntityType.HORSE.create(h.getLevel()); horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30); horse.setHealth(30);
             ItemStack barding=new ItemStack(io.github.ningmeng123.mite.registry.MiteArmorContent.get(ids[i])); horse.setBodyArmorItem(barding);

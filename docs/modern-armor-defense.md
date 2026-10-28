@@ -35,7 +35,7 @@ damage = D × (1 - effective / 25)
 | 锈铁 | 1 / 4 / 3 / 1 | 9 | 0.375 | 1.5 |
 | 金 | 2 / 4 / 3 / 1 | 10 | 0.5 | 2 |
 | 铜、银 | 2 / 5 / 3 / 2 | 12 | 0.75 | 3 |
-| 铁 | 2 / 5 / 5 / 2 | 14 | 1 | 4 |
+| 铁 | 3 / 6 / 6 / 3 | 18 | 1.25 | 5 |
 | 远古金属 | 2 / 6 / 5 / 3 | 16 | 1.25 | 5 |
 | 钻石、秘银 | 3 / 7 / 5 / 3 | 18 | 2 | 8 |
 | 下界合金、艾德曼 | 3 / 8 / 6 / 3 | 20 | 2.5 | 10 |
@@ -48,10 +48,12 @@ damage = D × (1 - effective / 25)
 | 锈铁 | 1 / 3 / 2 / 1 | 7 | 0.28125 | 1.125 |
 | 金 | 1 / 3 / 2 / 1 | 7 | 0.375 | 1.5 |
 | 铜、银 | 1 / 4 / 3 / 1 | 9 | 0.5625 | 2.25 |
-| 铁 | 2 / 4 / 4 / 1 | 11 | 0.75 | 3 |
+| 铁 | 3 / 5 / 5 / 2 | 15 | 1 | 4 |
 | 远古金属 | 2 / 5 / 4 / 2 | 13 | 0.9375 | 3.75 |
 | 秘银 | 2 / 6 / 5 / 2 | 15 | 1.5 | 6 |
 | 艾德曼 | 3 / 6 / 5 / 3 | 17 | 1.875 | 7.5 |
+
+2026-10-28 铁制防具每件增加 1 点护甲和 0.25 点韧性，覆盖铁板甲、铁链甲及铁马铠。铁马铠为 6 护甲、1.25 韧性；锈铁与其他材质沿用原值。铁链甲每件韧性为 1，其他链甲仍为同材质板甲的 75%。
 
 ## 品质、磨损与刷新
 
@@ -73,9 +75,9 @@ damage = D × (1 - effective / 25)
 
 ## 手动测试
 
-1. 替换旧版模组 JAR 后进入有作弊权限的测试存档。查看远古金属、秘银、艾德曼、钻石、下界合金胸甲：应分别有 1.25、2、2.5、2、2.5 点盔甲韧性；铁、铜、银、金分别为 1、0.75、0.75、0.5。
+1. 替换旧版模组 JAR 后进入有作弊权限的测试存档。查看远古金属、秘银、艾德曼、钻石、下界合金胸甲：应分别有 1.25、2、2.5、2、2.5 点盔甲韧性；铁、铜、银、金分别为 1.25、0.75、0.75、0.5。铁胸甲应为 6 护甲，铁链甲胸甲应为 5 护甲、1 韧性，铁马铠应为 6 护甲、1.25 韧性。
 2. 给玩家穿戴整套新制铁甲、钻石甲和秘银甲，确认防御属性随更换而变化。下界合金仍有击退抗性；铜和银同级，链甲低于对应板甲。
-3. 在遮阳处生成一只测试僵尸，只使用这一个带标签的目标，给它穿全套铁甲。执行一次 10 点仙人掌伤害，比较前后生命：没有其他效果或额外属性时应减少约 5.7333 点，而无甲目标减少 10 点。每次伤害比较间隔至少一秒。
+3. 在遮阳处生成一只测试僵尸，只使用这一个带标签的目标，给它穿全套铁甲，确认其为 18 护甲、5 韧性。执行一次 10 点仙人掌伤害，比较前后生命：没有其他效果或额外属性时应减少约 4.0308 点，而无甲目标减少 10 点。每次伤害比较间隔至少一秒。
 
 ```mcfunction
 /summon minecraft:zombie ~ ~ ~ {NoAI:1b,PersistenceRequired:1b,Tags:["mite_armor_test"]}
@@ -86,6 +88,7 @@ damage = D × (1 - effective / 25)
 /item replace entity @e[type=minecraft:zombie,tag=mite_armor_test,limit=1] armor.chest with minecraft:iron_chestplate
 /item replace entity @e[type=minecraft:zombie,tag=mite_armor_test,limit=1] armor.head with minecraft:iron_helmet
 /attribute @e[type=minecraft:zombie,tag=mite_armor_test,limit=1] minecraft:generic.armor get
+/attribute @e[type=minecraft:zombie,tag=mite_armor_test,limit=1] minecraft:generic.armor_toughness get
 /data get entity @e[type=minecraft:zombie,tag=mite_armor_test,limit=1] Health
 /damage @e[type=minecraft:zombie,tag=mite_armor_test,limit=1] 10 minecraft:cactus
 /data get entity @e[type=minecraft:zombie,tag=mite_armor_test,limit=1] Health
@@ -96,7 +99,7 @@ damage = D × (1 - effective / 25)
 
 ### 只剩一点耐久的怪物护甲
 
-在上述僵尸仍穿其他铁甲时执行以下命令，换入普通品质艾德曼胸甲（基础耐久 4096、损伤 4095）。等待一刻后，僵尸护甲应为 17（其余铁甲 9 + 胸甲 8），韧性为 5.5；把同一胸甲损伤改成 0 后，两项数值仍相同。玩家单独穿这件只剩一点耐久的胸甲时，应为 8 护甲、2.5 韧性。
+在上述僵尸仍穿其他铁甲时执行以下命令，换入普通品质艾德曼胸甲（基础耐久 4096、损伤 4095）。等待一刻后，僵尸护甲应为 20（其余铁甲 12 + 胸甲 8），韧性为 6.25；把同一胸甲损伤改成 0 后，两项数值仍相同。玩家单独穿这件只剩一点耐久的胸甲时，应为 8 护甲、2.5 韧性。
 
 ```mcfunction
 /item replace entity @e[type=minecraft:zombie,tag=mite_armor_test,limit=1] armor.chest with mite:adamantium_chestplate[minecraft:damage=4095]

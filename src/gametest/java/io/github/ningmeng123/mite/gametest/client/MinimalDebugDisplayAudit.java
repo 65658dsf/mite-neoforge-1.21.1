@@ -16,6 +16,7 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -41,6 +42,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /** Actual client transforms and safe toggle execution, without a game, constructor, window or rendering. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
@@ -81,7 +83,7 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
             check(Boolean.getBoolean("mixin.debug.export"), "Actual transformed-class export is required");
             ClassNode debug = defined(DEBUG, exports, true);
             ClassNode gui = defined(GUI, exports, true);
-            ClassNode keyboard = defined("net/minecraft/client/KeyboardHandler", exports, false);
+            ClassNode keyboard = defined("net/minecraft/client/KeyboardHandler", exports, true);
             auditRender(debug, report);
             auditWorldDay(debug, report);
             auditWorldTime(debug, report);
@@ -464,7 +466,7 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
         report.addProperty("normal_crosshair_forced_only_at_crosshair_debug_expression", true);
     }
 
-    private static void auditKeyboard(ClassNode keyboard, JsonObject report) {
+    private static void auditKeyboard(ClassNode keyboard, JsonObject report) throws Exception {
         MethodNode keys = method(keyboard, "handleDebugKeys", "(I)Z");
         MethodNode keyPress = method(keyboard, "keyPress", "(JIIII)V");
         check(calls(keyPress, DEBUG, "toggleOverlay") == 1 && calls(keyPress, keyboard.name, "handleDebugKeys") == 1,
@@ -473,8 +475,27 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
         check(fieldAccess(keyPress, "net/minecraft/client/Options", "hideGui", Opcodes.PUTFIELD),
                 "Native F1 still updates hideGui");
         check(caseCalls(keys, 65, "net/minecraft/client/renderer/LevelRenderer", "allChanged"), "Native F3+A chunk reload remains reachable");
-        check(caseCalls(keys, 66, "net/minecraft/client/renderer/entity/EntityRenderDispatcher", "setRenderHitBoxes"),
-                "Native F3+B hitbox toggle remains reachable");
+        MethodNode guard = merged(keyboard, "DisabledHitboxDebugKeyMixin", "mite$disableHitboxDebugKey");
+        check(calls(keys, keyboard.name, guard.name) == 1,
+                "Actual debug-key dispatch reaches the hitbox shortcut guard exactly once");
+        for (AbstractInsnNode instruction : keys.instructions) {
+            if (instruction == call(keys, keyboard.name, guard.name)) break;
+            check(!(instruction instanceof FieldInsnNode field && field.name.equals("minecraft")),
+                    "Hitbox shortcut is guarded before accessing the game instance");
+        }
+        Class<?> unsafeType = Class.forName("sun.misc.Unsafe");
+        Field singleton = unsafeType.getDeclaredField("theUnsafe"); singleton.setAccessible(true);
+        Object keyboardInstance = unsafeType.getMethod("allocateInstance", Class.class).invoke(singleton.get(null), KeyboardHandler.class);
+        Method actualKeys = KeyboardHandler.class.getDeclaredMethod("handleDebugKeys", int.class); actualKeys.setAccessible(true);
+        check(Boolean.TRUE.equals(actualKeys.invoke(keyboardInstance, 66)),
+                "F3+B is consumed before the native hitbox toggle or debug feedback accesses the absent game");
+        Method actualGuard = KeyboardHandler.class.getDeclaredMethod(guard.name, int.class, CallbackInfoReturnable.class);
+        actualGuard.setAccessible(true);
+        for (int key = 0; key <= 348; key++) {
+            CallbackInfoReturnable<Boolean> callback = new CallbackInfoReturnable<>("handleDebugKeys", true);
+            actualGuard.invoke(keyboardInstance, key, callback);
+            check(callback.isCancelled() == (key == 66), "Only the B debug shortcut is consumed: " + key);
+        }
         List<AbstractInsnNode> tooltip = caseBody(keys, 72);
         check(tooltip.stream().anyMatch(instruction -> instruction instanceof FieldInsnNode field && field.owner.equals("net/minecraft/client/Options")
                         && field.name.equals("advancedItemTooltips") && field.getOpcode() == Opcodes.PUTFIELD),
@@ -484,7 +505,9 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
             check(!mergedFrom(candidate, MIXINS + "MinimalDebugOverlayMixin") && !mergedFrom(candidate, MIXINS + "MinimalDebugCrosshairMixin"),
                     "The minimal display feature adds no keyboard handler");
         report.addProperty("native_f3_toggle_f1_hidegui_and_chord_dispatch_retained", true);
-        report.addProperty("native_f3_a_reload_b_hitboxes_h_tooltips_retained", true);
+        report.addProperty("native_f3_a_reload_h_tooltips_retained", true);
+        report.addProperty("f3_b_hitbox_shortcut_consumed_before_game_access", true);
+        report.addProperty("all_other_debug_keys_continue_native_dispatch", true);
     }
 
     private static void auditHideGui(ClassNode debug, ClassNode gui, JsonObject report) {

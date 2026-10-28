@@ -109,10 +109,10 @@ public final class MiteArmorContent {
         return DEFINITIONS.stream().filter(d -> d.id().equals(id)).findFirst().orElseGet(() -> io.github.ningmeng123.mite.api.MiteExtensions.externalArmor(item));
     }
     public static Item get(String id) { return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)); }
-    /** ItemHorseArmor.getProtection; native iron/gold are outside the added-item definition list. */
+    /** Modern barding balance; native iron/gold are outside the added-item definition list. */
     public static int horseProtection(ItemStack stack) {
         if (stack.is(Items.GOLDEN_HORSE_ARMOR)) return 3;
-        if (stack.is(Items.IRON_HORSE_ARMOR)) return 5;
+        if (stack.is(Items.IRON_HORSE_ARMOR)) return 6;
         Definition source=definition(stack.getItem());
         if (source!=null && source.horse()) return source.horseProtection();
         return stack.getItem() instanceof AnimalArmorItem modern ? modern.getMaterial().value().getDefense(ArmorItem.Type.BODY) : 0;
