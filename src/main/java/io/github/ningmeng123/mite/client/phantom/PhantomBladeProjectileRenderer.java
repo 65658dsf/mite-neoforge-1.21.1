@@ -8,6 +8,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.WeakHashMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -33,6 +34,11 @@ public final class PhantomBladeProjectileRenderer extends EntityRenderer<Phantom
     }
 
     @Override public boolean shouldRender(PhantomBladeProjectile entity, Frustum frustum, double x, double y, double z) {
+        Minecraft minecraft = Minecraft.getInstance();
+        // Hide only the camera owner's orbiting sword; outbound and returning flights stay visible.
+        if (entity.isDocked() && minecraft.options.getCameraType().isFirstPerson()
+                && minecraft.player != null && minecraft.getCameraEntity() == minecraft.player
+                && entity.ownerId() == minecraft.player.getId()) return false;
         return entity.distanceToSqr(x, y, z) <= 4096D && frustum.isVisible(entity.getBoundingBox().inflate(5D));
     }
 
