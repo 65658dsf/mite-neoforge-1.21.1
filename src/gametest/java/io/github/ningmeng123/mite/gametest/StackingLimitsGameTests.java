@@ -20,6 +20,22 @@ public final class StackingLimitsGameTests {
     private StackingLimitsGameTests() {}
 
     @GameTest(template = "empty")
+    public static void everyMetalIngotAndRawMineralStacksToFour(GameTestHelper helper) {
+        for (String id : new String[]{"minecraft:copper_ingot", "minecraft:iron_ingot", "minecraft:gold_ingot",
+                "minecraft:netherite_ingot", "minecraft:raw_copper", "minecraft:raw_iron", "minecraft:raw_gold",
+                "mite:silver_ingot", "mite:ancient_metal_ingot", "mite:mithril_ingot", "mite:adamantium_ingot",
+                "mite:vibranium_ingot", "mite:raw_silver", "mite:raw_mithril", "mite:raw_adamantium"}) {
+            ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)));
+            helper.assertValueEqual(stack.getMaxStackSize(), 4, "The mineral cap applies to " + id);
+            stack.setCount(8);
+            ItemStack loaded = ItemStack.parse(helper.getLevel().registryAccess(), stack.save(helper.getLevel().registryAccess())).orElseThrow();
+            helper.assertValueEqual(loaded.getCount(), 8, "Loading old overfull mineral stacks cannot delete items");
+            helper.assertValueEqual(loaded.getMaxStackSize(), 4, "Old mineral stacks still use the new transfer cap");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void allConfirmedAndAdaptedRegistryIdentitiesUseTheDeclaredStackLimit(GameTestHelper helper) {
         for (var row : StackingRules.limits().entrySet()) {
             var item = BuiltInRegistries.ITEM.getOptional(ResourceLocation.parse(row.getKey())).orElseThrow();

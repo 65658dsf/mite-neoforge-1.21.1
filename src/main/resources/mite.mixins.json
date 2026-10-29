@@ -362,6 +362,7 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.InvisibleMonsterRendererMixin",
     "client.EnderDragonGlowCompatibilityMixin",
     "client.EnderDragonSegmentsMixin",
     "client.EmfDragonJemCompatibilityMixin",

@@ -24,7 +24,7 @@ public final class NativeWeaponBalanceGameTests {
 
     @GameTest(template="empty")
     public static void swordsHeavyWeaponsAndLongReachFamiliesHaveDistinctActualBudgets(GameTestHelper h) {
-        for (var vector : List.of(new Vector("minecraft:iron_sword",7.2D,1.5D),
+        for (var vector : List.of(new Vector("minecraft:iron_sword",7.2D,2D),
                 new Vector("mite:iron_battle_axe",8.1D,.85D), new Vector("mite:iron_war_hammer",5.6D,.75D),
                 new Vector("mite:vibranium_sword",11.2D,1.5D),new Vector("mite:copper_sword",6D,1.5D),
                 new Vector("mite:silver_sword",6.4D,1.5D))) {

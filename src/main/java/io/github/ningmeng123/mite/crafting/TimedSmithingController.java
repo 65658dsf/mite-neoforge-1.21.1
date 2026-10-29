@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.network.CraftingProgressPayload;
 import io.github.ningmeng123.mite.rules.EquipmentQualityRules;
 import io.github.ningmeng123.mite.survival.FoodConsumption;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,7 +27,21 @@ import net.minecraft.world.level.Level;
 public final class TimedSmithingController {
     private static final Map<UUID, Session> SESSIONS = new HashMap<>();
     private static final ThreadLocal<Completion> COMPLETING = new ThreadLocal<>();
-    private record Prepared(SmithingMenu menu, RecipeHolder<SmithingRecipe> recipe, ItemStack result, int ingots) {}
+    private record Reserve(int slot, int count, ItemStack before) {}
+    private record Payment(int addition, List<Reserve> reserves) {
+        boolean matches(Player player) {
+            return reserves.stream().allMatch(reserve -> ItemStack.matches(reserve.before(), player.getInventory().getItem(reserve.slot())));
+        }
+        boolean same(Payment other) {
+            if (addition != other.addition || reserves.size() != other.reserves.size()) return false;
+            for (int index = 0; index < reserves.size(); index++) {
+                Reserve first = reserves.get(index), second = other.reserves.get(index);
+                if (first.slot() != second.slot() || first.count() != second.count() || !ItemStack.matches(first.before(), second.before())) return false;
+            }
+            return true;
+        }
+    }
+    private record Prepared(SmithingMenu menu, RecipeHolder<SmithingRecipe> recipe, ItemStack result, int ingots, Payment payment) {}
     private static final class Session {
         final Prepared prepared;
         final List<ItemStack> inputs;
@@ -57,24 +72,54 @@ public final class TimedSmithingController {
         return menu instanceof SmithingMenu && MaterialUpgradeRequirements.usesTemplate(menu.getSlot(SmithingMenu.TEMPLATE_SLOT).getItem());
     }
 
-    public static boolean previewAllowed(SmithingMenu menu) {
+    /** Matching sees all available matching ingots; the real input slot keeps its normal stack limit. */
+    public static SmithingRecipeInput includeInventory(SmithingRecipeInput input, Player player) {
+        if (!MaterialUpgradeRequirements.usesTemplate(input.template()) || input.addition().isEmpty()) return input;
+        return new SmithingRecipeInput(input.template(), input.base(), input.addition().copyWithCount(availableIngots(player, input.addition())));
+    }
+
+    public static int availableIngots(Player player, ItemStack addition) {
+        if (addition.isEmpty()) return 0;
+        long total = addition.getCount();
+        for (ItemStack stack : player.getInventory().items)
+            if (ItemStack.isSameItemSameComponents(stack, addition)) total += stack.getCount();
+        return (int)Math.min(Integer.MAX_VALUE, total);
+    }
+
+    private static Payment payment(Player player, ItemStack addition, int required) {
+        int fromAddition = Math.min(addition.getCount(), required);
+        int remaining = required - fromAddition;
+        List<Reserve> reserves = new ArrayList<>();
+        for (int slot = 0; slot < player.getInventory().items.size() && remaining > 0; slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            if (!ItemStack.isSameItemSameComponents(stack, addition)) continue;
+            int count = Math.min(remaining, stack.getCount());
+            reserves.add(new Reserve(slot, count, stack.copy()));
+            remaining -= count;
+        }
+        return remaining == 0 ? new Payment(fromAddition, List.copyOf(reserves)) : null;
+    }
+
+    public static boolean previewAllowed(SmithingMenu menu, Player player) {
         if (!applies(menu)) return true;
         ItemStack result = menu.getSlot(SmithingMenu.RESULT_SLOT).getItem();
         int required = result.isEmpty() ? 0 : MaterialUpgradeRequirements.ingots(result);
-        return required > 0 && menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem().getCount() >= required;
+        return required > 0 && availableIngots(player, menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem()) >= required;
     }
 
     private static Prepared prepare(ServerPlayer player, AbstractContainerMenu menu) {
         if (!(menu instanceof SmithingMenu smithing) || !applies(menu)) return null;
-        var input = new SmithingRecipeInput(menu.getSlot(0).getItem(), menu.getSlot(1).getItem(), menu.getSlot(2).getItem());
+        var input = includeInventory(new SmithingRecipeInput(menu.getSlot(0).getItem(), menu.getSlot(1).getItem(), menu.getSlot(2).getItem()), player);
         var recipe = player.level().getRecipeManager().getRecipeFor(RecipeType.SMITHING, input, player.level());
         if (recipe.isEmpty()) return null;
         ItemStack result = recipe.get().value().assemble(input, player.level().registryAccess());
         int ingots = result.isEmpty() ? 0 : MaterialUpgradeRequirements.ingots(result);
+        Payment payment = payment(player, menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem(), ingots);
         if (result.isEmpty() || ingots <= 0 || input.addition().getCount() < ingots
+                || payment == null
                 || !result.isItemEnabled(player.level().enabledFeatures())
                 || !ItemStack.matches(result, menu.getSlot(SmithingMenu.RESULT_SLOT).getItem())) return null;
-        return new Prepared(smithing, recipe.get(), result, ingots);
+        return new Prepared(smithing, recipe.get(), result, ingots, payment);
     }
 
     private static boolean allowed(ServerPlayer player, Prepared prepared, boolean inventory) {
@@ -86,8 +131,12 @@ public final class TimedSmithingController {
                     && carried.getCount() + prepared.result().getCount() <= carried.getMaxStackSize();
         }
         int remaining = prepared.result().getCount();
-        for (ItemStack existing : player.getInventory().items) {
-            if (existing.isEmpty()) remaining -= prepared.result().getMaxStackSize();
+        for (int slot = 0; slot < player.getInventory().items.size(); slot++) {
+            ItemStack existing = player.getInventory().getItem(slot);
+            boolean paidEmpty = false;
+            for (Reserve reserve : prepared.payment().reserves())
+                if (reserve.slot() == slot && reserve.count() >= existing.getCount()) { paidEmpty = true; break; }
+            if (existing.isEmpty() || paidEmpty) remaining -= prepared.result().getMaxStackSize();
             else if (ItemStack.isSameItemSameComponents(existing, prepared.result())) remaining -= existing.getMaxStackSize() - existing.getCount();
             if (remaining <= 0) return true;
         }
@@ -101,6 +150,7 @@ public final class TimedSmithingController {
         Session previous = SESSIONS.get(player.getUUID());
         if (previous != null && previous.prepared.menu() == menu
                 && previous.prepared.recipe().id().equals(prepared.recipe().id())
+                && previous.prepared.payment().same(prepared.payment())
                 && TimedCraftingController.matches(previous.inputs, inputs(prepared.menu()))) return true;
         SESSIONS.put(player.getUUID(), new Session(prepared, player.level(), inventory));
         show(player, 0, period(player, prepared), false, true);
@@ -146,6 +196,7 @@ public final class TimedSmithingController {
         if (prepared == null || player.level() != session.level || prepared.menu() != session.prepared.menu()
                 || !prepared.recipe().id().equals(session.prepared.recipe().id())
                 || prepared.ingots() != session.prepared.ingots()
+                || !prepared.payment().same(session.prepared.payment())
                 || !ItemStack.matches(prepared.result(), session.prepared.result())
                 || !TimedCraftingController.matches(session.inputs, inputs(prepared.menu()))
                 || !allowed(player, prepared, session.inventory)) {
@@ -206,6 +257,7 @@ public final class TimedSmithingController {
         if (completion == null || completion.claimed || completion.player != player
                 || completion.session.prepared.menu() != menu
                 || !ItemStack.matches(result, completion.session.prepared.result())
+                || !completion.session.prepared.payment().matches(player)
                 || !TimedCraftingController.matches(completion.session.inputs, inputs(menu))) return false;
         completion.claimed = true;
         return true;
@@ -214,10 +266,20 @@ public final class TimedSmithingController {
     public static boolean consume(SmithingMenu menu, int slot) {
         Completion completion = COMPLETING.get();
         if (completion == null || !completion.claimed || completion.session.prepared.menu() != menu) return false;
-        if (slot == SmithingMenu.TEMPLATE_SLOT) completion.validated = TimedCraftingController.matches(completion.session.inputs, inputs(menu));
+        if (slot == SmithingMenu.TEMPLATE_SLOT) completion.validated = TimedCraftingController.matches(completion.session.inputs, inputs(menu))
+                && completion.session.prepared.payment().matches(completion.player);
         if (!completion.validated) return false;
         ItemStack ingredient = menu.getSlot(slot).getItem();
-        ingredient.shrink(slot == SmithingMenu.ADDITIONAL_SLOT ? completion.session.prepared.ingots() : 1);
+        Payment payment = completion.session.prepared.payment();
+        ingredient.shrink(slot == SmithingMenu.ADDITIONAL_SLOT ? payment.addition() : 1);
+        if (slot == SmithingMenu.ADDITIONAL_SLOT) {
+            for (Reserve reserve : payment.reserves()) {
+                ItemStack stack = completion.player.getInventory().getItem(reserve.slot());
+                stack.shrink(reserve.count());
+                completion.player.getInventory().setItem(reserve.slot(), stack);
+            }
+            completion.player.getInventory().setChanged();
+        }
         menu.getSlot(slot).set(ingredient);
         return true;
     }
@@ -227,8 +289,13 @@ public final class TimedSmithingController {
         if (completion == null || !completion.claimed || !completion.validated || completion.session.prepared.menu() != menu) return;
         for (int slot = 0; slot < 3; slot++) {
             ItemStack expected = completion.session.inputs.get(slot).copy();
-            expected.shrink(slot == SmithingMenu.ADDITIONAL_SLOT ? completion.session.prepared.ingots() : 1);
+            expected.shrink(slot == SmithingMenu.ADDITIONAL_SLOT ? completion.session.prepared.payment().addition() : 1);
             if (!ItemStack.matches(expected, menu.getSlot(slot).getItem())) return;
+        }
+        for (Reserve reserve : completion.session.prepared.payment().reserves()) {
+            ItemStack expected = reserve.before().copy();
+            expected.shrink(reserve.count());
+            if (!ItemStack.matches(expected, completion.player.getInventory().getItem(reserve.slot()))) return;
         }
         completion.committed = true;
     }

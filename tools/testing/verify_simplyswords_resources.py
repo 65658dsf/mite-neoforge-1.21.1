@@ -25,6 +25,33 @@ def read(path):
     return json.loads((RESOURCES / path).read_text(encoding="utf-8"))
 
 
+def verify_chakram_ranges(archive, entries, manifest):
+    """Compare every upstream chakram, including optional integrations, independently."""
+    paths = []
+    for location in sorted(archive.namelist()):
+        if not location.startswith("data/simplyswords/weapon_attributes/") or not location.endswith(".json"):
+            continue
+        original = json.loads(archive.read(location))
+        if original.get("attributes", {}).get("category") != "chakram" and not Path(location).stem.endswith("_chakram"):
+            continue
+        expected = json.loads(archive.read(location))
+        expected.setdefault("attributes", {}).update({"attack_range": 4.25, "range_bonus": 0})
+        assert read(location) == expected, f"Chakram range override changed its original moveset: {location}"
+        paths.append(location)
+    assert len(paths) == 30, f"Review new upstream chakram coverage: {paths}"
+    for entry in entries:
+        if entry["family"] == "chakram":
+            location = f"data/mite/weapon_attributes/{entry['id'].split(':', 1)[1]}.json"
+            assert read(location) == {"parent": "simplyswords:iron_chakram",
+                                      "attributes": {"attack_range": 4.25, "range_bonus": 0}}, location
+    assert manifest["chakram_balance"] == {
+        "damage_multiplier_of_previous_base_total": .8,
+        "attack_range": 4.25,
+        "native_profile_overrides": paths,
+    }
+    return len(paths) + sum(entry["family"] == "chakram" for entry in entries)
+
+
 def verify_two_handed(archive, entries):
     """Independently audit declarations, inherited flags and known exceptions."""
     expected = {entry["id"] for entry in entries if entry["family"] in TWO_HANDED_FAMILIES}
@@ -125,6 +152,7 @@ def main():
     textures = {family: set() for family in FAMILIES}
     recipe_count = 0
     with zipfile.ZipFile(args.archive) as archive:
+        chakram_count = verify_chakram_ranges(archive, entries, manifest)
         two_handed_count = verify_two_handed(archive, entries)
         verify_retired_native_tags(archive)
         for entry in entries:
@@ -191,7 +219,7 @@ def main():
     vampiric = {value["id"] for value in read("data/mite/tags/item/simplyswords/enchantable/vampiric.json")["values"]}
     assert not any(item.startswith(("mite:simplyswords_silver_", "mite:simplyswords_mithril_")) for item in vampiric)
     assert not list((RESOURCES / "assets/mite/models/item").glob("simplyswords_gold_*.json"))
-    print(f"Verified 105 material redraws with exact source silhouettes and preserved grips, 90 conditional recipes and unlocks, optional tags and combat parents, {two_handed_count} two-handed weapon entries.")
+    print(f"Verified 105 material redraws with exact source silhouettes and preserved grips, 90 conditional recipes and unlocks, optional tags and combat parents, {two_handed_count} two-handed weapon entries, {chakram_count} fixed-range chakram profiles with preserved movesets.")
 
 
 if __name__ == "__main__":

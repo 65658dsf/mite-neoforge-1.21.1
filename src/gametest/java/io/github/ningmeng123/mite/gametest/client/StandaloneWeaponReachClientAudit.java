@@ -120,7 +120,7 @@ public final class StandaloneWeaponReachClientAudit implements DataProvider {
             report.addProperty("native_and_mite_weapons_checked", true);
             if (SimplySwordsCompat.enabled()) {
                 String[] families = {"rapier", "glaive", "spear", "chakram"};
-                double[] reaches = {3D, 3.5D, 4D, 5.5D};
+                double[] reaches = {3D, 3.5D, 4D, 4.25D};
                 for (int index = 0; index < families.length; ++index) {
                     verifyNewAndSaved(new ItemStack(SimplySwordsCompat.weapon("copper", families[index])), reaches[index],
                             "simplyswords_copper_" + families[index], lookup, cases);

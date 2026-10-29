@@ -21,6 +21,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -72,6 +74,11 @@ public final class MobCorrosion {
         return (int)(amount*(EquipmentDurability.armorProfile(stack)!=null ? 2F : EquipmentDurability.toolProfile(stack)!=null ? 100F : 1F));
     }
     public static boolean equipment(ItemStack stack,boolean acid,float amount,LivingEntity owner,EquipmentSlot slot) {
+        boolean changed=damageEquipment(stack,acid,amount,owner,slot);
+        if (changed) feedback(owner);
+        return changed;
+    }
+    private static boolean damageEquipment(ItemStack stack,boolean acid,float amount,LivingEntity owner,EquipmentSlot slot) {
         if (!susceptible(stack,acid) || owner instanceof Player player && player.isCreative() || !(owner.level() instanceof ServerLevel server)) return false;
         if (stack.isDamageableItem()) {
             int damage=wear(stack,amount);
@@ -92,14 +99,24 @@ public final class MobCorrosion {
     public static void inventory(Player player,boolean acid,int size,int attack) {
         if (player.isCreative()) return;
         var inventory=player.getInventory();
+        boolean changed=false;
         for (int slot=0;slot<inventory.getContainerSize();slot++) {
             ItemStack stack=inventory.getItem(slot);
             if (stack.isEmpty()) continue;
             boolean armor=slot>=36 && slot<40;
             float chance=.05F*size*(armor ? 5 : 1);
             for (int item=0;item<stack.getCount();item++)
-                if (player.getRandom().nextFloat()<chance) equipment(stack,acid,attack,player,armor ? EquipmentSlot.values()[EquipmentSlot.FEET.ordinal()+slot-36] : slot==40 ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
+                if (player.getRandom().nextFloat()<chance) changed|=damageEquipment(stack,acid,attack,player,armor ? EquipmentSlot.values()[EquipmentSlot.FEET.ordinal()+slot-36] : slot==40 ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
         }
+        if (changed) feedback(player);
+    }
+    /** EntityGelatinousCube/jv steam_with_hiss: one shared effect after actual inventory corrosion. */
+    private static void feedback(LivingEntity owner) {
+        if (!(owner.level() instanceof ServerLevel level)) return;
+        double y=owner.getY()+owner.getBbHeight()*.5;
+        level.playSound(null,owner.getX(),y,owner.getZ(),SoundEvents.FIRE_EXTINGUISH,owner.getSoundSource(),.7F,
+                1.6F+(owner.getRandom().nextFloat()-owner.getRandom().nextFloat())*.4F);
+        level.sendParticles(ParticleTypes.CLOUD,owner.getX(),y,owner.getZ(),5,owner.getBbWidth()*.3,owner.getBbHeight()*.25,owner.getBbWidth()*.3,.02);
     }
     public static boolean dropped(ItemEntity item,boolean acid,net.minecraft.world.entity.monster.Slime cube) {
         item.setPickUpDelay(Math.max(60,((ItemCorrosionAccess)(Object)item).mite$pickupDelay()));

@@ -98,8 +98,8 @@ public final class MobModelAudit031 implements DataProvider {
                     List.of("head","hat","body","right_arm","left_arm","right_leg","left_leg"));
             auditLayer(models,"source_outer_armor",LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(1F),0),64,32),64,32,
                     List.of("head","hat","body","right_arm","left_arm","right_leg","left_leg"));
-            LegacyStalkerModel<?> invisible=new LegacyStalkerModel<>(humanoidRoot,.05F),fire=new LegacyStalkerModel<>(humanoid.bakeRoot(),0F);
-            check((float)field(invisible,"opacity")==.05F&& (float)field(fire,"opacity")==0F,"Source stalker/fire opacity values");
+            LegacyStalkerModel<?> invisible=new LegacyStalkerModel<>(humanoidRoot,io.github.ningmeng123.mite.client.mob.InvisibleMonsterVisuals.OPACITY),fire=new LegacyStalkerModel<>(humanoid.bakeRoot(),0F);
+            check((float)field(invisible,"opacity")==io.github.ningmeng123.mite.client.mob.InvisibleMonsterVisuals.OPACITY&& (float)field(fire,"opacity")==0F,"Shader-visible stalker silhouette and source fire opacity values");
             report.add("layers",models); report.addProperty("layer_count",models.size());
             JsonObject source;
             try(var input=MobModelAudit031.class.getResourceAsStream("/mite/mobs-031.json")) {

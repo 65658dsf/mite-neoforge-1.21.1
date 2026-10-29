@@ -28,6 +28,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
@@ -251,6 +254,30 @@ public final class GrassMiningGameTests {
         ((DualFoodData) player.getFoodData()).mite$setNutrition(0);
         player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         return player;
+    }
+
+    @GameTest(template = "empty")
+    public static void ironShearsRightClickRecoversLeavesThroughTheServerHarvestPath(GameTestHelper helper) {
+        BlockPos base = helper.absolutePos(new BlockPos(1, 2, 1));
+        try (PlantFixture fixture = new PlantFixture(helper, base); PlayerSession session = newServerPlayer(helper)) {
+            ServerPlayer player = session.player();
+            ItemStack shears = new ItemStack(Items.SHEARS);
+            player.setItemInHand(InteractionHand.MAIN_HAND, shears);
+            for (Block leaves : new Block[]{Blocks.OAK_LEAVES, Blocks.BIRCH_LEAVES, Blocks.SPRUCE_LEAVES,
+                    Blocks.JUNGLE_LEAVES, Blocks.ACACIA_LEAVES, Blocks.DARK_OAK_LEAVES, Blocks.CHERRY_LEAVES,
+                    Blocks.MANGROVE_LEAVES}) {
+                fixture.place(leaves.defaultBlockState().setValue(net.minecraft.world.level.block.LeavesBlock.PERSISTENT, true));
+                int before = fixture.countDrops(leaves.asItem());
+                int wear = shears.getDamageValue();
+                UseOnContext context = new UseOnContext(player, InteractionHand.MAIN_HAND,
+                        new BlockHitResult(Vec3.atCenterOf(base), Direction.UP, base, false));
+                helper.assertTrue(shears.useOn(context).consumesAction(), "Iron shears accept right-click clipping for " + leaves);
+                helper.assertTrue(helper.getLevel().getBlockState(base).isAir(), "The server destroys the clipped leaf block");
+                helper.assertValueEqual(fixture.countDrops(leaves.asItem()) - before, 1, "Actual shears loot returns exactly one leaf block");
+                helper.assertTrue(shears.getDamageValue() > wear, "Clipping spends normal harvest durability exactly through the native harvest");
+            }
+        }
+        helper.succeed();
     }
 
     private static void assertProgress(GameTestHelper helper, Player player, BlockState state, BlockPos position,

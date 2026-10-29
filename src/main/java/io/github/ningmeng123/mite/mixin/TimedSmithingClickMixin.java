@@ -14,6 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /** All result-click modes are intent only until the authoritative upgrade completes. @author NingMeng123 */
 @Mixin(AbstractContainerMenu.class)
 public abstract class TimedSmithingClickMixin {
+    @Inject(method = "broadcastChanges", at = @At("HEAD"))
+    private void mite$refreshInventoryFundedUpgrade(CallbackInfo ci) {
+        AbstractContainerMenu menu = (AbstractContainerMenu)(Object)this;
+        if (TimedSmithingController.applies(menu) && !TimedSmithingController.completing(menu)) ((SmithingMenu)menu).createResult();
+    }
+
     @Inject(method = "clicked", at = @At("HEAD"), cancellable = true)
     private void mite$timeUpgrade(int slot, int button, ClickType type, Player player, CallbackInfo ci) {
         AbstractContainerMenu menu = (AbstractContainerMenu)(Object)this;

@@ -180,7 +180,7 @@ public final class ZombieVariantClientAudit {
                     check(image.getWidth() == 64 && image.getHeight() == 32, "Original species atlas remains 64x32: " + kind);
                     row.fact.addProperty("skin_width", image.getWidth()); row.fact.addProperty("skin_height", image.getHeight());
                 }
-                float expectedOpacity = kind == MobKind.INVISIBLE_STALKER ? .05F : 1F;
+                float expectedOpacity = kind == MobKind.INVISIBLE_STALKER ? io.github.ningmeng123.mite.client.mob.InvisibleMonsterVisuals.OPACITY : 1F;
                 check(Math.abs(((Number)field(model, "opacity")).floatValue() - expectedOpacity) < .0001F, "Source model opacity is preserved: " + kind);
                 check(Math.abs(((Number)field(renderer, "opacity")).floatValue() - expectedOpacity) < .0001F, "Source renderer opacity is preserved: " + kind);
                 check(Math.abs(((Number)field(renderer, "shadowStrength")).floatValue() - expectedOpacity) < .0001F, "Source shadow opacity is preserved: " + kind);
@@ -233,7 +233,7 @@ public final class ZombieVariantClientAudit {
                         if (column == 1) check(!same(idle, sample.pose), "Visible walking bones differ from idle: " + name);
                         if (column == 2) { attack = sample.pose; check(!same(idle, attack), "Actual weapon keyframes override FA idle bones: " + name); }
                         if (column == 3) check(!BetterCombatMobAnimations.active(row.entity) && !same(attack, sample.pose), "Attack end releases visible source bones: " + name);
-                        if (row.kind == MobKind.INVISIBLE_STALKER) check(sample.alphas.contains(13), "Actual translucent source vertices retain 5% alpha");
+                        if (row.kind == MobKind.INVISIBLE_STALKER) check(sample.alphas.contains(41), "Actual translucent silhouette vertices retain 16% alpha");
                         if (row.kind == MobKind.SHADOW) check(sample.alphas.contains(255), "Actual shadow vertices retain their source opacity");
                         if (row.kind == MobKind.EARTH_ELEMENTAL || row.kind == MobKind.CLAY_GOLEM)
                             check(sample.glowVertices > 0, "The actual renderer draws its source elemental glow layer");

@@ -24,6 +24,8 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -49,6 +51,45 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class GearProgressionGameTests {
     private GearProgressionGameTests() {}
+
+    @GameTest(template = "empty")
+    public static void upgradesReportEachReachedLevelAndItsNewModifierInChat(GameTestHelper helper) {
+        try (Session session = new Session(helper)) {
+            for (Item item : new Item[]{Items.IRON_PICKAXE, Items.IRON_SWORD, Items.IRON_CHESTPLATE}) {
+                session.channel.outboundMessages().clear();
+                ItemStack stack = new ItemStack(item);
+                session.random(0, 0);
+                long first = GearProgression.nextLevelExperienceMillis(stack, 0);
+                long second = GearProgression.nextLevelExperienceMillis(stack, 1);
+                GearProgression.award(stack, (first + second) * 2, session.player);
+                session.channel.runPendingTasks();
+                var messages = session.channel.outboundMessages().stream()
+                        .filter(packet -> packet instanceof ClientboundSystemChatPacket)
+                        .map(packet -> (ClientboundSystemChatPacket) packet).toList();
+                helper.assertValueEqual(messages.size(), 2, "Two reached levels emit two chat messages for " + item);
+                for (int index = 0; index < messages.size(); index++) {
+                    var message = messages.get(index);
+                    helper.assertFalse(message.overlay(), "Upgrade messages remain in chat history");
+                    helper.assertTrue(message.content().getContents() instanceof TranslatableContents, "Upgrade messages use translated components");
+                    var contents = (TranslatableContents) message.content().getContents();
+                    helper.assertTrue(contents.getKey().equals("message.mite.gear_level_up_affix"), "The message includes the gained modifier");
+                    Object[] args = contents.getArgs();
+                    helper.assertTrue(args[1].equals(index + 1) && args[2].equals(25) && args[4].equals(index + 1),
+                            "The chat records the reached equipment level and new modifier rank");
+                    helper.assertTrue(args[3] instanceof net.minecraft.network.chat.Component component
+                                    && component.getContents() instanceof TranslatableContents modifier
+                                    && modifier.getKey().startsWith("modifier.mite."),
+                            "The modifier name is translated for the player's language");
+                }
+                session.channel.outboundMessages().clear();
+                GearProgression.award(stack, 2, session.player);
+                session.channel.runPendingTasks();
+                helper.assertFalse(session.channel.outboundMessages().stream().anyMatch(packet -> packet instanceof ClientboundSystemChatPacket),
+                        "Experience below the next threshold does not spam chat");
+            }
+        }
+        helper.succeed();
+    }
 
     @GameTest(template = "empty")
     public static void halvedAwardsPreserveSavedGrowthAndPlayerExperienceAtThousandthPrecision(GameTestHelper helper) {

@@ -69,7 +69,11 @@ public final class StackingBatchRecipeGameTests {
             int count = record.get("output_count").getAsInt();
             helper.assertValueEqual(loaded.getResultItem(helper.getLevel().registryAccess()).getCount(), count, "Loaded recipe retains complete batch: " + id);
             helper.assertValueEqual(decoded.getResultItem(helper.getLevel().registryAccess()).getCount(), count, "JSON decoding retains complete batch: " + id);
-            helper.assertValueEqual(decoded.getResultItem(helper.getLevel().registryAccess()).getMaxStackSize(), record.get("maximum_stack").getAsInt(), "Recipe outputs still expose the source inventory limit: " + id);
+            ItemStack decodedOutput = decoded.getResultItem(helper.getLevel().registryAccess());
+            boolean adjustedMineral = decodedOutput.is(Items.RAW_COPPER) || decodedOutput.is(Items.RAW_GOLD)
+                    || decodedOutput.is(Items.RAW_IRON) || decodedOutput.is(Items.NETHERITE_INGOT);
+            helper.assertValueEqual(decodedOutput.getMaxStackSize(), adjustedMineral ? 4 : record.get("maximum_stack").getAsInt(),
+                    "Recipe outputs expose source limits with the current four-mineral adjustment: " + id);
             helper.assertValueEqual(decoded.getGroup(), json.has("group") ? json.get("group").getAsString() : "", "Native recipe group is unchanged: " + id);
             helper.assertValueEqual(decoded.category().getSerializedName(), json.has("category") ? json.get("category").getAsString() : "misc", "Native crafting category is unchanged: " + id);
             var roundTrip = (CraftingRecipe) Recipe.CODEC.parse(ops, Recipe.CODEC.encodeStart(ops, decoded).getOrThrow()).getOrThrow();
@@ -127,7 +131,7 @@ public final class StackingBatchRecipeGameTests {
                  "result":{"id":"minecraft:raw_copper","count":9}}
                 """).getAsJsonObject();
         StackBatchShapelessRecipe recipe = (StackBatchShapelessRecipe) Recipe.CODEC.parse(ops, valid).getOrThrow();
-        helper.assertValueEqual(recipe.getResultItem(helper.getLevel().registryAccess()).getCount(), 9, "Nine items remain intact while their inventory cap is eight");
+        helper.assertValueEqual(recipe.getResultItem(helper.getLevel().registryAccess()).getCount(), 9, "Nine items remain intact while their inventory cap is four");
         JsonObject empty = valid.deepCopy(); empty.add("ingredients", new JsonArray());
         helper.assertTrue(Recipe.CODEC.parse(ops, empty).error().isPresent(), "Empty ingredient list still fails native validation");
         JsonObject oversized = valid.deepCopy(); JsonArray ingredients = new JsonArray();
@@ -200,11 +204,11 @@ public final class StackingBatchRecipeGameTests {
             fixture.menu.clicked(0, 0, ClickType.QUICK_MOVE, fixture.player);
             Item output = Items.RAW_COPPER;
             helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 1, "The successful partial Shift transfer consumes exactly one input batch, and cannot consume the blocked next batch");
-            helper.assertValueEqual(fixture.player.getInventory().countItem(output), 8,
+            helper.assertValueEqual(fixture.player.getInventory().countItem(output), 4,
                     "The only free inventory slot receives precisely its source-limited capacity");
             int dropped = helper.getLevel().getEntitiesOfClass(ItemEntity.class, fixture.player.getBoundingBox().inflate(3),
                     entity -> entity.getItem().is(output)).stream().mapToInt(entity -> entity.getItem().getCount()).sum();
-            helper.assertValueEqual(dropped, 1, "Only the undelivered batch remainder is dropped, with no second debit");
+            helper.assertValueEqual(dropped, 5, "Only the undelivered batch remainder is dropped, with no second debit");
             assertConservedAndBounded(helper, fixture, output, 9, "One-free-slot Shift " + mode);
         }
         helper.succeed();
@@ -227,7 +231,7 @@ public final class StackingBatchRecipeGameTests {
                 assertConservedAndBounded(helper, fixture, Items.RAW_COPPER, 0, "Occupied cursor " + type);
             }
             Item output = Items.RAW_COPPER;
-            int cap = 8;
+            int cap = 4;
             fixture.menu.setCarried(new ItemStack(output, cap));
             fixture.menu.clicked(0, 0, ClickType.PICKUP, fixture.player);
             helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 2, "An already full matching cursor cannot debit the input batch");
@@ -317,7 +321,7 @@ public final class StackingBatchRecipeGameTests {
                     && candidate.source().id().equals(ResourceLocation.parse(id))).findFirst().orElseThrow();
             boolean doors = id.endsWith("birch_door");
             helper.assertValueEqual(page.output().getCount(), doors ? 3 : 9, "JEI displays the complete native batch rather than clipping it to an inventory stack");
-            helper.assertValueEqual(page.output().getMaxStackSize(), doors ? 1 : 8, "The page uses the same actual stack cap as gameplay");
+            helper.assertValueEqual(page.output().getMaxStackSize(), doors ? 1 : 4, "The page uses the same actual stack cap as gameplay");
             helper.assertTrue(doors ? page.source().value() instanceof StackBatchShapedRecipe : page.source().value() instanceof StackBatchShapelessRecipe,
                     "The optional viewer recognizes both explicitly integrated batch adapters");
         }

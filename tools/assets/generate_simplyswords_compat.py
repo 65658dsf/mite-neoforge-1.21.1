@@ -23,6 +23,7 @@ from PIL import Image, ImageDraw
 
 
 ROOT = Path(__file__).resolve().parents[2]
+CHAKRAM_ATTACK_RANGE = 4.25
 FAMILIES = {
     "longsword": ("Longsword", "长剑"),
     "twinblade": ("Twinblade", "双头刃"),
@@ -253,6 +254,7 @@ def main() -> None:
     ids = [f"mite:simplyswords_{metal}_{family}" for metal in MATERIALS for family in FAMILIES]
     translations = {locale: {} for locale in ("en_us", "zh_cn")}
     original_iron, original_gold, rendered = {}, {}, {}
+    chakram_profiles = []
 
     def put(path: str, value: object) -> None:
         files[path] = json_bytes(value)
@@ -260,6 +262,18 @@ def main() -> None:
     with zipfile.ZipFile(archive_path) as archive:
         native_ids = native_weapons(archive)
         two_handed_ids = [item_id for item_id in native_ids if is_two_handed(archive, item_id)]
+        # Keep every native/special/optional-material chakram's full moveset and
+        # sounds, changing only its length. Added metals below explicitly inherit
+        # the same fixed range even when an upstream resource is encountered first.
+        for location in sorted(archive.namelist()):
+            if not location.startswith('data/simplyswords/weapon_attributes/') or not location.endswith('.json'):
+                continue
+            profile = json.loads(archive.read(location))
+            if profile.get('attributes', {}).get('category') != 'chakram' and not Path(location).stem.endswith('_chakram'):
+                continue
+            profile.setdefault('attributes', {}).update({'attack_range': CHAKRAM_ATTACK_RANGE, 'range_bonus': 0})
+            put(location, profile)
+            chakram_profiles.append(location)
         for family in FAMILIES:
             original_iron[family] = Image.open(BytesIO(archive.read(f"assets/simplyswords/textures/item/iron_{family}.png"))).convert("RGBA")
             original_gold[family] = Image.open(BytesIO(archive.read(f"assets/simplyswords/textures/item/gold_{family}.png"))).convert("RGBA")
@@ -278,7 +292,10 @@ def main() -> None:
                 # The upstream jar has no iron_scythe attributes; use its glaive
                 # moveset instead of an unresolved weapon-attribute parent.
                 parent_family = "glaive" if family == "scythe" else family
-                put(f"data/mite/weapon_attributes/{path}.json", {"parent": f"simplyswords:iron_{parent_family}"})
+                combat = {"parent": f"simplyswords:iron_{parent_family}"}
+                if family == 'chakram':
+                    combat['attributes'] = {'attack_range': CHAKRAM_ATTACK_RANGE, 'range_bonus': 0}
+                put(f"data/mite/weapon_attributes/{path}.json", combat)
                 if is_two_handed(archive, f"simplyswords:iron_{parent_family}"):
                     two_handed_ids.append(item_id)
                 translations["en_us"][f"item.mite.{path}"] = f"{english_metal} {english_family}"
@@ -391,6 +408,11 @@ def main() -> None:
             "Native diamond and netherite weapons are retired; optional tag removals retain iron, gold and runic weapons. Unique weapons are excluded separately at runtime.",
         ],
         "optional_native_weapon_ids": len(native_ids),
+        "chakram_balance": {
+            "damage_multiplier_of_previous_base_total": .8,
+            "attack_range": CHAKRAM_ATTACK_RANGE,
+            "native_profile_overrides": chakram_profiles,
+        },
         "retired_native_weapon_ids": sorted(RETIRED_NATIVE_IDS),
         "items": entries,
     })

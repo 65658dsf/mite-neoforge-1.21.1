@@ -1,3 +1,7 @@
 {
-  "parent": "simplyswords:iron_chakram"
+  "parent": "simplyswords:iron_chakram",
+  "attributes": {
+    "attack_range": 4.25,
+    "range_bonus": 0
+  }
 }

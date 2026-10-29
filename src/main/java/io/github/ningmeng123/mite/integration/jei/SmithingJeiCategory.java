@@ -34,7 +34,8 @@ public final class SmithingJeiCategory implements IRecipeCategory<SmithingJeiRec
     @Override public void setRecipe(IRecipeLayoutBuilder builder, SmithingJeiRecipe recipe, IFocusGroup focuses) {
         builder.addInputSlot(7, 14).setStandardSlotBackground().addItemStacks(recipe.templates());
         builder.addInputSlot(35, 14).setStandardSlotBackground().addItemStacks(recipe.bases());
-        builder.addInputSlot(63, 14).setStandardSlotBackground().addItemStacks(recipe.additions());
+        builder.addInputSlot(63, 14).setStandardSlotBackground().addItemStacks(recipe.additions())
+                .addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable("jei.mite.material_upgrade_inventory")));
         builder.addOutputSlot(129, 14).setOutputSlotBackground().addItemStack(recipe.output())
                 .addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable("jei.mite.material_upgrade_preservation")));
     }

@@ -14,10 +14,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-/** Successful placement starts a shared eight-tick cooldown without queuing future actions. @author NingMeng123 */
+/** Successful placement starts a shared ten-tick cooldown without queuing future actions. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class PlacementDelay {
-    public static final int DELAY_TICKS = 8;
+    // Previous eight ticks +20% =9.6; round up to the next whole game tick.
+    public static final int DELAY_TICKS = 10;
     // Entity equality uses its network ID, shared by the integrated client and server.
     // Weak identity keys keep their deadlines separate without retaining old players.
     private static final Map<Player, Cooldown> COOLDOWNS = new MapMaker().weakKeys().makeMap();
@@ -45,6 +46,11 @@ public final class PlacementDelay {
     }
 
     public static boolean blocked(@Nullable Player player) { return remainingTicks(player) > 0; }
+
+    public static boolean placementBlocked(@Nullable Player player) {
+        return player != null && !player.hasInfiniteMaterials() && !player.isSpectator()
+                && (player.getFoodData().getFoodLevel() <= 0 || blocked(player));
+    }
 
     public static void placed(@Nullable Player player) {
         if (player != null && !player.hasInfiniteMaterials() && !player.isSpectator())

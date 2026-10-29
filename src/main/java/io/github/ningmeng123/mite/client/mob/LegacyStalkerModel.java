@@ -172,7 +172,7 @@ public final class LegacyStalkerModel<T extends Mob> extends HumanoidModel<T> {
     }
 
     @Override public void renderToBuffer(PoseStack pose, VertexConsumer vertices, int light, int overlay, int color) {
-        int alpha = Math.round((color >>> 24) * opacity);
+        int alpha = Math.min(color >>> 24, Math.round(255F * opacity));
         super.renderToBuffer(pose, vertices, light, overlay, color & 0x00FFFFFF | alpha << 24);
     }
 }

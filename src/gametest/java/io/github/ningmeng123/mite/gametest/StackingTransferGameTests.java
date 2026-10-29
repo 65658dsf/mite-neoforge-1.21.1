@@ -373,35 +373,35 @@ public final class StackingTransferGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void furnaceStopsAtEightIronIngotsAndResumesAfterOneWithdrawal(GameTestHelper helper) {
+    public static void furnaceStopsAtFourIronIngotsAndResumesAfterOneWithdrawal(GameTestHelper helper) {
         BlockPos local = new BlockPos(2, 2, 2);
         BlockPos absolute = helper.absolutePos(local);
         helper.setBlock(local, Blocks.FURNACE);
         AbstractFurnaceBlockEntity furnace = (AbstractFurnaceBlockEntity) helper.getLevel().getBlockEntity(absolute);
         furnace.setItem(0, new ItemStack(Items.IRON_ORE));
         furnace.setItem(1, new ItemStack(Items.COAL));
-        furnace.setItem(2, new ItemStack(Items.IRON_INGOT, 8));
+        furnace.setItem(2, new ItemStack(Items.IRON_INGOT, 4));
         for (int tick = 0; tick < 240; tick++) AbstractFurnaceBlockEntity.serverTick(helper.getLevel(), absolute,
                 helper.getLevel().getBlockState(absolute), furnace);
-        helper.assertValueEqual(furnace.getItem(2).getCount(), 8, "Full source ingot output cannot grow beyond eight");
+        helper.assertValueEqual(furnace.getItem(2).getCount(), 4, "Full source ingot output cannot grow beyond four");
         helper.assertValueEqual(furnace.getItem(0).getCount(), 1, "A full output retains the unprocessed ore");
         furnace.removeItem(2, 1);
         for (int tick = 0; tick < 200; tick++) AbstractFurnaceBlockEntity.serverTick(helper.getLevel(), absolute,
                 helper.getLevel().getBlockState(absolute), furnace);
         helper.assertTrue(furnace.getItem(0).isEmpty(), "One available output space permits exactly one source ore batch");
-        helper.assertValueEqual(furnace.getItem(2).getCount(), 8, "Refilled output stops at the same source limit");
+        helper.assertValueEqual(furnace.getItem(2).getCount(), 4, "Refilled output stops at the same source limit");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void nineIngotRecipeBatchSplitsIntoEightAndOneWithoutLosingTheNinth(GameTestHelper helper) {
+    public static void nineIngotRecipeBatchSplitsIntoFourFourAndOneWithoutLosingTheNinth(GameTestHelper helper) {
         try (CraftFixture fixture = new CraftFixture(helper, GameType.SURVIVAL)) {
             fixture.loadIronBlock();
             TimedCraftingTestSupport.craftOne(helper, fixture.player, fixture.menu, ClickType.PICKUP);
             helper.assertTrue(fixture.grid.isEmpty(), "The one completed source recipe consumes exactly one iron block");
             helper.assertValueEqual(fixture.player.getInventory().countItem(Items.IRON_INGOT), 9, "The nine-item batch is retained before inventory splitting");
-            helper.assertValueEqual(occupied(fixture.player.getInventory(), Items.IRON_INGOT), 2, "The output occupies eight-plus-one inventory slots");
-            assertBounded(helper, fixture.player.getInventory(), Items.IRON_INGOT, 8);
+            helper.assertValueEqual(occupied(fixture.player.getInventory(), Items.IRON_INGOT), 3, "The output occupies four-plus-four-plus-one inventory slots");
+            assertBounded(helper, fixture.player.getInventory(), Items.IRON_INGOT, 4);
         }
         helper.succeed();
     }
@@ -416,9 +416,9 @@ public final class StackingTransferGameTests {
                     entity -> entity.getItem().is(Items.IRON_INGOT));
             helper.assertValueEqual(drops.stream().mapToInt(entity -> entity.getItem().getCount()).sum(), 9,
                     "Full inventory output retains every paid/crafted ingot in both game modes");
-            helper.assertValueEqual(drops.size(), 2, "The ground receives one eight-item and one one-item stack");
+            helper.assertValueEqual(drops.size(), 3, "The ground receives two four-item and one one-item stack");
             for (ItemEntity entity : drops) {
-                helper.assertTrue(entity.getItem().getCount() <= 8, "Manufacturing never drops an overfull result batch");
+                helper.assertTrue(entity.getItem().getCount() <= 4, "Manufacturing never drops an overfull result batch");
                 entity.discard();
             }
         }
@@ -437,8 +437,8 @@ public final class StackingTransferGameTests {
         helper.runAfterDelay(1120, () -> {
             helper.assertTrue(crafter.isEmpty(), "One actual redstone manufacturing request consumes one iron block after its full source period");
             helper.assertValueEqual(chest.countItem(Items.IRON_INGOT), 9, "Native crafter output conserves all nine ingots");
-            helper.assertValueEqual(occupied(chest, Items.IRON_INGOT), 2, "Automatic output inserts the batch into eight-plus-one chest slots");
-            assertBounded(helper, chest, Items.IRON_INGOT, 8);
+            helper.assertValueEqual(occupied(chest, Items.IRON_INGOT), 3, "Automatic output inserts the batch into four-plus-four-plus-one chest slots");
+            assertBounded(helper, chest, Items.IRON_INGOT, 4);
             helper.succeed();
         });
     }

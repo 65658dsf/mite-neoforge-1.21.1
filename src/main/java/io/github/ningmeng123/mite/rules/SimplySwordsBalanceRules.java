@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 /** Bounded optional-weapon stats share the source material ladder and one material budget. @author NingMeng123 */
 public final class SimplySwordsBalanceRules {
     public static final double DAMAGE_FACTOR = .8D;
+    public static final double CHAKRAM_DAMAGE_MULTIPLIER = .8D;
     public static final double MIN_CONFIGURED_DAMAGE_ADJUSTMENT = -4D, MAX_CONFIGURED_DAMAGE_ADJUSTMENT = 8D;
     public static final double TWO_HANDED_ATTACK_SPEED_FACTOR = .8D;
     public record Profile(String family, double damageFactor, double attacksPerSecond, double minimumAttacksPerSecond,
@@ -26,7 +27,7 @@ public final class SimplySwordsBalanceRules {
             new Profile("claymore", 1.05D, .95D, .8D, 1.05D, .2D, 0D, 1.2D, 2F, true),
             new Profile("greataxe", 1.1D, .8D, .7D, .9D, .22D, 0D, .9D, 3F, true),
             new Profile("greathammer", 1.1D, .7D, .65D, .8D, .25D, 0D, .8D, 4F, true),
-            new Profile("chakram", .8D, 1.5D, 1.25D, 1.65D, .15D, 0D, 1D, -1F, false),
+            new Profile("chakram", .8D * CHAKRAM_DAMAGE_MULTIPLIER, 1.5D, 1.25D, 1.65D, .15D, 0D, 1D, -1F, false),
             new Profile("scythe", .9D, 1D, .85D, 1.1D, .15D, .05D, 1.3D, 1F, true),
             new Profile("halberd", .85D, .9D, .8D, 1D, .2D, .05D, 1.2D, 3F, true));
     private static final Map<String, Profile> BY_FAMILY = PROFILES.stream().collect(Collectors.toUnmodifiableMap(Profile::family, Function.identity()));

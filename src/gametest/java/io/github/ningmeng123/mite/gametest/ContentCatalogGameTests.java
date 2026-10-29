@@ -71,7 +71,7 @@ public final class ContentCatalogGameTests {
             var unpack = CraftingInput.of(1, 1, List.of(packed));
             var recipe = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, unpack, helper.getLevel()).orElseThrow();
             var result = recipe.value().assemble(unpack, helper.getLevel().registryAccess());
-            helper.assertTrue(result.is(ingot) && result.getCount() == 9 && result.getMaxStackSize() == 8, "Unpacking retains the full nine-ingot batch");
+            helper.assertTrue(result.is(ingot) && result.getCount() == 9 && result.getMaxStackSize() == 4, "Unpacking retains the full nine-ingot batch");
             helper.assertValueEqual(CraftingQuality.rule(recipe, result, unpack).requiredCapacity(), 0F, "Unpacking does not require metal equipment");
         }
         helper.succeed();

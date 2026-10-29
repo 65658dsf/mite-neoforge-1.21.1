@@ -168,7 +168,7 @@ public final class VibraniumCraftingGameTests {
         var encoded = Recipe.CODEC.encodeStart(ops, reverse.value()).getOrThrow();
         var decoded = Recipe.CODEC.parse(ops, encoded).getOrThrow();
         h.assertTrue(decoded.getResultItem(h.getLevel().registryAccess()).is(ingot), "The storage recipe survives actual registry-aware JSON encoding");
-        h.assertValueEqual(new ItemStack(ingot).getMaxStackSize(), 8, "Bulk output does not raise ordinary ingot stack limits");
+        h.assertValueEqual(new ItemStack(ingot).getMaxStackSize(), 4, "Bulk output does not raise ordinary ingot stack limits");
         h.assertValueEqual(new ItemStack(nugget).getMaxStackSize(), 64, "Vibranium nuggets retain ordinary nugget stack limits");
         h.succeed();
     }

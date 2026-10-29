@@ -74,6 +74,7 @@ public final class SkeletonWeaponDisplayClientAudit implements DataProvider {
             check(Boolean.getBoolean("mixin.debug.export"), "Actual transformed-class export is required");
             auditItemLayer(transformed("net/minecraft/client/renderer/entity/layers/ItemInHandLayer", targets), report);
             auditPose(transformed("net/minecraft/client/model/SkeletonModel", targets), report);
+            auditInvisibleMonsters(transformed("net/minecraft/client/renderer/entity/LivingEntityRenderer", targets), report);
             report.addProperty("status", "passed_actual_skeleton_weapon_display_transforms_without_rendering");
             write(report);
             return CompletableFuture.completedFuture(null);
@@ -82,6 +83,32 @@ public final class SkeletonWeaponDisplayClientAudit implements DataProvider {
             try { write(report); } catch (Exception secondary) { failure.addSuppressed(secondary); }
             return CompletableFuture.failedFuture(failure);
         }
+    }
+
+    private static void auditInvisibleMonsters(ClassNode renderer, JsonObject report) {
+        MethodNode render=method(renderer,"render","(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V");
+        MethodNode pass=merged(renderer,"InvisibleMonsterRendererMixin","mite$showInvisibleHostile");
+        MethodNode color=merged(renderer,"InvisibleMonsterRendererMixin","mite$faintHostileBody");
+        Set<MethodNode> reachable=reachableMethods(renderer,render);
+        check(reachable.contains(pass)&&reachable.contains(color),"The actual LivingEntityRenderer.render call chain reaches both invisible-hostile wrappers");
+        String policy="io/github/ningmeng123/mite/client/mob/InvisibleMonsterVisuals";
+        check(calls(pass,policy,"silhouette")==1&&calls(color,policy,"silhouette")==1,
+                "Both real merged handlers use the same hostile-invisibility gate");
+        check(calls(pass,"net/minecraft/client/renderer/RenderType","entityTranslucent")==1,
+                "The real render-pass wrapper can select the normal lit translucent buffer");
+        check(calls(pass,"com/llamalad7/mixinextras/injector/wrapoperation/Operation","call")==1
+                        &&calls(color,"com/llamalad7/mixinextras/injector/wrapoperation/Operation","call")==1,
+                "Both actual wrappers retain the original render pass and model draw operation");
+        check(reachable.stream().mapToLong(candidate->calls(candidate,"net/minecraft/client/model/EntityModel","renderToBuffer")).sum()==1,
+                "Exactly one original model render remains reachable through the real wrapper chain");
+        JsonObject facts=new JsonObject();
+        facts.addProperty("native_entrypoint",render.name+render.desc);
+        facts.addProperty("merged_render_pass_wrapper",pass.name+pass.desc);
+        facts.addProperty("merged_alpha_wrapper",color.name+color.desc);
+        facts.addProperty("both_wrappers_reachable_from_native_render",true);
+        facts.addProperty("lit_translucent_pass_and_native_model_draw_preserved",true);
+        facts.addProperty("shader_pack_visually_tested",false);
+        report.add("invisible_monster_rendering",facts);
     }
 
     private static void auditItemLayer(ClassNode layer, JsonObject report) {

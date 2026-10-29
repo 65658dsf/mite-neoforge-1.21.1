@@ -18,7 +18,7 @@ public abstract class BucketSourcePlacementMixin {
     @WrapMethod(method = "emptyContents(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z")
     private boolean mite$placeSourceWithExperience(Player player, Level level, BlockPos pos, BlockHitResult hit,
             ItemStack container, Operation<Boolean> original) {
-        if (PlacementDelay.blocked(player)) return false;
+        if (PlacementDelay.placementBlocked(player)) return false;
         BucketItem bucket = (BucketItem) (Object) this;
         boolean placed = BucketPlacementController.supports(bucket)
                 ? BucketPlacementController.empty(bucket, player, level, pos, hit, container,

@@ -42,9 +42,9 @@ public final class SimplySwordsBalanceGameTests {
             close(h, rate(stack), rates.get(entry.getKey()), "The real equipped attack rate includes exactly one handedness adjustment");
         }
         String[] families={"longsword","twinblade","rapier","katana","sai","spear","glaive","warglaive","cutlass","claymore","greataxe","greathammer","chakram","scythe","halberd"};
-        double[] copper={6D,5.4D,4.8D,5.7D,3.9D,4.2D,4.5D,5.1D,5.4D,6.3D,6.6D,6.6D,4.8D,5.4D,5.1D};
-        double[] silver={6.4D,5.76D,5.12D,6.08D,4.16D,4.48D,4.8D,5.44D,5.76D,6.72D,7.04D,7.04D,5.12D,5.76D,5.44D};
-        double[] iron={7.2D,6.48D,5.76D,6.84D,4.68D,5.04D,5.4D,6.12D,6.48D,7.56D,7.92D,7.92D,5.76D,6.48D,6.12D};
+        double[] copper={6D,5.4D,4.8D,5.7D,3.9D,4.2D,4.5D,5.1D,5.4D,6.3D,6.6D,6.6D,3.84D,5.4D,5.1D};
+        double[] silver={6.4D,5.76D,5.12D,6.08D,4.16D,4.48D,4.8D,5.44D,5.76D,6.72D,7.04D,7.04D,4.096D,5.76D,5.44D};
+        double[] iron={7.2D,6.48D,5.76D,6.84D,4.68D,5.04D,5.4D,6.12D,6.48D,7.56D,7.92D,7.92D,4.608D,6.48D,6.12D};
         for(int index=0;index<families.length;index++) {
             close(h,damage(weapon("copper",families[index])),copper[index],"The real copper "+families[index]+" uses its independent six-point sword budget");
             close(h,damage(weapon("silver",families[index])),silver[index],"The real silver "+families[index]+" uses its independent6.4 sword budget");
@@ -70,6 +70,29 @@ public final class SimplySwordsBalanceGameTests {
                     &&modifier.modifier().id().toString().equals("mite:simplyswords_two_handed_movement_speed")),"No registered weapon still supplies the removed item movement penalty");
         }
         h.assertValueEqual(added,105,"All 105 material variants pass the same live attribute path");
+        h.succeed();
+    }
+
+    @GameTest(template="empty",batch="simplyswords_balance")
+    public static void oldChakramBaseNormalizesOnceWhileKeepingIndependentAffixes(GameTestHelper h) {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        var stack = weapon("iron", "chakram");
+        close(h, damage(stack), 4.608D, "The real iron chakram keeps 80% of its previous 5.76 total base damage");
+        var extra = ResourceLocation.fromNamespaceAndPath("mite", "chakram_balance_test_affix");
+        stack.set(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 4.76D,
+                        AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+                .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(extra, 2D,
+                        AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND).build());
+        stack = ItemStack.parse(h.getLevel().registryAccess(), stack.save(h.getLevel().registryAccess())).orElseThrow();
+        var saved = stack.save(h.getLevel().registryAccess());
+        for (int query = 0; query < 4; ++query) {
+            close(h, damage(stack), 6.608D, "Saved base becomes 4.608 while the independent two-point affix remains intact");
+            h.assertValueEqual(stack.getAttributeModifiers().modifiers().stream()
+                    .filter(entry -> entry.modifier().id().equals(Item.BASE_ATTACK_DAMAGE_ID)).count(), 1L,
+                    "Repeated reads do not duplicate the normalized base");
+        }
+        h.assertValueEqual(stack.save(h.getLevel().registryAccess()), saved, "Effective normalization leaves the saved payload stable");
         h.succeed();
     }
 

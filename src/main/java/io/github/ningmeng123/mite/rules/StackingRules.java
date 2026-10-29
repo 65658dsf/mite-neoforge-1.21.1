@@ -7,9 +7,15 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /** Confirmed carried identities and explicit modern family adaptations. @author NingMeng123 */
 public final class StackingRules {
+    // User balance adjustment on top of the frozen R196 evidence table. Nuggets keep their existing limits.
+    private static final Set<String> FOUR_PER_STACK_MINERALS = Set.of(
+            "minecraft:copper_ingot", "minecraft:gold_ingot", "minecraft:iron_ingot", "minecraft:netherite_ingot",
+            "minecraft:raw_copper", "minecraft:raw_gold", "minecraft:raw_iron",
+            "mite:silver_ingot", "mite:ancient_metal_ingot", "mite:mithril_ingot", "mite:adamantium_ingot");
     private static final Map<String, Integer> LIMITS = load();
     private StackingRules() {}
 
@@ -27,7 +33,7 @@ public final class StackingRules {
             for (var value : data.getAsJsonArray("mappedItems")) {
                 var row = value.getAsJsonObject();
                 String id = row.get("modern_id").getAsString();
-                int limit = row.get("max_stack_size").getAsInt();
+                int limit = FOUR_PER_STACK_MINERALS.contains(id) ? 4 : row.get("max_stack_size").getAsInt();
                 if (!id.matches("(minecraft|mite):[a-z0-9_/.-]+") || limit < 1 || limit > 64
                         || limits.putIfAbsent(id, limit) != null) throw new IllegalArgumentException("Invalid stacking identity: " + id);
             }

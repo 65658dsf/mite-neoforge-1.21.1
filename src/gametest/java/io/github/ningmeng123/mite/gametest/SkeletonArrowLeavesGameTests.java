@@ -315,6 +315,9 @@ public final class SkeletonArrowLeavesGameTests {
         leaves(helper, 3, 11, 2, Blocks.OAK_LEAVES);
         AbstractSkeleton shooter = skeleton(helper);
         shooter.setNoGravity(true);
+        // This delayed UUID-resolution fixture must outlive normal mob despawning:
+        // other tests can leave the nearest real server player far outside 128 blocks.
+        shooter.setPersistenceRequired();
         Arrow source = arrow(helper, shooter, point(helper, 2.5D, 11.5D, 2.5D), new Vec3(2D, 0D, 0D));
         CompoundTag legacy = new CompoundTag();
         source.saveWithoutId(legacy);
@@ -327,8 +330,10 @@ public final class SkeletonArrowLeavesGameTests {
         loaded.saveWithoutId(unresolved);
         helper.assertTrue(!unresolved.contains("mite_skeleton_arrow_origin"),
                 "Saving an unresolved legacy arrow preserves its eligibility for owner migration");
-        helper.getLevel().addFreshEntity(shooter);
+        helper.assertTrue(helper.getLevel().addFreshEntity(shooter), "The saved shooter actually joins the server entity tracker");
         helper.runAfterDelay(1, () -> {
+            helper.assertTrue(!shooter.isRemoved() && helper.getLevel().getEntity(shooter.getUUID()) == shooter,
+                    "The persistent saved shooter remains available by UUID before migrating the arrow");
             loaded.tick();
             helper.assertTrue(loaded.getOwner() == shooter && skeletonOrigin(loaded) && !embedded(loaded),
                     "Legacy arrow resolves its now-loaded skeleton before the native collision check");

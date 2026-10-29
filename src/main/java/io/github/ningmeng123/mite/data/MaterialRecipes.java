@@ -33,6 +33,9 @@ public final class MaterialRecipes extends RecipeProvider {
     }
 
     public static void addRecipes(RecipeOutput output) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.BONE_MEAL).requires(Items.BONE)
+                .unlockedBy("has_bone", has(Items.BONE))
+                .save(output, ResourceLocation.withDefaultNamespace("bone_meal"));
         conversion(output, "copper", MiteMaterials.COPPER_NUGGET.get(), Items.COPPER_INGOT, false);
         conversion(output, "silver", MiteMaterials.SILVER_NUGGET.get(), MiteMaterials.SILVER_INGOT.get(), false);
         conversion(output, "gold", Items.GOLD_NUGGET, Items.GOLD_INGOT, true);

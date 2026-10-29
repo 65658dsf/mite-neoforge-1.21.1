@@ -32,7 +32,7 @@ public final class NativeWeaponBalanceRules {
             default -> 1.6D;
         };
         return switch (family) {
-            case SWORD -> 1.5D;
+            case SWORD -> "iron".equals(material) ? 2D : 1.5D;
             case DAGGER, KNIFE -> 2D;
             case BATTLE_AXE -> .85D;
             case WAR_HAMMER -> .75D;

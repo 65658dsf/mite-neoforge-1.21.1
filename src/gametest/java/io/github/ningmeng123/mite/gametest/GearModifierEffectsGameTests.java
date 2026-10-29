@@ -167,7 +167,8 @@ public final class GearModifierEffectsGameTests {
     public static void protectionOneSurvivesNativeArmorFlooringWithoutChangingOrdinaryFractionalArmor(GameTestHelper h) {
         TestPlayer player = player(h);
         ItemStack chest = new ItemStack(Items.IRON_CHESTPLATE);
-        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes(1D));
+        // Iron armor's current material toughness is 1.25; cancel that entire baseline for this zero-toughness control.
+        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes(1.25D));
         equip(player, EquipmentSlot.CHEST, chest);
         close(h, player.getAttributeValue(Attributes.ARMOR), 0D, "The explicit nonempty override removes default chestplate armor");
         close(h, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "The fractional armor fixture has no toughness");

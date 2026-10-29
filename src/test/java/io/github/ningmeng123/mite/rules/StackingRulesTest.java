@@ -12,8 +12,21 @@ import org.junit.jupiter.api.Test;
 final class StackingRulesTest {
     @Test void commonSourceBlocksAndItemsKeepTheirLiteralLimits() {
         String[] items = {"stone", "cobblestone", "dirt", "oak_log", "oak_planks", "torch", "brewing_stand", "bucket", "iron_ingot", "iron_nugget", "diamond", "flint"};
-        int[] limits = {4, 4, 4, 4, 8, 16, 16, 8, 8, 64, 32, 16};
+        int[] limits = {4, 4, 4, 4, 8, 16, 16, 8, 4, 64, 32, 16};
         for (int i = 0; i < items.length; i++) assertEquals(limits[i], StackingRules.limit("minecraft:" + items[i]), items[i]);
+    }
+
+    @Test void mineralBalanceOverridesFrozenSourceLimitsWithoutChangingNuggets() {
+        for (String material : new String[]{"copper", "gold", "iron", "netherite"})
+            assertEquals(4, StackingRules.limit("minecraft:" + material + "_ingot"));
+        for (String material : new String[]{"copper", "gold", "iron"})
+            assertEquals(4, StackingRules.limit("minecraft:raw_" + material));
+        for (String material : new String[]{"silver", "ancient_metal", "mithril", "adamantium"})
+            assertEquals(4, StackingRules.limit("mite:" + material + "_ingot"));
+        assertEquals(64, StackingRules.limit("minecraft:iron_nugget"));
+        assertEquals(32, StackingRules.limit("minecraft:diamond"));
+        assertEquals(4, StackingRules.limit("minecraft:iron_ore"));
+        assertEquals(4, StackingRules.limit("mite:deepslate_silver_ore"));
     }
 
     @Test void snowSubtypeDepthHasTheIndependentSourceException() {

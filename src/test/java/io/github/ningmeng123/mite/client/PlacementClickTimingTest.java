@@ -8,25 +8,25 @@ import org.junit.jupiter.api.Test;
 
 /** Native repeat timing stays separate from the shared placement deadline. @author NingMeng123 */
 class PlacementClickTimingTest {
-    @Test void firstSuccessfulPlacementStartsTheEightTickRepeatImmediately() {
-        assertEquals(8, PlacementClickTiming.rightClickDelay(4, 0, 8, false));
+    @Test void firstSuccessfulPlacementStartsTheTenTickRepeatImmediately() {
+        assertEquals(10, PlacementClickTiming.rightClickDelay(4, 0, 10, false));
         assertEquals(4, PlacementClickTiming.rightClickDelay(4, 0, 0, false));
     }
 
     @Test void heldPlacementResumesAtTheSharedDeadline() {
         assertEquals(2, PlacementClickTiming.rightClickDelay(4, 2, 2, true));
-        assertEquals(8, PlacementClickTiming.rightClickDelay(4, 0, 8, false));
+        assertEquals(10, PlacementClickTiming.rightClickDelay(4, 0, 10, false));
     }
 
     @Test void rapidClicksCannotExtendAnExistingPlacementDeadline() {
-        for (int remaining = 1; remaining <= 8; remaining++)
+        for (int remaining = 1; remaining <= 10; remaining++)
             assertEquals(remaining, PlacementClickTiming.rightClickDelay(4, remaining, remaining, true));
         assertEquals(1, PlacementClickTiming.rightClickDelay(4, 1, 1, true));
     }
 
     @Test void unrelatedInteractionsKeepTheirNativeDelayDuringPlacementCooldown() {
         assertEquals(4, PlacementClickTiming.rightClickDelay(4, 2, 2, false));
-        assertEquals(4, PlacementClickTiming.rightClickDelay(4, 8, 8, false));
+        assertEquals(4, PlacementClickTiming.rightClickDelay(4, 10, 10, false));
         assertEquals(9, PlacementClickTiming.rightClickDelay(9, 1, 1, false));
         assertEquals(4, PlacementClickTiming.rightClickDelay(4, 1, 0, true));
     }

@@ -410,6 +410,8 @@ public final class FoodVesselGameTests {
         helper.assertValueEqual(player.getInventory().countItem(MiteFoods.get("copper_water_bucket")), 1, "Pickup produces one copper water bucket");
         int fullSlot = slotContaining(player, MiteFoods.get("copper_water_bucket"));
         player.getInventory().selected = fullSlot;
+        // The shared ingestion fixture starts empty; placement now requires positive hunger.
+        player.getFoodData().setFoodLevel(1);
         var placement = player.getMainHandItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
         helper.assertTrue(placement.getResult().consumesAction(), "Native water placement succeeds on the exposed floor");
         player.setItemInHand(InteractionHand.MAIN_HAND, placement.getObject());

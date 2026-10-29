@@ -2,8 +2,11 @@ package io.github.ningmeng123.mite.compat.simplyswords;
 
 import com.google.gson.JsonParser;
 import io.github.ningmeng123.mite.Mite;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.fml.ModList;
 
 /** Bundled weapon lengths remain available without optional Better Combat classes. @author NingMeng123 */
 public final class SimplySwordsReach {
@@ -42,8 +46,7 @@ public final class SimplySwordsReach {
 
     private static Range read(ResourceLocation id, Set<ResourceLocation> visited) {
         if (!visited.add(id)) return new Range(0D, 0D);
-        try (var stream = SimplySwordsReach.class.getClassLoader().getResourceAsStream(
-                "data/" + id.getNamespace() + "/weapon_attributes/" + id.getPath() + ".json")) {
+        try (var stream = openBundledProfile(id)) {
             if (stream == null) return missingParent(id);
             var json = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
             Range parent = json.has("parent") ? read(ResourceLocation.parse(json.get("parent").getAsString()), visited)
@@ -60,6 +63,18 @@ public final class SimplySwordsReach {
             Mite.LOGGER.warn("Could not inspect bundled weapon length {}", id, exception);
             return new Range(0D, 0D);
         }
+    }
+
+    private static InputStream openBundledProfile(ResourceLocation id) throws IOException {
+        String path = "data/" + id.getNamespace() + "/weapon_attributes/" + id.getPath() + ".json";
+        // Classpath lookup may return Simply Swords before MITE's same-path overrides.
+        // Read this mod's own file first, matching the bundled balance layer used by Better Combat.
+        var modFile = ModList.get().getModFileById(Mite.MOD_ID);
+        if (modFile != null) {
+            var override = modFile.getFile().findResource(path);
+            if (Files.isRegularFile(override)) return Files.newInputStream(override);
+        }
+        return SimplySwordsReach.class.getClassLoader().getResourceAsStream(path);
     }
 
     /** Only the Better Combat 2.4 parents referenced by Simply Swords 1.70 need absent-mod defaults. */

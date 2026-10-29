@@ -128,7 +128,7 @@ public final class OreHarvestGameTests {
             var id = ResourceLocation.fromNamespaceAndPath("mite", "raw_" + metal);
             helper.assertTrue(BuiltInRegistries.ITEM.containsKey(id), "Custom raw metal is registered: " + id);
             ItemStack raw = new ItemStack(BuiltInRegistries.ITEM.get(id));
-            helper.assertValueEqual(raw.getMaxStackSize(), 8, "Custom raw metal matches existing copper, iron and gold raw-metal limits");
+            helper.assertValueEqual(raw.getMaxStackSize(), 4, "Custom raw metal matches existing copper, iron and gold raw-metal limits");
             helper.assertTrue(raw.has(DataComponents.FIRE_RESISTANT) == metal.equals("adamantium"), "Only adamantium raw metal retains its ore's fire resistance");
         }
         BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));

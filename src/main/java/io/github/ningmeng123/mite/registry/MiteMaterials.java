@@ -22,11 +22,11 @@ public final class MiteMaterials {
     public static final DeferredItem<Item> ANCIENT_METAL_INGOT = ingot("ancient_metal_ingot");
     public static final DeferredItem<Item> MITHRIL_INGOT = ingot("mithril_ingot");
     public static final DeferredItem<Item> ADAMANTIUM_INGOT = ingot("adamantium_ingot");
-    public static final DeferredItem<Item> RAW_SILVER = ITEMS.registerSimpleItem("raw_silver", new Item.Properties().stacksTo(8));
-    public static final DeferredItem<Item> RAW_MITHRIL = ITEMS.registerSimpleItem("raw_mithril", new Item.Properties().stacksTo(8));
-    public static final DeferredItem<Item> RAW_ADAMANTIUM = ITEMS.registerSimpleItem("raw_adamantium", new Item.Properties().stacksTo(8).fireResistant());
+    public static final DeferredItem<Item> RAW_SILVER = ITEMS.registerSimpleItem("raw_silver", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> RAW_MITHRIL = ITEMS.registerSimpleItem("raw_mithril", new Item.Properties().stacksTo(4));
+    public static final DeferredItem<Item> RAW_ADAMANTIUM = ITEMS.registerSimpleItem("raw_adamantium", new Item.Properties().stacksTo(4).fireResistant());
     public static final DeferredItem<Item> VIBRANIUM_NUGGET = ITEMS.registerSimpleItem("vibranium_nugget", new Item.Properties().stacksTo(64).fireResistant());
-    public static final DeferredItem<Item> VIBRANIUM_INGOT = ITEMS.registerSimpleItem("vibranium_ingot", new Item.Properties().stacksTo(8).fireResistant());
+    public static final DeferredItem<Item> VIBRANIUM_INGOT = ITEMS.registerSimpleItem("vibranium_ingot", new Item.Properties().stacksTo(4).fireResistant());
 
     public static final DeferredItem<Item> OBSIDIAN_STICK = ITEMS.registerSimpleItem("obsidian_stick", new Item.Properties().stacksTo(64));
 
@@ -41,7 +41,7 @@ public final class MiteMaterials {
     public static void modifyDefaultComponents(ModifyDefaultComponentsEvent event) {
         for (Item ingot : new Item[]{Items.COPPER_INGOT, Items.IRON_INGOT, Items.GOLD_INGOT}) {
             // Patch only the stack limit; preserve every other vanilla/default component.
-            event.modify(ingot, builder -> builder.set(DataComponents.MAX_STACK_SIZE, 8));
+            event.modify(ingot, builder -> builder.set(DataComponents.MAX_STACK_SIZE, 4));
         }
     }
 
@@ -50,6 +50,6 @@ public final class MiteMaterials {
     }
 
     private static DeferredItem<Item> ingot(String name) {
-        return ITEMS.registerSimpleItem(name, new Item.Properties().stacksTo(8));
+        return ITEMS.registerSimpleItem(name, new Item.Properties().stacksTo(4));
     }
 }

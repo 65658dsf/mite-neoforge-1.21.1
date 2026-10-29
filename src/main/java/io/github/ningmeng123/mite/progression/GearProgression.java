@@ -193,6 +193,7 @@ public final class GearProgression {
         int level = before.level();
         long experience = GearProgressionRules.saturatedAdd(before.experienceMillis(), experienceMillis);
         var affixes = new HashMap<>(before.affixes());
+        List<Component> upgrades = new ArrayList<>();
         while (level < cap) {
             long required = nextLevelExperienceMillis(stack, level);
             if (experience < required) break;
@@ -204,12 +205,15 @@ public final class GearProgression {
                 GearModifier selected = candidates.get(GearAffixRules.selectIndex(weights,
                         player.getRandom().nextInt(GearAffixRules.totalWeight(weights))));
                 affixes.merge(selected.id(), 1, Integer::sum);
+                upgrades.add(Component.translatable("message.mite.gear_level_up_affix", stack.getHoverName(),
+                        level, cap, selected.displayName(), affixes.get(selected.id())));
+            } else {
+                upgrades.add(Component.translatable("message.mite.gear_level_up", stack.getHoverName(), level, cap));
             }
         }
         if (level >= cap) experience = 0;
         stack.set(PROGRESS.get(), new GearProgress(id, level, experience, affixes, 1));
-        if (level != before.level()) player.displayClientMessage(
-                Component.translatable("message.mite.gear_level_up", stack.getHoverName(), level, cap), true);
+        upgrades.forEach(message -> player.displayClientMessage(message, false));
         player.getInventory().setChanged();
     }
 

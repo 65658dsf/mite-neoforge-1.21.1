@@ -230,6 +230,16 @@ public final class R196ToolItem extends Item implements EquipmentDurability.Prof
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
+        return clipBlock(context);
+    }
+
+    /** Shared by native iron shears and the other material shears. */
+    public static InteractionResult clipBlock(UseOnContext context) {
+        Player player = context.getPlayer();
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        BlockState state = level.getBlockState(pos);
+        if (player == null || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand())) return InteractionResult.PASS;
         // R196's whole-block clipping has no offhand equivalent. destroyBlock uses the main-hand stack,
         // so do not let offhand shears charge an unrelated main-hand tool or produce its ordinary drops.
         if (context.getHand() != InteractionHand.MAIN_HAND) return InteractionResult.PASS;

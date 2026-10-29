@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.client;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.crafting.MaterialUpgradeRequirements;
+import io.github.ningmeng123.mite.crafting.TimedSmithingController;
 import io.github.ningmeng123.mite.network.CraftingProgressPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -66,9 +67,11 @@ public final class CraftingProgressOverlay {
             var result = recipe.getResultItem(level.registryAccess());
             if (result.isEmpty()) continue;
             int required = MaterialUpgradeRequirements.ingots(result);
-            var label = Component.translatable("screen.mite.smithing_ingredients", addition.getHoverName(), addition.getCount(), required);
+            var player = Minecraft.getInstance().player;
+            int available = player == null ? addition.getCount() : TimedSmithingController.availableIngots(player, addition);
+            var label = Component.translatable("screen.mite.smithing_ingredients", addition.getHoverName(), available, required);
             event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, label, screen.getGuiLeft() + 88,
-                    Math.min(screen.height - 12, screen.getGuiTop() + 170), addition.getCount() < required ? 0xFFFF7070 : 0xFFFFFFFF);
+                    Math.min(screen.height - 12, screen.getGuiTop() + 170), available < required ? 0xFFFF7070 : 0xFFFFFFFF);
             return;
         }
     }

@@ -29,7 +29,7 @@ public abstract class PlacementDelayPacketMixin {
     private InteractionResultHolder<ItemStack> mite$limitBucketPlacement(Level level, Player player, InteractionHand hand,
             Operation<InteractionResultHolder<ItemStack>> original) {
         ItemStack stack = (ItemStack) (Object) this;
-        if (stack.getItem() instanceof BucketItem bucket && bucket.content != Fluids.EMPTY && PlacementDelay.blocked(player))
+        if (stack.getItem() instanceof BucketItem bucket && bucket.content != Fluids.EMPTY && PlacementDelay.placementBlocked(player))
             return InteractionResultHolder.fail(stack);
         return original.call(level, player, hand);
     }

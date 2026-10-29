@@ -48,7 +48,7 @@ public final class R196MobRenderers {
         for (MobKind kind : MobKind.values()) switch (kind.family()) {
             case UNDEAD -> event.<R196Undead>registerEntityRenderer(type(kind), context -> {
                 String path = kind == MobKind.INVISIBLE_STALKER ? "wight" : kind.path();
-                return new SourceHumanoidRenderer<>(context, entity -> texture(path), kind == MobKind.INVISIBLE_STALKER ? .05F : 1F, null);
+                return new SourceHumanoidRenderer<>(context, entity -> texture(path), kind == MobKind.INVISIBLE_STALKER ? InvisibleMonsterVisuals.OPACITY : 1F, null);
             });
             case FIRE -> event.<R196FireElemental>registerEntityRenderer(type(kind), context ->
                     new SourceHumanoidRenderer<>(context, entity -> texture("fire_elemental"), 0F, null));

@@ -10,7 +10,9 @@ import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.netty.channel.embedded.EmbeddedChannel;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -56,7 +58,7 @@ public final class BetterCombatPlayerReachGameTests {
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
         String[] families = {"longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive",
                 "warglaive", "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd"};
-        double[] expected = {3.1D, 3.5D, 3D, 3.1D, 2.3D, 4D, 3.5D, 3.1D, 2.75D, 4D, 4D, 4D, 5.5D, 3.5D, 4.5D};
+        double[] expected = {3.1D, 3.5D, 3D, 3.1D, 2.3D, 4D, 3.5D, 3.1D, 2.75D, 4D, 4D, 4D, 4.25D, 3.5D, 4.5D};
         for (String material : List.of("copper", "vibranium", "gold", "iron", "runic")) {
             for (int index = 0; index < families.length; ++index) {
                 var stack = new ItemStack(SimplySwordsCompat.weapon(material, families[index]));
@@ -75,6 +77,66 @@ public final class BetterCombatPlayerReachGameTests {
                 h.assertTrue(live == null ? bundled == null : bundled != null && Math.abs(bundled - live) < .00001D,
                         "Every managed normal/unique weapon agrees with the actual Better Combat registry: " + stack
                                 + " bundled=" + bundled + " live=" + live);
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void everyChakramMaterialAndSpecialProfileHasTheSameLiveRange(GameTestHelper h) {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        Set<String> expected = Set.of(
+                "mite:simplyswords_rusted_iron_chakram", "mite:simplyswords_copper_chakram",
+                "mite:simplyswords_silver_chakram", "mite:simplyswords_ancient_metal_chakram",
+                "mite:simplyswords_mithril_chakram", "mite:simplyswords_adamantium_chakram",
+                "mite:simplyswords_vibranium_chakram", "simplyswords:iron_chakram", "simplyswords:gold_chakram",
+                "simplyswords:diamond_chakram", "simplyswords:netherite_chakram", "simplyswords:runic_chakram",
+                "simplyswords:chompolotl", "simplyswords:mjolnir", "simplyswords:tempest");
+        Set<String> exercised = new HashSet<>();
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) {
+            for (var item : BuiltInRegistries.ITEM) {
+                var stack = new ItemStack(item);
+                var definition = SimplySwordsCompat.definition(stack);
+                if (definition == null || !definition.family().equals("chakram")) continue;
+                String id = BuiltInRegistries.ITEM.getKey(item).toString();
+                exercised.add(id);
+                Double bundled = SimplySwordsReach.baseReach(stack, 3D);
+                h.assertTrue(bundled != null && Math.abs(bundled - 4.25D) < .00001D,
+                        "Every registered material/special chakram has the fixed bundled range: " + id + " = " + bundled);
+                h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(stack) - 4.25D) < .00001D,
+                        "The actual tooltip uses the same 4.25-block range: " + id);
+                if (BetterCombatBridge.enabled()) {
+                    Double live = BetterCombatBridge.weaponBaseReach(stack, 3D);
+                    h.assertTrue(live != null && Math.abs(live - 4.25D) < .00001D,
+                            "The actual loaded Better Combat registry uses the fixed range: " + id + " = " + live);
+                }
+            }
+        }
+        Set<String> missing = new HashSet<>(expected);
+        missing.removeAll(exercised);
+        h.assertTrue(missing.isEmpty(), "Every required material and registered special chakram was exercised; missing="
+                + missing + ", actual=" + exercised);
+        // SS 1.70.2 ships this JSON and translation but ItemsRegistry never registers an item for it.
+        // Retired diamond/netherite and unique items above remain registered and must still be checked.
+        h.assertFalse(BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("simplyswords:magic_estoc")),
+                "The legacy magic_estoc profile is a bundled resource, not a registered fourth special chakram");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void chakramVanillaPacketsRespectTheNewRangeBoundary(GameTestHelper h) {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+            for (String material : List.of("iron", "vibranium")) {
+                equip(session.player(), new ItemStack(SimplySwordsCompat.weapon(material, "chakram")), ItemStack.EMPTY);
+                try (Target near = target(h, session.player(), 4.15D); Target far = target(h, session.player(), 4.35D)) {
+                    h.assertTrue(Math.abs(SourcePlayerReach.meleeReach(session.player(), near.entity()) - 4.25D) < .00001D,
+                            "The equipped " + material + " chakram has its actual 4.25-block reach");
+                    vanillaAttack(session.player(), near.entity());
+                    h.assertTrue(near.entity().getHealth() < 200F, "The actual packet hits inside the new chakram range");
+                    vanillaAttack(session.player(), far.entity());
+                    h.assertValueEqual(far.entity().getHealth(), 200F, "The actual packet rejects the former 5.5-block chakram range");
+                }
             }
         }
         h.succeed();

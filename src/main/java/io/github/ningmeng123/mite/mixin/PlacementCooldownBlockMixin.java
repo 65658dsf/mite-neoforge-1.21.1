@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PlacementCooldownBlockMixin {
     @Inject(method = "place", at = @At("HEAD"), cancellable = true)
     private void mite$checkPlacementCooldown(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> callback) {
-        if (PlacementDelay.blocked(context.getPlayer())) callback.setReturnValue(InteractionResult.FAIL);
+        if (PlacementDelay.placementBlocked(context.getPlayer())) callback.setReturnValue(InteractionResult.FAIL);
     }
 
     @Inject(method = "place", at = @At("RETURN"))

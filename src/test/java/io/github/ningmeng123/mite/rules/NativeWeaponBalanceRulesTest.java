@@ -6,6 +6,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Literal combat examples and the damage/speed/mobility tradeoff. @author NingMeng123 */
 class NativeWeaponBalanceRulesTest {
+    @Test void ironSwordAttacksTwicePerSecondWithoutChangingOtherMaterialsOrFamilies() {
+        assertEquals(2D, NativeWeaponBalanceRules.attacksPerSecond(SWORD, "iron"));
+        for (String material : new String[]{"copper", "silver", "gold", "ancient_metal", "mithril", "adamantium", "vibranium"})
+            assertEquals(1.5D, NativeWeaponBalanceRules.attacksPerSecond(SWORD, material));
+        assertEquals(.85D, NativeWeaponBalanceRules.attacksPerSecond(BATTLE_AXE, "iron"));
+    }
     @Test void materialExamplesIncludeTheNativeBasePointAndCopperOnlyOnce() {
         assertEquals(7.2F, NativeWeaponBalanceRules.damageBonus(SWORD,"iron",8F)+1F,.00001F);
         assertEquals(11.2F, NativeWeaponBalanceRules.damageBonus(SWORD,"vibranium",13F)+1F,.00001F);

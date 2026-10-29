@@ -5,6 +5,20 @@ import org.junit.jupiter.api.Test;
 
 /** Independent balance targets and relative combat tradeoffs. @author NingMeng123 */
 class SimplySwordsBalanceRulesTest {
+    @Test void chakramsLoseTwentyPercentOfThePreviousTotalRatherThanOnlyTheirModifier() {
+        assertEquals(4.608D, 1D + SimplySwordsBalanceRules.damageBonus("iron", "chakram", 9D, 0D), 1E-5);
+        assertEquals(3.608D, SimplySwordsBalanceRules.damageBonus("iron", "chakram", 9D, 0D), 1E-5);
+        assertEquals(3.84D, 1D + SimplySwordsBalanceRules.damageBonus("copper", "chakram", 8D, 0D), 1E-5);
+        assertEquals(4.096D, 1D + SimplySwordsBalanceRules.damageBonus("silver", "chakram", 8D, 0D), 1E-5);
+        assertEquals(3.584D, 1D + SimplySwordsBalanceRules.damageBonus("gold", "chakram", 7D, 0D), 1E-5);
+        assertEquals(5.12D, 1D + SimplySwordsBalanceRules.damageBonus("mithril", "chakram", 10D, 0D), 1E-5);
+        assertEquals(5.632D, 1D + SimplySwordsBalanceRules.damageBonus("adamantium", "chakram", 11D, 0D), 1E-5);
+        assertEquals(7.168D, 1D + SimplySwordsBalanceRules.damageBonus("vibranium", "chakram", 14D, 0D), 1E-5);
+        assertEquals(6.144D, 1D + SimplySwordsBalanceRules.damageBonus("iron", "chakram", 12D, 0D, true), 1E-5);
+        assertEquals(8.704D, 1D + SimplySwordsBalanceRules.damageBonus("iron", "chakram", 9D, 8D), 1E-5);
+        assertEquals(1.5D, SimplySwordsBalanceRules.attackRate("chakram", 1D), 1E-9);
+        assertEquals(7.2D, 1D + SimplySwordsBalanceRules.damageBonus("iron", "longsword", 9D, 0D), 1E-5);
+    }
     @Test void ninePointMaterialHasExplicitLowerDamageTargets() {
         assertEquals(7.2D, 1D + SimplySwordsBalanceRules.damageBonus("iron", "longsword", 9D, 0D), 1E-5);
         assertEquals(5.04D, 1D + SimplySwordsBalanceRules.damageBonus("iron", "spear", 9D, 0D), 1E-5);
