@@ -8,6 +8,7 @@ import io.github.ningmeng123.mite.api.MiteExtensions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +25,10 @@ public abstract class R196CreeperExplosionMixin {
         // native scale, including charged/custom NBT radii, and double infernal blasts.
         float blockRadius = MiteExtensions.policy().creeperExplosionRadius((Creeper)entity,nativeRadius * (entity instanceof R196InfernalCreeper ? 2F : 1F));
         float livingPower = blockRadius / 3F * 1.1F;
+        // abr ignites infernal blasts after removing terrain, using the native one-in-three
+        // air-over-solid rule. Keep modern mobGriefing protection for the remaining fire too.
+        boolean fire = entity instanceof R196InfernalCreeper && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
         return level.explode(entity, Explosion.getDefaultDamageSource(level, entity), new R196ExplosionCalculator(entity, livingPower),
-                x, y + entity.getBbHeight() * .25F, z, blockRadius, false, interaction);
+                x, y + entity.getBbHeight() * .25F, z, blockRadius, fire, interaction);
     }
 }

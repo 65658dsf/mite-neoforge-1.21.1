@@ -21,6 +21,7 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -112,6 +113,7 @@ public final class CreeperExplosionGameTests {
         final BlockPos anchor;
         final Map<BlockPos, BlockState> previous = new LinkedHashMap<>();
         final Map<BlockPos, BlockState> arena = new LinkedHashMap<>();
+        final Map<BlockPos, BlockState> beforeFire = new LinkedHashMap<>();
         final SpawnedEntityCapture drops;
         final boolean oldGriefing;
         final boolean oldDrops;
@@ -142,11 +144,25 @@ public final class CreeperExplosionGameTests {
             arena.put(pos, state);
         }
 
-        void restoreArena() { arena.forEach((pos, state) -> level.setBlock(pos, state, 2)); }
+        void restoreArena() {
+            clearResidualFire();
+            arena.forEach((pos, state) -> level.setBlock(pos, state, 2));
+        }
+
+        void clearResidualFire() {
+            beforeFire.forEach((pos, state) -> {
+                if (!(state.getBlock() instanceof BaseFireBlock) && level.getBlockState(pos).getBlock() instanceof BaseFireBlock)
+                    level.setBlock(pos, state, 2);
+            });
+            beforeFire.clear();
+        }
 
         Set<BlockPos> destroyed() {
             Set<BlockPos> result = new HashSet<>();
-            arena.forEach((pos, state) -> { if (level.getBlockState(pos).isAir()) result.add(pos); });
+            arena.forEach((pos, state) -> {
+                BlockState remaining = level.getBlockState(pos);
+                if (remaining.isAir() || remaining.getBlock() instanceof BaseFireBlock) result.add(pos);
+            });
             return result;
         }
 
@@ -176,7 +192,12 @@ public final class CreeperExplosionGameTests {
                     if (cancel) event.setCanceled(true);
                 }
             };
+            Consumer<ExplosionEvent.Detonate> rememberFirePositions = event -> {
+                if (event.getLevel() == level && event.getExplosion().getDirectSourceEntity() == creeper)
+                    event.getAffectedBlocks().forEach(pos -> beforeFire.putIfAbsent(pos.immutable(), level.getBlockState(pos)));
+            };
             NeoForge.EVENT_BUS.addListener(ExplosionEvent.Start.class, listener);
+            NeoForge.EVENT_BUS.addListener(ExplosionEvent.Detonate.class, rememberFirePositions);
             try {
                 Method explode = Creeper.class.getDeclaredMethod("explodeCreeper");
                 explode.setAccessible(true);
@@ -187,6 +208,7 @@ public final class CreeperExplosionGameTests {
                 throw new IllegalStateException("Cannot invoke actual creeper detonation", failure);
             } finally {
                 NeoForge.EVENT_BUS.unregister(listener);
+                NeoForge.EVENT_BUS.unregister(rememberFirePositions);
                 creeper.discard();
             }
         }
@@ -197,6 +219,7 @@ public final class CreeperExplosionGameTests {
         @Override public void close() {
             clearDrops();
             drops.close();
+            clearResidualFire();
             previous.forEach((pos, state) -> level.setBlock(pos, state, 2));
             rule(GameRules.RULE_MOBGRIEFING, oldGriefing);
             rule(GameRules.RULE_DOBLOCKDROPS, oldDrops);

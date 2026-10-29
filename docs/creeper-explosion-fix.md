@@ -21,6 +21,14 @@ R196 的 `0.715` 属于旧爆炸算法的参数，不能作为新版半径：`ab
 
 `CreeperExplosionGameTests` 实际调用 `Creeper.explodeCreeper`，不是直接用 `Level.explode` 冒充苦力怕引爆。普通、带电、地狱、带电地狱及自定义 NBT 五种情况在两个固定随机种子下，与独立现代爆炸对照的全部射线位置及实际方块移除集合逐一比较；另验证 `mobGriefing=false` 与 NeoForge 取消事件均不会破坏或产出方块掉落。既有实体伤害 GameTest 继续验证独立的源半径及线性伤害。
 
+## 2026-10-29：地狱爆炸残火
+
+`R196CreeperExplosionMixin` 恢复地狱苦力怕的燃烧爆炸标记。低版本 `.reference/r196/decompiled/abr.java:92` 对 `EntityInfernalCreeper` 自动启用该标记，`225–234` 在完成地形破坏后，对受影响列表中为空气、下方为不透明完整方块的位置按 `1/3` 概率放置火。现代原生爆炸已有相同的地面放火流程，因此直接复用；普通及带电普通苦力怕仍不主动放火。
+
+现代适配额外遵守 `mobGriefing`：关闭该规则时禁止残火；NeoForge 取消爆炸或移除受影响位置也会保护相应区域。火焰是实际火方块，没有专属固定持续时间，后续按正常火焰规则熄灭或传播。`doFireTick=false` 不阻止初始放置，只停止后续火焰 tick。
+
+独立输出 `build/verification/infernal-fire-20261029/build` 构建及 JUnit 通过。`InfernalCreeperFireGameTests` 的6项残火回归与既有6项起爆范围回归，共 **12/12 服务端 GameTest 通过**；日志为 `build/verification/infernal-fire-20261029-tests.log`。覆盖普通／带电地狱残火、普通苦力怕无火、事件删位与取消、关闭生物破坏、空气和水面不悬空生火。既有范围比较将残火视为原方块已移除，并逐次清理本次新增火焰，保留全部射线及地形断言。
+
 ## 手动测试
 
 在测试世界的空旷土地区域，切换创造模式并执行 `/gamerule mobGriefing true`。分别使用下列命令召唤，观察普通苦力怕能形成正常土坑，带电及地狱变种的坑更大：
