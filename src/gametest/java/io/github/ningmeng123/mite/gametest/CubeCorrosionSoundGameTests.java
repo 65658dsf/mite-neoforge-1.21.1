@@ -23,7 +23,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /** Real immune melee and player-contact corrosion feedback. @author NingMeng123 */
-@GameTestHolder("mite")
+@GameTestHolder("mite_corrosion_sound")
 @PrefixGameTestTemplate(false)
 public final class CubeCorrosionSoundGameTests {
     @GameTest(template="empty")

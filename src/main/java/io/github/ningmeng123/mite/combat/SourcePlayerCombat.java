@@ -70,8 +70,13 @@ public final class SourcePlayerCombat {
             } else hit = nativeHit.getAsBoolean();
             handInjury(player, target, weak);
             // EntityGelatinousCube:377 follows og's hand injury even after an immune or weak hit.
-            if (target instanceof R196Cube cube && !player.getMainHandItem().isEmpty())
-                MobCorrosion.equipment(player.getMainHandItem(), cube.acidic(), R196Cube.damageMultiplier(cube.miteKind()), player, EquipmentSlot.MAINHAND);
+            if (target instanceof R196Cube cube) {
+                boolean corroded = MobCorrosion.equipment(player.getMainHandItem(), cube.acidic(),
+                        R196Cube.damageMultiplier(cube.miteKind()), player, EquipmentSlot.MAINHAND);
+                // Acidic contact still hisses when creative mode or resistant/empty hands prevent wear.
+                // Successful corrosion already emitted the shared effect, so never play it twice.
+                if (cube.acidic() && !corroded) MobCorrosion.feedback(player);
+            }
             else if (target instanceof Slime && !(target instanceof MagmaCube) && !player.getMainHandItem().isEmpty())
                 MobCorrosion.equipment(player.getMainHandItem(), false, 1F, player, EquipmentSlot.MAINHAND);
             return hit;

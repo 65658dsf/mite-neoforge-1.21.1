@@ -110,8 +110,8 @@ public final class MobCorrosion {
         }
         if (changed) feedback(player);
     }
-    /** EntityGelatinousCube/jv steam_with_hiss: one shared effect after actual inventory corrosion. */
-    private static void feedback(LivingEntity owner) {
+    /** EntityGelatinousCube/jv steam_with_hiss, shared by equipment corrosion and acidic melee contact. */
+    public static void feedback(LivingEntity owner) {
         if (!(owner.level() instanceof ServerLevel level)) return;
         double y=owner.getY()+owner.getBbHeight()*.5;
         level.playSound(null,owner.getX(),y,owner.getZ(),SoundEvents.FIRE_EXTINGUISH,owner.getSoundSource(),.7F,
