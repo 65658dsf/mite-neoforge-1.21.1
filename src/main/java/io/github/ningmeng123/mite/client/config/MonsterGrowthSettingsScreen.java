@@ -46,6 +46,8 @@ public final class MonsterGrowthSettingsScreen extends Screen {
     private double previewInitial;
     private double previewRate;
     private Component failure;
+    private Component saveFailure;
+    private boolean saving;
 
     public MonsterGrowthSettingsScreen(Screen parent) {
         super(Component.translatable("mite.config.monster_formulas"));
@@ -87,16 +89,16 @@ public final class MonsterGrowthSettingsScreen extends Screen {
         damageTab.active = health;
         int y = paragraph(health ? "mite.config.growth_baseline_hint" : "mite.config.fixed_damage_hint", 0, 0xCCCCCC) + 8;
         String prefix = health ? "health" : "damage";
-        y = field(prefix + "_base", y, 32, editable, value -> validateDraft());
+        y = field(prefix + "_base", y, 32, editable && !saving, value -> edited());
         if (health) {
-            y = field("health_daily_percent", y, 32, editable, value -> validateDraft());
-            y = field("skeleton_reference", y, 32, editable, value -> validateDraft());
+            y = field("health_daily_percent", y, 32, editable && !saving, value -> edited());
+            y = field("skeleton_reference", y, 32, editable && !saving, value -> edited());
             y = paragraph("mite.config.growth_recurrence_heading", y + 3, 0xFFFFFF) + 4;
             y = paragraph("mite.config.health_recurrence_initial", y, 0xCCCCCC) + 4;
             y = paragraph("mite.config.growth_recurrence_blood", y, 0xCCCCCC) + 4;
-            y = field("health_blood_moon_formula", y, 512, editable, value -> validateDraft());
+            y = field("health_blood_moon_formula", y, 512, editable && !saving, value -> edited());
             y = paragraph("mite.config.growth_recurrence_period", y, 0xCCCCCC) + 4;
-            y = field("health_formula", y, 512, editable, value -> validateDraft());
+            y = field("health_formula", y, 512, editable && !saving, value -> edited());
             y = paragraph("mite.config.growth_recurrence_calendar", y, 0xCCCCCC) + 4;
             y = paragraph("mite.config.growth_variables", y + 3, 0xAAAAAA) + 4;
             y = paragraph("mite.config.growth_functions", y, 0xAAAAAA) + 10;
@@ -119,9 +121,10 @@ public final class MonsterGrowthSettingsScreen extends Screen {
                 .bounds(width / 2 - actionWidth * 3 / 2 - 4, height - 28, actionWidth, 20).build());
         var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
             copySettings(MonsterGrowthRules.DEFAULTS);
+            saveFailure = null;
             rebuild();
         }).bounds(width / 2 - actionWidth / 2, height - 28, actionWidth, 20).build());
-        reset.active = editable;
+        reset.active = editable && !saving;
         reset.setTooltip(Tooltip.create(Component.translatable("mite.config.growth_reset.tooltip")));
         addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
                 .bounds(width / 2 + actionWidth / 2 + 4, height - 28, actionWidth, 20).build());
@@ -219,9 +222,9 @@ public final class MonsterGrowthSettingsScreen extends Screen {
             failure = Component.literal(exception.getMessage());
             validSettings = null;
         }
-        if (save != null) save.active = editable && validSettings != null;
+        if (save != null) save.active = editable && MiteConfigClient.editable() && !saving && validSettings != null;
         if (status != null) {
-            Component message = failure != null ? failure : Component.translatable(editable ? "mite.config.growth_valid" : "mite.config.server_owned");
+            Component message = saving ? Component.translatable("mite.config.remote.saving") : saveFailure != null ? saveFailure : failure != null ? failure : Component.translatable(editable ? "mite.config.growth_valid" : "mite.config.server_owned");
             status.setMessage(Component.literal(font.plainSubstrByWidth(message.getString(), Math.max(60, width - 44))));
             status.setTooltip(Tooltip.create(message));
         }
@@ -285,9 +288,29 @@ public final class MonsterGrowthSettingsScreen extends Screen {
         if (box != null) box.setTextColor(0xFFFF5555);
     }
 
+    private void edited() {
+        saveFailure = null;
+        validateDraft();
+    }
+
     private void save() {
+        if (saving || !MiteConfigClient.editable()) return;
         validateDraft();
         if (!editable || validSettings == null) return;
+        if (MiteConfigClient.remoteServer()) {
+            var draft = validSettings;
+            saving = true;
+            saveFailure = null;
+            rebuild();
+            MiteConfigClient.saveRemote("growth", draft, error -> {
+                saving = false;
+                saveFailure = error;
+                if (error == null) {
+                    if (minecraft.screen == this) minecraft.setScreen(parent);
+                } else rebuild();
+            });
+            return;
+        }
         var result = MiteConfig.saveMonsterGrowth(validSettings);
         if (result.valid()) minecraft.setScreen(parent);
         else {

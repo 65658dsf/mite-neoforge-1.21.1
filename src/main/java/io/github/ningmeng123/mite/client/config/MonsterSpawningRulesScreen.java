@@ -63,6 +63,7 @@ public final class MonsterSpawningRulesScreen extends Screen {
     private Button save;
     private Button status;
     private Component failure;
+    private boolean saving;
 
     public MonsterSpawningRulesScreen(Screen parent) {
         super(Component.translatable("mite.config.spawning_rules.title"));
@@ -72,7 +73,7 @@ public final class MonsterSpawningRulesScreen extends Screen {
         addonControls = !supplied.isEmpty();
         if (addonControls) {
             options = supplied.stream().map(Control::addon).toList();
-            var snapshot = MiteExtensions.policy().spawningControlValues();
+            var snapshot = MiteConfigClient.spawningControlValues();
             for (var option : options) values.put(option.key(), snapshot.getOrDefault(option.key(), option.defaultValue()));
         } else {
             options = Arrays.stream(Option.values()).filter(option -> option != Option.REFERENCE_RULES
@@ -109,7 +110,7 @@ public final class MonsterSpawningRulesScreen extends Screen {
                         updateStatus();
                     }
                 }).bounds(width - controlWidth - 12, y - 2, controlWidth, 20).build());
-                toggle.active = editable;
+                toggle.active = editable && !saving;
                 toggle.setTooltip(Tooltip.create(description(option)));
                 continue;
             }
@@ -120,7 +121,7 @@ public final class MonsterSpawningRulesScreen extends Screen {
                 case BASE_CAP, BLOOD_CAP, DAILY_CAP_INCREASE, MAXIMUM_CAP -> true;
                 default -> false;
             };
-            box.setEditable(editable && (addonControls || !reference() || MiteExtensions.policy().configurableHostileSpawningSettings()) && !iteOwnsCap);
+            box.setEditable(editable && !saving && (addonControls || !reference() || MiteExtensions.policy().configurableHostileSpawningSettings()) && !iteOwnsCap);
             box.setTextColor(invalid.contains(key) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
             box.setTooltip(Tooltip.create(description(option)));
             box.setResponder(text -> {
@@ -160,7 +161,7 @@ public final class MonsterSpawningRulesScreen extends Screen {
             failure = null;
             rebuild();
         }).bounds(actionLeft + actionWidth + 4, height - 28, actionWidth, 20).build());
-        reset.active = editable;
+        reset.active = editable && !saving;
         reset.setTooltip(Tooltip.create(Component.translatable("mite.config.spawning_rules.reset.tooltip")));
         addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
                 .bounds(actionLeft + actionWidth * 2 + 8, height - 28, actionWidth, 20).build());
@@ -174,8 +175,8 @@ public final class MonsterSpawningRulesScreen extends Screen {
 
     private void updateStatus() {
         if (save == null || status == null) return;
-        save.active = editable && invalid.isEmpty() && failure == null;
-        Component message = failure != null ? failure : !editable ? Component.translatable("mite.config.server_owned")
+        save.active = editable && MiteConfigClient.editable() && !saving && invalid.isEmpty();
+        Component message = saving ? Component.translatable("mite.config.remote.saving") : failure != null ? failure : !editable ? Component.translatable("mite.config.server_owned")
                 : !invalid.isEmpty() ? Component.translatable("mite.config.spawning_rules.invalid", invalid.size())
                 : Component.translatable("mite.config.spawning_rules.live");
         status.setMessage(message);
@@ -188,7 +189,20 @@ public final class MonsterSpawningRulesScreen extends Screen {
     }
 
     private void save() {
-        if (!MiteConfigClient.editable() || !invalid.isEmpty()) return;
+        if (saving || !MiteConfigClient.editable() || !invalid.isEmpty()) return;
+        if (MiteConfigClient.remoteServer()) {
+            saving = true;
+            failure = null;
+            rebuild();
+            MiteConfigClient.saveRemote(addonControls ? "addon_spawning" : "spawning_rules", Map.copyOf(values), error -> {
+                saving = false;
+                failure = error;
+                if (error == null) {
+                    if (minecraft.screen == this) minecraft.setScreen(parent);
+                } else rebuild();
+            });
+            return;
+        }
         try {
             boolean saved;
             if (addonControls) {

@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.client.config;
 
 import io.github.ningmeng123.mite.config.MonsterSpawnCatalog;
+import io.github.ningmeng123.mite.config.GameplayConfigEdits;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,6 +52,7 @@ public final class MonsterSpawnSettingsScreen extends Screen {
     private Button save;
     private Button spawningRules;
     private Component failure;
+    private boolean saving;
 
     public MonsterSpawnSettingsScreen(Screen parent, String ownerModId,
             Supplier<Map<String, Double>> values, Consumer<Map<String, Double>> save) {
@@ -78,7 +80,7 @@ public final class MonsterSpawnSettingsScreen extends Screen {
         super(Component.translatable("mite.config.monster_spawn_title", ModList.get().getModContainerById(ownerModId)
                 .map(container -> container.getModInfo().getDisplayName()).orElse(ownerModId)));
         this.parent = parent;
-        this.editable = MiteConfigClient.editable();
+        this.editable = MiteConfigClient.editable() && (!MiteConfigClient.remoteServer() || "mite".equals(ownerModId));
         this.hasSpawningRules = "mite".equals(ownerModId);
         this.weightMode = weights != null;
         this.saveValues = save;
@@ -145,7 +147,7 @@ public final class MonsterSpawnSettingsScreen extends Screen {
                     : number(values.getOrDefault(entry.id(), 1D) * 100D)));
             if (editingWeight) box.setHint(Component.translatable(supportsWeight(entry)
                     ? "mite.config.monster_spawn_weight_inherit" : "mite.config.monster_spawn_weight_unavailable"));
-            box.setEditable(editable && (!editingWeight || supportsWeight(entry)));
+            box.setEditable(editable && !saving && (!editingWeight || supportsWeight(entry)));
             box.setTextColor(activeInvalid.contains(entry.id()) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
             box.setTooltip(Tooltip.create(Component.translatable(editingWeight && !supportsWeight(entry)
                     ? "mite.config.monster_spawn_weight_unavailable.tooltip" : columnKey + ".tooltip")));
@@ -182,7 +184,7 @@ public final class MonsterSpawnSettingsScreen extends Screen {
                 failure = null;
                 rebuildRows();
             }).bounds(width - 58, y, 46, 20).build());
-            reset.active = editable;
+            reset.active = editable && !saving;
             reset.setTooltip(Tooltip.create(Component.translatable("mite.config.monster_spawn_reset.tooltip")));
         }
         int pageButtonWidth = Math.min(90, Math.max(60, width / 4));
@@ -201,14 +203,27 @@ public final class MonsterSpawnSettingsScreen extends Screen {
 
     private void updateSave() {
         if (save == null) return;
-        save.active = editable && validDrafts() && failure == null;
-        save.setTooltip(Tooltip.create(failure != null ? failure : Component.translatable(!editable
+        save.active = editable && MiteConfigClient.editable() && !saving && validDrafts();
+        save.setTooltip(Tooltip.create(saving ? Component.translatable("mite.config.remote.saving") : failure != null ? failure : Component.translatable(!editable
                 ? "mite.config.server_owned" : validDrafts() ? "mite.config.monster_spawn_save_hint"
                         : weightMode ? "mite.config.monster_spawn_weight_invalid" : "mite.config.monster_spawn_invalid")));
     }
 
     private void save() {
-        if (!MiteConfigClient.editable() || !validDrafts()) return;
+        if (saving || !editable || !MiteConfigClient.editable() || !validDrafts()) return;
+        if (MiteConfigClient.remoteServer()) {
+            saving = true;
+            failure = null;
+            rebuildRows();
+            MiteConfigClient.saveRemote("spawn_rates", new GameplayConfigEdits.SpawnRates(Map.copyOf(values), Map.copyOf(weightValues)), error -> {
+                saving = false;
+                failure = error;
+                if (error == null) {
+                    if (minecraft.screen == this) minecraft.setScreen(parent);
+                } else rebuildRows();
+            });
+            return;
+        }
         try {
             saveValues.accept(Map.copyOf(values), Map.copyOf(weightValues));
             minecraft.setScreen(parent);
@@ -237,8 +252,10 @@ public final class MonsterSpawnSettingsScreen extends Screen {
             graphics.drawString(font, font.plainSubstrByWidth(baseline.getString(), width - 24), 12, row.y() + 30, 0xBBBBBB);
         }
         int y = height - 86;
-        for (var line : font.split(Component.translatable(weightMode ? "mite.config.monster_spawn_weight_hint" : "mite.config.monster_spawn_hint"), width - 24).stream().limit(2).toList()) {
-            graphics.drawString(font, line, 12, y, 0xAAAAAA);
+        Component hint = saving ? Component.translatable("mite.config.remote.saving") : failure != null ? failure
+                : Component.translatable(!editable ? "mite.config.server_owned" : weightMode ? "mite.config.monster_spawn_weight_hint" : "mite.config.monster_spawn_hint");
+        for (var line : font.split(hint, width - 24).stream().limit(2).toList()) {
+            graphics.drawString(font, line, 12, y, failure != null ? 0xFF5555 : 0xAAAAAA);
             y += font.lineHeight + 2;
         }
         graphics.drawCenteredString(font, Component.translatable("mite.config.page", page + 1, pageCount, entries.size()),

@@ -9,7 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
-/** Only the server publishes gameplay settings; clients have no write-back channel. @author NingMeng123 */
+/** The server publishes authoritative settings after login, reload and authorized edits. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class GameplayConfigSync {
     private GameplayConfigSync() {}

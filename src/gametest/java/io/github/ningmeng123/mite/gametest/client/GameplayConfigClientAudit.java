@@ -127,12 +127,13 @@ public final class GameplayConfigClientAudit implements DataProvider {
         check(landing.getDeclaredMethod("init").getReturnType() == void.class
                 && enchantments.getDeclaredMethod("init").getReturnType() == void.class, "Both screen init signatures resolve");
         report.addProperty("both_screen_constructors_and_init_signatures_resolved", true);
-        for (String name : List.of("MonsterGrowthSettingsScreen", "OreGenerationSettingsScreen")) {
+        for (String name : List.of("MonsterGrowthSettingsScreen", "OreGenerationSettingsScreen", "ServerGameplaySettingsScreen")) {
             Class<?> settings = Class.forName(CLIENT + name, false, loader);
             MethodHandles.publicLookup().findConstructor(settings, MethodType.methodType(void.class, Screen.class));
             check(settings.getDeclaredMethod("init").getReturnType() == void.class, name + " init signature resolves");
         }
         report.addProperty("growth_formula_and_actual_ore_screen_linkage_verified", true);
+        report.addProperty("remote_server_gameplay_screen_constructor_and_init_signatures_resolved", true);
         auditOreDimensionSelection(report);
         Class<?> spawnSettings = Class.forName(CLIENT + "MonsterSpawnSettingsScreen", false, loader);
         MethodHandles.publicLookup().findConstructor(spawnSettings,
@@ -312,7 +313,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
         check(root.keylist().isEmpty() && root.modSpec() == MiteConfig.SPEC,
                 "The native top context exposes the actual root entries with an empty path");
         Set<String> expectedHidden = Set.of("underworld_ores", "overworld_ores", "underworld_generation", "overworld_generation", "monster_spawning");
-        Set<String> expectedVisible = Set.of("monsters", "combat", "structures", "enchantments");
+        Set<String> expectedVisible = new TreeSet<>(Set.of("monsters", "combat", "structures", "enchantments"));
+        if (MiteConfig.SPEC.getSpec().contains("performance")) expectedVisible.add("performance");
         Set<String> hidden = new TreeSet<>(), visible = new TreeSet<>(), monsterValues = new TreeSet<>();
         Element sentinel = new Element(null, null, null, null, true);
         int suppressedMonsterValues = 0;
@@ -343,7 +345,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
             }
         }
         check(hidden.equals(expectedHidden) && visible.equals(expectedVisible),
-                "Dedicated ore and monster-spawn sections are suppressed; all four other gameplay sections remain");
+                "Dedicated ore and monster-spawn sections are suppressed; all other gameplay sections remain");
         check(monsterValues.equals(Set.of("growth_multiplier", "health_growth_multiplier"))
                 && suppressedMonsterValues > 0, "Only the two active health growth multipliers remain in the advanced page");
         check(originalValues.equals(MiteConfig.SPEC.getValues().valueMap()) && originalSpecs.equals(MiteConfig.SPEC.getSpec().valueMap())

@@ -28,7 +28,7 @@ public final class MiteSettingsScreen extends Screen {
         int exportWidth = Math.min(110, Math.max(78, font.width(exportLabel) + 16));
         var export = addRenderableWidget(Button.builder(exportLabel,
                 button -> exportConfiguration()).bounds(width - exportWidth - 8, 8, exportWidth, 20).build());
-        export.active = MiteConfigClient.editable();
+        export.active = MiteConfigClient.localEditable();
         export.setTooltip(Tooltip.create(Component.translatable(export.active
                 ? "mite.config.export.tooltip" : "mite.config.export.remote")));
         // The addon moves both header controls to y=34 when the title needs its own line.
@@ -61,7 +61,7 @@ public final class MiteSettingsScreen extends Screen {
         addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> onClose()).bounds(width / 2 - 100, height - 30, 200, 20).build());
     }
     private void exportConfiguration() {
-        if (!MiteConfigClient.editable()) return;
+        if (!MiteConfigClient.localEditable()) return;
         try {
             var bundle = GameplayConfigExport.exportBundle(minecraft.gameDirectory.toPath());
             minecraft.setScreen(ConfigExportResultScreen.success(this, bundle));
@@ -72,6 +72,7 @@ public final class MiteSettingsScreen extends Screen {
         }
     }
     private Screen gameplayScreen() {
+        if (MiteConfigClient.remoteServer()) return new ServerGameplaySettingsScreen(this);
         return new ConfigurationScreen(container, this, GameplaySectionScreen::new);
     }
 
@@ -105,8 +106,9 @@ public final class MiteSettingsScreen extends Screen {
         graphics.drawCenteredString(font, title, width / 2, 18, 0xFFFFFF);
         int hintY = menuTop() + 124;
         int availableLines = Math.max(0, (height - 36 - hintY) / font.lineHeight);
-        var hint = Component.translatable(MiteConfigClient.editable()
-                ? height < 280 ? "mite.config.scope_compact" : "mite.config.scope" : "mite.config.server_owned");
+        var hint = Component.translatable(!MiteConfigClient.editable() ? "mite.config.server_owned"
+                : MiteConfigClient.remoteServer() ? "mite.config.remote.scope"
+                : height < 280 ? "mite.config.scope_compact" : "mite.config.scope");
         for (var line : font.split(hint, Math.min(360, width - 24)).stream().limit(availableLines).toList()) {
             graphics.drawString(font, line, Math.max(12, width / 2 - 180), hintY, 0xCCCCCC);
             hintY += font.lineHeight;

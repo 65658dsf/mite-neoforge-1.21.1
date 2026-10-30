@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.client.config;
 
 import io.github.ningmeng123.mite.config.EnchantmentCatalog;
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.config.GameplayConfigEdits;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,6 +44,8 @@ public final class EnchantmentSettingsScreen extends Screen {
     private EditBox search;
     private Button save;
     private boolean restoring;
+    private boolean saving;
+    private Component failure;
 
     public EnchantmentSettingsScreen(Screen parent) {
         super(Component.translatable("mite.config.registry_enchantments"));
@@ -108,12 +111,14 @@ public final class EnchantmentSettingsScreen extends Screen {
                 if (!disabled.add(id)) disabled.remove(id);
                 button.setMessage(toggleLabel(id));
                 button.setTooltip(toggleTooltip(id));
+                failure = null;
+                refreshSave();
             }).bounds(controlsX, y, 58, 20).build());
-            toggle.active = editable;
+            toggle.active = editable && !saving;
             toggle.setTooltip(toggleTooltip(id));
             var maximum = addRenderableWidget(new EditBox(font, maximumX, y + 26, 48, 20, Component.translatable("mite.config.maximum")));
             maximum.setMaxLength(10);
-            maximum.setEditable(editable);
+            maximum.setEditable(editable && !saving);
             // Initial display is metadata, not an explicit override. Only user edits enter the responder.
             maximum.setValue(maximumDrafts.getOrDefault(id, displayedMaximum(entry)));
             maximum.setTextColor(invalidMaximums.contains(id) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
@@ -122,6 +127,7 @@ public final class EnchantmentSettingsScreen extends Screen {
                 if (restoring) return;
                 // Keep even invalid input while paging, filtering or rebuilding after a resize.
                 maximumDrafts.put(id, text);
+                failure = null;
                 try {
                     int level = Integer.parseInt(text);
                     if (level < 0 || level > 255) throw new NumberFormatException();
@@ -138,13 +144,14 @@ public final class EnchantmentSettingsScreen extends Screen {
             var chance = addRenderableWidget(new EditBox(font, chanceX, y + 26, Math.min(70, width - chanceX - 12), 20,
                     Component.translatable("mite.config.enchantment_chance")));
             chance.setMaxLength(24);
-            chance.setEditable(editable);
+            chance.setEditable(editable && !saving);
             chance.setValue(chanceDrafts.getOrDefault(id, displayedChance(id)));
             chance.setTextColor(invalidChances.contains(id) ? 0xFFFF5555 : EditBox.DEFAULT_TEXT_COLOR);
             refreshChanceTooltip(chance);
             chance.setResponder(text -> {
                 if (restoring) return;
                 chanceDrafts.put(id, text);
+                failure = null;
                 try {
                     double probability = Double.parseDouble(text.trim());
                     if (!Double.isFinite(probability) || probability < 0D || probability > 100D) throw new NumberFormatException();
@@ -158,6 +165,7 @@ public final class EnchantmentSettingsScreen extends Screen {
                 refreshSave();
             });
             var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
+                failure = null;
                 var factory = MiteConfig.factorySnapshot();
                 if (factory.caps().containsKey(id)) caps.put(id, factory.caps().get(id)); else caps.remove(id);
                 if (factory.disabled().contains(id)) disabled.add(id); else disabled.remove(id);
@@ -174,7 +182,7 @@ public final class EnchantmentSettingsScreen extends Screen {
                 toggle.setTooltip(toggleTooltip(id));
                 refreshSave();
             }).bounds(controlsX + 64, y, 56, 20).build());
-            reset.active = editable;
+            reset.active = editable && !saving;
             reset.setTooltip(Tooltip.create(Component.translatable(editable ? "mite.config.enchantment_reset.tooltip" : "mite.config.server_owned")));
         }
         var previous = addRenderableWidget(Button.builder(Component.literal("<"), button -> { page--; rebuildRows(); }).bounds(12, height - 65, 30, 20).build());
@@ -182,9 +190,22 @@ public final class EnchantmentSettingsScreen extends Screen {
         var next = addRenderableWidget(Button.builder(Component.literal(">"), button -> { page++; rebuildRows(); }).bounds(width - 42, height - 65, 30, 20).build());
         next.active = page < pageCount - 1;
         save = addRenderableWidget(Button.builder(Component.translatable("mite.config.save"), button -> {
-            if (editable && MiteConfigClient.editable() && invalidCount() == 0) {
-                MiteConfig.saveEnchantments(caps, disabled, chances);
-                minecraft.setScreen(parent);
+            if (!saving && editable && MiteConfigClient.editable() && invalidCount() == 0) {
+                if (MiteConfigClient.remoteServer()) {
+                    saving = true;
+                    failure = null;
+                    rebuildRows();
+                    MiteConfigClient.saveRemote("enchantments", new GameplayConfigEdits.Enchantments(caps, disabled, chances), error -> {
+                        saving = false;
+                        failure = error;
+                        if (error == null) {
+                            if (minecraft.screen == this) minecraft.setScreen(parent);
+                        } else rebuildRows();
+                    });
+                } else {
+                    MiteConfig.saveEnchantments(caps, disabled, chances);
+                    minecraft.setScreen(parent);
+                }
             }
         }).bounds(width / 2 - 104, height - 29, 100, 20).build());
         refreshSave();
@@ -222,10 +243,10 @@ public final class EnchantmentSettingsScreen extends Screen {
     }
     private void refreshSave() {
         if (save == null) return;
-        save.active = editable && MiteConfigClient.editable() && invalidCount() == 0;
+        save.active = editable && MiteConfigClient.editable() && !saving && invalidCount() == 0;
         Set<String> invalid = new HashSet<>(invalidMaximums);
         invalid.addAll(invalidChances);
-        save.setTooltip(invalid.isEmpty() ? null : Tooltip.create(Component.translatable("mite.config.invalid_enchantment_entries", invalidCount())
+        save.setTooltip(saving ? Tooltip.create(Component.translatable("mite.config.remote.saving")) : failure != null ? Tooltip.create(failure) : invalid.isEmpty() ? null : Tooltip.create(Component.translatable("mite.config.invalid_enchantment_entries", invalidCount())
                 .append("\n").append(invalid.stream().sorted().findFirst().orElse(""))));
     }
     private int invalidCount() { return invalidMaximums.size() + invalidChances.size(); }
@@ -262,10 +283,10 @@ public final class EnchantmentSettingsScreen extends Screen {
             }
         }
         graphics.drawCenteredString(font, Component.translatable("mite.config.page", page + 1, pageCount, filtered().size()), width / 2, height - 59, 0xCCCCCC);
-        Component hint = invalidCount() > 0 ? Component.translatable("mite.config.invalid_enchantment_entries", invalidCount())
+        Component hint = saving ? Component.translatable("mite.config.remote.saving") : failure != null ? failure : invalidCount() > 0 ? Component.translatable("mite.config.invalid_enchantment_entries", invalidCount())
                 : Component.translatable(editable ? "mite.config.enchantment_hint" : "mite.config.server_owned");
         graphics.drawCenteredString(font, font.plainSubstrByWidth(hint.getString(), width - 24), width / 2, height - 42,
-                invalidCount() == 0 ? 0xBBBBBB : 0xFF5555);
+                invalidCount() == 0 && failure == null ? 0xBBBBBB : 0xFF5555);
         if (mouseY >= height - 44 && mouseY < height - 31)
             graphics.renderTooltip(font, font.split(hint, Math.min(360, width - 24)), mouseX, mouseY);
     }

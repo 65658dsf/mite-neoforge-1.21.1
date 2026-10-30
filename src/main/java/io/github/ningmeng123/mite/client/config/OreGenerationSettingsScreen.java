@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.client.config;
 
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.config.GameplayConfigEdits;
 import io.github.ningmeng123.mite.rules.R196OreRules;
 import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
@@ -59,6 +60,8 @@ public final class OreGenerationSettingsScreen extends Screen {
     private EditBox search;
     private Button overworld, underworld, save;
     private boolean saveFailed;
+    private boolean saving;
+    private Component failure;
 
     public OreGenerationSettingsScreen(Screen parent) {
         super(Component.translatable("mite.config.ore_generation"));
@@ -141,7 +144,7 @@ public final class OreGenerationSettingsScreen extends Screen {
             visible.add(new VisibleRow(entry, y));
             var box = addRenderableWidget(new EditBox(font, controlsX, y, 78, 20, Component.translatable("mite.config.ore_multiplier")));
             box.setMaxLength(24);
-            box.setEditable(editable);
+            box.setEditable(editable && !saving);
             box.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_multiplier.tooltip")));
             // Initial display must not overwrite invalid text preserved across searches and pages.
             box.setValue(draft.text.getOrDefault(entry.mineral(), format(draft.multiplier(entry.mineral()))));
@@ -156,12 +159,13 @@ public final class OreGenerationSettingsScreen extends Screen {
                     box.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
                 } catch (NumberFormatException ignored) { draft.invalid.add(entry.mineral()); box.setTextColor(0xFFFF5555); }
                 saveFailed = false;
+                failure = null;
                 refreshSave();
             });
             var heightBox = addRenderableWidget(new EditBox(font, controlsX, y + 50, 138, 20,
                     Component.translatable("mite.config.ore_height_range")));
             heightBox.setMaxLength(32);
-            heightBox.setEditable(editable);
+            heightBox.setEditable(editable && !saving);
             heightBox.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_height_range.tooltip")));
             heightBox.setValue(draft.heightText.get(entry.mineral()));
             if (draft.invalidHeights.contains(entry.mineral())) heightBox.setTextColor(0xFFFF5555);
@@ -177,13 +181,14 @@ public final class OreGenerationSettingsScreen extends Screen {
                     heightBox.setTextColor(0xFFFF5555);
                 }
                 saveFailed = false;
+                failure = null;
                 refreshSave();
             });
             var reset = addRenderableWidget(Button.builder(Component.translatable("mite.config.reset"), button -> {
                 box.setValue(format(MiteConfig.factoryOreMultiplier(entry.kind(), entry.dimension(), entry.mineral().deepslate())));
                 heightBox.setValue(MiteConfig.factoryOreHeight(entry.kind(), entry.dimension(), entry.mineral().deepslate()).toString());
             }).bounds(controlsX + 84, y, 54, 20).build());
-            reset.active = editable;
+            reset.active = editable && !saving;
             reset.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_multiplier_reset")));
         }
         var previous = addRenderableWidget(Button.builder(Component.literal("<"), button -> { page--; rebuildRows(); })
@@ -193,7 +198,7 @@ public final class OreGenerationSettingsScreen extends Screen {
                 .bounds(width - 42, height - 65, 30, 20).build());
         next.active = page < pageCount - 1;
         save = addRenderableWidget(Button.builder(Component.translatable("mite.config.save"), button -> {
-            if (!editable || !MiteConfigClient.editable() || invalidCount() != 0) return;
+            if (saving || !editable || !MiteConfigClient.editable() || invalidCount() != 0) return;
             var values = new EnumMap<Dimension, Map<Kind, Double>>(Dimension.class);
             var deepValues = new EnumMap<Dimension, Map<Kind, Double>>(Dimension.class);
             var heights = new EnumMap<Dimension, Map<Kind, String>>(Dimension.class);
@@ -207,7 +212,18 @@ public final class OreGenerationSettingsScreen extends Screen {
                 heights.put(selected, regular);
                 deepHeights.put(selected, deep);
             });
-            if (MiteConfig.saveOreMultipliers(values, deepValues, heights, deepHeights)) minecraft.setScreen(parent);
+            if (MiteConfigClient.remoteServer()) {
+                saving = true;
+                failure = null;
+                rebuildRows();
+                MiteConfigClient.saveRemote("ore_multipliers", new GameplayConfigEdits.OreMultipliers(values, deepValues, heights, deepHeights), error -> {
+                    saving = false;
+                    failure = error;
+                    if (error == null) {
+                        if (minecraft.screen == this) minecraft.setScreen(parent);
+                    } else rebuildRows();
+                });
+            } else if (MiteConfig.saveOreMultipliers(values, deepValues, heights, deepHeights)) minecraft.setScreen(parent);
             else { saveFailed = true; refreshSave(); }
         }).bounds(width / 2 - 104, height - 29, 100, 20).build());
         refreshSave();
@@ -218,8 +234,8 @@ public final class OreGenerationSettingsScreen extends Screen {
     private int invalidCount() { return drafts.values().stream().mapToInt(draft -> draft.invalid.size() + draft.invalidHeights.size()).sum(); }
     private void refreshSave() {
         if (save == null) return;
-        save.active = editable && MiteConfigClient.editable() && invalidCount() == 0;
-        save.setTooltip(invalidCount() == 0 && !saveFailed ? null : Tooltip.create(
+        save.active = editable && MiteConfigClient.editable() && !saving && invalidCount() == 0;
+        save.setTooltip(saving ? Tooltip.create(Component.translatable("mite.config.remote.saving")) : failure != null ? Tooltip.create(failure) : invalidCount() == 0 && !saveFailed ? null : Tooltip.create(
                 Component.translatable("mite.config.ore_multiplier_invalid", Math.max(1, invalidCount()))));
     }
     private static String format(double value) { return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString(); }
@@ -261,11 +277,11 @@ public final class OreGenerationSettingsScreen extends Screen {
         }
         graphics.drawCenteredString(font, Component.translatable("mite.config.page", page + 1, pageCount, filtered().size()),
                 width / 2, height - 59, 0xCCCCCC);
-        Component hint = invalidCount() > 0 || saveFailed
+        Component hint = saving ? Component.translatable("mite.config.remote.saving") : failure != null ? failure : invalidCount() > 0 || saveFailed
                 ? Component.translatable("mite.config.ore_multiplier_invalid", Math.max(1, invalidCount()))
                 : Component.translatable(editable ? "mite.config.ore_multiplier_hint" : "mite.config.server_owned");
         graphics.drawCenteredString(font, font.plainSubstrByWidth(hint.getString(), width - 24), width / 2, height - 42,
-                invalidCount() > 0 || saveFailed ? 0xFF5555 : 0xBBBBBB);
+                invalidCount() > 0 || saveFailed || failure != null ? 0xFF5555 : 0xBBBBBB);
         if (mouseY >= height - 44 && mouseY < height - 31)
             graphics.renderTooltip(font, font.split(hint, Math.min(360, width - 24)), mouseX, mouseY);
     }
