@@ -20,12 +20,10 @@ DEFINITIONS = ROOT / "src/main/java/io/github/ningmeng123/mite/registry/MiteTool
 RESOURCES = ROOT / "src/main/resources"
 PRESETS = {
     "HATCHET": "axe",
-    "CLUB": "mace",
-    "CUDGEL": "mace",
+    "CLUB": "sword",
+    "CUDGEL": "sword",
 }
 DEFINE = re.compile(r'\bdefine\(\s*"([a-z0-9_.-]+:[a-z0-9_./-]+)"\s*,\s*([A-Z_]+)\s*,')
-# Better Combat already explicitly assigns this item its sword combo.
-PRESERVE = {"minecraft:wooden_sword"}
 
 
 def expected_profiles() -> dict[str, tuple[str, str]]:
@@ -35,7 +33,7 @@ def expected_profiles() -> dict[str, tuple[str, str]]:
     result: dict[str, tuple[str, str]] = {}
 
     def add(item: str, family: str) -> None:
-        if item in PRESERVE or family not in PRESETS:
+        if family not in PRESETS:
             return
         value = (family, f"bettercombat:{PRESETS[family]}")
         if item in result and result[item] != value:

@@ -71,7 +71,7 @@ public final class MetalMaterialGameTests {
     public static void sevenMetalIdentitiesStackLimitsAndFullPackingShapes(GameTestHelper helper) {
         for (Metal metal : metals()) {
             helper.assertValueEqual(new ItemStack(metal.nugget()).getMaxStackSize(), 64, metal.name() + " nuggets stack to 64");
-            helper.assertValueEqual(new ItemStack(metal.ingot()).getMaxStackSize(), 4, metal.name() + " ingots stack to 4");
+            helper.assertValueEqual(new ItemStack(metal.ingot()).getMaxStackSize(), 8, metal.name() + " ingots stack to 8");
             ItemStack saved = new ItemStack(metal.ingot(), 8);
             ItemStack loaded = ItemStack.parse(helper.getLevel().registryAccess(), saved.save(helper.getLevel().registryAccess())).orElseThrow();
             helper.assertTrue(ItemStack.isSameItemSameComponents(saved, loaded) && loaded.getCount() == 8,
@@ -89,7 +89,7 @@ public final class MetalMaterialGameTests {
                     CraftingInput.of(3, 3, mixed), helper.getLevel()).isEmpty(), "Mixed metals cannot satisfy the shaped packing recipe");
         }
         helper.assertValueEqual(new ItemStack(Items.RAW_COPPER).getMaxStackSize(), 4, "Modern raw copper follows the explicit source-metal family stack adaptation");
-        helper.assertValueEqual(new ItemStack(Items.NETHERITE_INGOT).getMaxStackSize(), 4, "Modern netherite follows the explicit source-ingot family stack adaptation");
+        helper.assertValueEqual(new ItemStack(Items.NETHERITE_INGOT).getMaxStackSize(), 8, "Modern netherite retains the eight-ingot family stack limit");
         helper.succeed();
     }
 
@@ -181,7 +181,7 @@ public final class MetalMaterialGameTests {
                 menu.getCraftSlots().setItem(0, new ItemStack(block.block(), 2));
                 TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.PICKUP);
                 helper.assertTrue(menu.getCarried().isEmpty(), "Completed manufacture routes the whole result to inventory, never an oversized cursor");
-                helper.assertValueEqual(count(player.getInventory(), block.ingot()), 9, "Normal manufacture stores the legal four-plus-four-plus-one split");
+                helper.assertValueEqual(count(player.getInventory(), block.ingot()), 9, "Normal manufacture stores the legal eight-plus-one split");
                 assertLegalStacks(helper, player.getInventory());
                 TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
                 helper.assertValueEqual(count(player.getInventory(), block.ingot()), 18, "Shift keeps the full next nine-ingot batch in inventory");
@@ -303,9 +303,9 @@ public final class MetalMaterialGameTests {
                     spawned.live(ItemEntity.class).forEach(ItemEntity::discard);
                     player.getInventory().setItem(8, ItemStack.EMPTY);
                     TimedCraftingTestSupport.craftOne(helper, player, menu, ClickType.QUICK_MOVE);
-                    helper.assertValueEqual(count(player.getInventory(), Items.COPPER_INGOT), 4, "A single free slot receives four ingots");
+                    helper.assertValueEqual(count(player.getInventory(), Items.COPPER_INGOT), 8, "A single free slot receives eight ingots");
                     helper.assertValueEqual(spawned.live(ItemEntity.class).stream().filter(item -> item.getItem().is(Items.COPPER_INGOT))
-                            .mapToInt(item -> item.getItem().getCount()).sum(), 5, "The remaining five ingots drop as legal stacks");
+                            .mapToInt(item -> item.getItem().getCount()).sum(), 1, "Only the remaining one ingot drops");
                     helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Each of the two completed periods consumes exactly one input");
                     assertLegalStacks(helper, player.getInventory());
                     spawned.live(ItemEntity.class).forEach(ItemEntity::discard);

@@ -247,14 +247,14 @@ public final class SourcePlayerCombatGameTests {
     public static void entityContextsKeepHeightBoatAndFireballOverrides(GameTestHelper h) {
         Player player=player(h); Cow target=cow(h,player,1D);
         player.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Items.IRON_SWORD));
-        close(h,SourcePlayerReach.meleeReach(player,target),2.25D,"Sword melee reach");
+        close(h,SourcePlayerReach.meleeReach(player,target),3D,"Sword has three total blocks of melee reach");
         close(h,SourcePlayerReach.interactionReach(player,target),2.5D,"Sword has no entity-interaction bonus");
         player.setPos(player.position().add(0D,2.5D,0D));
-        close(h,SourcePlayerReach.meleeReach(player,target),3.25D,"High ground reaches the +1 cap");
+        close(h,SourcePlayerReach.meleeReach(player,target),4D,"High ground reaches the +1 cap");
         Boat boat=EntityType.BOAT.create(h.getLevel()); boat.setPos(target.position());
         close(h,SourcePlayerReach.interactionReach(player,boat),2.5D,"Boat ignores height");
         LargeFireball ball=EntityType.FIREBALL.create(h.getLevel()); ball.setPos(target.position());
-        close(h,SourcePlayerReach.meleeReach(player,ball),5.25D,"Source fireball adds two after height and weapon");
+        close(h,SourcePlayerReach.meleeReach(player,ball),6D,"Source fireball adds two after height and weapon");
         target.discard(); boat.discard(); ball.discard(); h.succeed();
     }
     @GameTest(template = "empty")

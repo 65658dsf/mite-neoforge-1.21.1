@@ -233,24 +233,55 @@ public final class BetterCombatPlayerReachGameTests {
     }
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
-    public static void absentBetterCombatKeepsSourceSwordRangeAndPacketRejection(GameTestHelper h) {
-        if (BetterCombatBridge.enabled()) { h.succeed(); return; }
+    public static void ordinarySwordAndClubRangeIsThreeBlocksAcrossRealPackets(GameTestHelper h) {
         try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
             ServerPlayer player = session.player();
-            for (var item : List.of(Items.IRON_SWORD, io.github.ningmeng123.mite.registry.MiteTools.get("mite:copper_sword"))) {
+            var weapons = new java.util.ArrayList<Item>(List.of(Items.WOODEN_SWORD, Items.IRON_SWORD,
+                    io.github.ningmeng123.mite.registry.MiteTools.get("mite:wooden_cudgel"),
+                    io.github.ningmeng123.mite.registry.MiteTools.get("mite:copper_sword"),
+                    io.github.ningmeng123.mite.registry.MiteTools.get("mite:ancient_metal_sword"),
+                    io.github.ningmeng123.mite.registry.MiteTools.get("mite:mithril_sword"),
+                    io.github.ningmeng123.mite.registry.MiteTools.get("mite:vibranium_sword")));
+            for (var item : BuiltInRegistries.ITEM) {
+                var id = BuiltInRegistries.ITEM.getKey(item);
+                if (id.getNamespace().equals("modern_ite") && id.getPath().startsWith("club_")) weapons.add(item);
+            }
+            for (var item : weapons) {
                 equip(player, new ItemStack(item), ItemStack.EMPTY);
-                try (Target near = target(h, player, 2.1D); Target far = target(h, player, 2.8D)) {
-                    h.assertTrue(Math.abs(SourcePlayerReach.meleeReach(player, near.entity()) - 2.25D) < .00001D,
-                            "Without the optional mod, iron/copper swords retain the source 2.25 block reach");
-                    h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(player.getMainHandItem()) - 2.25D) < .00001D,
+                try (Target near = target(h, player, 2.9D); Target far = target(h, player, 3.1D)) {
+                    h.assertTrue(Math.abs(SourcePlayerReach.meleeReach(player, near.entity()) - 3D) < .00001D,
+                            "Ordinary swords and all club materials have three total blocks of reach: " + item);
+                    h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(player.getMainHandItem()) - 3D) < .00001D,
                             "The native sword tooltip matches the actual neutral-height attack range");
                     vanillaAttack(player, near.entity());
                     h.assertTrue(near.entity().getHealth() < 200F,
                             "The actual vanilla attack packet still damages a target inside source reach");
                     vanillaAttack(player, far.entity());
                     h.assertValueEqual(far.entity().getHealth(), 200F,
-                            "Without Better Combat, the same packet still rejects a target 2.8 blocks from its hitbox");
+                            "The same packet rejects a target beyond the complete three-block reach");
                 }
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void allOrdinarySwordAndClubIdentitiesShareTheThreeBlockBaseline(GameTestHelper h) {
+        // Bare tier-detection fixtures registered by EquipmentMaterialRecyclingGameTests have no weapon attributes.
+        Set<String> recyclingFixtures = Set.of("mite_equipment_recycling:unlisted_blade",
+                "mite_equipment_recycling:copper_mithril_iron_blade");
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) {
+            for (var item : BuiltInRegistries.ITEM) {
+                var stack = new ItemStack(item);
+                if (!SourcePlayerReach.ordinarySwordOrClub(stack)) continue;
+                h.assertValueEqual(SourcePlayerReach.baseMeleeReach(stack, 3D), 3D,
+                        "Every native/addon ordinary sword or club has a complete three-block baseline: " + item);
+                h.assertValueEqual(SourcePlayerReach.baseMeleeReach(stack, 3.5D), 3.5D,
+                        "Deliberate modern range attributes are counted once: " + item);
+                boolean bareRecyclingFixture = recyclingFixtures.contains(BuiltInRegistries.ITEM.getKey(item).toString())
+                        && stack.getAttributeModifiers().modifiers().stream()
+                                .noneMatch(entry -> entry.attribute().is(Attributes.ATTACK_DAMAGE));
+                if (BetterCombatBridge.enabled() && !bareRecyclingFixture) Loaded.assertSwordOrClubProfile(h, stack);
             }
         }
         h.succeed();
@@ -482,6 +513,21 @@ public final class BetterCombatPlayerReachGameTests {
 
     /** Loading the test holder never resolves optional Better Combat classes on an absent-mod run. */
     private static final class Loaded {
+        private static void assertSwordOrClubProfile(GameTestHelper h, ItemStack stack) {
+            var profile = net.bettercombat.logic.WeaponRegistry.getAttributes(stack);
+            h.assertTrue(profile != null, "The actual loaded Better Combat registry has an attack for " + stack);
+            if (profile == null) return;
+            h.assertTrue(Math.abs(net.bettercombat.logic.PlayerAttackHelper.combineAttackRange(profile, 3D) - 3D) < .00001D,
+                    "The actual ordinary sword/club profile also has three-block reach: " + stack);
+            var tool = io.github.ningmeng123.mite.item.EquipmentDurability.toolProfile(stack);
+            if (tool == null || tool.family() != io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily.CLUB
+                    && tool.family() != io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily.CUDGEL) return;
+            var sword = net.bettercombat.logic.WeaponRegistry.getAttributes(new ItemStack(Items.IRON_SWORD));
+            h.assertValueEqual(profile.attacks().length, sword.attacks().length, "Every club receives the ordinary sword's full combo");
+            for (int index = 0; index < sword.attacks().length; ++index)
+                h.assertValueEqual(profile.attacks()[index].animation(), sword.attacks()[index].animation(),
+                        "Every actual club attack uses the sword animation at combo " + index + ": " + stack);
+        }
         private static void nonVanillaValidation(GameTestHelper h) {
             boolean vanilla = net.bettercombat.network.Packets.C2S_AttackRequest.UseVanillaPacket;
             boolean validation = net.bettercombat.BetterCombatMod.config.server_target_range_validation;
@@ -490,10 +536,10 @@ public final class BetterCombatPlayerReachGameTests {
             try (Session session = session(h)) {
                 ServerPlayer player = session.player();
                 equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
-                try (Target near = target(h, player, 4.1D); Target far = target(h, player, 4.4D)) {
+                try (Target near = target(h, player, 5.6D); Target far = target(h, player, 5.9D)) {
                     request(player, near.entity(), 0);
                     h.assertTrue(near.entity().getHealth() < 200F,
-                            "The optional BC validation gate admits the source-configured 4.25 block sword reach");
+                            "The optional BC validation gate admits the source-configured 5.75 block sword reach");
                     request(player, far.entity(), 0);
                     h.assertValueEqual(far.entity().getHealth(), 200F,
                             "MITE still enforces the exact configured limit on the non-vanilla attack path");
@@ -527,26 +573,26 @@ public final class BetterCombatPlayerReachGameTests {
                 equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
                 double range = net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, player.getMainHandItem());
                 h.assertTrue(Math.abs(range - 3D) < .00001D, "The real sword profile has the default three block range");
-                try (Target near = target(h, player, 2.1D);
-                        Target capped = target(h, player, 2.4D);
+                try (Target near = target(h, player, 2.9D);
+                        Target capped = target(h, player, 3.1D);
                         Target far = target(h, player, range + .2D)) {
                     request(player, near.entity(), 0);
                     h.assertTrue(near.entity().getHealth() < 200F,
-                            "The real Better Combat request damages a target inside the source 2.25 block sword reach");
+                            "The real Better Combat request damages a target inside the complete three-block sword reach");
                     request(player, capped.entity(), 0);
                     h.assertValueEqual(capped.entity().getHealth(), 200F,
-                            "The native three block sword profile cannot exceed the source 2.25 block cap");
+                            "The native sword profile and source policy share the same three-block boundary");
                     request(player, far.entity(), 0);
                     h.assertValueEqual(far.entity().getHealth(), 200F,
                             "A forged Better Combat request cannot hit outside the actual sword range");
                 }
                 try (Target downhillNear = target(h, player, 2.6D, 1.5D);
-                        Target downhillFar = target(h, player, 2.9D, 1.5D);
-                        Target uphillNear = target(h, player, 1.6D, -1.5D);
-                        Target uphillFar = target(h, player, 1.9D, -1.5D)) {
-                    h.assertTrue(Math.abs(SourcePlayerReach.sourceMeleeReach(player, downhillNear.entity()) - 2.75D) < .00001D,
+                        Target downhillFar = target(h, player, 3.7D, 1.5D);
+                        Target uphillNear = target(h, player, 2.3D, -1.5D);
+                        Target uphillFar = target(h, player, 2.7D, -1.5D)) {
+                    h.assertTrue(Math.abs(SourcePlayerReach.sourceMeleeReach(player, downhillNear.entity()) - 3.5D) < .00001D,
                             "The source cap retains the downhill height advantage");
-                    h.assertTrue(Math.abs(SourcePlayerReach.sourceMeleeReach(player, uphillNear.entity()) - 1.75D) < .00001D,
+                    h.assertTrue(Math.abs(SourcePlayerReach.sourceMeleeReach(player, uphillNear.entity()) - 2.5D) < .00001D,
                             "The source cap retains the uphill height penalty");
                     request(player, downhillNear.entity(), 0);
                     h.assertTrue(downhillNear.entity().getHealth() < 200F,
@@ -561,7 +607,7 @@ public final class BetterCombatPlayerReachGameTests {
                     h.assertValueEqual(uphillFar.entity().getHealth(), 200F,
                             "The native sword profile cannot bypass the source uphill penalty");
                 }
-                try (Target target = target(h, player, 2.8D)) {
+                try (Target target = target(h, player, 3.2D)) {
                     vanillaAttack(player, target.entity());
                     h.assertValueEqual(target.entity().getHealth(), 200F,
                             "A normal vanilla packet cannot reuse the completed Better Combat request's reach");
@@ -603,7 +649,7 @@ public final class BetterCombatPlayerReachGameTests {
                             player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE)) - expectedRange) < .00001D,
                             "A Simply Swords durability family does not replace its native range: " + family);
                     requestAtDistance(h, player, 2.6D, 0D, true,
-                            "Both screenshot weapons hit beyond the ordinary sword's 2.25 block range: " + family);
+                            "Both screenshot weapons retain their independent declared range: " + family);
                     requestAtDistance(h, player, 2.9D, 0D, family.equals("glaive"),
                             "At 2.9 blocks only the longer glaive can cause real damage: " + family);
                     requestAtDistance(h, player, 3.3D, 0D, family.equals("glaive"),
@@ -724,7 +770,7 @@ public final class BetterCombatPlayerReachGameTests {
                             if (overlap) near.entity().setPos(player.position());
                             String context = parsed + (overlap ? " with an overlapping target" : " at one block");
                             h.assertValueEqual(SourcePlayerReach.sourceMeleeReach(player, near.entity()), 0D,
-                                    "Invalid Simply Swords metadata clamps source reach to zero instead of falling back to 2.25: " + context);
+                                    "Invalid Simply Swords metadata clamps source reach to zero instead of borrowing ordinary sword reach: " + context);
                             vanillaAttack(player, near.entity());
                             h.assertValueEqual(near.entity().getHealth(), 200F,
                                     "A normal vanilla attack packet rejects invalid Simply Swords range metadata: " + context);
@@ -771,8 +817,8 @@ public final class BetterCombatPlayerReachGameTests {
                 equip(player, new ItemStack(item), ItemStack.EMPTY);
                 try (Target shortNear = target(h, player, 1.7D);
                         Target shortFar = target(h, player, 1.9D);
-                        Target longNear = target(h, player, 2.1D);
-                        Target longFar = target(h, player, 2.4D)) {
+                        Target longNear = target(h, player, 2.9D);
+                        Target longFar = target(h, player, 3.1D)) {
                     request(player, shortNear.entity(), 0);
                     h.assertTrue(shortNear.entity().getHealth() < 200F, "The shortened combo attack still hits inside 1.8 blocks");
                     request(player, shortFar.entity(), 0);
@@ -780,10 +826,10 @@ public final class BetterCombatPlayerReachGameTests {
                             "The 0.6 range multiplier is enforced for the requested short attack");
                     request(player, longNear.entity(), 1);
                     h.assertTrue(longNear.entity().getHealth() < 200F,
-                            "The longer combo attack still hits inside the source 2.25 block sword reach");
+                            "The longer combo attack still hits inside the complete three-block sword reach");
                     request(player, longFar.entity(), 1);
                     h.assertValueEqual(longFar.entity().getHealth(), 200F,
-                            "A long combo attack cannot exceed the source 2.25 block cap");
+                            "A long combo attack cannot exceed the complete three-block sword cap");
                     equip(player, ItemStack.EMPTY, ItemStack.EMPTY);
                     vanillaAttack(player, shortFar.entity());
                     h.assertValueEqual(shortFar.entity().getHealth(), 200F,
@@ -843,13 +889,13 @@ public final class BetterCombatPlayerReachGameTests {
             try (ReachSettings ignored = new ReachSettings(.75D, .25D); Session session = session(h)) {
                 ServerPlayer player = session.player();
                 equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
-                try (Target near = target(h, player, 1.3D); Target far = target(h, player, 1.6D)) {
+                try (Target near = target(h, player, 1.9D); Target far = target(h, player, 2.1D)) {
                     request(player, near.entity(), 0);
                     h.assertTrue(near.entity().getHealth() < 200F,
-                            "The configured source sword range 2.25 * 0.75 - 0.25 still reaches 1.3 blocks");
+                            "The configured sword range 3 * 0.75 - 0.25 still reaches 1.9 blocks");
                     request(player, far.entity(), 0);
                     h.assertValueEqual(far.entity().getHealth(), 200F,
-                            "The configured source 1.4375 block sword reach rejects 1.6 blocks");
+                            "The configured two-block sword reach rejects 2.1 blocks");
                 }
                 player.setGameMode(GameType.CREATIVE);
                 Vec3 position = player.position();
@@ -869,13 +915,13 @@ public final class BetterCombatPlayerReachGameTests {
             try (ReachSettings ignored = new ReachSettings(2D, .25D); Session session = session(h)) {
                 ServerPlayer player = session.player();
                 equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
-                try (Target near = target(h, player, 4.1D); Target far = target(h, player, 4.4D)) {
+                try (Target near = target(h, player, 5.6D); Target far = target(h, player, 5.9D)) {
                     request(player, near.entity(), 0);
                     h.assertTrue(near.entity().getHealth() < 200F,
-                            "Increasing the source sword range to 2.25 * 2 - 0.25 survives the actual vanilla packet bridge");
+                            "Increasing the sword range to 3 * 2 - 0.25 survives the actual vanilla packet bridge");
                     request(player, far.entity(), 0);
                     h.assertValueEqual(far.entity().getHealth(), 200F,
-                            "The increased range is still bounded by the source-configured 4.25 blocks");
+                            "The increased range is still bounded by the configured 5.75 blocks");
                 }
             }
         }
@@ -898,13 +944,13 @@ public final class BetterCombatPlayerReachGameTests {
                 }
                 player.getAttribute(Attributes.SCALE).setBaseValue(1.5D);
                 player.refreshDimensions();
-                try (Target near = target(h, player, 2.1D, 0D); Target far = target(h, player, 2.4D, 0D)) {
+                try (Target near = target(h, player, 2.9D, 0D); Target far = target(h, player, 3.1D, 0D)) {
                     request(player, near.entity(), 0);
                     h.assertTrue(near.entity().getHealth() < 200F,
-                            "A larger player's actual scale can still hit inside the source 2.25 block sword reach");
+                            "A larger player's actual scale can still hit inside the complete three-block sword reach");
                     request(player, far.entity(), 0);
                     h.assertValueEqual(far.entity().getHealth(), 200F,
-                            "The scaled native 4.5 block sword range cannot bypass the source 2.25 block cap");
+                            "The scaled native 4.5 block sword range cannot bypass the complete three-block cap");
                 }
             } finally {
                 net.bettercombat.BetterCombatMod.config.entity_scale_attack_range_influence = previousInfluence;

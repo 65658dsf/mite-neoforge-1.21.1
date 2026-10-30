@@ -16,7 +16,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 
-/** A single material block yields nine ingots while each inventory stack holds four. @author NingMeng123 */
+/** A single material block yields nine ingots while each inventory stack holds eight. @author NingMeng123 */
 public final class BulkMaterialRecipe extends ShapelessRecipe {
     private final String materialGroup;
     private final Ingredient ingredient;
@@ -36,7 +36,7 @@ public final class BulkMaterialRecipe extends ShapelessRecipe {
 
     /** This exception is deliberately limited to a batch of nine source-metal or vibranium ingots. */
     public static boolean isValidResult(ItemStack stack) {
-        return stack.getCount() == 9 && stack.getMaxStackSize() == 4
+        return stack.getCount() == 9 && stack.getMaxStackSize() == 8
                 && (stack.is(Items.COPPER_INGOT) || stack.is(Items.IRON_INGOT) || stack.is(Items.GOLD_INGOT)
                 || stack.is(MiteMaterials.SILVER_INGOT.get()) || stack.is(MiteMaterials.ANCIENT_METAL_INGOT.get())
                 || stack.is(MiteMaterials.MITHRIL_INGOT.get()) || stack.is(MiteMaterials.ADAMANTIUM_INGOT.get()) || stack.is(MiteMaterials.VIBRANIUM_INGOT.get()));
@@ -45,7 +45,7 @@ public final class BulkMaterialRecipe extends ShapelessRecipe {
     public static final class Serializer implements RecipeSerializer<BulkMaterialRecipe> {
         private static final Codec<ItemStack> RESULT_CODEC = ItemStack.CODEC.validate(stack -> isValidResult(stack)
                 ? DataResult.success(stack)
-                : DataResult.error(() -> "Bulk material result must be exactly nine metal ingots with stack limit four"));
+                : DataResult.error(() -> "Bulk material result must be exactly nine metal ingots with stack limit eight"));
         private static final MapCodec<BulkMaterialRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.materialGroup),
                 Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),

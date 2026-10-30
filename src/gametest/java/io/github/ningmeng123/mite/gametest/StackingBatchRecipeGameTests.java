@@ -70,10 +70,10 @@ public final class StackingBatchRecipeGameTests {
             helper.assertValueEqual(loaded.getResultItem(helper.getLevel().registryAccess()).getCount(), count, "Loaded recipe retains complete batch: " + id);
             helper.assertValueEqual(decoded.getResultItem(helper.getLevel().registryAccess()).getCount(), count, "JSON decoding retains complete batch: " + id);
             ItemStack decodedOutput = decoded.getResultItem(helper.getLevel().registryAccess());
-            boolean adjustedMineral = decodedOutput.is(Items.RAW_COPPER) || decodedOutput.is(Items.RAW_GOLD)
-                    || decodedOutput.is(Items.RAW_IRON) || decodedOutput.is(Items.NETHERITE_INGOT);
-            helper.assertValueEqual(decodedOutput.getMaxStackSize(), adjustedMineral ? 4 : record.get("maximum_stack").getAsInt(),
-                    "Recipe outputs expose source limits with the current four-mineral adjustment: " + id);
+            boolean adjustedRawMineral = decodedOutput.is(Items.RAW_COPPER) || decodedOutput.is(Items.RAW_GOLD)
+                    || decodedOutput.is(Items.RAW_IRON);
+            helper.assertValueEqual(decodedOutput.getMaxStackSize(), adjustedRawMineral ? 4 : record.get("maximum_stack").getAsInt(),
+                    "Recipe outputs retain eight-ingot source limits while raw minerals remain four: " + id);
             helper.assertValueEqual(decoded.getGroup(), json.has("group") ? json.get("group").getAsString() : "", "Native recipe group is unchanged: " + id);
             helper.assertValueEqual(decoded.category().getSerializedName(), json.has("category") ? json.get("category").getAsString() : "misc", "Native crafting category is unchanged: " + id);
             var roundTrip = (CraftingRecipe) Recipe.CODEC.parse(ops, Recipe.CODEC.encodeStart(ops, decoded).getOrThrow()).getOrThrow();

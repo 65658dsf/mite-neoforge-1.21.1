@@ -4,6 +4,7 @@
   "package": "io.github.ningmeng123.mite.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ServerClockStatusMixin",
     "MonsterPreyTargetMixin",
     "NativeVindicatorTargetRangeMixin",
     "MonsterPreyContinuationMixin",
@@ -362,6 +363,8 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.PunchyClubAnimationMixin",
+    "client.InBedChatScreenMixin",
     "client.InvisibleMonsterRendererMixin",
     "client.EnderDragonGlowCompatibilityMixin",
     "client.EnderDragonSegmentsMixin",

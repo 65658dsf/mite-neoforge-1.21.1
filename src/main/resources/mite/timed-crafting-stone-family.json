@@ -1,0 +1,734 @@
+{
+  "author": "NingMeng123",
+  "source": "Modern vanilla stone-family crafting completion. Existing explicit rules win; benchmark and factor disclose each whole-batch adaptation. Stonecutting and smelting are separate native operations.",
+  "recipes": {
+    "minecraft:andesite": {
+      "difficulty": 480.00003,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 0.5,
+      "operation": "Two-stone mixing batch, half the four-block masonry benchmark"
+    },
+    "minecraft:andesite_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:andesite_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:blackstone_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:blackstone_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:blackstone_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:brick_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:chiseled_nether_bricks": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "Two slabs shaped into one carved block"
+    },
+    "minecraft:chiseled_polished_blackstone": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "Two slabs shaped into one carved block"
+    },
+    "minecraft:chiseled_stone_bricks": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "Two slabs shaped into one carved block"
+    },
+    "minecraft:chiseled_tuff": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "Two slabs shaped into one carved block"
+    },
+    "minecraft:chiseled_tuff_bricks": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "Two slabs shaped into one carved block"
+    },
+    "minecraft:dark_prismarine": {
+      "difficulty": 1890.0,
+      "required_bench": null,
+      "source_order": 162,
+      "benchmark": "minecraft:bricks",
+      "factor": 2.25,
+      "operation": "Eight shards and one dye, nine-piece stone composite"
+    },
+    "minecraft:dark_prismarine_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:dark_prismarine_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:diorite": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four-mineral mixing batch"
+    },
+    "minecraft:diorite_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:diorite_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:dripstone_block": {
+      "difficulty": 800.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1.3333333333333333,
+      "operation": "Four stone pieces; existing three-stone batch scaled by input count"
+    },
+    "minecraft:end_stone_brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:end_stone_brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:end_stone_brick_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:end_stone_bricks": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:granite": {
+      "difficulty": 480.00003,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 0.5,
+      "operation": "Two-mineral mixing batch, half the four-block masonry benchmark"
+    },
+    "minecraft:granite_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:granite_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:granite_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:mossy_cobblestone_from_moss_block": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "One stone/earth block mixed with a natural binder; simple 100-difficulty treatment"
+    },
+    "minecraft:mossy_cobblestone_from_vine": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "One stone/earth block mixed with a natural binder; simple 100-difficulty treatment"
+    },
+    "minecraft:mossy_stone_brick_wall": {
+      "difficulty": 900.0,
+      "required_bench": null,
+      "source_order": 177,
+      "benchmark": "minecraft:stone_brick_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:mossy_stone_bricks_from_moss_block": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "One stone/earth block mixed with a natural binder; simple 100-difficulty treatment"
+    },
+    "minecraft:mossy_stone_bricks_from_vine": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "One stone/earth block mixed with a natural binder; simple 100-difficulty treatment"
+    },
+    "minecraft:mud_brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:mud_brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:mud_brick_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:mud_bricks": {
+      "difficulty": 840.0,
+      "required_bench": null,
+      "source_order": 162,
+      "benchmark": "minecraft:bricks",
+      "factor": 1,
+      "operation": "Four constituent pieces pressed into masonry"
+    },
+    "minecraft:nether_brick_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:packed_mud": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "One stone/earth block mixed with a natural binder; simple 100-difficulty treatment"
+    },
+    "minecraft:polished_andesite": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:polished_andesite_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_andesite_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_basalt": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:polished_blackstone": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:polished_blackstone_brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_blackstone_brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_blackstone_brick_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_blackstone_bricks": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:polished_blackstone_button": {
+      "difficulty": 240.00002,
+      "required_bench": null,
+      "source_order": 507,
+      "benchmark": "minecraft:stone_button",
+      "factor": 1,
+      "operation": "Same dressed-stone control shape and input count as the existing stone recipe"
+    },
+    "minecraft:polished_blackstone_pressure_plate": {
+      "difficulty": 480.00003,
+      "required_bench": null,
+      "source_order": 458,
+      "benchmark": "minecraft:stone_pressure_plate",
+      "factor": 1,
+      "operation": "Same dressed-stone control shape and input count as the existing stone recipe"
+    },
+    "minecraft:polished_blackstone_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_blackstone_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_blackstone_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_diorite": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:polished_diorite_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_diorite_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_granite": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:polished_granite_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_granite_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_tuff": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:polished_tuff_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_tuff_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:polished_tuff_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:prismarine": {
+      "difficulty": 840.0,
+      "required_bench": null,
+      "source_order": 162,
+      "benchmark": "minecraft:bricks",
+      "factor": 1,
+      "operation": "Four constituent pieces pressed into masonry"
+    },
+    "minecraft:prismarine_brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:prismarine_brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:prismarine_bricks": {
+      "difficulty": 1890.0,
+      "required_bench": null,
+      "source_order": 162,
+      "benchmark": "minecraft:bricks",
+      "factor": 2.25,
+      "operation": "Nine constituent pieces instead of the four-piece brick benchmark"
+    },
+    "minecraft:prismarine_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:prismarine_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:prismarine_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:purpur_block": {
+      "difficulty": 840.0,
+      "required_bench": null,
+      "source_order": 162,
+      "benchmark": "minecraft:bricks",
+      "factor": 1,
+      "operation": "Four constituent pieces pressed into masonry"
+    },
+    "minecraft:purpur_pillar": {
+      "difficulty": 100.0,
+      "required_bench": null,
+      "source_order": 428,
+      "benchmark": "minecraft:chiseled_sandstone",
+      "factor": 1,
+      "operation": "Two slabs shaped into one carved block"
+    },
+    "minecraft:purpur_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:purpur_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:quartz_bricks": {
+      "difficulty": 14400.0,
+      "required_bench": null,
+      "source_order": 304,
+      "benchmark": "minecraft:quartz_block",
+      "factor": 4,
+      "operation": "Four quartz blocks; preserve the existing quartz per-block processing weight"
+    },
+    "minecraft:red_nether_brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:red_nether_brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:red_nether_brick_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:red_nether_bricks": {
+      "difficulty": 850.0,
+      "required_bench": null,
+      "source_order": 163,
+      "benchmark": "minecraft:nether_bricks",
+      "factor": 1,
+      "operation": "Four-piece nether masonry batch with two wart binders"
+    },
+    "minecraft:red_sandstone": {
+      "difficulty": 320.0,
+      "required_bench": null,
+      "source_order": 355,
+      "benchmark": "minecraft:cut_sandstone",
+      "factor": 1,
+      "operation": "Four sand items bound into one sandstone block"
+    },
+    "minecraft:red_sandstone_wall": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 179,
+      "benchmark": "minecraft:sandstone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:sandstone": {
+      "difficulty": 320.0,
+      "required_bench": null,
+      "source_order": 355,
+      "benchmark": "minecraft:cut_sandstone",
+      "factor": 1,
+      "operation": "Four sand items bound into one sandstone block"
+    },
+    "minecraft:sandstone_wall": {
+      "difficulty": 480.0,
+      "required_bench": null,
+      "source_order": 179,
+      "benchmark": "minecraft:sandstone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:sea_lantern": {
+      "difficulty": 1890.0,
+      "required_bench": null,
+      "source_order": 162,
+      "benchmark": "minecraft:bricks",
+      "factor": 2.25,
+      "operation": "Four shards and five crystals, nine-piece stone composite"
+    },
+    "minecraft:stone_brick_wall": {
+      "difficulty": 900.0,
+      "required_bench": null,
+      "source_order": 177,
+      "benchmark": "minecraft:stone_brick_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:stone_stairs": {
+      "difficulty": 1440.00012,
+      "required_bench": null,
+      "source_order": 390,
+      "benchmark": "minecraft:stone_slab",
+      "factor": 2,
+      "operation": "Six smooth-stone blocks; twice the existing three-block slab batch"
+    },
+    "minecraft:tuff_brick_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:tuff_brick_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:tuff_brick_wall": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 273,
+      "benchmark": "minecraft:cobblestone_wall",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:tuff_bricks": {
+      "difficulty": 960.00006,
+      "required_bench": null,
+      "source_order": 356,
+      "benchmark": "minecraft:stone_bricks",
+      "factor": 1,
+      "operation": "Four base blocks polished or bonded into four masonry blocks"
+    },
+    "minecraft:tuff_slab": {
+      "difficulty": 600.0,
+      "required_bench": null,
+      "source_order": 389,
+      "benchmark": "minecraft:cobblestone_slab",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    },
+    "minecraft:tuff_stairs": {
+      "difficulty": 1200.0,
+      "required_bench": null,
+      "source_order": 175,
+      "benchmark": "minecraft:cobblestone_stairs",
+      "factor": 1,
+      "operation": "Same material/operation whole-batch shape benchmark"
+    }
+  }
+}

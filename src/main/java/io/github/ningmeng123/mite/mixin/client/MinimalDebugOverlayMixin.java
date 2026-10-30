@@ -2,9 +2,9 @@ package io.github.ningmeng123.mite.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.ningmeng123.mite.rules.LunarCalendar;
+import io.github.ningmeng123.mite.rules.WorldClock;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -54,6 +54,10 @@ public abstract class MinimalDebugOverlayMixin {
                             mite$displayTime(dayTime), Component.translatable(mite$displayTimePeriod(dayTime))),
                             2, 22, 0xE0E0E0, true);
                 }
+                if (minecraft.player != null) {
+                    graphics.drawString(minecraft.font, Component.translatable("gui.mite.total_experience",
+                            minecraft.player.totalExperience), 2, 32, 0xE0E0E0, true);
+                }
             });
         }
         // Do not collect the modern left-hand world information or raycast debug targets.
@@ -64,15 +68,13 @@ public abstract class MinimalDebugOverlayMixin {
     private static long mite$displayDay(long time) {
         // R196 getDayOfWorld / R196StructureGeneration.displayDay: display days start at raw tick 18000.
         // Keep this distinct from LunarCalendar's unadjusted special-moon day; avoid time + 6000 overflow.
-        long safe = Math.max(time, 0L);
-        return safe / 24_000L + (safe % 24_000L + 6_000L) / 24_000L + 1L;
+        return WorldClock.displayDay(time);
     }
 
     @Unique
     private static String mite$displayTime(long time) {
         // World tick zero is 06:00. Reduce before adding the offset to avoid long overflow.
-        int ticks = (int)((Math.floorMod(time, 24_000L) + 6_000L) % 24_000L);
-        return String.format(Locale.ROOT, "%02d:%02d", ticks / 1_000, ticks % 1_000 * 60 / 1_000);
+        return WorldClock.displayTime(time);
     }
 
     @Unique

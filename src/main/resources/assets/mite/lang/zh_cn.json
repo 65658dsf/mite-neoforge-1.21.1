@@ -978,6 +978,8 @@
   "tooltip.mite.brightness_locked": "MITE 将亮度固定为最低，无法更改。",
   "gui.mite.world_day": "第 %s 天",
   "gui.mite.world_time": "游戏时间：%s（%s）",
+  "gui.mite.total_experience": "经验总量：%s",
+  "gui.mite.server_time": "第 %s 天 · %s",
   "gui.mite.time.day": "白天",
   "gui.mite.time.night": "黑夜",
   "gui.mite.tab.level": "%s",

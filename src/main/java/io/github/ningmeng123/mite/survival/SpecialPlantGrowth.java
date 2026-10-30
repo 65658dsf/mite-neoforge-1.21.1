@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.survival;
 import io.github.ningmeng123.mite.entity.CubeCropBlight;
 import io.github.ningmeng123.mite.entity.ai.ConspicuousCactus;
 import io.github.ningmeng123.mite.rules.SpecialPlantRules;
+import io.github.ningmeng123.mite.rules.CropGrowthRules;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
@@ -22,7 +23,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.common.CommonHooks;
 
-/** Source crop-family ticks without delegating back into the modern accelerated formulas. @author NingMeng123 */
+/** Source special-plant behavior with hourly first-harvest pacing for melon and pumpkin stems. @author NingMeng123 */
 public final class SpecialPlantGrowth {
     private static final Map<ServerLevel, byte[]> CACTUS_HEIGHTS = new WeakHashMap<>();
     private SpecialPlantGrowth() {}
@@ -58,7 +59,9 @@ public final class SpecialPlantGrowth {
             return;
         }
         if (growth == 0F || level.getMaxLocalRawBrightness(pos.above()) < 15) return;
-        if (!CommonHooks.canCropGrow(level, pos, state, random.nextInt((int) (25F / growth) + 1) == 0)) return;
+        // Seven stem stages plus four accepted fruit attempts: 1/2 fruit gate and two open sides.
+        int threshold=CropGrowthRules.growthThreshold(growth,melon(state)?2F:2.5F,11);
+        if (!CommonHooks.canCropGrow(level, pos, state, random.nextInt(CropGrowthRules.GROWTH_ROLL_BOUND)<threshold)) return;
         int age = state.hasProperty(StemBlock.AGE) ? state.getValue(StemBlock.AGE) : 7;
         if (age < 7) level.setBlock(pos, state.setValue(StemBlock.AGE, age + 1), 2);
         else {

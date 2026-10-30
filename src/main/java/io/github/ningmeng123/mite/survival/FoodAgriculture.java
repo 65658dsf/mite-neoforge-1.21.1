@@ -22,7 +22,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-/** Persistent farmland fertilization and source growth modifiers. @author NingMeng123 */
+/** Persistent farmland fertilization, living crop treatment and source growth modifiers. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class FoodAgriculture {
     public static final BooleanProperty FERTILIZED = BooleanProperty.create("mite_fertilized");
@@ -81,12 +81,24 @@ public final class FoodAgriculture {
         BlockState state = level.getBlockState(pos);
         if (soilPlant(state)) { pos = pos.below(); state = level.getBlockState(pos); }
         else if (event.getFace() != Direction.UP) return;
-        if (!(state.getBlock() instanceof FarmBlock) || !state.hasProperty(FERTILIZED) || state.getValue(FERTILIZED)) return;
+        if (!(state.getBlock() instanceof FarmBlock) || !state.hasProperty(FERTILIZED)) return;
+        BlockPos plantPos=pos.above(); BlockState plant=level.getBlockState(plantPos);
+        boolean cure=plant.getBlock() instanceof CropBlock && CubeCropBlight.blighted(plant) && !CubeCropBlight.dead(plant);
+        boolean fertilize=!state.getValue(FERTILIZED);
+        if(!fertilize&&!cure)return;
         if (!level.mayInteract(event.getEntity(), pos)
-                || !event.getEntity().mayUseItemAt(pos, Direction.UP, event.getItemStack())) return;
+                || !event.getEntity().mayUseItemAt(pos, Direction.UP, event.getItemStack())
+                || cure && (!level.mayInteract(event.getEntity(),plantPos)
+                || !event.getEntity().mayUseItemAt(plantPos,Direction.UP,event.getItemStack()))) return;
         if (!level.isClientSide) {
-            level.setBlock(pos, state.setValue(FERTILIZED, true), 2);
-            io.github.ningmeng123.mite.advancement.MiteAchievements.award(event.getEntity(),"soilEnrichment");
+            if(fertilize) {
+                level.setBlock(pos, state.setValue(FERTILIZED, true), 2);
+                io.github.ningmeng123.mite.advancement.MiteAchievements.award(event.getEntity(),"soilEnrichment");
+            }
+            if(cure) {
+                CubeCropBlight.cure((net.minecraft.server.level.ServerLevel)level,plantPos,plant);
+                io.github.ningmeng123.mite.advancement.MiteAchievements.award(event.getEntity(),"plantDoctor");
+            }
             if(FungalGrowth.culture((net.minecraft.server.level.ServerLevel)level,pos.above()))
                 io.github.ningmeng123.mite.advancement.MiteAchievements.award(event.getEntity(),"makeMycelium");
             event.getItemStack().consume(1, event.getEntity());

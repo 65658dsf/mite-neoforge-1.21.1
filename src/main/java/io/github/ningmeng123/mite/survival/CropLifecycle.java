@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.CommonHooks;
 
-/** Source growth, drought and disease order for food crops; saved state keys remain compatible. @author NingMeng123 */
+/** Hourly food-crop pacing with source environment, drought and disease order; saved keys remain compatible. @author NingMeng123 */
 public final class CropLifecycle {
     private CropLifecycle() {}
     public static boolean managed(BlockState state) {
@@ -86,7 +86,8 @@ public final class CropLifecycle {
             CubeCropBlight.infect(level,pos);return true;
         }
         if(light!=15||growth==0F||crop.isMaxAge(state))return true;
-        boolean grow=random.nextInt(CropGrowthRules.growthDenominator(growth))==0;
+        boolean grow=random.nextInt(CropGrowthRules.GROWTH_ROLL_BOUND)<CropGrowthRules.growthThreshold(
+                growth,CropGrowthRules.FOOD_REFERENCE_RATE,crop.getMaxAge());
         if(CommonHooks.canCropGrow(level,pos,state,grow)&&level.setBlock(pos,crop.getStateForAge(crop.getAge(state)+1),2)) {
             FoodAgriculture.onCropGrowth(level,pos.below(),random);
             CommonHooks.fireCropGrowPost(level,pos,state);

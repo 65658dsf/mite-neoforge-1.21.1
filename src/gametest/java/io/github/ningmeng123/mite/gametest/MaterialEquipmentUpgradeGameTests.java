@@ -224,7 +224,7 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void legalFourIngotSlotsAndBackpackReservesPayFullArmorCostsOnBothTakePaths(GameTestHelper h) {
+    public static void partialFourIngotSlotsAndBackpackReservesPayFullArmorCostsOnBothTakePaths(GameTestHelper h) {
         for (String family : List.of("helmet", "chestplate", "leggings"))
             for (boolean inventory : new boolean[]{false, true})
                 try (SmithingSession session = new SmithingSession(h)) {
@@ -250,7 +250,8 @@ public final class MaterialEquipmentUpgradeGameTests {
             session.menu.clicked(2, 0, ClickType.PICKUP, session.player);
             session.menu.broadcastChanges();
             h.assertTrue(session.menu.getCarried().isEmpty(), "Native clicks put exactly one legal stack in the material slot");
-            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 4, "The material slot never exceeds the four-ingot cap");
+            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 4, "The player deliberately supplies a partial stack of four ingots");
+            h.assertValueEqual(session.menu.getSlot(2).getItem().getMaxStackSize(), 8, "The partial-payment path retains the corrected eight-ingot cap");
             h.assertTrue(session.menu.getSlot(3).getItem().is(upgrade.result()), "Backpack reserves enable the full-price preview");
             if (inventory && family.equals("chestplate")) for (int slot = 0; slot < session.player.getInventory().items.size(); slot++)
                 if (session.player.getInventory().getItem(slot).isEmpty()) session.player.getInventory().setItem(slot, new ItemStack(Items.IRON_SWORD));
@@ -528,7 +529,9 @@ public final class MaterialEquipmentUpgradeGameTests {
                 if (mutation != 2) {
                     helper.assertValueEqual(session.menu.getSlot(0).getItem().getCount(), 1, "Cancellation consumes no template");
                     helper.assertTrue(session.menu.getSlot(1).getItem().is(upgrade.base()), "Cancellation preserves the source equipment");
-                    helper.assertValueEqual(session.metal(upgrade.addition()), mutation == 1 ? 4 : 6, "Cancellation consumes no additional ingot");
+                    // Six ingots now fit entirely in the eight-cap slot. Replacing it with two
+                    // leaves exactly two; the former four-cap fixture also had two in its backpack.
+                    helper.assertValueEqual(session.metal(upgrade.addition()), mutation == 1 ? 2 : 6, "Cancellation consumes no additional ingot");
                 } else {
                     helper.assertValueEqual(session.player.getInventory().countItem(upgrade.base()), 1, "Closing returns the original equipment through the native menu cleanup");
                     helper.assertValueEqual(session.player.getInventory().countItem(upgrade.addition()), 6, "Closing returns every unconsumed ingot");

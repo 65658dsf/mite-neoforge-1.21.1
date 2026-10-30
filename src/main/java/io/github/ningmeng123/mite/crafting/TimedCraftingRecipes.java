@@ -52,7 +52,8 @@ public final class TimedCraftingRecipes {
                     "/mite/timed-crafting-028-utility.json", "/mite/timed-crafting-028-decorative.json",
                     "/mite/timed-crafting-equipment-upgrades.json", "/mite/timed-crafting-material-processing.json",
                     "/mite/timed-crafting-r196-common.json", "/mite/timed-crafting-deepslate.json",
-                    "/mite/timed-crafting-phantom-blades.json")) {
+                    "/mite/timed-crafting-phantom-blades.json", "/mite/timed-crafting-modern-stone-walls.json",
+                    "/mite/timed-crafting-stone-family.json")) {
                 try (var reader027 = new InputStreamReader(Objects.requireNonNull(
                         TimedCraftingRecipes.class.getResourceAsStream(resource)), StandardCharsets.UTF_8)) {
                     JsonParser.parseReader(reader027).getAsJsonObject().getAsJsonObject("recipes").entrySet().forEach(entry -> {
@@ -62,7 +63,8 @@ public final class TimedCraftingRecipes {
                                 value.get("required_bench").isJsonNull() ? null : value.get("required_bench").getAsString(),
                                 value.get("source_order").getAsInt());
                         // Preserve deliberate recipe-specific overrides from earlier feature batches.
-                        if (resource.equals("/mite/timed-crafting-r196-common.json")) rules.putIfAbsent(id, rule);
+                        if (resource.equals("/mite/timed-crafting-r196-common.json")
+                                || resource.equals("/mite/timed-crafting-stone-family.json")) rules.putIfAbsent(id, rule);
                         else rules.put(id, rule);
                     });
                 }

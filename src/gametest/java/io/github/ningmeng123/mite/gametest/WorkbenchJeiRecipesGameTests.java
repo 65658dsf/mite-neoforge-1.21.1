@@ -403,7 +403,7 @@ public final class WorkbenchJeiRecipesGameTests {
                     && page.inputs().getFirst().stream().anyMatch(stack -> stack.is(conversion.getKey()))).findFirst().orElseThrow();
             helper.assertTrue(shown.output().is(conversion.getValue()), "The loaded material block produces its actual metal");
             helper.assertValueEqual(shown.output().getCount(), 9, "A complete one-block batch displays nine ingots");
-            helper.assertValueEqual(shown.output().getMaxStackSize(), 4, "The special batch display must not silently apply the normal four-ingot inventory limit");
+            helper.assertValueEqual(shown.output().getMaxStackSize(), 8, "The special batch display keeps the normal eight-ingot transfer limit while showing all nine");
             try (Fixture fixture = new Fixture(helper, "mite:flint_crafting_table")) {
                 fixture.menu.getSlot(1).set(new ItemStack(conversion.getKey()));
                 TimedCraftingTestSupport.craftOne(helper, fixture.player, fixture.menu, ClickType.PICKUP);

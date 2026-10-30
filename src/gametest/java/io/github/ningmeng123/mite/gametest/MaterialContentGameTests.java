@@ -22,8 +22,8 @@ public final class MaterialContentGameTests {
         for (var entry : MaterialContentRules.profiles().entrySet()) {
             ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(entry.getKey()));
             helper.assertTrue(!stack.isEmpty(), "Existing source material identity is registered");
-            int expected = entry.getKey().getPath().equals("sinew") ? 16 : entry.getKey().getPath().endsWith("_ingot") ? 4 : 64;
-            helper.assertValueEqual(stack.getMaxStackSize(), expected, "Actual stack limit uses the current four-ingot balance over source item families");
+            int expected = entry.getKey().getPath().equals("sinew") ? 16 : entry.getKey().getPath().endsWith("_ingot") ? 8 : 64;
+            helper.assertValueEqual(stack.getMaxStackSize(), expected, "Actual stack limit keeps metal ingots at eight over source item families");
             boolean leather = entry.getKey().getPath().equals("sinew");
             boolean adamantium = entry.getKey().getPath().startsWith("adamantium_");
             helper.assertTrue(stack.canBeHurtBy(helper.getLevel().damageSources().inFire()) == leather,

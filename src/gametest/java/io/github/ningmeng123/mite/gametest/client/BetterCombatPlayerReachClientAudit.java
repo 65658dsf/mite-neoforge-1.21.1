@@ -59,6 +59,7 @@ public final class BetterCombatPlayerReachClientAudit {
     private static int waiting;
     private static int readyTicks;
     private static int nextEntityId = -42000;
+    private static boolean punchyClassificationDone;
     private static JsonObject report;
 
     private BetterCombatPlayerReachClientAudit() {}
@@ -99,8 +100,16 @@ public final class BetterCombatPlayerReachClientAudit {
             if (mc.screen != null) return;
             // Let the new world's client-requested chunks finish generation before shutdown unloads them.
             if (++readyTicks < 200) return;
-            audit(mc);
-            report.addProperty("status", BetterCombatBridge.enabled()
+            if (Boolean.getBoolean("mite.punchyClubAudit")) {
+                if (!punchyClassificationDone) {
+                    PunchyClubAnimationClientAudit.audit(mc, report);
+                    punchyClassificationDone = true;
+                }
+                if (Boolean.getBoolean("mite.punchyClubInputAudit") && !PunchyClubAttackInputAudit.tick(mc, report)) return;
+            } else audit(mc);
+            report.addProperty("status", Boolean.getBoolean("mite.punchyClubAudit")
+                    ? "passed_real_punchy_club_sword_classifiers_and_active_combo_clips_without_bettercombat"
+                    : BetterCombatBridge.enabled()
                     ? "passed_real_client_targetfinder_and_mite_guard"
                     : "passed_optional_bettercombat_absent_and_original_mite_guard");
             finish(mc);
@@ -138,9 +147,9 @@ public final class BetterCombatPlayerReachClientAudit {
             settings(savedSettings, 1D, 0D, true);
             equip(player, new ItemStack(Items.IRON_SWORD));
             if (!BetterCombatBridge.enabled()) {
-                nativeCase(mc, "without_bettercombat_in_range", 2.1D, true);
-                nativeCase(mc, "without_bettercombat_outside_mite_boundary", 2.4D, false);
-                nativeCase(mc, "without_bettercombat_outside_mite", 2.8D, false);
+                nativeCase(mc, "without_bettercombat_in_range", 2.9D, true);
+                nativeCase(mc, "without_bettercombat_outside_mite_boundary", 3.1D, false);
+                nativeCase(mc, "without_bettercombat_outside_mite", 3.2D, false);
                 report.addProperty("optional_bettercombat_classes_resolved", false);
                 return;
             }
@@ -154,16 +163,16 @@ public final class BetterCombatPlayerReachClientAudit {
             near(sword.rawRange(), 3D, "The real installed ordinary sword has a three-block Better Combat range");
             near(BetterCombatPlayerReach.reach(player), 3D, "Better Combat retains its native sword range behind the source cap");
 
-            sample(mc, "sword_inside_mite_range", sword, 2.1D, 0D, 2.25D, true);
-            sample(mc, "sword_outside_mite_boundary", sword, 2.4D, 0D, 2.25D, false);
-            sample(mc, "sword_inside_bettercombat_but_outside_mite", sword, 2.8D, 0D, 2.25D, false);
-            sample(mc, "sword_outside_native_bettercombat_range", sword, 3.2D, 0D, 2.25D, false);
-            sample(mc, "raised_target_keeps_mite_height_penalty", sword, 1.7D, 1.25D, 1.875D, true);
-            sample(mc, "raised_target_outside_mite_height_limit", sword, 2.1D, 1.25D, 1.875D, false);
+            sample(mc, "sword_inside_mite_range", sword, 2.9D, 0D, 3D, true);
+            sample(mc, "sword_outside_mite_boundary", sword, 3.1D, 0D, 3D, false);
+            sample(mc, "sword_reaches_previous_short_cap", sword, 2.8D, 0D, 3D, true);
+            sample(mc, "sword_outside_native_bettercombat_range", sword, 3.2D, 0D, 3D, false);
+            sample(mc, "raised_target_keeps_mite_height_penalty", sword, 2.4D, 1.25D, 2.625D, true);
+            sample(mc, "raised_target_outside_mite_height_limit", sword, 2.8D, 1.25D, 2.625D, false);
             for (int yaw : new int[] {0, 90, 180, 270, 45, 135}) {
                 player.setYRot(yaw); player.yRotO = yaw; player.setOldPosAndRot();
-                sample(mc, "sword_yaw_" + yaw + "_inside_mite_range", sword, 2.1D, 0D, 2.25D, true);
-                sample(mc, "sword_yaw_" + yaw + "_outside_mite_range", sword, 2.4D, 0D, 2.25D, false);
+                sample(mc, "sword_yaw_" + yaw + "_inside_mite_range", sword, 2.9D, 0D, 3D, true);
+                sample(mc, "sword_yaw_" + yaw + "_outside_mite_range", sword, 3.1D, 0D, 3D, false);
             }
             player.setYRot(0F); player.yRotO = 0F; player.setOldPosAndRot();
 
@@ -194,17 +203,17 @@ public final class BetterCombatPlayerReachClientAudit {
             near(BetterCombatPlayerReach.reach(player), 12D, "The native BC range still receives the configured multiplier");
             // With raw range 3, the unmodified initial candidate box reaches only 7.3 blocks forward.
             // A null cursor prevents the direct-target exception from hiding a stale broad-phase radius.
-            sample(mc, "multiplier_expands_initial_candidate_search", sword, 8.8D, 0D, 9D, true);
-            sample(mc, "multiplied_range_keeps_mite_upper_bound", sword, 9.2D, 0D, 9D, false);
+            sample(mc, "multiplier_expands_initial_candidate_search", sword, 11.8D, 0D, 12D, true);
+            sample(mc, "multiplied_range_keeps_mite_upper_bound", sword, 12.2D, 0D, 12D, false);
 
             settings(savedSettings, 1.5D, 1D, false);
             scale(player, 2D);
             double alignedY = api().origin(player).y - player.getY() - .5D;
             near(BetterCombatPlayerReach.reach(player), 8D, "BC scale precedes the configured multiplier and reduction");
-            // BC keeps (3 * 2) * 1.5 - 1 = 8, while the source cap remains 2.25 * 1.5 - 1.
+            // BC keeps (3 * 2) * 1.5 - 1 = 8, while the source cap remains 3 * 1.5 - 1.
             // Align both origins within the target box and disable height adjustment to isolate scale.
-            sample(mc, "scale_preserves_source_cap_after_multiplier_and_reduction", sword, 2.1D, alignedY, 2.375D, true);
-            sample(mc, "scaled_bettercombat_range_cannot_exceed_source_cap", sword, 2.5D, alignedY, 2.375D, false);
+            sample(mc, "scale_preserves_source_cap_after_multiplier_and_reduction", sword, 3.3D, alignedY, 3.5D, true);
+            sample(mc, "scaled_bettercombat_range_cannot_exceed_source_cap", sword, 3.7D, alignedY, 3.5D, false);
 
             settings(savedSettings, 1D, 0D, false);
             scale(player, .5D);
@@ -284,28 +293,28 @@ public final class BetterCombatPlayerReachClientAudit {
         Attack off = attack(player);
         check(off.offHand(), "Dual-wield combo 1 selects the real offhand sword");
         near(off.rawRange(), 5D, "Offhand mainhand-only range components participate in the actual BC attack");
-        sample(mc, "dual_wield_extended_offhand_inside_source_range", off, 4.1D, 0D, 4.25D, true);
-        sample(mc, "dual_wield_extended_offhand_outside_source_range", off, 4.4D, 0D, 4.25D, false);
+        sample(mc, "dual_wield_extended_offhand_inside_source_range", off, 4.8D, 0D, 5D, true);
+        sample(mc, "dual_wield_extended_offhand_outside_source_range", off, 5.2D, 0D, 5D, false);
         api().setCombo.invoke(player, 0);
         Attack main = attack(player);
         check(!main.offHand(), "Dual-wield combo 0 selects the real mainhand sword");
         near(main.rawRange(), 3D, "The normal mainhand cannot borrow the offhand's range component");
-        sample(mc, "dual_wield_normal_mainhand_inside_source_range", main, 2.1D, 0D, 2.25D, true);
-        sample(mc, "dual_wield_normal_mainhand_cannot_borrow_offhand_range", main, 2.4D, 0D, 2.25D, false);
+        sample(mc, "dual_wield_normal_mainhand_inside_source_range", main, 2.9D, 0D, 3D, true);
+        sample(mc, "dual_wield_normal_mainhand_cannot_borrow_offhand_range", main, 3.1D, 0D, 3D, false);
 
         equip(player, extended, normal);
         api().setCombo.invoke(player, 0);
         main = attack(player);
         check(!main.offHand(), "Reversed fixture combo 0 still selects the mainhand");
         near(main.rawRange(), 5D, "The extended mainhand retains its own explicit range component");
-        sample(mc, "dual_wield_extended_mainhand_inside_source_range", main, 4.1D, 0D, 4.25D, true);
-        sample(mc, "dual_wield_extended_mainhand_outside_source_range", main, 4.4D, 0D, 4.25D, false);
+        sample(mc, "dual_wield_extended_mainhand_inside_source_range", main, 4.8D, 0D, 5D, true);
+        sample(mc, "dual_wield_extended_mainhand_outside_source_range", main, 5.2D, 0D, 5D, false);
         api().setCombo.invoke(player, 1);
         off = attack(player);
         check(off.offHand(), "Reversed fixture combo 1 still selects the offhand");
         near(off.rawRange(), 3D, "The normal offhand cannot borrow the mainhand's range component");
-        sample(mc, "dual_wield_normal_offhand_inside_source_range", off, 2.1D, 0D, 2.25D, true);
-        sample(mc, "dual_wield_normal_offhand_cannot_borrow_mainhand_range", off, 2.4D, 0D, 2.25D, false);
+        sample(mc, "dual_wield_normal_offhand_inside_source_range", off, 2.9D, 0D, 3D, true);
+        sample(mc, "dual_wield_normal_offhand_cannot_borrow_mainhand_range", off, 3.1D, 0D, 3D, false);
         api().setCombo.invoke(player, 0);
         equip(player, new ItemStack(Items.IRON_SWORD));
     }
@@ -368,10 +377,10 @@ public final class BetterCombatPlayerReachClientAudit {
         try {
             double reach = SourcePlayerReach.meleeReach(mc.player, target);
             boolean allowed = SourcePlayerReach.canMelee(mc.player, target);
-            JsonObject fact = fact(name, mc.player, target, faceDistance, 0D, reach, 2.25D, expectedHit);
+            JsonObject fact = fact(name, mc.player, target, faceDistance, 0D, reach, 3D, expectedHit);
             fact.addProperty("mite_can_melee", allowed);
             report.getAsJsonArray("cases").add(fact);
-            near(reach, 2.25D, "MITE sword range without Better Combat");
+            near(reach, 3D, "MITE sword range without Better Combat");
             check(allowed == expectedHit, name + ": original MITE guard expected=" + expectedHit + ", actual=" + allowed);
             fact.addProperty("passed", true);
         } finally {

@@ -51,6 +51,35 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class SpecialPlantGameTests {
     private SpecialPlantGameTests() {}
     @GameTest(template="empty")
+    public static void calibratedMelonAndPumpkinRowsIncludeActualFruitProduction(GameTestHelper h) {
+        try(Fixture f=new Fixture(h.getLevel(),h)) {
+            f.daylight();
+            for(boolean melon:new boolean[]{false,true}) {
+                var block=(StemBlock)(melon?Blocks.MELON_STEM:Blocks.PUMPKIN_STEM);
+                BlockState seed=block.defaultBlockState().setValue(StemBlock.AGE,0);
+                for(BlockPos soil:BlockPos.betweenClosed(f.pos.offset(-1,-1,-1),f.pos.offset(1,-1,1)))
+                    f.set(soil,Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE,7));
+                for(Direction side:Direction.Plane.HORIZONTAL)f.set(f.pos.relative(side),Blocks.AIR.defaultBlockState());
+                f.set(f.pos.west(),seed); f.set(f.pos.east(),seed); f.set(f.pos,seed);
+                for(int age=0;age<7;age++) {
+                    BlockState before=f.level.getBlockState(f.pos);
+                    before.randomTick(f.level,f.pos,new Draws(new int[]{0,1},new float[0]));
+                    h.assertValueEqual(f.level.getBlockState(f.pos).getValue(StemBlock.AGE),age+1,"Every accepted native stem update advances exactly one age");
+                    h.assertTrue(f.level.getBlockState(f.pos.north()).isAir()&&f.level.getBlockState(f.pos.south()).isAir(),"Growing a stem to age seven does not yet deliver fruit");
+                }
+                BlockState mature=f.level.getBlockState(f.pos);
+                mature.randomTick(f.level,f.pos,new Draws(new int[]{0,0},new float[0]));
+                h.assertValueEqual(f.level.getBlockState(f.pos),mature,"The separate fifty-percent fruit gate can reject an accepted age-seven update");
+                mature.randomTick(f.level,f.pos,new Draws(new int[]{0,1,0,1},new float[0]));
+                h.assertValueEqual(f.level.getBlockState(f.pos),mature,"Choosing the occupied west side creates no fruit");
+                mature.randomTick(f.level,f.pos,new Draws(new int[]{0,1,2,1},new float[]{.5F}));
+                h.assertTrue(f.level.getBlockState(f.pos.north()).is(melon?Blocks.MELON:Blocks.PUMPKIN),"The accepted open-side attempt creates the real harvestable fruit");
+                h.assertTrue(f.level.getBlockState(f.pos).is(melon?Blocks.ATTACHED_MELON_STEM:Blocks.ATTACHED_PUMPKIN_STEM),"Actual fruit generation attaches the live stem once");
+            }
+        }
+        h.succeed();
+    }
+    @GameTest(template="empty")
     public static void stemDeathIsSavedAndSeedRecoveryOnlyWorksBeforeSprouting(GameTestHelper h) {
         Player player=h.makeMockPlayer(GameType.SURVIVAL);
         for(var block:new StemBlock[]{(StemBlock)Blocks.MELON_STEM,(StemBlock)Blocks.PUMPKIN_STEM}) {

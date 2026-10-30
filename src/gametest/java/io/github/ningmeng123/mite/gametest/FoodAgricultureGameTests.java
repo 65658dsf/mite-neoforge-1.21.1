@@ -406,12 +406,11 @@ public final class FoodAgricultureGameTests {
         @Override public int nextInt(int bound) { return 0; }
     }
     private static final class BeetrootGrowthRandom extends LegacyRandomSource {
-        private int draws;
         BeetrootGrowthRandom() { super(196L); }
         @Override public int nextInt(int bound) {
-            // The beetroot's first draw must enter its native superclass tick; following
-            // draws win native growth and the independently verified 1/256 fertilizer loss.
-            return draws++ == 0 ? 1 : 0;
+            // Beetroot now enters the shared calibrated tick directly; both growth and
+            // the independently verified 1/256 fertilizer loss must receive winning draws.
+            return 0;
         }
     }
     /** Independent boundary draws avoid correlated first draws of freshly initialized nearby seeds. */

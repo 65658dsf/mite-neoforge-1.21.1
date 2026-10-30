@@ -17,7 +17,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.KeyboardHandler;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
+import net.minecraft.client.gui.screens.InBedChatScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.neoforged.api.distmarker.Dist;
@@ -43,6 +47,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** Actual client transforms and safe toggle execution, without a game, constructor, window or rendering. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
@@ -51,6 +56,8 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
     private static final String GUI = "net/minecraft/client/gui/Gui";
     private static final String MINECRAFT = "net/minecraft/client/Minecraft";
     private static final String GRAPHICS = "net/minecraft/client/gui/GuiGraphics";
+    private static final String BED = "net/minecraft/client/gui/screens/InBedChatScreen";
+    private static final String BUTTON = "net/minecraft/client/gui/components/Button";
     private static final String CALLBACK = "org/spongepowered/asm/mixin/injection/callback/CallbackInfo";
     private static final String MIXINS = "io.github.ningmeng123.mite.mixin.client.";
     private static final List<String> CHART_FIELDS = List.of("renderProfilerChart", "renderFpsCharts", "renderNetworkCharts");
@@ -87,6 +94,8 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
             auditRender(debug, report);
             auditWorldDay(debug, report);
             auditWorldTime(debug, report);
+            auditTotalExperience(debug, report);
+            auditWakeButton(defined(BED, exports, true), report);
             auditHardwareScope(debug, report);
             auditHardwareSummary(debug, report);
             auditOptionalPerformancePaths(debug, exports, report);
@@ -112,9 +121,9 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
         check(calls(parts, MINECRAFT, "getFps") == 1 && calls(parts, "java/lang/Integer", "toString") == 1,
                 "Replacement displays the actual native FPS as a bare number");
         String fpsDescriptor = "(Lnet/minecraft/client/gui/Font;Ljava/lang/String;IIIZ)I";
-        check(calls(parts, GRAPHICS, "drawString") == 3
+        check(calls(parts, GRAPHICS, "drawString") == 4
                         && calls(parts, GRAPHICS, "drawString", fpsDescriptor) == 1,
-                "Exactly one bare FPS draw and localized day and game-time draws are used on the left");
+                "Exactly one bare FPS draw and localized day, game-time and total-experience draws are used on the left");
         MethodInsnNode draw = call(parts, GRAPHICS, "drawString", fpsDescriptor);
         AbstractInsnNode shadow = previous(draw), color = previous(shadow), y = previous(color), x = previous(y);
         check(integer(x) == 2 && integer(y) == 2 && integer(color) == 0xE0E0E0 && integer(shadow) == 1,
@@ -168,10 +177,10 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
         check(parts.stream().anyMatch(part -> fieldAccess(part, MINECRAFT, "level", Opcodes.GETFIELD)),
                 "The day label reads the current client level");
         check(parts.stream().anyMatch(part -> hasString(part, "gui.mite.world_day"))
-                        && calls(parts, "net/minecraft/network/chat/Component", "translatable") == 3,
+                        && calls(parts, "net/minecraft/network/chat/Component", "translatable") == 4,
                 "The day label uses the localized world-day component");
         String descriptor = "(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIIZ)I";
-        check(calls(parts, GRAPHICS, "drawString", descriptor) == 2, "Localized components are used for day count and game time");
+        check(calls(parts, GRAPHICS, "drawString", descriptor) == 3, "Localized components are used for day count, game time and total experience");
         MethodInsnNode draw = call(parts, GRAPHICS, "drawString", descriptor);
         AbstractInsnNode shadow = previous(draw), color = previous(shadow), y = previous(color), x = previous(y);
         check(integer(x) == 2 && integer(y) == 12 && integer(color) == 0xE0E0E0 && integer(shadow) == 1,
@@ -262,6 +271,108 @@ public final class MinimalDebugDisplayAudit implements DataProvider {
         }
         report.add("real_display_time_period_boundary_cases", periods);
         report.addProperty("localized_day_night_uses_shared_day_time_and_mite_calendar_boundaries", true);
+    }
+
+    private static void auditTotalExperience(ClassNode debug, JsonObject report) {
+        List<MethodNode> parts = lambdaParts(debug, merged(debug, "MinimalDebugOverlayMixin", "mite$drawFpsAndPerformance"));
+        var reads = parts.stream().flatMap(part -> executable(part).stream())
+                .filter(instruction -> instruction instanceof FieldInsnNode field && field.getOpcode() == Opcodes.GETFIELD
+                        && field.name.equals("totalExperience") && field.desc.equals("I")).toList();
+        check(reads.size() == 1, "The actual overlay reads totalExperience exactly once, rather than a level or progress estimate");
+        FieldInsnNode read = (FieldInsnNode)reads.getFirst();
+        check(List.of("net/minecraft/client/player/LocalPlayer", "net/minecraft/client/player/AbstractClientPlayer",
+                "net/minecraft/world/entity/player/Player").contains(read.owner),
+                "The experience value comes from the actual synchronized client player field");
+        check(previous(read) instanceof FieldInsnNode player && player.getOpcode() == Opcodes.GETFIELD
+                        && player.owner.equals(MINECRAFT) && player.name.equals("player"),
+                "The drawn experience value is read directly from Minecraft.player.totalExperience");
+        check(next(read) instanceof MethodInsnNode box && box.owner.equals("java/lang/Integer")
+                        && box.name.equals("valueOf") && box.desc.equals("(I)Ljava/lang/Integer;"),
+                "The exact integer total is boxed unchanged as a localization argument");
+        // ASM indexOf returns the node's cached index without checking list ownership.
+        // Locate the actual instruction identity before comparing positions inside its method.
+        MethodNode body = parts.stream().filter(part -> java.util.Arrays.stream(part.instructions.toArray())
+                .anyMatch(instruction -> instruction == read)).findFirst().orElseThrow();
+        check(hasString(body, "gui.mite.total_experience"), "The total-experience row uses its dedicated localized label");
+        MethodInsnNode label = null, draw = null;
+        for (AbstractInsnNode instruction = next(read); instruction != null; instruction = next(instruction)) {
+            if (instruction instanceof MethodInsnNode call && call.owner.equals("net/minecraft/network/chat/Component")
+                    && call.name.equals("translatable") && label == null) label = call;
+            if (instruction instanceof MethodInsnNode call && call.owner.equals(GRAPHICS) && call.name.equals("drawString")) {
+                draw = call; break;
+            }
+        }
+        check(label != null && draw != null && draw.desc.equals(
+                        "(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIIZ)I"),
+                "The real player total reaches the localized component draw in the same actual method");
+        AbstractInsnNode shadow = previous(draw), color = previous(shadow), y = previous(color), x = previous(y);
+        check(integer(x) == 2 && integer(y) == 32 && integer(color) == 0xE0E0E0 && integer(shadow) == 1,
+                "Total experience is drawn at (2,32) with the existing color and shadow");
+        boolean guarded = false;
+        for (AbstractInsnNode instruction : body.instructions) {
+            if (body.instructions.indexOf(instruction) >= body.instructions.indexOf(read)) break;
+            if (instruction instanceof JumpInsnNode jump && jump.getOpcode() == Opcodes.IFNULL
+                    && previous(jump) instanceof FieldInsnNode field && field.owner.equals(MINECRAFT)
+                    && field.name.equals("player") && body.instructions.indexOf(jump.label) > body.instructions.indexOf(draw)) guarded = true;
+        }
+        check(guarded, "A real Minecraft.player null check skips the complete experience read and draw outside a world");
+        check(parts.stream().noneMatch(part -> executable(part).stream().anyMatch(instruction -> instruction instanceof FieldInsnNode field
+                        && List.of("experienceLevel", "experienceProgress").contains(field.name))),
+                "The total-experience row does not substitute the level or fractional bar value");
+        report.addProperty("localized_total_experience_at_2_32_reads_exact_client_player_total_integer", true);
+        report.addProperty("total_experience_read_and_draw_guarded_when_client_player_absent", true);
+    }
+
+    private static void auditWakeButton(ClassNode bed, JsonObject report) throws Exception {
+        MethodNode init = method(bed, "init", "()V");
+        MethodNode handler = merged(bed, "InBedChatScreenMixin", "mite$raiseWakeButton");
+        check(handler.desc.equals("(L" + CALLBACK + ";)V") && calls(init, BED, handler.name) == 1,
+                "The real sleeping-chat init invokes the merged wake-button handler exactly once");
+        MethodInsnNode injected = call(init, BED, handler.name);
+        check(next(injected).getOpcode() == Opcodes.RETURN,
+                "The wake-button handler executes at the actual init return after native widget creation");
+        check(executable(init).stream().anyMatch(instruction -> instruction instanceof FieldInsnNode field
+                        && field.getOpcode() == Opcodes.PUTFIELD && field.name.equals("leaveBedButton")
+                        && init.instructions.indexOf(field) < init.instructions.indexOf(injected)),
+                "The native wake-up button is assigned before the handler adjusts it");
+        MethodInsnNode bounds = call(init, BUTTON + "$Builder", "bounds");
+        AbstractInsnNode height = previous(bounds), width = previous(height), subtract = previous(width);
+        check(integer(height) == 20 && integer(width) == 200 && subtract.getOpcode() == Opcodes.ISUB
+                        && integer(previous(subtract)) == 40 && previous(previous(subtract)) instanceof FieldInsnNode field
+                        && field.name.equals("height") && field.getOpcode() == Opcodes.GETFIELD,
+                "Native sleeping-chat init still creates the wake button at screen height minus 40, with its original size");
+        check(calls(handler, BUTTON, "getY") == 1 && calls(handler, BUTTON, "setY") == 1
+                        && calls(handler, "java/lang/Math", "max") == 1 && hasInteger(handler, 32) && hasInteger(handler, 4),
+                "The actual merged handler raises only Y by 32 and clamps it to at least four pixels");
+
+        Class<?> unsafeType = Class.forName("sun.misc.Unsafe");
+        Field singleton = unsafeType.getDeclaredField("theUnsafe"); singleton.setAccessible(true);
+        Object unsafe = singleton.get(null);
+        Method allocate = unsafeType.getMethod("allocateInstance", Class.class);
+        InBedChatScreen screen = (InBedChatScreen)allocate.invoke(unsafe, InBedChatScreen.class);
+        Button button = (Button)allocate.invoke(unsafe, Button.class);
+        check(field(Screen.class, "minecraft").get(screen) == null, "No Minecraft instance or screen constructor is needed for wake-button adjustment");
+        field(InBedChatScreen.class, "leaveBedButton").set(screen, button);
+        field(AbstractWidget.class, "x").setInt(button, 117);
+        field(AbstractWidget.class, "width").setInt(button, 200);
+        field(AbstractWidget.class, "height").setInt(button, 20);
+        Method actual = InBedChatScreen.class.getDeclaredMethod(handler.name, CallbackInfo.class); actual.setAccessible(true);
+        JsonArray cases = new JsonArray();
+        for (int screenHeight : new int[]{0, 40, 44, 71, 72, 75, 76, 90, 240, 360, 900, 2160, Integer.MAX_VALUE}) {
+            int nativeY = screenHeight - 40;
+            button.setY(nativeY);
+            actual.invoke(screen, new CallbackInfo("init", false));
+            int expected = Math.max(4, screenHeight - 72);
+            check(button.getY() == expected && button.getX() == 117 && button.getWidth() == 200 && button.getHeight() == 20,
+                    "Real merged wake-button handler preserves X/size and yields max(4,height-72) at height " + screenHeight);
+            check(field(InBedChatScreen.class, "leaveBedButton").get(screen) == button,
+                    "The actual handler repositions the same native button instead of replacing its wake-up action");
+            JsonObject result = new JsonObject(); result.addProperty("screen_height", screenHeight);
+            result.addProperty("native_y", nativeY); result.addProperty("raised_y", button.getY()); cases.add(result);
+        }
+        report.add("real_wake_button_handler_height_cases", cases);
+        report.addProperty("wake_button_real_init_injection_raises_y_32_and_clamps_to_4", true);
+        report.addProperty("wake_button_constructor_minecraft_window_and_render_not_invoked", true);
     }
 
     private static void auditHardwareScope(ClassNode debug, JsonObject report) throws Exception {

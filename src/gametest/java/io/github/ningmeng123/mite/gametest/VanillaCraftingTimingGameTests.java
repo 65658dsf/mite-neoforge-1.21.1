@@ -30,6 +30,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CrafterBlock;
@@ -110,6 +111,66 @@ public final class VanillaCraftingTimingGameTests {
         checkContinuous(helper, stone("mossy_cobblestone_wall", Items.MOSSY_COBBLESTONE, Items.MOSSY_COBBLESTONE_WALL, 8,
                 1200F, 0, 1, 2, 3, 4, 5), true);
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void modernStoneWallsWaitForTheCompleteCobblestoneWallPeriod(GameTestHelper helper) {
+        checkOrdinary(helper, stone("andesite_wall", Items.ANDESITE, Items.ANDESITE_WALL, 6,
+                1200F, 0, 1, 2, 3, 4, 5), true);
+        checkContinuous(helper, stone("diorite_wall", Items.DIORITE, Items.DIORITE_WALL, 6,
+                1200F, 0, 1, 2, 3, 4, 5), true);
+        checkOrdinary(helper, stone("tuff_wall", Items.TUFF, Items.TUFF_WALL, 6,
+                1200F, 0, 1, 2, 3, 4, 5), true);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyNewStoneShapeWaitsForNormalAndShiftManufacturing(GameTestHelper helper) throws Exception {
+        checkSupplementalStoneRecipes(helper, true);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyNewStoneProcessingRecipeWaitsForNormalAndShiftManufacturing(GameTestHelper helper) throws Exception {
+        checkSupplementalStoneRecipes(helper, false);
+        // Small stone controls remain available in the real inventory grid, with its own speed.
+        checkOrdinary(helper, stone("polished_blackstone_button", Items.POLISHED_BLACKSTONE,
+                Items.POLISHED_BLACKSTONE_BUTTON, 1, 240.00002F, 0), false);
+        checkContinuous(helper, stone("polished_blackstone_pressure_plate", Items.POLISHED_BLACKSTONE,
+                Items.POLISHED_BLACKSTONE_PRESSURE_PLATE, 1, 480.00003F, 0, 1), false);
+        helper.succeed();
+    }
+
+    private static void checkSupplementalStoneRecipes(GameTestHelper helper, boolean shapes) throws Exception {
+        var data = StoneCraftingCoverageGameTests.supplemental();
+        int checked = 0;
+        for (var row : data.entrySet()) {
+            var id = ResourceLocation.parse(row.getKey());
+            boolean shape = id.getPath().endsWith("_wall") || id.getPath().endsWith("_stairs") || id.getPath().endsWith("_slab");
+            if (shape != shapes) continue;
+            var holder = helper.getLevel().getRecipeManager().byKey(id).orElseThrow();
+            var actual = holder.value();
+            var output = actual.getResultItem(helper.getLevel().registryAccess());
+            var slots = new ArrayList<Integer>();
+            var ingredients = new ArrayList<Item>();
+            int width = actual instanceof ShapedRecipe shaped ? shaped.getWidth() : 3;
+            for (int index = 0; index < actual.getIngredients().size(); index++) {
+                var ingredient = actual.getIngredients().get(index);
+                if (ingredient.isEmpty()) continue;
+                helper.assertTrue(ingredient.getItems().length > 0, "The loaded stone recipe has a real ingredient: " + id);
+                slots.add(index / width * 3 + index % width);
+                ingredients.add(ingredient.getItems()[0].getItem());
+            }
+            var recipe = new RecipeCase(id.getPath(), output.getItem(), output.getCount(),
+                    row.getValue().getAsJsonObject().get("difficulty").getAsFloat(),
+                    slots.stream().mapToInt(Integer::intValue).toArray(), ingredients.toArray(Item[]::new));
+            // Exercise both click modes for every newly covered loaded recipe. The same
+            // real native menu checks N-1, payment, full-batch output and repeat limits.
+            checkOrdinary(helper, recipe, true);
+            checkContinuous(helper, recipe, true);
+            checked++;
+        }
+        helper.assertTrue(checked > 20, "The matrix covers a substantial loaded stone operation family");
     }
 
     @GameTest(template = "empty")
@@ -244,6 +305,18 @@ public final class VanillaCraftingTimingGameTests {
     public static void redstoneCrafterCannotBypassTheDeepslatePeriod(GameTestHelper helper) {
         checkRedstoneCrafter(helper, stone("deepslate_tiles", Items.DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES,
                 4, 960.00006F, 0, 1, 3, 4));
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 700)
+    public static void redstoneCrafterCannotBypassTheNewGraniteWallPeriod(GameTestHelper helper) {
+        checkRedstoneCrafter(helper, stone("granite_wall", Items.GRANITE, Items.GRANITE_WALL,
+                6, 1200F, 0, 1, 2, 3, 4, 5));
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 700)
+    public static void redstoneCrafterUsesTheShorterSandstoneWallPeriod(GameTestHelper helper) {
+        checkRedstoneCrafter(helper, stone("sandstone_wall", Items.SANDSTONE, Items.SANDSTONE_WALL,
+                6, 480F, 0, 1, 2, 3, 4, 5));
     }
 
     private static void checkRedstoneCrafter(GameTestHelper helper, RecipeCase recipe) {

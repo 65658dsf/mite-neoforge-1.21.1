@@ -1,0 +1,9 @@
+{
+  "author": "NingMeng123",
+  "reference": "Modern stone wall batches use the existing cobblestone wall difficulty (1200).",
+  "recipes": {
+    "minecraft:andesite_wall": {"difficulty": 1200.0, "required_bench": null, "source_order": 273},
+    "minecraft:diorite_wall": {"difficulty": 1200.0, "required_bench": null, "source_order": 273},
+    "minecraft:tuff_wall": {"difficulty": 1200.0, "required_bench": null, "source_order": 273}
+  }
+}

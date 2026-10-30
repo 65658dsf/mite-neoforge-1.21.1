@@ -7,10 +7,12 @@ import java.util.Map;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -34,10 +36,18 @@ public final class MiteItemStacking {
             event.modify(item, patch -> patch.set(DataComponents.MAX_STACK_SIZE, maximum));
             resolved.put(item, maximum);
         });
+        // Leaf families supplied by addons need the same default and transfer ceiling,
+        // even when their identity was not present in the frozen source table.
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof LeavesBlock) {
+                event.modify(item, patch -> patch.set(DataComponents.MAX_STACK_SIZE, 8));
+                resolved.put(item, 8);
+            }
+        }
         limits = Collections.unmodifiableMap(resolved);
     }
 
-    /** Zero means unmanaged; foreign items and disclosed modern defaults keep their own component limits. */
+    /** Zero means unmanaged; non-leaf foreign items keep their own component limits. */
     public static int limit(ItemStack stack) {
         int maximum = limits.getOrDefault(stack.getItem(), 0);
         if (maximum > 0 && stack.is(Items.SNOW)) {

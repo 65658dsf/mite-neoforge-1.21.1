@@ -155,7 +155,7 @@ public final class MaterialClientSmoke {
                                 && !mc.player.isCreative() && !mc.player.isSpectator() && mc.player.experienceLevel == 0
                                 && mc.player.totalExperience == 0 && sameHealth(mc.player.getHealth())
                                 && mc.player.getFoodData().getFoodLevel() == 6 && counts(mc.player).equals(INITIAL))) return;
-                        require(legalStacks(mc.player), "Initial copper ingot stack limit was not four");
+                        require(legalStacks(mc.player), "Initial copper ingot stack limit was not eight");
                         mc.setScreen(new InventoryScreen(mc.player));
                         planStage(mc);
                     }
@@ -482,7 +482,7 @@ public final class MaterialClientSmoke {
 
     private static boolean legalStack(ItemStack stack) {
         return stack.isEmpty() || stack.getCount() <= stack.getMaxStackSize()
-                && (!stack.is(Items.COPPER_INGOT) || stack.getMaxStackSize() == 4 && stack.getCount() <= 4);
+                && (!stack.is(Items.COPPER_INGOT) || stack.getMaxStackSize() == 8 && stack.getCount() <= 8);
     }
 
     private static List<String> grid(Player player) {

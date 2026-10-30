@@ -10,19 +10,27 @@ import org.junit.jupiter.api.Test;
 
 /** Independent source constants and complete oracle disposition coverage. @author NingMeng123 */
 final class StackingRulesTest {
+    @Test void leavesStackToEightWithoutChangingOtherBotanicalMaterials() {
+        for(String tree:new String[]{"oak","spruce","birch","jungle","acacia","dark_oak","mangrove","cherry","azalea","flowering_azalea"})
+            assertEquals(8,StackingRules.limit("minecraft:"+tree+"_leaves"),tree);
+        assertEquals(4,StackingRules.limit("minecraft:oak_log"));
+        assertEquals(8,StackingRules.limit("minecraft:oak_planks"));
+        assertEquals(4,StackingRules.limit("minecraft:raw_iron"));
+        assertEquals(8,StackingRules.limit("minecraft:iron_ingot"));
+    }
     @Test void commonSourceBlocksAndItemsKeepTheirLiteralLimits() {
         String[] items = {"stone", "cobblestone", "dirt", "oak_log", "oak_planks", "torch", "brewing_stand", "bucket", "iron_ingot", "iron_nugget", "diamond", "flint"};
-        int[] limits = {4, 4, 4, 4, 8, 16, 16, 8, 4, 64, 32, 16};
+        int[] limits = {4, 4, 4, 4, 8, 16, 16, 8, 8, 64, 32, 16};
         for (int i = 0; i < items.length; i++) assertEquals(limits[i], StackingRules.limit("minecraft:" + items[i]), items[i]);
     }
 
-    @Test void mineralBalanceOverridesFrozenSourceLimitsWithoutChangingNuggets() {
+    @Test void metalIngotsStackToEightWhileRawMineralsStayAtFour() {
         for (String material : new String[]{"copper", "gold", "iron", "netherite"})
-            assertEquals(4, StackingRules.limit("minecraft:" + material + "_ingot"));
+            assertEquals(8, StackingRules.limit("minecraft:" + material + "_ingot"));
         for (String material : new String[]{"copper", "gold", "iron"})
             assertEquals(4, StackingRules.limit("minecraft:raw_" + material));
         for (String material : new String[]{"silver", "ancient_metal", "mithril", "adamantium"})
-            assertEquals(4, StackingRules.limit("mite:" + material + "_ingot"));
+            assertEquals(8, StackingRules.limit("mite:" + material + "_ingot"));
         assertEquals(64, StackingRules.limit("minecraft:iron_nugget"));
         assertEquals(32, StackingRules.limit("minecraft:diamond"));
         assertEquals(4, StackingRules.limit("minecraft:iron_ore"));

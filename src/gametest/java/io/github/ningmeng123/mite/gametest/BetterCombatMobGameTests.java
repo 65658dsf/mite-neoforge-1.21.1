@@ -889,8 +889,8 @@ public final class BetterCombatMobGameTests {
                 helper.assertTrue(Math.abs(profile.range() - 1.8D) < .000001D, "Native profile data retains the actual short-move multiplier");
                 helper.assertTrue(Math.abs(BetterCombatBridge.playerEquivalentRange(attacker, attacker.getMainHandItem(), profile.rangeMultiplier()) - 1.3D) < .000001D,
                         "The half-block configured reduction follows the actual move multiplier before the monster margin");
-                helper.assertTrue(Math.abs(MobWeaponReach.sourceLimit(attacker, target, attacker.getY()) - 1.55D) < .000001D,
-                        "The independent source cap is wider than this short move and cannot substitute for its shoulder cap");
+                helper.assertTrue(Math.abs(MobWeaponReach.sourceLimit(attacker, target, attacker.getY()) - 2.3D) < .000001D,
+                        "The three-block sword baseline minus .5 reduction and .2 monster margin is 2.3, still wider than this short move");
                 placeAtShoulderDistance(attacker, target, start);
                 float health = target.getHealth();
                 if (start > 1.1D) {

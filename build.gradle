@@ -46,6 +46,19 @@ neoForge {
     runs {
         client {
             client()
+            if (project.providers.gradleProperty('mitePunchyClubAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.betterCombatPlayerReachAudit', 'true'
+                systemProperty 'mite.punchyClubAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.betterCombatPlayerReachAuditOutput', file('build/verification/punchy-club-client-audit.json').absolutePath
+            }
+            if (project.providers.gradleProperty('mitePunchyClubInputAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.betterCombatPlayerReachAudit', 'true'
+                systemProperty 'mite.punchyClubAudit', 'true'
+                systemProperty 'mite.punchyClubInputAudit', 'true'
+                systemProperty 'mixin.debug.export', 'true'
+                systemProperty 'mite.betterCombatPlayerReachAuditOutput', file('build/verification/punchy-club-input-client-audit.json').absolutePath
+            }
             if (project.providers.gradleProperty('miteEnderDragonCompatibilityAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.enderDragonCompatibilityAudit', 'true'
                 systemProperty 'mixin.debug.export', 'true'

@@ -20,6 +20,7 @@ import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -72,9 +73,20 @@ public final class SourcePlayerReach {
     }
     /** Weapon length is independent of its durability family; external range is included exactly once. */
     public static double baseMeleeReach(ItemStack weapon, double itemRange) {
+        // Native swords and clubs use the complete three-block interaction attribute,
+        // without adding the old short-weapon bonus a second time. SS families retain their own lengths.
+        if (ordinarySwordOrClub(weapon)) return itemRange;
         Double weaponBase = BetterCombatBridge.weaponBaseReach(weapon, itemRange);
         if (weaponBase == null && !BetterCombatBridge.enabled()) weaponBase = SimplySwordsReach.baseReach(weapon, itemRange);
         return weaponBase == null ? 1.5D + toolBonus(weapon) + itemRange - 3D : weaponBase;
+    }
+    public static boolean ordinarySwordOrClub(ItemStack weapon) {
+        if (SimplySwordsCompat.definition(weapon) != null) return false;
+        var profile = EquipmentDurability.toolProfile(weapon);
+        return profile != null ? switch (profile.family()) {
+            case SWORD, CLUB, CUDGEL -> true;
+            default -> false;
+        } : weapon.getItem() instanceof SwordItem;
     }
     /** Neutral-height survival preview for the hovered stack, independent of the currently held item. */
     public static double tooltipMeleeReach(ItemStack weapon) {

@@ -113,8 +113,8 @@ public final class StandaloneWeaponReachClientAudit implements DataProvider {
                     base.monsterSpawnRates(), base.oreHeights(), base.overworldOreHeights(), base.spawningSettings(),
                     base.monsterSpawnWeights(), base.betterCombatMobs()));
             report.addProperty("neutral_reach_fixture_uses_memory_snapshot_only", true);
-            verifyNewAndSaved(new ItemStack(Items.IRON_SWORD), 2.25D, "minecraft:iron_sword", lookup, cases);
-            verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_sword")), 2.25D, "mite:copper_sword", lookup, cases);
+            verifyNewAndSaved(new ItemStack(Items.IRON_SWORD), 3D, "minecraft:iron_sword", lookup, cases);
+            verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_sword")), 3D, "mite:copper_sword", lookup, cases);
             verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_dagger")), 2D, "mite:copper_dagger", lookup, cases);
             verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_war_hammer")), 2.25D, "mite:copper_war_hammer", lookup, cases);
             report.addProperty("native_and_mite_weapons_checked", true);
@@ -130,7 +130,7 @@ public final class StandaloneWeaponReachClientAudit implements DataProvider {
                 verify(rapier, 3D, "simplyswords_copper_rapier", "hover_again", cases);
             }
             // Return to a short native weapon after unrelated/long hovered items, without any player state.
-            verify(new ItemStack(Items.IRON_SWORD), 2.25D, "minecraft:iron_sword", "hover_again", cases);
+            verify(new ItemStack(Items.IRON_SWORD), 3D, "minecraft:iron_sword", "hover_again", cases);
             report.addProperty("simply_swords_specific_cases_skipped", !SimplySwordsCompat.enabled());
             report.addProperty("actual_itemstack_get_tooltip_lines_called", true);
             report.addProperty("old_saved_components_preserved", true);

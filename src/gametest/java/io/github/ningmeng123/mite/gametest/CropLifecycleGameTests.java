@@ -6,6 +6,8 @@ import io.github.ningmeng123.mite.mining.MiningProgress;
 import io.github.ningmeng123.mite.registry.MiteFoodPlants;
 import io.github.ningmeng123.mite.survival.CropLifecycle;
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
+import io.github.ningmeng123.mite.rules.CropGrowthRules;
+import io.github.ningmeng123.mite.survival.SpecialPlantGrowth;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,6 +41,57 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class CropLifecycleGameTests {
     private CropLifecycleGameTests() {}
+    @GameTest(template="empty")
+    public static void actualPlainsMelonRowsMatchTheFirstHarvestHourlyReference(GameTestHelper h) {
+        try(Fixture f=new Fixture(h)) {
+            f.soils(wet());
+            for(boolean melon:new boolean[]{false,true}) {
+                BlockState seed=(melon?Blocks.MELON_STEM:Blocks.PUMPKIN_STEM).defaultBlockState();
+                f.set(f.pos,seed); f.set(f.pos.east(),seed); f.set(f.pos.west(),seed);
+                f.set(f.pos.north(),Blocks.AIR.defaultBlockState());f.set(f.pos.south(),Blocks.AIR.defaultBlockState());
+                float expected=melon?2F:2.5F;
+                float actual=SpecialPlantGrowth.stemGrowth(f.level,f.pos,seed);
+                h.assertTrue(Math.abs(actual-expected)<.000001F,"Actual wet plains rows retain their species climate and two open fruit sides");
+                int threshold=CropGrowthRules.growthThreshold(actual,expected,11);
+                double minutes=11D*4096D/(threshold/1_000_000D*3D*20D*60D*(12081D/24000D));
+                h.assertTrue(Math.abs(minutes-60D)<.001D,"The actual row's climate produces the full seed-to-fruit hourly average");
+            }
+        }
+        h.succeed();
+    }
+    @GameTest(template="empty")
+    public static void everyFoodCropUsesItsCalibratedBoundaryOnceIncludingNativeBeetroot(GameTestHelper h) {
+        try(Fixture f=new Fixture(h)) {
+            f.soils(wet());
+            for(CropBlock crop:foodCrops()) {
+                BlockState seed=crop.getStateForAge(0);
+                for(BlockPos p:BlockPos.betweenClosed(f.pos.offset(-1,0,-1),f.pos.offset(1,0,1)))f.set(p,seed);
+                h.assertTrue(Math.abs(CropLifecycle.growthRate(seed,f.level,f.pos)-1.25F)<.000001F,"The actual wet dense field matches the hourly reference");
+                int threshold=(int)Math.round(crop.getMaxAge()*4096D/(72000D*3D*(12081D/24000D))*1_000_000D);
+                Rolls miss=new Rolls(bound->bound==1_000_000?threshold:1,1F,false);
+                seed.randomTick(f.level,f.pos,miss);
+                h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),0,"A draw exactly at the calibrated probability threshold does not grow");
+                Rolls win=new Rolls(bound->bound==1_000_000?threshold-1:1,1F,false);
+                seed.randomTick(f.level,f.pos,win);
+                h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),1,"The adjacent accepted draw advances exactly one real crop age");
+                h.assertValueEqual(java.util.Collections.frequency(win.bounds,1_000_000),1,"Beetroot and other species execute one shared growth roll per native random tick");
+                h.assertFalse(win.bounds.contains(3),"Beetroot has no additional native one-third timing gate");
+            }
+        }
+        h.succeed();
+    }
+    @GameTest(template="empty")
+    public static void clearNativeDaylightMatchesTheHourlyCalendarReference(GameTestHelper h) {
+        try(Fixture f=new Fixture(h)) {
+            int fullLight=0;
+            for(int tick=0;tick<24000;tick++) {
+                f.weather(tick,0F);
+                if(f.level.getMaxLocalRawBrightness(f.pos.above())==15)fullLight++;
+            }
+            h.assertTrue(Math.abs(fullLight-12081)<=4,"Native clear-day sky darkening retains the measured roughly fifty-percent full-light duty cycle: "+fullLight);
+        }
+        h.succeed();
+    }
     @GameTest(template="empty")
     public static void nineSoilsUseSourceMetadataContributionAndFertilizerExactlyOnce(GameTestHelper h) {
         try(Fixture f=new Fixture(h)) {
@@ -214,7 +267,7 @@ public final class CropLifecycleGameTests {
             h.assertTrue(win.bounds.contains(256),"A successful native crop update consumes the source fertility draw");
             h.assertFalse(FoodAgriculture.fertilized(f.level.getBlockState(f.pos.below())),"A zero 256-way draw removes manure");
             f.set(f.pos.below(),fertile); f.set(f.pos,crop);
-            var growthMiss=new Rolls(bound->1,1F,false); crop.randomTick(f.level,f.pos,growthMiss);
+            var growthMiss=new Rolls(bound->bound-1,1F,false); crop.randomTick(f.level,f.pos,growthMiss);
             h.assertFalse(growthMiss.bounds.contains(256),"A failed growth roll never rolls fertilizer loss");
             h.assertTrue(FoodAgriculture.fertilized(f.level.getBlockState(f.pos.below())),"No growth means no fertilizer consumption");
             f.set(f.pos,crop); var lossMiss=new Rolls(bound->bound==256?1:0,1F,false); crop.randomTick(f.level,f.pos,lossMiss);
