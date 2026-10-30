@@ -392,7 +392,7 @@ public final class MeleePursuitPaths {
         var region = new LoadedPathNavigationRegion(mob.level(), start.offset(-RANGE - 8, -RANGE - 8, -RANGE - 8),
                 start.offset(RANGE + 8, RANGE + 8, RANGE + 8));
         PathfinderMob pursuitMob = mob;
-        WalkNodeEvaluator nodes = new WalkNodeEvaluator() {
+        WalkNodeEvaluator nodes = new CachedWalkNodeEvaluator() {
             @Override public Set<PathType> getPathTypeWithinMobBB(PathfindingContext context, int x, int y, int z) {
                 Set<PathType> types = super.getPathTypeWithinMobBB(context, x, y, z);
                 // Keep the native cautious cost on safe neighboring cells. Actual obstructions
