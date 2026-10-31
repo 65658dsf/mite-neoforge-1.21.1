@@ -4,6 +4,8 @@
 
 本文件记录独立提取的原版证据，具体实现与手测完成度由对应实现文档记录。结构化规则、原始 class SHA-256、反编译文件 SHA-256、方法范围及规范化方法 SHA-256 见 [crop-source.json](../spec/crop-source.json)。未执行旧版游戏，也未复制旧版方法正文。
 
+2026-10-31 现代适配已按用户要求移除农作物的生长温度限制和温度减速，下文温度成长公式仅为 R196 来源记录。当前运行规则见 [crop-growth.md](crop-growth.md) 与 [crop-special-plants.md](crop-special-plants.md)；病害、耕地蒸发和自然天气另按原有规则执行。
+
 ## 覆盖与调用链
 
 - `aqz` 注册的小麦、胡萝卜、马铃薯、洋葱均继承 `anr → BlockGrowingPlant → BlockPlant → aqz`；死亡方块继承 `BlockCropsDead`，停止随机刻且无掉落。

@@ -7,15 +7,19 @@ import io.github.ningmeng123.mite.survival.FoodAgriculture;
 import io.github.ningmeng123.mite.survival.FungalGrowth;
 import io.github.ningmeng123.mite.survival.SpecialPlantGrowth;
 import io.github.ningmeng123.mite.survival.TropicalPlantGrowth;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -25,6 +29,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.CocoaBlock;
@@ -50,6 +56,31 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class SpecialPlantGameTests {
     private SpecialPlantGameTests() {}
+    @GameTest(template="empty")
+    public static void coldAndHotBiomesUseTheSameOptimalStemGrowthWithoutBypassingWater(GameTestHelper h) {
+        try(Fixture f=new Fixture(h.getLevel(),h)) {
+            f.daylight();
+            for(var biome:List.of(Biomes.SNOWY_PLAINS,Biomes.PLAINS,Biomes.DESERT)) {
+                f.biome(biome);
+                for(BlockPos soil:BlockPos.betweenClosed(f.pos.offset(-1,-1,-1),f.pos.offset(1,-1,1)))
+                    f.set(soil,Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE,7));
+                for(var block:List.of(Blocks.MELON_STEM,Blocks.PUMPKIN_STEM)) {
+                    BlockState seed=block.defaultBlockState();
+                    f.set(f.pos,seed); f.set(f.pos.east(),seed); f.set(f.pos.west(),seed);
+                    f.set(f.pos.north(),Blocks.AIR.defaultBlockState()); f.set(f.pos.south(),Blocks.AIR.defaultBlockState());
+                    h.assertValueEqual(SpecialPlantGrowth.stemGrowth(f.level,f.pos,seed),2.5F,
+                            "Cold, temperate and hot dry biomes share the former optimal stem growth");
+                    seed.randomTick(f.level,f.pos,new Draws(new int[]{0,1},new float[0]));
+                    h.assertValueEqual(f.level.getBlockState(f.pos).getValue(StemBlock.AGE),1,
+                            "An accepted real stem tick advances in every temperature zone");
+                }
+                f.set(f.pos.below(),Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE,0));
+                h.assertValueEqual(SpecialPlantGrowth.stemGrowth(f.level,f.pos,f.level.getBlockState(f.pos)),0F,
+                        "Removing temperature requirements does not remove the wet-soil requirement");
+            }
+        }
+        h.succeed();
+    }
     @GameTest(template="empty")
     public static void calibratedMelonAndPumpkinRowsIncludeActualFruitProduction(GameTestHelper h) {
         try(Fixture f=new Fixture(h.getLevel(),h)) {
@@ -126,7 +157,7 @@ public final class SpecialPlantGameTests {
             f.set(f.pos,stem);
             float ordinary=SpecialPlantGrowth.stemGrowth(f.level,f.pos,stem);
             f.set(f.pos.below(),wet.setValue(FoodAgriculture.FERTILIZED,true));
-            h.assertTrue(ordinary>0F,"The actual test biome permits pumpkin growth");
+            h.assertTrue(ordinary>0F,"Wet soil permits pumpkin growth");
             h.assertValueEqual(SpecialPlantGrowth.stemGrowth(f.level,f.pos,stem),ordinary*1.5F,"Stem fertilizer uses the exact source multiplier once");
             ItemStack boneMeal=new ItemStack(Items.BONE_MEAL,2);
             h.assertFalse(BoneMealItem.applyBonemeal(boneMeal,f.level,f.pos,h.makeMockPlayer(GameType.SURVIVAL)),"The actual bone-meal entry cannot reach the source's dormant stem-fertilizer helper");
@@ -162,19 +193,60 @@ public final class SpecialPlantGameTests {
             f.daylight();
             f.set(f.pos.below(),Blocks.SAND.defaultBlockState()); f.set(f.pos.below().east(),Blocks.WATER.defaultBlockState());
             BlockState cane=Blocks.SUGAR_CANE.defaultBlockState().setValue(SugarCaneBlock.AGE,14); f.set(f.pos,cane);
-            cane.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{0F,.8F}));
-            h.assertValueEqual(f.level.getBlockState(f.pos).getValue(SugarCaneBlock.AGE),15,"Both winning temperature and slowdown draws advance cane once");
+            cane.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{.8F}));
+            h.assertValueEqual(f.level.getBlockState(f.pos).getValue(SugarCaneBlock.AGE),15,"A winning independent slowdown draw advances cane once");
             f.set(f.pos.above(2),Blocks.STONE.defaultBlockState());
-            BlockState grown=f.level.getBlockState(f.pos); grown.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{0F,.8F}));
+            BlockState grown=f.level.getBlockState(f.pos); grown.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{.8F}));
             h.assertTrue(f.level.getBlockState(f.pos.above()).isAir(),"A covered column cannot grow even with one air block directly above the cane");
             f.set(f.pos.above(2),Blocks.GLASS.defaultBlockState());
             h.assertTrue(SpecialPlantGrowth.caneOpenSky(f.level,f.pos.above(2)),"Source zero-opacity glass remains transparent to the sky test");
             f.set(f.pos.above(2),Blocks.OAK_LEAVES.defaultBlockState());
             h.assertFalse(SpecialPlantGrowth.caneOpenSky(f.level,f.pos.above(2)),"Positive-opacity leaves block the sky test immediately, without waiting for light updates");
             f.set(f.pos.above(2),Blocks.AIR.defaultBlockState());
-            grown.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{0F,.8F}));
+            grown.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{.8F}));
             h.assertTrue(f.level.getBlockState(f.pos.above()).is(Blocks.SUGAR_CANE),"The sixteenth accepted update creates the next segment");
             h.assertValueEqual(f.level.getBlockState(f.pos).getValue(SugarCaneBlock.AGE),0,"The previous segment resets its age");
+        }
+        h.succeed();
+    }
+    @GameTest(template="empty")
+    public static void coldAndHotSugarCaneKeepOnlyTheIndependentSlowdownRoll(GameTestHelper h) {
+        try(Fixture f=new Fixture(h.getLevel(),h)) {
+            f.daylight();
+            f.set(f.pos.below(),Blocks.SAND.defaultBlockState());
+            f.set(f.pos.below().east(),Blocks.WATER.defaultBlockState());
+            BlockState cane=Blocks.SUGAR_CANE.defaultBlockState().setValue(SugarCaneBlock.AGE,14);
+            for(var biome:List.of(Biomes.SNOWY_PLAINS,Biomes.DESERT)) {
+                f.biome(biome); f.set(f.pos,cane);
+                cane.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{.7999F}));
+                h.assertValueEqual(f.level.getBlockState(f.pos).getValue(SugarCaneBlock.AGE),14,
+                        "The retained eighty-percent slowdown can reject growth in either biome");
+                Draws accepted=new Draws(new int[0],new float[]{.8F});
+                cane.randomTick(f.level,f.pos,accepted);
+                h.assertValueEqual(f.level.getBlockState(f.pos).getValue(SugarCaneBlock.AGE),15,
+                        "A boundary winning draw grows real cane in freezing and desert biomes alike");
+                h.assertValueEqual(accepted.floatIndex,1,"Only the independent slowdown roll is consumed");
+            }
+        }
+        h.succeed();
+    }
+    @GameTest(template="empty")
+    public static void blueberriesKeepTheSameRegrowthBoundaryAcrossTheirForestHabitat(GameTestHelper h) {
+        try(Fixture f=new Fixture(h.getLevel(),h)) {
+            f.daylight();
+            f.set(f.pos.below(),Blocks.GRASS_BLOCK.defaultBlockState());
+            var state=MiteFoodPlants.BLUEBERRY_BUSH.get().defaultBlockState()
+                    .setValue(net.minecraft.world.level.block.SweetBerryBushBlock.AGE,1);
+            for(var biome:List.of(Biomes.FOREST,Biomes.BIRCH_FOREST,Biomes.FLOWER_FOREST)) {
+                f.biome(biome); f.set(f.pos,state);
+                h.assertTrue(state.canSurvive(f.level,f.pos),"The regrowth comparison stays inside the existing forest habitat");
+                state.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{.025F}));
+                h.assertValueEqual(f.level.getBlockState(f.pos).getValue(net.minecraft.world.level.block.SweetBerryBushBlock.AGE),1,
+                        "A draw exactly at the original optimal 2.5-percent boundary does not grow");
+                state.randomTick(f.level,f.pos,new Draws(new int[0],new float[]{.024999F}));
+                h.assertValueEqual(f.level.getBlockState(f.pos).getValue(net.minecraft.world.level.block.SweetBerryBushBlock.AGE),2,
+                        "Every permitted forest uses the same optimal regrowth chance despite its temperature");
+            }
         }
         h.succeed();
     }
@@ -294,24 +366,43 @@ public final class SpecialPlantGameTests {
         Draws() { this(new int[0],new float[0]); }
         Draws(int[] ints,float[] floats) { super(196); this.ints=ints; this.floats=floats; }
         @Override public int nextInt(int bound) { lastBound=bound; return Math.floorMod(intIndex<ints.length?ints[intIndex++]:1,bound); }
-        @Override public float nextFloat() { return floatIndex<floats.length?floats[floatIndex++]:.5F; }
+        @Override public float nextFloat() { int index=floatIndex++; return index<floats.length?floats[index]:.5F; }
     }
     private static final class Fixture implements AutoCloseable {
         final ServerLevel level; final BlockPos pos; final Map<BlockPos,BlockState> originals=new LinkedHashMap<>();
         final long time; final float rain,thunder;
+        final java.util.function.Consumer<ResourceKey<Biome>> fillBiome;
+        final Runnable restoreBiomes;
         Fixture(ServerLevel level,GameTestHelper h) {
             this.level=level;
             BlockPos reference=h.absolutePos(new BlockPos(2,2,2));
             pos=new BlockPos((reference.getX()&~15)+8,level.getMaxBuildHeight()-40,(reference.getZ()&~15)+8);
-            level.getChunkAt(pos); time=level.getDayTime(); rain=level.getRainLevel(1F);
+            var chunk=level.getChunkAt(pos);
+            var section=chunk.getSection(chunk.getSectionIndex(pos.getY()));
+            var old=section.getBiomes();
+            var snapshots=new ArrayList<Holder<Biome>>(64);
+            for(int x=0;x<4;x++)for(int y=0;y<4;y++)for(int z=0;z<4;z++)snapshots.add(old.get(x,y,z));
+            int quartX=QuartPos.fromBlock(chunk.getPos().getMinBlockX());
+            int quartY=QuartPos.fromBlock(pos.getY())&~3;
+            int quartZ=QuartPos.fromBlock(chunk.getPos().getMinBlockZ());
+            var sampler=level.getChunkSource().randomState().sampler();
+            fillBiome=biome->{
+                var holder=level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(biome);
+                section.fillBiomesFromNoise((x,y,z,climate)->holder,sampler,quartX,quartY,quartZ);
+            };
+            restoreBiomes=()->section.fillBiomesFromNoise((x,y,z,climate)->
+                    snapshots.get(((x&3)<<4)|((y&3)<<2)|(z&3)),sampler,quartX,quartY,quartZ);
+            time=level.getDayTime(); rain=level.getRainLevel(1F);
             level.setRainLevel(1F); thunder=level.getThunderLevel(1F); level.setRainLevel(rain);
             for(BlockPos cell:BlockPos.betweenClosed(pos.offset(-1,-1,-1),pos.offset(1,4,1))) set(cell,Blocks.AIR.defaultBlockState());
         }
+        void biome(ResourceKey<Biome> biome) { fillBiome.accept(biome); }
         void set(BlockPos pos,BlockState state) { originals.putIfAbsent(pos.immutable(),level.getBlockState(pos)); level.setBlock(pos,state,3); }
         void daylight() { level.setDayTime(6000); level.setRainLevel(0F); level.setThunderLevel(0F); level.updateSkyBrightness(); }
         @Override public void close() {
             level.setDayTime(time); level.setRainLevel(rain); level.setThunderLevel(thunder); level.updateSkyBrightness();
             originals.forEach((pos,state)->level.setBlock(pos,state,3));
+            restoreBiomes.run();
         }
     }
 }

@@ -42,19 +42,19 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class CropLifecycleGameTests {
     private CropLifecycleGameTests() {}
     @GameTest(template="empty")
-    public static void actualPlainsMelonRowsMatchTheFirstHarvestHourlyReference(GameTestHelper h) {
+    public static void actualPlainsStemRowsUseOptimalTemperatureRatesAndKeepTheirExistingReference(GameTestHelper h) {
         try(Fixture f=new Fixture(h)) {
             f.soils(wet());
             for(boolean melon:new boolean[]{false,true}) {
                 BlockState seed=(melon?Blocks.MELON_STEM:Blocks.PUMPKIN_STEM).defaultBlockState();
                 f.set(f.pos,seed); f.set(f.pos.east(),seed); f.set(f.pos.west(),seed);
                 f.set(f.pos.north(),Blocks.AIR.defaultBlockState());f.set(f.pos.south(),Blocks.AIR.defaultBlockState());
-                float expected=melon?2F:2.5F;
+                float expected=2.5F;
                 float actual=SpecialPlantGrowth.stemGrowth(f.level,f.pos,seed);
-                h.assertTrue(Math.abs(actual-expected)<.000001F,"Actual wet plains rows retain their species climate and two open fruit sides");
-                int threshold=CropGrowthRules.growthThreshold(actual,expected,11);
+                h.assertTrue(Math.abs(actual-expected)<.000001F,"Actual wet plains rows use the former optimal temperature rate and two open fruit sides");
+                int threshold=CropGrowthRules.growthThreshold(actual,melon?2F:2.5F,11);
                 double minutes=11D*4096D/(threshold/1_000_000D*3D*20D*60D*(12081D/24000D));
-                h.assertTrue(Math.abs(minutes-60D)<.001D,"The actual row's climate produces the full seed-to-fruit hourly average");
+                h.assertTrue(Math.abs(minutes-(melon?48D:60D))<.001D,"Removing temperature loss preserves each species' existing growth-roll reference");
             }
         }
         h.succeed();
@@ -148,13 +148,20 @@ public final class CropLifecycleGameTests {
         h.succeed();
     }
     @GameTest(template="empty")
-    public static void cropTemperatureIsReadFromTheRealBiomeWithoutInventedRainGrowthBonus(GameTestHelper h) {
+    public static void everyFoodCropGrowsAtTheSameRateInActualHotColdAndHumidBiomes(GameTestHelper h) {
         try(Fixture f=new Fixture(h)) {
-            f.soils(wet()); f.set(f.pos,Blocks.WHEAT.defaultBlockState());
-            f.biome(Biomes.PLAINS); f.rate(h,1.25F,"Plains temperature 0.8 is optimal");
-            f.biome(Biomes.DESERT); f.rate(h,.25F,"Desert temperature 2.0 leaves one fifth of the normal rate");
-            f.biome(Biomes.FROZEN_PEAKS); f.rate(h,0F,"Frozen peaks are outside the complete one-degree tolerance");
-            f.biome(Biomes.JUNGLE); f.rate(h,1.25F,"Humid jungle does not grant ordinary food crops an invented humidity multiplier");
+            f.soils(wet());
+            for(var biome:List.of(Biomes.PLAINS,Biomes.DESERT,Biomes.FROZEN_PEAKS,Biomes.JUNGLE)) {
+                f.biome(biome);
+                h.assertTrue(f.level.getBiome(f.pos).is(biome),"The real world fixture uses the requested biome");
+                for(CropBlock crop:foodCrops()) {
+                    BlockState seed=crop.getStateForAge(0); f.set(f.pos,seed);
+                    f.rate(h,1.25F,"Temperature cannot pause or slow any food crop, and humidity adds no new multiplier");
+                    seed.randomTick(f.level,f.pos,new Rolls(bound->bound==CropGrowthRules.GROWTH_ROLL_BOUND?0:1,1F,false));
+                    h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),1,
+                            "A real accepted crop random tick advances in hot, cold and humid biomes");
+                }
+            }
         }
         h.succeed();
     }

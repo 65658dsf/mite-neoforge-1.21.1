@@ -27,7 +27,7 @@ final class CropGrowthRulesTest {
         assertEquals(0,CropGrowthRules.growthThreshold(-1F,1.25F,7));
         assertEquals(1_000_000,CropGrowthRules.growthThreshold(Float.MAX_VALUE,1.25F,7));
     }
-    @Test void cropsHaveAnEightTenthsToOnePointTwoOptimumAndOneDegreeTolerance() {
+    @Test void diseaseTemperatureHelperRetainsItsLinearTolerance() {
         assertEquals(1F,CropGrowthRules.temperatureModifier(.8F,.8F,1.2F));
         assertEquals(1F,CropGrowthRules.temperatureModifier(1F,.8F,1.2F));
         assertEquals(1F,CropGrowthRules.temperatureModifier(1.2F,.8F,1.2F));

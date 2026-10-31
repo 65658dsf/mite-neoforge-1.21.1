@@ -48,7 +48,7 @@ public final class SpecialPlantGrowth {
         for (int x : new int[]{-1, 1}) for (int z : new int[]{-1, 1}) diagonal |= sameStem(state, level.getBlockState(pos.offset(x, 0, z)));
         if (diagonal || alongX && alongZ) rate /= 2F;
         if (FoodAgriculture.fertilized(soil)) rate *= 1.5F;
-        return rate * SpecialPlantRules.stemClimate(melon(state), level.getBiome(pos).value().getBaseTemperature(), FoodAgriculture.humid(level, pos));
+        return rate * SpecialPlantRules.stemClimate(melon(state), FoodAgriculture.humid(level, pos));
     }
     public static void stemTick(ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
         if (dead(state) || !level.isAreaLoaded(pos, 1)) return;
@@ -85,8 +85,8 @@ public final class SpecialPlantGrowth {
     public static void caneTick(ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
         if (!level.isAreaLoaded(pos, 1)) return;
         if (!state.canSurvive(level, pos)) { level.destroyBlock(pos, true); return; }
-        if (random.nextFloat() > level.getBiome(pos).value().getBaseTemperature() - .2F || random.nextFloat() < .8F
-                || level.getMaxLocalRawBrightness(pos) < 15 || !caneOpenSky(level,pos.above(2)) || !level.isEmptyBlock(pos.above())) return;
+        if (!SpecialPlantRules.caneClimate(random.nextFloat(), level.getMaxLocalRawBrightness(pos))
+                || !caneOpenSky(level,pos.above(2)) || !level.isEmptyBlock(pos.above())) return;
         int height = 1;
         while (level.getBlockState(pos.below(height)).is(Blocks.SUGAR_CANE)) height++;
         if (height >= 3 || !CommonHooks.canCropGrow(level, pos, state, true)) return;

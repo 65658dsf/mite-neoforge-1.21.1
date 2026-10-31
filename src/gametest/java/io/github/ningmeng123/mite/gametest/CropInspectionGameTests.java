@@ -131,7 +131,7 @@ public final class CropInspectionGameTests {
     }
 
     @GameTest(template="empty")
-    public static void cropDiagnosisReadsRealDrySoilDaylightNightAndClimateWithoutOverridingDisease(GameTestHelper h) {
+    public static void cropDiagnosisReadsRealDrySoilAndDaylightWithoutClimateGatesOrOverridingDisease(GameTestHelper h) {
         try(var f=new Fixture(h)) {
             var plant=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2);f.set(f.pos.below(),wet());f.set(f.pos,plant);
             var sunny=CropInspection.inspect(f.level,f.pos,plant);
@@ -142,11 +142,49 @@ public final class CropInspectionGameTests {
             f.set(f.pos.below(),wet());f.weather(18000L);
             h.assertValueEqual(CropInspection.inspect(f.level,f.pos,plant).condition(),Condition.LIGHT,"Actual nighttime sunlight cannot be misreported as a growing day");
             f.weather(6000L);f.biome(Biomes.FROZEN_PEAKS);
-            h.assertValueEqual(CropInspection.inspect(f.level,f.pos,plant).condition(),Condition.TEMPERATURE,"The real native frozen-peaks biome is too cold for this crop");
+            h.assertValueEqual(CropInspection.inspect(f.level,f.pos,plant).condition(),Condition.GROWING,"The real frozen-peaks biome no longer prevents a wet sunlit crop from growing");
             var ill=plant.setValue(CubeCropBlight.BLIGHTED,true);f.set(f.pos,ill);f.set(f.pos.below(),wet().setValue(FarmBlock.MOISTURE,0));
             h.assertValueEqual(CropInspection.inspect(f.level,f.pos,ill).condition(),Condition.BLIGHTED,"Dry soil or cold climate must not mask the more urgent existing disease");
             var dead=ill.setValue(CubeCropBlight.DEAD,true);f.set(f.pos,dead);
             h.assertValueEqual(CropInspection.inspect(f.level,f.pos,dead).condition(),Condition.DEAD,"A dead crop never receives a false growth diagnosis");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void coldAndHotBiomesKeepFoodAndStemDiagnosticsFocusedOnWaterAndLight(GameTestHelper h) {
+        try(var f=new Fixture(h)) {
+            var plants=List.of(Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2),
+                    Blocks.CARROTS.defaultBlockState().setValue(CropBlock.AGE,2),
+                    Blocks.POTATOES.defaultBlockState().setValue(CropBlock.AGE,2),
+                    ((CropBlock)Blocks.BEETROOTS).getStateForAge(2),
+                    MiteFoodPlants.ONIONS.get().getStateForAge(2),
+                    Blocks.MELON_STEM.defaultBlockState().setValue(StemBlock.AGE,2),
+                    Blocks.PUMPKIN_STEM.defaultBlockState().setValue(StemBlock.AGE,2));
+            for(var biome:List.of(Biomes.FROZEN_PEAKS,Biomes.DESERT)) {
+                f.biome(biome);
+                h.assertTrue(f.level.getBiome(f.pos).is(biome),"The actual inspection position uses the requested cold or hot native biome");
+                for(var plant:plants) {
+                    f.weather(6000L);f.set(f.pos.below(),wet());f.set(f.pos,plant);
+                    h.assertTrue(plant.canSurvive(f.level,f.pos),"The real crop or stem remains planted legally in this biome");
+                    h.assertValueEqual(CropInspection.inspect(f.level,f.pos,plant).condition(),Condition.GROWING,
+                            "Wet sunlit food crops and stems remain eligible in both extreme climates");
+                    f.set(f.pos.below(),wet().setValue(FarmBlock.MOISTURE,0));
+                    h.assertValueEqual(CropInspection.inspect(f.level,f.pos,plant).condition(),Condition.DRY,
+                            "Removing the temperature rule does not hide actual drought");
+                    f.set(f.pos.below(),wet());f.weather(18000L);
+                    h.assertValueEqual(CropInspection.inspect(f.level,f.pos,plant).condition(),Condition.LIGHT,
+                            "Removing the temperature rule does not hide actual nighttime light limits");
+                }
+                f.weather(6000L);f.set(f.pos.below(),Blocks.GRASS_BLOCK.defaultBlockState());
+                var berry=MiteFoodPlants.BLUEBERRY_BUSH.get().defaultBlockState().setValue(SweetBerryBushBlock.AGE,1);f.set(f.pos,berry);
+                h.assertValueEqual(CropInspection.inspect(f.level,f.pos,berry).condition(),Condition.UNSUITABLE,
+                        "Blueberries outside their independent forest habitat retain their actual planting restriction");
+            }
+            f.biome(Biomes.FOREST);f.weather(6000L);
+            var berry=f.level.getBlockState(f.pos);
+            h.assertValueEqual(CropInspection.inspect(f.level,f.pos,berry).condition(),Condition.GROWING,
+                    "A legal sunlit blueberry still reports that its growth conditions are satisfied");
         }
         h.succeed();
     }
@@ -207,6 +245,21 @@ public final class CropInspectionGameTests {
             h.assertTrue(CropInspection.load(malformed)==null,"Impossible network value is rejected: "+field);
         }
         h.assertTrue(CropInspection.load(new CompoundTag())==null,"An empty or unrelated server payload safely falls back");
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void legacyTemperaturePayloadKeepsCropFactsWithoutRevivingAnObsoleteGrowthWarning(GameTestHelper h) {
+        var wheat=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2);
+        var facts=CropInspection.state(wheat);
+        var encoded=CropInspection.save(facts);encoded.putString("condition","TEMPERATURE");
+        var decoded=CropInspection.load(encoded);
+        h.assertValueEqual(decoded,facts,"A legacy temperature diagnosis safely becomes unknown while actual crop facts survive");
+        h.assertFalse(has(CropInspection.lines(decoded),"tooltip.mite.crop.condition"),"Old payloads must not display an obsolete stopped-growth warning");
+        h.assertValueEqual(CropInspection.save(decoded).getString("condition"),"NONE","Re-encoding an old payload never generates the retired condition");
+        var legacy=new CropInspection.Snapshot(facts.kind(),facts.health(),facts.age(),facts.maxAge(),facts.moisture(),facts.fertilized(),
+                Condition.TEMPERATURE,facts.light(),facts.irrigation(),facts.height(),facts.heightLimit());
+        h.assertValueEqual(legacy.condition(),Condition.NONE,"Direct snapshot callers also cannot revive the retired temperature message");
         h.succeed();
     }
 

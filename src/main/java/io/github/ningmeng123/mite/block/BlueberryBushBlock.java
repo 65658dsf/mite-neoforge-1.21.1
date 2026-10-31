@@ -50,9 +50,7 @@ public final class BlueberryBushBlock extends SweetBerryBushBlock {
     @Override protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!state.canSurvive(level, pos)) { level.destroyBlock(pos, true); return; }
         if (state.getValue(AGE) >= 3 || level.getMaxLocalRawBrightness(pos.above()) != 15) return;
-        float temperature = level.getBiome(pos).value().getBaseTemperature();
-        float chance = .025F * Math.max(1F - Math.abs(temperature - .7F), 0F);
-        if (random.nextFloat() < chance) level.setBlock(pos, state.setValue(AGE, state.getValue(AGE) + 1), 2);
+        if (random.nextFloat() < .025F) level.setBlock(pos, state.setValue(AGE, state.getValue(AGE) + 1), 2);
     }
     @Override protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (state.getValue(AGE) != 3) return InteractionResult.PASS;

@@ -3,23 +3,20 @@ package io.github.ningmeng123.mite.rules;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-/** Independently enumerated R196 climate and coordinate-table boundaries. @author NingMeng123 */
+/** Temperature-independent growth and coordinate-table boundaries. @author NingMeng123 */
 final class SpecialPlantRulesTest {
-    @Test void pumpkinAndMelonHaveDistinctOptimalClimates() {
-        assertEquals(.25F,SpecialPlantRules.stemClimate(false,.6F,false));
-        assertEquals(.25F,SpecialPlantRules.stemClimate(false,1F,false));
-        assertEquals(.15F,SpecialPlantRules.stemClimate(false,1.4F,false),.00001F);
-        assertEquals(.15F,SpecialPlantRules.stemClimate(true,.6F,false),.00001F);
-        assertEquals(.25F,SpecialPlantRules.stemClimate(true,1.4F,false));
-        assertEquals(.3F,SpecialPlantRules.stemClimate(true,1F,true));
-        assertEquals(0F,SpecialPlantRules.stemClimate(true,0F,false));
+    @Test void stemsKeepTheirOptimalBaseAndOnlyMelonsRetainTheHumidityBonus() {
+        assertEquals(.25F,SpecialPlantRules.stemClimate(false,false));
+        assertEquals(.25F,SpecialPlantRules.stemClimate(false,true));
+        assertEquals(.25F,SpecialPlantRules.stemClimate(true,false));
+        assertEquals(.3F,SpecialPlantRules.stemClimate(true,true));
     }
-    @Test void caneUsesBothIndependentSlowdownsAndFullLight() {
-        assertTrue(SpecialPlantRules.caneClimate(.8F,.6F,.8F,15));
-        assertFalse(SpecialPlantRules.caneClimate(.8F,.6001F,.8F,15));
-        assertFalse(SpecialPlantRules.caneClimate(.8F,.6F,.7999F,15));
-        assertFalse(SpecialPlantRules.caneClimate(.8F,.6F,.8F,14));
-        assertFalse(SpecialPlantRules.caneClimate(.19F,0F,.9F,15));
+    @Test void caneRetainsItsIndependentSlowdownAndFullLight() {
+        assertTrue(SpecialPlantRules.caneClimate(.8F,15));
+        assertTrue(SpecialPlantRules.caneClimate(.9999F,15));
+        assertFalse(SpecialPlantRules.caneClimate(.7999F,15));
+        assertFalse(SpecialPlantRules.caneClimate(0F,15));
+        assertFalse(SpecialPlantRules.caneClimate(.8F,14));
     }
     @Test void deadStemsUseTheSourceOchreRatherThanTheYoungGreenColor() {
         assertEquals(0x00ff00,SpecialPlantRules.stemColor(0,false));

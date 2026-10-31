@@ -153,6 +153,7 @@ public final class CropJadeAudit implements DataProvider {
             check(!recording.components.isEmpty(), name + ": no crop details");
             check(recording.tagged.getOrDefault(UID, 0) == recording.components.size(), name + ": each crop line needs its own MITE tag");
             java.util.Set<String> keys = new java.util.LinkedHashSet<>(); recording.components.forEach(component -> collectKeys(component, keys));
+            check(!keys.contains("tooltip.mite.crop.condition.temperature"), name + ": retired temperature warnings must never reappear");
             for (String key : required) check(keys.contains(key), name + ": missing " + key);
             for (String key : forbidden) check(!keys.contains(key), name + ": invented/incorrect detail " + key);
             // Model a later-priority native provider or a user-customized sort order.
@@ -173,6 +174,18 @@ public final class CropJadeAudit implements DataProvider {
             packet.put(io.github.ningmeng123.mite.integration.jade.CropJadeProvider.DATA_KEY, payload);
             check(decode(state, packet, false).equals(detailed), "Exact target payload must supply real soil and growth conditions");
             check(decode(state, packet, true).equals(base), "Fake target must ignore a matching server packet");
+            var legacy = packet.copy();
+            legacy.getCompound(io.github.ningmeng123.mite.integration.jade.CropJadeProvider.DATA_KEY).getCompound("data").putString("condition", "TEMPERATURE");
+            var migrated = decode(state, legacy, false);
+            check(migrated.condition() == io.github.ningmeng123.mite.integration.CropInspection.Condition.NONE
+                            && migrated.health() == detailed.health() && migrated.age() == detailed.age() && migrated.moisture() == 7,
+                    "Old temperature payloads preserve actual crop and soil facts without the retired growth restriction");
+            java.util.Set<String> legacyKeys = new java.util.LinkedHashSet<>();
+            io.github.ningmeng123.mite.integration.CropInspection.lines(migrated)
+                    .forEach(component -> collectKeys(component, legacyKeys));
+            check(legacyKeys.contains("tooltip.mite.crop.growth") && legacyKeys.contains("tooltip.mite.crop.soil")
+                            && !legacyKeys.contains("tooltip.mite.crop.condition") && !legacyKeys.contains("tooltip.mite.crop.condition.temperature"),
+                    "Decoded legacy Jade payload lines keep crop facts visible without showing the obsolete temperature warning");
             JsonArray rejected = new JsonArray();
             java.util.Map<String, java.util.function.Consumer<net.minecraft.nbt.CompoundTag>> invalid = new java.util.LinkedHashMap<>();
             invalid.put("stale_position", data -> data.putLong("position", POSITION.above().asLong()));
@@ -191,6 +204,7 @@ public final class CropJadeAudit implements DataProvider {
             });
             check(decode(state, new net.minecraft.nbt.CompoundTag(), false).equals(base), "Missing optional server payload must retain local health and age");
             JsonObject fact = new JsonObject(); fact.addProperty("matching_target_accepted", true); fact.addProperty("fake_target_falls_back", true);
+            fact.addProperty("obsolete_temperature_payload_warning_removed", true);
             fact.add("rejected_payloads", rejected); fact.addProperty("fallback_moisture", base.moisture()); fact.addProperty("fallback_condition", base.condition().name());
             report.add("server_payload_context", fact);
         }

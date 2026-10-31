@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** R196 cane checks temperature, full daylight and an open column before each age increase. @author NingMeng123 */
+/** Cane keeps its independent slowdown, full daylight and open-column requirements. @author NingMeng123 */
 @Mixin(SugarCaneBlock.class)
 public abstract class SugarCaneGrowthMixin extends Block {
     protected SugarCaneGrowthMixin(BlockBehaviour.Properties properties) { super(properties); }

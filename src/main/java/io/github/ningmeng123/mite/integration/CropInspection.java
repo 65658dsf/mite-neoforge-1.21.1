@@ -2,7 +2,6 @@ package io.github.ningmeng123.mite.integration;
 
 import io.github.ningmeng123.mite.block.BlueberryBushBlock;
 import io.github.ningmeng123.mite.entity.CubeCropBlight;
-import io.github.ningmeng123.mite.rules.CropGrowthRules;
 import io.github.ningmeng123.mite.survival.CropLifecycle;
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
 import io.github.ningmeng123.mite.survival.FungalGrowth;
@@ -29,9 +28,15 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class CropInspection {
     public enum Kind { FOOD, STEM, BERRY, SOIL, COCOA, WART, MUSHROOM, CANE, CACTUS }
     public enum Health { NONE, HEALTHY, BLIGHTED, DEAD }
+    // TEMPERATURE is retained only so version-one payloads from an older server still decode.
     public enum Condition { NONE, GROWING, BLIGHTED, DEAD, DRY, LIGHT, TEMPERATURE, UNSUITABLE, FRUIT_PRESENT, WRONG_DIMENSION, GIANT_READY }
     public record Snapshot(Kind kind,Health health,int age,int maxAge,int moisture,boolean fertilized,
-            Condition condition,int light,int irrigation,int height,int heightLimit) {}
+            Condition condition,int light,int irrigation,int height,int heightLimit) {
+        public Snapshot {
+            // Old diagnostics cannot establish a current growth condition after the temperature gate was removed.
+            if(condition==Condition.TEMPERATURE)condition=Condition.NONE;
+        }
+    }
     private CropInspection() {}
 
     /** Block-state-only fallback for a client that has not yet received server inspection data. */
@@ -73,13 +78,8 @@ public final class CropInspection {
             else if(base.kind()==Kind.STEM&&state.getBlock() instanceof AttachedStemBlock)condition=Condition.FRUIT_PRESENT;
             else if(!mature) {
                 light=level.getMaxLocalRawBrightness(pos.above());
-                float temperature=level.getBiome(pos).value().getBaseTemperature();
                 boolean needsDaylight=base.kind()==Kind.FOOD||base.kind()==Kind.STEM||base.kind()==Kind.BERRY;
-                boolean noTemperature=base.kind()==Kind.FOOD?CropGrowthRules.temperatureModifier(temperature,.8F,1.2F)<=0F
-                        :base.kind()==Kind.STEM?SpecialPlantGrowth.stemGrowth(level,pos,state)<=0F&&moisture!=0
-                        :base.kind()==Kind.BERRY&&1F-Math.abs(temperature-.7F)<=0F;
                 if((base.kind()==Kind.FOOD||base.kind()==Kind.STEM)&&moisture==0)condition=Condition.DRY;
-                else if(noTemperature)condition=Condition.TEMPERATURE;
                 else if(needsDaylight&&light!=15)condition=Condition.LIGHT;
                 else condition=Condition.GROWING;
             }

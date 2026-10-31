@@ -52,7 +52,6 @@ public final class CropLifecycle {
         for(int x:new int[]{-1,1}) for(int z:new int[]{-1,1}) diagonal|=sameLiving(level.getBlockState(pos.offset(x,0,z)),block);
         if(diagonal||(ew&&ns))rate/=2F;
         if(FoodAgriculture.fertilized(center))rate*=1.5F;
-        rate*=CropGrowthRules.temperatureModifier(level.getBiome(pos).value().getBaseTemperature(),.8F,1.2F);
         rate*=.25F;
         return rate*FoodAgriculture.proximity(level,pos,block);
     }

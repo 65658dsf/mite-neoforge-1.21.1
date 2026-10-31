@@ -714,7 +714,6 @@
   "tooltip.mite.crop.condition.growing": "符合当前生长条件",
   "tooltip.mite.crop.condition.dry": "耕地干燥，停止生长",
   "tooltip.mite.crop.condition.light": "光照不足，需要实际亮度 15",
-  "tooltip.mite.crop.condition.temperature": "温度不适，停止生长",
   "tooltip.mite.crop.condition.unsuitable": "环境不适",
   "tooltip.mite.crop.condition.fruit_present": "已结果，等待采收",
   "tooltip.mite.crop.condition.wrong_dimension": "只能在下界生长",

@@ -714,7 +714,6 @@
   "tooltip.mite.crop.condition.growing": "Current conditions suitable",
   "tooltip.mite.crop.condition.dry": "Dry soil; growth paused",
   "tooltip.mite.crop.condition.light": "Insufficient light; requires light level 15",
-  "tooltip.mite.crop.condition.temperature": "Unsuitable temperature; growth paused",
   "tooltip.mite.crop.condition.unsuitable": "Unsuitable environment",
   "tooltip.mite.crop.condition.fruit_present": "Fruit present; awaiting harvest",
   "tooltip.mite.crop.condition.wrong_dimension": "Grows only in the Nether",
