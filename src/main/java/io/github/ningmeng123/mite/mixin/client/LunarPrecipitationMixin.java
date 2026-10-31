@@ -1,6 +1,5 @@
 package io.github.ningmeng123.mite.mixin.client;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.client.BloodMoonAtmosphere;
@@ -44,15 +43,18 @@ public abstract class LunarPrecipitationMixin {
         args.set(2, (float)args.get(2) * color.blue());
     }
 
-    @ModifyExpressionValue(method = "renderSnowAndRain", at = @At(value = "INVOKE",
+    @WrapOperation(method = "renderSnowAndRain", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/biome/Biome;hasPrecipitation()Z"))
-    private boolean mite$bloodPeriodRainGate(boolean original) {
-        return original || level != null && LunarCalendar.state(level.getDayTime(), level.dimension().equals(Level.OVERWORLD)).bloodPeriod();
+    private boolean mite$bloodPeriodRainGate(Biome biome, Operation<Boolean> original) {
+        // AsyncParticles uses a null biome for culled columns; blood rain must not re-enable them.
+        if (biome == null) return false;
+        return original.call(biome) || level != null && LunarCalendar.state(level.getDayTime(), level.dimension().equals(Level.OVERWORLD)).bloodPeriod();
     }
 
     @WrapOperation(method = {"renderSnowAndRain", "tickRain"}, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;"))
     private Biome.Precipitation mite$bloodPeriodPrecipitation(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
+        if (biome == null) return Biome.Precipitation.NONE;
         return LunarWeather.precipitation(level, biome, pos, original.call(biome, pos));
     }
 }

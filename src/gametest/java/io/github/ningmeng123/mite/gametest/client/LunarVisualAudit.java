@@ -36,8 +36,9 @@ import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
-/** Opt-in transformed lunar injection/resource audit: no Minecraft instance, world, rendering, GL or UI. @author NingMeng123 */
+/** Opt-in transformed lunar audit: no Minecraft instance, world load, rendering, GL or UI. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public final class LunarVisualAudit implements DataProvider {
     private static final String ROOT = "io/github/ningmeng123/mite/";
@@ -68,7 +69,7 @@ public final class LunarVisualAudit implements DataProvider {
         report.addProperty("opengl_or_render_invoked", false);
         report.addProperty("game_ui_automated", false);
         report.addProperty("visual_appearance_passed", false);
-        report.addProperty("target_initialization_requested", false);
+        report.addProperty("renderer_initialization_requested", false);
         JsonArray targets = new JsonArray(), textures = new JsonArray(), nativeCalls = new JsonArray();
         report.add("targets", targets); report.add("textures", textures); report.add("native_calls", nativeCalls);
         report.addProperty("call_graph_edges", "same-class method calls and invokedynamic bootstrap method handles");
@@ -94,6 +95,22 @@ public final class LunarVisualAudit implements DataProvider {
             requireReachable(sky, rain, ROOT + "world/LunarWeather", "precipitation");
             requireReachable(sky, rainTick, ROOT + "world/LunarWeather", "precipitation");
             requireReachable(sky, rain, ROOT + "rules/LunarCalendar", "state");
+            MethodNode rainGate = lunarWrapper(sky, "mite$bloodPeriodRainGate");
+            MethodNode precipitation = lunarWrapper(sky, "mite$bloodPeriodPrecipitation");
+            requireReachable(sky, rain, sky.name, rainGate.name);
+            requireReachable(sky, rain, sky.name, precipitation.name);
+            requireReachable(sky, rainTick, sky.name, precipitation.name);
+            LunarPrecipitationAudit.verify(sky, rainGate, precipitation, report);
+            var asyncParticles = ModList.get().getModContainerById("asyncparticles");
+            report.addProperty("asyncparticles_loaded", asyncParticles.isPresent());
+            if (asyncParticles.isPresent()) {
+                report.addProperty("asyncparticles_version", asyncParticles.get().getModInfo().getVersion().toString());
+                MethodNode cullingGate = sky.methods.stream()
+                        .filter(candidate -> candidate.name.endsWith("$shouldRenderWeatherColumn"))
+                        .findFirst().orElseThrow(() -> new IllegalStateException("Missing AsyncParticles weather-culling wrapper"));
+                requireReachable(sky, rain, sky.name, cullingGate.name);
+                report.addProperty("asyncparticles_weather_culling_gate_reachable", true);
+            }
             auditBloodRain(sky, rain, rainTick, targets, report);
 
             ClassNode atmosphere = transformed("net.minecraft.client.multiplayer.ClientLevel", targets);
@@ -181,8 +198,9 @@ public final class LunarVisualAudit implements DataProvider {
     }
     private static void auditBloodRain(ClassNode renderer, MethodNode rain, MethodNode rainTick,
             JsonArray targets, JsonObject report) throws Exception {
-        requireDryNightCancellation(renderer, rain);
-        requireDryNightCancellation(renderer, rainTick);
+        JsonArray cancellationBodies = new JsonArray();
+        requireDryNightCancellation(renderer, rain, cancellationBodies);
+        requireDryNightCancellation(renderer, rainTick, cancellationBodies);
         int rainVertices = 0, snowVertices = 0;
         String precipitation = "";
         boolean tintPending = false;
@@ -227,26 +245,68 @@ public final class LunarVisualAudit implements DataProvider {
         fact.addProperty("rain_vertices_tinted", rainVertices);
         fact.addProperty("snow_vertices_untouched", snowVertices);
         fact.addProperty("dry_night_cancels_rain_rendering_and_tick_before_native_body", true);
+        fact.add("dry_night_guarded_method_bodies", cancellationBodies);
         fact.addProperty("rain_splash_provider_uses_same_color", true);
         report.add("blood_rain_rendering", fact);
     }
-    private static void requireDryNightCancellation(ClassNode type, MethodNode entrypoint) {
-        boolean guarded = false, checkedCancellation = false, earlyReturn = false;
-        for (AbstractInsnNode instruction : entrypoint.instructions) {
-            if (instruction instanceof MethodInsnNode call) {
-                // The HEAD callback must cancel before either the dimension effect hook or native weather rendering runs.
-                if (call.owner.equals("net/minecraft/client/multiplayer/ClientLevel") && call.name.equals("effects")) break;
+    private static void requireDryNightCancellation(ClassNode type, MethodNode entrypoint, JsonArray facts) {
+        // WrapMethod can move the original body behind an Operation lambda. Inspect every reachable
+        // native body rather than requiring its HEAD callback to remain in the public entrypoint.
+        var bodies = reachableMethods(type, entrypoint).stream().filter(candidate -> {
+            for (AbstractInsnNode instruction : candidate.instructions)
+                if (nativeWeatherBoundary(instruction)) return true;
+            return false;
+        }).toList();
+        check(!bodies.isEmpty(), "The actual native weather body must remain reachable from " + entrypoint.name);
+        for (MethodNode body : bodies) {
+            int boundary = -1, callbackIndex = -1, callbackLocal = -1, cancellationIndex = -1;
+            for (int index = 0; index < body.instructions.size(); index++)
+                if (nativeWeatherBoundary(body.instructions.get(index))) { boundary = index; break; }
+            for (int index = 0; index < boundary; index++) {
+                AbstractInsnNode instruction = body.instructions.get(index);
+                if (!(instruction instanceof MethodInsnNode call)) continue;
                 if (call.owner.equals(type.name)) {
                     MethodNode hook = method(type, call.name, call.desc);
                     if (reachesCall(type, hook, ROOT + "world/LunarWeather", "dryBloodStorm")
-                            && reachesCall(type, hook, "org/spongepowered/asm/mixin/injection/callback/CallbackInfo", "cancel"))
-                        guarded = true;
-                } else if (guarded && call.owner.equals("org/spongepowered/asm/mixin/injection/callback/CallbackInfo")
-                        && call.name.equals("isCancelled")) checkedCancellation = true;
-            } else if (checkedCancellation && instruction.getOpcode() == Opcodes.RETURN) earlyReturn = true;
+                            && reachesCall(type, hook, "org/spongepowered/asm/mixin/injection/callback/CallbackInfo", "cancel")
+                            && previousExecutable(call) instanceof VarInsnNode load && load.getOpcode() == Opcodes.ALOAD) {
+                        callbackIndex = index; callbackLocal = load.var;
+                    }
+                } else if (callbackIndex >= 0 && call.owner.equals("org/spongepowered/asm/mixin/injection/callback/CallbackInfo")
+                        && call.name.equals("isCancelled") && previousExecutable(call) instanceof VarInsnNode load
+                        && load.getOpcode() == Opcodes.ALOAD && load.var == callbackLocal
+                        && nextExecutable(call) instanceof JumpInsnNode jump && jump.getOpcode() == Opcodes.IFEQ
+                        && nextExecutable(jump) != null && nextExecutable(jump).getOpcode() == Opcodes.RETURN) {
+                    int returnIndex = body.instructions.indexOf(nextExecutable(jump));
+                    int continueIndex = body.instructions.indexOf(jump.label);
+                    if (returnIndex < continueIndex && continueIndex <= boundary) cancellationIndex = index;
+                }
+            }
+            check(callbackIndex >= 0 && cancellationIndex > callbackIndex,
+                    "Blood-night cancellation must return before native " + entrypoint.name + " effects in reachable body " + body.name);
+            JsonObject fact = new JsonObject();
+            fact.addProperty("entrypoint", entrypoint.name + entrypoint.desc);
+            fact.addProperty("native_body", body.name + body.desc);
+            fact.addProperty("callback_instruction_index", callbackIndex);
+            fact.addProperty("cancellation_check_instruction_index", cancellationIndex);
+            fact.addProperty("native_effects_instruction_index", boundary);
+            fact.addProperty("same_callback_info_local_cancels_before_native_effects", true);
+            facts.add(fact);
         }
-        check(guarded && checkedCancellation && earlyReturn,
-                "Blood-night cancellation must run before the native " + entrypoint.name + " body, including dimension effects");
+    }
+    private static boolean nativeWeatherBoundary(AbstractInsnNode instruction) {
+        return instruction instanceof MethodInsnNode call && call.owner.equals("net/minecraft/client/multiplayer/ClientLevel")
+                && call.name.equals("effects");
+    }
+    private static AbstractInsnNode previousExecutable(AbstractInsnNode instruction) {
+        AbstractInsnNode previous = instruction.getPrevious();
+        while (previous != null && previous.getOpcode() < 0) previous = previous.getPrevious();
+        return previous;
+    }
+    private static AbstractInsnNode nextExecutable(AbstractInsnNode instruction) {
+        AbstractInsnNode next = instruction.getNext();
+        while (next != null && next.getOpcode() < 0) next = next.getNext();
+        return next;
     }
     private static void requireReachable(ClassNode type, MethodNode start, String owner, String name) {
         check(reachesCall(type, start, owner, name), "Missing reachable injected call " + type.name + "." + start.name + " -> " + owner + "." + name);
@@ -382,6 +442,13 @@ public final class LunarVisualAudit implements DataProvider {
     private static MethodNode method(ClassNode type, String name, String desc) {
         return type.methods.stream().filter(method -> method.name.equals(name) && method.desc.equals(desc)).findFirst()
                 .orElseThrow(() -> new IllegalStateException("Missing pinned typed method " + type.name + "." + name + desc));
+    }
+    private static MethodNode lunarWrapper(ClassNode type, String suffix) {
+        var matches = type.methods.stream().filter(candidate -> candidate.name.endsWith("$" + suffix)
+                && (mergedFrom(candidate.visibleAnnotations, MIXINS + "LunarPrecipitationMixin")
+                        || mergedFrom(candidate.invisibleAnnotations, MIXINS + "LunarPrecipitationMixin"))).toList();
+        check(matches.size() == 1, "Expected one actual merged lunar wrapper " + suffix);
+        return matches.getFirst();
     }
     private static String sha256(byte[] bytes) throws Exception { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes)); }
     private void write(JsonObject report) throws Exception {
