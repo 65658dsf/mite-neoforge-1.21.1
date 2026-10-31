@@ -62,8 +62,26 @@ public final class IndependentNativeMobLootGameTests {
     @GameTest(template="empty") public static void exactlyQuarterWellnessStillProducesMeat(GameTestHelper h) { var e=mob(h,EntityType.MOOSHROOM); SourceVanillaMobLoot.setLivestockNeeds(e,.25F,.25F,.25F); var drops=death(h,e,5,true); h.assertTrue(count(drops,Items.BEEF)>=1 && count(drops,Items.LEATHER)>=1,"Inclusive source .25 across inherited rr mooshroom"); h.succeed(); }
     @GameTest(template="empty") public static void sheepIndependentWoolMeatLeatherDraws(GameTestHelper h) { Sheep e=mob(h,EntityType.SHEEP); e.setColor(DyeColor.BLUE); Random r=new Random(9); boolean wool=r.nextInt(2)==0; int meat=r.nextInt(3)+1; boolean skin=r.nextInt(2)==0; var drops=death(h,e,9,true); h.assertTrue(count(drops,Items.BLUE_WOOL)==(wool?1:0) && count(drops,Items.MUTTON)==meat && count(drops,Items.LEATHER)==(skin?1:0),"Source rz death pools preserve draw order and woolcolor"); h.succeed(); }
     @GameTest(template="empty") public static void shearedSheepHasNoNativeGuaranteedWool(GameTestHelper h) { Sheep e=mob(h,EntityType.SHEEP); e.setSheared(true); var drops=death(h,e,0,true); h.assertTrue(drops.stream().noneMatch(s->s.is(Items.WHITE_WOOL)) && count(drops,Items.MUTTON)==new Random(0).nextInt(3)+1,"No duplicate native sheep loot survives source scope"); h.succeed(); }
-    @GameTest(template="empty") public static void chickenUsesSavedFeathersInsteadOfLootingDraw(GameTestHelper h) { var e=mob(h,EntityType.CHICKEN); SourceVanillaMobLoot.setFeathers(e,0); var drops=death(h,e,0,true); h.assertTrue(count(drops,Items.FEATHER)==0 && count(drops,Items.CHICKEN)==new Random(0).nextInt(3)+1,"Depleted feather stock still gives uniformly rolled meat"); h.succeed(); }
-    @GameTest(template="empty") public static void burningChickenDropsCookedMeatAndNoFeathers(GameTestHelper h) { var e=mob(h,EntityType.CHICKEN); e.igniteForSeconds(10); var drops=death(h,e,0,true); h.assertTrue(count(drops,Items.COOKED_CHICKEN)==new Random(0).nextInt(3)+1 && count(drops,Items.CHICKEN)==0 && count(drops,Items.FEATHER)==0,"Source burning branch removes featherpool"); h.succeed(); }
+    @GameTest(template="empty") public static void chickenUsesSavedFeathersAndAlwaysDropsOneRawMeat(GameTestHelper h) {
+        for (int feathers : new int[]{0, 1}) for (boolean recent : new boolean[]{false, true}) for (long seed=0; seed<16; seed++) {
+            var e=mob(h,EntityType.CHICKEN); SourceVanillaMobLoot.setFeathers(e,feathers);
+            var drops=death(h,e,seed,recent,e.damageSources().generic(),true);
+            h.assertTrue(count(drops,Items.FEATHER)==feathers && count(drops,Items.CHICKEN)==1
+                    && count(drops,Items.COOKED_CHICKEN)==0,"Adult chicken always drops exactly one raw meat and only its saved feathers");
+            e.discard();
+        }
+        h.succeed();
+    }
+    @GameTest(template="empty") public static void burningChickenAlwaysDropsOneCookedMeatAndNoFeathers(GameTestHelper h) {
+        for (boolean recent : new boolean[]{false, true}) for (long seed=0; seed<16; seed++) {
+            var e=mob(h,EntityType.CHICKEN); e.igniteForSeconds(10);
+            var drops=death(h,e,seed,recent,e.damageSources().generic(),true);
+            h.assertTrue(count(drops,Items.COOKED_CHICKEN)==1 && count(drops,Items.CHICKEN)==0
+                    && count(drops,Items.FEATHER)==0,"Burning adult chicken always drops exactly one cooked meat without feathers");
+            e.discard();
+        }
+        h.succeed();
+    }
     @GameTest(template="empty") public static void nativePigSaddleReturnsExactlyOnce(GameTestHelper h) { Pig e=mob(h,EntityType.PIG); e.equipSaddle(new ItemStack(Items.SADDLE),null); var drops=death(h,e,0,true); h.assertTrue(count(drops,Items.SADDLE)==1 && count(drops,Items.PORKCHOP)>=1,"Installed native saddle returned once while source meat replaces table"); h.succeed(); }
     @GameTest(template="empty") public static void nativeZombieRareRewardIsNuggetNotIngot(GameTestHelper h) { long n=seed(r->{ r.nextFloat(); return r.nextInt(200)<5; }); Random r=new Random(n); boolean flesh=r.nextFloat()<.5F; r.nextInt(200); Item[] expected={SourceVanillaMobLoot.item("mite:copper_nugget"),SourceVanillaMobLoot.item("mite:silver_nugget"),Items.GOLD_NUGGET,Items.IRON_NUGGET}; Item nugget=expected[r.nextInt(4)]; var e=mob(h,EntityType.ZOMBIE); var drops=death(h,e,n,true); h.assertTrue(count(drops,nugget)==1 && count(drops,Items.ROTTEN_FLESH)==(flesh?1:0),"Source tw exactrare RNG and metal tier"); h.assertTrue(count(drops,Items.IRON_INGOT)==0 && count(drops,Items.CARROT)==0 && count(drops,Items.POTATO)==0,"Vanilla rare ingot and crops cannot duplicate ordinarysource zombie"); h.succeed(); }
     @GameTest(template="empty") public static void zombieVillagerExactRareOnionHasNoModifierDuplicate(GameTestHelper h) { long n=seed(r->{r.nextFloat();return r.nextInt(50)<5 && r.nextInt(6)==5;}); var e=mob(h,EntityType.ZOMBIE_VILLAGER); var drops=death(h,e,n,true); h.assertTrue(count(drops,SourceVanillaMobLoot.item("mite:onion"))==1 && count(drops,Items.IRON_INGOT)==0,"Source villager rare50 pool6, old NaturalFood modifier never runs again"); h.succeed(); }

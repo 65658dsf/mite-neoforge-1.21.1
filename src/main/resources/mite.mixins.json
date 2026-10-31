@@ -364,6 +364,7 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.BoatWaterMaskMixin",
     "client.PunchyClubAnimationMixin",
     "client.InBedChatScreenMixin",
     "client.InvisibleMonsterRendererMixin",

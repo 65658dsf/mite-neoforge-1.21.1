@@ -86,7 +86,7 @@ public final class BalanceFeedbackGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void everyAdultMeatAnimalDropsOneTwoOrThreeEvenWhenIllOrAfterMassiveFall(GameTestHelper h) {
+    public static void adultMeatCountsRemainGuaranteedEvenWhenIllOrAfterMassiveFall(GameTestHelper h) {
         for (Animal animal : ANIMALS) {
             boolean[] found = new boolean[4];
             for (int draw = 0; draw < 48; draw++) {
@@ -109,10 +109,15 @@ public final class BalanceFeedbackGameTests {
                 try { mob.setHealth(0F); mob.die(mob.damageSources().generic()); }
                 finally { NeoForge.EVENT_BUS.unregister(listener); mob.discard(); }
                 int meat = drops.stream().filter(stack -> stack.is(animal.meat())).mapToInt(ItemStack::getCount).sum();
+                if (animal.type() == EntityType.CHICKEN) {
+                    h.assertValueEqual(meat, 1, "Adult chicken always drops exactly one meat even when ill or after a massive fall");
+                    continue;
+                }
                 h.assertTrue(meat >= 1 && meat <= 3, animal.type() + " adult meat is always within the three equal outcomes");
                 found[meat] = true;
             }
-            h.assertTrue(found[1] && found[2] && found[3], animal.type() + " actually reaches every requested meat quantity");
+            if (animal.type() != EntityType.CHICKEN)
+                h.assertTrue(found[1] && found[2] && found[3], animal.type() + " actually reaches every requested meat quantity");
         }
         h.succeed();
     }

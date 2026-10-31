@@ -80,15 +80,15 @@ class EquipmentDurabilityRulesTest {
     }
 
     @Test
-    void attacksUseFamilyCostsIncludingScytheEnchantmentPriority() {
+    void attacksUseFamilyCostsWithoutTheLegacyScytheCombatPenalty() {
         ToolFamily[] families = {PICKAXE, AXE, BATTLE_AXE, HATCHET, SHOVEL, MATTOCK, HOE,
                 SWORD, DAGGER, KNIFE, SCYTHE, SHEARS, CLUB, CUDGEL, WAR_HAMMER};
-        int[] expected = {100, 100, 75, 133, 100, 100, 200, 50, 50, 50, 400, 200, 25, 25, 66};
+        int[] expected = {100, 100, 75, 133, 100, 100, 200, 50, 50, 50, 50, 200, 25, 25, 66};
         for (int i = 0; i < families.length; i++)
             assertEquals(expected[i], attackWear(tool(families[i]), false, false), families[i].name());
-        assertEquals(200, attackWear(tool(SCYTHE), false, true));
-        assertEquals(100, attackWear(tool(SCYTHE), true, false));
-        assertEquals(100, attackWear(tool(SCYTHE), true, true));
+        assertEquals(50, attackWear(tool(SCYTHE), false, true));
+        assertEquals(50, attackWear(tool(SCYTHE), true, false));
+        assertEquals(50, attackWear(tool(SCYTHE), true, true));
     }
 
     @Test

@@ -101,9 +101,10 @@ public final class EquipmentDurabilityRules {
         float rate = switch (profile.family()) {
             case HATCHET -> 1F * 4F / 3F;
             case BATTLE_AXE -> 1F * 0.75F;
-            case SWORD, DAGGER, KNIFE -> 0.5F;
+            // Modern combat scythes share the sword wear budget. The old farming-tool
+            // penalty (4F, reduced by damage enchantments) destroyed copper scythes in eight hits.
+            case SWORD, DAGGER, KNIFE, SCYTHE -> 0.5F;
             case HOE, SHEARS -> 2F;
-            case SCYTHE -> vampiric ? 1F : sharpness ? 2F : 4F;
             case CLUB, CUDGEL -> 0.25F;
             case WAR_HAMMER -> 1F * 2F / 3F;
             default -> 1F;

@@ -150,8 +150,8 @@ public final class SourceVanillaMobLoot {
             emit(mob,cooked?Items.COOKED_MUTTON:Items.MUTTON,random.nextInt(3)+1);
             if(random.nextInt(2)==0) emit(mob,Items.LEATHER,1);
         } else if (type==EntityType.CHICKEN) {
-            if(cooked) emit(mob,Items.COOKED_CHICKEN,random.nextInt(3)+1);
-            else { emit(mob,Items.FEATHER,feathers(mob)); emit(mob,Items.CHICKEN,random.nextInt(3)+1); }
+            if(!cooked) emit(mob,Items.FEATHER,feathers(mob));
+            emit(mob,cooked?Items.COOKED_CHICKEN:Items.CHICKEN,1);
         } else if (type==EntityType.HORSE || type==EntityType.DONKEY || type==EntityType.MULE || type==EntityType.ZOMBIE_HORSE || type==EntityType.SKELETON_HORSE) {
             int count=random.nextInt(3)+1;
             for(int i=0;i<count;i++) { boolean blank=random.nextInt(4)==0; Item skin=type==EntityType.SKELETON_HORSE?Items.BONE:type==EntityType.ZOMBIE_HORSE?(blank?null:Items.ROTTEN_FLESH):Items.LEATHER; if(skin!=null) emit(mob,skin,1); }

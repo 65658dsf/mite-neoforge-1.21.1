@@ -111,6 +111,9 @@ public final class FireAspectAnimalLootGameTests {
         h.assertTrue(count(drops, cooked ? animal.cooked : animal.raw) > 0
                         && count(drops, cooked ? animal.raw : animal.cooked) == 0,
                 animal.type + " drops only the expected " + (cooked ? "cooked" : "raw") + " meat");
+        if (animal.type == EntityType.CHICKEN)
+            h.assertValueEqual(count(drops, cooked ? animal.cooked : animal.raw), 1,
+                    "Chicken drops exactly one meat for real melee, fire, arrow and indirect death paths");
         if (cooked && animal.type == EntityType.CHICKEN)
             h.assertTrue(count(drops, Items.FEATHER) == 0, "The source burning chicken branch does not also emit feathers");
         if (cooked && animal.type == EntityType.SHEEP)
