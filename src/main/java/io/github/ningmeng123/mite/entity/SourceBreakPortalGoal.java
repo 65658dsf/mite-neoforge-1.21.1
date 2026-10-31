@@ -70,6 +70,7 @@ public final class SourceBreakPortalGoal extends Goal {
             var digger=R196DiggerGoal.first(mob);
             if(digger!=null) {
                 var plan=digger.pursuitPlan();
+                if(MeleePursuitPaths.pending(mob)) return false;
                 if(plan.portal()&&plan.firstBlock()!=null&&mob.distanceToSqr(plan.firstBlock().getCenter())<4D) {
                     target=plan.firstBlock();return permitted(level);
                 }
@@ -129,6 +130,7 @@ public final class SourceBreakPortalGoal extends Goal {
     @Override public void tick() {
         if (!(mob.level() instanceof ServerLevel level) || target == null || !closedPortal(level, target)
                 || !EventHooks.canEntityGrief(level, mob) || rejected() || fasterWalkingRoute()) return;
+        if(MeleePursuitPaths.pending(mob)) return;
         BlockState state = level.getBlockState(target);
         mob.setNoActionTime(-400);
         if (mob.getRandom().nextInt(20) == 0) {

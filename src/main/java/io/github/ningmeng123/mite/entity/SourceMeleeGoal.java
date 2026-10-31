@@ -35,6 +35,7 @@ public final class SourceMeleeGoal extends Goal {
     private Vec3 progressPosition;
     private int stalledTicks;
     private long lastProgressAt;
+    private boolean waitingForInitialPath;
 
     public SourceMeleeGoal(PathfinderMob mob, double speed, boolean followUnseen) {
         this(mob, null, speed, followUnseen);
@@ -129,23 +130,31 @@ public final class SourceMeleeGoal extends Goal {
         if (suppressed > 0) --suppressed;
         attackCooldown = Math.max(0, attackCooldown - 1);
         path = findPath(target);
-        return canStrike(mob, target) || path != null;
+        return canStrike(mob, target) || path != null
+                || MeleePursuitPaths.applies(mob) && mob.getTarget() == target && MeleePursuitPaths.pending(mob);
     }
 
     @Override public boolean canContinueToUse() {
         LivingEntity target = mob.getTarget();
         if (target == null || !target.isAlive()) return false;
+        if (waitingForInitialPath) {
+            if (path != null || canStrike(mob, target)) waitingForInitialPath = false;
+            else if (!MeleePursuitPaths.pending(mob)) return false;
+        }
         if (!followUnseen && !MeleePursuitPaths.applies(mob)) return !mob.getNavigation().isDone();
         return mob.isWithinRestriction(target.blockPosition());
     }
 
     @Override public void start() {
+        // Reserve MOVE/LOOK while the first route is being computed so a lower-priority
+        // wander goal cannot move the mob and repeatedly invalidate its own checkpoint.
+        waitingForInitialPath = path == null && MeleePursuitPaths.pending(mob) && !canStrike(mob, mob.getTarget());
         mob.getNavigation().moveTo(path, speed);
         path = mob.getNavigation().getPath();
         pathTarget = mob.getTarget(); progressPosition = mob.position(); stalledTicks = 0; recalculate = 0;
         lastProgressAt = mob.level().getGameTime();
     }
-    @Override public void stop() { mob.getNavigation().stop(); pathTarget = null; progressPosition = null; }
+    @Override public void stop() { mob.getNavigation().stop(); pathTarget = null; progressPosition = null; waitingForInitialPath = false; }
     @Override public boolean requiresUpdateEveryTick() { return true; }
 
     /** Existing target memory only lasts longer while an actual complete pursuit route is making progress. */
@@ -188,8 +197,9 @@ public final class SourceMeleeGoal extends Goal {
         if ((followUnseen || MeleePursuitPaths.applies(mob) || SourceMonsterTargeting.canSee(mob, target, false)) && --recalculate <= 0) {
             recalculate = 4 + mob.getRandom().nextInt(7);
             path = findPath(target);
+            if (MeleePursuitPaths.pending(mob)) recalculate = 1;
             if (MeleePursuitPaths.applies(mob) && MeleePursuitPaths.inRange(mob, target)
-                    && !MeleePursuitPaths.reaches(mob, path, target)) recalculate = 20;
+                    && !MeleePursuitPaths.pending(mob) && !MeleePursuitPaths.reaches(mob, path, target)) recalculate = 20;
             // Reissuing the same route resets vanilla's stuck timer, hiding a blocked passage forever.
             if (path != mob.getNavigation().getPath() || mob.getNavigation().isDone()) mob.getNavigation().moveTo(path, speed);
             path = mob.getNavigation().getPath();
@@ -208,7 +218,7 @@ public final class SourceMeleeGoal extends Goal {
             attackCooldown = weaponCombat ? 0 : 20;
             if (!weaponCombat && !mob.getMainHandItem().isEmpty()) mob.swing(InteractionHand.MAIN_HAND);
             mob.doHurtTarget(target);
-        } else if (R196MonsterAi.diggingEnabled(mob)) {
+        } else if (!MeleePursuitPaths.pending(mob) && R196MonsterAi.diggingEnabled(mob)) {
             int attackerY = net.minecraft.util.Mth.floor(mob.getY() + .5D);
             int targetY = net.minecraft.util.Mth.floor(target.getY() + .5D);
             if (targetY > attackerY) {

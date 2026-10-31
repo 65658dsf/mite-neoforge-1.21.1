@@ -49,6 +49,7 @@
     "BetterCombatPlayerAttackMixin",
     "BetterCombatMeleeGoalMixin",
     "MeleeAttackPursuitMixin",
+    "SearchLocalPathTypeCacheMixin",
     "MobAttackBoundsMixin",
     "BetterCombatMobSwingMixin",
     "SimplySwordsThrownSpearMixin",

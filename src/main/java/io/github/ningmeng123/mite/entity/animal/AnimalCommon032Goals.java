@@ -69,6 +69,7 @@ public final class AnimalCommon032Goals {
     public static final class Flee extends SourceMovement032Goal implements Marker {
         private static final int REPLAN_INTERVAL=10;
         private final float panicChance;
+        private boolean startingPath;
         private int replanTicks;
         private net.minecraft.world.phys.Vec3 plannedThreat;
         public Flee(PathfinderMob mob,float speed,float panicChance) { super(mob,speed,true); this.panicChance=panicChance; }
@@ -94,7 +95,9 @@ public final class AnimalCommon032Goals {
                 // A known attacker never turns a failed escape search into a random run toward it.
                 return path;
             }
-            if(mob.getRandom().nextFloat()<panicChance) startPanicking();
+            // Starting a movement episode retains its original chance. Replanning an existing
+            // panic must not roll another 100-199 ticks merely because a short route ended.
+            if(startingPath && mob.getRandom().nextFloat()<panicChance) startPanicking();
             return randomPath();
         }
         @Nullable private Path randomPath() {
@@ -105,7 +108,8 @@ public final class AnimalCommon032Goals {
             if(!R196AnimalAi032.state(mob).getBoolean("done_panicking") && mob.getRandom().nextFloat()<panicChance) startPanicking();
             if(!panicking()) R196AnimalAi032.state(mob).putBoolean("done_panicking",true);
             rememberPlan();
-            super.start();
+            startingPath=true;
+            try { super.start(); } finally { startingPath=false; }
         }
         @Override public void tick() {
             super.tick();

@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.entity;
 
+import io.github.ningmeng123.mite.config.MiteConfig;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -103,6 +104,8 @@ public final class MeleePursuitPaths {
     }
 
     public static void invalidate(PathfinderMob mob) {
+        AsyncMeleePursuit.cancel(mob);
+        PathSearchBudget.cancel(mob);
         SearchCache cache = SEARCHES.get(mob);
         if (cache != null) cache.clear();
     }
@@ -118,6 +121,10 @@ public final class MeleePursuitPaths {
     }
 
     private MeleePursuitPaths() {}
+
+    private static int movingRetryTicks() {
+        return MiteConfig.pursuitSearchBudgetEnabled() ? 20 : MIN_MOVING_RETRY_TICKS;
+    }
 
     public static boolean applies(PathfinderMob mob) {
         return R196MonsterAi.managed(mob) && mob.getNavigation() instanceof GroundPathNavigation
@@ -138,6 +145,35 @@ public final class MeleePursuitPaths {
     }
 
     @Nullable private static Path find(PathfinderMob mob, LivingEntity target, @Nullable Path previous, boolean vanilla) {
+        // Existing checkpoints must be invalidated even if a fast path or an unloaded target
+        // means that this call never reaches another native query. New snapshots stay lazy.
+        if (AsyncMeleePursuit.state(mob) != null) AsyncMeleePursuit.begin(mob, target, vanilla);
+        try (PathSearchBudget.Decision ignored = PathSearchBudget.open(mob)) {
+            Path result = findPursuit(mob, target, previous, vanilla, true);
+            if (AsyncMeleePursuit.state(mob) != null && reaches(mob, result, target, vanilla)
+                    && !completeRouteClear(mob, result, target, vanilla)) {
+                // Terrain or support may have changed during a delayed query. Recheck natively
+                // now instead of installing a stale route or classifying it as a failed pursuit.
+                invalidate(mob);
+                result = findPursuit(mob, target, null, vanilla, false);
+                if (!completeRouteClear(mob, result, target, vanilla)) { invalidate(mob); return null; }
+            }
+            AsyncMeleePursuit.complete(mob, AsyncMeleePursuit.state(mob));
+            PathSearchBudget.cancel(mob);
+            return result;
+        } catch (AsyncMeleePursuit.Pending pending) {
+            return previous != null && completeRouteClear(mob, previous, target, vanilla) ? previous : null;
+        } catch (RuntimeException | Error failure) {
+            AsyncMeleePursuit.cancel(mob);
+            PathSearchBudget.cancel(mob);
+            throw failure;
+        }
+    }
+
+    /** Waiting is distinct from a failed route, including after the worker has finished but before consumption. */
+    public static boolean pending(PathfinderMob mob) { return AsyncMeleePursuit.pending(mob) || PathSearchBudget.pending(mob); }
+
+    @Nullable private static Path findPursuit(PathfinderMob mob, LivingEntity target, @Nullable Path previous, boolean vanilla, boolean asynchronous) {
         SearchCache cache = SEARCHES.computeIfAbsent(mob, ignored -> new SearchCache());
         if (cache.targetId != target.getId() || cache.vanillaEndpoint != vanilla
                 || vanilla && (cache.opensDoors != mob.getNavigation().getNodeEvaluator().canOpenDoors()
@@ -170,19 +206,19 @@ public final class MeleePursuitPaths {
         // short real-query interval for a failed pursuit, even across geometry changes.
         // Never hand a moved monster an unverified stale path; other goals can retry soon.
         if (!matches && cache.failures > 0 && cache.samePursuit(mob, target, now, vanilla)
-                && now - cache.searchedAt < MIN_MOVING_RETRY_TICKS) {
+                && now - cache.searchedAt < movingRetryTicks()) {
             ++cache.cacheHits;
-            cache.movingRetryAt = cache.searchedAt + MIN_MOVING_RETRY_TICKS;
+            cache.movingRetryAt = cache.searchedAt + movingRetryTicks();
             return null;
         }
         cache.movingRetryAt = Long.MIN_VALUE;
         if (!sameFailure) cache.clear();
-        Path direct = find(mob, Set.of(target.blockPosition()), 1, false, vanilla);
+        Path direct = find(mob, Set.of(target.blockPosition()), 1, false, vanilla, asynchronous ? target : null);
         if (reaches(mob, direct, target, vanilla)) return cache.rememberComplete(mob, target, now, direct);
         // Accuracy zero only helps when the looser goal was reached outside physical attack range.
         // A failed looser search need not explore the same region again before the larger detour.
         if (direct != null && direct.canReach()) {
-            Path exact = find(mob, Set.of(target.blockPosition()), 0, false, vanilla);
+            Path exact = find(mob, Set.of(target.blockPosition()), 0, false, vanilla, asynchronous ? target : null);
             if (reaches(mob, exact, target, vanilla)) return cache.rememberComplete(mob, target, now, exact);
             if (distance(mob, exact, target) < distance(mob, direct, target)) direct = exact;
         }
@@ -200,12 +236,13 @@ public final class MeleePursuitPaths {
             if (canStrikeFrom(mob, target, point, vanilla)) positions.add(feet);
         }
         if (!positions.isEmpty()) {
-            Path detour = find(mob, positions, 0, true, vanilla);
+            Path detour = find(mob, positions, 0, true, vanilla, asynchronous ? target : null);
             if (reaches(mob, detour, target, vanilla)) return cache.rememberComplete(mob, target, now, detour);
         }
         cache.failures = Math.min(3, cache.failures + 1);
         cache.remember(mob, target, now);
-        cache.retryAt = now + Math.min(MAX_FAILURE_RETRY_TICKS, 20 << (cache.failures - 1))
+        cache.retryAt = now + Math.min(MiteConfig.pursuitSearchBudgetEnabled() ? 160 : MAX_FAILURE_RETRY_TICKS,
+                (MiteConfig.pursuitSearchBudgetEnabled() ? 40 : 20) << (cache.failures - 1))
                 + Math.floorMod(mob.getId(), RETRY_STAGGER_TICKS);
         cache.complete = null; cache.partial = direct;
         return direct;
@@ -379,18 +416,31 @@ public final class MeleePursuitPaths {
 
     /** Fresh native evaluator avoids navigation's cached same-target partial path. No chunk is loaded. */
     @Nullable static Path find(PathfinderMob mob, Set<BlockPos> targets, int accuracy, boolean detour) {
-        return find(mob, targets, accuracy, detour, false);
+        try (PathSearchBudget.Decision ignored = PathSearchBudget.open(mob)) {
+            Path result = find(mob, targets, accuracy, detour, false, null);
+            PathSearchBudget.cancel(mob);
+            return result;
+        } catch (AsyncMeleePursuit.Pending pending) {
+            return null;
+        } catch (RuntimeException | Error failure) {
+            PathSearchBudget.cancel(mob);
+            throw failure;
+        }
     }
 
-    @Nullable private static Path find(PathfinderMob mob, Set<BlockPos> targets, int accuracy, boolean detour, boolean vanilla) {
+    @Nullable private static Path find(PathfinderMob mob, Set<BlockPos> targets, int accuracy, boolean detour, boolean vanilla, @Nullable LivingEntity pursuitTarget) {
         BlockPos start = mob.blockPosition();
         Set<BlockPos> loaded = new LinkedHashSet<>();
         for (BlockPos target : targets) {
             if (start.distSqr(target) <= RANGE * RANGE && mob.level().hasChunkAt(target)) loaded.add(target);
         }
-        if (loaded.isEmpty()) return null;
+        if (loaded.isEmpty()) {
+            if (pursuitTarget != null) AsyncMeleePursuit.cancel(mob);
+            return null;
+        }
         var region = new LoadedPathNavigationRegion(mob.level(), start.offset(-RANGE - 8, -RANGE - 8, -RANGE - 8),
                 start.offset(RANGE + 8, RANGE + 8, RANGE + 8));
+        region.cautiousValidator(feet -> cautiousPositionFits(mob, feet, vanilla));
         PathfinderMob pursuitMob = mob;
         WalkNodeEvaluator nodes = new CachedWalkNodeEvaluator() {
             @Override public Set<PathType> getPathTypeWithinMobBB(PathfindingContext context, int x, int y, int z) {
@@ -398,8 +448,12 @@ public final class MeleePursuitPaths {
                 // Keep the native cautious cost on safe neighboring cells. Actual obstructions
                 // must participate in step-up and diagonal decisions before A* chooses a route.
                 // Native getCachedPathType caches this result for this one bounded search.
-                if (types.contains(PathType.DAMAGE_CAUTIOUS)
-                        && !cautiousPositionFits(pursuitMob, new BlockPos(x, y, z), vanilla)) types.add(PathType.BLOCKED);
+                if (types.contains(PathType.DAMAGE_CAUTIOUS)) {
+                    BlockPos feet = new BlockPos(x, y, z);
+                    boolean fits = cautiousPositionFits(pursuitMob, feet, vanilla);
+                    region.recordCautious(feet, fits);
+                    if (!fits) types.add(PathType.BLOCKED);
+                }
                 return types;
             }
 
@@ -417,9 +471,18 @@ public final class MeleePursuitPaths {
         nodes.setCanOpenDoors(vanilla && mob.getNavigation().getNodeEvaluator().canOpenDoors());
         nodes.setCanPassDoors(!vanilla || mob.getNavigation().getNodeEvaluator().canPassDoors());
         nodes.setCanFloat(mob.getNavigation().getNodeEvaluator().canFloat());
-        ++SEARCHES.computeIfAbsent(mob, ignored -> new SearchCache()).searches;
-        Path path = new PathFinder(nodes, detour ? DETOUR_NODES : MAX_NODES)
-                .findPath(region, mob, loaded, detour ? DETOUR_LENGTH * 2 : RANGE, accuracy, 1F);
+        int maxNodes = MiteConfig.pursuitSearchBudgetEnabled() ? (detour ? 4096 : 1024) : (detour ? DETOUR_NODES : MAX_NODES);
+        float range = detour ? DETOUR_LENGTH * 2 : RANGE;
+        Runnable countSearch = () -> ++SEARCHES.computeIfAbsent(mob, ignored -> new SearchCache()).searches;
+        java.util.function.Supplier<Path> synchronous = () -> PathSearchBudget.synchronous(mob, () -> {
+            countSearch.run();
+            return new PathFinder(nodes, maxNodes).findPath(region, mob, loaded, range, accuracy, 1F);
+        });
+        Path path;
+        if (pursuitTarget != null) AsyncMeleePursuit.begin(mob, pursuitTarget, vanilla);
+        if (pursuitTarget != null) path = AsyncMeleePursuit.query(mob, region, nodes, loaded, maxNodes, range, accuracy, 1F,
+                countSearch, synchronous);
+        else path = synchronous.get();
         if (path == null) return null;
         Vec3 previous = mob.position();
         double length = 0D;

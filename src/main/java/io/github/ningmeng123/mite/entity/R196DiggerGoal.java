@@ -241,6 +241,11 @@ public final class R196DiggerGoal extends Goal {
     }
     @Override public boolean canUse() {
         restore();var prey=mob.getTarget();
+        // A delayed walking decision is not evidence that an overhead or legacy mining route is needed.
+        if(MeleePursuitPaths.pending(mob)) {
+            if(ZombieRoutePlanner.applies(mob)) pursuit.plan();
+            if(MeleePursuitPaths.pending(mob)) return false;
+        }
         // Restored target UUIDs may be resolved a few ticks after the goal's saved work is loaded.
         if(overheadDigging&&prey==null&&!started) return false;
         if(overheadDigging&&(target==null||!overheadObstruction(target))) stop();
@@ -248,6 +253,7 @@ public final class R196DiggerGoal extends Goal {
         if(overhead!=null) return setBlockToDig(overhead,true);
         if(ZombieRoutePlanner.applies(mob)) {
             var plan=pursuit.plan();
+            if(MeleePursuitPaths.pending(mob)) return false;
             if(plan.choosesBreaking()) {
                 if(plan.portal()) {if(active)stop();return false;}
                 return setBlockToDig(plan.firstBlock(),true);
@@ -307,6 +313,11 @@ public final class R196DiggerGoal extends Goal {
     @Override public void start() { active=true;started=true;if(overheadDigging)mob.getNavigation().stop();save(); }
     @Override public boolean canContinueToUse() {
         if(blockingWeapon()||!mob.isAlive()) return false;
+        if(MeleePursuitPaths.pending(mob) && ZombieRoutePlanner.applies(mob)) {
+            var plan=pursuit.plan();
+            if(MeleePursuitPaths.pending(mob)) return active && target!=null && canDestroy(target,true);
+            if(plan.completeWalkingRoute()&&!plan.choosesBreaking()) return false;
+        }
         if(overheadDigging&&(target==null||!overheadObstruction(target))) return false;
         var melee=SourceMeleeGoal.first(mob);
         if(melee!=null&&melee.tickWhenDigging()) return false;
@@ -350,6 +361,7 @@ public final class R196DiggerGoal extends Goal {
         return delay;
     }
     @Override public void tick() {
+        if(MeleePursuitPaths.pending(mob)) { save();return; }
         if(!active||target==null||!(mob.level() instanceof ServerLevel level)) return;
         if(pause>0) { pause--;return; }
         if(overheadDigging&&!overheadObstruction(target)||!canDestroy(target,true)) { stop();return; }

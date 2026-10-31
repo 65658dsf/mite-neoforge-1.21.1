@@ -39,6 +39,108 @@ public final class AnimalHerdEscapeGameTests {
     private static final AtomicInteger IDS = new AtomicInteger();
 
     @GameTest(template = "ranged_027")
+    public static void orphanedChickenPanicExpiresExactlyDespiteRepeatedCompletedRouteReplans(GameTestHelper h) {
+        try (Fixture f = new Fixture(h, true)) {
+            var chicken = f.mob(EntityType.CHICKEN, 0, 0);
+            var state = R196AnimalAi032.state(chicken);
+            state.remove("attacker"); state.putInt("attacker_memory", 0);
+            state.putLong("spooked_until", h.getLevel().getGameTime());
+            state.putBoolean("decided_to_flee", false); state.putBoolean("fleeing", false);
+            state.putInt("panic_countdown", 120);
+            var flee = new AnimalCommon032Goals.Flee(chicken, 1.3F, .75F);
+            h.assertTrue(flee.canUse(), "Only an old remaining panic starts this episode, without an attacker, fire or active spook");
+            flee.start();
+            // Model a valid remaining old countdown after initial start decisions have already run.
+            state.putInt("panic_countdown", 120);
+            int replans = 0;
+            for (int tick = 1; tick <= 120; tick++) {
+                chicken.getNavigation().stop();
+                // After replan's nextInt(20), this seed makes the old chicken .75 roll succeed.
+                chicken.getRandom().setSeed(1L);
+                flee.tick();
+                if (flee.stationaryTicks() == 0) replans++;
+                h.assertValueEqual(state.getInt("panic_countdown"), 120 - tick,
+                        "A completed short path cannot restart the old panic: tick=" + tick + ", replans=" + replans);
+            }
+            h.assertTrue(replans == 12, "The actual flee goal replans twelve times at its unchanged ten-tick interval");
+            h.assertFalse(flee.canContinueToUse() || R196AnimalAi032.isSpookedOrFleeing(chicken),
+                    "The expired episode releases fleeing instead of keeping an undamaged chicken running");
+            flee.stop();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "ranged_027")
+    public static void startingChickenMovementRetainsBothExistingInitialPanicRolls(GameTestHelper h) {
+        try (Fixture f = new Fixture(h, true)) {
+            var chicken = f.mob(EntityType.CHICKEN, 0, 0);
+            chicken.setPathfindingMalus(PathType.WATER, 0F);
+            var state = R196AnimalAi032.state(chicken);
+            for (long seed : new long[]{0L, 1L, 2L, 3L, 4096L, 6144L, 10000L, 20000L}) {
+                state.remove("attacker"); state.putInt("attacker_memory", 0);
+                state.putLong("spooked_until", h.getLevel().getGameTime());
+                state.putBoolean("done_panicking", false); state.putInt("panic_countdown", 0);
+                Random expected = new Random(seed);
+                int countdown = 0;
+                if (expected.nextFloat() < .75F) countdown = 100 + expected.nextInt(100);
+                expected.nextInt(20); // Native movement task's initial stuck threshold.
+                if (expected.nextFloat() < .75F) countdown = 100 + expected.nextInt(100);
+                chicken.getRandom().setSeed(seed);
+                var flee = new AnimalCommon032Goals.Flee(chicken, 1.3F, .75F);
+                flee.start();
+                h.assertValueEqual(state.getInt("panic_countdown"), countdown,
+                        "Initial start and initial path retain the previous random-draw order and .75 probabilities: seed=" + seed);
+                flee.stop();
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "ranged_027")
+    public static void aRealNewPlayerHitStillStartsFearAfterAnOldChickenPanicHasFinished(GameTestHelper h) {
+        try (Fixture f = new Fixture(h, true)) {
+            var chicken = f.mob(EntityType.CHICKEN, 0, 0);
+            var state = R196AnimalAi032.state(chicken);
+            state.putBoolean("done_panicking", true); state.putInt("panic_countdown", 0);
+            h.assertTrue(chicken.hurt(chicken.damageSources().playerAttack(f.player), 1F), "The new player hit causes actual damage");
+            h.assertTrue(R196AnimalAi032.lastAttacker(chicken) == f.player && R196AnimalAi032.spooked(chicken),
+                    "New real damage still records the player and starts the ordinary herd alarm");
+            var flee = new AnimalCommon032Goals.Flee(chicken, 1.3F, .75F);
+            h.assertTrue(flee.canUse(), "An old completed panic never blocks a genuine new threat");
+            flee.start();
+            for (int tick = 0; tick < 12; tick++) {
+                flee.tick();
+                h.assertTrue(state.getInt("panic_countdown") >= 99,
+                        "An active real spook continues refreshing panic while the threat's alarm is current");
+            }
+            flee.stop();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "ranged_027")
+    public static void anActuallyBurningChickenStillRefreshesPanicDuringRepeatedRouteChecks(GameTestHelper h) {
+        try (Fixture f = new Fixture(h, true)) {
+            var chicken = f.mob(EntityType.CHICKEN, 0, 0);
+            var state = R196AnimalAi032.state(chicken);
+            state.putBoolean("done_panicking", true); state.putInt("panic_countdown", 1);
+            chicken.setRemainingFireTicks(100);
+            var flee = new AnimalCommon032Goals.Flee(chicken, 1.3F, .75F);
+            h.assertTrue(chicken.isOnFire() && flee.canUse(), "A real burning flag remains a panic trigger");
+            flee.start();
+            for (int tick = 0; tick < 12; tick++) {
+                chicken.getNavigation().stop();
+                flee.tick();
+                h.assertTrue(state.getInt("panic_countdown") >= 100,
+                        "Burning still refreshes the original 100-199 tick panic independently of replanning");
+            }
+            chicken.clearFire();
+            flee.stop();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "ranged_027")
     public static void actualPlayerHitScaresMixedHerdAndStopsBreedingImmediately(GameTestHelper h) {
         try (Fixture f = new Fixture(h, false)) {
             var cow = f.mob(EntityType.COW, 0, 0);

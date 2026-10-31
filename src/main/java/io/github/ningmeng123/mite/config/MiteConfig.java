@@ -45,6 +45,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.DoubleValue WEAPON_REACH_MULTIPLIER, WEAPON_REACH_REDUCTION;
     public static final ModConfigSpec.BooleanValue HEIGHT_REACH_PENALTY, UNDERWORLD_TRIALS, OVERWORLD_TRIALS;
     public static final ModConfigSpec.BooleanValue BETTER_COMBAT_MOBS;
+    public static final ModConfigSpec.BooleanValue ASYNC_PATHFINDING, AI_LOAD_REDUCTION;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS, ENCHANTMENT_CHANCES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_RATES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_WEIGHTS;
@@ -138,6 +139,12 @@ public final class MiteConfig {
                     : builder.defineInRange(option.key(), factorySpawningDefault(option), option.minimum(), option.maximum()));
         }
         builder.pop();
+        builder.push("performance");
+        ASYNC_PATHFINDING = builder.comment("Spread supported stationary hostile melee searches across server ticks. Native world and evaluator hooks stay on the server thread; A* bookkeeping runs on bounded workers. Delays path decisions to reduce tick spikes.")
+                .define("async_pathfinding", true);
+        AI_LOAD_REDUCTION = builder.comment("Limit and stagger expensive AI searches across server ticks. Animals resume food/water scans in batches; hostile mobs queue synchronous decisions and retry impossible routes less often. Preserves immediate attacks and real danger responses, but delays some decisions and reduces hostile search node budgets. False restores the previous search frequency and node limits.")
+                .define("ai_load_reduction", true);
+        builder.pop();
         builder.translation("mite.config.combat").push("combat");
         WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Survival melee attack reach multiplier. Original MITE weapons keep source reach; Simply Swords weapons retain their own length with or without Better Combat. Creative reach remains unchanged.");
         WEAPON_REACH_REDUCTION = number(builder, "weapon_reach_reduction", 0D, 16D, "Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.");
@@ -168,6 +175,28 @@ public final class MiteConfig {
     }
 
     private MiteConfig() {}
+
+    /** Read only on the server thread. A JVM override also permits synchronous regression runs. */
+    public static boolean asyncPathfindingEnabled() {
+        String override = System.getProperty("mite.asyncPathfinding");
+        return override == null ? value(ASYNC_PATHFINDING) : Boolean.parseBoolean(override);
+    }
+
+    /** Server-only work scheduling; JVM overrides also allow independent strict regressions. */
+    public static boolean aiLoadReductionEnabled() {
+        String override = System.getProperty("mite.aiLoadReduction");
+        return override == null ? value(AI_LOAD_REDUCTION) : Boolean.parseBoolean(override);
+    }
+
+    public static boolean animalSearchBudgetEnabled() {
+        String override = System.getProperty("mite.animalSearchBudget");
+        return override == null ? aiLoadReductionEnabled() : Boolean.parseBoolean(override);
+    }
+
+    public static boolean pursuitSearchBudgetEnabled() {
+        String override = System.getProperty("mite.pursuitSearchBudget");
+        return override == null ? aiLoadReductionEnabled() : Boolean.parseBoolean(override);
+    }
 
     private static String generationPath(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
         return (dimension == R196OreRules.Dimension.OVERWORLD ? "overworld_generation." : "underworld_generation.")

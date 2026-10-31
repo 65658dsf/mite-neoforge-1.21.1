@@ -247,7 +247,8 @@ public final class SourceMonsterTargeting {
                     var melee = SourceMeleeGoal.first(mob);
                     var digger = R196DiggerGoal.first(mob);
                     boolean overhead = digger != null && digger.isBreakingOverheadFor(target);
-                    if (!overhead && (unseen > 600 || melee == null || !melee.followsReachableRoute(target))) return false;
+                    if (!overhead && (unseen > 600 || !MeleePursuitPaths.pending(mob)
+                            && (melee == null || !melee.followsReachableRoute(target)))) return false;
                 }
             }
             return true;
