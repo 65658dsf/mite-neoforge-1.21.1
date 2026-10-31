@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
+import io.github.ningmeng123.mite.entity.MobAttackBoundsAccess;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import java.util.List;
@@ -96,7 +97,8 @@ public final class MobWeaponReachGameTests {
 
     @GameTest(template = "empty", templateNamespace = "mite_targeting")
     public static void nativeArmedAttacksRecheckTheShorterCapAfterTheTargetRetreats(GameTestHelper helper) {
-        try (ReachSettings ignored = new ReachSettings(.75D, .25D, false)) {
+        // Ordinary swords now retain a three-block player base; keep this cap below native reach.
+        try (ReachSettings ignored = new ReachSettings(.5D, .5D, false)) {
             for (EntityType<? extends Mob> type : List.of(EntityType.ZOMBIE, EntityType.VINDICATOR,
                     EntityType.PIGLIN, EntityType.CAVE_SPIDER)) {
                 try (Fixture fixture = new Fixture(helper, type)) {
@@ -106,6 +108,8 @@ public final class MobWeaponReachGameTests {
                     helper.assertTrue(fixture.attacker.isWithinMeleeAttackRange(fixture.target),
                             "Native melee admits a genuinely close target before it moves: " + type);
                     fixture.atDistance(limit + .05D, 0D);
+                    helper.assertTrue(((MobAttackBoundsAccess)fixture.attacker).mite$attackBoundingBox().intersects(fixture.target.getBoundingBox()),
+                            "The retreat stays inside the native attack volume, isolating the shorter configured cap");
                     helper.assertTrue(SourcePlayerReach.canMelee(fixture.player, fixture.target),
                             "The escaped target remains inside the same weapon's survival player range: " + type);
                     helper.assertFalse(fixture.attacker.isWithinMeleeAttackRange(fixture.target),
@@ -171,7 +175,7 @@ public final class MobWeaponReachGameTests {
             helper.assertTrue(SourceMeleeGoal.canStrike((PathfinderMob)fixture.attacker, fixture.target),
                     "The historical source sword boundary remains usable inside the new cap");
         }
-        try (ReachSettings ignored = new ReachSettings(.75D, .25D, false);
+        try (ReachSettings ignored = new ReachSettings(.5D, .5D, false);
                 Fixture fixture = new Fixture(helper, EntityType.ZOMBIE)) {
             fixture.equip(new ItemStack(Items.IRON_SWORD));
             fixture.atDistance(MobWeaponReach.sourceLimit(fixture.attacker, fixture.target, fixture.attacker.getY()) + .05D, 0D);
@@ -179,6 +183,8 @@ public final class MobWeaponReachGameTests {
             helper.assertFalse(SourceMeleeGoal.canStrike(attacker, fixture.target),
                     "The old source sword feet distance cannot bypass a tighter configured player cap");
             Vec3 planned = attacker.position().add(0D, 0D, .1D);
+            helper.assertTrue(planned.distanceTo(fixture.target.position()) < 1.95D,
+                    "The planned endpoint stays inside the historical source sword gate");
             helper.assertTrue(SourceMeleeGoal.canStrikeFrom(attacker, fixture.target, planned),
                     "The route planner can still select a genuinely closer attack endpoint");
             float before = fixture.target.getHealth();

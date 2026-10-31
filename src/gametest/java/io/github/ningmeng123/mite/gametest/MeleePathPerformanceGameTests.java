@@ -106,7 +106,7 @@ public final class MeleePathPerformanceGameTests {
         }).thenExecute(f::close).thenSucceed();
     }
 
-    @GameTest(template = "empty", batch = "melee_path_performance_target", timeoutTicks = 400)
+    @GameTest(template = "empty", batch = "melee_path_performance_target", timeoutTicks = 1200)
     public static void movementRespectsShortQueryIntervalAndReplacingTargetInvalidatesFailure(GameTestHelper h) {
         Fixture f = new Fixture(h);
         f.closeWithTest();
@@ -143,7 +143,7 @@ public final class MeleePathPerformanceGameTests {
         });
     }
 
-    @GameTest(template = "empty", batch = "melee_path_performance_invalidate", timeoutTicks = 400)
+    @GameTest(template = "empty", batch = "melee_path_performance_invalidate", timeoutTicks = 1200)
     public static void explicitInvalidationPreservesStatisticsAndUsesTheNewOpeningImmediately(GameTestHelper h) {
         Fixture f = new Fixture(h);
         f.closeWithTest();

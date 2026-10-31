@@ -3,8 +3,10 @@ package io.github.ningmeng123.mite.entity;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import java.util.function.Predicate;
+import java.lang.ref.WeakReference;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.PathNavigationRegion;
@@ -22,6 +24,8 @@ final class LoadedPathNavigationRegion extends PathNavigationRegion implements S
     private final Long2ObjectOpenHashMap<PathType> rawPathTypes = new Long2ObjectOpenHashMap<>();
     private final Long2BooleanOpenHashMap cautiousProbes = new Long2BooleanOpenHashMap();
     private Predicate<BlockPos> cautiousValidator;
+    private WeakReference<PathfinderMob> obstacleOwner;
+    private PursuitEntityObstacles.Snapshot entityObstacles;
 
     LoadedPathNavigationRegion(Level level, BlockPos minimum, BlockPos maximum) {
         // The native constructor populates chunks exclusively with getChunkNow; it never loads terrain.
@@ -72,8 +76,17 @@ final class LoadedPathNavigationRegion extends PathNavigationRegion implements S
     void cautiousValidator(Predicate<BlockPos> validator) { cautiousValidator = validator; }
     void recordCautious(BlockPos position, boolean fits) { cautiousProbes.put(position.asLong(), fits); }
 
+    void entityObstacles(PathfinderMob mob, PursuitEntityObstacles.Snapshot snapshot) {
+        obstacleOwner = new WeakReference<>(mob);
+        entityObstacles = snapshot;
+    }
+
     /** Delayed failures are reusable only while all queried terrain and captured chunks remain current. */
     boolean terrainUnchanged() {
+        if (entityObstacles != null) {
+            PathfinderMob owner = obstacleOwner.get();
+            if (owner == null || !entityObstacles.unchanged(owner)) return false;
+        }
         var border = sourceLevel.getWorldBorder();
         if (borderMinX != border.getMinX() || borderMinZ != border.getMinZ()
                 || borderMaxX != border.getMaxX() || borderMaxZ != border.getMaxZ()) return false;
