@@ -73,6 +73,14 @@ neoForge {
                 systemProperty 'mite.entityAtlasAuditOutput', file(project.providers.gradleProperty('miteEntityAtlasAuditOutput')
                         .getOrElse('build/verification/entity-atlas')).absolutePath
             }
+            if (project.providers.gradleProperty('miteSickLivestockAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.sickLivestockAudit', 'true'
+                systemProperty 'mite.sickLivestockRequireExtendedAtlas', project.providers.gradleProperty('miteSickLivestockRequireExtendedAtlas').getOrElse('false')
+                systemProperty 'mite.sickLivestockAuditExpectCustom', project.providers.gradleProperty('miteSickLivestockAuditExpectCustom').getOrElse('auto')
+                systemProperty 'mite.sickLivestockAuditOutput', file(project.providers.gradleProperty('miteSickLivestockAuditOutput')
+                        .getOrElse('build/verification/sick-livestock')).absolutePath
+                programArguments.addAll '--width', '1600', '--height', '1000'
+            }
             if (project.providers.gradleProperty('miteSpiderResourcePackAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.spiderResourcePackAudit', 'true'
                 programArguments.addAll '--width', '1280', '--height', '900'

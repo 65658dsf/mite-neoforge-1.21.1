@@ -30,8 +30,8 @@ import org.objectweb.asm.tree.MethodNode;
 public final class LivestockHealthRenderAudit033 implements DataProvider {
     private static final String RENDERERS="net.minecraft.client.renderer.entity.";
     private static final String MIXINS="io.github.ningmeng123.mite.mixin.client.";
-    private static final String HELPER="io/github/ningmeng123/mite/entity/animal/LivestockHealth033";
-    private static final String HELPER_DESCRIPTOR="(Lnet/minecraft/world/entity/Mob;)Lnet/minecraft/resources/ResourceLocation;";
+    private static final String HELPER="io/github/ningmeng123/mite/client/SickLivestockVisuals";
+    private static final String HELPER_DESCRIPTOR="(Lnet/minecraft/world/entity/Mob;Lnet/minecraft/client/model/EntityModel;)Lnet/minecraft/resources/ResourceLocation;";
     private static final List<Skin> SKINS=List.of(
             new Skin("Cow","cow","b547af8cb364bf46a4d669a60cdc8e06522095307f49dc306529c1750ad5217b"),
             new Skin("Chicken","chicken","21398ff4ef0cb6b6c67869e2ffc1afb903e6ecd1ca329edb4b9e16261deceb3d"),
@@ -76,12 +76,12 @@ public final class LivestockHealthRenderAudit033 implements DataProvider {
                 String callback="(Lnet/minecraft/world/entity/animal/"+skin.animal()+";Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V";
                 check(handler.desc.equals(callback),"Typed callback descriptor: "+mixin);
                 check(calls(texture,type.name,handler.name,handler.desc)==1,"Typed texture method must invoke the injected handler once: "+mixin);
-                check(calls(handler,HELPER,"sickBodyTexture",HELPER_DESCRIPTOR)==1,"Injected handler must invoke the shared wellness texture helper once: "+mixin);
+                check(calls(handler,HELPER,"bodyTexture",HELPER_DESCRIPTOR)==1,"Injected handler must invoke the shared wellness texture helper once: "+mixin);
                 check(calls(handler,"org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable","setReturnValue","(Ljava/lang/Object;)V")==1,
                         "Injected handler must set the conditional body texture: "+mixin);
                 for(var instruction:handler.instructions) if(instruction instanceof MethodInsnNode call
-                        && call.owner.equals(HELPER) && call.name.equals("sickBodyTexture"))
-                    check(call.getOpcode()==Opcodes.INVOKESTATIC,"Shared texture helper is a static common-code call");
+                        && call.owner.equals(HELPER) && call.name.equals("bodyTexture"))
+                    check(call.getOpcode()==Opcodes.INVOKESTATIC,"Shared texture helper is a static client-code call");
                 JsonObject renderer=new JsonObject(); renderer.addProperty("target",target); renderer.addProperty("typed_method",texture.name+texture.desc);
                 renderer.addProperty("mixin",mixin); renderer.addProperty("handler",handler.name+handler.desc);
                 renderer.addProperty("export",exported.toAbsolutePath().normalize().toString()); renderer.addProperty("export_sha256",sha256(bytecode));

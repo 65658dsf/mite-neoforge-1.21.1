@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin.client;
 
-import io.github.ningmeng123.mite.entity.animal.LivestockHealth033;
+import io.github.ningmeng123.mite.client.SickLivestockVisuals;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Pig;
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class SickPigTexture033Mixin {
     @Inject(method="getTextureLocation(Lnet/minecraft/world/entity/animal/Pig;)Lnet/minecraft/resources/ResourceLocation;",at=@At("HEAD"),cancellable=true)
     private void mite$sickPig(Pig animal,CallbackInfoReturnable<ResourceLocation> cir) {
-        ResourceLocation texture=LivestockHealth033.sickBodyTexture(animal);
+        ResourceLocation texture=SickLivestockVisuals.bodyTexture(animal,((LivingEntityRenderer<?,?>)(Object)this).getModel());
         if(texture!=null) cir.setReturnValue(texture);
     }
 }
