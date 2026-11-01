@@ -30,7 +30,7 @@ public final class CropJadeAudit implements DataProvider {
         event.getGenerator().addProvider(true, new CropJadeAudit(report));
     }
 
-    @Override public String getName() { return "Optional crop and anvil inspection against the real Jade API without rendering"; }
+    @Override public String getName() { return "Optional crop, anvil and livestock inspection against the real Jade API without rendering"; }
 
     @Override
     public CompletableFuture<?> run(CachedOutput unused) {
@@ -74,6 +74,8 @@ public final class CropJadeAudit implements DataProvider {
         private static final net.minecraft.resources.ResourceLocation VANILLA = snownee.jade.api.JadeIds.MC_CROP_PROGRESS;
         private static final net.minecraft.resources.ResourceLocation UID = io.github.ningmeng123.mite.integration.jade.CropJadeProvider.UID;
         private static final io.github.ningmeng123.mite.integration.jade.CropJadeProvider PROVIDER = io.github.ningmeng123.mite.integration.jade.CropJadeProvider.INSTANCE;
+        private static final net.minecraft.resources.ResourceLocation LIVESTOCK_UID = io.github.ningmeng123.mite.integration.jade.LivestockJadeProvider.UID;
+        private static final io.github.ningmeng123.mite.integration.jade.LivestockJadeProvider LIVESTOCK_PROVIDER = io.github.ningmeng123.mite.integration.jade.LivestockJadeProvider.INSTANCE;
         private static final java.util.List<String> TARGETS = java.util.List.of("CropBlock", "FarmBlock", "StemBlock", "AttachedStemBlock",
                 "BlueberryBushBlock", "CocoaBlock", "NetherWartBlock", "MushroomBlock", "SugarCaneBlock", "CactusBlock");
 
@@ -273,8 +275,8 @@ public final class CropJadeAudit implements DataProvider {
 
         private static final class Registration implements java.lang.reflect.InvocationHandler {
             private final java.util.List<Class<?>> server = new java.util.ArrayList<>(), client = new java.util.ArrayList<>();
-            private int clientFeatures;
-            private int campfireServer, campfireClient, anvilServer, anvilClient;
+            private final java.util.Map<net.minecraft.resources.ResourceLocation, Integer> clientFeatures = new java.util.LinkedHashMap<>();
+            private int campfireServer, campfireClient, anvilServer, anvilClient, livestockClient;
             private snownee.jade.api.callback.JadeTooltipCollectedCallback callback;
             @Override public Object invoke(Object target, java.lang.reflect.Method method, Object[] args) throws Throwable {
                 if (method.getName().equals("registerBlockDataProvider") || method.getName().equals("registerBlockComponent")) {
@@ -292,7 +294,15 @@ public final class CropJadeAudit implements DataProvider {
                     check(args[0] == PROVIDER, "Every crop target must use the same stateless singleton provider");
                     (method.getName().equals("registerBlockDataProvider") ? server : client).add((Class<?>) args[1]); return null;
                 }
-                if (method.getName().equals("markAsClientFeature")) { check(args[0].equals(UID), "Unexpected Jade client feature ID"); clientFeatures++; return null; }
+                if (method.getName().equals("registerEntityComponent")) {
+                    check(args[0] == LIVESTOCK_PROVIDER, "The animal target must use the stateless livestock singleton provider");
+                    check(args[1] == net.minecraft.world.entity.animal.Animal.class, "Livestock components target exactly the one Animal parent");
+                    livestockClient++; return null;
+                }
+                if (method.getName().equals("markAsClientFeature")) {
+                    check(args[0].equals(UID) || args[0].equals(LIVESTOCK_UID), "Unexpected Jade client feature ID");
+                    clientFeatures.merge((net.minecraft.resources.ResourceLocation) args[0], 1, Integer::sum); return null;
+                }
                 if (method.getName().equals("addTooltipCollectedCallback") && args.length == 2) {
                     check(callback == null, "Duplicate final tooltip callback"); callback = (snownee.jade.api.callback.JadeTooltipCollectedCallback) args[1]; return null;
                 }
@@ -304,12 +314,19 @@ public final class CropJadeAudit implements DataProvider {
                 check(server.stream().map(Class::getSimpleName).toList().equals(TARGETS), "Unexpected target types");
                 for (int a = 0; a < server.size(); a++) for (int b = a + 1; b < server.size(); b++)
                     check(!server.get(a).isAssignableFrom(server.get(b)) && !server.get(b).isAssignableFrom(server.get(a)), "Inherited targets would duplicate Jade output");
-                check(clientFeatures == 1 && callback != null, "Local-state feature and final progress-cleanup callback must each be registered once");
+                check(clientFeatures.size() == 2 && clientFeatures.getOrDefault(UID, 0) == 1
+                                && clientFeatures.getOrDefault(LIVESTOCK_UID, 0) == 1 && callback != null,
+                        "Crop and livestock local-state features and the final progress-cleanup callback must each be registered once");
                 check(campfireServer == 1 && campfireClient == 1, "Campfire common/client providers are each registered exactly once");
                 check(anvilServer == 1 && anvilClient == 1, "Anvil common/client providers are each registered exactly once, without inherited duplicates");
+                check(livestockClient == 1, "Livestock client provider is registered exactly once, without inherited duplicates");
                 JsonArray names = new JsonArray(); server.forEach(type -> names.add(type.getName())); report.add("registered_block_classes", names);
                 report.addProperty("server_registrations", server.size()); report.addProperty("client_registrations", client.size());
-                report.addProperty("targets_have_no_inheritance_overlap", true); report.addProperty("client_feature_registrations", clientFeatures);
+                report.addProperty("targets_have_no_inheritance_overlap", true); report.addProperty("client_feature_registrations", clientFeatures.size());
+                report.addProperty("crop_client_feature_registrations", clientFeatures.get(UID));
+                report.addProperty("livestock_client_feature_registrations", clientFeatures.get(LIVESTOCK_UID));
+                report.addProperty("livestock_client_registrations", livestockClient);
+                report.addProperty("registered_entity_class", net.minecraft.world.entity.animal.Animal.class.getName());
                 report.addProperty("final_tooltip_callbacks", 1);
                 report.addProperty("campfire_server_and_client_registrations", 1);
                 report.addProperty("anvil_server_and_client_registrations", 1);
