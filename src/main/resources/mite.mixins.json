@@ -423,7 +423,7 @@
     "client.SickPigTexture033Mixin",
     "client.SickSheepTexture033Mixin",
     "client.SickLivestockBodyColorMixin",
-    "client.EmfSickLivestockPartColorMixin",
+    "client.EmfSickLivestockTextureMixin",
     "client.LunarSkyMixin",
     "client.LunarLightTextureMixin",
     "client.LunarPrecipitationMixin",

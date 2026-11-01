@@ -7,7 +7,6 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.ningmeng123.mite.Mite;
-import io.github.ningmeng123.mite.client.SickLivestockVisuals;
 import io.github.ningmeng123.mite.entity.animal.Livestock032View;
 import io.github.ningmeng123.mite.entity.animal.LivestockHealth033;
 import io.github.ningmeng123.mite.entity.animal.LivestockRules032;
@@ -268,14 +267,24 @@ public final class SickLivestockClientAudit {
         sample.addProperty("phase", List.of("healthy", "sick", "recovered").get(phase));
         sample.add("body", textureFact(body));
         row.fact.getAsJsonArray("phases").add(sample);
-        int expectedBodyColor = sick && row.custom ? SickLivestockVisuals.CUSTOM_MODEL_SICK_COLOR : -1;
         Capture capture = capture(row.entity);
         sample.add("observed_real_renderer_vertex_buffers", capture.json());
-        check(!capture.buffers.isEmpty() && capture.buffers.getFirst().vertices > 0,
-                "Real renderer emitted body vertices: " + row.label);
-        Colors primary = capture.buffers.getFirst();
-        check(primary.colors.contains(expectedBodyColor), "Real body vertices use the expected health color: " + row.label);
-        check(primary.colors.stream().allMatch(color -> color >>> 24 == 255), "Body tint retains opaque vertex alpha: " + row.label);
+        Colors primary = primary(capture);
+        check(primary.colors.stream().allMatch(color -> color == -1),
+                "Body vertices retain neutral white; sickness is represented by the actual gray atlas: " + row.label);
+        check(primary.texture != null, "The actual body atlas is identified: " + row.label);
+        sample.add("rendered_body", textureFact(primary.texture));
+        if (phase == 0) row.fact.addProperty("normal_rendered_body", primary.texture.toString());
+        else if (sick) {
+            ResourceLocation source = graySource(row);
+            sample.addProperty("gray_source_atlas", source.toString());
+            sample.addProperty("gray_source_kind", row.custom ? "active_etf_selected_body" : "legacy_sick_body");
+            sample.add("gray_body_pixels", verifyGray(primary.texture, source,
+                    !row.custom && row.entity.getType() == EntityType.CHICKEN));
+            row.fact.addProperty("sick_rendered_body", primary.texture.toString());
+            row.fact.addProperty("sick_gray_pixel_hash", sample.getAsJsonObject("gray_body_pixels").get("pixel_hash").getAsString());
+        } else check(primary.texture.toString().equals(row.fact.get("normal_rendered_body").getAsString()),
+                "Recovery restores the actual ETF-selected healthy atlas: " + row.label);
         if (row.saddled) {
             List<Colors> saddle = capture.buffers.stream().filter(buffer -> buffer.type.contains("saddle") && buffer.vertices > 0).toList();
             check(!saddle.isEmpty(), "Saddled pig emits an actual saddle render layer");
@@ -293,7 +302,7 @@ public final class SickLivestockClientAudit {
                     boolean customPart = buffer.texture.getPath().contains("sheep_wool");
                     int original = customPart ? -1 : Sheep.getColor(sheep.getColor());
                     check(buffer.colors.stream().allMatch(color -> color == original),
-                            "Body sickness tint leaves independent wool vertex colors unchanged: " + row.label + "/" + buffer.texture);
+                            "Sickness leaves independent wool vertex colors unchanged: " + row.label + "/" + buffer.texture);
                 }
                 sample.add("wool_atlases", atlases);
                 if (phase == 0) row.fact.add("normal_wool_atlases", atlases);
@@ -308,17 +317,11 @@ public final class SickLivestockClientAudit {
                 }
             }
         }
-        for (int alpha : List.of(0, 38, 127, 255)) {
-            int input = alpha << 24 | 0x80A0C0;
-            check(SickLivestockVisuals.bodyColor(row.entity, model, input) >>> 24 == alpha,
-                    "Sickness color retains arbitrary caller alpha " + alpha);
-        }
         sample.addProperty("inventory_screen_real_gpu_draw_completed", true);
         sample.addProperty("same_renderer_and_model_identity", true);
-        sample.addProperty("expected_body_color_argb", hex(expectedBodyColor));
-        sample.addProperty("arbitrary_input_alpha_preserved", true);
+        sample.addProperty("expected_body_color_argb", "0xFFFFFFFF");
         if (sick && !row.custom && row.entity.getType() == EntityType.CHICKEN) {
-            var uploaded = Minecraft.getInstance().getTextureManager().getTexture(body);
+            var uploaded = Minecraft.getInstance().getTextureManager().getTexture(primary.texture);
             check(uploaded instanceof DynamicTexture, "Native sick chicken uses an actual uploaded repaired atlas");
             NativeImage image = ((DynamicTexture) uploaded).getPixels();
             check(image != null, "Repaired chicken pixels remain available for UV inspection");
@@ -336,12 +339,102 @@ public final class SickLivestockClientAudit {
         ResourceLocation delayed = texture(row.entity);
         if (row.custom) check(delayed.equals(row.normal), "Recovery delay retains the custom pack atlas");
         Capture capture = capture(row.entity);
-        int expected = row.custom ? SickLivestockVisuals.CUSTOM_MODEL_SICK_COLOR : -1;
-        check(capture.buffers.getFirst().colors.contains(expected), "Recovery delay retains the real body sickness appearance");
+        row.fact.add("recovery_delay_observed_buffers", capture.json());
+        Colors primary = primary(capture);
+        check(primary.texture.toString().equals(row.fact.get("sick_rendered_body").getAsString()),
+                "Recovery delay reuses the actual gray sickness atlas");
+        check(primary.colors.stream().allMatch(color -> color == -1), "Recovery delay retains neutral body vertex colors");
+        JsonObject grayPixels = verifyGray(primary.texture, graySource(row),
+                !row.custom && row.entity.getType() == EntityType.CHICKEN);
+        check(grayPixels.get("pixel_hash").getAsString().equals(row.fact.get("sick_gray_pixel_hash").getAsString()),
+                "Gray sickness pixels stay unchanged throughout the recovery delay");
+        row.fact.add("recovery_delay_gray_pixels", grayPixels);
         view.mite$setRecoveryTicks(0);
         check(texture(row.entity).equals(row.normal), "Recovery delay expiry restores the normal atlas immediately");
-        check(capture(row.entity).buffers.getFirst().colors.contains(-1), "Recovery delay expiry restores actual white body vertices");
+        Capture recovered = capture(row.entity);
+        row.fact.add("recovery_expiry_observed_buffers", recovered.json());
+        Colors normal = primary(recovered);
+        check(normal.colors.stream().allMatch(color -> color == -1), "Recovery delay expiry retains actual white body vertices");
+        check(normal.texture.toString().equals(row.fact.get("normal_rendered_body").getAsString()),
+                "Recovery delay expiry restores the same original ETF-selected atlas");
         row.fact.addProperty("recovery_delay_rendered_and_expiry_restored", true);
+    }
+
+    private static Colors primary(Capture capture) {
+        // The texture adapter may request the normal consumer before rebinding the body to its generated atlas.
+        return capture.buffers.stream().filter(buffer -> buffer.vertices > 0).findFirst().orElseThrow(
+                () -> new IllegalStateException("Real renderer emitted no body vertices"));
+    }
+
+    private static ResourceLocation graySource(Row row) {
+        ResourceLocation source = row.custom ? ResourceLocation.parse(row.fact.get("normal_rendered_body").getAsString())
+                : LivestockHealth033.sickBodyTexture(row.entity);
+        check(source != null, "The gray body retains an identifiable source atlas");
+        return source;
+    }
+
+    /** Inspect pixels actually uploaded and selected by the transformed renderer, including ETF variants. */
+    private static JsonObject verifyGray(ResourceLocation grayId, ResourceLocation sourceId, boolean repairedChicken) throws Exception {
+        JsonObject fact = new JsonObject();
+        fact.addProperty("generated_atlas", grayId.toString());
+        fact.addProperty("source_atlas", sourceId.toString());
+        check(!grayId.equals(sourceId), "Sick body binds a generated atlas rather than the colored source");
+        var uploaded = Minecraft.getInstance().getTextureManager().getTexture(grayId);
+        check(uploaded instanceof DynamicTexture, "Gray sickness atlas is a real uploaded DynamicTexture: " + grayId);
+        NativeImage gray = ((DynamicTexture) uploaded).getPixels();
+        check(gray != null, "Generated gray atlas retains inspectable pixels");
+        int visible = 0, minimum = 255, maximum = 0, repaired = 0;
+        long hash = 1469598103934665603L;
+        try (NativeImage source = imageCopy(sourceId)) {
+            check(gray.getWidth() == source.getWidth() && gray.getHeight() == source.getHeight(),
+                    "Generated gray atlas preserves the actual source UV dimensions");
+            for (int y = 0; y < gray.getHeight(); y++) for (int x = 0; x < gray.getWidth(); x++) {
+                int original = source.getPixelRGBA(x, y);
+                if (repairedChicken && x >= 7 && x < 11 && y < 3 && original >>> 24 == 0) {
+                    original = source.getPixelRGBA(x - 4, y);
+                    repaired++;
+                }
+                int pixel = gray.getPixelRGBA(x, y);
+                hash = (hash ^ Integer.toUnsignedLong(pixel)) * 1099511628211L;
+                check(pixel >>> 24 == original >>> 24, "Gray atlas preserves source alpha at " + x + "," + y);
+                if (pixel >>> 24 == 0) continue;
+                int red = pixel & 255, green = pixel >>> 8 & 255, blue = pixel >>> 16 & 255;
+                check(red == green && green == blue, "Every visible sick body texel is neutral gray-white at " + x + "," + y);
+                int sourceRed = original & 255, sourceGreen = original >>> 8 & 255, sourceBlue = original >>> 16 & 255;
+                int luminance = (77 * sourceRed + 150 * sourceGreen + 29 * sourceBlue + 128) >> 8;
+                check(red == 88 + (152 * luminance + 127) / 255,
+                        "Actual gray atlas preserves source markings and the specified pale luminance at " + x + "," + y);
+                visible++;
+                minimum = Math.min(minimum, red);
+                maximum = Math.max(maximum, red);
+            }
+            fact.addProperty("width", source.getWidth());
+            fact.addProperty("height", source.getHeight());
+        }
+        check(visible > 0 && minimum < maximum, "Gray conversion keeps visible texture detail instead of a flat fill");
+        if (repairedChicken) check(repaired == 12, "Native chicken independently verifies the twelve repaired head underside texels");
+        fact.addProperty("all_visible_rgb_channels_equal", true);
+        fact.addProperty("source_alpha_and_uv_preserved", true);
+        fact.addProperty("specified_luminance_verified", true);
+        fact.addProperty("native_chicken_head_repaired_texels", repaired);
+        fact.addProperty("visible_texels", visible);
+        fact.addProperty("gray_min", minimum);
+        fact.addProperty("gray_max", maximum);
+        fact.addProperty("pixel_hash", Long.toUnsignedString(hash));
+        return fact;
+    }
+
+    private static NativeImage imageCopy(ResourceLocation id) throws Exception {
+        var resource = Minecraft.getInstance().getResourceManager().getResource(id);
+        if (resource.isPresent()) try (var input = resource.get().open()) { return NativeImage.read(input); }
+        var texture = Minecraft.getInstance().getTextureManager().getTexture(id);
+        check(texture instanceof DynamicTexture, "The actual source atlas is readable: " + id);
+        NativeImage original = ((DynamicTexture) texture).getPixels();
+        check(original != null, "Dynamic source atlas retains its pixels");
+        NativeImage copy = new NativeImage(original.getWidth(), original.getHeight(), false);
+        for (int y = 0; y < copy.getHeight(); y++) for (int x = 0; x < copy.getWidth(); x++)
+            copy.setPixelRGBA(x, y, original.getPixelRGBA(x, y));
+        return copy;
     }
 
     /** Uses the normal dispatcher too, so ETF's per-entity random texture state is active during observation. */

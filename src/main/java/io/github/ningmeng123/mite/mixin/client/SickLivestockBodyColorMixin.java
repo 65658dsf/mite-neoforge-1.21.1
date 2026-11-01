@@ -12,19 +12,18 @@ import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-/** Tint only customized sick livestock bodies while retaining their resource-pack texture layout. @author NingMeng123 */
+/** Replace only the resolved main-body atlas, retaining resource-pack geometry and independent part textures. @author NingMeng123 */
 @Mixin(LivingEntityRenderer.class)
 public abstract class SickLivestockBodyColorMixin<T extends LivingEntity> {
     @WrapOperation(method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/EntityModel;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V"))
     private void mite$sickCustomizedBody(EntityModel<T> model, PoseStack pose, VertexConsumer vertices, int light,
             int overlay, int color, Operation<Void> original, @Local(argsOnly = true) T entity) {
-        int tintedColor = SickLivestockVisuals.bodyColor(entity, model, color);
-        var scope = SickLivestockVisuals.beginBodyColor(color, tintedColor);
+        var scope = SickLivestockVisuals.beginBodyTexture(entity, model, vertices);
         try {
-            original.call(model, pose, vertices, light, overlay, tintedColor);
+            original.call(model, pose, scope == null ? vertices : scope.vertices(), light, overlay, color);
         } finally {
-            SickLivestockVisuals.endBodyColor(scope);
+            SickLivestockVisuals.endBodyTexture(scope);
         }
     }
 }
