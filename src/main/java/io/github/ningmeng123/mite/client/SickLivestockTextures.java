@@ -14,7 +14,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 
-/** Derive a neutral gray-white sick coat from the atlas actually selected for the animal. @author NingMeng123 */
+/** Derive a soft reference-style gray coat from the atlas actually selected for the animal. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public final class SickLivestockTextures {
     private static final String PREFIX = "dynamic/sick_livestock/";
@@ -69,15 +69,17 @@ public final class SickLivestockTextures {
     }
 }
 
-/** NativeImage ABGR pixels: remove hue, lift the coat into gray-white, retain alpha and local shading. @author NingMeng123 */
+/** NativeImage ABGR pixels: blend with mid-gray to match the muted legacy sick palette. @author NingMeng123 */
 final class SickLivestockPalette {
     private SickLivestockPalette() {}
 
     static int gray(int pixel) {
         if (pixel >>> 24 == 0) return pixel;
-        int red = pixel & 255, green = pixel >>> 8 & 255, blue = pixel >>> 16 & 255;
-        int luminance = (77 * red + 150 * green + 29 * blue + 128) >> 8;
-        int gray = 88 + (152 * luminance + 127) / 255;
-        return pixel & 0xFF000000 | gray << 16 | gray << 8 | gray;
+        // The reference's dark coat retains a little warmth, while its white
+        // markings are muted. A neutral luminance fill loses that appearance.
+        int red = ((pixel & 255) + 127) >> 1;
+        int green = ((pixel >>> 8 & 255) + 127) >> 1;
+        int blue = ((pixel >>> 16 & 255) + 127) >> 1;
+        return pixel & 0xFF000000 | blue << 16 | green << 8 | red;
     }
 }

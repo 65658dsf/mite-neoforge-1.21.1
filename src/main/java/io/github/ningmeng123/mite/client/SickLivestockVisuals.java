@@ -20,12 +20,12 @@ public final class SickLivestockVisuals {
 
     private SickLivestockVisuals() {}
 
-    /** CEM bodies keep the renderer's selected texture until ETF has resolved its active variant. */
+    /** Native bodies retain the original sick artwork; CEM atlases are selected after ETF resolves their active variant. */
     @Nullable public static ResourceLocation bodyTexture(Mob animal, EntityModel<?> model) {
         ResourceLocation sick = LivestockHealth033.sickBodyTexture(animal);
         if (sick == null || customized(model)) return null;
         if (animal.getType() == EntityType.CHICKEN) sick = SickChickenTexture.repair(sick);
-        return SickLivestockTextures.gray(sick);
+        return sick;
     }
 
     /** Swap only the actual main-body atlas; independent wool, saddle and CEM part textures retain their appearance. */

@@ -136,7 +136,7 @@ public final class SickLivestockClientAudit {
         if (done || screen == null || mc.screen != screen || screen.frames < 4) return;
         try {
             Files.createDirectories(output());
-            Path screenshot = output().resolve(screen.page == 0 ? "front.png" : "rear.png");
+            Path screenshot = output().resolve(List.of("front.png", "rear.png", "cow-close.png").get(screen.page));
             try (NativeImage image = Screenshot.takeScreenshot(mc.getMainRenderTarget())) {
                 check(image.getWidth() > 100 && image.getHeight() > 100, "Captured an actual GPU framebuffer");
                 image.writeToFile(screenshot);
@@ -144,7 +144,7 @@ public final class SickLivestockClientAudit {
                 REPORT.addProperty("framebuffer_height", image.getHeight());
             }
             REPORT.getAsJsonArray("screenshots").add(screenshot.toString());
-            if (++screen.page < 2) { screen.frames = 0; return; }
+            if (++screen.page < 3) { screen.frames = 0; return; }
             REPORT.addProperty("actual_living_renderer_events", livingDraws);
             REPORT.addProperty("status", "passed_real_livestock_texture_and_vertex_color_regressions");
             finish(mc, null);
@@ -216,9 +216,10 @@ public final class SickLivestockClientAudit {
                 graphics.fill(0, 0, width, height, 0xFF17202B);
                 graphics.drawCenteredString(font, "Livestock: healthy / sick / recovered (same entity and model)", width / 2, 7, 0xFFF0F3FA);
                 int labelWidth = Math.min(120, width / 5), cellWidth = (width - labelWidth - 8) / 3;
-                int rowHeight = (height - 30) / rows.size();
-                for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
-                    Row row = rows.get(rowIndex);
+                List<Row> visibleRows = page == 2 ? rows.subList(0, 1) : rows;
+                int rowHeight = (height - 30) / visibleRows.size();
+                for (int rowIndex = 0; rowIndex < visibleRows.size(); rowIndex++) {
+                    Row row = visibleRows.get(rowIndex);
                     int y = 27 + rowIndex * rowHeight;
                     graphics.drawString(font, row.label, 5, y + rowHeight / 2, 0xFFE5E9F4, false);
                     for (int phase = 0; phase < 3; phase++) {
@@ -229,9 +230,9 @@ public final class SickLivestockClientAudit {
                         sawDraw = false;
                         try {
                             InventoryScreen.renderEntityInInventory(graphics, x + cellWidth / 2F, y + rowHeight - 5F,
-                                    Math.min(cellWidth * .32F, rowHeight * .52F), new Vector3f(),
+                                    Math.min(cellWidth * (page == 2 ? .55F : .32F), rowHeight * .52F), new Vector3f(),
                                     new Quaternionf().rotationZ((float) Math.PI).rotateX(.25F)
-                                            .rotateY((page == 0 ? (float) Math.PI : 0F) + .6F), null, row.entity);
+                                            .rotateY((page == 1 ? 0F : (float) Math.PI) + .6F), null, row.entity);
                             check(sawDraw, "Actual InventoryScreen renderer completed: " + row.label + "/" + phase);
                             if (page == 0 && frames == 0) verifyRenderedPhase(row, phase);
                         } finally { drawing = null; }
@@ -271,18 +272,18 @@ public final class SickLivestockClientAudit {
         sample.add("observed_real_renderer_vertex_buffers", capture.json());
         Colors primary = primary(capture);
         check(primary.colors.stream().allMatch(color -> color == -1),
-                "Body vertices retain neutral white; sickness is represented by the actual gray atlas: " + row.label);
+                "Body vertices retain neutral white; sickness is represented by the selected body atlas: " + row.label);
         check(primary.texture != null, "The actual body atlas is identified: " + row.label);
         sample.add("rendered_body", textureFact(primary.texture));
         if (phase == 0) row.fact.addProperty("normal_rendered_body", primary.texture.toString());
         else if (sick) {
-            ResourceLocation source = graySource(row);
-            sample.addProperty("gray_source_atlas", source.toString());
-            sample.addProperty("gray_source_kind", row.custom ? "active_etf_selected_body" : "legacy_sick_body");
-            sample.add("gray_body_pixels", verifyGray(primary.texture, source,
+            ResourceLocation source = sickSource(row);
+            sample.addProperty("sick_source_atlas", source.toString());
+            sample.addProperty("appearance_mode", row.custom ? "reference_gray_overlay" : "reference_native_original");
+            sample.add("body_pixels", verifySickPixels(primary.texture, source, row.custom,
                     !row.custom && row.entity.getType() == EntityType.CHICKEN));
             row.fact.addProperty("sick_rendered_body", primary.texture.toString());
-            row.fact.addProperty("sick_gray_pixel_hash", sample.getAsJsonObject("gray_body_pixels").get("pixel_hash").getAsString());
+            row.fact.addProperty("sick_body_pixel_hash", sample.getAsJsonObject("body_pixels").get("pixel_hash").getAsString());
         } else check(primary.texture.toString().equals(row.fact.get("normal_rendered_body").getAsString()),
                 "Recovery restores the actual ETF-selected healthy atlas: " + row.label);
         if (row.saddled) {
@@ -342,13 +343,13 @@ public final class SickLivestockClientAudit {
         row.fact.add("recovery_delay_observed_buffers", capture.json());
         Colors primary = primary(capture);
         check(primary.texture.toString().equals(row.fact.get("sick_rendered_body").getAsString()),
-                "Recovery delay reuses the actual gray sickness atlas");
+                "Recovery delay reuses the actual sickness atlas");
         check(primary.colors.stream().allMatch(color -> color == -1), "Recovery delay retains neutral body vertex colors");
-        JsonObject grayPixels = verifyGray(primary.texture, graySource(row),
+        JsonObject sickPixels = verifySickPixels(primary.texture, sickSource(row), row.custom,
                 !row.custom && row.entity.getType() == EntityType.CHICKEN);
-        check(grayPixels.get("pixel_hash").getAsString().equals(row.fact.get("sick_gray_pixel_hash").getAsString()),
-                "Gray sickness pixels stay unchanged throughout the recovery delay");
-        row.fact.add("recovery_delay_gray_pixels", grayPixels);
+        check(sickPixels.get("pixel_hash").getAsString().equals(row.fact.get("sick_body_pixel_hash").getAsString()),
+                "Sickness pixels stay unchanged throughout the recovery delay");
+        row.fact.add("recovery_delay_body_pixels", sickPixels);
         view.mite$setRecoveryTicks(0);
         check(texture(row.entity).equals(row.normal), "Recovery delay expiry restores the normal atlas immediately");
         Capture recovered = capture(row.entity);
@@ -366,60 +367,64 @@ public final class SickLivestockClientAudit {
                 () -> new IllegalStateException("Real renderer emitted no body vertices"));
     }
 
-    private static ResourceLocation graySource(Row row) {
+    private static ResourceLocation sickSource(Row row) {
         ResourceLocation source = row.custom ? ResourceLocation.parse(row.fact.get("normal_rendered_body").getAsString())
                 : LivestockHealth033.sickBodyTexture(row.entity);
-        check(source != null, "The gray body retains an identifiable source atlas");
+        check(source != null, "The sick body retains an identifiable source atlas");
         return source;
     }
 
-    /** Inspect pixels actually uploaded and selected by the transformed renderer, including ETF variants. */
-    private static JsonObject verifyGray(ResourceLocation grayId, ResourceLocation sourceId, boolean repairedChicken) throws Exception {
+    /** Native skins retain the reference artwork; CEM coats blend the actual selected atlas halfway toward mid-gray. */
+    private static JsonObject verifySickPixels(ResourceLocation actualId, ResourceLocation sourceId,
+            boolean custom, boolean repairedChicken) throws Exception {
         JsonObject fact = new JsonObject();
-        fact.addProperty("generated_atlas", grayId.toString());
+        fact.addProperty("actual_atlas", actualId.toString());
         fact.addProperty("source_atlas", sourceId.toString());
-        check(!grayId.equals(sourceId), "Sick body binds a generated atlas rather than the colored source");
-        var uploaded = Minecraft.getInstance().getTextureManager().getTexture(grayId);
-        check(uploaded instanceof DynamicTexture, "Gray sickness atlas is a real uploaded DynamicTexture: " + grayId);
-        NativeImage gray = ((DynamicTexture) uploaded).getPixels();
-        check(gray != null, "Generated gray atlas retains inspectable pixels");
+        fact.addProperty("appearance_mode", custom ? "reference_gray_overlay" : "reference_native_original");
+        if (custom || repairedChicken) {
+            check(!actualId.equals(sourceId), "CEM adaptation or chicken UV repair binds a generated atlas");
+            check(Minecraft.getInstance().getTextureManager().getTexture(actualId) instanceof DynamicTexture,
+                    "Adapted sickness atlas is a real uploaded DynamicTexture: " + actualId);
+        } else check(actualId.equals(sourceId), "Native sick animals bind the original reference skin directly");
         int visible = 0, minimum = 255, maximum = 0, repaired = 0;
         long hash = 1469598103934665603L;
-        try (NativeImage source = imageCopy(sourceId)) {
-            check(gray.getWidth() == source.getWidth() && gray.getHeight() == source.getHeight(),
-                    "Generated gray atlas preserves the actual source UV dimensions");
-            for (int y = 0; y < gray.getHeight(); y++) for (int x = 0; x < gray.getWidth(); x++) {
+        try (NativeImage source = imageCopy(sourceId); NativeImage actual = imageCopy(actualId)) {
+            check(actual.getWidth() == source.getWidth() && actual.getHeight() == source.getHeight(),
+                    "Sick atlas preserves the actual source UV dimensions");
+            for (int y = 0; y < actual.getHeight(); y++) for (int x = 0; x < actual.getWidth(); x++) {
                 int original = source.getPixelRGBA(x, y);
                 if (repairedChicken && x >= 7 && x < 11 && y < 3 && original >>> 24 == 0) {
                     original = source.getPixelRGBA(x - 4, y);
                     repaired++;
                 }
-                int pixel = gray.getPixelRGBA(x, y);
+                int pixel = actual.getPixelRGBA(x, y);
                 hash = (hash ^ Integer.toUnsignedLong(pixel)) * 1099511628211L;
-                check(pixel >>> 24 == original >>> 24, "Gray atlas preserves source alpha at " + x + "," + y);
+                check(pixel >>> 24 == original >>> 24, "Sick atlas preserves source alpha at " + x + "," + y);
+                if (!custom) check(pixel == original, "Native sick artwork is preserved exactly outside the chicken UV repair at " + x + "," + y);
                 if (pixel >>> 24 == 0) continue;
                 int red = pixel & 255, green = pixel >>> 8 & 255, blue = pixel >>> 16 & 255;
-                check(red == green && green == blue, "Every visible sick body texel is neutral gray-white at " + x + "," + y);
-                int sourceRed = original & 255, sourceGreen = original >>> 8 & 255, sourceBlue = original >>> 16 & 255;
-                int luminance = (77 * sourceRed + 150 * sourceGreen + 29 * sourceBlue + 128) >> 8;
-                check(red == 88 + (152 * luminance + 127) / 255,
-                        "Actual gray atlas preserves source markings and the specified pale luminance at " + x + "," + y);
+                if (custom) {
+                    int sourceRed = original & 255, sourceGreen = original >>> 8 & 255, sourceBlue = original >>> 16 & 255;
+                    check(red == ((sourceRed + 127) >> 1) && green == ((sourceGreen + 127) >> 1) && blue == ((sourceBlue + 127) >> 1),
+                            "Actual CEM atlas applies the reference gray overlay without losing source markings at " + x + "," + y);
+                    check(red >= 63 && red <= 191 && green >= 63 && green <= 191 && blue >= 63 && blue <= 191,
+                            "Reference gray overlay stays within its compressed contrast range");
+                }
                 visible++;
-                minimum = Math.min(minimum, red);
-                maximum = Math.max(maximum, red);
+                minimum = Math.min(minimum, Math.min(red, Math.min(green, blue)));
+                maximum = Math.max(maximum, Math.max(red, Math.max(green, blue)));
             }
             fact.addProperty("width", source.getWidth());
             fact.addProperty("height", source.getHeight());
         }
-        check(visible > 0 && minimum < maximum, "Gray conversion keeps visible texture detail instead of a flat fill");
+        check(visible > 0 && minimum < maximum, "Sick coat retains visible texture detail instead of a flat fill");
         if (repairedChicken) check(repaired == 12, "Native chicken independently verifies the twelve repaired head underside texels");
-        fact.addProperty("all_visible_rgb_channels_equal", true);
         fact.addProperty("source_alpha_and_uv_preserved", true);
-        fact.addProperty("specified_luminance_verified", true);
+        fact.addProperty(custom ? "reference_gray_overlay_verified" : "original_reference_pixels_verified", true);
         fact.addProperty("native_chicken_head_repaired_texels", repaired);
         fact.addProperty("visible_texels", visible);
-        fact.addProperty("gray_min", minimum);
-        fact.addProperty("gray_max", maximum);
+        fact.addProperty("output_channel_min", minimum);
+        fact.addProperty("output_channel_max", maximum);
         fact.addProperty("pixel_hash", Long.toUnsignedString(hash));
         return fact;
     }
