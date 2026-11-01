@@ -32,7 +32,7 @@ public abstract class SourceMovement032Goal extends Goal {
     }
     /** Replanning must not recapture a temporary swimming allowance as the permanent water cost. */
     protected void replan() {
-        previousPosition=mob.blockPosition(); stationaryTicks=0; stuckThreshold=30+mob.getRandom().nextInt(20);
+        resetProgress();
         // Native createPath otherwise returns the active route unchanged for the same target.
         mob.getNavigation().stop();
         mob.setPathfindingMalus(PathType.WATER,oldWaterCost);
@@ -42,6 +42,10 @@ public abstract class SourceMovement032Goal extends Goal {
         }
         mob.getNavigation().moveTo(path,movementSpeed());
     }
+    protected final void resetProgress() {
+        previousPosition=mob.blockPosition(); stationaryTicks=0; stuckThreshold=30+mob.getRandom().nextInt(20);
+    }
+    protected final float originalWaterCost() { return oldWaterCost; }
     private boolean valid(@Nullable Path path) {
         return path!=null && !path.isDone() && path.getEndNode()!=null
                 && mob.position().distanceToSqr(new net.minecraft.world.phys.Vec3(path.getEndNode().x,path.getEndNode().y,path.getEndNode().z))>=1D;

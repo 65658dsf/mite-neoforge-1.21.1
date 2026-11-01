@@ -1,10 +1,12 @@
 package io.github.ningmeng123.mite.entity.animal;
 
 import io.github.ningmeng123.mite.entity.R196NpcNeeds;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.animal.Wolf;
@@ -72,6 +74,12 @@ public final class AnimalCommon032Goals {
         private boolean startingPath;
         private int replanTicks;
         private net.minecraft.world.phys.Vec3 plannedThreat;
+        private java.util.UUID plannedAttacker;
+        private boolean budgeted,wasBurning,pendingUrgency;
+        private long seenStimulus,seenAlarm,seenAlarmGeneration,retryAt=Long.MIN_VALUE;
+        private int failures;
+        private net.minecraft.world.phys.Vec3 failureOrigin;
+        @Nullable private AnimalFleeSession session;
         public Flee(PathfinderMob mob,float speed,float panicChance) { super(mob,speed,true); this.panicChance=panicChance; }
         public void startPanicking() { R196AnimalAi032.state(mob).putInt("panic_countdown",100+mob.getRandom().nextInt(100)); }
         public boolean panicking() {
@@ -107,15 +115,37 @@ public final class AnimalCommon032Goals {
         @Override public void start() {
             if(!R196AnimalAi032.state(mob).getBoolean("done_panicking") && mob.getRandom().nextFloat()<panicChance) startPanicking();
             if(!panicking()) R196AnimalAi032.state(mob).putBoolean("done_panicking",true);
+            budgeted=slicedEnabled();
+            long stimulus=AnimalFleeBudget.generation(mob);
+            pendingUrgency=budgeted && (stimulus!=seenStimulus && AnimalFleeBudget.freshDamage(mob) || mob.isOnFire() && !wasBurning);
+            seenStimulus=stimulus;wasBurning=mob.isOnFire();seenAlarm=R196AnimalAi032.state(mob).getLong("herd_alarm_until");
+            seenAlarmGeneration=AnimalFleeBudget.alarmGeneration(mob);
             rememberPlan();
             startingPath=true;
             try { super.start(); } finally { startingPath=false; }
+        }
+        private boolean slicedEnabled() { return MiteConfig.animalSearchBudgetEnabled() && mob.level() instanceof ServerLevel; }
+        @Override protected void replan() {
+            if(!budgeted) {super.replan();return;}
+            cancelSession();resetProgress();
+            LivingEntity attacker=R196AnimalAi032.lastAttacker(mob);
+            if(startingPath && attacker==null && mob.getRandom().nextFloat()<panicChance) startPanicking();
+            session=new AnimalFleeSession(mob,attacker,originalWaterCost(),pendingUrgency);
+            AnimalFleeBudget.request(session);
+            if(!session.urgent) pendingUrgency=false;
+            consumeSession();
         }
         @Override public void tick() {
             super.tick();
             var state=R196AnimalAi032.state(mob); int before=state.getInt("panic_countdown");
             if(mob.isOnFire()) startPanicking();
             else if(before>0) { state.putInt("panic_countdown",before-1); if(before==1) state.putBoolean("done_panicking",true); }
+            if(budgeted!=slicedEnabled()) {
+                cancelSession();clearFailure();budgeted=slicedEnabled();pendingUrgency=false;
+                mob.setPathfindingMalus(net.minecraft.world.level.pathfinder.PathType.WATER,originalWaterCost());
+                rememberPlan();replan();return;
+            }
+            if(budgeted) {tickSliced();return;}
             if(--replanTicks>0) return;
             replanTicks=REPLAN_INTERVAL;
             LivingEntity attacker=R196AnimalAi032.lastAttacker(mob);
@@ -128,8 +158,57 @@ public final class AnimalCommon032Goals {
         private void rememberPlan() {
             LivingEntity attacker=R196AnimalAi032.lastAttacker(mob);
             plannedThreat=attacker==null ? null : attacker.position();
+            plannedAttacker=attacker==null?null:attacker.getUUID();
             replanTicks=REPLAN_INTERVAL;
         }
+        private void tickSliced() {
+            long stimulus=AnimalFleeBudget.generation(mob),alarm=R196AnimalAi032.state(mob).getLong("herd_alarm_until");
+            long alarmGeneration=AnimalFleeBudget.alarmGeneration(mob);
+            boolean burning=mob.isOnFire(),newDamage=stimulus!=seenStimulus,newFire=burning && !wasBurning,
+                    newAlarm=alarm>seenAlarm || alarmGeneration!=seenAlarmGeneration;
+            seenStimulus=stimulus;wasBurning=burning;seenAlarm=alarm;seenAlarmGeneration=alarmGeneration;
+            LivingEntity attacker=R196AnimalAi032.lastAttacker(mob);
+            boolean moved=!java.util.Objects.equals(plannedAttacker,attacker==null?null:attacker.getUUID())
+                    || attacker!=null && (plannedThreat==null || attacker.position().distanceToSqr(plannedThreat)>=4D);
+            if(newDamage || newFire || newAlarm || moved) {
+                clearFailure();pendingUrgency|=newDamage || newFire;
+                rememberPlan();replan();return;
+            }
+            if(session!=null) {
+                if(session.invalid || !session.contextValid()) {cancelSession();clearFailure();rememberPlan();replan();return;}
+                if(session.pending()) AnimalFleeBudget.request(session);
+                if(!session.urgent) pendingUrgency=false;
+                consumeSession();return;
+            }
+            if(--replanTicks>0) return;
+            replanTicks=REPLAN_INTERVAL;
+            if(failureOrigin!=null && failureOrigin.distanceToSqr(mob.position())>=1D) clearFailure();
+            if(!isStuck() && !mob.getNavigation().isDone()) return;
+            if(mob.level().getGameTime()<retryAt) {AnimalFleeBudget.countBackoff(mob);return;}
+            rememberPlan();replan();
+        }
+        private void consumeSession() {
+            if(session==null || session.pending()) return;
+            AnimalFleeSession completed=session;
+            AnimalFleeBudget.cancel(completed);session=null;
+            if(!completed.resultValid()) {replanTicks=0;return;}
+            if(completed.result==null) {
+                failures=Math.min(3,failures+1);
+                retryAt=mob.level().getGameTime()+(20L<<(failures-1))+Math.floorMod(mob.getId(),10);
+                failureOrigin=mob.position();AnimalFleeBudget.countBackoff(mob);return;
+            }
+            clearFailure();resetProgress();
+            mob.setPathfindingMalus(net.minecraft.world.level.pathfinder.PathType.WATER,completed.wet?0F:originalWaterCost());
+            mob.getNavigation().moveTo(completed.result,movementSpeed());
+            var navigation=(AnimalFleeNavigationAccess)mob.getNavigation();
+            navigation.mite$fleeTarget(completed.result.getTarget());navigation.mite$fleeAccuracy(0);
+            if(R196AnimalAi032.lastAttacker(mob)!=null) {
+                R196AnimalAi032.state(mob).putBoolean("fleeing",true);
+                if(mob instanceof Wolf wolf) NativeAnimalSpecial032.onFleeing(wolf);
+            }
+        }
+        private void clearFailure() {failures=0;retryAt=Long.MIN_VALUE;failureOrigin=null;}
+        private void cancelSession() {AnimalFleeBudget.cancel(session);session=null;}
         private boolean controlled() { return mob.isPassenger() || mob.getFirstPassenger() instanceof Player; }
         @Override protected float movementSpeed() { return (movementSpeed+(panicking() ? .2F : 0F))*.95F; }
         @Override public boolean canContinueToUse() {
@@ -137,7 +216,9 @@ public final class AnimalCommon032Goals {
             R196AnimalAi032.considerStopFleeing(mob);
             return R196AnimalAi032.state(mob).getBoolean("decided_to_flee") || panicking();
         }
-        @Override public void stop() { R196AnimalAi032.considerStopFleeing(mob); super.stop(); }
+        @Override public void stop() {
+            cancelSession();pendingUrgency=false;R196AnimalAi032.considerStopFleeing(mob);super.stop();
+        }
     }
     public static final class FoodItems extends SourceMovement032Goal implements Marker {
         private ItemEntity target;

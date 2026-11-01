@@ -49,6 +49,7 @@
     "BetterCombatPlayerAttackMixin",
     "BetterCombatMeleeGoalMixin",
     "MeleeAttackPursuitMixin",
+    "AnimalFleeNavigationMixin",
     "SearchLocalPathTypeCacheMixin",
     "MobAttackBoundsMixin",
     "BetterCombatMobSwingMixin",

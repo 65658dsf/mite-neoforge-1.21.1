@@ -21,6 +21,22 @@ public final class AnimalEscapePath {
 
     private AnimalEscapePath() {}
 
+    static int candidateCount() { return DISTANCES.length; }
+
+    /** The same ordered destinations are also consumed by the paced flee planner. */
+    @Nullable static BlockPos candidate(PathfinderMob mob, LivingEntity threat, Vec3 origin, Vec3 danger, int index) {
+        double dx=origin.x-danger.x, dz=origin.z-danger.z, magnitude=Math.hypot(dx,dz);
+        if(magnitude<.001D) {
+            Vec3 facing=threat.getLookAngle();dx=-facing.x;dz=-facing.z;magnitude=Math.hypot(dx,dz);
+            if(magnitude<.001D) {dx=1D;dz=0D;magnitude=1D;}
+        }
+        dx/=magnitude;dz/=magnitude;
+        double angle=Math.toRadians(ANGLES[index]),cosine=Math.cos(angle),sine=Math.sin(angle);
+        BlockPos position=BlockPos.containing(origin.x+(dx*cosine-dz*sine)*DISTANCES[index],origin.y,
+                origin.z+(dx*sine+dz*cosine)*DISTANCES[index]);
+        return mob.level().hasChunkAt(position)?SourceMovement032Goal.findFoot(mob,position):null;
+    }
+
     /** Searches only loaded terrain and scores the route the animal will actually walk. */
     @Nullable public static Path find(PathfinderMob mob, LivingEntity threat) {
         if (!threat.isAlive() || mob.level() != threat.level()) return null;
@@ -83,12 +99,17 @@ public final class AnimalEscapePath {
         return segment + .5D * malus + fluid + cautious + Math.max(0D, rise) * .5D;
     }
 
-    private static double score(PathfinderMob mob, @Nullable Path path, Vec3 origin, Vec3 danger) {
+    static double score(PathfinderMob mob, @Nullable Path path, Vec3 origin, Vec3 danger) {
+        return score(mob,path,origin,danger,path==null?0:path.getNextNodeIndex());
+    }
+
+    /** Ignore only waypoints that native navigation has already reached, without changing the path cursor. */
+    static double score(PathfinderMob mob, @Nullable Path path, Vec3 origin, Vec3 danger, int firstUnreachedNode) {
         if (path == null || path.isDone() || path.getEndNode() == null) return Double.NEGATIVE_INFINITY;
         double initial = distance(origin, danger), minimum = initial;
         double length = 0D, cost = 0D, earlyLength = 0D, earlyDistance = initial;
         Vec3 previous = origin;
-        for (int i = path.getNextNodeIndex(); i < path.getNodeCount(); i++) {
+        for (int i = Math.max(path.getNextNodeIndex(),firstUnreachedNode); i < path.getNodeCount(); i++) {
             Node node = path.getNode(i);
             if (!mob.level().hasChunkAt(node.asBlockPos())) return Double.NEGATIVE_INFINITY;
             Vec3 point = path.getEntityPosAtNode(mob, i);

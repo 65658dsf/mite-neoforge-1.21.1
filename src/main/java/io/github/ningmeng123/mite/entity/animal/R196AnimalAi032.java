@@ -190,6 +190,7 @@ public final class R196AnimalAi032 {
     }
     @SubscribeEvent public static void damage(LivingDamageEvent.Post event) {
         if(event.getEntity().level().isClientSide || !(event.getEntity() instanceof Animal animal) || !managed(animal) || !(event.getNewDamage()>0F)) return;
+        AnimalFleeBudget.damaged(animal);
         animal.resetLove();
         if(event.getSource().getEntity() instanceof LivingEntity attacker) {
             SourceAnimalDespawn032.refresh(animal,attacker instanceof net.minecraft.world.entity.player.Player?-9600:-1200);
@@ -207,6 +208,7 @@ public final class R196AnimalAi032 {
         long until=Math.max(state(source).getLong("herd_alarm_until"),source.level().getGameTime()+200L+source.getRandom().nextInt(100));
         for(Mob peer:source.level().getEntitiesOfClass(Mob.class,source.getBoundingBox().inflate(ALARM_RADIUS))) {
             if(!peer.isAlive() || !herdAnimal(peer) || peer.distanceToSqr(source)>ALARM_RADIUS*ALARM_RADIUS) continue;
+            AnimalFleeBudget.alarmed(peer);
             rememberAttacker(peer,attacker);
             var fear=state(peer);
             fear.putLong("herd_alarm_until",Math.max(fear.getLong("herd_alarm_until"),until));
