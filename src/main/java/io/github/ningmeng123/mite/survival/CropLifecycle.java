@@ -15,9 +15,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.CommonHooks;
 
-/** Hourly food-crop pacing with source environment, drought and disease order; saved keys remain compatible. @author NingMeng123 */
+/** Random drought and disease remain separate from the persistent, bounded maturation clock. @author NingMeng123 */
 public final class CropLifecycle {
     private CropLifecycle() {}
     public static boolean managed(BlockState state) {
@@ -84,13 +83,7 @@ public final class CropLifecycle {
         if(random.nextFloat()<CropGrowthRules.blightChance(level.getBiome(pos).value().getBaseTemperature(),FoodAgriculture.humid(level,pos),light,state.is(Blocks.POTATOES))) {
             CubeCropBlight.infect(level,pos);return true;
         }
-        if(light!=15||growth==0F||crop.isMaxAge(state))return true;
-        boolean grow=random.nextInt(CropGrowthRules.GROWTH_ROLL_BOUND)<CropGrowthRules.growthThreshold(
-                growth,CropGrowthRules.FOOD_REFERENCE_RATE,crop.getMaxAge());
-        if(CommonHooks.canCropGrow(level,pos,state,grow)&&level.setBlock(pos,crop.getStateForAge(crop.getAge(state)+1),2)) {
-            FoodAgriculture.onCropGrowth(level,pos.below(),random);
-            CommonHooks.fireCropGrowPost(level,pos,state);
-        }
+        // TimedCropGrowth advances stages from persisted work, never from a lucky random draw.
         return true;
     }
     public static BlockState deadState(BlockState state,boolean fromDisease) {

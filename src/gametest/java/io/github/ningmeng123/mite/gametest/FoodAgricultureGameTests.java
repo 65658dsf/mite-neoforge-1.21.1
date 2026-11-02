@@ -5,11 +5,16 @@ import io.github.ningmeng123.mite.registry.MiteFoodPlants;
 import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.survival.ChestWormComposting;
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
+import io.github.ningmeng123.mite.survival.CropLifecycle;
+import io.github.ningmeng123.mite.survival.TimedCropGrowth;
+import io.github.ningmeng123.mite.rules.CropGrowthRules;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.NbtUtils;
@@ -21,6 +26,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
@@ -32,6 +38,7 @@ import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -173,9 +180,13 @@ public final class FoodAgricultureGameTests {
                         "Both crops observe the same actual outdoor light");
                 level.setBlock(onionPos, onion, 2);
                 level.setBlock(berryPos, berry, 2);
-                // No blight, and a winning growth draw: only the real light condition may block growth.
+                // Random draws cannot bypass the onion clock; the same real light conditions
+                // still control its clock and the blueberry's retained native random growth.
                 onion.randomTick(level, onionPos, new DropRandom(.5F, true));
                 berry.randomTick(level, berryPos, new DropRandom(0F, true));
+                helper.assertValueEqual(level.getBlockState(onionPos).getValue(CropBlock.AGE),2,
+                        "A lucky random tick cannot prematurely advance a timed onion");
+                advanceSavedClockAtNextStage(level,onionPos);
                 boolean grows = lightLevels[index] == 15;
                 helper.assertValueEqual(level.getBlockState(onionPos).getValue(CropBlock.AGE), grows ? 3 : 2,
                         "Onions grow at level 15, but not at night, the 14 boundary or full rain");
@@ -237,27 +248,69 @@ public final class FoodAgricultureGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void nativeBeetrootAgeThreeGrowthCanLoseFertilityWithoutReadingAgeSeven(GameTestHelper helper) {
+    public static void timedBeetrootAgeThreeGrowthCanLoseFertilityWithoutReadingAgeSeven(GameTestHelper helper) {
         var level = helper.getLevel();
-        var pos = helper.absolutePos(new BlockPos(2, 2, 2));
+        var reference = helper.absolutePos(new BlockPos(2, 2, 2));
+        var pos = new BlockPos((reference.getX()&~15)+8,((level.getMaxBuildHeight()-32)&~15)+8,(reference.getZ()&~15)+8);
         var original = level.getBlockState(pos);
         var originalSoil = level.getBlockState(pos.below());
         var crop = (CropBlock) Blocks.BEETROOTS;
+        long time=level.getDayTime();float rain=level.getRainLevel(1F);
+        level.setRainLevel(1F);float thunder=level.getThunderLevel(1F);level.setRainLevel(rain);
+        long reseed=level.random.nextLong();
         try {
+            level.setDayTime(6000L);level.setRainLevel(0F);level.setThunderLevel(0F);level.updateSkyBrightness();
             var soil = Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 7).setValue(FoodAgriculture.FERTILIZED, true);
             level.setBlock(pos.below(), soil, 2);
             var state = crop.getStateForAge(1);
             helper.assertFalse(state.hasProperty(CropBlock.AGE), "The real modern beetroot has AGE_3 rather than wheat's AGE_7");
             level.setBlock(pos, state, 2);
             state.randomTick(level, pos, new BeetrootGrowthRandom());
-            helper.assertValueEqual(crop.getAge(level.getBlockState(pos)), 2, "Actual native beetroot random tick advances its own age property");
+            helper.assertValueEqual(crop.getAge(level.getBlockState(pos)),1,"Native beetroot cannot bypass the clock with a winning random draw");
+            helper.assertTrue(level.getBlockState(pos.below()).getValue(FoodAgriculture.FERTILIZED),
+                    "No actual growth means no premature fertility-loss draw");
+            long seed=0L;
+            while(RandomSource.create(seed).nextInt(256)!=0)seed++;
+            level.random.setSeed(seed);
+            advanceSavedClockAtNextStage(level,pos);
+            helper.assertValueEqual(crop.getAge(level.getBlockState(pos)), 2, "The actual saved-work clock advances modern beetroot's own age property");
             helper.assertFalse(level.getBlockState(pos.below()).getValue(FoodAgriculture.FERTILIZED),
                     "The winning source 1/256 fertility-loss draw applies after actual beetroot growth");
         } finally {
+            level.random.setSeed(reseed);
+            level.setDayTime(time);level.setRainLevel(rain);level.setThunderLevel(thunder);level.updateSkyBrightness();
             level.setBlock(pos, original, 2);
             level.setBlock(pos.below(), originalSoil, 2);
         }
         helper.succeed();
+    }
+
+    /** Load a near-boundary saved clock and drive the production chunk clock, including growth hooks. */
+    private static void advanceSavedClockAtNextStage(net.minecraft.server.level.ServerLevel level,BlockPos pos) {
+        var state=level.getBlockState(pos);
+        var crop=(CropBlock)state.getBlock();
+        int next=crop.getAge(state)+1,max=crop.getMaxAge();
+        long threshold=(CropGrowthRules.TIMED_MATURITY_WORK*next+max-1)/max;
+        long speed=CropGrowthRules.timedWorkPerTick(CropLifecycle.growthRate(state,level,pos));
+        var chunk=level.getChunkAt(pos);
+        var entries=new ArrayList<>(chunk.getData(TimedCropGrowth.CLOCKS.get()).entries());
+        entries.removeIf(entry->entry.position()==pos.asLong());
+        entries.add(new TimedCropGrowth.Entry(pos.asLong(),BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString(),Math.max(0,threshold-speed)));
+        chunk.setData(TimedCropGrowth.CLOCKS.get(),new TimedCropGrowth.Data(entries));
+        long time=level.getGameTime();
+        int tickSpeed=level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+        try {
+            // Headless GameTest defaults randomTickSpeed to zero; enable the production clock explicitly.
+            level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(3,level.getServer());
+            TimedCropGrowth.tickChunk(level,chunk);
+            for(int tick=1;tick<=21;tick++) {
+                ((ServerLevelData)level.getLevelData()).setGameTime(time+tick);
+                TimedCropGrowth.tickChunk(level,chunk);
+            }
+        } finally {
+            ((ServerLevelData)level.getLevelData()).setGameTime(time);
+            level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(tickSpeed,level.getServer());
+        }
     }
 
     @GameTest(template = "empty")
@@ -408,8 +461,7 @@ public final class FoodAgricultureGameTests {
     private static final class BeetrootGrowthRandom extends LegacyRandomSource {
         BeetrootGrowthRandom() { super(196L); }
         @Override public int nextInt(int bound) {
-            // Beetroot now enters the shared calibrated tick directly; both growth and
-            // the independently verified 1/256 fertilizer loss must receive winning draws.
+            // A winning old growth draw must no longer bypass the persistent beetroot clock.
             return 0;
         }
     }

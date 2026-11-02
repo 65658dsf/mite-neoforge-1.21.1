@@ -8,6 +8,7 @@ import io.github.ningmeng123.mite.survival.CropLifecycle;
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
 import io.github.ningmeng123.mite.rules.CropGrowthRules;
 import io.github.ningmeng123.mite.survival.SpecialPlantGrowth;
+import io.github.ningmeng123.mite.survival.TimedCropGrowth;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,10 +19,15 @@ import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.gametest.framework.GameTestInfo;
+import net.minecraft.gametest.framework.GameTestListener;
+import net.minecraft.gametest.framework.GameTestRunner;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
@@ -31,6 +37,7 @@ import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainerRO;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -60,22 +67,23 @@ public final class CropLifecycleGameTests {
         h.succeed();
     }
     @GameTest(template="empty")
-    public static void everyFoodCropUsesItsCalibratedBoundaryOnceIncludingNativeBeetroot(GameTestHelper h) {
+    public static void everyFoodCropUsesItsPersistentStageBoundaryIncludingNativeBeetroot(GameTestHelper h) {
         try(Fixture f=new Fixture(h)) {
             f.soils(wet());
             for(CropBlock crop:foodCrops()) {
                 BlockState seed=crop.getStateForAge(0);
                 for(BlockPos p:BlockPos.betweenClosed(f.pos.offset(-1,0,-1),f.pos.offset(1,0,1)))f.set(p,seed);
                 h.assertTrue(Math.abs(CropLifecycle.growthRate(seed,f.level,f.pos)-1.25F)<.000001F,"The actual wet dense field matches the hourly reference");
-                int threshold=(int)Math.round(crop.getMaxAge()*4096D/(72000D*3D*(12081D/24000D))*1_000_000D);
-                Rolls miss=new Rolls(bound->bound==1_000_000?threshold:1,1F,false);
-                seed.randomTick(f.level,f.pos,miss);
-                h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),0,"A draw exactly at the calibrated probability threshold does not grow");
-                Rolls win=new Rolls(bound->bound==1_000_000?threshold-1:1,1F,false);
+                Rolls win=new Rolls(bound->bound==256?1:0,1F,false);
                 seed.randomTick(f.level,f.pos,win);
-                h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),1,"The adjacent accepted draw advances exactly one real crop age");
-                h.assertValueEqual(java.util.Collections.frequency(win.bounds,1_000_000),1,"Beetroot and other species execute one shared growth roll per native random tick");
+                h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),0,"Even a winning random draw cannot bypass the elapsed growth clock");
+                h.assertFalse(win.bounds.contains(1_000_000),"Food crops no longer draw random maturity rolls");
                 h.assertFalse(win.bounds.contains(3),"Beetroot has no additional native one-third timing gate");
+                int firstStage=(72000+crop.getMaxAge()-1)/crop.getMaxAge();
+                f.clock(firstStage-1);
+                h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),0,"The real clock cannot advance before the first earned stage boundary");
+                f.clock(20);
+                h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),1,"A native clock update advances after enough eligible ticks, for both seven- and three-stage crops");
             }
         }
         h.succeed();
@@ -133,19 +141,43 @@ public final class CropLifecycleGameTests {
         }
         h.succeed();
     }
-    @GameTest(template="empty")
+    @GameTest(template="empty",batch="crop_light_boundary",timeoutTicks=200)
     public static void foodCropsRequireActualLightFifteenAndDoNotGrowAtFourteenOrAtNight(GameTestHelper h) {
-        try(Fixture f=new Fixture(h)) {
-            var crop=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2); f.soils(wet());
+        Fixture f=new Fixture(h);
+        h.testInfo.addListener(new GameTestListener() {
+            @Override public void testStructureLoaded(GameTestInfo info) {}
+            @Override public void testAddedForRerun(GameTestInfo original,GameTestInfo rerun,GameTestRunner runner) {}
+            @Override public void testPassed(GameTestInfo info,GameTestRunner runner) { f.close(); }
+            @Override public void testFailed(GameTestInfo info,GameTestRunner runner) { f.close(); }
+        });
+        f.soils(wet());
+        var engine=f.level.getChunkSource().getLightEngine();
+        engine.checkBlock(f.pos.above());
+        var lighting=engine.waitForPendingTasks(f.pos.getX()>>4,f.pos.getZ()>>4);
+        engine.tryScheduleUpdate();
+        h.startSequence().thenWaitUntil(()->{
+            engine.tryScheduleUpdate();
+            for(int tasks=0;tasks<64&&f.level.getChunkSource().pollTask();tasks++) {}
+            h.assertTrue(lighting.isDone(),"The native skylight engine completes the fixture's pending chunk updates");
+            lighting.join();
+            // Skylight storage is initialized asynchronously after a FULL chunk is published.
+            // Check its real raw light before applying the synchronous day/rain/night darkening.
+            h.assertValueEqual(f.level.getBrightness(LightLayer.SKY,f.pos.above()),15,
+                    "The exposed crop position has fully propagated native skylight before the light-boundary checks");
+        }).thenExecute(()->{
+            var crop=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2);f.soils(wet());
             long[] times={6000,6000,18000}; float[] rain={0F,.3F,0F}; int[] light={15,14,4};
             for(int index=0;index<times.length;index++) {
                 f.weather(times[index],rain[index]); f.set(f.pos,crop);
                 h.assertValueEqual(f.level.getMaxLocalRawBrightness(f.pos.above()),light[index],"The native light engine observes the independently selected source boundary");
                 crop.randomTick(f.level,f.pos,new Rolls(bound->bound==256?1:0,1F,false));
-                h.assertValueEqual(((CropBlock)crop.getBlock()).getAge(f.level.getBlockState(f.pos)),index==0?3:2,"Only actual light level fifteen permits growth even with a winning growth draw");
+                long before=TimedCropGrowth.remainingTicks(f.level,f.pos,crop);
+                f.clock(20);
+                long after=TimedCropGrowth.remainingTicks(f.level,f.pos,f.level.getBlockState(f.pos));
+                h.assertValueEqual(((CropBlock)crop.getBlock()).getAge(f.level.getBlockState(f.pos)),2,"Random ticks and one clock second cannot jump a crop's growth stage");
+                h.assertTrue(index==0?after<before:after==before,"Only actual light fifteen earns clock progress; light fourteen and nighttime remain paused");
             }
-        }
-        h.succeed();
+        }).thenSucceed();
     }
     @GameTest(template="empty")
     public static void everyFoodCropGrowsAtTheSameRateInActualHotColdAndHumidBiomes(GameTestHelper h) {
@@ -158,8 +190,10 @@ public final class CropLifecycleGameTests {
                     BlockState seed=crop.getStateForAge(0); f.set(f.pos,seed);
                     f.rate(h,1.25F,"Temperature cannot pause or slow any food crop, and humidity adds no new multiplier");
                     seed.randomTick(f.level,f.pos,new Rolls(bound->bound==CropGrowthRules.GROWTH_ROLL_BOUND?0:1,1F,false));
-                    h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),1,
-                            "A real accepted crop random tick advances in hot, cold and humid biomes");
+                    h.assertValueEqual(crop.getAge(f.level.getBlockState(f.pos)),0,"A random update cannot accelerate maturation in any biome");
+                    long before=TimedCropGrowth.remainingTicks(f.level,f.pos,seed);f.clock(20);
+                    h.assertTrue(TimedCropGrowth.remainingTicks(f.level,f.pos,seed)<before,
+                            "The real clock earns growth in hot, cold and humid biomes without a temperature pause");
                 }
             }
         }
@@ -265,20 +299,22 @@ public final class CropLifecycleGameTests {
         h.succeed();
     }
     @GameTest(template="empty")
-    public static void manureLossUsesOneOfTwoHundredFiftySixOnlyAfterRealGrowth(GameTestHelper h) {
+    public static void randomTicksCannotConsumeFertilizerWithoutAnActualClockStageAdvance(GameTestHelper h) {
         try(Fixture f=new Fixture(h)) {
             f.soils(wet()); var crop=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2);
             var fertile=wet().setValue(FoodAgriculture.FERTILIZED,true);
             f.set(f.pos.below(),fertile); f.set(f.pos,crop);
             var win=new Rolls(bound->0,1F,false); crop.randomTick(f.level,f.pos,win);
-            h.assertTrue(win.bounds.contains(256),"A successful native crop update consumes the source fertility draw");
-            h.assertFalse(FoodAgriculture.fertilized(f.level.getBlockState(f.pos.below())),"A zero 256-way draw removes manure");
+            h.assertFalse(win.bounds.contains(256),"A random crop tick cannot consume the clock's stage-linked fertilizer draw");
+            h.assertTrue(FoodAgriculture.fertilized(f.level.getBlockState(f.pos.below())),"No actual clock stage advance means no fertilizer consumption");
             f.set(f.pos.below(),fertile); f.set(f.pos,crop);
             var growthMiss=new Rolls(bound->bound-1,1F,false); crop.randomTick(f.level,f.pos,growthMiss);
             h.assertFalse(growthMiss.bounds.contains(256),"A failed growth roll never rolls fertilizer loss");
             h.assertTrue(FoodAgriculture.fertilized(f.level.getBlockState(f.pos.below())),"No growth means no fertilizer consumption");
-            f.set(f.pos,crop); var lossMiss=new Rolls(bound->bound==256?1:0,1F,false); crop.randomTick(f.level,f.pos,lossMiss);
-            h.assertTrue(FoodAgriculture.fertilized(f.level.getBlockState(f.pos.below())),"A nonzero 256-way loss draw preserves manure after growth");
+            FoodAgriculture.onCropGrowth(f.level,f.pos.below(),new Rolls(bound->1,1F,false));
+            h.assertTrue(FoodAgriculture.fertilized(f.level.getBlockState(f.pos.below())),"The retained source nonzero 256-way fertilizer branch preserves manure after an actual stage");
+            FoodAgriculture.onCropGrowth(f.level,f.pos.below(),new Rolls(bound->0,1F,false));
+            h.assertFalse(FoodAgriculture.fertilized(f.level.getBlockState(f.pos.below())),"The retained source zero 256-way fertilizer branch removes manure after an actual stage");
         }
         h.succeed();
     }
@@ -303,19 +339,28 @@ public final class CropLifecycleGameTests {
     private static final class Fixture implements AutoCloseable {
         final ServerLevel level; final BlockPos pos; final Map<BlockPos,BlockState> originals=new LinkedHashMap<>();
         final LevelChunkSection section; final PalettedContainerRO<Holder<Biome>> biomes;
-        final int quartX,quartY,quartZ; final long time; final float rain,thunder;
+        final int quartX,quartY,quartZ,randomTickSpeed; final long time,gameTime; final float rain,thunder;
         Fixture(GameTestHelper h) {
             level=h.getLevel(); BlockPos ref=h.absolutePos(new BlockPos(2,2,2));
             pos=new BlockPos((ref.getX()&~15)+8,((level.getMaxBuildHeight()-56)&~15)+8,(ref.getZ()&~15)+8);
             var chunk=level.getChunkAt(pos);section=chunk.getSection(chunk.getSectionIndex(pos.getY()));biomes=section.getBiomes();
             quartX=QuartPos.fromBlock(chunk.getPos().getMinBlockX()); quartY=QuartPos.fromBlock(pos.getY())&~3;quartZ=QuartPos.fromBlock(chunk.getPos().getMinBlockZ());
-            time=level.getDayTime();rain=level.getRainLevel(1F);level.setRainLevel(1F);thunder=level.getThunderLevel(1F);level.setRainLevel(rain);
+            time=level.getDayTime();gameTime=level.getGameTime();rain=level.getRainLevel(1F);level.setRainLevel(1F);thunder=level.getThunderLevel(1F);level.setRainLevel(rain);
+            randomTickSpeed=level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+            level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(3,level.getServer());
             for(BlockPos cell:BlockPos.betweenClosed(pos.offset(-2,-1,-2),pos.offset(2,2,2))) set(cell,Blocks.AIR.defaultBlockState());
             biome(Biomes.PLAINS);weather(6000,0F);
         }
         void set(BlockPos pos,BlockState state) { originals.putIfAbsent(pos.immutable(),level.getBlockState(pos));level.setBlock(pos,state,2); }
         void soils(BlockState state) { for(BlockPos p:BlockPos.betweenClosed(pos.offset(-1,-1,-1),pos.offset(1,-1,1)))set(p,state); }
         void weather(long time,float rain) { level.setDayTime(time);level.setRainLevel(rain);level.setThunderLevel(0F);level.updateSkyBrightness(); }
+        void clock(int ticks) {
+            var data=(ServerLevelData)level.getLevelData();var chunk=level.getChunkAt(pos);
+            TimedCropGrowth.tickChunk(level,chunk);
+            for(int tick=0;tick<ticks;tick++) {
+                data.setGameTime(level.getGameTime()+1L);TimedCropGrowth.tickChunk(level,chunk);
+            }
+        }
         void biome(ResourceKey<Biome> key) {
             var biome=level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(key);
             section.fillBiomesFromNoise((x,y,z,climate)->biome,level.getChunkSource().randomState().sampler(),quartX,quartY,quartZ);
@@ -324,6 +369,8 @@ public final class CropLifecycleGameTests {
             h.assertTrue(Math.abs(CropLifecycle.growthRate(level.getBlockState(pos),level,pos)-expected)<.000001F,reason);
         }
         @Override public void close() {
+            ((ServerLevelData)level.getLevelData()).setGameTime(gameTime);
+            level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(randomTickSpeed,level.getServer());
             level.setDayTime(time);level.setRainLevel(rain);level.setThunderLevel(thunder);level.updateSkyBrightness();
             originals.forEach((p,state)->level.setBlock(p,state,2));
             section.fillBiomesFromNoise((x,y,z,climate)->biomes.get(x&3,y&3,z&3),level.getChunkSource().randomState().sampler(),quartX,quartY,quartZ);

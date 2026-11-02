@@ -156,6 +156,10 @@ public final class CropJadeAudit implements DataProvider {
             check(recording.tagged.getOrDefault(UID, 0) == recording.components.size(), name + ": each crop line needs its own MITE tag");
             java.util.Set<String> keys = new java.util.LinkedHashSet<>(); recording.components.forEach(component -> collectKeys(component, keys));
             check(!keys.contains("tooltip.mite.crop.condition.temperature"), name + ": retired temperature warnings must never reappear");
+            check(!keys.contains("tooltip.mite.crop.countdown") && !keys.contains("tooltip.mite.crop.countdown.stem")
+                            && !keys.contains("tooltip.mite.crop.countdown.waiting"),
+                    name + ": state-only fallback cannot invent an estimated maturity time");
+            check(!keys.contains("tooltip.mite.crop.countdown.actual"),name+": state-only fallback cannot invent a saved growth clock");
             for (String key : required) check(keys.contains(key), name + ": missing " + key);
             for (String key : forbidden) check(!keys.contains(key), name + ": invented/incorrect detail " + key);
             // Model a later-priority native provider or a user-customized sort order.
@@ -168,7 +172,7 @@ public final class CropJadeAudit implements DataProvider {
         private static void auditPayload(net.minecraft.world.level.block.state.BlockState state, JsonObject report) {
             var base = io.github.ningmeng123.mite.integration.CropInspection.state(state);
             var detailed = new io.github.ningmeng123.mite.integration.CropInspection.Snapshot(base.kind(), base.health(), base.age(), base.maxAge(),
-                    7, true, io.github.ningmeng123.mite.integration.CropInspection.Condition.GROWING, 15, 1, -1, -1);
+                    7, true, io.github.ningmeng123.mite.integration.CropInspection.Condition.GROWING, 15, 1, -1, -1, 500L);
             net.minecraft.nbt.CompoundTag packet = new net.minecraft.nbt.CompoundTag(), payload = new net.minecraft.nbt.CompoundTag();
             payload.putLong("position", POSITION.asLong()); payload.putString("block", "minecraft:wheat");
             payload.putString("dimension", "minecraft:overworld"); payload.putString("state", state.toString());
@@ -176,6 +180,7 @@ public final class CropJadeAudit implements DataProvider {
             packet.put(io.github.ningmeng123.mite.integration.jade.CropJadeProvider.DATA_KEY, payload);
             check(decode(state, packet, false).equals(detailed), "Exact target payload must supply real soil and growth conditions");
             check(decode(state, packet, true).equals(base), "Fake target must ignore a matching server packet");
+            auditCountdown(state,packet,report);
             var legacy = packet.copy();
             legacy.getCompound(io.github.ningmeng123.mite.integration.jade.CropJadeProvider.DATA_KEY).getCompound("data").putString("condition", "TEMPERATURE");
             var migrated = decode(state, legacy, false);
@@ -200,6 +205,12 @@ public final class CropJadeAudit implements DataProvider {
             invalid.put("age_disagrees", data -> data.getCompound("data").putInt("age", 4));
             invalid.put("kind_disagrees", data -> data.getCompound("data").putString("kind", "SOIL"));
             invalid.put("invalid_moisture", data -> data.getCompound("data").putInt("moisture", 8));
+            invalid.put("string_growth_time", data -> data.getCompound("data").putString("growthTicks", "500"));
+            invalid.put("integer_growth_time", data -> data.getCompound("data").putInt("growthTicks", 500));
+            invalid.put("negative_growth_time", data -> data.getCompound("data").putLong("growthTicks", -2L));
+            invalid.put("growth_time_for_mushroom", data -> data.getCompound("data").putString("kind", "MUSHROOM"));
+            invalid.put("growth_time_while_dry", data -> data.getCompound("data").putString("condition", "DRY"));
+            invalid.put("growth_time_without_diagnosis", data -> data.getCompound("data").putString("condition", "NONE"));
             invalid.forEach((name, mutation) -> {
                 var corrupt = packet.copy(); mutation.accept(corrupt.getCompound(io.github.ningmeng123.mite.integration.jade.CropJadeProvider.DATA_KEY));
                 check(decode(state, corrupt, false).equals(base), name + ": stale/malformed data must fall back to local block state"); rejected.add(name);
@@ -209,6 +220,62 @@ public final class CropJadeAudit implements DataProvider {
             fact.addProperty("obsolete_temperature_payload_warning_removed", true);
             fact.add("rejected_payloads", rejected); fact.addProperty("fallback_moisture", base.moisture()); fact.addProperty("fallback_condition", base.condition().name());
             report.add("server_payload_context", fact);
+        }
+
+        private static void auditCountdown(net.minecraft.world.level.block.state.BlockState state,
+                net.minecraft.nbt.CompoundTag packet,JsonObject report) {
+            var timed=decode(state,packet,false);
+            var lines=io.github.ningmeng123.mite.integration.CropInspection.lines(timed);
+            java.util.Set<String> keys=new java.util.LinkedHashSet<>();lines.forEach(component->collectKeys(component,keys));
+            check(keys.contains("tooltip.mite.crop.countdown")&&!keys.contains("tooltip.mite.crop.mature"),
+                    "Matching server timing data adds an estimate while keeping actual immaturity");
+            var timer=lines.stream().filter(component->component.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text
+                    &&text.getKey().equals("tooltip.mite.crop.countdown")).findFirst().orElseThrow();
+            check(((net.minecraft.network.chat.contents.TranslatableContents)timer.getContents()).getArgs()[0].equals("0:00:25"),
+                    "The localized countdown formats five hundred game ticks as twenty-five seconds");
+
+            keys.clear();io.github.ningmeng123.mite.integration.CropInspection.lines(timed,0L).forEach(component->collectKeys(component,keys));
+            check(keys.contains("tooltip.mite.crop.countdown.waiting")&&!keys.contains("tooltip.mite.crop.mature"),
+                    "An elapsed random-growth estimate waits instead of fabricating a mature state");
+
+            var night=packet.copy();
+            night.getCompound(io.github.ningmeng123.mite.integration.jade.CropJadeProvider.DATA_KEY).getCompound("data").putString("condition","LIGHT");
+            keys.clear();io.github.ningmeng123.mite.integration.CropInspection.lines(decode(state,night,false))
+                    .forEach(component->collectKeys(component,keys));
+            check(keys.contains("tooltip.mite.crop.countdown.paused")&&!keys.contains("tooltip.mite.crop.countdown"),
+                    "A valid nighttime snapshot pauses rather than runs the displayed estimate");
+
+            var old=packet.copy();
+            old.getCompound(io.github.ningmeng123.mite.integration.jade.CropJadeProvider.DATA_KEY).getCompound("data").remove("growthTicks");
+            var legacy=decode(state,old,false);
+            check(legacy.growthTicks()==-1L&&legacy.condition()==io.github.ningmeng123.mite.integration.CropInspection.Condition.GROWING,
+                    "Older version-one servers keep their diagnostics while missing timing stays unknown");
+            keys.clear();io.github.ningmeng123.mite.integration.CropInspection.lines(legacy).forEach(component->collectKeys(component,keys));
+            check(!keys.contains("tooltip.mite.crop.countdown"),"Older servers do not cause a guessed numeric countdown");
+
+            var actual=packet.copy();
+            actual.getCompound(io.github.ningmeng123.mite.integration.jade.CropJadeProvider.DATA_KEY)
+                    .getCompound("data").putBoolean("timedGrowth",true);
+            var persisted=decode(state,actual,false);
+            check(persisted.timedGrowth(),"The server payload distinguishes a saved clock from a stochastic estimate");
+            keys.clear();io.github.ningmeng123.mite.integration.CropInspection.lines(persisted)
+                    .forEach(component->collectKeys(component,keys));
+            check(keys.contains("tooltip.mite.crop.countdown.actual")&&!keys.contains("tooltip.mite.crop.countdown"),
+                    "Persistent ordinary crops display actual remaining time without an estimated-maturity label");
+            keys.clear();io.github.ningmeng123.mite.integration.CropInspection.lines(persisted,0L)
+                    .forEach(component->collectKeys(component,keys));
+            check(keys.contains("tooltip.mite.crop.countdown.actual_waiting")&&!keys.contains("tooltip.mite.crop.countdown.waiting"),
+                    "A completed clock waits for a growth update rather than a lucky random tick");
+            check(io.github.ningmeng123.mite.integration.CropGrowthCountdown.remainingAtSample(500,true,1000,1020)==480,
+                    "A real clock interpolates only game time since the server sample");
+            check(io.github.ningmeng123.mite.integration.CropGrowthCountdown.remainingAtSample(500,false,1000,1020)==500,
+                    "Paused clocks cannot consume the sampling interval");
+
+            JsonObject fact=new JsonObject();fact.addProperty("matched_timing_payload",true);
+            fact.addProperty("formatted_duration","0:00:25");fact.addProperty("elapsed_estimate_waits_for_random_growth",true);
+            fact.addProperty("nighttime_pauses",true);fact.addProperty("old_server_without_time_falls_back",true);
+            fact.addProperty("world_or_render_used",false);report.add("crop_growth_countdown",fact);
+            fact.addProperty("persistent_clock_payload_and_actual_labels",true);
         }
 
         private static io.github.ningmeng123.mite.integration.CropInspection.Snapshot decode(net.minecraft.world.level.block.state.BlockState state,

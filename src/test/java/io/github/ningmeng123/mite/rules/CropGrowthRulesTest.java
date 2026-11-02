@@ -5,21 +5,14 @@ import org.junit.jupiter.api.Test;
 
 /** Literal source boundaries are independent of the modern world implementation. @author NingMeng123 */
 final class CropGrowthRulesTest {
-    @Test void normalDayNightFoodCropsAndFirstMelonFruitAverageOneRealHour() {
-        // Independent selection arithmetic: 4096 positions, three picks/tick, 20 ticks/sec.
-        for(int stages:new int[]{3,7}) {
-            int threshold=CropGrowthRules.growthThreshold(1.25F,1.25F,stages);
-            double chance=threshold/1_000_000D;
-            double minutes=stages*4096D/(3D*20D*60D*chance*(12081D/24000D));
-            assertEquals(60D,minutes,.001D,"Food stages="+stages);
-        }
+    @Test void legacyFruitAttemptCalibrationRetainsItsReferenceWhileFoodUsesThePersistentClock() {
         for(float rate:new float[]{2F,2.5F}) {
             // Seven stem stages + 1/(1/2 fruit gate * 2/4 open directions) = eleven.
             int threshold=CropGrowthRules.growthThreshold(rate,rate,11);
             assertEquals(60D,11D*4096D/(3D*20D*60D*(threshold/1_000_000D)*(12081D/24000D)),.001D);
         }
     }
-    @Test void calibratedGrowthPreservesEnvironmentAndCannotExceedOneAdvancePerRandomTick() {
+    @Test void legacyFruitRollPreservesEnvironmentAndCannotAcceptMoreThanOneAttemptPerRandomTick() {
         int normal=CropGrowthRules.growthThreshold(1.25F,1.25F,7);
         assertEquals(normal*.5,CropGrowthRules.growthThreshold(.625F,1.25F,7),1D);
         assertEquals(normal*1.5,CropGrowthRules.growthThreshold(1.875F,1.25F,7),1D);

@@ -1,12 +1,14 @@
 package io.github.ningmeng123.mite.integration.jade;
 
 import io.github.ningmeng123.mite.integration.CropInspection;
+import io.github.ningmeng123.mite.integration.CropGrowthCountdown;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.jade.api.Accessor;
 import snownee.jade.api.BlockAccessor;
@@ -53,6 +55,7 @@ public enum CropJadeProvider implements IBlockComponentProvider, IServerDataProv
         payload.putString("block", BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString());
         payload.putString("dimension", level.dimension().location().toString());
         payload.putString("state", state.toString());
+        payload.putLong("sampleTime",level.getGameTime());
         payload.put("data", CropInspection.save(snapshot));
         data.put(DATA_KEY, payload);
     }
@@ -64,7 +67,14 @@ public enum CropJadeProvider implements IBlockComponentProvider, IServerDataProv
         if (accessor.isFakeBlock() || !serverData.contains(DATA_KEY, Tag.TAG_COMPOUND)) {
             return CropInspection.state(state);
         }
-        return snapshot(state, accessor.getPosition(), accessor.getLevel().dimension().location(), serverData, false);
+        Level level=accessor.getLevel();
+        CompoundTag payload=serverData.getCompound(DATA_KEY);
+        if(payload.contains("sampleTime",Tag.TAG_LONG)) {
+            long sampled=payload.getLong("sampleTime"),now=level.getGameTime();
+            if(sampled>now+20||sampled<now-100)return CropInspection.state(state);
+        } else if(payload.getCompound("data").contains("growthTicks",Tag.TAG_LONG)
+                &&payload.getCompound("data").getLong("growthTicks")>=0)return CropInspection.state(state);
+        return snapshot(state, accessor.getPosition(), level.dimension().location(), serverData, false);
     }
 
     /** Context validation also accepts plain values, without requiring a second world or accessor. */
@@ -91,7 +101,13 @@ public enum CropJadeProvider implements IBlockComponentProvider, IServerDataProv
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
         CropInspection.Snapshot snapshot = snapshot(accessor);
         if (snapshot == null) return;
-        var lines = CropInspection.lines(snapshot);
+        long remaining=snapshot.growthTicks();
+        if(snapshot.timedGrowth()&&remaining>=0) {
+            CompoundTag payload=accessor.getServerData().getCompound(DATA_KEY);
+            remaining=CropGrowthCountdown.remainingAtSample(remaining,snapshot.condition()==CropInspection.Condition.GROWING,
+                    payload.getLong("sampleTime"),accessor.getLevel().getGameTime());
+        }
+        var lines = CropInspection.lines(snapshot,remaining);
         if (lines.isEmpty()) return;
         tooltip.remove(JadeIds.MC_CROP_PROGRESS);
         lines.forEach(line -> tooltip.add(line, UID));

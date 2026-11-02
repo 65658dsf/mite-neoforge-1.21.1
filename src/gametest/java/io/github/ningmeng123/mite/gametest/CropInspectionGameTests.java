@@ -26,6 +26,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.AttachedStemBlock;
@@ -249,6 +250,143 @@ public final class CropInspectionGameTests {
     }
 
     @GameTest(template="empty")
+    public static void foodMaturityClockUsesActualStagesFertilizerAndNeighbourLayout(GameTestHelper h) {
+        try(var f=new Fixture(h)) {
+            for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++)f.set(f.pos.offset(x,-1,z),wet());
+            CropBlock[] crops={(CropBlock)Blocks.WHEAT,(CropBlock)Blocks.CARROTS,(CropBlock)Blocks.POTATOES,
+                    (CropBlock)Blocks.BEETROOTS,MiteFoodPlants.ONIONS.get()};
+            for(var crop:crops) {
+                var plant=crop.getStateForAge(1);f.set(f.pos,plant);
+                var snapshot=CropInspection.inspect(f.level,f.pos,plant);
+                // Nine wet cells: (1 + 3 + 8*3/4) * 1/4 * isolated-plant 1/2 = 1.25.
+                h.assertValueEqual(snapshot.growthTicks(),expectedFoodTicks(crop.getMaxAge(),1,1.25D),
+                        "Countdown uses the plant's real maximum, including three-stage modern beetroot");
+                h.assertTrue(snapshot.timedGrowth(),"Food crops expose the authoritative persistent growth clock");
+                h.assertTrue(has(CropInspection.lines(snapshot),"tooltip.mite.crop.countdown.actual"),"Healthy server data exposes actual remaining growth time");
+            }
+            var wheat=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,1);f.set(f.pos,wheat);
+            f.set(f.pos.below(),wet().setValue(FoodAgriculture.FERTILIZED,true));
+            var fertilized=CropInspection.inspect(f.level,f.pos,wheat);
+            h.assertValueEqual(fertilized.growthTicks(),expectedFoodTicks(7,1,1.875D),"Central fertilizer feeds the capped clock speed from its real layout multiplier");
+            f.set(f.pos.below(),wet());f.set(f.pos.east(),wheat);f.set(f.pos.west(),wheat);
+            var row=CropInspection.inspect(f.level,f.pos,wheat);
+            h.assertValueEqual(row.growthTicks(),expectedFoodTicks(7,1,2.5D),"Two row neighbours improve clock speed without crowding across axes");
+            f.set(f.pos.north().east(),wheat);
+            var crowded=CropInspection.inspect(f.level,f.pos,wheat);
+            h.assertValueEqual(crowded.growthTicks(),expectedFoodTicks(7,1,1.25D),"A diagonal living crop removes the row's speed bonus");
+            h.assertTrue(crowded.growthTicks()>row.growthTicks(),"Countdown lengthens when the actual layout slows growth");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void growthClockIgnoresPositiveRandomTickSpeedAndPausesForNightOrDisabledTicks(GameTestHelper h) {
+        try(var f=new Fixture(h)) {
+            var plant=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2);f.set(f.pos.below(),wet());f.set(f.pos,plant);
+            var sunny=CropInspection.inspect(f.level,f.pos,plant);
+            f.weather(18000L);
+            var night=CropInspection.inspect(f.level,f.pos,plant);
+            h.assertValueEqual(night.condition(),Condition.LIGHT,"Nighttime remains an explicit growth pause");
+            h.assertValueEqual(night.growthTicks(),sunny.growthTicks(),"Night keeps the same estimate of eligible growth ticks, without counting darkness as progress");
+            h.assertTrue(has(CropInspection.lines(night),"tooltip.mite.crop.countdown.paused"),"The paused line replaces a falsely running countdown");
+            h.assertFalse(has(CropInspection.lines(night),"tooltip.mite.crop.countdown.actual"),"Nighttime does not display a running maturity timer");
+            f.weather(6000L);f.tickSpeed(6);
+            var fast=CropInspection.inspect(f.level,f.pos,plant);
+            h.assertValueEqual(fast.growthTicks(),sunny.growthTicks(),"Positive randomTickSpeed changes cannot accelerate the real crop clock");
+            f.tickSpeed(0);
+            var disabled=CropInspection.inspect(f.level,f.pos,plant);
+            h.assertValueEqual(disabled.condition(),Condition.RANDOM_TICKS_DISABLED,"Disabled random ticks explain why a wet sunlit crop cannot advance");
+            h.assertValueEqual(disabled.growthTicks(),-1L,"A stopped random-tick clock cannot promise a finite maturity time");
+            h.assertTrue(has(CropInspection.lines(disabled),"tooltip.mite.crop.countdown.paused"),"Jade explicitly pauses the clock when random ticks are disabled");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void specialCropClocksUseSourceChanceAndStopAtStemMaturity(GameTestHelper h) {
+        try(var f=new Fixture(h)) {
+            f.biome(Biomes.FOREST);f.set(f.pos.below(),Blocks.GRASS_BLOCK.defaultBlockState());
+            var berry=MiteFoodPlants.BLUEBERRY_BUSH.get().defaultBlockState().setValue(SweetBerryBushBlock.AGE,1);f.set(f.pos,berry);
+            var berries=CropInspection.inspect(f.level,f.pos,berry);
+            h.assertValueEqual(berries.condition(),Condition.GROWING,"The berry fixture has valid forest soil and daylight");
+            h.assertValueEqual(berries.growthTicks(),109227L,"Two remaining berry stages average 2*4096*40/3 eligible ticks");
+            f.set(f.pos,Blocks.AIR.defaultBlockState());f.set(f.pos.north(),Blocks.JUNGLE_LOG.defaultBlockState());
+            var cocoa=Blocks.COCOA.defaultBlockState().setValue(CocoaBlock.FACING,Direction.NORTH).setValue(CocoaBlock.AGE,1);f.set(f.pos,cocoa);
+            var pod=CropInspection.inspect(f.level,f.pos,cocoa);
+            h.assertValueEqual(pod.condition(),Condition.GROWING,"The cocoa pod is attached to its actual jungle log");
+            h.assertValueEqual(pod.growthTicks(),54614L,"Cocoa uses the source 1/40 chance rather than vanilla 1/5 growth");
+            f.set(f.pos.north(),Blocks.AIR.defaultBlockState());f.set(f.pos.below(),Blocks.SOUL_SAND.defaultBlockState());
+            var wart=Blocks.NETHER_WART.defaultBlockState().setValue(NetherWartBlock.AGE,1);f.set(f.pos,wart);
+            var wrongWorld=CropInspection.inspect(f.level,f.pos,wart);
+            h.assertValueEqual(wrongWorld.condition(),Condition.WRONG_DIMENSION,"Soul sand in the Overworld still cannot grow source nether wart");
+            h.assertValueEqual(wrongWorld.growthTicks(),-1L,"No nether-wart timer runs outside its permitted dimension");
+            h.assertTrue(has(CropInspection.lines(wrongWorld),"tooltip.mite.crop.countdown.paused"),"The wart clock shows its dimension pause");
+            f.set(f.pos.below(),wet());
+            var stem=Blocks.MELON_STEM.defaultBlockState().setValue(StemBlock.AGE,6);f.set(f.pos,stem);
+            var growingStem=CropInspection.inspect(f.level,f.pos,stem);
+            h.assertTrue(growingStem.growthTicks()>0&&growingStem.timedGrowth()&&has(CropInspection.lines(growingStem),"tooltip.mite.crop.countdown.actual_stem"),"The persistent stem clock measures full stem growth");
+            var fullStem=stem.setValue(StemBlock.AGE,7);f.set(f.pos,fullStem);
+            h.assertValueEqual(CropInspection.inspect(f.level,f.pos,fullStem).growthTicks(),-1L,"A grown stem does not invent a fruit-production deadline");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void missingDataDiseaseDeathAndElapsedPredictionNeverInventMaturity(GameTestHelper h) {
+        try(var f=new Fixture(h)) {
+            var plant=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2);f.set(f.pos.below(),wet());f.set(f.pos,plant);
+            var snapshot=CropInspection.inspect(f.level,f.pos,plant);
+            var elapsed=CropInspection.lines(snapshot,0L);
+            h.assertTrue(has(elapsed,"tooltip.mite.crop.countdown.actual_waiting"),"A client prediction that reaches zero waits for the next authoritative server growth update");
+            h.assertFalse(has(elapsed,"tooltip.mite.crop.mature"),"The estimate reaching zero cannot claim the block actually matured");
+            h.assertFalse(has(CropInspection.lines(CropInspection.state(plant)),"tooltip.mite.crop.countdown.actual"),"State-only fallback has no guessed environment or maturity time");
+            var sick=plant.setValue(CubeCropBlight.BLIGHTED,true);f.set(f.pos,sick);
+            var illness=CropInspection.inspect(f.level,f.pos,sick);
+            h.assertValueEqual(illness.growthTicks(),-1L,"Disease stops the maturity estimate until treated");
+            h.assertTrue(has(CropInspection.lines(illness),"tooltip.mite.crop.countdown.paused"),"A living diseased crop advertises its paused clock");
+            var dead=sick.setValue(CubeCropBlight.DEAD,true);f.set(f.pos,dead);
+            var death=CropInspection.inspect(f.level,f.pos,dead);
+            h.assertValueEqual(death.growthTicks(),-1L,"Dead crops have no maturity estimate");
+            h.assertFalse(has(CropInspection.lines(death),"tooltip.mite.crop.countdown.paused"),"A dead plant cannot suggest that its growth could resume");
+            var mature=plant.setValue(CropBlock.AGE,7);f.set(f.pos,mature);
+            var ready=CropInspection.inspect(f.level,f.pos,mature);
+            h.assertValueEqual(ready.growthTicks(),-1L,"Already mature crops do not need a countdown");
+            h.assertTrue(has(CropInspection.lines(ready),"tooltip.mite.crop.mature"),"Only actual mature state provides the ready-to-harvest label");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void growthTimingPayloadRetainsLegacyFallbackAndRejectsImpossibleEstimates(GameTestHelper h) {
+        var expected=new CropInspection.Snapshot(Kind.FOOD,Health.HEALTHY,2,7,7,false,Condition.GROWING,15,1,-1,-1,500L,true);
+        var encoded=CropInspection.save(expected);
+        h.assertValueEqual(CropInspection.load(encoded),expected,"Eligible growth time survives the optional server round trip");
+        var old=encoded.copy();old.remove("growthTicks");old.remove("timedGrowth");
+        var legacy=CropInspection.load(old);
+        h.assertValueEqual(legacy.growthTicks(),-1L,"Version-one servers without timing data keep the unknown sentinel");
+        h.assertFalse(legacy.timedGrowth(),"Older payloads without an explicit clock mode remain compatible without inventing an authoritative timer");
+        h.assertFalse(has(CropInspection.lines(legacy),"tooltip.mite.crop.countdown"),"Legacy diagnostics never fabricate a countdown");
+        Map<String,java.util.function.Consumer<CompoundTag>> invalid=new LinkedHashMap<>();
+        invalid.put("string timing",tag->tag.putString("growthTicks","500"));
+        invalid.put("integer timing",tag->tag.putInt("growthTicks",500));
+        invalid.put("string clock mode",tag->tag.putString("timedGrowth","true"));
+        invalid.put("negative timing",tag->tag.putLong("growthTicks",-2));
+        invalid.put("non-growing kind",tag->tag.putString("kind","MUSHROOM"));
+        invalid.put("clock applied to random special crop",tag->tag.putString("kind","COCOA"));
+        invalid.put("clock applied to random berries",tag->tag.putString("kind","BERRY"));
+        invalid.put("diseased plant",tag->tag.putString("health","BLIGHTED"));
+        invalid.put("dead plant",tag->tag.putString("health","DEAD"));
+        invalid.put("mature plant",tag->tag.putInt("age",7));
+        invalid.put("dry condition",tag->tag.putString("condition","DRY"));
+        invalid.put("unknown condition",tag->tag.putString("condition","NONE"));
+        invalid.forEach((name,mutation)->{
+            var corrupt=encoded.copy();mutation.accept(corrupt);
+            h.assertTrue(CropInspection.load(corrupt)==null,"Impossible growth time is rejected: "+name);
+        });
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
     public static void legacyTemperaturePayloadKeepsCropFactsWithoutRevivingAnObsoleteGrowthWarning(GameTestHelper h) {
         var wheat=Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,2);
         var facts=CropInspection.state(wheat);
@@ -291,6 +429,12 @@ public final class CropInspectionGameTests {
     }
 
     private static BlockState wet() {return Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE,7);}
+    private static long expectedFoodTicks(int maxAge,int age,double rate) {
+        // Old crops migrate once from their saved stage; new plants start at work zero.
+        long total=504_000_000_000L,work=total*age/maxAge;
+        long speed=Math.round(7_000_000D+(Math.clamp(rate/1.25D,1D,3D)-1D)*2_500_000D);
+        return (total-work+speed-1)/speed;
+    }
     private static String key(Component c) {return c.getContents() instanceof TranslatableContents translated?translated.getKey():"";}
     private static boolean has(List<Component> lines,String key) {return lines.stream().anyMatch(c->key(c).equals(key));}
     private static Component line(GameTestHelper h,List<Component> lines,String key) {
@@ -302,24 +446,27 @@ public final class CropInspectionGameTests {
     private static final class Fixture implements AutoCloseable {
         final ServerLevel level;final BlockPos pos;final Map<BlockPos,BlockState> originals=new LinkedHashMap<>();
         final LevelChunkSection section;final PalettedContainerRO<Holder<Biome>> biomes;final int quartX,quartY,quartZ;
-        final long time;final float rain,thunder;
+        final long time;final float rain,thunder;final int randomTickSpeed;
         Fixture(GameTestHelper h) {
             level=h.getLevel();var ref=h.absolutePos(new BlockPos(2,2,2));
             pos=new BlockPos((ref.getX()&~15)+8,((level.getMaxBuildHeight()-56)&~15)+8,(ref.getZ()&~15)+8);
             var chunk=level.getChunkAt(pos);section=chunk.getSection(chunk.getSectionIndex(pos.getY()));biomes=section.getBiomes();
             quartX=QuartPos.fromBlock(chunk.getPos().getMinBlockX());quartY=QuartPos.fromBlock(pos.getY())&~3;quartZ=QuartPos.fromBlock(chunk.getPos().getMinBlockZ());
             time=level.getDayTime();rain=level.getRainLevel(1F);level.setRainLevel(1F);thunder=level.getThunderLevel(1F);level.setRainLevel(rain);
+            randomTickSpeed=level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);tickSpeed(3);
             for(BlockPos cell:BlockPos.betweenClosed(pos.offset(-4,-1,-4),pos.offset(4,3,4)))set(cell,Blocks.AIR.defaultBlockState());
             biome(Biomes.PLAINS);weather(6000L);
         }
         void set(BlockPos p,BlockState state) {originals.putIfAbsent(p.immutable(),level.getBlockState(p));level.setBlock(p,state,2);}
         void weather(long time) {level.setDayTime(time);level.setRainLevel(0F);level.setThunderLevel(0F);level.updateSkyBrightness();}
+        void tickSpeed(int speed) {level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(speed,level.getServer());}
         void biome(ResourceKey<Biome> key) {
             var biome=level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(key);
             section.fillBiomesFromNoise((x,y,z,climate)->biome,level.getChunkSource().randomState().sampler(),quartX,quartY,quartZ);
         }
         @Override public void close() {
             level.setDayTime(time);level.setRainLevel(rain);level.setThunderLevel(thunder);level.updateSkyBrightness();
+            tickSpeed(randomTickSpeed);
             originals.forEach((p,state)->level.setBlock(p,state,2));
             section.fillBiomesFromNoise((x,y,z,climate)->biomes.get(x&3,y&3,z&3),level.getChunkSource().randomState().sampler(),quartX,quartY,quartZ);
         }

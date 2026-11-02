@@ -6,7 +6,9 @@ import io.github.ningmeng123.mite.registry.MiteFoodPlants;
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
 import io.github.ningmeng123.mite.survival.FungalGrowth;
 import io.github.ningmeng123.mite.survival.SpecialPlantGrowth;
+import io.github.ningmeng123.mite.survival.TimedCropGrowth;
 import io.github.ningmeng123.mite.survival.TropicalPlantGrowth;
+import io.github.ningmeng123.mite.rules.CropGrowthRules;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.NbtUtils;
@@ -28,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -42,6 +46,7 @@ import net.minecraft.world.level.block.StemBlock;
 import net.minecraft.world.level.block.SugarCaneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -71,8 +76,14 @@ public final class SpecialPlantGameTests {
                     h.assertValueEqual(SpecialPlantGrowth.stemGrowth(f.level,f.pos,seed),2.5F,
                             "Cold, temperate and hot dry biomes share the former optimal stem growth");
                     seed.randomTick(f.level,f.pos,new Draws(new int[]{0,1},new float[0]));
+                    h.assertValueEqual(f.level.getBlockState(f.pos).getValue(StemBlock.AGE),0,
+                            "Even a winning random draw cannot bypass the real stem clock in any temperature zone");
+                    h.assertValueEqual(TimedCropGrowth.remainingTicks(f.level,f.pos,seed),
+                            CropGrowthRules.timedRemainingTicks(0L,2.5F),
+                            "The real clock gives the same bounded duration in every temperature zone");
+                    finishNextStemStage(f.level,f.pos);
                     h.assertValueEqual(f.level.getBlockState(f.pos).getValue(StemBlock.AGE),1,
-                            "An accepted real stem tick advances in every temperature zone");
+                            "A stem with sufficient saved growth work advances through the real clock in every temperature zone");
                 }
                 f.set(f.pos.below(),Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE,0));
                 h.assertValueEqual(SpecialPlantGrowth.stemGrowth(f.level,f.pos,f.level.getBlockState(f.pos)),0F,
@@ -82,7 +93,7 @@ public final class SpecialPlantGameTests {
         h.succeed();
     }
     @GameTest(template="empty")
-    public static void calibratedMelonAndPumpkinRowsIncludeActualFruitProduction(GameTestHelper h) {
+    public static void timedMelonAndPumpkinRowsKeepSeparateActualFruitProduction(GameTestHelper h) {
         try(Fixture f=new Fixture(h.getLevel(),h)) {
             f.daylight();
             for(boolean melon:new boolean[]{false,true}) {
@@ -95,7 +106,9 @@ public final class SpecialPlantGameTests {
                 for(int age=0;age<7;age++) {
                     BlockState before=f.level.getBlockState(f.pos);
                     before.randomTick(f.level,f.pos,new Draws(new int[]{0,1},new float[0]));
-                    h.assertValueEqual(f.level.getBlockState(f.pos).getValue(StemBlock.AGE),age+1,"Every accepted native stem update advances exactly one age");
+                    h.assertValueEqual(f.level.getBlockState(f.pos).getValue(StemBlock.AGE),age,"Lucky native random updates cannot advance an immature timed stem");
+                    finishNextStemStage(f.level,f.pos);
+                    h.assertValueEqual(f.level.getBlockState(f.pos).getValue(StemBlock.AGE),age+1,"Every completed saved-work boundary advances exactly one real stem age");
                     h.assertTrue(f.level.getBlockState(f.pos.north()).isAir()&&f.level.getBlockState(f.pos.south()).isAir(),"Growing a stem to age seven does not yet deliver fruit");
                 }
                 BlockState mature=f.level.getBlockState(f.pos);
@@ -360,6 +373,32 @@ public final class SpecialPlantGameTests {
                 .withParameter(LootContextParams.BLOCK_STATE,state).withParameter(LootContextParams.TOOL,ItemStack.EMPTY);
         if(player!=null) builder.withParameter(LootContextParams.THIS_ENTITY,player);
         return state.getDrops(builder);
+    }
+    /** Restore a legitimate near-stage saved clock, then exercise its actual native chunk-tick update. */
+    private static void finishNextStemStage(ServerLevel level,BlockPos pos) {
+        var state=level.getBlockState(pos);
+        int next=state.getValue(StemBlock.AGE)+1;
+        long threshold=(CropGrowthRules.TIMED_MATURITY_WORK*next+6)/7;
+        long speed=CropGrowthRules.timedWorkPerTick(SpecialPlantGrowth.stemGrowth(level,pos,state));
+        var chunk=level.getChunkAt(pos);
+        var entries=new ArrayList<>(chunk.getData(TimedCropGrowth.CLOCKS.get()).entries());
+        entries.removeIf(entry->entry.position()==pos.asLong());
+        entries.add(new TimedCropGrowth.Entry(pos.asLong(),BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString(),Math.max(0,threshold-speed)));
+        chunk.setData(TimedCropGrowth.CLOCKS.get(),new TimedCropGrowth.Data(entries));
+        long time=level.getGameTime();
+        int tickSpeed=level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+        try {
+            // Headless GameTest defaults randomTickSpeed to zero; enable the production clock explicitly.
+            level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(3,level.getServer());
+            TimedCropGrowth.tickChunk(level,chunk);
+            for(int tick=1;tick<=21;tick++) {
+                ((ServerLevelData)level.getLevelData()).setGameTime(time+tick);
+                TimedCropGrowth.tickChunk(level,chunk);
+            }
+        } finally {
+            ((ServerLevelData)level.getLevelData()).setGameTime(time);
+            level.getGameRules().getRule(GameRules.RULE_RANDOMTICKING).set(tickSpeed,level.getServer());
+        }
     }
     private static final class Draws extends LegacyRandomSource {
         private final int[] ints; private final float[] floats; private int intIndex,floatIndex,lastBound;

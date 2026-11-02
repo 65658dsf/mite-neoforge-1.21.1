@@ -6,14 +6,17 @@ import io.github.ningmeng123.mite.survival.CropLifecycle;
 import io.github.ningmeng123.mite.survival.FoodAgriculture;
 import io.github.ningmeng123.mite.survival.FungalGrowth;
 import io.github.ningmeng123.mite.survival.SpecialPlantGrowth;
+import io.github.ningmeng123.mite.survival.TimedCropGrowth;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CocoaBlock;
@@ -29,12 +32,20 @@ public final class CropInspection {
     public enum Kind { FOOD, STEM, BERRY, SOIL, COCOA, WART, MUSHROOM, CANE, CACTUS }
     public enum Health { NONE, HEALTHY, BLIGHTED, DEAD }
     // TEMPERATURE is retained only so version-one payloads from an older server still decode.
-    public enum Condition { NONE, GROWING, BLIGHTED, DEAD, DRY, LIGHT, TEMPERATURE, UNSUITABLE, FRUIT_PRESENT, WRONG_DIMENSION, GIANT_READY }
+    public enum Condition { NONE, GROWING, BLIGHTED, DEAD, DRY, LIGHT, TEMPERATURE, UNSUITABLE, FRUIT_PRESENT, WRONG_DIMENSION, GIANT_READY, RANDOM_TICKS_DISABLED }
     public record Snapshot(Kind kind,Health health,int age,int maxAge,int moisture,boolean fertilized,
-            Condition condition,int light,int irrigation,int height,int heightLimit) {
+            Condition condition,int light,int irrigation,int height,int heightLimit,long growthTicks,boolean timedGrowth) {
+        public Snapshot(Kind kind,Health health,int age,int maxAge,int moisture,boolean fertilized,
+                Condition condition,int light,int irrigation,int height,int heightLimit) {
+            this(kind,health,age,maxAge,moisture,fertilized,condition,light,irrigation,height,heightLimit,-1,false);
+        }
+        public Snapshot(Kind kind,Health health,int age,int maxAge,int moisture,boolean fertilized,
+                Condition condition,int light,int irrigation,int height,int heightLimit,long growthTicks) {
+            this(kind,health,age,maxAge,moisture,fertilized,condition,light,irrigation,height,heightLimit,growthTicks,false);
+        }
         public Snapshot {
             // Old diagnostics cannot establish a current growth condition after the temperature gate was removed.
-            if(condition==Condition.TEMPERATURE)condition=Condition.NONE;
+            if(condition==Condition.TEMPERATURE) {condition=Condition.NONE;growthTicks=-1;}
         }
     }
     private CropInspection() {}
@@ -89,25 +100,50 @@ public final class CropInspection {
             BlockPos top=pos;while(top.getY()+1<level.getMaxBuildHeight()&&level.getBlockState(top.above()).is(state.getBlock()))top=top.above();
             height=top.getY()-bottom.getY()+1;limit=base.kind()==Kind.CANE?3:SpecialPlantGrowth.cactusHeight(level,bottom.below());
         }
-        return new Snapshot(base.kind(),base.health(),base.age(),base.maxAge(),moisture,fertile,condition,light,irrigation,height,limit);
+        long growthTicks=-1;
+        boolean timedGrowth=TimedCropGrowth.managed(state);
+        if(timed(base)&&canGrow&&(condition==Condition.GROWING||condition==Condition.LIGHT)) {
+            int speed=level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+            if(speed==0&&condition==Condition.GROWING)condition=Condition.RANDOM_TICKS_DISABLED;
+            else if(speed>0&&timedGrowth)growthTicks=TimedCropGrowth.remainingTicks(level,pos,state);
+            else {
+                double chance=switch(base.kind()) {
+                    case BERRY, COCOA, WART -> .025D;
+                    default -> 0D;
+                };
+                growthTicks=CropGrowthCountdown.expectedTicks(base.maxAge()-base.age(),chance,speed);
+            }
+        }
+        return new Snapshot(base.kind(),base.health(),base.age(),base.maxAge(),moisture,fertile,condition,light,irrigation,height,limit,growthTicks,timedGrowth);
     }
 
     public static CompoundTag save(Snapshot s) {
         var tag=new CompoundTag();tag.putInt("version",1);tag.putString("kind",s.kind().name());tag.putString("health",s.health().name());
         tag.putInt("age",s.age());tag.putInt("maxAge",s.maxAge());tag.putInt("moisture",s.moisture());tag.putBoolean("fertilized",s.fertilized());
-        tag.putString("condition",s.condition().name());tag.putInt("light",s.light());tag.putInt("irrigation",s.irrigation());tag.putInt("height",s.height());tag.putInt("heightLimit",s.heightLimit());return tag;
+        tag.putString("condition",s.condition().name());tag.putInt("light",s.light());tag.putInt("irrigation",s.irrigation());tag.putInt("height",s.height());tag.putInt("heightLimit",s.heightLimit());
+        tag.putLong("growthTicks",s.growthTicks());tag.putBoolean("timedGrowth",s.timedGrowth());return tag;
     }
     public static Snapshot load(CompoundTag tag) {
         if(tag.getInt("version")!=1)return null;
+        if(tag.contains("growthTicks")&&!tag.contains("growthTicks",Tag.TAG_LONG))return null;
+        if(tag.contains("timedGrowth")&&!tag.contains("timedGrowth",Tag.TAG_BYTE))return null;
         try {
             var s=new Snapshot(Kind.valueOf(tag.getString("kind")),Health.valueOf(tag.getString("health")),tag.getInt("age"),tag.getInt("maxAge"),
-                    tag.getInt("moisture"),tag.getBoolean("fertilized"),Condition.valueOf(tag.getString("condition")),tag.getInt("light"),tag.getInt("irrigation"),tag.getInt("height"),tag.getInt("heightLimit"));
+                    tag.getInt("moisture"),tag.getBoolean("fertilized"),Condition.valueOf(tag.getString("condition")),tag.getInt("light"),tag.getInt("irrigation"),tag.getInt("height"),tag.getInt("heightLimit"),
+                    tag.contains("growthTicks",Tag.TAG_LONG)?tag.getLong("growthTicks"):-1,tag.getBoolean("timedGrowth"));
             if(s.age() < -1||s.maxAge() < -1||s.maxAge()==0||(s.age()<0)!=(s.maxAge()<0)||s.maxAge()>7||s.age()>s.maxAge()||s.moisture() < -1||s.moisture()>7
-                    ||s.light() < -1||s.light()>15||s.irrigation() < -1||s.irrigation()>1||s.height() < -1||s.height()>1024||s.heightLimit() < -1||s.heightLimit()>3)return null;
+                    ||s.light() < -1||s.light()>15||s.irrigation() < -1||s.irrigation()>1||s.height() < -1||s.height()>1024||s.heightLimit() < -1||s.heightLimit()>3
+                    ||s.growthTicks() < -1||s.growthTicks()>=0&&(!timed(s)||s.health()==Health.BLIGHTED
+                            ||s.condition()!=Condition.GROWING&&s.condition()!=Condition.LIGHT)
+                    ||s.timedGrowth()&&s.kind()!=Kind.FOOD&&s.kind()!=Kind.STEM)return null;
             return s;
         } catch(IllegalArgumentException e) {return null;}
     }
     public static List<Component> lines(Snapshot s) {
+        return lines(s,s==null?-1:s.growthTicks());
+    }
+    /** Ordinary crops expose their real server clock; special random plants expose an estimate. */
+    public static List<Component> lines(Snapshot s,long remainingTicks) {
         if(s==null)return List.of();List<Component> result=new ArrayList<>();
         if(s.health()!=Health.NONE) {
             var color=s.health()==Health.HEALTHY?ChatFormatting.GREEN:s.health()==Health.BLIGHTED?ChatFormatting.YELLOW:ChatFormatting.RED;
@@ -117,6 +153,19 @@ public final class CropInspection {
             if(s.kind()==Kind.MUSHROOM)result.add(Component.translatable("tooltip.mite.crop.giant_progress",s.age(),s.maxAge()));
             else if(s.health()!=Health.DEAD)result.add(s.age()==s.maxAge()&&s.health()!=Health.BLIGHTED?Component.translatable("tooltip.mite.crop.mature").withStyle(ChatFormatting.GREEN)
                     :Component.translatable("tooltip.mite.crop.growth",s.age()*100/s.maxAge(),s.age(),s.maxAge()));
+        }
+        if(timed(s)) {
+            if(s.condition()==Condition.GROWING&&s.growthTicks()>=0&&remainingTicks>=0) {
+                if(remainingTicks==0)result.add(Component.translatable(s.timedGrowth()?"tooltip.mite.crop.countdown.actual_waiting":"tooltip.mite.crop.countdown.waiting").withStyle(ChatFormatting.YELLOW));
+                else {
+                    long seconds=remainingTicks/20+(remainingTicks%20==0?0:1);
+                    String duration=String.format(java.util.Locale.ROOT,"%d:%02d:%02d",seconds/3600,seconds/60%60,seconds%60);
+                    String timerKey=s.timedGrowth()?(s.kind()==Kind.STEM?"tooltip.mite.crop.countdown.actual_stem":"tooltip.mite.crop.countdown.actual")
+                            :(s.kind()==Kind.STEM?"tooltip.mite.crop.countdown.stem":"tooltip.mite.crop.countdown");
+                    result.add(Component.translatable(timerKey,duration).withStyle(ChatFormatting.AQUA));
+                }
+            } else if(s.condition()!=Condition.NONE&&s.condition()!=Condition.GROWING)
+                result.add(Component.translatable("tooltip.mite.crop.countdown.paused").withStyle(ChatFormatting.YELLOW));
         }
         if(s.moisture()>=0)result.add(Component.translatable("tooltip.mite.crop.soil",s.moisture(),
                 Component.translatable(s.fertilized()?"tooltip.mite.crop.fertilized":"tooltip.mite.crop.unfertilized").withStyle(s.fertilized()?ChatFormatting.GREEN:ChatFormatting.GRAY)));
@@ -131,5 +180,9 @@ public final class CropInspection {
         else if(s.health()==Health.DEAD)result.add(Component.translatable("tooltip.mite.crop.no_cure").withStyle(ChatFormatting.GRAY));
         if(s.height()>0)result.add(Component.translatable("tooltip.mite.crop.height",s.height(),s.heightLimit()));
         return List.copyOf(result);
+    }
+    private static boolean timed(Snapshot s) {
+        return s.age()>=0&&s.age()<s.maxAge()&&s.health()!=Health.DEAD
+                &&(s.kind()==Kind.FOOD||s.kind()==Kind.STEM||s.kind()==Kind.BERRY||s.kind()==Kind.COCOA||s.kind()==Kind.WART);
     }
 }
