@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.phys.AABB;
@@ -103,7 +104,7 @@ public final class MitePortals {
         int targetId = route(source, frame);
         if (dimensionId(source) == R196PortalRules.OVERWORLD && targetId == R196PortalRules.OVERWORLD) {
             if (!(entity instanceof ServerPlayer)) return null;
-            Optional<Vec3> position = safeLanding(source, entity, source.getSharedSpawnPos().getX(), source.getSharedSpawnPos().getZ(), true, 8);
+            Optional<Vec3> position = safeSurfaceLanding(source, entity, source.getSharedSpawnPos().getX(), source.getSharedSpawnPos().getZ(), 8);
             return position.map(pos -> notifyPortalUse(transition(source, entity, pos, Vec3.ZERO, entity.getYRot()),entry)).orElse(null);
         }
         ServerLevel target = source.getServer().getLevel(dimensionKey(targetId));
@@ -178,6 +179,20 @@ public final class MitePortals {
                 .map(pos -> transition(level, entity, pos, Vec3.ZERO, entity.getYRot())).orElse(null);
     }
 
+    /** A home gate searches neighbouring surface columns, never caves beneath an unsafe spawn surface. */
+    public static Optional<Vec3> safeSurfaceLanding(ServerLevel level, Entity entity, int x, int z, int radius) {
+        BlockPos origin = new BlockPos(x, level.getMinBuildHeight(), z);
+        for (BlockPos.MutableBlockPos column : BlockPos.spiralAround(origin, radius, Direction.EAST, Direction.SOUTH)) {
+            if (!level.getWorldBorder().isWithinBounds(column)) continue;
+            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ());
+            if (y <= level.getMinBuildHeight() || y >= level.getMaxBuildHeight()) continue;
+            BlockPos feet = new BlockPos(column.getX(), y, column.getZ());
+            Vec3 position = Vec3.atBottomCenterOf(feet);
+            if (safeSupport(level, feet.below()) && clearForEntity(level, entity, position)) return Optional.of(position);
+        }
+        return Optional.empty();
+    }
+
     /** No unconditional Y64 clearing: a blocked runegate fails atomically without modifying terrain. */
     public static Optional<Vec3> safeLanding(ServerLevel level, Entity entity, int x, int z, boolean fromTop, int radius) {
         int min = level.getMinBuildHeight() + 1;
@@ -189,15 +204,18 @@ public final class MitePortals {
             for (int index = 0; index <= max - min; index++) {
                 int y = fromTop ? max - index : min + index;
                 BlockPos feet = new BlockPos(column.getX(), y, column.getZ());
-                BlockPos below = feet.below();
-                BlockState support = level.getBlockState(below);
-                if (!support.isFaceSturdy(level, below, Direction.UP) || hazardous(support)
-                        || support.is(Blocks.BEDROCK) || support.is(MiteWorldBlocks.MANTLE.get()) || support.is(MiteWorldBlocks.CORE.get())) continue;
+                if (!safeSupport(level, feet.below())) continue;
                 Vec3 position = Vec3.atBottomCenterOf(feet);
                 if (clearForEntity(level, entity, position)) return Optional.of(position);
             }
         }
         return Optional.empty();
+    }
+
+    private static boolean safeSupport(ServerLevel level, BlockPos below) {
+        BlockState support = level.getBlockState(below);
+        return support.isFaceSturdy(level, below, Direction.UP) && !hazardous(support)
+                && !support.is(Blocks.BEDROCK) && !support.is(MiteWorldBlocks.MANTLE.get()) && !support.is(MiteWorldBlocks.CORE.get());
     }
 
     private static boolean clearForEntity(ServerLevel level, Entity entity, Vec3 position) {
