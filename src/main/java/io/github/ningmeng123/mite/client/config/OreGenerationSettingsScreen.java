@@ -64,8 +64,16 @@ public final class OreGenerationSettingsScreen extends Screen {
     private Component failure;
 
     public OreGenerationSettingsScreen(Screen parent) {
+        this(parent, Dimension.OVERWORLD, "");
+    }
+
+    public OreGenerationSettingsScreen(Screen parent, Dimension dimension, String query) {
         super(Component.translatable("mite.config.ore_generation"));
         this.parent = parent;
+        if (dimension != Dimension.OVERWORLD && dimension != Dimension.UNDERWORLD)
+            throw new IllegalArgumentException("Unsupported ore settings dimension: " + dimension);
+        this.dimension = dimension;
+        this.query = query == null ? "" : query;
         editable = MiteConfigClient.editable();
         for (var selected : List.of(Dimension.OVERWORLD, Dimension.UNDERWORLD)) {
             Draft draft = new Draft();

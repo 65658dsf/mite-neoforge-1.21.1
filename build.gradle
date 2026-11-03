@@ -119,6 +119,13 @@ neoForge {
             if (project.providers.gradleProperty('miteClientDirectory').isPresent()) {
                 gameDirectory = file(project.providers.gradleProperty('miteClientDirectory').get())
             }
+            if (project.providers.gradleProperty('miteSettingsSearchAudit').getOrElse('false').toBoolean()) {
+                systemProperty 'mite.settingsSearchAudit', 'true'
+                gameDirectory = file(project.providers.gradleProperty('miteClientDirectory')
+                        .getOrElse('build/verification/settings-search-run'))
+                systemProperty 'mite.settingsSearchAuditOutput', file(project.providers.gradleProperty('miteSettingsSearchAuditOutput')
+                        .getOrElse('build/verification/settings-search/client-audit.json')).absolutePath
+            }
             if (project.providers.gradleProperty('miteSimplySwordsClientAudit').getOrElse('false').toBoolean()) {
                 systemProperty 'mite.simplySwordsClientAudit', 'true'
                 systemProperty 'mite.simplySwordsClientAuditOutput', file(project.providers.gradleProperty('miteSimplySwordsClientAuditOutput')

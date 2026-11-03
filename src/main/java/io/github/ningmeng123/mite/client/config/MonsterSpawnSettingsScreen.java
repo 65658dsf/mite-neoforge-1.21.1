@@ -103,6 +103,13 @@ public final class MonsterSpawnSettingsScreen extends Screen {
         entries.sort(Comparator.comparing(MonsterSpawnCatalog.Entry::id));
     }
 
+    /** Select an entity before opening this editor from a settings search result. */
+    public void setSearchQuery(String query) {
+        this.query = query == null ? "" : query;
+        page = 0;
+        if (search != null) search.setValue(this.query);
+    }
+
     @Override protected void init() {
         int searchY = 33;
         search = addRenderableWidget(new EditBox(font, 12, searchY, Math.max(100, width - (hasSpawningRules ? 142 : 24)), 20,

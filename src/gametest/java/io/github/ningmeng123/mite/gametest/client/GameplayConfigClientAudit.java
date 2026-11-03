@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.client.config.ConfigSearchIndex;
 import io.github.ningmeng123.mite.client.config.MiteSettingsScreen;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
@@ -54,11 +55,13 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 /** Opt-in real client linkage and language checks without a Minecraft instance or rendering. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
@@ -135,6 +138,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
         report.addProperty("growth_formula_and_actual_ore_screen_linkage_verified", true);
         report.addProperty("remote_server_gameplay_screen_constructor_and_init_signatures_resolved", true);
         auditOreDimensionSelection(report);
+        auditSearchMetadata(report);
         Class<?> spawnSettings = Class.forName(CLIENT + "MonsterSpawnSettingsScreen", false, loader);
         MethodHandles.publicLookup().findConstructor(spawnSettings,
                 MethodType.methodType(void.class, Screen.class, String.class, Supplier.class, Consumer.class));
@@ -430,18 +434,41 @@ public final class GameplayConfigClientAudit implements DataProvider {
     private static void auditOreDimensionSelection(JsonObject report) throws Exception {
         ClassNode screen = bytecode(CLIENT + "OreGenerationSettingsScreen");
         String dimension = "io/github/ningmeng123/mite/rules/R196OreRules$Dimension";
-        int assignments = 0;
+        String defaultConstructor = "(Lnet/minecraft/client/gui/screens/Screen;)V";
+        String selectedConstructor = "(Lnet/minecraft/client/gui/screens/Screen;L" + dimension + ";Ljava/lang/String;)V";
+        int defaultDelegations = 0, initializers = 0, selectedAssignments = 0;
         boolean selectedLabel = false, selectedColor = false;
         for (var method : screen.methods) {
             if (method.name.equals("<init>")) for (var instruction : method.instructions) {
+                if (method.desc.equals(defaultConstructor) && instruction instanceof MethodInsnNode call
+                        && call.getOpcode() == Opcodes.INVOKESPECIAL && call.owner.equals(screen.name)
+                        && call.name.equals("<init>")) {
+                    var query = previousCode(instruction);
+                    var selected = previousCode(query);
+                    var parent = previousCode(selected);
+                    var receiver = previousCode(parent);
+                    check(call.desc.equals(selectedConstructor)
+                                    && query instanceof LdcInsnNode text && text.cst.equals("")
+                                    && selected instanceof FieldInsnNode value && value.getOpcode() == Opcodes.GETSTATIC
+                                    && value.owner.equals(dimension) && value.name.equals("OVERWORLD")
+                                    && parent instanceof VarInsnNode argument && argument.getOpcode() == Opcodes.ALOAD && argument.var == 1
+                                    && receiver instanceof VarInsnNode self && self.getOpcode() == Opcodes.ALOAD && self.var == 0,
+                            "The default ore constructor delegates with its parent, OVERWORLD and an empty search query");
+                    defaultDelegations++;
+                }
                 if (!(instruction instanceof FieldInsnNode field) || field.getOpcode() != Opcodes.PUTFIELD
                         || !field.owner.equals(screen.name) || !field.name.equals("dimension")) continue;
-                assignments++;
-                var initial = instruction.getPrevious();
-                while (initial != null && initial.getOpcode() < 0) initial = initial.getPrevious();
-                check(initial instanceof FieldInsnNode value && value.getOpcode() == Opcodes.GETSTATIC
-                                && value.owner.equals(dimension) && value.name.equals("OVERWORLD"),
-                        "The ore screen constructor defaults to the overworld rather than the underworld");
+                check(method.desc.equals(selectedConstructor), "Only the explicit-dimension constructor initializes the ore dimension");
+                var source = previousCode(instruction);
+                if (source instanceof FieldInsnNode value && value.getOpcode() == Opcodes.GETSTATIC
+                        && value.owner.equals(dimension) && value.name.equals("OVERWORLD")) {
+                    check(selectedAssignments == 0, "The field initializer cannot overwrite the explicitly selected dimension");
+                    initializers++;
+                } else {
+                    check(source instanceof VarInsnNode argument && argument.getOpcode() == Opcodes.ALOAD && argument.var == 2,
+                            "The explicit-dimension constructor stores its actual dimension argument");
+                    selectedAssignments++;
+                }
             }
             if (method.name.equals("dimensionLabel")) for (var instruction : method.instructions) {
                 if (instruction instanceof LdcInsnNode constant
@@ -450,7 +477,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
                         && field.owner.equals("net/minecraft/ChatFormatting") && field.name.equals("YELLOW")) selectedColor = true;
             }
         }
-        check(assignments == 1, "The ore screen has one explicit default dimension assignment");
+        check(defaultDelegations == 1 && selectedAssignments == 1 && initializers <= 1,
+                "The default path selects OVERWORLD and the shared constructor preserves that selected argument");
         check(calls(screen, "init", screen.name, "dimensionLabel")
                         && calls(screen, "rebuildRows", screen.name, "dimensionLabel"),
                 "Both initial ore tabs and refreshed tabs use the explicit selection label");
@@ -458,8 +486,52 @@ public final class GameplayConfigClientAudit implements DataProvider {
                         && calls(screen, "dimensionLabel", "net/minecraft/network/chat/MutableComponent", "withStyle"),
                 "The selected ore dimension has a localized current marker styled yellow");
         report.addProperty("ore_screen_default_overworld_bytecode_verified", true);
+        report.addProperty("ore_screen_search_constructor_preserves_selected_dimension_verified", true);
         report.addProperty("ore_screen_initial_and_refreshed_selected_dimension_labels_verified", true);
         report.addProperty("ore_screen_selected_dimension_localized_yellow_marker_verified", true);
+    }
+
+    private static AbstractInsnNode previousCode(AbstractInsnNode instruction) {
+        var previous = instruction == null ? null : instruction.getPrevious();
+        while (previous != null && previous.getOpcode() < 0) previous = previous.getPrevious();
+        return previous;
+    }
+
+    private static void auditSearchMetadata(JsonObject report) throws Exception {
+        var expected = new TreeSet<String>();
+        collectSearchLeafIds(MiteConfig.SPEC.getSpec(), List.of(), expected);
+        var opened = new java.util.concurrent.atomic.AtomicInteger();
+        // Availability=false short-circuits connection/permission checks. Do not construct a Minecraft instance or open a screen.
+        var entries = ConfigSearchIndex.configurationEntries(Mite.MOD_ID, false, (config, path) -> {
+            opened.incrementAndGet();
+            return null;
+        });
+        var actual = new TreeSet<String>();
+        for (var entry : entries) {
+            check(actual.add(entry.id()), "No registered config leaf appears twice in the search index: " + entry.id());
+            check(!entry.available() && entry.open() != null && !entry.label().getString().isBlank()
+                            && !entry.category().getString().isBlank() && entry.matches(entry.id()),
+                    "Search metadata retains a label, category, lazy target and searchable full path: " + entry.id());
+        }
+        check(!expected.isEmpty() && actual.equals(expected), "The homepage metadata indexes every MITE config leaf exactly once");
+        check(opened.get() == 0, "Constructing search metadata does not invoke any screen-opening callback");
+        Class<?> single = Class.forName(CLIENT + "SingleConfigValueScreen", false, GameplayConfigClientAudit.class.getClassLoader());
+        MethodHandles.publicLookup().findStatic(single, "create",
+                MethodType.methodType(Screen.class, Screen.class, ModConfig.class, List.class, Component.class));
+        report.addProperty("homepage_search_registered_mite_leaves", actual.size());
+        report.addProperty("homepage_search_every_declared_leaf_indexed_exactly_once", true);
+        report.addProperty("homepage_search_screen_opening_callbacks_invoked", opened.get());
+        report.addProperty("homepage_search_single_value_native_editor_signature_verified", true);
+    }
+
+    private static void collectSearchLeafIds(UnmodifiableConfig definitions, List<String> prefix, Set<String> ids) {
+        for (var entry : definitions.entrySet()) {
+            var path = new ArrayList<>(prefix);
+            path.add(entry.getKey());
+            if (entry.getValue() instanceof UnmodifiableConfig section) collectSearchLeafIds(section, path, ids);
+            else if (entry.getValue() instanceof ModConfigSpec.ValueSpec)
+                check(ids.add(Mite.MOD_ID + ":" + String.join(".", path)), "Every expected search leaf has a unique path");
+        }
     }
 
     private static void auditSpawningRulesScreen(JsonObject report, Class<?> spawnSettings) throws Exception {
@@ -571,6 +643,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
             required.add("mite.config." + key + ".tooltip");
         }
         required.add("mite.config.monster_spawn_reset.tooltip");
+        for (String key : List.of("search_all", "search_all.tooltip", "search_all.empty", "ore_multiplier"))
+            required.add("mite.config." + key);
         for (var language : languages.entrySet()) {
             for (String key : required) {
                 String value = language.getValue().get(key);

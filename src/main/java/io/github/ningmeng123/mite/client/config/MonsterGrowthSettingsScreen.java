@@ -25,6 +25,7 @@ public final class MonsterGrowthSettingsScreen extends Screen {
     private record TextLine(FormattedCharSequence text, int y, int color) {}
     private final Screen parent;
     private final boolean editable;
+    private String selectedKey;
     private final Map<String, String> drafts = new HashMap<>();
     private final List<ScrollingWidget> scrollingWidgets = new ArrayList<>();
     private final List<TextLine> lines = new ArrayList<>();
@@ -50,8 +51,14 @@ public final class MonsterGrowthSettingsScreen extends Screen {
     private boolean saving;
 
     public MonsterGrowthSettingsScreen(Screen parent) {
+        this(parent, null);
+    }
+
+    public MonsterGrowthSettingsScreen(Screen parent, String key) {
         super(Component.translatable("mite.config.monster_formulas"));
         this.parent = parent;
+        selectedKey = key == null ? null : key.substring(key.lastIndexOf('.') + 1);
+        health = selectedKey == null || !selectedKey.startsWith("damage_");
         editable = MiteConfigClient.editable();
         copySettings(MiteConfig.monsterGrowthSettings());
         drafts.put("health_native", "20");
@@ -133,6 +140,18 @@ public final class MonsterGrowthSettingsScreen extends Screen {
                 .bounds(12, height - 51, Math.max(100, width - 24), 18).build());
         validateDraft();
         updateViewport();
+        if (selectedKey != null) {
+            EditBox selected = fields.get(selectedKey);
+            selectedKey = null;
+            if (selected != null) {
+                for (var row : scrollingWidgets) if (row.widget() == selected) {
+                    scroll = Math.max(0, row.y() - font.lineHeight - 4);
+                    break;
+                }
+                updateViewport();
+                setFocused(selected);
+            }
+        }
     }
 
     private void switchTab(boolean showHealth) {

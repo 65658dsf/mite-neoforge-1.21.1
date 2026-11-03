@@ -48,8 +48,13 @@ public final class EnchantmentSettingsScreen extends Screen {
     private Component failure;
 
     public EnchantmentSettingsScreen(Screen parent) {
+        this(parent, "");
+    }
+
+    public EnchantmentSettingsScreen(Screen parent, String query) {
         super(Component.translatable("mite.config.registry_enchantments"));
         this.parent = parent;
+        this.query = query == null ? "" : query;
         editable = MiteConfigClient.editable();
         var snapshot = MiteConfig.effectiveSnapshot();
         caps = new HashMap<>(snapshot.caps());

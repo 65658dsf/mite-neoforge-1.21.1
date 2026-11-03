@@ -58,6 +58,7 @@ public final class MonsterSpawningRulesScreen extends Screen {
     private final Map<String, String> drafts = new HashMap<>();
     private final Set<String> invalid = new HashSet<>();
     private final List<VisibleRow> visible = new ArrayList<>();
+    private String selectedKey;
     private int page;
     private int pageCount;
     private Button save;
@@ -66,8 +67,13 @@ public final class MonsterSpawningRulesScreen extends Screen {
     private boolean saving;
 
     public MonsterSpawningRulesScreen(Screen parent) {
+        this(parent, null);
+    }
+
+    public MonsterSpawningRulesScreen(Screen parent, String key) {
         super(Component.translatable("mite.config.spawning_rules.title"));
         this.parent = parent;
+        selectedKey = key;
         editable = MiteConfigClient.editable();
         var supplied = List.copyOf(MiteExtensions.policy().spawningControls());
         addonControls = !supplied.isEmpty();
@@ -89,6 +95,13 @@ public final class MonsterSpawningRulesScreen extends Screen {
         clearWidgets();
         visible.clear();
         int rows = Math.max(1, (height - 140) / 44);
+        if (selectedKey != null) {
+            for (int index = 0; index < options.size(); index++) if (options.get(index).key().equals(selectedKey)) {
+                page = index / rows;
+                break;
+            }
+            selectedKey = null;
+        }
         pageCount = Math.max(1, (options.size() + rows - 1) / rows);
         page = Math.clamp(page, 0, pageCount - 1);
         for (int index = page * rows; index < Math.min(options.size(), (page + 1) * rows); index++) {

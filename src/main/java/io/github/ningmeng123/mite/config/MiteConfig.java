@@ -139,10 +139,10 @@ public final class MiteConfig {
                     : builder.defineInRange(option.key(), factorySpawningDefault(option), option.minimum(), option.maximum()));
         }
         builder.pop();
-        builder.push("performance");
-        ASYNC_PATHFINDING = builder.comment("Spread supported stationary hostile melee searches across server ticks. Native world and evaluator hooks stay on the server thread; A* bookkeeping runs on bounded workers. Delays path decisions to reduce tick spikes.")
+        builder.translation("mite.config.performance").push("performance");
+        ASYNC_PATHFINDING = builder.translation("mite.config.async_pathfinding").comment("Spread supported stationary hostile melee searches across server ticks. Native world and evaluator hooks stay on the server thread; A* bookkeeping runs on bounded workers. Delays path decisions to reduce tick spikes.")
                 .define("async_pathfinding", true);
-        AI_LOAD_REDUCTION = builder.comment("Limit and stagger expensive AI searches across server ticks. Animals resume food/water scans in batches; hostile mobs queue synchronous decisions and retry impossible routes less often. Preserves immediate attacks and real danger responses, but delays some decisions and reduces hostile search node budgets. False restores the previous search frequency and node limits.")
+        AI_LOAD_REDUCTION = builder.translation("mite.config.ai_load_reduction").comment("Limit and stagger expensive AI searches across server ticks. Animals resume food/water scans in batches; hostile mobs queue synchronous decisions and retry impossible routes less often. Preserves immediate attacks and real danger responses, but delays some decisions and reduces hostile search node budgets. False restores the previous search frequency and node limits.")
                 .define("ai_load_reduction", true);
         builder.pop();
         builder.translation("mite.config.combat").push("combat");

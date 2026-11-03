@@ -27,10 +27,10 @@ public final class ServerGameplaySettingsScreen extends Screen {
         Component label() { return Component.translatable(translation()); }
     }
     private final Screen parent;
-    private final Map<String, Object> values = new HashMap<>(MiteConfigClient.gameplayValues());
+    private final Map<String, Object> values;
     private final Map<String, String> drafts = new HashMap<>();
     private final Set<String> invalid = new HashSet<>();
-    private final List<String> paths = values.keySet().stream().sorted().toList();
+    private final List<String> paths;
     private final List<Row> rows = new ArrayList<>();
     private int page;
     private int pageCount;
@@ -40,8 +40,15 @@ public final class ServerGameplaySettingsScreen extends Screen {
     private Button status;
 
     public ServerGameplaySettingsScreen(Screen parent) {
+        this(parent, null);
+    }
+
+    public ServerGameplaySettingsScreen(Screen parent, String selectedPath) {
         super(Component.translatable("mite.config.gameplay"));
         this.parent = parent;
+        values = new HashMap<>(MiteConfigClient.gameplayValues());
+        if (selectedPath != null) values.keySet().removeIf(path -> !path.equals(selectedPath));
+        paths = values.keySet().stream().sorted().toList();
     }
 
     @Override protected void init() { rebuild(); }
