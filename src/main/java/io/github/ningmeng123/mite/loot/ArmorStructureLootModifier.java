@@ -48,7 +48,8 @@ public final class ArmorStructureLootModifier extends LootModifier {
     @Override protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
         if (context.getQueriedLootTableId().toString().equals("minecraft:chests/simple_dungeon")
                 && context.getLevel().dimension().equals(MiteWorldDimensions.UNDERWORLD))
-            return UnderworldDungeonLoot.generate(context, POOLS.get("dungeon_underworld"));
+            // Keep food after the complete replacement; NeoForge's GLM map does not preserve list order.
+            return DungeonFoodLoot.append(UnderworldDungeonLoot.generate(context, POOLS.get("dungeon_underworld")), context);
         ItemStack artifact=io.github.ningmeng123.mite.advancement.ReferencedBooks.artifact(context);
         if(!artifact.isEmpty())loot.add(artifact);
         String table = context.getQueriedLootTableId().toString();
@@ -94,7 +95,7 @@ public final class ArmorStructureLootModifier extends LootModifier {
         }
         if (!reservedRecord.isEmpty() && unique.mark(((io.github.ningmeng123.mite.item.R196RecordItem)reservedRecord.getItem()).recordName()))
             loot.add(reservedRecord);
-        return loot;
+        return DungeonFoodLoot.append(loot, context);
     }
     private static boolean replacedGear(ItemStack stack) {
         if (io.github.ningmeng123.mite.item.RemovedDiamondEquipment.isRemoved(stack)) return true;

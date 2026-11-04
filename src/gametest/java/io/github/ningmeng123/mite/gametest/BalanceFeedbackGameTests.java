@@ -271,7 +271,7 @@ public final class BalanceFeedbackGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void registeredUnderworldDungeonHasOnlyTheReferenceLootAndMatchesIndependentSlotOracle(GameTestHelper h) {
+    public static void registeredUnderworldDungeonRetainsReferenceLootAndMatchesIndependentSlotOracleAlongsideFoods(GameTestHelper h) {
         ServerLevel underworld = h.getLevel().getServer().getLevel(MiteWorldDimensions.UNDERWORLD);
         var pool = ArmorStructureLootModifier.pools().get("dungeon_underworld");
         var claims = io.github.ningmeng123.mite.utility.UniqueMusicSavedData.get(underworld);
@@ -290,9 +290,12 @@ public final class BalanceFeedbackGameTests {
                 for (var stack : actual) counts.merge(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(), stack.getCount(), Integer::sum);
                 h.assertTrue(counts.equals(referenceCounts(seed, 48)), "Seed " + seed + " matches independent R196 weight/quantity/27-slot replacement arithmetic");
                 var real = table.getRandomItems(params, seed);
-                h.assertTrue(real.size() <= 8, "A registered dungeon chest has only the reference eight rounds, without extra vanilla pools");
-                for (var stack : real) h.assertTrue(pool.entries().stream().anyMatch(entry -> entry.item().equals(
-                        BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())), "Modern dungeon-only items cannot leak into the complete R196 replacement");
+                var referenceLoot = real.stream().filter(stack -> !stack.is(io.github.ningmeng123.mite.registry.MiteFoods.get("orange"))
+                        && !stack.is(io.github.ningmeng123.mite.registry.MiteFoods.get("onion"))).toList();
+                h.assertTrue(referenceLoot.size() <= 8 && real.size() <= 10,
+                        "A registered dungeon chest retains the reference eight rounds plus at most two independent food stacks");
+                for (var stack : referenceLoot) h.assertTrue(pool.entries().stream().anyMatch(entry -> entry.item().equals(
+                        BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())), "Unrelated modern dungeon items cannot leak into the complete R196 replacement");
             }
         } finally { for (String record : records) { claims.release(record); if (previous.contains(record)) claims.mark(record); } }
         h.succeed();
