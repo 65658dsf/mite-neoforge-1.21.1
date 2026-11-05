@@ -6,6 +6,7 @@ license="${mod_license}"
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
+logoFile="logo.png"
 authors="${mod_authors}"
 displayURL="https://github.com/65658dsf"
 description='''${mod_description}'''
