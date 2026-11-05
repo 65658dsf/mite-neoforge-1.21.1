@@ -43,12 +43,16 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.ZombieVillager;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -366,10 +370,10 @@ public final class R196MobSpawning {
                 && (fixedTiming || settings.ready(level.getGameTime(), state.lastHostileAttempt));
         if (hostile) state.lastHostileAttempt = level.getGameTime();
         float modifier = overworld ? step.modifier() : fixedTiming ? .25F : (float)settings.value(Option.DIMENSION_CHANCE_MULTIPLIER);
-        boolean low = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, true, fixedTiming
-                ? R196SpawnRules.referenceHostilePassProbability(true, modifier) : settings.probability(true, modifier, moon.blood())),0F,1F);
-        boolean high = hostile && Math.random() < Math.clamp(extension().hostilePassProbability(level, false, fixedTiming
-                ? R196SpawnRules.referenceHostilePassProbability(false, modifier) : settings.probability(false, modifier, moon.blood())),0F,1F);
+        boolean low = hostile && Math.random() < R196SpawnRules.dimensionHostileProbability(extension().hostilePassProbability(level, true, fixedTiming
+                ? R196SpawnRules.referenceHostilePassProbability(true, modifier) : settings.probability(true, modifier, moon.blood())),underworld(level));
+        boolean high = hostile && Math.random() < R196SpawnRules.dimensionHostileProbability(extension().hostilePassProbability(level, false, fixedTiming
+                ? R196SpawnRules.referenceHostilePassProbability(false, modifier) : settings.probability(false, modifier, moon.blood())),underworld(level));
         boolean periodic = Math.floorMod(level.getGameTime(), 400) == 0;
         if (low || high) {
             Map<Long, Boolean> chunks = eligibleChunks(level, true);
@@ -632,7 +636,12 @@ public final class R196MobSpawning {
         if (category == Category.AMBIENT) return true;
         BlockState block = level.getBlockState(pos);
         if (category == Category.AQUATIC) return block.getFluidState().is(FluidTags.WATER);
-        if (block.isAir() || block.is(Blocks.BEDROCK) || block.is(MiteWorldBlocks.MANTLE.get()) || block.is(Blocks.MYCELIUM) || block.is(BlockTags.FENCES)) return false;
+        if (block.isAir() || block.is(Blocks.BEDROCK) || block.is(MiteWorldBlocks.MANTLE.get()) || block.is(BlockTags.FENCES)) return false;
+        // Underworld vegetation replaces broad areas of ordinary cavern floor with mycelium.
+        // Treat those patches as hostile ground; otherwise the scheduler drops the whole
+        // source pool there while addon-injected modern monsters can still be selected.
+        if (block.is(Blocks.MYCELIUM)) return category == Category.MONSTER
+                && level instanceof ServerLevelAccessor accessor && underworld(accessor.getLevel());
         if (category == Category.ANIMAL) return block.is(Blocks.GRASS_BLOCK);
         return block.is(Blocks.SNOW) || block.is(Blocks.LILY_PAD) || block.getBlock() instanceof SlabBlock || block.getBlock() instanceof StairBlock
                 || block.isFaceSturdy(level, pos, Direction.UP);
@@ -666,6 +675,10 @@ public final class R196MobSpawning {
     }
     public static boolean qualifiesWithEvent(Mob mob, ServerLevelAccessor accessor, MobSpawnType reason, boolean light, boolean modern) {
         if (reason == MobSpawnType.NATURAL && !naturalDaylightAllows(mob, accessor.getLevel())) return false;
+        // Addons may inject a source ground mob after an unsupported position selected
+        // the modern-only pool. Recheck the actual mob, including every wide-body offset,
+        // rather than trusting the earlier unselected candidate's placement calculation.
+        if (reason == MobSpawnType.NATURAL && !modern && !sourceNaturalPositionAllows(mob, accessor)) return false;
         // Vanilla's natural-spawn caller checks geometry separately from the mob's light/difficulty predicate.
         if (modern) return accessor.noCollision(mob)
                 && SpawnPlacements.isSpawnPositionOk(mob.getType(), accessor, mob.blockPosition())
@@ -674,6 +687,13 @@ public final class R196MobSpawning {
         var event = new MobSpawnEvent.PositionCheck(mob, accessor, reason, null); NeoForge.EVENT_BUS.post(event);
         return event.getResult() == MobSpawnEvent.PositionCheck.Result.SUCCEED || event.getResult() == MobSpawnEvent.PositionCheck.Result.DEFAULT
                 && R196SpawnQualification.qualifies(mob, accessor, light, reason == MobSpawnType.SPAWNER);
+    }
+    private static boolean sourceNaturalPositionAllows(Mob mob, ServerLevelAccessor accessor) {
+        Category category = category(mob);
+        if (category == null || category == Category.AMBIENT || mob instanceof Bat || mob instanceof FlyingMob || mob instanceof Blaze
+                || mob instanceof EnderDragon || mob instanceof WitherBoss) return true;
+        Double supportedY = positionY(accessor, mob.blockPosition(), category);
+        return supportedY != null && Math.abs(mob.getY() - supportedY) <= .01D;
     }
     /** New natural hostiles cannot appear on the daytime surface or in connected shallow cave mouths. */
     public static boolean naturalDaylightAllows(Mob mob, ServerLevel level) {

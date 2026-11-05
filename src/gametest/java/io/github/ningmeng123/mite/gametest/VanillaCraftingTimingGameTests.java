@@ -105,6 +105,40 @@ public final class VanillaCraftingTimingGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void modernWorkstationsWaitForManufactureAcrossRealExtractionPaths(GameTestHelper helper) throws Exception {
+        try (var reader = new java.io.InputStreamReader(java.util.Objects.requireNonNull(
+                VanillaCraftingTimingGameTests.class.getResourceAsStream("/mite/timed-crafting-modern-workstations.json")),
+                java.nio.charset.StandardCharsets.UTF_8)) {
+            var rows = com.google.gson.JsonParser.parseReader(reader).getAsJsonObject().getAsJsonObject("recipes");
+            for (var row : rows.entrySet()) {
+                var id = ResourceLocation.parse(row.getKey());
+                var holder = helper.getLevel().getRecipeManager().byKey(id).orElseThrow();
+                var actual = holder.value();
+                var output = actual.getResultItem(helper.getLevel().registryAccess());
+                int width = actual instanceof ShapedRecipe shaped ? shaped.getWidth() : 3;
+                var slots = new ArrayList<Integer>();
+                var ingredients = new ArrayList<Item>();
+                for (int index = 0; index < actual.getIngredients().size(); index++) {
+                    var ingredient = actual.getIngredients().get(index);
+                    if (ingredient.isEmpty()) continue;
+                    slots.add(index / width * 3 + index % width);
+                    ingredients.add(ingredient.getItems()[0].getItem());
+                }
+                var recipe = new RecipeCase(id.getPath(), output.getItem(), output.getCount(),
+                        row.getValue().getAsJsonObject().get("difficulty").getAsFloat(),
+                        slots.stream().mapToInt(Integer::intValue).toArray(), ingredients.toArray(Item[]::new));
+                checkOrdinary(helper, recipe, true);
+                checkContinuous(helper, recipe, true);
+                if (output.is(Items.GRINDSTONE) || output.is(Items.SMITHING_TABLE)) {
+                    checkQuickMove(helper, recipe, true);
+                    checkOtherClicks(helper, recipe, true);
+                }
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void cobblestoneWallVariantsProduceEightOnlyAfterTheCompletePeriod(GameTestHelper helper) {
         checkOrdinary(helper, stone("cobblestone_wall", Items.COBBLESTONE, Items.COBBLESTONE_WALL, 8,
                 1200F, 0, 1, 2, 3, 4, 5), true);

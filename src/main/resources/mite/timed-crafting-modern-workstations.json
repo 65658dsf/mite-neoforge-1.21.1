@@ -1,0 +1,21 @@
+{
+  "author": "NingMeng123",
+  "source": "Modern workstation manufacturing adaptation: wooden and mixed workstations use the existing chest batch (640); furnace variants use the existing furnace batch (1600). Assembly remains available on the same workbenches as before.",
+  "recipes": {
+    "minecraft:grindstone": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:smithing_table": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:stonecutter": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:fletching_table": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:cartography_table": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:loom": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:barrel": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:composter": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:lectern": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:blast_furnace": {"difficulty": 1600.0, "required_bench": null, "source_order": -1},
+    "minecraft:smoker": {"difficulty": 1600.0, "required_bench": null, "source_order": -1},
+    "minecraft:campfire": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:soul_campfire": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:beehive": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "minecraft:crafter": {"difficulty": 640.0, "required_bench": null, "source_order": -1}
+  }
+}

@@ -10,6 +10,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Literal aci/js/tm arithmetic and independent guarded table evidence. @author NingMeng123 */
 class R196SpawnRulesTest {
+    @Test void onlyUnderworldHostilePassesReceiveTwentyPercentMoreChance() {
+        for (boolean deep : List.of(false, true)) {
+            float original = R196SpawnRules.referenceHostilePassProbability(deep, .25F);
+            float expected = deep ? .03F : .051F;
+            assertEquals(expected, R196SpawnRules.dimensionHostileProbability(original, true), .000001F);
+            assertEquals(original, R196SpawnRules.dimensionHostileProbability(original, false));
+        }
+        assertEquals(.6F, R196SpawnRules.dimensionHostileProbability(.5F, true), .000001F);
+        assertEquals(0F, R196SpawnRules.dimensionHostileProbability(0F, true));
+        assertEquals(0F, R196SpawnRules.dimensionHostileProbability(-1F, true));
+        assertEquals(1F, R196SpawnRules.dimensionHostileProbability(1F, true));
+    }
+
+    @Test void evenlySpacedNaturalSpawnDrawsAdmitExactlyOneFifthMoreUnderworldPasses() {
+        for (boolean deep : List.of(false, true)) {
+            float original = R196SpawnRules.referenceHostilePassProbability(deep, .25F);
+            float increased = R196SpawnRules.dimensionHostileProbability(original, true);
+            int before = 0, after = 0;
+            for (int draw = 0; draw < 20_000; draw++) {
+                double value = (draw + .5D) / 20_000D;
+                if (value < original) before++;
+                if (value < increased) after++;
+            }
+            assertEquals(deep ? 500 : 850, before);
+            assertEquals(before * 6, after * 5);
+        }
+    }
+
     @Test void referenceCapsTruncateBeforeDeepDoublingAndScaleTheAreaUnionOnce() {
         assertEquals(56, R196SpawnRules.referenceMonsterCap(289, false));
         assertEquals(112, R196SpawnRules.referenceMonsterCap(289, true));

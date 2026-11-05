@@ -64,6 +64,11 @@ public final class R196SpawnRules {
         return Math.clamp((deep ? .1F : .17F) * modifier, 0F, 1F);
     }
 
+    /** Underworld natural hostiles receive twenty percent more passes; policy vetoes remain zero. */
+    public static float dimensionHostileProbability(float probability, boolean underworld) {
+        return Math.clamp(probability * (underworld ? 1.2F : 1F), 0F, 1F);
+    }
+
     public static int cap(Category category, int eligibleChunks, boolean deep, boolean tournamentAnimals) {
         return cap(category, eligibleChunks, deep, tournamentAnimals, false);
     }
