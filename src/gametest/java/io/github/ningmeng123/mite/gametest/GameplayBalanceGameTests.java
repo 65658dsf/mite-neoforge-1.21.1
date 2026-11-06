@@ -72,7 +72,7 @@ public final class GameplayBalanceGameTests {
             fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
             fixture.block(3);
             helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "One hunger point restores placement immediately");
-            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 10, "A successful recovered placement starts ten ticks");
+            helper.assertValueEqual(PlacementDelay.remainingMillis(fixture.player), 0L, "Successful server placement leaves input timing to the client");
             fixture.clearTarget();
             PlacementDelay.clear(fixture.player);
             fixture.player.getFoodData().setFoodLevel(0);
@@ -98,86 +98,85 @@ public final class GameplayBalanceGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void firstBlockPacketPlacesImmediatelyAndOnlyFreshPacketsAfterTenTicksCanPlaceAgain(GameTestHelper helper) {
-        Fixture fixture = new Fixture(helper);
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
-        long started = fixture.player.server.overworld().getGameTime();
-        fixture.block(1);
-        helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "The first real block packet places immediately");
-        helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 1, "The immediate successful placement consumes exactly one item");
-        helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 10, "Only success starts the shared ten-tick cooldown");
-        fixture.clearTarget();
-        fixture.block(2);
-        helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "A second packet in the same tick is refused without prediction or placement");
-        helper.runAfterDelay(9, () -> {
+    public static void sameTickBlockPacketsEachCommitExactlyOnePlacement(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
+            fixture.block(1);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "The first real block packet places immediately");
+            helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 1, "The first placement consumes one block");
+            fixture.clearTarget();
+            fixture.block(2);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "Packets arriving together each execute their valid placement");
+            helper.assertTrue(fixture.player.getMainHandItem().isEmpty(), "Two accepted packets consume exactly two blocks");
+            helper.assertValueEqual(PlacementDelay.remainingMillis(fixture.player), 0L, "Input timing belongs to the client");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void firstPaidWaterBucketPlacesImmediatelyAndHungerRejectedIntentCannotArmTheNextPour(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
+            PlayerExperience.setTotal(fixture.player, 1000);
+            BucketPlacementIntent.receive(fixture.player, InteractionHand.MAIN_HAND, 1, true);
+            fixture.bucket(InteractionHand.MAIN_HAND, 1);
+            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isSource(), "The first paid source appears immediately through the real use packet");
+            helper.assertValueEqual(fixture.player.totalExperience, 900, "Immediate source placement spends one hundred experience exactly once");
+            helper.assertFalse(TemporaryFluidChanges.get(helper.getLevel()).pending().containsKey(fixture.target.asLong()), "The accepted Ctrl request makes a permanent source");
+            fixture.clearTarget();
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
+            fixture.player.getFoodData().setFoodLevel(0);
+            BucketPlacementIntent.receive(fixture.player, InteractionHand.MAIN_HAND, 2, true);
+            fixture.bucket(InteractionHand.MAIN_HAND, 2);
+            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(), "Hunger rejects the next armed placement");
+            helper.assertTrue(fixture.player.getMainHandItem().is(Items.WATER_BUCKET), "The hunger refusal preserves the full bucket");
+            helper.assertValueEqual(fixture.player.totalExperience, 900, "The hunger refusal preserves source experience");
+            fixture.player.getFoodData().setFoodLevel(1);
+            fixture.bucket(InteractionHand.MAIN_HAND, 3);
+            helper.assertTrue(TemporaryFluidChanges.get(helper.getLevel()).pending().containsKey(fixture.target.asLong()), "The following ordinary request creates temporary water after consuming the rejected Ctrl intent");
+            helper.assertValueEqual(fixture.player.totalExperience, 900, "Each request uses its own source-payment intent");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void sameTickHotbarAndHandChangesUseEachPacketsCurrentStack(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
+            fixture.block(1);
+            fixture.clearTarget();
+            fixture.player.getInventory().selected = 1;
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
+            fixture.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.STONE, 2));
+            fixture.block(2);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "The changed hotbar slot supplies the next block");
+            fixture.clearTarget();
+            fixture.block(InteractionHand.OFF_HAND, 3);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.STONE), "The subsequent offhand packet supplies its own block");
+            helper.assertValueEqual(fixture.player.getOffhandItem().getCount(), 1, "The offhand placement consumes exactly one item");
+            helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 1, "The selected main-hand placement consumes exactly one item");
+            helper.assertValueEqual(fixture.player.getInventory().getItem(0).getCount(), 1, "The original hotbar stack retains its remaining block");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void sameTickBlockAndLiquidPacketsEachCommitTheirCurrentItem(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
+            fixture.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.WATER_BUCKET));
+            fixture.block(1);
+            fixture.clearTarget();
+            fixture.bucket(InteractionHand.OFF_HAND, 2);
+            helper.assertFalse(helper.getLevel().getFluidState(fixture.target).isEmpty(), "A valid liquid packet arriving after a block packet places its water");
+            helper.assertTrue(fixture.player.getOffhandItem().is(Items.BUCKET), "The accepted liquid placement returns one empty bucket");
+            fixture.clearTarget();
             fixture.block(3);
-            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "A fresh packet at tick nine is still inside the cooldown");
-            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 1, "Rejected packets never extend the successful placement deadline");
-        });
-        helper.runAfterDelay(10, () -> {
-            try {
-                helper.assertValueEqual(fixture.player.server.overworld().getGameTime(), started + 10, "The block assertion runs at exactly ten elapsed server ticks");
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "Expiry alone never replays an earlier refused placement");
-                helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 1, "Every refused packet preserves the held block");
-                fixture.block(4);
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "A new request at exactly ten elapsed ticks places immediately");
-                helper.assertTrue(fixture.player.getMainHandItem().isEmpty(), "The second successful request consumes the final block exactly once");
-                helper.succeed();
-            } finally { fixture.close(); }
-        });
-    }
-
-    @GameTest(template = "empty")
-    public static void firstPaidWaterBucketPlacesImmediatelyAndRefusedControlIntentCannotArmTheNextPour(GameTestHelper helper) {
-        Fixture fixture = new Fixture(helper);
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
-        PlayerExperience.setTotal(fixture.player, 1000);
-        BucketPlacementIntent.receive(fixture.player, InteractionHand.MAIN_HAND, 1, true);
-        fixture.bucket(InteractionHand.MAIN_HAND, 1);
-        helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isSource(), "The first paid source appears immediately through the real use packet");
-        helper.assertValueEqual(fixture.player.totalExperience, 900, "Immediate source placement spends its one hundred experience exactly once");
-        helper.assertFalse(TemporaryFluidChanges.get(helper.getLevel()).pending().containsKey(fixture.target.asLong()), "The accepted Ctrl request makes a permanent source");
-        fixture.clearTarget();
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
-        BucketPlacementIntent.receive(fixture.player, InteractionHand.MAIN_HAND, 2, true);
-        fixture.bucket(InteractionHand.MAIN_HAND, 2);
-        helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(), "A repeated full bucket cannot bypass the shared post-placement cooldown");
-        helper.assertValueEqual(fixture.player.totalExperience, 900, "A cooldown refusal never charges a paid-source request");
-        helper.runAfterDelay(10, () -> {
-            try {
-                helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(), "No bucket action is replayed when its cooldown expires");
-                fixture.bucket(InteractionHand.MAIN_HAND, 3);
-                helper.assertTrue(TemporaryFluidChanges.get(helper.getLevel()).pending().containsKey(fixture.target.asLong()), "The refused Ctrl intent was consumed and a later ordinary request remains temporary");
-                helper.assertValueEqual(fixture.player.totalExperience, 900, "The unrelated ordinary pour cannot inherit the refused request's source cost");
-                helper.succeed();
-            } finally { fixture.close(); }
-        });
-    }
-
-    @GameTest(template = "empty")
-    public static void swappingHotbarStacksOrHandsCannotBypassTheSharedPlacementCooldown(GameTestHelper helper) {
-        Fixture fixture = new Fixture(helper);
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
-        fixture.block(1);
-        fixture.clearTarget();
-        fixture.player.getInventory().selected = 1;
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
-        fixture.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.STONE, 2));
-        fixture.block(2);
-        fixture.block(InteractionHand.OFF_HAND, 3);
-        helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "Neither a new hotbar stack nor the opposite hand bypasses the cooldown");
-        helper.assertTrue(fixture.player.getMainHandItem().getCount() == 2 && fixture.player.getOffhandItem().getCount() == 2,
-                "Refused cross-hand packets consume neither replacement stack");
-        helper.runAfterDelay(10, () -> {
-            try {
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "The old refused actions remain absent after expiry");
-                fixture.block(InteractionHand.OFF_HAND, 4);
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.STONE), "The opposite hand may place on a fresh request at tick ten");
-                helper.assertValueEqual(fixture.player.getOffhandItem().getCount(), 1, "Only the accepted offhand action consumes its item");
-                helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 2, "The swapped main-hand stack remains untouched");
-                helper.succeed();
-            } finally { fixture.close(); }
-        });
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "A following valid block packet commits immediately");
+            helper.assertTrue(fixture.player.getMainHandItem().isEmpty(), "The two block packets consume exactly two blocks");
+            helper.assertValueEqual(PlacementDelay.remainingMillis(fixture.player), 0L, "Server arrivals create no additional input deadline");
+        }
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -233,65 +232,61 @@ public final class GameplayBalanceGameTests {
                         "Only an affordable Ctrl request creates permanent water: " + items[index]);
                 helper.assertValueEqual(fixture.player.totalExperience, experience - (source ? 100 : 0), "Mob buckets use the ordinary source payment rules: " + items[index]);
                 var mobs = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, new AABB(fixture.target).inflate(3), mob -> mob.getType() == types[index]);
-                helper.assertValueEqual(mobs.size(), 1, "Repeated packets release exactly one matching bucket mob: " + items[index]);
+                helper.assertValueEqual(mobs.size(), 1, "One accepted packet releases exactly one matching bucket mob: " + items[index]);
                 helper.assertTrue(fixture.player.getMainHandItem().is(Items.BUCKET) && fixture.player.getMainHandItem().getCount() == 1,
                         "One completed mob release returns one empty bucket: " + items[index]);
                 fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(items[index]));
                 fixture.bucket(InteractionHand.MAIN_HAND, 2);
                 helper.assertValueEqual(helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
-                        new AABB(fixture.target).inflate(3), mob -> mob.getType() == types[index]).size(), 1,
-                        "A second newly held mob bucket cannot release another entity during the cooldown");
-                helper.assertTrue(fixture.player.getMainHandItem().is(items[index]), "Refusing a repeated mob bucket leaves its creature and vessel intact");
-                helper.assertValueEqual(fixture.player.totalExperience, experience - (source ? 100 : 0), "Refused creature release never charges more source experience");
-                mobs.forEach(net.minecraft.world.entity.Entity::discard);
+                        new AABB(fixture.target).inflate(3), mob -> mob.getType() == types[index]).size(), 2,
+                        "A second full bucket arriving in the same tick releases exactly one additional creature");
+                helper.assertTrue(fixture.player.getMainHandItem().is(Items.BUCKET), "The second accepted creature placement returns its empty vessel");
+                helper.assertValueEqual(fixture.player.totalExperience, experience - (source ? 100 : 0), "The second ordinary creature request uses its own payment intent");
+                helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
+                        new AABB(fixture.target).inflate(3), mob -> mob.getType() == types[index])
+                        .forEach(net.minecraft.world.entity.Entity::discard);
         } finally { fixture.close(); }
         verifyMobBucketSequence(helper, control, experience, index + 1);
     }
 
     @GameTest(template = "empty")
-    public static void outOfReachAndCooldownRefusalsNeverReplayAnOldBlockPlacement(GameTestHelper helper) {
+    public static void outOfReachPacketsRemainRejectedUntilAFreshReachableRequest(GameTestHelper helper) {
         Fixture fixture = new Fixture(helper);
         fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
         fixture.block(1);
         fixture.clearTarget();
-        fixture.block(2);
         fixture.player.setPos(fixture.player.position().add(20D, 0D, 0D));
-        helper.runAfterDelay(10, () -> {
+        var hit = new BlockHitResult(Vec3.atBottomCenterOf(fixture.target), Direction.UP, fixture.target.below(), false);
+        fixture.player.connection.handleUseItemOn(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, hit, 2));
+        helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "The original server handler rejects an out-of-reach packet");
+        helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 1, "The rejected request preserves the held block");
+        helper.runAfterDelay(4, () -> {
             try {
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "Moving during cooldown cannot leave an action to replay at expiry");
-                var hit = new BlockHitResult(Vec3.atBottomCenterOf(fixture.target), Direction.UP, fixture.target.below(), false);
-                fixture.player.connection.handleUseItemOn(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, hit, 3));
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "A new but out-of-reach packet is still rejected by the original server handler");
-                helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 0, "A failed reach check cannot start a placement cooldown");
-                fixture.block(4);
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "Returning within reach permits a fresh immediate placement");
+                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "Server ticks leave the rejected request unexecuted");
+                fixture.block(3);
+                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "A fresh reachable packet places immediately");
+                helper.assertTrue(fixture.player.getMainHandItem().isEmpty(), "The fresh accepted request consumes the final block");
                 helper.succeed();
             } finally { fixture.close(); }
         });
     }
 
     @GameTest(template = "empty")
-    public static void powderSnowPlacesImmediatelyAndSharesItsPostPlacementCooldownWithBlocks(GameTestHelper helper) {
-        Fixture fixture = new Fixture(helper);
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.POWDER_SNOW_BUCKET));
-        long started = fixture.player.server.overworld().getGameTime();
-        fixture.block(1);
-        helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.POWDER_SNOW), "The solid bucket block-item path places immediately");
-        helper.assertTrue(fixture.player.getMainHandItem().is(Items.BUCKET), "The immediate snow placement returns one empty vessel");
-        fixture.clearTarget();
-        fixture.player.getFoodData().setFoodLevel(1);
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS));
-        fixture.block(2);
-        helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "Switching from a snow bucket to a block cannot bypass the shared deadline");
-        helper.runAfterDelay(10, () -> {
-            try {
-                helper.assertValueEqual(fixture.player.server.overworld().getGameTime(), started + 10, "The powder-snow assertion runs at exactly ten elapsed server ticks");
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir(), "A refused block is not queued behind the successful snow placement");
-                fixture.block(3);
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "A fresh block request at ten ticks succeeds without a new delay");
-                helper.succeed();
-            } finally { fixture.close(); }
-        });
+    public static void powderSnowAndFollowingBlockPacketsCommitImmediately(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.POWDER_SNOW_BUCKET));
+            fixture.block(1);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.POWDER_SNOW), "The solid bucket block-item path places immediately");
+            helper.assertTrue(fixture.player.getMainHandItem().is(Items.BUCKET), "The snow placement returns one empty vessel");
+            fixture.clearTarget();
+            fixture.player.getFoodData().setFoodLevel(1);
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS));
+            fixture.block(2);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "The following block packet commits in the same server tick");
+            helper.assertTrue(fixture.player.getMainHandItem().isEmpty(), "The accepted block consumes its single item");
+            helper.assertValueEqual(PlacementDelay.remainingMillis(fixture.player), 0L, "Server solid-bucket handling leaves input timing to the client");
+        }
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -314,7 +309,7 @@ public final class GameplayBalanceGameTests {
             helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 0, "A rejected transaction never starts a placement cooldown");
             fixture.block(2);
             helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "A non-canceled request in the same tick may still place immediately");
-            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 10, "Only the newly committed block starts the deadline");
+            helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 1, "Only the committed placement consumes one block");
         }
         helper.succeed();
     }
@@ -339,67 +334,54 @@ public final class GameplayBalanceGameTests {
             fixture.clearTarget();
             helper.getLevel().setBlock(fixture.target.below(), MiteWorkbenches.TABLES.get("flint").get().defaultBlockState(), 2);
             fixture.block(4);
-            helper.assertTrue(fixture.player.containerMenu != fixture.player.inventoryMenu, "A running placement cooldown does not block ordinary workbench use");
+            helper.assertTrue(fixture.player.containerMenu != fixture.player.inventoryMenu, "The server placement gate preserves the ordinary workbench interaction path");
             helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 1, "Only the single genuine placement consumes an item");
         }
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void failedBlueberryPlantingCanEatWithoutStartingOrExtendingPlacementCooldown(GameTestHelper helper) {
-        Fixture fixture = new Fixture(helper);
-        fixture.player.getFoodData().setFoodLevel(0);
-        ((DualFoodData) fixture.player.getFoodData()).mite$setNutrition(0);
-        NutritionState.set(fixture.player, new NutritionState(1, 0, 0, 0, 0, -1));
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteFoods.BLUEBERRIES.get(), 2));
-        fixture.block(1);
-        helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir() && fixture.player.isUsingItem(),
-                "An invalid blueberry planting destination retains the native food-use fallback");
-        helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 0, "Beginning to eat a block item is not counted as placement");
-        fixture.player.stopUsingItem();
-        fixture.player.getFoodData().setFoodLevel(1);
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS));
-        fixture.block(2);
-        fixture.clearTarget();
-        helper.runAfterDelay(2, () -> {
-            try {
-                fixture.player.getFoodData().setFoodLevel(0);
-                fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteFoods.BLUEBERRIES.get(), 2));
-                fixture.block(3);
-                helper.assertTrue(fixture.player.isUsingItem(), "An active placement cooldown still permits an edible block item's food fallback");
-            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 8, "Starting food consumption cannot extend the original placement deadline");
-                helper.succeed();
-            } finally { fixture.close(); }
-        });
+    public static void failedBlueberryPlantingPreservesFoodFallbackBeforeAndAfterBlockPlacement(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
+            fixture.player.getFoodData().setFoodLevel(0);
+            ((DualFoodData) fixture.player.getFoodData()).mite$setNutrition(0);
+            NutritionState.set(fixture.player, new NutritionState(1, 0, 0, 0, 0, -1));
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteFoods.BLUEBERRIES.get(), 2));
+            fixture.block(1);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).isAir() && fixture.player.isUsingItem(), "Failed planting retains the native food-use fallback");
+            fixture.player.stopUsingItem();
+            fixture.player.getFoodData().setFoodLevel(1);
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS));
+            fixture.block(2);
+            fixture.clearTarget();
+            fixture.player.getFoodData().setFoodLevel(0);
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteFoods.BLUEBERRIES.get(), 2));
+            fixture.block(3);
+            helper.assertTrue(fixture.player.isUsingItem(), "The server preserves food fallback after the previous block packet");
+            helper.assertValueEqual(PlacementDelay.remainingMillis(fixture.player), 0L, "The server preserves client ownership of input timing");
+        }
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void waterLilyUseCannotBypassTheSharedCooldownThroughItsSeparateUsePath(GameTestHelper helper) {
-        Fixture fixture = new Fixture(helper);
-        helper.getLevel().setBlock(fixture.target, Blocks.WATER.defaultBlockState(), 2);
-        fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.LILY_PAD, 2));
-        fixture.bucket(InteractionHand.MAIN_HAND, 1);
-        helper.assertTrue(helper.getLevel().getBlockState(fixture.target.above()).is(Blocks.LILY_PAD), "The first water-plant use places immediately through its native use method");
-        helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 10, "Direct BlockItem placement outside CommonHooks still starts the same cooldown");
-        helper.getLevel().setBlock(fixture.target.above(), Blocks.AIR.defaultBlockState(), 2);
-        fixture.bucket(InteractionHand.MAIN_HAND, 2);
-        helper.assertTrue(helper.getLevel().getBlockState(fixture.target.above()).isAir(), "A second water-plant use cannot bypass ordinary block cooldowns");
-        helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 1, "Rejected water-plant placement consumes no additional item");
-        helper.runAfterDelay(10, () -> {
-            try {
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target.above()).isAir(), "A refused water plant never appears by itself at expiry");
-                fixture.bucket(InteractionHand.MAIN_HAND, 3);
-                helper.assertTrue(helper.getLevel().getBlockState(fixture.target.above()).is(Blocks.LILY_PAD), "A fresh water-plant request at the deadline is accepted immediately");
-                helper.succeed();
-            } finally {
-                helper.getLevel().setBlock(fixture.target.above(), Blocks.AIR.defaultBlockState(), 2);
-                fixture.close();
-            }
-        });
+    public static void sameTickWaterLilyPacketsCommitThroughTheirSeparateUsePath(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
+            helper.getLevel().setBlock(fixture.target, Blocks.WATER.defaultBlockState(), 2);
+            fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.LILY_PAD, 2));
+            fixture.bucket(InteractionHand.MAIN_HAND, 1);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target.above()).is(Blocks.LILY_PAD), "The first water-plant use places through its native use method");
+            helper.getLevel().setBlock(fixture.target.above(), Blocks.AIR.defaultBlockState(), 2);
+            fixture.bucket(InteractionHand.MAIN_HAND, 2);
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target.above()).is(Blocks.LILY_PAD), "The following valid water-plant packet commits in the same server tick");
+            helper.assertTrue(fixture.player.getMainHandItem().isEmpty(), "The two water-plant requests consume exactly two items");
+            helper.assertValueEqual(PlacementDelay.remainingMillis(fixture.player), 0L, "Water-plant use creates its input deadline on the client");
+            helper.getLevel().setBlock(fixture.target.above(), Blocks.AIR.defaultBlockState(), 2);
+        }
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void creativePlacementRetainsItsOriginalImmediateUnrestrictedBehavior(GameTestHelper helper) {
+    public static void creativeServerPlacementRetainsItsAuthoritativeGateExemption(GameTestHelper helper) {
         try (Fixture fixture = new Fixture(helper)) {
             fixture.player.setGameMode(GameType.CREATIVE);
             fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS, 2));
@@ -407,9 +389,9 @@ public final class GameplayBalanceGameTests {
             helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "The first creative placement remains immediate");
             fixture.clearTarget();
             fixture.block(2);
-            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "Creative placement is not limited by the new survival cooldown");
+            helper.assertTrue(helper.getLevel().getBlockState(fixture.target).is(Blocks.GLASS), "The server accepts creative placement independently of the client's input lock");
             helper.assertValueEqual(fixture.player.getMainHandItem().getCount(), 2, "Native creative placement still consumes no items");
-            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 0, "Creative actions do not create a hidden placement deadline");
+            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 0, "Creative actions have their input deadline on the client");
         }
         helper.succeed();
     }

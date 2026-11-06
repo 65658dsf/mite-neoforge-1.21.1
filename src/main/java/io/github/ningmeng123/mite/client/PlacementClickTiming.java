@@ -1,26 +1,31 @@
 package io.github.ningmeng123.mite.client;
 
-/** Aligns native repeated-use timing only with actual placement attempts. @author NingMeng123 */
+/** Tracks actual placement attempts during one native use action. @author NingMeng123 */
 public final class PlacementClickTiming {
-    private static final ThreadLocal<Boolean> BLOCKED = new ThreadLocal<>();
+    private static final ThreadLocal<Boolean> ATTEMPTED = new ThreadLocal<>();
 
     private PlacementClickTiming() {}
 
     public static void begin() {
-        BLOCKED.remove();
+        ATTEMPTED.remove();
     }
 
-    public static void blocked() {
-        BLOCKED.set(true);
+    public static void attempted() {
+        ATTEMPTED.set(true);
     }
 
-    public static boolean consumeBlocked() {
-        boolean blocked = Boolean.TRUE.equals(BLOCKED.get());
-        BLOCKED.remove();
-        return blocked;
+    public static void actionConsumed() {
+        ATTEMPTED.remove();
     }
 
-    public static int rightClickDelay(int nativeDelay, int previousRemaining, int remaining, boolean blocked) {
-        return remaining > 0 && (blocked || remaining > previousRemaining) ? remaining : nativeDelay;
+    public static boolean consumeAttempted() {
+        boolean attempted = Boolean.TRUE.equals(ATTEMPTED.get());
+        ATTEMPTED.remove();
+        return attempted;
+    }
+
+    public static int rightClickDelay(int nativeDelay, long remainingMillis, boolean attempted, boolean usingItem) {
+        if (remainingMillis > 0L) return 1;
+        return attempted && !usingItem ? 0 : nativeDelay;
     }
 }

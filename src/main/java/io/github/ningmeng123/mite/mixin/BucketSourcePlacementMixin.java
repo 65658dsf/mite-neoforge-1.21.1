@@ -24,7 +24,7 @@ public abstract class BucketSourcePlacementMixin {
                 ? BucketPlacementController.empty(bucket, player, level, pos, hit, container,
                         () -> original.call(player, level, pos, hit, container))
                 : original.call(player, level, pos, hit, container);
-        if (placed) PlacementDelay.placed(player);
+        if (placed) PlacementDelay.bucketPlaced(player);
         return placed;
     }
 }

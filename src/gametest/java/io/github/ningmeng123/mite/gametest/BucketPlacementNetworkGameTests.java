@@ -33,7 +33,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /** Exercises Ctrl intent through the real server use-packet handler instead of a direct placement scope. @author NingMeng123 */
-@GameTestHolder("mite")
+@GameTestHolder("mite_gameplay")
 @PrefixGameTestTemplate(false)
 public final class BucketPlacementNetworkGameTests {
     private BucketPlacementNetworkGameTests() {}
@@ -133,61 +133,32 @@ public final class BucketPlacementNetworkGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void immediatePourSharesTenTickCooldownAndDiscardsRejectedControlPackets(GameTestHelper helper) {
-        Fixture fixture = new Fixture(helper);
-        try {
+    public static void sameTickPoursEachUseTheirOwnHandAndControlIntent(GameTestHelper helper) {
+        try (Fixture fixture = new Fixture(helper)) {
             fixture.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
             fixture.use(InteractionHand.MAIN_HAND, 300);
             helper.assertTrue(helper.getLevel().getFluidState(fixture.target).is(FluidTags.WATER),
-                    "The first real bucket packet pours immediately, without a preparation tick");
-            helper.assertTrue(fixture.temporary(), "An immediate ordinary pour still has its finite water deadline");
-            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 10,
-                    "A successful pour starts exactly ten ticks of cooldown");
+                    "The first real bucket packet pours immediately");
+            helper.assertTrue(fixture.temporary(), "The ordinary pour receives its finite fluid deadline");
             TemporaryFluidChanges.get(helper.getLevel()).cancel(fixture.target);
             helper.getLevel().setBlock(fixture.target, Blocks.AIR.defaultBlockState(), 2);
             fixture.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.LAVA_BUCKET));
             BucketPlacementIntent.receive(fixture.player, InteractionHand.OFF_HAND, 301, true);
             fixture.use(InteractionHand.OFF_HAND, 301);
-            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(),
-                    "Switching hand and liquid cannot bypass the shared cooldown");
-            helper.assertTrue(fixture.player.getOffhandItem().is(Items.LAVA_BUCKET), "A rejected pour retains its full bucket");
-            helper.assertValueEqual(fixture.player.totalExperience, 1000, "A rejected Ctrl request spends no source experience");
-            helper.runAfterDelay(9, () -> {
-                try {
-                    helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 1,
-                            "The original deadline still has one tick remaining");
-                    BucketPlacementIntent.receive(fixture.player, InteractionHand.OFF_HAND, 302, true);
-                    fixture.use(InteractionHand.OFF_HAND, 302);
-                    helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(),
-                            "A repeated request is still refused at tick nine");
-                    helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 1,
-                            "Rejected requests do not extend the deadline");
-                    helper.runAfterDelay(1, () -> {
-                        try {
-                            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 0,
-                                    "Placement becomes available at tick ten");
-                            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).isEmpty(),
-                                    "The elapsed cooldown never replays a refused placement");
-                            fixture.use(InteractionHand.OFF_HAND, 303);
-                            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).is(FluidTags.LAVA),
-                                    "A fresh request pours immediately at the deadline");
-                            helper.assertTrue(fixture.temporary(), "Rejected Ctrl requests cannot arm the later ordinary pour");
-                            helper.assertValueEqual(fixture.player.totalExperience, 1000,
-                                    "The later unarmed request cannot charge either rejected source intent");
-                            helper.assertValueEqual(PlacementDelay.remainingTicks(fixture.player), 10,
-                                    "The new successful pour starts its own cooldown");
-                            helper.succeed();
-                        } finally { fixture.close(); }
-                    });
-                } catch (RuntimeException | Error failure) {
-                    fixture.close();
-                    throw failure;
-                }
-            });
-        } catch (RuntimeException | Error failure) {
-            fixture.close();
-            throw failure;
+            helper.assertTrue(helper.getLevel().getFluidState(fixture.target).is(FluidTags.LAVA),
+                    "The following offhand packet places its own liquid in the same server tick");
+            helper.assertTrue(fixture.player.getOffhandItem().is(Items.BUCKET), "The accepted lava pour returns one empty vessel");
+            helper.assertFalse(fixture.temporary(), "The matching Ctrl intent makes the second pour permanent");
+            helper.assertValueEqual(fixture.player.totalExperience, 900, "Only the armed request pays one source cost");
+            helper.getLevel().setBlock(fixture.target, Blocks.AIR.defaultBlockState(), 2);
+            fixture.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.LAVA_BUCKET));
+            fixture.use(InteractionHand.OFF_HAND, 302);
+            helper.assertTrue(fixture.temporary(), "A subsequent ordinary request receives its own temporary mode");
+            helper.assertValueEqual(fixture.player.totalExperience, 900, "The consumed Ctrl intent applies only to its matching request");
+            helper.assertValueEqual(PlacementDelay.remainingMillis(fixture.player), 0L,
+                    "The server leaves input timing to the client even when valid packets arrive together");
         }
+        helper.succeed();
     }
 
     private static List<Item> filledBuckets(boolean water) {

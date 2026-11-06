@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import io.github.ningmeng123.mite.world.PlacementDelay;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.SolidBucketItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +20,9 @@ public abstract class PlacementCooldownBlockMixin {
 
     @Inject(method = "place", at = @At("RETURN"))
     private void mite$completedBlockPlacement(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> callback) {
-        if (callback.getReturnValue().consumesAction()) PlacementDelay.blockPlaced(context.getPlayer(), context.getLevel());
+        if (callback.getReturnValue().consumesAction()) {
+            PlacementDelay.blockPlaced(context.getPlayer(), context.getLevel(),
+                    (Object) this instanceof SolidBucketItem);
+        }
     }
 }

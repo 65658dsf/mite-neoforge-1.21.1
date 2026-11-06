@@ -8,11 +8,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Records rejected local placement gates without intercepting other uses. @author NingMeng123 */
+/** Failed placement can retry on the next input tick. @author NingMeng123 */
 @Mixin(value = PlacementDelay.class, remap = false)
 public abstract class PlacementCooldownAttemptMixin {
-    @Inject(method = "blocked", at = @At("RETURN"))
-    private static void mite$recordBlockedPlacement(Player player, CallbackInfoReturnable<Boolean> callback) {
-        if (callback.getReturnValueZ() && player != null && player.level().isClientSide) PlacementClickTiming.blocked();
+    @Inject(method = "placementBlocked", at = @At("RETURN"))
+    private static void mite$recordPlacementAttempt(Player player, CallbackInfoReturnable<Boolean> callback) {
+        if (player != null && player.level().isClientSide) PlacementClickTiming.attempted();
     }
 }

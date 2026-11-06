@@ -35,7 +35,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /** Real iron/metal bucket entry points and authoritative source-placement transactions. @author NingMeng123 */
-@GameTestHolder("mite")
+@GameTestHolder("mite_gameplay")
 @PrefixGameTestTemplate(false)
 public final class BucketPlacementGameTests {
     private BucketPlacementGameTests() {}

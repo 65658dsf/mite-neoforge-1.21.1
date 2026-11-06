@@ -96,21 +96,40 @@ public final class BucketPlacementClientAudit implements DataProvider {
                     "io.github.ningmeng123.mite.mixin.client.PlacementCooldownMinecraftMixin");
             check(reachable(minecraft, method(minecraft, "startUseItem", "()V"), repeat),
                     "The native repeated-use path reaches placement-specific timing synchronization");
-            check(calls(repeat, "io/github/ningmeng123/mite/client/PlacementClickTiming", "rightClickDelay")
-                            && calls(repeat, "io/github/ningmeng123/mite/world/PlacementDelay", "remainingTicks"),
-                    "Placement repeat timing reads the actual shared deadline instead of creating a separate timer");
+            check(calls(repeat, "io/github/ningmeng123/mite/world/PlacementDelay", "blocked")
+                            && calls(repeat, "io/github/ningmeng123/mite/world/PlacementDelay", "remainingMillis"),
+                    "The native use gate checks the shared real-time placement deadline");
+            MethodNode poll = handler(minecraft, "mite$pollPlacementRepeat",
+                    "io.github.ningmeng123.mite.mixin.client.PlacementCooldownMinecraftMixin");
+            check(reachable(minecraft, method(minecraft, "handleKeybinds", "()V"), poll),
+                    "The actual native input loop reaches real-time placement polling");
+            check(calls(poll, "io/github/ningmeng123/mite/world/PlacementDelay", "remainingMillis"),
+                    "Held placement resumes from the shared millisecond deadline");
+            check(calls(repeat, "io/github/ningmeng123/mite/client/PlacementClickTiming", "begin")
+                            && calls(repeat, "io/github/ningmeng123/mite/client/PlacementClickTiming", "consumeAttempted")
+                            && calls(repeat, "io/github/ningmeng123/mite/client/PlacementClickTiming", "rightClickDelay"),
+                    "Native use scopes placement attempts and applies their retry timing");
+            MethodNode consumed = handler(minecraft, "mite$clearAttemptAfterConsumedUse",
+                    "io.github.ningmeng123.mite.mixin.client.PlacementCooldownMinecraftMixin");
+            check(reachable(minecraft, method(minecraft, "startUseItem", "()V"), consumed)
+                            && calls(consumed, "io/github/ningmeng123/mite/client/PlacementClickTiming", "actionConsumed"),
+                    "Successful block, item and entity use clears earlier failed placement attempts");
             String delayTarget = "io.github.ningmeng123.mite.world.PlacementDelay";
             Class.forName(delayTarget, false, getClass().getClassLoader());
             ClassNode delay = new ClassNode();
             new ClassReader(Files.readAllBytes(Path.of(".mixin.out", "class", delayTarget.replace('.', '/') + ".class")))
                     .accept(delay, 0);
-            MethodNode attempt = handler(delay, "mite$recordBlockedPlacement",
+            MethodNode attempt = handler(delay, "mite$recordPlacementAttempt",
                     "io.github.ningmeng123.mite.mixin.client.PlacementCooldownAttemptMixin");
-            check(reachable(delay, method(delay, "blocked", "(Lnet/minecraft/world/entity/player/Player;)Z"), attempt)
-                            && calls(attempt, "io/github/ningmeng123/mite/client/PlacementClickTiming", "blocked"),
-                    "Only the shared placement gate records a rejected local placement attempt");
+            check(reachable(delay, method(delay, "placementBlocked", "(Lnet/minecraft/world/entity/player/Player;)Z"), attempt)
+                            && calls(attempt, "io/github/ningmeng123/mite/client/PlacementClickTiming", "attempted"),
+                    "Actual block and bucket placement checks record local attempts for immediate failure retries");
             report.addProperty("native_start_use_reaches_placement_timing", true);
-            report.addProperty("shared_gate_reaches_client_attempt_recording", true);
+            report.addProperty("native_keybinds_reach_placement_deadline_polling", true);
+            report.addProperty("placement_input_uses_shared_millisecond_deadline", true);
+            report.addProperty("placement_gate_reaches_client_attempt_recording", true);
+            report.addProperty("native_start_use_reaches_placement_retry_timing", true);
+            report.addProperty("successful_use_clears_prior_placement_attempt", true);
             report.addProperty("transformed_export", export.toAbsolutePath().normalize().toString());
             report.addProperty("prediction_scope_handler", mode.name);
             report.addProperty("packet_order_handler", input.name);
