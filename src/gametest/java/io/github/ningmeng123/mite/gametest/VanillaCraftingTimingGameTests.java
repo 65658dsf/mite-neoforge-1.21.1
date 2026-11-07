@@ -93,7 +93,7 @@ public final class VanillaCraftingTimingGameTests {
                 result.add(switch (shape) {
                     case "slab" -> stone(id, input, output, 6, 600F, 0, 1, 2);
                     case "stairs" -> stone(id, input, output, 4, 1200F, 0, 3, 4, 6, 7, 8);
-                    default -> stone(id, input, output, 6, 1200F, 0, 1, 2, 3, 4, 5);
+                    default -> stone(id, input, output, 8, 1200F, 0, 1, 2, 3, 4, 5);
                 });
             }
         }
@@ -149,11 +149,11 @@ public final class VanillaCraftingTimingGameTests {
 
     @GameTest(template = "empty")
     public static void modernStoneWallsWaitForTheCompleteCobblestoneWallPeriod(GameTestHelper helper) {
-        checkOrdinary(helper, stone("andesite_wall", Items.ANDESITE, Items.ANDESITE_WALL, 6,
+        checkOrdinary(helper, stone("andesite_wall", Items.ANDESITE, Items.ANDESITE_WALL, 8,
                 1200F, 0, 1, 2, 3, 4, 5), true);
-        checkContinuous(helper, stone("diorite_wall", Items.DIORITE, Items.DIORITE_WALL, 6,
+        checkContinuous(helper, stone("diorite_wall", Items.DIORITE, Items.DIORITE_WALL, 8,
                 1200F, 0, 1, 2, 3, 4, 5), true);
-        checkOrdinary(helper, stone("tuff_wall", Items.TUFF, Items.TUFF_WALL, 6,
+        checkOrdinary(helper, stone("tuff_wall", Items.TUFF, Items.TUFF_WALL, 8,
                 1200F, 0, 1, 2, 3, 4, 5), true);
         helper.succeed();
     }
@@ -344,13 +344,13 @@ public final class VanillaCraftingTimingGameTests {
     @GameTest(template = "empty", timeoutTicks = 700)
     public static void redstoneCrafterCannotBypassTheNewGraniteWallPeriod(GameTestHelper helper) {
         checkRedstoneCrafter(helper, stone("granite_wall", Items.GRANITE, Items.GRANITE_WALL,
-                6, 1200F, 0, 1, 2, 3, 4, 5));
+                8, 1200F, 0, 1, 2, 3, 4, 5));
     }
 
     @GameTest(template = "empty", timeoutTicks = 700)
     public static void redstoneCrafterUsesTheShorterSandstoneWallPeriod(GameTestHelper helper) {
         checkRedstoneCrafter(helper, stone("sandstone_wall", Items.SANDSTONE, Items.SANDSTONE_WALL,
-                6, 480F, 0, 1, 2, 3, 4, 5));
+                8, 480F, 0, 1, 2, 3, 4, 5));
     }
 
     private static void checkRedstoneCrafter(GameTestHelper helper, RecipeCase recipe) {
@@ -444,7 +444,7 @@ public final class VanillaCraftingTimingGameTests {
             helper.assertValueEqual(actual.id(), id, "The ingredients match the real loaded vanilla recipe " + id);
             helper.assertTrue(menu.stillValid(player), "The player uses a valid inventory or physically placed workbench");
             helper.assertTrue(menu.getSlot(0).getItem().is(recipe.output), "The real result slot previews the requested vanilla item");
-            helper.assertValueEqual(menu.getSlot(0).getItem().getCount(), recipe.outputCount, "The result preview preserves the vanilla batch size");
+            helper.assertValueEqual(menu.getSlot(0).getItem().getCount(), recipe.outputCount, "The result preview shows the expected full batch");
             var rule = TimedCraftingRecipes.get(id);
             helper.assertTrue(rule != null, "The vanilla recipe has an explicit R196 manufacturing rule");
             helper.assertValueEqual(rule.difficulty(), recipe.difficulty, "R196 difficulty is calculated for the complete output batch");

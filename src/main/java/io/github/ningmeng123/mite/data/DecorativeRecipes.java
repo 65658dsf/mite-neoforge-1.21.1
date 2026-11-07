@@ -6,26 +6,29 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.BlockFamilies;
+import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
 
 /** Source doors/bars/dyes and a distinct modern copper-trapdoor shape. @author NingMeng123 */
 public final class DecorativeRecipes {
     private DecorativeRecipes() {}
     public static void addRecipes(RecipeOutput output) {
-        // R196 orders 273/274 both use six blocks for a complete batch of eight walls.
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Items.COBBLESTONE_WALL, 8)
-                .pattern("III").pattern("III").define('I', Items.COBBLESTONE)
-                .unlockedBy("has_cobblestone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
-                .save(output, ResourceLocation.withDefaultNamespace("cobblestone_wall"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Items.MOSSY_COBBLESTONE_WALL, 8)
-                .pattern("III").pattern("III").define('I', Items.MOSSY_COBBLESTONE)
-                .unlockedBy("has_mossy_cobblestone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.MOSSY_COBBLESTONE))
-                .save(output, ResourceLocation.withDefaultNamespace("mossy_cobblestone_wall"));
+        // Every wall family uses six material blocks for a complete batch of eight walls.
+        for (var family : BlockFamilies.getAllFamilies().toList()) {
+            var wall = family.getVariants().get(BlockFamily.Variant.WALL);
+            if (wall == null) continue;
+            var material = family.getBaseBlock();
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, wall, 8)
+                    .pattern("III").pattern("III").define('I', material)
+                    .unlockedBy("has_" + BuiltInRegistries.BLOCK.getKey(material).getPath(),
+                            InventoryChangeTrigger.TriggerInstance.hasItems(material))
+                    .save(output, BuiltInRegistries.BLOCK.getKey(wall));
+        }
         try (var reader = new InputStreamReader(Objects.requireNonNull(DecorativeRecipes.class.getResourceAsStream("/mite/decorative-028.json")), StandardCharsets.UTF_8)) {
             var data = JsonParser.parseReader(reader).getAsJsonObject();
             var rows = data.getAsJsonArray("recipes");

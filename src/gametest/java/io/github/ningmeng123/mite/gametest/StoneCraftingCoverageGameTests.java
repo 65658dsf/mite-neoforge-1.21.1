@@ -100,7 +100,10 @@ public final class StoneCraftingCoverageGameTests {
             helper.assertValueEqual(page.baselineTicks(), ticks, "JEI uses the real whole-batch manufacturing clock: " + holder.id());
             helper.assertValueEqual(page.output().getCount(), output.getCount(), "JEI preserves the actual recipe batch: " + holder.id());
             helper.assertTrue(page.output().is(output.getItem()), "The timed page retains the actual stone output: " + holder.id());
-            if (((BlockItem) output.getItem()).getBlock() instanceof WallBlock) walls++;
+            if (((BlockItem) output.getItem()).getBlock() instanceof WallBlock) {
+                helper.assertValueEqual(output.getCount(), 8, "Every wall craft produces eight walls per batch: " + holder.id());
+                walls++;
+            }
             var row = new JsonObject();
             row.addProperty("recipe", holder.id().toString());
             row.addProperty("output", BuiltInRegistries.ITEM.getKey(output.getItem()).toString());
