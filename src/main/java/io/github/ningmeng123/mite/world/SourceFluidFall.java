@@ -18,7 +18,8 @@ public final class SourceFluidFall {
         return io.github.ningmeng123.mite.rules.UnderworldSpringRules.freefallDecayDelay(water,ultraWarm);
     }
     public static boolean tryFall(Level level,BlockPos pos,FluidState state) {
-        if (!(level instanceof ServerLevel server) || !(level.getBlockState(pos).getBlock() instanceof LiquidBlock)
+        // Only whole sources may move here; promoting downhill flow creates extra source cells.
+        if (!state.isSource() || !(level instanceof ServerLevel server) || !(level.getBlockState(pos).getBlock() instanceof LiquidBlock)
                 || !state.is(FluidTags.WATER) && !state.is(FluidTags.LAVA)
                 || pos.getY()<=level.getMinBuildHeight() || !level.hasChunkAt(pos.below()) || !level.getBlockState(pos.below()).isAir()) return false;
         boolean near=level.players().stream().anyMatch(player->player.isAlive()&&!player.isSpectator()
