@@ -147,26 +147,33 @@ public final class R196EnchantmentTable {
         return energy < 1 ? List.of() : select(stack, energy, random, allowed, false);
     }
 
+    /** Player and generated enchantments share the same source float arithmetic and extension adjustment. */
+    public static int randomizedEnergy(int energy, RandomSource random) {
+        float roll = random.nextFloat();
+        float multiplier = io.github.ningmeng123.mite.api.MiteExtensions.policy().enchantmentPowerMultiplier(
+                roll, 1F + (roll - .5F) * .5F);
+        return Math.max(1, (int)(energy * multiplier));
+    }
+
     private static List<EnchantmentInstance> select(ItemStack stack, int energy, RandomSource random,
             List<Holder<Enchantment>> allowed, boolean playerEnchanting) {
         if (energy < 1 || enchantability(stack) < 1) return List.of();
-        int remaining = Math.max(1, (int)(energy * (1F + (random.nextFloat() - .5F) * .5F)));
-        // Source offers can exceed 150 energy. Use vanilla's table range for the count roll,
-        // while the full source energy still controls levels and the existing energy budget.
-        int extraPower = Math.min(30, remaining);
+        int remaining = randomizedEnergy(energy, random);
         List<Candidate> selected = new ArrayList<>();
         Map<String, Holder<Enchantment>> holders = allowed.stream()
                 .filter(holder -> ConfiguredEnchantments.availableForRandomSelection(holder, random))
                 .filter(holder -> holder.unwrapKey().isPresent())
                 .collect(Collectors.toMap(holder -> holder.unwrapKey().orElseThrow().location().toString(),
                         Function.identity(), (first, second) -> first));
-        while (remaining > 0) {
+        while (remaining > 0 && selected.size() < 3) {
             List<Candidate> candidates = new ArrayList<>();
             for (var definition : R196EnchantmentCatalog.definitions()) {
                 if (!stack.is(Items.BOOK) && !definition.supported(stack)) continue;
-                if (selected.stream().anyMatch(previous -> !R196EnchantmentCatalog.compatible(previous.definition().id(), definition.id()))) continue;
                 var holder = holders.get(definition.resourceId());
                 if (holder == null) continue;
+                if (selected.stream().anyMatch(previous -> !io.github.ningmeng123.mite.api.MiteExtensions.policy()
+                        .tableEnchantmentsCompatible(stack, previous.enchantment().enchantment, holder,
+                                R196EnchantmentCatalog.compatible(previous.definition().id(), definition.id())))) continue;
                 int maximum = playerEnchanting ? definition.maxLevel() : definition.maxGeneratedLevel();
                 for (int level = maximum; level >= 1; level--) {
                     if (definition.minCost(level) <= remaining) {
@@ -187,8 +194,7 @@ public final class R196EnchantmentTable {
                         random.nextInt(chosen.enchantment().level) + 1));
             selected.add(chosen);
             remaining -= chosen.definition().minCost(chosen.enchantment().level) + 5;
-            if (remaining < 5 || random.nextInt(50) > extraPower) break;
-            extraPower /= 2;
+            if (remaining < 5) break;
         }
         List<EnchantmentInstance> shuffled = new ArrayList<>();
         while (!selected.isEmpty()) shuffled.add(selected.remove(random.nextInt(selected.size())).enchantment());

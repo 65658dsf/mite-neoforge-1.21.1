@@ -1,5 +1,7 @@
 package io.github.ningmeng123.mite.enchantment;
 
+import io.github.ningmeng123.mite.api.MiteExtensions;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.crafting.MaterialAnvilRules;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -31,6 +33,14 @@ public final class R196BookAnvil {
                 || stack.is(Items.LEATHER_LEGGINGS) || stack.is(Items.LEATHER_BOOTS));
     }
     private static MaterialAnvilRules.Plan rejected() { return new MaterialAnvilRules.Plan(ItemStack.EMPTY, 0, 0, false); }
+
+    private static int maximumLevel(ItemStack stack, Holder<Enchantment> enchantment, R196EnchantmentCatalog.Definition definition) {
+        int maximum = definition == null ? enchantment.value().getMaxLevel() : definition.maxLevel();
+        if (definition != null && R196EnchantmentTable.vibranium(stack))
+            maximum = Math.max(maximum, definition.sourceTableLevel(true));
+        int materialMaximum = maximum;
+        return enchantment.unwrapKey().map(key -> MiteConfig.enchantmentMaxLevel(key.location().toString(), materialMaximum)).orElse(materialMaximum);
+    }
 
     private static boolean changesBookEnchantments(ItemStack before, ItemStack book, ItemStack after) {
         if (before.isEmpty() || after.isEmpty()) return false;
@@ -94,11 +104,12 @@ public final class R196BookAnvil {
             if (!supportsBook(entry.getKey(), first)) continue;
             // Check both retained and newly added entries; the same enchantment is an upgrade candidate.
             if (resultEnchantments.keySet().stream().anyMatch(previous -> !previous.equals(entry.getKey())
-                    && !Enchantment.areCompatible(previous, entry.getKey()))) return rejected();
+                    && !MiteExtensions.policy().anvilEnchantmentsCompatible(first, previous, entry.getKey(),
+                            Enchantment.areCompatible(previous, entry.getKey())))) return rejected();
             int current = resultEnchantments.getLevel(entry.getKey());
             int incoming = entry.getIntValue();
             int level = Math.min(current == incoming ? incoming + 1 : Math.max(current, incoming),
-                    definition == null ? entry.getKey().value().getMaxLevel() : definition.maxLevel());
+                    maximumLevel(first, entry.getKey(), definition));
             if (level <= current) continue;
             resultEnchantments.set(entry.getKey(), level);
             changed = true;

@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentMenuAccess;
@@ -146,6 +147,107 @@ public final class MaterialEnchantingGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void generatedSourceRewardsSpendTheirBudgetWithoutContinuationRollsAndStopAtThree(GameTestHelper helper) {
+        try (var settings = new Settings()) {
+            MiteConfig.ENCHANTMENT_MAX_LEVELS.set(List.of("minecraft:sharpness=1", "minecraft:unbreaking=1",
+                    "minecraft:looting=1", "minecraft:fortune=1"));
+            MiteConfig.refreshEnchantmentRules();
+            var registry = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            List<Holder<Enchantment>> allowed = List.of(registry.getHolderOrThrow(Enchantments.SHARPNESS), registry.getHolderOrThrow(Enchantments.UNBREAKING),
+                    registry.getHolderOrThrow(Enchantments.LOOTING), registry.getHolderOrThrow(Enchantments.FORTUNE));
+            var random = new SelectionRandom(.5F);
+            var selected = EnchantmentHelper.selectEnchantment(random, new ItemStack(Items.BOOK), 1000, allowed.stream());
+            helper.assertValueEqual(selected.size(), 3, "The real generated-reward entry spends enough remaining energy on exactly three entries");
+            helper.assertValueEqual(selected.stream().map(entry -> entry.enchantment).distinct().count(), 3L,
+                    "The three-entry ceiling retains unique compatible source enchantments");
+            helper.assertValueEqual(random.continuationRolls, 0, "Continuation depends only on remaining budget and never consumes an extra probability roll");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void playerAndGeneratedSelectionShareTheExtensionAdjustedEnergyRoll(GameTestHelper helper) throws Exception {
+        var policy = MiteExtensions.class.getDeclaredField("policy");
+        policy.setAccessible(true);
+        Object original = policy.get(null);
+        try (var settings = new Settings()) {
+            policy.set(null, new MiteExtensions.Policy() {});
+            float[] rolls = {0F, .5F, Math.nextDown(1F)};
+            int[] sourceEnergy = {75, 100, 125};
+            for (int index = 0; index < rolls.length; index++)
+                helper.assertValueEqual(R196EnchantmentTable.randomizedEnergy(100, new SelectionRandom(rolls[index])), sourceEnergy[index],
+                        "R196 float variation retains its independent boundary vector");
+            int[] adjustments = {0};
+            policy.set(null, new MiteExtensions.Policy() {
+                @Override public float enchantmentPowerMultiplier(float roll, float originalMultiplier) {
+                    adjustments[0]++;
+                    return 1F + (roll - .75F) * .5F;
+                }
+            });
+            int[] extensionEnergy = {62, 87, 112};
+            for (int index = 0; index < rolls.length; index++)
+                helper.assertValueEqual(R196EnchantmentTable.randomizedEnergy(100, new SelectionRandom(rolls[index])), extensionEnergy[index],
+                        "An installed extension can restore ITE's lower centered energy interval");
+            var registry = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            List<Holder<Enchantment>> allowed = List.of(registry.getHolderOrThrow(Enchantments.SHARPNESS));
+            adjustments[0] = 0;
+            var input = new ItemStack(Items.IRON_SWORD);
+            var playerResult = VanillaTableEnchanting.select(input, 30, new SelectionRandom(.5F), allowed, 100);
+            var generatedResult = EnchantmentHelper.selectEnchantment(new SelectionRandom(.5F), input, 1000, allowed.stream());
+            helper.assertTrue(!playerResult.isEmpty() && !generatedResult.isEmpty(), "Both real selection routes produce an eligible source enchantment");
+            helper.assertValueEqual(adjustments[0], 2, "Player and generated selection each apply the same extension adjustment exactly once");
+        } finally {
+            policy.set(null, original);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void tableMaterialCompatibilityAndApplicabilityReachBothSelectionRoutes(GameTestHelper helper) throws Exception {
+        var policy = MiteExtensions.class.getDeclaredField("policy");
+        policy.setAccessible(true);
+        Object original = policy.get(null);
+        try (var settings = new Settings()) {
+            MiteConfig.ENCHANTMENT_MAX_LEVELS.set(List.of("minecraft:sharpness=1", "minecraft:smite=1"));
+            MiteConfig.refreshEnchantmentRules();
+            var registry = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            var sharpness = registry.getHolderOrThrow(Enchantments.SHARPNESS);
+            var smite = registry.getHolderOrThrow(Enchantments.SMITE);
+            List<Holder<Enchantment>> allowed = List.of(sharpness, smite);
+            policy.set(null, new MiteExtensions.Policy() {
+                @Override public boolean tableEnchantmentsCompatible(ItemStack stack, Holder<Enchantment> left,
+                        Holder<Enchantment> right, boolean originalCompatibility) {
+                    return R196EnchantmentTable.vibranium(stack) && !left.equals(right)
+                            && allowed.contains(left) && allowed.contains(right) || originalCompatibility;
+                }
+                @Override public boolean enchantmentApplicable(String id, ItemStack stack, boolean originalApplicability) {
+                    return R196EnchantmentTable.vibranium(stack) && (id.equals("smite") || id.equals("minecraft:smite"))
+                            || originalApplicability;
+                }
+            });
+            for (boolean vibranium : new boolean[]{false, true}) {
+                var input = new ItemStack(vibranium ? MiteTools.get("vibranium_sword") : Items.IRON_SWORD);
+                int expected = vibranium ? 2 : 1;
+                helper.assertValueEqual(VanillaTableEnchanting.select(input, 30, new SelectionRandom(.5F), allowed, 100).size(), expected,
+                        "Player tables apply material-specific damage compatibility while retaining lower-material conflicts");
+                helper.assertValueEqual(EnchantmentHelper.selectEnchantment(new SelectionRandom(.5F), input, 1000, allowed.stream()).size(), expected,
+                        "Generated rewards apply the same material compatibility and candidate applicability policy");
+            }
+            policy.set(null, new MiteExtensions.Policy() {
+                @Override public boolean enchantmentApplicable(String id, ItemStack stack, boolean originalApplicability) {
+                    return !id.equals("sharpness") && !id.equals("minecraft:sharpness") && originalApplicability;
+                }
+            });
+            var input = new ItemStack(Items.IRON_SWORD);
+            helper.assertTrue(VanillaTableEnchanting.select(input, 30, new SelectionRandom(.5F), List.of(sharpness), 100).isEmpty(),
+                    "An extension's applicability restriction also overrides a matching native primary-item tag");
+        } finally {
+            policy.set(null, original);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void fullMithrilOffersUsuallyHaveMultipleCompatibleEntriesAndBooksRetainOnlyOne(GameTestHelper helper) {
         try (var settings = new Settings()) {
             int multiple = 0, triples = 0;
@@ -275,6 +377,20 @@ public final class MaterialEnchantingGameTests {
         private MiddleBudgetRandom() { super(196L); }
         @Override public float nextFloat() { return .5F; }
         @Override public int nextInt(int bound) { return bound == 2 ? 1 : 0; }
+    }
+
+    private static final class SelectionRandom extends LegacyRandomSource {
+        private final float roll;
+        private int continuationRolls;
+        private SelectionRandom(float roll) { super(196L); this.roll = roll; }
+        @Override public float nextFloat() { return roll; }
+        @Override public int nextInt(int bound) {
+            if (bound == 50) {
+                continuationRolls++;
+                return 49;
+            }
+            return bound == 2 ? 1 : 0;
+        }
     }
 
     private static final class Settings implements AutoCloseable {

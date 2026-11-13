@@ -1,12 +1,21 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.block.entity.MaterialAnvilBlockEntity;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.crafting.AnvilExperienceAccess;
+import io.github.ningmeng123.mite.crafting.WorkbenchRules;
+import io.github.ningmeng123.mite.enchantment.R196BookAnvil;
+import io.github.ningmeng123.mite.progression.GearProgression;
+import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
+import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
@@ -35,6 +44,78 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class BookAnvilGameTests {
     private BookAnvilGameTests() {}
+
+    @GameTest(template = "empty")
+    public static void vibraniumLimitsApplyThroughRealAnvilPickupAndPreservePointFees(GameTestHelper helper)
+            throws ReflectiveOperationException {
+        try (var policy = new ExtensionPolicy()) {
+            List<ItemStack> equipment = List.of(new ItemStack(MiteTools.get("vibranium_pickaxe")),
+                    new ItemStack(MiteTools.get("vibranium_sword")),
+                    new ItemStack(MiteArmorContent.get("mite:vibranium_chestplate")));
+            List<ResourceKey<Enchantment>> enchantments = List.of(Enchantments.FORTUNE, Enchantments.LOOTING, Enchantments.THORNS);
+            for (int index = 0; index < equipment.size(); index++) try (Fixture f = new Fixture(helper, Blocks.ANVIL)) {
+                ItemStack input = equipment.get(index);
+                ResourceKey<Enchantment> enchantment = enchantments.get(index);
+                input.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(enchantment), 4);
+                f.prepare(input, book(helper, new Entry(enchantment, 4)));
+                helper.assertValueEqual(stored(helper, f.menu.getSlot(2).getItem(), enchantment), 5,
+                        "The source vibranium equipment preview upgrades from IV to V");
+                assertFee(helper, f.menu, 8000);
+                f.menu.clicked(2, 0, ClickType.PICKUP, f.owner);
+                helper.assertValueEqual(stored(helper, f.menu.getCarried(), enchantment), 5,
+                        "Actual anvil extraction retains vibranium's fifth rank");
+                helper.assertValueEqual(f.owner.totalExperience, 2000, "The extended result pays the same 8000 point fee once");
+                helper.assertValueEqual(f.entity().damage(), 500, "The extended fifth rank pays its final-level anvil wear");
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void extensionConflictExemptionRequiresHighTierEquipmentAndKeepsBookAndIronConflicts(GameTestHelper helper)
+            throws ReflectiveOperationException {
+        try (var policy = new ExtensionPolicy()) {
+            var protection = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.PROTECTION);
+            for (String material : List.of("adamantium", "vibranium")) try (Fixture f = new Fixture(helper, Blocks.ANVIL)) {
+                ItemStack armor = new ItemStack(MiteArmorContent.get("mite:" + material + "_chestplate"));
+                armor.enchant(protection, 4);
+                f.prepare(armor, book(helper, new Entry(Enchantments.FIRE_PROTECTION, 4)));
+                helper.assertValueEqual(stored(helper, f.menu.getSlot(2).getItem(), Enchantments.PROTECTION), 4,
+                        "High-tier equipment retains its first protection enchantment");
+                helper.assertValueEqual(stored(helper, f.menu.getSlot(2).getItem(), Enchantments.FIRE_PROTECTION), 4,
+                        "High-tier equipment accepts the extension's conflict exemption");
+                f.menu.clicked(2, 0, ClickType.PICKUP, f.owner);
+                helper.assertValueEqual(stored(helper, f.menu.getCarried(), Enchantments.FIRE_PROTECTION), 4,
+                        "The high-tier conflict exemption reaches the actual extracted item");
+                helper.assertValueEqual(f.owner.totalExperience, 2000, "The conflict-exempt transaction still pays its point fee");
+            }
+            ItemStack iron = new ItemStack(Items.IRON_CHESTPLATE);
+            iron.enchant(protection, 4);
+            helper.assertTrue(R196BookAnvil.plan(iron, book(helper, new Entry(Enchantments.FIRE_PROTECTION, 4))).output().isEmpty(),
+                    "The extension keeps ordinary iron equipment conflicts");
+            helper.assertTrue(R196BookAnvil.plan(book(helper, new Entry(Enchantments.PROTECTION, 4)),
+                    book(helper, new Entry(Enchantments.FIRE_PROTECTION, 4))).output().isEmpty(),
+                    "Ordinary books retain their original conflict rules without a high-tier target");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void explicitCapsOverrideExtensionVibraniumAnvilLimits(GameTestHelper helper) throws ReflectiveOperationException {
+        List<? extends String> previous = MiteConfig.ENCHANTMENT_MAX_LEVELS.get();
+        try (var policy = new ExtensionPolicy()) {
+            MiteConfig.ENCHANTMENT_MAX_LEVELS.set(List.of("minecraft:fortune=2"));
+            MiteConfig.refreshEnchantmentRules();
+            ItemStack pickaxe = new ItemStack(MiteTools.get("vibranium_pickaxe"));
+            var plan = R196BookAnvil.plan(pickaxe, book(helper, new Entry(Enchantments.FORTUNE, 5)));
+            helper.assertValueEqual(stored(helper, plan.output(), Enchantments.FORTUNE), 2,
+                    "An explicit lower cap takes priority over the extension's fifth-rank material limit");
+        } finally {
+            MiteConfig.ENCHANTMENT_MAX_LEVELS.set(previous);
+            MiteConfig.refreshEnchantmentRules();
+        }
+        helper.succeed();
+    }
 
     @GameTest(template = "empty")
     public static void everyAnvilUpgradesSourceBooksAndChargesNormalAndShiftPickupOnce(GameTestHelper helper) {
@@ -228,6 +309,23 @@ public final class BookAnvilGameTests {
 
     private record Entry(ResourceKey<Enchantment> enchantment, int level) {}
     private record Merge(List<Entry> first, List<Entry> second, int points, int wear) {}
+
+    private static final class ExtensionPolicy implements AutoCloseable {
+        private final Field field = MiteExtensions.class.getDeclaredField("policy");
+        private final MiteExtensions.Policy previous = MiteExtensions.policy();
+
+        ExtensionPolicy() throws ReflectiveOperationException {
+            field.setAccessible(true);
+            field.set(null, new MiteExtensions.Policy() {
+                @Override public boolean anvilEnchantmentsCompatible(ItemStack stack, Holder<Enchantment> left,
+                        Holder<Enchantment> right, boolean original) {
+                    return WorkbenchRules.materialCapacity(GearProgression.material(stack)) >= 256F || original;
+                }
+            });
+        }
+
+        @Override public void close() throws IllegalAccessException { field.set(null, previous); }
+    }
 
     private static final class Fixture implements AutoCloseable {
         final GameTestHelper helper;

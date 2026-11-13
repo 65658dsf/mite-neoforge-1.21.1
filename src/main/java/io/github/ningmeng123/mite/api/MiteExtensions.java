@@ -75,6 +75,9 @@ public final class MiteExtensions {
         default boolean enchantmentSupported(Holder<Enchantment> enchantment, boolean original) { return original; }
         default boolean enchantmentApplicable(String id, ItemStack stack, boolean original) { return original; }
         default boolean enchantmentsCompatible(String left, String right, boolean original) { return original; }
+        default boolean tableEnchantmentsCompatible(ItemStack stack, Holder<Enchantment> left, Holder<Enchantment> right, boolean original) { return original; }
+        default boolean anvilEnchantmentsCompatible(ItemStack stack, Holder<Enchantment> left, Holder<Enchantment> right, boolean original) { return original; }
+        default float enchantmentPowerMultiplier(float roll, float original) { return original; }
         default float craftingDifficulty(ItemStack stack, float original) { return original; }
         default int materialUpgradeIngots(ItemStack stack, int original) { return original; }
         default double mobHealthLimit(Mob mob, double original) { return original; }

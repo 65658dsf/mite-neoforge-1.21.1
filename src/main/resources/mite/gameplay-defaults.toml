@@ -202,7 +202,7 @@
 
 [enchantments]
 	disabled = ["minecraft:binding_curse", "minecraft:loyalty"]
-	max_levels = ["modern_ite:extend=1"]
+	max_levels = []
 	chance_percent = ["minecraft:loyalty=0.0"]
 
 # Modern underworld additions requested after the original export; preserve all earlier values.

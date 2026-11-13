@@ -148,7 +148,7 @@ public final class VanillaTableEnchanting {
             List<Holder<Enchantment>> allowed, int paidEnergy) {
         if (stack.isEmpty() || selectionLevel < 1 || paidEnergy < 1 || selectionEnchantability(stack) < 1) return List.of();
         int energy = paidEnergy == Integer.MAX_VALUE ? selectionLevel : paidEnergy;
-        int remaining = Math.max(1, (int)(energy * (1F + (random.nextFloat() - .5F) * .5F)));
+        int remaining = R196EnchantmentTable.randomizedEnergy(energy, random);
         List<Holder<Enchantment>> participating = new ArrayList<>();
         Set<String> visited = new HashSet<>();
         for (Holder<Enchantment> holder : allowed) {
@@ -161,7 +161,7 @@ public final class VanillaTableEnchanting {
         while (remaining > 0 && selected.size() < 3) {
             List<Candidate> candidates = new ArrayList<>();
             for (Holder<Enchantment> holder : participating) {
-                if (selected.stream().anyMatch(previous -> !tableCompatible(previous.enchantment().enchantment, holder))) continue;
+                if (selected.stream().anyMatch(previous -> !tableCompatible(stack, previous.enchantment().enchantment, holder))) continue;
                 var source = R196EnchantmentCatalog.definition(holder.unwrapKey().orElseThrow().location().toString());
                 var profile = profile(holder);
                 int weight = source == null ? profile.weight() : source.weight();
@@ -191,14 +191,21 @@ public final class VanillaTableEnchanting {
         return shuffled;
     }
 
-    private static boolean tableCompatible(Holder<Enchantment> left, Holder<Enchantment> right) {
-        return compatible(left, right) && R196EnchantmentCatalog.compatible(
+    private static boolean tableCompatible(ItemStack stack, Holder<Enchantment> left, Holder<Enchantment> right) {
+        boolean original = compatible(left, right) && R196EnchantmentCatalog.compatible(
                 left.unwrapKey().orElseThrow().location().toString(), right.unwrapKey().orElseThrow().location().toString());
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().tableEnchantmentsCompatible(stack, left, right, original);
     }
 
     /** Source registry overrides must not remove a native item's ordinary table enchantments. */
     public static boolean primaryItem(ItemStack stack, Holder<Enchantment> enchantment) {
         if (stack.is(Items.BOOK)) return true;
+        String id = enchantment.unwrapKey().map(key -> key.location().toString()).orElse("");
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy()
+                .enchantmentApplicable(id, stack, nativePrimaryItem(stack, enchantment));
+    }
+
+    private static boolean nativePrimaryItem(ItemStack stack, Holder<Enchantment> enchantment) {
         if (stack.is(Items.WOODEN_SWORD)) return WoodenClubBehavior.allowsEnchantment(enchantment);
         String id = enchantment.unwrapKey().map(key -> key.location().toString()).orElse("");
         Profile vanilla = PROFILES.get(id);
