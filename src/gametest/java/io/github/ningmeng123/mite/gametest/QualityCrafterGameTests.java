@@ -33,6 +33,24 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class QualityCrafterGameTests {
+    @GameTest(template = "empty", timeoutTicks = 50)
+    public static void adjacentVibraniumWorkbenchCapsAutomatedChestManufactureAtTwentyFiveTicks(GameTestHelper helper) {
+        Machine machine = new Machine(helper, 1);
+        helper.setBlock(machine.position.north(), MiteWorkbenches.TABLES.get("vibranium").get().defaultBlockState());
+        for (int slot : new int[]{0, 1, 2, 3, 5, 6, 7, 8}) machine.crafter.setItem(slot, new ItemStack(Items.OAK_PLANKS));
+        List<ItemStack> original = machine.snapshot();
+        machine.pulse();
+        helper.runAfterDelay(25, () -> {
+            helper.assertTrue(machine.chest.isEmpty(), "The initial activation delay and 25-tick manufacturing period both elapse before emission");
+            machine.assertInputs(original, "Unfinished vibranium-assisted manufacture preserves every plank");
+        });
+        helper.runAfterDelay(34, () -> {
+            helper.assertValueEqual(machine.count(Items.CHEST), 1, "A recipe without a material requirement completes after the 25-tick vibranium period");
+            helper.assertTrue(machine.crafter.isEmpty(), "The machine consumes exactly one complete chest recipe");
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = "empty", timeoutTicks = 650)
     public static void automationManufacturesOnlyOrdinaryEquipmentOneBatchPerPulse(GameTestHelper helper) {
         Machine machine = new Machine(helper, 1);

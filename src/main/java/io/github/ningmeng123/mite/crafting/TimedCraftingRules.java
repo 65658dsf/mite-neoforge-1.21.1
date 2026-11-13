@@ -24,6 +24,8 @@ public final class TimedCraftingRules {
 
     public static float benchModifier(float capacity, boolean hasMaterialRequirement) {
         if (capacity <= 0F) return 0F;
+        // Extreme's vibranium workbench caps every recipe at 25 ticks, including recipes without a material gate.
+        if (capacity >= 512F) return Float.MAX_VALUE;
         if (!hasMaterialRequirement || capacity <= 2F) return .2F;
         if (capacity <= 4F) return .3F;
         if (capacity <= 8F) return .4F;

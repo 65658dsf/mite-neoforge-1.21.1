@@ -43,12 +43,24 @@ class TimedCraftingRulesTest {
             }
         }
     }
-    @Test void noMaterialRequirementAlwaysUsesPointTwoEvenAtHighestBench() {
+    @Test void ordinaryWorkbenchesUsePointTwoWithoutMaterialRequirement() {
         assertEquals(0F, TimedCraftingRules.benchModifier(0F, false));
         assertEquals(.2F, TimedCraftingRules.benchModifier(256F, false));
         assertEquals(.7F, TimedCraftingRules.benchModifier(256F, true));
         assertEquals(.3F, TimedCraftingRules.benchModifier(4F, true));
         assertEquals(50, TimedCraftingRules.damageSetback(1F));
         assertEquals(163835, TimedCraftingRules.damageSetback(100000F));
+    }
+
+    @Test void vibraniumWorkbenchCapsEveryRecipeAtTwentyFiveTicks() {
+        for (boolean materialRequired : new boolean[]{false, true}) {
+            float modifier = TimedCraftingRules.benchModifier(512F, materialRequired);
+            for (float difficulty : new float[]{25F, 640F, 6400F, 204800F}) {
+                for (int level : new int[]{Integer.MIN_VALUE, -40, 0, 200}) {
+                    assertEquals(25, TimedCraftingRules.period(difficulty, level, modifier, false));
+                    assertEquals(25, TimedCraftingRules.period(difficulty, level, modifier, true));
+                }
+            }
+        }
     }
 }

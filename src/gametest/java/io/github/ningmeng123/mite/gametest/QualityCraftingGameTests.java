@@ -36,6 +36,47 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class QualityCraftingGameTests {
     @GameTest(template = "empty")
+    public static void vibraniumWorkbenchCompletesRecipesWithoutMaterialRequirementsInTwentyFiveTicks(GameTestHelper helper) {
+        try (Fixture f = new Fixture(helper, 0)) {
+            helper.getLevel().setBlockAndUpdate(f.table, MiteWorkbenches.TABLES.get("adamantium").get().defaultBlockState());
+            f.output = Items.CHEST;
+            for (int slot : new int[]{1, 2, 3, 4, 6, 7, 8, 9}) f.menu.getSlot(slot).set(new ItemStack(Items.OAK_PLANKS));
+            f.tick(1);
+            helper.assertTrue(f.menu.getSlot(0).getItem().is(Items.CHEST), "The real chest recipe matches at the placed workbench");
+            helper.assertTrue(f.period() > 25, "An adamantium workbench uses the ordinary chest manufacturing period");
+            helper.getLevel().setBlockAndUpdate(f.table, MiteWorkbenches.TABLES.get("vibranium").get().defaultBlockState());
+            helper.assertValueEqual(f.period(), 25, "A recipe without a material requirement also receives vibranium's 25-tick cap");
+            TimedCraftingTestSupport.craftOne(helper, f.player, f.menu, ClickType.PICKUP);
+            f.assertOutputs(1);
+            helper.assertTrue(f.grid.isEmpty(), "The completed chest consumes exactly one set of eight planks");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vibraniumWorkbenchKeepsPaidQualityCostsWhileCappingManufactureAtTwentyFiveTicks(GameTestHelper helper) {
+        try (Fixture f = new Fixture(helper, 500)) {
+            f.loadPickaxes(1);
+            f.select(3);
+            helper.getLevel().setBlockAndUpdate(f.table, MiteWorkbenches.TABLES.get("adamantium").get().defaultBlockState());
+            helper.assertTrue(f.period() > 25, "An adamantium workbench retains the normal higher-quality equipment period");
+            helper.getLevel().setBlockAndUpdate(f.table, MiteWorkbenches.TABLES.get("vibranium").get().defaultBlockState());
+            helper.assertValueEqual(f.period(), 25, "Vibranium caps higher-quality equipment manufacture at 25 ticks");
+            f.menu.clicked(0, 0, ClickType.QUICK_MOVE, f.player);
+            f.tick(24);
+            f.assertPickInputs(1);
+            f.assertOutputs(0);
+            helper.assertValueEqual(f.player.totalExperience, 500, "The shortened manufacturing period charges no experience before completion");
+            f.tick(1);
+            f.assertPickInputs(0);
+            f.assertOutputs(1);
+            helper.assertValueEqual(EquipmentDurability.quality(f.firstOutput()).ordinal(), 3, "The completed pick retains the selected fine quality");
+            helper.assertValueEqual(f.player.totalExperience, 0, "The 25-tick batch still pays the exact 500-point quality fee");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void copperPickPreviewUsesMaterialRangeRegardlessOfExperienceAndWraps(GameTestHelper helper) {
         // Requested UI behavior exposes all material-supported qualities, including unaffordable ones.
         for (int experience : new int[]{0, 499, 500, 999, 1000}) {
