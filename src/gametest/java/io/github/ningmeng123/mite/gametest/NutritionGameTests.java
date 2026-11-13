@@ -121,7 +121,7 @@ public final class NutritionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void oneSeedSaturationBuffersOneExhaustionDeductionBeforeNutritionResumes(GameTestHelper helper) {
+    public static void oneSeedSaturationBuffersOneExhaustionDeductionBeforeSatiationResumes(GameTestHelper helper) {
         Player player = player(helper);
         setEnergy(player, 4, 3);
         player.getFoodData().setSaturation(0F);
@@ -132,7 +132,7 @@ public final class NutritionGameTests {
                 "The first queued hunger deduction consumes the one-point saturation buffer");
         assertEnergy(helper, player, 4, 3, "Consuming saturation protects both independent food reserves for that deduction");
         player.getFoodData().tick(player);
-        assertEnergy(helper, player, 4, 2, "Once seed saturation is depleted the next deduction consumes nutrition before satiation");
+        assertEnergy(helper, player, 3, 3, "Once seed saturation is depleted the next deduction consumes satiation");
         helper.succeed();
     }
 
@@ -262,9 +262,9 @@ public final class NutritionGameTests {
         setEnergy(player, 6, 6);
         player.getFoodData().addExhaustion(8F);
         player.getFoodData().tick(player);
-        assertEnergy(helper, player, 6, 5, "Eight hunger deducts only one nutrition on its first tick and preserves satiation");
+        assertEnergy(helper, player, 5, 6, "Eight hunger deducts only one satiation on its first tick and preserves nutrition");
         player.getFoodData().tick(player);
-        assertEnergy(helper, player, 6, 4, "The queued second nutrition deduction occurs on the next tick");
+        assertEnergy(helper, player, 4, 6, "The queued second satiation deduction occurs on the next tick");
         setEnergy(player, 0, 6);
         player.getFoodData().addExhaustion(4F);
         player.getFoodData().tick(player);
@@ -273,7 +273,7 @@ public final class NutritionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void retainedSatiationPreventsStarvationAfterNutritionIsEmpty(GameTestHelper helper) {
+    public static void retainedSatiationCannotPreventStarvationAfterNutritionIsEmpty(GameTestHelper helper) {
         Player player = player(helper);
         setEnergy(player, 6, 0);
         player.getFoodData().setSaturation(6F);
@@ -284,9 +284,9 @@ public final class NutritionGameTests {
             // Build the source's inactive normal branch without weakening the production Extreme lock.
             server.getWorldData().setDifficulty(Difficulty.NORMAL);
             for (int i = 0; i < 500; i++) player.getFoodData().tick(player);
-            helper.assertValueEqual(player.getHealth(), 6F, "Retained satiation prevents starvation after five-hundred updates");
+            helper.assertValueEqual(player.getHealth(), 6F, "Five-hundred float additions remain below the source starvation damage boundary");
             player.getFoodData().tick(player);
-            helper.assertValueEqual(player.getHealth(), 6F, "The five-hundred first update still cannot damage a player with satiation");
+            helper.assertValueEqual(player.getHealth(), 5F, "The five-hundred first update damages a player with zero nutrition and retained satiation");
             assertEnergy(helper, player, 6, 0, "Empty nutrition cannot discard the retained satiation reserve");
             helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 6F,
                     "The existing native saturation buffer is preserved when no exhaustion unit is due");
@@ -316,7 +316,7 @@ public final class NutritionGameTests {
             helper.assertValueEqual(player.getHealth(), 5F, "The one-thousand nine-hundred twenty-fourth update heals one health");
             assertEnergy(helper, player, 6, 6, "Regeneration's extra hunger is queued after this tick's deduction stage");
             player.getFoodData().tick(player);
-            assertEnergy(helper, player, 6, 5, "Regeneration's shared hunger consumes nutrition before satiation");
+            assertEnergy(helper, player, 5, 6, "Regeneration's shared hunger consumes satiation while nutrition-only hunger remains below four");
             player.setHealth(6F);
             player.getFoodData().tick(player);
             CompoundTag saved = player.saveWithoutId(new CompoundTag());

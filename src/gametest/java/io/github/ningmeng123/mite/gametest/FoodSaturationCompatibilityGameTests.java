@@ -21,7 +21,7 @@ public final class FoodSaturationCompatibilityGameTests {
     private FoodSaturationCompatibilityGameTests() {}
 
     @GameTest(template = "empty")
-    public static void breadNutritionPreviewDoesNotDuplicateItsNutritionExhaustionBuffer(GameTestHelper helper) {
+    public static void breadNutritionPreviewPreservesSatiationFirstConsumption(GameTestHelper helper) {
         Player player = player(helper);
         ItemStack bread = new ItemStack(Items.BREAD, 2);
         helper.assertValueEqual(bread.get(DataComponents.FOOD).saturation(), 2F,
@@ -31,7 +31,7 @@ public final class FoodSaturationCompatibilityGameTests {
         assertReserves(helper, player, 8, 2);
         player.getFoodData().addExhaustion(4F);
         player.getFoodData().tick(player);
-        assertReserves(helper, player, 8, 1);
+        assertReserves(helper, player, 7, 2);
         helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 0F,
                 "The source nutrition preview did not insert a separate two-point vanilla exhaustion buffer");
         helper.succeed();
