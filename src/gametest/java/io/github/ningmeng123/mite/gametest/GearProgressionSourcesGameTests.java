@@ -5,9 +5,12 @@ import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.mining.MiningProgress;
 import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
 import io.github.ningmeng123.mite.progression.GearProgress;
+import io.github.ningmeng123.mite.progression.GearModifier;
 import io.github.ningmeng123.mite.progression.GearProgression;
 import io.github.ningmeng123.mite.progression.GearProgressionRules;
 import io.github.ningmeng123.mite.progression.PlayerPlacedBlocks;
+import io.github.ningmeng123.mite.registry.MiteOreBlocks;
+import io.github.ningmeng123.mite.registry.MiteTools;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 import java.util.UUID;
@@ -31,6 +34,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -46,6 +50,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
@@ -103,6 +108,48 @@ public final class GearProgressionSourcesGameTests {
     private static UseOnContext use(ServerPlayer player, BlockPos clicked, Direction side) {
         return new UseOnContext(player, InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(clicked), side, clicked, false));
+    }
+
+    @GameTest(template = "empty")
+    public static void geologyMiningSpawnsExperienceThroughTheCompletedPlayerBreak(GameTestHelper h) {
+        ServerPlayer player = player(h);
+        BlockPos pos = h.absolutePos(new BlockPos(3, 3, 3));
+        try {
+            ItemStack pickaxe = new ItemStack(MiteTools.get("adamantium_pickaxe"));
+            pickaxe.set(GearProgression.PROGRESS.get(), new GearProgress(UUID.randomUUID(), 1, 0,
+                    Map.of(GearModifier.TOOL_GEOLOGY.id(), 1), 1));
+            player.setItemInHand(InteractionHand.MAIN_HAND, pickaxe);
+            var ores = java.util.List.of(Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE,
+                    Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.GOLD_ORE, Blocks.DEEPSLATE_GOLD_ORE,
+                    MiteOreBlocks.SILVER_ORE.get(), MiteOreBlocks.DEEPSLATE_SILVER_ORE.get(),
+                    MiteOreBlocks.MITHRIL_ORE.get(), MiteOreBlocks.DEEPSLATE_MITHRIL_ORE.get(),
+                    MiteOreBlocks.ADAMANTIUM_ORE.get(), MiteOreBlocks.DEEPSLATE_ADAMANTIUM_ORE.get());
+            int[] rewards = {5, 5, 5, 5, 10, 10, 7, 7, 20, 20, 50, 50};
+            for (int index = 0; index < ores.size(); index++) {
+                h.getLevel().setBlock(pos, ores.get(index).defaultBlockState(), 3);
+                PlayerPlacedBlocks.set(h.getLevel(), pos, false);
+                try (var spawned = new SpawnedEntityCapture(h.getLevel(), entity ->
+                        entity instanceof ExperienceOrb && entity.getBoundingBox().intersects(new AABB(pos).inflate(2D)))) {
+                    h.assertTrue(player.gameMode.destroyBlock(pos), "The geology pickaxe completes the real ore break");
+                    int experience = spawned.live(ExperienceOrb.class).stream().mapToInt(orb ->
+                            orb.getValue() * Math.max(1, orb.saveWithoutId(new CompoundTag()).getInt("Count"))).sum();
+                    h.assertValueEqual(experience, rewards[index],
+                            "Natural metal ore emits geology experience after loot evaluation: " + ores.get(index));
+                    int before = player.totalExperience;
+                    player.moveTo(pos.getCenter());
+                    for (ExperienceOrb orb : spawned.live(ExperienceOrb.class)) {
+                        int count = Math.max(1, orb.saveWithoutId(new CompoundTag()).getInt("Count"));
+                        for (int unit = 0; unit < count; unit++) {
+                            player.takeXpDelay = 0;
+                            orb.playerTouch(player);
+                        }
+                    }
+                    h.assertValueEqual(player.totalExperience - before, rewards[index],
+                            "The emitted geology experience reaches the player's experience total: " + ores.get(index));
+                }
+            }
+        } finally { close(player); }
+        h.succeed();
     }
 
     @GameTest(template = "empty")
