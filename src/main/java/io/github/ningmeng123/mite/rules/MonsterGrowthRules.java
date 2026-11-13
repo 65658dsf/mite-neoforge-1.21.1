@@ -6,7 +6,7 @@ import java.util.Map;
 /** Editable attribute growth with a new real basis after each completed blood moon. @author NingMeng123 */
 public final class MonsterGrowthRules {
     public static final String DEFAULT_FORMULA = "base + reference * rate * days";
-    public static final Settings DEFAULTS = new Settings(0D, 0D, 20D, .005D, .0025D,
+    public static final Settings DEFAULTS = new Settings(20D, 0D, 20D, .005D, .0025D,
             DEFAULT_FORMULA, DEFAULT_FORMULA);
     private static final int MAX_REBASES = 4096;
     private static final int CACHE_SIZE = 512;
@@ -19,7 +19,7 @@ public final class MonsterGrowthRules {
 
     private MonsterGrowthRules() {}
 
-    /** Zero bases retain the entity's native attribute; rates are fractions, so .005 means .5 percent. */
+    /** Health base is the first growth reference (zero means twenty); skeletonReference is retained for saved settings. */
     public record Settings(double healthBase, double damageBase, double skeletonReference,
                            double healthRate, double damageRate, String healthFormula, String damageFormula,
                            String healthBloodMoonFormula, String damageBloodMoonFormula) {
@@ -72,11 +72,9 @@ public final class MonsterGrowthRules {
             long[] dates = {1L, 2L, 32L, 33L, 34L, 65L, 97L, 128L, 129L, 160L, 161L, 1025L};
             for (double multiplier : new double[]{0D, 1D, healthMultiplier}) {
                 for (double nativeBase : new double[]{1D, 6D, 20D, 30D, 1024D}) {
-                    double initial = settings.healthBase() > 0D ? settings.healthBase() : nativeBase;
-                    for (boolean skeleton : new boolean[]{false, true}) for (long day : dates) {
-                        double reference = skeleton ? Math.max(initial, settings.skeletonReference()) : initial;
-                        strict(day, initial, reference, settings.healthRate() * multiplier, health, healthBloodMoon, true);
-                    }
+                    double reference = settings.healthBase() > 0D ? settings.healthBase() : 20D;
+                    for (long day : dates)
+                        strict(day, nativeBase, reference, settings.healthRate() * multiplier, health, healthBloodMoon, true);
                 }
             }
             for (double multiplier : new double[]{0D, 1D, damageMultiplier}) {
@@ -93,7 +91,7 @@ public final class MonsterGrowthRules {
 
     private static String numericProblem(Settings settings) {
         if (settings == null) return "缺少怪物增长设置";
-        if (!inRange(settings.healthBase(), 1024D)) return "生命基准必须是 0 到 1024 之间的有限数值";
+        if (!inRange(settings.healthBase(), 1024D)) return "首周期参考生命必须是 0 到 1024 之间的有限数值";
         if (!inRange(settings.damageBase(), 2048D)) return "攻击基准必须是 0 到 2048 之间的有限数值";
         if (!inRange(settings.skeletonReference(), 1024D)) return "骷髅首周期参考生命必须是 0 到 1024 之间的有限数值";
         if (!inRange(settings.healthRate(), 1D) || !inRange(settings.damageRate(), 1D))
@@ -118,9 +116,8 @@ public final class MonsterGrowthRules {
             Result result = RESULTS.get(key);
             if (result != null) return result;
         }
-        double configuredBase = health ? settings.healthBase() : settings.damageBase();
-        double initial = configuredBase > 0D ? configuredBase : nativeBase;
-        double reference = health && skeleton ? Math.max(initial, settings.skeletonReference()) : initial;
+        double initial = health || settings.damageBase() == 0D ? nativeBase : settings.damageBase();
+        double reference = health ? (settings.healthBase() > 0D ? settings.healthBase() : 20D) : initial;
         double rate = (health ? settings.healthRate() : settings.damageRate()) * effectiveMultiplier;
         String expression = health ? settings.healthFormula() : settings.damageFormula();
         String bloodMoonExpression = health ? settings.healthBloodMoonFormula() : settings.damageBloodMoonFormula();

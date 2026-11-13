@@ -40,18 +40,36 @@ class MonsterGrowthRulesTest {
         assertEquals(9.2D, MonsterGrowthRules.health(33L, 6D, true, DEFAULTS, 1D), 1E-12);
         assertEquals(9.246D, MonsterGrowthRules.health(34L, 6D, true, DEFAULTS, 1D), 1E-12);
         assertEquals(10.672D, MonsterGrowthRules.health(65L, 6D, true, DEFAULTS, 1D), 1E-12);
-        assertEquals(8.0736D, MonsterGrowthRules.health(65L, 6D, false, DEFAULTS, 1D), 1E-12);
+        assertEquals(10.672D, MonsterGrowthRules.health(65L, 6D, false, DEFAULTS, 1D), 1E-12);
     }
 
-    @Test void configurableBasesRatesAndActualFormulasDriveTheSameCalculation() {
+    @Test void allNativeHealthValuesUseTheSameFirstReferenceWithLegacyZeroAndExplicitTwenty() {
+        for (double configured : new double[]{0D, 20D}) {
+            var settings = new MonsterGrowthRules.Settings(configured, 0D, 1024D, .005D, .0025D,
+                    MonsterGrowthRules.DEFAULT_FORMULA, MonsterGrowthRules.DEFAULT_FORMULA);
+            assertTrue(MonsterGrowthRules.validate(settings).valid());
+            for (double nativeHealth : new double[]{6D, 20D, 30D}) for (boolean skeleton : new boolean[]{false, true}) {
+                assertEquals(nativeHealth, MonsterGrowthRules.health(1L, nativeHealth, skeleton, settings, 1D), 1E-12);
+                var secondDay = MonsterGrowthRules.healthPreview(2L, nativeHealth, skeleton, settings, 1D);
+                assertEquals(nativeHealth, secondDay.base(), 1E-12);
+                assertEquals(20D, secondDay.reference(), 1E-12);
+                assertEquals(nativeHealth + .1D, secondDay.value(), 1E-12);
+                assertEquals(nativeHealth + 3.2D, MonsterGrowthRules.health(33L, nativeHealth, skeleton, settings, 1D), 1E-12);
+                assertEquals((nativeHealth + 3.2D) * 1.16D,
+                        MonsterGrowthRules.health(65L, nativeHealth, skeleton, settings, 1D), 1E-12);
+            }
+        }
+    }
+
+    @Test void configurableReferencesRatesAndActualFormulasRetainNativeInitialHealth() {
         var settings = new MonsterGrowthRules.Settings(40D, 6D, 20D, .01D, .005D,
                 "base + reference * rate * days * 2", "base + initial * rate * days");
         assertTrue(MonsterGrowthRules.validate(settings).valid());
-        assertEquals(40D, MonsterGrowthRules.health(1L, 20D, false, settings, 1D));
-        assertEquals(65.6D, MonsterGrowthRules.health(33L, 20D, false, settings, 1D), 1E-12);
-        assertEquals(107.584D, MonsterGrowthRules.health(65L, 20D, false, settings, 1D), 1E-10);
+        assertEquals(20D, MonsterGrowthRules.health(1L, 20D, false, settings, 1D));
+        assertEquals(45.6D, MonsterGrowthRules.health(33L, 20D, false, settings, 1D), 1E-12);
+        assertEquals(74.784D, MonsterGrowthRules.health(65L, 20D, false, settings, 1D), 1E-10);
         assertEquals(7.92D, MonsterGrowthRules.damage(65L, 3D, settings, 1D), 1E-12);
-        assertEquals(40D, MonsterGrowthRules.health(65L, 20D, false, settings, 0D));
+        assertEquals(20D, MonsterGrowthRules.health(65L, 20D, false, settings, 0D));
     }
 
     @Test void independentBloodMoonFormulasSetTheNextBasisWithoutUsingThePeriodFormula() {

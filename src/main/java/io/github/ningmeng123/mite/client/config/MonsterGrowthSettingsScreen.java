@@ -32,7 +32,6 @@ public final class MonsterGrowthSettingsScreen extends Screen {
     private final List<TextLine> previewLines = new ArrayList<>();
     private final Map<String, EditBox> fields = new HashMap<>();
     private boolean health = true;
-    private boolean skeleton;
     private int scroll;
     private int contentHeight;
     private int previewY;
@@ -99,7 +98,6 @@ public final class MonsterGrowthSettingsScreen extends Screen {
         y = field(prefix + "_base", y, 32, editable && !saving, value -> edited());
         if (health) {
             y = field("health_daily_percent", y, 32, editable && !saving, value -> edited());
-            y = field("skeleton_reference", y, 32, editable && !saving, value -> edited());
             y = paragraph("mite.config.growth_recurrence_heading", y + 3, 0xFFFFFF) + 4;
             y = paragraph("mite.config.health_recurrence_initial", y, 0xCCCCCC) + 4;
             y = paragraph("mite.config.growth_recurrence_blood", y, 0xCCCCCC) + 4;
@@ -112,14 +110,6 @@ public final class MonsterGrowthSettingsScreen extends Screen {
             y = paragraph("mite.config.growth_preview_heading", y, 0xFFFFFF) + 5;
             y = field("health_native", y, 32, true, value -> validateDraft());
             y = field("preview_day", y, 19, true, value -> validateDraft());
-            var toggle = Button.builder(skeletonLabel(), button -> {
-                skeleton = !skeleton;
-                button.setMessage(skeletonLabel());
-                validateDraft();
-            }).bounds(panelX, 0, panelWidth, 20).build();
-            toggle.setTooltip(Tooltip.create(Component.translatable("mite.config.preview_skeleton.tooltip")));
-            addScrollingWidget(toggle, y);
-            y += 28;
         }
         previewY = y;
         contentHeight = y;
@@ -221,14 +211,13 @@ public final class MonsterGrowthSettingsScreen extends Screen {
                     }
                     double multiplier = MiteConfig.monsterGrowthMultiplier()
                             * MiteConfig.monsterHealthGrowthMultiplier();
-                    preview = MonsterGrowthRules.healthPreview(day, nativeValue, skeleton, settings, multiplier);
+                    preview = MonsterGrowthRules.healthPreview(day, nativeValue, false, settings, multiplier);
                     previewDay = day;
-                    double configuredBase = settings.healthBase();
-                    previewInitial = configuredBase > 0D ? configuredBase : nativeValue;
+                    previewInitial = nativeValue;
                     previewRate = settings.healthRate() * multiplier;
                     if (preview.bloodMoons() > 0L && !preview.fallback()) {
                         long previousDay = day - preview.days() - 1L;
-                        lastBloodMoonInput = MonsterGrowthRules.healthPreview(previousDay, nativeValue, skeleton, settings, multiplier);
+                        lastBloodMoonInput = MonsterGrowthRules.healthPreview(previousDay, nativeValue, false, settings, multiplier);
                         if (lastBloodMoonInput.fallback()) lastBloodMoonInput = null;
                     }
                     if (preview.fallback()) {
@@ -355,10 +344,6 @@ public final class MonsterGrowthSettingsScreen extends Screen {
                 if (getFocused() == row.widget()) setFocused(null);
             }
         }
-    }
-
-    private Component skeletonLabel() {
-        return Component.translatable("mite.config.preview_skeleton", Component.translatable(skeleton ? "mite.config.enabled" : "mite.config.disabled"));
     }
 
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {

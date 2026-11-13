@@ -6,19 +6,23 @@ import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -47,7 +51,7 @@ public final class MonsterGrowthFormulaGameTests {
             double weapon = nativeAttack - 4D;
             helper.assertTrue(weapon > 0D, "The fixture's real iron sword installs a native damage modifier");
             MonsterDayScaling.refresh(attacker);
-            close(helper, attacker.getMaxHealth(), 52.8D, "Configured health basis and double-rate formula reach the actual attribute");
+            close(helper, attacker.getMaxHealth(), 32.8D, "Configured growth reference and double-rate formula retain native initial health");
 
             Mob target = mob(helper, EntityType.COW);
             target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(200D);
@@ -68,6 +72,45 @@ public final class MonsterGrowthFormulaGameTests {
             apply(MonsterGrowthRules.DEFAULTS);
             MonsterDayScaling.refresh(attacker);
             close(helper, attacker.getMaxHealth(), 23.2D, "Restoring settings recomputes from the native basis without retaining the configured override");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void sharedTwentyReferenceRetainsNativeHealthAndRepairsSavedSkeletonOverrides(GameTestHelper helper) {
+        try (var ignored = new Fixture(helper)) {
+            for (double configured : new double[]{0D, 20D}) {
+                apply(new MonsterGrowthRules.Settings(configured, 0D, 1024D, .005D, .0025D,
+                        MonsterGrowthRules.DEFAULT_FORMULA, MonsterGrowthRules.DEFAULT_FORMULA));
+                day(helper, 1L);
+                Mob skeleton = mob(helper, EntityType.SKELETON);
+                close(helper, skeleton.getMaxHealth(), 6D, "Ordinary skeletons start at six native health");
+                skeleton.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier(
+                        MonsterDayScaling.HEALTH_MODIFIER, 20D / 6D - 1D,
+                        AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+                skeleton.setHealth(10F);
+                CompoundTag saved = new CompoundTag();
+                skeleton.saveWithoutId(saved);
+                saved.putString("id", "minecraft:skeleton");
+                Mob restored = (Mob)EntityType.loadEntityRecursive(saved, helper.getLevel(), Function.identity());
+                helper.assertTrue(restored != null, "An older twenty-health skeleton modifier reloads natively");
+                MonsterDayScaling.join(new EntityJoinLevelEvent(restored, helper.getLevel(), true));
+                close(helper, restored.getAttributeBaseValue(Attributes.MAX_HEALTH), 6D, "Saved native skeleton base remains six");
+                close(helper, restored.getMaxHealth(), 6D, "Refreshing a saved override restores the six-health initial maximum");
+                close(helper, restored.getHealth(), 3D, "Correcting the saved override retains its half-health wound");
+                helper.assertTrue(!restored.getAttribute(Attributes.MAX_HEALTH).hasModifier(MonsterDayScaling.HEALTH_MODIFIER),
+                        "Day-one correction removes the old date modifier");
+                day(helper, 2L);
+                MonsterDayScaling.refresh(restored);
+                close(helper, restored.getMaxHealth(), 6.1D, "Skeleton growth uses the shared twenty-health reference");
+                close(helper, restored.getHealth(), 3.05D, "Daily growth retains the reloaded wound fraction");
+                Mob larger = mob(helper, EntityType.ZOMBIE);
+                larger.getAttribute(Attributes.MAX_HEALTH).setBaseValue(30D);
+                larger.setHealth(15F);
+                MonsterDayScaling.refresh(larger);
+                close(helper, larger.getMaxHealth(), 30.1D, "A thirty-health monster shares the same first daily increment");
+                close(helper, larger.getHealth(), 15.05D, "Shared reference growth preserves other monster injuries");
+            }
         }
         helper.succeed();
     }

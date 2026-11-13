@@ -106,9 +106,9 @@ public final class MiteConfig {
         MONSTER_GROWTH = number(builder, "growth_multiplier", 1D, 100D, "Overall multiplier of the formula's rate variable; 0 disables rate-based growth in the default formula. Custom formulas may also use day or days directly. Existing monsters refresh periodically.");
         MONSTER_HEALTH_GROWTH = number(builder, "health_growth_multiplier", 1D, 100D, "Daily health growth multiplier, multiplied by the overall growth multiplier.");
         MONSTER_DAMAGE_GROWTH = number(builder, "damage_growth_multiplier", 1D, 100D, "Legacy compatibility value; calendar-based attack damage growth has been removed and this value has no gameplay effect.");
-        MONSTER_HEALTH_BASE = number(builder, "health_base", 0D, 1024D, "Initial unscaled maximum health. 0 preserves each entity's native health, including independent modifiers.");
+        MONSTER_HEALTH_BASE = number(builder, "health_base", 20D, 1024D, "First-period health growth reference shared by all monsters. 0 uses the default 20. Each entity retains its native initial health, including independent modifiers. Later blood-moon periods reference actual settled health.");
         MONSTER_DAMAGE_BASE = number(builder, "damage_base", 0D, 2048D, "Fixed innate melee attack damage, independent of the world date. 0 preserves each entity's native base; weapon bonuses are added afterward.");
-        MONSTER_SKELETON_REFERENCE = number(builder, "skeleton_reference", 20D, 1024D, "Minimum initial health growth reference for skeletons. After each blood moon the actual settled value becomes the new reference.");
+        MONSTER_SKELETON_REFERENCE = number(builder, "skeleton_reference", 20D, 1024D, "Legacy compatibility value. All monsters now share health_base as their first-period growth reference.");
         MONSTER_HEALTH_DAILY_PERCENT = number(builder, "health_daily_percent", .5D, 100D, "Daily health growth in percent of the current blood-moon baseline: 0.5 means 0.5%, or rate=0.005 in the formula.");
         MONSTER_DAMAGE_DAILY_PERCENT = number(builder, "damage_daily_percent", .25D, 100D, "Legacy compatibility value; calendar-based attack damage growth has been removed and this value has no gameplay effect.");
         MONSTER_HEALTH_FORMULA = builder.translation("mite.config.health_formula")

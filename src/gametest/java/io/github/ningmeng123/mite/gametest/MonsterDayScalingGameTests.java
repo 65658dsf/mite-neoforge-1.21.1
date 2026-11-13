@@ -135,7 +135,7 @@ public final class MonsterDayScalingGameTests {
             monster.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier(LEADER, 1.5D,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
             monster.setHealth(25F);
-            MonsterDayScaling.refresh(monster); health(helper, monster, 67.28F, 33.64F);
+            MonsterDayScaling.refresh(monster); health(helper, monster, 61.712F, 30.856F);
             helper.assertTrue(monster.getAttribute(Attributes.MAX_HEALTH).hasModifier(LEADER), "The independently installed leader modifier remains intact");
             helper.assertValueEqual(monster.getAttribute(Attributes.MAX_HEALTH).getModifiers().size(), 2,
                     "Leader and calendar growth remain distinct modifiers");
@@ -200,7 +200,8 @@ public final class MonsterDayScalingGameTests {
                 Mob bat = mob(helper, MiteMobs.type(kind)); float maximum = bat.getMaxHealth();
                 helper.assertTrue(MonsterDayScaling.handles(bat), "MITE attacking ambient bat is part of hostile growth: " + kind);
                 MonsterDayScaling.refresh(bat);
-                health(helper, bat, maximum * 1.3456F, maximum * 1.3456F);
+                float grown = (maximum + 3.2F) * 1.16F;
+                health(helper, bat, grown, grown);
             }
             for (EntityType<?> type : List.of(EntityType.COW, EntityType.WOLF, EntityType.BAT, MiteMobs.type(MobKind.DIRE_WOLF))) {
                 Mob animal = mob(helper, type); float maximum = animal.getMaxHealth(); animal.setHealth(maximum / 2F);
@@ -507,7 +508,7 @@ public final class MonsterDayScalingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void twentyAndThirtyHealthSkeletonsUseTheirOwnBasisWhileOtherSixHealthMonstersStayOnOrdinaryGrowth(GameTestHelper helper) {
+    public static void skeletonsAndOtherMonstersShareTwentyReferenceAcrossDifferentNativeHealth(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             for (double basis : new double[]{20D, 30D}) {
                 set(helper, 1L);
@@ -515,9 +516,9 @@ public final class MonsterDayScalingGameTests {
                 skeleton.getAttribute(Attributes.MAX_HEALTH).setBaseValue(basis); skeleton.setHealth((float)basis);
                 MonsterDayScaling.refresh(skeleton); health(helper, skeleton, (float)basis, (float)basis);
                 set(helper, 33L);
-                MonsterDayScaling.refresh(skeleton); health(helper, skeleton, basis == 20D ? 23.2F : 34.8F, basis == 20D ? 23.2F : 34.8F);
+                MonsterDayScaling.refresh(skeleton); health(helper, skeleton, basis == 20D ? 23.2F : 33.2F, basis == 20D ? 23.2F : 33.2F);
                 set(helper, 65L);
-                MonsterDayScaling.refresh(skeleton); health(helper, skeleton, basis == 20D ? 26.912F : 40.368F, basis == 20D ? 26.912F : 40.368F);
+                MonsterDayScaling.refresh(skeleton); health(helper, skeleton, basis == 20D ? 26.912F : 38.512F, basis == 20D ? 26.912F : 38.512F);
                 close(helper, skeleton.getAttributeBaseValue(Attributes.MAX_HEALTH), basis,
                         "The greater skeleton basis is not replaced by an unconditional twenty-health value");
             }
@@ -526,10 +527,10 @@ public final class MonsterDayScalingGameTests {
             smallZombie.getAttribute(Attributes.MAX_HEALTH).setBaseValue(6D); smallZombie.setHealth(3F);
             MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 6F, 3F);
             set(helper, 33L);
-            MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 6.96F, 3.48F);
+            MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 9.2F, 4.6F);
             set(helper, 65L);
-            MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 8.0736F, 4.0368F);
-            modifier(helper, smallZombie, .3456D);
+            MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 10.672F, 5.336F);
+            modifier(helper, smallZombie, 4.672D / 6D);
         }
         helper.succeed();
     }
@@ -544,11 +545,11 @@ public final class MonsterDayScalingGameTests {
             skeleton.setHealth(15F);
             health(helper, skeleton, 30F, 15F);
             set(helper, 33L);
-            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 34.8F, 17.4F); modifier(helper, skeleton, .16D);
+            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 33.2F, 16.6F); modifier(helper, skeleton, 3.2D / 30D);
             for (int repeat = 0; repeat < 20; repeat++) MonsterDayScaling.refresh(skeleton);
-            health(helper, skeleton, 34.8F, 17.4F);
+            health(helper, skeleton, 33.2F, 16.6F);
             set(helper, 65L);
-            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 40.368F, 20.184F); modifier(helper, skeleton, .3456D);
+            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 38.512F, 19.256F); modifier(helper, skeleton, 8.512D / 30D);
             helper.assertValueEqual(skeleton.getAttribute(Attributes.MAX_HEALTH).getModifiers().size(), 2,
                     "The actual thirty-health basis retains one independent native modifier plus one date modifier");
             close(helper, skeleton.getAttribute(Attributes.MAX_HEALTH).getModifier(LEADER).amount(), 4D,
