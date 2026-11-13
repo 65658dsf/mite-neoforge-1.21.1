@@ -195,6 +195,7 @@ public final class ArmorContentGameTests {
     public static void allFiveHorseArmorsEquipWithRealProtectionTexturesAndSaveIdentity(GameTestHelper helper) {
         String[] metals = {"copper", "silver", "ancient_metal", "mithril", "adamantium"};
         int[] protection = {4, 4, 5, 6, 7};
+        double[] toughness = {.5D, .5D, .5D, .625D, .75D};
         var horse = helper.spawn(EntityType.HORSE, new BlockPos(1, 1, 1));
         horse.setTamed(true);
         for (int index = 0; index < metals.length; index++) {
@@ -205,6 +206,7 @@ public final class ArmorContentGameTests {
             horse.setItemSlot(EquipmentSlot.BODY, armor);
             horse.tick();
             helper.assertValueEqual((int)horse.getAttributeValue(Attributes.ARMOR), protection[index], "Real horse armor attribute matches source protection");
+            helper.assertValueEqual(horse.getAttributeValue(Attributes.ARMOR_TOUGHNESS), toughness[index], "Real horse armor uses calibrated material toughness");
             helper.assertValueEqual(((AnimalArmorItem)armor.getItem()).getTexture().toString(),
                     "mite:textures/entity/horse/armor/horse_armor_" + metals[index] + ".png", "Renderer uses copied source entity texture");
             CompoundTag saved = new CompoundTag();
@@ -213,6 +215,8 @@ public final class ArmorContentGameTests {
             helper.assertTrue(restored != null, "Horse save fixture created");
             restored.load(saved);
             helper.assertTrue(restored.getBodyArmorItem().is(armor.getItem()), "Entity save keeps exact barding identity");
+            restored.tick();
+            helper.assertValueEqual(restored.getAttributeValue(Attributes.ARMOR_TOUGHNESS), toughness[index], "Entity save restores calibrated barding toughness");
             restored.discard();
         }
         horse.setItemSlot(EquipmentSlot.BODY, stack("mite:silver_horse_armor"));

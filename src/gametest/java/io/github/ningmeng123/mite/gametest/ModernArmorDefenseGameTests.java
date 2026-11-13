@@ -56,11 +56,11 @@ public final class ModernArmorDefenseGameTests {
 
     @GameTest(template = "empty")
     public static void plateStagesUseModernArmorAndToughnessForPlayersAndZombies(GameTestHelper helper) {
-        String[] materials = {"leather", "rusted_iron", "gold", "copper", "silver", "iron", "ancient_metal", "mithril", "adamantium"};
-        double[] armor = {7, 9, 10, 12, 12, 18, 16, 18, 20};
-        double[] toughness = {1, 1.5, 2, 3, 3, 5, 5, 8, 10};
+        String[] materials = {"leather", "rusted_iron", "gold", "copper", "silver", "iron", "ancient_metal", "mithril", "adamantium", "vibranium"};
+        double[] armor = {12, 16, 16, 17, 17, 18, 18, 19, 20, 22};
+        double[] toughness = {.5, 1.5, 1.5, 2, 2, 2, 2, 2.5, 3, 16};
         // Native formula: raw20 * (1 - clamp(A - 20/(2+T/4), A*.2, 20)/25).
-        float[] loss = {18.88F,18.56F,18.4F,16.21818182F,16.21818182F,10.52307692F,12.12307692F,9.6F,7.55555556F};
+        float[] loss = {17.92941176F,13.93684211F,13.93684211F,12.8F,12.8F,12F,12F,10.89523810F,9.81818182F,5.06666667F};
         try (Session session = newPlayer(helper)) {
             var player = session.player();
             var zombie = mob(helper, EntityType.ZOMBIE);
@@ -86,13 +86,16 @@ public final class ModernArmorDefenseGameTests {
     @GameTest(template = "empty")
     public static void eachChainMaterialHasLowerArmorAndToughnessThanItsPlate(GameTestHelper helper) {
         String[] materials = {"rusted_iron", "gold", "copper", "silver", "iron", "ancient_metal", "mithril", "adamantium"};
-        double[] armor = {7, 7, 9, 9, 15, 13, 15, 17};
-        double[] toughness = {1.125,1.5,2.25,2.25,4,3.75,6,7.5};
+        double[] armor = {14, 14, 15, 15, 16, 16, 17, 18};
+        double[] toughness = {1,1,1,1,1.5,1.5,2,2};
+        float[] loss = {15.91111111F,15.91111111F,15.11111111F,15.11111111F,13.93684211F,13.93684211F,12.8F,12F};
         try (Session session = newPlayer(helper)) {
             for (int index = 0; index < materials.length; index++) {
                 equip(session.player(), materials[index], true); refresh(session.player());
                 close(helper, session.player().getAttributeValue(Attributes.ARMOR), armor[index], "Chain armor " + materials[index]);
                 close(helper, session.player().getAttributeValue(Attributes.ARMOR_TOUGHNESS), toughness[index], "Chain toughness " + materials[index]);
+                close(helper, hit(session.player(), session.player().damageSources().cactus(), 20F), loss[index],
+                        "Actual chain damage " + materials[index]);
             }
         }
         helper.succeed();
@@ -110,8 +113,8 @@ public final class ModernArmorDefenseGameTests {
                 }
                 refresh(zombie);
                 close(helper, zombie.getAttributeValue(Attributes.ARMOR), 20, "NPC armor must not vanish with generated wear " + wear);
-                close(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 10, "NPC toughness must not vanish with generated wear " + wear);
-                close(helper, hit(zombie, zombie.damageSources().cactus(), 20F), 7.55555556, "Worn NPC armor actually reduces health damage " + wear);
+                close(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 3, "NPC toughness must not vanish with generated wear " + wear);
+                close(helper, hit(zombie, zombie.damageSources().cactus(), 20F), 9.81818182, "Worn NPC armor actually reduces health damage " + wear);
             }
         } finally { zombie.discard(); }
         helper.succeed();
@@ -129,9 +132,9 @@ public final class ModernArmorDefenseGameTests {
             refresh(original);
             CompoundTag saved = original.saveWithoutId(new CompoundTag());
             restored.load(saved); refresh(restored);
-            close(helper, restored.getAttributeValue(Attributes.ARMOR), 18, "Reloaded worn mob retains full modern armor");
-            close(helper, restored.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 8, "Reloaded worn mob retains full modern toughness");
-            close(helper, hit(restored, restored.damageSources().cactus(), 20F), 9.6, "Reloaded armor mitigates a real transaction");
+            close(helper, restored.getAttributeValue(Attributes.ARMOR), 19, "Reloaded worn mob retains full modern armor");
+            close(helper, restored.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2.5, "Reloaded worn mob retains full modern toughness");
+            close(helper, hit(restored, restored.damageSources().cactus(), 20F), 10.89523810, "Reloaded armor mitigates a real transaction");
         } finally { original.discard(); restored.discard(); }
         helper.succeed();
     }
@@ -148,31 +151,31 @@ public final class ModernArmorDefenseGameTests {
                     chest.setDamageValue(damage);
                     zombie.setItemSlot(EquipmentSlot.CHEST, chest); refresh(zombie);
                     helper.assertTrue(zombie.getItemBySlot(EquipmentSlot.CHEST) == chest, "NPC owns the original stack identity");
-                    close(helper, zombie.getAttributeValue(Attributes.ARMOR), 7D, "NPC uses full armor before transfer at damage " + damage);
-                    close(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "NPC uses full toughness before transfer at damage " + damage);
+                    close(helper, zombie.getAttributeValue(Attributes.ARMOR), 6D, "NPC uses full armor before transfer at damage " + damage);
+                    close(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .625D, "NPC uses full toughness before transfer at damage " + damage);
                     double[] outsideAttributes = {0D, 0D};
                     chest.forEachModifier(EquipmentSlot.CHEST, (attribute, modifier) -> {
                         if (attribute.equals(Attributes.ARMOR)) outsideAttributes[0] += modifier.amount();
                         if (attribute.equals(Attributes.ARMOR_TOUGHNESS)) outsideAttributes[1] += modifier.amount();
                     });
-                    close(helper, outsideAttributes[0], 7D, "Worn item queries retain full armor independently of the wearer");
-                    close(helper, outsideAttributes[1], 2D, "Worn item queries retain full toughness independently of the wearer");
+                    close(helper, outsideAttributes[0], 6D, "Worn item queries retain full armor independently of the wearer");
+                    close(helper, outsideAttributes[1], .625D, "Worn item queries retain full toughness independently of the wearer");
 
                     zombie.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY); refresh(zombie);
                     close(helper, zombie.getAttributeValue(Attributes.ARMOR), 0D, "NPC unequip removes the full armor modifier");
                     close(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "NPC unequip removes the full toughness modifier");
                     player.setItemSlot(EquipmentSlot.CHEST, chest); refresh(player);
                     helper.assertTrue(player.getItemBySlot(EquipmentSlot.CHEST) == chest, "Player receives exactly the same stack without copying");
-                    close(helper, player.getAttributeValue(Attributes.ARMOR), 7D, "Player retains full armor at damage " + damage);
-                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Player retains full toughness at damage " + damage);
+                    close(helper, player.getAttributeValue(Attributes.ARMOR), 6D, "Player retains full armor at damage " + damage);
+                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .625D, "Player retains full toughness at damage " + damage);
 
                     player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY); refresh(player);
                     close(helper, player.getAttributeValue(Attributes.ARMOR), 0D, "Player unequip removes the full armor modifier");
                     close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "Player unequip removes the full toughness modifier");
                     zombie.setItemSlot(EquipmentSlot.CHEST, chest); refresh(zombie);
                     helper.assertTrue(zombie.getItemBySlot(EquipmentSlot.CHEST) == chest, "Return transfer preserves the original stack identity");
-                    close(helper, zombie.getAttributeValue(Attributes.ARMOR), 7D, "Returned NPC armor is full rather than cached from the player");
-                    close(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Returned NPC toughness is full rather than cached from the player");
+                    close(helper, zombie.getAttributeValue(Attributes.ARMOR), 6D, "Returned NPC armor is full rather than cached from the player");
+                    close(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .625D, "Returned NPC toughness is full rather than cached from the player");
                     helper.assertValueEqual(chest.getDamageValue(), damage, "Transfers do not repair or damage the stack to obtain the result");
                 }
             } finally { zombie.discard(); }
@@ -194,8 +197,8 @@ public final class ModernArmorDefenseGameTests {
                     piece.setDamageValue(wear == 100 ? piece.getMaxDamage() - 1 : piece.getMaxDamage() * wear / 100);
                 }
                 refresh(player);
-                close(helper, player.getAttributeValue(Attributes.ARMOR), 12D, "Copper retains armor twelve at wear " + wear);
-                close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 3D, "Copper retains toughness three at wear " + wear);
+                close(helper, player.getAttributeValue(Attributes.ARMOR), 17D, "Copper retains armor seventeen at wear " + wear);
+                close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Copper retains toughness two at wear " + wear);
                 // A new shooter keeps extension combo histories independent between wear stages.
                 var shooter = mob(helper, EntityType.SKELETON);
                 shooter.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
@@ -216,11 +219,11 @@ public final class ModernArmorDefenseGameTests {
                     impact.invoke(arrow, new EntityHitResult(player));
                     close(helper, incoming[0], 2.5D, "A real skeleton arrow enters with the exact half damage");
                     close(helper, incoming[1], 2.5D, "No prior-shooter combo changes the wear comparison");
-                    close(helper, before - player.getHealth(), 1.39090909D,
-                            "Copper twelve and toughness three reduce the real arrow equally at wear " + wear);
+                    close(helper, before - player.getHealth(), .9D,
+                            "Copper seventeen and toughness two reduce the real arrow equally at wear " + wear);
                     refresh(player);
-                    close(helper, player.getAttributeValue(Attributes.ARMOR), 12D, "The real hit does not weaken copper armor");
-                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 3D, "The real hit does not weaken copper toughness");
+                    close(helper, player.getAttributeValue(Attributes.ARMOR), 17D, "The real hit does not weaken copper armor");
+                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "The real hit does not weaken copper toughness");
                     for (var slot : SLOTS) helper.assertFalse(player.getItemBySlot(slot).isEmpty(),
                             "Ordinary arrow wear retains equipped armor, including the last durability point");
                 } finally {
@@ -246,11 +249,11 @@ public final class ModernArmorDefenseGameTests {
             var source = guardian.damageSources().playerAttack(attacker);
             helper.assertTrue(source.getWeaponItem() != null && source.getWeaponItem().is(Items.IRON_SWORD)
                     && !source.getWeaponItem().isEnchanted(), "Independent melee fixture has no silver or enchantment multiplier");
-            close(helper, hit(skeleton, source, 20F), 10.52307692, "Native skeleton uses iron18 and toughness5 once");
+            close(helper, hit(skeleton, source, 20F), 12, "Native skeleton uses iron18 and toughness2 once");
             close(helper, ((R196Mob)guardian).naturalDefense(source), 2,
                     "Guardian retains its independent source natural defense");
-            // Natural2 first: raw18; iron18/toughness5 => effective12.461538 =>18*.50153846.
-            close(helper, hit(guardian, source, 20F), 9.02769231,
+            // Natural2 first: raw18; iron18/toughness2 => effective10.8 =>18*.568.
+            close(helper, hit(guardian, source, 20F), 10.224,
                     "Added guardian combines source natural defense and modern armor once");
         } finally { skeleton.discard(); guardian.discard(); }
         helper.succeed();
@@ -261,18 +264,23 @@ public final class ModernArmorDefenseGameTests {
         try (Session session = newPlayer(helper)) {
             var player = session.player();
             equip(player, "mithril", false); refresh(player);
-            // Native formula: effective armor=18-40/(2+8/4)=8; raw40*(1-8/25)=27.2.
-            close(helper, hit(player, player.damageSources().cactus(), 40F), 27.2, "Mithril18/toughness8 protects a large hit");
+            // Raw40 reaches the effective-armor floor of19*.2. Raw30 still benefits from toughness2.5.
+            close(helper, hit(player, player.damageSources().cactus(), 40F), 33.92, "Mithril19/toughness2.5 retains the native large-hit floor");
+            close(helper, hit(player, player.damageSources().cactus(), 30F), 20.91428571, "Mithril19/toughness2.5 protects a large hit above the floor");
             equip(player, "mithril", false); refresh(player);
             var suppress = ResourceLocation.fromNamespaceAndPath("mite", "gametest_toughness_control");
             player.getAttribute(Attributes.ARMOR_TOUGHNESS).addTransientModifier(
-                    new AttributeModifier(suppress, -8D, AttributeModifier.Operation.ADD_VALUE));
-            try { close(helper, hit(player, player.damageSources().cactus(), 40F), 34.24,
-                    "Same armor without toughness suffers a larger real hit"); }
+                    new AttributeModifier(suppress, -2.5D, AttributeModifier.Operation.ADD_VALUE));
+            try {
+                close(helper, hit(player, player.damageSources().cactus(), 40F), 33.92,
+                        "The effective-armor floor also bounds the same forty-point hit without toughness");
+                close(helper, hit(player, player.damageSources().cactus(), 30F), 25.2,
+                        "Same armor without toughness suffers a larger thirty-point hit");
+            }
             finally { player.getAttribute(Attributes.ARMOR_TOUGHNESS).removeModifier(suppress); }
             equip(player, "mithril", false); refresh(player);
-            close(helper, player.getAttributeValue(Attributes.ARMOR), 18, "Mithril retains armor18");
-            close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 8, "Mithril retains toughness8");
+            close(helper, player.getAttributeValue(Attributes.ARMOR), 19, "Mithril retains armor19");
+            close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2.5, "Mithril retains toughness2.5");
         }
         helper.succeed();
     }
@@ -287,8 +295,8 @@ public final class ModernArmorDefenseGameTests {
                     equip(target, "iron", false);
                     enchantSet(helper, target, Enchantments.PROTECTION, 4); refresh(target);
                     close(helper, target.getAttributeValue(Attributes.ARMOR), 18, "Protection does not also multiply ARMOR");
-                    // Iron18/toughness5: raw20=>10.523077, then EPF16 multiplies by.36.
-                    close(helper, hit(target, target.damageSources().cactus(), 20F), 3.78830769, "Native ProtectionIV applies once to actual health");
+                    // Iron18/toughness2: raw20=>12, then EPF16 multiplies by.36.
+                    close(helper, hit(target, target.damageSources().cactus(), 20F), 4.32, "Native ProtectionIV applies once to actual health");
                 }
             } finally { zombie.discard(); }
         }
@@ -302,8 +310,8 @@ public final class ModernArmorDefenseGameTests {
             enchantSet(helper, player, Enchantments.PROTECTION, 4);
             enchantSet(helper, player, Enchantments.PROJECTILE_PROTECTION, 4); refresh(player);
             var arrow = new DamageSource(helper.getLevel().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.ARROW));
-            // Raw25 with iron18/toughness5=>14.692308; command-combined EPF is capped at20.
-            close(helper, hit(player, arrow, 25F), 2.93846154, "Combined protection cannot exceed native EPF20");
+            // Raw25 with iron18/toughness2=>17; command-combined EPF is capped at20.
+            close(helper, hit(player, arrow, 25F), 3.4, "Combined protection cannot exceed native EPF20");
         }
         helper.succeed();
     }
@@ -316,8 +324,8 @@ public final class ModernArmorDefenseGameTests {
                 for (LivingEntity target : new LivingEntity[]{session.player(), zombie}) {
                     equip(target, "iron", false); refresh(target);
                     target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 200, 0));
-                    close(helper, hit(target, target.damageSources().cactus(), 20F), 8.41846154,
-                            "Iron18/toughness5 then one native ResistanceI percentage without source flat5");
+                    close(helper, hit(target, target.damageSources().cactus(), 20F), 9.6,
+                            "Iron18/toughness2 then one native ResistanceI percentage without source flat5");
                 }
             } finally { zombie.discard(); }
         }
@@ -362,7 +370,7 @@ public final class ModernArmorDefenseGameTests {
                     refresh(target);
                     target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 200, 0));
                     float baseline = hit(target, target.damageSources().lava(), 20F);
-                    close(helper, baseline, 2.176,
+                    close(helper, baseline, 2.82763636,
                             "Lava-resistant armor, Resistance I and fire protection EPF16 provide a stable mitigated baseline");
                     target.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0));
                     close(helper, hit(target, target.damageSources().lava(), 20F), baseline / 2F,
@@ -386,8 +394,8 @@ public final class ModernArmorDefenseGameTests {
                 var source = new DamageSource(helper.getLevel().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                         .getHolderOrThrow(DamageTypes.PLAYER_ATTACK), attacker);
                 helper.assertTrue(source.getWeaponItem() != null && source.getWeaponItem().is(Items.MACE), "Native source supplies enchanted mace");
-                // Raw8: iron18/toughness5 gives effective15.538462/25; BreachII subtracts.30 once.
-                close(helper, hit(player, source, 8F), 5.42769231, "Breach applies to modern mitigation once");
+                // Raw8: iron18/toughness2 gives effective14.8/25; BreachII subtracts.30 once.
+                close(helper, hit(player, source, 8F), 5.664, "Breach applies to modern mitigation once");
                 int wear = 0; for (var slot : SLOTS) wear += player.getItemBySlot(slot).getDamageValue();
                 helper.assertValueEqual(wear, 8, "Native armor effectiveness does not alter the retained R196 durability budget");
             } finally { attacker.discard(); }
@@ -407,8 +415,8 @@ public final class ModernArmorDefenseGameTests {
                             ResourceLocation.fromNamespaceAndPath("mite", "gametest_additional_armor"), 4D, AttributeModifier.Operation.ADD_VALUE));
                     refresh(target);
                     close(helper, target.getAttributeValue(Attributes.ARMOR), 12, "Iron6+turtle2+external4 all contribute");
-                    close(helper, target.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1.75, "Iron1.25+turtle.5 both contribute");
-                    close(helper, hit(target, target.damageSources().cactus(), 20F), 16.96410256,
+                    close(helper, target.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1, "Iron.5+turtle.5 both contribute");
+                    close(helper, hit(target, target.damageSources().cactus(), 20F), 17.51111111,
                             "Managed NPCs and players use real attributes for unknown-profile mixed armor");
                 }
             } finally { zombie.discard(); }
@@ -431,9 +439,9 @@ public final class ModernArmorDefenseGameTests {
             };
             NeoForge.EVENT_BUS.addListener(listener);
             try {
-                // The native equipment attribute refresh occurs on the next living tick: armor6/toughness1.25 remain for this transaction.
-                close(helper, hit(player, player.damageSources().cactus(), 10F), 7.46378378,
-                        "Single chest6 with toughness1.25 gives9.329730, then native ResistanceI gives7.463784");
+                // The native equipment attribute refresh occurs on the next living tick: armor6/toughness.5 remain for this transaction.
+                close(helper, hit(player, player.damageSources().cactus(), 10F), 7.58588235,
+                        "Single chest6 with toughness.5 gives9.482353, then native ResistanceI gives7.585882");
             } finally { NeoForge.EVENT_BUS.unregister(listener); }
             helper.assertValueEqual(calls[0], 1, "One cancellable armor event per real hit");
             helper.assertValueEqual(chest.getDamageValue(), 0, "Canceling the armor event prevents wear");

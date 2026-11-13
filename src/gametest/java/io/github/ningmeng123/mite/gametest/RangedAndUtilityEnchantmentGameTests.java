@@ -337,8 +337,8 @@ public final class RangedAndUtilityEnchantmentGameTests {
             target.hurt(attacker.damageSources().playerAttack(attacker), 14F);
             losses[index] = 100F - target.getHealth();
         }
-        close(h, losses[0], 6.3323076923D, "Raw14 versus iron18/toughness5 uses effective armor13.692308");
-        close(h, losses[1], 9.1323076923D, "PiercingV makes armor13, effective armor8.692308 while retaining toughness");
+        close(h, losses[0], 7.056D, "Raw14 versus iron18/toughness2 uses effective armor12.4");
+        close(h, losses[1], 9.856D, "PiercingV makes armor13, effective armor7.4 while retaining toughness");
         var cow = cow(h, 200F);
         cow.hurt(attacker.damageSources().playerAttack(attacker), 10F);
         close(h, 200F - cow.getHealth(), 10D, "Unarmored targets do not receive additional raw damage from Piercing");
@@ -359,8 +359,8 @@ public final class RangedAndUtilityEnchantmentGameTests {
         armor(target); target.tick(); target.setHealth(200F); target.invulnerableTime = 0;
         attacker.setItemInHand(InteractionHand.MAIN_HAND, enchanted(h, Items.IRON_PICKAXE, "piercing", 5));
         target.hurt(attacker.damageSources().playerAttack(attacker), 10F);
-        close(h, plain, 4.0307692308D, "Raw10 versus iron18/toughness5 gives effective armor14.923077");
-        close(h, 200F - target.getHealth(), 6.0307692308D, "PiercingV makes armor13 and retains toughness5 without adding raw damage");
+        close(h, plain, 4.4D, "Raw10 versus iron18/toughness2 gives effective armor14");
+        close(h, 200F - target.getHealth(), 6.4D, "PiercingV makes armor13 and retains toughness2 without adding raw damage");
         target.discard(); h.succeed();
     }
 

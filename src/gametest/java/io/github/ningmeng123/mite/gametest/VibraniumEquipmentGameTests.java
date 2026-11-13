@@ -102,8 +102,8 @@ public final class VibraniumEquipmentGameTests {
     @GameTest(template = "empty")
     public static void armorHasBalancedUniformToughnessAfterDefaultComponentModification(GameTestHelper helper) {
         String[] slots = {"helmet", "chestplate", "leggings", "boots"};
-        int[] defense = {4, 8, 6, 4}, durability = {5120, 8192, 7168, 4096};
-        double[] toughness = {3D, 3D, 3D, 3D};
+        int[] defense = {5, 7, 6, 4}, durability = {5120, 8192, 7168, 4096};
+        double[] toughness = {4D, 4D, 4D, 4D};
         double totalKnockbackResistance = 0D;
         for (int i = 0; i < slots.length; i++) {
             ItemStack stack = new ItemStack(MiteArmorContent.get("mite:vibranium_" + slots[i]));

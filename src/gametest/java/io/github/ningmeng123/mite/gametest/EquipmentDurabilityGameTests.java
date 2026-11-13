@@ -128,22 +128,22 @@ public final class EquipmentDurabilityGameTests {
             player.doTick();
             helper.assertValueEqual(chest.getMaxDamage(), 128, "Iron chestplate has the original maximum");
             helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Iron chestplate uses balanced armor six");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1.25D, "Iron chestplate uses balanced toughness one and a quarter");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .5D, "Iron chestplate uses calibrated toughness one half");
             chest.setDamageValue(96);
             player.doTick();
             helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Seventy-five percent wear retains full modern protection");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1.25D, "Seventy-five percent wear retains full toughness");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .5D, "Seventy-five percent wear retains full toughness");
             chest.setDamageValue(127);
             player.doTick();
             helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "One remaining durability retains full protection");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1.25D, "One remaining durability retains full toughness");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .5D, "One remaining durability retains full toughness");
             chest.hurtAndBreak(500, player, EquipmentSlot.CHEST);
             helper.assertFalse(chest.isEmpty(), "Ordinary worn-armor damage cannot destroy the last point");
             helper.assertValueEqual(chest.getDamageValue(), 127, "The last point is not consumed");
             chest.setDamageValue(0);
             player.doTick();
             helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Repair retains the same full protection without unequipping");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 1.25D, "Repair retains the same full toughness without unequipping");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .5D, "Repair retains the same full toughness without unequipping");
         }
         helper.succeed();
     }
@@ -166,20 +166,20 @@ public final class EquipmentDurabilityGameTests {
             helper.assertValueEqual(EquipmentDurability.quality(decoded), Quality.FINE, "Armor network keeps quality");
             var player = session.player();
             player.setItemSlot(EquipmentSlot.CHEST, decoded); player.doTick();
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 7D, "Decoded worn player mithril chest retains modern armor seven");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Decoded worn player mithril chest retains toughness two");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Decoded worn player mithril chest retains calibrated armor six");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .625D, "Decoded worn player mithril chest retains toughness .625");
             EquipmentDurability.setQuality(decoded, Quality.LEGENDARY); player.doTick();
             helper.assertValueEqual(decoded.getMaxDamage(), 3584, "Quality increases durability rather than direct defensive stats");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 7D, "Quality changes capacity without changing full base armor");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Quality changes capacity without changing full base toughness");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Quality changes capacity without changing full base armor");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .625D, "Quality changes capacity without changing full base toughness");
             decoded.setDamageValue(decoded.getMaxDamage() - 1); player.doTick();
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 7D, "Player last durability point retains full armor");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Player last durability point retains full toughness");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Player last durability point retains full armor");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .625D, "Player last durability point retains full toughness");
             decoded.hurtAndBreak(500, player, EquipmentSlot.CHEST);
             helper.assertFalse(decoded.isEmpty(), "Final point remains repairable under retained source wear rules");
             decoded.setDamageValue(0); player.doTick();
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 7D, "Repair updates modern armor without re-equipping");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Repair updates modern toughness without re-equipping");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR), 6D, "Repair updates modern armor without re-equipping");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .625D, "Repair updates modern toughness without re-equipping");
         } finally { buffer.release(); }
         helper.succeed();
     }

@@ -78,19 +78,19 @@ public final class ArmorAttributeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void retainedLeatherIronGoldAndChainKeepTheirModernLowTierProtection(GameTestHelper helper) {
+    public static void retainedLeatherIronGoldAndChainUseSourceCalibratedSlotProtection(GameTestHelper helper) {
         Item[][] sets = {
                 {Items.LEATHER_HELMET, Items.LEATHER_CHESTPLATE, Items.LEATHER_LEGGINGS, Items.LEATHER_BOOTS},
                 {Items.IRON_HELMET, Items.IRON_CHESTPLATE, Items.IRON_LEGGINGS, Items.IRON_BOOTS},
                 {Items.GOLDEN_HELMET, Items.GOLDEN_CHESTPLATE, Items.GOLDEN_LEGGINGS, Items.GOLDEN_BOOTS},
                 {Items.CHAINMAIL_HELMET, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_BOOTS}
         };
-        int[][] expected = {{1, 3, 2, 1}, {3, 6, 6, 3}, {2, 4, 3, 1}, {3, 5, 5, 2}};
+        int[][] expected = {{3, 4, 3, 2}, {4, 6, 5, 3}, {3, 5, 5, 3}, {3, 5, 5, 3}};
         for (int set = 0; set < sets.length; set++) {
             for (int piece = 0; piece < SLOTS.length; piece++) {
                 var stack = new ItemStack(sets[set][piece]);
-                check(helper, amount(stack, Attributes.ARMOR, SLOTS[piece]), expected[set][piece], "Retained low-tier armor uses independent modern slot values");
-                check(helper, amount(stack, Attributes.ARMOR_TOUGHNESS, SLOTS[piece]), new double[]{.25D,1.25D,.5D,1D}[set], "Every retained low-tier material supplies positive toughness");
+                check(helper, amount(stack, Attributes.ARMOR, SLOTS[piece]), expected[set][piece], "Retained low-tier armor uses source-calibrated slot values");
+                check(helper, amount(stack, Attributes.ARMOR_TOUGHNESS, SLOTS[piece]), new double[]{.125D,.5D,.375D,.375D}[set], "Every retained low-tier material supplies positive toughness");
             }
         }
         helper.succeed();
@@ -100,7 +100,7 @@ public final class ArmorAttributeGameTests {
     public static void horseArmorHasOnePositiveBodyToughnessContributionWithoutHumanoidWear(GameTestHelper helper) {
         var iron = new ItemStack(Items.IRON_HORSE_ARMOR);
         check(helper, amount(iron, Attributes.ARMOR, EquipmentSlot.BODY), 6D, "Iron barding gains one BODY armor point");
-        check(helper, amount(iron, Attributes.ARMOR_TOUGHNESS, EquipmentSlot.BODY), 1.25D, "Iron barding gains one quarter BODY toughness");
+        check(helper, amount(iron, Attributes.ARMOR_TOUGHNESS, EquipmentSlot.BODY), .5D, "Iron barding gains the calibrated material BODY toughness");
         for (var definition : MiteArmorContent.definitions()) {
             if (!definition.horse()) continue;
             var stack = new ItemStack(MiteArmorContent.get(definition.id()));
@@ -129,13 +129,13 @@ public final class ArmorAttributeGameTests {
             zombie.setItemSlot(EquipmentSlot.FEET, stack("mite:adamantium_chain_boots"));
             zombie.tick();
             check(helper, zombie.getAttributeValue(Attributes.ARMOR), baselineArmor + 17D,
-                    "Real native equipment application sums copper two + mithril seven + ancient five + adamantium-chain three");
-            check(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), baselineToughness + 5.875D,
-                    "Mixed material toughness sums .75 +2 +1.25 +1.875");
+                    "Real native equipment application sums copper three + mithril six + ancient five + adamantium-chain three");
+            check(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), baselineToughness + 2.125D,
+                    "Mixed material toughness sums .5 +.625 +.5 +.5");
             zombie.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
             zombie.tick();
-            check(helper, zombie.getAttributeValue(Attributes.ARMOR), baselineArmor + 10D, "Unequipping chest removes exactly its modifier");
-            check(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), baselineToughness + 3.875D, "Unequipping chest removes exactly two toughness");
+            check(helper, zombie.getAttributeValue(Attributes.ARMOR), baselineArmor + 11D, "Unequipping chest removes exactly its modifier");
+            check(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), baselineToughness + 1.5D, "Unequipping chest removes exactly .625 toughness");
         } finally { zombie.discard(); }
         helper.succeed();
     }
@@ -149,13 +149,13 @@ public final class ArmorAttributeGameTests {
             ItemStack chest = stack("mite:mithril_chestplate");
             zombie.setItemSlot(EquipmentSlot.CHEST, chest);
             zombie.tick();
-            check(helper, zombie.getAttributeValue(Attributes.ARMOR), baseline + 7D, "Fresh NPC chestpiece supplies seven protection");
+            check(helper, zombie.getAttributeValue(Attributes.ARMOR), baseline + 6D, "Fresh NPC chestpiece supplies six protection");
             EquipmentDurability.setQuality(chest, Quality.LEGENDARY);
             chest.setDamageValue(chest.getMaxDamage() - 1);
             zombie.tick();
-            check(helper, zombie.getAttributeValue(Attributes.ARMOR), baseline + 7D,
+            check(helper, zombie.getAttributeValue(Attributes.ARMOR), baseline + 6D,
                     "NPC armor does not accidentally inherit the player last-point factor or a quality multiplier");
-            check(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D,
+            check(helper, zombie.getAttributeValue(Attributes.ARMOR_TOUGHNESS), .625D,
                     "NPC toughness depends on material, not quality or wear");
         } finally { zombie.discard(); }
         helper.succeed();
@@ -170,8 +170,8 @@ public final class ArmorAttributeGameTests {
         helper.assertFalse(saved.getCompound("components").contains("minecraft:attribute_modifiers"),
                 "Normal old-world equipment has no per-stack armor override; only non-default components are saved");
         ItemStack restored = ItemStack.parse(helper.getLevel().registryAccess(), saved).orElseThrow();
-        check(helper, amount(restored, Attributes.ARMOR, EquipmentSlot.CHEST), 7D, "NBT stack resolves the new default defense");
-        check(helper, amount(restored, Attributes.ARMOR_TOUGHNESS, EquipmentSlot.CHEST), 2D, "NBT stack resolves the new default toughness");
+        check(helper, amount(restored, Attributes.ARMOR, EquipmentSlot.CHEST), 6D, "NBT stack resolves the new default defense");
+        check(helper, amount(restored, Attributes.ARMOR_TOUGHNESS, EquipmentSlot.CHEST), .625D, "NBT stack resolves the new default toughness");
         helper.assertValueEqual(restored.getDamageValue(), 900, "The migration retains actual wear");
         helper.assertValueEqual(restored.getMaxDamage(), 3584, "The migration retains R196 quality-adjusted durability");
         helper.assertValueEqual(EquipmentDurability.quality(restored), Quality.LEGENDARY, "The migration retains quality");
@@ -225,7 +225,7 @@ public final class ArmorAttributeGameTests {
         var restored=ItemStack.parse(helper.getLevel().registryAccess(),old.save(helper.getLevel().registryAccess())).orElseThrow();
         helper.assertValueEqual(restored.get(DataComponents.ATTRIBUTE_MODIFIERS),savedModifiers,"Saved legacy data and custom identities remain exact");
         check(helper,effectiveAmount(restored,Attributes.ARMOR,EquipmentSlot.CHEST),6D,"Recognized old iron base five is normalized to the new six");
-        check(helper,effectiveAmount(restored,Attributes.ARMOR_TOUGHNESS,EquipmentSlot.CHEST),1.25D,"An explicit legacy patch lacking toughness gains the iron baseline");
+        check(helper,effectiveAmount(restored,Attributes.ARMOR_TOUGHNESS,EquipmentSlot.CHEST),.5D,"An explicit legacy patch lacking toughness gains the iron baseline");
         check(helper,effectiveAmount(restored,Attributes.KNOCKBACK_RESISTANCE,EquipmentSlot.CHEST),.125D,"Custom unrelated modifier survives normalization");
         check(helper,effectiveAmount(restored,Attributes.ARMOR_TOUGHNESS,EquipmentSlot.MAINHAND),0D,"A saved patch cannot grant baseline toughness from a hand");
         Zombie wearer=zombie(helper);
@@ -233,15 +233,15 @@ public final class ArmorAttributeGameTests {
             wearer.tick(); double baseline=wearer.getAttributeValue(Attributes.ARMOR);
             wearer.setItemSlot(EquipmentSlot.CHEST,restored); wearer.tick();
             check(helper,wearer.getAttributeValue(Attributes.ARMOR),baseline+6D,"Loaded explicit base armor enters real equipped attributes");
-            check(helper,wearer.getAttributeValue(Attributes.ARMOR_TOUGHNESS),1.25D,"Loaded explicit base toughness enters real equipped attributes");
+            check(helper,wearer.getAttributeValue(Attributes.ARMOR_TOUGHNESS),.5D,"Loaded explicit base toughness enters real equipped attributes");
         } finally {wearer.discard();}
         ItemStack oldMithril=stack("mite:mithril_chestplate");
         oldMithril.set(DataComponents.ATTRIBUTE_MODIFIERS,ItemAttributeModifiers.builder()
                 .add(Attributes.ARMOR,new AttributeModifier(ResourceLocation.withDefaultNamespace("armor.chestplate"),9D,AttributeModifier.Operation.ADD_VALUE),EquipmentSlotGroup.CHEST)
                 .add(Attributes.ARMOR_TOUGHNESS,new AttributeModifier(ResourceLocation.withDefaultNamespace("armor.chestplate"),3D,AttributeModifier.Operation.ADD_VALUE),EquipmentSlotGroup.CHEST)
                 .add(Attributes.ARMOR,custom("legacy_bonus",1.25D),EquipmentSlotGroup.CHEST).build());
-        check(helper,effectiveAmount(oldMithril,Attributes.ARMOR,EquipmentSlot.CHEST),8.25D,"New mithril base seven and custom armor bonus are both preserved");
-        check(helper,effectiveAmount(oldMithril,Attributes.ARMOR_TOUGHNESS,EquipmentSlot.CHEST),2D,"Old explicit base toughness three becomes the new two");
+        check(helper,effectiveAmount(oldMithril,Attributes.ARMOR,EquipmentSlot.CHEST),7.25D,"New mithril base six and custom armor bonus are both preserved");
+        check(helper,effectiveAmount(oldMithril,Attributes.ARMOR_TOUGHNESS,EquipmentSlot.CHEST),.625D,"Old explicit base toughness three becomes the calibrated .625");
         helper.succeed();
     }
 
@@ -261,8 +261,8 @@ public final class ArmorAttributeGameTests {
         old.set(DataComponents.ATTRIBUTE_MODIFIERS,saved);
         ItemStack restored=ItemStack.parse(helper.getLevel().registryAccess(),old.save(helper.getLevel().registryAccess())).orElseThrow();
         helper.assertValueEqual(restored.get(DataComponents.ATTRIBUTE_MODIFIERS),saved,"Normalization does not rewrite saved duplicate data or custom identities");
-        check(helper,effectiveAmount(restored,Attributes.ARMOR,EquipmentSlot.CHEST),8.25D,"Repeated nine-point bases become one seven-point base plus the custom bonus");
-        check(helper,effectiveAmount(restored,Attributes.ARMOR_TOUGHNESS,EquipmentSlot.CHEST),2D,"Repeated toughness bases become exactly one balanced baseline");
+        check(helper,effectiveAmount(restored,Attributes.ARMOR,EquipmentSlot.CHEST),7.25D,"Repeated nine-point bases become one six-point base plus the custom bonus");
+        check(helper,effectiveAmount(restored,Attributes.ARMOR_TOUGHNESS,EquipmentSlot.CHEST),.625D,"Repeated toughness bases become exactly one balanced baseline");
         for (EquipmentSlot wrong:new EquipmentSlot[]{EquipmentSlot.MAINHAND,EquipmentSlot.OFFHAND,EquipmentSlot.HEAD,EquipmentSlot.LEGS,EquipmentSlot.FEET,EquipmentSlot.BODY}) {
             check(helper,effectiveAmount(restored,Attributes.ARMOR,wrong),0D,"Canonical saved armor cannot leak through " + wrong);
             check(helper,effectiveAmount(restored,Attributes.ARMOR_TOUGHNESS,wrong),0D,"Canonical saved toughness cannot leak through " + wrong);
@@ -275,8 +275,8 @@ public final class ArmorAttributeGameTests {
             check(helper,wearer.getAttributeValue(Attributes.ARMOR),baseline,"Holding loaded armor grants no base armor");
             check(helper,wearer.getAttributeValue(Attributes.ARMOR_TOUGHNESS),0D,"Holding loaded armor grants no base toughness");
             wearer.setItemSlot(EquipmentSlot.MAINHAND,ItemStack.EMPTY); wearer.setItemSlot(EquipmentSlot.CHEST,restored); wearer.tick();
-            check(helper,wearer.getAttributeValue(Attributes.ARMOR),baseline+8.25D,"Real equipped armor receives one normalized base and the custom armor bonus");
-            check(helper,wearer.getAttributeValue(Attributes.ARMOR_TOUGHNESS),2D,"Real equipped toughness receives one normalized base");
+            check(helper,wearer.getAttributeValue(Attributes.ARMOR),baseline+7.25D,"Real equipped armor receives one normalized base and the custom armor bonus");
+            check(helper,wearer.getAttributeValue(Attributes.ARMOR_TOUGHNESS),.625D,"Real equipped toughness receives one normalized base");
             check(helper,wearer.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE),.125D,"Real equipment keeps the custom unrelated effect");
         } finally {wearer.discard();}
         helper.succeed();

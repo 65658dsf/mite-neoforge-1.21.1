@@ -194,9 +194,9 @@ public final class SpecialMobEquipmentGameTests {
                     advancedWeapon |= held.startsWith("mite:mithril_") || held.startsWith("mite:adamantium_") || held.startsWith("mite:vibranium_");
                     if (chain(kind)) helper.assertTrue(held.endsWith("_sword"), "A source melee longdead never loses its weapon family");
                     mob.tick();
-                    helper.assertTrue(mob.getAttributeValue(Attributes.ARMOR) >= (chain(kind) ? 13D : ancient(kind) ? 16D : 9D),
+                    helper.assertTrue(mob.getAttributeValue(Attributes.ARMOR) >= (chain(kind) ? 16D : ancient(kind) ? 18D : 16D),
                             "Native NPC equipment reconciliation applies at least the full source-set armor despite generated wear");
-                    helper.assertTrue(mob.getAttributeValue(Attributes.ARMOR_TOUGHNESS) >= (chain(kind) ? 3.75D : ancient(kind) ? 5D : 1.5D),
+                    helper.assertTrue(mob.getAttributeValue(Attributes.ARMOR_TOUGHNESS) >= (chain(kind) ? 1.5D : ancient(kind) ? 2D : 1.5D),
                             "Native NPC equipment reconciliation retains the source toughness floor");
                     mob.discard();
                 }

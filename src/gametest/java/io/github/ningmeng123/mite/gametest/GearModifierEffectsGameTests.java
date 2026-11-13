@@ -167,8 +167,8 @@ public final class GearModifierEffectsGameTests {
     public static void protectionOneSurvivesNativeArmorFlooringWithoutChangingOrdinaryFractionalArmor(GameTestHelper h) {
         TestPlayer player = player(h);
         ItemStack chest = new ItemStack(Items.IRON_CHESTPLATE);
-        // Iron armor's current material toughness is 1.25; cancel that entire baseline for this zero-toughness control.
-        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes(1.25D));
+        // Cancel iron's entire .5 material toughness baseline for this zero-toughness control.
+        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes(.5D));
         equip(player, EquipmentSlot.CHEST, chest);
         close(h, player.getAttributeValue(Attributes.ARMOR), 0D, "The explicit nonempty override removes default chestplate armor");
         close(h, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "The fractional armor fixture has no toughness");
@@ -195,7 +195,7 @@ public final class GearModifierEffectsGameTests {
     public static void specializedProtectionAndBlessedEnterTheNativeArmorComputation(GameTestHelper h) {
         TestPlayer player = player(h);
         ItemStack chest = new ItemStack(Items.LEATHER_CHESTPLATE);
-        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes(.25D));
+        chest.set(DataComponents.ATTRIBUTE_MODIFIERS, zeroArmorAttributes(.125D));
         equip(player, EquipmentSlot.CHEST, chest);
         close(h, player.getAttributeValue(Attributes.ARMOR), 0D, "Specialized armor fixture has no ordinary armor contribution");
         close(h, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 0D, "Specialized armor fixture has no ordinary toughness contribution");

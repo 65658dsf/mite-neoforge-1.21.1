@@ -56,12 +56,12 @@ public final class ArmorBalanceFeedbackGameTests {
         var barding=new ItemStack(io.github.ningmeng123.mite.registry.MiteArmorContent.get("mite:adamantium_horse_armor"));
         horse.setBodyArmorItem(barding); horse.setNoAi(true); horse.tick();
         h.assertTrue(horse.getAttributeValue(Attributes.ARMOR)==7D,"BODY keeps its independent source armor amount");
-        h.assertTrue(horse.getAttributeValue(Attributes.ARMOR_TOUGHNESS)==2.5D,"BODY contributes actual equipped toughness");
+        h.assertTrue(horse.getAttributeValue(Attributes.ARMOR_TOUGHNESS)==.75D,"BODY contributes actual equipped toughness");
         var source=horse.damageSources().mobAttack(EntityType.COW.create(h.getLevel()));
         float before=horse.getHealth();horse.hurt(source,12F);float withToughness=before-horse.getHealth();
-        h.assertTrue(Math.abs(withToughness-4.5062857143)<.0001,"BODY preserves flat seven protection and adds only the native toughness improvement");
+        h.assertTrue(Math.abs(withToughness-4.9451428571)<.0001,"BODY preserves flat seven protection and adds only the native toughness improvement");
         var control=ResourceLocation.fromNamespaceAndPath("mite","armor_feedback_body_toughness");
-        horse.getAttribute(Attributes.ARMOR_TOUGHNESS).addTransientModifier(new AttributeModifier(control,-2.5D,AttributeModifier.Operation.ADD_VALUE));
+        horse.getAttribute(Attributes.ARMOR_TOUGHNESS).addTransientModifier(new AttributeModifier(control,-.75D,AttributeModifier.Operation.ADD_VALUE));
         try {
             horse.setHealth(100F);horse.invulnerableTime=0;horse.hurt(source,12F);
             h.assertTrue(Math.abs((100F-horse.getHealth())-5D)<.0001,"Removing BODY toughness retains the exact original flat barding protection");
