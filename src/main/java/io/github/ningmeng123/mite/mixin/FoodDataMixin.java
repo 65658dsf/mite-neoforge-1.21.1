@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Source food values, satiation-first metabolism and nutrition-driven recovery. @author NingMeng123 */
+/** Food values, saturation-first consumption and nutrition-driven recovery. @author NingMeng123 */
 @Mixin(FoodData.class)
 public abstract class FoodDataMixin implements DualFoodData {
     @Shadow private int foodLevel;
@@ -34,6 +34,7 @@ public abstract class FoodDataMixin implements DualFoodData {
     @Shadow public abstract void addExhaustion(float amount);
     @Unique private Player mite$player;
     @Unique private int mite$nutrition = 20;
+    // Retained for legacy saved-data compatibility.
     @Unique private float mite$nutritionHunger;
     @Unique private float mite$healProgress;
     @Unique private float mite$starveProgress;
@@ -107,7 +108,6 @@ public abstract class FoodDataMixin implements DualFoodData {
         if (!player.isCreative()) {
             state = state.tick(player.isSprinting());
             NutritionState.set(player,state);
-            mite$nutritionHunger += NutritionRules.NUTRITION_ONLY_HUNGER_PER_TICK;
         }
         if (!player.getAbilities().invulnerable && !player.isCreative()) {
             var pos = player.blockPosition();
@@ -123,17 +123,14 @@ public abstract class FoodDataMixin implements DualFoodData {
             if (saturationLevel>0F) {
                 // Modern saturation absorbs exhaustion, without enabling modern fast healing.
                 saturationLevel=Math.max(0F,saturationLevel-1F);
-            } else if (foodLevel>0 || mite$nutrition>0) {
-                if (foodLevel<1 || mite$nutritionHunger+.001F>=4F && mite$nutrition>0) {
-                    mite$nutrition--;
-                    mite$nutritionHunger=0F;
-                } else {
-                    foodLevel--;
-                }
+            } else if (mite$nutrition>0) {
+                mite$nutrition--;
+                mite$nutritionHunger=0F;
+            } else if (foodLevel>0) {
+                foodLevel--;
             }
         }
-        if (mite$nutrition==0) {
-            mite$healProgress=0F;
+        if (foodLevel==0 && mite$nutrition==0) {
             mite$starveProgress += .002F;
             if (mite$starveProgress>=1F) {
                 if (NutritionRules.starvationCanDamage(player.getHealth(),player.level().getDifficulty().getId()))
@@ -143,6 +140,8 @@ public abstract class FoodDataMixin implements DualFoodData {
             }
         } else {
             mite$starveProgress=0F;
+        }
+        if (mite$nutrition>0) {
             // Source regeneration uses the highest worn level. Tournament-only sleep penalties remain separate.
             mite$healProgress += io.github.ningmeng123.mite.api.MiteExtensions.policy().naturalRegeneration(player, NutritionRules.regenerationIncrement(mite$nutrition,state.malnourished(),player.isSleeping(),io.github.ningmeng123.mite.enchantment.R196Enchantments.equipped(player,"regeneration")));
             if (player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION) && player.isHurt()) {
@@ -152,7 +151,7 @@ public abstract class FoodDataMixin implements DualFoodData {
                     mite$healProgress-=1F;
                 }
             } else mite$healProgress=0F;
-        }
+        } else mite$healProgress=0F;
     }
     // Apply the requested 15% increase once, including metabolism and regeneration.
     @ModifyVariable(method="addExhaustion(F)V",at=@At("HEAD"),argsOnly=true,ordinal=0,require=1,allow=1)

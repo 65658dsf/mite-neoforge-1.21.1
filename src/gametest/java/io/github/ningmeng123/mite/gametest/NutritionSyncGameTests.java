@@ -31,7 +31,7 @@ public final class NutritionSyncGameTests {
     private NutritionSyncGameTests() {}
 
     @GameTest(template = "empty")
-    public static void nonzeroSaturationChangesSendImmediateSnapshotsWithoutDuplicatePackets(GameTestHelper helper) {
+    public static void independentSaturationAndNutritionChangesSendImmediateSnapshotsWithoutDuplicatePackets(GameTestHelper helper) {
         MinecraftServer server = helper.getLevel().getServer();
         CommonListenerCookie cookie = CommonListenerCookie.createInitial(
                 new GameProfile(UUID.randomUUID(), "mite-food-sync"), false);
@@ -68,6 +68,26 @@ public final class NutritionSyncGameTests {
                 PlayerFoodEvents.sync(player, false);
                 helper.assertValueEqual(listener.received.size(), index + 1,
                         "A second call with unchanged resources sends no duplicate packet outside the heartbeat");
+            }
+            int[] nutritionSequence = {2, 1, 0};
+            for (int index = 0; index < nutritionSequence.length; index++) {
+                ((DualFoodData) player.getFoodData()).mite$setNutrition(nutritionSequence[index]);
+                PlayerFoodEvents.sync(player, false);
+                int expectedPackets = saturationSequence.length + index + 1;
+                helper.assertValueEqual(listener.received.size(), expectedPackets,
+                        "Each nutrition-only decrease immediately emits one custom snapshot");
+                NutritionPayload actual = listener.received.get(expectedPackets - 1);
+                helper.assertValueEqual(actual.nutrition(), nutritionSequence[index],
+                        "The real outbound packet carries the newly authoritative nutrition amount");
+                helper.assertValueEqual(actual.satiation(), 4, "The hunger-bar reserve stays fixed while nutrition decreases");
+                helper.assertValueEqual(actual.saturation(), 2F, "The separate seed buffer stays fixed while nutrition decreases");
+                helper.assertValueEqual(actual.protein(), 160_000, "The nutrition-only change retains protein");
+                helper.assertValueEqual(actual.fat(), 160_000, "The nutrition-only change retains essential fat");
+                helper.assertValueEqual(actual.plants(), 160_000, "The nutrition-only change retains plant nutrients");
+                helper.assertValueEqual(player.getHealth(), unchangedHealth, "The nutrition-only change retains health");
+                PlayerFoodEvents.sync(player, false);
+                helper.assertValueEqual(listener.received.size(), expectedPackets,
+                        "The nutrition-only snapshot also suppresses a duplicate sync call");
             }
         } finally {
             // Exercise the public production cleanup hook; leave no UUID entry in the snapshot cache.

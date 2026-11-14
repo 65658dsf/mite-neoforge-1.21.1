@@ -41,6 +41,7 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 /** Real matched recipes, timed result-slot consumption and native cooking. @author NingMeng123 */
 @GameTestHolder("mite")
@@ -312,6 +313,7 @@ public final class FoodRecipeGameTests {
             player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(), cookie.clientInformation());
             Connection connection = new Connection(PacketFlow.SERVERBOUND);
             channel = new EmbeddedChannel(connection);
+            NetworkRegistry.configureMockConnection(connection);
             player.server.getPlayerList().placeNewPlayer(connection, player, cookie);
             player.setGameMode(GameType.SURVIVAL);
             player.moveTo(helper.absolutePos(new BlockPos(1, 2, 2)).getCenter());

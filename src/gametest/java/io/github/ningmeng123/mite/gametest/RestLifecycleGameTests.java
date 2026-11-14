@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 /** Native beds, FoodData, player saves and packet-driven respawning. @author NingMeng123 */
 @GameTestHolder("mite")
@@ -372,6 +373,7 @@ public final class RestLifecycleGameTests {
                     cookie.clientInformation());
             var connection = new Connection(PacketFlow.SERVERBOUND);
             channel = new EmbeddedChannel(connection);
+            NetworkRegistry.configureMockConnection(connection);
             player.server.getPlayerList().placeNewPlayer(connection, player, cookie);
             listener = player.connection;
             player.setGameMode(GameType.SURVIVAL);

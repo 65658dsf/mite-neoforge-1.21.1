@@ -28,6 +28,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 /** Native egg food use and the authoritative Ctrl-throw transaction. @author NingMeng123 */
 @GameTestHolder("mite")
@@ -188,6 +189,7 @@ public final class EggNutritionGameTests {
             player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(), cookie.clientInformation());
             var connection = new Connection(PacketFlow.SERVERBOUND);
             channel = new EmbeddedChannel(connection);
+            NetworkRegistry.configureMockConnection(connection);
             helper.getLevel().getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
             player.setGameMode(GameType.SURVIVAL);
             player.moveTo(helper.absolutePos(new BlockPos(1, 2, 2)).getCenter());

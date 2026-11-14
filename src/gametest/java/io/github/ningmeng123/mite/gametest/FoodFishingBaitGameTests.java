@@ -35,6 +35,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 /** Pinned fishing methods verify source geometric probability and once-only bait consumption. @author NingMeng123 */
 @GameTestHolder("mite")
@@ -260,6 +261,7 @@ public final class FoodFishingBaitGameTests {
             player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(), cookie.clientInformation());
             Connection connection = new Connection(PacketFlow.SERVERBOUND);
             channel = new EmbeddedChannel(connection);
+            NetworkRegistry.configureMockConnection(connection);
             helper.getLevel().getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
             player.setGameMode(GameType.SURVIVAL);
             player.moveTo(helper.absolutePos(new BlockPos(2, 4, 2)).getCenter());
