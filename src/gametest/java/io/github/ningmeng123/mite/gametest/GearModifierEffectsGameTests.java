@@ -240,17 +240,17 @@ public final class GearModifierEffectsGameTests {
         equip(player, EquipmentSlot.CHEST, chest);
         RecordingCow target = new RecordingCow(h.getLevel(), player);
         player.setHealth(50F); player.attack(target);
-        close(h, target.received, 20.25F, "Half health applies 1.25x to the ten-point fixture plus normalized 6.2 sword modifier");
+        close(h, target.received, 22.5F, "Half health applies 1.25x to the ten-point fixture plus the source eight-point sword bonus");
         modifier(chest, GearModifier.ARMOR_INDOMITABLE, 4); player.tick(); player.setOnGround(true);
         player.setHealth(10F); player.attack(target);
-        close(h, target.received, 32.4F, "Ten percent health enables 2x at any Indomitable rank");
+        close(h, target.received, 36F, "Ten percent health enables 2x at any Indomitable rank");
         ServerLevel nether = h.getLevel().getServer().getLevel(Level.NETHER);
         h.assertTrue(nether != null, "The test server loads the Nether dimension");
         TestPlayer demon = new TestPlayer(nether, new BlockPos(0, 80, 0));
         equip(demon, EquipmentSlot.MAINHAND, modifier(sword.copy(), GearModifier.TOOL_DEMON_POWER, 1));
         RecordingCow netherTarget = new RecordingCow(nether, demon);
         demon.attack(netherTarget);
-        close(h, netherTarget.received, 20.25F, "Demon Power multiplies real normalized melee damage by 1.25 outside the Overworld");
+        close(h, netherTarget.received, 22.5F, "Demon Power multiplies real source melee damage by 1.25 outside the Overworld");
         h.succeed();
     }
 

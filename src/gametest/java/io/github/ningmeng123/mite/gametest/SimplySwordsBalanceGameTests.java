@@ -34,23 +34,25 @@ public final class SimplySwordsBalanceGameTests {
     @GameTest(template="empty",batch="simplyswords_balance")
     public static void actualMaterialVariantsHaveIndependentDamageAndSpeedTargets(GameTestHelper h) {
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
-        var expected=Map.of("longsword",7.2D,"spear",5.04D,"glaive",5.4D,"halberd",6.12D,"greathammer",7.92D);
-        var rates=Map.of("longsword",1.5D,"spear",1D,"glaive",.8D,"halberd",.72D,"greathammer",.56D);
+        var expected=Map.of("longsword",9D,"spear",5.85D,"glaive",5.85D,"halberd",4.95D,"greathammer",11.25D);
+        var rates=Map.of("longsword",1.3D,"spear",.9D,"glaive",.8D,"halberd",.65D,"greathammer",.56D);
         for (var entry:expected.entrySet()) {
             var stack=new ItemStack(SimplySwordsCompat.weapon("ancient_metal",entry.getKey()));
             close(h, damage(stack), entry.getValue(), "The real nine-point ancient-metal material has its reviewed "+entry.getKey()+" damage");
             close(h, rate(stack), rates.get(entry.getKey()), "The real equipped attack rate includes exactly one handedness adjustment");
         }
         String[] families={"longsword","twinblade","rapier","katana","sai","spear","glaive","warglaive","cutlass","claymore","greataxe","greathammer","chakram","scythe","halberd"};
-        double[] copper={6D,5.4D,4.8D,5.7D,3.9D,4.2D,4.5D,5.1D,5.4D,6.3D,6.6D,6.6D,3.84D,5.4D,5.1D};
-        double[] silver={6.4D,5.76D,5.12D,6.08D,4.16D,4.48D,4.8D,5.44D,5.76D,6.72D,7.04D,7.04D,4.096D,5.76D,5.44D};
-        double[] iron={7.2D,6.48D,5.76D,6.84D,4.68D,5.04D,5.4D,6.12D,6.48D,7.56D,7.92D,7.92D,4.608D,6.48D,6.12D};
+        double[] copper={8D,5.6D,6D,6.8D,4.8D,5.2D,5.2D,6.4D,6.4D,9.2D,9.6D,10D,4.4D,5.6D,4.4D};
+        double[] iron={9D,6.3D,6.75D,7.65D,5.4D,5.85D,5.85D,7.2D,7.2D,10.35D,10.8D,11.25D,4.95D,6.3D,4.95D};
+        double[] actualRates={1.3D,1.05D,1.85D,1.7D,2D,.9D,.8D,1.65D,1.75D,.76D,.64D,.56D,.9D,.8D,.65D};
         for(int index=0;index<families.length;index++) {
-            close(h,damage(weapon("copper",families[index])),copper[index],"The real copper "+families[index]+" uses its independent six-point sword budget");
-            close(h,damage(weapon("silver",families[index])),silver[index],"The real silver "+families[index]+" uses its independent6.4 sword budget");
+            close(h,damage(weapon("copper",families[index])),copper[index],"The real copper "+families[index]+" uses its source eight-point sword budget");
+            close(h,damage(weapon("silver",families[index])),copper[index],"The real silver "+families[index]+" uses its source eight-point sword budget");
             close(h,damage(weapon("iron",families[index])),iron[index],"The native SS iron "+families[index]+" shares the source iron tier instead of underperforming copper");
+            close(h,rate(weapon("copper",families[index])),actualRates[index],"Added material equipment uses the reviewed final family rate");
+            close(h,rate(weapon("iron",families[index])),actualRates[index],"Native iron equipment uses the reviewed final family rate");
         }
-        close(h,damage(weapon("gold","longsword")),5.6D,"Native SS gold uses the source seven-point sword basis");
+        close(h,damage(weapon("gold","longsword")),7D,"Native SS gold uses the source seven-point sword basis");
         h.assertTrue(damage(weapon("ancient_metal","greathammer"))>damage(weapon("ancient_metal","longsword")),"The hammer retains the stronger individual hit");
         h.assertTrue(damage(weapon("ancient_metal","greathammer"))*rate(weapon("ancient_metal","greathammer"))
                 <damage(weapon("ancient_metal","longsword"))*rate(weapon("ancient_metal","longsword")),"The slower heavy weapon cannot also dominate sustained base damage");
@@ -59,7 +61,7 @@ public final class SimplySwordsBalanceGameTests {
             var stack=new ItemStack(item); var definition=SimplySwordsCompat.definition(stack);
             if (definition==null) continue;
             if (definition.added()) added++;
-            h.assertTrue(Double.isFinite(damage(stack))&&damage(stack)>0D&&damage(stack)<65D,"Every native/unique/added registered family has finite bounded base damage: "+BuiltInRegistries.ITEM.getKey(item));
+            h.assertTrue(Double.isFinite(damage(stack))&&damage(stack)>0D&&damage(stack)<=80D,"Every native/unique/added registered family has finite bounded base damage: "+BuiltInRegistries.ITEM.getKey(item));
             var speedProfile=io.github.ningmeng123.mite.rules.SimplySwordsBalanceRules.profile(definition.family());
             double handling=SimplySwordsHandling.twoHanded(stack)?.8D:1D;
             h.assertTrue(rate(stack)>=speedProfile.minimumAttacksPerSecond()*handling-.00001D
@@ -74,10 +76,42 @@ public final class SimplySwordsBalanceGameTests {
     }
 
     @GameTest(template="empty",batch="simplyswords_balance")
+    public static void loadedNativeComboPeaksPreserveTheReviewedDamageBudget(GameTestHelper h) throws ReflectiveOperationException {
+        if (!SimplySwordsCompat.enabled() || !io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge.enabled()) {
+            h.succeed();
+            return;
+        }
+        String[] families={"longsword","twinblade","rapier","katana","sai","spear","glaive","warglaive",
+                "cutlass","claymore","greataxe","greathammer","chakram","scythe","halberd"};
+        double[] expectedPeak={1.4D,1.2D,1.1D,1.2D,1D,1D,1.4D,1.2D,1.3D,1.25D,1.4D,1.5D,1D,1.4D,1.6D};
+        var registry=Class.forName("net.bettercombat.logic.WeaponRegistry").getMethod("getAttributes",ItemStack.class);
+        for (String material:java.util.List.of("copper","iron")) {
+            double swordPeak=damage(weapon(material,"longsword"))*1.4D;
+            for (int index=0;index<families.length;index++) {
+                ItemStack stack=weapon(material,families[index]);
+                Object attributes=registry.invoke(null,stack);
+                h.assertTrue(attributes!=null,"The installed combat registry resolves the actual material weapon");
+                Object[] attacks=(Object[])attributes.getClass().getMethod("attacks").invoke(attributes);
+                double peak=0D;
+                for (Object attack:attacks) {
+                    double multiplier=((Number)attack.getClass().getMethod("damageMultiplier").invoke(attack)).doubleValue();
+                    peak=Math.max(peak,multiplier);
+                }
+                double expected=material.equals("iron")&&families[index].equals("scythe")?1D:expectedPeak[index];
+                close(h,peak,expected,"The original parsed combo remains intact for "+material+" "+families[index]);
+                boolean heavy=java.util.Set.of("claymore","greataxe","greathammer").contains(families[index]);
+                if (heavy) h.assertTrue(damage(stack)*peak>swordPeak,"The heavy weapon retains its stronger peak hit");
+                else h.assertTrue(damage(stack)*peak<=swordPeak+.0001D,"Fast and long weapons keep their peak hit within the sword budget");
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty",batch="simplyswords_balance")
     public static void oldChakramBaseNormalizesOnceWhileKeepingIndependentAffixes(GameTestHelper h) {
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
         var stack = weapon("iron", "chakram");
-        close(h, damage(stack), 4.608D, "The real iron chakram keeps 80% of its previous 5.76 total base damage");
+        close(h, damage(stack), 4.95D, "The real iron chakram applies its single .55 family budget");
         var extra = ResourceLocation.fromNamespaceAndPath("mite", "chakram_balance_test_affix");
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.builder()
                 .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 4.76D,
@@ -87,7 +121,7 @@ public final class SimplySwordsBalanceGameTests {
         stack = ItemStack.parse(h.getLevel().registryAccess(), stack.save(h.getLevel().registryAccess())).orElseThrow();
         var saved = stack.save(h.getLevel().registryAccess());
         for (int query = 0; query < 4; ++query) {
-            close(h, damage(stack), 6.608D, "Saved base becomes 4.608 while the independent two-point affix remains intact");
+            close(h, damage(stack), 6.95D, "Saved base becomes 4.95 while the independent two-point affix remains intact");
             h.assertValueEqual(stack.getAttributeModifiers().modifiers().stream()
                     .filter(entry -> entry.modifier().id().equals(Item.BASE_ATTACK_DAMAGE_ID)).count(), 1L,
                     "Repeated reads do not duplicate the normalized base");
@@ -115,7 +149,7 @@ public final class SimplySwordsBalanceGameTests {
         var saved=stack.save(h.getLevel().registryAccess());
         stack=ItemStack.parse(h.getLevel().registryAccess(),saved).orElseThrow();
         for (int query=0;query<8;query++) {
-            close(h,damage(stack),9.92D,"Old 999 damage becomes reviewed 7.92 base plus the existing separate two-point affix");
+            close(h,damage(stack),13.25D,"Old 999 damage becomes reviewed 11.25 base plus the existing separate two-point affix");
             close(h,rate(stack),.56D,"Old fast-heavy components cannot bypass the heavy .7 family rate and its one20% handling cost");
             h.assertTrue(stack.getAttributeModifiers().modifiers().stream().anyMatch(entry->entry.modifier().id().equals(extra)&&entry.modifier().amount()==2D),"Separate affix IDs and amounts remain intact");
             h.assertFalse(stack.getAttributeModifiers().modifiers().stream().anyMatch(entry->entry.modifier().id().toString().equals("mite:simplyswords_two_handed_movement_speed")),"Old item-based movement components are excluded from effective attributes");
@@ -153,11 +187,11 @@ public final class SimplySwordsBalanceGameTests {
                 stack.getItem().use(h.getLevel(),owner,InteractionHand.MAIN_HAND);
                 h.assertTrue(observed.get()!=null&&observed.get().isAddedToLevel(),"The original throwable item's actual use path creates its real projectile");
                 h.assertFalse(stack.isEmpty(),"The explicit creative-ability fixture preserves the source stack for the companion helper check");
-                close(h,Class.forName("net.sweenus.simplyswords.entity.ThrownSpearEntity").getField("primaryBaseDamage").getFloat(observed.get()),4.04D,
+                close(h,Class.forName("net.sweenus.simplyswords.entity.ThrownSpearEntity").getField("primaryBaseDamage").getFloat(observed.get()),4.85D,
                         "Native throwing reads reviewed spear damage through its helper for "+(old?"old saved":"new default")+" components");
                 double helper=(Double)Class.forName("net.sweenus.simplyswords.util.HelperMethods")
                         .getMethod("getAttackFromStack",ItemStack.class,EquipmentSlotGroup.class).invoke(null,stack,EquipmentSlotGroup.MAINHAND);
-                close(h,helper,4.04D,"The companion native skill helper reads the same normalized stat");
+                close(h,helper,4.85D,"The companion native skill helper reads the same normalized stat");
             } finally {
                 NeoForge.EVENT_BUS.unregister(listener);if(observed.get()!=null)observed.get().discard();owner.discard();
             }

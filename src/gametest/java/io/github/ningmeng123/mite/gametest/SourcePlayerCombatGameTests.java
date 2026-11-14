@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.combat.SourcePlayerCombat;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
+import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.registry.MiteTools;
@@ -224,7 +225,10 @@ public final class SourcePlayerCombatGameTests {
             ItemStack held=new ItemStack(item); player.setItemInHand(InteractionHand.MAIN_HAND,held);
             h.assertTrue(SourcePlayerCombat.handProtected(held),"Modern melee weapon protects the main hand");
             h.assertFalse(SourcePlayerCombat.weak(player),"Protected modern weapon is usable with low health and no food energy");
-            close(h,SourcePlayerReach.meleeReach(player,target),2.25D,"Modern weapon uses source sword/hammer reach");
+            double expectedReach = item == Items.TRIDENT
+                    ? (BetterCombatBridge.enabled() ? 3.25D : 2.75D) : (BetterCombatBridge.enabled() ? 2D : 1.75D);
+            close(h,SourcePlayerReach.meleeReach(player,target),expectedReach,
+                    "Modern weapons use the long trident and short mace family distances");
             h.assertFalse(SourcePlayerReach.effective(held,Blocks.STONE.defaultBlockState()),"A melee weapon cannot claim pickaxe effectiveness");
             close(h,SourcePlayerReach.blockReach(player,Blocks.STONE.defaultBlockState(),InteractionHand.MAIN_HAND),2.75D,"Ineffective weapon adds no block reach");
         }
@@ -247,14 +251,15 @@ public final class SourcePlayerCombatGameTests {
     public static void entityContextsKeepHeightBoatAndFireballOverrides(GameTestHelper h) {
         Player player=player(h); Cow target=cow(h,player,1D);
         player.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Items.IRON_SWORD));
-        close(h,SourcePlayerReach.meleeReach(player,target),3D,"Sword has three total blocks of melee reach");
+        double swordReach = 2.25D;
+        close(h,SourcePlayerReach.meleeReach(player,target),swordReach,"Sword keeps its source distance in both combat modes");
         close(h,SourcePlayerReach.interactionReach(player,target),2.5D,"Sword has no entity-interaction bonus");
         player.setPos(player.position().add(0D,2.5D,0D));
-        close(h,SourcePlayerReach.meleeReach(player,target),4D,"High ground reaches the +1 cap");
+        close(h,SourcePlayerReach.meleeReach(player,target),swordReach+1D,"High ground reaches the +1 cap");
         Boat boat=EntityType.BOAT.create(h.getLevel()); boat.setPos(target.position());
         close(h,SourcePlayerReach.interactionReach(player,boat),2.5D,"Boat ignores height");
         LargeFireball ball=EntityType.FIREBALL.create(h.getLevel()); ball.setPos(target.position());
-        close(h,SourcePlayerReach.meleeReach(player,ball),6D,"Source fireball adds two after height and weapon");
+        close(h,SourcePlayerReach.meleeReach(player,ball),swordReach+3D,"Source fireball adds two after height and weapon");
         target.discard(); boat.discard(); ball.discard(); h.succeed();
     }
     @GameTest(template = "empty")

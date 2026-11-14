@@ -9,6 +9,8 @@ import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
+import io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules;
+import io.github.ningmeng123.mite.rules.SimplySwordsBalanceRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -73,12 +75,26 @@ public final class SourcePlayerReach {
     }
     /** Weapon length is independent of its durability family; external range is included exactly once. */
     public static double baseMeleeReach(ItemStack weapon, double itemRange) {
-        // Native swords and clubs use the complete three-block interaction attribute,
-        // without adding the old short-weapon bonus a second time. SS families retain their own lengths.
-        if (ordinarySwordOrClub(weapon)) return itemRange;
-        Double weaponBase = BetterCombatBridge.weaponBaseReach(weapon, itemRange);
-        if (weaponBase == null && !BetterCombatBridge.enabled()) weaponBase = SimplySwordsReach.baseReach(weapon, itemRange);
-        return weaponBase == null ? 1.5D + toolBonus(weapon) + itemRange - 3D : weaponBase;
+        boolean betterCombat = BetterCombatBridge.enabled();
+        var simplySwords = SimplySwordsCompat.definition(weapon);
+        if (simplySwords != null) {
+            Double metadata = BetterCombatBridge.weaponBaseReach(weapon, itemRange);
+            if (metadata == null && !betterCombat) metadata = SimplySwordsReach.baseReach(weapon, itemRange);
+            if (hasExplicitRange(weapon)) return metadata == null ? itemRange : metadata;
+            double balanced = SimplySwordsBalanceRules.meleeReach(simplySwords.family(), betterCombat) + itemRange - 3D;
+            return metadata == null ? balanced : Math.min(metadata, balanced);
+        }
+        if (weapon.is(Items.TRIDENT)) return (betterCombat ? 3.25D : 2.75D) + itemRange - 3D;
+        if (weapon.is(Items.MACE)) return (betterCombat ? 2D : 1.75D) + itemRange - 3D;
+        var profile = EquipmentDurability.toolProfile(weapon);
+        if (profile != null) return NativeWeaponBalanceRules.meleeReach(profile.family(), betterCombat) + itemRange - 3D;
+        if (weapon.getItem() instanceof SwordItem) return 2.25D + itemRange - 3D;
+        return 1.5D + toolBonus(weapon) + itemRange - 3D;
+    }
+    private static boolean hasExplicitRange(ItemStack weapon) {
+        return weapon.getAttributeModifiers().modifiers().stream().anyMatch(entry ->
+                entry.attribute().is(Attributes.ENTITY_INTERACTION_RANGE) && entry.slot().test(EquipmentSlot.MAINHAND)
+                        && !entry.modifier().id().equals(LEGACY_TOOL_REACH));
     }
     public static boolean ordinarySwordOrClub(ItemStack weapon) {
         if (SimplySwordsCompat.definition(weapon) != null) return false;

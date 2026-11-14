@@ -2,6 +2,8 @@ package io.github.ningmeng123.mite.item;
 
 import io.github.ningmeng123.mite.mining.MiningProgress;
 import io.github.ningmeng123.mite.registry.MiteTags;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
+import io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules;
 import io.github.ningmeng123.mite.rules.WoodenClubRules;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -39,7 +41,9 @@ public final class WoodenClubBehavior {
                                 new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 2.0, AttributeModifier.Operation.ADD_VALUE),
                                 EquipmentSlotGroup.MAINHAND)
                         .add(Attributes.ATTACK_SPEED,
-                                new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -2.4, AttributeModifier.Operation.ADD_VALUE),
+                                new AttributeModifier(Item.BASE_ATTACK_SPEED_ID,
+                                        NativeWeaponBalanceRules.attacksPerSecond(ToolFamily.CLUB, "wood") - 4D,
+                                        AttributeModifier.Operation.ADD_VALUE),
                                 EquipmentSlotGroup.MAINHAND)
                         .build()));
     }

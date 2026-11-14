@@ -13,6 +13,7 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -34,6 +35,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -180,8 +182,15 @@ public final class WoodenEquipmentGameTests {
                 prepareTarget(cow);
                 chargeAttack(player);
                 helper.assertValueEqual(player.getAttributeValue(Attributes.ATTACK_DAMAGE), 3.0, "The club adds 2 to the player's base attack 1");
-                helper.assertTrue(Math.abs(player.getAttributeValue(Attributes.ATTACK_SPEED) - 1.6) < 0.000001,
-                        "The modern club attack cooldown is 1.6 attacks per second");
+                helper.assertTrue(Math.abs(player.getAttributeValue(Attributes.ATTACK_SPEED) - 1.2) < 0.000001,
+                        "The modern club attack cooldown is 1.2 attacks per second");
+                double defaultSpeed = 4D + Items.WOODEN_SWORD.components()
+                        .getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY).modifiers().stream()
+                        .filter(entry -> entry.slot().test(EquipmentSlot.MAINHAND)
+                                && entry.attribute().equals(Attributes.ATTACK_SPEED))
+                        .mapToDouble(entry -> entry.modifier().amount()).sum();
+                helper.assertTrue(Math.abs(defaultSpeed - 1.2D) < .000001D,
+                        "The club's item defaults carry the same selected family cooldown");
                 assertAttackDamage(helper, player, cow, 3.0F, "An actual club hit deals 3 damage to an unarmored cow");
                 helper.assertValueEqual(neighbor.getHealth(), neighbor.getMaxHealth(), "A nearby valid sweep target is not hit by the club");
             } finally {
@@ -214,7 +223,7 @@ public final class WoodenEquipmentGameTests {
                 prepareTarget(swordTarget);
                 player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
                 neighbor.invulnerableTime = 0;
-                assertAttackDamage(helper, player, swordTarget, 7.2F, "Balanced iron sword damage retains the ordinary sword sweep path");
+                assertAttackDamage(helper, player, swordTarget, 9F, "Source iron sword damage retains the ordinary sword sweep path");
                 helper.assertTrue(neighbor.getHealth() < neighbor.getMaxHealth(),
                         "The same fixture permits an ordinary sword to sweep, proving the club's negative check is meaningful");
                 helper.assertValueEqual(player.getMainHandItem().getDamageValue(), 50, "R196 sword attack wear is 100 times the source rate 0.5, applied once");

@@ -67,6 +67,50 @@ public final class MobWeaponReachGameTests {
     }
 
     @GameTest(template = "empty", templateNamespace = "mite_targeting")
+    public static void balancedFamiliesKeepLiteralMonsterCapsAndRejectDirectHitsOutsideThem(GameTestHelper helper) {
+        boolean betterCombat = BetterCombatBridge.enabled();
+        var weapons = new java.util.ArrayList<>(List.of(
+                new WeaponCap(new ItemStack(Items.IRON_SWORD), 2.05D),
+                new WeaponCap(new ItemStack(MiteTools.get("mite:wooden_cudgel")), 1.55D),
+                new WeaponCap(new ItemStack(MiteTools.get("mite:iron_dagger")), 1.8D),
+                new WeaponCap(new ItemStack(MiteTools.get("mite:iron_war_hammer")), 1.8D),
+                new WeaponCap(new ItemStack(MiteTools.get("mite:iron_scythe")), betterCombat ? 3.05D : 2.3D),
+                new WeaponCap(new ItemStack(Items.TRIDENT), betterCombat ? 3.05D : 2.55D),
+                new WeaponCap(new ItemStack(Items.MACE), betterCombat ? 1.8D : 1.55D)));
+        if (io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.enabled()) {
+            String[] families = {"longsword", "sai", "claymore", "greataxe", "greathammer", "chakram", "spear", "halberd"};
+            double[] caps = betterCombat
+                    ? new double[]{2.3D, 1.8D, 3.05D, 3.05D, 3.05D, 2.6D, 3.55D, 3.8D}
+                    : new double[]{2.3D, 1.8D, 3.05D, 3.05D, 3.05D, 2.6D, 2.8D, 3.05D};
+            for (int index = 0; index < families.length; index++) weapons.add(new WeaponCap(new ItemStack(
+                    io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat.weapon("copper", families[index])), caps[index]));
+        }
+        try (ReachSettings ignored = new ReachSettings(1D, 0D, false);
+                Fixture fixture = new Fixture(helper, EntityType.ZOMBIE)) {
+            for (var weapon : weapons) {
+                fixture.equip(weapon.stack());
+                close(helper, MobWeaponReach.sourceLimit(fixture.attacker, fixture.target, fixture.attacker.getY()), weapon.cap(),
+                        "The balanced monster cap equals its literal weapon budget minus the fixed fifth of a block");
+                fixture.atDistance(weapon.cap() - .001D, 0D);
+                helper.assertTrue(MobWeaponReach.canReachFrom(fixture.attacker, fixture.target, fixture.attacker.position()),
+                        "The actual eye-to-hitbox measurement accepts the point inside the balanced monster cap");
+                fixture.atDistance(weapon.cap() + .001D, 0D);
+                helper.assertFalse(MobWeaponReach.canReachFrom(fixture.attacker, fixture.target, fixture.attacker.position()),
+                        "The actual eye-to-hitbox measurement rejects the point outside the balanced monster cap");
+                float health = fixture.target.getHealth();
+                helper.assertFalse(fixture.attacker.doHurtTarget(fixture.target),
+                        "A direct native attack cannot bypass the balanced monster reach guard");
+                fixture.finishSwing();
+                helper.assertValueEqual(fixture.target.getHealth(), health,
+                        "The rejected native attack produces no immediate or delayed damage");
+            }
+        }
+        helper.succeed();
+    }
+
+    private record WeaponCap(ItemStack stack, double cap) {}
+
+    @GameTest(template = "empty", templateNamespace = "mite_targeting")
     public static void eyeToHitboxAndPlannedFeetRespectAdultBabyAndSpiderBodies(GameTestHelper helper) {
         try (ReachSettings ignored = new ReachSettings(.75D, .25D, false)) {
             for (EntityType<? extends Mob> type : List.of(EntityType.ZOMBIE, EntityType.SPIDER, EntityType.CAVE_SPIDER)) {
@@ -97,8 +141,8 @@ public final class MobWeaponReachGameTests {
 
     @GameTest(template = "empty", templateNamespace = "mite_targeting")
     public static void nativeArmedAttacksRecheckTheShorterCapAfterTheTargetRetreats(GameTestHelper helper) {
-        // Ordinary swords now retain a three-block player base; keep this cap below native reach.
-        try (ReachSettings ignored = new ReachSettings(.5D, .5D, false)) {
+        // Keep the configured cap below native reach and above the fixture's vertical eye-to-box gap.
+        try (ReachSettings ignored = new ReachSettings(.75D, .5D, false)) {
             for (EntityType<? extends Mob> type : List.of(EntityType.ZOMBIE, EntityType.VINDICATOR,
                     EntityType.PIGLIN, EntityType.CAVE_SPIDER)) {
                 try (Fixture fixture = new Fixture(helper, type)) {
@@ -175,7 +219,7 @@ public final class MobWeaponReachGameTests {
             helper.assertTrue(SourceMeleeGoal.canStrike((PathfinderMob)fixture.attacker, fixture.target),
                     "The historical source sword boundary remains usable inside the new cap");
         }
-        try (ReachSettings ignored = new ReachSettings(.5D, .5D, false);
+        try (ReachSettings ignored = new ReachSettings(.75D, .5D, false);
                 Fixture fixture = new Fixture(helper, EntityType.ZOMBIE)) {
             fixture.equip(new ItemStack(Items.IRON_SWORD));
             fixture.atDistance(MobWeaponReach.sourceLimit(fixture.attacker, fixture.target, fixture.attacker.getY()) + .05D, 0D);

@@ -2,15 +2,15 @@ package io.github.ningmeng123.mite.rules;
 
 /** wp, uh and uq formulas without Minecraft dependencies. @author NingMeng123 */
 public final class R196WeaponRules {
-    public static final float DEFAULT_MELEE_DAMAGE_FACTOR = .8F;
+    public static final float DEFAULT_MELEE_DAMAGE_FACTOR = 1F;
     private R196WeaponRules() {}
-    /** One modern material budget over the source total, including the player's base point. */
+    /** Retains the source weapon bonus, with the player's base attack supplied by the entity. */
     public static float meleeDamageBonus(String material, float originalBonus) {
-        return (originalBonus + 1F) * meleeDamageFactor(material) - 1F;
+        return originalBonus;
     }
-    /** Source copper/silver swords total eight; copper is six, silver6.4 and iron9 becomes7.2. */
+    /** Public compatibility hook for the shared material multiplier. */
     public static float meleeDamageFactor(String material) {
-        return "copper".equals(material) ? .75F : DEFAULT_MELEE_DAMAGE_FACTOR;
+        return DEFAULT_MELEE_DAMAGE_FACTOR;
     }
     public static int sphereDamage(int subtype) {
         if (subtype < 0 || subtype > 4) throw new IllegalArgumentException("Unknown sphere subtype");

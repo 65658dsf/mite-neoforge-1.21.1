@@ -6,12 +6,15 @@ import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -27,24 +30,24 @@ public final class NativeWeaponAttributes {
         if (stack.isEmpty() || SimplySwordsCompat.definition(stack) != null) return null;
         var definition = MiteTools.definition(stack);
         if (definition != null) {
-            if (NativeWeaponBalanceRules.starter(definition.material())) return null;
             return new Profile(NativeWeaponBalanceRules.damageBonus(definition.family(), definition.material(), definition.damage()),
                     NativeWeaponBalanceRules.attacksPerSecond(definition.family(), definition.material()),
                     NativeWeaponBalanceRules.movementPenalty(definition.family(), definition.material()));
         }
-        float rawBonus = (float)stack.getItem().getDefaultAttributeModifiers().modifiers().stream()
-                .filter(entry -> entry.attribute().equals(Attributes.ATTACK_DAMAGE)
-                        && entry.modifier().id().equals(Item.BASE_ATTACK_DAMAGE_ID)
-                        && entry.modifier().operation() == AttributeModifier.Operation.ADD_VALUE)
-                .mapToDouble(entry -> entry.modifier().amount()).sum();
-        if (stack.is(Items.TRIDENT)) return new Profile((rawBonus + 1D) * .72D - 1D, 1D, .05D);
-        if (stack.is(Items.MACE)) return new Profile((rawBonus + 1D) * .8D - 1D, .65D, .15D);
+        if (stack.is(Items.TRIDENT)) return new Profile(5D, .9D, .05D);
+        if (stack.is(Items.MACE)) return new Profile(9.5D, .6D, .15D);
         if (!BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("minecraft")) return null;
         var profile = EquipmentDurability.toolProfile(stack);
         if (profile == null) return null;
+        float rawBonus = (float)stack.getItem().components()
+                .getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY).modifiers().stream()
+                .filter(entry -> entry.slot().test(EquipmentSlot.MAINHAND)
+                        && entry.attribute().equals(Attributes.ATTACK_DAMAGE)
+                        && entry.modifier().id().equals(Item.BASE_ATTACK_DAMAGE_ID)
+                        && entry.modifier().operation() == AttributeModifier.Operation.ADD_VALUE)
+                .mapToDouble(entry -> entry.modifier().amount()).sum();
         String path = BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
         String material = path.substring(0, path.indexOf('_') < 0 ? path.length() : path.indexOf('_'));
-        if (material.equals("wooden") || material.equals("stone")) return null;
         return new Profile(NativeWeaponBalanceRules.damageBonus(profile.family(), material, rawBonus),
                 NativeWeaponBalanceRules.attacksPerSecond(profile.family(), material),
                 NativeWeaponBalanceRules.movementPenalty(profile.family(), material));

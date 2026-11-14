@@ -1,5 +1,5 @@
 {
-  "tooltip.mite.attack_reach": "%s 攻击距离（同高）",
+  "tooltip.mite.attack_reach": "有效近战距离 %s 格",
   "item.mite.rusted_iron_phantom_blade": "锈铁幻灵刃",
   "item.mite.gold_phantom_blade": "金幻灵刃",
   "item.mite.copper_phantom_blade": "铜幻灵刃",
@@ -1274,7 +1274,7 @@
   "mite.config.better_combat_mobs": "开启怪物更好战斗兼容",
   "mite.config.better_combat_mobs.tooltip": "默认关闭，怪物使用原本的攻击方式。开启后，持近战武器的敌对怪物使用 Better Combat 的攻击前摇、连招、冷却和动画；需要安装 Better Combat。不影响玩家的 Better Combat 兼容。",
   "mite.config.weapon_reach_multiplier": "攻击距离倍率",
-  "mite.config.weapon_reach_multiplier.tooltip": "先将生存近战距离乘此数，再扣除固定减少值。1 保持默认；不影响创造模式。普通 MITE 武器沿用原有距离；简易刀剑在安装或未安装 Better Combat 时均保留各自的武器基础距离。",
+  "mite.config.weapon_reach_multiplier.tooltip": "先按是否安装 Better Combat 选择对应的武器类型距离，再应用倍率及固定减少值。默认倍率 1。MITE 与简易刀剑共用此设置。",
   "mite.config.weapon_reach_reduction": "攻击距离减少（方块）",
   "mite.config.weapon_reach_reduction.tooltip": "从倍率计算后的近战距离中扣除，最低为 0。默认 0；该设置不改变伤害。",
   "mite.config.height_reach_penalty": "启用高低差攻击距离修正",

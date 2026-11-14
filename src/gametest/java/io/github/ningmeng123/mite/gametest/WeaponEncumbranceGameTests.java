@@ -139,9 +139,17 @@ public final class WeaponEncumbranceGameTests {
             NeoForge.EVENT_BUS.post(new PlayerTickEvent.Pre(player));
             close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement, "Formation cores in the inventory never slow the player");
             equip(player, EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT)); player.tick();
-            close(h, player.getAttributeValue(Attributes.ATTACK_SPEED), 1D, "The retained native reach weapon keeps its explicit one-attack-per-second rate");
-            close(h, player.getCurrentItemAttackStrengthDelay(), 20D, "The retained trident's actual player recovery remains twenty ticks");
+            close(h, player.getAttributeValue(Attributes.ATTACK_DAMAGE), 6D, "The retained trident has six total base melee damage");
+            close(h, player.getAttributeValue(Attributes.ATTACK_SPEED), .9D, "The retained trident has its selected long-range weapon cooldown");
+            h.assertTrue(Math.abs(player.getCurrentItemAttackStrengthDelay() - 22.222222222D) < .00001D,
+                    "The retained trident's float recovery follows its .9 attack rate");
             close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement * .95D, "Only the currently held trident supplies the existing reach weight");
+            equip(player, EquipmentSlot.MAINHAND, new ItemStack(Items.MACE)); player.tick();
+            close(h, player.getAttributeValue(Attributes.ATTACK_DAMAGE), 10.5D, "The retained mace has its selected high per-hit base damage");
+            close(h, player.getAttributeValue(Attributes.ATTACK_SPEED), .6D, "The retained mace has a slow heavy-weapon cooldown");
+            h.assertTrue(Math.abs(player.getCurrentItemAttackStrengthDelay() - 33.333333333D) < .00001D,
+                    "The retained mace's float recovery follows its .6 attack rate");
+            close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement * .85D, "Switching to a mace replaces the trident's weight with fifteen percent");
             equip(player, EquipmentSlot.MAINHAND, ItemStack.EMPTY); player.tick();
             close(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement, "Removing the main-hand weapon restores movement while formation cores stay in the inventory");
             close(h, player.getAttributeValue(Attributes.ATTACK_SPEED), 4D, "Removing the main-hand weapon restores the native attack rate");

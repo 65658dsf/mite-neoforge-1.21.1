@@ -54,8 +54,8 @@ public final class VibraniumEquipmentGameTests {
             helper.assertValueEqual(stack.getItem().getEnchantmentValue(), 120, "Source enchantability is 120");
             helper.assertTrue(stack.has(DataComponents.FIRE_RESISTANT), "Vibranium resists fire and lava");
             check(helper, amount(stack, Attributes.ATTACK_DAMAGE, EquipmentSlot.MAINHAND),
-                    io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules.damageBonus(definition.family(), definition.material(), definition.damage()),
-                    "Native attack component carries the rebalanced family damage while archival source values stay intact");
+                    definition.damage(),
+                    "Native attack component retains the source type and material damage bonus");
         }
         ItemStack pickaxe = new ItemStack(MiteTools.get("vibranium_pickaxe"));
         helper.assertValueEqual(pickaxe.getMaxDamage(), 614400, "Pickaxe retains source hundredfold tool capacity");

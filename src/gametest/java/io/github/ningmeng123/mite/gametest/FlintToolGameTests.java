@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
@@ -61,8 +63,14 @@ public final class FlintToolGameTests {
             player.setSprinting(false);
             helper.assertValueEqual(player.getAttributeValue(Attributes.ATTACK_DAMAGE), 4.0,
                     "Equipment updates apply the +3 attack modifier above the player's base 1");
-            helper.assertValueEqual(player.getAttributeValue(Attributes.ATTACK_SPEED), 1.0,
-                    "The modern cooldown allows one fully charged attack per second");
+            helper.assertValueEqual(player.getAttributeValue(Attributes.ATTACK_SPEED), 1.25,
+                    "The modern hatchet cooldown allows 1.25 fully charged attacks per second");
+            double defaultSpeed = 4D + hatchet.getItem().components()
+                    .getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY).modifiers().stream()
+                    .filter(entry -> entry.slot().test(EquipmentSlot.MAINHAND)
+                            && entry.attribute().equals(Attributes.ATTACK_SPEED))
+                    .mapToDouble(entry -> entry.modifier().amount()).sum();
+            helper.assertValueEqual(defaultSpeed, 1.25D, "The hatchet's item defaults carry the selected family cooldown");
             float before = target.getHealth();
             player.attack(target);
             helper.assertTrue(target.getHealth() < before, "The normal player attack damages a living target");

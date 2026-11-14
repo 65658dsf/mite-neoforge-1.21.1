@@ -146,7 +146,7 @@ public final class MiteConfig {
                 .define("ai_load_reduction", true);
         builder.pop();
         builder.translation("mite.config.combat").push("combat");
-        WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Survival melee attack reach multiplier. Original MITE weapons keep source reach; Simply Swords weapons retain their own length with or without Better Combat. Creative reach remains unchanged.");
+        WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Multiplier of balanced melee reach before the fixed reduction. MITE and Simply Swords select separate family ranges according to Better Combat availability.");
         WEAPON_REACH_REDUCTION = number(builder, "weapon_reach_reduction", 0D, 16D, "Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.");
         HEIGHT_REACH_PENALTY = builder.translation("mite.config.height_reach_penalty").comment("Apply MITE target-height reach adjustments.").define("height_reach_penalty", true);
         BETTER_COMBAT_MOBS = builder.translation("mite.config.better_combat_mobs")

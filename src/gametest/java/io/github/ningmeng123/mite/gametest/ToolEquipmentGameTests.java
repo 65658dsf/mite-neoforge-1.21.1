@@ -193,7 +193,7 @@ public final class ToolEquipmentGameTests {
         try (Session session = player(helper)) {
             ServerPlayer player = session.player();
             String[] paths = {"silver_dagger", "silver_war_hammer", "wooden_cudgel"};
-            float[] damage = {6.0F, 12.0F, 4.0F}; // Balanced metal bases retain silver 1.25x and skeleton blunt 2x.
+            float[] damage = {7.5F, 15.0F, 4.0F}; // Source metal bases retain silver 1.25x and skeleton blunt 2x.
             int[] wear = {50, 66, 25};
             for (int i = 0; i < paths.length; i++) {
                 ItemStack stack = tool(paths[i]);

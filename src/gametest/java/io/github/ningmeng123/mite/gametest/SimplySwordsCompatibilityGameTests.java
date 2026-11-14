@@ -61,15 +61,24 @@ public final class SimplySwordsCompatibilityGameTests {
     private SimplySwordsCompatibilityGameTests() {}
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
-    public static void everyCopperFamilySharesTheSixPointSwordBudgetAndStaysBelowSilverAndIron(GameTestHelper h) {
-        if (SimplySwordsCompat.enabled()) for (String family : SimplySwordsCompat.families()) {
+    public static void everyCopperAndSilverFamilySharesTheEightPointSwordBasisBelowNativeIron(GameTestHelper h) {
+        String[] families = {"longsword", "twinblade", "rapier", "katana", "sai", "spear", "glaive",
+                "warglaive", "cutlass", "claymore", "greataxe", "greathammer", "chakram", "scythe", "halberd"};
+        double[] eightPointDamage = {8D, 5.6D, 6D, 6.8D, 4.8D, 5.2D, 5.2D, 6.4D, 6.4D, 9.2D, 9.6D, 10D, 4.4D, 5.6D, 4.4D};
+        double[] ninePointDamage = {9D, 6.3D, 6.75D, 7.65D, 5.4D, 5.85D, 5.85D, 7.2D, 7.2D, 10.35D, 10.8D, 11.25D, 4.95D, 6.3D, 4.95D};
+        if (SimplySwordsCompat.enabled()) for (int index = 0; index < families.length; index++) {
+            String family = families[index];
             var copper = new ItemStack(SimplySwordsCompat.weapon("copper", family));
             var silver = new ItemStack(SimplySwordsCompat.weapon("silver", family));
             var iron = new ItemStack(SimplySwordsCompat.weapon("iron", family));
             double copperDamage = baseDamage(copper), silverDamage = baseDamage(silver);
-            h.assertTrue(Math.abs(copperDamage - silverDamage * .9375D) < .00001D,
-                    "Real copper/silver " + family + " share the source eight-point basis with the reviewed six/six-point-four budgets");
-            h.assertTrue(copperDamage < silverDamage && silverDamage < baseDamage(iron),
+            h.assertTrue(Math.abs(copperDamage - eightPointDamage[index]) < .00001D,
+                    "Real copper " + family + " applies its family factor to the source eight-point sword basis");
+            h.assertTrue(Math.abs(silverDamage - eightPointDamage[index]) < .00001D,
+                    "Real silver " + family + " shares the same source eight-point sword basis");
+            h.assertTrue(Math.abs(baseDamage(iron) - ninePointDamage[index]) < .00001D,
+                    "Native iron " + family + " applies its family factor to the source nine-point sword basis");
+            h.assertTrue(silverDamage < baseDamage(iron),
                     "The actual native iron family stays above added copper and silver: " + family);
         }
         h.succeed();

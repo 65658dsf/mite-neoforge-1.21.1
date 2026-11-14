@@ -741,14 +741,18 @@ public final class BetterCombatMobGameTests {
                 MiteConfig.WEAPON_REACH_MULTIPLIER.set(1D);
                 MiteConfig.WEAPON_REACH_REDUCTION.set(0D);
                 MiteConfig.refreshEnchantmentRules();
-                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.5D, 2.5D, true);
-                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.65D, 2.65D, false);
-                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.9D, 2.9D, false);
-                simplySwordsDistanceCase(h, "glaive", 3.5D, 2.9D, 2.9D, true);
-                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.4D, 3.4D, false);
-                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.7D, 3.7D, false);
-                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.5D, 2.9D, false);
-                simplySwordsDistanceCase(h, "glaive", 3.5D, 2.9D, 3.7D, false);
+                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 1.8D, 1.8D, true);
+                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 2D, 2D, false);
+                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 2.9D, 2.9D, false);
+                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 2.9D, 2.9D, true);
+                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 3.4D, 3.4D, false);
+                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 3.7D, 3.7D, false);
+                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 1.8D, 2.9D, false);
+                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 2.9D, 3.7D, false);
+                simplySwordsDistanceCase(h, "greathammer", 4D, 3.25D, 2.9D, 2.9D, true);
+                simplySwordsDistanceCase(h, "greathammer", 4D, 3.25D, 3.1D, 3.1D, false);
+                simplySwordsDistanceCase(h, "spear", 4D, 3.75D, 3.4D, 3.4D, true);
+                simplySwordsDistanceCase(h, "spear", 4D, 3.75D, 3.65D, 3.65D, false);
             } finally {
                 MiteConfig.WEAPON_REACH_MULTIPLIER.set(multiplier);
                 MiteConfig.WEAPON_REACH_REDUCTION.set(reduction);
@@ -758,7 +762,7 @@ public final class BetterCombatMobGameTests {
         }
     }
 
-    private static void simplySwordsDistanceCase(GameTestHelper h, String family, double expectedRange,
+    private static void simplySwordsDistanceCase(GameTestHelper h, String family, double expectedRange, double expectedPlayerReach,
             double startDistance, double impactDistance, boolean hits) {
         Mob attacker = armed(h, EntityType.ZOMBIE);
         Mob target = target(h, attacker);
@@ -769,13 +773,14 @@ public final class BetterCombatMobGameTests {
             var profile = profile(h, attacker);
             h.assertTrue(Math.abs(profile.range() - expectedRange) < .000001D,
                     "The actual Better Combat weapon registry retains its distinct native range: " + id);
-            h.assertTrue(Math.abs(profile.reach(attacker, target) - (expectedRange - .2D)) < .000001D,
+            double expectedMobReach = expectedPlayerReach - .2D;
+            h.assertTrue(Math.abs(profile.reach(attacker, target) - expectedMobReach) < .000001D,
                     "The mob retains this weapon's distinct player range minus the fixed margin: " + id);
             placeAtEyeDistance(attacker, target, startDistance);
             float health = target.getHealth();
-            if (startDistance > expectedRange - .2D) {
+            if (startDistance > expectedMobReach) {
                 h.assertFalse(BetterMobCombat.canStrike(attacker, target),
-                        "A target outside this weapon's own range cannot begin a swing: " + id);
+                        "A target outside the balanced " + expectedMobReach + "-block range cannot begin a swing: " + id);
                 h.assertFalse(BetterMobCombat.request(attacker, target),
                         "A rejected remote request creates no pending weapon impact: " + id);
                 advance(attacker, target, profile.windupTicks());
@@ -783,7 +788,7 @@ public final class BetterCombatMobGameTests {
                 return;
             }
             h.assertTrue(BetterMobCombat.canStrike(attacker, target),
-                    "The weapon's distinct native range admits its nearby target: " + id);
+                    "The balanced " + expectedMobReach + "-block range admits its target at " + startDistance + ": " + id);
             begin(h, attacker, target);
             placeAtEyeDistance(attacker, target, impactDistance);
             advance(attacker, target, profile.windupTicks() - 1);
@@ -889,8 +894,8 @@ public final class BetterCombatMobGameTests {
                 helper.assertTrue(Math.abs(profile.range() - 1.8D) < .000001D, "Native profile data retains the actual short-move multiplier");
                 helper.assertTrue(Math.abs(BetterCombatBridge.playerEquivalentRange(attacker, attacker.getMainHandItem(), profile.rangeMultiplier()) - 1.3D) < .000001D,
                         "The half-block configured reduction follows the actual move multiplier before the monster margin");
-                helper.assertTrue(Math.abs(MobWeaponReach.sourceLimit(attacker, target, attacker.getY()) - 2.3D) < .000001D,
-                        "The three-block sword baseline minus .5 reduction and .2 monster margin is 2.3, still wider than this short move");
+                helper.assertTrue(Math.abs(MobWeaponReach.sourceLimit(attacker, target, attacker.getY()) - 1.55D) < .000001D,
+                        "The source 2.25-block sword minus .5 reduction and .2 monster margin is 1.55, still wider than this short move");
                 placeAtShoulderDistance(attacker, target, start);
                 float health = target.getHealth();
                 if (start > 1.1D) {

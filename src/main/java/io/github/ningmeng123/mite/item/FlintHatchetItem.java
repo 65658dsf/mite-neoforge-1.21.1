@@ -1,7 +1,9 @@
 package io.github.ningmeng123.mite.item;
 
 import io.github.ningmeng123.mite.mining.MiningProgress;
+import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.FlintToolRules;
+import io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -34,7 +36,9 @@ public final class FlintHatchetItem extends Item {
                                 new AttributeModifier(BASE_ATTACK_DAMAGE_ID, 3.0, AttributeModifier.Operation.ADD_VALUE),
                                 EquipmentSlotGroup.MAINHAND)
                         .add(Attributes.ATTACK_SPEED,
-                                new AttributeModifier(BASE_ATTACK_SPEED_ID, -3.0, AttributeModifier.Operation.ADD_VALUE),
+                                new AttributeModifier(BASE_ATTACK_SPEED_ID,
+                                        NativeWeaponBalanceRules.attacksPerSecond(ToolFamily.HATCHET, "flint") - 4D,
+                                        AttributeModifier.Operation.ADD_VALUE),
                                 EquipmentSlotGroup.MAINHAND)
                         .build()));
         // Item defaults retain PASS on right-click, zero enchantability and no material repair.

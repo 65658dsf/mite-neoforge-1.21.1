@@ -2,7 +2,6 @@ package io.github.ningmeng123.mite.client;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
-import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.item.GemSacrifice;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
@@ -28,7 +27,7 @@ public final class CraftingTooltips {
     @SubscribeEvent
     public static void explainEquipment(ItemTooltipEvent event) {
         var stack = event.getItemStack();
-        if (!BetterCombatBridge.enabled() && !(stack.getItem() instanceof ProjectileWeaponItem)
+        if (!(stack.getItem() instanceof ProjectileWeaponItem)
                 && !(stack.getItem() instanceof ShieldItem)
                 && (stack.is(Items.STICK) || stack.is(Items.BONE) || stack.getAttributeModifiers().modifiers().stream().anyMatch(entry ->
                         entry.attribute().is(Attributes.ATTACK_DAMAGE) && entry.slot().test(EquipmentSlot.MAINHAND)))) {

@@ -169,12 +169,12 @@ public final class SimplySwordsHandlingGameTests {
             for (String material : List.of("copper", "silver", "iron", "vibranium")) {
                 var spear = new ItemStack(SimplySwordsCompat.weapon(material, "spear"));
                 player.setItemSlot(EquipmentSlot.MAINHAND, spear); player.tick();
-                check(h, player.getAttributeValue(Attributes.ATTACK_SPEED), 1D, "A real equipped " + material + " spear attacks once per second");
-                check(h, player.getCurrentItemAttackStrengthDelay(), 20D, "The spear's actual vanilla recovery is twenty ticks");
+                check(h, player.getAttributeValue(Attributes.ATTACK_SPEED), .9D, "A real equipped " + material + " spear uses its reviewed long-range attack rate");
+                check(h, player.getCurrentItemAttackStrengthDelay(), 20D / .9D, "The spear's actual vanilla recovery follows its .9 attacks per second");
                 check(h, player.getAttributeValue(Attributes.MOVEMENT_SPEED), movement * .95D, "The spear retains its existing main-hand reach weight");
             }
             String[] families = {"twinblade", "katana", "glaive", "claymore", "greataxe", "greathammer", "scythe", "halberd"};
-            double[] rates = {1.2D, 1.24D, .8D, .76D, .64D, .56D, .8D, .72D};
+            double[] rates = {1.05D, 1.7D, .8D, .76D, .64D, .56D, .8D, .65D};
             double[] weights = {.15D, .15D, .15D, .2D, .22D, .25D, .15D, .2D};
             for (int index = 0; index < families.length; index++) {
                 var weapon = new ItemStack(SimplySwordsCompat.weapon("copper", families[index]));
@@ -321,7 +321,7 @@ public final class SimplySwordsHandlingGameTests {
                 mob.tick();
                 var spear = BetterCombatBridge.profile(mob, 0);
                 h.assertTrue(spear != null, "The actual Better Combat registry resolves the throwable spear");
-                h.assertValueEqual(spear.cooldownTicks(), 20, "The installed Better Combat bridge retains the spear's twenty-tick cooldown");
+                h.assertValueEqual(spear.cooldownTicks(), 22, "The installed Better Combat bridge resolves the spear's reviewed twenty-two-tick cooldown");
             } finally { cap.setInt(config, previousCap); mob.discard(); }
         }
 

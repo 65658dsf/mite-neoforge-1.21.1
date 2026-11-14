@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -113,24 +114,31 @@ public final class StandaloneWeaponReachClientAudit implements DataProvider {
                     base.monsterSpawnRates(), base.oreHeights(), base.overworldOreHeights(), base.spawningSettings(),
                     base.monsterSpawnWeights(), base.betterCombatMobs()));
             report.addProperty("neutral_reach_fixture_uses_memory_snapshot_only", true);
-            verifyNewAndSaved(new ItemStack(Items.IRON_SWORD), 3D, "minecraft:iron_sword", lookup, cases);
-            verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_sword")), 3D, "mite:copper_sword", lookup, cases);
+            boolean betterCombat = BetterCombatBridge.enabled();
+            double swordReach = 2.25D;
+            verifyNewAndSaved(new ItemStack(Items.IRON_SWORD), swordReach, "minecraft:iron_sword", lookup, cases);
+            verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_sword")), swordReach, "mite:copper_sword", lookup, cases);
             verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_dagger")), 2D, "mite:copper_dagger", lookup, cases);
-            verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_war_hammer")), 2.25D, "mite:copper_war_hammer", lookup, cases);
+            verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_war_hammer")), 2D, "mite:copper_war_hammer", lookup, cases);
+            verifyNewAndSaved(new ItemStack(MiteTools.get("mite:copper_scythe")), betterCombat ? 3.25D : 2.5D, "mite:copper_scythe", lookup, cases);
+            verifyNewAndSaved(new ItemStack(Items.TRIDENT), betterCombat ? 3.25D : 2.75D, "minecraft:trident", lookup, cases);
+            verifyNewAndSaved(new ItemStack(Items.MACE), betterCombat ? 2D : 1.75D, "minecraft:mace", lookup, cases);
             report.addProperty("native_and_mite_weapons_checked", true);
             if (SimplySwordsCompat.enabled()) {
-                String[] families = {"rapier", "glaive", "spear", "chakram"};
-                double[] reaches = {3D, 3.5D, 4D, 4.25D};
+                String[] families = {"rapier", "glaive", "spear", "chakram", "longsword", "sai", "claymore", "greataxe", "greathammer"};
+                double[] reaches = betterCombat
+                        ? new double[]{2.1D, 3.5D, 3.75D, 2.8D, 2.5D, 2D, 3.25D, 3.25D, 3.25D}
+                        : new double[]{2D, 2.75D, 3D, 2.8D, 2.5D, 2D, 3.25D, 3.25D, 3.25D};
                 for (int index = 0; index < families.length; ++index) {
                     verifyNewAndSaved(new ItemStack(SimplySwordsCompat.weapon("copper", families[index])), reaches[index],
                             "simplyswords_copper_" + families[index], lookup, cases);
                 }
                 var rapier = new ItemStack(SimplySwordsCompat.weapon("copper", "rapier"));
                 rapier.set(DataComponents.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
-                verify(rapier, 3D, "simplyswords_copper_rapier", "hover_again", cases);
+                verify(rapier, reaches[0], "simplyswords_copper_rapier", "hover_again", cases);
             }
             // Return to a short native weapon after unrelated/long hovered items, without any player state.
-            verify(new ItemStack(Items.IRON_SWORD), 3D, "minecraft:iron_sword", "hover_again", cases);
+            verify(new ItemStack(Items.IRON_SWORD), swordReach, "minecraft:iron_sword", "hover_again", cases);
             report.addProperty("simply_swords_specific_cases_skipped", !SimplySwordsCompat.enabled());
             report.addProperty("actual_itemstack_get_tooltip_lines_called", true);
             report.addProperty("old_saved_components_preserved", true);
@@ -167,23 +175,21 @@ public final class StandaloneWeaponReachClientAudit implements DataProvider {
         var before = stack.copy();
         List<Component> tooltip = stack.getTooltipLines(Item.TooltipContext.EMPTY, null, NO_KEYS);
         var reach = tooltip.stream().filter(line -> translated(line, REACH_KEY)).toList();
-        check(tooltip.stream().anyMatch(line -> translated(line, "tooltip.mite.quality")),
-                "The real ItemStack tooltip dispatched its final client event");
-        int expectedCount = BetterCombatBridge.enabled() ? 0 : 1;
-        check(reach.size() == expectedCount, "Reach is appended exactly once without Better Combat and never duplicated with it");
+        check(reach.size() == 1, "The actual client ItemTooltipEvent appends effective melee reach exactly once in every integration environment");
+        if (EquipmentDurability.isManaged(stack))
+            check(tooltip.stream().anyMatch(line -> translated(line, "tooltip.mite.quality")),
+                    "Managed equipment also retains its quality line through the real client event");
         var fact = new JsonObject();
         fact.addProperty("family", family);
         fact.addProperty("stack_state", state);
         fact.addProperty("expected_base_reach", expected);
         fact.addProperty("standalone_reach_line_count", reach.size());
-        if (!reach.isEmpty()) {
-            var text = (TranslatableContents)reach.getFirst().getContents();
-            String formatted = ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(expected);
-            check(text.getArgs().length == 1 && formatted.equals(text.getArgs()[0]),
-                    "The real reach tooltip carries the expected numeric argument for " + family);
-            fact.addProperty("translation_key", text.getKey());
-            fact.addProperty("numeric_argument", String.valueOf(text.getArgs()[0]));
-        }
+        var text = (TranslatableContents)reach.getFirst().getContents();
+        String formatted = ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(expected);
+        check(text.getArgs().length == 1 && formatted.equals(text.getArgs()[0]),
+                "The real reach tooltip carries the expected numeric argument for " + family);
+        fact.addProperty("translation_key", text.getKey());
+        fact.addProperty("numeric_argument", String.valueOf(text.getArgs()[0]));
         check(ItemStack.matches(stack, before), "Building a tooltip never mutates the hovered weapon");
         cases.add(fact);
     }
