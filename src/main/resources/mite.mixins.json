@@ -383,6 +383,7 @@
     "client.GearGrowthMiningMixin",
     "client.BetterCombatMobRendererMixin",
     "client.BetterCombatTargetRangeMixin",
+    "client.DynamicCrosshairReachMixin",
     "client.BetterCombatCollisionMixin",
     "client.BetterCombatMobHeldItemMixin",
     "client.JeiAnvilSidebarMixin",

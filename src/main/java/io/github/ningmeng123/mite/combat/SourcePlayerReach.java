@@ -26,7 +26,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /** Target-dependent R196 reach, shared by selection, real actions and packet validation. @author NingMeng123 */
@@ -165,6 +168,15 @@ public final class SourcePlayerReach {
     }
     public static boolean canMelee(Player player, Entity target) {
         return canReachEntityAt(player, target, closestPoint(target.getBoundingBox().inflate(target.getPickRadius()), player.getEyePosition()), true, 1F);
+    }
+    /** A melee target indicator uses the same reach and aimed collision point as an actual client attack. */
+    public static boolean canTargetMelee(Player player, EntityHitResult hit, float partialTick) {
+        Entity target = hit.getEntity();
+        if (player.isSpectator() || !target.isAlive() || !target.isPickable() || !target.isAttackable()
+                || !canMelee(player, target)
+                || !canReachEntityAt(player, target, hit.getLocation(), true, partialTick)) return false;
+        return player.level().clip(new ClipContext(player.getEyePosition(partialTick), hit.getLocation(),
+                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player)).getType() == HitResult.Type.MISS;
     }
     public static boolean canInteract(Player player, Entity target) {
         return canReachEntityAt(player, target, closestPoint(target.getBoundingBox().inflate(target.getPickRadius()), player.getEyePosition()), false, 1F);

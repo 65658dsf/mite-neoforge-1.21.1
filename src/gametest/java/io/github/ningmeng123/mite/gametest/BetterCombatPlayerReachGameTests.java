@@ -40,6 +40,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
@@ -54,6 +55,88 @@ public final class BetterCombatPlayerReachGameTests {
         if (BetterCombatBridge.enabled()) return false;
         h.succeed();
         return true;
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void chickenTargetIndicatorsUseTheActualEmptyHandWeaponAndLevelReach(GameTestHelper h) {
+        try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+            ServerPlayer player = session.player();
+            int originalExperience = player.totalExperience;
+            var chicken = EntityType.CHICKEN.create(h.getLevel());
+            chicken.setNoAi(true);
+            chicken.setNoGravity(true);
+            h.getLevel().addFreshEntity(chicken);
+            chicken.getAttribute(Attributes.MAX_HEALTH).setBaseValue(200D);
+            chicken.setHealth(200F);
+            try {
+                PlayerExperience.setLevels(player, 0);
+                equip(player, ItemStack.EMPTY, ItemStack.EMPTY);
+                positionSmallTarget(player, chicken, 1.4D);
+                var near = aimedHit(player, chicken);
+                h.assertTrue(SourcePlayerReach.canTargetMelee(player, near, 1F), "The close chicken is an actual empty-hand melee target");
+                player.connection.handleInteract(ServerboundInteractPacket.createAttackPacket(chicken, false));
+                h.assertTrue(chicken.getHealth() < 200F, "The same empty-hand target receives the actual attack packet");
+                chicken.setHealth(200F);
+                chicken.invulnerableTime = 0;
+                positionSmallTarget(player, chicken, 1.6D);
+                h.assertTrue(SourcePlayerReach.canInteract(player, chicken), "The chicken remains inside the independent interaction distance");
+                h.assertFalse(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "An interactable chicken beyond empty-hand reach gets no attack indicator");
+                player.connection.handleInteract(ServerboundInteractPacket.createAttackPacket(chicken, false));
+                h.assertValueEqual(chicken.getHealth(), 200F, "The same out-of-reach chicken rejects the real attack packet");
+                positionSmallTarget(player, chicken, 1.55D);
+                PlayerExperience.setLevels(player, 5);
+                h.assertTrue(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "The current five-level bonus immediately admits the chicken");
+                PlayerExperience.setLevels(player, 0);
+                h.assertFalse(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "Losing the level bonus immediately removes its attack eligibility");
+                equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
+                positionSmallTarget(player, chicken, 2.1D);
+                h.assertTrue(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "Equipping a sword uses its own longer melee distance");
+                positionSmallTarget(player, chicken, 2.4D);
+                h.assertFalse(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "The weapon indicator enforces the actual sword boundary");
+            } finally {
+                PlayerExperience.setTotal(player, originalExperience);
+                chicken.discard();
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void meleeTargetIndicatorsRequireTheAimedPointAndAClearBlockRay(GameTestHelper h) {
+        try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+            ServerPlayer player = session.player();
+            equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
+            try (Target target = target(h, player, 2.1D, 0D)) {
+                var aimed = aimedHit(player, target.entity());
+                h.assertTrue(SourcePlayerReach.canTargetMelee(player, aimed, 1F), "The clear aimed collision point is attackable");
+                Vec3 farPoint = target.entity().getBoundingBox().getCenter().add(0D, 0D, .3D);
+                h.assertFalse(SourcePlayerReach.canTargetMelee(player, new EntityHitResult(target.entity(), farPoint), 1F), "A farther aim point cannot borrow the nearest collision point's range");
+                BlockPos obstruction = BlockPos.containing(player.getEyePosition().lerp(aimed.getLocation(), .5D));
+                var previous = h.getLevel().getBlockState(obstruction);
+                try {
+                    h.getLevel().setBlockAndUpdate(obstruction, Blocks.STONE.defaultBlockState());
+                    h.assertFalse(SourcePlayerReach.canTargetMelee(player, aimed, 1F), "A solid block before the aimed entity suppresses its melee indicator");
+                } finally { h.getLevel().setBlockAndUpdate(obstruction, previous); }
+                h.assertTrue(SourcePlayerReach.canTargetMelee(player, aimed, 1F), "Removing the blocking geometry restores attack eligibility");
+                player.setGameMode(GameType.SPECTATOR);
+                h.assertFalse(SourcePlayerReach.canTargetMelee(player, aimed, 1F), "A spectator has no melee target indicator");
+                player.setGameMode(GameType.SURVIVAL);
+                target.entity().setHealth(0F);
+                h.assertFalse(SourcePlayerReach.canTargetMelee(player, aimed, 1F), "A defeated target has no attack indicator");
+            }
+        }
+        h.succeed();
+    }
+
+    private static EntityHitResult aimedHit(ServerPlayer player, net.minecraft.world.entity.Entity target) {
+        return new EntityHitResult(target, SourcePlayerReach.closestPoint(target.getBoundingBox().inflate(target.getPickRadius()), player.getEyePosition()));
+    }
+
+    private static void positionSmallTarget(ServerPlayer player, net.minecraft.world.entity.Entity target, double distance) {
+        target.setPos(player.position());
+        double vertical = Math.max(0D, player.getEyeY() - target.getBoundingBox().maxY - target.getPickRadius());
+        double forward = Math.sqrt(distance * distance - vertical * vertical) + target.getBbWidth() * .5D + target.getPickRadius();
+        target.setPos(player.position().add(0D, 0D, forward));
     }
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
