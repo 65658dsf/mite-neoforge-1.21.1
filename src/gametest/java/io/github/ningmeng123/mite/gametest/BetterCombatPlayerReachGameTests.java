@@ -8,7 +8,9 @@ import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsReach;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
+import io.github.ningmeng123.mite.rules.ProgressionRules;
 import io.github.ningmeng123.mite.survival.DualFoodData;
+import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -235,6 +238,154 @@ public final class BetterCombatPlayerReachGameTests {
     }
 
     private record WeaponRange(String id, double reach) {}
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void currentExperienceLevelsImmediatelyExtendAndRetractNativeSwordReach(GameTestHelper h) {
+        int[] levels = {-1, 0, 4, 5, 9, 10, 45, 49, 50, 51, 49, 5, 0};
+        double[] bonuses = {0D, 0D, 0D, .1D, .1D, .2D, .9D, .9D, 1D, 1D, .9D, .1D, 0D};
+        try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+            ServerPlayer player = session.player();
+            int originalTotal = player.totalExperience;
+            try {
+                equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
+                for (int index = 0; index < levels.length; index++) {
+                    PlayerExperience.setLevels(player, levels[index]);
+                    double expected = 2.25D + bonuses[index];
+                    h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(player.getMainHandItem(), player) - expected) < .00001D,
+                            "The hovered native sword follows the current signed level immediately: " + levels[index]);
+                    levelReachBoundary(h, player, expected, "native sword at level " + levels[index]);
+                }
+            } finally { PlayerExperience.setTotal(player, originalTotal); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void newAndSavedSimplySwordsFamiliesReceiveTheLevelBonusExactlyOnce(GameTestHelper h) {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        String[] families = {"longsword", "claymore", "greataxe", "greathammer", "chakram", "sai"};
+        double[] reaches = {2.5D, 3.25D, 3.25D, 3.25D, 2.8D, 2D};
+        int[] levels = {5, 50, 5};
+        double[] bonuses = {.1D, 1D, .1D};
+        try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+            ServerPlayer player = session.player();
+            int originalTotal = player.totalExperience;
+            try {
+                for (int family = 0; family < families.length; family++) {
+                    for (boolean saved : new boolean[]{false, true}) {
+                        ItemStack stack = new ItemStack(SimplySwordsCompat.weapon("copper", families[family]));
+                        if (saved) {
+                            stack.set(DataComponents.ATTRIBUTE_MODIFIERS, stack.getAttributeModifiers());
+                            stack = ItemStack.parse(h.getLevel().registryAccess(), stack.save(h.getLevel().registryAccess())).orElseThrow();
+                        }
+                        equip(player, stack, ItemStack.EMPTY);
+                        for (int level = 0; level < levels.length; level++) {
+                            PlayerExperience.setLevels(player, levels[level]);
+                            double expected = reaches[family] + bonuses[level];
+                            var beforeTooltip = stack.save(h.getLevel().registryAccess());
+                            h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(stack) - reaches[family]) < .00001D,
+                                    "The playerless preview retains the weapon's own family distance");
+                            h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(stack, player) - expected) < .00001D,
+                                    "The hovered new or saved weapon adds the current player's bonus once");
+                            h.assertValueEqual(stack.save(h.getLevel().registryAccess()), beforeTooltip,
+                                    "Level-aware tooltip queries preserve the complete saved item");
+                            levelReachBoundary(h, player, expected, families[family] + " saved=" + saved + " level=" + levels[level]);
+                        }
+                    }
+                }
+            } finally { PlayerExperience.setTotal(player, originalTotal); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void levelReachIsAddedAfterConfigurationAndPreservesInteractionDistances(GameTestHelper h) {
+        try (ReachSettings ignored = new ReachSettings(1.5D, .25D); Session session = session(h)) {
+            ServerPlayer player = session.player();
+            int originalTotal = player.totalExperience;
+            try {
+                PlayerExperience.setLevels(player, 0);
+                equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
+                double blockReach = SourcePlayerReach.blockReach(player, Blocks.STONE.defaultBlockState(), InteractionHand.MAIN_HAND);
+                double entityAttribute = player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+                double blockAttribute = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
+                try (Target target = target(h, player, 1D, 0D)) {
+                    double interactionReach = SourcePlayerReach.interactionReach(player, target.entity());
+                    for (int level : new int[]{5, 50}) {
+                        PlayerExperience.setLevels(player, level);
+                        double expected = 3.125D + (level == 5 ? .1D : 1D);
+                        h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(player.getMainHandItem(), player) - expected) < .00001D,
+                                "The fixed level reward is added after the 1.5 multiplier and .25 reduction");
+                        levelReachBoundary(h, player, expected, "configured native sword at level " + level);
+                        h.assertValueEqual(SourcePlayerReach.blockReach(player, Blocks.STONE.defaultBlockState(), InteractionHand.MAIN_HAND),
+                                blockReach, "Experience-level melee reach preserves block interaction distance");
+                        h.assertValueEqual(SourcePlayerReach.interactionReach(player, target.entity()), interactionReach,
+                                "Experience-level melee reach preserves entity right-click interaction distance");
+                        h.assertValueEqual(player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE), entityAttribute,
+                                "The level reward is independent of the general entity interaction attribute");
+                        h.assertValueEqual(player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), blockAttribute,
+                                "The level reward is independent of the general block interaction attribute");
+                    }
+                }
+            } finally { PlayerExperience.setTotal(player, originalTotal); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void levelReachExtendsEmptyHandsCreativeAttacksAndLongSelectionRays(GameTestHelper h) {
+        try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
+            ServerPlayer player = session.player();
+            int originalTotal = player.totalExperience;
+            try {
+                PlayerExperience.setLevels(player, 50);
+                equip(player, ItemStack.EMPTY, ItemStack.EMPTY);
+                levelReachBoundary(h, player, 2.5D, "level-50 empty hands");
+                player.setGameMode(GameType.CREATIVE);
+                equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
+                levelReachBoundary(h, player, 6D, "level-50 creative native sword");
+                player.setGameMode(GameType.SURVIVAL);
+                equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
+                try (ReachSettings longSelection = new ReachSettings(10D, 0D)) {
+                    PlayerExperience.setLevels(player, 0);
+                    double baseline = SourcePlayerReach.selectionRange(player);
+                    h.assertTrue(baseline > 16D, "The fixture exercises a configured selection ray beyond its historical minimum");
+                    PlayerExperience.setLevels(player, 5);
+                    h.assertTrue(Math.abs(SourcePlayerReach.selectionRange(player) - baseline - .1D) < .00001D,
+                            "Long target-selection rays include the level reward after configuration");
+                    PlayerExperience.setLevels(player, 50);
+                    h.assertTrue(Math.abs(SourcePlayerReach.selectionRange(player) - baseline - 1D) < .00001D,
+                            "Long target-selection rays include the capped reward exactly once");
+                }
+            } finally {
+                PlayerExperience.setTotal(player, originalTotal);
+                player.setGameMode(GameType.SURVIVAL);
+            }
+        }
+        h.succeed();
+    }
+
+    private static void levelReachBoundary(GameTestHelper h, ServerPlayer player, double reach, String context) {
+        try (Target near = target(h, player, reach - .025D, 0D);
+                Target far = target(h, player, reach + .025D, 0D)) {
+            var beforeRange = player.getMainHandItem().saveOptional(h.getLevel().registryAccess());
+            h.assertTrue(Math.abs(SourcePlayerReach.meleeReach(player, near.entity()) - reach) < .00001D,
+                    "The actual level-aware melee distance matches its literal boundary: " + context);
+            h.assertValueEqual(player.getMainHandItem().saveOptional(h.getLevel().registryAccess()), beforeRange,
+                    "Reading level-aware reach preserves all held item components: " + context);
+            vanillaAttack(player, near.entity());
+            h.assertTrue(near.entity().getHealth() < 200F, "A real vanilla packet hits immediately inside the level-aware boundary: " + context);
+            vanillaAttack(player, far.entity());
+            h.assertValueEqual(far.entity().getHealth(), 200F, "A real vanilla packet rejects the point beyond the level-aware boundary: " + context);
+        }
+        if (BetterCombatBridge.enabled() && !player.getMainHandItem().isEmpty()) {
+            double combatReach = player.getAbilities().instabuild ? Loaded.creativeLevelReach(player) : reach;
+            Loaded.levelRequestAtDistance(h, player, combatReach - .025D, true,
+                    "A real Better Combat request hits immediately inside the level-aware boundary: " + context);
+            Loaded.levelRequestAtDistance(h, player, combatReach + .025D, false,
+                    "A real Better Combat request rejects the point beyond the level-aware boundary: " + context);
+        }
+    }
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
     public static void absentBetterCombatStillHitsWithSavedRapierGlaiveAndSpear(GameTestHelper h) {
@@ -627,6 +778,42 @@ public final class BetterCombatPlayerReachGameTests {
 
     /** Loading the test holder never resolves optional Better Combat classes on an absent-mod run. */
     private static final class Loaded {
+        private static double creativeLevelReach(ServerPlayer player) {
+            double raw = net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, player.getMainHandItem());
+            return Math.min(5D, raw) + ProgressionRules.meleeReachBonusForLevel(player.experienceLevel);
+        }
+
+        private static void levelRequestAtDistance(GameTestHelper h, ServerPlayer player, double distance,
+                boolean hit, String message) {
+            try (Target target = target(h, player, distance, 0D)) {
+                var hand = net.bettercombat.logic.PlayerAttackHelper.getCurrentAttack(player, 0);
+                h.assertTrue(hand != null, "The level-aware fixture resolves an actual Better Combat hand");
+                double raw = net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, hand.itemStack());
+                double move = hand.attack().rangeMultiplier();
+                boolean[] permitted = new boolean[1];
+                String[] diagnostic = new String[1];
+                Runnable capture = () -> {
+                    permitted[0] = Boolean.TRUE.equals(BetterCombatPlayerReach.canMelee(player, target.entity()));
+                    Vec3 origin = BetterCombatPlayerReach.origin(player);
+                    double actual = origin.distanceTo(SourcePlayerReach.closestPoint(target.entity().getBoundingBox(), origin));
+                    diagnostic[0] = "raw=" + raw + " move=" + move + " level=" + player.experienceLevel
+                            + " source=" + SourcePlayerReach.sourceMeleeReach(player, target.entity())
+                            + " combat=" + BetterCombatPlayerReach.reach(player)
+                            + " multiplier=" + MiteConfig.weaponReachMultiplier()
+                            + " reduction=" + MiteConfig.weaponReachReduction() + " originDistance=" + actual;
+                };
+                BetterCombatPlayerReach.duringAttack(player, hand.itemStack(), move, capture);
+                boolean beforePermitted = permitted[0];
+                String before = diagnostic[0];
+                request(player, target.entity(), 0);
+                BetterCombatPlayerReach.duringAttack(player, hand.itemStack(), move, capture);
+                String details = message + " before[" + before + "] after[" + diagnostic[0] + "]";
+                h.assertValueEqual(beforePermitted, hit, "The captured move enforces the expected level-aware geometry: " + details);
+                if (hit) h.assertTrue(target.entity().getHealth() < 200F, details);
+                else h.assertValueEqual(target.entity().getHealth(), 200F, details);
+            }
+        }
+
         private static void assertSwordOrClubProfile(GameTestHelper h, ItemStack stack) {
             var profile = net.bettercombat.logic.WeaponRegistry.getAttributes(stack);
             h.assertTrue(profile != null, "The actual loaded Better Combat registry has an attack for " + stack);

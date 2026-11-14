@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.compat.bettercombat;
 
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
+import io.github.ningmeng123.mite.rules.ProgressionRules;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -82,11 +83,12 @@ public final class BetterCombatPlayerReach {
         return player.getEyePosition().add(0D, -player.getBbHeight() * .15D * player.getAgeScale(), 0D);
     }
 
-    /** Apply fixed reduction after Better Combat's move, scale and range extensions. */
+    /** Apply range settings after move/scale extensions, then add the player's capped level bonus. */
     public static double configure(Player player, double range) {
         if (!Double.isFinite(range) || range <= 0D) return 0D;
-        return player.getAbilities().instabuild ? range : SourcePlayerCombatRules.configuredWeaponReach(range,
+        double configured = player.getAbilities().instabuild ? range : SourcePlayerCombatRules.configuredWeaponReach(range,
                 MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction());
+        return configured + ProgressionRules.meleeReachBonusForLevel(player.experienceLevel);
     }
 
     public static double searchRange(Player player, double rawRange) {

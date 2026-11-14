@@ -6,7 +6,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Boundary vectors for the R196 health curve, including integer overflow edges.
+ * Boundary vectors for level-dependent health, food capacity, and melee reach.
  *
  * @author NingMeng123
  */
@@ -56,5 +56,51 @@ class ProgressionRulesTest {
     void matchesHealthCurveAtEveryTransition(int level, double expectedHealth) {
         assertEquals(expectedHealth, ProgressionRules.maxHealthForLevel(level));
         assertEquals((int) expectedHealth, ProgressionRules.foodLimitForLevel(level));
+    }
+
+    @ParameterizedTest(name = "level {0} grants {1} blocks of melee reach")
+    @CsvSource({
+            "-2147483648, 0.0",
+            "-50, 0.0",
+            "-5, 0.0",
+            "-1, 0.0",
+            "0, 0.0",
+            "1, 0.0",
+            "4, 0.0",
+            "5, 0.1",
+            "6, 0.1",
+            "9, 0.1",
+            "10, 0.2",
+            "11, 0.2",
+            "14, 0.2",
+            "15, 0.3",
+            "16, 0.3",
+            "19, 0.3",
+            "20, 0.4",
+            "21, 0.4",
+            "24, 0.4",
+            "25, 0.5",
+            "26, 0.5",
+            "29, 0.5",
+            "30, 0.6",
+            "31, 0.6",
+            "34, 0.6",
+            "35, 0.7",
+            "36, 0.7",
+            "39, 0.7",
+            "40, 0.8",
+            "41, 0.8",
+            "44, 0.8",
+            "45, 0.9",
+            "46, 0.9",
+            "49, 0.9",
+            "50, 1.0",
+            "51, 1.0",
+            "55, 1.0",
+            "200, 1.0",
+            "2147483647, 1.0"
+    })
+    void meleeReachUsesCurrentLevelAtEveryTransition(int level, double expectedReachBonus) {
+        assertEquals(expectedReachBonus, ProgressionRules.meleeReachBonusForLevel(level));
     }
 }

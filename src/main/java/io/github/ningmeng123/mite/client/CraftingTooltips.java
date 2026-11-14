@@ -32,7 +32,7 @@ public final class CraftingTooltips {
                 && (stack.is(Items.STICK) || stack.is(Items.BONE) || stack.getAttributeModifiers().modifiers().stream().anyMatch(entry ->
                         entry.attribute().is(Attributes.ATTACK_DAMAGE) && entry.slot().test(EquipmentSlot.MAINHAND)))) {
             event.getToolTip().add(Component.translatable("tooltip.mite.attack_reach",
-                    ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(SourcePlayerReach.tooltipMeleeReach(stack)))
+                    ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(SourcePlayerReach.tooltipMeleeReach(stack, event.getEntity())))
                     .withStyle(ChatFormatting.DARK_GREEN));
         }
         if (EquipmentDurability.isManaged(stack)) {

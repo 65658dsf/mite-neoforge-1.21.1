@@ -9,6 +9,7 @@ import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.mining.SourceMiningRequirements;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
+import io.github.ningmeng123.mite.rules.ProgressionRules;
 import io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules;
 import io.github.ningmeng123.mite.rules.SimplySwordsBalanceRules;
 import net.minecraft.core.BlockPos;
@@ -106,6 +107,10 @@ public final class SourcePlayerReach {
     }
     /** Neutral-height survival preview for the hovered stack, independent of the currently held item. */
     public static double tooltipMeleeReach(ItemStack weapon) {
+        return tooltipMeleeReach(weapon, null);
+    }
+    /** Include the viewing player's current level while retaining a level-zero preview without a player. */
+    public static double tooltipMeleeReach(ItemStack weapon, Player player) {
         var modifiers = ItemAttributeModifiers.builder();
         for (var entry : weapon.getAttributeModifiers().modifiers()) {
             if (entry.attribute().is(Attributes.ENTITY_INTERACTION_RANGE) && !entry.modifier().id().equals(LEGACY_TOOL_REACH))
@@ -113,7 +118,8 @@ public final class SourcePlayerReach {
         }
         double base = baseMeleeReach(weapon, modifiers.build().compute(3D, EquipmentSlot.MAINHAND));
         return base <= 0D || !Double.isFinite(base) ? 0D : SourcePlayerCombatRules.configuredWeaponReach(base,
-                MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction());
+                MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction())
+                + ProgressionRules.meleeReachBonusForLevel(player == null ? 0 : player.experienceLevel);
     }
     /** Preserve MITE's weapon, target-height and attribute limits for either attack system. */
     public static double sourceMeleeReach(Player player, Entity target) {
@@ -124,7 +130,7 @@ public final class SourcePlayerReach {
         return SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
                 player.getY() - target.getY(), base - 1.5D, target instanceof AbstractHurtingProjectile, 0D,
                 MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(),
-                MiteConfig.heightReachPenaltyEnabled());
+                MiteConfig.heightReachPenaltyEnabled()) + ProgressionRules.meleeReachBonusForLevel(player.experienceLevel);
     }
     /** Keep the historical ray while allowing configured long weapons to be selected on the client. */
     public static double selectionRange(Player player) {
@@ -134,7 +140,8 @@ public final class SourcePlayerReach {
         double base = baseMeleeReach(player.getMainHandItem(), BetterCombatPlayerReach.rangeAttribute(player, LEGACY_TOOL_REACH));
         return Math.max(16D, SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
                 2.5D, base - 1.5D, true, 0D,
-                MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled()));
+                MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled())
+                + ProgressionRules.meleeReachBonusForLevel(player.experienceLevel));
     }
     public static double interactionReach(Player player, Entity target) {
         // Source yc.getReachBonus(entity) is zero for every active item. Modern offhand follows the same rule.

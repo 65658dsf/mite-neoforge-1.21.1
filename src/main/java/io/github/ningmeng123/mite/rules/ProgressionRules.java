@@ -1,7 +1,7 @@
 package io.github.ningmeng123.mite.rules;
 
 /**
- * Level-dependent rules verified against R196 EntityPlayer.
+ * R196-derived health and food rules with modern level-dependent melee reach.
  *
  * @author NingMeng123
  */
@@ -24,6 +24,11 @@ public final class ProgressionRules {
      */
     public static double maxHealthForLevel(int level) {
         return foodLimitForLevel(level);
+    }
+
+    /** Modern melee reach gains 0.1 blocks per five current experience levels, up to 1.0 block. */
+    public static double meleeReachBonusForLevel(int level) {
+        return Math.clamp(level / 5, 0, 10) / 10D;
     }
 
     /** R196 food capacity uses the same level curve as base maximum health. */
