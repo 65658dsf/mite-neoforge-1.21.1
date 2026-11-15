@@ -60,11 +60,15 @@
 
 ## 附魔描述兼容
 
-已为全部 17 种 MITE 自定义附魔提供简体中文和英文描述，位于 `assets/mite/lang/zh_cn.json`、`en_us.json`，使用 `enchantment.mite.<附魔ID>.desc`。通过 Enchantment Descriptions 的原生语言查询接入，无需额外注册或增加必需依赖；未安装该模组时，这些描述条目不会额外生成提示。
+已为全部 17 种 MITE 自定义附魔提供简体中文和英文描述，位于 `assets/mite/lang/zh_cn.json`、`en_us.json`，使用 `enchantment.mite.<附魔ID>.desc`。普通附魔描述通过 Enchantment Descriptions 的原生语言查询接入，该模组由玩家安装。
 
 按当前实现说明效果和限制，例如钓鱼时运提高咬钩率、砍伐只处理正上方连续原木、自由行动减轻移动惩罚。描述不固定最高等级、触发概率或持续时间，兼容附魔配置和装备词缀。
 
-适配核对版本为 `enchdesc-neoforge-1.21.1-21.1.11.jar`，其所需的 Bookshelf 和 Prickle 由玩家安装。该版本默认在附魔书和已附魔装备的悬停提示中直接显示描述；若开启其 `require_keybind` 配置，需按住 Shift。使用新构建包重启客户端后，可分别以简体中文和 English (US) 悬停检查附魔书；开发环境中可在资源处理完成后用 F3+T 重新加载资源。
+2026-11-15 按用户要求，附魔效果描述默认收起，按住 Shift 时展开。附魔名称、等级和成长副词条名称照常显示。对已安装的 Enchantment Descriptions，MITE 的客户端兼容钩子统一使用 Shift 展开条件。适配核对版本为 `enchdesc-neoforge-1.21.1-21.1.11.jar`，其所需的 Bookshelf 和 Prickle 由玩家安装。
+
+全部 17 种成长副词条使用内置的 `modifier.mite.<类别>.<词条ID>.desc` 中英描述，按住 Shift 时显示在对应副词条下方。描述依据成长词条的实际效果编写，例如神圣提供对亡灵来源伤害的额外护甲，火焰保护提供对火焰伤害的额外护甲。保存为附魔 ID 的旧成长副词条继续查询相应附魔描述。提示使用 `tooltip.mite.enchantment_descriptions_shift`，简体中文为“按住 Shift 查看效果描述”。
+
+使用新构建包重启客户端后，可分别以简体中文和 English (US) 悬停检查附魔书、已附魔装备及带成长副词条的装备，核对松开和按住 Shift 时的显示。开发环境中可在资源处理完成后用 F3+T 重新加载语言资源。
 
 ## 现代适配与边界
 
