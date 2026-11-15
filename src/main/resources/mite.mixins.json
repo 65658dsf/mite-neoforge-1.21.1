@@ -410,6 +410,8 @@
     "client.BloodRainParticleMixin",
     "EnchantmentScreenMixin",
     "client.EnchantmentDescriptionKeyMixin",
+    "client.L2AttributePanelMixin",
+    "client.L2AttributeEntriesMixin",
     "client.EnchantedBowFovMixin",
     "client.SkeletonBowModelMixin",
     "client.SkeletonWeaponItemLayerMixin",

@@ -47,6 +47,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
@@ -317,6 +318,7 @@ public final class SourcePlayerCombatGameTests {
         var cookie=CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(),"mite-source-combat"),false);
         var player=new ServerPlayer(h.getLevel().getServer(),h.getLevel(),cookie.gameProfile(),cookie.clientInformation());
         var connection=new Connection(PacketFlow.SERVERBOUND); var channel=new EmbeddedChannel(connection);
+        NetworkRegistry.configureMockConnection(connection);
         try {
             h.getLevel().getServer().getPlayerList().placeNewPlayer(connection,player,cookie);
             player.setGameMode(GameType.SURVIVAL);
