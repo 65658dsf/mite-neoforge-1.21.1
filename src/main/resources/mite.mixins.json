@@ -408,6 +408,7 @@
     "client.BloodMoonAtmosphereMixin",
     "client.BloodRainParticleMixin",
     "EnchantmentScreenMixin",
+    "client.EnchantmentDescriptionKeyMixin",
     "client.EnchantedBowFovMixin",
     "client.SkeletonBowModelMixin",
     "client.SkeletonWeaponItemLayerMixin",
