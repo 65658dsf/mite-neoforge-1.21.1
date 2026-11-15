@@ -24,14 +24,20 @@ public final class FoodCatalogGameTests {
 
     @GameTest(template = "empty")
     public static void sourceFoodsCarryIndependentResourcesAndOpenTheServerQualifiedUsePath(GameTestHelper helper) {
-        helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size(), 64, "33 existing IDs and31 newly registered source foods preserve verified release values");
-        helper.assertValueEqual(MiteFoodCatalog.modernProfiles().size(), 16, "15 modern foods and the explicit user wheat-seed adaptation have separate profiles");
+        helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size(), 62, "31 existing IDs and31 newly registered source foods preserve verified release values");
+        helper.assertValueEqual(MiteFoodCatalog.modernProfiles().size(), 18, "15 modern foods and three explicit user food adaptations have separate profiles");
         helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size() + MiteFoodCatalog.modernProfiles().size(), 80,
                 "The complete current ingestion catalog has80 profiles including source zero-resource water bowl");
         verifyComponents(helper, MiteFoodCatalog.sourceProfiles());
         verifyComponents(helper, MiteFoodCatalog.modernProfiles());
-        helper.assertValueEqual(profile(Items.BREAD), new FoodProfile(8, 2, false, false, false, 0, false, false),
-                "R196 bread is S8/N2, not native hunger5 and saturation6");
+        helper.assertValueEqual(profile(Items.BREAD), new FoodProfile(2, 8, false, false, false, 0, false, false),
+                "User-adapted bread restores two hunger points and eight saturation-layer points");
+        helper.assertValueEqual(profile(Items.BAKED_POTATO), new FoodProfile(2, 6, false, false, false, 0, false, false),
+                "User-adapted baked potato restores two hunger points and six saturation-layer points");
+        for (Item item : new Item[]{Items.BREAD, Items.BAKED_POTATO}) {
+            helper.assertFalse(MiteFoodCatalog.sourceProfiles().containsKey(item), "User-adapted food source classification: " + item);
+            helper.assertTrue(MiteFoodCatalog.modernProfiles().containsKey(item), "User-adapted food belongs to adaptation profiles: " + item);
+        }
         helper.assertValueEqual(profile(Items.BEEF), new FoodProfile(5, 5, true, false, false, 0, false, false), "Raw beef source profile");
         helper.assertValueEqual(profile(Items.COOKED_BEEF), new FoodProfile(10, 10, true, false, false, 0, false, false), "Cooked beef source profile");
         helper.assertValueEqual(profile(Items.COD), new FoodProfile(3, 3, true, true, false, 0, false, false), "Modern cod explicitly represents R196 small fish");

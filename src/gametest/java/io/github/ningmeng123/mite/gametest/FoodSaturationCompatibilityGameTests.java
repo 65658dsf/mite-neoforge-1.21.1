@@ -21,19 +21,29 @@ public final class FoodSaturationCompatibilityGameTests {
     private FoodSaturationCompatibilityGameTests() {}
 
     @GameTest(template = "empty")
-    public static void breadNutritionPreviewConsumesDisplayedSaturationBeforeHunger(GameTestHelper helper) {
-        Player player = player(helper);
-        ItemStack bread = new ItemStack(Items.BREAD, 2);
-        helper.assertValueEqual(bread.get(DataComponents.FOOD).saturation(), 2F,
-                "The source bread has absolute nutrition two in compatible food preview metadata");
-        ItemStack remaining = bread.finishUsingItem(helper.getLevel(), player);
-        helper.assertValueEqual(remaining.getCount(), 1, "The actual player consumes only one serving");
-        assertReserves(helper, player, 8, 2);
-        player.getFoodData().addExhaustion(4F);
-        player.getFoodData().tick(player);
-        assertReserves(helper, player, 8, 1);
-        helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 0F,
-                "The source nutrition preview did not insert a separate two-point vanilla exhaustion buffer");
+    public static void breadAndBakedPotatoConsumeDisplayedSaturationBeforeHunger(GameTestHelper helper) {
+        for (Item item : new Item[]{Items.BREAD, Items.BAKED_POTATO}) {
+            Player player = player(helper);
+            ItemStack serving = new ItemStack(item, 2);
+            int saturation = item == Items.BREAD ? 8 : 6;
+            helper.assertValueEqual(serving.get(DataComponents.FOOD).nutrition(), 2,
+                    "Food preview restores two hunger points: " + item);
+            helper.assertValueEqual(serving.get(DataComponents.FOOD).saturation(), (float) saturation,
+                    "Food preview carries the requested saturation-layer value: " + item);
+            ItemStack remaining = serving.finishUsingItem(helper.getLevel(), player);
+            helper.assertValueEqual(remaining.getCount(), 1, "The actual player consumes only one serving: " + item);
+            assertReserves(helper, player, 2, saturation);
+            for (int nutrition = saturation - 1; nutrition >= 0; nutrition--) {
+                player.getFoodData().addExhaustion(4F);
+                player.getFoodData().tick(player);
+                assertReserves(helper, player, 2, nutrition);
+            }
+            player.getFoodData().addExhaustion(4F);
+            player.getFoodData().tick(player);
+            assertReserves(helper, player, 1, 0);
+            helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 0F,
+                    "The food preview leaves the separate seed buffer at zero: " + item);
+        }
         helper.succeed();
     }
 

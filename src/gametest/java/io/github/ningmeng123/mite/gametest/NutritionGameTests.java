@@ -51,19 +51,19 @@ public final class NutritionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void realBreadAndBeefConsumptionHaveDistinctR196Values(GameTestHelper helper) {
+    public static void realBreadAndBeefConsumptionHaveDistinctFoodValues(GameTestHelper helper) {
         Player player = player(helper);
         player.experienceLevel = 35;
         setEnergy(player, 0, 0);
         ItemStack bread = new ItemStack(Items.BREAD, 2);
         ItemStack remaining = bread.finishUsingItem(helper.getLevel(), player);
         helper.assertValueEqual(remaining.getCount(), 1, "Completing bread consumes exactly one item");
-        assertEnergy(helper, player, 8, 2, "Bread contributes eight satiation and two nutrition");
+        assertEnergy(helper, player, 2, 8, "Bread contributes two hunger points and eight saturation-layer points");
         helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 0F, "Native saturation is not used as R196 nutrition");
         ItemStack beef = new ItemStack(Items.COOKED_BEEF, 2);
         remaining = beef.finishUsingItem(helper.getLevel(), player);
         helper.assertValueEqual(remaining.getCount(), 1, "Completing beef consumes exactly one item");
-        assertEnergy(helper, player, 18, 12, "Beef contributes ten to each independent resource");
+        assertEnergy(helper, player, 12, 18, "Beef contributes ten to each independent resource");
         helper.succeed();
     }
 

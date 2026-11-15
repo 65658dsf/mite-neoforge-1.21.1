@@ -132,11 +132,11 @@
     },
     {
       "id": "minecraft:bread",
-      "source_kind": "r196",
+      "source_kind": "user_adaptation",
       "source_id": 297,
       "source_subtype": 0,
-      "satiation": 8,
-      "nutrition": 2,
+      "satiation": 2,
+      "nutrition": 8,
       "protein": false,
       "fat": false,
       "plants": false,
@@ -145,7 +145,12 @@
       "always_edible": false,
       "stack_limit": 16,
       "use_ticks": 32,
-      "effects": []
+      "effects": [],
+      "explicit_original_source_values": {
+        "satiation": 8,
+        "nutrition": 2
+      },
+      "adaptation_note": "User-requested: restores 2 hunger points and 8 saturation points in the AppleSkin nutrition layer."
     },
     {
       "id": "minecraft:porkchop",
@@ -535,11 +540,11 @@
     },
     {
       "id": "minecraft:baked_potato",
-      "source_kind": "r196",
+      "source_kind": "user_adaptation",
       "source_id": 393,
       "source_subtype": 0,
-      "satiation": 6,
-      "nutrition": 2,
+      "satiation": 2,
+      "nutrition": 6,
       "protein": false,
       "fat": false,
       "plants": false,
@@ -548,7 +553,12 @@
       "always_edible": false,
       "stack_limit": 16,
       "use_ticks": 32,
-      "effects": []
+      "effects": [],
+      "explicit_original_source_values": {
+        "satiation": 6,
+        "nutrition": 2
+      },
+      "adaptation_note": "User-requested: restores 2 hunger points and 6 saturation points in the AppleSkin nutrition layer."
     },
     {
       "id": "minecraft:poisonous_potato",
