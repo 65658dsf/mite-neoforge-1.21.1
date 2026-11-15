@@ -369,6 +369,9 @@
   "client": [
     "client.BoatWaterMaskMixin",
     "client.PunchyClubAnimationMixin",
+    "client.PunchyPolarisConfigMixin",
+    "client.PunchyPolarisClipsMixin",
+    "client.PunchyWeaponTransitionMixin",
     "client.InBedChatScreenMixin",
     "client.InvisibleMonsterRendererMixin",
     "client.EnderDragonGlowCompatibilityMixin",

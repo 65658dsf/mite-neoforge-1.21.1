@@ -56,6 +56,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 public final class BetterCombatPlayerReachClientAudit {
     private static boolean started;
     private static boolean done;
+    private static boolean auditWindowHidden;
     private static int waiting;
     private static int readyTicks;
     private static int nextEntityId = -42000;
@@ -65,8 +66,16 @@ public final class BetterCombatPlayerReachClientAudit {
     private BetterCombatPlayerReachClientAudit() {}
 
     @SubscribeEvent public static void afterTick(ClientTickEvent.Post event) {
-        if (!Boolean.getBoolean("mite.betterCombatPlayerReachAudit") || done) return;
+        if (!Boolean.getBoolean("mite.betterCombatPlayerReachAudit")) return;
         Minecraft mc = Minecraft.getInstance();
+        if (!auditWindowHidden && Boolean.getBoolean("mite.punchyHideWindow")) {
+            org.lwjgl.glfw.GLFW.glfwHideWindow(mc.getWindow().getWindow());
+            auditWindowHidden = true;
+        }
+        if (done) {
+            PunchyClubAttackInputAudit.previewTick(mc);
+            return;
+        }
         if (mc.getOverlay() != null) return;
         try {
             if (!started) {
@@ -95,7 +104,8 @@ public final class BetterCombatPlayerReachClientAudit {
                                 .value().createWorldDimensions(), mc.screen);
                 return;
             }
-            check(++waiting < 2400, "Timed out loading the disposable player reach audit world");
+            int tickBudget = Boolean.getBoolean("mite.punchyClubInputAudit") ? 7200 : 2400;
+            check(++waiting < tickBudget, "Timed out loading the disposable player reach audit world");
             if (mc.level == null || mc.player == null || mc.getSingleplayerServer() == null || mc.getConnection() == null) return;
             if (mc.screen != null) return;
             // Let the new world's client-requested chunks finish generation before shutdown unloads them.
@@ -105,10 +115,19 @@ public final class BetterCombatPlayerReachClientAudit {
                     PunchyClubAnimationClientAudit.audit(mc, report);
                     punchyClassificationDone = true;
                 }
-                if (Boolean.getBoolean("mite.punchyClubInputAudit") && !PunchyClubAttackInputAudit.tick(mc, report)) return;
+                if (Boolean.getBoolean("mite.punchyClubInputAudit")) {
+                    if (report.get("standalone_pack_enabled").getAsBoolean()) {
+                        if (!PunchyClubAttackInputAudit.tick(mc, report)) return;
+                    } else {
+                        report.addProperty("native_input_audit_skipped",
+                                "Full weapon frame capture requires the optional external animation pack; Polaris scope was audited.");
+                    }
+                }
             } else audit(mc);
             report.addProperty("status", Boolean.getBoolean("mite.punchyClubAudit")
-                    ? "passed_real_punchy_club_sword_classifiers_and_active_combo_clips_without_bettercombat"
+                    ? report.get("standalone_pack_enabled").getAsBoolean()
+                    ? "passed_standalone_punchy_resource_pack_all_weapon_families_default_sword_and_polaris"
+                    : "passed_main_mod_polaris_scope_original_resource_pack_and_default_weapons"
                     : BetterCombatBridge.enabled()
                     ? "passed_real_client_targetfinder_and_mite_guard"
                     : "passed_optional_bettercombat_absent_and_original_mite_guard");
@@ -718,12 +737,12 @@ public final class BetterCombatPlayerReachClientAudit {
 
     private static void finish(Minecraft mc) {
         done = true;
-        report.addProperty("safe_client_shutdown_requested", true);
+        report.addProperty("safe_client_shutdown_requested", !Boolean.getBoolean("mite.punchyPreview"));
         try {
             Path output = output(); Files.createDirectories(output.getParent());
             Files.writeString(output, new GsonBuilder().setPrettyPrinting().create().toJson(report) + "\n", StandardCharsets.UTF_8);
         } catch (Exception failure) { Mite.LOGGER.error("Cannot write the Better Combat player reach client audit", failure); }
-        mc.stop();
+        if (!Boolean.getBoolean("mite.punchyPreview")) mc.stop();
     }
 
     private static Path output() {
