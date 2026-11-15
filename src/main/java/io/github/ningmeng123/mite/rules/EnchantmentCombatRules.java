@@ -18,12 +18,20 @@ public final class EnchantmentCombatRules {
     }
     /** Independent sources add resistance before the final physical [0,1] bound. */
     public static float movementFactorWithResistance(int slowAmplifier, int hasteAmplifier, boolean inWeb, float resistance) {
+        return Math.clamp(1F + speedModifierWithResistance(slowAmplifier, hasteAmplifier, inWeb, resistance), 0F, 4F);
+    }
+    /** bfe:684-689 applies the net slowdown to both mouse axes, capped at 1/13 sensitivity. */
+    public static double lookSensitivityFactor(int slowAmplifier, int hasteAmplifier, boolean inWeb, float resistance) {
+        float modifier = Math.max(-.8F, speedModifierWithResistance(slowAmplifier, hasteAmplifier, inWeb, resistance));
+        return modifier < 0F ? 1D / (1F - modifier * 15F) : 1D;
+    }
+    private static float speedModifierWithResistance(int slowAmplifier, int hasteAmplifier, boolean inWeb, float resistance) {
         float slow = slowAmplifier < 0 ? 0F : -(slowAmplifier + 1F) * .2F;
         if (inWeb) slow -= .75F;
         float haste = hasteAmplifier < 0 ? 0F : (hasteAmplifier + 1F) * .2F;
         float amount = slow + haste;
         if (amount < 0F) amount *= 1F - Math.clamp(resistance, 0F, 1F);
-        return Math.clamp(1F + amount, 0F, 4F);
+        return amount;
     }
     public static double playerSlownessAmount(int slowAmplifier, int hasteAmplifier, int freeAction) {
         return playerSlownessAmountWithResistance(slowAmplifier, hasteAmplifier, freeActionResistance(freeAction));

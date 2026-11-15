@@ -100,8 +100,13 @@ public final class AutoHarvestInputAudit implements DataProvider {
         JsonArray exports = new JsonArray(); report.add("defined_targets", exports);
         try {
             check(Boolean.getBoolean("mixin.debug.export"), "Actual transformed-class export is required");
-            ClassNode minecraft = defined(MINECRAFT, exports);
             ClassNode mouse = defined(MOUSE, exports);
+            auditWebLook(mouse, report);
+            if (Boolean.getBoolean("mite.webLookAuditOnly")) {
+                report.addProperty("status", "passed_actual_web_look_transforms_without_window_or_input");
+                write(report); return CompletableFuture.completedFuture(null);
+            }
+            ClassNode minecraft = defined(MINECRAFT, exports);
             ClassNode gui = defined(GUI, exports);
             ClassNode mode = defined(MODE, exports);
             ClassNode input = resource(INPUT);
@@ -425,6 +430,82 @@ public final class AutoHarvestInputAudit implements DataProvider {
         requireReset(minecraft, MINECRAFT_MIXIN, "clearClientLevel", "(Lnet/minecraft/client/gui/screens/Screen;)V", hooks);
         requireReset(mouse, MOUSE_MIXIN, "releaseMouse", "()V", hooks);
         report.add("actual_lifecycle_reset_hooks", hooks);
+    }
+
+    private static void auditWebLook(ClassNode mouse, JsonObject report) {
+        String rules = "io/github/ningmeng123/mite/rules/EnchantmentCombatRules";
+        String args = "org/spongepowered/asm/mixin/injection/invoke/arg/Args";
+        String player = "net/minecraft/client/player/LocalPlayer";
+        MethodNode turn = method(mouse, "turnPlayer", "(D)V");
+        var handlers = mouse.methods.stream().filter(candidate -> mergedFrom(candidate, MIXINS + "SourceWebLookMixin")
+                && calls(candidate, rules, "lookSensitivityFactor") == 1).toList();
+        check(handlers.size() == 1, "Exactly one transformed web-look handler computes the R196 sensitivity factor");
+        MethodNode handler = handlers.getFirst();
+        check(calls(handler, player, "getBoundingBox") == 1
+                        && calls(handler, "net/minecraft/world/phys/AABB", "deflate") == 1
+                        && calls(handler, "net/minecraft/world/level/Level", "getBlockStates") == 1
+                        && calls(handler, "java/util/stream/Stream", "anyMatch") == 1
+                        && callsNamed(handler, "getY") == 0 && callsNamed(handler, "getEyeY") == 0,
+                "Web detection scans the whole player bounding box, including the feet");
+        AbstractInsnNode deflateAmount = handler.instructions.get(
+                indexOfCall(handler, "net/minecraft/world/phys/AABB", "deflate") - 1);
+        check(deflateAmount instanceof LdcInsnNode amount && Double.valueOf(.001D).equals(amount.cst),
+                "The web scan deflates the bounding box by the native collision epsilon");
+        check(mouse.methods.stream().filter(candidate -> reachable(mouse, handler, candidate)).anyMatch(candidate ->
+                        field(candidate, "net/minecraft/world/level/block/Blocks", "COBWEB", Opcodes.GETSTATIC)),
+                "The actual web-scan predicate selects the cobweb block");
+        check(field(handler, "net/minecraft/world/entity/player/Abilities", "flying", Opcodes.GETFIELD)
+                        && calls(handler, player, "isSpectator") == 1,
+                "Web detection checks flying and spectator exemptions");
+        check(field(handler, "net/minecraft/world/effect/MobEffects", "MOVEMENT_SLOWDOWN", Opcodes.GETSTATIC)
+                        && field(handler, "net/minecraft/world/effect/MobEffects", "MOVEMENT_SPEED", Opcodes.GETSTATIC)
+                        && calls(handler, player, "getEffect") == 2
+                        && calls(handler, "io/github/ningmeng123/mite/enchantment/R196Enchantments", "freeActionResistance") == 1,
+                "The sensitivity formula receives native speed, slowness and equipped Free Action resistance");
+        check(calls(turn, mouse.name, handler.name) == 1 && calls(turn, player, "turn") == 1,
+                "The native mouse-turn entry applies the merged sensitivity handler before its single player turn");
+        int handlerIndex = indexOfCall(turn, mouse.name, handler.name);
+        check(handlerIndex < indexOfCall(turn, player, "turn"),
+                "The sensitivity handler modifies the actual arguments consumed by the native player turn");
+        check(calls(handler, args, "get") == 2 && calls(handler, args, "set") == 2
+                        && hasInteger(handler, 0) && hasInteger(handler, 1),
+                "The merged handler reads and writes both horizontal and vertical mouse arguments");
+        long multiplications = 0;
+        for (AbstractInsnNode instruction : handler.instructions)
+            if (instruction.getOpcode() == Opcodes.DMUL) multiplications++;
+        check(multiplications == 2, "Both mouse axes are multiplied by the computed slowdown factor");
+        check(calls(turn, "net/minecraft/util/SmoothDouble", "getNewDeltaValue") == 2
+                        && calls(turn, player, "isScoping") == 1
+                        && calls(turn, "net/minecraft/client/CameraType", "isFirstPerson") == 1
+                        && calls(turn, OPTIONS, "invertYMouse") == 1,
+                "The native smooth-camera, first-person spyglass and inverted-Y paths remain present");
+        check(lastIndexOfCall(turn, "net/minecraft/util/SmoothDouble", "getNewDeltaValue") < handlerIndex
+                        && indexOfCall(turn, player, "isScoping") < handlerIndex
+                        && indexOfCall(turn, OPTIONS, "invertYMouse") < handlerIndex,
+                "Web slowdown applies after the native camera branches and inverted-Y calculation");
+        report.addProperty("actual_web_look_handler", handler.name);
+        report.addProperty("web_look_scales_both_final_mouse_axes", true);
+        report.addProperty("web_look_preserves_native_camera_paths", true);
+        report.addProperty("web_look_scans_whole_body_with_flight_and_spectator_exemptions", true);
+        report.addProperty("web_look_uses_speed_slowness_and_free_action", true);
+        if (ModList.get().isLoaded("modern_ite")) {
+            var iteHandlers = mouse.methods.stream().filter(candidate -> mergedFrom(candidate,
+                    "io.github.ningmeng123.modernite.mixin.client.ControlLookMixin")).toList();
+            check(iteHandlers.size() == 1, "The loaded ITE extension contributes its sensitivity handler");
+            MethodNode ite = iteHandlers.getFirst();
+            check(calls(turn, mouse.name, ite.name) == 1
+                            && indexOfCall(turn, mouse.name, ite.name) < indexOfCall(turn, player, "turn"),
+                    "The same native player turn consumes both MITE and ITE sensitivity adjustments");
+            long twelveFactors = 0, iteMultiplications = 0;
+            for (AbstractInsnNode instruction : ite.instructions) {
+                if (instruction instanceof LdcInsnNode constant && Double.valueOf(12D).equals(constant.cst)) twelveFactors++;
+                if (instruction.getOpcode() == Opcodes.DMUL) iteMultiplications++;
+            }
+            check(twelveFactors == 2 && iteMultiplications >= 2,
+                    "ITE retains its twelvefold fast-sensitivity multiplier for both axes");
+            report.addProperty("actual_ite_look_handler", ite.name);
+            report.addProperty("web_look_composes_with_ite_fast_sensitivity", true);
+        }
     }
 
     private static void requireReset(ClassNode type, String mixin, String name, String descriptor, JsonArray hooks) {

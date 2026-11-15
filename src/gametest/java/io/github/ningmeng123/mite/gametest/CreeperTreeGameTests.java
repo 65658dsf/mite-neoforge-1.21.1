@@ -133,7 +133,7 @@ public final class CreeperTreeGameTests {
     @GameTest(template="ranged_027") public static void establishedCactusTrapCausesRealContactMemoryAndTimedDefusing(GameTestHelper h) {
         BlockPos cactus=cactus(h); killAtCactus(h,cactus); killAtCactus(h,cactus);
         h.assertValueEqual(ConspicuousCactus.killCount(h.getLevel(),cactus),2,"Two real lethal contacts establish a conspicuous cactus");
-        Creeper creeper=mob(h,EntityType.CREEPER); creeper.moveTo(cactus.getCenter().add(1,0,0));
+        Creeper creeper=mob(h,EntityType.CREEPER); creeper.moveTo(cactus.getCenter());
         for(int attempt=0;attempt<32&&ConspicuousCactus.recentTicks(creeper)==0;attempt++) {
             creeper.setHealth(creeper.getMaxHealth()); creeper.invulnerableTime=0;
             h.getLevel().getBlockState(cactus).entityInside(h.getLevel(),cactus,creeper);

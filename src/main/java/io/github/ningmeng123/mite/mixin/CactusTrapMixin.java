@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.entity.ai.ConspicuousCactus;
+import io.github.ningmeng123.mite.survival.SourceCactusContact;
 import io.github.ningmeng123.mite.survival.SpecialPlantGrowth;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +24,7 @@ public abstract class CactusTrapMixin {
     @WrapOperation(method="entityInside",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
     private boolean mite$rememberActualContact(Entity victim,DamageSource source,float amount,Operation<Boolean> original,
             BlockState state,Level level,BlockPos pos,Entity unused) {
+        if (level.isClientSide || !SourceCactusContact.canHurt(victim)) return false;
         boolean hurt=original.call(victim,source,amount);
         if(hurt&&level instanceof ServerLevel server) ConspicuousCactus.afterActualContact(server,pos,victim);
         return hurt;

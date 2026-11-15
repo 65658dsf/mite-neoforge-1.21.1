@@ -35,6 +35,25 @@ class EnchantmentCombatRulesTest {
         assertEquals(.81D * .25D, potion * web * .25D, .000001D);
         assertEquals(1.25F, EnchantmentCombatRules.speedMultiplier(5));
     }
+    @Test void websSlowBothMouseAxesUsingTheR196SensitivityCurve() {
+        assertEquals(1D, EnchantmentCombatRules.lookSensitivityFactor(-1, -1, false, 0F));
+        assertEquals(1D / 12.25D, EnchantmentCombatRules.lookSensitivityFactor(-1, -1, true, 0F), .000001D);
+        assertEquals(1D / 3.25D, EnchantmentCombatRules.lookSensitivityFactor(-1, -1, true, .8F), .000001D);
+        assertEquals(1D, EnchantmentCombatRules.lookSensitivityFactor(-1, -1, true, 1F));
+        assertEquals(1D / 12.25D, EnchantmentCombatRules.lookSensitivityFactor(-1, -1, true, -1F), .000001D);
+        assertEquals(1D, EnchantmentCombatRules.lookSensitivityFactor(-1, -1, true, 2F));
+    }
+    @Test void lookSlowdownCombinesWebsPotionsAndFreeActionBeforeItsOwnCap() {
+        assertEquals(1D / 4D, EnchantmentCombatRules.lookSensitivityFactor(0, -1, false, 0F), .000001D);
+        assertEquals(1D / 13D, EnchantmentCombatRules.lookSensitivityFactor(5, -1, false, 0F), .000001D);
+        assertEquals(1D / 13D, EnchantmentCombatRules.lookSensitivityFactor(25, -1, true, 0F), .000001D);
+        assertEquals(1D / 4.6D, EnchantmentCombatRules.lookSensitivityFactor(5, -1, false, .8F), .000001D);
+        assertEquals(1D / 3.85D, EnchantmentCombatRules.lookSensitivityFactor(0, -1, true, .8F), .000001D);
+        assertEquals(1D / 9.25D, EnchantmentCombatRules.lookSensitivityFactor(-1, 0, true, 0F), .000001D);
+        assertEquals(1D, EnchantmentCombatRules.lookSensitivityFactor(0, 0, false, 0F));
+        assertEquals(1D, EnchantmentCombatRules.lookSensitivityFactor(-1, 3, true, 0F));
+        assertEquals(1D, EnchantmentCombatRules.lookSensitivityFactor(-1, 10, false, 0F));
+    }
     @Test void thornsRollAndDamageBoundariesMatchAbhIncludingUnsafeCommandLevels() {
         assertFalse(EnchantmentCombatRules.thornsProc(0, 0F));
         assertTrue(EnchantmentCombatRules.thornsProc(3, .4499F));
