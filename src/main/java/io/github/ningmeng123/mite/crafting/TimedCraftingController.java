@@ -64,7 +64,7 @@ public final class TimedCraftingController {
         CraftingQuality.Result quality = CraftingQuality.resolve(player, menu, grid, recipe.get(), raw);
         if (quality == null) return null;
         if (player instanceof ServerPlayer && (quality.quality() != null || raw.getItem() instanceof io.github.ningmeng123.mite.item.RunestoneItem)) {
-            ItemStack display = WorkbenchRules.allows(menu, quality.stack())
+            ItemStack display = WorkbenchRules.allows(menu, quality.stack(), player.level())
                     && CraftingAccessRules.canCraft(grid, quality.stack()) ? quality.stack() : ItemStack.EMPTY;
             if (!ItemStack.matches(menu.getSlot(0).getItem(), display)) {
                 menu.getSlot(0).set(display.copy());

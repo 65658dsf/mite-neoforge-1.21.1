@@ -32,6 +32,6 @@ public abstract class WorkbenchTierMixin implements WorkbenchAccess {
     @Inject(method = "quickMoveStack", at = @At("HEAD"), cancellable = true)
     private void mite$checkTier(Player player, int index, CallbackInfoReturnable<ItemStack> cir) {
         CraftingMenu menu = (CraftingMenu)(Object)this;
-        if (index == 0 && !WorkbenchRules.allows(menu, menu.getSlot(0).getItem())) cir.setReturnValue(ItemStack.EMPTY);
+        if (index == 0 && !WorkbenchRules.allows(menu, menu.getSlot(0).getItem(), player.level())) cir.setReturnValue(ItemStack.EMPTY);
     }
 }

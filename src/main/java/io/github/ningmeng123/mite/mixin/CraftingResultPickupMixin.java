@@ -18,7 +18,8 @@ public abstract class CraftingResultPickupMixin {
         Slot slot = (Slot) (Object) this;
         if ((slot == player.inventoryMenu.getSlot(0)
                 || player.containerMenu instanceof CraftingMenu && slot == player.containerMenu.getSlot(0))
-                && !WorkbenchRules.allows(slot == player.inventoryMenu.getSlot(0) ? player.inventoryMenu : player.containerMenu, slot.getItem())) {
+                && !WorkbenchRules.allows(slot == player.inventoryMenu.getSlot(0) ? player.inventoryMenu : player.containerMenu,
+                        slot.getItem(), player.level())) {
             cir.setReturnValue(false);
             return;
         }

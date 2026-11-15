@@ -23,6 +23,6 @@ public abstract class CraftingMenuAccessMixin {
             require = 1, allow = 1)
     private static ItemStack mite$checkEquipment(ItemStack output, AbstractContainerMenu menu, Level level,
             Player player, CraftingContainer grid, ResultContainer result, RecipeHolder<CraftingRecipe> hint) {
-        return CraftingAccessRules.canCraft(grid, output) && WorkbenchRules.allows(menu, output) ? output : ItemStack.EMPTY;
+        return CraftingAccessRules.canCraft(grid, output) && WorkbenchRules.allows(menu, output, level) ? output : ItemStack.EMPTY;
     }
 }

@@ -7,9 +7,12 @@ import io.github.ningmeng123.mite.item.EquipmentDurability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -89,6 +92,15 @@ public final class WorkbenchRules {
         float required = required(result);
         return required <= 0 || menu instanceof CraftingMenu && menu instanceof WorkbenchAccess access
                 && access.mite$workbenchCapacity() >= required;
+    }
+    public static boolean allows(AbstractContainerMenu menu, ItemStack result, Level level) {
+        if (allows(menu, result)) return true;
+        if (!(menu instanceof CraftingMenu || menu instanceof InventoryMenu)
+                || !(menu.getSlot(1).container instanceof CraftingContainer grid)) return false;
+        var recipe = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid.asCraftInput(), level);
+        return recipe.isPresent()
+                && io.github.ningmeng123.mite.api.MiteExtensions.policy().isMaintenanceRecipe(recipe.get().value())
+                && ItemStack.matches(result, recipe.get().value().assemble(grid.asCraftInput(), level.registryAccess()));
     }
     public static boolean allowsCrafter(Level level, BlockPos pos, ItemStack result) {
         float required = required(result);

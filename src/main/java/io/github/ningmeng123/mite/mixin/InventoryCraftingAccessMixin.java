@@ -17,7 +17,7 @@ public abstract class InventoryCraftingAccessMixin {
     private void mite$checkQuickMove(Player player, int index, CallbackInfoReturnable<ItemStack> cir) {
         InventoryMenu menu = (InventoryMenu) (Object) this;
         if (index == 0 && (!CraftingAccessRules.canCraft(menu.getCraftSlots(), menu.getSlot(0).getItem())
-                || !WorkbenchRules.allows(menu, menu.getSlot(0).getItem()))) {
+                || !WorkbenchRules.allows(menu, menu.getSlot(0).getItem(), player.level()))) {
             cir.setReturnValue(ItemStack.EMPTY);
         }
     }
