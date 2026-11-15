@@ -190,7 +190,7 @@ public final class SourceEnchantmentCombat {
         SourceStatusEffects.refreshAttack(entity, removed);
         if (SourceStatusEffects.managed(entity)) {
             AttributeInstance speed = entity.getAttribute(Attributes.MOVEMENT_SPEED);
-            if (speed != null) modifier(speed, SPEED, entity instanceof Player ? R196Enchantments.equipped(entity, "speed") * .05D : 0D);
+            if (speed != null) modifier(speed, SPEED, armorSpeedBonus(entity));
             entity.getPersistentData().remove(SCALED_SLOW);
             SourceStatusEffects.refreshMovement(entity, removed);
             return;
@@ -199,8 +199,7 @@ public final class SourceEnchantmentCombat {
                 && !entity.getPersistentData().getBoolean(SCALED_SLOW)) return;
         AttributeInstance speed = entity.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed == null) return;
-        int speedLevel = entity instanceof Player ? R196Enchantments.equipped(entity, "speed") : 0;
-        modifier(speed, SPEED, speedLevel * .05D);
+        modifier(speed, SPEED, armorSpeedBonus(entity));
         float resistance = R196Enchantments.freeActionResistance(entity);
         MobEffectInstance slow = removed != null && removed.getEffect().equals(MobEffects.MOVEMENT_SLOWDOWN)
                 ? null : entity.getEffect(MobEffects.MOVEMENT_SLOWDOWN);
@@ -225,6 +224,11 @@ public final class SourceEnchantmentCombat {
             });
             entity.getPersistentData().remove(SCALED_SLOW);
         }
+    }
+    private static double armorSpeedBonus(LivingEntity entity) {
+        if (!(entity instanceof Player player)) return 0D;
+        return io.github.ningmeng123.mite.api.MiteExtensions.policy().armorSpeedBonus(player,
+                R196Enchantments.equipped(player, "speed") * .05D);
     }
     private static void replaceSlow(AttributeInstance speed, double amount) {
         AttributeModifier old = speed.getModifier(SLOWNESS);

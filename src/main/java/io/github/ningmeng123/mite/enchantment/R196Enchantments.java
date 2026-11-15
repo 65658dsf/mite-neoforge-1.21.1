@@ -50,11 +50,13 @@ public final class R196Enchantments {
     }
     public static int unbreakingDamage(ItemStack stack, net.minecraft.server.level.ServerLevel world, int requested, int ordinaryLevel) {
         var pair = EnchantmentSources.levels(stack, world, "minecraft:unbreaking");
-        if (pair.affix() == 0) return io.github.ningmeng123.mite.rules.EquipmentDurabilityRules
-                .afterUnbreaking(requested, ordinaryLevel, world.random::nextFloat);
-        float chance = Math.clamp(io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.unbreakingNegationChance(pair.normal())
-                + pair.affix() * .15F, 0F, 1F);
         int remaining = Math.max(requested, 0);
+        if (remaining == 0) return 0;
+        float baseChance = io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.unbreakingNegationChance(
+                pair.affix() == 0 ? ordinaryLevel : pair.normal()) + pair.affix() * .15F;
+        float chance = Math.clamp(io.github.ningmeng123.mite.api.MiteExtensions.policy()
+                .unbreakingNegationChance(stack, baseChance), 0F, 1F);
+        if (chance <= 0F) return remaining;
         for (int point = 0; point < requested; point++) if (world.random.nextFloat() < chance) remaining--;
         return remaining;
     }

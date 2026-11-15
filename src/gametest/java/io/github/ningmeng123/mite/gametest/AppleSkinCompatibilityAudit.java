@@ -40,6 +40,18 @@ public final class AppleSkinCompatibilityAudit {
         @Override public CompletableFuture<?> run(CachedOutput output) {
             JsonObject result = new JsonObject();
             var loader = AppleSkinCompatibilityAudit.class.getClassLoader();
+            try {
+                Class.forName("net.minecraft.client.gui.Gui", false, loader);
+                ClassNode gui = readExport("net.minecraft.client.gui.Gui");
+                var food = method(gui, "renderFood", "(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/entity/player/Player;II)V");
+                calls(food, "mite$foodContainerCount", 1);
+                calls(food, "mite$foodIconPosition", 3);
+                calls(method(gui, "renderFoodLevel", "(Lnet/minecraft/client/gui/GuiGraphics;)V"), "mite$foodReservedHeight", 1);
+                result.addProperty("vanilla_food_icons_wrap_into_rows", true);
+                result.addProperty("vanilla_food_reserves_additional_air_bar_height", true);
+            } catch (ReflectiveOperationException | IOException error) {
+                throw new IllegalStateException("Headless food HUD compatibility audit failed", error);
+            }
             if (loader.getResource(SATURATION.replace('.', '/') + ".class") == null) {
                 result.addProperty("status", "skipped: AppleSkin is absent");
                 return DataProvider.saveStable(output, result, report);
@@ -66,6 +78,14 @@ public final class AppleSkinCompatibilityAudit {
                     throw new IllegalStateException("The original forecast properties read survived its redirect");
                 var draw = method(readExport(DRAW), "drawSaturationOverlay", "(FFLnet/minecraft/world/entity/player/Player;Lnet/minecraft/client/gui/GuiGraphics;IIFI)V");
                 calls(draw, "mite$boundedNutritionRow", 1);
+                calls(draw, "mite$foodOffsetCount", 1);
+                calls(draw, "mite$foodColumnOffset", 1);
+                calls(draw, "mite$nutritionIconRow", 1);
+                var hunger = method(readExport(DRAW), "drawHungerOverlay", "(IILnet/minecraft/world/entity/player/Player;Lnet/minecraft/client/gui/GuiGraphics;IIFZI)V");
+                calls(hunger, "mite$boundedFoodPreview", 1);
+                calls(hunger, "mite$foodOffsetCount", 1);
+                calls(hunger, "mite$foodColumnOffset", 1);
+                calls(hunger, "mite$foodPreviewIconRow", 2);
                 var health = method(readExport(HEALTH), "shouldRenderOverlay",
                         "(Lnet/minecraft/client/Minecraft;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/client/gui/GuiGraphics;I)Z");
                 calls(health, "mite$disableModernHealingPreview", 1);
@@ -75,6 +95,8 @@ public final class AppleSkinCompatibilityAudit {
                 result.addProperty("satiation_cap_addends_replaced", 1);
                 result.addProperty("qualified_forecast_reads_replaced", 1);
                 result.addProperty("drawing_capacity_limits_replaced", 1);
+                result.addProperty("food_preview_capacity_limits_replaced", 1);
+                result.addProperty("nutrition_and_food_previews_share_multirow_offsets", true);
                 result.addProperty("modern_healing_preview_disabled", 1);
                 result.addProperty("queried_food_bridge_verified", true);
                 return DataProvider.saveStable(output, result, report);

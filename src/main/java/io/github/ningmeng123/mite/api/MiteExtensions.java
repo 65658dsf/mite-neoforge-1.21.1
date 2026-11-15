@@ -66,6 +66,10 @@ public final class MiteExtensions {
         default double monsterSpawnWeightMultiplier(SpawnContext context, BlockPos pos, EntityType<?> type, double original) { return original; }
         default double maximumHealth(Player player, double original) { return original; }
         default int foodCapacity(Player player, int original) { return original; }
+        /** Base-relative armor movement bonus, combining worn speed enchantments and socket effects. */
+        default double armorSpeedBonus(Player player, double original) { return original; }
+        /** Final per-point Unbreaking probability for managed equipment, including socket bonuses. */
+        default float unbreakingNegationChance(ItemStack stack, float original) { return original; }
         default int gearMaximumLevel(ItemStack stack, int original) { return original; }
         default io.github.ningmeng123.mite.progression.GearAffixRules.Definition affixDefinition(ItemStack stack, Holder<Enchantment> enchantment, io.github.ningmeng123.mite.progression.GearAffixRules.Definition original) { return original; }
         default float naturalRegeneration(Player player, float original) { return original; }
@@ -120,7 +124,7 @@ public final class MiteExtensions {
             var snapshot=io.github.ningmeng123.mite.network.NutritionPayload.latest();
             if (snapshot!=null && snapshot.entityId()==player.getId()) return snapshot.limit();
         }
-        return Math.clamp(policy.foodCapacity(player, ProgressionRules.foodLimitForLevel(player.experienceLevel)),1,20);
+        return Math.max(1, policy.foodCapacity(player, ProgressionRules.foodLimitForLevel(player.experienceLevel)));
     }
     public static double maximumHealth(Player player) {
         double value=policy.maximumHealth(player,ProgressionRules.maxHealthForLevel(player.experienceLevel));

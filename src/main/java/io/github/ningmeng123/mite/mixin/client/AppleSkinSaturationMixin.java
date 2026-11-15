@@ -1,6 +1,13 @@
 package io.github.ningmeng123.mite.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import io.github.ningmeng123.mite.client.AppleSkinNutritionView;
+import io.github.ningmeng123.mite.rules.AppleSkinNutritionRules;
+import io.github.ningmeng123.mite.rules.FoodHudLayout;
+import java.util.Vector;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +22,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 /** Optional AppleSkin 3.0.9 nutrition HUD; strict pinned selectors, no external dependency. @author NingMeng123 */
 @Pseudo
@@ -47,9 +56,46 @@ public abstract class AppleSkinSaturationMixin {
     @Pseudo
     @Mixin(targets = "squeek.appleskin.client.HUDOverlayHandler", remap = false)
     public abstract static class Draw {
-        @ModifyConstant(method = "drawSaturationOverlay(FFLnet/minecraft/world/entity/player/Player;Lnet/minecraft/client/gui/GuiGraphics;IIFI)V", constant = @Constant(floatValue = 20F), require = 1, allow = 1, remap = false)
+        private static final String NUTRITION_DRAW = "drawSaturationOverlay(FFLnet/minecraft/world/entity/player/Player;Lnet/minecraft/client/gui/GuiGraphics;IIFI)V";
+        private static final String FOOD_DRAW = "drawHungerOverlay(IILnet/minecraft/world/entity/player/Player;Lnet/minecraft/client/gui/GuiGraphics;IIFZI)V";
+
+        @ModifyConstant(method = NUTRITION_DRAW, constant = @Constant(floatValue = 20F), require = 1, allow = 1, remap = false)
         private static float mite$boundedNutritionRow(float original, float added, float current, Player player, GuiGraphics graphics, int x, int y, float alpha, int tick) {
             return AppleSkinNutritionView.capacity(player);
+        }
+
+        @ModifyConstant(method = FOOD_DRAW, constant = @Constant(intValue = 20), require = 1, allow = 1, remap = false)
+        private static int mite$boundedFoodPreview(int original, int added, int current, Player player, GuiGraphics graphics, int x, int y, float alpha, boolean rotten, int tick) {
+            return AppleSkinNutritionView.capacity(player);
+        }
+
+        // AppleSkin caches one row of original animation offsets. Reuse its columns on every row.
+        @ModifyExpressionValue(method = {NUTRITION_DRAW, FOOD_DRAW}, at = @At(value = "INVOKE",
+                target = "Ljava/util/Vector;size()I"), require = 2, allow = 2, remap = false)
+        private static int mite$foodOffsetCount(int original, @Local(argsOnly = true) Player player) {
+            // Before AppleSkin's first cache generation, keep its empty-vector fallback.
+            return original == 0 ? 0
+                    : Math.max(original, AppleSkinNutritionRules.maximumIcons(AppleSkinNutritionView.capacity(player)));
+        }
+
+        @WrapOperation(method = {NUTRITION_DRAW, FOOD_DRAW}, at = @At(value = "INVOKE",
+                target = "Ljava/util/Vector;get(I)Ljava/lang/Object;"), require = 2, allow = 2, remap = false)
+        private static Object mite$foodColumnOffset(Vector<?> offsets, int icon, Operation<Object> original) {
+            return original.call(offsets, icon % 10);
+        }
+
+        @ModifyArgs(method = NUTRITION_DRAW, at = @At(value = "INVOKE",
+                target = "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"),
+                require = 1, allow = 1, remap = false)
+        private static void mite$nutritionIconRow(Args args, @Local(argsOnly = true) Player player, @Local(index = 13) int icon) {
+            args.set(2, (int) args.get(2) - FoodHudLayout.rowOffset(AppleSkinNutritionView.capacity(player), icon));
+        }
+
+        @ModifyArgs(method = FOOD_DRAW, at = @At(value = "INVOKE",
+                target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lnet/minecraft/resources/ResourceLocation;IIII)V"),
+                require = 2, allow = 2, remap = false)
+        private static void mite$foodPreviewIconRow(Args args, @Local(argsOnly = true) Player player, @Local(index = 15) int icon) {
+            args.set(2, (int) args.get(2) - FoodHudLayout.rowOffset(AppleSkinNutritionView.capacity(player), icon));
         }
     }
 
