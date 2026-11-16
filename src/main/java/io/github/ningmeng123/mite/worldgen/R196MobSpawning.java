@@ -62,6 +62,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
@@ -73,6 +74,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructureSets;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureSpawnOverride;
 import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStructurePlacement;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
@@ -279,6 +282,45 @@ public final class R196MobSpawning {
     private static Holder<Biome> sourceBiome(ServerLevel level, BlockPos pos) {
         return level.getBiome(new BlockPos(pos.getX(), level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()) - 1, pos.getZ()));
     }
+    /** Resolve the native first matching override once, including intentionally empty pools. */
+    private static final class StructureSpawnPools {
+        final Map<MobCategory, StructureSpawnOverride> overrides = new EnumMap<>(MobCategory.class);
+        StructureSpawnOverride fortressMonsters;
+
+        boolean allows(EntityType<?> type) {
+            var override = overrides.get(type.getCategory());
+            return override == null || !override.spawns().isEmpty();
+        }
+    }
+
+    private static StructureSpawnPools structureSpawnPools(ServerLevel level, BlockPos pos) {
+        var result = new StructureSpawnPools();
+        var structures = level.structureManager();
+        for (var reference : structures.getAllStructuresAt(pos).entrySet()) {
+            Structure structure = reference.getKey();
+            var declared = structure.spawnOverrides();
+            if (declared.isEmpty()) continue;
+            boolean needsPiece = declared.values().stream()
+                    .anyMatch(override -> override.boundingBox() == StructureSpawnOverride.BoundingBoxType.PIECE);
+            structures.fillStartsForStructure(structure, reference.getValue(), start -> {
+                boolean whole = start.getBoundingBox().isInside(pos);
+                if (!whole) return;
+                boolean piece = needsPiece && structures.structureHasPieceAt(pos, start);
+                for (var entry : declared.entrySet()) {
+                    var override = entry.getValue();
+                    if (override.boundingBox() == StructureSpawnOverride.BoundingBoxType.PIECE ? piece : whole)
+                        result.overrides.putIfAbsent(entry.getKey(), override);
+                }
+            });
+        }
+        if (NaturalSpawner.isInNetherFortressBounds(pos, level, MobCategory.MONSTER, structures)) {
+            var fortress = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(BuiltinStructures.FORTRESS);
+            result.fortressMonsters = fortress.spawnOverrides().get(MobCategory.MONSTER);
+            if (result.fortressMonsters != null) result.overrides.put(MobCategory.MONSTER, result.fortressMonsters);
+        }
+        return result;
+    }
+
     public static List<Entry> sourcePool(ServerLevel level, BlockPos pos, Category category) {
         if (category == Category.MONSTER && level.dimension().equals(Level.NETHER)) {
             var structure = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(BuiltinStructures.FORTRESS);
@@ -294,19 +336,23 @@ public final class R196MobSpawning {
                 : OverworldSlimeSpawns.pool(level, category, BloodMoonInvasion.pool(level, category, original));
     }
     private static List<Entry> pool(ServerLevel level, BlockPos pos, Category category, boolean modernOnly) {
+        return pool(level, pos, category, modernOnly, structureSpawnPools(level, pos));
+    }
+
+    private static List<Entry> pool(ServerLevel level, BlockPos pos, Category category, boolean modernOnly, StructureSpawnPools structures) {
         List<Entry> entries = new ArrayList<>();
         if (!modernOnly) entries.addAll(sourcePool(level, pos, category));
-        var actual = level.getBiome(pos).value().getMobSettings();
         for (MobCategory vanilla : MobCategory.values()) if (category(vanilla) == category) {
             // Keep native-only species in their actual biome or structure habitats in both presets.
-            var nativePool = vanilla == MobCategory.MONSTER
-                    ? level.getChunkSource().getGenerator().getMobsAt(level.getBiome(pos), level.structureManager(), vanilla, pos)
-                    : actual.getMobs(vanilla);
+            var nativePool = vanilla == MobCategory.MONSTER && structures.fortressMonsters != null
+                    ? structures.fortressMonsters.spawns()
+                    : level.getChunkSource().getGenerator().getMobsAt(level.getBiome(pos), level.structureManager(), vanilla, pos);
             for (var value : nativePool.unwrap()) if (usesNativeSpawnEntries(value.type)) {
                 @SuppressWarnings("unchecked") EntityType<? extends Mob> type = (EntityType<? extends Mob>) value.type;
                 entries.add(new Entry(type, null, category, value.getWeight().asInt(), value.minCount, value.maxCount, 4, true));
             }
         }
+        entries.removeIf(entry -> !structures.allows(entry.type()));
         return entries;
     }
     public static Map<Long, Boolean> eligibleChunks(ServerLevel level, boolean hostile) {
@@ -569,7 +615,10 @@ public final class R196MobSpawning {
     /** Ordinary source passes also perform the later pack and finalization identity lotteries. */
     public static Entry select(ServerLevel level, BlockPos pos, Category category, RandomSource random, boolean modernOnly,
             boolean finalizationTransforms) {
-        List<Entry> entries = extension().spawnPool(context(level,category,null),pos,List.copyOf(pool(level, pos, category, modernOnly)));
+        var structures = structureSpawnPools(level, pos);
+        List<Entry> entries = extension().spawnPool(context(level,category,null),pos,
+                List.copyOf(pool(level, pos, category, modernOnly, structures))).stream()
+                .filter(entry -> structures.allows(entry.type())).toList();
         if (entries.isEmpty()) return null;
         Holder<Biome> surface = sourceBiome(level, pos);
         int sourceY = R196SpawnRules.sourceY(pos.getY(), underworld(level));
