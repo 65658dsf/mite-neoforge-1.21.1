@@ -361,7 +361,8 @@ public final class R196DiggerGoal extends Goal {
         return delay;
     }
     @Override public void tick() {
-        if(MeleePursuitPaths.pending(mob)) { save();return; }
+        // A pending route recheck keeps this already selected goal running.
+        // Advance its valid work after canUse admits the initial route decision.
         if(!active||target==null||!(mob.level() instanceof ServerLevel level)) return;
         if(pause>0) { pause--;return; }
         if(overheadDigging&&!overheadObstruction(target)||!canDestroy(target,true)) { stop();return; }

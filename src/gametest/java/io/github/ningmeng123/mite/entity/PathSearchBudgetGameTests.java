@@ -1,10 +1,12 @@
 package io.github.ningmeng123.mite.entity;
 
+import io.github.ningmeng123.mite.registry.MiteTools;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -25,6 +27,8 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDestroyBlockEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -100,6 +104,64 @@ public final class PathSearchBudgetGameTests {
             }
             PathSearchBudget.cancel(waiting); PathSearchBudget.cancel(opening);
             h.assertValueEqual(PathSearchBudget.stats(h.getLevel().getServer()).backlog(), 0, "Explicit cancellation removes all waiting tickets");
+            f.close(); h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty", templateNamespace = "mite", batch = "path_budget_active_digger", timeoutTicks = 160)
+    public static void activeValidatedDiggingFinishesWhileAnotherRouteDecisionWaitsAndStillHonorsProtection(GameTestHelper h) {
+        Fixture f = new Fixture(h, 3);
+        f.ready(() -> {
+            Zombie mob = f.mobs.get(2);
+            var digger = R196DiggerGoal.first(mob);
+            BlockPos stone = f.origin.east().above();
+            h.getLevel().setBlock(stone, Blocks.STONE.defaultBlockState(), 2);
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(MiteTools.get("vibranium_pickaxe")));
+            occupyTick(f.mobs.get(0), f.mobs.get(1));
+            h.assertFalse(attempt(mob, () -> {}), "The next actual synchronous decision is denied by the full budget");
+            h.assertFalse(optimized(digger::canUse), "An initial unconfirmed route still cannot start digging while pending");
+            PathSearchBudget.cancel(mob);
+            h.assertTrue(digger.setBlockToDig(stone, true), "The prior decision selects a physically reachable valid stone block");
+            digger.start();
+            h.assertFalse(attempt(mob, () -> {}), "A later route recheck waits while the established block remains valid");
+            h.assertTrue(optimized(digger::canContinueToUse), "The pending recheck retains the valid active digging goal");
+            int workTicks = 40 + 10 * Math.max(1, digger.stageDelay(stone));
+            optimized(() -> {
+                h.assertTrue(MeleePursuitPaths.pending(mob), "The real admission ticket remains pending before mining advances");
+                digger.tick();
+                h.assertValueEqual(digger.cooldown(), 39,
+                        "An already validated active block counts down while an independent route recheck is pending");
+                for (int tick = 1; tick < workTicks; tick++) digger.tick();
+                h.assertTrue(h.getLevel().getBlockState(stone).isAir(),
+                        "Established valid digging completes within its tool-derived work ticks despite sustained pending");
+                h.assertTrue(MeleePursuitPaths.pending(mob), "Mining does not manufacture a completed route decision");
+                return null;
+            });
+
+            digger.stop();
+            h.getLevel().setBlock(stone, Blocks.STONE.defaultBlockState(), 2);
+            h.assertTrue(digger.setBlockToDig(stone, true), "The next validated target can start before the final protection callback");
+            digger.start();
+            int[] callbacks = {0};
+            Consumer<LivingDestroyBlockEvent> protect = event -> {
+                if (event.getEntity() == mob && event.getPos().equals(stone)) {
+                    callbacks[0]++;
+                    event.setCanceled(true);
+                }
+            };
+            NeoForge.EVENT_BUS.addListener(LivingDestroyBlockEvent.class, protect);
+            try {
+                optimized(() -> {
+                    for (int tick = 0; tick < workTicks; tick++) digger.tick();
+                    return null;
+                });
+            } finally {
+                NeoForge.EVENT_BUS.unregister(protect);
+            }
+            h.assertValueEqual(callbacks[0], 1, "The final protected mutation still dispatches the real cancellable event");
+            h.assertTrue(h.getLevel().getBlockState(stone).is(Blocks.STONE), "Final protection preserves the selected stone block");
+            h.assertTrue(digger.destructionRejected(stone), "A protected target is rejected after the completed work");
+            digger.stop();
             f.close(); h.succeed();
         });
     }

@@ -144,7 +144,7 @@ public final class AsyncMeleePursuitGameTests {
     }
 
     @GameTest(template="empty",templateNamespace="mite_path_perf",batch="async_pursuit_active_dig",timeoutTicks=600)
-    public static void activeMiningPausesWithoutResettingProgressOrCancellingItsWalkingQuery(GameTestHelper h) {
+    public static void activeMiningKeepsWorkingWithoutResettingProgressOrCancellingItsWalkingQuery(GameTestHelper h) {
         Fixture f=new Fixture(h,false);
         f.ready(() -> {
             BlockPos obstacle=f.origin.east();
@@ -154,10 +154,10 @@ public final class AsyncMeleePursuitGameTests {
             f.digger.start();
             int progress=f.digger.progress(),cooldown=f.digger.cooldown();
             f.find();var task=AsyncMeleePursuit.state(f.mob).task;
-            h.assertTrue(f.digger.canContinueToUse(),"Pending walking pauses an already active work goal");
+            h.assertTrue(f.digger.canContinueToUse(),"Pending walking retains an already validated active work goal");
             f.digger.tick();
             h.assertValueEqual(f.digger.progress(),progress,"Pending navigation preserves mining progress");
-            h.assertValueEqual(f.digger.cooldown(),cooldown,"Pending navigation does not advance the destructive countdown");
+            h.assertValueEqual(f.digger.cooldown(),cooldown-1,"Active mining counts down while the walking query is pending");
             h.assertTrue(AsyncMeleePursuit.state(f.mob).task==task,"The goal does not cancel its own shared walking task");
             h.startSequence().thenWaitUntil(() -> {
                 AsyncPathSearchEngine.pump(h.getLevel().getServer(),TimeUnit.MILLISECONDS.toNanos(4));
