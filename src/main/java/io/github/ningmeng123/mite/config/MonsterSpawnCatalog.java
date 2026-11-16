@@ -51,6 +51,14 @@ public final class MonsterSpawnCatalog {
                     weights.computeIfAbsent(data.type, ignored -> new TreeSet<>()).add(data.getWeight().asInt());
             }
         }));
+        access.registry(Registries.STRUCTURE).ifPresent(structures -> structures.forEach(structure -> {
+            var override = structure.spawnOverrides().get(MobCategory.MONSTER);
+            if (override == null) return;
+            for (var data : override.spawns().unwrap()) {
+                if (!R196MobSpawning.sourceType(data.type))
+                    weights.computeIfAbsent(data.type, ignored -> new TreeSet<>()).add(data.getWeight().asInt());
+            }
+        }));
         var result = new ArrayList<Entry>();
         for (var type : BuiltInRegistries.ENTITY_TYPE) {
             String id = BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();

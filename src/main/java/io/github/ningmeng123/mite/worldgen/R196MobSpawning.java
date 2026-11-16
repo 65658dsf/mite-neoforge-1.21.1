@@ -48,6 +48,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -88,7 +89,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-/** Source spawning loops replace vanilla scheduling; modern-only mobs retain explicit native predicates. @author NingMeng123 */
+/** Source land-spawning loops retain native habitat predicates for modern-only mobs. @author NingMeng123 */
 public final class R196MobSpawning {
     private static io.github.ningmeng123.mite.api.MiteExtensions.Policy extension() { return io.github.ningmeng123.mite.api.MiteExtensions.policy(); }
     private static io.github.ningmeng123.mite.api.MiteExtensions.SpawnContext context(ServerLevel level, Category category, Boolean deep) {
@@ -292,16 +293,21 @@ public final class R196MobSpawning {
         List<Entry> entries = new ArrayList<>();
         if (!modernOnly) entries.addAll(sourcePool(level, pos, category));
         var actual = level.getBiome(pos).value().getMobSettings();
-        for (MobCategory vanilla : MobCategory.values()) if (category(vanilla) == category)
-            for (var value : actual.getMobs(vanilla).unwrap()) if (!sourceType(value.type)) {
+        for (MobCategory vanilla : MobCategory.values()) if (category(vanilla) == category) {
+            // Ocean-monument guardians live in a structure override, outside the biome table.
+            var nativePool = vanilla == MobCategory.MONSTER
+                    ? level.getChunkSource().getGenerator().getMobsAt(level.getBiome(pos), level.structureManager(), vanilla, pos)
+                    : actual.getMobs(vanilla);
+            for (var value : nativePool.unwrap()) if (!sourceType(value.type)) {
                 String namespace = BuiltInRegistries.ENTITY_TYPE.getKey(value.type).getNamespace();
-                // Keep third-party habitat compatibility, while the reference MONSTER pool
-                // uses only authored source identities from Minecraft and MITE themselves.
+                // Modern water hostiles retain their biome habitats in the reference preset.
                 if (category == Category.MONSTER && referenceSpawning(level)
-                        && (namespace.equals("minecraft") || namespace.equals(Mite.MOD_ID))) continue;
+                        && (namespace.equals("minecraft") || namespace.equals(Mite.MOD_ID))
+                        && SpawnPlacements.getPlacementType(value.type) != SpawnPlacementTypes.IN_WATER) continue;
                 @SuppressWarnings("unchecked") EntityType<? extends Mob> type = (EntityType<? extends Mob>) value.type;
                 entries.add(new Entry(type, null, category, value.getWeight().asInt(), value.minCount, value.maxCount, 4, true));
             }
+        }
         return entries;
     }
     public static Map<Long, Boolean> eligibleChunks(ServerLevel level, boolean hostile) {
@@ -395,7 +401,6 @@ public final class R196MobSpawning {
             Map<Long, Boolean> chunks = eligibleChunks(level, false);
             if (level.getServer().isSpawningAnimals()) {
                 spawnPass(level, Category.AMBIENT, null, chunks, false);
-                spawnPass(level, Category.AQUATIC, null, chunks, false);
             }
         }
         if (R196SpawnRules.animalSpawnTick(level.getGameTime())) {
@@ -699,6 +704,9 @@ public final class R196MobSpawning {
     public static boolean naturalDaylightAllows(Mob mob, ServerLevel level) {
         if (mob.getType() == EntityType.GHAST && underworld(level)
                 && !R196UnderworldSpawns.ghastUnlocked(BloodMoonInvasion.highestDay(level))) return false;
+        // Submerged hostiles use their native water depth and light predicates.
+        if (SpawnPlacements.getPlacementType(mob.getType()) == SpawnPlacementTypes.IN_WATER
+                && level.getFluidState(mob.blockPosition()).is(FluidTags.WATER)) return true;
         if (!level.dimension().equals(Level.OVERWORLD) || !daylightHostile(mob)) return true;
         return !R196SpawnRules.daytime((int)Math.floorMod(level.getDayTime(), 24000L))
                 || !R196OutdoorChecks.daytimeSurfaceHabitat(level, mob.blockPosition());
