@@ -125,6 +125,7 @@ public final class R196MobSpawning {
                         int weight, int minimum, int maximum, int pack, boolean modern) {}
     private record Profile(int id, String name, Map<Category, List<Entry>> lists) {}
     private static final Map<ServerLevel, State> STATES = new WeakHashMap<>();
+    private static final Map<Mob, List<Entity>> NATURAL_SPAWN_ENTITIES = new IdentityHashMap<>();
     private static final Map<ServerLevel, RandomSource> INITIAL_WEIGHTED_RANDOM = java.util.Collections.synchronizedMap(new WeakHashMap<>());
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Mite.MOD_ID);
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> INITIAL_ANIMALS = ATTACHMENTS.register(
@@ -509,18 +510,29 @@ public final class R196MobSpawning {
     }
     public record NaturalMonsterSpawn(SpawnGroupData group, int monsters) {}
 
+    /** Enlist a fresh companion in the owner's active natural-spawn commit and rollback. */
+    public static boolean enlistNaturalSpawn(Mob owner, Entity companion) {
+        List<Entity> owned = NATURAL_SPAWN_ENTITIES.get(owner);
+        if (owned == null) return false;
+        if (!owned.contains(companion)) owned.add(companion);
+        return true;
+    }
+
     /** Commit a fresh natural-spawn tree atomically, including tt's already-added skeleton rider. */
     public static NaturalMonsterSpawn finalizeNaturalMonster(ServerLevel level, Mob root, SpawnGroupData group, int allowance) {
         return finalizeNaturalMonster(level,root,group,allowance,null);
     }
     private static NaturalMonsterSpawn finalizeNaturalMonster(ServerLevel level, Mob root, SpawnGroupData group, int allowance, SpawnBudget budget) {
         List<Entity> owned = new ArrayList<>(); owned.add(root);
+        NATURAL_SPAWN_ENTITIES.put(root, owned);
         try {
             SpawnGroupData finalized = EventHooks.finalizeMobSpawn(root, level, level.getCurrentDifficultyAt(root.blockPosition()), MobSpawnType.NATURAL, group);
             // Snapshot immediately, before any parent add callback can cancel/remove it
             // and consequently detach its pre-added rider from getSelfAndPassengers.
-            List<Entity> tree = root.getSelfAndPassengers().toList();
+            Entity vehicle = root.getRootVehicle();
+            List<Entity> tree = new ArrayList<>((owned.contains(vehicle) ? vehicle : root).getSelfAndPassengers().toList());
             for (Entity entity : tree) if (!owned.contains(entity)) owned.add(entity);
+            for (Entity entity : owned) if (!tree.contains(entity)) tree.add(entity);
             int needed = (int)owned.stream().filter(entity -> !entity.isRemoved() && entity instanceof Mob mob
                     && category(mob) == Category.MONSTER).count();
             boolean daylightBlocked = owned.stream().anyMatch(entity -> !entity.isRemoved() && entity instanceof Mob mob
@@ -545,6 +557,8 @@ public final class R196MobSpawning {
             return new NaturalMonsterSpawn(finalized, added);
         } catch (RuntimeException | Error failure) {
             discardNaturalTree(owned); throw failure;
+        } finally {
+            NATURAL_SPAWN_ENTITIES.remove(root);
         }
     }
 

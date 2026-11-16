@@ -15,11 +15,14 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Items;
@@ -100,9 +103,14 @@ public final class SourceAquatic032 {
         var state=bat.level().getBlockState(pos);
         return !state.is(Blocks.GLASS) && state.isFaceSturdy(bat.level(),pos,Direction.DOWN) && bat.level().isEmptyBlock(pos.below());
     }
+    /** Source flying skeletons and creepers steer their carrier toward the prey's feet. */
+    public static Mob combatRider(Bat bat) {
+        Entity rider = bat.getFirstPassenger();
+        return rider instanceof AbstractSkeleton || rider instanceof Creeper ? (Mob)rider : null;
+    }
     public static void batAi(Bat bat) {
         var data=bat.getPersistentData(); BlockPos ceiling=BlockPos.containing(bat.getX(),bat.getY()+bat.getBbHeight()+.12,bat.getZ());
-        boolean prevented=data.getInt("mite_bat_prevent_hang_032")>0 || bat.getTarget()!=null || bat.hurtTime>0 || bat.level().getNearestPlayer(bat,4)!=null;
+        boolean prevented=bat.isVehicle() || bat.isPassenger() || data.getInt("mite_bat_prevent_hang_032")>0 || bat.getTarget()!=null || bat.hurtTime>0 || bat.level().getNearestPlayer(bat,4)!=null;
         if(bat.isResting()) {
             if(!canHang(bat,ceiling) || prevented || bat.getRandom().nextInt(1000)==0) { bat.setResting(false); bat.level().levelEvent(null,1025,bat.blockPosition(),0); }
             else { if(bat.getRandom().nextInt(200)==0) bat.yHeadRot=bat.getRandom().nextInt(360); data.putInt("mite_bat_hang_y_032",ceiling.getY()); }
@@ -116,6 +124,18 @@ public final class SourceAquatic032 {
             data.putInt("mite_bat_flight_x_032",target.getX()); data.putInt("mite_bat_flight_y_032",target.getY()); data.putInt("mite_bat_flight_z_032",target.getZ());
         }
         Vec3 d=new Vec3(target.getX()+.5-bat.getX(),target.getY()+.1-bat.getY(),target.getZ()+.5-bat.getZ()),old=bat.getDeltaMovement();
+        Mob rider=combatRider(bat);
+        LivingEntity prey=bat.getTarget();
+        if(prey!=null&&prey.isAlive()&&!(prey instanceof Animal)&&!(prey instanceof net.minecraft.world.entity.npc.Villager)) {
+            Vec3 destination=(rider==null?prey.getEyePosition():prey.position()).add(
+                    data.getFloat("mite_bat_waver_x_032"),data.getFloat("mite_bat_waver_y_032"),data.getFloat("mite_bat_waver_z_032"));
+            d=destination.subtract(bat.position());
+            if(MobCombat.ticksWithOffset(bat)%20==0) {
+                data.putFloat("mite_bat_waver_x_032",bat.getRandom().nextFloat()-.5F);
+                data.putFloat("mite_bat_waver_y_032",bat.getRandom().nextFloat()-.5F);
+                data.putFloat("mite_bat_waver_z_032",bat.getRandom().nextFloat()-.5F);
+            }
+        }
         Vec3 next=old.add((Math.signum(d.x)*.5-old.x)*.1,(Math.signum(d.y)*.7-old.y)*.1,(Math.signum(d.z)*.5-old.z)*.1); bat.setDeltaMovement(next);
         bat.setYRot((float)(Math.atan2(next.z,next.x)*180/Math.PI)-90); bat.zza=.5F;
         if(!prevented && bat.getRandom().nextInt(data.getBoolean("mite_bat_initial_hang_032")?10:1)==0 && canHang(bat,ceiling)) { data.putInt("mite_bat_hang_y_032",ceiling.getY()); bat.setResting(true); }

@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.rules.R196MobRules;
+import io.github.ningmeng123.mite.entity.animal.SourceAquatic032;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -50,6 +51,7 @@ public final class R196Bat extends Bat implements R196Mob {
     public int feedCooldown() { return feedCooldown; }
     public boolean preysUpon(LivingEntity entity) {
         if (!entity.isAlive()) return false;
+        if (isVehicle() && (entity instanceof Villager || entity instanceof Animal)) return false;
         if (entity instanceof Player player) return !player.isCreative() && !player.isSpectator();
         return MonsterHunting.active(level()) && feedCooldown <= 0 && (entity instanceof Villager || entity instanceof Animal
                 && !(entity instanceof R196Mob mob && mob.miteKind()==MobKind.HELLHOUND));
@@ -119,7 +121,7 @@ public final class R196Bat extends Bat implements R196Mob {
         }
     }
     private boolean preventedFromHanging() {
-        return preventHang > 0 || getTarget() != null || hurtTime > 0 || level().getNearestPlayer(this, 4) != null;
+        return isVehicle() || isPassenger() || preventHang > 0 || getTarget() != null || hurtTime > 0 || level().getNearestPlayer(this, 4) != null;
     }
     public boolean canHangFrom(BlockPos ceiling) {
         var block = level().getBlockState(ceiling);
@@ -158,7 +160,7 @@ public final class R196Bat extends Bat implements R196Mob {
         Vec3 destination = flightTarget.getCenter().add(0, -.4, 0);
         LivingEntity prey = getTarget();
         if (prey != null && prey.isAlive()) {
-            destination = prey.getEyePosition().add(waverX, waverY, waverZ);
+            destination = (SourceAquatic032.combatRider(this) == null ? prey.getEyePosition() : prey.position()).add(waverX, waverY, waverZ);
             if (MobCombat.ticksWithOffset(this) % 20 == 0) {
                 waverX = random.nextFloat() - .5F; waverY = random.nextFloat() - .5F; waverZ = random.nextFloat() - .5F;
             }
