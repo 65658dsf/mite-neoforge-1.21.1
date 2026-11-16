@@ -30,7 +30,6 @@ import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -237,6 +236,10 @@ public final class R196MobSpawning {
         });
     }
     public static boolean sourceType(EntityType<?> type) { return Tables.CLASSES.containsKey(type); }
+    private static boolean usesNativeSpawnEntries(EntityType<?> type) {
+        // Donkeys share source horse behavior, while modern horse finalization cannot create their identity.
+        return !sourceType(type) || type == EntityType.DONKEY;
+    }
     public static List<Entry> sourceProfile(int legacyBiomeId, Category category) { return Tables.BIOMES.get(legacyBiomeId).lists().get(category); }
     /** Existing authored pool metadata, including structure overrides; no parallel configuration entity list. */
     public static List<Entry> sourceEntries() {
@@ -295,16 +298,11 @@ public final class R196MobSpawning {
         if (!modernOnly) entries.addAll(sourcePool(level, pos, category));
         var actual = level.getBiome(pos).value().getMobSettings();
         for (MobCategory vanilla : MobCategory.values()) if (category(vanilla) == category) {
-            // Ocean-monument guardians live in a structure override, outside the biome table.
+            // Keep native-only species in their actual biome or structure habitats in both presets.
             var nativePool = vanilla == MobCategory.MONSTER
                     ? level.getChunkSource().getGenerator().getMobsAt(level.getBiome(pos), level.structureManager(), vanilla, pos)
                     : actual.getMobs(vanilla);
-            for (var value : nativePool.unwrap()) if (!sourceType(value.type)) {
-                String namespace = BuiltInRegistries.ENTITY_TYPE.getKey(value.type).getNamespace();
-                // Modern water hostiles retain their biome habitats in the reference preset.
-                if (category == Category.MONSTER && referenceSpawning(level)
-                        && (namespace.equals("minecraft") || namespace.equals(Mite.MOD_ID))
-                        && SpawnPlacements.getPlacementType(value.type) != SpawnPlacementTypes.IN_WATER) continue;
+            for (var value : nativePool.unwrap()) if (usesNativeSpawnEntries(value.type)) {
                 @SuppressWarnings("unchecked") EntityType<? extends Mob> type = (EntityType<? extends Mob>) value.type;
                 entries.add(new Entry(type, null, category, value.getWeight().asInt(), value.minCount, value.maxCount, 4, true));
             }
@@ -792,7 +790,7 @@ public final class R196MobSpawning {
         for (Category category : List.of(Category.ANIMAL, Category.AQUATIC)) {
             List<Entry> entries = new ArrayList<>(profile.lists().get(category));
             for (MobCategory vanilla : MobCategory.values()) if (category(vanilla) == category)
-                for (var extra : biome.value().getMobSettings().getMobs(vanilla).unwrap()) if (!sourceType(extra.type)) {
+                for (var extra : biome.value().getMobSettings().getMobs(vanilla).unwrap()) if (usesNativeSpawnEntries(extra.type)) {
                     @SuppressWarnings("unchecked") EntityType<? extends Mob> type = (EntityType<? extends Mob>) extra.type;
                     entries.add(new Entry(type, null, category, extra.getWeight().asInt(), extra.minCount, extra.maxCount, 4, true));
                 }

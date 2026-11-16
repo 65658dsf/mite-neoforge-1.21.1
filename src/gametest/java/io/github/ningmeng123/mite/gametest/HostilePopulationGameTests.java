@@ -110,10 +110,11 @@ public final class HostilePopulationGameTests {
                 var pool = R196MobSpawning.class.getDeclaredMethod("pool", ServerLevel.class, BlockPos.class, Category.class, boolean.class);
                 pool.setAccessible(true);
                 @SuppressWarnings("unchecked") var entries = (List<R196MobSpawning.Entry>)pool.invoke(null, arena.level, arena.position, Category.MONSTER, false);
-                for (var entry : entries) {
-                    String namespace = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(entry.type()).getNamespace();
-                    helper.assertTrue(entry.sourceClass() != null || !namespace.equals("minecraft") && !namespace.equals("mite"),
-                            "Reference pools retain authored source identities and third-party compatibility only");
+                for (var entry : entries) if (entry.modern()) {
+                    var nativeEntries = arena.level.getChunkSource().getGenerator().getMobsAt(arena.level.getBiome(arena.position),
+                            arena.level.structureManager(), MobCategory.MONSTER, arena.position).unwrap();
+                    helper.assertTrue(nativeEntries.stream().anyMatch(nativeEntry -> nativeEntry.type == entry.type()),
+                            "Modern candidates retain an actual native biome or structure entry");
                 }
             } catch (ReflectiveOperationException failure) { throw new AssertionError(failure); }
         }));
