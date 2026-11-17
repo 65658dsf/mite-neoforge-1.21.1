@@ -74,13 +74,16 @@ public final class R196Cube extends Slime implements R196Mob, CubeState {
         ItemStack tool=MobCombat.weapon(source);
         return tool==null || !tool.has(net.minecraft.core.component.DataComponents.TOOL) || tool.getDestroySpeed(net.minecraft.world.level.block.Blocks.STONE.defaultBlockState())<=1F;
     }
+    public static int vanillaContactDamage(Slime cube) {
+        return cube.getSize() * (cube instanceof net.minecraft.world.entity.monster.MagmaCube ? 2 : 1);
+    }
     public static void vanillaContact(Slime cube,LivingEntity target) {
         boolean magma=cube instanceof net.minecraft.world.entity.monster.MagmaCube;
         if (cube.level().isClientSide || !cube.isAlive() || cube.distanceToSqr(target)>contactRangeSquared(cube.getSize()) || !cube.hasLineOfSight(target)) return;
         if (!(target instanceof Player) && (magma || !(target instanceof Animal || target instanceof Villager))) return;
         if (!MonsterHunting.mayAttackPrey(cube, target)) return;
         if (!magma && target instanceof Player player) player.makeStuckInBlock(net.minecraft.world.level.block.Blocks.SLIME_BLOCK.defaultBlockState(),new net.minecraft.world.phys.Vec3(.8,1,.8));
-        int damage=cube.getSize()*(magma ? 2 : 1);
+        int damage=vanillaContactDamage(cube);
         if (!target.hurt(cube.damageSources().mobAttack(cube),damage) || !target.isAlive()) return;
         if (!magma && target instanceof Player player) MobCorrosion.inventory(player,false,cube.getSize(),damage);
         if (magma && cube.getRandom().nextInt(10)<cube.getSize()*2) target.igniteForSeconds(cube.getSize()*3);

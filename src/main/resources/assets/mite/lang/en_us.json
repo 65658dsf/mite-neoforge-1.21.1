@@ -1007,6 +1007,8 @@
   "config.jade.plugin_mite.campfire": "Campfire fuel",
   "config.jade.plugin_mite.anvil_durability": "Anvil durability",
   "config.jade.plugin_mite.livestock_health": "MITE animal sickness causes",
+  "config.jade.plugin_mite.monster_attack": "MITE monster melee attack damage",
+  "jade.mite.monster_attack": "Melee attack damage: %s",
   "tooltip.mite.livestock.health": "Health: %s",
   "tooltip.mite.livestock.health.sick": "Sick",
   "tooltip.mite.livestock.health.recovering": "Recovering",

@@ -1007,6 +1007,8 @@
   "config.jade.plugin_mite.campfire": "篝火燃料",
   "config.jade.plugin_mite.anvil_durability": "铁砧耐久度",
   "config.jade.plugin_mite.livestock_health": "MITE 动物生病原因",
+  "config.jade.plugin_mite.monster_attack": "MITE 怪物近战攻击力",
+  "jade.mite.monster_attack": "近战攻击力：%s",
   "tooltip.mite.livestock.health": "健康状况：%s",
   "tooltip.mite.livestock.health.sick": "生病",
   "tooltip.mite.livestock.health.recovering": "恢复中",

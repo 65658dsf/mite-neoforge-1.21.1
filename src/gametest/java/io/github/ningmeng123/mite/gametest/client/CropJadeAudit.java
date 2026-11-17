@@ -76,6 +76,8 @@ public final class CropJadeAudit implements DataProvider {
         private static final io.github.ningmeng123.mite.integration.jade.CropJadeProvider PROVIDER = io.github.ningmeng123.mite.integration.jade.CropJadeProvider.INSTANCE;
         private static final net.minecraft.resources.ResourceLocation LIVESTOCK_UID = io.github.ningmeng123.mite.integration.jade.LivestockJadeProvider.UID;
         private static final io.github.ningmeng123.mite.integration.jade.LivestockJadeProvider LIVESTOCK_PROVIDER = io.github.ningmeng123.mite.integration.jade.LivestockJadeProvider.INSTANCE;
+        private static final net.minecraft.resources.ResourceLocation MONSTER_ATTACK_UID = io.github.ningmeng123.mite.integration.jade.MonsterAttackJadeProvider.UID;
+        private static final io.github.ningmeng123.mite.integration.jade.MonsterAttackJadeProvider MONSTER_ATTACK_PROVIDER = io.github.ningmeng123.mite.integration.jade.MonsterAttackJadeProvider.INSTANCE;
         private static final java.util.List<String> TARGETS = java.util.List.of("CropBlock", "FarmBlock", "StemBlock", "AttachedStemBlock",
                 "BlueberryBushBlock", "CocoaBlock", "NetherWartBlock", "MushroomBlock", "SugarCaneBlock", "CactusBlock");
 
@@ -343,7 +345,7 @@ public final class CropJadeAudit implements DataProvider {
         private static final class Registration implements java.lang.reflect.InvocationHandler {
             private final java.util.List<Class<?>> server = new java.util.ArrayList<>(), client = new java.util.ArrayList<>();
             private final java.util.Map<net.minecraft.resources.ResourceLocation, Integer> clientFeatures = new java.util.LinkedHashMap<>();
-            private int campfireServer, campfireClient, anvilServer, anvilClient, livestockClient;
+            private int campfireServer, campfireClient, anvilServer, anvilClient, livestockClient, monsterAttackServer, monsterAttackClient;
             private snownee.jade.api.callback.JadeTooltipCollectedCallback callback;
             @Override public Object invoke(Object target, java.lang.reflect.Method method, Object[] args) throws Throwable {
                 if (method.getName().equals("registerBlockDataProvider") || method.getName().equals("registerBlockComponent")) {
@@ -361,7 +363,14 @@ public final class CropJadeAudit implements DataProvider {
                     check(args[0] == PROVIDER, "Every crop target must use the same stateless singleton provider");
                     (method.getName().equals("registerBlockDataProvider") ? server : client).add((Class<?>) args[1]); return null;
                 }
-                if (method.getName().equals("registerEntityComponent")) {
+                if (method.getName().equals("registerEntityDataProvider") || method.getName().equals("registerEntityComponent")) {
+                    boolean common = method.getName().equals("registerEntityDataProvider");
+                    if (args[0] == MONSTER_ATTACK_PROVIDER) {
+                        check(args[1] == net.minecraft.world.entity.Mob.class, "Monster attack data/components target exactly the one Mob parent");
+                        if (common) monsterAttackServer++; else monsterAttackClient++;
+                        return null;
+                    }
+                    check(!common, "Unexpected Jade entity data provider");
                     check(args[0] == LIVESTOCK_PROVIDER, "The animal target must use the stateless livestock singleton provider");
                     check(args[1] == net.minecraft.world.entity.animal.Animal.class, "Livestock components target exactly the one Animal parent");
                     livestockClient++; return null;
@@ -387,6 +396,9 @@ public final class CropJadeAudit implements DataProvider {
                 check(campfireServer == 1 && campfireClient == 1, "Campfire common/client providers are each registered exactly once");
                 check(anvilServer == 1 && anvilClient == 1, "Anvil common/client providers are each registered exactly once, without inherited duplicates");
                 check(livestockClient == 1, "Livestock client provider is registered exactly once, without inherited duplicates");
+                check(monsterAttackServer == 1 && monsterAttackClient == 1,
+                        "Monster attack common/client providers are each registered exactly once on Mob");
+                check(!clientFeatures.containsKey(MONSTER_ATTACK_UID), "Monster attack remains a server-backed feature");
                 JsonArray names = new JsonArray(); server.forEach(type -> names.add(type.getName())); report.add("registered_block_classes", names);
                 report.addProperty("server_registrations", server.size()); report.addProperty("client_registrations", client.size());
                 report.addProperty("targets_have_no_inheritance_overlap", true); report.addProperty("client_feature_registrations", clientFeatures.size());
@@ -397,6 +409,9 @@ public final class CropJadeAudit implements DataProvider {
                 report.addProperty("final_tooltip_callbacks", 1);
                 report.addProperty("campfire_server_and_client_registrations", 1);
                 report.addProperty("anvil_server_and_client_registrations", 1);
+                report.addProperty("monster_attack_server_and_client_registrations", 1);
+                report.addProperty("monster_attack_registered_entity_class", net.minecraft.world.entity.Mob.class.getName());
+                report.addProperty("monster_attack_client_feature", false);
             }
         }
     }
