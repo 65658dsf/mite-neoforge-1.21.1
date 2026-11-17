@@ -2,7 +2,7 @@
 
 将 Minecraft 1.6.4 MITE R196 的生存与成长规则重实现到 Minecraft 1.21.1 NeoForge，保留现代主世界地形、材质和功能内容，并逐项调整平衡。支持单人游戏和独立服务器。
 
-开发者 **NingMeng123** · 当前源码配套版本 **0.3.5** · 模组 ID `mite`
+开发者 **NingMeng123** · 当前源码配套版本 **0.3.6** · 模组 ID `mite`
 
 [安装与版本配套](#安装与版本配套) · [主要内容](#主要内容) · [玩法配置](#玩法配置) · [本地开发](#本地开发) · [文档与历史记录](#文档与历史记录)
 
@@ -17,8 +17,8 @@
 | Minecraft | 1.21.1 |
 | 模组加载器 | NeoForge 21.1.259，元数据声明范围为 `[21.1.259,21.2)` |
 | Java | 21，64 位 |
-| 本体文件 | `MITE-Modern-0.3.5.jar` |
-| 可选 ITE 扩展 | `MITE-Modern-ITE-0.3.5.jar`，配套本体 0.3.5 或更新版本 |
+| 本体文件 | `MITE-Modern-0.3.6.jar` |
+| 可选 ITE 扩展 | `MITE-Modern-ITE-0.3.6.jar`，配套本体 0.3.6 或更新版本 |
 | 联机安装 | 客户端与服务端均安装本体，使用相同的配套版本 |
 
 1. 准备本体 JAR。源码构建产物位于 `build/libs/`，步骤见下方“本地开发”。
@@ -101,7 +101,7 @@ Simply Swords 的声明版本为 1.70.2 及以上，Better Combat 为 `[2.4.0,3)
 .\gradlew.bat build
 ```
 
-当前构建产物为 `build/libs/MITE-Modern-0.3.5.jar`。macOS 和 Linux 可通过 `bash ./gradlew` 执行对应任务。构建配置见工程文件。[build.gradle](build.gradle)、[gradle.properties](gradle.properties)
+当前构建产物为 `build/libs/MITE-Modern-0.3.6.jar`。macOS 和 Linux 可通过 `bash ./gradlew` 执行对应任务。构建配置见工程文件。[build.gradle](build.gradle)、[gradle.properties](gradle.properties)
 
 | 命令 | 作用 |
 | --- | --- |
@@ -163,7 +163,7 @@ Simply Swords 的声明版本为 1.70.2 及以上，Better Combat 为 `[2.4.0,3)
 | 生产与生存 | [炉体与热量](docs/furnaces-024-evidence.md)、[作物生长](docs/crop-growth.md)、[家畜健康](docs/livestock-health-033-evidence.md)、[坍塌](docs/collapse-physics.md) |
 | 怪物与月相 | [怪物生命成长](docs/monster-day-scaling.md)、[装备进阶](docs/blood-moon-equipment.md)、[自然刷怪](docs/monster-natural-spawning.md)、[月相](docs/lunar-source-evidence.md) |
 | 探索与特殊装备 | [地底世界](docs/underworld-depth-022.md)、[地底地牢](docs/underworld-dungeons.md)、[幻灵刃](docs/phantom-blades-2026-10-24.md) |
-| 历史更新 | [0.3.5](docs/release-0.3.5.md)、[0.3.4](docs/release-0.3.4.md)、[0.3.3](docs/release-0.3.3.md)、[0.3.2](docs/release-0.3.2.md)、[0.2.16](docs/release-0.2.16.md) |
+| 历史更新 | [0.3.6](docs/release-0.3.6.md)、[0.3.5](docs/release-0.3.5.md)、[0.3.4](docs/release-0.3.4.md)、[0.3.3](docs/release-0.3.3.md)、[0.3.2](docs/release-0.3.2.md)、[0.2.16](docs/release-0.2.16.md) |
 
 ## 来源与许可
 

@@ -4,6 +4,7 @@ build/
 src/generated/resources/.cache/
 out/
 /bin/
+outputs/
 .eclipse/
 run/
 run-*/
