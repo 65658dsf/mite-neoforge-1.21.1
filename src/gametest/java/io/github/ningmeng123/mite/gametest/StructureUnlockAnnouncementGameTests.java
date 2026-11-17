@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.advancement.StructureAdvancements;
 import io.github.ningmeng123.mite.survival.DeathOrbQueue;
 import io.github.ningmeng123.mite.rules.StructureUnlockRules.Metric;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.protocol.PacketFlow;
@@ -200,6 +202,83 @@ public final class StructureUnlockAnnouncementGameTests {
     }
 
     @GameTest(template="empty")
+    public static void allTwentyOneStructureNoticesSendOnceAndSurviveNativeRelogin(GameTestHelper h) {
+        try (WorldState world=new WorldState(h); Session session=new Session(h)) {
+            world.explorationState.complete();session.drain();
+            int allStructures=StructureAdvancements.ALL_ENABLED;
+            h.assertValueEqual(Integer.bitCount(allStructures),21,"The trusted snapshot covers all twenty-one structure families");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),allStructures,60L),21,
+                    "Every unlocked structure family sends its own first chat notice");
+            List<ClientboundSystemChatPacket> packets=session.drain();
+            h.assertValueEqual(packets.size(),21,"All twenty-one notices reach the actual player connection");
+            assertAll(h,packets.subList(0,4),60L);
+            assertExplorationPackets(h,packets.subList(4,packets.size()),60L);
+            h.assertValueEqual(marker(session.player()).getInt("seen"),allStructures,
+                    "The persistent marker records every delivered structure family");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),allStructures,60L),0,
+                    "A repeated complete snapshot sends no duplicate notice");
+            h.assertTrue(session.drain().isEmpty(),"Repeated delivery leaves the native chat connection empty");
+            CompoundTag saved=session.player().saveWithoutId(new CompoundTag());
+            h.assertValueEqual(saved.getCompound("NeoForgeData").getCompound(Player.PERSISTED_NBT_TAG)
+                    .getCompound(StructureUnlockAnnouncements.DATA_KEY).getInt("seen"),allStructures,
+                    "Native player saving includes all twenty-one notice bits");
+            world.at(0L,0);
+            session.reconnect();
+            h.assertValueEqual(marker(session.player()).getInt("seen"),allStructures,
+                    "The actual player-file relogin preserves every exploration notice");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),allStructures,1L),0,
+                    "Relogin and calendar rollback never replay saved exploration notices");
+            h.assertTrue(session.drain().isEmpty(),"The reconnected player receives no repeated structure chat");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void existingFourNoticeMarkerReceivesAllSeventeenExplorationNoticesOnce(GameTestHelper h) {
+        try (WorldState world=new WorldState(h); Session session=new Session(h)) {
+            world.explorationState.complete();session.drain();
+            CompoundTag notices=new CompoundTag();notices.putInt("version",1);notices.putInt("seen",15);
+            CompoundTag persisted=session.player().getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+            persisted.put(StructureUnlockAnnouncements.DATA_KEY,notices);
+            session.player().getPersistentData().put(Player.PERSISTED_NBT_TAG,persisted);
+            h.assertValueEqual(ALL,15,"The four existing notice bits retain their saved assignments");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),StructureAdvancements.ALL_ENABLED,60L),17,
+                    "Existing players receive every newly supported exploration notice");
+            assertExplorationPackets(h,session.drain(),60L);
+            h.assertValueEqual(marker(session.player()).getInt("version"),1,"Exploration notices retain the compatible marker schema");
+            h.assertValueEqual(marker(session.player()).getInt("seen"),StructureAdvancements.ALL_ENABLED,
+                    "The upgraded player retains the original bits alongside all seventeen new notices");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),StructureAdvancements.ALL_ENABLED,60L),0,
+                    "An upgraded player receives each exploration notice once");
+            h.assertTrue(session.drain().isEmpty(),"Upgrade delivery never replays the four original notices");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
+    public static void actualFortressDistanceGateSendsOneLocalizedChatAtTheCompletedThreshold(GameTestHelper h) {
+        try (WorldState world=new WorldState(h); Session session=new Session(h)) {
+            int fortress=StructureAdvancements.Entry.FORTRESS.enabledBit();
+            h.assertTrue((StructureUnlockAnnouncements.enabled(world.level,world.enabledOptions())&fortress)!=0,
+                    "The real Nether generator includes its fortress structure set");
+            world.explorationState.values(java.util.Map.of(Metric.NETHER_WALK_CM,50_000L));
+            world.at(738_000L,0);session.drain();
+            assertNoNewNotice(h,world,session,0,32L);
+            world.explorationState.values(java.util.Map.of(Metric.NETHER_WALK_CM,50_001L));
+            h.assertValueEqual(world.available(),fortress,"Completing strictly over five hundred Nether blocks releases only the fortress");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),32L),1,
+                    "The newly completed fortress gate sends one real chat packet");
+            assertExplorationPacket(h,only(h,session.drain()),StructureAdvancements.Entry.FORTRESS,32L);
+            h.assertValueEqual(marker(session.player()).getInt("seen"),fortress,
+                    "Only the delivered fortress notice is consumed for this player");
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),32L),0,
+                    "An unchanged completed fortress gate cannot repeat its notice");
+            h.assertTrue(session.drain().isEmpty(),"The next fortress snapshot leaves chat empty");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="empty")
     public static void disabledWorldNativeLoginAndAnnouncementTickSendNoFalseUnlocks(GameTestHelper h) {
         try (WorldState world=new WorldState(h); Session session=new Session(h)) {
             h.assertFalse(world.level.getServer().getWorldData().worldGenOptions().generateStructures(),
@@ -225,7 +304,7 @@ public final class StructureUnlockAnnouncementGameTests {
             CompoundTag persisted=session.player().getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
             persisted.putString("other_fixture_marker","preserve");
             session.player().getPersistentData().put(Player.PERSISTED_NBT_TAG,persisted);
-            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),1<<12,1L),0,
+            h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),1<<30,1L),0,
                     "Unknown snapshot bits cannot send or consume a structure notice");
             world.at(738_000L,0);
             h.assertValueEqual(StructureUnlockAnnouncements.deliver(session.player(),world.available(),32L),1,"The first eligible structure sends one packet");
@@ -379,6 +458,29 @@ public final class StructureUnlockAnnouncementGameTests {
         h.assertValueEqual(content.getArgs().length,1,"The message carries one authoritative display-day argument");
         h.assertTrue(content.getArgs()[0] instanceof Number&&((Number)content.getArgs()[0]).longValue()==day,
                 "The native packet preserves the full authoritative calendar day");
+    }
+    private static void assertExplorationPackets(GameTestHelper h,List<ClientboundSystemChatPacket> packets,long day) {
+        h.assertValueEqual(packets.size(),17,"Exactly seventeen independent exploration chat packets were sent");
+        int index=0;
+        for (var entry:StructureAdvancements.Entry.values()) {
+            if ((entry.enabledBit()&ALL)==0) assertExplorationPacket(h,packets.get(index++),entry,day);
+        }
+    }
+    private static void assertExplorationPacket(GameTestHelper h,ClientboundSystemChatPacket packet,StructureAdvancements.Entry entry,long day) {
+        h.assertFalse(packet.overlay(),"Exploration unlocks appear in ordinary chat");
+        h.assertValueEqual(packet.content().getStyle().getColor(),TextColor.fromLegacyFormat(ChatFormatting.AQUA),
+                "Exploration unlock chat carries its intended color");
+        h.assertTrue(packet.content().getContents() instanceof TranslatableContents,"Exploration chat is localized on the client");
+        var content=(TranslatableContents)packet.content().getContents();
+        h.assertValueEqual(content.getKey(),PREFIX+"exploration","The generic exploration message is used for each new family");
+        h.assertValueEqual(content.getArgs().length,2,"Exploration notices carry the display day and structure title");
+        h.assertTrue(content.getArgs()[0] instanceof Number&&((Number)content.getArgs()[0]).longValue()==day,
+                "Exploration packets retain the authoritative display day");
+        h.assertTrue(content.getArgs()[1] instanceof Component,"Structure titles remain localized components inside the chat packet");
+        Component title=(Component)content.getArgs()[1];
+        h.assertTrue(title.getContents() instanceof TranslatableContents,"The structure title is translated by the receiving client");
+        h.assertValueEqual(((TranslatableContents)title.getContents()).getKey(),"advancement.mite.structures."+entry.path()+".title",
+                "Each exploration packet names its exact unlocked structure family");
     }
 
     private static final class WorldState implements AutoCloseable {

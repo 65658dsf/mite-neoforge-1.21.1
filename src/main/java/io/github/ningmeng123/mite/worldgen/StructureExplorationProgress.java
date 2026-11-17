@@ -87,27 +87,27 @@ public final class StructureExplorationProgress {
         var result = EnumSet.noneOf(Metric.class);
         if (player.getAbilities().flying || player.isFallFlying()) return result;
         var biome = player.level().getBiome(player.blockPosition());
-        boolean walking = player.onGround() && !player.isPassenger() && !player.isInWaterOrBubble();
+        boolean onFoot = !player.isPassenger() && !player.isInWaterOrBubble();
         boolean boat = player.getVehicle() instanceof Boat vessel && vessel.isInWater() && !vessel.isUnderWater();
         if (player.level().dimension().equals(Level.OVERWORLD)) {
             if (biome.is(BiomeTags.IS_OCEAN)) {
                 if (boat) result.add(Metric.OCEAN_SAIL_CM);
                 if (!player.isPassenger() && player.isEyeInFluid(FluidTags.WATER)) result.add(Metric.OCEAN_DIVE_CM);
             }
-            if ((biome.is(Biomes.SWAMP) || biome.is(Biomes.MANGROVE_SWAMP)) && (walking || boat))
+            if ((biome.is(Biomes.SWAMP) || biome.is(Biomes.MANGROVE_SWAMP)) && (onFoot || boat))
                 result.add(Metric.SWAMP_TRAVEL_CM);
-            if (walking) {
+            if (onFoot) {
                 if (biome.is(Biomes.DESERT)) result.add(Metric.DESERT_WALK_CM);
                 if (biome.is(BiomeTags.IS_JUNGLE)) result.add(Metric.JUNGLE_WALK_CM);
                 if (snow(biome)) result.add(Metric.SNOW_WALK_CM);
                 if (biome.is(Biomes.DARK_FOREST)) result.add(Metric.DARK_FOREST_WALK_CM);
                 if (player.getY() < 0D) result.add(Metric.UNDERGROUND_WALK_CM);
-                if (player.getY() <= -40D && player.isShiftKeyDown()) result.add(Metric.DEEP_SNEAK_CM);
+                if (player.getY() <= -40D && player.onGround() && player.isShiftKeyDown()) result.add(Metric.DEEP_SNEAK_CM);
             }
-        } else if (player.level().dimension().equals(Level.NETHER) && walking) {
+        } else if (player.level().dimension().equals(Level.NETHER) && onFoot) {
             result.add(Metric.NETHER_WALK_CM);
             if (biome.is(Biomes.SOUL_SAND_VALLEY)) result.add(Metric.SOUL_VALLEY_WALK_CM);
-        } else if (player.level().dimension().equals(Level.END) && walking
+        } else if (player.level().dimension().equals(Level.END) && onFoot
                 && player.getX() * player.getX() + player.getZ() * player.getZ() > 1_000_000D) {
             result.add(Metric.END_ISLAND_WALK_CM);
         }
@@ -153,7 +153,8 @@ public final class StructureExplorationProgress {
         }
     }
 
-    @SubscribeEvent public static void tick(PlayerTickEvent.Post event) {
+    // Connection ticking restores the accepted position after player physics, so sample before that simulation.
+    @SubscribeEvent public static void tick(PlayerTickEvent.Pre event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         sample(player);
         if (player.tickCount % 20 == 0) reconcileStatistics(player, false);

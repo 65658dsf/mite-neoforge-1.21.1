@@ -20,7 +20,8 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 @EventBusSubscriber(modid=Mite.MOD_ID)
 public final class StructureUnlockAnnouncements {
     public static final int VILLAGE=1, END_PORTAL=2, RUINED_PORTAL=4, PILLAGER_OUTPOST=8;
-    private static final int ALL_NOTICES=VILLAGE|END_PORTAL|RUINED_PORTAL|PILLAGER_OUTPOST;
+    private static final int LEGACY_NOTICES=VILLAGE|END_PORTAL|RUINED_PORTAL|PILLAGER_OUTPOST;
+    private static final int ALL_NOTICES=StructureAdvancements.ALL_ENABLED;
     public static final String DATA_KEY="mite:structure_unlock_notices";
     private StructureUnlockAnnouncements() {}
 
@@ -93,6 +94,13 @@ public final class StructureUnlockAnnouncements {
                 "message.mite.structure_unlock.ruined_portal",day).withStyle(ChatFormatting.GOLD),false);
         if((pending&PILLAGER_OUTPOST)!=0)player.sendSystemMessage(Component.translatable(
                 "message.mite.structure_unlock.pillager_outpost",day).withStyle(ChatFormatting.RED),false);
+        int explorationPending=pending&~LEGACY_NOTICES;
+        for(var entry:StructureAdvancements.Entry.values()) {
+            if((explorationPending&entry.enabledBit())!=0)player.sendSystemMessage(Component.translatable(
+                    "message.mite.structure_unlock.exploration",day,
+                    Component.translatable("advancement.mite.structures."+entry.path()+".title"))
+                    .withStyle(ChatFormatting.AQUA),false);
+        }
         notices.putInt("version",1);
         notices.putInt("seen",seen|pending);
         persisted.put(DATA_KEY,notices);

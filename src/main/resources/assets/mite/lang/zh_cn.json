@@ -1004,6 +1004,7 @@
   "message.mite.structure_unlock.end_portal": "今天是第 %s 天：主世界的未探索区块已可生成要塞和末地传送门房间，可用末影之眼寻找并激活。",
   "message.mite.structure_unlock.ruined_portal": "今天是第 %s 天：废弃传送门生成条件已满足，未探索区块现在可以生成废弃传送门。",
   "message.mite.structure_unlock.pillager_outpost": "今天是第 %s 天：掠夺者前哨站生成条件已满足，主世界的未探索区块现在可以生成掠夺者前哨站。",
+  "message.mite.structure_unlock.exploration": "第 %s 天，%s 的生成条件已满足，现在可在尚未探索的区块中生成。",
   "config.jade.plugin_mite.campfire": "篝火燃料",
   "config.jade.plugin_mite.anvil_durability": "铁砧耐久度",
   "config.jade.plugin_mite.livestock_health": "MITE 动物生病原因",

@@ -24,6 +24,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,6 +38,7 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
@@ -43,6 +47,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
@@ -139,6 +144,138 @@ public final class StructureExplorationGameTests {
             player.setPos(player.position().add(2D, 0D, 0D)); StructureExplorationProgress.sample(player);
             h.assertValueEqual(scope.data.value(player.getUUID(), Metric.UNDERGROUND_WALK_CM), before,
                     "Even a short teleport command resets the baseline instead of counting as walking");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void groundedNetherSprintPacketsCountOnlyRestoredServerPositions(GameTestHelper h) {
+        ServerLevel nether = h.getLevel().getServer().getLevel(Level.NETHER);
+        h.assertTrue(nether != null, "The actual Nether dimension is loaded");
+        try (Scope scope = new Scope(h, nether, 72); PlayerFixture f = new PlayerFixture(h, scope)) {
+            scope.fillBiome.accept(Biomes.SOUL_SAND_VALLEY);
+            ServerPlayer player = f.player;
+            Map<BlockPos, BlockState> oldBlocks = new HashMap<>();
+            boolean[] sampledAirborne = {false};
+            Consumer<PlayerTickEvent.Post> observePhysics = event -> {
+                if (event.getEntity() == player && !player.onGround()) sampledAirborne[0] = true;
+            };
+            try {
+                for (int x = -1; x <= 4; x++) for (int z = -1; z <= 1; z++) for (int y = -1; y <= 2; y++) {
+                    BlockPos pos = scope.pos.offset(x, y, z);
+                    oldBlocks.put(pos, scope.level.getBlockState(pos));
+                    scope.level.setBlock(pos, y == -1 ? Blocks.STONE.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
+                }
+                Vec3 start = Vec3.atBottomCenterOf(scope.pos);
+                player.teleportTo(scope.level, start.x, start.y, start.z, 0F, 0F);
+                f.acknowledgeTeleport(h);
+                player.connection.resetPosition();
+                StructureExplorationProgress.reset(player);
+                player.setOnGround(true);
+                player.setDeltaMovement(Vec3.ZERO);
+                player.connection.tick();
+                NeoForge.EVENT_BUS.addListener(observePhysics);
+                for (int step = 1; step <= 4; step++) {
+                    double x = start.x + step * .25D;
+                    player.setSprinting(true);
+                    player.connection.handleMovePlayer(new ServerboundMovePlayerPacket.Pos(x, start.y, start.z, true));
+                    h.assertTrue(player.onGround() && player.isSprinting() && Math.abs(player.getX() - x) < 1E-9D,
+                            "The native listener accepts each flat grounded sprint movement packet");
+                    player.setDeltaMovement(.05D, 0D, 0D);
+                    player.connection.tick();
+                    h.assertTrue(Math.abs(player.getX() - x) < 1E-9D,
+                            "The native connection restores the accepted client position after player physics");
+                    h.assertValueEqual(scope.data.value(player.getUUID(), Metric.NETHER_WALK_CM), step * 25L,
+                            "Final server positions credit the exact grounded sprint distance");
+                }
+                h.assertTrue(sampledAirborne[0], "Native player physics can clear the ground flag before the connection restores position");
+                player.setDeltaMovement(.05D, 0D, 0D);
+                player.connection.tick();
+                h.assertValueEqual(scope.data.value(player.getUUID(), Metric.NETHER_WALK_CM), 100L,
+                        "Temporary idle-tick physics cannot add exploration distance");
+                h.assertValueEqual(scope.data.value(player.getUUID(), Metric.SOUL_VALLEY_WALK_CM), 100L,
+                        "Soul valley progress uses the same final accepted sprint distance");
+            } finally {
+                NeoForge.EVENT_BUS.unregister(observePhysics);
+                oldBlocks.forEach((pos, state) -> scope.level.setBlock(pos, state, 2));
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void netherSprintJumpsCountTakeoffAirborneAndLandingHorizontalTravel(GameTestHelper h) {
+        ServerLevel nether = h.getLevel().getServer().getLevel(Level.NETHER);
+        h.assertTrue(nether != null, "The actual Nether dimension is loaded");
+        try (Scope scope = new Scope(h, nether, 72); PlayerFixture f = new PlayerFixture(h, scope)) {
+            scope.fillBiome.accept(Biomes.SOUL_SAND_VALLEY);
+            ServerPlayer player = f.player;
+            Vec3 start = player.position();
+            player.setSprinting(true);
+            player.setOnGround(true);
+            StructureExplorationProgress.sample(player);
+            player.setPos(start.add(1D, 0D, 0D));
+            StructureExplorationProgress.sample(player);
+            h.assertValueEqual(scope.data.value(player.getUUID(), Metric.NETHER_WALK_CM), 100L,
+                    "Grounded sprinting counts as travel on foot");
+            player.setOnGround(false);
+            player.setPos(start.add(1.5D, .4D, 0D));
+            StructureExplorationProgress.sample(player);
+            player.setPos(start.add(2D, .8D, 0D));
+            StructureExplorationProgress.sample(player);
+            player.setPos(start.add(2.5D, .4D, 0D));
+            StructureExplorationProgress.sample(player);
+            player.setOnGround(true);
+            player.setPos(start.add(3D, 0D, 0D));
+            StructureExplorationProgress.sample(player);
+            h.assertValueEqual(scope.data.value(player.getUUID(), Metric.NETHER_WALK_CM), 300L,
+                    "A sprint jump includes takeoff, airborne and landing horizontal segments");
+            h.assertValueEqual(scope.data.value(player.getUUID(), Metric.SOUL_VALLEY_WALK_CM), 300L,
+                    "Soul valley exploration includes the same sprint jump");
+            player.setOnGround(false);
+            player.setPos(start.add(3D, .8D, 0D));
+            StructureExplorationProgress.sample(player);
+            player.setOnGround(true);
+            player.setPos(start.add(3D, 0D, 0D));
+            StructureExplorationProgress.sample(player);
+            h.assertValueEqual(scope.data.value(player.getUUID(), Metric.NETHER_WALK_CM), 300L,
+                    "A vertical-only jump adds no horizontal distance");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void overworldSprintJumpsCountBiomeTravelButDeepSneakingStillRequiresGround(GameTestHelper h) {
+        try (Scope scope = new Scope(h); PlayerFixture f = new PlayerFixture(h, scope)) {
+            ServerPlayer player = f.player;
+            Vec3 start = new Vec3(scope.pos.getX() + .5D, -41D, scope.pos.getZ() + .5D);
+            player.setSprinting(true);
+            player.setShiftKeyDown(true);
+            for (var entry : Map.of(Biomes.DESERT, Metric.DESERT_WALK_CM, Biomes.JUNGLE, Metric.JUNGLE_WALK_CM,
+                    Biomes.SNOWY_PLAINS, Metric.SNOW_WALK_CM, Biomes.DARK_FOREST, Metric.DARK_FOREST_WALK_CM,
+                    Biomes.SWAMP, Metric.SWAMP_TRAVEL_CM).entrySet()) {
+                scope.fillBiome.accept(entry.getKey());
+                player.setPos(start);
+                player.setOnGround(true);
+                StructureExplorationProgress.reset(player);
+                StructureExplorationProgress.sample(player);
+                player.setOnGround(false);
+                player.setPos(start.add(.5D, .4D, 0D));
+                StructureExplorationProgress.sample(player);
+                player.setOnGround(true);
+                player.setPos(start.add(1D, 0D, 0D));
+                StructureExplorationProgress.sample(player);
+                h.assertValueEqual(scope.data.value(player.getUUID(), entry.getValue()), 100L,
+                        "Each overworld foot-travel biome includes sprint jumps: " + entry.getValue());
+            }
+            h.assertValueEqual(scope.data.value(player.getUUID(), Metric.UNDERGROUND_WALK_CM), 500L,
+                    "Underground travel includes all five horizontal jump paths");
+            h.assertValueEqual(scope.data.value(player.getUUID(), Metric.DEEP_SNEAK_CM), 0L,
+                    "Holding sneak during airborne travel cannot satisfy deep grounded sneaking");
+            player.setPos(player.position().add(1D, 0D, 0D));
+            StructureExplorationProgress.sample(player);
+            h.assertValueEqual(scope.data.value(player.getUUID(), Metric.DEEP_SNEAK_CM), 100L,
+                    "A subsequent grounded sneak segment still advances deep sneaking");
         }
         h.succeed();
     }
@@ -277,11 +414,14 @@ public final class StructureExplorationGameTests {
         private final Runnable restoreBiome;
         private final Consumer<ResourceKey<Biome>> fillBiome;
         private Scope(GameTestHelper h) {
-            level = h.getLevel(); data = StructureExplorationData.get(level);
+            this(h, h.getLevel(), -40);
+        }
+        private Scope(GameTestHelper h, ServerLevel level, int height) {
+            this.level = level; data = StructureExplorationData.get(level);
             saved = data.save(new CompoundTag(), level.registryAccess()); dirty = data.isDirty();
             data.restore(new CompoundTag());
             BlockPos origin = h.absolutePos(new BlockPos(1, 2, 1));
-            pos = new BlockPos((origin.getX() & ~15) + 8, -40, (origin.getZ() & ~15) + 8);
+            pos = new BlockPos((origin.getX() & ~15) + 8, height, (origin.getZ() & ~15) + 8);
             var chunk = level.getChunkAt(pos);
             var section = chunk.getSection(chunk.getSectionIndex(pos.getY()));
             var old = section.getBiomes();
@@ -313,6 +453,8 @@ public final class StructureExplorationGameTests {
             channel = new EmbeddedChannel(connection);
             NetworkRegistry.configureMockConnection(connection);
             player.server.getPlayerList().placeNewPlayer(connection, player, cookie);
+            if (player.serverLevel() != scope.level)
+                player.teleportTo(scope.level, scope.pos.getX() + .5D, scope.pos.getY(), scope.pos.getZ() + .5D, 0F, 0F);
             player.setGameMode(GameType.SURVIVAL); player.setNoGravity(true); player.setOnGround(true);
             player.moveTo(scope.pos.getCenter());
             player.getInventory().clearContent(); player.removeAllEffects();
@@ -321,6 +463,14 @@ public final class StructureExplorationGameTests {
             h.assertTrue(player.isAlive() && !player.isCreative() && !player.isSpectator(),
                     "The exploration fixture is a normal living survival player, not the always-creative GameTest mock subclass");
             StructureExplorationProgress.reset(player);
+        }
+        private void acknowledgeTeleport(GameTestHelper h) {
+            channel.runPendingTasks();
+            int teleportId = -1;
+            for (Object packet : channel.outboundMessages())
+                if (packet instanceof ClientboundPlayerPositionPacket position) teleportId = position.getId();
+            h.assertTrue(teleportId >= 0, "Native login and positioning emit a teleport confirmation identifier");
+            player.connection.handleAcceptTeleportPacket(new ServerboundAcceptTeleportationPacket(teleportId));
         }
         @Override public void close() {
             try {
