@@ -97,25 +97,29 @@ public final class AsyncMeleePursuitGameTests {
     public static void replacementTargetEquipmentAndOriginChangesCancelObsoleteWorkAndRespondNatively(GameTestHelper h) {
         Fixture f=new Fixture(h,false);
         f.ready(() -> {
-            f.find();var oldTargetTask=AsyncMeleePursuit.state(f.mob).task;
-            Player replacement=h.makeMockPlayer(GameType.SURVIVAL);
-            f.players.add(replacement);replacement.moveTo(Vec3.atBottomCenterOf(f.origin.east(10)));
-            f.player=replacement;f.mob.setTarget(replacement);
-            h.assertTrue(MeleePursuitPaths.reaches(f.mob,f.find(),replacement) && !MeleePursuitPaths.pending(f.mob),
-                    "A replacement target receives a fresh synchronous response rather than an old task's path");
-            h.assertTrue(oldTargetTask.cancelled(),"The old target's task is cancelled");
-            MeleePursuitPaths.invalidate(f.mob);f.find();var oldGearTask=AsyncMeleePursuit.state(f.mob).task;
-            f.mob.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.IRON_SWORD));
-            h.assertTrue(MeleePursuitPaths.reaches(f.mob,f.find(),replacement) && !MeleePursuitPaths.pending(f.mob),
-                    "Weapon changes immediately re-evaluate physical attack endpoints");
-            h.assertTrue(oldGearTask.cancelled(),"Equipment changes cancel the obsolete query");
-            MeleePursuitPaths.invalidate(f.mob);f.find();var oldOriginTask=AsyncMeleePursuit.state(f.mob).task;
-            f.mob.moveTo(f.mob.getX()+.25D,f.mob.getY(),f.mob.getZ(),0F,0F);
-            h.assertTrue(MeleePursuitPaths.reaches(f.mob,f.find(),replacement) && !MeleePursuitPaths.pending(f.mob),
-                    "Sub-block movement does not install a path computed from the old origin");
-            h.assertTrue(oldOriginTask.cancelled(),"Movement cancels the previous origin's task");
-            h.assertValueEqual(MeleePursuitPaths.searchStats(f.mob).failures(),0,"Input changes do not become failed pursuits");
-            f.close();h.succeed();
+            // Keep all three input-change fallbacks independent of the two-decision server budget.
+            try (var settings = io.github.ningmeng123.mite.gametest.PathfindingTestSettings.unboundedAsync()) {
+                f.find();var oldTargetTask=AsyncMeleePursuit.state(f.mob).task;
+                Player replacement=h.makeMockPlayer(GameType.SURVIVAL);
+                f.players.add(replacement);replacement.moveTo(Vec3.atBottomCenterOf(f.origin.east(10)));
+                f.player=replacement;f.mob.setTarget(replacement);
+                h.assertTrue(MeleePursuitPaths.reaches(f.mob,f.find(),replacement) && !MeleePursuitPaths.pending(f.mob),
+                        "A replacement target receives a fresh synchronous response rather than an old task's path");
+                h.assertTrue(oldTargetTask.cancelled(),"The old target's task is cancelled");
+                MeleePursuitPaths.invalidate(f.mob);f.find();var oldGearTask=AsyncMeleePursuit.state(f.mob).task;
+                f.mob.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.IRON_SWORD));
+                h.assertTrue(MeleePursuitPaths.reaches(f.mob,f.find(),replacement) && !MeleePursuitPaths.pending(f.mob),
+                        "Weapon changes immediately re-evaluate physical attack endpoints");
+                h.assertTrue(oldGearTask.cancelled(),"Equipment changes cancel the obsolete query");
+                MeleePursuitPaths.invalidate(f.mob);f.find();var oldOriginTask=AsyncMeleePursuit.state(f.mob).task;
+                f.mob.moveTo(f.mob.getX()+.25D,f.mob.getY(),f.mob.getZ(),0F,0F);
+                h.assertTrue(MeleePursuitPaths.reaches(f.mob,f.find(),replacement) && !MeleePursuitPaths.pending(f.mob),
+                        "Sub-block movement does not install a path computed from the old origin");
+                h.assertTrue(oldOriginTask.cancelled(),"Movement cancels the previous origin's task");
+                h.assertValueEqual(MeleePursuitPaths.searchStats(f.mob).failures(),0,"Input changes do not become failed pursuits");
+                f.close();h.succeed();
+
+            }
         });
     }
 

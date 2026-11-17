@@ -132,13 +132,15 @@ public final class MeleePathPerformanceGameTests {
             h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
                     "Moving the pursuer also respects the same short native-query interval");
             final long beforeRetry = searches;
-            h.runAfterDelay(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS, () -> {
-                try {
-                    f.find();
-                    h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > beforeRetry,
-                            "Changed geometry permits a new native query as soon as the short interval expires");
-                    h.succeed();
-                } finally { f.close(); }
+            h.startSequence().thenExecuteAfter(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS, () -> {
+                PathfindingTestSettings.runSynchronous(() -> {
+                    try {
+                        f.find();
+                        h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > beforeRetry,
+                                "Changed geometry permits a new native query as soon as the short interval expires");
+                        h.succeed();
+                    } finally { f.close(); }
+                });
             });
         });
     }
@@ -261,7 +263,7 @@ public final class MeleePathPerformanceGameTests {
             return zombie;
         }
 
-        Path find() { return MeleePursuitPaths.find(mob, player, null); }
+        Path find() { return PathfindingTestSettings.synchronousResult(() -> MeleePursuitPaths.find(mob, player, null)); }
 
         void openPassage() {
             helper.getLevel().setBlock(origin.east(3), Blocks.AIR.defaultBlockState(), 2);
@@ -313,7 +315,7 @@ public final class MeleePathPerformanceGameTests {
 
         void guard(Runnable action) {
             if (closed) return;
-            try { action.run(); } catch (RuntimeException | Error failure) { close(); throw failure; }
+            try { PathfindingTestSettings.runSynchronous(action); } catch (RuntimeException | Error failure) { close(); throw failure; }
         }
 
         GameTestSequence whenReady(Runnable action) {

@@ -3,7 +3,6 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
 import io.github.ningmeng123.mite.crafting.TimedCraftingController;
-import io.github.ningmeng123.mite.registry.MiteItems;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -145,17 +144,15 @@ public final class WorkbenchEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void crafterRequiresAdjacentEquipmentRatherThanBiomeOrPlayerInventory(GameTestHelper helper) {
+    public static void retiredCrafterCannotBeEnabledByAnyAdjacentMaterialWorkbench(GameTestHelper helper) {
         BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
         var result = new ItemStack(MiteTools.get("minecraft:iron_axe"));
-        helper.assertTrue(!WorkbenchRules.allowsCrafter(helper.getLevel(), pos, result), "Unassisted machine cannot make iron tools");
-        helper.getLevel().setBlockAndUpdate(pos.east(), MiteWorkbenches.TABLES.get("copper").get().defaultBlockState());
-        helper.assertTrue(!WorkbenchRules.allowsCrafter(helper.getLevel(), pos, result), "Copper support is too weak for iron tool");
-        helper.getLevel().setBlockAndUpdate(pos.east(), MiteWorkbenches.TABLES.get("iron").get().defaultBlockState());
-        helper.assertTrue(WorkbenchRules.allowsCrafter(helper.getLevel(), pos, result), "Adjacent iron equipment permits iron tool");
+        for (var entry : MiteWorkbenches.TABLES.entrySet()) {
+            helper.getLevel().setBlockAndUpdate(pos.east(), entry.getValue().get().defaultBlockState());
+            helper.assertFalse(WorkbenchRules.allowsCrafter(helper.getLevel(), pos, result),
+                    "A retired crafter remains disabled beside the " + entry.getKey() + " workbench");
+        }
         helper.getLevel().setBlockAndUpdate(pos.east(), Blocks.AIR.defaultBlockState());
-        helper.getLevel().setBlockAndUpdate(pos.east(2), MiteWorkbenches.TABLES.get("adamantium").get().defaultBlockState());
-        helper.assertTrue(!WorkbenchRules.allowsCrafter(helper.getLevel(), pos, result), "Distant equipment must not be discovered or cached");
         helper.succeed();
     }
 

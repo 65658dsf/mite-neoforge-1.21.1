@@ -5,7 +5,6 @@ import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
@@ -103,10 +102,6 @@ public final class WorkbenchRules {
                 && ItemStack.matches(result, recipe.get().value().assemble(grid.asCraftInput(), level.registryAccess()));
     }
     public static boolean allowsCrafter(Level level, BlockPos pos, ItemStack result) {
-        float required = required(result);
-        if (required <= 0) return true;
-        // Modern automation uses an adjacent physical bench as its manufacturing equipment.
-        for (Direction direction : Direction.values()) if (capacity(level.getBlockState(pos.relative(direction))) >= required) return true;
         return false;
     }
 }

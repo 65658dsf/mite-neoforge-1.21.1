@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -24,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
@@ -42,9 +40,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -84,35 +80,6 @@ public final class WoodenEquipmentGameTests {
             helper.assertTrue(helper.getLevel().getRecipeManager().byKey(vanilla(id)).isPresent(), "The other wooden recipe remains: " + id);
         }
         helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 40)
-    public static void realRedstoneCraftersCannotProduceEitherRetiredTool(GameTestHelper helper) {
-        List<CrafterBlockEntity> crafters = new ArrayList<>();
-        for (int index = 0; index < 2; index++) {
-            int z = 1 + index * 3;
-            BlockPos crafterPos = new BlockPos(1, 1, z);
-            helper.setBlock(crafterPos, Blocks.CRAFTER.defaultBlockState()
-                    .setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
-            helper.setBlock(new BlockPos(2, 1, z), Blocks.CHEST);
-            CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(crafterPos));
-            List<ItemStack> grid = retiredToolGrid(index == 1);
-            for (int slot = 0; slot < 9; slot++) crafter.setItem(slot, grid.get(slot).copy());
-            crafters.add(crafter);
-            helper.pulseRedstone(new BlockPos(0, 1, z), 5);
-        }
-        helper.runAfterDelay(9, () -> {
-            for (int index = 0; index < 2; index++) {
-                Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(new BlockPos(2, 1, 1 + index * 3)));
-                helper.assertTrue(chest.isEmpty(), "The actual crafter emits no retired tool or replacement item");
-                List<ItemStack> expected = retiredToolGrid(index == 1);
-                for (int slot = 0; slot < 9; slot++) {
-                    assertSameStack(helper, expected.get(slot), crafters.get(index).getItem(slot),
-                            "A rejected recipe consumes no input at crafter " + index + ", slot " + slot);
-                }
-            }
-            helper.succeed();
-        });
     }
 
     @SuppressWarnings("deprecation") // The raw API deliberately provides the identical-seed pre-GLM oracle.

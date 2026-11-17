@@ -15,7 +15,6 @@
     "minecraft:smoker": {"difficulty": 1600.0, "required_bench": null, "source_order": -1},
     "minecraft:campfire": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
     "minecraft:soul_campfire": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
-    "minecraft:beehive": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
-    "minecraft:crafter": {"difficulty": 640.0, "required_bench": null, "source_order": -1}
+    "minecraft:beehive": {"difficulty": 640.0, "required_bench": null, "source_order": -1}
   }
 }

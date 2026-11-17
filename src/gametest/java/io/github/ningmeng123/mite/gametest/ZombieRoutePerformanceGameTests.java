@@ -90,15 +90,17 @@ public final class ZombieRoutePerformanceGameTests {
             h.getLevel().setBlock(f.player.blockPosition().below(), Blocks.BEDROCK.defaultBlockState(), 2);
             var failed = f.digger.pursuitPlan();
             h.assertTrue(!failed.completeWalkingRoute() && !failed.choosesBreaking(), "The isolated high perch has no route or excavation shortcut");
-            h.runAfterDelay(25, () -> {
-                try {
-                    h.assertTrue(f.digger.pursuitPlan() == failed, "A stationary impossible pursuit does not restart the expensive search after twenty ticks");
-                    f.player.moveTo(f.player.getX() + 1.1D, f.player.getY(), f.player.getZ(), 0F, 0F);
-                    h.assertTrue(f.digger.pursuitPlan() != failed, "Real target movement invalidates the failed plan immediately");
-                    h.succeed();
-                } finally {
-                    f.close();
-                }
+            h.startSequence().thenExecuteAfter(25, () -> {
+                PathfindingTestSettings.runSynchronous(() -> {
+                    try {
+                        h.assertTrue(f.digger.pursuitPlan() == failed, "A stationary impossible pursuit does not restart the expensive search after twenty ticks");
+                        f.player.moveTo(f.player.getX() + 1.1D, f.player.getY(), f.player.getZ(), 0F, 0F);
+                        h.assertTrue(f.digger.pursuitPlan() != failed, "Real target movement invalidates the failed plan immediately");
+                        h.succeed();
+                    } finally {
+                        f.close();
+                    }
+                });
             });
         });
     }
@@ -126,25 +128,29 @@ public final class ZombieRoutePerformanceGameTests {
             }
             h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
                     "Movement and repeated digging/melee requests cannot force another same-tick native query");
-            h.runAfterDelay(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS - 1, () -> {
-                f.player.moveTo(f.origin.getX() + 8.5D, f.origin.getY() + 12D,
-                        f.origin.getZ() + .5D, 0F, 0F);
-                f.digger.canUse(); melee.canUse();
-                h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
-                        "A moving unreachable target cannot bypass the final tick of the minimum retry interval");
-                h.runAfterDelay(1, () -> {
-                    try {
-                        // Ensure both original search positions have changed when the deadline
-                        // arrives, so this is moving-target recovery rather than stationary backoff.
-                        f.player.moveTo(f.origin.getX() + 10.7D, f.origin.getY() + 12D,
-                                f.origin.getZ() + .5D, 0F, 0F);
-                        f.mob.moveTo(f.origin.getX() + 1.6D, f.origin.getY(),
-                                f.origin.getZ() + .5D, 0F, 0F);
-                        f.digger.canUse();
-                        h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > searches,
-                                "Moving-target pursuit resumes a real query as soon as its short minimum cooldown expires");
-                        h.succeed();
-                    } finally { f.close(); }
+            h.startSequence().thenExecuteAfter(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS - 1, () -> {
+                PathfindingTestSettings.runSynchronous(() -> {
+                    f.player.moveTo(f.origin.getX() + 8.5D, f.origin.getY() + 12D,
+                            f.origin.getZ() + .5D, 0F, 0F);
+                    f.digger.canUse(); melee.canUse();
+                    h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
+                            "A moving unreachable target cannot bypass the final tick of the minimum retry interval");
+                    h.startSequence().thenExecuteAfter(1, () -> {
+                        PathfindingTestSettings.runSynchronous(() -> {
+                            try {
+                                // Ensure both original search positions have changed when the deadline
+                                // arrives, so this is moving-target recovery rather than stationary backoff.
+                                f.player.moveTo(f.origin.getX() + 10.7D, f.origin.getY() + 12D,
+                                        f.origin.getZ() + .5D, 0F, 0F);
+                                f.mob.moveTo(f.origin.getX() + 1.6D, f.origin.getY(),
+                                        f.origin.getZ() + .5D, 0F, 0F);
+                                f.digger.canUse();
+                                h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > searches,
+                                        "Moving-target pursuit resumes a real query as soon as its short minimum cooldown expires");
+                                h.succeed();
+                            } finally { f.close(); }
+                        });
+                    });
                 });
             });
         });
@@ -167,17 +173,21 @@ public final class ZombieRoutePerformanceGameTests {
                     "The initial player movement is deferred instead of starting another search immediately");
             // The player and zombie now stay exactly still. Requiring another position change
             // at the deadline would hide a deferred plan being cached as a new 40-tick failure.
-            h.runAfterDelay(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS - 1, () -> {
-                f.digger.pursuitPlan();
-                h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
-                        "Stopping after the movement does not shorten the minimum query cooldown");
-                h.runAfterDelay(1, () -> {
-                    try {
-                        f.digger.pursuitPlan();
-                        h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > searches,
-                                "The unchanged moved position is queried at tick ten rather than cached for forty more ticks");
-                        h.succeed();
-                    } finally { f.close(); }
+            h.startSequence().thenExecuteAfter(MeleePursuitPaths.MIN_MOVING_RETRY_TICKS - 1, () -> {
+                PathfindingTestSettings.runSynchronous(() -> {
+                    f.digger.pursuitPlan();
+                    h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() == searches,
+                            "Stopping after the movement does not shorten the minimum query cooldown");
+                    h.startSequence().thenExecuteAfter(1, () -> {
+                        PathfindingTestSettings.runSynchronous(() -> {
+                            try {
+                                f.digger.pursuitPlan();
+                                h.assertTrue(MeleePursuitPaths.searchStats(f.mob).searches() > searches,
+                                        "The unchanged moved position is queried at tick ten rather than cached for forty more ticks");
+                                h.succeed();
+                            } finally { f.close(); }
+                        });
+                    });
                 });
             });
         });
@@ -294,7 +304,7 @@ public final class ZombieRoutePerformanceGameTests {
                         "Native ticking chunk status enables the block-update path that invalidates cached gate types");
             }).thenExecute(() -> {
                 if (closed) return;
-                try { action.run(); } catch (RuntimeException | Error failure) { close(); throw failure; }
+                try { PathfindingTestSettings.runSynchronous(action); } catch (RuntimeException | Error failure) { close(); throw failure; }
             });
         }
 

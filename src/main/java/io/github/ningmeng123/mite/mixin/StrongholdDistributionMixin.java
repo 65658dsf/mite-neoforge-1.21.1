@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.mixin;
 
 import io.github.ningmeng123.mite.rules.StructureDistributionRules;
+import io.github.ningmeng123.mite.worldgen.StrongholdRecovery;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.Util;
@@ -43,5 +44,12 @@ public abstract class StrongholdDistributionMixin {
                                     position.x(), 0, position.z(), randomState.sampler())), random::nextInt))
                     .stream().map(position -> new ChunkPos(position.x(), position.z())).toList();
         }, Util.backgroundExecutor()));
+    }
+
+    @Inject(method = "getRingPositionsFor", at = @At("RETURN"), cancellable = true)
+    private void mite$recoverConsumedStrongholdCandidates(ConcentricRingsStructurePlacement placement,
+            CallbackInfoReturnable<List<ChunkPos>> cir) {
+        cir.setReturnValue(StrongholdRecovery.positions((ChunkGeneratorStructureState)(Object)this,
+                placement, cir.getReturnValue()));
     }
 }

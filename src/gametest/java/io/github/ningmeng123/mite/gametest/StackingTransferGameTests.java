@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -44,10 +43,8 @@ import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -450,24 +447,6 @@ public final class StackingTransferGameTests {
             }
         }
         helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 1150)
-    public static void realCrafterPlacesANineIngotBatchAcrossSourceLimitedChestSlots(GameTestHelper helper) {
-        BlockPos local = new BlockPos(1, 1, 1);
-        helper.setBlock(local, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
-        helper.setBlock(local.east(), Blocks.CHEST);
-        CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(local));
-        Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(local.east()));
-        crafter.setItem(0, new ItemStack(Items.IRON_BLOCK));
-        helper.pulseRedstone(local.west(), 5);
-        helper.runAfterDelay(1120, () -> {
-            helper.assertTrue(crafter.isEmpty(), "One actual redstone manufacturing request consumes one iron block after its full source period");
-            helper.assertValueEqual(chest.countItem(Items.IRON_INGOT), 9, "Native crafter output conserves all nine ingots");
-            helper.assertValueEqual(occupied(chest, Items.IRON_INGOT), 2, "Automatic output inserts the batch into eight-plus-one chest slots");
-            assertBounded(helper, chest, Items.IRON_INGOT, 8);
-            helper.succeed();
-        });
     }
 
     @GameTest(template = "empty")

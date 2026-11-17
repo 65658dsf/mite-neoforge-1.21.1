@@ -403,8 +403,15 @@ public final class R196MobSpawning {
         int total = 0;
         for (Entity entity : level.getAllEntities()) if (entity instanceof Mob mob && category(mob) == category
                 && (category == Category.MONSTER || !mob.isPersistenceRequired())
+                && (category != Category.MONSTER || !inactiveNaturalMonster(mob, level))
                 && (deep == null || (R196SpawnRules.sourceY(mob.getBlockY(), underworld(level)) < 60) == deep)) total++;
         return total;
+    }
+    /** Old natural populations outside simulation distance resume using their allowance when they tick again. */
+    private static boolean inactiveNaturalMonster(Mob mob, ServerLevel level) {
+        return mob.getSpawnType() == MobSpawnType.NATURAL && !mob.isPersistenceRequired()
+                && !mob.requiresCustomPersistence() && !mob.hasCustomName()
+                && !level.isPositionEntityTicking(mob.blockPosition());
     }
     public static void tick(ServerLevel level) {
         if (!manages(level) || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) || level.players().stream().noneMatch(player -> !player.isSpectator() && player.isAlive())) return;
@@ -478,7 +485,7 @@ public final class R196MobSpawning {
         chunkLoop: for (var coordinate : chunks.entrySet()) {
             if (coordinate.getValue() || present >= limit) continue;
             ChunkPos chunkPos = new ChunkPos(coordinate.getKey()); LevelChunk chunk = level.getChunkSource().getChunkNow(chunkPos.x, chunkPos.z);
-            if (chunk == null) continue;
+            if (chunk == null || !level.isNaturalSpawningAllowed(chunkPos) || !level.getWorldBorder().isWithinBounds(chunkPos)) continue;
             int upper = Math.min(level.getMaxBuildHeight(), chunk.getHighestSectionPosition() + 16);
             if (upper <= level.getMinBuildHeight()) continue;
             int x = chunkPos.getMinBlockX() + random.nextInt(16), z = chunkPos.getMinBlockZ() + random.nextInt(16);
@@ -499,6 +506,7 @@ public final class R196MobSpawning {
                     int jitter=Math.max(1,extension().spawnJitter(spawnContext,6));
                     trialX += random.nextInt(jitter) - random.nextInt(jitter); trialZ += random.nextInt(jitter) - random.nextInt(jitter);
                     BlockPos position = new BlockPos(trialX, y, trialZ);
+                    if (!naturalPositionAllows(level, position)) continue;
                     Double placementY = positionY(level, position, category);
                     if (placementY == null && selected != null && !selected.modern()) continue;
                     double actualY = placementY == null ? y : placementY;
@@ -520,12 +528,14 @@ public final class R196MobSpawning {
                     mob.moveTo(point.x, point.y, point.z, random.nextFloat() * 360F, 0F);
                     if (mob instanceof Bat bat && hangBats) hang(level, bat);
                     if (overworld && moon.blue() && !day && level.getBrightness(LightLayer.SKY, BlockPos.containing(mob.getX(), mob.getEyeY(), mob.getZ())) > 0) continue;
-                    if (!qualifiesWithEvent(mob, level, MobSpawnType.NATURAL, category != Category.ANIMAL || !moon.blue() || day, actual.modern())) {
+                    if (!naturalPositionAllows(level, mob.blockPosition())
+                            || !qualifiesWithEvent(mob, level, MobSpawnType.NATURAL, category != Category.ANIMAL || !moon.blue() || day, actual.modern())) {
                         if (mob.getBbWidth() < 1F) continue;
                         boolean valid = false;
                         for (double[] offset : new double[][]{{-.5, 0}, {.5, 0}, {0, -.5}, {0, .5}}) {
                             mob.moveTo(point.x + offset[0], point.y, point.z + offset[1], random.nextFloat() * 360F, 0F);
-                            if (qualifiesWithEvent(mob, level, MobSpawnType.NATURAL, category != Category.ANIMAL || !moon.blue() || day, actual.modern())) { valid = true; break; }
+                            if (naturalPositionAllows(level, mob.blockPosition())
+                                    && qualifiesWithEvent(mob, level, MobSpawnType.NATURAL, category != Category.ANIMAL || !moon.blue() || day, actual.modern())) { valid = true; break; }
                         }
                         if (!valid) continue;
                     }
@@ -551,6 +561,10 @@ public final class R196MobSpawning {
             }
         }
         return spawned;
+    }
+    /** Loaded view-distance chunks can be visible without ticking or permitting natural spawns. */
+    private static boolean naturalPositionAllows(ServerLevel level, BlockPos pos) {
+        return level.isPositionEntityTicking(pos) && level.getWorldBorder().isWithinBounds(pos);
     }
     public record NaturalMonsterSpawn(SpawnGroupData group, int monsters) {}
 

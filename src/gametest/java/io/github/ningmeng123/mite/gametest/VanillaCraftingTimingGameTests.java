@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -20,7 +19,6 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
-import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -32,11 +30,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CrafterBlock;
-import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -328,73 +322,6 @@ public final class VanillaCraftingTimingGameTests {
             fixture.tick(fixture.period * 2);
             fixture.assertAmounts(1);
         }
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 700)
-    public static void redstoneCrafterAlsoWaitsForTheChestRuleAndManufacturesOneBatchPerPulse(GameTestHelper helper) {
-        checkRedstoneCrafter(helper, chest());
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 700)
-    public static void redstoneCrafterCannotBypassTheDeepslatePeriod(GameTestHelper helper) {
-        checkRedstoneCrafter(helper, stone("deepslate_tiles", Items.DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES,
-                4, 960.00006F, 0, 1, 3, 4));
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 700)
-    public static void redstoneCrafterCannotBypassTheNewGraniteWallPeriod(GameTestHelper helper) {
-        checkRedstoneCrafter(helper, stone("granite_wall", Items.GRANITE, Items.GRANITE_WALL,
-                8, 1200F, 0, 1, 2, 3, 4, 5));
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 700)
-    public static void redstoneCrafterUsesTheShorterSandstoneWallPeriod(GameTestHelper helper) {
-        checkRedstoneCrafter(helper, stone("sandstone_wall", Items.SANDSTONE, Items.SANDSTONE_WALL,
-                8, 480F, 0, 1, 2, 3, 4, 5));
-    }
-
-    private static void checkRedstoneCrafter(GameTestHelper helper, RecipeCase recipe) {
-        BlockPos position = new BlockPos(1, 1, 1);
-        helper.setBlock(position, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
-        helper.setBlock(position.east(), Blocks.CHEST);
-        CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(position));
-        Container output = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(position.east()));
-        for (int index = 0; index < recipe.slots.length; index++)
-            crafter.setItem(recipe.slots[index], new ItemStack(recipe.ingredients[index], 2));
-        var actual = CrafterBlock.getPotentialResults(helper.getLevel(), crafter.asCraftInput()).orElseThrow();
-        helper.assertValueEqual(actual.id(), ResourceLocation.withDefaultNamespace(recipe.id), "Automation uses the actually loaded recipe");
-        int period = TimedCraftingRules.period(recipe.difficulty, 0, .2F, false);
-        helper.pulseRedstone(position.west(), 5);
-        helper.runAfterDelay(period, () -> {
-            helper.assertTrue(output.isEmpty(), "A real redstone crafter cannot instantly emit the preview");
-            assertMachineInputs(helper, crafter, recipe, 2);
-        });
-        helper.runAfterDelay(period + 9, () -> {
-            helper.assertValueEqual(count(output, recipe.output), recipe.outputCount, "The full manufacturing period emits exactly one batch");
-            assertMachineInputs(helper, crafter, recipe, 1);
-        });
-        helper.runAfterDelay(period * 2 + 15, () -> {
-            helper.assertValueEqual(count(output, recipe.output), recipe.outputCount, "One redstone pulse does not consume a second batch");
-            assertMachineInputs(helper, crafter, recipe, 1);
-            helper.succeed();
-        });
-    }
-
-    private static void assertMachineInputs(GameTestHelper helper, CrafterBlockEntity crafter, RecipeCase recipe, int amount) {
-        for (int slot = 0; slot < 9; slot++) {
-            boolean occupied = false;
-            for (int input : recipe.slots) if (input == slot) occupied = true;
-            helper.assertValueEqual(crafter.getItem(slot).getCount(), occupied ? amount : 0,
-                    "The real crafter consumes inputs only for a completed batch (slot " + slot + ")");
-        }
-    }
-
-    private static int count(Container container, Item item) {
-        int result = 0;
-        for (int slot = 0; slot < container.getContainerSize(); slot++) {
-            if (container.getItem(slot).is(item)) result += container.getItem(slot).getCount();
-        }
-        return result;
     }
 
     private static final class Fixture implements AutoCloseable {

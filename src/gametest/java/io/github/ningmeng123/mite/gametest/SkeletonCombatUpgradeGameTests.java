@@ -12,6 +12,7 @@ import io.github.ningmeng123.mite.enchantment.SourceEnchantmentCombat;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -41,6 +42,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class SkeletonCombatUpgradeGameTests {
+    private static final AtomicInteger SHOT_FIXTURES = new AtomicInteger();
+
     private static <T extends Mob> T spawn(GameTestHelper h, EntityType<T> type) {
         T mob = type.create(h.getLevel());
         BlockPos pos = h.absolutePos(new BlockPos(1, 10, 1));
@@ -260,24 +263,37 @@ public final class SkeletonCombatUpgradeGameTests {
     @GameTest(template = "empty")
     public static void releaseRetainsRandomSpreadAndArrowNeverTracksAfterLaunch(GameTestHelper h) {
         var skeleton = spawn(h, EntityType.SKELETON); var target = spawn(h, EntityType.COW);
-        moveTarget(skeleton, target, 18);
-        Vec3 previous = null; boolean varied = false;
-        for (int seed = 0; seed < 12; ++seed) {
-            Arrow arrow = new Arrow(EntityType.ARROW, h.getLevel()); arrow.setOwner(skeleton);
-            arrow.setPos(skeleton.getX(), skeleton.getEyeY() - .1, skeleton.getZ()); arrow.getRandom().setSeed(seed);
-            SkeletonAiming.shoot(skeleton, arrow, target, 1.6F);
-            Vec3 launch = arrow.getDeltaMovement();
-            if (previous != null && launch.distanceToSqr(previous) > 1e-7) varied = true;
-            previous = launch;
-            target.setPos(target.getX(), target.getY(), target.getZ() + 20);
-            arrow.tick();
-            h.assertTrue(Math.abs(arrow.getDeltaMovement().x - launch.x * .99) < 1e-5
-                    && Math.abs(arrow.getDeltaMovement().z - launch.z * .99) < 1e-5,
-                    "After firing, the arrow only follows native drag and never turns toward target");
-            moveTarget(skeleton, target, 18); arrow.discard();
+        try {
+            // Keep the eighteen-block shot clear of neighboring structures in the randomized test grid.
+            BlockPos origin = new BlockPos(2_300_000 + SHOT_FIXTURES.getAndIncrement() * 64, 96, 2_300_000);
+            for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-1, 0, -2), origin.offset(20, 3, 2)))
+                h.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+            skeleton.moveTo(Vec3.atBottomCenterOf(origin));
+            moveTarget(skeleton, target, 18);
+            Vec3 previous = null; boolean varied = false;
+            for (int seed = 0; seed < 12; ++seed) {
+                Arrow arrow = new Arrow(EntityType.ARROW, h.getLevel()); arrow.setOwner(skeleton);
+                try {
+                    arrow.setPos(skeleton.getX(), skeleton.getEyeY() - .1, skeleton.getZ()); arrow.getRandom().setSeed(seed);
+                    h.assertTrue(SkeletonAiming.aimPoint(skeleton, target) != null, "Each spread sample has a visible target before release");
+                    SkeletonAiming.shoot(skeleton, arrow, target, 1.6F);
+                    Vec3 launch = arrow.getDeltaMovement();
+                    h.assertTrue(launch.lengthSqr() > 1D, "Each native random draw launches a real moving arrow");
+                    if (previous != null && launch.distanceToSqr(previous) > 1e-7) varied = true;
+                    previous = launch;
+                    target.setPos(target.getX(), target.getY(), target.getZ() + 20);
+                    arrow.tick();
+                    h.assertTrue(Math.abs(arrow.getDeltaMovement().x - launch.x * .99) < 1e-5
+                            && Math.abs(arrow.getDeltaMovement().z - launch.z * .99) < 1e-5,
+                            "After firing, the arrow only follows native drag and never turns toward target");
+                    moveTarget(skeleton, target, 18);
+                } finally { arrow.discard(); }
+            }
+            h.assertTrue(varied, "Different native random draws produce different inaccurate shots");
+        } finally {
+            skeleton.discard(); target.discard();
         }
-        h.assertTrue(varied, "Different native random draws produce different inaccurate shots");
-        skeleton.discard(); target.discard(); h.succeed();
+        h.succeed();
     }
 
     @GameTest(template = "empty")

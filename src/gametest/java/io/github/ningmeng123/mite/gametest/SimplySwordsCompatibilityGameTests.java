@@ -40,6 +40,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.item.crafting.SmithingTransformRecipe;
@@ -303,8 +305,9 @@ public final class SimplySwordsCompatibilityGameTests {
     @GameTest(template = "empty", batch = "simplyswords_compat")
     public static void materialAnvilsAndPhysicalWorkbenchesGateTheAddedWeapons(GameTestHelper h) {
         if (absent(h)) return;
-        BlockPos crafter = h.absolutePos(new BlockPos(1, 1, 1));
-        BlockPos bench = crafter.east();
+        BlockPos bench = h.absolutePos(new BlockPos(1, 1, 1));
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var menu = new CraftingMenu(83, player.getInventory(), ContainerLevelAccess.create(h.getLevel(), bench));
         for (String material : ALL_METALS) {
             ItemStack stack = new ItemStack(SimplySwordsCompat.weapon(material, "longsword"));
             EquipmentDurability.setQuality(stack, Quality.POOR);
@@ -325,10 +328,10 @@ public final class SimplySwordsCompatibilityGameTests {
             h.assertTrue(CraftingQuality.lowestDifficulty(stack) >= factor(material) * 200F,
                     "Weapon crafting and quality repair have a positive metal-work difficulty");
             h.getLevel().setBlockAndUpdate(bench, MiteWorkbenches.TABLES.get("flint").get().defaultBlockState());
-            h.assertFalse(WorkbenchRules.allowsCrafter(h.getLevel(), crafter, stack), "A flint bench cannot manufacture metal weapons");
+            h.assertFalse(WorkbenchRules.allows(menu, stack), "A flint player workbench cannot manufacture metal weapons");
             h.getLevel().setBlockAndUpdate(bench, MiteWorkbenches.TABLES.get(material.equals("vibranium")
                     ? "vibranium" : "adamantium").get().defaultBlockState());
-            h.assertTrue(WorkbenchRules.allowsCrafter(h.getLevel(), crafter, stack), "A sufficient adjacent bench enables manufacturing");
+            h.assertTrue(WorkbenchRules.allows(menu, stack), "A sufficient physical player workbench enables manufacturing");
         }
         ItemStack mithril = new ItemStack(SimplySwordsCompat.weapon("mithril", "greathammer"));
         mithril.setDamageValue(1000);

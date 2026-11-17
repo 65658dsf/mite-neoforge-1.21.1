@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.datafixers.util.Pair;
 import io.github.ningmeng123.mite.worldgen.R196StructureGeneration;
+import io.github.ningmeng123.mite.worldgen.StrongholdRecovery;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -47,6 +48,7 @@ public abstract class StructureProgressGateMixin {
     private Pair<BlockPos, Holder<Structure>> mite$filterLockedStructureSearch(ServerLevel level,
             HolderSet<Structure> requested, BlockPos origin, int radius, boolean skipReferenced,
             Operation<Pair<BlockPos, Holder<Structure>>> original) {
+        StrongholdRecovery.recover(level);
         var allowed = requested.stream().filter(holder -> R196StructureGeneration.unlocked(level, holder)).toList();
         if (allowed.isEmpty()) return null;
         return original.call(level, allowed.size() == requested.size() ? requested : HolderSet.direct(allowed),

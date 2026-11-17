@@ -327,7 +327,7 @@ public final class MonsterFarmlandGameTests {
 
     @GameTest(template = "empty")
     public static void playerOnAdjacentFarmlandUsesFasterActuallyAttackableStep(GameTestHelper helper) {
-        try (var fixture = new Fixture(helper)) {
+        try (var settings = PathfindingTestSettings.synchronous(); var fixture = new Fixture(helper)) {
             BlockPos obstacle=fixture.origin.east();fixture.set(obstacle,soil(false));
             fixture.set(obstacle.above(),Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,7));
             var player=helper.makeMockPlayer(GameType.SURVIVAL);

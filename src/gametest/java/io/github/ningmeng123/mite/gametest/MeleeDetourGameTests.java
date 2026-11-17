@@ -48,210 +48,228 @@ public final class MeleeDetourGameTests {
 
     @GameTest(template = "empty")
     public static void zombieUsesRightOpeningAndStairsToAttackPlayerOnFencePerch(GameTestHelper h) {
-        try (Fixture f = new Fixture(h, EntityType.ZOMBIE)) {
-            h.assertFalse(SourceMeleeGoal.canStrike(f.mob, f.player), "The wall and height prevent the initial attack");
-            var plan = f.zombiePlan();
-            h.assertTrue(plan.completeWalkingRoute() && !plan.choosesBreaking(),
-                    "A reachable physical attack position makes walking to the player on the fence complete");
-            assertStairRoute(h, f, plan.path());
-            h.assertTrue(f.mob.position().equals(Vec3.atBottomCenterOf(f.origin)),
-                    "Finding another route does not teleport the monster");
-            f.assertTerrainIntact();
-        }
-        h.succeed();
+        PathfindingTestSettings.runSynchronous(() -> {
+            try (Fixture f = new Fixture(h, EntityType.ZOMBIE)) {
+                h.assertFalse(SourceMeleeGoal.canStrike(f.mob, f.player), "The wall and height prevent the initial attack");
+                var plan = f.zombiePlan();
+                h.assertTrue(plan.completeWalkingRoute() && !plan.choosesBreaking(),
+                        "A reachable physical attack position makes walking to the player on the fence complete");
+                assertStairRoute(h, f, plan.path());
+                h.assertTrue(f.mob.position().equals(Vec3.atBottomCenterOf(f.origin)),
+                        "Finding another route does not teleport the monster");
+                f.assertTerrainIntact();
+            }
+            h.succeed();
+        });
     }
 
     @GameTest(template = "empty")
     public static void installedWitherSkeletonMeleeFindsTheSameReachableAttackLedge(GameTestHelper h) {
-        try (Fixture f = new Fixture(h, EntityType.WITHER_SKELETON)) {
-            h.assertTrue(R196MonsterAi.managed(f.mob) && !ZombieRoutePlanner.applies(f.mob),
-                    "The second species exercises shared melee pursuit independently of zombie digging");
-            SourceMeleeGoal goal = f.melee();
-            h.assertTrue(goal.canUse(), "The installed non-zombie player melee goal pursues the elevated perch");
-            goal.start();
-            goal.tick();
-            assertStairRoute(h, f, f.mob.getNavigation().getPath());
-            goal.stop();
-        }
-        h.succeed();
+        PathfindingTestSettings.runSynchronous(() -> {
+            try (Fixture f = new Fixture(h, EntityType.WITHER_SKELETON)) {
+                h.assertTrue(R196MonsterAi.managed(f.mob) && !ZombieRoutePlanner.applies(f.mob),
+                        "The second species exercises shared melee pursuit independently of zombie digging");
+                SourceMeleeGoal goal = f.melee();
+                h.assertTrue(goal.canUse(), "The installed non-zombie player melee goal pursues the elevated perch");
+                goal.start();
+                goal.tick();
+                assertStairRoute(h, f, f.mob.getNavigation().getPath());
+                goal.stop();
+            }
+            h.succeed();
+        });
     }
 
     @GameTest(template = "empty")
     public static void unfinishedMeleeDetourSurvivesMovingAwayAndLosingSight(GameTestHelper h) {
-        try (Fixture f = new Fixture(h, EntityType.WITHER_SKELETON)) {
-            SourceMeleeGoal goal = f.melee();
-            h.assertTrue(goal.canUse(), "The real installed melee goal starts the side route");
-            goal.start();
-            Path original = f.mob.getNavigation().getPath();
-            assertStairRoute(h, f, original);
-            double initialDistance = f.mob.distanceToSqr(f.player);
-            f.mob.moveTo(f.origin.getX() + .5D, f.origin.getY(), f.origin.getZ() + 3.5D, 0F, 0F);
-            h.assertTrue(f.mob.distanceToSqr(f.player) > initialDistance,
-                    "Following the wall toward the right opening first moves farther from the player");
-            h.assertFalse(SourceMonsterTargeting.canSee(f.mob, f.player, false),
-                    "The player is still hidden during the outward part of the detour");
-            for (int tick = 0; tick < 40; ++tick) goal.tick();
-            h.assertTrue(f.mob.getNavigation().getPath() == original && !f.mob.getNavigation().isDone(),
-                    "Repeated melee replans preserve the unfinished valid side route while its early nodes move away");
-            f.mob.getNavigation().stop();
-            h.assertTrue(goal.canContinueToUse(),
-                    "An unseen player is retained when a partial or interrupted movement route ends");
-            for (int tick = 0; tick < 15; ++tick) goal.tick();
-            assertStairRoute(h, f, f.mob.getNavigation().getPath());
-            goal.stop();
-        }
-        h.succeed();
+        PathfindingTestSettings.runSynchronous(() -> {
+            try (Fixture f = new Fixture(h, EntityType.WITHER_SKELETON)) {
+                SourceMeleeGoal goal = f.melee();
+                h.assertTrue(goal.canUse(), "The real installed melee goal starts the side route");
+                goal.start();
+                Path original = f.mob.getNavigation().getPath();
+                assertStairRoute(h, f, original);
+                double initialDistance = f.mob.distanceToSqr(f.player);
+                f.mob.moveTo(f.origin.getX() + .5D, f.origin.getY(), f.origin.getZ() + 3.5D, 0F, 0F);
+                h.assertTrue(f.mob.distanceToSqr(f.player) > initialDistance,
+                        "Following the wall toward the right opening first moves farther from the player");
+                h.assertFalse(SourceMonsterTargeting.canSee(f.mob, f.player, false),
+                        "The player is still hidden during the outward part of the detour");
+                for (int tick = 0; tick < 40; ++tick) goal.tick();
+                h.assertTrue(f.mob.getNavigation().getPath() == original && !f.mob.getNavigation().isDone(),
+                        "Repeated melee replans preserve the unfinished valid side route while its early nodes move away");
+                f.mob.getNavigation().stop();
+                h.assertTrue(goal.canContinueToUse(),
+                        "An unseen player is retained when a partial or interrupted movement route ends");
+                for (int tick = 0; tick < 15; ++tick) goal.tick();
+                assertStairRoute(h, f, f.mob.getNavigation().getPath());
+                goal.stop();
+            }
+            h.succeed();
+        });
     }
 
     @GameTest(template = "empty")
     public static void movingPlayerInvalidatesAnUnfinishedAttackPositionRoute(GameTestHelper h) {
-        try (Fixture f = new Fixture(h, EntityType.WITHER_SKELETON)) {
-            SourceMeleeGoal goal = f.melee();
-            h.assertTrue(goal.canUse(), "The first perched position has a real melee route");
-            goal.start();
-            Path original = f.mob.getNavigation().getPath();
-            assertStairRoute(h, f, original);
-            Vec3 oldEnd = MeleePursuitPaths.standingPoint(f.mob, original, original.getNodeCount() - 1);
-            f.perch(4);
-            h.assertFalse(SourceMeleeGoal.canStrikeFrom(f.mob, f.player, oldEnd),
-                    "The old standing position cannot attack the moved player");
-            for (int tick = 0; tick < 15; ++tick) goal.tick();
-            Path replacement = f.mob.getNavigation().getPath();
-            h.assertTrue(replacement != original, "Player movement invalidates the active route before arrival");
-            assertStairRoute(h, f, replacement);
-            goal.stop();
-        }
-        h.succeed();
+        PathfindingTestSettings.runSynchronous(() -> {
+            try (Fixture f = new Fixture(h, EntityType.WITHER_SKELETON)) {
+                SourceMeleeGoal goal = f.melee();
+                h.assertTrue(goal.canUse(), "The first perched position has a real melee route");
+                goal.start();
+                Path original = f.mob.getNavigation().getPath();
+                assertStairRoute(h, f, original);
+                Vec3 oldEnd = MeleePursuitPaths.standingPoint(f.mob, original, original.getNodeCount() - 1);
+                f.perch(4);
+                h.assertFalse(SourceMeleeGoal.canStrikeFrom(f.mob, f.player, oldEnd),
+                        "The old standing position cannot attack the moved player");
+                for (int tick = 0; tick < 15; ++tick) goal.tick();
+                Path replacement = f.mob.getNavigation().getPath();
+                h.assertTrue(replacement != original, "Player movement invalidates the active route before arrival");
+                assertStairRoute(h, f, replacement);
+                goal.stop();
+            }
+            h.succeed();
+        });
     }
 
     @GameTest(template = "empty")
     public static void inaccessibleLedgeIsNotMistakenForACompleteWalkingAlternative(GameTestHelper h) {
-        try (Fixture f = new Fixture(h, EntityType.ZOMBIE)) {
-            f.stairs(false);
-            var plan = f.zombiePlan();
-            h.assertTrue(!plan.completeWalkingRoute() && !plan.choosesBreaking(),
-                    "Removing the only stairs leaves no attack position reachable from the ground");
-            h.assertTrue(plan.path() == null || !SourceMeleeGoal.canStrikeFrom(f.mob, f.player,
-                            MeleePursuitPaths.standingPoint(f.mob, plan.path(), plan.path().getNodeCount() - 1)),
-                    "A partial native path below the ledge is not advertised as a usable attack endpoint");
-            Vec3 throughWall = new Vec3(f.origin.getX() + .5D, f.origin.getY() + 3.5D, f.origin.getZ() + .5D);
-            f.player.moveTo(f.origin.getX() + 2D, f.origin.getY() + 3.5D, f.origin.getZ() + .5D, 0F, 0F);
-            h.assertFalse(SourceMeleeGoal.canStrikeFrom(f.mob, f.player, throughWall),
-                    "Even a point inside numeric melee range cannot strike through the opaque wall");
-            f.assertTerrainIntact();
-        }
-        h.succeed();
+        PathfindingTestSettings.runSynchronous(() -> {
+            try (Fixture f = new Fixture(h, EntityType.ZOMBIE)) {
+                f.stairs(false);
+                var plan = f.zombiePlan();
+                h.assertTrue(!plan.completeWalkingRoute() && !plan.choosesBreaking(),
+                        "Removing the only stairs leaves no attack position reachable from the ground");
+                h.assertTrue(plan.path() == null || !SourceMeleeGoal.canStrikeFrom(f.mob, f.player,
+                                MeleePursuitPaths.standingPoint(f.mob, plan.path(), plan.path().getNodeCount() - 1)),
+                        "A partial native path below the ledge is not advertised as a usable attack endpoint");
+                Vec3 throughWall = new Vec3(f.origin.getX() + .5D, f.origin.getY() + 3.5D, f.origin.getZ() + .5D);
+                f.player.moveTo(f.origin.getX() + 2D, f.origin.getY() + 3.5D, f.origin.getZ() + .5D, 0F, 0F);
+                h.assertFalse(SourceMeleeGoal.canStrikeFrom(f.mob, f.player, throughWall),
+                        "Even a point inside numeric melee range cannot strike through the opaque wall");
+                f.assertTerrainIntact();
+            }
+            h.succeed();
+        });
     }
 
     @GameTest(template = "empty")
     public static void nativeStandingPointFitsTheRealHalfSlabFloorUnderALowCeiling(GameTestHelper h) {
-        try (Fixture f = new Fixture(h, EntityType.ZOMBIE)) {
-            BlockPos floor = f.origin.offset(0, 0, 10);
-            h.getLevel().setBlock(floor, Blocks.STONE_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM), 2);
-            h.getLevel().setBlock(floor.above(2), Blocks.STONE_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP), 2);
-            Path path = new Path(List.of(new Node(floor.getX(), floor.getY() + 1, floor.getZ())), floor.above(), true);
-            Vec3 raw = path.getEntityPosAtNode(f.mob, 0);
-            Vec3 standing = MeleePursuitPaths.standingPoint(f.mob, path, 0);
-            h.assertTrue(standing.y == floor.getY() + .5D,
-                    "Native standing height follows the bottom slab's half-block floor");
-            h.assertFalse(h.getLevel().noCollision(f.mob, f.mob.getBoundingBox().move(raw.subtract(f.mob.position())).deflate(.001D)),
-                    "The integer node position would put the zombie's head inside the upper slab ceiling");
-            AABB body = f.mob.getBoundingBox().move(standing.subtract(f.mob.position())).deflate(.001D);
-            h.assertTrue(h.getLevel().noCollision(f.mob, body) && !h.getLevel().noCollision(f.mob, body.move(0D, -.0625D, 0D)),
-                    "The actual native floor position fits below the ceiling and remains physically supported");
-        }
-        h.succeed();
+        PathfindingTestSettings.runSynchronous(() -> {
+            try (Fixture f = new Fixture(h, EntityType.ZOMBIE)) {
+                BlockPos floor = f.origin.offset(0, 0, 10);
+                h.getLevel().setBlock(floor, Blocks.STONE_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM), 2);
+                h.getLevel().setBlock(floor.above(2), Blocks.STONE_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP), 2);
+                Path path = new Path(List.of(new Node(floor.getX(), floor.getY() + 1, floor.getZ())), floor.above(), true);
+                Vec3 raw = path.getEntityPosAtNode(f.mob, 0);
+                Vec3 standing = MeleePursuitPaths.standingPoint(f.mob, path, 0);
+                h.assertTrue(standing.y == floor.getY() + .5D,
+                        "Native standing height follows the bottom slab's half-block floor");
+                h.assertFalse(h.getLevel().noCollision(f.mob, f.mob.getBoundingBox().move(raw.subtract(f.mob.position())).deflate(.001D)),
+                        "The integer node position would put the zombie's head inside the upper slab ceiling");
+                AABB body = f.mob.getBoundingBox().move(standing.subtract(f.mob.position())).deflate(.001D);
+                h.assertTrue(h.getLevel().noCollision(f.mob, body) && !h.getLevel().noCollision(f.mob, body.move(0D, -.0625D, 0D)),
+                        "The actual native floor position fits below the ceiling and remains physically supported");
+            }
+            h.succeed();
+        });
     }
 
     @GameTest(template = "empty", timeoutTicks = 160)
     public static void nearbyPlayerCanRequireMoreThanFortyEightBlocksOfWalking(GameTestHelper h) {
-        BlockPos origin = new BlockPos(390_000 + IDS.getAndIncrement() * 96,
-                h.absolutePos(BlockPos.ZERO).getY() + 12, 390_000);
-        for (int x = -4; x <= 12; ++x) for (int z = -30; z <= 30; ++z)
-            for (int y = -4; y <= 7; ++y) h.getLevel().setBlock(origin.offset(x, y, z),
-                    (y == -1 || y == 7 ? Blocks.BEDROCK : Blocks.AIR).defaultBlockState(), 2);
-        for (int z = -27; z <= 27; ++z) for (int y = 0; y <= 5; ++y)
-            h.getLevel().setBlock(origin.offset(2, y, z), Blocks.BEDROCK.defaultBlockState(), 2);
-        PathfinderMob mob = EntityType.WITHER_SKELETON.create(h.getLevel());
-        Player player = h.makeMockPlayer(GameType.SURVIVAL);
-        mob.moveTo(Vec3.atBottomCenterOf(origin));
-        mob.setNoAi(true);
-        mob.setNoGravity(true);
-        mob.setOnGround(true);
-        mob.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-        h.getLevel().addFreshEntity(mob);
-        player.moveTo(Vec3.atBottomCenterOf(origin.east(8)));
-        mob.setTarget(player);
-        List<ChunkPos> chunks = new ArrayList<>();
-        ChunkPos low = new ChunkPos(origin.offset(-4, 0, -30)), high = new ChunkPos(origin.offset(12, 0, 30));
-        for (int x = low.x; x <= high.x; ++x) for (int z = low.z; z <= high.z; ++z) {
-            ChunkPos chunk = new ChunkPos(x, z);
-            chunks.add(chunk);
-            h.getLevel().getChunkSource().addRegionTicket(TICKET, chunk, 2, mob.getId());
-        }
-        boolean[] closed = {false};
-        Runnable cleanup = () -> {
-            if (closed[0]) return;
-            closed[0] = true;
-            mob.getNavigation().stop();
-            mob.discard();
-            player.discard();
-            for (ChunkPos chunk : chunks) h.getLevel().getChunkSource().removeRegionTicket(TICKET, chunk, 2, mob.getId());
-        };
-        h.testInfo.addListener(new GameTestListener() {
-            @Override public void testStructureLoaded(GameTestInfo info) {}
-            @Override public void testAddedForRerun(GameTestInfo original, GameTestInfo rerun, GameTestRunner runner) {}
-            @Override public void testPassed(GameTestInfo info, GameTestRunner runner) { cleanup.run(); }
-            @Override public void testFailed(GameTestInfo info, GameTestRunner runner) { cleanup.run(); }
-        });
-        // Native regions take a getChunkNow snapshot; freshly loaded chunks must first become visible.
-        h.startSequence().thenWaitUntil(() -> h.assertTrue(chunks.stream().allMatch(chunk ->
-                        h.getLevel().getChunkSource().getChunkNow(chunk.x, chunk.z) != null),
-                "Every part of the long wall and both openings is visible to native path regions")).thenExecute(() -> {
-            try {
-            h.assertTrue(mob.distanceToSqr(player) == 64D,
-                    "The player is nearby despite the long obstacle between the entities");
-            h.assertTrue(h.getLevel().getBlockState(origin.below()).is(Blocks.BEDROCK)
-                            && h.getLevel().noCollision(mob, mob.getBoundingBox()),
-                    "The long-route fixture begins on a solid floor with room for the actual monster body");
-            Path raw192 = nativePlayerBlockPath(h, mob, player.blockPosition(), 0, 192F, 8192);
-            h.assertTrue(raw192 != null && raw192.canReach(),
-                    "A fresh native query with the exploratory allowance confirms that the fixture itself is traversable: "
-                            + diagnostic(mob, player, raw192));
-            Path raw48 = nativePlayerBlockPath(h, mob, player.blockPosition(), 0, 48F, 2048);
-            h.assertTrue(raw48 == null || !raw48.canReach(),
-                    "The same terrain cannot be completed by the direct forty-eight-block query: " + diagnostic(mob, player, raw48));
-            SourceMeleeGoal goal = SourceMeleeGoal.first(mob);
-            h.assertTrue(goal != null && goal.canUse(), "The installed non-zombie melee task starts the long detour");
-            goal.start();
-            Path path = mob.getNavigation().getPath();
-            h.assertTrue(path != null && path.canReach() && SourceMeleeGoal.canStrikeFrom(mob, player,
-                            MeleePursuitPaths.standingPoint(mob, path, path.getNodeCount() - 1)),
-                    "The longer fallback budget finds a complete path to a real attack position; selected="
-                            + diagnostic(mob, player, path) + "; raw192=" + diagnostic(mob, player, raw192));
-            Vec3 previous = mob.position();
-            double length = 0D;
-            boolean aroundEnd = false;
-            for (int index = 0; index < path.getNodeCount(); ++index) {
-                Vec3 point = MeleePursuitPaths.standingPoint(mob, path, index);
-                length += previous.distanceTo(point);
-                previous = point;
-                var node = path.getNode(index);
-                int x = node.x - origin.getX(), z = node.z - origin.getZ();
-                aroundEnd |= Math.abs(z) >= 28;
-                h.assertFalse(x == 2 && Math.abs(z) <= 27,
-                        "The complete route never traverses any of the wall's fifty-five cells");
+        PathfindingTestSettings.runSynchronous(() -> {
+            BlockPos origin = new BlockPos(390_000 + IDS.getAndIncrement() * 96,
+                    h.absolutePos(BlockPos.ZERO).getY() + 12, 390_000);
+            for (int x = -4; x <= 12; ++x) for (int z = -30; z <= 30; ++z)
+                for (int y = -4; y <= 7; ++y) h.getLevel().setBlock(origin.offset(x, y, z),
+                        (y == -1 || y == 7 ? Blocks.BEDROCK : Blocks.AIR).defaultBlockState(), 2);
+            for (int z = -27; z <= 27; ++z) for (int y = 0; y <= 5; ++y)
+                h.getLevel().setBlock(origin.offset(2, y, z), Blocks.BEDROCK.defaultBlockState(), 2);
+            PathfinderMob mob = EntityType.WITHER_SKELETON.create(h.getLevel());
+            Player player = h.makeMockPlayer(GameType.SURVIVAL);
+            mob.moveTo(Vec3.atBottomCenterOf(origin));
+            mob.setNoAi(true);
+            mob.setNoGravity(true);
+            mob.setOnGround(true);
+            mob.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            h.getLevel().addFreshEntity(mob);
+            player.moveTo(Vec3.atBottomCenterOf(origin.east(8)));
+            mob.setTarget(player);
+            List<ChunkPos> chunks = new ArrayList<>();
+            ChunkPos low = new ChunkPos(origin.offset(-4, 0, -30)), high = new ChunkPos(origin.offset(12, 0, 30));
+            for (int x = low.x; x <= high.x; ++x) for (int z = low.z; z <= high.z; ++z) {
+                ChunkPos chunk = new ChunkPos(x, z);
+                chunks.add(chunk);
+                h.getLevel().getChunkSource().addRegionTicket(TICKET, chunk, 2, mob.getId());
             }
-            h.assertTrue(aroundEnd && length > 56D && length <= 96D,
-                    "Nearby pursuit uses the actual wall end and a real route longer than fifty-six blocks within the ninety-six-block route limit: " + length);
-            goal.stop();
-            } finally { cleanup.run(); }
-        }).thenSucceed();
+            boolean[] closed = {false};
+            Runnable cleanup = () -> {
+                if (closed[0]) return;
+                closed[0] = true;
+                mob.getNavigation().stop();
+                mob.discard();
+                player.discard();
+                for (ChunkPos chunk : chunks) h.getLevel().getChunkSource().removeRegionTicket(TICKET, chunk, 2, mob.getId());
+            };
+            h.testInfo.addListener(new GameTestListener() {
+                @Override public void testStructureLoaded(GameTestInfo info) {}
+                @Override public void testAddedForRerun(GameTestInfo original, GameTestInfo rerun, GameTestRunner runner) {}
+                @Override public void testPassed(GameTestInfo info, GameTestRunner runner) { cleanup.run(); }
+                @Override public void testFailed(GameTestInfo info, GameTestRunner runner) { cleanup.run(); }
+            });
+            // Native regions take a getChunkNow snapshot; freshly loaded chunks must first become visible.
+            h.startSequence().thenWaitUntil(() -> h.assertTrue(chunks.stream().allMatch(chunk ->
+                            h.getLevel().getChunkSource().getChunkNow(chunk.x, chunk.z) != null),
+                    "Every part of the long wall and both openings is visible to native path regions")).thenExecute(() -> {
+                        PathfindingTestSettings.runSynchronous(() -> {
+                    try {
+                    h.assertTrue(mob.distanceToSqr(player) == 64D,
+                            "The player is nearby despite the long obstacle between the entities");
+                    h.assertTrue(h.getLevel().getBlockState(origin.below()).is(Blocks.BEDROCK)
+                                    && h.getLevel().noCollision(mob, mob.getBoundingBox()),
+                            "The long-route fixture begins on a solid floor with room for the actual monster body");
+                    Path raw192 = nativePlayerBlockPath(h, mob, player.blockPosition(), 0, 192F, 8192);
+                    h.assertTrue(raw192 != null && raw192.canReach(),
+                            "A fresh native query with the exploratory allowance confirms that the fixture itself is traversable: "
+                                    + diagnostic(mob, player, raw192));
+                    Path raw48 = nativePlayerBlockPath(h, mob, player.blockPosition(), 0, 48F, 2048);
+                    h.assertTrue(raw48 == null || !raw48.canReach(),
+                            "The same terrain cannot be completed by the direct forty-eight-block query: " + diagnostic(mob, player, raw48));
+                    SourceMeleeGoal goal = SourceMeleeGoal.first(mob);
+                    h.assertTrue(goal != null && goal.canUse(), "The installed non-zombie melee task starts the long detour");
+                    goal.start();
+                    Path path = mob.getNavigation().getPath();
+                    h.assertTrue(path != null && path.canReach() && SourceMeleeGoal.canStrikeFrom(mob, player,
+                                    MeleePursuitPaths.standingPoint(mob, path, path.getNodeCount() - 1)),
+                            "The longer fallback budget finds a complete path to a real attack position; selected="
+                                    + diagnostic(mob, player, path) + "; raw192=" + diagnostic(mob, player, raw192));
+                    Vec3 previous = mob.position();
+                    double length = 0D;
+                    boolean aroundEnd = false;
+                    for (int index = 0; index < path.getNodeCount(); ++index) {
+                        Vec3 point = MeleePursuitPaths.standingPoint(mob, path, index);
+                        length += previous.distanceTo(point);
+                        previous = point;
+                        var node = path.getNode(index);
+                        int x = node.x - origin.getX(), z = node.z - origin.getZ();
+                        aroundEnd |= Math.abs(z) >= 28;
+                        h.assertFalse(x == 2 && Math.abs(z) <= 27,
+                                "The complete route never traverses any of the wall's fifty-five cells");
+                    }
+                    h.assertTrue(aroundEnd && length > 56D && length <= 96D,
+                            "Nearby pursuit uses the actual wall end and a real route longer than fifty-six blocks within the ninety-six-block route limit: " + length);
+                    goal.stop();
+                    } finally { cleanup.run(); }
+                        });
+                    }).thenSucceed();
+        });
     }
 
-    @GameTest(template = "empty", batch = "melee_detour_live", timeoutTicks = 240)
+    @GameTest(template = "empty", batch = "melee_detour_live", timeoutTicks = 800)
     public static void nativeZombieMovementActuallyFollowsTheOpeningAndClimbsTheStairs(GameTestHelper h) {
         Fixture f = new Fixture(h, EntityType.ZOMBIE);
+        boolean[] walkedAway = {false}, usedOpening = {false}, climbed = {false};
+        double[] firstDistance = {0D};
         h.testInfo.addListener(new GameTestListener() {
             @Override public void testStructureLoaded(GameTestInfo info) {}
             @Override public void testAddedForRerun(GameTestInfo original, GameTestInfo rerun, GameTestRunner runner) {}
@@ -272,19 +290,18 @@ public final class MeleeDetourGameTests {
             f.mob.setDeltaMovement(0D, -.08D, 0D);
             f.mob.setOnGround(true);
             f.mob.setNoAi(false);
-            boolean walkedAway = false, usedOpening = false, climbed = false;
-            double firstDistance = f.mob.distanceToSqr(f.player);
-            // Use complete native ticks, including GoalSelector, navigation, jumping and collision travel.
-            for (int tick = 0; tick < 500 && !SourceMeleeGoal.canStrike(f.mob, f.player); ++tick) {
-                h.getLevel().tickNonPassenger(f.mob);
-                walkedAway |= f.mob.getX() < f.origin.getX() + 1D && f.mob.distanceToSqr(f.player) > firstDistance + 1D;
-                usedOpening |= f.mob.getX() >= f.origin.getX() + 2D && f.mob.getZ() >= f.origin.getZ() + 6D;
-                climbed |= f.mob.getY() >= f.origin.getY() + 2.75D;
-            }
-            h.assertTrue(walkedAway && usedOpening && climbed,
+            firstDistance[0] = f.mob.distanceToSqr(f.player);
+        }).thenWaitUntil(() -> {
+            // Let native world ticks service async path callbacks and then perform actual entity travel.
+            walkedAway[0] |= f.mob.getX() < f.origin.getX() + 1D && f.mob.distanceToSqr(f.player) > firstDistance[0] + 1D;
+            usedOpening[0] |= f.mob.getX() >= f.origin.getX() + 2D && f.mob.getZ() >= f.origin.getZ() + 6D;
+            climbed[0] |= f.mob.getY() >= f.origin.getY() + 2.75D;
+            h.assertTrue(walkedAway[0] && usedOpening[0] && climbed[0],
                     "Native movement first retreats along the wall, crosses its right opening and climbs real stairs: " + f.mob.position());
             h.assertTrue(SourceMeleeGoal.canStrike(f.mob, f.player),
                     "The full installed melee AI reaches an actual physical attack position beside the perched player: " + f.mob.position());
+        }).thenExecute(() -> {
+            SourceMeleeGoal goal = f.melee();
             goal.tick();
             h.assertTrue(goal.attackCooldown() > 0, "Reaching the ledge enters the real melee attack cadence");
             f.assertTerrainIntact();

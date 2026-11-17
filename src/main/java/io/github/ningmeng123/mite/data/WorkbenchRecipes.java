@@ -43,11 +43,11 @@ public final class WorkbenchRecipes extends RecipeProvider {
                     .unlockedBy("has_ingot", has(ingot))
                     .save(output, ResourceLocation.fromNamespaceAndPath("mite", material + "_crafting_table"));
         }
-        // Keep the modern Crafter obtainable after removing vanilla crafting tables.
+        // The retired automatic crafter has no obtainable recipe.
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Items.CRAFTER)
                 .pattern("III").pattern("ITI").pattern("RDR").define('I', Items.IRON_INGOT)
                 .define('T', MiteWorkbenches.TABLES.get("flint").get()).define('R', Items.REDSTONE)
                 .define('D', Items.DROPPER).unlockedBy("has_iron", has(Items.IRON_INGOT))
-                .save(output, ResourceLocation.withDefaultNamespace("crafter"));
+                .save(output.withConditions(FalseCondition.INSTANCE), ResourceLocation.withDefaultNamespace("crafter"));
     }
 }

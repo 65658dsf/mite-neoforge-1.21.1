@@ -7,10 +7,8 @@ import io.github.ningmeng123.mite.registry.MiteShards;
 import io.github.ningmeng123.mite.registry.MiteResourceBlocks;
 import net.minecraft.world.item.Item;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -209,13 +207,13 @@ public final class FlintGravelGameTests {
     private static final class DropFixture implements AutoCloseable {
         private final GameTestHelper helper;
         private final AABB area;
-        private final Set<UUID> existing = new HashSet<>();
+        private final SpawnedEntityCapture capture;
         private final boolean oldTileDrops;
 
         private DropFixture(GameTestHelper helper, BlockPos position) {
             this.helper = helper;
             area = new AABB(position).inflate(1.0);
-            for (ItemEntity drop : helper.getLevel().getEntitiesOfClass(ItemEntity.class, area)) existing.add(drop.getUUID());
+            capture = new SpawnedEntityCapture(helper.getLevel(), entity -> entity instanceof ItemEntity && area.contains(entity.position()));
             oldTileDrops = helper.getLevel().getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS);
             setTileDrops(true);
         }
@@ -225,14 +223,13 @@ public final class FlintGravelGameTests {
         }
 
         private List<ItemEntity> newDrops() {
-            return helper.getLevel().getEntitiesOfClass(ItemEntity.class, area).stream()
-                    .filter(drop -> !existing.contains(drop.getUUID())).toList();
+            return capture.live(ItemEntity.class);
         }
 
         @Override
         public void close() {
             setTileDrops(oldTileDrops);
-            newDrops().forEach(ItemEntity::discard);
+            capture.close();
         }
     }
 }

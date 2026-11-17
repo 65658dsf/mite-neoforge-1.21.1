@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.FrontAndTop;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
@@ -35,10 +34,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -208,30 +204,6 @@ public final class MetalMaterialGameTests {
             helper.assertTrue(Recipe.CODEC.encodeStart(ops, invalid).error().isPresent(), "Codec validation rejects unrelated item outputs");
         }
         helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 2000)
-    public static void actualCrafterBulkUnpackingSplitsNineWithoutDroppingAnIngot(GameTestHelper helper) {
-        BlockPos crafterPos = new BlockPos(1, 1, 1);
-        BlockPos chestPos = new BlockPos(2, 1, 1);
-        helper.setBlock(crafterPos, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
-        helper.setBlock(chestPos, Blocks.CHEST);
-        helper.setBlock(crafterPos.south(), TimedCraftingTestSupport.flintTable());
-        CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(crafterPos));
-        crafter.setItem(0, new ItemStack(Items.COPPER_BLOCK, 2));
-        helper.pulseRedstone(new BlockPos(0, 1, 1), 5);
-        int period = io.github.ningmeng123.mite.crafting.TimedCraftingRules.period(3600F, 0, .2F, false);
-        helper.runAfterDelay(period, () -> {
-            Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(chestPos));
-            helper.assertValueEqual(count(chest, Items.COPPER_INGOT), 0, "The real Crafter does not publish a batch before its manufacturing period");
-        });
-        helper.runAfterDelay(period + 9, () -> {
-            Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(chestPos));
-            helper.assertValueEqual(count(chest, Items.COPPER_INGOT), 9, "One real Crafter pulse outputs all nine ingots");
-            helper.assertValueEqual(crafter.getItem(0).getCount(), 1, "Automation consumes one block per pulse");
-            assertLegalStacks(helper, chest);
-            helper.succeed();
-        });
     }
 
     @GameTest(template = "empty")

@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.FrontAndTop;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
@@ -33,14 +32,11 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Real inventory/workbench/recipe-book/crafter access checks and material consumption. @author NingMeng123 */
+/** Real inventory/workbench/recipe-book access checks and material consumption. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class FlintWorkbenchGameTests {
@@ -278,42 +274,6 @@ public final class FlintWorkbenchGameTests {
             helper.getLevel().setBlockAndUpdate(table, previous);
         }
         helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 1000)
-    public static void redstoneCraftersStillProcessWoodAndBambooWithExactConsumption(GameTestHelper helper) {
-        Item[] inputs = {Items.OAK_LOG, Items.STRIPPED_BAMBOO_BLOCK};
-        Item[] outputs = {Items.OAK_PLANKS, Items.BAMBOO_PLANKS};
-        List<CrafterBlockEntity> crafters = new ArrayList<>();
-        for (int index = 0; index < 2; index++) {
-            int z = 1 + index * 3;
-            BlockPos position = new BlockPos(1, 1, z);
-            helper.setBlock(position, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
-            helper.setBlock(new BlockPos(2, 1, z), Blocks.CHEST);
-            helper.setBlock(position.south(), TimedCraftingTestSupport.flintTable());
-            CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(position));
-            crafter.setItem(0, new ItemStack(inputs[index], 2));
-            crafters.add(crafter);
-            helper.pulseRedstone(new BlockPos(0, 1, z), 5);
-        }
-        int period = io.github.ningmeng123.mite.crafting.TimedCraftingRules.period(120.00001F, 0, .2F, false);
-        helper.runAfterDelay(period, () -> {
-            for (int index = 0; index < 2; index++) {
-                Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(new BlockPos(2, 1, 1 + index * 3)));
-                helper.assertValueEqual(count(chest, outputs[index]), 0, "A powered wood processor cannot output before its manufacture period");
-            }
-        });
-        helper.runAfterDelay(period + 9, () -> {
-            for (int index = 0; index < 2; index++) {
-                Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(new BlockPos(2, 1, 1 + index * 3)));
-                helper.assertValueEqual(count(chest, outputs[index]), index == 0 ? 4 : 2,
-                        "A real redstone pulse creates the ordinary plank amount in the adjacent chest");
-                helper.assertTrue(crafters.get(index).getItem(0).is(inputs[index]) && crafters.get(index).getItem(0).getCount() == 1,
-                        "A crafter consumes exactly one material per pulse");
-                for (int slot = 1; slot < 9; slot++) helper.assertTrue(crafters.get(index).getItem(slot).isEmpty(), "No extra ingredient or remainder is created");
-            }
-            helper.succeed();
-        });
     }
 
     @GameTest(template = "empty")

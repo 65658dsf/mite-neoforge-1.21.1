@@ -815,7 +815,7 @@ public final class MaterialEquipmentUpgradeGameTests {
 
     private static Map<String, Integer> templateWorkbenchPeriods() {
         return Map.of("mite:iron_crafting_table", 140, "mite:ancient_metal_crafting_table", 130,
-                "mite:mithril_crafting_table", 122, "mite:adamantium_crafting_table", 115, "mite:vibranium_crafting_table", 115);
+                "mite:mithril_crafting_table", 122, "mite:adamantium_crafting_table", 115, "mite:vibranium_crafting_table", 25);
     }
 
     private static List<ItemStack> templateIngredients(int silverCorners, int count) {

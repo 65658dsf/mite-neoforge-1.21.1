@@ -4,8 +4,6 @@ import io.github.ningmeng123.mite.registry.MiteItems;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.FrontAndTop;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -21,13 +19,10 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.CrafterBlockEntity;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Loaded recipes, real menu consumption and a redstone-driven crafter. @author NingMeng123 */
+/** Loaded recipes and real player-menu material consumption. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class FlintRecipeGameTests {
@@ -152,36 +147,6 @@ public final class FlintRecipeGameTests {
             io.github.ningmeng123.mite.crafting.TimedCraftingController.cancel(player);
             helper.getLevel().getServer().getPlayerList().remove(player);
         }
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 1000)
-    public static void redstoneCrafterConsumesRemoteBindingAndOutputsOneHatchet(GameTestHelper helper) {
-        BlockPos crafterPos = new BlockPos(1, 1, 1);
-        BlockPos chestPos = new BlockPos(2, 1, 1);
-        helper.setBlock(crafterPos, Blocks.CRAFTER.defaultBlockState()
-                .setValue(BlockStateProperties.ORIENTATION, FrontAndTop.EAST_UP));
-        helper.setBlock(chestPos, Blocks.CHEST);
-        helper.setBlock(crafterPos.south(), TimedCraftingTestSupport.flintTable());
-        CrafterBlockEntity crafter = (CrafterBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(crafterPos));
-        crafter.setItem(0, new ItemStack(Items.FLINT, 2));
-        crafter.setItem(1, new ItemStack(Items.STICK, 2));
-        crafter.setItem(4, new ItemStack(Items.STICK, 2));
-        crafter.setItem(8, new ItemStack(Items.STRING, 2));
-        helper.pulseRedstone(new BlockPos(0, 1, 1), 5);
-        int period = io.github.ningmeng123.mite.crafting.TimedCraftingRules.period(175F, 0, .2F, false);
-        helper.runAfterDelay(period, () -> {
-            Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(chestPos));
-            helper.assertValueEqual(count(chest, MiteItems.FLINT_HATCHET.get()), 0, "The Crafter cannot dispense before the real manufacturing period completes");
-        });
-        helper.runAfterDelay(period + 9, () -> {
-            Container chest = (Container) helper.getLevel().getBlockEntity(helper.absolutePos(chestPos));
-            helper.assertValueEqual(count(chest, MiteItems.FLINT_HATCHET.get()), 1, "A real redstone pulse creates one hatchet in the output chest");
-            for (int slot = 0; slot < 9; slot++) {
-                int expected = slot == 0 || slot == 1 || slot == 4 || slot == 8 ? 1 : 0;
-                helper.assertValueEqual(crafter.getItem(slot).getCount(), expected, "The crafter consumes one per occupied input slot " + slot);
-            }
-            helper.succeed();
-        });
     }
 
     private static void assertRecipe(GameTestHelper helper, String id, int width, int height,

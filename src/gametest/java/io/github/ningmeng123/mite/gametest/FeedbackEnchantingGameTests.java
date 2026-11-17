@@ -34,7 +34,7 @@ public final class FeedbackEnchantingGameTests {
     private FeedbackEnchantingGameTests() {}
 
     @GameTest(template = "empty")
-    public static void allRegisteredCopperToolsUseTheReducedTotalBaseDamage(GameTestHelper helper) {
+    public static void allRegisteredCopperToolsRetainTheirSourceBaseDamage(GameTestHelper helper) {
         int checked = 0;
         for (var definition : MiteTools.definitions()) if (definition.material().equals("copper")) {
             var stack = new ItemStack(MiteTools.get(definition.id()));
@@ -47,8 +47,8 @@ public final class FeedbackEnchantingGameTests {
                     net.minecraft.world.item.component.ItemAttributeModifiers.EMPTY).modifiers().stream()
                     .filter(entry -> entry.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE))
                     .mapToDouble(entry -> entry.modifier().amount()).sum();
-            helper.assertTrue(Math.abs(actual - silverDamage * .9375D) < .00001D,
-                    "Copper and silver use the reviewed0.75/0.8 material budgets for the same source family: " + definition.id());
+            helper.assertTrue(Math.abs(actual - silverDamage) < .00001D,
+                    "Copper and silver retain the same source base damage for each family: " + definition.id());
             checked++;
         }
         helper.assertTrue(checked >= 10, "All copper tool and weapon families were inspected");

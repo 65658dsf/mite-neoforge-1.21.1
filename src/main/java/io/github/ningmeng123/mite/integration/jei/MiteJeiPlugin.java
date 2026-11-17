@@ -143,7 +143,7 @@ public final class MiteJeiPlugin implements IModPlugin {
     public void onRuntimeAvailable(IJeiRuntime runtime) {
         var ingredientManager = runtime.getIngredientManager();
         var removedEquipment = ingredientManager.getAllItemStacks().stream()
-                .filter(RemovedDiamondEquipment::isRemoved).toList();
+                .filter(stack -> RemovedDiamondEquipment.isRemoved(stack) || stack.is(Items.CRAFTER)).toList();
         if (!removedEquipment.isEmpty()) {
             ingredientManager.removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, removedEquipment);
         }

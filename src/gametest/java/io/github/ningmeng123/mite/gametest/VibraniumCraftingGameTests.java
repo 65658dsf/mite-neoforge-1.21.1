@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -268,9 +269,10 @@ public final class VibraniumCraftingGameTests {
         h.assertTrue(CraftingQuality.rule(holder, result, input) != null, "Material conversion has a manufacturing-time rule: " + path);
     }
     private static void assertBench(GameTestHelper h, ItemStack result, String material, boolean allowed) {
-        BlockPos crafter = h.absolutePos(new BlockPos(2, 3, 2));
-        for (var direction : net.minecraft.core.Direction.values()) h.getLevel().setBlockAndUpdate(crafter.relative(direction), Blocks.AIR.defaultBlockState());
-        h.getLevel().setBlockAndUpdate(crafter.east(), MiteWorkbenches.TABLES.get(material).get().defaultBlockState());
-        h.assertValueEqual(WorkbenchRules.allowsCrafter(h.getLevel(), crafter, result), allowed, "Adjacent " + material + " bench correctly gates " + result);
+        BlockPos bench = h.absolutePos(new BlockPos(2, 3, 2));
+        h.getLevel().setBlockAndUpdate(bench, MiteWorkbenches.TABLES.get(material).get().defaultBlockState());
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var menu = new CraftingMenu(82, player.getInventory(), ContainerLevelAccess.create(h.getLevel(), bench));
+        h.assertValueEqual(WorkbenchRules.allows(menu, result), allowed, "The physical " + material + " player workbench correctly gates " + result);
     }
 }
