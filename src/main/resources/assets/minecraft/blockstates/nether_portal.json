@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "axis=x,mite_destination=0": {
+      "model": "mite:block/portal_overworld_ns"
+    },
+    "axis=x,mite_destination=1": {
+      "model": "mite:block/portal_underworld_ns"
+    },
+    "axis=x,mite_destination=2": {
+      "model": "mite:block/portal_nether_ns"
+    },
+    "axis=z,mite_destination=0": {
+      "model": "mite:block/portal_overworld_ew"
+    },
+    "axis=z,mite_destination=1": {
+      "model": "mite:block/portal_underworld_ew"
+    },
+    "axis=z,mite_destination=2": {
+      "model": "mite:block/portal_nether_ew"
+    }
+  }
+}

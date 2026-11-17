@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Keep vanilla rendering/portal processor, replace only R196 routing and disabled spawns. @author NingMeng123 */
+/** Native portal processor with synchronized R196 routes and disabled spawns. @author NingMeng123 */
 @Mixin(NetherPortalBlock.class)
 public abstract class NetherPortalBlockMixin extends Block {
     protected NetherPortalBlockMixin(BlockBehaviour.Properties properties) { super(properties); }

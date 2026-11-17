@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.portal;
 
+import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.registry.MiteWorldBlocks;
 import io.github.ningmeng123.mite.rules.R196PortalRules;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
@@ -11,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.TickTask;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -23,13 +25,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 
 /** Server-authoritative ordinary gates and deterministic four-corner runegates. @author NingMeng123 */
+@EventBusSubscriber(modid = Mite.MOD_ID)
 public final class MitePortals {
     private MitePortals() {}
 
@@ -62,14 +70,79 @@ public final class MitePortals {
         }
     }
 
+    /** Resolve the saved route with the same legacy Nether fallback used for travel. */
+    public static int destinationId(Level level, BlockState state) {
+        if (level.dimension() == Level.NETHER && !state.getValue(MitePortalProperties.RUNEGATE)) {
+            return R196PortalRules.UNDERWORLD;
+        }
+        return state.getValue(MitePortalProperties.DESTINATION);
+    }
+
+    /** Corner edits update the synchronized appearance before a traveler enters the gate. */
+    public static void refreshRuneRoutes(Level level, BlockPos corner) {
+        if (level.isClientSide || dimensionId(level) < 0) return;
+        for (Direction.Axis axis : new Direction.Axis[]{Direction.Axis.X, Direction.Axis.Z}) {
+            Direction along = axis == Direction.Axis.X ? Direction.EAST : Direction.SOUTH;
+            for (int x : new int[]{-1, 2}) for (int y : new int[]{-1, 3}) {
+                MitePortalFrame frame = new MitePortalFrame(corner.relative(along, -x).below(y), axis);
+                if (!level.hasChunksAt(frame.at(-1, -1), frame.at(2, 3))) continue;
+                refreshRoute(level, frame);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void load(ChunkEvent.Load event) {
+        if (!(event.getLevel() instanceof ServerLevel level) || dimensionId(level) < 0
+                || !(event.getChunk() instanceof LevelChunk chunk)) return;
+        level.getServer().tell(new TickTask(level.getServer().getTickCount(), () -> {
+            if (level.getChunkSource().getChunkNow(chunk.getPos().x, chunk.getPos().z) != chunk) return;
+            refreshLoadedRoutes(chunk);
+            // A newly loaded corner can complete a frame whose interior is in the adjacent chunk.
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                LevelChunk neighbor = level.getChunkSource().getChunkNow(chunk.getPos().x + direction.getStepX(),
+                        chunk.getPos().z + direction.getStepZ());
+                if (neighbor != null) refreshLoadedRoutes(neighbor);
+            }
+        }));
+    }
+
+    private static void refreshLoadedRoutes(LevelChunk chunk) {
+        Level level = chunk.getLevel();
+        for (int index = 0; index < chunk.getSections().length; index++) {
+            LevelChunkSection section = chunk.getSections()[index];
+            if (!section.maybeHas(state -> state.is(Blocks.NETHER_PORTAL))) continue;
+            int minY = chunk.getMinBuildHeight() + index * 16;
+            for (int x = 0; x < 16; x++) for (int y = 0; y < 16; y++) for (int z = 0; z < 16; z++) {
+                BlockState state = section.getBlockState(x, y, z);
+                if (!state.is(Blocks.NETHER_PORTAL)) continue;
+                BlockPos pos = new BlockPos(chunk.getPos().getMinBlockX() + x, minY + y, chunk.getPos().getMinBlockZ() + z);
+                Direction along = state.getValue(NetherPortalBlock.AXIS) == Direction.Axis.X ? Direction.EAST : Direction.SOUTH;
+                if (!level.hasChunksAt(pos.relative(along, -2), pos.relative(along, 2))) continue;
+                MitePortalFrame.find(level, pos, state.getValue(NetherPortalBlock.AXIS))
+                        .ifPresent(frame -> refreshRoute(level, frame));
+            }
+        }
+    }
+
+    private static void refreshRoute(Level level, MitePortalFrame frame) {
+        if (!frame.complete(level)) return;
+        BlockState state = level.getBlockState(frame.bottomLeft());
+        boolean rune = frame.rune(level).isPresent();
+        if (state.getValue(MitePortalProperties.RUNEGATE) != rune) {
+            initializeRoute(level, frame);
+        } else {
+            int destination = rune ? dimensionId(level) : destinationId(level, state);
+            if (state.getValue(MitePortalProperties.DESTINATION) != destination) writeRoute(level, frame, destination, rune);
+        }
+    }
+
     private static int route(Level level, MitePortalFrame frame) {
         BlockState state = level.getBlockState(frame.bottomLeft());
         if (state.getValue(MitePortalProperties.RUNEGATE) && frame.rune(level).isEmpty()) {
             return R196PortalRules.ordinaryDestination(dimensionId(level), frame.touchingBottom(level));
         }
-        // Old worlds have the vanilla default state: Nether portals now route to the underworld.
-        if (level.dimension() == Level.NETHER && !state.getValue(MitePortalProperties.RUNEGATE)) return R196PortalRules.UNDERWORLD;
-        return state.getValue(MitePortalProperties.DESTINATION);
+        return destinationId(level, state);
     }
 
     public static boolean isInstantGate(Level level, BlockPos pos) {

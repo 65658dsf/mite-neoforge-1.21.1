@@ -372,6 +372,8 @@
     "AchievementBonemealMixin"
   ],
   "client": [
+    "client.PortalParticleMixin",
+    "client.PortalOverlayMixin",
     "client.MiteLoadingOverlayMixin",
     "client.BoatWaterMaskMixin",
     "client.PunchyClubAnimationMixin",

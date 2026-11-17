@@ -72,12 +72,82 @@ public final class UnderworldPortalGameTests {
         ServerLevel level = helper.getLevel();
         MitePortalFrame frame = frame(level, helper.absolutePos(new BlockPos(1, 2, 1)), Direction.Axis.X);
         PortalShape.findEmptyPortalShape(level, frame.bottomLeft(), frame.axis()).orElseThrow().createPortalBlocks();
+        MitePortals.writeRoute(level, frame, 1, false);
         corners(level, frame, false);
         helper.assertValueEqual(frame.rune(level).orElseThrow().seed(), 0x4321, "Four source corner nibbles retain their order");
+        helper.assertTrue(level.getBlockState(frame.bottomLeft()).getValue(MitePortalProperties.RUNEGATE), "Corner edits immediately synchronize the runegate appearance");
+        helper.assertValueEqual(level.getBlockState(frame.at(1, 2)).getValue(MitePortalProperties.DESTINATION), 0, "All runegate blocks immediately use their source dimension's color");
         helper.assertTrue(MitePortals.isInstantGate(level, frame.bottomLeft()), "Adding corners to an existing frame enables runegate behavior");
         level.setBlock(frame.at(2, 3), MiteWorldBlocks.ADAMANTIUM_RUNESTONE.get().defaultBlockState(), 2);
         helper.assertTrue(frame.rune(level).isEmpty(), "Mixed-metal corners do not form a runegate");
+        helper.assertFalse(level.getBlockState(frame.bottomLeft()).getValue(MitePortalProperties.RUNEGATE), "Removing a matching corner immediately restores ordinary gate appearance");
         helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void legacyNetherRoutesSynchronizeTheirActualDestinationOnChunkLoad(GameTestHelper helper) {
+        ServerLevel nether = helper.getLevel().getServer().getLevel(Level.NETHER);
+        int x = 240000 + helper.absolutePos(BlockPos.ZERO).getX();
+        MitePortalFrame frame = frame(nether, new BlockPos(x, 70, 0), Direction.Axis.Z);
+        PortalShape.findEmptyPortalShape(nether, frame.bottomLeft(), frame.axis()).orElseThrow().createPortalBlocks();
+        MitePortals.writeRoute(nether, frame, 0, false);
+        var state = nether.getBlockState(frame.bottomLeft());
+        helper.assertValueEqual(MitePortals.destinationId(nether, state), 1, "A legacy default-state Nether gate already travels to the underworld");
+        MitePortals.load(new net.neoforged.neoforge.event.level.ChunkEvent.Load(nether.getChunkAt(frame.bottomLeft()), false));
+        helper.runAfterDelay(2, () -> {
+            for (int column = 0; column < 2; column++) for (int row = 0; row < 3; row++) {
+                helper.assertValueEqual(nether.getBlockState(frame.at(column, row)).getValue(MitePortalProperties.DESTINATION), 1,
+                        "Chunk loading synchronizes the legacy gate's purple underworld appearance");
+            }
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void legacyRuneCornerStatesReconcileAcrossChunkBordersWithoutChangingSavedOrdinaryRoutes(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int chunkX = Math.floorDiv(480000 + helper.absolutePos(BlockPos.ZERO).getX(), 16) * 16;
+        int chunkZ = Math.floorDiv(helper.absolutePos(BlockPos.ZERO).getZ(), 16) * 16;
+        MitePortalFrame addedCorners = frame(level, new BlockPos(chunkX + 14, 70, chunkZ + 8), Direction.Axis.X);
+        MitePortalFrame removedCorners = frame(level, new BlockPos(chunkX + 38, 70, chunkZ + 8), Direction.Axis.X);
+        MitePortalFrame ordinary = frame(level, new BlockPos(chunkX + 45, 70, chunkZ + 8), Direction.Axis.X);
+        for (MitePortalFrame frame : new MitePortalFrame[]{addedCorners, removedCorners, ordinary}) {
+            PortalShape.findEmptyPortalShape(level, frame.bottomLeft(), frame.axis()).orElseThrow().createPortalBlocks();
+        }
+        corners(level, addedCorners, false);
+        var cornerChunk = level.getChunkAt(addedCorners.at(2, -1));
+        helper.assertValueEqual(cornerChunk.getPos().x, (addedCorners.bottomLeft().getX() >> 4) + 1,
+                "The load event belongs to the corner-only chunk east of the portal interior");
+
+        // Let setup-generated chunk-load tasks finish before reproducing states saved by the old implementation.
+        helper.runAfterDelay(2, () -> {
+            MitePortals.writeRoute(level, addedCorners, 1, false);
+            MitePortals.writeRoute(level, removedCorners, 0, true);
+            MitePortals.writeRoute(level, ordinary, 1, false);
+            helper.assertTrue(addedCorners.rune(level).isPresent(), "The legacy ordinary state already has complete rune corners");
+            helper.assertTrue(removedCorners.rune(level).isEmpty(), "The legacy runegate state has already lost its corners");
+            MitePortals.load(new net.neoforged.neoforge.event.level.ChunkEvent.Load(cornerChunk, false));
+            helper.runAfterDelay(2, () -> {
+                for (int column = 0; column < 2; column++) for (int row = 0; row < 3; row++) {
+                    var added = level.getBlockState(addedCorners.at(column, row));
+                    helper.assertTrue(added.getValue(MitePortalProperties.RUNEGATE),
+                            "Loading only the adjacent corner chunk updates every runegate interior block");
+                    helper.assertValueEqual(added.getValue(MitePortalProperties.DESTINATION), 0,
+                            "Existing rune corners restore the blue overworld runegate route");
+                    var removed = level.getBlockState(removedCorners.at(column, row));
+                    helper.assertFalse(removed.getValue(MitePortalProperties.RUNEGATE),
+                            "Missing rune corners restore the ordinary gate state");
+                    helper.assertValueEqual(removed.getValue(MitePortalProperties.DESTINATION), 0,
+                            "The former runegate follows the ordinary surface return-home route");
+                    var saved = level.getBlockState(ordinary.at(column, row));
+                    helper.assertFalse(saved.getValue(MitePortalProperties.RUNEGATE),
+                            "A saved ordinary return gate keeps its ordinary state");
+                    helper.assertValueEqual(saved.getValue(MitePortalProperties.DESTINATION), 1,
+                            "Loading preserves the explicit underworld destination of an ordinary return gate");
+                }
+                helper.succeed();
+            });
+        });
     }
 
     @GameTest(template = "empty")

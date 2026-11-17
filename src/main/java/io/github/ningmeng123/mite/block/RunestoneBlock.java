@@ -5,6 +5,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import io.github.ningmeng123.mite.item.RunestoneItem;
+import io.github.ningmeng123.mite.portal.MitePortals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelReader;
@@ -25,6 +26,14 @@ public final class RunestoneBlock extends Block {
     }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(RUNE);
+    }
+    @Override protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState previous, boolean moved) {
+        super.onPlace(state, level, pos, previous, moved);
+        if (!state.is(previous.getBlock())) MitePortals.refreshRuneRoutes(level, pos);
+    }
+    @Override protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState replacement, boolean moved) {
+        super.onRemove(state, level, pos, replacement, moved);
+        if (!state.is(replacement.getBlock())) MitePortals.refreshRuneRoutes(level, pos);
     }
     @Override public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return RunestoneItem.withRune(new ItemStack(this), state.getValue(RUNE));
