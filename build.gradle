@@ -305,6 +305,8 @@ neoForge {
 }
 
 dependencies {
+    // NeoForge owns the early window at runtime.
+    compileOnly('net.neoforged.fancymodloader:earlydisplay:4.0.45') { transitive = false }
     // Optional combat integration; users supply both mods, neither is bundled.
     compileOnly('maven.modrinth:better-combat:2.4.0+1.21.1-neoforge') { transitive = false }
     gametestCompileOnly('maven.modrinth:better-combat:2.4.0+1.21.1-neoforge') { transitive = false }
