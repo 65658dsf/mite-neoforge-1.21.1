@@ -2,6 +2,8 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.mining.ToolHarvestRules;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
@@ -12,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -19,6 +23,48 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /** Actual mining progress and server removal eligibility, rather than only drop flags. @author NingMeng123 */
 @GameTestHolder("mite") @PrefixGameTestTemplate(false)
 public final class SourceMiningGameTests {
+    @GameTest(template = "empty")
+    public static void iceAndSnowAllowHandBreakingWhileSnowKeepsItsDropToolRequirement(GameTestHelper helper) {
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setOnGround(true);
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
+        List<BlockState> states = new ArrayList<>(List.of(
+                Blocks.ICE.defaultBlockState(),
+                Blocks.FROSTED_ICE.defaultBlockState(),
+                Blocks.PACKED_ICE.defaultBlockState(),
+                Blocks.BLUE_ICE.defaultBlockState(),
+                Blocks.SNOW_BLOCK.defaultBlockState(),
+                Blocks.POWDER_SNOW.defaultBlockState()));
+        for (int layers = 1; layers <= 8; layers++) {
+            states.add(Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers));
+        }
+
+        for (ItemStack held : List.of(ItemStack.EMPTY, new ItemStack(Items.STICK))) {
+            player.setItemSlot(EquipmentSlot.MAINHAND, held);
+            for (BlockState state : states) {
+                helper.getLevel().setBlock(pos, state, 2);
+                helper.assertFalse(ToolHarvestRules.isBlocked(player, state),
+                        "Hands and ordinary items can break ice and snow: " + state);
+                helper.assertTrue(state.getDestroyProgress(player, helper.getLevel(), pos) > 0F,
+                        "Ice and snow allow actual mining progress: " + state);
+                var event = new BlockEvent.BreakEvent(helper.getLevel(), pos, state, player);
+                ToolHarvestRules.harvest(event);
+                helper.assertFalse(event.isCanceled(), "The final ice or snow break is accepted: " + state);
+            }
+        }
+
+        for (BlockState state : states) {
+            if (!state.is(Blocks.SNOW) && !state.is(Blocks.SNOW_BLOCK)) continue;
+            player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            helper.assertFalse(player.hasCorrectToolForDrops(state),
+                    "Bare hands retain the native snow drop requirement: " + state);
+            player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SHOVEL));
+            helper.assertTrue(player.hasCorrectToolForDrops(state),
+                    "A shovel retains native snow drop eligibility: " + state);
+        }
+        helper.succeed();
+    }
+
     @GameTest(template="empty")
     public static void bareHandsAndUnrelatedItemsCannotRemoveRequiredMaterialsAtAnyLevel(GameTestHelper h) {
         var p=h.makeMockPlayer(GameType.SURVIVAL);p.setOnGround(true);p.experienceLevel=500;

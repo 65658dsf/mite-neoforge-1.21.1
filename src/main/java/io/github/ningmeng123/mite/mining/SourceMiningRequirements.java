@@ -40,7 +40,8 @@ public final class SourceMiningRequirements {
         return 0;
     }
     public static boolean requiresTool(BlockState state) {
-        if (sourceHandBreakable(state)) return false;
+        // Ice and snow allow hand destruction independently of tool requirements for drops.
+        if (state.is(BlockTags.ICE) || state.is(BlockTags.SNOW) || sourceHandBreakable(state)) return false;
         return minimumHarvestLevel(state) > 0 || state.requiresCorrectToolForDrops();
     }
     /** These R196 materials have neither requires_tool nor a positive block minimum, despite modern pickaxe tags. */
