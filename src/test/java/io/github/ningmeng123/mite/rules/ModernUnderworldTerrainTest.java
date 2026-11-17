@@ -19,6 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Tests the documented modern height/accessibility contract, separately from the source oracle. @author NingMeng123 */
 final class ModernUnderworldTerrainTest {
+    private static final int AREA_CHUNKS = 3;
+    private static final int AREA_WIDTH = AREA_CHUNKS * 16;
+    private static final int[][] FORWARD_NEIGHBORS = {{1, 0}, {0, 1}};
+
     @Test
     void modernDimensionsAndGameplayBoundariesAreExplicit() {
         assertEquals(2, ModernUnderworldTerrain.CURRENT_LAYOUT_VERSION);
@@ -102,8 +106,8 @@ final class ModernUnderworldTerrainTest {
                                 "只有顶部屋顶可以保留基岩");
                     }
                 }
-                // The source oracle independently verifies these 25 chunks. Expansion must retain
-                // their complete cavern contents, including water and cobwebs, at the mapped layers.
+                // The independent source oracle still fixes every original stone, water and cobweb.
+                // The accessibility adaptation may only fill dry air above a supported stone floor.
                 byte[] original = new R196UnderworldTerrain(seed).generate(chunkX, chunkZ);
                 for (int legacyY = 120; legacyY <= 247; legacyY++) {
                     int start = ModernUnderworldTerrain.fromLegacyY(legacyY);
@@ -111,7 +115,26 @@ final class ModernUnderworldTerrainTest {
                     for (int x = 0; x < 16; x++) for (int z = 0; z < 16; z++) {
                         byte expected = original[R196UnderworldTerrain.index(x, legacyY, z)];
                         for (int y = start; y < end; y++) {
-                            assertEquals(expected, blocks[ModernUnderworldTerrain.index(x, y, z)], "洞穴内容映射后改变");
+                            byte actual = blocks[ModernUnderworldTerrain.index(x, y, z)];
+                            if (expected == actual) continue;
+                            assertEquals(R196UnderworldTerrain.AIR, expected, "台阶只能填入原有空气");
+                            assertEquals(R196UnderworldTerrain.STONE, actual, "台阶必须由石头组成");
+                            int floorY = y - 1;
+                            while (original[R196UnderworldTerrain.index(x,
+                                    ModernUnderworldTerrain.toLegacyY(floorY), z)] == R196UnderworldTerrain.AIR) {
+                                floorY--;
+                            }
+                            assertTrue(y - floorY <= 2, "坡脚最多在原有地面上增加两层");
+                            assertEquals(R196UnderworldTerrain.STONE, original[R196UnderworldTerrain.index(x,
+                                    ModernUnderworldTerrain.toLegacyY(floorY), z)], "台阶必须落在原有石地面上");
+                            int topY = y;
+                            while (blocks[ModernUnderworldTerrain.index(x, topY + 1, z)] == R196UnderworldTerrain.STONE) {
+                                topY++;
+                            }
+                            for (int dy = 1; dy <= 3; dy++) {
+                                assertEquals(R196UnderworldTerrain.AIR,
+                                        blocks[ModernUnderworldTerrain.index(x, topY + dy, z)], "台阶上方应保留三格净空");
+                            }
                         }
                     }
                 }
@@ -137,6 +160,45 @@ final class ModernUnderworldTerrainTest {
     }
 
     @Test
+    void dryTerracesGainSingleBlockRoutesAcrossPositiveAndNegativeChunks() {
+        int beforeDoubleSteps = 0, afterDoubleSteps = 0;
+        int restoredRoutes = 0, restoredBorderRoutes = 0;
+        for (long seed : new long[]{0, 1, 196, 123456789L}) {
+            TerrainSample sample = terrainSample(seed);
+            FloorEdges before = floorEdges(sample.before());
+            FloorEdges after = floorEdges(sample.after());
+            assertTrue(after.singleSteps() > before.singleSteps(), "一格台阶应增加，种子 " + seed);
+            assertTrue(after.doubleSteps() < before.doubleSteps(), "两格断层应减少，种子 " + seed);
+            assertOriginalWalkableEdgesRemain(sample);
+            RestoredRoutes routes = restoredDoubleLedgeRoutes(sample);
+            assertTrue(routes.routes() > 0, "原有两格台地应得到可直接上去的路径，种子 " + seed);
+            assertTrue(routes.borderRoutes() > 0, "跨区块边缘也应得到可走台阶，种子 " + seed);
+            beforeDoubleSteps += before.doubleSteps();
+            afterDoubleSteps += after.doubleSteps();
+            restoredRoutes += routes.routes();
+            restoredBorderRoutes += routes.borderRoutes();
+        }
+        assertTrue(afterDoubleSteps * 5 < beforeDoubleSteps * 3, "固定样本的两格断层应减少超过四成");
+        assertTrue(restoredRoutes > 400, "实际两格高台的端点之间应新增足够的一格通路");
+        assertTrue(restoredBorderRoutes > 10, "区块接缝不能遗漏台阶调整");
+    }
+
+    @Test
+    void neighboringChunksProduceTheSameStepsInEitherGenerationOrder() {
+        int[][] positions = {{-1, -1}, {-1, 0}, {0, -1}, {0, 0}};
+        ModernUnderworldTerrain forward = new ModernUnderworldTerrain(196);
+        byte[][] expected = new byte[positions.length][];
+        for (int i = 0; i < positions.length; i++) {
+            expected[i] = forward.generate(positions[i][0], positions[i][1]);
+        }
+        ModernUnderworldTerrain reverse = new ModernUnderworldTerrain(196);
+        for (int i = positions.length - 1; i >= 0; i--) {
+            assertArrayEquals(expected[i], reverse.generate(positions[i][0], positions[i][1]),
+                    "接缝台阶不能依赖相邻区块的生成顺序");
+        }
+    }
+
+    @Test
     void modernGenerationStillSupportsParallelChunks() throws Exception {
         ModernUnderworldTerrain generator = new ModernUnderworldTerrain(123456789L);
         String first = digest(generator.generate(0, 0));
@@ -150,6 +212,118 @@ final class ModernUnderworldTerrainTest {
             assertEquals(second, results.get(2).get());
         }
     }
+
+    private static TerrainSample terrainSample(long seed) {
+        R196UnderworldTerrain source = new R196UnderworldTerrain(seed);
+        ModernUnderworldTerrain modern = new ModernUnderworldTerrain(seed);
+        byte[][] before = new byte[AREA_CHUNKS * AREA_CHUNKS][];
+        byte[][] after = new byte[before.length][];
+        // The sample spans both sides of zero and every internal X/Z chunk boundary.
+        for (int chunkX = -1; chunkX <= 1; chunkX++) {
+            for (int chunkZ = -1; chunkZ <= 1; chunkZ++) {
+                int chunk = (chunkX + 1) * AREA_CHUNKS + chunkZ + 1;
+                byte[] original = source.generate(chunkX, chunkZ);
+                before[chunk] = new byte[16 * 16 * ModernUnderworldTerrain.HEIGHT];
+                for (int x = 0; x < 16; x++) for (int z = 0; z < 16; z++) {
+                    for (int y = ModernUnderworldTerrain.CAVERN_OFFSET;
+                         y < ModernUnderworldTerrain.CAVERN_TOP_EXCLUSIVE; y++) {
+                        before[chunk][ModernUnderworldTerrain.index(x, y, z)] = original[R196UnderworldTerrain.index(
+                                x, ModernUnderworldTerrain.toLegacyY(y), z)];
+                    }
+                }
+                after[chunk] = modern.generate(chunkX, chunkZ);
+            }
+        }
+        return new TerrainSample(before, after);
+    }
+
+    private static FloorEdges floorEdges(byte[][] chunks) {
+        int singleSteps = 0, doubleSteps = 0;
+        for (int x = 0; x < AREA_WIDTH; x++) for (int z = 0; z < AREA_WIDTH; z++) {
+            for (int y = ModernUnderworldTerrain.CAVERN_OFFSET + 2;
+                 y < ModernUnderworldTerrain.CAVERN_TOP_EXCLUSIVE - 5; y++) {
+                if (!floor(chunks, x, y, z, 3)) continue;
+                for (int[] direction : FORWARD_NEIGHBORS) {
+                    int nx = x + direction[0], nz = z + direction[1];
+                    if (nx >= AREA_WIDTH || nz >= AREA_WIDTH) continue;
+                    for (int dy : new int[]{-2, -1, 1, 2}) {
+                        if (!floor(chunks, nx, y + dy, nz, 3)) continue;
+                        if (Math.abs(dy) == 1) singleSteps++;
+                        else doubleSteps++;
+                    }
+                }
+            }
+        }
+        return new FloorEdges(singleSteps, doubleSteps);
+    }
+
+    private static void assertOriginalWalkableEdgesRemain(TerrainSample sample) {
+        for (int x = 0; x < AREA_WIDTH; x++) for (int z = 0; z < AREA_WIDTH; z++) {
+            for (int y = ModernUnderworldTerrain.CAVERN_OFFSET + 2;
+                 y < ModernUnderworldTerrain.CAVERN_TOP_EXCLUSIVE - 5; y++) {
+                if (!floor(sample.before(), x, y, z, 2)) continue;
+                int newY = raisedFloor(sample.after(), x, y, z);
+                assertTrue(floor(sample.after(), x, newY, z, 2), "原有站立位置应保留双格净空");
+                for (int[] direction : FORWARD_NEIGHBORS) {
+                    int nx = x + direction[0], nz = z + direction[1];
+                    if (nx >= AREA_WIDTH || nz >= AREA_WIDTH) continue;
+                    for (int dy = -1; dy <= 1; dy++) {
+                        if (!floor(sample.before(), nx, y + dy, nz, 2)) continue;
+                        int neighborY = raisedFloor(sample.after(), nx, y + dy, nz);
+                        assertTrue(Math.abs(newY - neighborY) <= 1, "填台阶不能把原有一格通路变成断层");
+                        assertTrue(floor(sample.after(), nx, neighborY, nz, 2), "邻接通路应保留双格净空");
+                    }
+                }
+            }
+        }
+    }
+
+    private static RestoredRoutes restoredDoubleLedgeRoutes(TerrainSample sample) {
+        int routes = 0, borderRoutes = 0;
+        for (int x = 0; x < AREA_WIDTH; x++) for (int z = 0; z < AREA_WIDTH; z++) {
+            for (int y = ModernUnderworldTerrain.CAVERN_OFFSET + 2;
+                 y < ModernUnderworldTerrain.CAVERN_TOP_EXCLUSIVE - 5; y++) {
+                if (!floor(sample.before(), x, y, z, 3)) continue;
+                for (int[] direction : FORWARD_NEIGHBORS) {
+                    int nx = x + direction[0], nz = z + direction[1];
+                    if (nx >= AREA_WIDTH || nz >= AREA_WIDTH) continue;
+                    for (int dy : new int[]{-2, 2}) {
+                        if (!floor(sample.before(), nx, y + dy, nz, 3)) continue;
+                        int newY = raisedFloor(sample.after(), x, y, z);
+                        int neighborY = raisedFloor(sample.after(), nx, y + dy, nz);
+                        if (Math.abs(newY - neighborY) > 1) continue;
+                        if (!floor(sample.after(), x, newY, z, 3)
+                                || !floor(sample.after(), nx, neighborY, nz, 3)) continue;
+                        routes++;
+                        if (x / 16 != nx / 16 || z / 16 != nz / 16) borderRoutes++;
+                    }
+                }
+            }
+        }
+        return new RestoredRoutes(routes, borderRoutes);
+    }
+
+    private static boolean floor(byte[][] chunks, int x, int y, int z, int headroom) {
+        if (block(chunks, x, y, z) != R196UnderworldTerrain.STONE) return false;
+        for (int dy = 1; dy <= headroom; dy++) {
+            if (block(chunks, x, y + dy, z) != R196UnderworldTerrain.AIR) return false;
+        }
+        return true;
+    }
+
+    private static int raisedFloor(byte[][] chunks, int x, int y, int z) {
+        int top = y;
+        while (top < y + 2 && block(chunks, x, top + 1, z) == R196UnderworldTerrain.STONE) top++;
+        return top;
+    }
+
+    private static byte block(byte[][] chunks, int x, int y, int z) {
+        return chunks[x / 16 * AREA_CHUNKS + z / 16][ModernUnderworldTerrain.index(x % 16, y, z % 16)];
+    }
+
+    private record TerrainSample(byte[][] before, byte[][] after) {}
+    private record FloorEdges(int singleSteps, int doubleSteps) {}
+    private record RestoredRoutes(int routes, int borderRoutes) {}
 
     private static String digest(byte[] values) throws Exception {
         return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(values));
