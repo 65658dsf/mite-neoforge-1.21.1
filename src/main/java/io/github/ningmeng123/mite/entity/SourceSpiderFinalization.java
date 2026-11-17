@@ -36,11 +36,14 @@ public final class SourceSpiderFinalization {
                 spider.getRandom().nextGaussian()*.05D,AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         // te and all four source leaf arachnids never call tt's special callback.
         if(spider.getType()!=EntityType.SPIDER) return group;
-        var worldRandom=spider.level().getRandom();
+        var worldRandom=accessor.getRandom();
         if(worldRandom.nextInt(100)==0 && !spider.isSpawnCancelled()) {
             AbstractSkeleton rider=createRider(spider,accessor,difficulty,reason);
             if(rider!=null) {
-                if(spider.level().addFreshEntity(rider)) {
+                // World generation saves the complete passenger tree through its accessor after finalization.
+                if(accessor!=spider.level()) {
+                    if(!rider.startRiding(spider)) rider.discard();
+                } else if(accessor.addFreshEntity(rider)) {
                     if(!rider.startRiding(spider)) rider.discard();
                 } else rider.discard();
             }
