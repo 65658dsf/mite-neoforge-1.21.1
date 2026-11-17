@@ -47,8 +47,8 @@ public final class DeathExperienceGameTests {
         try {
             keep.set(false, helper.getLevel().getServer());
             loot.set(false, helper.getLevel().getServer());
-            int[][] cases = {{819520, 0}, {491840, 0}, {20, 0}, {19, -1}, {0, -20}, {-1, -21}, {-20, -40},
-                    {-779, -799}, {-780, -800}, {-799, -800}, {-800, -800}};
+            int[][] cases = {{819520, 0}, {491840, 0}, {20, 0}, {19, -1}, {0, -20}, {-1, -40}, {-20, -40},
+                    {-21, -60}, {-51, -80}, {-760, -780}, {-761, -800}, {-779, -800}, {-780, -800}, {-799, -800}, {-800, -800}};
             for (int[] entry : cases) {
                 PlayerExperience.setTotal(player, entry[0]);
                 prepareDeathPosition(helper, player);
@@ -173,9 +173,9 @@ public final class DeathExperienceGameTests {
             // A later death takes a fresh snapshot instead of replaying the saved one.
             prepareDeathPosition(helper, loaded);
             loaded.kill();
-            assertPending(helper, loaded, -21);
+            assertPending(helper, loaded, -40);
             loaded = respawn(helper, loaded, false);
-            assertTotal(helper, loaded, -21);
+            assertTotal(helper, loaded, -40);
         } finally {
             keep.set(oldKeep, helper.getLevel().getServer());
             loot.set(oldLoot, helper.getLevel().getServer());
@@ -352,6 +352,20 @@ public final class DeathExperienceGameTests {
             player = respawn(helper, player, false);
             helper.assertFalse(packets.isEmpty(), "Respawn sends an experience packet before the next tick");
             assertPacket(helper, packets.getFirst(), -1, -1, 0.95F, "The first respawn XP packet already contains the penalty");
+            // Repeated deaths must clear earned progress before the first respawn packet.
+            for (int[] death : new int[][]{{0, -40}, {9, -60}}) {
+                player.giveExperiencePoints(death[0]);
+                int expectedTotal = death[1];
+                prepareDeathPosition(helper, player);
+                player.kill();
+                assertPending(helper, player, expectedTotal);
+                packets.clear();
+                player = respawn(helper, player, false);
+                assertTotal(helper, player, expectedTotal);
+                helper.assertFalse(packets.isEmpty(), "Negative-level respawn immediately synchronizes experience");
+                assertPacket(helper, packets.getFirst(), expectedTotal, expectedTotal / 20, 0.0F,
+                        "Negative-level death clears the bar in the first respawn XP packet");
+            }
         } finally {
             pipeline.remove(PACKET_CAPTURE);
             keep.set(oldKeep, helper.getLevel().getServer());

@@ -31,10 +31,12 @@ public final class ExperienceRules {
     private ExperienceRules() {
     }
 
-    /** R196 jv.onDeath: only totals below level one's threshold incur debt. */
+    /** Negative-level deaths clear bar progress and incur one more level of debt. */
     public static int experienceAfterDeath(int totalExperience) {
-        return totalExperience < 20
-                ? (int) Math.max(MIN_TOTAL_EXPERIENCE, (long) totalExperience - 20L) : 0;
+        if (totalExperience < 0) {
+            return experienceRequiredForLevel(levelForTotalExperience(totalExperience) - 1);
+        }
+        return totalExperience < 20 ? totalExperience - 20 : 0;
     }
 
     /** R196 uf.getExperienceValue: positive cumulative XP divided by three. */
