@@ -1,0 +1,6 @@
+{
+  "parent": "mite:block/template_material_smithing_table",
+  "textures": {
+    "metal": "mite:block/mithril_block"
+  }
+}

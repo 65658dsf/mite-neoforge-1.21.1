@@ -1,9 +1,13 @@
 {
   "author": "NingMeng123",
-  "source": "Modern workstation manufacturing adaptation: wooden and mixed workstations use the existing chest batch (640); furnace variants use the existing furnace batch (1600). Assembly remains available on the same workbenches as before.",
+  "source": "Modern workstation manufacturing adaptation: workstation assembly uses the existing chest batch (640); furnace variants use the existing furnace batch (1600). Material smithing tables require their matching workbench.",
   "recipes": {
     "minecraft:grindstone": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
     "minecraft:smithing_table": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
+    "mite:ancient_metal_smithing_table": {"difficulty": 640.0, "required_bench": "ancient_metal", "source_order": -1},
+    "mite:mithril_smithing_table": {"difficulty": 640.0, "required_bench": "mithril", "source_order": -1},
+    "mite:adamantium_smithing_table": {"difficulty": 640.0, "required_bench": "adamantium", "source_order": -1},
+    "mite:vibranium_smithing_table": {"difficulty": 640.0, "required_bench": "vibranium", "source_order": -1},
     "minecraft:stonecutter": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
     "minecraft:fletching_table": {"difficulty": 640.0, "required_bench": null, "source_order": -1},
     "minecraft:cartography_table": {"difficulty": 640.0, "required_bench": null, "source_order": -1},

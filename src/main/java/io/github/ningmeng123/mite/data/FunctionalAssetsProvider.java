@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.data;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -49,6 +50,14 @@ public final class FunctionalAssetsProvider implements DataProvider {
             save(tasks, cache, "assets/mite/models/item/" + box + ".json", "{\"parent\":\"minecraft:builtin/entity\",\"gui_light\":\"front\",\"display\":{\"gui\":{\"rotation\":[30,45,0],\"scale\":[0.625,0.625,0.625]},\"ground\":{\"translation\":[0,3,0],\"scale\":[0.25,0.25,0.25]},\"fixed\":{\"rotation\":[0,180,0],\"scale\":[0.5,0.5,0.5]}}}");
             save(tasks, cache, "data/mite/loot_table/blocks/" + box + ".json", ordinaryLoot("mite:" + box));
         }
+        MiteFunctionalBlocks.SMITHING_TABLES.forEach((material, block) -> {
+            String name = block.getId().getPath();
+            save(tasks, cache, "assets/mite/blockstates/" + name + ".json", "{\"variants\":{\"\":{\"model\":\"mite:block/" + name + "\"}}}");
+            save(tasks, cache, "assets/mite/models/block/" + name + ".json",
+                    "{\"parent\":\"mite:block/template_material_smithing_table\",\"textures\":{\"metal\":\"mite:block/" + material + "_block\"}}");
+            save(tasks, cache, "assets/mite/models/item/" + name + ".json", "{\"parent\":\"mite:block/" + name + "\"}");
+            save(tasks, cache, "data/mite/loot_table/blocks/" + name + ".json", ordinaryLoot("mite:" + name));
+        });
         for (String name : List.of("anvil", "chipped_anvil", "damaged_anvil"))
             save(tasks, cache, "data/minecraft/loot_table/blocks/" + name + ".json", anvilLoot("minecraft:" + name));
         save(tasks, cache, "assets/mite/blockstates/emerald_enchanting_table.json", "{\"variants\":{\"\":{\"model\":\"mite:block/emerald_enchanting_table\"}}}");

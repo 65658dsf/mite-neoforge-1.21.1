@@ -8,6 +8,7 @@ import io.github.ningmeng123.mite.crafting.FoodShapelessRecipe;
 import io.github.ningmeng123.mite.crafting.WorkbenchDismantleRecipe;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
 import io.github.ningmeng123.mite.crafting.WaterBowlSuspiciousStewRecipe;
+import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,13 +58,21 @@ public final class WorkbenchJeiRecipes {
         return Collections.unmodifiableMap(result);
     }
 
-    /** Every table listed on the left can manufacture every recipe in this category. */
+    /** Workbenches that meet the category's minimum capacity. */
     public static List<String> categoryWorkstations(String categoryId) {
         Profile minimum = categoryProfiles().get(categoryId);
         if (minimum == null) throw new IllegalArgumentException("Unknown workbench category: " + categoryId);
         if (categoryId.equals(INVENTORY)) return List.of();
         return profiles().values().stream().filter(profile -> profile.gridSize() == 3
                 && profile.capacity() >= minimum.capacity()).map(Profile::id).toList();
+    }
+
+    /** Category catalysts appear in JEI's sidebar and match every page in the category. */
+    public static List<String> categoryCatalysts(String categoryId) {
+        for (String material : MiteFunctionalBlocks.SMITHING_TABLES.keySet()) {
+            if (MiteWorkbenches.TABLES.get(material).getId().toString().equals(categoryId)) return List.of(categoryId);
+        }
+        return categoryWorkstations(categoryId);
     }
 
     public static Index groupedIndex(Level level) { return groupedIndex(index(level)); }
@@ -151,9 +160,12 @@ public final class WorkbenchJeiRecipes {
             if (!recipe.matches(example, level)) continue;
             var rule = CraftingQuality.rule(holder, output, example);
             float required = Math.max(WorkbenchRules.required(output), rule == null ? 0F : rule.requiredCapacity());
+            var requiredWorkbench = WorkbenchRules.requiredWorkbench(output);
+            String requiredId = requiredWorkbench == null ? null : BuiltInRegistries.BLOCK.getKey(requiredWorkbench).toString();
             boolean covered = false;
             for (Profile profile : profiles.values()) {
-                if (profile.capacity() < required || !recipe.canCraftInDimensions(profile.gridSize(), profile.gridSize())
+                if ((requiredId != null && !profile.id().equals(requiredId)) || profile.capacity() < required
+                        || !recipe.canCraftInDimensions(profile.gridSize(), profile.gridSize())
                         || profile.gridSize() == 2 && output.is(ItemTags.PLANKS)) continue;
                 int displayWidth = shapeless ? Math.min(profile.gridSize(), count) : width;
                 int displayHeight = shapeless ? (count + displayWidth - 1) / displayWidth : height;

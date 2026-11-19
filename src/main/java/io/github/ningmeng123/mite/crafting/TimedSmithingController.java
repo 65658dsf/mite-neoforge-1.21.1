@@ -41,7 +41,8 @@ public final class TimedSmithingController {
             return true;
         }
     }
-    private record Prepared(SmithingMenu menu, RecipeHolder<SmithingRecipe> recipe, ItemStack result, int ingots, Payment payment) {}
+    private record Prepared(SmithingMenu menu, RecipeHolder<SmithingRecipe> recipe, ItemStack result, int ingots,
+            Payment payment, SmithingTableTier table) {}
     private static final class Session {
         final Prepared prepared;
         final List<ItemStack> inputs;
@@ -103,7 +104,8 @@ public final class TimedSmithingController {
     public static boolean previewAllowed(SmithingMenu menu, Player player) {
         if (!applies(menu)) return true;
         ItemStack result = menu.getSlot(SmithingMenu.RESULT_SLOT).getItem();
-        int required = result.isEmpty() ? 0 : MaterialUpgradeRequirements.ingots(result);
+        if (result.isEmpty() || SmithingTableTier.current(menu) != SmithingTableTier.requiredFor(result)) return false;
+        int required = MaterialUpgradeRequirements.ingots(result);
         return required > 0 && availableIngots(player, menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem()) >= required;
     }
 
@@ -113,13 +115,15 @@ public final class TimedSmithingController {
         var recipe = player.level().getRecipeManager().getRecipeFor(RecipeType.SMITHING, input, player.level());
         if (recipe.isEmpty()) return null;
         ItemStack result = recipe.get().value().assemble(input, player.level().registryAccess());
-        int ingots = result.isEmpty() ? 0 : MaterialUpgradeRequirements.ingots(result);
+        SmithingTableTier table = SmithingTableTier.current(smithing);
+        if (result.isEmpty() || table != SmithingTableTier.requiredFor(result)) return null;
+        int ingots = MaterialUpgradeRequirements.ingots(result);
         Payment payment = payment(player, menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem(), ingots);
-        if (result.isEmpty() || ingots <= 0 || input.addition().getCount() < ingots
+        if (ingots <= 0 || input.addition().getCount() < ingots
                 || payment == null
                 || !result.isItemEnabled(player.level().enabledFeatures())
                 || !ItemStack.matches(result, menu.getSlot(SmithingMenu.RESULT_SLOT).getItem())) return null;
-        return new Prepared(smithing, recipe.get(), result, ingots, payment);
+        return new Prepared(smithing, recipe.get(), result, ingots, payment, table);
     }
 
     private static boolean allowed(ServerPlayer player, Prepared prepared, boolean inventory) {
@@ -167,9 +171,10 @@ public final class TimedSmithingController {
         return prepared == null ? 0 : period(player, prepared);
     }
     private static int period(ServerPlayer player, Prepared prepared) {
-        return TimedCraftingRules.period(EquipmentQualityRules.adjustedDifficulty(
+        int basePeriod = TimedCraftingRules.period(EquipmentQualityRules.adjustedDifficulty(
                 MaterialUpgradeRequirements.difficulty(prepared.result()), EquipmentDurability.quality(prepared.result())),
                 player.experienceLevel, 0F, PlayerCurses.has(player, R196Curse.CLUMSINESS));
+        return prepared.table().duration(basePeriod);
     }
 
     public static void cancel(ServerPlayer player) {

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "mite:mithril_ingot"
+    },
+    "T": {
+      "item": "minecraft:smithing_table"
+    }
+  },
+  "pattern": [
+    "I I",
+    " T "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mite:mithril_smithing_table"
+  }
+}

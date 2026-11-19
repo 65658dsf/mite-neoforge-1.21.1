@@ -1,9 +1,12 @@
 package io.github.ningmeng123.mite.crafting;
 
+import io.github.ningmeng123.mite.block.MaterialSmithingTableBlock;
 import io.github.ningmeng123.mite.block.MaterialWorkbenchBlock;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
+import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -13,6 +16,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -37,6 +41,13 @@ public final class WorkbenchRules {
     }
     public static float capacity(BlockState state) {
         return state.getBlock() instanceof MaterialWorkbenchBlock bench ? materialCapacity(bench.material()) : 0F;
+    }
+    @Nullable
+    public static Block requiredWorkbench(ItemStack result) {
+        if (result.getItem() instanceof BlockItem item && item.getBlock() instanceof MaterialSmithingTableBlock table) {
+            return MiteWorkbenches.TABLES.get(table.material()).get();
+        }
+        return null;
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
@@ -88,12 +99,16 @@ public final class WorkbenchRules {
         return materialCapacity(MiteTools.requiredBenchMaterial(result));
     }
     public static boolean allows(AbstractContainerMenu menu, ItemStack result) {
+        Block bench = requiredWorkbench(result);
+        if (bench != null) return menu instanceof CraftingMenu && menu instanceof WorkbenchAccess access
+                && access.mite$isWorkbench(bench);
         float required = required(result);
         return required <= 0 || menu instanceof CraftingMenu && menu instanceof WorkbenchAccess access
                 && access.mite$workbenchCapacity() >= required;
     }
     public static boolean allows(AbstractContainerMenu menu, ItemStack result, Level level) {
         if (allows(menu, result)) return true;
+        if (requiredWorkbench(result) != null) return false;
         if (!(menu instanceof CraftingMenu || menu instanceof InventoryMenu)
                 || !(menu.getSlot(1).container instanceof CraftingContainer grid)) return false;
         var recipe = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid.asCraftInput(), level);

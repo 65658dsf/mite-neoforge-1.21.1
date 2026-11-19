@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,6 +21,9 @@ public abstract class WorkbenchTierMixin implements WorkbenchAccess {
     @Shadow @Final private ContainerLevelAccess access;
     @Override public float mite$workbenchCapacity() {
         return access.evaluate((level, pos) -> WorkbenchRules.capacity(level.getBlockState(pos)), 0F);
+    }
+    @Override public boolean mite$isWorkbench(Block block) {
+        return access.evaluate((level, pos) -> level.getBlockState(pos).is(block), false);
     }
     @Inject(method = "stillValid", at = @At("HEAD"), cancellable = true)
     private void mite$validMaterialTable(Player player, CallbackInfoReturnable<Boolean> cir) {

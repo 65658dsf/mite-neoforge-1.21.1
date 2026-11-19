@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.integration.jei;
 
 import io.github.ningmeng123.mite.crafting.TimedCraftingRecipes;
 import io.github.ningmeng123.mite.crafting.TimedCraftingRules;
+import io.github.ningmeng123.mite.crafting.WorkbenchRules;
 import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +23,14 @@ public record WorkbenchJeiRecipe(String workstationId, RecipeHolder<CraftingReci
             int width, int height, List<List<ItemStack>> inputs, ItemStack output,
             TimedCraftingRecipes.Rule rule, float requiredCapacity, boolean shapeless) {
         this(workstationId, source, width, height, inputs, output, rule, requiredCapacity, shapeless, source.id());
+    }
+
+    public boolean requiresExactWorkbench() {
+        return WorkbenchRules.requiredWorkbench(output) != null;
+    }
+
+    public List<String> compatibleWorkstations() {
+        return requiresExactWorkbench() ? List.of(workstationId) : WorkbenchJeiRecipes.categoryWorkstations(workstationId);
     }
 
     /** Level zero, default quality, no active curse; actual player manufacturing can take a different time. */

@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.registry;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.block.EmeraldEnchantingTableBlock;
 import io.github.ningmeng123.mite.block.MaterialAnvilBlock;
+import io.github.ningmeng123.mite.block.MaterialSmithingTableBlock;
 import io.github.ningmeng123.mite.block.MaterialWorkbenchBlock;
 import io.github.ningmeng123.mite.block.R196FurnaceBlock;
 import io.github.ningmeng123.mite.block.RunestoneBlock;
@@ -105,7 +106,7 @@ public final class MiteCreativeTabs {
         if (item instanceof BlockItem blockItem) {
             var block = blockItem.getBlock();
             if (block instanceof MaterialWorkbenchBlock || block instanceof R196FurnaceBlock
-                    || block instanceof MaterialAnvilBlock || block instanceof StrongboxBlock
+                    || block instanceof MaterialAnvilBlock || block instanceof MaterialSmithingTableBlock || block instanceof StrongboxBlock
                     || block instanceof EmeraldEnchantingTableBlock || block instanceof RunestoneBlock
                     || block instanceof DoorBlock || block instanceof IronBarsBlock) return Group.FUNCTIONAL_BLOCKS;
             return Group.MATERIALS;

@@ -61,6 +61,8 @@ public final class MiteBlockTagsProvider extends BlockTagsProvider {
             if (material.equals("mithril") || material.equals("adamantium")) tag(BlockTags.NEEDS_DIAMOND_TOOL).add(block.get());
             else tag(BlockTags.NEEDS_IRON_TOOL).add(block.get());
         });
+        io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.SMITHING_TABLES.values()
+                .forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block.get()));
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(io.github.ningmeng123.mite.registry.MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(MiteFurnaces.CLAY_OVEN.get(), MiteFurnaces.LARGE_CLAY_OVEN.get(),
                 MiteFurnaces.OBSIDIAN_FURNACE.get(), MiteFurnaces.NETHERRACK_FURNACE.get());

@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.integration.jei;
 
+import io.github.ningmeng123.mite.crafting.SmithingTableTier;
 import io.github.ningmeng123.mite.crafting.TimedCraftingRules;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
@@ -15,8 +16,12 @@ public record SmithingJeiRecipe(RecipeHolder<SmithingRecipe> source, List<ItemSt
         output = output.copy();
     }
 
-    /** Average-quality duration for the player's current state. */
+    public SmithingTableTier requiredTable() {
+        return SmithingTableTier.requiredFor(output);
+    }
+
+    /** Average-quality duration at the required table for the player's current state. */
     public int durationTicks(int level, boolean clumsy) {
-        return TimedCraftingRules.period(difficulty, level, 0F, clumsy);
+        return requiredTable().duration(TimedCraftingRules.period(difficulty, level, 0F, clumsy));
     }
 }

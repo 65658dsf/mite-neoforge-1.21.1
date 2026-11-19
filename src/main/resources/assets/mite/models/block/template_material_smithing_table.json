@@ -1,0 +1,45 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "bottom": "minecraft:block/smithing_table_bottom",
+    "front": "minecraft:block/smithing_table_front",
+    "side": "minecraft:block/smithing_table_side",
+    "top": "minecraft:block/smithing_table_top",
+    "particle": "#metal"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 13, 16],
+      "faces": {
+        "down": {"texture": "#bottom", "cullface": "down"},
+        "north": {"uv": [0, 3, 16, 16], "texture": "#front", "cullface": "north"},
+        "south": {"uv": [0, 3, 16, 16], "texture": "#front", "cullface": "south"},
+        "east": {"uv": [0, 3, 16, 16], "texture": "#side", "cullface": "east"},
+        "west": {"uv": [0, 3, 16, 16], "texture": "#side", "cullface": "west"}
+      }
+    },
+    {
+      "from": [0, 13, 0],
+      "to": [16, 15, 16],
+      "faces": {
+        "up": {"texture": "#metal"},
+        "north": {"uv": [0, 0, 16, 3], "texture": "#metal", "cullface": "north"},
+        "south": {"uv": [0, 0, 16, 3], "texture": "#metal", "cullface": "south"},
+        "east": {"uv": [0, 0, 16, 3], "texture": "#metal", "cullface": "east"},
+        "west": {"uv": [0, 0, 16, 3], "texture": "#metal", "cullface": "west"}
+      }
+    },
+    {
+      "from": [1, 15, 1],
+      "to": [15, 16, 15],
+      "faces": {
+        "up": {"uv": [0, 0, 16, 16], "texture": "#top", "cullface": "up"},
+        "north": {"texture": "#metal"},
+        "south": {"texture": "#metal"},
+        "east": {"texture": "#metal"},
+        "west": {"texture": "#metal"}
+      }
+    }
+  ]
+}

@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.registry;
 import com.mojang.serialization.Codec;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.block.MaterialAnvilBlock;
+import io.github.ningmeng123.mite.block.MaterialSmithingTableBlock;
 import io.github.ningmeng123.mite.block.StrongboxBlock;
 import io.github.ningmeng123.mite.block.EmeraldEnchantingTableBlock;
 import io.github.ningmeng123.mite.block.entity.MaterialAnvilBlockEntity;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
@@ -43,6 +45,7 @@ public final class MiteFunctionalBlocks {
                     .networkSynchronized(ByteBufCodecs.VAR_INT));
     public static final Map<String, DeferredBlock<MaterialAnvilBlock>> ANVILS = new LinkedHashMap<>();
     public static final Map<String, DeferredBlock<StrongboxBlock>> STRONGBOXES = new LinkedHashMap<>();
+    public static final Map<String, DeferredBlock<MaterialSmithingTableBlock>> SMITHING_TABLES = new LinkedHashMap<>();
     static {
         for (String material : List.of("copper", "silver", "gold", "iron", "ancient_metal", "mithril", "adamantium", "vibranium")) {
             String prefix = material.equals("gold") ? "golden" : material;
@@ -59,6 +62,15 @@ public final class MiteFunctionalBlocks {
                     BlockBehaviour.Properties.ofFullCopy(Blocks.CHEST).strength(WorkbenchRules.materialCapacity(material) * 1.2F)));
             STRONGBOXES.put(material, strongbox);
             ITEMS.registerSimpleBlockItem(strongbox, new Item.Properties().stacksTo(4));
+        }
+        for (String material : List.of("ancient_metal", "mithril", "adamantium", "vibranium")) {
+            var table = BLOCKS.registerBlock(material + "_smithing_table",
+                    properties -> new MaterialSmithingTableBlock(material, properties),
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.SMITHING_TABLE).sound(SoundType.METAL));
+            SMITHING_TABLES.put(material, table);
+            Item.Properties properties = new Item.Properties().stacksTo(4);
+            if (material.equals("vibranium")) properties.fireResistant();
+            ITEMS.registerSimpleBlockItem(table, properties);
         }
     }
     public static final DeferredBlock<EmeraldEnchantingTableBlock> EMERALD_ENCHANTING_TABLE =

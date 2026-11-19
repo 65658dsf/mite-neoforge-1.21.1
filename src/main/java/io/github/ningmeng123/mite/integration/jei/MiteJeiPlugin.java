@@ -19,6 +19,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -70,9 +71,16 @@ public final class MiteJeiPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         TYPES.forEach((id, type) -> registration.addRecipeCategories(
                 new FurnaceJeiCategory(type, furnace(id), registration.getJeiHelpers().getGuiHelper())));
-        WORKBENCH_TYPES.forEach((id, type) -> registration.addRecipeCategories(new WorkbenchJeiCategory(type,
-                id.equals(WorkbenchJeiRecipes.INVENTORY) ? new ItemStack(Items.CHEST) : furnace(id),
-                registration.getJeiHelpers().getGuiHelper(), id.equals(WorkbenchJeiRecipes.INVENTORY))));
+        WORKBENCH_TYPES.forEach((id, type) -> {
+            boolean inventory = id.equals(WorkbenchJeiRecipes.INVENTORY);
+            ItemStack bench = inventory ? new ItemStack(Items.CHEST) : furnace(id);
+            Component title = inventory ? Component.translatable("jei.mite.inventory_crafting") : bench.getHoverName();
+            List<String> catalysts = WorkbenchJeiRecipes.categoryCatalysts(id);
+            List<ItemStack> additionalWorkstations = WorkbenchJeiRecipes.categoryWorkstations(id).stream()
+                    .filter(workstation -> !catalysts.contains(workstation)).map(MiteJeiPlugin::furnace).toList();
+            registration.addRecipeCategories(new WorkbenchJeiCategory(type, bench,
+                    registration.getJeiHelpers().getGuiHelper(), title, additionalWorkstations));
+        });
         registration.addRecipeCategories(new AnvilJeiCategory(ANVIL_TYPE,
                 new ItemStack(Items.ANVIL), registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SmithingJeiCategory(SMITHING_TYPE, registration.getJeiHelpers().getGuiHelper()));
@@ -128,15 +136,15 @@ public final class MiteJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalysts(SMITHING_TYPE, new ItemStack(Items.SMITHING_TABLE));
+        registration.addRecipeCatalysts(RecipeTypes.SMITHING, MiteFunctionalBlocks.SMITHING_TABLES.values().stream()
+                .map(table -> new ItemStack(table.get())).toArray(ItemStack[]::new));
         registration.addRecipeCatalysts(ENCHANTING_TYPE, new ItemStack(Items.ENCHANTING_TABLE),
                 new ItemStack(MiteFunctionalBlocks.EMERALD_ENCHANTING_TABLE.get()));
         TYPES.forEach((id, type) -> registration.addRecipeCatalysts(type, furnace(id)));
         WORKBENCH_TYPES.forEach((id, type) -> {
-            for (String workstation : WorkbenchJeiRecipes.categoryWorkstations(id))
+            for (String workstation : WorkbenchJeiRecipes.categoryCatalysts(id))
                 registration.addRecipeCatalysts(type, furnace(workstation));
         });
-        // Anvils are recipe-specific CATALYST slots, so uses never include higher-tier repairs.
     }
 
     @Override

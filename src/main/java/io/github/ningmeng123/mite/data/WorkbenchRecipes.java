@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.data;
 
 import io.github.ningmeng123.mite.registry.MiteItems;
+import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -43,6 +44,13 @@ public final class WorkbenchRecipes extends RecipeProvider {
                     .unlockedBy("has_ingot", has(ingot))
                     .save(output, ResourceLocation.fromNamespaceAndPath("mite", material + "_crafting_table"));
         }
+        MiteFunctionalBlocks.SMITHING_TABLES.forEach((material, table) -> {
+            var ingot = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("mite", material + "_ingot"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, table.get())
+                    .pattern("I I").pattern(" T ").define('I', ingot).define('T', Items.SMITHING_TABLE)
+                    .unlockedBy("has_matching_workbench", has(MiteWorkbenches.TABLES.get(material).get()))
+                    .save(output, table.getId());
+        });
         // The retired automatic crafter has no obtainable recipe.
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Items.CRAFTER)
                 .pattern("III").pattern("ITI").pattern("RDR").define('I', Items.IRON_INGOT)

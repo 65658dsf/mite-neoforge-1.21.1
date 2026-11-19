@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.client;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.crafting.MaterialUpgradeRequirements;
+import io.github.ningmeng123.mite.crafting.SmithingTableTier;
 import io.github.ningmeng123.mite.crafting.TimedSmithingController;
 import io.github.ningmeng123.mite.network.CraftingProgressPayload;
 import net.minecraft.client.Minecraft;
@@ -57,21 +58,30 @@ public final class CraftingProgressOverlay {
 
     private static void drawSmithingCost(ScreenEvent.Render.Post event, AbstractContainerScreen<?> screen, SmithingMenu menu) {
         var level = Minecraft.getInstance().level;
-        var template = menu.getSlot(0).getItem();
-        var base = menu.getSlot(1).getItem();
-        var addition = menu.getSlot(2).getItem();
+        var template = menu.getSlot(SmithingMenu.TEMPLATE_SLOT).getItem();
+        var base = menu.getSlot(SmithingMenu.BASE_SLOT).getItem();
+        var addition = menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem();
         if (level == null || !MaterialUpgradeRequirements.usesTemplate(template) || base.isEmpty() || addition.isEmpty()) return;
         for (var holder : level.getRecipeManager().getAllRecipesFor(RecipeType.SMITHING)) {
             var recipe = holder.value();
             if (!recipe.isTemplateIngredient(template) || !recipe.isBaseIngredient(base) || !recipe.isAdditionIngredient(addition)) continue;
             var result = recipe.getResultItem(level.registryAccess());
             if (result.isEmpty()) continue;
+            int x = screen.getGuiLeft() + 88;
+            int y = Math.min(screen.height - 12, screen.getGuiTop() + 170);
+            var currentTable = SmithingTableTier.current(menu);
+            var requiredTable = SmithingTableTier.requiredFor(result);
+            if (currentTable != null && currentTable != requiredTable) {
+                var label = Component.translatable("screen.mite.smithing_required_table", requiredTable.block().getName());
+                event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, label, x, y, 0xFFFF7070);
+                return;
+            }
             int required = MaterialUpgradeRequirements.ingots(result);
             var player = Minecraft.getInstance().player;
             int available = player == null ? addition.getCount() : TimedSmithingController.availableIngots(player, addition);
             var label = Component.translatable("screen.mite.smithing_ingredients", addition.getHoverName(), available, required);
-            event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, label, screen.getGuiLeft() + 88,
-                    Math.min(screen.height - 12, screen.getGuiTop() + 170), available < required ? 0xFFFF7070 : 0xFFFFFFFF);
+            event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, label, x, y,
+                    available < required ? 0xFFFF7070 : 0xFFFFFFFF);
             return;
         }
     }

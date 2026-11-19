@@ -51,6 +51,8 @@ public final class WorkbenchJeiGroupingGameTests {
                 "The copper category includes copper, silver, gold and every stronger table on its left");
         helper.assertTrue(WorkbenchJeiRecipes.categoryWorkstations(INVENTORY).isEmpty(),
                 "Inventory crafting never claims that a placed workbench is required");
+        helper.assertTrue(Set.copyOf(WorkbenchJeiRecipes.categoryCatalysts(COPPER)).equals(METAL_TABLES),
+                "Tabs without exact-workbench recipes keep all their workbench catalysts");
         helper.assertValueEqual(categories.get(INVENTORY).gridSize(), 2, "Inventory retains its real two-by-two grid");
         helper.succeed();
     }
@@ -63,6 +65,12 @@ public final class WorkbenchJeiGroupingGameTests {
                 Set.of(IRON, "mite:ancient_metal_crafting_table", MITHRIL, ADAMANTIUM, VIBRANIUM));
         assertOutputGroup(helper, pages, "mite:mithril_pickaxe", MITHRIL, Set.of(MITHRIL, ADAMANTIUM, VIBRANIUM));
         assertOutputGroup(helper, pages, "mite:adamantium_pickaxe", ADAMANTIUM, Set.of(ADAMANTIUM, VIBRANIUM));
+        for (String material : List.of("ancient_metal", "mithril", "adamantium", "vibranium")) {
+            String workbench = "mite:" + material + "_crafting_table";
+            assertOutputGroup(helper, pages, "mite:" + material + "_smithing_table", workbench, Set.of(workbench));
+            helper.assertTrue(WorkbenchJeiRecipes.categoryCatalysts(workbench).equals(List.of(workbench)),
+                    "A mixed workbench tab advertises only its matching table for every recipe");
+        }
         assertOutputGroup(helper, pages, "minecraft:oak_planks", FLINT, ALL_TABLES);
         helper.assertTrue(pages.stream().noneMatch(page -> page.workstationId().equals(INVENTORY)
                 && page.output().is(Items.OAK_PLANKS)), "Combining categories does not introduce forbidden inventory plank crafting");
@@ -87,8 +95,8 @@ public final class WorkbenchJeiGroupingGameTests {
         for (var page : tablePages) {
             var originals = sourceTables.get(page.displayId());
             Set<String> originalTables = originals.stream().map(WorkbenchJeiRecipe::workstationId).collect(Collectors.toSet());
-            helper.assertTrue(new HashSet<>(WorkbenchJeiRecipes.categoryWorkstations(page.workstationId())).equals(originalTables),
-                    "Every left catalyst supports this recipe and every supporting table remains present: " + page.displayId());
+            helper.assertTrue(new HashSet<>(page.compatibleWorkstations()).equals(originalTables),
+                    "Every displayed catalyst supports this recipe and every supporting table remains present: " + page.displayId());
             helper.assertTrue(WorkbenchJeiRecipes.categoryProfiles().containsKey(page.workstationId()),
                     "Each table page belongs to a category registered by the plugin");
             var selected = originals.stream().filter(original -> original.workstationId().equals(page.workstationId()))
@@ -195,8 +203,8 @@ public final class WorkbenchJeiGroupingGameTests {
         var matches = pages.stream().filter(WorkbenchJeiGroupingGameTests::isTable).filter(page -> page.output().is(expectedItem)).toList();
         helper.assertTrue(!matches.isEmpty() && matches.stream().allMatch(page -> page.workstationId().equals(category)),
                 "The independently specified lowest category for " + output + " is " + category);
-        helper.assertTrue(Set.copyOf(WorkbenchJeiRecipes.categoryWorkstations(category)).equals(catalysts),
-                "The left-side table set for " + output + " matches its independently specified material gate");
+        helper.assertTrue(matches.stream().allMatch(page -> Set.copyOf(page.compatibleWorkstations()).equals(catalysts)),
+                "The displayed table set for " + output + " matches its independently specified material gate");
     }
 
     private static void assertPageUnchanged(GameTestHelper helper, WorkbenchJeiRecipe expected, WorkbenchJeiRecipe actual) {
