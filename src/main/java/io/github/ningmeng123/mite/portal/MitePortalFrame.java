@@ -75,7 +75,9 @@ public record MitePortalFrame(BlockPos bottomLeft, Direction.Axis axis) {
     public boolean touchingBottom(Level level) {
         int frameY = bottomLeft.getY() - 1;
         boolean underworld = level.dimension() == MiteWorldDimensions.UNDERWORLD;
-        boolean atPortalMantle = underworld && frameY - 1 == ModernUnderworldTerrain.NETHER_PORTAL_MANTLE_Y;
+        int foundationY = frameY - 1;
+        boolean atPortalMantle = underworld && foundationY >= ModernUnderworldTerrain.MIN_PORTAL_MANTLE_Y
+                && foundationY <= ModernUnderworldTerrain.MAX_PORTAL_MANTLE_Y;
         if (!atPortalMantle && !R196PortalRules.canTouchBottom(frameY, level.getMinBuildHeight())) return false;
         Block bottomType = underworld ? MiteWorldBlocks.MANTLE.get()
                 : level.dimension() == Level.NETHER ? MiteWorldBlocks.CORE.get() : Blocks.BEDROCK;

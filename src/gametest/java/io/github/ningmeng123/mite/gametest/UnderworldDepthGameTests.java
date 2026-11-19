@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.world.PlacementDelay;
 import io.github.ningmeng123.mite.config.MiteConfig;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import io.github.ningmeng123.mite.registry.MiteWorldBlocks;
 import io.github.ningmeng123.mite.rules.R196PortalRules;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
 import io.github.ningmeng123.mite.worldgen.ModernUnderworldTerrain;
+import io.github.ningmeng123.mite.worldgen.R196UnderworldTerrain;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -83,8 +85,10 @@ public final class UnderworldDepthGameTests {
         }
         BlockPos interior = descent.bottom();
         MitePortalFrame frame = new MitePortalFrame(interior, Direction.Axis.X);
-        helper.assertTrue(underworld.getBlockState(interior.atY(0)).is(Blocks.STONE),
-                "The descent uses a natural stone opening in the Y=0 mantle layer");
+        for (int y = ModernUnderworldTerrain.MIN_PORTAL_MANTLE_Y; y <= ModernUnderworldTerrain.MAX_PORTAL_MANTLE_Y; y++) {
+            helper.assertTrue(underworld.getBlockState(interior.atY(y)).is(Blocks.STONE),
+                    "The descent uses a continuous natural stone opening through the shallow mantle layers");
+        }
         try (Session session = player(helper)) {
             ServerPlayer player = session.player();
             player.changeDimension(new DimensionTransition(underworld, Vec3.atBottomCenterOf(descent.start()), Vec3.ZERO,
@@ -141,30 +145,44 @@ public final class UnderworldDepthGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 800)
-    public static void survivalCanBuildANetherRoundTripOnNaturalMantleAtZero(GameTestHelper helper) {
+    public static void survivalCanLightNetherGatesAtAllShallowMantleHeights(GameTestHelper helper) {
         ServerLevel underworld = underworld(helper);
-        BlockPos corner = new ChunkPos(4900, -4900).getWorldPosition();
-        BlockPos interior = corner.offset(8, 2, 8);
-        MitePortalFrame frame = new MitePortalFrame(interior, Direction.Axis.X);
-        for (int x = 0; x < 2; x++) {
-            helper.assertTrue(underworld.getBlockState(frame.at(x, -2)).is(MiteWorldBlocks.MANTLE.get()),
-                    "The foundation directly under the bottom obsidian generates as mantle at Y=0");
+        ModernUnderworldTerrain terrain = new ModernUnderworldTerrain(underworld.getSeed());
+        List<MitePortalFrame> frames = new ArrayList<>();
+        for (int mantleY = ModernUnderworldTerrain.MIN_PORTAL_MANTLE_Y;
+                mantleY <= ModernUnderworldTerrain.MAX_PORTAL_MANTLE_Y; mantleY++) {
+            MitePortalFrame frame = findShallowPortalFoundation(helper, terrain, new ChunkPos(4900 + 24 * mantleY, -4900), mantleY);
+            helper.assertTrue(underworld.getBlockState(frame.at(0, -2)).is(MiteWorldBlocks.MANTLE.get()),
+                    "The foundation under the bottom obsidian generates as mantle at Y=" + mantleY);
+            helper.assertTrue(frame.touchingBottom(underworld), "A natural mantle foundation is valid at Y=" + mantleY);
+            frames.add(frame);
         }
-        helper.assertFalse(new MitePortalFrame(corner.offset(8, 2, 0), frame.axis()).touchingBottom(underworld),
-                "A frame at the same height above a mineable seam does not route to the Nether");
-        helper.assertFalse(new MitePortalFrame(interior.above(), frame.axis()).touchingBottom(underworld),
-                "A frame one block above the mantle does not route to the Nether");
+        MitePortalFrame highestFrame = frames.getLast();
+        assertGapDoesNotRoute(helper, underworld, highestFrame);
+        MitePortalFrame higherFrame = new MitePortalFrame(highestFrame.bottomLeft().above(), highestFrame.axis());
+        BlockPos higherFoundation = higherFrame.at(0, -2);
+        var original = underworld.getBlockState(higherFoundation);
+        try {
+            underworld.setBlock(higherFoundation, MiteWorldBlocks.MANTLE.get().defaultBlockState(), 2);
+            helper.assertFalse(higherFrame.touchingBottom(underworld), "Mantle above Y=1 cannot route to the Nether");
+        } finally {
+            underworld.setBlock(higherFoundation, original, 2);
+        }
 
         try (Session session = player(helper)) {
             ServerPlayer player = session.player();
-            player.changeDimension(new DimensionTransition(underworld, Vec3.atBottomCenterOf(interior), Vec3.ZERO,
+            player.changeDimension(new DimensionTransition(underworld, Vec3.atBottomCenterOf(frames.getFirst().bottomLeft()), Vec3.ZERO,
                     0, 0, DimensionTransition.DO_NOTHING));
-            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteTools.get("mithril_pickaxe")));
-            excavatePortalRoom(helper, player, underworld, frame);
-            buildAndLightPortal(helper, player, underworld, frame);
-            helper.assertValueEqual(underworld.getBlockState(interior).getValue(MitePortalProperties.DESTINATION),
-                    R196PortalRules.NETHER, "The gate on the Y=0 mantle layer stores the Nether route");
+            for (MitePortalFrame frame : frames) {
+                player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteTools.get("mithril_pickaxe")));
+                excavatePortalRoom(helper, player, underworld, frame);
+                buildAndLightPortal(helper, player, underworld, frame);
+                helper.assertValueEqual(underworld.getBlockState(frame.bottomLeft()).getValue(MitePortalProperties.DESTINATION),
+                        R196PortalRules.NETHER, "The gate stores the Nether route at mantle Y=" + frame.at(0, -2).getY());
+            }
 
+            MitePortalFrame frame = frames.get(-ModernUnderworldTerrain.MIN_PORTAL_MANTLE_Y);
+            BlockPos interior = frame.bottomLeft();
             player.setPos(Vec3.atBottomCenterOf(interior));
             var gate = (NetherPortalBlock) Blocks.NETHER_PORTAL;
             var outbound = gate.getPortalDestination(underworld, player, interior);
@@ -182,6 +200,48 @@ public final class UnderworldDepthGameTests {
                     "The player returns through the original frame on the Y=0 foundation");
         }
         helper.succeed();
+    }
+
+    private static void assertGapDoesNotRoute(GameTestHelper helper, ServerLevel level, MitePortalFrame supportedFrame) {
+        BlockPos corner = new ChunkPos(supportedFrame.bottomLeft()).getWorldPosition().atY(supportedFrame.bottomLeft().getY());
+        for (int x = 1; x <= 13; x++) for (int z = 0; z < 16; z++) {
+            MitePortalFrame frame = new MitePortalFrame(corner.offset(x, 0, z), Direction.Axis.X);
+            boolean onMantle = false;
+            for (int offset = -1; offset <= 2; offset++) {
+                onMantle |= level.getBlockState(frame.at(offset, -2)).is(MiteWorldBlocks.MANTLE.get());
+            }
+            if (onMantle) continue;
+            helper.assertFalse(frame.touchingBottom(level), "A frame at an eligible height without any mantle contact cannot route to the Nether");
+            return;
+        }
+        helper.fail("No natural opening under a possible frame at the top shallow mantle height");
+    }
+
+    private static MitePortalFrame findShallowPortalFoundation(GameTestHelper helper, ModernUnderworldTerrain terrain,
+            ChunkPos anchor, int mantleY) {
+        for (int radius = 0; radius <= 6; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) for (int dz = -radius; dz <= radius; dz++) {
+                if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) continue;
+                ChunkPos chunk = new ChunkPos(anchor.x + dx, anchor.z + dz);
+                byte[] blocks = terrain.generate(chunk.x, chunk.z);
+                for (int x = 1; x <= 13; x++) for (int z = 1; z <= 14; z++) {
+                    if (blocks[ModernUnderworldTerrain.index(x, mantleY, z)] != R196UnderworldTerrain.MANTLE) continue;
+                    if (hasMantleAboveFoundation(blocks, x, z, mantleY)) continue;
+                    return new MitePortalFrame(chunk.getWorldPosition().offset(x, mantleY + 2, z), Direction.Axis.X);
+                }
+            }
+        }
+        helper.fail("No natural mantle foundation fits a survival obsidian frame at Y=" + mantleY);
+        throw new IllegalStateException("Unreachable after GameTest failure");
+    }
+
+    private static boolean hasMantleAboveFoundation(byte[] blocks, int x, int z, int mantleY) {
+        for (int dx = -1; dx <= 2; dx++) for (int dz = -1; dz <= 1; dz++) {
+            for (int y = mantleY + 1; y <= ModernUnderworldTerrain.MAX_PORTAL_MANTLE_Y; y++) {
+                if (blocks[ModernUnderworldTerrain.index(x + dx, y, z + dz)] == R196UnderworldTerrain.MANTLE) return true;
+            }
+        }
+        return false;
     }
 
     @GameTest(template = "empty", timeoutTicks = 400)

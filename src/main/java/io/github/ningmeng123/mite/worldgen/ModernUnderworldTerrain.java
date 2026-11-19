@@ -1,6 +1,8 @@
 package io.github.ningmeng123.mite.worldgen;
 
 import java.util.LinkedHashMap;
+import java.util.Random;
+import java.util.SplittableRandom;
 
 /**
  * Explicit 1.21.1 height/accessibility adaptation of the independently verified R196 terrain.
@@ -18,10 +20,11 @@ public final class ModernUnderworldTerrain {
     public static final int SEA_LEVEL = fromLegacyY(R196UnderworldTerrain.SEA_LEVEL);
     public static final int SPAWN_HEIGHT = fromLegacyY(160);
     public static final int MAX_MANTLE_Y = fromLegacyY(3) - 1;
-    public static final int NETHER_PORTAL_MANTLE_Y = 0;
+    public static final int MIN_PORTAL_MANTLE_Y = -1;
+    public static final int MAX_PORTAL_MANTLE_Y = 1;
     public static final int MIN_ROOF_Y = fromLegacyY(R196UnderworldTerrain.HEIGHT - 3);
 
-    private static final int PORTAL_MANTLE_INSET = 2;
+    private static final int PORTAL_MANTLE_CELL_SIZE = 31;
     private static final int STEP_RADIUS = 2;
     private static final int MAX_STEP_RISE = 3;
     private static final int HEADROOM = 3;
@@ -30,10 +33,14 @@ public final class ModernUnderworldTerrain {
     private static final int MAX_CACHED_SOURCE_CHUNKS = 64;
 
     private final R196UnderworldTerrain source;
+    private final long mantleSeed;
+    private final R196OctaveNoise mantleRoughness;
     private final LinkedHashMap<Long, byte[]> sourceChunks = new LinkedHashMap<>(16, .75f, true);
 
     public ModernUnderworldTerrain(long seed) {
         source = new R196UnderworldTerrain(seed);
+        mantleSeed = seed ^ 0x4D414E544C45L;
+        mantleRoughness = new R196OctaveNoise(new Random(mantleSeed), 1);
     }
 
     public long hashedSeed() { return source.hashedSeed(); }
@@ -68,14 +75,46 @@ public final class ModernUnderworldTerrain {
                 }
             }
         }
-        // Inset the mantle from every chunk edge to leave four-wide mineable seams between patches.
-        for (int x = PORTAL_MANTLE_INSET; x < 16 - PORTAL_MANTLE_INSET; x++) {
-            for (int z = PORTAL_MANTLE_INSET; z < 16 - PORTAL_MANTLE_INSET; z++) {
-                adapted[index(x, NETHER_PORTAL_MANTLE_Y, z)] = R196UnderworldTerrain.MANTLE;
-            }
-        }
+        addPortalMantle(adapted, chunkX * 16, chunkZ * 16);
         addFloorSteps(adapted, chunkX, chunkZ);
         return adapted;
+    }
+
+    private void addPortalMantle(byte[] blocks, int chunkMinX, int chunkMinZ) {
+        double[] roughness = mantleRoughness.sample(chunkMinX, 0, chunkMinZ, 16, 1, 16, .2, 1, .2);
+        int size = PORTAL_MANTLE_CELL_SIZE;
+        // Bound each patch inside its own cell to keep solid, mineable space between patches.
+        // These cells are independent of Minecraft chunks, so a patch can cross a chunk border.
+        for (int cellX = Math.floorDiv(chunkMinX, size); cellX <= Math.floorDiv(chunkMinX + 15, size); cellX++) {
+            for (int cellZ = Math.floorDiv(chunkMinZ, size); cellZ <= Math.floorDiv(chunkMinZ + 15, size); cellZ++) {
+                var random = new SplittableRandom(mantleSeed ^ cellX * 0x9E3779B97F4A7C15L ^ cellZ * 0xC2B2AE3D27D4EB4FL);
+                if (random.nextInt(4) == 0) continue;
+                int radius = random.nextInt(7, 12);
+                int width = random.nextInt(5, 8);
+                int inset = radius + 1;
+                int centerX = cellX * size + random.nextInt(inset, size - inset) - chunkMinX;
+                int centerZ = cellZ * size + random.nextInt(inset, size - inset) - chunkMinZ;
+                int baseY = random.nextInt(MIN_PORTAL_MANTLE_Y, MAX_PORTAL_MANTLE_Y + 1);
+                double angle = random.nextDouble(2 * Math.PI);
+                double cos = StrictMath.cos(angle), sin = StrictMath.sin(angle);
+
+                for (int x = Math.max(0, centerX - radius); x <= Math.min(15, centerX + radius); x++) {
+                    for (int z = Math.max(0, centerZ - radius); z <= Math.min(15, centerZ + radius); z++) {
+                        int dx = x - centerX, dz = z - centerZ;
+                        double along = (dx * cos + dz * sin) / radius;
+                        double across = (dz * cos - dx * sin) / width;
+                        double distanceSquared = along * along + across * across;
+                        double edge = roughness[x * 16 + z];
+                        if (distanceSquared > Math.min(1, .76 + .4 * edge)) continue;
+                        // Keep a relatively flat center to build on, with height variation towards the edge.
+                        int rise = distanceSquared < .32 ? 0 : (int) Math.round(edge * 2);
+                        int y = Math.clamp(baseY + rise, MIN_PORTAL_MANTLE_Y, MAX_PORTAL_MANTLE_Y);
+                        int index = index(x, y, z);
+                        if (blocks[index] == R196UnderworldTerrain.STONE) blocks[index] = R196UnderworldTerrain.MANTLE;
+                    }
+                }
+            }
+        }
     }
 
     private byte[] sourceChunk(int chunkX, int chunkZ) {

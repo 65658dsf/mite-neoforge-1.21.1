@@ -7,6 +7,8 @@ import io.github.ningmeng123.mite.worldgen.R196UnderworldTerrain;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -22,6 +24,7 @@ final class ModernUnderworldTerrainTest {
     private static final int AREA_CHUNKS = 3;
     private static final int AREA_WIDTH = AREA_CHUNKS * 16;
     private static final int[][] FORWARD_NEIGHBORS = {{1, 0}, {0, 1}};
+    private static final int NO_PORTAL_MANTLE = Integer.MIN_VALUE;
 
     @Test
     void modernDimensionsAndGameplayBoundariesAreExplicit() {
@@ -34,7 +37,8 @@ final class ModernUnderworldTerrainTest {
         assertEquals(152, ModernUnderworldTerrain.SEA_LEVEL);
         assertEquals(176, ModernUnderworldTerrain.SPAWN_HEIGHT);
         assertEquals(-60, ModernUnderworldTerrain.MAX_MANTLE_Y);
-        assertEquals(0, ModernUnderworldTerrain.NETHER_PORTAL_MANTLE_Y);
+        assertEquals(-1, ModernUnderworldTerrain.MIN_PORTAL_MANTLE_Y);
+        assertEquals(1, ModernUnderworldTerrain.MAX_PORTAL_MANTLE_Y);
         assertEquals(316, ModernUnderworldTerrain.MIN_ROOF_Y);
     }
 
@@ -87,18 +91,16 @@ final class ModernUnderworldTerrainTest {
             return DynamicTest.dynamicTest("modern " + seed + " / " + chunkX + "," + chunkZ, () -> {
                 byte[] blocks = new ModernUnderworldTerrain(seed).generate(chunkX, chunkZ);
                 assertEquals(16 * 16 * 384, blocks.length);
+                int mineableColumns = 0;
                 for (int x = 0; x < 16; x++) for (int z = 0; z < 16; z++) {
                     assertEquals(R196UnderworldTerrain.MANTLE, blocks[ModernUnderworldTerrain.index(x, -64, z)]);
                     assertEquals(R196UnderworldTerrain.BEDROCK, blocks[ModernUnderworldTerrain.index(x, 319, z)]);
+                    int portalMantleY = portalMantleHeight(blocks, x, z);
+                    if (portalMantleY == NO_PORTAL_MANTLE) mineableColumns++;
                     boolean reachedMantle = false;
-                    boolean portalMantle = x >= 2 && x <= 13 && z >= 2 && z <= 13;
-                    // The center patch belongs at Y=0 only, and the seams allow continuous descent.
                     for (int y = 115; y >= -64; y--) {
                         byte block = blocks[ModernUnderworldTerrain.index(x, y, z)];
-                        if (y == 0 && portalMantle) {
-                            assertEquals(R196UnderworldTerrain.MANTLE, block, "区块中央的夹心应位于 Y=0");
-                            continue;
-                        }
+                        if (y == portalMantleY) continue;
                         if (block == R196UnderworldTerrain.MANTLE) {
                             assertTrue(y >= -64 && y <= -60, "夹心以外的地幔只能位于现代底界范围");
                             reachedMantle = true;
@@ -112,6 +114,7 @@ final class ModernUnderworldTerrainTest {
                                 "只有顶部屋顶可以保留基岩");
                     }
                 }
+                assertTrue(mineableColumns > 0, "应保留从洞穴底部挖到负层地幔的通路");
                 // The independent source oracle still fixes every original stone, water and cobweb.
                 // The accessibility adaptation may only fill dry air above a supported stone floor.
                 byte[] original = new R196UnderworldTerrain(seed).generate(chunkX, chunkZ);
@@ -146,6 +149,71 @@ final class ModernUnderworldTerrainTest {
                 }
             });
         });
+    }
+
+    @Test
+    void portalMantlePatchesVaryAcrossHeightsChunksAndSeeds() {
+        int[][] first = samplePortalMantle(0);
+        int[][] second = samplePortalMantle(196);
+        assertFalse(Arrays.deepEquals(first, second), "不同世界种子应生成不同的浅层地幔分布");
+    }
+
+    private static int[][] samplePortalMantle(long seed) {
+        int radius = 3;
+        int width = (radius * 2 + 1) * 16;
+        int[][] heights = new int[width][width];
+        var patchSizes = new HashSet<Integer>();
+        var mantleHeights = new HashSet<Integer>();
+        int coveredColumns = 0;
+        ModernUnderworldTerrain terrain = new ModernUnderworldTerrain(seed);
+        for (int chunkX = -radius; chunkX <= radius; chunkX++) for (int chunkZ = -radius; chunkZ <= radius; chunkZ++) {
+            byte[] chunk = terrain.generate(chunkX, chunkZ);
+            int chunkCoverage = 0;
+            for (int x = 0; x < 16; x++) for (int z = 0; z < 16; z++) {
+                int height = portalMantleHeight(chunk, x, z);
+                heights[(chunkX + radius) * 16 + x][(chunkZ + radius) * 16 + z] = height;
+                if (height != NO_PORTAL_MANTLE) {
+                    chunkCoverage++;
+                    mantleHeights.add(height);
+                }
+            }
+            patchSizes.add(chunkCoverage);
+            coveredColumns += chunkCoverage;
+        }
+        assertEquals(3, mantleHeights.size(), "Y=-1、0、1 都应有机会生成地幔");
+        assertTrue(patchSizes.contains(0), "部分区块应完全没有浅层地幔");
+        assertTrue(patchSizes.size() > 2, "有地幔的区块应有不同的覆盖面积");
+        assertTrue(coveredColumns < width * width * 3 / 4, "应有足够的岩柱可挖穿全部三层");
+
+        boolean crossesChunkBorder = false;
+        boolean hasIrregularEdge = false;
+        for (int x = 0; x < width - 1; x++) for (int z = 0; z < width - 1; z++) {
+            int height = heights[x][z];
+            if (height == NO_PORTAL_MANTLE) continue;
+            boolean east = height == heights[x + 1][z];
+            boolean south = height == heights[x][z + 1];
+            crossesChunkBorder |= (x % 16 == 15 && east) || (z % 16 == 15 && south);
+            // A two-by-two with precisely three blocks at this height has a nonrectangular edge.
+            int adjacent = (east ? 1 : 0) + (south ? 1 : 0) + (height == heights[x + 1][z + 1] ? 1 : 0);
+            hasIrregularEdge |= adjacent == 2;
+        }
+        assertTrue(crossesChunkBorder, "同一层的地幔斑块应能跨越区块边界");
+        assertTrue(hasIrregularEdge, "浅层地幔斑块应有不规则边缘");
+        return heights;
+    }
+
+    private static int portalMantleHeight(byte[] chunk, int x, int z) {
+        int height = NO_PORTAL_MANTLE;
+        for (int y = ModernUnderworldTerrain.MIN_PORTAL_MANTLE_Y; y <= ModernUnderworldTerrain.MAX_PORTAL_MANTLE_Y; y++) {
+            byte state = chunk[ModernUnderworldTerrain.index(x, y, z)];
+            if (state == R196UnderworldTerrain.MANTLE) {
+                assertEquals(NO_PORTAL_MANTLE, height, "浅层同一岩柱不应叠放地幔");
+                height = y;
+            } else {
+                assertEquals(R196UnderworldTerrain.STONE, state, "浅层地幔间应保留可挖岩石");
+            }
+        }
+        return height;
     }
 
     @Test
