@@ -27,6 +27,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 
 /** Per-dimension multipliers and absolute ore heights. @author NingMeng123 */
 public final class OreGenerationSettingsScreen extends Screen {
@@ -53,12 +54,13 @@ public final class OreGenerationSettingsScreen extends Screen {
     private final boolean editable;
     private final Map<Dimension, Draft> drafts = new EnumMap<>(Dimension.class);
     private final Map<Dimension, List<Entry>> entries = new EnumMap<>(Dimension.class);
+    private final Map<Dimension, Button> tabs = new EnumMap<>(Dimension.class);
     private final List<VisibleRow> visible = new ArrayList<>();
     private Dimension dimension = Dimension.OVERWORLD;
     private String query = "";
     private int page, pageCount = 1;
     private EditBox search;
-    private Button overworld, underworld, save;
+    private Button save;
     private boolean saveFailed;
     private boolean saving;
     private Component failure;
@@ -70,31 +72,26 @@ public final class OreGenerationSettingsScreen extends Screen {
     public OreGenerationSettingsScreen(Screen parent, Dimension dimension, String query) {
         super(Component.translatable("mite.config.ore_generation"));
         this.parent = parent;
-        if (dimension != Dimension.OVERWORLD && dimension != Dimension.UNDERWORLD)
-            throw new IllegalArgumentException("Unsupported ore settings dimension: " + dimension);
         this.dimension = dimension;
         this.query = query == null ? "" : query;
         editable = MiteConfigClient.editable();
-        for (var selected : List.of(Dimension.OVERWORLD, Dimension.UNDERWORLD)) {
+        for (var selected : Dimension.values()) {
+            if (selected == Dimension.NETHER && !MiteConfigClient.netherOreSettingsAvailable()) continue;
             Draft draft = new Draft();
             List<Entry> minerals = new ArrayList<>();
             for (Kind kind : R196OreRules.configurableKinds(selected)) {
                 var block = R196OreFeature.generationBlock(kind);
-                draft.multipliers.put(kind, MiteConfig.oreMultiplier(kind, selected));
-                minerals.add(new Entry(selected, new Mineral(kind, false), BuiltInRegistries.BLOCK.getKey(block), block.getName(),
+                var mineral = new Mineral(kind, false);
+                addDraft(draft, mineral, selected);
+                if (block != Blocks.AIR) minerals.add(new Entry(selected, mineral, BuiltInRegistries.BLOCK.getKey(block), block.getName(),
                         MiteConfig.oreBaseCandidates(kind, selected), MiteConfig.orePassChance(kind, selected)));
-                if (R196OreRules.hasDeepslateOre(kind)) {
+                if (selected != Dimension.NETHER && R196OreRules.hasDeepslateOre(kind)) {
                     var deepBlock = R196OreFeature.generationBlock(kind, true);
-                    // The editor shows absolute rates; saving keeps the displayed deep value independent of regular-row edits.
-                    draft.deepslateMultipliers.put(kind, MiteConfig.oreMultiplier(kind, selected, true));
-                    minerals.add(new Entry(selected, new Mineral(kind, true), BuiltInRegistries.BLOCK.getKey(deepBlock), deepBlock.getName(),
+                    var deepMineral = new Mineral(kind, true);
+                    addDraft(draft, deepMineral, selected);
+                    minerals.add(new Entry(selected, deepMineral, BuiltInRegistries.BLOCK.getKey(deepBlock), deepBlock.getName(),
                             MiteConfig.oreBaseCandidates(kind, selected), MiteConfig.orePassChance(kind, selected)));
                 }
-            }
-            for (var entry : minerals) {
-                var override = MiteConfig.oreHeightOverride(entry.kind(), selected, entry.mineral().deepslate());
-                draft.heights.put(entry.mineral(), override == null ? "" : override.toString());
-                draft.heightText.put(entry.mineral(), MiteConfig.oreHeightRange(entry.kind(), selected, entry.mineral().deepslate()).toString());
             }
             minerals.sort(Comparator.comparing(entry -> entry.id().toString()));
             drafts.put(selected, draft);
@@ -102,12 +99,27 @@ public final class OreGenerationSettingsScreen extends Screen {
         }
     }
 
+    private static void addDraft(Draft draft, Mineral mineral, Dimension dimension) {
+        // Store the displayed absolute multiplier, including for individually editable deepslate variants.
+        (mineral.deepslate() ? draft.deepslateMultipliers : draft.multipliers).put(mineral.kind(),
+                MiteConfig.oreMultiplier(mineral.kind(), dimension, mineral.deepslate()));
+        var override = MiteConfig.oreHeightOverride(mineral.kind(), dimension, mineral.deepslate());
+        draft.heights.put(mineral, override == null ? "" : override.toString());
+        draft.heightText.put(mineral, MiteConfig.oreHeightRange(mineral.kind(), dimension, mineral.deepslate()).toString());
+    }
+
     @Override protected void init() {
-        int tabWidth = (width - 30) / 2;
-        overworld = addRenderableWidget(Button.builder(dimensionLabel(Dimension.OVERWORLD),
-                button -> changeDimension(Dimension.OVERWORLD)).bounds(12, 34, tabWidth, 20).build());
-        underworld = addRenderableWidget(Button.builder(dimensionLabel(Dimension.UNDERWORLD),
-                button -> changeDimension(Dimension.UNDERWORLD)).bounds(18 + tabWidth, 34, tabWidth, 20).build());
+        tabs.clear();
+        var dimensions = drafts.keySet().toArray(Dimension[]::new);
+        if (!drafts.containsKey(dimension)) dimension = Dimension.OVERWORLD;
+        int available = width - 24 - (dimensions.length - 1) * 6;
+        for (int i = 0; i < dimensions.length; i++) {
+            Dimension selected = dimensions[i];
+            int start = i * available / dimensions.length;
+            int end = (i + 1) * available / dimensions.length;
+            tabs.put(selected, addRenderableWidget(Button.builder(dimensionLabel(selected),
+                    button -> changeDimension(selected)).bounds(12 + start + i * 6, 34, end - start, 20).build()));
+        }
         search = addRenderableWidget(new EditBox(font, 12, 60, width - 24, 20, Component.translatable("mite.config.ore_search")));
         search.setMaxLength(200);
         search.setHint(Component.translatable("mite.config.ore_search"));
@@ -119,8 +131,7 @@ public final class OreGenerationSettingsScreen extends Screen {
     private void changeDimension(Dimension selected) { dimension = selected; page = 0; rebuildRows(); }
 
     private Component dimensionLabel(Dimension selected) {
-        Component label = Component.translatable(selected == Dimension.OVERWORLD
-                ? "mite.config.ore_dimension.overworld" : "mite.config.ore_dimension.underworld");
+        Component label = Component.translatable("mite.config.ore_dimension." + selected.name().toLowerCase(Locale.ROOT));
         return selected == dimension
                 ? Component.translatable("mite.config.ore_dimension.selected", label).withStyle(ChatFormatting.YELLOW)
                 : label;
@@ -134,11 +145,11 @@ public final class OreGenerationSettingsScreen extends Screen {
 
     private void rebuildRows() {
         for (var child : List.copyOf(children()))
-            if (child != search && child != overworld && child != underworld) removeWidget(child);
-        overworld.active = dimension != Dimension.OVERWORLD;
-        underworld.active = dimension != Dimension.UNDERWORLD;
-        overworld.setMessage(dimensionLabel(Dimension.OVERWORLD));
-        underworld.setMessage(dimensionLabel(Dimension.UNDERWORLD));
+            if (child != search && !tabs.containsValue(child)) removeWidget(child);
+        tabs.forEach((selected, tab) -> {
+            tab.active = selected != dimension;
+            tab.setMessage(dimensionLabel(selected));
+        });
         visible.clear();
         List<Entry> filtered = filtered();
         int rows = Math.max(1, (height - 170) / 78);
@@ -174,7 +185,10 @@ public final class OreGenerationSettingsScreen extends Screen {
                     Component.translatable("mite.config.ore_height_range")));
             heightBox.setMaxLength(32);
             heightBox.setEditable(editable && !saving);
-            heightBox.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_height_range.tooltip")));
+            var heightHelp = Component.translatable("mite.config.ore_height_range.tooltip");
+            if (entry.kind() == Kind.ANCIENT_DEBRIS) heightHelp.append("\n")
+                    .append(Component.translatable("mite.config.ore_debris_height_hint"));
+            heightBox.setTooltip(Tooltip.create(heightHelp));
             heightBox.setValue(draft.heightText.get(entry.mineral()));
             if (draft.invalidHeights.contains(entry.mineral())) heightBox.setTextColor(0xFFFF5555);
             heightBox.setResponder(text -> {
@@ -211,14 +225,16 @@ public final class OreGenerationSettingsScreen extends Screen {
             var deepValues = new EnumMap<Dimension, Map<Kind, Double>>(Dimension.class);
             var heights = new EnumMap<Dimension, Map<Kind, String>>(Dimension.class);
             var deepHeights = new EnumMap<Dimension, Map<Kind, String>>(Dimension.class);
-            drafts.forEach((selected, draftValues) -> values.put(selected, draftValues.multipliers));
-            drafts.forEach((selected, draftValues) -> deepValues.put(selected, draftValues.deepslateMultipliers));
             drafts.forEach((selected, draftValues) -> {
+                values.put(selected, draftValues.multipliers);
                 var regular = new EnumMap<Kind, String>(Kind.class);
                 var deep = new EnumMap<Kind, String>(Kind.class);
                 draftValues.heights.forEach((mineral, text) -> (mineral.deepslate() ? deep : regular).put(mineral.kind(), text));
                 heights.put(selected, regular);
-                deepHeights.put(selected, deep);
+                if (selected != Dimension.NETHER) {
+                    deepValues.put(selected, draftValues.deepslateMultipliers);
+                    deepHeights.put(selected, deep);
+                }
             });
             if (MiteConfigClient.remoteServer()) {
                 saving = true;
@@ -249,12 +265,16 @@ public final class OreGenerationSettingsScreen extends Screen {
     private static String format(double value) { return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString(); }
     private static Component baseline(Entry entry) {
         double count = R196OreRules.configuredCandidateCount(entry.kind(), entry.dimension());
+        if (entry.kind() == Kind.NETHER_INFESTED)
+            return Component.translatable("mite.config.ore_nether_infested_baseline", format(count));
         double chance = R196OreRules.configuredCandidateChance(entry.kind(), entry.dimension()) * 100D;
         return Component.translatable("mite.config.ore_baseline", format(count), format(chance), format(count * chance / 100D));
     }
     private Component effective(Entry entry) {
         Draft draft = drafts.get(entry.dimension());
         String attempts = draft.invalid.contains(entry.mineral()) ? "?" : format(entry.base() * draft.multiplier(entry.mineral()) * entry.chance());
+        if (entry.kind() == Kind.NETHER_ADAMANTIUM)
+            return Component.translatable("mite.config.ore_nether_adamantium_effective", attempts);
         return Component.translatable("mite.config.ore_effective", format(entry.base()), format(entry.chance() * 100D), attempts);
     }
 
@@ -280,6 +300,10 @@ public final class OreGenerationSettingsScreen extends Screen {
                 if (entry.mineral().deepslate()) lines.add(Component.translatable("mite.config.ore_deepslate_hint"));
                 if (R196OreRules.modernUnderworldAddition(entry.kind(), entry.dimension()))
                     lines.add(Component.translatable("mite.config.ore_underworld_modern_hint"));
+                if (entry.kind() == Kind.NETHER_ADAMANTIUM)
+                    lines.add(Component.translatable("mite.config.ore_nether_adamantium_hint"));
+                if (entry.kind() == Kind.ANCIENT_DEBRIS)
+                    lines.add(Component.translatable("mite.config.ore_debris_height_hint"));
                 graphics.renderTooltip(font, lines.stream().flatMap(line -> font.split(line, Math.min(360, width - 24)).stream()).toList(), mouseX, mouseY);
             }
         }

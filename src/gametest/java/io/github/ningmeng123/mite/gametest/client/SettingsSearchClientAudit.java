@@ -1,5 +1,7 @@
 package io.github.ningmeng123.mite.gametest.client;
 
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.electronwill.nightconfig.toml.TomlParser;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -11,8 +13,12 @@ import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.client.config.ConfigSearchIndex;
 import io.github.ningmeng123.mite.client.config.EnchantmentSettingsScreen;
 import io.github.ningmeng123.mite.client.config.MiteSettingsScreen;
+import io.github.ningmeng123.mite.client.config.OreGenerationSettingsScreen;
 import io.github.ningmeng123.mite.client.config.SingleConfigValueScreen;
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.rules.OreHeightRange;
+import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
+import io.github.ningmeng123.mite.rules.R196OreRules.Kind;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +50,7 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.joml.Matrix4f;
 
 /** Opt-in production settings search, native GPU rendering and disposable configuration round trip. @author NingMeng123 */
@@ -53,6 +60,7 @@ public final class SettingsSearchClientAudit {
     private static int ticks, saveTicks;
     private static String originalLanguage;
     private static Double originalReach, originalReduction;
+    private static final List<Runnable> restoreOreSettings = new ArrayList<>();
     private static Path configFile;
     private static byte[] originalFile;
     private static JsonObject report;
@@ -136,9 +144,10 @@ public final class SettingsSearchClientAudit {
         mc.screen.onClose();
         check(mc.screen == home, "Closing a result returns to the same search homepage");
 
-        nativeResetAndSave(mc, home);
         boolean ite = ModList.get().isLoaded("modern_ite");
         report.addProperty("modern_ite_loaded", ite);
+        auditNetherOreSettings(mc, home, ite);
+        nativeResetAndSave(mc, home);
         if (ite) {
             mc.setScreen(home); home.init(mc, 854, 480);
             search(home).setValue("longer_day_time_end_day");
@@ -154,6 +163,107 @@ public final class SettingsSearchClientAudit {
         report.addProperty("chinese_key_whitespace_clear_and_unmatched_search", true);
         report.addProperty("multiple_result_pages_and_resize_preserve_query", true);
         report.addProperty("dedicated_result_navigation_preselects_entry", true);
+    }
+
+    private static void auditNetherOreSettings(Minecraft mc, Screen home, boolean ite) throws Exception {
+        for (String section : List.of("overworld_ores", "underworld_ores", "nether_ores",
+                "overworld_generation", "underworld_generation", "nether_generation")) {
+            rememberSettings(MiteConfig.SPEC.getValues().get(section));
+        }
+
+        mc.setScreen(home);
+        home.init(mc, 320, 240);
+        String quartzSetting = "mite:nether_ores.quartz";
+        search(home).setValue(quartzSetting);
+        openOnlyResult(home, quartzSetting);
+        Screen ore = mc.screen;
+        check(ore instanceof OreGenerationSettingsScreen, "A Nether ore result opens the dedicated ore editor");
+        ore.init(mc, 320, 240);
+        EditBox search = oreInput(ore, "ore_search");
+        check(search.getValue().equals("minecraft:nether_quartz_ore"), "Homepage search selects quartz by its registered block ID");
+        String currentNether = Component.translatable("mite.config.ore_dimension.selected",
+                Component.translatable("mite.config.ore_dimension.nether")).getString();
+        check(widgets(ore).stream().anyMatch(widget -> widget instanceof Button tab && !tab.active
+                        && tab.getMessage().getString().equals(currentNether)), "The Nether tab is selected on result navigation");
+        bounds(ore);
+        noOverlap(ore);
+        capture(mc, ore, 320, 240, "settings-ore-nether-zh-cn");
+
+        oreInput(ore, "ore_search").setValue("modern_ite:nether_adamantium_ore");
+        check(editBoxes(ore).size() == (ite ? 3 : 1),
+                "Nether adamantium is selectable when Modern ITE supplies the block");
+        if (ite) {
+            oreInput(ore, "ore_multiplier").setValue("0");
+            oreInput(ore, "ore_height_range").setValue("[28,48]");
+        }
+        oreInput(ore, "ore_search").setValue("minecraft:nether_quartz_ore");
+        oreInput(ore, "ore_multiplier").setValue("2.5");
+        oreInput(ore, "ore_height_range").setValue("[40,24]");
+        check(!button(ore, "mite.config.save").active, "An inverted Nether height range disables Save");
+
+        press(ore, "mite.config.ore_dimension.overworld");
+        oreInput(ore, "ore_search").setValue("minecraft:coal_ore");
+        oreInput(ore, "ore_multiplier").setValue("0.75");
+        press(ore, "mite.config.ore_dimension.underworld");
+        oreInput(ore, "ore_search").setValue("minecraft:coal_ore");
+        oreInput(ore, "ore_multiplier").setValue("1.25");
+        check(!button(ore, "mite.config.save").active, "The invalid hidden Nether draft prevents saving the other dimensions");
+
+        press(ore, "mite.config.ore_dimension.nether");
+        oreInput(ore, "ore_search").setValue("minecraft:nether_quartz_ore");
+        check(oreInput(ore, "ore_multiplier").getValue().equals("2.5")
+                        && oreInput(ore, "ore_height_range").getValue().equals("[40,24]"),
+                "Switching tabs and searching preserves the valid and invalid Nether drafts");
+        press(ore, "mite.config.reset");
+        check(Double.parseDouble(oreInput(ore, "ore_multiplier").getValue()) == MiteConfig.factoryOreMultiplier(Kind.QUARTZ, Dimension.NETHER, false)
+                        && oreInput(ore, "ore_height_range").getValue().equals(MiteConfig.factoryOreHeight(Kind.QUARTZ, Dimension.NETHER, false).toString()),
+                "Restoring quartz replaces both draft values with factory defaults");
+        oreInput(ore, "ore_multiplier").setValue("2.5");
+        oreInput(ore, "ore_height_range").setValue("[24,40]");
+        ore.init(mc, 854, 480);
+        check(oreInput(ore, "ore_multiplier").getValue().equals("2.5") && oreInput(ore, "ore_height_range").getValue().equals("[24,40]"),
+                "The Nether quartz draft survives changing the screen size");
+        bounds(ore);
+        noOverlap(ore);
+        capture(mc, ore, 854, 480, "settings-ore-nether-draft-zh-cn");
+        press(ore, "mite.config.save");
+        check(mc.screen == home, "Saving the ore editor returns to the originating settings search");
+        var disk = new TomlParser().parse(Files.readString(configFile));
+        check(((Number)disk.get("nether_ores.quartz")).doubleValue() == 2.5D
+                        && ((Number)disk.get("overworld_ores.coal")).doubleValue() == .75D
+                        && ((Number)disk.get("underworld_ores.coal")).doubleValue() == 1.25D,
+                "Save persists distinct ore rates for all three dimensions to TOML");
+        check("[24,40]".equals(disk.get("nether_generation.quartz.height_range")),
+                "Save persists the Nether height to TOML");
+        var quartzHeight = MiteConfig.oreHeightOverride(Kind.QUARTZ, Dimension.NETHER, false);
+        check(new OreHeightRange(24, 40).equals(quartzHeight),
+                "The saved Nether height becomes the effective generation range: " + quartzHeight);
+        if (ite) {
+            check(MiteConfig.oreMultiplier(Kind.NETHER_ADAMANTIUM, Dimension.NETHER, false) == 0D
+                            && new OreHeightRange(28, 48)
+                                    .equals(MiteConfig.oreHeightOverride(Kind.NETHER_ADAMANTIUM, Dimension.NETHER, false)),
+                    "Saving quartz also commits the hidden Nether adamantium draft");
+        }
+        home.init(mc, 854, 480);
+        openOnlyResult(home, quartzSetting);
+        check(oreInput(mc.screen, "ore_multiplier").getValue().equals("2.5")
+                        && oreInput(mc.screen, "ore_height_range").getValue().equals("[24,40]"),
+                "The freshly opened Nether page reads the saved multiplier and height");
+        mc.screen.onClose();
+        report.addProperty("nether_ore_search_tab_draft_reset_save_and_reopen", true);
+        report.addProperty("nether_adamantium_availability_matches_modern_ite", true);
+    }
+
+    private static void rememberSettings(UnmodifiableConfig section) {
+        for (var entry : section.entrySet()) {
+            if (entry.getValue() instanceof UnmodifiableConfig subsection) rememberSettings(subsection);
+            else if (entry.getValue() instanceof ModConfigSpec.ConfigValue<?> value) rememberSetting(value);
+        }
+    }
+
+    private static <T> void rememberSetting(ModConfigSpec.ConfigValue<T> value) {
+        T original = value.get();
+        restoreOreSettings.add(() -> value.set(original));
     }
 
     private static void nativeResetAndSave(Minecraft mc, Screen home) throws Exception {
@@ -227,6 +337,10 @@ public final class SettingsSearchClientAudit {
         return widgets(screen).stream().filter(EditBox.class::isInstance).map(EditBox.class::cast)
                 .filter(box -> box.getMessage().getString().equals(Component.translatable("mite.config.search_all").getString())).findFirst().orElseThrow();
     }
+    private static EditBox oreInput(Screen screen, String key) {
+        String label = Component.translatable("mite.config." + key).getString();
+        return editBoxes(screen).stream().filter(box -> box.getMessage().getString().equals(label)).findFirst().orElseThrow();
+    }
     private static Button nativeButton(Screen screen, String field) throws Exception {
         var member = ConfigurationSectionScreen.class.getDeclaredField(field); member.setAccessible(true); return (Button)member.get(screen);
     }
@@ -299,6 +413,7 @@ public final class SettingsSearchClientAudit {
             if (originalReach != null) {
                 MiteConfig.WEAPON_REACH_MULTIPLIER.set(originalReach);
                 MiteConfig.WEAPON_REACH_REDUCTION.set(originalReduction);
+                restoreOreSettings.forEach(Runnable::run);
                 MiteConfig.SPEC.save();
                 MiteConfig.refreshEnchantmentRules();
                 if (originalFile == null) Files.deleteIfExists(configFile); else Files.write(configFile, originalFile);

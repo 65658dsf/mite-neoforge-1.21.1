@@ -8,7 +8,8 @@ public final class R196OreRules {
     public enum Dimension { OVERWORLD, UNDERWORLD, NETHER }
     public enum Kind {
         DIRT, GRAVEL, COAL, COPPER, SILVER, GOLD, IRON, MITHRIL, ADAMANTIUM,
-        INFESTED, REDSTONE, DIAMOND, LAPIS, EMERALD, QUARTZ, NETHER_GOLD, NETHER_INFESTED
+        INFESTED, REDSTONE, DIAMOND, LAPIS, EMERALD, QUARTZ, NETHER_GOLD, NETHER_INFESTED,
+        ANCIENT_DEBRIS, NETHER_ADAMANTIUM
     }
     public static final List<Kind> OVERWORLD = List.of(Kind.DIRT, Kind.GRAVEL, Kind.COAL,
             Kind.COPPER, Kind.SILVER, Kind.GOLD, Kind.IRON, Kind.MITHRIL, Kind.INFESTED,
@@ -23,6 +24,8 @@ public final class R196OreRules {
     /** User-requested modern additions; the archived UNDERWORLD source table remains unchanged. */
     public static final List<Kind> CONFIGURABLE_UNDERWORLD = java.util.stream.Stream.concat(
             UNDERWORLD.stream(), java.util.stream.Stream.of(Kind.COAL, Kind.EMERALD)).toList();
+    public static final List<Kind> CONFIGURABLE_NETHER = List.of(Kind.QUARTZ, Kind.NETHER_GOLD,
+            Kind.ANCIENT_DEBRIS, Kind.NETHER_ADAMANTIUM, Kind.NETHER_INFESTED);
     private static final List<Kind> OVERWORLD_GENERATION = java.util.stream.Stream.concat(
             OVERWORLD.stream(), java.util.stream.Stream.of(Kind.ADAMANTIUM)).toList();
 
@@ -47,7 +50,7 @@ public final class R196OreRules {
         return switch (dimension) {
             case OVERWORLD -> CONFIGURABLE_OVERWORLD;
             case UNDERWORLD -> CONFIGURABLE_UNDERWORLD;
-            case NETHER -> List.of();
+            case NETHER -> CONFIGURABLE_NETHER;
         };
     }
 
@@ -58,6 +61,11 @@ public final class R196OreRules {
     /** Keep archival candidate counts intact while exposing explicit defaults for modern additions. */
     public static int configuredCandidateCount(Kind kind, Dimension dimension) {
         if (modernUnderworldAddition(kind, dimension)) return kind == Kind.COAL ? 50 : 3;
+        if (dimension == Dimension.NETHER) {
+            if (kind == Kind.ANCIENT_DEBRIS) return 2; // One attempt in each vanilla placed feature.
+            if (kind == Kind.NETHER_ADAMANTIUM) return 4; // Modern ITE's factory count.
+            if (kind == Kind.NETHER_INFESTED) return 5; // Mean of the original 2..8 attempts.
+        }
         return candidateCount(kind, dimension);
     }
     public static double configuredCandidateChance(Kind kind, Dimension dimension) {

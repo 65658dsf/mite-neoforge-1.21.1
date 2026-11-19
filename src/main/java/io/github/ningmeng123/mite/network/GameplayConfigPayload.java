@@ -18,7 +18,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
-/** Server settings including both ore dimensions, sent on login and config reload. @author NingMeng123 */
+/** Server settings including ore generation, sent on login and config reload. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public record GameplayConfigPayload(MiteConfig.Snapshot snapshot, Map<String, Object> gameplayValues,
         Map<String, Object> addonSpawning) implements CustomPacketPayload {

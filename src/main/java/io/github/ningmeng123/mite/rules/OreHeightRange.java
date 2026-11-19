@@ -18,6 +18,10 @@ public record OreHeightRange(int minimum, int maximum) {
     }
 
     public static OreHeightRange defaults(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
+        if (dimension == R196OreRules.Dimension.NETHER) {
+            if (kind == R196OreRules.Kind.ANCIENT_DEBRIS) return new OreHeightRange(8, 119);
+            if (kind == R196OreRules.Kind.NETHER_ADAMANTIUM) return new OreHeightRange(0, 128);
+        }
         int maximum = dimension == R196OreRules.Dimension.UNDERWORLD && kind == R196OreRules.Kind.ADAMANTIUM
                 ? 135 : R196OreRules.maxHeight(kind, dimension);
         return new OreHeightRange(R196OreRules.modernY(dimension, R196OreRules.minHeight(kind, dimension)),

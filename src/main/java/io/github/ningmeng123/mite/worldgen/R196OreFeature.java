@@ -38,6 +38,7 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         Random random = new Random(context.random().nextLong());
         int originX = Math.floorDiv(context.origin().getX(), 16) * 16;
         int originZ = Math.floorDiv(context.origin().getZ(), 16) * 16;
+        if (dimension == Dimension.NETHER) return netherOres(level, originX, originZ, random) > 0;
         List<Kind> order = R196OreRules.generationKinds(dimension);
         int placed = 0;
         for (Kind kind : order) {
@@ -62,7 +63,7 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
                 for (int candidate = 0; candidate < count; candidate++) {
                     if (configurable) {
                         if (!OreGenerationRates.passesChance(MiteConfig.orePassChance(kind, dimension), dimension, random)) continue;
-                    } else if (dimension != Dimension.NETHER && random.nextInt(R196OreRules.candidateRarity(dimension)) != 0) continue;
+                    } else if (random.nextInt(R196OreRules.candidateRarity(dimension)) != 0) continue;
                     int x = originX + random.nextInt(16);
                     int legacyY = R196OreRules.randomHeight(kind, dimension, random);
                     int z = originZ + random.nextInt(16);
@@ -87,6 +88,33 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
         }
         return placed > 0;
     }
+
+    private static int netherOres(WorldGenLevel level, int originX, int originZ, Random random) {
+        var snapshot = MiteConfig.effectiveSnapshot();
+        int placed = 0;
+        for (Kind kind : R196OreRules.generationKinds(Dimension.NETHER)) {
+            var settings = NetherOreSettings.read(snapshot, kind);
+            OreHeightRange height = settings.height();
+            int baseCount = R196OreRules.candidateCount(kind, Dimension.NETHER, random);
+            int count = OreGenerationRates.scaleCandidates(baseCount, settings.multiplier(), random);
+            if (count == 0) continue;
+            Access access = new Access(level, Dimension.NETHER, kind, true, false, height, null);
+            for (int candidate = 0; candidate < count; candidate++) {
+                int x = originX + random.nextInt(16);
+                int legacyY = R196OreRules.randomHeight(kind, Dimension.NETHER, random);
+                int z = originZ + random.nextInt(16);
+                int y = legacyY;
+                if (height != null) {
+                    Integer sampled = height.sample(random, level.getMinBuildHeight(), level.getMaxBuildHeight());
+                    if (sampled == null) break;
+                    y = sampled;
+                }
+                placed += R196OreRules.generateVein(kind, Dimension.NETHER, access, x, y, z, legacyY, false, random);
+            }
+        }
+        return placed;
+    }
+
     /** Emerald keeps its source 3..8 singleton attempts, now subject to the same editable rates and heights. */
     private static int emeralds(WorldGenLevel level, Dimension dimension, int originX, int originZ, Random random) {
         Kind kind = Kind.EMERALD;
@@ -173,7 +201,8 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
             if (level.isOutsideBuildHeight(pos) || !level.getWorldBorder().isWithinBounds(pos) || !level.ensureCanWrite(pos)) return false;
             BlockState current = level.getBlockState(pos);
             // Existing ore, boundary blocks, structures, containers, fluids and air never become new ore.
-            if (dimension == Dimension.NETHER) return current.is(Blocks.NETHERRACK);
+            if (dimension == Dimension.NETHER)
+                return current.is(Blocks.NETHERRACK) && (stoneHeight == null || stoneHeight.contains(y));
             if (!current.is(Blocks.STONE) && !current.is(Blocks.DEEPSLATE)) return false;
             boolean deep = deepHost(current, y);
             return deep ? deepslate && (deepHeight == null || deepHeight.contains(y))
@@ -222,6 +251,8 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
             case EMERALD -> deep ? Blocks.DEEPSLATE_EMERALD_ORE : Blocks.EMERALD_ORE;
             case QUARTZ -> Blocks.NETHER_QUARTZ_ORE;
             case NETHER_GOLD -> Blocks.NETHER_GOLD_ORE;
+            case ANCIENT_DEBRIS -> Blocks.ANCIENT_DEBRIS;
+            case NETHER_ADAMANTIUM -> BuiltInRegistries.BLOCK.get(NetherOrePlacement.NETHER_ADAMANTIUM);
             case NETHER_INFESTED -> BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("mite", "infested_netherrack"));
         };
     }

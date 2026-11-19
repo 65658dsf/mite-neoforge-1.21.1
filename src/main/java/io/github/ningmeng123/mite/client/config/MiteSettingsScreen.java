@@ -146,7 +146,8 @@ public final class MiteSettingsScreen extends Screen {
 
         private static boolean hidesOreSection(String key) {
             return switch (key) {
-                case "underworld_ores", "overworld_ores", "underworld_generation", "overworld_generation", "monster_spawning" -> true;
+                case "underworld_ores", "overworld_ores", "nether_ores",
+                        "underworld_generation", "overworld_generation", "nether_generation", "monster_spawning" -> true;
                 default -> false;
             };
         }

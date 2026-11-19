@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.worldgen;
 import io.github.ningmeng123.mite.rules.R196OreRules;
 import java.util.List;
 import java.util.Random;
+import java.util.function.DoubleSupplier;
 
 /** Scale new vein attempts, retaining fractional rates and the default random sequence. @author NingMeng123 */
 final class OreGenerationRates {
@@ -22,10 +23,14 @@ final class OreGenerationRates {
 
     /** Integral counts consume no extra random draw; baseCount=1 also accepts actual configured counts. */
     static int scaleCandidates(int baseCount, double multiplier, Random random) {
+        return scaleCandidates(baseCount, multiplier, random::nextDouble);
+    }
+
+    static int scaleCandidates(int baseCount, double multiplier, DoubleSupplier nextDouble) {
         double scaled = baseCount * multiplier;
         int whole = (int)scaled;
         double remainder = scaled - whole;
-        return whole + (remainder > 0.0D && random.nextDouble() < remainder ? 1 : 0);
+        return whole + (remainder > 0.0D && nextDouble.getAsDouble() < remainder ? 1 : 0);
     }
 
     /** Preserve the generator's original integer roll at its default probability, including its seed sequence. */

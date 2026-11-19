@@ -11,6 +11,7 @@ import io.github.ningmeng123.mite.client.config.ConfigSearchIndex;
 import io.github.ningmeng123.mite.client.config.MiteSettingsScreen;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.MonsterSpawningSettings;
+import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
@@ -316,7 +317,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
         });
         check(root.keylist().isEmpty() && root.modSpec() == MiteConfig.SPEC,
                 "The native top context exposes the actual root entries with an empty path");
-        Set<String> expectedHidden = Set.of("underworld_ores", "overworld_ores", "underworld_generation", "overworld_generation", "monster_spawning");
+        Set<String> expectedHidden = Set.of("underworld_ores", "overworld_ores", "nether_ores", "underworld_generation",
+                "overworld_generation", "nether_generation", "monster_spawning");
         Set<String> expectedVisible = new TreeSet<>(Set.of("monsters", "combat", "structures", "enchantments"));
         if (MiteConfig.SPEC.getSpec().contains("performance")) expectedVisible.add("performance");
         Set<String> hidden = new TreeSet<>(), visible = new TreeSet<>(), monsterValues = new TreeSet<>();
@@ -479,8 +481,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
         }
         check(defaultDelegations == 1 && selectedAssignments == 1 && initializers <= 1,
                 "The default path selects OVERWORLD and the shared constructor preserves that selected argument");
-        check(calls(screen, "init", screen.name, "dimensionLabel")
-                        && calls(screen, "rebuildRows", screen.name, "dimensionLabel"),
+        check(calls(screen, "<init>", dimension, "values") && calls(screen, "init", screen.name, "dimensionLabel")
+                        && callsOrLinkedLambda(screen, "rebuildRows", screen.name, "dimensionLabel"),
                 "Both initial ore tabs and refreshed tabs use the explicit selection label");
         check(selectedLabel && selectedColor
                         && calls(screen, "dimensionLabel", "net/minecraft/network/chat/MutableComponent", "withStyle"),
@@ -489,6 +491,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
         report.addProperty("ore_screen_search_constructor_preserves_selected_dimension_verified", true);
         report.addProperty("ore_screen_initial_and_refreshed_selected_dimension_labels_verified", true);
         report.addProperty("ore_screen_selected_dimension_localized_yellow_marker_verified", true);
+        report.addProperty("ore_screen_tabs_created_for_all_dimensions_verified", true);
     }
 
     private static AbstractInsnNode previousCode(AbstractInsnNode instruction) {
@@ -500,6 +503,10 @@ public final class GameplayConfigClientAudit implements DataProvider {
     private static void auditSearchMetadata(JsonObject report) throws Exception {
         var expected = new TreeSet<String>();
         collectSearchLeafIds(MiteConfig.SPEC.getSpec(), List.of(), expected);
+        if (!ModList.get().isLoaded("modern_ite")) {
+            expected.remove("mite:nether_ores.nether_adamantium");
+            expected.remove("mite:nether_generation.nether_adamantium.height_range");
+        }
         var opened = new java.util.concurrent.atomic.AtomicInteger();
         // Availability=false short-circuits connection/permission checks. Do not construct a Minecraft instance or open a screen.
         var entries = ConfigSearchIndex.configurationEntries(Mite.MOD_ID, false, (config, path) -> {
@@ -513,13 +520,13 @@ public final class GameplayConfigClientAudit implements DataProvider {
                             && !entry.category().getString().isBlank() && entry.matches(entry.id()),
                     "Search metadata retains a label, category, lazy target and searchable full path: " + entry.id());
         }
-        check(!expected.isEmpty() && actual.equals(expected), "The homepage metadata indexes every MITE config leaf exactly once");
+        check(!expected.isEmpty() && actual.equals(expected), "The homepage metadata indexes every supported MITE config leaf exactly once");
         check(opened.get() == 0, "Constructing search metadata does not invoke any screen-opening callback");
         Class<?> single = Class.forName(CLIENT + "SingleConfigValueScreen", false, GameplayConfigClientAudit.class.getClassLoader());
         MethodHandles.publicLookup().findStatic(single, "create",
                 MethodType.methodType(Screen.class, Screen.class, ModConfig.class, List.class, Component.class));
         report.addProperty("homepage_search_registered_mite_leaves", actual.size());
-        report.addProperty("homepage_search_every_declared_leaf_indexed_exactly_once", true);
+        report.addProperty("homepage_search_every_supported_leaf_indexed_exactly_once", true);
         report.addProperty("homepage_search_screen_opening_callbacks_invoked", opened.get());
         report.addProperty("homepage_search_single_value_native_editor_signature_verified", true);
     }
@@ -643,6 +650,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
             required.add("mite.config." + key + ".tooltip");
         }
         required.add("mite.config.monster_spawn_reset.tooltip");
+        for (Dimension dimension : Dimension.values())
+            required.add("mite.config.ore_dimension." + dimension.name().toLowerCase(Locale.ROOT));
         for (String key : List.of("search_all", "search_all.tooltip", "search_all.empty", "ore_multiplier"))
             required.add("mite.config." + key);
         for (var language : languages.entrySet()) {

@@ -43,6 +43,11 @@ public final class MiteConfigClient {
         var mc = Minecraft.getInstance();
         return mc.getConnection() != null && !mc.hasSingleplayerServer();
     }
+    static boolean netherOreSettingsAvailable() {
+        if (!remoteServer()) return true;
+        var snapshot = MiteConfig.effectiveSnapshot();
+        return snapshot != MiteConfig.localSnapshot() && !snapshot.netherOres().isEmpty();
+    }
     public static Map<String, Object> gameplayValues() { return gameplayValues; }
     public static Map<String, Object> spawningControlValues() {
         return remoteServer() && !spawningValues.isEmpty() ? spawningValues : MiteExtensions.policy().spawningControlValues();

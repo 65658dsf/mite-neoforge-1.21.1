@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.config.EnchantmentCatalog;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.config.MonsterSpawnCatalog;
 import io.github.ningmeng123.mite.rules.R196OreRules;
+import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import io.github.ningmeng123.mite.worldgen.R196OreFeature;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,6 +25,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.config.ModConfigs;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -79,6 +81,9 @@ public final class ConfigSearchIndex {
             if (value.getValue() instanceof UnmodifiableConfig section) collect(result, config, section, path, available, open);
             else if (value.getValue() instanceof ModConfigSpec.ConfigValue<?>) {
                 List<String> target = List.copyOf(path);
+                if (config.getModId().equals(Mite.MOD_ID) && oreDimension(target.getFirst()) == Dimension.NETHER
+                        && ((available && !MiteConfigClient.netherOreSettingsAvailable())
+                                || R196OreFeature.generationBlock(oreKind(target)) == Blocks.AIR)) continue;
                 ModConfigSpec.ValueSpec definition = spec.getSpec().get(path);
                 String translation = definition.getTranslationKey();
                 Component description = translation != null && Language.getInstance().has(translation + ".tooltip")
@@ -94,7 +99,7 @@ public final class ConfigSearchIndex {
 
     private static Component label(String modId, List<String> path, ModConfigSpec.ValueSpec spec) {
         String key = path.getLast();
-        if (modId.equals(Mite.MOD_ID) && isOreSection(path.getFirst())) {
+        if (modId.equals(Mite.MOD_ID) && oreDimension(path.getFirst()) != null) {
             var kind = oreKind(path);
             boolean deep = key.startsWith("deepslate_");
             Component name = R196OreFeature.generationBlock(kind, deep).getName();
@@ -135,15 +140,15 @@ public final class ConfigSearchIndex {
 
     private static Screen openMite(Screen parent, ModConfig config, List<String> path) {
         String section = path.getFirst(), key = path.getLast();
-        if (isOreSection(section)) {
+        Dimension oreDimension = oreDimension(section);
+        if (oreDimension != null) {
             // Candidate/probability controls are advanced native values; the ore page edits rates and heights.
             if (key.equals("candidates") || key.equals("chance_percent"))
                 return SingleConfigValueScreen.create(parent, config, path, label(Mite.MOD_ID, path,
                         ((ModConfigSpec)config.getSpec()).getSpec().get(path)));
-            var dimension = section.startsWith("underworld") ? R196OreRules.Dimension.UNDERWORLD : R196OreRules.Dimension.OVERWORLD;
             boolean deep = key.startsWith("deepslate_");
             String id = BuiltInRegistries.BLOCK.getKey(R196OreFeature.generationBlock(oreKind(path), deep)).toString();
-            return new OreGenerationSettingsScreen(parent, dimension, id);
+            return new OreGenerationSettingsScreen(parent, oreDimension, id);
         }
         if (section.equals("enchantments")) return new EnchantmentSettingsScreen(parent);
         if (section.equals("monster_spawning")) {
@@ -161,8 +166,13 @@ public final class ConfigSearchIndex {
                 ((ModConfigSpec)config.getSpec()).getSpec().get(path)));
     }
 
-    private static boolean isOreSection(String section) {
-        return List.of("overworld_ores", "underworld_ores", "overworld_generation", "underworld_generation").contains(section);
+    private static Dimension oreDimension(String section) {
+        return switch (section) {
+            case "overworld_ores", "overworld_generation" -> Dimension.OVERWORLD;
+            case "underworld_ores", "underworld_generation" -> Dimension.UNDERWORLD;
+            case "nether_ores", "nether_generation" -> Dimension.NETHER;
+            default -> null;
+        };
     }
 
     private static R196OreRules.Kind oreKind(List<String> path) {
