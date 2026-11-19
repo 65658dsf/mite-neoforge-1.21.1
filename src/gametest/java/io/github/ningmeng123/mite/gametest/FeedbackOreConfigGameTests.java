@@ -30,7 +30,7 @@ public final class FeedbackOreConfigGameTests {
         helper.succeed();
     }
     @GameTest(template="empty", timeoutTicks=400)
-    public static void underworldCoalAndEmeraldUseIndependentRegularAndDeepRatesOnNativeStone(GameTestHelper helper) {
+    public static void underworldCoalAndEmeraldUseIndependentRegularAndDeepRatesOnLegacyStone(GameTestHelper helper) {
         verifyGeneration(helper, Dimension.UNDERWORLD);
         helper.succeed();
     }
@@ -73,9 +73,9 @@ public final class FeedbackOreConfigGameTests {
                 for (int y=-63; y<319; y++) {
                     var state = chunk.getBlockState(new BlockPos(bx,y,bz));
                     if (state.is(Blocks.COAL_ORE)) { count[0]++; helper.assertTrue(y>=0, "Regular coal follows the ordinary underworld host"); }
-                    if (state.is(Blocks.DEEPSLATE_COAL_ORE)) { count[1]++; helper.assertTrue(y<0, "Deep coal is generated from genuine negative-height stone"); }
+                    if (state.is(Blocks.DEEPSLATE_COAL_ORE)) { count[1]++; helper.assertTrue(y<0, "Deep coal follows the negative-height deepslate host"); }
                     if (state.is(Blocks.EMERALD_ORE)) { count[2]++; helper.assertTrue(y>=0, "Regular emerald follows the ordinary underworld host"); }
-                    if (state.is(Blocks.DEEPSLATE_EMERALD_ORE)) { count[3]++; helper.assertTrue(y<0, "Deep emerald is generated from genuine negative-height stone"); }
+                    if (state.is(Blocks.DEEPSLATE_EMERALD_ORE)) { count[3]++; helper.assertTrue(y<0, "Deep emerald follows the negative-height deepslate host"); }
                 }
             }
             for (int found : count) helper.assertTrue(found>0, "Actual fresh chunk decoration places each requested ore variant");
@@ -134,7 +134,7 @@ public final class FeedbackOreConfigGameTests {
                     var fixture = new OreGenerationGameTests.GenerationFixture(level, new ChunkPos(6490 + index++, -6490), false);
                     fixture.fill(-64, 129);
                     if (dimension == Dimension.UNDERWORLD) {
-                        // The genuine R196 underworld generator uses stone, including below zero.
+                        // Older underworld chunks used stone below zero, with a deep coal and emerald fallback.
                         for (var chunk : fixture.all) {
                             int x=chunk.getPos().getMinBlockX(), z=chunk.getPos().getMinBlockZ();
                             for (int dx=0; dx<16; dx++) for (int dz=0; dz<16; dz++) for (int y=-64; y<0; y++)

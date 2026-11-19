@@ -6,11 +6,12 @@ import java.util.SplittableRandom;
 
 /**
  * Explicit 1.21.1 height/accessibility adaptation of the independently verified R196 terrain.
- * Interior bedrock becomes mineable stone, and short dry ledges receive walkable stone steps.
+ * Interior bedrock becomes mineable rock, and short dry ledges receive walkable stone steps.
  *
  * @author NingMeng123
  */
 public final class ModernUnderworldTerrain {
+    public static final byte DEEPSLATE = -2;
     public static final int CURRENT_LAYOUT_VERSION = 2;
     public static final int MIN_Y = -64;
     public static final int HEIGHT = 384;
@@ -71,6 +72,9 @@ public final class ModernUnderworldTerrain {
                     if (block == R196UnderworldTerrain.BEDROCK && y < MIN_ROOF_Y) {
                         block = R196UnderworldTerrain.STONE;
                     }
+                    if (block == R196UnderworldTerrain.STONE && y < 0) {
+                        block = DEEPSLATE;
+                    }
                     adapted[index(x, y, z)] = block;
                 }
             }
@@ -110,7 +114,9 @@ public final class ModernUnderworldTerrain {
                         int rise = distanceSquared < .32 ? 0 : (int) Math.round(edge * 2);
                         int y = Math.clamp(baseY + rise, MIN_PORTAL_MANTLE_Y, MAX_PORTAL_MANTLE_Y);
                         int index = index(x, y, z);
-                        if (blocks[index] == R196UnderworldTerrain.STONE) blocks[index] = R196UnderworldTerrain.MANTLE;
+                        if (blocks[index] == R196UnderworldTerrain.STONE || blocks[index] == DEEPSLATE) {
+                            blocks[index] = R196UnderworldTerrain.MANTLE;
+                        }
                     }
                 }
             }

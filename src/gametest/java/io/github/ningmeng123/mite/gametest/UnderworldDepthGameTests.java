@@ -36,6 +36,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -68,7 +69,11 @@ public final class UnderworldDepthGameTests {
             helper.assertTrue(chunk.getBlockState(floor.atY(319)).is(Blocks.BEDROCK), "The ceiling remains protected bedrock");
             for (int y = ModernUnderworldTerrain.MAX_MANTLE_Y + 1; y < ModernUnderworldTerrain.MIN_ROOF_Y; y++) {
                 BlockPos at = floor.atY(y);
-                helper.assertFalse(chunk.getBlockState(at).is(Blocks.BEDROCK), "An unmineable old internal stratum seals survival descent at " + at);
+                var state = chunk.getBlockState(at);
+                helper.assertFalse(state.is(Blocks.BEDROCK), "An unmineable old internal stratum seals survival descent at " + at);
+                if (state.is(Blocks.STONE) || state.is(Blocks.DEEPSLATE)) {
+                    helper.assertTrue(state.is(baseRock(y)), "Natural rock changes to deepslate below Y=0 at " + at);
+                }
             }
         }
         helper.succeed();
@@ -78,7 +83,7 @@ public final class UnderworldDepthGameTests {
     public static void survivalCanExcavateNaturalMantleAndBuildANegativeHeightNetherRoundTrip(GameTestHelper helper) {
         ServerLevel underworld = underworld(helper);
         Descent descent;
-        // The original terrain/portal fixture needs an undecorated stone shaft under the historical ore rates.
+        // The original terrain/portal fixture needs an undecorated rock shaft under the historical ore rates.
         // Richer user presets are independently tested; they must not make this terrain seed reject mineable ores.
         try (var ignored = new LegacyOreRates()) {
             descent = findDryDescent(helper, underworld, new ChunkPos(4800, -4800));
@@ -86,8 +91,8 @@ public final class UnderworldDepthGameTests {
         BlockPos interior = descent.bottom();
         MitePortalFrame frame = new MitePortalFrame(interior, Direction.Axis.X);
         for (int y = ModernUnderworldTerrain.MIN_PORTAL_MANTLE_Y; y <= ModernUnderworldTerrain.MAX_PORTAL_MANTLE_Y; y++) {
-            helper.assertTrue(underworld.getBlockState(interior.atY(y)).is(Blocks.STONE),
-                    "The descent uses a continuous natural stone opening through the shallow mantle layers");
+            helper.assertTrue(underworld.getBlockState(interior.atY(y)).is(baseRock(y)),
+                    "The descent uses a continuous natural rock opening through the shallow mantle layers at Y=" + y);
         }
         try (Session session = player(helper)) {
             ServerPlayer player = session.player();
@@ -290,7 +295,7 @@ public final class UnderworldDepthGameTests {
                 boolean dry = true;
                 for (int shaftY = bottom.getY() - 1; shaftY <= y; shaftY++) {
                     var state = level.getBlockState(bottom.atY(shaftY));
-                    if (!(state.isAir() || state.is(Blocks.STONE))) { dry = false; break; }
+                    if (!(state.isAir() || state.is(baseRock(shaftY)))) { dry = false; break; }
                 }
                 if (dry) return new Descent(start, bottom);
                 break;
@@ -298,6 +303,10 @@ public final class UnderworldDepthGameTests {
         }
         helper.fail("The untouched generated seed fixture has no dry mineable descent to a natural mantle foundation");
         throw new IllegalStateException("Unreachable after GameTest failure");
+    }
+
+    private static Block baseRock(int y) {
+        return y < 0 ? Blocks.DEEPSLATE : Blocks.STONE;
     }
 
     private static void excavatePortalRoom(GameTestHelper helper, ServerPlayer player, ServerLevel level, MitePortalFrame frame) {

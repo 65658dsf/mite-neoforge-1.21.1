@@ -106,7 +106,7 @@ final class ModernUnderworldTerrainTest {
                             reachedMantle = true;
                             break;
                         }
-                        assertEquals(R196UnderworldTerrain.STONE, block, "生存下掘不能被内部基岩封住");
+                        assertEquals(baseRock(y), block, "负数层应为可挖的深板岩，Y=0 及以上应为石头");
                     }
                     assertTrue(reachedMantle);
                     for (int y = -59; y < 316; y++) {
@@ -210,10 +210,14 @@ final class ModernUnderworldTerrainTest {
                 assertEquals(NO_PORTAL_MANTLE, height, "浅层同一岩柱不应叠放地幔");
                 height = y;
             } else {
-                assertEquals(R196UnderworldTerrain.STONE, state, "浅层地幔间应保留可挖岩石");
+                assertEquals(baseRock(y), state, "浅层地幔间应保留对应高度的可挖岩石");
             }
         }
         return height;
+    }
+
+    private static byte baseRock(int y) {
+        return y < 0 ? ModernUnderworldTerrain.DEEPSLATE : R196UnderworldTerrain.STONE;
     }
 
     @Test

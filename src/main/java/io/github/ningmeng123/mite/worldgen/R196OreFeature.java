@@ -179,7 +179,7 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
             return deep ? deepslate && (deepHeight == null || deepHeight.contains(y))
                     : stone && (stoneHeight == null || stoneHeight.contains(y));
         }
-        /** R196 underworld rock is stone even below zero; only the two modern additions gain deep variants there. */
+        /** Older underworld terrain used stone below zero while already supporting deep coal and emerald. */
         private boolean deepHost(BlockState current, int y) {
             return current.is(Blocks.DEEPSLATE) || current.is(Blocks.STONE) && y < 0
                     && R196OreRules.modernUnderworldAddition(kind, dimension);

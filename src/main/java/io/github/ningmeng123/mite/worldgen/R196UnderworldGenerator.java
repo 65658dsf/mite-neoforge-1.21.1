@@ -59,6 +59,7 @@ public final class R196UnderworldGenerator extends ChunkGenerator {
     public static BlockState stateFor(byte block) {
         return switch (block) {
             case R196UnderworldTerrain.STONE -> Blocks.STONE.defaultBlockState();
+            case ModernUnderworldTerrain.DEEPSLATE -> Blocks.DEEPSLATE.defaultBlockState();
             case R196UnderworldTerrain.BEDROCK -> Blocks.BEDROCK.defaultBlockState();
             case R196UnderworldTerrain.WATER -> Blocks.WATER.defaultBlockState();
             case R196UnderworldTerrain.COBWEB -> Blocks.COBWEB.defaultBlockState();

@@ -143,7 +143,7 @@ public final class OreGenerationGameTests {
     public static void realUnderworldGeneratorDecoratesFreshRockWithAdamantiumWithoutBreakingMantle(GameTestHelper helper) {
         ServerLevel level = helper.getLevel().getServer().getLevel(MiteWorldDimensions.UNDERWORLD);
         helper.assertTrue(level != null, "The actual underworld loads before checking ore generation");
-        int adamantium = 0, allOre = 0;
+        int adamantium = 0, deepAdamantium = 0;
         for (int offset = 0; offset < 3; offset++) {
             ChunkAccess chunk = level.getChunk(6200 + offset, -6200);
             helper.assertValueEqual(chunk.getData(MiteAttachments.UNDERWORLD_LAYOUT_VERSION.get()), 2, "Ore checks use genuine modern generated underworld chunks");
@@ -153,12 +153,16 @@ public final class OreGenerationGameTests {
                 helper.assertTrue(chunk.getBlockState(origin.offset(x, 319, z)).is(Blocks.BEDROCK), "Ore decoration cannot replace the protected roof");
                 for (int y = -63; y < 319; y++) {
                     String id = BuiltInRegistries.BLOCK.getKey(chunk.getBlockState(origin.offset(x, y, z)).getBlock()).getPath();
-                    if (id.endsWith("_ore")) allOre++;
+                    if (y < 0 && id.endsWith("_ore")) {
+                        helper.assertTrue(id.startsWith("deepslate_"), "Ores in negative underworld rock use their deep variants");
+                    }
                     if (id.equals("adamantium_ore")) adamantium++;
+                    if (id.equals("deepslate_adamantium_ore")) deepAdamantium++;
                 }
             }
         }
-        helper.assertTrue(allOre > 0 && adamantium > 0, "The real modern underworld generator must actually decorate rock with its source-only adamantium progression ore");
+        helper.assertTrue(adamantium > 0 && deepAdamantium > 0,
+                "The real underworld generator decorates stone and deepslate with the corresponding adamantium ores");
         helper.succeed();
     }
 
