@@ -225,7 +225,7 @@ public final class BloodMoonInvasionGameTests {
             int sum = pool.stream().mapToInt(Entry::weight).sum(), offset = 0;
             Map<String, Integer> observed = new LinkedHashMap<>();
             for (Entry entry : pool) {
-                if (List.of("te", "EntityLongdead", "EntityAncientBoneLord").contains(entry.sourceClass()))
+                if (entry.sourceClass() != null && List.of("te", "EntityLongdead", "EntityAncientBoneLord").contains(entry.sourceClass()))
                     for (int ticket = offset; ticket < offset + entry.weight(); ticket++) {
                         Entry result = R196MobSpawning.select(room.level, room.pos, Category.MONSTER, new TicketRandom(sum, ticket), false);
                         helper.assertTrue(result != null && result.sourceClass().equals(entry.sourceClass()), "Every appended ticket belongs to exactly its source entry");
