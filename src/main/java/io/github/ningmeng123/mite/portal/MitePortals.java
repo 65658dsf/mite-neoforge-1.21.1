@@ -257,7 +257,9 @@ public final class MitePortals {
         BlockPos origin = new BlockPos(x, level.getMinBuildHeight(), z);
         for (BlockPos.MutableBlockPos column : BlockPos.spiralAround(origin, radius, Direction.EAST, Direction.SOUTH)) {
             if (!level.getWorldBorder().isWithinBounds(column)) continue;
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ());
+            // Spawn chunks can be unloaded. Load the candidate before reading its surface height.
+            LevelChunk chunk = level.getChunkAt(column);
+            int y = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX() & 15, column.getZ() & 15) + 1;
             if (y <= level.getMinBuildHeight() || y >= level.getMaxBuildHeight()) continue;
             BlockPos feet = new BlockPos(column.getX(), y, column.getZ());
             Vec3 position = Vec3.atBottomCenterOf(feet);

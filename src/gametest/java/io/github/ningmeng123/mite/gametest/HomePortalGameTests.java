@@ -9,6 +9,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.portal.DimensionTransition;
@@ -59,6 +60,45 @@ public final class HomePortalGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty")
+    @SuppressWarnings("removal")
+    public static void enteringHomeGateReturnsPlayerToUnloadedSpawn(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        WritableLevelData levelData = (WritableLevelData)level.getLevelData();
+        BlockPos oldSpawn = levelData.getSpawnPos();
+        float oldAngle = levelData.getSpawnAngle();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        BlockPos entrance = placeEntrance(level, new BlockPos(origin.getX(), 80, origin.getZ())).bottomLeft();
+        int surfaceY = level.getChunkSource().getGenerator().getSpawnHeight(level);
+        BlockPos spawn = new BlockPos(24_000_008, surfaceY, 24_000_008);
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        try {
+            player.setGameMode(GameType.SURVIVAL);
+            player.setPos(Vec3.atBottomCenterOf(entrance));
+            // Updating only the stored spawn simulates disabled spawn chunk loading.
+            levelData.setSpawn(spawn, oldAngle);
+            helper.assertFalse(level.hasChunkAt(spawn), "Spawn must start outside loaded chunks");
+            level.getBlockState(entrance).entityInside(level, entrance, player);
+            player.baseTick();
+            helper.assertValueEqual(player.position(), Vec3.atBottomCenterOf(spawn), "Entering the home portal loads the spawn surface and teleports the player there");
+            helper.assertTrue(player.serverLevel() == level, "The home portal keeps the player in the Overworld");
+        } finally {
+            levelData.setSpawn(oldSpawn, oldAngle);
+            level.getServer().getPlayerList().remove(player);
+        }
+        helper.succeed();
+    }
+
+    private static MitePortalFrame placeEntrance(ServerLevel level, BlockPos bottomLeft) {
+        MitePortalFrame frame = new MitePortalFrame(bottomLeft, Direction.Axis.X);
+        for (int x = -1; x <= 2; x++) for (int y = -1; y <= 3; y++) {
+            level.setBlock(frame.at(x, y), x == -1 || x == 2 || y == -1 || y == 3
+                    ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
+        }
+        PortalShape.findEmptyPortalShape(level, frame.bottomLeft(), frame.axis()).orElseThrow().createPortalBlocks();
+        return frame;
+    }
+
     private static final class HomeFixture implements AutoCloseable {
         final ServerLevel level;
         final ServerPlayer player;
@@ -83,12 +123,7 @@ public final class HomePortalGameTests {
             level.setBlock(spawn.below(3), Blocks.AIR.defaultBlockState(), 2);
             level.setBlock(spawn.below(4), Blocks.AIR.defaultBlockState(), 2);
             level.setBlock(spawn.below(5), Blocks.STONE.defaultBlockState(), 2);
-            entrance = new MitePortalFrame(spawn.west(32).below(10), Direction.Axis.X);
-            for (int x = -1; x <= 2; x++) for (int y = -1; y <= 3; y++) {
-                level.setBlock(entrance.at(x, y), x == -1 || x == 2 || y == -1 || y == 3
-                        ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
-            }
-            PortalShape.findEmptyPortalShape(level, entrance.bottomLeft(), entrance.axis()).orElseThrow().createPortalBlocks();
+            entrance = placeEntrance(level, spawn.west(32).below(10));
             // Resolving a destination needs a server player, but never logs in or executes the transition.
             player = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "home-portal-test"));
             player.setPos(Vec3.atBottomCenterOf(entrance.bottomLeft()));
