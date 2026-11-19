@@ -34,6 +34,7 @@ final class ModernUnderworldTerrainTest {
         assertEquals(152, ModernUnderworldTerrain.SEA_LEVEL);
         assertEquals(176, ModernUnderworldTerrain.SPAWN_HEIGHT);
         assertEquals(-60, ModernUnderworldTerrain.MAX_MANTLE_Y);
+        assertEquals(0, ModernUnderworldTerrain.NETHER_PORTAL_MANTLE_Y);
         assertEquals(316, ModernUnderworldTerrain.MIN_ROOF_Y);
     }
 
@@ -90,11 +91,16 @@ final class ModernUnderworldTerrainTest {
                     assertEquals(R196UnderworldTerrain.MANTLE, blocks[ModernUnderworldTerrain.index(x, -64, z)]);
                     assertEquals(R196UnderworldTerrain.BEDROCK, blocks[ModernUnderworldTerrain.index(x, 319, z)]);
                     boolean reachedMantle = false;
-                    // Descending from the cavern base must require ordinary stone mining only.
+                    boolean portalMantle = x >= 2 && x <= 13 && z >= 2 && z <= 13;
+                    // The center patch belongs at Y=0 only, and the seams allow continuous descent.
                     for (int y = 115; y >= -64; y--) {
                         byte block = blocks[ModernUnderworldTerrain.index(x, y, z)];
+                        if (y == 0 && portalMantle) {
+                            assertEquals(R196UnderworldTerrain.MANTLE, block, "区块中央的夹心应位于 Y=0");
+                            continue;
+                        }
                         if (block == R196UnderworldTerrain.MANTLE) {
-                            assertTrue(y >= -64 && y <= -60, "地幔只能位于现代底界范围");
+                            assertTrue(y >= -64 && y <= -60, "夹心以外的地幔只能位于现代底界范围");
                             reachedMantle = true;
                             break;
                         }

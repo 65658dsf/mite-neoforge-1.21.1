@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.block.RunestoneBlock;
 import io.github.ningmeng123.mite.registry.MiteWorldBlocks;
 import io.github.ningmeng123.mite.rules.R196PortalRules;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
+import io.github.ningmeng123.mite.worldgen.ModernUnderworldTerrain;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,8 +74,10 @@ public record MitePortalFrame(BlockPos bottomLeft, Direction.Axis axis) {
 
     public boolean touchingBottom(Level level) {
         int frameY = bottomLeft.getY() - 1;
-        if (!R196PortalRules.canTouchBottom(frameY, level.getMinBuildHeight())) return false;
-        Block bottomType = level.dimension() == MiteWorldDimensions.UNDERWORLD ? MiteWorldBlocks.MANTLE.get()
+        boolean underworld = level.dimension() == MiteWorldDimensions.UNDERWORLD;
+        boolean atPortalMantle = underworld && frameY - 1 == ModernUnderworldTerrain.NETHER_PORTAL_MANTLE_Y;
+        if (!atPortalMantle && !R196PortalRules.canTouchBottom(frameY, level.getMinBuildHeight())) return false;
+        Block bottomType = underworld ? MiteWorldBlocks.MANTLE.get()
                 : level.dimension() == Level.NETHER ? MiteWorldBlocks.CORE.get() : Blocks.BEDROCK;
         for (int x = -1; x <= 2; x++) if (level.getBlockState(at(x, -2)).is(bottomType)) return true;
         return false;

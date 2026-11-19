@@ -10,10 +10,10 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.portal.MitePortalFrame;
 import io.github.ningmeng123.mite.portal.MitePortalProperties;
-import io.github.ningmeng123.mite.portal.MitePortals;
 import io.github.ningmeng123.mite.registry.MiteAttachments;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.registry.MiteWorldBlocks;
+import io.github.ningmeng123.mite.rules.R196PortalRules;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
 import io.github.ningmeng123.mite.worldgen.ModernUnderworldTerrain;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -83,6 +83,8 @@ public final class UnderworldDepthGameTests {
         }
         BlockPos interior = descent.bottom();
         MitePortalFrame frame = new MitePortalFrame(interior, Direction.Axis.X);
+        helper.assertTrue(underworld.getBlockState(interior.atY(0)).is(Blocks.STONE),
+                "The descent uses a natural stone opening in the Y=0 mantle layer");
         try (Session session = player(helper)) {
             ServerPlayer player = session.player();
             player.changeDimension(new DimensionTransition(underworld, Vec3.atBottomCenterOf(descent.start()), Vec3.ZERO,
@@ -97,27 +99,11 @@ public final class UnderworldDepthGameTests {
                 excavated += mine(helper, player, underworld, at);
             }
             helper.assertTrue(excavated > 100, "Descent genuinely excavates the mineable strata between the upper cave and negative mantle");
-            for (int x = -1; x <= 2; x++) for (int z = -1; z <= 1; z++) for (int y = -1; y <= 3; y++) {
-                mine(helper, player, underworld, frame.at(x, y).offset(0, 0, z));
-            }
+            excavatePortalRoom(helper, player, underworld, frame);
             helper.assertTrue(frame.touchingBottom(underworld), "A normal-size low frame reaches a naturally generated mantle foundation");
             helper.assertTrue(interior.getY() - 1 <= underworld.getMinBuildHeight() + 8 && interior.getY() < 0,
                     "The frame is in the actual negative-height bottom portal band");
-            player.setPos(interior.getX() + .5, interior.getY(), interior.getZ() - 2.5);
-            // Native BlockItem.useOn placement consumes supplies; the fixture never setblocks a frame.
-            for (int x = -1; x <= 2; x++) placeObsidian(helper, player, underworld, frame.at(x, -1));
-            for (int y = 0; y <= 2; y++) {
-                placeObsidian(helper, player, underworld, frame.at(-1, y));
-                placeObsidian(helper, player, underworld, frame.at(2, y));
-            }
-            for (int x = -1; x <= 2; x++) placeObsidian(helper, player, underworld, frame.at(x, 3));
-            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL));
-            BlockPos bottomObsidian = frame.at(0, -1);
-            player.setPos(interior.getX() + .5, interior.getY(), interior.getZ() - .5);
-            helper.assertTrue(player.canInteractWithBlock(bottomObsidian, 1D), "Ignition fixture stays inside actual survival reach");
-            var ignition = player.gameMode.useItemOn(player, underworld, player.getMainHandItem(), InteractionHand.MAIN_HAND,
-                    new BlockHitResult(Vec3.atCenterOf(bottomObsidian).add(0, .5, 0), Direction.UP, bottomObsidian, false));
-            helper.assertTrue(ignition.consumesAction() && frame.complete(underworld), "Actual flint-and-steel interaction activates the hand-built native frame");
+            buildAndLightPortal(helper, player, underworld, frame);
             helper.assertValueEqual(underworld.getBlockState(interior).getValue(MitePortalProperties.DESTINATION), 2,
                     "Natural negative mantle contact routes the gate to Nether");
             ChunkAccess original = underworld.getChunkAt(interior);
@@ -154,6 +140,50 @@ public final class UnderworldDepthGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty", timeoutTicks = 800)
+    public static void survivalCanBuildANetherRoundTripOnNaturalMantleAtZero(GameTestHelper helper) {
+        ServerLevel underworld = underworld(helper);
+        BlockPos corner = new ChunkPos(4900, -4900).getWorldPosition();
+        BlockPos interior = corner.offset(8, 2, 8);
+        MitePortalFrame frame = new MitePortalFrame(interior, Direction.Axis.X);
+        for (int x = 0; x < 2; x++) {
+            helper.assertTrue(underworld.getBlockState(frame.at(x, -2)).is(MiteWorldBlocks.MANTLE.get()),
+                    "The foundation directly under the bottom obsidian generates as mantle at Y=0");
+        }
+        helper.assertFalse(new MitePortalFrame(corner.offset(8, 2, 0), frame.axis()).touchingBottom(underworld),
+                "A frame at the same height above a mineable seam does not route to the Nether");
+        helper.assertFalse(new MitePortalFrame(interior.above(), frame.axis()).touchingBottom(underworld),
+                "A frame one block above the mantle does not route to the Nether");
+
+        try (Session session = player(helper)) {
+            ServerPlayer player = session.player();
+            player.changeDimension(new DimensionTransition(underworld, Vec3.atBottomCenterOf(interior), Vec3.ZERO,
+                    0, 0, DimensionTransition.DO_NOTHING));
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteTools.get("mithril_pickaxe")));
+            excavatePortalRoom(helper, player, underworld, frame);
+            buildAndLightPortal(helper, player, underworld, frame);
+            helper.assertValueEqual(underworld.getBlockState(interior).getValue(MitePortalProperties.DESTINATION),
+                    R196PortalRules.NETHER, "The gate on the Y=0 mantle layer stores the Nether route");
+
+            player.setPos(Vec3.atBottomCenterOf(interior));
+            var gate = (NetherPortalBlock) Blocks.NETHER_PORTAL;
+            var outbound = gate.getPortalDestination(underworld, player, interior);
+            ServerLevel nether = underworld.getServer().getLevel(Level.NETHER);
+            helper.assertTrue(outbound != null && outbound.newLevel() == nether,
+                    "The Y=0 foundation sends the native portal to the Nether");
+            player.changeDimension(outbound);
+            helper.assertTrue(player.serverLevel() == nether, "The player arrives in the Nether");
+            var exit = MitePortalFrame.find(nether, player.blockPosition()).orElseThrow();
+            var inbound = gate.getPortalDestination(nether, player, exit.bottomLeft());
+            helper.assertTrue(inbound != null && inbound.newLevel() == underworld,
+                    "The Nether exit resolves back to the underworld");
+            player.changeDimension(inbound);
+            helper.assertTrue(player.serverLevel() == underworld && frame.equals(MitePortalFrame.find(underworld, player.blockPosition()).orElse(null)),
+                    "The player returns through the original frame on the Y=0 foundation");
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 400)
     public static void negativeSectionsAndExplicitLayoutVersionSurviveNativeChunkSerialization(GameTestHelper helper) {
         ServerLevel level = underworld(helper);
@@ -180,7 +210,9 @@ public final class UnderworldDepthGameTests {
     private static Descent findDryDescent(GameTestHelper helper, ServerLevel level, ChunkPos chunkPos) {
         level.getChunk(chunkPos.x, chunkPos.z);
         int baseX = chunkPos.getMinBlockX(), baseZ = chunkPos.getMinBlockZ();
-        for (int x = 2; x < 13; x++) for (int z = 2; z < 13; z++) {
+        for (int x = 1; x <= 13; x++) for (int z = 1; z <= 14; z++) {
+            BlockPos column = new BlockPos(baseX + x, 0, baseZ + z);
+            if (!level.getBlockState(column).is(Blocks.STONE)) continue;
             int centralFloor = level.getMinBuildHeight(), surroundingFloor = centralFloor;
             for (int dx = -1; dx <= 2; dx++) for (int dz = -1; dz <= 1; dz++) {
                 for (int y = level.getMinBuildHeight(); y <= ModernUnderworldTerrain.MAX_MANTLE_Y; y++) {
@@ -191,7 +223,7 @@ public final class UnderworldDepthGameTests {
                 }
             }
             if (centralFloor != surroundingFloor) continue;
-            BlockPos bottom = new BlockPos(baseX + x, centralFloor + 2, baseZ + z);
+            BlockPos bottom = column.atY(centralFloor + 2);
             for (int y = ModernUnderworldTerrain.CAVERN_TOP_EXCLUSIVE - 2; y > ModernUnderworldTerrain.SEA_LEVEL; y--) {
                 BlockPos start = bottom.atY(y);
                 if (!level.getBlockState(start).isAir() || !level.getBlockState(start.above()).isAir()) continue;
@@ -206,6 +238,31 @@ public final class UnderworldDepthGameTests {
         }
         helper.fail("The untouched generated seed fixture has no dry mineable descent to a natural mantle foundation");
         throw new IllegalStateException("Unreachable after GameTest failure");
+    }
+
+    private static void excavatePortalRoom(GameTestHelper helper, ServerPlayer player, ServerLevel level, MitePortalFrame frame) {
+        for (int x = -1; x <= 2; x++) for (int z = -1; z <= 1; z++) for (int y = -1; y <= 3; y++) {
+            mine(helper, player, level, frame.at(x, y).offset(0, 0, z));
+        }
+    }
+
+    private static void buildAndLightPortal(GameTestHelper helper, ServerPlayer player, ServerLevel level, MitePortalFrame frame) {
+        // Native BlockItem.useOn places the frame and consumes the obsidian.
+        for (int x = -1; x <= 2; x++) placeObsidian(helper, player, level, frame.at(x, -1));
+        for (int y = 0; y <= 2; y++) {
+            placeObsidian(helper, player, level, frame.at(-1, y));
+            placeObsidian(helper, player, level, frame.at(2, y));
+        }
+        for (int x = -1; x <= 2; x++) placeObsidian(helper, player, level, frame.at(x, 3));
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL));
+        BlockPos bottomObsidian = frame.at(0, -1);
+        BlockPos interior = frame.bottomLeft();
+        player.setPos(interior.getX() + .5, interior.getY(), interior.getZ() - .5);
+        helper.assertTrue(player.canInteractWithBlock(bottomObsidian, 1D), "Ignition fixture stays inside actual survival reach");
+        var ignition = player.gameMode.useItemOn(player, level, player.getMainHandItem(), InteractionHand.MAIN_HAND,
+                new BlockHitResult(Vec3.atCenterOf(bottomObsidian).add(0, .5, 0), Direction.UP, bottomObsidian, false));
+        helper.assertTrue(ignition.consumesAction() && frame.complete(level),
+                "Actual flint-and-steel interaction activates the hand-built native frame");
     }
 
     private static int mine(GameTestHelper helper, ServerPlayer player, ServerLevel level, BlockPos pos) {

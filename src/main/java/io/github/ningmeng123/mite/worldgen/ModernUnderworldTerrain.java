@@ -18,8 +18,10 @@ public final class ModernUnderworldTerrain {
     public static final int SEA_LEVEL = fromLegacyY(R196UnderworldTerrain.SEA_LEVEL);
     public static final int SPAWN_HEIGHT = fromLegacyY(160);
     public static final int MAX_MANTLE_Y = fromLegacyY(3) - 1;
+    public static final int NETHER_PORTAL_MANTLE_Y = 0;
     public static final int MIN_ROOF_Y = fromLegacyY(R196UnderworldTerrain.HEIGHT - 3);
 
+    private static final int PORTAL_MANTLE_INSET = 2;
     private static final int STEP_RADIUS = 2;
     private static final int MAX_STEP_RISE = 3;
     private static final int HEADROOM = 3;
@@ -64,6 +66,12 @@ public final class ModernUnderworldTerrain {
                     }
                     adapted[index(x, y, z)] = block;
                 }
+            }
+        }
+        // Inset the mantle from every chunk edge to leave four-wide mineable seams between patches.
+        for (int x = PORTAL_MANTLE_INSET; x < 16 - PORTAL_MANTLE_INSET; x++) {
+            for (int z = PORTAL_MANTLE_INSET; z < 16 - PORTAL_MANTLE_INSET; z++) {
+                adapted[index(x, NETHER_PORTAL_MANTLE_Y, z)] = R196UnderworldTerrain.MANTLE;
             }
         }
         addFloorSteps(adapted, chunkX, chunkZ);

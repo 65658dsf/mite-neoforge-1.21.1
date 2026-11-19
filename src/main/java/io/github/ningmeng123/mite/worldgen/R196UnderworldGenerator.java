@@ -144,5 +144,7 @@ public final class R196UnderworldGenerator extends ChunkGenerator {
     @Override
     public void addDebugScreenInfo(List<String> lines, RandomState state, BlockPos position) {
         lines.add("MITE underworld: min Y -64, height 384, mantle -64..-60, cavern 116..307");
+        lines.add("Nether portal mantle at Y " + ModernUnderworldTerrain.NETHER_PORTAL_MANTLE_Y
+                + " in new chunks, with mineable routes along chunk edges");
     }
 }
