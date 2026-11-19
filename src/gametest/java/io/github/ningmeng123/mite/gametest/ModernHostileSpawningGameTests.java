@@ -28,6 +28,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -50,6 +51,8 @@ import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
+import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -119,22 +122,34 @@ public final class ModernHostileSpawningGameTests {
                 helper.assertTrue(result.monsters() == 1 && brute.isAddedToLevel() && brute.getSpawnType() == MobSpawnType.NATURAL,
                         "A selected Overworld brute enters the real world as one natural monster");
                 var saved = brute.saveWithoutId(new CompoundTag());
+                helper.assertFalse(saved.getBoolean("IsImmuneToZombification"), "The natural spawn does not need a permanent immunity flag");
+                saved.putInt("TimeInOverworld", 300);
                 var restored = (PiglinBrute)site.mob(EntityType.PIGLIN_BRUTE);
                 restored.load(saved);
                 restored.setNoAi(false);
-                helper.assertTrue(saved.getBoolean("IsImmuneToZombification") && !restored.isConverting(),
-                        "A naturally spawned Overworld brute remains immune after an NBT round trip");
+                helper.assertFalse(restored.isConverting(), "An Overworld brute remains protected after loading without an immunity flag");
+                restored.tick();
+                helper.assertTrue(restored.isAlive() && restored.saveWithoutId(new CompoundTag()).getInt("TimeInOverworld") == 0,
+                        "The Overworld brute clears the old conversion timer during its real server tick");
 
                 var summoned = (PiglinBrute)site.mob(EntityType.PIGLIN_BRUTE);
                 EventHooks.finalizeMobSpawn(summoned, site.level, site.level.getCurrentDifficultyAt(site.pos), MobSpawnType.COMMAND, null);
                 summoned.setNoAi(false);
-                helper.assertTrue(summoned.isConverting(), "A command-spawned brute retains the native Overworld conversion behavior");
+                helper.assertFalse(summoned.isConverting(), "A command-spawned brute also remains protected in the Overworld");
+
+                var piglin = (Piglin)site.mob(EntityType.PIGLIN);
+                piglin.setNoAi(false);
+                helper.assertTrue(piglin.isConverting(), "An ordinary piglin still starts converting in the Overworld");
+
+                var endBrute = EntityType.PIGLIN_BRUTE.create(site.level.getServer().getLevel(Level.END));
+                helper.assertTrue(endBrute != null && endBrute.isConverting(),
+                        "A brute in another unsafe dimension still follows native conversion rules");
             }
         }).thenSucceed();
     }
 
     @GameTest(template = "empty", timeoutTicks = 240)
-    public static void naturalNetherBrutesUsePiglinGroundRulesAndKeepNativeConversion(GameTestHelper helper) {
+    public static void naturalNetherBrutesUsePiglinGroundRulesAndStayBrutesInTheOverworld(GameTestHelper helper) {
         ServerLevel nether = helper.getLevel().getServer().getLevel(Level.NETHER);
         var site = new DaylightUndeadSpawnGameTests.Site(nether, true, 88);
         site.keepLoaded(helper);
@@ -150,8 +165,21 @@ public final class ModernHostileSpawningGameTests {
                 var result = R196MobSpawning.finalizeNaturalMonster(nether, brute, null, 1);
                 helper.assertTrue(result.monsters() == 1 && brute.isAddedToLevel() && brute.getSpawnType() == MobSpawnType.NATURAL,
                         "The selected Nether brute joins the real world through natural finalization");
-                helper.assertFalse(brute.saveWithoutId(new CompoundTag()).getBoolean("IsImmuneToZombification"),
-                        "The Nether spawn keeps the native conversion behavior when later taken to the Overworld");
+                brute.setNoAi(false);
+                helper.assertFalse(brute.isConverting(), "The Nether still protects brutes through its native dimension rules");
+                var destination = Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(0, 1, 0)));
+                var moved = brute.changeDimension(new DimensionTransition(helper.getLevel(), destination, Vec3.ZERO,
+                        0F, 0F, DimensionTransition.DO_NOTHING));
+                try {
+                    helper.assertTrue(moved instanceof PiglinBrute && moved != brute, "The real dimension transfer restores a brute in the Overworld");
+                    var transferred = (PiglinBrute)moved;
+                    transferred.setNoAi(false);
+                    helper.assertTrue(!transferred.saveWithoutId(new CompoundTag()).getBoolean("IsImmuneToZombification")
+                                    && !transferred.isConverting(),
+                            "A Nether brute is protected as soon as it arrives in the Overworld");
+                } finally {
+                    if (moved != null) moved.discard();
+                }
             }
         }).thenSucceed();
     }

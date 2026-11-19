@@ -170,6 +170,7 @@
     "QualityMobEquipmentMixin",
     "MobEquipmentUpgradeMixin",
     "PiglinBruteArmorMixin",
+    "PiglinBruteZombificationMixin",
     "PiglinEquipmentUpgradeMixin",
     "QualitySpecialMobEquipmentMixin",
     "QualityRepairConsumptionMixin",

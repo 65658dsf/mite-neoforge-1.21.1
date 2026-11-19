@@ -35,8 +35,6 @@ public abstract class PiglinBruteArmorMixin extends AbstractPiglin {
     @Inject(method = "finalizeSpawn", at = @At("TAIL"))
     private void mite$initializeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
             MobSpawnType reason, SpawnGroupData group, CallbackInfoReturnable<SpawnGroupData> cir) {
-        if (reason == MobSpawnType.NATURAL && level.getLevel().dimension().equals(Level.OVERWORLD))
-            setImmuneToZombification(true);
         // Bastion templates store the original full health before spawn initialization runs.
         if (reason == MobSpawnType.STRUCTURE && getHealth() == 50F && getAttributeBaseValue(Attributes.MAX_HEALTH) == 100D)
             setHealth(getMaxHealth());
