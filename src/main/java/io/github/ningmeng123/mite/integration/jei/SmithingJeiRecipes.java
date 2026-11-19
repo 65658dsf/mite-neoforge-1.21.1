@@ -2,7 +2,6 @@ package io.github.ningmeng123.mite.integration.jei;
 
 import io.github.ningmeng123.mite.crafting.MaterialUpgradeRequirements;
 import io.github.ningmeng123.mite.crafting.SmithingRecipeIngredients;
-import io.github.ningmeng123.mite.crafting.TimedCraftingRules;
 import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,8 +37,8 @@ public final class SmithingJeiRecipes {
             var additions = Arrays.stream(ingredients.mite$additionIngredient().getItems())
                     .map(stack -> stack.copyWithCount(required)).toList();
             if (templates.isEmpty() || bases.isEmpty() || additions.isEmpty()) continue;
-            int ticks = TimedCraftingRules.period(MaterialUpgradeRequirements.difficulty(output), 0, 0F, false);
-            pages.add(new SmithingJeiRecipe(holder, templates, bases, additions, output, ticks));
+            pages.add(new SmithingJeiRecipe(holder, templates, bases, additions, output,
+                    MaterialUpgradeRequirements.difficulty(output)));
             originals.add(holder);
         }
         return new Index(pages, originals);

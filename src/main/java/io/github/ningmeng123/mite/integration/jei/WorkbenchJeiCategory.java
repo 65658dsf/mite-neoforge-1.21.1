@@ -4,6 +4,8 @@ import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.item.RunestoneItem;
 import io.github.ningmeng123.mite.crafting.WorkbenchDismantleRecipe;
 import io.github.ningmeng123.mite.crafting.FoodManufacturingRecipe;
+import io.github.ningmeng123.mite.curse.PlayerCurses;
+import io.github.ningmeng123.mite.curse.R196Curse;
 import java.math.BigDecimal;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
@@ -70,15 +72,20 @@ public final class WorkbenchJeiCategory implements IRecipeCategory<WorkbenchJeiR
     @Override
     public void draw(WorkbenchJeiRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         arrow.draw(graphics, 78, 27);
-        drawFit(graphics, Component.translatable("jei.mite.workbench_time_basis"), 5, 67);
-        var times = WorkbenchJeiRecipes.categoryWorkstations(recipe.workstationId()).stream()
-                .mapToInt(recipe::baselineTicks).summaryStatistics();
-        String duration = times.getCount() == 0 ? seconds(recipe.baselineTicks())
-                : times.getMin() == times.getMax() ? seconds(times.getMin())
-                : seconds(times.getMin()) + "–" + seconds(times.getMax());
-        Component time = recipe.rule() == null ? Component.translatable("jei.mite.workbench_untimed")
-                : Component.translatable("jei.mite.workbench_time", duration);
-        drawFit(graphics, time, 5, 80);
+        if (recipe.rule() == null) {
+            drawFit(graphics, Component.translatable("jei.mite.workbench_untimed"), 5, 80);
+        } else {
+            var player = Minecraft.getInstance().player;
+            int level = player == null ? 0 : player.experienceLevel;
+            boolean clumsy = player != null && PlayerCurses.has(player, R196Curse.CLUMSINESS);
+            drawFit(graphics, Component.translatable("jei.mite.workbench_time_basis", level), 5, 67);
+            var times = WorkbenchJeiRecipes.categoryWorkstations(recipe.workstationId()).stream()
+                    .mapToInt(id -> recipe.durationTicks(id, level, clumsy)).summaryStatistics();
+            String duration = times.getCount() == 0 ? seconds(recipe.durationTicks(recipe.workstationId(), level, clumsy))
+                    : times.getMin() == times.getMax() ? seconds(times.getMin())
+                    : seconds(times.getMin()) + "–" + seconds(times.getMax());
+            drawFit(graphics, Component.translatable("jei.mite.workbench_time", duration), 5, 80);
+        }
         if (isMixedMilk(recipe))
             drawFit(graphics, Component.translatable("jei.mite.workbench_mixed_milk"), 5, 91);
     }
@@ -87,10 +94,13 @@ public final class WorkbenchJeiCategory implements IRecipeCategory<WorkbenchJeiR
     public void getTooltip(ITooltipBuilder tooltip, WorkbenchJeiRecipe recipe, IRecipeSlotsView slots,
             double mouseX, double mouseY) {
         if (recipe.rule() == null || mouseX < 5 || mouseX >= WIDTH - 5 || mouseY < 78 || mouseY >= 90) return;
+        var player = Minecraft.getInstance().player;
+        int level = player == null ? 0 : player.experienceLevel;
+        boolean clumsy = player != null && PlayerCurses.has(player, R196Curse.CLUMSINESS);
         for (String id : WorkbenchJeiRecipes.categoryWorkstations(recipe.workstationId())) {
             ItemStack bench = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)));
             tooltip.add(bench.getHoverName().copy().append(": ")
-                    .append(Component.translatable("jei.mite.workbench_time", seconds(recipe.baselineTicks(id)))));
+                    .append(Component.translatable("jei.mite.workbench_time", seconds(recipe.durationTicks(id, level, clumsy)))));
         }
     }
 

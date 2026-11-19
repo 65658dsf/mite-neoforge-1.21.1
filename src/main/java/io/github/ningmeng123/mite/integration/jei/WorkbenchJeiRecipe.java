@@ -28,10 +28,15 @@ public record WorkbenchJeiRecipe(String workstationId, RecipeHolder<CraftingReci
     public int baselineTicks() { return baselineTicks(workstationId); }
 
     public int baselineTicks(String workstation) {
+        return durationTicks(workstation, 0, false);
+    }
+
+    /** Default-quality duration for a compatible workstation and the player's current state. */
+    public int durationTicks(String workstation, int level, boolean clumsy) {
         if (rule == null) return 0;
         float capacity = WorkbenchJeiRecipes.profiles().get(workstation).capacity();
-        return TimedCraftingRules.period(rule.difficulty(), 0,
-                TimedCraftingRules.benchModifier(capacity, rule.requiredBench() != null), false);
+        return TimedCraftingRules.period(rule.difficulty(), level,
+                TimedCraftingRules.benchModifier(capacity, rule.requiredBench() != null), clumsy);
     }
 
     public List<ItemStack> remainders() {

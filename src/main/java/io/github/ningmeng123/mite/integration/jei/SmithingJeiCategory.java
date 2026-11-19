@@ -1,5 +1,8 @@
 package io.github.ningmeng123.mite.integration.jei;
 
+import io.github.ningmeng123.mite.curse.PlayerCurses;
+import io.github.ningmeng123.mite.curse.R196Curse;
+import java.math.BigDecimal;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -43,8 +46,12 @@ public final class SmithingJeiCategory implements IRecipeCategory<SmithingJeiRec
     @Override public void draw(SmithingJeiRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         arrow.draw(graphics, 95, 15);
         drawFit(graphics, Component.translatable("jei.mite.material_upgrade_ingots", recipe.additions().getFirst().getCount()), 39);
-        drawFit(graphics, Component.translatable("jei.mite.material_upgrade_time",
-                java.math.BigDecimal.valueOf(recipe.baseTicks()).divide(java.math.BigDecimal.valueOf(20)).stripTrailingZeros().toPlainString()), 53);
+        var player = Minecraft.getInstance().player;
+        int level = player == null ? 0 : player.experienceLevel;
+        boolean clumsy = player != null && PlayerCurses.has(player, R196Curse.CLUMSINESS);
+        String duration = BigDecimal.valueOf(recipe.durationTicks(level, clumsy)).divide(BigDecimal.valueOf(20))
+                .stripTrailingZeros().toPlainString();
+        drawFit(graphics, Component.translatable("jei.mite.material_upgrade_time", duration, level), 53);
     }
 
     @Override public ResourceLocation getRegistryName(SmithingJeiRecipe recipe) { return recipe.source().id(); }

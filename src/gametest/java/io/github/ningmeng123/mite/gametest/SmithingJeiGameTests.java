@@ -17,7 +17,7 @@ public final class SmithingJeiGameTests {
     private SmithingJeiGameTests() {}
 
     @GameTest(template = "empty")
-    public static void materialUpgradePagesShowTheFullNativeCostAndTimedBaseline(GameTestHelper helper) {
+    public static void materialUpgradePagesShowTheFullNativeCostAndCurrentTiming(GameTestHelper helper) {
         var index = SmithingJeiRecipes.index(helper.getLevel());
         helper.assertTrue(!index.recipes().isEmpty(), "Loaded native smithing upgrades produce display pages");
         helper.assertValueEqual(index.originals().size(), index.recipes().size(), "Only replaced native pages are hidden");
@@ -27,9 +27,9 @@ public final class SmithingJeiGameTests {
             int required = MaterialUpgradeRequirements.ingots(page.output());
             helper.assertTrue(page.additions().stream().allMatch(stack -> stack.getCount() == required),
                     "Every displayed alternative requires the full target-material cost");
-            helper.assertValueEqual(page.baseTicks(), TimedCraftingRules.period(
-                    MaterialUpgradeRequirements.difficulty(page.output()), 0, 0F, false),
-                    "Displayed timing uses the server's zero-level neutral baseline");
+            float difficulty = MaterialUpgradeRequirements.difficulty(page.output());
+            helper.assertValueEqual(page.durationTicks(0, false), TimedCraftingRules.period(difficulty, 0, 0F, false),
+                    "Displayed timing matches the server at level zero and default quality");
             var template = page.templates().getFirst().copy();
             var base = page.bases().getFirst().copy();
             var addition = page.additions().getFirst().copy();
@@ -42,6 +42,12 @@ public final class SmithingJeiGameTests {
             }
             if (page.source().id().equals(ResourceLocation.parse("mite:equipment_upgrade/ancient_metal_helmet_to_mithril"))) {
                 helper.assertValueEqual(required, 5, "The mithril helmet page shows five mithril ingots");
+                helper.assertValueEqual(page.durationTicks(20, false), TimedCraftingRules.period(difficulty, 20, 0F, false),
+                        "The same page applies the current positive level to its displayed duration");
+                helper.assertValueEqual(page.durationTicks(-20, false), TimedCraftingRules.period(difficulty, -20, 0F, false),
+                        "The same page applies the current negative level to its displayed duration");
+                helper.assertValueEqual(page.durationTicks(20, true), TimedCraftingRules.period(difficulty, 20, 0F, true),
+                        "The same page applies the player's clumsiness to its displayed duration");
                 helmet = true;
             }
             if (page.source().id().getPath().endsWith("_to_ancient_metal")) {

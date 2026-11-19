@@ -16,6 +16,7 @@ import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.registry.MiteUpgradeTemplates;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
+import io.github.ningmeng123.mite.rules.ExperienceRules;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.netty.buffer.Unpooled;
@@ -500,6 +501,27 @@ public final class MaterialEquipmentUpgradeGameTests {
             helper.assertValueEqual(session.player.getInventory().countItem(upgrade.result()), 0, "Later Shift clicks cannot change the active transaction's destination");
             helper.assertValueEqual(session.metal(upgrade.addition()), 3, "Repeated requests consume only one complete five-ingot batch");
             helper.assertFalse(TimedSmithingController.isActive(session.player), "Smithing never silently queues the next equipment item");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void gainingLevelsDuringSmithingShortensTheActivePeriod(GameTestHelper helper) {
+        try (SmithingSession session = new SmithingSession(helper)) {
+            Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+            session.load(upgrade, new ItemStack(upgrade.base()), 5);
+            session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+            int initialPeriod = TimedSmithingController.period(session.player, session.menu);
+            helper.assertTrue(TimedSmithingController.isActive(session.player), "A normal result click starts timed smithing at level zero");
+            session.tick(5);
+
+            PlayerExperience.setTotal(session.player, ExperienceRules.experienceRequiredForLevel(50));
+            int fasterPeriod = TimedSmithingController.period(session.player, session.menu);
+            helper.assertTrue(fasterPeriod >= 25 && fasterPeriod < initialPeriod, "Level 50 shortens the smithing period");
+            session.tick(fasterPeriod - 6);
+            helper.assertTrue(session.menu.getCarried().isEmpty(), "The result waits until the shortened period ends");
+            session.tick(1);
+            helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "The active upgrade completes at the new period without resetting progress");
         }
         helper.succeed();
     }

@@ -117,6 +117,13 @@ public final class WorkbenchJeiGroupingGameTests {
                 .equals(Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9)), "Different cheese batch sizes never collapse into one display ID");
         helper.assertTrue(inventoryMilk.stream().map(page -> page.output().getCount()).collect(Collectors.toSet())
                 .equals(Set.of(1, 2, 3, 4)), "Inventory cheese batches retain the two-by-two limit");
+        var cheese = inventoryMilk.stream().filter(page -> page.output().getCount() == 1).findFirst().orElseThrow();
+        helper.assertValueEqual(cheese.durationTicks(INVENTORY, 0, false), 1195,
+                "Inventory cheese has no workbench speed bonus at level zero");
+        helper.assertValueEqual(cheese.durationTicks(INVENTORY, 50, false), 597,
+                "The same inventory recipe uses the faster current level");
+        helper.assertValueEqual(cheese.durationTicks(INVENTORY, -20, false), 1991,
+                "The same inventory recipe takes longer at a negative level");
         var originalStews = source.recipes().stream().filter(page -> isTable(page)
                 && SuspiciousStewJeiRecipes.isDisplayVariant(page.displayId())).toList();
         var groupedStews = grouped.recipes().stream().filter(page -> isTable(page)
@@ -155,6 +162,20 @@ public final class WorkbenchJeiGroupingGameTests {
             helper.assertValueEqual((double) WorkbenchJeiRecipes.profiles().get(page.workstationId()).capacity(), minimum,
                     "The category's default time is explicitly based on its lowest compatible table");
         }
+        var helmetId = ResourceLocation.parse("mite:mithril_helmet");
+        var helmet = grouped.recipes().stream().filter(page -> page.displayId().equals(helmetId)).findFirst().orElseThrow();
+        helper.assertValueEqual(helmet.durationTicks(MITHRIL, 0, false), 2568,
+                "The mithril helmet has the neutral duration on its minimum table at level zero");
+        helper.assertValueEqual(helmet.durationTicks(MITHRIL, 50, false), 1580,
+                "The same table offers faster manufacturing at a positive level");
+        helper.assertValueEqual(helmet.durationTicks(MITHRIL, -20, false), 3424,
+                "Negative levels slow manufacturing on the same table");
+        helper.assertValueEqual(helmet.durationTicks(ADAMANTIUM, 50, false), 1521,
+                "The adamantium catalyst retains its own modifier at the current level");
+        helper.assertValueEqual(helmet.durationTicks(VIBRANIUM, 50, false), 25,
+                "The vibranium catalyst remains at the 25-tick minimum");
+        helper.assertValueEqual(helmet.durationTicks(MITHRIL, 50, true), 3160,
+                "Clumsiness increases the estimated duration at the same level and table");
         helper.succeed();
     }
 
