@@ -43,13 +43,15 @@ public final class L2AttributePanelGameTests {
             Player player = player(helper);
             ItemStack[] weapons = {ItemStack.EMPTY, new ItemStack(Items.IRON_SWORD), new ItemStack(MiteTools.get("iron_war_hammer"))};
             double[] bases = {1.5D, 2.25D, 2D};
-            int[] levels = {0, 42, 50};
-            double[] bonuses = {0D, .8D, 1D};
+            int[] levels = {0, 9, 10, 99, 100, 9};
+            double[] bonuses = {0D, 0D, .1D, .9D, 1D, 0D};
             for (int weapon = 0; weapon < weapons.length; weapon++) {
                 player.setItemInHand(InteractionHand.MAIN_HAND, weapons[weapon]);
                 for (int index = 0; index < levels.length; index++) {
                     player.experienceLevel = levels[index];
                     assertRows(helper, player, 2.75D, 2.5D, bases[weapon] + bonuses[index]);
+                    assertNumericLine(helper, L2AttributePanel.details(player, L2AttributePanel.MELEE_REACH, true),
+                            "tooltip.mite.l2_range.level_bonus", bonuses[index]);
                 }
             }
         }
@@ -68,13 +70,13 @@ public final class L2AttributePanelGameTests {
             player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE).addTransientModifier(new AttributeModifier(
                     ResourceLocation.fromNamespaceAndPath("mite", "l2_panel_entity_fixture"), .75D,
                     AttributeModifier.Operation.ADD_VALUE));
-            assertRows(helper, player, 3.25D, 3.25D, 3.8D);
+            assertRows(helper, player, 3.25D, 3.25D, 3.4D);
             for (Holder<Attribute> attribute : List.of(Attributes.BLOCK_INTERACTION_RANGE, Attributes.ENTITY_INTERACTION_RANGE)) {
                 player.getAttribute(attribute).addTransientModifier(new AttributeModifier(
                         ResourceLocation.fromNamespaceAndPath("mite", "tool_reach"), .5D,
                         AttributeModifier.Operation.ADD_VALUE));
             }
-            assertRows(helper, player, 3.25D, 3.25D, 3.8D);
+            assertRows(helper, player, 3.25D, 3.25D, 3.4D);
         }
         helper.succeed();
     }
@@ -91,8 +93,8 @@ public final class L2AttributePanelGameTests {
             player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE).addTransientModifier(new AttributeModifier(
                     ResourceLocation.fromNamespaceAndPath("mite", "l2_panel_creative_entity_fixture"), 2D,
                     AttributeModifier.Operation.ADD_VALUE));
-            int[] levels = {0, 42, 50};
-            double[] bonuses = {0D, .8D, 1D};
+            int[] levels = {0, 42, 100};
+            double[] bonuses = {0D, .4D, 1D};
             for (int index = 0; index < levels.length; index++) {
                 player.experienceLevel = levels[index];
                 assertRows(helper, player, 5D, 5D, 5D + bonuses[index]);
@@ -133,8 +135,8 @@ public final class L2AttributePanelGameTests {
                     weapon = ItemStack.parse(helper.getLevel().registryAccess(), weapon.save(helper.getLevel().registryAccess())).orElseThrow();
                 }
                 player.setItemInHand(InteractionHand.MAIN_HAND, weapon);
-                int[] levels = {0, 42, 50};
-                double[] bonuses = {0D, .8D, 1D};
+                int[] levels = {0, 42, 100};
+                double[] bonuses = {0D, .4D, 1D};
                 for (int index = 0; index < levels.length; index++) {
                     player.experienceLevel = levels[index];
                     assertRows(helper, player, 2.75D, 2.5D, 3.25D + bonuses[index]);
@@ -149,7 +151,7 @@ public final class L2AttributePanelGameTests {
         if (!BetterCombatBridge.enabled()) { helper.succeed(); return; }
         try (ReachSettings ignored = new ReachSettings()) {
             Player player = player(helper);
-            player.experienceLevel = 50;
+            player.experienceLevel = 100;
             ItemStack sword = new ItemStack(Items.IRON_SWORD);
             player.setItemInHand(InteractionHand.MAIN_HAND, sword);
             BetterCombatPlayerReach.duringAttack(player, sword, .5D, () -> {

@@ -26,9 +26,9 @@ public final class ProgressionRules {
         return foodLimitForLevel(level);
     }
 
-    /** Modern melee reach gains 0.1 blocks per five current experience levels, up to 1.0 block. */
+    /** Modern melee reach gains 0.1 blocks per ten current experience levels, up to 1.0 block. */
     public static double meleeReachBonusForLevel(int level) {
-        return Math.clamp(level / 5, 0, 10) / 10D;
+        return Math.clamp(level / 10, 0, 10) / 10D;
     }
 
     /** R196 food capacity uses the same level curve as base maximum health. */

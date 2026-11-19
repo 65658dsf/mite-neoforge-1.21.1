@@ -84,9 +84,11 @@ public final class BetterCombatPlayerReachGameTests {
                 player.connection.handleInteract(ServerboundInteractPacket.createAttackPacket(chicken, false));
                 h.assertValueEqual(chicken.getHealth(), 200F, "The same out-of-reach chicken rejects the real attack packet");
                 positionSmallTarget(player, chicken, 1.55D);
-                PlayerExperience.setLevels(player, 5);
-                h.assertTrue(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "The current five-level bonus immediately admits the chicken");
-                PlayerExperience.setLevels(player, 0);
+                PlayerExperience.setLevels(player, 9);
+                h.assertFalse(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "Level nine still uses base empty-hand reach");
+                PlayerExperience.setLevels(player, 10);
+                h.assertTrue(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "The first ten-level bonus immediately admits the chicken");
+                PlayerExperience.setLevels(player, 9);
                 h.assertFalse(SourcePlayerReach.canTargetMelee(player, aimedHit(player, chicken), 1F), "Losing the level bonus immediately removes its attack eligibility");
                 equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
                 positionSmallTarget(player, chicken, 2.1D);
@@ -324,8 +326,8 @@ public final class BetterCombatPlayerReachGameTests {
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
     public static void currentExperienceLevelsImmediatelyExtendAndRetractNativeSwordReach(GameTestHelper h) {
-        int[] levels = {-1, 0, 4, 5, 9, 10, 45, 49, 50, 51, 49, 5, 0};
-        double[] bonuses = {0D, 0D, 0D, .1D, .1D, .2D, .9D, .9D, 1D, 1D, .9D, .1D, 0D};
+        int[] levels = {-1, 0, 9, 10, 19, 20, 50, 99, 100, 110, 99, 9, 0};
+        double[] bonuses = {0D, 0D, 0D, .1D, .1D, .2D, .5D, .9D, 1D, 1D, .9D, 0D, 0D};
         try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
             ServerPlayer player = session.player();
             int originalTotal = player.totalExperience;
@@ -348,7 +350,7 @@ public final class BetterCombatPlayerReachGameTests {
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
         String[] families = {"longsword", "claymore", "greataxe", "greathammer", "chakram", "sai"};
         double[] reaches = {2.5D, 3.25D, 3.25D, 3.25D, 2.8D, 2D};
-        int[] levels = {5, 50, 5};
+        int[] levels = {10, 100, 10};
         double[] bonuses = {.1D, 1D, .1D};
         try (ReachSettings ignored = new ReachSettings(1D, 0D); Session session = session(h)) {
             ServerPlayer player = session.player();
@@ -394,9 +396,9 @@ public final class BetterCombatPlayerReachGameTests {
                 double blockAttribute = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
                 try (Target target = target(h, player, 1D, 0D)) {
                     double interactionReach = SourcePlayerReach.interactionReach(player, target.entity());
-                    for (int level : new int[]{5, 50}) {
+                    for (int level : new int[]{10, 100}) {
                         PlayerExperience.setLevels(player, level);
-                        double expected = 3.125D + (level == 5 ? .1D : 1D);
+                        double expected = 3.125D + (level == 10 ? .1D : 1D);
                         h.assertTrue(Math.abs(SourcePlayerReach.tooltipMeleeReach(player.getMainHandItem(), player) - expected) < .00001D,
                                 "The fixed level reward is added after the 1.5 multiplier and .25 reduction");
                         levelReachBoundary(h, player, expected, "configured native sword at level " + level);
@@ -421,22 +423,22 @@ public final class BetterCombatPlayerReachGameTests {
             ServerPlayer player = session.player();
             int originalTotal = player.totalExperience;
             try {
-                PlayerExperience.setLevels(player, 50);
+                PlayerExperience.setLevels(player, 100);
                 equip(player, ItemStack.EMPTY, ItemStack.EMPTY);
-                levelReachBoundary(h, player, 2.5D, "level-50 empty hands");
+                levelReachBoundary(h, player, 2.5D, "level-100 empty hands");
                 player.setGameMode(GameType.CREATIVE);
                 equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
-                levelReachBoundary(h, player, 6D, "level-50 creative native sword");
+                levelReachBoundary(h, player, 6D, "level-100 creative native sword");
                 player.setGameMode(GameType.SURVIVAL);
                 equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
                 try (ReachSettings longSelection = new ReachSettings(10D, 0D)) {
                     PlayerExperience.setLevels(player, 0);
                     double baseline = SourcePlayerReach.selectionRange(player);
                     h.assertTrue(baseline > 16D, "The fixture exercises a configured selection ray beyond its historical minimum");
-                    PlayerExperience.setLevels(player, 5);
+                    PlayerExperience.setLevels(player, 10);
                     h.assertTrue(Math.abs(SourcePlayerReach.selectionRange(player) - baseline - .1D) < .00001D,
                             "Long target-selection rays include the level reward after configuration");
-                    PlayerExperience.setLevels(player, 50);
+                    PlayerExperience.setLevels(player, 100);
                     h.assertTrue(Math.abs(SourcePlayerReach.selectionRange(player) - baseline - 1D) < .00001D,
                             "Long target-selection rays include the capped reward exactly once");
                 }
