@@ -145,7 +145,21 @@ public final class R196MobSpawning {
         static final Map<String, Integer> PACKS = new HashMap<>();
         static final Map<Integer, Profile> BIOMES = load();
         static final List<Entry> FORTRESS = fortress();
+        static final List<Entry> NETHER_MONSTERS = List.of(
+                netherMob(MobKind.GHOUL, 10, 1), netherMob(MobKind.WIGHT, 10, 1),
+                netherMob(MobKind.INVISIBLE_STALKER, 10, 1), netherMob(MobKind.DEMON_SPIDER, 10, 1),
+                netherMob(MobKind.HELLHOUND, 20, 2), netherMob(MobKind.INFERNAL_CREEPER, 10, 1),
+                netherMob(MobKind.SHADOW, 10, 1), netherMob(MobKind.FIRE_ELEMENTAL, 10, 1),
+                netherMob(MobKind.BLACK_WIDOW_SPIDER, 5, 1), netherMob(MobKind.REVENANT, 10, 1),
+                netherMob(MobKind.LONGDEAD, 20, 2), netherMob(MobKind.NETHERSPAWN, 10, 2),
+                netherMob(MobKind.CLAY_GOLEM, 10, 1), netherMob(MobKind.BONE_LORD, 5, 1),
+                netherMob(MobKind.ANCIENT_BONE_LORD, 5, 1), netherMob(MobKind.PHASE_SPIDER, 5, 2));
         static final Map<String, List<String>> HIERARCHIES = hierarchies();
+
+        private static Entry netherMob(MobKind kind, int weight, int maximumGroup) {
+            String source = kind.sourceClass();
+            return new Entry(MiteMobs.type(kind), source, Category.MONSTER, weight, 1, maximumGroup, PACKS.get(source), false);
+        }
         private static Map<String, List<String>> hierarchies() {
             Map<String, List<String>> values = new HashMap<>();
             for (var element : R196MobRules.sourceData().getAsJsonArray("entities")) {
@@ -250,6 +264,7 @@ public final class R196MobSpawning {
         for (var profile : Tables.BIOMES.values())
             for (var entries : profile.lists().values()) result.addAll(entries);
         result.addAll(Tables.FORTRESS);
+        result.addAll(Tables.NETHER_MONSTERS);
         return List.copyOf(result);
     }
     public static Category category(Mob mob) {
@@ -341,7 +356,11 @@ public final class R196MobSpawning {
 
     private static List<Entry> pool(ServerLevel level, BlockPos pos, Category category, boolean modernOnly, StructureSpawnPools structures) {
         List<Entry> entries = new ArrayList<>();
-        if (!modernOnly) entries.addAll(sourcePool(level, pos, category));
+        if (!modernOnly) {
+            entries.addAll(sourcePool(level, pos, category));
+            if (category == Category.MONSTER && level.dimension().equals(Level.NETHER) && structures.fortressMonsters == null)
+                entries.addAll(Tables.NETHER_MONSTERS);
+        }
         for (MobCategory vanilla : MobCategory.values()) if (category(vanilla) == category) {
             // Keep native-only species in their actual biome or structure habitats in both presets.
             var nativePool = vanilla == MobCategory.MONSTER && structures.fortressMonsters != null
