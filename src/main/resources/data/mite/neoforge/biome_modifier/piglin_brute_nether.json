@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": ["minecraft:nether_wastes", "minecraft:crimson_forest"],
+  "spawners": {
+    "type": "minecraft:piglin_brute",
+    "weight": 2,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

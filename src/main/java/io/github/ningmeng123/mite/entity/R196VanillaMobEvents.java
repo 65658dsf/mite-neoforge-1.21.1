@@ -13,7 +13,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.EntityEvent;
 
-/** Changes native source baselines through NeoForge while preserving modern-only species and existing saved attributes. @author NingMeng123 */
+/** Registers native mob baselines through NeoForge while preserving existing saved attributes. @author NingMeng123 */
 public final class R196VanillaMobEvents {
     private R196VanillaMobEvents() {}
     public static void register(IEventBus modBus) {
@@ -22,6 +22,8 @@ public final class R196VanillaMobEvents {
     }
     @SuppressWarnings("unchecked")
     private static void attributes(EntityAttributeModificationEvent event) {
+        event.add(EntityType.PIGLIN_BRUTE, Attributes.MAX_HEALTH, 100D);
+        event.add(EntityType.PIGLIN_BRUTE, Attributes.ATTACK_DAMAGE, 14D);
         R196VanillaMobRules.entries().forEach((rawType, row) -> {
             EntityType<? extends LivingEntity> type = (EntityType<? extends LivingEntity>)rawType;
             event.add(type, Attributes.MAX_HEALTH, row.health());

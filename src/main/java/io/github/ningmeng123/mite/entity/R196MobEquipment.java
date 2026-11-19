@@ -61,6 +61,8 @@ public final class R196MobEquipment {
             case 0 -> "minecraft:leather_"; case 1 -> "mite:rusted_iron_chain_";
             case 2 -> "mite:copper_chain_"; case 3 -> "mite:rusted_iron_"; default -> "mite:copper_";
         };
+        if (PiglinArmor.handles(mob) && (tier == 0 || tier == 1 || tier == 3))
+            prefix = PiglinArmor.MINIMUM_PREFIX;
         for (int i = 0; i < slots.length; ++i) {
             if (i > 0 && random.nextFloat() < stop) break;
             if (mob.getItemBySlot(slots[i]).isEmpty()) mob.setItemSlot(slots[i], generated(mob, prefix + suffixes[i], true));

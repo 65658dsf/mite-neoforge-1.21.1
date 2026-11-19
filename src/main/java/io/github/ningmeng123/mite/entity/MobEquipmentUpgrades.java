@@ -31,7 +31,8 @@ public final class MobEquipmentUpgrades {
 
     /** Identifies the actual destination without temporarily replacing either hand. */
     @Nullable public static EquipmentSlot targetSlot(Mob mob, ItemStack incoming) {
-        if (!handles(mob) || incoming.isEmpty() || RemovedDiamondEquipment.isRemoved(incoming)) return null;
+        if (!handles(mob) || incoming.isEmpty() || RemovedDiamondEquipment.isRemoved(incoming)
+                || PiglinArmor.rejects(mob, incoming)) return null;
         Kind incomingKind = kind(incoming);
         if (incomingKind == Kind.NONE) return null;
         EquipmentSlot slot;
@@ -64,7 +65,7 @@ public final class MobEquipmentUpgrades {
     /** Null retains native damage/defense/wear comparisons for equal quality and unrelated items. */
     @Nullable public static Boolean replacementDecision(Mob mob, ItemStack incoming, ItemStack current) {
         if (!handles(mob)) return null;
-        if (RemovedDiamondEquipment.isRemoved(incoming)) return false;
+        if (RemovedDiamondEquipment.isRemoved(incoming) || PiglinArmor.rejects(mob, incoming)) return false;
         if (!equipment(incoming)) return null;
         if (SourceEnchantmentCombat.disarmed(mob) || locked(current)) return false;
         if (current.isEmpty() || kind(current) == Kind.NONE) return true;

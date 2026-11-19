@@ -349,7 +349,8 @@ public final class R196MobSpawning {
                     : level.getChunkSource().getGenerator().getMobsAt(level.getBiome(pos), level.structureManager(), vanilla, pos);
             for (var value : nativePool.unwrap()) if (usesNativeSpawnEntries(value.type)) {
                 @SuppressWarnings("unchecked") EntityType<? extends Mob> type = (EntityType<? extends Mob>) value.type;
-                entries.add(new Entry(type, null, category, value.getWeight().asInt(), value.minCount, value.maxCount, 4, true));
+                int pack = type == EntityType.PIGLIN_BRUTE ? value.maxCount : 4;
+                entries.add(new Entry(type, null, category, value.getWeight().asInt(), value.minCount, value.maxCount, pack, true));
             }
         }
         entries.removeIf(entry -> !structures.allows(entry.type()));
@@ -907,12 +908,22 @@ public final class R196MobSpawning {
         return true;
     }
     private static void registerPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(EntityType.PIGLIN_BRUTE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                R196MobSpawning::brutePlacement, RegisterSpawnPlacementsEvent.Operation.REPLACE);
         for (EntityType<?> rawType : Tables.CLASSES.keySet()) {
             @SuppressWarnings("unchecked") EntityType<? extends Mob> type = (EntityType<? extends Mob>)rawType;
             event.register(type, SpawnPlacements.getPlacementType(type), SpawnPlacements.getHeightmapType(type),
                     R196MobSpawning::placement, RegisterSpawnPlacementsEvent.Operation.REPLACE);
         }
     }
+    private static boolean brutePlacement(EntityType<?> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (reason != MobSpawnType.NATURAL) return true;
+        if (level.getDifficulty() == Difficulty.PEACEFUL) return false;
+        var dimension = level.getLevel().dimension();
+        if (dimension.equals(Level.NETHER)) return !level.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK);
+        return dimension.equals(Level.OVERWORLD) && R196SpawnQualification.mobLight(level, pos, random);
+    }
+
     private static boolean placement(EntityType<? extends Mob> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos position, RandomSource random) {
         // Modern trials intentionally ignore natural light, floor and player-distance restrictions.
         // Their own collision, line-of-sight, obstruction and custom SpawnData checks still run.

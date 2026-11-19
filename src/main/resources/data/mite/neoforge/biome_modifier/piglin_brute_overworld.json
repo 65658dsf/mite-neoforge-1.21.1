@@ -1,0 +1,19 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": {
+    "type": "neoforge:and",
+    "values": [
+      "#minecraft:is_overworld",
+      {
+        "type": "neoforge:not",
+        "value": ["minecraft:mushroom_fields", "minecraft:deep_dark"]
+      }
+    ]
+  },
+  "spawners": {
+    "type": "minecraft:piglin_brute",
+    "weight": 2,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

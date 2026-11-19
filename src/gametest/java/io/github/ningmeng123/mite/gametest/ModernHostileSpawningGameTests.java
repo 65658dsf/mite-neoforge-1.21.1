@@ -28,6 +28,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -35,6 +36,7 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -48,6 +50,7 @@ import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
+import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -75,16 +78,91 @@ public final class ModernHostileSpawningGameTests {
         ServerLevel nether = helper.getLevel().getServer().getLevel(Level.NETHER);
         helper.assertTrue(nether != null, "The native Nether dimension is available");
         try (var preset = new SpawnPreset(true)) {
-            assertHabitat(helper, nether, Biomes.NETHER_WASTES, Set.of(EntityType.PIGLIN));
-            assertHabitat(helper, nether, Biomes.CRIMSON_FOREST, Set.of(EntityType.PIGLIN, EntityType.HOGLIN));
+            assertHabitat(helper, nether, Biomes.NETHER_WASTES, Set.of(EntityType.PIGLIN, EntityType.PIGLIN_BRUTE));
+            assertHabitat(helper, nether, Biomes.CRIMSON_FOREST, Set.of(EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.HOGLIN));
             assertHabitat(helper, nether, Biomes.WARPED_FOREST, Set.of());
             try (var warped = new Habitat(nether, Biomes.WARPED_FOREST)) {
                 Set<EntityType<?>> selected = warped.selected(helper);
                 helper.assertFalse(selected.contains(EntityType.PIGLIN), "Warped forest has no native piglin candidate");
+                helper.assertFalse(selected.contains(EntityType.PIGLIN_BRUTE), "Warped forest has no native piglin brute candidate");
                 helper.assertFalse(selected.contains(EntityType.HOGLIN), "Warped forest has no native hoglin candidate");
             }
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 240)
+    public static void naturalOverworldBrutesAreRareAndRetainTheirIdentityAfterSaving(GameTestHelper helper) {
+        var site = new DaylightUndeadSpawnGameTests.Site(helper.getLevel(), true, 100);
+        site.keepLoaded(helper);
+        helper.startSequence().thenWaitUntil(() -> site.requireLightingReady(helper)).thenExecute(() -> {
+            try (site; var progress = new DaylightUndeadSpawnGameTests.Progress(site.level);
+                    var plains = new Habitat(site.level, site.pos, Biomes.PLAINS);
+                    var mushrooms = new Habitat(site.level, Biomes.MUSHROOM_FIELDS)) {
+                progress.time(223L * 24_000L + 18_000L);
+                progress.data.restoreProgress(224L);
+                var bruteEntries = plains.nativePool().stream().filter(entry -> entry.type == EntityType.PIGLIN_BRUTE).toList();
+                helper.assertValueEqual(bruteEntries.size(), 1, "Plains have exactly one native brute spawn entry");
+                var bruteEntry = bruteEntries.getFirst();
+                helper.assertValueEqual(bruteEntry.getWeight().asInt(), 2, "The default Overworld weight matches the zombie lord's weight");
+                helper.assertTrue(bruteEntry.minCount == 1 && bruteEntry.maxCount == 1, "The Overworld brute has a singleton spawn group");
+                helper.assertFalse(mushrooms.nativeCandidates().contains(EntityType.PIGLIN_BRUTE),
+                        "Mushroom fields retain their existing exclusion from ordinary brute spawns");
+
+                var selected = findBrute(plains);
+                helper.assertTrue(selected != null && selected.modern() && selected.minimum() == 1 && selected.maximum() == 1
+                                && selected.pack() == 1,
+                        "The actual natural scheduler can select a solitary Overworld brute");
+                var brute = (PiglinBrute)site.mob(EntityType.PIGLIN_BRUTE);
+                helper.assertTrue(qualifies(brute, site.level), "The natural brute passes real dark ground, collision, and position checks");
+                var result = R196MobSpawning.finalizeNaturalMonster(site.level, brute, null, 1);
+                helper.assertTrue(result.monsters() == 1 && brute.isAddedToLevel() && brute.getSpawnType() == MobSpawnType.NATURAL,
+                        "A selected Overworld brute enters the real world as one natural monster");
+                var saved = brute.saveWithoutId(new CompoundTag());
+                var restored = (PiglinBrute)site.mob(EntityType.PIGLIN_BRUTE);
+                restored.load(saved);
+                restored.setNoAi(false);
+                helper.assertTrue(saved.getBoolean("IsImmuneToZombification") && !restored.isConverting(),
+                        "A naturally spawned Overworld brute remains immune after an NBT round trip");
+
+                var summoned = (PiglinBrute)site.mob(EntityType.PIGLIN_BRUTE);
+                EventHooks.finalizeMobSpawn(summoned, site.level, site.level.getCurrentDifficultyAt(site.pos), MobSpawnType.COMMAND, null);
+                summoned.setNoAi(false);
+                helper.assertTrue(summoned.isConverting(), "A command-spawned brute retains the native Overworld conversion behavior");
+            }
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 240)
+    public static void naturalNetherBrutesUsePiglinGroundRulesAndKeepNativeConversion(GameTestHelper helper) {
+        ServerLevel nether = helper.getLevel().getServer().getLevel(Level.NETHER);
+        var site = new DaylightUndeadSpawnGameTests.Site(nether, true, 88);
+        site.keepLoaded(helper);
+        helper.startSequence().thenWaitUntil(() -> site.requireLightingReady(helper)).thenExecute(() -> {
+            try (site; var wastes = new Habitat(nether, site.pos, Biomes.NETHER_WASTES)) {
+                var selected = findBrute(wastes);
+                helper.assertTrue(selected != null && selected.pack() == 1, "The real Nether wastes natural scheduler selects a solitary brute");
+                var brute = (PiglinBrute)site.mob(EntityType.PIGLIN_BRUTE);
+                site.set(site.pos.below(), Blocks.NETHER_WART_BLOCK.defaultBlockState());
+                helper.assertFalse(qualifies(brute, nether), "A natural brute rejects the same wart floor as an ordinary piglin");
+                site.set(site.pos.below(), Blocks.NETHERRACK.defaultBlockState());
+                helper.assertTrue(qualifies(brute, nether), "A real netherrack floor admits the natural brute");
+                var result = R196MobSpawning.finalizeNaturalMonster(nether, brute, null, 1);
+                helper.assertTrue(result.monsters() == 1 && brute.isAddedToLevel() && brute.getSpawnType() == MobSpawnType.NATURAL,
+                        "The selected Nether brute joins the real world through natural finalization");
+                helper.assertFalse(brute.saveWithoutId(new CompoundTag()).getBoolean("IsImmuneToZombification"),
+                        "The Nether spawn keeps the native conversion behavior when later taken to the Overworld");
+            }
+        }).thenSucceed();
+    }
+
+    private static R196MobSpawning.Entry findBrute(Habitat site) {
+        RandomSource random = RandomSource.create(604_732L);
+        for (int draw = 0; draw < 4_096; draw++) {
+            var selected = R196MobSpawning.select(site.level, site.pos, Category.MONSTER, random, false, true);
+            if (selected != null && selected.type() == EntityType.PIGLIN_BRUTE) return selected;
+        }
+        return null;
     }
 
     @GameTest(template = "empty")
@@ -280,10 +358,13 @@ public final class ModernHostileSpawningGameTests {
 
         Set<EntityType<?>> nativeCandidates() {
             Set<EntityType<?>> result = new HashSet<>();
-            var nativePool = level.getChunkSource().getGenerator().getMobsAt(level.getBiome(pos),
-                    level.structureManager(), MobCategory.MONSTER, pos);
-            for (var entry : nativePool.unwrap()) if (!R196MobSpawning.sourceType(entry.type)) result.add(entry.type);
+            for (var entry : nativePool()) if (!R196MobSpawning.sourceType(entry.type)) result.add(entry.type);
             return result;
+        }
+
+        List<MobSpawnSettings.SpawnerData> nativePool() {
+            return level.getChunkSource().getGenerator().getMobsAt(level.getBiome(pos),
+                    level.structureManager(), MobCategory.MONSTER, pos).unwrap();
         }
 
         Set<EntityType<?>> selected(GameTestHelper helper) {

@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.registry.MiteMobs;
@@ -23,6 +24,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -95,6 +97,45 @@ public final class MonsterSpawnRuntimeGameTests {
             @Override public double nextDouble() { return draw; }
             @Override public int nextInt(int bound) { throw new AssertionError("Fractional configured weights must use the double lottery, not nextInt"); }
         };
+    }
+
+    @GameTest(template = "empty")
+    public static void overworldBruteFollowsTheIteLordsEffectiveNaturalWeight(GameTestHelper helper) {
+        var lordId = ResourceLocation.fromNamespaceAndPath("modern_ite", "zombie_lord");
+        var lordType = BuiltInRegistries.ENTITY_TYPE.getOptional(lordId);
+        if (lordType.isEmpty()) {
+            helper.succeed();
+            return;
+        }
+        var level = helper.getLevel();
+        var pos = helper.absolutePos(BlockPos.ZERO);
+        var brute = new R196MobSpawning.Entry(EntityType.PIGLIN_BRUTE, null, Category.MONSTER, 2, 1, 1, 1, true);
+        var control = new R196MobSpawning.Entry(EntityType.PILLAGER, null, Category.MONSTER, 5, 1, 1, 1, true);
+        try (var settings = new Settings(helper)) {
+            level.setDayTime(223L * 24_000L + 18_000L);
+            level.updateSkyBrightness();
+            BloodMoonInvasionData.get(level).restoreProgress(224L);
+            settings.rates(List.of());
+            settings.weights(List.of("minecraft:pillager=5"));
+            settings.ite.snapshot(Map.of(lordId.toString(), 3D), Map.of(lordId.toString(), 2.5D));
+            var context = new MiteExtensions.SpawnContext(level, Category.MONSTER, null);
+            var lord = MiteExtensions.policy().spawnPool(context, pos, List.of(brute)).stream()
+                    .filter(entry -> entry.type() == lordType.get()).findFirst().orElseThrow();
+            var entries = List.of(brute, lord, control);
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, entries,
+                    fixedWeightDraw(Math.nextDown(.375D)), true) == brute, "The brute receives the same effective 7.5 weight as the ITE lord");
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, entries,
+                    fixedWeightDraw(.375D), true) == lord, "The ITE lord begins exactly at its equal selection boundary");
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, entries,
+                    fixedWeightDraw(.75D), true) == control, "The two equal weights together occupy 15 of 20 selection units");
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, List.of(brute),
+                    fixedWeightDraw(0D), true) == null, "When the ITE lord is unavailable at a position, its brute counterpart is absent");
+
+            settings.ite.snapshot(Map.of(lordId.toString(), 3D), Map.of(lordId.toString(), 0D));
+            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, entries,
+                    fixedWeightDraw(0D), true) == control, "An ITE zero-weight override disables the brute counterpart too");
+        }
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -377,7 +418,7 @@ public final class MonsterSpawnRuntimeGameTests {
         private final Class<?> config, world, population;
         private final ModConfigSpec.ConfigValue<List<? extends String>> setting;
         private final List<? extends String> original;
-        private final Map<?, ?> remote;
+        private final Map<?, ?> remoteRates, remoteWeights;
         private final long time, highest;
         private final boolean dirty, grace;
         private final ServerPlayer player;
@@ -397,8 +438,12 @@ public final class MonsterSpawnRuntimeGameTests {
                 setting = (ModConfigSpec.ConfigValue<List<? extends String>>) config.getField("NATURAL_SPAWN_RATES").get(null);
             } catch (ReflectiveOperationException failure) { throw new IllegalStateException("Installed ITE spawn API unavailable", failure); }
             original = List.copyOf(setting.get());
-            Object effective = call(config, "effectiveSnapshot", new Class<?>[0]);
-            remote = effective == call(config, "localSnapshot", new Class<?>[0]) ? null : (Map<?, ?>) effective;
+            Object effectiveRates = call(config, "effectiveSnapshot", new Class<?>[0]);
+            Object effectiveWeights = call(config, "effectiveWeights", new Class<?>[0]);
+            boolean local = effectiveRates == call(config, "localSnapshot", new Class<?>[0])
+                    && effectiveWeights == call(config, "localWeights", new Class<?>[0]);
+            remoteRates = local ? null : (Map<?, ?>)effectiveRates;
+            remoteWeights = local ? null : (Map<?, ?>)effectiveWeights;
             time = level.getServer().overworld().getDayTime();
             var history = BloodMoonInvasionData.get(level); highest = history.highestDay(); dirty = history.isDirty();
             grace = (boolean) call(world, "graceEnded", new Class<?>[]{ServerLevel.class}, level);
@@ -428,12 +473,16 @@ public final class MonsterSpawnRuntimeGameTests {
             call(population, "clearReservations", new Class<?>[]{ServerLevel.class}, level);
         }
 
+        private void snapshot(Map<?, ?> rates, Map<?, ?> weights) {
+            call(config, "receiveServerSnapshot", new Class<?>[]{Map.class, Map.class}, rates, weights);
+        }
+
         @Override public void close() {
             player.discard(); channel.finishAndReleaseAll();
             call(population, "clearReservations", new Class<?>[]{ServerLevel.class}, level);
             setting.set(original); call(config, "refresh", new Class<?>[0]);
             call(config, "clearServerSnapshot", new Class<?>[0]);
-            if (remote != null) call(config, "receiveServerSnapshot", new Class<?>[]{Map.class}, remote);
+            if (remoteRates != null) snapshot(remoteRates, remoteWeights);
             level.getServer().overworld().setDayTime(time);
             level.getServer().overworld().updateSkyBrightness();
             var history = BloodMoonInvasionData.get(level); history.restoreProgress(highest); history.setDirty(dirty);

@@ -46,7 +46,7 @@ public final class BloodMoonEquipment {
 
     public static boolean handles(Mob mob) {
         if (mob instanceof R196Mob source) return source instanceof R196Undead;
-        return mob instanceof Zombie || mob instanceof AbstractSkeleton;
+        return mob instanceof Zombie || mob instanceof AbstractSkeleton || PiglinArmor.handles(mob);
     }
 
     public static boolean bloodDate(Mob mob) {
@@ -88,7 +88,7 @@ public final class BloodMoonEquipment {
             int filled = 0;
             for (int index = 0; index < SLOTS.length; index++) if (mob.getItemBySlot(SLOTS[index]).isEmpty()) {
                 if (mob.getRandom().nextDouble() >= BloodMoonEquipmentRules.armorChance(stage, true)) continue;
-                int tier = BloodMoonEquipmentRules.selectTier(stage, true, mob.getRandom().nextDouble());
+                int tier = selectArmorTier(mob, stage, true);
                 mob.setItemSlot(SLOTS[index], R196MobEquipment.generated(mob,
                         BloodMoonEquipmentRules.PREFIXES.get(tier) + SUFFIXES[index], true));
                 tiers[index] = tier;
@@ -99,7 +99,7 @@ public final class BloodMoonEquipment {
         }
         double armorChance = BloodMoonEquipmentRules.ordinaryArmorChance(progress);
         if (mob.getRandom().nextDouble() >= armorChance) return true;
-        int tier = selectTier(progress, blood, mob.getRandom().nextDouble());
+        int tier = selectArmorTier(mob, progress, false);
         result.putInt("tier", tier);
         int filled = 0;
         for (int index = 0; index < SLOTS.length; index++) if (mob.getItemBySlot(SLOTS[index]).isEmpty()) {
@@ -136,6 +136,11 @@ public final class BloodMoonEquipment {
     private static int selectTier(double progress, boolean blood, double draw) {
         return blood ? BloodMoonEquipmentRules.selectTier((int)progress, true, draw)
                 : BloodMoonEquipmentRules.selectOrdinaryTier(progress, draw);
+    }
+
+    private static int selectArmorTier(Mob mob, double progress, boolean blood) {
+        int tier = selectTier(progress, blood, mob.getRandom().nextDouble());
+        return PiglinArmor.handles(mob) ? Math.max(PiglinArmor.MINIMUM_TIER, tier) : tier;
     }
 
     /** Prefer armor created by this spawn roll, then recognized explicitly supplied armor. */
@@ -221,7 +226,8 @@ public final class BloodMoonEquipment {
         retireEarlyEquipmentLock(mob);
         if (event.loadedFromDisk() && mob.getType().getCategory() == MobCategory.MONSTER)
             markLegacyEntity(mob, "existing_entity");
-        if (!handles(mob)) return;
+        // Piglins finalize their armor in their own native spawn methods.
+        if (PiglinArmor.handles(mob) || !handles(mob)) return;
         if (event.loadedFromDisk()) {
             // Mark untouched old entities as already decided, without changing any equipment.
             // The marker also prevents an upgrade if that old entity later crosses dimensions.

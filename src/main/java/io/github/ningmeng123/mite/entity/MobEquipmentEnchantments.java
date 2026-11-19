@@ -51,6 +51,11 @@ public final class MobEquipmentEnchantments {
         return stack;
     }
 
+    public static boolean alreadyGenerated(Mob mob, ItemStack stack) {
+        Set<ItemStack> source = GENERATED.get(mob);
+        return source != null && source.contains(stack);
+    }
+
     /** Native enchantment decisions remain intact; only their still-unenchanted birth equipment gets the date supplement. */
     public static boolean populate(Mob mob) {
         if (!(mob instanceof Enemy) || !(mob.level() instanceof ServerLevel) || mob.getPersistentData().contains(DATA_KEY)) return false;

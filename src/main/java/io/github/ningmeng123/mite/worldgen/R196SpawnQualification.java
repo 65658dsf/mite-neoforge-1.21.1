@@ -102,7 +102,10 @@ public final class R196SpawnQualification {
     }
     public static boolean mobLight(Mob mob, ServerLevelAccessor access, boolean spawner) {
         if (spawner) return !sunlight(mob, access);
-        var level = access.getLevel(); BlockPos position = mob.blockPosition(); RandomSource random = mob.getRandom();
+        return mobLight(access, mob.blockPosition(), mob.getRandom());
+    }
+    static boolean mobLight(ServerLevelAccessor access, BlockPos position, RandomSource random) {
+        var level = access.getLevel();
         if (access.getBlockState(position).blocksMotion()) position = position.above();
         int sky = access.getBrightness(LightLayer.SKY, position);
         if (sky > random.nextInt(32)) return false;

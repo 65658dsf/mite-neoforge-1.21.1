@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BooleanSupplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -25,6 +26,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 /** Applies saved rates to the actual natural-spawn pool, including source replacement families. @author NingMeng123 */
 public final class ConfiguredMonsterSpawns {
     public static final String ADMITTED = "mite:natural_spawn_admitted";
+    private static final ResourceLocation ZOMBIE_LORD = ResourceLocation.fromNamespaceAndPath("modern_ite", "zombie_lord");
     private static final Set<EntityJoinLevelEvent> PROVISIONAL_ADMISSIONS = ConcurrentHashMap.newKeySet();
     private ConfiguredMonsterSpawns() {}
 
@@ -94,14 +96,28 @@ public final class ConfiguredMonsterSpawns {
         boolean nativeWeights = true;
         long nativeTotal = 0L;
         var context = new MiteExtensions.SpawnContext(level, category, null);
+        var lordType = category == R196SpawnRules.Category.MONSTER && level.dimension().equals(Level.OVERWORLD)
+                ? BuiltInRegistries.ENTITY_TYPE.getOptional(ZOMBIE_LORD).orElse(null) : null;
+        // The addon's actual pool has already applied its date and habitat gates.
+        var lord = lordType == null ? null : entries.stream().filter(entry -> entry.type() == lordType).findFirst().orElse(null);
         for (int index = 0; index < entries.size(); index++) {
             var entry = entries.get(index);
-            double rate = familyMultiplier(level, pos, entry, finalizationTransforms);
+            boolean followsLord = lordType != null && entry.type() == EntityType.PIGLIN_BRUTE;
+            if (followsLord && lord == null) {
+                nativeWeights = false;
+                continue;
+            }
+            var basis = followsLord ? lord : entry;
+            double rate = familyMultiplier(level, pos, basis, finalizationTransforms);
             if (finalizationTransforms) {
-                double extended = MiteExtensions.policy().monsterSpawnWeightMultiplier(context, pos, entry.type(), rate);
+                double extended = MiteExtensions.policy().monsterSpawnWeightMultiplier(context, pos, basis.type(), rate);
                 if (Double.isFinite(extended) && extended >= 0D && extended <= 100D) rate = extended;
             }
-            double baseWeight = weight(entry.type(), Math.max(0, entry.weight()));
+            double baseWeight = weight(basis.type(), Math.max(0, basis.weight()));
+            if (followsLord) {
+                rate *= multiplier(entry.type());
+                if (baseWeight > 0D) baseWeight = weight(entry.type(), baseWeight);
+            }
             weights[index] = baseWeight * rate;
             nativeWeights &= rate == 1D && baseWeight == Math.max(0, entry.weight());
             nativeTotal += Math.max(0, entry.weight());

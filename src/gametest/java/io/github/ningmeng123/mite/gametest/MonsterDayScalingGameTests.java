@@ -108,6 +108,10 @@ public final class MonsterDayScalingGameTests {
     public static void freshMonstersStayFullAndDayRefreshPreservesWoundsWithoutStacking(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 1L);
+            Mob brute = mob(helper, EntityType.PIGLIN_BRUTE);
+            MonsterDayScaling.refresh(brute);
+            health(helper, brute, 100F, 100F);
+            close(helper, brute.getAttributeBaseValue(Attributes.ATTACK_DAMAGE), 14D, "Piglin brute innate attack");
             Mob monster = mob(helper, EntityType.ZOMBIE);
             MonsterDayScaling.refresh(monster); health(helper, monster, 20F, 20F);
             double attack = monster.getAttributeValue(Attributes.ATTACK_DAMAGE);

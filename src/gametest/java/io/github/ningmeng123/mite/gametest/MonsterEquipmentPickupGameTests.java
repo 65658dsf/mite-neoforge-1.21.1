@@ -358,6 +358,40 @@ public final class MonsterEquipmentPickupGameTests {
         });
     }
 
+    @GameTest(template = "empty", timeoutTicks = 240)
+    public static void piglinsAndBrutesPickUpBetterArmorButRejectArmorBelowGold(GameTestHelper h) {
+        ready(h, f -> {
+            for (var type : List.of(EntityType.PIGLIN, EntityType.PIGLIN_BRUTE)) {
+                var piglin = f.track(type.create(h.getLevel()));
+                piglin.setNoAi(true);
+                piglin.setCanPickUpLoot(true);
+                ItemStack leather = quality(new ItemStack(Items.LEATHER_CHESTPLATE), Quality.EXCELLENT);
+                ItemEntity belowGold = f.item(leather, 0, 0, 0);
+                piglin.aiStep();
+                h.assertTrue(belowGold.isAlive() && piglin.getItemBySlot(EquipmentSlot.CHEST).isEmpty()
+                                && piglin.getMainHandItem().isEmpty() && piglin.equipItemIfPossible(leather.copy()).isEmpty(),
+                        "Armor below gold stays on the ground even when the armor and mainhand slots are empty for " + type);
+                belowGold.discard();
+
+                ItemStack gold = quality(new ItemStack(Items.GOLDEN_CHESTPLATE), Quality.AVERAGE);
+                ItemStack iron = quality(new ItemStack(Items.IRON_CHESTPLATE), Quality.AVERAGE);
+                piglin.setItemSlot(EquipmentSlot.CHEST, gold);
+                ItemEntity better = f.item(iron.copy(), 0, 0, 0);
+                piglin.aiStep();
+                h.assertTrue(better.isRemoved() && ItemStack.matches(piglin.getItemBySlot(EquipmentSlot.CHEST), iron),
+                        "Actual native pickup replaces gold with higher-defense iron at equal quality for " + type);
+
+                if (type == EntityType.PIGLIN) {
+                    ItemEntity coin = f.item(new ItemStack(Items.GOLD_INGOT), 0, 0, 0);
+                    piglin.aiStep();
+                    h.assertTrue(coin.isRemoved() && piglin.getOffhandItem().is(Items.GOLD_INGOT)
+                                    && piglin.getBrain().hasMemoryValue(MemoryModuleType.ADMIRING_ITEM),
+                            "The normal piglin still picks up and admires barter currency");
+                }
+            }
+        });
+    }
+
     private static void ready(GameTestHelper h, Consumer<Fixture> test) {
         Fixture f = new Fixture(h);
         h.testInfo.addListener(new GameTestListener() {

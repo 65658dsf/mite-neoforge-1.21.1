@@ -167,6 +167,7 @@
     "TimedSmithingCombinerMixin",
     "QualityMobEquipmentMixin",
     "MobEquipmentUpgradeMixin",
+    "PiglinBruteArmorMixin",
     "PiglinEquipmentUpgradeMixin",
     "QualitySpecialMobEquipmentMixin",
     "QualityRepairConsumptionMixin",
