@@ -8,50 +8,54 @@ PATH = ROOT / "spec/blood-moon-equipment.json"
 GRADES = (0, 1, 2, 3, 3, 4, 5, 6, 7, 8)
 PREFIXES = ("minecraft:leather_", "minecraft:chainmail_", "minecraft:golden_", "mite:copper_", "mite:silver_",
             "minecraft:iron_", "mite:ancient_metal_", "mite:mithril_", "mite:adamantium_", "mite:vibranium_")
+STAGE_START_DAYS = {0: 16, 1: 32, 3: 48, 5: 64, 6: 96, 7: 112, 8: 128, 9: 144}
+FIRST_BLOOD_MOON_BY_STAGE = {1: 1, 5: 2, 6: 3, 9: 4}
 
 
 def distribution(stage):
     lower, upper = F(7, 20), F(2, 5)
     center = GRADES[stage]
     grade_weights = [lower ** (center - grade) if grade < center else upper ** (grade - center) for grade in range(9)]
-    total = sum(grade_weights)
-    return [grade_weights[grade] / total / GRADES.count(grade) for grade in GRADES]
+    material_weights = [grade_weights[grade] / GRADES.count(grade) for grade in GRADES]
+    if stage == 3:
+        material_weights[2:5] = [sum(material_weights[2:5]) / 3] * 3
+    total = sum(material_weights)
+    return [weight / total for weight in material_weights]
 
 
 def calendar_stage(day):
-    count = max(0, day) // 32 - max(0, day) // 128
-    if count < 2:
-        return 0
-    if count >= 9:
-        return 9
-    if count == 8:
-        return 8
-    return (0, 1, 2, 3, 5, 6)[count - 2]
+    return max((stage for stage, start_day in STAGE_START_DAYS.items() if day >= start_day), default=0)
 
 
 def main():
     data = json.loads(PATH.read_text(encoding="utf-8"))
     data["schema_version"] = 4
     data["prefixes"] = list(PREFIXES)
-    data["stage"] = "Both ordinary and blood dates use blood count 2..7 => indices 0,1,2,3,5,6; eighth at day320 => adamantium index8; ninth at day352 and later => vibranium index9. Existing indices0..8 remain fixed."
+    data["stage"] = "Use the highest saved world day for ordinary, blood and blue dates. Leather starts at day 16, chainmail at 32, gold/copper/silver at 48, iron at 64, ancient metal at 96, mithril at 112, adamantium at 128 and vibranium at 144. Stage rows retain blood_start_day as the shared calendar threshold and blood_moon_counts as the first default blood moon at that stage, when one occurs. Vibranium is the stage from the fourth blood moon onward."
     data["early_ordinary_legacy_armor_chance"] = .3
+    data["first_blood_date_material_and_partial_stop_changed"] = True
     data["ordinary_equipment_factor"] = .5
-    data["ordinary_armor_probability"] = "Whole-set acceptance: blood_armor_probability / 2 at the same highest-date stage; legacy entrance30% before day64"
+    data["ordinary_armor_probability"] = "Whole-set acceptance: blood_armor_probability / 2 at the same highest-date stage; legacy entrance 30% before day 16"
+    data["blood_armor_probability"] = "Per initially empty armor slot: (80 + 2 * stage) / 100; independent acceptance and accepted-slot material rolls from day 16 onward. The first default blood moon on day 32 uses stage 1 and an 82% per-slot chance."
     data["ordinary_held_probability"] = "Empty-main-hand supplementation only: blood_held_probability / 2 at the same highest-date stage"
     data["ordinary_lower_material_weight_ratio"] = .35
     data["ordinary_higher_material_weight_ratio"] = .4
-    data["material_probability"] = "The same normalized nine-grade distribution on ordinary and blood dates; split grade3 equally between copper and silver. All ten materials remain possible."
+    data["material_weight"] = "center=material_grades[stage]; gradeWeight(g)=g<center ? lower^(center-g) : higher^(g-center); divide each grade weight between its materials. At stage 3, redistribute the combined gold, copper and silver weight of 27/20 equally (9/20 each)."
+    data["material_probability"] = "Ordinary and blood dates use the same normalized weights. Copper and silver share their grade; stage 3 also gives gold the same weight as copper and silver. All ten materials remain possible."
     data["overall_material_probability"] = "Ordinary: whole-set acceptance times conditional material chance for each initially empty slot. Blood: independent single-slot acceptance times material chance. Every ordinary per-slot material marginal is exactly half the same highest-date blood marginal."
-    data["probability_oracle"] = "Independent Python fractions.Fraction fixture with nine grades and ten material columns [0,1,2,3,3,4,5,6,7,8]; shared ratios7/20,2/5, ordinary acceptance factor1/2. No production Java or random-selection implementation is imported."
+    data["probability_oracle"] = "Independent Python fractions.Fraction fixture with nine grades and ten material columns [0,1,2,3,3,4,5,6,7,8], shared ratios 7/20 and 2/5, equal redistribution in stage 3, and ordinary acceptance factor 1/2. No production Java or random-selection implementation is imported."
     data["material_grades"] = list(GRADES)
     data["grade_material_counts"] = [GRADES.count(grade) for grade in range(9)]
     data["grade_names"] = ["leather", "chainmail", "gold", "copper_and_silver", "iron", "ancient_metal", "mithril", "adamantium", "vibranium"]
-    data["equipment_policy"] = "New eligible humanoid monsters only; persist each spawn decision including empty results. Ordinary dates use one whole-set acceptance/material roll, with acceptance half the same highest-date blood rate and the same material weights. Blood dates independently roll each empty slot. Before day64, ordinary legacy armor entrance is30%, first blood entrance60%, retaining source materials and partial stopping. Preserve fixed equipment floors, explicit stacks, source quality/wear, existing decisions and loaded entities; never reroll them. Calendar enchantment growth and enchanted natural-gear drop penalties are separate shared generation/drop rules."
-    data["held_equipment"]["material"] = "Prefer the first newly generated armor piece, then recognized existing armor; otherwise draw independently from the shared highest-date blood-stage material distribution."
+    data["equipment_policy"] = "New eligible humanoid monsters only. Persist each spawn decision including empty results. Ordinary dates use one whole-set acceptance/material roll, with acceptance half the same highest-date blood rate and the same material weights. Blood dates independently roll each empty slot. Before day 16, use source materials and partial stopping with 30% ordinary entrance and 60% legacy first blood entrance for an early addon calendar. Preserve fixed equipment floors, explicit stacks, source quality/wear, existing decisions and loaded entities. Calendar enchantment growth and enchanted natural-gear drop penalties are separate shared generation/drop rules."
+    data["held_equipment"]["material"] = "Prefer the first newly generated armor piece, then recognized existing armor; otherwise draw independently from the shared highest-date material distribution."
     data["held_equipment"]["tool_prefixes"] = ["mite:rusted_iron_", "mite:rusted_iron_", *PREFIXES[2:]]
     data["held_equipment"]["generation"] = "R196MobEquipment.generated once per new stack, retaining source quality/wear with calendar enchantment growth; death-drop policy is separate."
+    data["stages"][3]["common_material"] = "铜／银／金（同权）"
     for stage, row in enumerate(data["stages"]):
         row["material_grade"] = GRADES[stage]
+        row["blood_moon_counts"] = [FIRST_BLOOD_MOON_BY_STAGE[stage]] if stage in FIRST_BLOOD_MOON_BY_STAGE else []
+        row["blood_start_day"] = STAGE_START_DAYS.get(stage)
         for blood in (False, True):
             label = "blood" if blood else "ordinary"
             factor = F(1) if blood else F(1, 2)
@@ -72,14 +76,16 @@ def main():
     calendar = data["ordinary_calendar_progression"]
     calendar.pop("growth_start_day", None)
     calendar.pop("days_per_stage", None)
-    calendar["maximum_day"] = 352
-    calendar["progress"] = "max(0, stage(highestDay/32-highestDay/128)); from day64 use the same unlocked stage as blood dates"
-    calendar["material_interpolation"] = "New ordinary spawns use the integer shared blood stage. Compatible fractional API inputs blend adjacent shared normalized distributions; no ordinary date interpolation remains."
-    calendar["history"] = "Persisted highest primary-world calendar date; time rewind and dimensions do not lower it, and blue dates do not advance the blood count."
-    calendar["blood_comparison"] = "For each highest date >=64 and each material, ordinary per-empty-slot armor marginal and empty-main-hand supplement marginal are exactly half their blood-date counterparts. Whole-suit and at-least-one-piece probabilities differ because ordinary acceptance is shared across slots. Native weapons, fixed sets and shield generation remain independent."
+    calendar["introduced_from_day"] = min(STAGE_START_DAYS.values())
+    calendar["maximum_day"] = max(STAGE_START_DAYS.values())
+    calendar["progress"] = "Use the material stage unlocked by the highest saved calendar day. Shared thresholds apply on ordinary, blood and blue dates. The day 15 anchor describes the bounded probability helper; actual pre-day-16 spawns use the legacy equipment path."
+    calendar["material_interpolation"] = "New ordinary spawns use the integer calendar stage. Compatible fractional API inputs blend adjacent shared normalized distributions."
+    calendar["history"] = "Persisted highest primary-world calendar date; time rewind and dimensions do not lower it. Blue dates use ordinary equipment acceptance with the material stage of the saved highest date."
+    calendar["blood_comparison"] = "For each highest date from day 16 and each material, ordinary per-empty-slot armor and empty-main-hand supplement probabilities are exactly half their blood-date counterparts. Whole-suit and at-least-one-piece probabilities differ because ordinary acceptance is shared across slots. Native weapons, fixed sets and shield generation remain independent."
     calendar["quality_unchanged"] = "Preserve source quality/wear, fixed equipment floors and explicit main hands. Calendar enchantment growth and death-drop policy apply separately."
     calendar["anchors"] = []
-    for day in (64, 65, 95, 96, 127, 128, 159, 160, 191, 192, 200, 223, 224, 255, 256, 287, 288, 319, 320, 351, 352, 353, 1280):
+    for day in (15, 16, 31, 32, 47, 48, 63, 64, 65, 79, 80, 95, 96, 111, 112, 127, 128, 143, 144, 159, 160,
+                191, 192, 200, 223, 224, 255, 256, 287, 288, 319, 320, 351, 352, 353, 1280):
         stage = calendar_stage(day)
         probabilities = distribution(stage)
         armor, held = F(80 + 2 * stage, 200), F(70 + 3 * stage, 200)

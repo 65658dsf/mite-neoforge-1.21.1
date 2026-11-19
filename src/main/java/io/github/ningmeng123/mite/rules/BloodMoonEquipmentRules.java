@@ -7,12 +7,15 @@ public final class BloodMoonEquipmentRules {
     public static final List<String> PREFIXES = List.of("minecraft:leather_", "minecraft:chainmail_", "minecraft:golden_",
             "mite:copper_", "mite:silver_", "minecraft:iron_", "mite:ancient_metal_", "mite:mithril_", "mite:adamantium_", "mite:vibranium_");
     public static final int HIGHEST_TIER = PREFIXES.size() - 1;
-    public static final long ADAMANTIUM_BLOOD_MOON = 8L;
-    public static final long VIBRANIUM_BLOOD_MOON = 9L;
-    public static final long ORDINARY_START_DAY = 64L;
+    /** @deprecated The adamantium stage starts on a blue moon. Use {@link #stageForDay(long)}. */
+    @Deprecated
+    public static final long ADAMANTIUM_BLOOD_MOON = 4L;
+    public static final long VIBRANIUM_BLOOD_MOON = 4L;
+    public static final long ORDINARY_START_DAY = 16L;
     public static final double ORDINARY_EQUIPMENT_FACTOR = .5D;
     public static final double FIRST_BLOOD_ARMOR_CHANCE = .6D;
     public static final double EARLY_ORDINARY_ARMOR_CHANCE = FIRST_BLOOD_ARMOR_CHANCE * ORDINARY_EQUIPMENT_FACTOR;
+    private static final int MIXED_METAL_STAGE = 3;
     private BloodMoonEquipmentRules() {}
 
     public static long bloodMoons(long highestDay) {
@@ -20,14 +23,23 @@ public final class BloodMoonEquipmentRules {
         return Math.max(0L, io.github.ningmeng123.mite.api.MiteExtensions.policy().bloodMoonCount(day, day / 32L - day / 128L));
     }
 
-    /** -1 preserves the pre-progression source/native equipment path. */
+    /** Material stage on the numbered blood moon in the default calendar. */
     public static int stage(long bloodMoons) {
-        if (bloodMoons < 2L) return -1;
+        if (bloodMoons < 1L) return -1;
         if (bloodMoons >= VIBRANIUM_BLOOD_MOON) return HIGHEST_TIER;
-        if (bloodMoons >= ADAMANTIUM_BLOOD_MOON) return 8;
-        int stage = (int)bloodMoons - 2;
-        // Copper and silver share a grade; do not spend a second blood moon on silver.
-        return stage >= 4 ? stage + 1 : stage;
+        return stageForDay(bloodMoons * 32L);
+    }
+
+    /** Shared highest-day material stage. -1 uses the early source equipment path. */
+    public static int stageForDay(long highestDay) {
+        if (highestDay >= 144L) return HIGHEST_TIER;
+        if (highestDay >= 128L) return 8;
+        if (highestDay >= 112L) return 7;
+        if (highestDay >= 96L) return 6;
+        if (highestDay >= 64L) return 5;
+        if (highestDay >= 48L) return MIXED_METAL_STAGE;
+        if (highestDay >= 32L) return 1;
+        return ordinaryActive(highestDay) ? 0 : -1;
     }
 
     /** Stable item indices remain compatible with saved equipment and calendar basis rows. */
@@ -42,7 +54,7 @@ public final class BloodMoonEquipmentRules {
 
     /** Ordinary dates use the material stage unlocked by the same highest calendar date. */
     public static double ordinaryProgress(long highestDay) {
-        return Math.max(0, stage(bloodMoons(highestDay)));
+        return Math.max(0, stageForDay(highestDay));
     }
 
     public static double ordinaryArmorChance(double progress) {
@@ -107,7 +119,7 @@ public final class BloodMoonEquipmentRules {
         return materialWeight(stage, tier, bloodDate) / total;
     }
 
-    /** The stage's grade is most likely; copper/silver split their shared grade equally. */
+    /** The stage's leading materials have the highest weights. */
     public static int selectTier(int stage, boolean bloodDate, double draw) {
         checkStage(stage);
         if (!(draw >= 0D && draw < 1D)) throw new IllegalArgumentException("Material draw must be in [0,1)");
@@ -120,6 +132,8 @@ public final class BloodMoonEquipmentRules {
     }
 
     private static double materialWeight(int stage, int tier, boolean bloodDate) {
+        // Gold, copper and silver share their combined weight of 1.35 in the mixed-metal stage.
+        if (stage == MIXED_METAL_STAGE && tier >= 2 && tier <= 4) return .45D;
         double lower = .35D;
         double upper = .4D;
         int distance = materialGrade(tier) - materialGrade(stage);

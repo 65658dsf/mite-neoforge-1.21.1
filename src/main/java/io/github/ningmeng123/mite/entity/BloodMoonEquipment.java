@@ -55,9 +55,7 @@ public final class BloodMoonEquipment {
 
     public static boolean progressionActive(Mob mob) {
         if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return false;
-        long day = BloodMoonInvasion.highestDay(level);
-        return bloodDate(mob) ? BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(day)) >= 0
-                : BloodMoonEquipmentRules.ordinaryActive(day);
+        return BloodMoonEquipmentRules.stageForDay(BloodMoonInvasion.highestDay(level)) >= 0;
     }
 
     /** True means this armor roll was handled, including an intentionally empty result. */
@@ -66,20 +64,12 @@ public final class BloodMoonEquipment {
         var data = mob.getPersistentData();
         if (data.contains(DATA_KEY)) return true;
         long day = BloodMoonInvasion.highestDay(level);
+        int stage = BloodMoonEquipmentRules.stageForDay(day);
+        if (stage < 0) return false;
         boolean blood = bloodDate(mob);
-        double progress;
-        if (blood) {
-            int bloodStage = BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(day));
-            if (bloodStage < 0) return false;
-            progress = bloodStage;
-        } else {
-            if (!BloodMoonEquipmentRules.ordinaryActive(day)) return false;
-            progress = BloodMoonEquipmentRules.ordinaryProgress(day);
-        }
-        int stage = (int)Math.floor(progress);
         var result = new CompoundTag();
         result.putInt("version", VERSION); result.putInt("stage", stage); result.putInt("tier", -1);
-        result.putLong("highest_day", day); result.putDouble("progress", progress);
+        result.putLong("highest_day", day); result.putDouble("progress", stage);
         data.put(DATA_KEY, result);
         result.putBoolean("blood_date", blood);
         int[] tiers = {-1, -1, -1, -1};
@@ -97,9 +87,9 @@ public final class BloodMoonEquipment {
             result.putIntArray("armor_tiers", tiers); result.putInt("filled_slots", filled);
             return true;
         }
-        double armorChance = BloodMoonEquipmentRules.ordinaryArmorChance(progress);
+        double armorChance = BloodMoonEquipmentRules.ordinaryArmorChance(stage);
         if (mob.getRandom().nextDouble() >= armorChance) return true;
-        int tier = selectArmorTier(mob, progress, false);
+        int tier = selectArmorTier(mob, stage, false);
         result.putInt("tier", tier);
         int filled = 0;
         for (int index = 0; index < SLOTS.length; index++) if (mob.getItemBySlot(SLOTS[index]).isEmpty()) {

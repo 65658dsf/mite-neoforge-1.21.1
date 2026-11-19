@@ -13,7 +13,7 @@ class BloodMoonEquipmentRulesTest {
         return JsonParser.parseString(Files.readString(Path.of("spec/blood-moon-equipment.json"))).getAsJsonObject();
     }
 
-    @Test void progressionCountsActualBloodDatesAndBlueDatesNeverAdvanceIt() {
+    @Test void bloodMoonCountSkipsBlueDates() {
         long[] days = {0, 31, 32, 63, 64, 96, 127, 128, 159, 160, 256, 288, 319, 320, 351, 352, 736};
         long[] counts = {0, 0, 1, 1, 2, 3, 3, 3, 3, 4, 6, 7, 7, 8, 8, 9, 18};
         for (int index = 0; index < days.length; index++)
@@ -21,31 +21,48 @@ class BloodMoonEquipmentRulesTest {
         assertEquals(0L, BloodMoonEquipmentRules.bloodMoons(Long.MIN_VALUE));
     }
 
-    @Test void sharedStagesKeepCopperSilverTogetherAdamantiumEighthAndVibraniumNinth() {
+    @Test void numberedBloodMoonsUseTheirDefaultCalendarStages() {
         assertEquals(-1, BloodMoonEquipmentRules.stage(0));
-        assertEquals(-1, BloodMoonEquipmentRules.stage(1));
-        int[] expected = {0, 1, 2, 3, 5, 6, 8, 9, 9};
+        int[] expected = {1, 5, 6, 9, 9, 9, 9, 9, 9};
         for (int index = 0; index < expected.length; index++)
-            assertEquals(expected[index], BloodMoonEquipmentRules.stage(2L + index));
+            assertEquals(expected[index], BloodMoonEquipmentRules.stage(1L + index));
         assertEquals(9, BloodMoonEquipmentRules.stage(Long.MAX_VALUE));
+        assertEquals("minecraft:iron_", BloodMoonEquipmentRules.PREFIXES.get(5));
         assertEquals("mite:adamantium_", BloodMoonEquipmentRules.PREFIXES.get(8));
         assertEquals("mite:vibranium_", BloodMoonEquipmentRules.PREFIXES.get(9));
     }
 
-    @Test void earlyOrdinaryArmorIsHalfFirstBloodWithoutActivatingModernMaterials() throws Exception {
+    @Test void day64FavorsIronAndTheThirdBloodMoonFavorsAncientMetal() {
+        double ironStage = BloodMoonEquipmentRules.ordinaryProgress(64);
+        double ironSetChance = BloodMoonEquipmentRules.ordinaryArmorChance(ironStage)
+                * BloodMoonEquipmentRules.ordinaryTierChance(ironStage, 5);
+        assertEquals(72000D / 348797D, ironSetChance, 1E-15);
+
+        int stage = BloodMoonEquipmentRules.stageForDay(96);
+        double ancientMetal = BloodMoonEquipmentRules.tierChance(stage, 6, true);
+        for (int tier = 0; tier <= BloodMoonEquipmentRules.HIGHEST_TIER; tier++) {
+            if (tier != 6) assertTrue(ancientMetal > BloodMoonEquipmentRules.tierChance(stage, tier, true));
+        }
+        double ancientMetalPerSlot = BloodMoonEquipmentRules.armorChance(stage, true) * ancientMetal;
+        assertEquals(2944000D / 6910827D, ancientMetalPerSlot, 1E-15);
+        assertEquals(.8914442188091787D, 1D - Math.pow(1D - ancientMetalPerSlot, 4), 1E-15);
+    }
+
+    @Test void preDay16UsesLegacyArmorAndFirstBloodUsesTheChainmailStage() throws Exception {
         assertEquals(.3D, BloodMoonEquipmentRules.EARLY_ORDINARY_ARMOR_CHANCE);
         assertEquals(.6D, BloodMoonEquipmentRules.FIRST_BLOOD_ARMOR_CHANCE);
         assertEquals(BloodMoonEquipmentRules.FIRST_BLOOD_ARMOR_CHANCE / 2D, BloodMoonEquipmentRules.EARLY_ORDINARY_ARMOR_CHANCE);
-        for (long day : new long[]{Long.MIN_VALUE, 0, 1, 31, 32, 63}) {
+        for (long day : new long[]{Long.MIN_VALUE, 0, 1, 15}) {
             assertFalse(BloodMoonEquipmentRules.ordinaryActive(day));
             assertEquals(0D, BloodMoonEquipmentRules.ordinaryProgress(day));
         }
-        assertTrue(BloodMoonEquipmentRules.ordinaryActive(64));
+        assertTrue(BloodMoonEquipmentRules.ordinaryActive(16));
         assertTrue(BloodMoonEquipmentRules.ordinaryActive(Long.MAX_VALUE));
+        assertEquals(.82D, BloodMoonEquipmentRules.armorChance(BloodMoonEquipmentRules.stageForDay(32), true));
         var spec = specification();
         assertEquals(.3D, spec.get("early_ordinary_legacy_armor_chance").getAsDouble());
         assertEquals(.6D, spec.get("first_blood_date_legacy_armor_chance").getAsDouble());
-        assertFalse(spec.get("first_blood_date_material_and_partial_stop_changed").getAsBoolean());
+        assertTrue(spec.get("first_blood_date_material_and_partial_stop_changed").getAsBoolean());
     }
 
     @Test void allTwentyDistributionsMatchIndependentRationalSpecification() throws Exception {
@@ -108,9 +125,9 @@ class BloodMoonEquipmentRulesTest {
 
     @Test void highestDateAnchorsMatchIndependentStagesAndRationalHalfProbabilityTables() throws Exception {
         var calendar = specification().getAsJsonObject("ordinary_calendar_progression");
-        assertEquals(64L, calendar.get("introduced_from_day").getAsLong());
-        assertEquals(352L, calendar.get("maximum_day").getAsLong());
-        assertEquals(23, calendar.getAsJsonArray("anchors").size());
+        assertEquals(16L, calendar.get("introduced_from_day").getAsLong());
+        assertEquals(144L, calendar.get("maximum_day").getAsLong());
+        assertEquals(36, calendar.getAsJsonArray("anchors").size());
         for (var element : calendar.getAsJsonArray("anchors")) {
             var row = element.getAsJsonObject(); long day = row.get("day").getAsLong();
             double progress = BloodMoonEquipmentRules.ordinaryProgress(day);
@@ -131,14 +148,12 @@ class BloodMoonEquipmentRulesTest {
         }
     }
 
-    @Test void ordinaryDatesUseTheirBloodStageAndOnlyActualBloodThresholdsAdvanceMaterials() {
-        for (long day = 64; day <= 1281; day++) {
+    @Test void calendarThresholdsAdvanceTheSharedStageIncludingTheDay128BlueMoon() {
+        for (long day = 16; day <= 1281; day++) {
             double progress = BloodMoonEquipmentRules.ordinaryProgress(day);
-            int bloodStage = BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(day));
-            assertEquals(bloodStage, progress, "Same highest-date material stage at day " + day);
+            assertEquals(BloodMoonEquipmentRules.stageForDay(day), progress, "Same highest-date material stage at day " + day);
             double previous = BloodMoonEquipmentRules.ordinaryProgress(day - 1);
             assertTrue(progress >= previous);
-            if (day % 128L == 0L) assertEquals(previous, progress, "Blue dates never advance equipment");
             for (int threshold = 0; threshold < 10; threshold++) {
                 double currentTail = 0D, previousTail = 0D;
                 for (int tier = threshold; tier < 10; tier++) {
@@ -148,8 +163,10 @@ class BloodMoonEquipmentRulesTest {
                 assertTrue(currentTail + 1E-14 >= previousTail, "High-material tail regressed at day " + day);
             }
         }
-        assertEquals(8D, BloodMoonEquipmentRules.ordinaryProgress(320));
-        assertEquals(9D, BloodMoonEquipmentRules.ordinaryProgress(352));
+        long[] days = {15, 16, 31, 32, 47, 48, 63, 64, 80, 95, 96, 111, 112, 127, 128, 143, 144, 160};
+        int[] stages = {-1, 0, 0, 1, 1, 3, 3, 5, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9};
+        for (int index = 0; index < days.length; index++)
+            assertEquals(stages[index], BloodMoonEquipmentRules.stageForDay(days[index]), "Day " + days[index]);
         assertEquals(9D, BloodMoonEquipmentRules.ordinaryProgress(Long.MAX_VALUE));
     }
 
@@ -162,9 +179,18 @@ class BloodMoonEquipmentRulesTest {
             for (int tier = 0; tier < 10; tier++) total += BloodMoonEquipmentRules.ordinaryTierChance(progress, tier);
             assertEquals(1D, total, 1E-14);
         }
-        for (int tier = 0; tier < 10; tier++)
-            assertEquals(BloodMoonEquipmentRules.ordinaryTierChance(3D, tier), BloodMoonEquipmentRules.ordinaryTierChance(4D, tier));
-        assertEquals(100000D / 435043D, BloodMoonEquipmentRules.ordinaryTierChance(3D, 3), 1E-15);
+        assertEquals(100000D / 435043D, BloodMoonEquipmentRules.ordinaryTierChance(4D, 3), 1E-15);
+    }
+
+    @Test void day48GivesGoldCopperAndSilverEqualLeadingChances() {
+        int stage = BloodMoonEquipmentRules.stageForDay(48);
+        double mixedMetal = BloodMoonEquipmentRules.ordinaryTierChance(stage, 2);
+        assertEquals(90000D / 435043D, mixedMetal, 1E-15);
+        for (int tier = 0; tier <= BloodMoonEquipmentRules.HIGHEST_TIER; tier++) {
+            double chance = BloodMoonEquipmentRules.ordinaryTierChance(stage, tier);
+            if (tier >= 2 && tier <= 4) assertEquals(mixedMetal, chance);
+            else assertTrue(chance < mixedMetal);
+        }
     }
 
     @Test void independentBloodSlotAllEmptyAndAllFourProbabilitiesRemainUnchanged() throws Exception {
@@ -180,7 +206,7 @@ class BloodMoonEquipmentRulesTest {
         assertEquals(.84934656D, BloodMoonEquipmentRules.bloodAllFourChance(8), 1E-14);
     }
 
-    @Test void independentHighTierAnchorsKeepBothTailsAndTheEighthBloodSlotChance() {
+    @Test void independentHighTierAnchorsKeepBothTailsAndTheAdamantiumSlotChance() {
         assertEquals(640D / 650871D, BloodMoonEquipmentRules.ordinaryTierChance(0D, 8), 1E-15);
         assertEquals(117649D / 354398189D, BloodMoonEquipmentRules.ordinaryTierChance(8D, 0), 1E-15);
         assertEquals(1280000000D / 2480787323D, BloodMoonEquipmentRules.ordinaryTierChance(8D, 8), 1E-15);

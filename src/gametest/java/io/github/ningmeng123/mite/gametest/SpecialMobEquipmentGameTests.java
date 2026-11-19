@@ -157,15 +157,15 @@ public final class SpecialMobEquipmentGameTests {
     @GameTest(template = "empty")
     public static void lowRollsNeverReplaceTheSourceFloorAndInactiveProgressConsumesNoMaterialRandom(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
-            for (long day : new long[]{1L, 32L, 63L}) {
+            for (long day : new long[]{1L, 8L, 15L}) {
                 set(helper, day, (day - 1L) * 24_000L + 6_000L);
                 Mob mob = create(helper, MobKind.ANCIENT_BONE_LORD, 196L);
                 helper.assertValueEqual(SpecialMobEquipment.itemId(mob, "mite:ancient_metal_helmet"), "mite:ancient_metal_helmet",
-                        "The first blood moon and pre-day64 ordinary dates retain the source material");
+                        "Before day 16 fixed-set mobs retain the source material");
                 helper.assertValueEqual(mob.getRandom().nextLong(), RandomSource.create(196L).nextLong(),
                         "Inactive progression introduces no material RNG draw");
             }
-            set(helper, 64L, 6_000L);
+            set(helper, 16L, 15L * 24_000L + 6_000L);
             for (String source : List.of("mite:rusted_iron_helmet", "mite:ancient_metal_helmet",
                     "mite:ancient_metal_chainmail_helmet", "mite:ancient_metal_sword", "mite:ancient_metal_dagger", "mite:ancient_metal_bow")) {
                 Mob mob = create(helper, MobKind.ANCIENT_BONE_LORD, firstDraw(0D, .05D));
@@ -207,25 +207,25 @@ public final class SpecialMobEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void eighthBloodMoonAndOrdinaryDatesShareMaterialDistributionsWithoutChangingFloors(GameTestHelper helper) {
+    public static void blueMoonAndRewoundBloodDatesShareTheUnlockedAdamantiumDistribution(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             long seed = firstDraw(.5D, .55D);
-            set(helper, 320L, 6_000L);
+            set(helper, 128L, 127L * 24_000L + 6_000L);
             Mob ordinary = create(helper, MobKind.ANCIENT_BONE_LORD, seed);
             helper.assertValueEqual(SpecialMobEquipment.itemId(ordinary, "mite:ancient_metal_helmet"), "mite:adamantium_helmet",
-                    "An ordinary day320 middle draw uses the same adamantium distribution as blood");
+                    "A middle draw on the day 128 blue moon uses the Adamantium distribution");
             CompoundTag normal = ordinary.getPersistentData().getCompound(SpecialMobEquipment.DATA_KEY);
             helper.assertTrue(!normal.getBoolean("blood_date") && normal.getDouble("progress") == 8D,
-                    "Ordinary growth reaches the same eighth blood-moon stage on day320");
+                    "The day 128 blue moon reaches the Adamantium stage using ordinary equipment mode");
 
-            set(helper, 320L, 319L * 24_000L + 6_000L);
+            helper.getLevel().getServer().overworld().setDayTime(95L * 24_000L + 6_000L);
             Mob blood = create(helper, MobKind.ANCIENT_BONE_LORD, seed);
             helper.assertValueEqual(SpecialMobEquipment.itemId(blood, "mite:ancient_metal_helmet"), "mite:adamantium_helmet",
-                    "The same middle draw is adamantium at the eighth blood moon");
+                    "The same middle draw picks Adamantium after rewinding to a blood date");
             CompoundTag crimson = blood.getPersistentData().getCompound(SpecialMobEquipment.DATA_KEY);
             helper.assertTrue(crimson.getBoolean("blood_date") && crimson.getDouble("progress") == 8D,
-                    "Blood day320 and ordinary highest day320 share the eighth blood-moon stage");
-            helper.assertTrue(crimson.getLong("highest_day") == 320L && crimson.getInt("version") > 0,
+                    "A rewound blood date uses the same unlocked material stage as the ordinary date");
+            helper.assertTrue(crimson.getLong("highest_day") == 128L && crimson.getInt("version") > 0,
                     "The authoritative highest day and schema version accompany the spawn snapshot");
         }
         helper.succeed();
@@ -302,11 +302,11 @@ public final class SpecialMobEquipmentGameTests {
     @GameTest(template = "empty")
     public static void aSpawnKeepsOneDateSnapshotWhenAnotherPieceIsGeneratedAfterTheClockChanges(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
-            set(helper, 64L, 6_000L);
+            set(helper, 16L, 15L * 24_000L + 6_000L);
             Mob mob = create(helper, MobKind.ANCIENT_BONE_LORD, firstDraw(0D, .05D));
             SpecialMobEquipment.itemId(mob, "mite:ancient_metal_helmet");
             CompoundTag original = mob.getPersistentData().getCompound(SpecialMobEquipment.DATA_KEY).copy();
-            set(helper, 320L, 319L * 24_000L + 6_000L);
+            set(helper, 160L, 159L * 24_000L + 6_000L);
             mob.getRandom().setSeed(firstDraw(.5D, .55D));
             helper.assertValueEqual(SpecialMobEquipment.itemId(mob, "mite:ancient_metal_chestplate"), "mite:ancient_metal_chestplate",
                     "Another piece on this existing transaction cannot use a later blood-date material distribution");
@@ -394,7 +394,7 @@ public final class SpecialMobEquipmentGameTests {
             ServerLevel nether = helper.getLevel().getServer().getLevel(Level.NETHER);
             helper.assertTrue(nether != null, "Native Nether level is available for its preserved special skeleton branch");
             for (MobKind kind : List.of(MobKind.BONE_LORD, MobKind.LONGDEAD_GUARDIAN, MobKind.ANCIENT_BONE_LORD, MobKind.LONGDEAD)) {
-                for (long day : new long[]{1L, 63L}) {
+                for (long day : new long[]{1L, 15L}) {
                     set(helper, day, 6_000L);
                     Mob mob = create(helper, kind, nether, 196L);
                     finalizeNative(mob, MobSpawnType.SPAWN_EGG, 1);
@@ -439,9 +439,9 @@ public final class SpecialMobEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void specialSourceFamiliesResolveVibraniumTailAtBothLateCalendarAndNinthBlood(GameTestHelper helper) {
+    public static void specialSourceFamiliesResolveVibraniumOnDay144AndTheNextBloodDate(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
-            for (long[] date : new long[][]{{1280L, 6000L}, {352L, 351L * 24000L + 6000L}}) {
+            for (long[] date : new long[][]{{144L, 143L * 24000L + 6000L}, {160L, 159L * 24000L + 6000L}}) {
                 set(helper, date[0], date[1]);
                 Map<String,String> expected = Map.of(
                         "mite:ancient_metal_helmet", "mite:vibranium_helmet",
@@ -455,6 +455,8 @@ public final class SpecialMobEquipmentGameTests {
                     Mob mob = create(helper, MobKind.LONGDEAD_GUARDIAN, firstDraw(.999D, 1D));
                     helper.assertValueEqual(SpecialMobEquipment.itemId(mob,entry.getKey()),entry.getValue(),
                             "A deterministic Vibranium tail preserves each registered source family, with an Adamantium ceiling for chainmail");
+                    helper.assertValueEqual(mob.getPersistentData().getCompound(SpecialMobEquipment.DATA_KEY).getDouble("progress"), 9D,
+                            "The special source family uses the Vibranium stage at highest day " + date[0]);
                 }
             }
         }

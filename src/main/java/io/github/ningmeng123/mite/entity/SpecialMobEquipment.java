@@ -88,13 +88,12 @@ public final class SpecialMobEquipment {
         if (data.contains(DATA_KEY)) return data.getCompound(DATA_KEY);
         long day = BloodMoonInvasion.highestDay(level);
         boolean blood = BloodMoonEquipment.bloodDate(mob);
-        double value = blood ? BloodMoonEquipmentRules.stage(BloodMoonEquipmentRules.bloodMoons(day))
-                : BloodMoonEquipmentRules.ordinaryActive(day) ? BloodMoonEquipmentRules.ordinaryProgress(day) : -1D;
+        int stage = BloodMoonEquipmentRules.stageForDay(day);
         CompoundTag result = new CompoundTag();
         result.putInt("version", 1);
         result.putLong("highest_day", day);
         result.putBoolean("blood_date", blood);
-        result.putDouble("progress", value);
+        result.putDouble("progress", stage);
         data.put(DATA_KEY, result);
         return result;
     }
