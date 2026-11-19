@@ -1053,6 +1053,7 @@
   "jei.mite.anvil_qualification": "Requires the ability to craft this quality; repairing itself consumes no XP",
   "jei.mite.anvil_preservation": "Preserves the left equipment's quality, enchantments and colors",
   "jei.mite.anvil_combination_rules": "Same quality and an unenchanted right input; shield colors and patterns must match",
+  "tooltip.mite.simplyswords.greathammer_sunder": "Sunders %s%% armor per hit, up to %s%%",
   "item.mite.simplyswords_rusted_iron_longsword": "Rusted Iron Longsword",
   "item.mite.simplyswords_rusted_iron_twinblade": "Rusted Iron Twinblade",
   "item.mite.simplyswords_rusted_iron_rapier": "Rusted Iron Rapier",

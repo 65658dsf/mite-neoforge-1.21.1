@@ -1053,6 +1053,7 @@
   "jei.mite.anvil_qualification": "需要具备该品质的制作能力；修理本身不扣经验",
   "jei.mite.anvil_preservation": "保留左侧装备的品质、附魔及颜色",
   "jei.mite.anvil_combination_rules": "要求相同品质，右侧无附魔；盾牌颜色及纹样需一致",
+  "tooltip.mite.simplyswords.greathammer_sunder": "每次命中削减 %s%% 护甲，最多削减 %s%%",
   "item.mite.simplyswords_rusted_iron_longsword": "锈铁长剑",
   "item.mite.simplyswords_rusted_iron_twinblade": "锈铁双头刃",
   "item.mite.simplyswords_rusted_iron_rapier": "锈铁细剑",

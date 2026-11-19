@@ -58,6 +58,8 @@
     "BetterCombatMobSwingMixin",
     "SimplySwordsThrownSpearMixin",
     "SimplySwordsUniqueLootMixin",
+    "SimplySwordsImplicitComponentMixin",
+    "SimplySwordsImplicitRegistryMixin",
     "AnvilDurabilityMenuMixin",
     "BlazeChargeAccess",
     "SourceStatusEffectInstanceMixin",
