@@ -17,6 +17,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -65,6 +66,30 @@ public final class VibraniumEquipmentGameTests {
         helper.assertTrue(shears.canPerformAction(ItemAbilities.SHEARS_DIG), "Extended shears retain native shearing actions");
         helper.assertTrue(MiteTools.definition(new ItemStack(MiteTools.get("vibranium_knife"))).family() == ToolFamily.KNIFE,
                 "The knife uses its own source reach and wear family");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void pickaxeDurabilityBarUsesQualityAdjustedCapacity(GameTestHelper helper) {
+        ItemStack pickaxe = new ItemStack(MiteTools.get("vibranium_pickaxe"));
+        int baseCapacity = pickaxe.getMaxDamage();
+        pickaxe.setDamageValue(baseCapacity / 2);
+        int halfDurabilityColor = pickaxe.getBarColor();
+
+        EquipmentDurability.setQuality(pickaxe, Quality.EXCELLENT);
+        int capacity = pickaxe.getMaxDamage();
+        helper.assertValueEqual(capacity, 1228800, "Excellent vibranium pickaxe capacity");
+
+        pickaxe.setDamageValue(capacity - baseCapacity);
+        helper.assertValueEqual(pickaxe.getBarWidth(), 7, "The base capacity remaining fills half of the bar");
+        helper.assertValueEqual(pickaxe.getBarColor(), halfDurabilityColor, "Half durability has the same color at either quality");
+
+        int remaining = 469991;
+        pickaxe.setDamageValue(capacity - remaining);
+        helper.assertTrue(pickaxe.isBarVisible(), "The worn pickaxe still shows its durability bar");
+        helper.assertValueEqual(pickaxe.getBarWidth(), 5, "Durability below the base capacity still fills the bar proportionally");
+        helper.assertValueEqual(pickaxe.getBarColor(), Mth.hsvToRgb((float) remaining / capacity / 3F, 1F, 1F),
+                "The worn pickaxe color reflects its remaining fraction");
         helper.succeed();
     }
 

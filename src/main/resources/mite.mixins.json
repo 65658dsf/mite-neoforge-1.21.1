@@ -141,6 +141,7 @@
     "WorkbenchTierMixin",
     "RemovedCrafterMixin",
     "DurabilityItemStackMixin",
+    "DurabilityItemBarMixin",
     "DurabilityEnchantmentMixin",
     "DurabilityPlayerArmorMixin",
     "ShieldItemMixin",
