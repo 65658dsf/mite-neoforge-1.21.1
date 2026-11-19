@@ -92,11 +92,12 @@ public final class ObsidianMiningGameTests {
             helper.assertValueEqual(countObsidian(drops), 2, "Two harvested blocks produce two obsidian items");
 
             PlayerExperience.setLevels(player, 200);
-            for (ItemStack tool : new ItemStack[]{new ItemStack(MiteTools.get("mite:copper_pickaxe")), ItemStack.EMPTY}) {
+            for (ItemStack tool : new ItemStack[]{new ItemStack(MiteTools.get("mite:copper_pickaxe")),
+                    new ItemStack(Items.STONE_PICKAXE), ItemStack.EMPTY}) {
                 player.setItemSlot(EquipmentSlot.MAINHAND, tool);
                 helper.getLevel().setBlockAndUpdate(pos, obsidian);
                 helper.assertValueEqual(obsidian.getDestroyProgress(player, helper.getLevel(), pos), 0F,
-                        "Copper and bare hands cannot gain obsidian progress even at maximum level");
+                        "Insufficient tools and bare hands cannot gain obsidian progress even at maximum level");
                 helper.assertFalse(player.gameMode.destroyBlock(pos), "The final server harvest rejects insufficient tools");
                 helper.assertTrue(helper.getLevel().getBlockState(pos).is(Blocks.OBSIDIAN),
                         "Rejected harvesting retains the obsidian block");
@@ -129,11 +130,6 @@ public final class ObsidianMiningGameTests {
                 helper.assertValueEqual(pick.getDamageValue(), 480,
                         "The adjacent stone also uses its source hardness 2.4 and costs 240");
             }
-
-            ItemStack weakPick = new ItemStack(MiteTools.get("mite:copper_pickaxe"));
-            player.setItemSlot(EquipmentSlot.MAINHAND, weakPick);
-            weakPick.mineBlock(helper.getLevel(), obsidian, pos, player);
-            helper.assertValueEqual(weakPick.getDamageValue(), 0, "An insufficient profiled pick does not spend durability");
 
             ItemStack creativePick = new ItemStack(Items.IRON_PICKAXE);
             player.setItemSlot(EquipmentSlot.MAINHAND, creativePick);

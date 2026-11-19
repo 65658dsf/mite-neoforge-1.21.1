@@ -231,8 +231,8 @@ public final class EquipmentDurability {
         if (state.getBlock() instanceof CraftingTableBlock) return true;
         if (miner instanceof Player player && io.github.ningmeng123.mite.mining.FunctionalBlockMining.portable(player, state, level, pos)) return true;
         float hardness = MiningProgress.effectiveHardness(state, state.getDestroySpeed(level, pos));
-        if (!(hardness > 0F) || !(stack.getDestroySpeed(state) > 1F)
-                || state.requiresCorrectToolForDrops() && !stack.isCorrectToolForDrops(state)) return true;
+        if (!(hardness > 0F)) return true;
+        // As in vanilla, mining speed and drop eligibility are independent of block wear.
         boolean sandstone = state.is(Blocks.SANDSTONE) || state.is(Blocks.CUT_SANDSTONE)
                 || state.is(Blocks.CHISELED_SANDSTONE) || state.is(Blocks.SMOOTH_SANDSTONE)
                 || state.is(Blocks.RED_SANDSTONE) || state.is(Blocks.CUT_RED_SANDSTONE)

@@ -1,6 +1,5 @@
 package io.github.ningmeng123.mite.item;
 
-import io.github.ningmeng123.mite.mining.MiningProgress;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.FlintToolRules;
 import io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules;
@@ -13,7 +12,6 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -51,14 +49,7 @@ public final class FlintHatchetItem extends Item {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miner) {
-        if (!level.isClientSide && stack.isDamageableItem()
-                && !(miner instanceof Player player && (player.isCreative() || player.isSpectator()))) {
-            float hardness = MiningProgress.effectiveHardness(state, state.getDestroySpeed(level, pos));
-            if (hardness > 0.0F && getDestroySpeed(stack, state) > 1.0F) {
-                stack.hurtAndBreak(FlintToolRules.blockWear(hardness), miner, EquipmentSlot.MAINHAND);
-            }
-        }
-        return true;
+        return EquipmentDurability.mineBlock(stack, level, state, pos, miner);
     }
 
     @Override

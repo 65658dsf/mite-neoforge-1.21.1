@@ -1,6 +1,5 @@
 package io.github.ningmeng123.mite.item;
 
-import io.github.ningmeng123.mite.mining.MiningProgress;
 import io.github.ningmeng123.mite.registry.MiteTags;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules;
@@ -9,12 +8,10 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -55,13 +52,6 @@ public final class WoodenClubBehavior {
     }
 
     public static boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miner) {
-        if (!level.isClientSide && stack.isDamageableItem()
-                && !(miner instanceof Player player && (player.isCreative() || player.isSpectator()))) {
-            float hardness = MiningProgress.effectiveHardness(state, state.getDestroySpeed(level, pos));
-            if (hardness > 0.0F && stack.getDestroySpeed(state) > 1.0F) {
-                stack.hurtAndBreak(WoodenClubRules.blockWear(hardness), miner, EquipmentSlot.MAINHAND);
-            }
-        }
-        return true;
+        return EquipmentDurability.mineBlock(stack, level, state, pos, miner);
     }
 }

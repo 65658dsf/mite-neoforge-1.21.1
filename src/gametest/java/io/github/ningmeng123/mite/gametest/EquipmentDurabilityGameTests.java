@@ -3,6 +3,8 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
+import io.github.ningmeng123.mite.registry.MiteItems;
+import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.buffer.Unpooled;
@@ -250,16 +252,47 @@ public final class EquipmentDurabilityGameTests {
             axe.mineBlock(helper.getLevel(), Blocks.OAK_LOG.defaultBlockState(),
                     helper.absolutePos(new BlockPos(1, 1, 1)), player);
             helper.assertValueEqual(axe.getDamageValue(), 120, "Nonportable log uses hardness-based wear exactly once");
-            ItemStack weakPick = new ItemStack(Items.STONE_PICKAXE);
-            player.setItemSlot(EquipmentSlot.MAINHAND, weakPick);
-            helper.assertFalse(weakPick.isCorrectToolForDrops(Blocks.OBSIDIAN.defaultBlockState()),
-                    "The modern stone pickaxe fixture is below the obsidian harvest tier");
-            helper.assertTrue(weakPick.getDestroySpeed(Blocks.OBSIDIAN.defaultBlockState()) > 1F,
-                    "A speed bonus alone does not prove the tier is sufficient");
-            weakPick.mineBlock(helper.getLevel(), Blocks.OBSIDIAN.defaultBlockState(),
-                    helper.absolutePos(new BlockPos(1, 1, 1)), player);
-            helper.assertValueEqual(weakPick.getDamageValue(), 0,
-                    "An under-tier tool does not spend durability through the actual ItemStack callback");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void survivalBreaksWearToolsRegardlessOfMiningSpeedOrDropEligibility(GameTestHelper helper) {
+        record DirtWear(ItemStack tool, int damage) {}
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 2, 1));
+        var level = helper.getLevel();
+        var previous = level.getBlockState(pos);
+        var dirt = Blocks.DIRT.defaultBlockState();
+        try (PlayerSession session = newPlayer(helper)) {
+            ServerPlayer player = session.player();
+            finishSpawnProtection(player);
+            for (DirtWear test : List.of(
+                    new DirtWear(new ItemStack(Items.IRON_PICKAXE), 50),
+                    new DirtWear(new ItemStack(MiteTools.get("mite:copper_pickaxe")), 50),
+                    new DirtWear(new ItemStack(Items.IRON_AXE), 50),
+                    new DirtWear(new ItemStack(Items.IRON_SWORD), 100),
+                    new DirtWear(new ItemStack(MiteTools.get("mite:copper_sword")), 100),
+                    new DirtWear(new ItemStack(MiteItems.FLINT_HATCHET.get()), 66),
+                    new DirtWear(new ItemStack(Items.WOODEN_SWORD), 12),
+                    new DirtWear(new ItemStack(Items.IRON_SHOVEL), 25))) {
+                player.setItemSlot(EquipmentSlot.MAINHAND, test.tool());
+                level.setBlockAndUpdate(pos, dirt);
+                helper.assertTrue(player.gameMode.destroyBlock(pos) && level.getBlockState(pos).isAir(),
+                        "The server removes dirt with " + test.tool().getItem());
+                helper.assertValueEqual(test.tool().getDamageValue(), test.damage(),
+                        "Dirt applies hardness-based wear once to " + test.tool().getItem());
+            }
+
+            ItemStack pick = new ItemStack(Items.IRON_PICKAXE);
+            player.setItemSlot(EquipmentSlot.MAINHAND, pick);
+            var snow = Blocks.SNOW_BLOCK.defaultBlockState();
+            level.setBlockAndUpdate(pos, snow);
+            helper.assertFalse(snow.canHarvestBlock(level, pos, player), "A pickaxe cannot collect snow block drops");
+            helper.assertTrue(player.gameMode.destroyBlock(pos) && level.getBlockState(pos).isAir(),
+                    "The server still allows a pickaxe to break a snow block");
+            helper.assertValueEqual(pick.getDamageValue(), 40, "Breaking a snow block without its drops still wears the pickaxe");
+        } finally {
+            level.setBlockAndUpdate(pos, previous);
         }
         helper.succeed();
     }
