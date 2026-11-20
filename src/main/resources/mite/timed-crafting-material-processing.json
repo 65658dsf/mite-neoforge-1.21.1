@@ -1,8 +1,10 @@
 {
   "author": "NingMeng123",
-  "source": "R196 aaf:43,65; yc:82-83: clay balls 4 * 25; sugar cane 100 * scaleDifficulty(8)",
+  "source": "R196 aaf:43,65; yc:82-83: clay balls 4 * 25; sugar cane 100 * scaleDifficulty(8). Netherite uses the corresponding adamantium batch difficulties for crafting one ingot and unpacking a block.",
   "recipes": {
     "minecraft:sugar_from_sugar_cane": {"difficulty": 800.0, "required_bench": null, "source_order": -1},
-    "minecraft:clay": {"difficulty": 100.0, "required_bench": null, "source_order": -1}
+    "minecraft:clay": {"difficulty": 100.0, "required_bench": null, "source_order": -1},
+    "minecraft:netherite_ingot": {"difficulty": 25600.0, "required_bench": "mithril", "source_order": 59},
+    "minecraft:netherite_ingot_from_netherite_block": {"difficulty": 230400.0, "required_bench": "mithril", "source_order": 468}
   }
 }

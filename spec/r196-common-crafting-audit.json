@@ -27,7 +27,7 @@
       "building_materials": 46,
       "storage_and_dismantling": 14
     },
-    "output_count_changed_recipe_ids": 49,
+    "output_count_changed_recipe_ids": 46,
     "skipped_existing_or_disabled": 4
   },
   "recipes": {
@@ -1272,20 +1272,19 @@
       "difficulty": 100.0,
       "required_bench": null,
       "source_output_count": 1,
-      "modern_output_count": 3,
-      "output_count_changed": true,
-      "modern_origin": "minecraft_1.21.1_client.jar:minecraft:bone_meal",
+      "modern_output_count": 1,
+      "output_count_changed": false,
+      "modern_origin": "src/generated/resources/data/minecraft/recipe/bone_meal.json",
       "modern_recipe": {
         "type": "minecraft:crafting_shapeless",
         "category": "misc",
-        "group": "bonemeal",
         "ingredients": [
           {
             "item": "minecraft:bone"
           }
         ],
         "result": {
-          "count": 3,
+          "count": 1,
           "id": "minecraft:bone_meal"
         }
       }
@@ -2236,23 +2235,23 @@
       "difficulty": 1200.0,
       "required_bench": null,
       "source_output_count": 8,
-      "modern_output_count": 6,
-      "output_count_changed": true,
-      "modern_origin": "minecraft_1.21.1_client.jar:minecraft:cobblestone_wall",
+      "modern_output_count": 8,
+      "output_count_changed": false,
+      "modern_origin": "src/generated/resources/data/minecraft/recipe/cobblestone_wall.json",
       "modern_recipe": {
         "type": "minecraft:crafting_shaped",
         "category": "misc",
         "key": {
-          "#": {
+          "I": {
             "item": "minecraft:cobblestone"
           }
         },
         "pattern": [
-          "###",
-          "###"
+          "III",
+          "III"
         ],
         "result": {
-          "count": 6,
+          "count": 8,
           "id": "minecraft:cobblestone_wall"
         }
       }
@@ -9440,23 +9439,23 @@
       "difficulty": 1200.0,
       "required_bench": null,
       "source_output_count": 8,
-      "modern_output_count": 6,
-      "output_count_changed": true,
-      "modern_origin": "minecraft_1.21.1_client.jar:minecraft:mossy_cobblestone_wall",
+      "modern_output_count": 8,
+      "output_count_changed": false,
+      "modern_origin": "src/generated/resources/data/minecraft/recipe/mossy_cobblestone_wall.json",
       "modern_recipe": {
         "type": "minecraft:crafting_shaped",
         "category": "misc",
         "key": {
-          "#": {
+          "I": {
             "item": "minecraft:mossy_cobblestone"
           }
         },
         "pattern": [
-          "###",
-          "###"
+          "III",
+          "III"
         ],
         "result": {
-          "count": 6,
+          "count": 8,
           "id": "minecraft:mossy_cobblestone_wall"
         }
       }
@@ -27367,8 +27366,6 @@
     "minecraft:mangrove_chest_boat",
     "minecraft:mangrove_hanging_sign",
     "minecraft:netherite_block",
-    "minecraft:netherite_ingot",
-    "minecraft:netherite_ingot_from_netherite_block",
     "minecraft:oak_chest_boat",
     "minecraft:oak_hanging_sign",
     "minecraft:observer",

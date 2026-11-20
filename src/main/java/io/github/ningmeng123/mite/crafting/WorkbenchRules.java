@@ -14,6 +14,7 @@ import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -51,6 +52,7 @@ public final class WorkbenchRules {
     }
     public static float required(ItemStack result) {
         if (result.isEmpty()) return 0;
+        if (result.is(Items.NETHERITE_INGOT)) return materialCapacity("mithril");
         if (result.getItem() instanceof io.github.ningmeng123.mite.phantom.PhantomBladeItem blade)
             return materialCapacity(blade.material());
         if (result.is(MiteUpgradeTemplates.UPGRADE_TEMPLATE.get())) return materialCapacity("iron");
@@ -77,7 +79,7 @@ public final class WorkbenchRules {
         var ranged = arrow != null ? arrow : rod != null ? rod : carrotRod;
         if (ranged != null) return ranged == io.github.ningmeng123.mite.rules.R196RangedRules.Material.FLINT
                 || ranged == io.github.ningmeng123.mite.rules.R196RangedRules.Material.OBSIDIAN ? 0F : materialCapacity(ranged.id);
-        if (result.is(net.minecraft.world.item.Items.FLINT_AND_STEEL)) return materialCapacity("iron");
+        if (result.is(Items.FLINT_AND_STEEL)) return materialCapacity("iron");
         if (result.getItem() instanceof io.github.ningmeng123.mite.item.RunestoneItem item)
             return item.getBlock() == io.github.ningmeng123.mite.registry.MiteWorldBlocks.MITHRIL_RUNESTONE.get()
                     ? materialCapacity("mithril") : materialCapacity("adamantium");
