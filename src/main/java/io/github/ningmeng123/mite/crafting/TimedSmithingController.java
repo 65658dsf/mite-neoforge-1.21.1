@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -104,7 +105,7 @@ public final class TimedSmithingController {
     public static boolean previewAllowed(SmithingMenu menu, Player player) {
         if (!applies(menu)) return true;
         ItemStack result = menu.getSlot(SmithingMenu.RESULT_SLOT).getItem();
-        if (result.isEmpty() || SmithingTableTier.current(menu) != SmithingTableTier.requiredFor(result)) return false;
+        if (!allowedAtTable(SmithingTableTier.current(menu), result)) return false;
         int required = MaterialUpgradeRequirements.ingots(result);
         return required > 0 && availableIngots(player, menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem()) >= required;
     }
@@ -116,14 +117,18 @@ public final class TimedSmithingController {
         if (recipe.isEmpty()) return null;
         ItemStack result = recipe.get().value().assemble(input, player.level().registryAccess());
         SmithingTableTier table = SmithingTableTier.current(smithing);
-        if (result.isEmpty() || table != SmithingTableTier.requiredFor(result)) return null;
+        if (!allowedAtTable(table, result)) return null;
         int ingots = MaterialUpgradeRequirements.ingots(result);
         Payment payment = payment(player, menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem(), ingots);
         if (ingots <= 0 || input.addition().getCount() < ingots
                 || payment == null
                 || !result.isItemEnabled(player.level().enabledFeatures())
                 || !ItemStack.matches(result, menu.getSlot(SmithingMenu.RESULT_SLOT).getItem())) return null;
-        return new Prepared(smithing, recipe.get(), result, ingots, payment, table);
+        return new Prepared(smithing, recipe.get(), result, ingots, payment, table == null ? SmithingTableTier.VANILLA : table);
+    }
+
+    private static boolean allowedAtTable(@Nullable SmithingTableTier table, ItemStack result) {
+        return !result.isEmpty() && (table == null || table.supports(SmithingTableTier.requiredFor(result)));
     }
 
     private static boolean allowed(ServerPlayer player, Prepared prepared, boolean inventory) {

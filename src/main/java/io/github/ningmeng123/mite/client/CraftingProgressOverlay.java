@@ -71,7 +71,7 @@ public final class CraftingProgressOverlay {
             int y = Math.min(screen.height - 12, screen.getGuiTop() + 170);
             var currentTable = SmithingTableTier.current(menu);
             var requiredTable = SmithingTableTier.requiredFor(result);
-            if (currentTable != null && currentTable != requiredTable) {
+            if (currentTable != null && !currentTable.supports(requiredTable)) {
                 var label = Component.translatable("screen.mite.smithing_required_table", requiredTable.block().getName());
                 event.getGuiGraphics().drawCenteredString(Minecraft.getInstance().font, label, x, y, 0xFFFF7070);
                 return;

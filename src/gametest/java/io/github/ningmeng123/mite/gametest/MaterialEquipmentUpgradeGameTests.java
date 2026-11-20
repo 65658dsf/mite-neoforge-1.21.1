@@ -426,43 +426,47 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void matchingSmithingTablesApplyTheirTimeReductionsToRealUpgrades(GameTestHelper helper) {
+    public static void compatibleSmithingTablesApplyTheOpenedTablesTimeReduction(GameTestHelper helper) {
         List<String> bases = List.of("mite:silver_sword", "minecraft:iron_helmet", "mite:ancient_metal_helmet",
                 "mite:mithril_helmet", "mite:adamantium_helmet");
         int[] divisors = {0, 8, 6, 4, 2};
-        for (int index = 0; index < SMITHING_MATERIALS.size(); index++) {
-            String material = SMITHING_MATERIALS.get(index);
-            Upgrade upgrade = upgrade(bases.get(index), material);
-            try (SmithingSession session = new SmithingSession(helper, material)) {
-                session.load(upgrade, personalEquipment(helper, upgrade.base()), 8);
-                ItemStack result = session.menu.getSlot(SmithingMenu.RESULT_SLOT).getItem();
-                helper.assertTrue(result.is(upgrade.result()) && session.menu.stillValid(session.player),
-                        "The physical " + material + " table opens a valid smithing menu and shows the matching upgrade");
-                SmithingTableTier tier = SmithingTableTier.requiredFor(result);
-                helper.assertValueEqual(tier.block(), smithingTable(material), "The destination material identifies the matching smithing table");
-                int divisor = divisors[index];
-                helper.assertValueEqual(tier.timeReductionDivisor(), divisor, "The table advertises its own duration reduction");
-                session.menu.clicked(SmithingMenu.RESULT_SLOT, 0, ClickType.PICKUP, session.player);
-                int baseline = TimedCraftingRules.period(EquipmentQualityRules.adjustedDifficulty(
-                        MaterialUpgradeRequirements.difficulty(result), EquipmentDurability.quality(result)),
-                        session.player.experienceLevel, 0F, PlayerCurses.has(session.player, R196Curse.CLUMSINESS));
-                int expected = divisor == 0 ? baseline : baseline - baseline / divisor;
-                helper.assertTrue(TimedSmithingController.isActive(session.player), "The matching table starts the upgrade");
-                helper.assertValueEqual(TimedSmithingController.period(session.player, session.menu), expected,
-                        "The physical table's time reduction applies to the quality-adjusted vanilla period");
-                session.tick(expected - 1);
-                helper.assertTrue(session.menu.getCarried().isEmpty(), "The upgraded item is unavailable before the last shortened tick");
-                session.tick(1);
-                helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "The upgrade finishes on its shortened final tick");
+        for (int minimum = 0; minimum < SMITHING_MATERIALS.size(); minimum++) {
+            String target = SMITHING_MATERIALS.get(minimum);
+            Upgrade upgrade = upgrade(bases.get(minimum), target);
+            SmithingTableTier required = SmithingTableTier.requiredFor(new ItemStack(upgrade.result()));
+            helper.assertValueEqual(required.block(), smithingTable(target), "The destination material identifies the minimum smithing table");
+            for (int opened = minimum; opened < SMITHING_MATERIALS.size(); opened++) {
+                String material = SMITHING_MATERIALS.get(opened);
+                boolean quickMove = opened > minimum;
+                try (SmithingSession session = new SmithingSession(helper, material)) {
+                    session.load(upgrade, personalEquipment(helper, upgrade.base()), 8);
+                    ItemStack result = session.menu.getSlot(SmithingMenu.RESULT_SLOT).getItem();
+                    helper.assertTrue(result.is(upgrade.result()) && session.menu.stillValid(session.player),
+                            "The physical " + material + " table opens a valid menu and previews the " + target + " upgrade");
+                    session.menu.clicked(SmithingMenu.RESULT_SLOT, 0, quickMove ? ClickType.QUICK_MOVE : ClickType.PICKUP, session.player);
+                    int baseline = smithingBaseline(session.player, result);
+                    int divisor = divisors[opened];
+                    int expected = divisor == 0 ? baseline : baseline - baseline / divisor;
+                    helper.assertTrue(TimedSmithingController.isActive(session.player), "A compatible table starts the upgrade");
+                    helper.assertValueEqual(TimedSmithingController.period(session.player, session.menu), expected,
+                            "The actual " + material + " table determines the duration of the " + target + " upgrade");
+                    session.tick(expected - 1);
+                    helper.assertTrue(session.menu.getCarried().isEmpty() && session.player.getInventory().countItem(upgrade.result()) == 0,
+                            "Neither delivery path produces the upgrade before the calculated finish");
+                    session.tick(1);
+                    helper.assertTrue(quickMove ? session.player.getInventory().countItem(upgrade.result()) == 1
+                                    : session.menu.getCarried().is(upgrade.result()),
+                            "The upgrade finishes on the last tick and reaches its intended destination");
+                }
             }
         }
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void bothSlowerAndFasterWrongSmithingTablesRejectTheUpgrade(GameTestHelper helper) {
+    public static void lowerTierSmithingTablesRejectHigherEquipmentUpgrades(GameTestHelper helper) {
         Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
-        for (String material : List.of("iron", "ancient_metal", "adamantium", "vibranium")) {
+        for (String material : List.of("iron", "ancient_metal")) {
             try (SmithingSession session = new SmithingSession(helper, material)) {
                 session.load(upgrade, personalEquipment(helper, upgrade.base()), 6);
                 var before = TimedCraftingController.snapshot(session.menu.getSlot(0).container);
@@ -472,14 +476,45 @@ public final class MaterialEquipmentUpgradeGameTests {
                 for (ClickType click : List.of(ClickType.PICKUP, ClickType.QUICK_MOVE))
                     session.menu.clicked(SmithingMenu.RESULT_SLOT, 0, click, session.player);
                 helper.assertTrue(session.menu.quickMoveStack(session.player, SmithingMenu.RESULT_SLOT).isEmpty(),
-                        "Direct quick-move cannot use the wrong table");
-                helper.assertFalse(TimedSmithingController.isActive(session.player), "The wrong table never starts manufacturing");
+                        "Direct quick-move cannot use a table below the minimum tier");
+                helper.assertFalse(TimedSmithingController.isActive(session.player), "A table below the minimum tier never starts manufacturing");
                 helper.assertTrue(TimedCraftingController.matches(before, session.menu.getSlot(0).container), "Every smithing ingredient stays in place");
                 helper.assertTrue(session.menu.getCarried().isEmpty() && session.player.getInventory().countItem(upgrade.result()) == 0,
-                        "Neither delivery path obtains an item from the wrong table");
+                        "Neither delivery path obtains an item from a table below the minimum tier");
             }
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void externalSmithingWorkstationsKeepTheirNativeValidationAndBaselineSpeed(GameTestHelper helper) {
+        Block externalStation = Blocks.LECTERN;
+        Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+        try (SmithingSession session = new SmithingSession(helper, externalStation,
+                (player, access) -> new SmithingMenu(37, player.getInventory(), access) {
+                    @Override protected boolean isValidBlock(BlockState state) { return state.is(externalStation); }
+                })) {
+            session.load(upgrade, personalEquipment(helper, upgrade.base()), 8);
+            ItemStack result = session.menu.getSlot(SmithingMenu.RESULT_SLOT).getItem();
+            helper.assertTrue(session.menu.stillValid(session.player) && result.is(upgrade.result()),
+                    "An external station can validate its own block and preview the material upgrade");
+            session.menu.clicked(SmithingMenu.RESULT_SLOT, 0, ClickType.PICKUP, session.player);
+            helper.assertTrue(TimedSmithingController.isActive(session.player), "An external station starts the timed upgrade");
+            int baseline = smithingBaseline(session.player, result);
+            helper.assertValueEqual(TimedSmithingController.period(session.player, session.menu), baseline,
+                    "The external station uses baseline smithing time");
+            session.tick(baseline - 1);
+            helper.assertTrue(session.menu.getCarried().isEmpty(), "The upgrade takes the full baseline period");
+            session.tick(1);
+            helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "The upgrade completes on the final baseline tick");
+        }
+        helper.succeed();
+    }
+
+    private static int smithingBaseline(ServerPlayer player, ItemStack result) {
+        return TimedCraftingRules.period(EquipmentQualityRules.adjustedDifficulty(
+                MaterialUpgradeRequirements.difficulty(result), EquipmentDurability.quality(result)),
+                player.experienceLevel, 0F, PlayerCurses.has(player, R196Curse.CLUMSINESS));
     }
 
     private static void assertSmithingMaterialCost(GameTestHelper helper, Upgrade upgrade, int required, boolean inventory) {
@@ -1086,11 +1121,14 @@ public final class MaterialEquipmentUpgradeGameTests {
 
     private static final class SmithingSession extends MenuSession<SmithingMenu> {
         private SmithingSession(GameTestHelper helper, String material) {
-            super(helper, smithingTable(material).defaultBlockState(), 4,
+            this(helper, smithingTable(material),
                     (player, access) -> access.evaluate((level, pos) -> {
                         var provider = Objects.requireNonNull(level.getBlockState(pos).getMenuProvider(level, pos));
                         return (SmithingMenu) provider.createMenu(37, player.getInventory(), player);
                     }).orElseThrow());
+        }
+        private SmithingSession(GameTestHelper helper, Block station, BiFunction<ServerPlayer, ContainerLevelAccess, SmithingMenu> createMenu) {
+            super(helper, station.defaultBlockState(), 4, createMenu);
         }
         void load(Upgrade upgrade, ItemStack source, int ingots) {
             menu.getSlot(0).set(template());

@@ -16,12 +16,16 @@ public record SmithingJeiRecipe(RecipeHolder<SmithingRecipe> source, List<ItemSt
         output = output.copy();
     }
 
-    public SmithingTableTier requiredTable() {
+    public SmithingTableTier minimumTable() {
         return SmithingTableTier.requiredFor(output);
     }
 
-    /** Average-quality duration at the required table for the player's current state. */
+    /** Average-quality duration at the minimum table for the player's current state. */
     public int durationTicks(int level, boolean clumsy) {
-        return requiredTable().duration(TimedCraftingRules.period(difficulty, level, 0F, clumsy));
+        return durationTicks(minimumTable(), level, clumsy);
+    }
+
+    public int durationTicks(SmithingTableTier table, int level, boolean clumsy) {
+        return table.duration(TimedCraftingRules.period(difficulty, level, 0F, clumsy));
     }
 }

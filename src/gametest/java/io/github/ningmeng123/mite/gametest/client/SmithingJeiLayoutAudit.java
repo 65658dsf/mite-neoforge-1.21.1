@@ -79,12 +79,18 @@ public final class SmithingJeiLayoutAudit {
         SmithingJeiRecipe page = page();
         Class<?> builderType = api("mezz.jei.api.gui.builder.IRecipeLayoutBuilder");
         List<Slot> slots = new ArrayList<>();
+        List<Slot> invisible = new ArrayList<>();
         Object builder = proxy(builderType, (self, method, arguments) -> {
             if (method.getDeclaringClass() == Object.class) return objectMethod(self, method, arguments);
             if (method.isDefault()) return InvocationHandler.invokeDefault(self, method, arguments);
             if (method.getName().equals("addSlot") && arguments.length == 1) {
                 Slot slot = new Slot(((Enum<?>)arguments[0]).name());
                 slots.add(slot);
+                return slot.builder();
+            }
+            if (method.getName().equals("addInvisibleIngredients") && arguments.length == 1) {
+                Slot slot = new Slot(((Enum<?>)arguments[0]).name());
+                invisible.add(slot);
                 return slot.builder();
             }
             throw new IllegalStateException("Unexpected smithing layout operation: " + method);
@@ -104,12 +110,18 @@ public final class SmithingJeiLayoutAudit {
                         && matches(slots.get(3), item("mite:mithril_helmet")),
                 "The real layout displays one template, one ancient metal helmet, five mithril ingots and one mithril helmet");
         check(matches(slots.getLast(), item("mite:mithril_smithing_table")) && slots.getLast().horizontal == 7
-                        && slots.getLast().vertical == 39, "The displayed catalyst is the target material's smithing table");
+                        && slots.getLast().vertical == 39, "The visible catalyst shows the minimum smithing table");
+        check(invisible.size() == 1 && invisible.getFirst().role.equals("CATALYST"),
+                "Higher compatible smithing tables appear as recipe-specific catalysts");
+        List<ItemStack> higher = invisible.getFirst().ingredients;
+        check(higher.size() == 2 && ItemStack.matches(higher.get(0), item("mite:adamantium_smithing_table"))
+                        && ItemStack.matches(higher.get(1), item("mite:vibranium_smithing_table")),
+                "Mithril upgrades are discoverable from mithril, adamantium and vibranium smithing tables");
         check(page.source().id().equals(categoryClass.getMethod("getRegistryName", SmithingJeiRecipe.class).invoke(category, page)),
                 "The category retains the source recipe identity");
         verifyWorkbenchCategories(pluginClass, plugin, gui);
         verifyCatalysts(pluginClass, plugin, type);
-        Mite.LOGGER.info("[MITE smithing JEI layout audit] passed-real-JEI-api: type=mite:material_upgrade, dimensions=164x88, inputs=3, outputs=1, mithril-ingots=5, output=mite:mithril_helmet, catalyst=mite:mithril_smithing_table, Minecraft-instance-created=false, window-created=false, rendered=false");
+        Mite.LOGGER.info("[MITE smithing JEI layout audit] passed-real-JEI-api: type=mite:material_upgrade, dimensions=164x88, inputs=3, outputs=1, mithril-ingots=5, output=mite:mithril_helmet, catalysts=mithril/adamantium/vibranium, Minecraft-instance-created=false, window-created=false, rendered=false");
     }
 
     private static SmithingJeiRecipe page() {

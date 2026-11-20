@@ -43,27 +43,41 @@ public final class SmithingJeiCategory implements IRecipeCategory<SmithingJeiRec
                 .addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable("jei.mite.material_upgrade_inventory")));
         builder.addOutputSlot(129, 14).setOutputSlotBackground().addItemStack(recipe.output())
                 .addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable("jei.mite.material_upgrade_preservation")));
-        var table = recipe.requiredTable();
+        var minimum = recipe.minimumTable();
+        var compatible = minimum.compatibleTables();
         builder.addSlot(RecipeIngredientRole.CATALYST, 7, 39).setStandardSlotBackground()
-                .addItemStack(new ItemStack(table.block())).addRichTooltipCallback((slot, tooltip) -> {
-                    int divisor = table.timeReductionDivisor();
+                .addItemStack(new ItemStack(minimum.block())).addRichTooltipCallback((slot, tooltip) -> {
+                    int divisor = minimum.timeReductionDivisor();
                     if (divisor != 0) tooltip.add(Component.translatable("jei.mite.material_upgrade_speed", divisor));
+                    var player = Minecraft.getInstance().player;
+                    int level = player == null ? 0 : player.experienceLevel;
+                    boolean clumsy = player != null && PlayerCurses.has(player, R196Curse.CLUMSINESS);
+                    for (var table : compatible) {
+                        tooltip.add(Component.translatable("jei.mite.material_upgrade_table_time", table.block().getName(),
+                                seconds(recipe.durationTicks(table, level, clumsy))));
+                    }
                 });
+        var higherTables = compatible.stream().filter(table -> table != minimum)
+                .map(table -> new ItemStack(table.block())).toList();
+        if (!higherTables.isEmpty()) builder.addInvisibleIngredients(RecipeIngredientRole.CATALYST).addItemStacks(higherTables);
     }
 
     @Override public void draw(SmithingJeiRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         arrow.draw(graphics, 95, 15);
-        drawFit(graphics, Component.translatable("jei.mite.material_upgrade_table", recipe.requiredTable().block().getName()), 29, 43);
+        drawFit(graphics, Component.translatable("jei.mite.material_upgrade_table", recipe.minimumTable().block().getName()), 29, 43);
         drawFit(graphics, Component.translatable("jei.mite.material_upgrade_ingots", recipe.additions().getFirst().getCount()), 5, 62);
         var player = Minecraft.getInstance().player;
         int level = player == null ? 0 : player.experienceLevel;
         boolean clumsy = player != null && PlayerCurses.has(player, R196Curse.CLUMSINESS);
-        String duration = BigDecimal.valueOf(recipe.durationTicks(level, clumsy)).divide(BigDecimal.valueOf(20))
-                .stripTrailingZeros().toPlainString();
+        String duration = seconds(recipe.durationTicks(level, clumsy));
         drawFit(graphics, Component.translatable("jei.mite.material_upgrade_time", duration, level), 5, 76);
     }
 
     @Override public ResourceLocation getRegistryName(SmithingJeiRecipe recipe) { return recipe.source().id(); }
+
+    private static String seconds(int ticks) {
+        return BigDecimal.valueOf(ticks).divide(BigDecimal.valueOf(20)).stripTrailingZeros().toPlainString();
+    }
 
     private static void drawFit(GuiGraphics graphics, Component text, int horizontal, int vertical) {
         var font = Minecraft.getInstance().font;

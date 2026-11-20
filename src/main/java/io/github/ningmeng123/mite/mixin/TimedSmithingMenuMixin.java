@@ -35,8 +35,7 @@ public abstract class TimedSmithingMenuMixin extends ItemCombinerMenu implements
     private void mite$syncSmithingTable(int id, Inventory inventory, ContainerLevelAccess access, CallbackInfo ci) {
         addDataSlot(mite$smithingTable);
         if (!inventory.player.level().isClientSide()) {
-            mite$smithingTable.set(access.evaluate((level, pos) -> SmithingTableTier.idForBlock(level.getBlockState(pos).getBlock()),
-                    SmithingTableTier.VANILLA.id()));
+            mite$smithingTable.set(access.evaluate((level, pos) -> SmithingTableTier.idForBlock(level.getBlockState(pos).getBlock()), 0));
         }
     }
 
@@ -48,7 +47,7 @@ public abstract class TimedSmithingMenuMixin extends ItemCombinerMenu implements
     @Inject(method = "isValidBlock", at = @At("HEAD"), cancellable = true)
     private void mite$keepOpenedSmithingTable(BlockState state, CallbackInfoReturnable<Boolean> cir) {
         SmithingTableTier tier = mite$smithingTableTier();
-        cir.setReturnValue(tier != null && state.is(tier.block()));
+        if (tier != null) cir.setReturnValue(state.is(tier.block()));
     }
 
     @Inject(method = "createRecipeInput", at = @At("RETURN"), cancellable = true)

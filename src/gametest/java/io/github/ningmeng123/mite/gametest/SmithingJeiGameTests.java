@@ -1,8 +1,10 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.crafting.MaterialUpgradeRequirements;
+import io.github.ningmeng123.mite.crafting.SmithingTableTier;
 import io.github.ningmeng123.mite.crafting.TimedCraftingRules;
 import io.github.ningmeng123.mite.integration.jei.SmithingJeiRecipes;
+import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -29,7 +31,7 @@ public final class SmithingJeiGameTests {
             helper.assertTrue(page.additions().stream().allMatch(stack -> stack.getCount() == required),
                     "Every displayed alternative requires the full target-material cost");
             float difficulty = MaterialUpgradeRequirements.difficulty(page.output());
-            var table = page.requiredTable();
+            var table = page.minimumTable();
             helper.assertValueEqual(page.durationTicks(0, false), table.duration(TimedCraftingRules.period(difficulty, 0, 0F, false)),
                     "Displayed timing matches the server at level zero and default quality");
             var template = page.templates().getFirst().copy();
@@ -45,7 +47,9 @@ public final class SmithingJeiGameTests {
             if (page.source().id().equals(ResourceLocation.parse("mite:equipment_upgrade/ancient_metal_helmet_to_mithril"))) {
                 helper.assertValueEqual(required, 5, "The mithril helmet page shows five mithril ingots");
                 helper.assertValueEqual(BuiltInRegistries.BLOCK.getKey(table.block()), ResourceLocation.parse("mite:mithril_smithing_table"),
-                        "The mithril helmet page requires the mithril smithing table");
+                        "The mithril smithing table is the minimum for the mithril helmet page");
+                helper.assertValueEqual(table.compatibleTables(), List.of(SmithingTableTier.MITHRIL, SmithingTableTier.ADAMANTIUM,
+                        SmithingTableTier.VIBRANIUM), "The mithril helmet page includes only mithril and higher tables");
                 helper.assertValueEqual(table.timeReductionDivisor(), 6, "Mithril smithing reduces time by one sixth");
                 helper.assertValueEqual(page.durationTicks(20, false), table.duration(TimedCraftingRules.period(difficulty, 20, 0F, false)),
                         "The same page applies the current positive level to its displayed duration");
@@ -53,6 +57,11 @@ public final class SmithingJeiGameTests {
                         "The same page applies the current negative level to its displayed duration");
                 helper.assertValueEqual(page.durationTicks(20, true), table.duration(TimedCraftingRules.period(difficulty, 20, 0F, true)),
                         "The same page applies the player's clumsiness to its displayed duration");
+                int baseTicks = TimedCraftingRules.period(difficulty, 20, 0F, true);
+                helper.assertValueEqual(page.durationTicks(SmithingTableTier.ADAMANTIUM, 20, true), baseTicks - baseTicks / 4,
+                        "The adamantium alternative uses its own reduction and current player state");
+                helper.assertValueEqual(page.durationTicks(SmithingTableTier.VIBRANIUM, 20, true), baseTicks - baseTicks / 2,
+                        "The vibranium alternative uses its own reduction and current player state");
                 helmet = true;
             }
             if (page.source().id().getPath().endsWith("_to_ancient_metal")) {
