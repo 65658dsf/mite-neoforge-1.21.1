@@ -7,11 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class MonsterDayScalingRulesTest {
     @Test void agreedCalendarDatesHaveTheExpectedHealthAndDamageMultipliers() {
         long[] days = {1L, 2L, 21L, 32L, 33L, 34L, 64L, 65L, 66L, 97L, 129L};
-        double[] health = {1D, 1.005D, 1.1D, 1.155D, 1.16D, 1.1658D, 1.3398D, 1.3456D, 1.352328D, 1.560896D, 1.81063936D};
-        double[] damage = {1D, 1.0025D, 1.05D, 1.0775D, 1.08D, 1.0827D, 1.1637D, 1.1664D, 1.169316D, 1.259712D, 1.36048896D};
+        double[] expected = {1D, 1.005D, 1.1D, 1.155D, 1.16D, 1.1658D, 1.3398D, 1.3456D, 1.352328D, 1.560896D, 1.81063936D};
         for (int index = 0; index < days.length; index++) {
-            assertEquals(health[index], MonsterDayScalingRules.healthMultiplier(days[index]), 1E-10, "Health at day " + days[index]);
-            assertEquals(damage[index], MonsterDayScalingRules.damageMultiplier(days[index]), 1E-10, "Damage at day " + days[index]);
+            assertEquals(expected[index], MonsterDayScalingRules.healthMultiplier(days[index]), 1E-10, "Health at day " + days[index]);
+            assertEquals(expected[index], MonsterDayScalingRules.damageMultiplier(days[index]), 1E-10, "Damage at day " + days[index]);
         }
     }
 
@@ -24,21 +23,20 @@ class MonsterDayScalingRulesTest {
 
     @Test void eachThirtyTwoDaySegmentIsLinearAndTheNextSegmentUsesItsNewBasis() {
         long[][] dates = {{1L, 20L, 31L, 32L}, {33L, 40L, 63L, 64L}, {65L, 80L, 95L, 96L}};
-        double[] healthStep = {.005D, .0058D, .006728D};
-        double[] damageStep = {.0025D, .0027D, .002916D};
+        double[] step = {.005D, .0058D, .006728D};
         for (int segment = 0; segment < dates.length; segment++) for (long previous : dates[segment]) {
-            assertEquals(healthStep[segment], MonsterDayScalingRules.healthMultiplier(previous + 1L)
+            assertEquals(step[segment], MonsterDayScalingRules.healthMultiplier(previous + 1L)
                     - MonsterDayScalingRules.healthMultiplier(previous), 1E-12);
-            assertEquals(damageStep[segment], MonsterDayScalingRules.damageMultiplier(previous + 1L)
+            assertEquals(step[segment], MonsterDayScalingRules.damageMultiplier(previous + 1L)
                     - MonsterDayScalingRules.damageMultiplier(previous), 1E-12);
         }
     }
 
     @Test void ruleMultipliersRemainUncappedWhenNativeMaximumHealthWillAlreadyBeClamped() {
         assertEquals(115.51959436843139D, MonsterDayScalingRules.healthMultiplier(1025L), 1E-10);
-        assertEquals(11.737082995415249D, MonsterDayScalingRules.damageMultiplier(1025L), 1E-10);
+        assertEquals(115.51959436843139D, MonsterDayScalingRules.damageMultiplier(1025L), 1E-10);
         assertEquals(13344.776683046925D, MonsterDayScalingRules.healthMultiplier(2049L), 1E-8);
-        assertEquals(137.7591172412658D, MonsterDayScalingRules.damageMultiplier(2049L), 1E-10);
+        assertEquals(13344.776683046925D, MonsterDayScalingRules.damageMultiplier(2049L), 1E-8);
         assertEquals(Double.MAX_VALUE, MonsterDayScalingRules.healthMultiplier(1_000_000_001L));
         assertEquals(Double.MAX_VALUE, MonsterDayScalingRules.damageMultiplier(1_000_000_001L));
     }
@@ -84,10 +82,10 @@ class MonsterDayScalingRulesTest {
     @Test void configuredGrowthChangesEachDailyIncreaseAndRetainsTheThirtyTwoDayRebase() {
         assertEquals(1.32D, MonsterDayScalingRules.healthMultiplier(33L, 2D), 1E-12);
         assertEquals(1.7424D, MonsterDayScalingRules.healthMultiplier(65L, 2D), 1E-12);
-        assertEquals(1.16D, MonsterDayScalingRules.damageMultiplier(33L, 2D), 1E-12);
-        assertEquals(1.3456D, MonsterDayScalingRules.damageMultiplier(65L, 2D), 1E-12);
+        assertEquals(1.32D, MonsterDayScalingRules.damageMultiplier(33L, 2D), 1E-12);
+        assertEquals(1.7424D, MonsterDayScalingRules.damageMultiplier(65L, 2D), 1E-12);
         assertEquals(1.08D, MonsterDayScalingRules.healthMultiplier(33L, .5D), 1E-12);
-        assertEquals(1.04D, MonsterDayScalingRules.damageMultiplier(33L, .5D), 1E-12);
+        assertEquals(1.08D, MonsterDayScalingRules.damageMultiplier(33L, .5D), 1E-12);
         assertEquals(12.4D, 6D * MonsterDayScalingRules.healthMultiplier(33L, 6D, true, 2D), 1E-12);
         assertEquals(20.848D, 6D * MonsterDayScalingRules.healthMultiplier(65L, 6D, true, 2D), 1E-12);
     }

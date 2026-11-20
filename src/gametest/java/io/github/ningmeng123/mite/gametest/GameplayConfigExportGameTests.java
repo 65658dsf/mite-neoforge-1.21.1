@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.fml.loading.FMLPaths;
@@ -63,16 +64,14 @@ public final class GameplayConfigExportGameTests {
         try (var ignored = new Settings()) {
             restoreDefaults();
             String health = "base + reference * rate * days * 2";
-            String damage = "unknown_legacy_attack + day / 0";
+            String damage = "base + reference * rate * days * 3";
             MiteConfig.MONSTER_HEALTH_FORMULA.set(health);
             MiteConfig.MONSTER_DAMAGE_FORMULA.set(damage);
             MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA.set("");
             MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.set("  ");
             MiteConfig.refreshEnchantmentRules();
-            helper.assertValueEqual(MiteConfig.localSnapshot().monsterSettings().healthFormula(), health,
-                    "An inactive legacy attack expression cannot reject a valid health configuration");
-            helper.assertTrue(MiteConfig.validateMonsterGrowth(MiteConfig.localSnapshot().monsterSettings()).valid(),
-                    "Only active health formulas and the fixed attack base participate in configuration validation");
+            helper.assertValueEqual(MiteConfig.localSnapshot().monsterSettings().damageFormula(), damage,
+                    "The validated attack expression is active before export");
             byte[] source = sourceBytes();
             var editorValues = currentValues();
             Path directory = Files.createTempDirectory("mite-config-repeat-export-");
@@ -93,7 +92,7 @@ public final class GameplayConfigExportGameTests {
                 helper.assertValueEqual(parsed.get(List.of("monsters", "health_blood_moon_formula")), health,
                         "An omitted health settlement exports its effective inherited formula");
                 helper.assertValueEqual(parsed.get(List.of("monsters", "damage_blood_moon_formula")), damage,
-                        "Inactive attack expressions remain exportable as compatibility data without execution");
+                        "A blank attack settlement exports the inherited attack expression");
             }
             helper.assertValueEqual(currentValues(), editorValues, "Resolving inheritance for export does not mutate the client configuration");
             helper.assertTrue(Arrays.equals(sourceBytes(), source), "Repeated export never saves the loaded client config");
@@ -209,7 +208,9 @@ public final class GameplayConfigExportGameTests {
     }
 
     private static void restoreDefaults() {
-        for (var value : values()) set(value, value.getDefault());
+        for (var value : values()) {
+            if (!value.getPath().equals(List.of("monsters", "damage_rate_migrated"))) set(value, value.getDefault());
+        }
         MiteConfig.clearServerSnapshot();
         MiteConfig.refreshEnchantmentRules();
     }
@@ -274,17 +275,27 @@ public final class GameplayConfigExportGameTests {
     private static final class Settings implements AutoCloseable {
         private final Map<ModConfigSpec.ConfigValue<?>, Object> original = new LinkedHashMap<>();
         private final MiteConfig.Snapshot remote;
+        private final Lock configLock = GameplayConfigEditGameTests.lockCommonConfig();
 
-        private Settings() {
-            remote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot() ? null : MiteConfig.effectiveSnapshot();
-            for (var value : values()) original.put(value, copy(value.get()));
+        private Settings() throws ReflectiveOperationException {
+            try {
+                remote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot() ? null : MiteConfig.effectiveSnapshot();
+                for (var value : values()) original.put(value, copy(value.get()));
+            } catch (RuntimeException | Error failure) {
+                configLock.unlock();
+                throw failure;
+            }
         }
 
         @Override public void close() {
-            original.forEach(GameplayConfigExportGameTests::set);
-            MiteConfig.clearServerSnapshot();
-            MiteConfig.refreshEnchantmentRules();
-            if (remote != null) MiteConfig.receiveServerSnapshot(remote);
+            try {
+                original.forEach(GameplayConfigExportGameTests::set);
+                MiteConfig.clearServerSnapshot();
+                MiteConfig.refreshEnchantmentRules();
+                if (remote != null) MiteConfig.receiveServerSnapshot(remote);
+            } finally {
+                configLock.unlock();
+            }
         }
     }
 }

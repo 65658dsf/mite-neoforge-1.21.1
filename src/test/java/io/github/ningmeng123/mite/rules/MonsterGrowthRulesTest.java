@@ -12,9 +12,10 @@ class MonsterGrowthRulesTest {
         long[] days = {1L, 2L, 32L, 33L, 34L, 65L, 97L, 129L, 130L, 161L};
         double[] health = {20D, 20.1D, 23.1D, 23.2D, 23.316D, 26.912D, 31.21792D,
                 36.2127872D, 36.3688768D, 41.2076544D};
-        for (int index = 0; index < days.length; index++)
+        for (int index = 0; index < days.length; index++) {
             assertEquals(health[index], MonsterGrowthRules.health(days[index], 20D, false, DEFAULTS, 1D), 1E-10);
-        assertEquals(3.4992D, MonsterGrowthRules.damage(65L, 3D, DEFAULTS, 1D), 1E-12);
+            assertEquals(3D * health[index] / 20D, MonsterGrowthRules.damage(days[index], 3D, DEFAULTS, 1D), 1E-12);
+        }
         var afterFirstMoon = MonsterGrowthRules.healthPreview(34L, 20D, false, DEFAULTS, 1D);
         assertEquals(23.2D, afterFirstMoon.base(), 1E-12);
         assertEquals(23.2D, afterFirstMoon.reference(), 1E-12);
@@ -149,6 +150,9 @@ class MonsterGrowthRulesTest {
         var attackValidation = MonsterGrowthRules.validate(badAttackBloodMoon);
         assertFalse(attackValidation.valid());
         assertTrue(attackValidation.message().contains("攻击血月基准公式"), attackValidation.message());
+        var invalidForProjectiles = new MonsterGrowthRules.Settings(20D, 5D, 20D, .005D, .005D,
+                MonsterGrowthRules.DEFAULT_FORMULA, "base / (initial - 1)");
+        assertFalse(MonsterGrowthRules.validate(invalidForProjectiles).valid());
         var zeroAttack = new MonsterGrowthRules.Settings(0D, 0D, 20D, .005D, .0025D,
                 MonsterGrowthRules.DEFAULT_FORMULA, MonsterGrowthRules.DEFAULT_FORMULA,
                 MonsterGrowthRules.DEFAULT_FORMULA, "0");

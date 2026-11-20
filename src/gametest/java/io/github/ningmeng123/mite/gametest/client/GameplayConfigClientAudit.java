@@ -352,8 +352,8 @@ public final class GameplayConfigClientAudit implements DataProvider {
         }
         check(hidden.equals(expectedHidden) && visible.equals(expectedVisible),
                 "Dedicated ore and monster-spawn sections are suppressed; all other gameplay sections remain");
-        check(monsterValues.equals(Set.of("growth_multiplier", "health_growth_multiplier"))
-                && suppressedMonsterValues > 0, "Only the two active health growth multipliers remain in the advanced page");
+        check(monsterValues.equals(Set.of("growth_multiplier", "health_growth_multiplier", "damage_growth_multiplier"))
+                && suppressedMonsterValues > 0, "The advanced page exposes the overall, health and damage growth multipliers");
         check(originalValues.equals(MiteConfig.SPEC.getValues().valueMap()) && originalSpecs.equals(MiteConfig.SPEC.getSpec().valueMap())
                 && config.getLoadedConfig() == originalLoadedConfig && MiteConfig.SPEC.isLoaded() == originallyLoaded,
                 "Section visibility checks do not modify the registered spec, config values or loaded config");
@@ -503,6 +503,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
     private static void auditSearchMetadata(JsonObject report) throws Exception {
         var expected = new TreeSet<String>();
         collectSearchLeafIds(MiteConfig.SPEC.getSpec(), List.of(), expected);
+        expected.remove("mite:monsters.damage_rate_migrated");
         if (!ModList.get().isLoaded("modern_ite")) {
             expected.remove("mite:nether_ores.nether_adamantium");
             expected.remove("mite:nether_generation.nether_adamantium.height_range");

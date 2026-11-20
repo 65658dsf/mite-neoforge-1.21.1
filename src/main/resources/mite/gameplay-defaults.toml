@@ -170,7 +170,7 @@
 	damage_base = 0.0
 	skeleton_reference = 20.0
 	health_daily_percent = 0.5
-	damage_daily_percent = 0.25
+	damage_daily_percent = 0.5
 	health_formula = "base + reference * rate * days"
 	damage_formula = "base + reference * rate * days"
 	health_blood_moon_formula = "base + reference * rate * days"

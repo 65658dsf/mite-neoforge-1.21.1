@@ -176,6 +176,7 @@ public final class GameplayConfigEdits {
         var values = new LinkedHashMap<String, ModConfigSpec.ConfigValue<?>>();
         values.put("monsters.growth_multiplier", MiteConfig.MONSTER_GROWTH);
         values.put("monsters.health_growth_multiplier", MiteConfig.MONSTER_HEALTH_GROWTH);
+        values.put("monsters.damage_growth_multiplier", MiteConfig.MONSTER_DAMAGE_GROWTH);
         values.put("combat.weapon_reach_multiplier", MiteConfig.WEAPON_REACH_MULTIPLIER);
         values.put("combat.weapon_reach_reduction", MiteConfig.WEAPON_REACH_REDUCTION);
         values.put("combat.height_reach_penalty", MiteConfig.HEIGHT_REACH_PENALTY);
@@ -215,7 +216,8 @@ public final class GameplayConfigEdits {
         var current = MiteConfig.localSnapshot();
         double growth = ((Number)checked.getOrDefault("monsters.growth_multiplier", current.growth())).doubleValue();
         double health = ((Number)checked.getOrDefault("monsters.health_growth_multiplier", current.healthGrowth())).doubleValue();
-        if (!MiteConfig.validateMonsterGrowth(current.monsterSettings(), growth * health).valid()) return false;
+        double damage = ((Number)checked.getOrDefault("monsters.damage_growth_multiplier", current.damageGrowth())).doubleValue();
+        if (!MonsterGrowthRules.validate(current.monsterSettings(), growth * health, growth * damage).valid()) return false;
         // Nothing is mutated until every field and the resulting formula execution have passed.
         checked.forEach((key, value) -> {
             var setting = settings.get(key);

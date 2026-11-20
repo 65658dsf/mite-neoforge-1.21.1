@@ -61,7 +61,7 @@ public final class ConfigSearchIndex {
         return List.copyOf(result);
     }
 
-    /** Every declared leaf is indexed, including advanced values hidden by category landing pages. */
+    /** Includes advanced settings hidden by category landing pages. */
     public static List<Entry> configurationEntries(String modId, boolean available,
             BiFunction<ModConfig, List<String>, Screen> open) {
         var result = new ArrayList<Entry>();
@@ -81,6 +81,7 @@ public final class ConfigSearchIndex {
             if (value.getValue() instanceof UnmodifiableConfig section) collect(result, config, section, path, available, open);
             else if (value.getValue() instanceof ModConfigSpec.ConfigValue<?>) {
                 List<String> target = List.copyOf(path);
+                if (config.getModId().equals(Mite.MOD_ID) && target.equals(List.of("monsters", "damage_rate_migrated"))) continue;
                 if (config.getModId().equals(Mite.MOD_ID) && oreDimension(target.getFirst()) == Dimension.NETHER
                         && ((available && !MiteConfigClient.netherOreSettingsAvailable())
                                 || R196OreFeature.generationBlock(oreKind(target)) == Blocks.AIR)) continue;
@@ -130,10 +131,10 @@ public final class ConfigSearchIndex {
         if (!MiteConfigClient.remoteServer()) return true;
         String section = path.getFirst(), key = path.getLast();
         if (section.endsWith("_generation") && (key.equals("candidates") || key.equals("chance_percent"))) return false;
-        if (legacyDamage(key) || section.equals("monster_spawning") && !key.equals("rates") && !key.equals("weights")
+        if (section.equals("monster_spawning") && !key.equals("rates") && !key.equals("weights")
                 && !MiteExtensions.policy().spawningControls().isEmpty()) return false;
         if (section.equals("performance") || section.equals("combat") || section.equals("structures")
-                || section.equals("monsters") && key.endsWith("_multiplier") && !key.equals("damage_growth_multiplier"))
+                || section.equals("monsters") && key.endsWith("_multiplier"))
             return MiteConfigClient.editable() && MiteConfigClient.gameplayValues().containsKey(String.join(".", path));
         return MiteConfigClient.editable();
     }
@@ -157,8 +158,6 @@ public final class ConfigSearchIndex {
                     label(Mite.MOD_ID, path, ((ModConfigSpec)config.getSpec()).getSpec().get(path)));
             return new MonsterSpawningRulesScreen(parent, key);
         }
-        if (legacyDamage(key)) return SingleConfigValueScreen.create(parent, config, path,
-                label(Mite.MOD_ID, path, ((ModConfigSpec)config.getSpec()).getSpec().get(path)));
         if (section.equals("monsters") && !key.endsWith("_multiplier"))
             return new MonsterGrowthSettingsScreen(parent, key);
         if (MiteConfigClient.remoteServer()) return new ServerGameplaySettingsScreen(parent, String.join(".", path));
@@ -178,10 +177,6 @@ public final class ConfigSearchIndex {
     private static R196OreRules.Kind oreKind(List<String> path) {
         String key = path.getFirst().endsWith("_ores") ? path.getLast() : path.get(1);
         return R196OreRules.Kind.valueOf(key.replaceFirst("^deepslate_", "").toUpperCase(Locale.ROOT));
-    }
-
-    private static boolean legacyDamage(String key) {
-        return List.of("damage_growth_multiplier", "damage_daily_percent", "damage_formula", "damage_blood_moon_formula").contains(key);
     }
 
     private static void addEnchantments(List<Entry> result, Screen parent) {

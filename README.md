@@ -58,7 +58,7 @@ Simply Swords 的声明版本为 1.70.2 及以上，Better Combat 为 `[2.4.0,3)
 | 食物与恢复 | 饱食、营养、蛋白质、脂肪、植物营养和糖抵抗，食品加工及多种容器 |
 | 农业与畜牧 | 作物气候、光照、湿度、肥力、布局和病害，家畜食物、水分与自由度 |
 | 生物与月相 | 特殊生物、协同追击和破障，血月、蓝月、丰收月与月晕 |
-| 日期进程 | 怪物生命随日期成长，出生装备的材质与附魔随世界进程提高 |
+| 日期进程 | 除凋零和末影龙外，敌对怪物的生命与攻击默认每天各增长当前周期参考值的 0.5%。僵尸领主等敌对 Boss 也参与成长。出生装备的材质与附魔随世界进程提高 |
 | 地底与探索 | 地底世界、矿物与传送规则，适配后的地牢、试炼密室和宝库奖励 |
 | 功能与显示 | 金属容器、盾牌、材料箭、钓鱼竿、幻灵刃，以及营养面板和装备提示 |
 
@@ -161,7 +161,7 @@ Simply Swords 的声明版本为 1.70.2 及以上，Better Combat 为 `[2.4.0,3)
 | 难度与画面设置 | [客户端设置](docs/client-settings.md) |
 | 装备与附魔 | [装备成长](docs/equipment-progression.md)、[副属性权重](docs/equipment-affix-weights.md)、[材质升级](docs/equipment-material-upgrades.md)、[附魔规则](docs/enchantments-r196.md) |
 | 生产与生存 | [炉体与热量](docs/furnaces-024-evidence.md)、[作物生长](docs/crop-growth.md)、[家畜健康](docs/livestock-health-033-evidence.md)、[坍塌](docs/collapse-physics.md) |
-| 怪物与月相 | [怪物生命成长](docs/monster-day-scaling.md)、[装备进阶](docs/blood-moon-equipment.md)、[自然刷怪](docs/monster-natural-spawning.md)、[月相](docs/lunar-source-evidence.md) |
+| 怪物与月相 | [怪物生命与攻击成长](docs/monster-day-scaling.md)、[装备进阶](docs/blood-moon-equipment.md)、[自然刷怪](docs/monster-natural-spawning.md)、[月相](docs/lunar-source-evidence.md) |
 | 探索与特殊装备 | [地底世界](docs/underworld-depth-022.md)、[地底地牢](docs/underworld-dungeons.md)、[幻灵刃](docs/phantom-blades-2026-10-24.md) |
 | 历史更新 | [0.3.6](docs/release-0.3.6.md)、[0.3.5](docs/release-0.3.5.md)、[0.3.4](docs/release-0.3.4.md)、[0.3.3](docs/release-0.3.3.md)、[0.3.2](docs/release-0.3.2.md)、[0.2.16](docs/release-0.2.16.md) |
 

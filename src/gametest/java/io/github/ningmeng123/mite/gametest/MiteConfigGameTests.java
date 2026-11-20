@@ -355,10 +355,10 @@ public final class MiteConfigGameTests {
             helper.assertValueEqual(MiteConfig.monsterGrowthSettings(), before.monsterSettings(),
                     "Runtime consumers keep the last successful bases, rates and formulas after a bad file reload");
             MiteConfig.MONSTER_HEALTH_FORMULA.set(MonsterGrowthRules.DEFAULT_FORMULA);
-            MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA.set("base / (days - days)");
+            MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.set("base / (days - days)");
             MiteConfig.refreshEnchantmentRules();
             helper.assertValueEqual(MiteConfig.localSnapshot().monsterSettings(), before.monsterSettings(),
-                    "A failing blood-moon settlement from a file reload also retains the entire valid revision");
+                    "A failing attack settlement on reload retains the entire valid revision");
         }
         helper.succeed();
     }
@@ -388,8 +388,8 @@ public final class MiteConfigGameTests {
             long day = monster.getPersistentData().getCompound(MonsterDayScaling.DATA_KEY).getLong("day");
             close(helper, monster.getMaxHealth(), Math.min(1024D, 20D * MonsterDayScalingRules.healthMultiplier(day, 6D)),
                     "Overall and health growth multiply in the runtime attribute update");
-            close(helper, MonsterDayScaling.attackMultiplier(monster), 1D,
-                    "Legacy damage growth multipliers cannot restore calendar damage growth");
+            close(helper, MonsterDayScaling.attackMultiplier(monster), MonsterDayScalingRules.damageMultiplier(day, 8D),
+                    "Overall and damage growth multiply in the runtime attributed attack");
 
             var player = helper.makeMockPlayer(GameType.SURVIVAL);
             var position = helper.absolutePos(new BlockPos(2, 3, 2));

@@ -6,7 +6,7 @@ import java.util.Map;
 /** Editable attribute growth with a new real basis after each completed blood moon. @author NingMeng123 */
 public final class MonsterGrowthRules {
     public static final String DEFAULT_FORMULA = "base + reference * rate * days";
-    public static final Settings DEFAULTS = new Settings(20D, 0D, 20D, .005D, .0025D,
+    public static final Settings DEFAULTS = new Settings(20D, 0D, 20D, .005D, .005D,
             DEFAULT_FORMULA, DEFAULT_FORMULA);
     private static final int MAX_REBASES = 4096;
     private static final int CACHE_SIZE = 512;
@@ -78,8 +78,10 @@ public final class MonsterGrowthRules {
                 }
             }
             for (double multiplier : new double[]{0D, 1D, damageMultiplier}) {
-                for (double nativeBase : new double[]{0D, 1D, 3D, 20D, 2048D}) for (long day : dates) {
-                    double initial = settings.damageBase() > 0D ? settings.damageBase() : nativeBase;
+                // Unit base is used for owned attacks even when melee has a configured override.
+                double[] initialValues = settings.damageBase() > 0D ? new double[]{1D, settings.damageBase()}
+                        : new double[]{0D, 1D, 3D, 20D, 2048D};
+                for (double initial : initialValues) for (long day : dates) {
                     strict(day, initial, initial, settings.damageRate() * multiplier, damage, damageBloodMoon, false);
                 }
             }

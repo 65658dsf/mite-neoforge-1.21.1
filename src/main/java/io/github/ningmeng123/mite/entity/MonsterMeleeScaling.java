@@ -4,7 +4,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
-/** Configure a fixed innate melee base while retaining equipment and effect modifiers. @author NingMeng123 */
+/** Apply calendar growth to innate melee damage while retaining equipment and effect modifiers. @author NingMeng123 */
 public final class MonsterMeleeScaling {
     private record Frame(Mob attacker, Frame previous) {}
     private static final ThreadLocal<Frame> CURRENT = new ThreadLocal<>();
@@ -19,7 +19,7 @@ public final class MonsterMeleeScaling {
         return frame != null && frame.attacker() == attacker;
     }
 
-    /** The live attribute remains untouched; weapon bonuses are applied after the fixed innate base. */
+    /** Apply weapon bonuses to the grown base on a copy of the current attribute. */
     public static double attackValue(Mob attacker, double nativeValue) {
         if (!active(attacker) || !MonsterDayScaling.handles(attacker)) return nativeValue;
         AttributeInstance attribute = attacker.getAttribute(Attributes.ATTACK_DAMAGE);

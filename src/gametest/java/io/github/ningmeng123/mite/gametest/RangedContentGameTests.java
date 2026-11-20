@@ -7,6 +7,7 @@ import io.github.ningmeng123.mite.ranged.ArrowRecovery;
 import io.github.ningmeng123.mite.ranged.MaterialArrowView;
 import io.github.ningmeng123.mite.registry.MiteRangedItems;
 import io.github.ningmeng123.mite.rules.R196RangedRules.Material;
+import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -134,7 +136,26 @@ public final class RangedContentGameTests {
         helper.succeed();
     }
     @GameTest(template = "ranged_027")
-    public static void mobBowHitsKeepHalfDamageIncludingFractionsAndModernArrows(GameTestHelper helper) {
+    public static void mobArrowHitsKeepGrowingAcrossBloodMoonsAndBlueMoons(GameTestHelper helper) {
+        var world = helper.getLevel().getServer().overworld();
+        var progress = BloodMoonInvasionData.get(world);
+        long time = world.getDayTime(), highest = progress.highestDay();
+        try {
+            world.setDayTime(6000L);
+            long[] days = {1L, 2L, 33L, 65L, 129L, 130L, 161L};
+            double[] multipliers = {1D, 1.005D, 1.16D, 1.3456D, 1.81063936D, 1.81844384D, 2.06038272D};
+            for (int i = 0; i < days.length; i++) {
+                progress.restoreProgress(days[i]);
+                checkMonsterBowHits(helper, multipliers[i]);
+            }
+        } finally {
+            world.setDayTime(time);
+            progress.restoreProgress(highest);
+        }
+        helper.succeed();
+    }
+
+    private static void checkMonsterBowHits(GameTestHelper helper, double multiplier) {
         for (EntityType<?> type : List.of(EntityType.SKELETON, EntityType.STRAY, EntityType.BOGGED, EntityType.ZOMBIFIED_PIGLIN)) {
             Mob shooter = (Mob)type.create(helper.getLevel());
             helper.assertTrue(shooter != null, "The bow-wielding mob fixture exists");
@@ -142,12 +163,13 @@ public final class RangedContentGameTests {
                 ItemStack ammo = modern ? new ItemStack(Items.TIPPED_ARROW) : new ItemStack(MiteRangedItems.arrow(Material.RUSTED_IRON));
                 Arrow arrow = (Arrow)((ArrowItem)ammo.getItem()).createArrow(helper.getLevel(), ammo, shooter, new ItemStack(Items.BOW));
                 arrow.setDeltaMovement(3D, 0D, 0D); arrow.setCritArrow(false);
-                Cow target = new Cow(EntityType.COW, helper.getLevel());
+                Cow target = bowTarget(helper);
                 float before = target.getHealth();
                 // Skeleton rusty arrows used to deal5; other mobs retain velocity damage before the half multiplier.
                 float expected = modern ? 3F : type == EntityType.ZOMBIFIED_PIGLIN ? 2.25F : 2.5F;
                 helper.assertValueEqual(hit(helper, arrow, target), expected, "The native hit halves mob bow damage for " + type);
-                helper.assertValueEqual(before - target.getHealth(), expected, "The target loses the exact fractional health");
+                helper.assertTrue(Math.abs(before - target.getHealth() - expected * multiplier) < 1E-5D,
+                        "The halved bow hit scales by " + multiplier + " for " + type);
                 arrow.discard(); target.discard();
             }
             shooter.discard();
@@ -156,10 +178,19 @@ public final class RangedContentGameTests {
         ItemStack ammo = new ItemStack(MiteRangedItems.arrow(Material.RUSTED_IRON));
         Arrow arrow = (Arrow)((ArrowItem)ammo.getItem()).createArrow(helper.getLevel(), ammo, shooter, new ItemStack(Items.CROSSBOW));
         arrow.setDeltaMovement(3D, 0D, 0D); arrow.setCritArrow(false);
-        helper.assertValueEqual(hit(helper, arrow, new Cow(EntityType.COW, helper.getLevel())), 4.5F,
-                "A non-skeleton mob crossbow retains its original damage");
+        Cow target = bowTarget(helper);
+        float before = target.getHealth();
+        helper.assertValueEqual(hit(helper, arrow, target), 4.5F, "The crossbow retains its original base hit");
+        helper.assertTrue(Math.abs(before - target.getHealth() - 4.5D * multiplier) < 1E-5D,
+                "The pillager's full crossbow hit scales once by " + multiplier);
         arrow.discard(); shooter.discard();
-        helper.succeed();
+    }
+
+    private static Cow bowTarget(GameTestHelper helper) {
+        Cow target = new Cow(EntityType.COW, helper.getLevel());
+        target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(32D);
+        target.setHealth(32F);
+        return target;
     }
     @GameTest(template = "ranged_027")
     public static void NativeBowAndCrossbowFireAndConsumeSourceAmmunition(GameTestHelper helper) {

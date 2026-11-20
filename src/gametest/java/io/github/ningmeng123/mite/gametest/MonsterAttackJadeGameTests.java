@@ -1,9 +1,13 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.entity.MobKind;
+import io.github.ningmeng123.mite.entity.MonsterDayScaling;
 import io.github.ningmeng123.mite.entity.MonsterMeleeScaling;
+import io.github.ningmeng123.mite.registry.MiteMobs;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -18,6 +22,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.fml.ModList;
@@ -37,7 +42,7 @@ public final class MonsterAttackJadeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void ordinaryCubeAttackUsesActualContactDamageInsteadOfAttributeModifiers(GameTestHelper helper) {
+    public static void cubesShowCalendarGrowthOnContactDamage(GameTestHelper helper) {
         if (jadeAvailable(helper)) RuntimeChecks.cubeAttack(helper);
         helper.succeed();
     }
@@ -92,7 +97,7 @@ public final class MonsterAttackJadeGameTests {
                 var accessor = accessor(zombie, data);
                 helper.assertTrue(PROVIDER.shouldRequestData(accessor), "A living zombie requests authoritative attack data");
                 PROVIDER.appendServerData(data, accessor);
-                close(helper, snapshot(helper, accessor), zombie.getAttributeValue(Attributes.ATTACK_DAMAGE),
+                close(helper, snapshot(helper, accessor), MonsterDayScaling.attackBase(zombie, zombie.getAttributeBaseValue(Attributes.ATTACK_DAMAGE)),
                         "The unarmed zombie uses its current innate attack");
 
                 zombie.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
@@ -133,16 +138,23 @@ public final class MonsterAttackJadeGameTests {
         }
 
         private static void cubeAttack(GameTestHelper helper) {
-            for (var type : List.of(EntityType.SLIME, EntityType.MAGMA_CUBE)) {
-                var cube = mob(helper, type);
+            Map<EntityType<? extends Mob>, Float> contactDamages = Map.of(
+                    EntityType.SLIME, 4F, EntityType.MAGMA_CUBE, 8F, MiteMobs.type(MobKind.BLOB), 17F);
+            for (var entry : contactDamages.entrySet()) {
+                Slime cube = (Slime)mob(helper, entry.getKey());
                 try {
                     cube.setSize(4, true);
-                    cube.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(123D);
+                    cube.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(17D);
+                    CompoundTag calendar = new CompoundTag();
+                    calendar.putLong("day", 33L);
+                    cube.getPersistentData().put(MonsterDayScaling.DATA_KEY, calendar);
+                    double multiplier = MonsterDayScaling.attackMultiplier(cube);
+                    helper.assertTrue(multiplier > 1D, "The fixture has reached a date with attack growth");
                     CompoundTag data = new CompoundTag();
                     var accessor = accessor(cube, data);
                     PROVIDER.appendServerData(data, accessor);
-                    close(helper, snapshot(helper, accessor), type == EntityType.MAGMA_CUBE ? 8D : 4D,
-                            "Ordinary cubes display size-based contact damage even with a different attack attribute");
+                    close(helper, snapshot(helper, accessor), (float)(entry.getValue() * multiplier),
+                            "Jade scales size-based vanilla contact and attribute-based MITE contact exactly once");
                 } finally { cube.discard(); }
             }
         }

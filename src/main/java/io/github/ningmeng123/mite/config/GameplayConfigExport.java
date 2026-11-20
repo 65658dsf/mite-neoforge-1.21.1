@@ -180,8 +180,8 @@ public final class GameplayConfigExport {
                 content.get(MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA.getPath()),
                 content.get(MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.getPath()));
         double overall = number(content, MiteConfig.MONSTER_GROWTH);
-        var validation = MiteConfig.validateMonsterGrowth(settings,
-                overall * number(content, MiteConfig.MONSTER_HEALTH_GROWTH));
+        var validation = MonsterGrowthRules.validate(settings, overall * number(content, MiteConfig.MONSTER_HEALTH_GROWTH),
+                overall * number(content, MiteConfig.MONSTER_DAMAGE_GROWTH));
         if (!validation.valid()) throw new IOException("Exported growth formulas failed validation: " + validation.message());
     }
 

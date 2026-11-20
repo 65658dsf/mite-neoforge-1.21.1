@@ -42,6 +42,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.DoubleValue MONSTER_GROWTH, MONSTER_HEALTH_GROWTH, MONSTER_DAMAGE_GROWTH;
     public static final ModConfigSpec.DoubleValue MONSTER_HEALTH_BASE, MONSTER_DAMAGE_BASE, MONSTER_SKELETON_REFERENCE;
     public static final ModConfigSpec.DoubleValue MONSTER_HEALTH_DAILY_PERCENT, MONSTER_DAMAGE_DAILY_PERCENT;
+    private static final ModConfigSpec.BooleanValue DAMAGE_RATE_MIGRATED;
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_FORMULA, MONSTER_DAMAGE_FORMULA;
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_BLOOD_MOON_FORMULA, MONSTER_DAMAGE_BLOOD_MOON_FORMULA;
     public static final ModConfigSpec.DoubleValue WEAPON_REACH_MULTIPLIER, WEAPON_REACH_REDUCTION;
@@ -123,24 +124,26 @@ public final class MiteConfig {
         builder.translation("mite.config.monsters").push("monsters");
         MONSTER_GROWTH = number(builder, "growth_multiplier", 1D, 100D, "Overall multiplier of the formula's rate variable; 0 disables rate-based growth in the default formula. Custom formulas may also use day or days directly. Existing monsters refresh periodically.");
         MONSTER_HEALTH_GROWTH = number(builder, "health_growth_multiplier", 1D, 100D, "Daily health growth multiplier, multiplied by the overall growth multiplier.");
-        MONSTER_DAMAGE_GROWTH = number(builder, "damage_growth_multiplier", 1D, 100D, "Legacy compatibility value; calendar-based attack damage growth has been removed and this value has no gameplay effect.");
+        MONSTER_DAMAGE_GROWTH = number(builder, "damage_growth_multiplier", 1D, 100D, "Daily attack damage growth multiplier, multiplied by the overall growth multiplier.");
         MONSTER_HEALTH_BASE = number(builder, "health_base", 20D, 1024D, "First-period health growth reference shared by all monsters. 0 uses the default 20. Each entity retains its native initial health, including independent modifiers. Later blood-moon periods reference actual settled health.");
-        MONSTER_DAMAGE_BASE = number(builder, "damage_base", 0D, 2048D, "Fixed innate melee attack damage, independent of the world date. 0 preserves each entity's native base; weapon bonuses are added afterward.");
+        MONSTER_DAMAGE_BASE = number(builder, "damage_base", 0D, 2048D, "Initial innate melee attack damage. 0 uses the entity's native base. Weapon bonuses are added after growth.");
         MONSTER_SKELETON_REFERENCE = number(builder, "skeleton_reference", 20D, 1024D, "Legacy compatibility value. All monsters now share health_base as their first-period growth reference.");
         MONSTER_HEALTH_DAILY_PERCENT = number(builder, "health_daily_percent", .5D, 100D, "Daily health growth in percent of the current blood-moon baseline: 0.5 means 0.5%, or rate=0.005 in the formula.");
-        MONSTER_DAMAGE_DAILY_PERCENT = number(builder, "damage_daily_percent", .25D, 100D, "Legacy compatibility value; calendar-based attack damage growth has been removed and this value has no gameplay effect.");
+        MONSTER_DAMAGE_DAILY_PERCENT = number(builder, "damage_daily_percent", MonsterGrowthRules.DEFAULTS.damageRate() * 100D, 100D, "Daily innate attack growth as a percentage of the current period's reference attack. 0.5 means rate=0.005.");
+        DAMAGE_RATE_MIGRATED = builder.comment("Set automatically after upgrading the old default daily attack rate.")
+                .define("damage_rate_migrated", false);
         MONSTER_HEALTH_FORMULA = builder.translation("mite.config.health_formula")
                 .comment("Health within the current growth period. Variables: base, initial, reference, rate, days, day, blood_moons. The separate health_blood_moon_formula settles the new base/reference when a blood moon ends. Only validated arithmetic is accepted.")
                 .define("health_formula", MonsterGrowthRules.DEFAULTS.healthFormula(), MiteConfig::validFormulaSyntax);
         MONSTER_DAMAGE_FORMULA = builder.translation("mite.config.damage_formula")
-                .comment("Legacy compatibility expression; calendar-based attack damage growth has been removed and this formula is not executed for gameplay.")
-                .define("damage_formula", MonsterGrowthRules.DEFAULTS.damageFormula());
+                .comment("Innate attack within the current growth period. The separate damage_blood_moon_formula settles the next period's base and reference.")
+                .define("damage_formula", MonsterGrowthRules.DEFAULTS.damageFormula(), MiteConfig::validFormulaSyntax);
         MONSTER_HEALTH_BLOOD_MOON_FORMULA = builder.translation("mite.config.health_blood_moon_formula")
                 .comment("Health baseline settlement when each blood moon ends (after days 32/64/96/160). The result becomes both base and reference for the next growth period; blue moons are skipped. Uses the same variables as health_formula. Empty inherits health_formula, preserving existing custom configurations.")
                 .define("health_blood_moon_formula", BundledGameplayDefaults.text("monsters.health_blood_moon_formula", ""), MiteConfig::validOptionalFormulaSyntax);
         MONSTER_DAMAGE_BLOOD_MOON_FORMULA = builder.translation("mite.config.damage_blood_moon_formula")
-                .comment("Legacy compatibility expression; attack damage no longer rebases after blood moons and this formula is not executed for gameplay.")
-                .define("damage_blood_moon_formula", BundledGameplayDefaults.text("monsters.damage_blood_moon_formula", ""));
+                .comment("Innate attack baseline settlement when each blood moon ends. The result becomes the next period's base and reference. Empty inherits damage_formula.")
+                .define("damage_blood_moon_formula", BundledGameplayDefaults.text("monsters.damage_blood_moon_formula", ""), MiteConfig::validOptionalFormulaSyntax);
         builder.pop();
         builder.translation("mite.config.monster_spawning").push("monster_spawning");
         NATURAL_SPAWN_RATES = builder.translation("mite.config.natural_spawn_rates")
@@ -686,7 +689,7 @@ public final class MiteConfig {
                 inheritedFormula(value(MONSTER_HEALTH_BLOOD_MOON_FORMULA), healthFormula),
                 inheritedFormula(value(MONSTER_DAMAGE_BLOOD_MOON_FORMULA), damageFormula));
         double overall = value(MONSTER_GROWTH), healthMultiplier = value(MONSTER_HEALTH_GROWTH), damageMultiplier = value(MONSTER_DAMAGE_GROWTH);
-        var validation = validateMonsterGrowth(growth, overall * healthMultiplier);
+        var validation = MonsterGrowthRules.validate(growth, overall * healthMultiplier, overall * damageMultiplier);
         if (!validation.valid()) {
             Mite.LOGGER.warn("Rejected monster growth configuration; retaining last valid formulas: {}", validation.message());
             growth = local == null ? MonsterGrowthRules.DEFAULTS : local.monsterSettings();
@@ -758,15 +761,12 @@ public final class MiteConfig {
 
     public static GrowthFormula.Validation validateMonsterGrowth(MonsterGrowthRules.Settings settings) {
         var snapshot = effectiveSnapshot();
-        return validateMonsterGrowth(settings, snapshot.growth() * snapshot.healthGrowth());
+        return MonsterGrowthRules.validate(settings, snapshot.growth() * snapshot.healthGrowth(), snapshot.growth() * snapshot.damageGrowth());
     }
 
-    /** Inactive legacy attack formulas cannot reject an otherwise valid health configuration. */
     public static GrowthFormula.Validation validateMonsterGrowth(MonsterGrowthRules.Settings settings, double healthMultiplier) {
-        if (settings == null) return MonsterGrowthRules.validate(null, healthMultiplier, 0D);
-        var active = new MonsterGrowthRules.Settings(settings.healthBase(), settings.damageBase(), settings.skeletonReference(),
-                settings.healthRate(), 0D, settings.healthFormula(), "base", settings.healthBloodMoonFormula(), "base");
-        return MonsterGrowthRules.validate(active, healthMultiplier, 0D);
+        var snapshot = effectiveSnapshot();
+        return MonsterGrowthRules.validate(settings, healthMultiplier, snapshot.growth() * snapshot.damageGrowth());
     }
 
     public static GrowthFormula.Validation saveMonsterGrowth(MonsterGrowthRules.Settings settings) {
@@ -890,8 +890,37 @@ public final class MiteConfig {
         return true;
     }
 
+    private static void migrateAttackGrowth() {
+        String formula = MONSTER_DAMAGE_FORMULA.get();
+        String settlement = MONSTER_DAMAGE_BLOOD_MOON_FORMULA.get();
+        String defaultFormula = MonsterGrowthRules.DEFAULT_FORMULA;
+        if (defaultFormula.equals(formula) && defaultFormula.equals(inheritedFormula(settlement, formula))) {
+            if (MONSTER_DAMAGE_DAILY_PERCENT.get() == .25D && MONSTER_DAMAGE_GROWTH.get() == 1D)
+                MONSTER_DAMAGE_DAILY_PERCENT.set(MONSTER_DAMAGE_DAILY_PERCENT.getDefault());
+        } else if (!validLegacyAttack(formula, settlement)) {
+            // The previous release allowed arbitrary attack formulas because it never executed them.
+            Mite.LOGGER.warn("Repairing unusable monster attack formulas from the previous configuration");
+            if (!validLegacyAttack(formula, defaultFormula)) {
+                formula = defaultFormula;
+                MONSTER_DAMAGE_FORMULA.set(formula);
+            }
+            if (!validLegacyAttack(formula, settlement)) MONSTER_DAMAGE_BLOOD_MOON_FORMULA.set(defaultFormula);
+        }
+        DAMAGE_RATE_MIGRATED.set(true);
+        SPEC.save();
+    }
+
+    private static boolean validLegacyAttack(String formula, String settlement) {
+        var defaults = MonsterGrowthRules.DEFAULTS;
+        var attack = new MonsterGrowthRules.Settings(defaults.healthBase(), MONSTER_DAMAGE_BASE.get(), defaults.skeletonReference(),
+                defaults.healthRate(), MONSTER_DAMAGE_DAILY_PERCENT.get() / 100D, defaults.healthFormula(), formula,
+                defaults.healthBloodMoonFormula(), inheritedFormula(settlement, formula));
+        return MonsterGrowthRules.validate(attack, 1D, MONSTER_GROWTH.get() * MONSTER_DAMAGE_GROWTH.get()).valid();
+    }
+
     @SubscribeEvent public static void changed(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC || event instanceof ModConfigEvent.Unloading) return;
+        if (!DAMAGE_RATE_MIGRATED.get()) migrateAttackGrowth();
         EnchantmentCatalog.entries();
         refreshEnchantmentRules();
         GameplayConfigSync.broadcast();

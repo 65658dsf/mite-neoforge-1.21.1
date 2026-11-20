@@ -57,8 +57,9 @@ public enum MonsterAttackJadeProvider implements IEntityComponentProvider, IServ
 
     private static double attackDamage(Mob mob) {
         if (mob instanceof Slime slime) {
-            if (!(slime instanceof R196Cube)) return R196Cube.vanillaContactDamage(slime);
-            return mob.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            float contactDamage = slime instanceof R196Cube ? (float)slime.getAttributeValue(Attributes.ATTACK_DAMAGE)
+                    : R196Cube.vanillaContactDamage(slime);
+            return MonsterDayScaling.scaledOwnedDamage(slime, contactDamage);
         }
         try (MonsterMeleeScaling.Scope ignored = MonsterMeleeScaling.enter(mob)) {
             return MonsterMeleeScaling.attackValue(mob, mob.getAttributeValue(Attributes.ATTACK_DAMAGE));

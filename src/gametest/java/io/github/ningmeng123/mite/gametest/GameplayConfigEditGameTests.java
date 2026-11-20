@@ -10,6 +10,7 @@ import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.network.GameplayConfigEditPayload;
 import io.github.ningmeng123.mite.network.GameplayConfigEditResultPayload;
 import io.github.ningmeng123.mite.network.GameplayConfigPayload;
+import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
 import io.github.ningmeng123.mite.rules.MonsterSpawningSettings.Option;
 import io.netty.buffer.Unpooled;
 import java.nio.file.Files;
@@ -20,12 +21,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.ServerOpListEntry;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfigs;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -135,9 +139,11 @@ public final class GameplayConfigEditGameTests {
             operator.permission(2);
             var oldSpawning = MiteConfig.localSnapshot().spawningSettings();
             helper.assertTrue(GameplayConfigEdits.apply(operator.player, "gameplay", GSON.toJson(Map.of(
-                    "combat.weapon_reach_multiplier", 2.25D, "combat.height_reach_penalty", false))) == null,
+                    "combat.weapon_reach_multiplier", 2.25D, "combat.height_reach_penalty", false,
+                    "monsters.damage_growth_multiplier", 1.5D))) == null,
                     "A general gameplay patch is accepted through the server authority boundary");
             helper.assertValueEqual(MiteConfig.weaponReachMultiplier(), 2.25D, "The live reach rule receives the server edit");
+            helper.assertValueEqual(MiteConfig.localSnapshot().damageGrowth(), 1.5D, "The server applies the edited attack growth multiplier");
             helper.assertFalse(MiteConfig.heightReachPenaltyEnabled(), "The live boolean rule receives the server edit");
             helper.assertValueEqual(MiteConfig.localSnapshot().spawningSettings(), oldSpawning, "A gameplay patch preserves unrelated dedicated settings");
             var disk = new TomlParser().parse(Files.readString(configPath()));
@@ -146,6 +152,61 @@ public final class GameplayConfigEditGameTests {
             helper.assertValueEqual(disk.get(List.of("combat", "height_reach_penalty")), false, "Boolean values stay booleans on disk");
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void oldDefaultAttackRateUpgradesOnceAndCustomRatesSurvive(GameTestHelper helper) throws Exception {
+        try (var ignored = new Settings()) {
+            ModConfigSpec.BooleanValue migrated = MiteConfig.SPEC.getValues().get("monsters.damage_rate_migrated");
+            migrated.set(false);
+            MiteConfig.MONSTER_DAMAGE_DAILY_PERCENT.set(.25D);
+            MiteConfig.MONSTER_DAMAGE_BASE.set(8D);
+            MiteConfig.MONSTER_DAMAGE_GROWTH.set(1D);
+            MiteConfig.MONSTER_DAMAGE_FORMULA.set(MonsterGrowthRules.DEFAULT_FORMULA);
+            MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.set("");
+            MiteConfig.SPEC.save();
+            assertSavedAttackRate(helper, .5D);
+            helper.assertValueEqual(MiteConfig.localSnapshot().monsterSettings().damageBase(), 8D,
+                    "An explicitly configured innate attack base keeps its value and receives the new default growth rate");
+
+            MiteConfig.MONSTER_DAMAGE_DAILY_PERCENT.set(.25D);
+            MiteConfig.SPEC.save();
+            assertSavedAttackRate(helper, .25D);
+
+            migrated.set(false);
+            MiteConfig.MONSTER_DAMAGE_FORMULA.set("base + reference * rate * days * 2");
+            MiteConfig.SPEC.save();
+            assertSavedAttackRate(helper, .25D);
+
+            migrated.set(false);
+            String health = "base + reference * rate * days * 4";
+            String bloodMoonAttack = "base + reference * rate * days * 3";
+            MiteConfig.MONSTER_GROWTH.set(1.5D);
+            MiteConfig.MONSTER_HEALTH_GROWTH.set(2D);
+            MiteConfig.MONSTER_DAMAGE_GROWTH.set(3D);
+            MiteConfig.MONSTER_HEALTH_FORMULA.set(health);
+            MiteConfig.MONSTER_DAMAGE_FORMULA.set("base / 0");
+            MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.set(bloodMoonAttack);
+            MiteConfig.SPEC.save();
+            var repaired = MiteConfig.localSnapshot();
+            helper.assertValueEqual(repaired.monsterSettings().damageFormula(), MonsterGrowthRules.DEFAULT_FORMULA,
+                    "The unusable legacy attack expression is repaired");
+            helper.assertValueEqual(repaired.monsterSettings().damageBloodMoonFormula(), bloodMoonAttack,
+                    "The valid attack settlement survives the repair");
+            helper.assertValueEqual(repaired.monsterSettings().healthFormula(), health, "The newly loaded health formula survives the repair");
+            helper.assertValueEqual(repaired.growth(), 1.5D, "The overall multiplier survives the repair");
+            helper.assertValueEqual(repaired.healthGrowth(), 2D, "The health multiplier survives the repair");
+            helper.assertValueEqual(repaired.damageGrowth(), 3D, "The attack multiplier survives the repair");
+            assertSavedAttackRate(helper, .25D);
+        }
+        helper.succeed();
+    }
+
+    private static void assertSavedAttackRate(GameTestHelper helper, double expected) throws Exception {
+        var saved = new TomlParser().parse(Files.readString(configPath()));
+        helper.assertValueEqual(saved.get("monsters.damage_rate_migrated"), true, "The server records the completed upgrade");
+        helper.assertValueEqual(((Number)saved.get("monsters.damage_daily_percent")).doubleValue(), expected, "Stored daily attack percent");
+        helper.assertValueEqual(MiteConfig.localSnapshot().monsterSettings().damageRate(), expected / 100D, "Published attack growth rate");
     }
 
     @GameTest(template = "empty")
@@ -236,15 +297,41 @@ public final class GameplayConfigEditGameTests {
     @SuppressWarnings("unchecked")
     private static void set(ModConfigSpec.ConfigValue<?> value, Object contents) { ((ModConfigSpec.ConfigValue<Object>)value).set(contents); }
 
+    /** Hold FML's reload lock so an earlier save's file-watcher callback cannot replace an in-progress test draft. */
+    static Lock lockCommonConfig() throws ReflectiveOperationException {
+        ModConfig config = ModConfigs.getModConfigs("mite").stream().filter(entry -> entry.getSpec() == MiteConfig.SPEC).findFirst().orElseThrow();
+        var field = ModConfig.class.getDeclaredField("lock");
+        field.setAccessible(true);
+        Lock lock = (Lock)field.get(config);
+        lock.lock();
+        return lock;
+    }
+
     private static final class Settings implements AutoCloseable {
-        private final Map<ModConfigSpec.ConfigValue<?>, Object> original = currentValues();
-        private final MiteConfig.Snapshot remote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot() ? null : MiteConfig.effectiveSnapshot();
+        private final Lock configLock = lockCommonConfig();
+        private final Map<ModConfigSpec.ConfigValue<?>, Object> original;
+        private final MiteConfig.Snapshot remote;
+
+        private Settings() throws ReflectiveOperationException {
+            try {
+                original = currentValues();
+                remote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot() ? null : MiteConfig.effectiveSnapshot();
+            } catch (RuntimeException | Error failure) {
+                configLock.unlock();
+                throw failure;
+            }
+        }
+
         @Override public void close() {
-            original.forEach(GameplayConfigEditGameTests::set);
-            MiteConfig.clearServerSnapshot();
-            MiteConfig.refreshEnchantmentRules();
-            MiteConfig.SPEC.save();
-            if (remote != null) MiteConfig.receiveServerSnapshot(remote);
+            try {
+                original.forEach(GameplayConfigEditGameTests::set);
+                MiteConfig.clearServerSnapshot();
+                MiteConfig.refreshEnchantmentRules();
+                MiteConfig.SPEC.save();
+                if (remote != null) MiteConfig.receiveServerSnapshot(remote);
+            } finally {
+                configLock.unlock();
+            }
         }
     }
 

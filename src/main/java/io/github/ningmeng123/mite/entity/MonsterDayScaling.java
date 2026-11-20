@@ -1,29 +1,29 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.combat.SourcePlayerCombat;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-/** Calendar health and a fixed innate attack base, shared by native and MITE monsters. @author NingMeng123 */
+/** Calendar health and attack growth shared by native and MITE monsters. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class MonsterDayScaling {
     public static final String DATA_KEY = "mite:day_scaling";
@@ -32,9 +32,9 @@ public final class MonsterDayScaling {
     private MonsterDayScaling() {}
 
     public static boolean handles(Mob mob) {
-        return !(mob instanceof EnderDragon) && !(mob instanceof WitherBoss)
-                && !mob.getType().is(Tags.EntityTypes.BOSSES)
-                && (mob.getType().getCategory() == MobCategory.MONSTER
+        var type = mob.getType();
+        return type != EntityType.ENDER_DRAGON && type != EntityType.WITHER
+                && (type.getCategory() == MobCategory.MONSTER
                 || mob instanceof R196Mob source && source.miteKind() != null && source.miteKind().family() == MobKind.Family.BAT);
     }
 
@@ -43,16 +43,37 @@ public final class MonsterDayScaling {
                 mob.getPersistentData().getCompound(DATA_KEY).getLong("day"));
     }
 
-    /** Kept for extension compatibility; calendar progression no longer increases owned attack damage. */
+    /** Projectiles, explosions and contact attacks have their own base damage. */
     public static double attackMultiplier(Mob mob) {
-        return 1D;
+        if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return 1D;
+        var settings = MiteConfig.monsterGrowthSettings();
+        if (settings.damageBase() != 0D) {
+            settings = new MonsterGrowthRules.Settings(settings.healthBase(), 0D, settings.skeletonReference(),
+                    settings.healthRate(), settings.damageRate(), settings.healthFormula(), settings.damageFormula(),
+                    settings.healthBloodMoonFormula(), settings.damageBloodMoonFormula());
+        }
+        return grownAttack(day(mob, level), 1D, settings);
+    }
+
+    public static float scaledOwnedDamage(Mob attacker, float amount) {
+        return (float)Math.min(Float.MAX_VALUE, amount * attackMultiplier(attacker));
     }
 
     /** The innate attribute is evaluated before the native weapon, equipment and effect modifiers. */
     public static double attackBase(Mob mob, double nativeBase) {
-        if (!handles(mob) || !(mob.level() instanceof ServerLevel)) return nativeBase;
-        double configured = MiteConfig.monsterGrowthSettings().damageBase();
-        return configured > 0D ? configured : nativeBase;
+        if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return nativeBase;
+        var settings = MiteConfig.monsterGrowthSettings();
+        double initial = settings.damageBase() > 0D ? settings.damageBase() : nativeBase;
+        // Commands and saved NBT can supply a negative base that equipment later offsets.
+        if (initial < 0D || !Double.isFinite(initial)) return nativeBase;
+        return grownAttack(day(mob, level), initial, settings);
+    }
+
+    private static double grownAttack(long day, double nativeBase, MonsterGrowthRules.Settings settings) {
+        var result = MonsterGrowthRules.damagePreview(day, nativeBase, settings,
+                MiteConfig.monsterGrowthMultiplier() * MiteConfig.monsterDamageGrowthMultiplier());
+        reportFallback(result);
+        return result.value();
     }
 
     private static void reportFallback(MonsterGrowthRules.Result result) {
@@ -67,7 +88,7 @@ public final class MonsterDayScaling {
     public static void refresh(Mob mob) {
         if (!mob.isAlive() || !(mob.level() instanceof ServerLevel level)) return;
         if (!handles(mob)) {
-            // Old saves may still carry our permanent health modifier from before bosses were excluded.
+            // Remove stale calendar health from entities that no longer participate in growth.
             var attribute = mob.getAttribute(Attributes.MAX_HEALTH);
             if (attribute != null && attribute.hasModifier(HEALTH_MODIFIER)) {
                 float health = mob.getHealth(), maximum = mob.getMaxHealth();
@@ -124,7 +145,15 @@ public final class MonsterDayScaling {
                 && Math.floorMod(mob.tickCount + mob.getId(), 20) == 0) refresh(mob);
     }
 
-    /** Legacy extension entry point; incoming damage is no longer changed by the world calendar. */
+    /** Native melee already includes the grown body attribute when it reaches this event. */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void damage(LivingIncomingDamageEvent event) {
+        var source = event.getSource();
+        float amount = event.getAmount();
+        if (event.isCanceled() || !(amount > 0F) || !Float.isFinite(amount) || event.getEntity().level().isClientSide
+                || !(source.getEntity() instanceof Mob attacker) || source.is(DamageTypes.THORNS)
+                || SourcePlayerCombat.isHandDamage(source)) return;
+        if (source.getDirectEntity() == attacker && source.is(DamageTypes.MOB_ATTACK) && MonsterMeleeScaling.active(attacker)) return;
+        event.setAmount(scaledOwnedDamage(attacker, amount));
     }
 }

@@ -10,7 +10,7 @@ public final class MonsterDayScalingRules {
 
     /** The setting scales the daily increase, so zero retains the original unscaled body. */
     public static double healthMultiplier(long day, double growthMultiplier) {
-        return periodMultiplier(day, .005D * growthRate(growthMultiplier));
+        return periodMultiplier(day, MonsterGrowthRules.DEFAULTS.healthRate() * growthRate(growthMultiplier));
     }
 
     /** Six-health skeletons retain six initially, but their daily increase uses a twenty-health reference. */
@@ -30,7 +30,7 @@ public final class MonsterDayScalingRules {
     }
 
     public static double damageMultiplier(long day, double growthMultiplier) {
-        return periodMultiplier(day, .0025D * growthRate(growthMultiplier));
+        return periodMultiplier(day, MonsterGrowthRules.DEFAULTS.damageRate() * growthRate(growthMultiplier));
     }
 
     private static double growthRate(double multiplier) {

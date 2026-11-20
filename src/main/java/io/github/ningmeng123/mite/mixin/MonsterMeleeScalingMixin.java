@@ -13,7 +13,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-/** Native melee reads the fixed configured body attack before adding the held weapon. @author NingMeng123 */
+/** Native melee reads the grown body attack before adding the held weapon. @author NingMeng123 */
 @Mixin(Mob.class)
 public abstract class MonsterMeleeScalingMixin {
     @WrapMethod(method = "doHurtTarget")

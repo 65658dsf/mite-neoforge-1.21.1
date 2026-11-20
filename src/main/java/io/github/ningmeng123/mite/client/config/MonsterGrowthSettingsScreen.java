@@ -61,6 +61,7 @@ public final class MonsterGrowthSettingsScreen extends Screen {
         editable = MiteConfigClient.editable();
         copySettings(MiteConfig.monsterGrowthSettings());
         drafts.put("health_native", "20");
+        drafts.put("damage_native", "3");
         var level = net.minecraft.client.Minecraft.getInstance().level;
         drafts.put("preview_day", Long.toString(level == null ? 1L : Math.max(1L, Math.floorDiv(level.getDayTime(), 24000L) + 1L)));
     }
@@ -93,24 +94,22 @@ public final class MonsterGrowthSettingsScreen extends Screen {
         var damageTab = addRenderableWidget(Button.builder(Component.translatable("mite.config.damage_tab"), button -> switchTab(false))
                 .bounds(width / 2 + 2, 27, tabWidth, 20).build());
         damageTab.active = health;
-        int y = paragraph(health ? "mite.config.growth_baseline_hint" : "mite.config.fixed_damage_hint", 0, 0xCCCCCC) + 8;
+        int y = paragraph("mite.config.growth_baseline_hint", 0, 0xCCCCCC) + 8;
         String prefix = health ? "health" : "damage";
         y = field(prefix + "_base", y, 32, editable && !saving, value -> edited());
-        if (health) {
-            y = field("health_daily_percent", y, 32, editable && !saving, value -> edited());
-            y = paragraph("mite.config.growth_recurrence_heading", y + 3, 0xFFFFFF) + 4;
-            y = paragraph("mite.config.health_recurrence_initial", y, 0xCCCCCC) + 4;
-            y = paragraph("mite.config.growth_recurrence_blood", y, 0xCCCCCC) + 4;
-            y = field("health_blood_moon_formula", y, 512, editable && !saving, value -> edited());
-            y = paragraph("mite.config.growth_recurrence_period", y, 0xCCCCCC) + 4;
-            y = field("health_formula", y, 512, editable && !saving, value -> edited());
-            y = paragraph("mite.config.growth_recurrence_calendar", y, 0xCCCCCC) + 4;
-            y = paragraph("mite.config.growth_variables", y + 3, 0xAAAAAA) + 4;
-            y = paragraph("mite.config.growth_functions", y, 0xAAAAAA) + 10;
-            y = paragraph("mite.config.growth_preview_heading", y, 0xFFFFFF) + 5;
-            y = field("health_native", y, 32, true, value -> validateDraft());
-            y = field("preview_day", y, 19, true, value -> validateDraft());
-        }
+        y = field(prefix + "_daily_percent", y, 32, editable && !saving, value -> edited());
+        y = paragraph("mite.config.growth_recurrence_heading", y + 3, 0xFFFFFF) + 4;
+        y = paragraph("mite.config." + prefix + "_recurrence_initial", y, 0xCCCCCC) + 4;
+        y = paragraph("mite.config.growth_recurrence_blood", y, 0xCCCCCC) + 4;
+        y = field(prefix + "_blood_moon_formula", y, 512, editable && !saving, value -> edited());
+        y = paragraph("mite.config.growth_recurrence_period", y, 0xCCCCCC) + 4;
+        y = field(prefix + "_formula", y, 512, editable && !saving, value -> edited());
+        y = paragraph("mite.config.growth_recurrence_calendar", y, 0xCCCCCC) + 4;
+        y = paragraph("mite.config.growth_variables", y + 3, 0xAAAAAA) + 4;
+        y = paragraph("mite.config.growth_functions", y, 0xAAAAAA) + 10;
+        y = paragraph("mite.config.growth_preview_heading", y, 0xFFFFFF) + 5;
+        y = field(prefix + "_native", y, 32, true, value -> validateDraft());
+        y = field("preview_day", y, 19, true, value -> validateDraft());
         previewY = y;
         contentHeight = y;
         int actionWidth = Math.min(100, (width - 32) / 3);
@@ -197,34 +196,28 @@ public final class MonsterGrowthSettingsScreen extends Screen {
                 failure = Component.literal(validation.message());
                 markInvalid("health_formula");
                 markInvalid("health_blood_moon_formula");
+                markInvalid("damage_formula");
+                markInvalid("damage_blood_moon_formula");
             } else {
-                validSettings = settings;
-                if (health) {
-                    double nativeValue = numeric("health_native", .000001D, 1024D);
-                    long day;
-                    try {
-                        day = Long.parseLong(drafts.get("preview_day"));
-                        if (day < 1L) throw new NumberFormatException();
-                    } catch (NumberFormatException exception) {
-                        markInvalid("preview_day");
-                        throw new IllegalArgumentException(Component.translatable("mite.config.invalid_preview_day").getString());
-                    }
-                    double multiplier = MiteConfig.monsterGrowthMultiplier()
-                            * MiteConfig.monsterHealthGrowthMultiplier();
-                    preview = MonsterGrowthRules.healthPreview(day, nativeValue, false, settings, multiplier);
-                    previewDay = day;
-                    previewInitial = nativeValue;
-                    previewRate = settings.healthRate() * multiplier;
-                    if (preview.bloodMoons() > 0L && !preview.fallback()) {
-                        long previousDay = day - preview.days() - 1L;
-                        lastBloodMoonInput = MonsterGrowthRules.healthPreview(previousDay, nativeValue, false, settings, multiplier);
-                        if (lastBloodMoonInput.fallback()) lastBloodMoonInput = null;
-                    }
-                    if (preview.fallback()) {
-                        failure = Component.translatable("mite.config.preview_fallback");
-                        validSettings = null;
-                    }
+                double nativeValue = health ? numeric("health_native", .000001D, 1024D) : numeric("damage_native", 0D, 2048D);
+                try {
+                    previewDay = Long.parseLong(drafts.get("preview_day"));
+                    if (previewDay < 1L) throw new NumberFormatException();
+                } catch (NumberFormatException exception) {
+                    markInvalid("preview_day");
+                    throw new IllegalArgumentException(Component.translatable("mite.config.invalid_preview_day").getString());
                 }
+                double multiplier = previewMultiplier();
+                preview = previewAt(previewDay, nativeValue, settings, multiplier);
+                previewInitial = health || settings.damageBase() == 0D ? nativeValue : settings.damageBase();
+                previewRate = (health ? settings.healthRate() : settings.damageRate()) * multiplier;
+                if (preview.bloodMoons() > 0L && !preview.fallback()) {
+                    long previousDay = previewDay - preview.days() - 1L;
+                    lastBloodMoonInput = previewAt(previousDay, nativeValue, settings, multiplier);
+                    if (lastBloodMoonInput.fallback()) lastBloodMoonInput = null;
+                }
+                if (preview.fallback()) failure = Component.translatable("mite.config.preview_fallback");
+                else validSettings = settings;
             }
         } catch (IllegalArgumentException exception) {
             failure = Component.literal(exception.getMessage());
@@ -240,17 +233,26 @@ public final class MonsterGrowthSettingsScreen extends Screen {
         updateViewport();
     }
 
+    private double previewMultiplier() {
+        return MiteConfig.monsterGrowthMultiplier()
+                * (health ? MiteConfig.monsterHealthGrowthMultiplier() : MiteConfig.monsterDamageGrowthMultiplier());
+    }
+
+    private MonsterGrowthRules.Result previewAt(long day, double nativeValue, MonsterGrowthRules.Settings settings, double multiplier) {
+        return health ? MonsterGrowthRules.healthPreview(day, nativeValue, false, settings, multiplier)
+                : MonsterGrowthRules.damagePreview(day, nativeValue, settings, multiplier);
+    }
+
     private void updatePreviewLines() {
         previewLines.clear();
         int y = previewY;
         if (preview != null && !preview.fallback()) {
-            double multiplier = MiteConfig.monsterGrowthMultiplier()
-                    * MiteConfig.monsterHealthGrowthMultiplier();
+            String prefix = health ? "health" : "damage";
             y = previewParagraph(Component.translatable("mite.config.growth_preview_initial", number(previewInitial)), y, 0xCCCCCC);
             y = previewParagraph(Component.translatable("mite.config.growth_preview_rate", number(previewRate)), y, 0xCCCCCC);
             if (lastBloodMoonInput != null && preview.base() < Double.MAX_VALUE) {
                 y = previewParagraph(Component.translatable("mite.config.growth_preview_blood", preview.bloodMoons(),
-                        previewDay - preview.days(), drafts.get("health_blood_moon_formula")), y + 3, 0xFFCCCC);
+                        previewDay - preview.days(), drafts.get(prefix + "_blood_moon_formula")), y + 3, 0xFFCCCC);
                 y = previewParagraph(Component.translatable("mite.config.growth_preview_blood_inputs", number(lastBloodMoonInput.base()),
                         number(lastBloodMoonInput.reference()), lastBloodMoonInput.days() + 1L, lastBloodMoonInput.bloodMoons(),
                         number(preview.base())), y, 0xFFCCCC);
@@ -261,9 +263,9 @@ public final class MonsterGrowthSettingsScreen extends Screen {
                         number(preview.base())), y + 3, 0xFFCCCC);
             }
             y = previewParagraph(Component.translatable("mite.config.growth_preview_period",
-                    drafts.get("health_formula")), y + 3, 0xCCCCCC);
+                    drafts.get(prefix + "_formula")), y + 3, 0xCCCCCC);
             y = previewParagraph(Component.translatable("mite.config.growth_preview_context", number(preview.base()),
-                    number(preview.reference()), preview.days(), preview.bloodMoons(), previewDay, number(multiplier)), y, 0xCCCCCC);
+                    number(preview.reference()), preview.days(), preview.bloodMoons(), previewDay, number(previewMultiplier())), y, 0xCCCCCC);
             y = previewParagraph(Component.translatable("mite.config.growth_preview_value", number(preview.value())), y + 3, 0x88FF88);
             if (preview.value() == Double.MAX_VALUE || preview.base() == Double.MAX_VALUE)
                 y = previewParagraph(Component.translatable("mite.config.growth_preview_saturated"), y + 3, 0xFFCC88);
