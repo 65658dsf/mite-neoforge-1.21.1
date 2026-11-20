@@ -232,92 +232,76 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void partialFourIngotSlotsAndBackpackReservesPayFullArmorCostsOnBothTakePaths(GameTestHelper h) {
+    public static void armorUpgradesChargeOnlyTheMaterialSlotOnBothTakePaths(GameTestHelper h) {
         for (String family : List.of("helmet", "chestplate", "leggings"))
-            for (boolean inventory : new boolean[]{false, true})
+            for (ClickType delivery : List.of(ClickType.PICKUP, ClickType.QUICK_MOVE))
                 try (SmithingSession session = new SmithingSession(h, "mithril")) {
             Upgrade upgrade = upgrade("mite:ancient_metal_" + family, "mithril");
             int required = family.equals("helmet") ? 5 : family.equals("chestplate") ? 8 : 7;
             h.assertValueEqual(MaterialUpgradeRequirements.ingots(new ItemStack(upgrade.result())), required, "The complete armor metal price is retained");
             ItemStack source = personalEquipment(h, upgrade.base()), before = source.copy();
-            session.menu.getSlot(0).set(template());
-            session.menu.getSlot(1).set(source);
-            session.player.getInventory().setItem(0, new ItemStack(upgrade.addition(), 4));
-            int reserve = required - 4 + 3;
-            for (int slot = 1; reserve > 0; slot++) {
-                int count = Math.min(4, reserve);
-                session.player.getInventory().setItem(slot, new ItemStack(upgrade.addition(), count));
-                reserve -= count;
-            }
-            int inventorySlot = -1;
-            for (int slot = 0; slot < session.menu.slots.size(); slot++)
-                if (session.menu.getSlot(slot).container == session.player.getInventory()
-                        && session.menu.getSlot(slot).getContainerSlot() == 0) inventorySlot = slot;
-            h.assertTrue(inventorySlot >= 0, "The actual smithing menu exposes the player's hotbar slot");
-            session.menu.clicked(inventorySlot, 0, ClickType.PICKUP, session.player);
-            session.menu.clicked(2, 0, ClickType.PICKUP, session.player);
+            session.load(upgrade, source, required - 1);
+            var inventory = session.player.getInventory();
+            inventory.setItem(0, new ItemStack(upgrade.addition(), 3));
             session.menu.broadcastChanges();
-            h.assertTrue(session.menu.getCarried().isEmpty(), "Native clicks put exactly one legal stack in the material slot");
-            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 4, "The player deliberately supplies a partial stack of four ingots");
-            h.assertValueEqual(session.menu.getSlot(2).getItem().getMaxStackSize(), 8, "The partial-payment path retains the corrected eight-ingot cap");
-            h.assertTrue(session.menu.getSlot(3).getItem().is(upgrade.result()), "Backpack reserves enable the full-price preview");
-            if (inventory && family.equals("chestplate")) for (int slot = 0; slot < session.player.getInventory().items.size(); slot++)
-                if (session.player.getInventory().getItem(slot).isEmpty()) session.player.getInventory().setItem(slot, new ItemStack(Items.IRON_SWORD));
-            session.menu.clicked(3, 0, inventory ? ClickType.QUICK_MOVE : ClickType.PICKUP, session.player);
+            h.assertTrue(session.menu.getSlot(3).getItem().isEmpty(), "A stack one short stays invalid even with three more ingots in the hotbar");
+            int hotbarSlot = session.menu.findSlot(inventory, 0).orElseThrow();
+            session.menu.clicked(hotbarSlot, 0, ClickType.PICKUP, session.player);
+            session.menu.clicked(SmithingMenu.ADDITIONAL_SLOT, 1, ClickType.PICKUP, session.player);
+            session.menu.clicked(hotbarSlot, 0, ClickType.PICKUP, session.player);
+            h.assertValueEqual(session.metal(upgrade.addition()), required, "One manually deposited ingot completes the material stack");
+            h.assertTrue(session.menu.getSlot(3).getItem().is(upgrade.result()), "The complete material slot enables the preview");
+
+            session.menu.clicked(3, 0, delivery, session.player);
             int period = TimedSmithingController.period(session.player, session.menu);
-            h.assertTrue(period > 0 && TimedSmithingController.isActive(session.player), "A real result click starts the full manufacturing period");
+            h.assertTrue(period > 0 && TimedSmithingController.isActive(session.player), "A real result click starts the manufacturing period");
+            inventory.setItem(9, new ItemStack(upgrade.addition()));
+            session.menu.clicked(hotbarSlot, 0, ClickType.PICKUP, session.player);
+            session.menu.clicked(hotbarSlot, 0, ClickType.PICKUP_ALL, session.player);
+            h.assertTrue(session.menu.getCarried().is(upgrade.addition()) && session.menu.getCarried().getCount() == 3,
+                    "Backpack double-click collects only the three loose ingots");
+            session.menu.clicked(hotbarSlot, 0, ClickType.PICKUP, session.player);
             session.tick(period - 1);
-            h.assertValueEqual(TimedSmithingController.availableIngots(session.player, session.menu.getSlot(2).getItem()), required + 3,
-                    "Waiting reserves the price without charging any input or backpack metal");
+            h.assertValueEqual(session.metal(upgrade.addition()), required, "All slotted ingots remain until completion");
             h.assertTrue(ItemStack.matches(before, session.menu.getSlot(1).getItem()), "Waiting preserves the original equipment");
             session.tick(1);
-            h.assertValueEqual(session.player.getInventory().countItem(upgrade.addition()), 3, "Completion pays the complete armor price and leaves exactly the three extra ingots");
-            h.assertTrue(session.menu.getSlot(2).getItem().isEmpty(), "Payment takes the material slot before backpack reserves");
-            h.assertTrue(session.menu.getSlot(0).getItem().isEmpty() && session.menu.getSlot(1).getItem().isEmpty(), "Exactly one template and one equipment item are consumed");
-            ItemStack output = inventory ? session.player.getInventory().items.stream().filter(stack -> stack.is(upgrade.result())).findFirst().orElseThrow()
+            h.assertTrue(session.menu.getSlot(0).container.isEmpty(), "Exactly one template, one equipment item and the slotted ingots are consumed");
+            h.assertValueEqual(inventory.getItem(0).getCount(), 3, "The collected ingots stay in the hotbar");
+            ItemStack output = delivery == ClickType.QUICK_MOVE ? inventory.items.stream().filter(stack -> stack.is(upgrade.result())).findFirst().orElseThrow()
                     : session.menu.getCarried();
-            h.assertTrue(output.is(upgrade.result()) && output.getCount() == 1, "The chosen delivery path receives exactly one upgraded armor item");
+            h.assertTrue(output.is(upgrade.result()) && output.getCount() == 1, "The chosen destination receives exactly one upgraded armor item");
             assertPersonalComponents(h, before, output);
-            for (ItemStack stack : session.player.getInventory().items)
-                h.assertTrue(stack.isEmpty() || stack.getCount() <= stack.getMaxStackSize(), "Every remaining backpack stack respects its actual cap");
             session.tick(period);
-            h.assertValueEqual(session.player.getInventory().countItem(upgrade.addition()), 3, "Completion does not replay a backpack payment");
+            h.assertValueEqual(inventory.countItem(upgrade.addition()), 3, "Further ticks never charge backpack metal");
         }
         h.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void insufficientOrChangedBackpackSmithingReservesCannotChargeOrFinishAnUpgrade(GameTestHelper h) {
+    public static void backpackAndCursorIngotsCannotFundAnIncompleteMaterialSlot(GameTestHelper h) {
         try (SmithingSession session = new SmithingSession(h, "mithril")) {
             Upgrade upgrade = upgrade("mite:ancient_metal_chestplate", "mithril");
-            ItemStack source = personalEquipment(h, upgrade.base());
-            session.load(upgrade, source, 4);
-            ItemStack named = new ItemStack(upgrade.addition(), 4);
-            named.set(DataComponents.CUSTOM_NAME, Component.literal("NingMeng123 reserved ingots"));
-            session.player.getInventory().setItem(0, named);
-            session.menu.broadcastChanges();
-            h.assertTrue(session.menu.getSlot(3).getItem().isEmpty(), "Differently named ingots are not consumed as plain material reserves");
-            session.player.getInventory().setItem(1, new ItemStack(upgrade.addition(), 3));
-            session.menu.broadcastChanges();
-            session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
-            h.assertFalse(TimedSmithingController.isActive(session.player), "Seven matching ingots cannot start an eight-ingot chestplate upgrade");
-            session.player.getInventory().setItem(1, new ItemStack(upgrade.addition(), 4));
-            session.menu.broadcastChanges();
-            h.assertTrue(session.menu.getSlot(3).getItem().is(upgrade.result()), "Replenishing the backpack refreshes the native preview");
-            session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
-            int period = TimedSmithingController.period(session.player, session.menu);
-            session.tick(1);
-            ItemStack changed = session.player.getInventory().getItem(1).copy();
-            changed.set(DataComponents.CUSTOM_NAME, Component.literal("NingMeng123 changed during smithing"));
-            session.player.getInventory().setItem(1, changed);
-            session.tick(period);
-            h.assertFalse(TimedSmithingController.isActive(session.player), "Changing the planned backpack payment cancels the authoritative timer");
-            h.assertTrue(session.menu.getCarried().isEmpty(), "A canceled payment creates no upgraded item");
-            h.assertTrue(ItemStack.matches(source, session.menu.getSlot(1).getItem()), "Cancellation preserves the original equipment");
-            h.assertValueEqual(session.menu.getSlot(0).getItem().getCount(), 1, "Cancellation preserves the template");
-            h.assertValueEqual(session.menu.getSlot(2).getItem().getCount(), 4, "Cancellation charges no material-slot ingots");
-            h.assertTrue(ItemStack.matches(named, session.player.getInventory().getItem(0))
-                    && ItemStack.matches(changed, session.player.getInventory().getItem(1)), "Cancellation leaves every backpack reserve unchanged");
+            var inventory = session.player.getInventory();
+            inventory.setItem(9, new ItemStack(upgrade.addition(), 8));
+            session.load(upgrade, personalEquipment(h, upgrade.base()), 4);
+            var before = TimedCraftingController.snapshot(session.menu.getSlot(0).container);
+            int backpackSlot = session.menu.findSlot(inventory, 9).orElseThrow();
+            for (boolean carryIngots : new boolean[]{false, true}) {
+                if (carryIngots) session.menu.clicked(backpackSlot, 0, ClickType.PICKUP, session.player);
+                session.menu.broadcastChanges();
+                h.assertTrue(session.menu.getSlot(3).getItem().isEmpty(), "An underfilled material slot has no result even with eight matching ingots elsewhere");
+                session.menu.clicked(3, 0, ClickType.PICKUP, session.player);
+                session.menu.clicked(3, 0, ClickType.QUICK_MOVE, session.player);
+                h.assertTrue(session.menu.quickMoveStack(session.player, 3).isEmpty(), "Direct quick-move cannot manufacture an unfunded result");
+                h.assertFalse(TimedSmithingController.isActive(session.player), "Off-slot ingots cannot start a timer");
+                session.tick(200);
+                h.assertTrue(TimedCraftingController.matches(before, session.menu.getSlot(0).container), "Failed requests preserve all three inputs");
+                h.assertValueEqual(inventory.countItem(upgrade.result()), 0, "Neither request delivers equipment to the backpack");
+                h.assertValueEqual(inventory.countItem(upgrade.addition()), carryIngots ? 0 : 8, "Failed requests leave every backpack ingot intact");
+                ItemStack held = session.menu.getCarried();
+                h.assertTrue(carryIngots ? held.is(upgrade.addition()) && held.getCount() == 8 : held.isEmpty(),
+                        "Failed requests leave the cursor unchanged");
+            }
         }
         h.succeed();
     }
@@ -638,7 +622,10 @@ public final class MaterialEquipmentUpgradeGameTests {
                     ItemStack changed = session.menu.getSlot(1).getItem().copy();
                     changed.set(DataComponents.CUSTOM_NAME, Component.literal("NingMeng123 changed during manufacturing"));
                     session.menu.getSlot(1).set(changed);
-                } else if (mutation == 1) session.menu.getSlot(2).set(new ItemStack(upgrade.addition(), 2));
+                } else if (mutation == 1) {
+                    session.player.getInventory().setItem(0, new ItemStack(upgrade.addition(), 8));
+                    session.menu.getSlot(2).set(new ItemStack(upgrade.addition(), 2));
+                }
                 else if (mutation == 2) {
                     session.menu.removed(session.player);
                     session.player.containerMenu = session.player.inventoryMenu;
@@ -653,9 +640,11 @@ public final class MaterialEquipmentUpgradeGameTests {
                 if (mutation != 2) {
                     helper.assertValueEqual(session.menu.getSlot(0).getItem().getCount(), 1, "Cancellation consumes no template");
                     helper.assertTrue(session.menu.getSlot(1).getItem().is(upgrade.base()), "Cancellation preserves the source equipment");
-                    // Six ingots now fit entirely in the eight-cap slot. Replacing it with two
-                    // leaves exactly two; the former four-cap fixture also had two in its backpack.
                     helper.assertValueEqual(session.metal(upgrade.addition()), mutation == 1 ? 2 : 6, "Cancellation consumes no additional ingot");
+                    if (mutation == 1) {
+                        helper.assertTrue(session.menu.getSlot(3).getItem().isEmpty(), "Taking needed ingots out of the material slot invalidates the preview");
+                        helper.assertValueEqual(session.player.getInventory().countItem(upgrade.addition()), 8, "A canceled upgrade cannot take missing ingots from the backpack");
+                    }
                 } else {
                     helper.assertValueEqual(session.player.getInventory().countItem(upgrade.base()), 1, "Closing returns the original equipment through the native menu cleanup");
                     helper.assertValueEqual(session.player.getInventory().countItem(upgrade.addition()), 6, "Closing returns every unconsumed ingot");
@@ -715,6 +704,57 @@ public final class MaterialEquipmentUpgradeGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void backpackClicksPreserveSmithingUntilTheOriginalDestinationIsFree(GameTestHelper helper) {
+        for (ClickType delivery : List.of(ClickType.PICKUP, ClickType.QUICK_MOVE)) {
+            try (SmithingSession session = new SmithingSession(helper, "mithril")) {
+                Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
+                var inventory = session.player.getInventory();
+                session.load(upgrade, personalEquipment(helper, upgrade.base()), 5);
+                inventory.setItem(9, new ItemStack(upgrade.addition(), 2));
+                inventory.setItem(10, new ItemStack(upgrade.addition(), 3));
+                var inputs = TimedCraftingController.snapshot(session.menu.getSlot(0).container);
+                int backpackSlot = session.menu.findSlot(inventory, 9).orElseThrow();
+                for (int slot = 0; slot < inventory.items.size(); slot++) {
+                    if (inventory.getItem(slot).isEmpty()) inventory.setItem(slot, new ItemStack(Items.DIAMOND));
+                }
+                if (delivery == ClickType.QUICK_MOVE)
+                    session.menu.clicked(backpackSlot, 0, ClickType.PICKUP, session.player);
+                session.menu.clicked(SmithingMenu.RESULT_SLOT, 0, delivery, session.player);
+                int period = TimedSmithingController.period(session.player, session.menu);
+                session.tick(5);
+
+                session.menu.clicked(session.menu.findSlot(inventory, 10).orElseThrow(), 0, ClickType.SWAP, session.player);
+                helper.assertTrue(inventory.getItem(0).is(upgrade.addition()) && inventory.getItem(10).is(Items.DIAMOND), "Number-key sorting moves matching ingots into the hotbar");
+                session.menu.clicked(backpackSlot, 0, ClickType.PICKUP, session.player);
+                session.tick(1);
+                helper.assertValueEqual(TimedSmithingController.progress(session.player), 6, "Moving and picking up matching backpack metal preserves and advances the timer");
+                session.tick(period);
+                helper.assertValueEqual(TimedSmithingController.progress(session.player), period, "Smithing waits at full progress for its original destination");
+                helper.assertTrue(TimedCraftingController.matches(inputs, session.menu.getSlot(0).container), "Waiting leaves all smithing inputs intact");
+                helper.assertValueEqual(inventory.countItem(upgrade.addition()) + session.menu.getCarried().getCount(), 5,
+                        "Waiting preserves the matching ingots in the backpack or on the cursor");
+
+                session.menu.clicked(backpackSlot, 0, ClickType.PICKUP, session.player);
+                session.tick(1);
+                helper.assertFalse(TimedSmithingController.isActive(session.player), "Freeing the destination immediately completes the upgrade");
+                if (delivery == ClickType.QUICK_MOVE) {
+                    helper.assertTrue(session.menu.getSlot(backpackSlot).getItem().is(upgrade.result()), "Shift-click delivers to the freed backpack slot");
+                    helper.assertTrue(session.menu.getCarried().is(upgrade.addition()) && session.menu.getCarried().getCount() == 2,
+                            "Inventory delivery preserves both held ingots");
+                } else {
+                    helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "Ordinary pickup delivers to the freed cursor");
+                    helper.assertTrue(session.menu.getSlot(backpackSlot).getItem().is(upgrade.addition()) && session.menu.getSlot(backpackSlot).getItem().getCount() == 2,
+                            "Both held ingots return to their backpack slot");
+                }
+                helper.assertTrue(session.menu.getSlot(0).container.isEmpty(), "Delivery consumes one complete set of inputs");
+                helper.assertTrue(inventory.getItem(0).is(upgrade.addition()) && inventory.getItem(0).getCount() == 3,
+                        "Delivery preserves the three ingots moved to the hotbar");
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void actualContainerPacketsCannotDeclareAnUpgradeCompleteOrAccelerateIt(GameTestHelper helper) {
         try (SmithingSession session = new SmithingSession(helper, "mithril")) {
             Upgrade upgrade = upgrade("mite:ancient_metal_helmet", "mithril");
@@ -732,7 +772,7 @@ public final class MaterialEquipmentUpgradeGameTests {
             helper.assertTrue(session.menu.getCarried().is(upgrade.result()), "Only the authoritative final tick delivers the original single output");
             helper.assertTrue(session.menu.getSlot(0).getItem().isEmpty() && session.menu.getSlot(1).getItem().isEmpty()
                     && session.menu.getSlot(2).getItem().isEmpty(), "The packet transaction consumes one complete recipe exactly once");
-            helper.assertValueEqual(session.metal(upgrade.addition()), 0, "The server packet pays all five ingots across the material slot and backpack once");
+            helper.assertValueEqual(session.metal(upgrade.addition()), 0, "The server packet pays all five ingots from the material slot once");
         }
         helper.succeed();
     }
@@ -1136,22 +1176,16 @@ public final class MaterialEquipmentUpgradeGameTests {
             setMetal(upgrade.addition(), ingots);
         }
         void setMetal(Item ingot, int ingots) {
-            for (int slot = 0; slot < player.getInventory().items.size(); slot++)
-                if (player.getInventory().getItem(slot).is(ingot)) player.getInventory().setItem(slot, ItemStack.EMPTY);
-            int cap = new ItemStack(ingot).getMaxStackSize();
-            int inSlot = Math.min(cap, ingots), remaining = ingots - inSlot;
-            for (int slot = 0; slot < player.getInventory().items.size() && remaining > 0; slot++) {
-                if (!player.getInventory().getItem(slot).isEmpty()) continue;
-                int count = Math.min(cap, remaining);
-                player.getInventory().setItem(slot, new ItemStack(ingot, count));
-                remaining -= count;
-            }
-            if (remaining != 0) throw new IllegalStateException("Insufficient fixture inventory space for legal smithing reserves");
-            menu.getSlot(2).set(new ItemStack(ingot, inSlot));
+            ItemStack stack = new ItemStack(ingot, ingots);
+            var slot = menu.getSlot(SmithingMenu.ADDITIONAL_SLOT);
+            if (ingots > slot.getMaxStackSize(stack)) throw new IllegalArgumentException("Test ingots must fit in the material slot");
+            slot.set(stack);
             menu.broadcastChanges();
         }
-        int metal(Item ingot) { return (menu.getSlot(2).getItem().is(ingot) ? menu.getSlot(2).getItem().getCount() : 0)
-                + player.getInventory().countItem(ingot); }
+        int metal(Item ingot) {
+            ItemStack stack = menu.getSlot(SmithingMenu.ADDITIONAL_SLOT).getItem();
+            return stack.is(ingot) ? stack.getCount() : 0;
+        }
         void tick(int ticks) { for (int tick = 0; tick < ticks; tick++) TimedSmithingController.tick(player); }
     }
 

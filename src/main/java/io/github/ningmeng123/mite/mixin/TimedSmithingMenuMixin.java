@@ -13,7 +13,6 @@ import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -50,15 +49,10 @@ public abstract class TimedSmithingMenuMixin extends ItemCombinerMenu implements
         if (tier != null) cir.setReturnValue(state.is(tier.block()));
     }
 
-    @Inject(method = "createRecipeInput", at = @At("RETURN"), cancellable = true)
-    private void mite$includeInventoryMetal(CallbackInfoReturnable<SmithingRecipeInput> callback) {
-        callback.setReturnValue(TimedSmithingController.includeInventory(callback.getReturnValue(), player));
-    }
-
     @Inject(method = "createResult", at = @At("TAIL"))
     private void mite$requireUpgradeStationAndCost(CallbackInfo ci) {
         SmithingMenu menu = (SmithingMenu)(Object)this;
-        if (!TimedSmithingController.previewAllowed(menu, player)) menu.getSlot(SmithingMenu.RESULT_SLOT).set(ItemStack.EMPTY);
+        if (!TimedSmithingController.previewAllowed(menu)) menu.getSlot(SmithingMenu.RESULT_SLOT).set(ItemStack.EMPTY);
     }
 
     @Inject(method = "mayPickup", at = @At("HEAD"), cancellable = true)

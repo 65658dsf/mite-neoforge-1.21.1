@@ -1,10 +1,15 @@
 package io.github.ningmeng123.mite.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.crafting.TimedCraftingController;
+import io.github.ningmeng123.mite.crafting.TimedSmithingController;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,6 +33,18 @@ public abstract class TimedCraftingClickMixin {
             menu.broadcastChanges();
         }
         ci.cancel();
+    }
+
+    @WrapOperation(method = "doClick", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;canTakeItemForPickAll(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/inventory/Slot;)Z"),
+            require = 1, allow = 1)
+    private boolean mite$keepActiveInputsDuringBackpackCollect(AbstractContainerMenu menu, ItemStack stack, Slot candidate,
+            Operation<Boolean> original, int clickedSlot, int button, ClickType type, Player player) {
+        // A double-click scans the whole menu, even when it started in the backpack.
+        if (player instanceof ServerPlayer server && menu == player.containerMenu
+                && candidate.container != player.getInventory() && menu.getSlot(clickedSlot).container == player.getInventory()
+                && (TimedCraftingController.isActive(server) || TimedSmithingController.isActive(server))) return false;
+        return original.call(menu, stack, candidate);
     }
 
     @Inject(method = "removed", at = @At("HEAD"))

@@ -30,6 +30,8 @@ public final class SmithingJeiGameTests {
             int required = MaterialUpgradeRequirements.ingots(page.output());
             helper.assertTrue(page.additions().stream().allMatch(stack -> stack.getCount() == required),
                     "Every displayed alternative requires the full target-material cost");
+            helper.assertTrue(page.additions().stream().allMatch(stack -> required <= stack.getMaxStackSize()),
+                    "Every displayed upgrade can be paid in a single smithing material slot: " + page.source().id());
             float difficulty = MaterialUpgradeRequirements.difficulty(page.output());
             var table = page.minimumTable();
             helper.assertValueEqual(page.durationTicks(0, false), table.duration(TimedCraftingRules.period(difficulty, 0, 0F, false)),

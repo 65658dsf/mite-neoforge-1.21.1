@@ -420,12 +420,12 @@ public final class AnimalHerdEscapeGameTests {
             R196AnimalAi032.rememberAttacker(cow, f.player);
             var goal = new AnimalCommon032Goals.Flee(cow, 1.6F, 0F);
             goal.startPanicking(); goal.start(); goal.tick(); cow.getNavigation().tick();
-            h.assertTrue(Math.abs(cow.getMoveControl().getSpeedModifier() - 1.71D) < .0001D,
-                    "Native navigation receives 95% of the original speed including the panic boost");
+            h.assertTrue(Math.abs(cow.getMoveControl().getSpeedModifier() - 1.6245D) < .0001D,
+                    "Native navigation receives 90.25% of the original speed including the panic boost");
             R196AnimalAi032.state(cow).putInt("panic_countdown", 0);
             goal.tick(); cow.getNavigation().tick();
-            h.assertTrue(Math.abs(cow.getMoveControl().getSpeedModifier() - 1.52D) < .0001D,
-                    "Panic expiring immediately restores 95% of the original normal flee speed");
+            h.assertTrue(Math.abs(cow.getMoveControl().getSpeedModifier() - 1.444D) < .0001D,
+                    "Panic expiring immediately restores 90.25% of the original normal flee speed");
             goal.stop();
             // A sealed three-high cell guarantees that neither dry nor swimming path attempts can leave.
             for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) if (x != 0 || z != 0)
@@ -542,13 +542,13 @@ public final class AnimalHerdEscapeGameTests {
             state.putBoolean("done_panicking", true); state.putInt("panic_countdown", 120);
         }).thenWaitUntil(() -> {
             h.assertTrue(f.running() && !f.mob.getNavigation().isDone(), "The real pending escape is delivered to native movement before checking its speed");
-            h.assertTrue(Math.abs(f.mob.getMoveControl().getSpeedModifier() - 1.71D) < .0001D,
-                    "Actual native navigation receives 95% of the cow's 1.6 plus 0.2 panic speed");
+            h.assertTrue(Math.abs(f.mob.getMoveControl().getSpeedModifier() - 1.6245D) < .0001D,
+                    "Actual native navigation receives 90.25% of the cow's 1.6 plus 0.2 panic speed");
         }).thenExecute(() -> {
             R196AnimalAi032.state(f.mob).putInt("panic_countdown", 0); boostEndedAt[0] = f.mob.tickCount;
         }).thenWaitUntil(() -> h.assertTrue(f.mob.tickCount > boostEndedAt[0]
-                        && Math.abs(f.mob.getMoveControl().getSpeedModifier() - 1.52D) < .0001D,
-                "The next real animal tick sends the original normal flee speed at 95% after its panic boost expires"))
+                        && Math.abs(f.mob.getMoveControl().getSpeedModifier() - 1.444D) < .0001D,
+                "The next real animal tick sends the original normal flee speed at 90.25% after its panic boost expires"))
                 .thenExecute(() -> {
                     h.assertTrue(f.mob.tickCount - boostEndedAt[0] <= 2,
                             "Normal flee speed changes immediately, without waiting for a fresh route");

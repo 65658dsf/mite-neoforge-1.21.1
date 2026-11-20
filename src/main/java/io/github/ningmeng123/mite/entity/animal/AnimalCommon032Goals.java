@@ -69,6 +69,7 @@ public final class AnimalCommon032Goals {
         return selected;
     }
     public static final class Flee extends SourceMovement032Goal implements Marker {
+        private static final float FLEE_SPEED_MULTIPLIER = 0.9025F;
         private static final int REPLAN_INTERVAL=10;
         private final float panicChance;
         private boolean startingPath;
@@ -210,7 +211,7 @@ public final class AnimalCommon032Goals {
         private void clearFailure() {failures=0;retryAt=Long.MIN_VALUE;failureOrigin=null;}
         private void cancelSession() {AnimalFleeBudget.cancel(session);session=null;}
         private boolean controlled() { return mob.isPassenger() || mob.getFirstPassenger() instanceof Player; }
-        @Override protected float movementSpeed() { return (movementSpeed+(panicking() ? .2F : 0F))*.95F; }
+        @Override protected float movementSpeed() { return (movementSpeed+(panicking() ? .2F : 0F))*FLEE_SPEED_MULTIPLIER; }
         @Override public boolean canContinueToUse() {
             if(controlled()) return false;
             R196AnimalAi032.considerStopFleeing(mob);

@@ -8,6 +8,6 @@
 - 所有普通树苗和樱花共用上述路径。NeoForge 1.21.1 的 `MangrovePropaguleBlock.randomTick` 在落地状态调用继承的 `advanceTree`，同样生效；悬挂红树繁殖体自身的成熟速度保持原规则。树苗仍不接受骨粉。
 - 按用户后续明确，金属锭每组8个，覆盖铜、银、金、铁、远古金属、秘银、艾德曼、振金及现代下界合金锭；粗铜、粗银、粗铁、粗金、粗秘银和粗艾德曼每组4个。矿石/储存方块原已每组4个，金属粒、粉尘及宝石使用各自既有上限。
 - 历史R196堆叠证据JSON保留原始数值；`StackingRules` 只对原矿保留4个覆盖。旧存档物品数量不减少，普通旧锭自然使用8个上限，显式更严格的物品组件仍保留。九锭拆包配方保留完整批次，通过已有合法拆分机制交付为8+1，编码器同步校验8个上限。
-- 模板升级仍按整件原价付款。材料槽优先扣除，不足部分由背包中同种、同组件的锭补齐；5/7/8锭等升级费用不变。付款栈在计时中变化会取消，完成前不扣料。界面、JEI及模板槽提示同步说明补料来源。
+- 模板升级仍按整件原价付款。材料槽优先扣除，不足部分由背包中同种、同组件的锭补齐；5/7/8锭等升级费用不变。付款栈在计时中变化会取消，完成前不扣料。界面、JEI及模板槽提示同步说明补料来源。后续材料槽规则见[装备材质升级](equipment-material-upgrades.md)。
 
 自动验证入口：`StackingRulesTest`、`TreeAndBoneBalanceGameTests`、`GrassMiningGameTests.ironShearsRightClickRecoversLeavesThroughTheServerHarvestPath`、`StackingLimitsGameTests`，以及既有金属制造、容器/熔炉/发射器和批量配方回归。具体运行结果由本轮整体构建记录给出。

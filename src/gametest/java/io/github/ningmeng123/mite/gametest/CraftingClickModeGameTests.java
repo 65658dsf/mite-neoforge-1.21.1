@@ -5,12 +5,14 @@ import io.github.ningmeng123.mite.crafting.TimedCraftingController;
 import io.github.ningmeng123.mite.registry.MiteMaterials;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
 import io.netty.channel.embedded.EmbeddedChannel;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -43,6 +45,47 @@ public final class CraftingClickModeGameTests {
                         "A completed ordinary click leaves no queued batch");
                 helper.assertTrue(fixture.menu.getSlot(0).getItem().is(MiteMaterials.COPPER_NUGGET.get()),
                         "A valid remaining recipe stays visible without automatically starting it");
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void collectingBackpackItemsPreservesActiveCraftingInputsInBothMenus(GameTestHelper helper) {
+        for (boolean workbench : new boolean[]{false, true}) {
+            try (Fixture fixture = new Fixture(helper, workbench)) {
+                fixture.load(2);
+                var inventory = fixture.player.getInventory();
+                int slot = fixture.menu.findSlot(inventory, 9).orElseThrow();
+                inventory.setItem(9, new ItemStack(Items.COPPER_INGOT));
+                inventory.setItem(10, new ItemStack(Items.COPPER_INGOT));
+                fixture.menu.clicked(0, 0, ClickType.PICKUP, fixture.player);
+                fixture.tick(5);
+
+                fixture.menu.clicked(slot, 0, ClickType.PICKUP, fixture.player);
+                fixture.tick(1);
+                helper.assertValueEqual(TimedCraftingController.progress(fixture.player), 6,
+                        "Picking up a backpack item advances the running batch");
+                // Vanilla predicts that the double-click also empties the grid onto the cursor.
+                var predictedSlots = new Int2ObjectOpenHashMap<ItemStack>();
+                predictedSlots.put(1, ItemStack.EMPTY);
+                predictedSlots.put(fixture.menu.findSlot(inventory, 10).orElseThrow(), ItemStack.EMPTY);
+                fixture.player.connection.handleContainerClick(new ServerboundContainerClickPacket(fixture.menu.containerId,
+                        fixture.menu.getStateId(), slot, 0, ClickType.PICKUP_ALL, new ItemStack(Items.COPPER_INGOT, 4), predictedSlots));
+                fixture.tick(1);
+                helper.assertValueEqual(TimedCraftingController.progress(fixture.player), 7,
+                        "Double-clicking the backpack keeps the running batch");
+                helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 2, "Both grid ingredients stay in place");
+                fixture.tick(fixture.period - 7);
+                helper.assertValueEqual(fixture.grid.getItem(0).getCount(), 1, "Finishing consumes one grid ingredient");
+                helper.assertValueEqual(inventory.countItem(MiteMaterials.COPPER_NUGGET.get()), 9,
+                        "The full batch arrives in the backpack while the cursor is occupied");
+                helper.assertTrue(ItemStack.matches(fixture.menu.getCarried(), new ItemStack(Items.COPPER_INGOT, 2)),
+                        "The cursor keeps both collected backpack ingots");
+
+                fixture.menu.clicked(slot, 0, ClickType.PICKUP_ALL, fixture.player);
+                helper.assertValueEqual(fixture.menu.getCarried().getCount(), 3,
+                        "After the batch, normal double-click collection includes the idle grid");
             }
         }
         helper.succeed();
