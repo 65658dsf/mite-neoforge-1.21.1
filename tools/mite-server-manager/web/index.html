@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+  <title>MITE 服务端管理器</title>
+  <link rel="stylesheet" href="./app.css">
+  <link rel="stylesheet" href="./config.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div><strong>MITE</strong><small data-en="Server Manager">服务端管理器</small></div>
+      </div>
+      <nav class="nav" aria-label="主页面" data-en-aria-label="Main navigation">
+        <button class="nav-button current" data-page="console" aria-current="page"><span class="nav-icon terminal-icon" aria-hidden="true">›_</span><span data-en="Console">控制台</span></button>
+        <button class="nav-button" data-page="config"><span class="nav-icon file-icon" aria-hidden="true"></span><span data-en="Server &amp; MITE">服务器与 MITE</span></button>
+        <button class="nav-button" data-page="runtime"><span class="nav-icon tune-icon" aria-hidden="true"></span><span data-en="Launch settings">启动设置</span></button>
+      </nav>
+      <div class="sidebar-footer"><span class="stack-mark" aria-hidden="true"></span><div><strong>NeoForge</strong><small data-en="Minecraft server">Minecraft 服务端</small></div></div>
+    </aside>
+    <main class="workspace">
+      <header class="top-bar">
+        <div><h1 id="page-title">控制台</h1></div>
+        <div class="directory-actions">
+          <button class="top-button directory-button" id="choose-directory" title="选择服务端目录"><span class="folder-icon" aria-hidden="true"></span><span id="directory-label">选择服务端目录</span><span class="chevron" aria-hidden="true">⌄</span></button>
+          <button class="top-button icon-button" id="open-directory" title="在资源管理器中打开服务端目录" data-en-title="Open the server folder in Explorer" aria-label="打开服务端目录" data-en-aria-label="Open server folder" disabled>↗</button>
+          <select id="language" class="top-button language-select" aria-label="界面语言" data-en-aria-label="Interface language">
+            <option value="zh-CN">简体中文</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </header>
+
+      <section class="page console-page" id="page-console">
+        <div class="server-overview">
+          <div class="scene" aria-hidden="true">
+            <div class="terrain terrain-back"></div><div class="terrain terrain-mid"></div><div class="terrain terrain-front"></div>
+            <div class="ore ore-one"></div><div class="ore ore-two"></div>
+          </div>
+          <div class="server-info">
+            <div class="server-emblem" aria-hidden="true"><i></i></div>
+            <div class="server-text">
+              <h2 id="server-name">MITE 服务端</h2>
+              <div class="phase-row"><span id="phase-dot" class="phase-dot" data-tone="idle"></span><span id="phase-label">等待选择服务端</span></div>
+            </div>
+          </div>
+          <div class="server-actions">
+            <button id="stop-server" class="btn stop-button" disabled><span class="stop-icon" aria-hidden="true"></span><span data-en="Stop">停止</span></button>
+            <button id="start-server" class="btn primary" disabled><span class="play-icon" aria-hidden="true"></span><span data-en="Start server">启动服务器</span></button>
+          </div>
+        </div>
+        <div class="console-grid">
+          <section class="card log-card" aria-labelledby="logs-title">
+            <div class="card-top">
+              <div class="card-title"><span class="panel-glyph" aria-hidden="true">›_</span><h2 id="logs-title" data-en="Live logs">实时日志</h2></div>
+              <div class="log-tools">
+                <label class="switch-label"><input type="checkbox" id="follow-log" checked><span class="switch" aria-hidden="true"></span><span data-en="Auto-scroll">自动滚动</span></label>
+                <button class="btn quiet compact" id="clear-log" data-en="Clear">清空</button>
+              </div>
+            </div>
+            <div id="log-view" class="log-view" tabindex="0" aria-label="服务器日志" data-en-aria-label="Server logs">
+              <div id="log-empty" class="log-empty"><span class="prompt-mark" aria-hidden="true">›_</span><strong data-en="Waiting for server output">等待服务端输出</strong><span id="log-empty-hint">选择服务端目录后即可启动。</span></div>
+              <div id="log-lines"></div>
+            </div>
+            <form id="command-form" class="command-form">
+              <label class="command-box"><span aria-hidden="true">/</span><input id="command" placeholder="输入 Minecraft 命令" data-en-placeholder="Enter a Minecraft command" aria-label="Minecraft 命令" data-en-aria-label="Minecraft command" autocomplete="off" spellcheck="false" disabled><kbd>Enter</kbd></label>
+              <button type="submit" class="btn command-send" id="send-command" disabled><span data-en="Send">发送</span> <span aria-hidden="true">↵</span></button>
+            </form>
+          </section>
+          <section class="card players-card" aria-labelledby="players-title">
+            <div class="card-top">
+              <div class="card-title"><h2 id="players-title" data-en="Online players">在线玩家</h2><span class="player-count" id="player-count">0</span></div>
+              <button class="btn quiet compact refresh-button" id="refresh-players" title="刷新在线列表" data-en-title="Refresh player list" aria-label="刷新在线列表" data-en-aria-label="Refresh player list" disabled>↻</button>
+            </div>
+            <div class="player-view">
+              <div id="player-empty" class="player-empty"><div class="player-symbol" aria-hidden="true"><span></span></div><strong data-en="No players online">暂无在线玩家</strong></div>
+              <div id="player-list" class="player-list" aria-label="在线玩家列表" data-en-aria-label="Online player list"></div>
+            </div>
+            <div class="player-actions">
+              <label class="field-label" for="player-name" data-en="Manage player">管理玩家</label>
+              <input id="player-name" class="text-input player-name" placeholder="选择或输入玩家用户名" data-en-placeholder="Select or enter a username" aria-describedby="players-title" autocomplete="off" spellcheck="false" maxlength="16" disabled>
+              <div class="action-grid">
+                <button class="btn action" data-command="kick" data-en="Kick" disabled>踢出</button>
+                <button class="btn action danger" data-command="ban" data-en="Ban" disabled>封禁</button>
+                <button class="btn action" data-command="op" data-en="Grant OP" disabled>给予 OP</button>
+                <button class="btn action" data-command="deop" data-en="Remove OP" disabled>撤销 OP</button>
+                <button class="btn action" data-command="pardon" data-en="Unban" disabled>解封</button>
+                <button class="btn action" data-command="whitelist add" data-en="Allowlist" disabled>加入白名单</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page config-page" id="page-config" hidden></section>
+
+      <section class="page settings-page" id="page-runtime" hidden>
+        <section class="card settings-card" aria-labelledby="runtime-title">
+          <div class="settings-card-heading">
+            <div class="settings-icon" aria-hidden="true">J</div>
+            <div><h2 id="runtime-title" data-en="Java and memory">Java 与内存</h2><p data-en="Applies at the next launch. Requires 64-bit Java 21.">适用于下一次启动，需要 64 位 Java 21。</p></div>
+          </div>
+          <form id="runtime-form">
+            <label class="field-label" for="java" data-en="Java path">Java 路径</label>
+            <div class="java-row">
+              <input id="java" class="text-input" placeholder="自动查找 Java 21" data-en-placeholder="Find Java 21 automatically" spellcheck="false" autocomplete="off">
+              <button class="btn" type="button" id="browse-java" data-en="Browse">浏览</button>
+              <button class="btn" type="button" id="scan-java" aria-controls="java-scan">扫描 Java</button>
+            </div>
+            <div id="java-scan" class="java-scan" hidden>
+              <p id="java-scan-status" role="status"></p>
+              <ul id="java-scan-results" class="java-scan-results" aria-label="扫描到的 Java" data-en-aria-label="Detected Java installations"></ul>
+            </div>
+            <div class="memory-fields">
+              <label class="field-label"><span data-en="Minimum memory">最小内存</span><div class="memory-input"><input class="text-input" type="number" min="1" max="2147483647" step="1" id="memory-min" required><span>MiB</span></div></label>
+              <label class="field-label"><span data-en="Maximum memory">最大内存</span><div class="memory-input"><input class="text-input" type="number" min="1" max="2147483647" step="1" id="memory-max" required><span>MiB</span></div></label>
+            </div>
+            <div class="settings-footer"><span id="runtime-note"></span><button type="submit" id="save-runtime" class="btn primary" data-en="Save launch settings">保存启动设置</button></div>
+          </form>
+        </section>
+        <section class="card settings-card eula-card" aria-labelledby="eula-title">
+          <div class="settings-card-heading">
+            <div class="settings-icon agreement-icon" aria-hidden="true">✓</div>
+            <div><h2 id="eula-title">Minecraft EULA</h2><p id="eula-state">首次启动需要阅读并接受协议。</p></div>
+          </div>
+          <div class="agreement-actions"><button class="btn" id="read-eula" data-en="Read EULA ↗">查看协议 ↗</button><button class="btn" id="accept-eula" data-en="Accept EULA">接受 EULA</button></div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <dialog id="confirm-dialog" class="dialog">
+    <form method="dialog">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-message"></p>
+      <div class="dialog-actions"><button value="cancel" class="btn" data-en="Cancel" autofocus>取消</button><button value="accept" class="btn primary" id="confirm-accept">确认</button></div>
+    </form>
+  </dialog>
+  <div class="toast-holder" id="toasts" role="status" aria-live="polite"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
