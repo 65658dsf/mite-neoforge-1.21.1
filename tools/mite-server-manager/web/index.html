@@ -45,12 +45,14 @@
             <div class="server-emblem" aria-hidden="true"><i></i></div>
             <div class="server-text">
               <h2 id="server-name">MITE 服务端</h2>
-              <div class="phase-row"><span id="phase-dot" class="phase-dot" data-tone="idle"></span><span id="phase-label">等待选择服务端</span></div>
+              <div class="phase-row"><span id="phase-dot" class="phase-dot" data-tone="idle"></span><span id="phase-label">等待选择服务端</span><span class="pack-version" id="pack-version" hidden></span></div>
             </div>
           </div>
           <div class="server-actions">
             <button id="stop-server" class="btn stop-button" disabled><span class="stop-icon" aria-hidden="true"></span><span data-en="Stop">停止</span></button>
             <button id="start-server" class="btn primary" disabled><span class="play-icon" aria-hidden="true"></span><span data-en="Start server">启动服务器</span></button>
+            <button id="open-server-pack" class="btn primary" type="button" hidden>下载服务端</button>
+            <button id="cancel-server-pack" class="btn stop-button" type="button" data-en="Cancel download" hidden>取消下载</button>
           </div>
         </div>
         <div class="console-grid">
@@ -64,6 +66,12 @@
             </div>
             <div id="log-view" class="log-view" tabindex="0" aria-label="服务器日志" data-en-aria-label="Server logs">
               <div id="log-empty" class="log-empty"><span class="prompt-mark" aria-hidden="true">›_</span><strong data-en="Waiting for server output">等待服务端输出</strong><span id="log-empty-hint">选择服务端目录后即可启动。</span></div>
+              <div id="pack-setup" class="log-empty pack-setup" hidden>
+                <strong id="pack-setup-status" role="status">未下载 MITE Modern ITE 服务端</strong>
+                <progress id="pack-progress" class="pack-progress" aria-label="服务端包下载进度" data-en-aria-label="Server pack download progress" hidden></progress>
+                <p id="pack-progress-detail"></p>
+                <p id="pack-setup-error" role="alert" hidden></p>
+              </div>
               <div id="log-lines"></div>
             </div>
             <form id="command-form" class="command-form">
@@ -132,6 +140,27 @@
       </section>
     </main>
   </div>
+  <dialog id="server-pack-dialog" class="dialog pack-dialog" aria-labelledby="pack-dialog-title">
+    <h2 id="pack-dialog-title" data-en="Download MITE Modern ITE server">下载 MITE Modern ITE 服务端</h2>
+    <div class="pack-target">
+      <span data-en="Install into a new subfolder under">在此目录下创建服务端子目录</span>
+      <code id="pack-target-path"></code>
+    </div>
+    <label class="field-label" for="pack-release" data-en="Server pack version">服务端包版本</label>
+    <select id="pack-release" class="text-input" disabled></select>
+    <p id="pack-catalog-status" class="pack-dialog-status" role="status"></p>
+    <p id="pack-release-details" class="pack-dialog-status"></p>
+    <section id="pack-changelog" aria-labelledby="pack-changelog-title" hidden>
+      <h3 id="pack-changelog-title" data-en="Matching client changelog">同版客户端更新日志</h3>
+      <pre id="pack-changelog-text" tabindex="0"></pre>
+    </section>
+    <div class="dialog-actions pack-dialog-actions">
+      <button class="btn quiet compact" type="button" id="open-pack-source" data-en="Open CurseForge ↗">查看 CurseForge ↗</button>
+      <button class="btn" type="button" id="retry-pack-catalog" data-en="Retry list" hidden>重读版本列表</button>
+      <button class="btn" type="button" id="close-pack-dialog" data-en="Back">返回</button>
+      <button class="btn primary" type="button" id="begin-server-pack" data-en="Download and unpack" disabled>下载并解压</button>
+    </div>
+  </dialog>
   <dialog id="confirm-dialog" class="dialog">
     <form method="dialog">
       <h2 id="confirm-title"></h2>

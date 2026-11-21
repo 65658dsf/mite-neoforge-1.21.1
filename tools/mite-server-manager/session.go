@@ -45,13 +45,14 @@ type LogLine struct {
 }
 
 type SessionSnapshot struct {
-	Phase     string    `json:"phase"`
-	Status    string    `json:"status"`
-	Active    bool      `json:"active"`
-	Ready     bool      `json:"ready"`
-	Players   []string  `json:"players"`
-	Logs      []LogLine `json:"logs"`
-	LastLogID uint64    `json:"lastLogId"`
+	Phase      string                     `json:"phase"`
+	Status     string                     `json:"status"`
+	Active     bool                       `json:"active"`
+	Ready      bool                       `json:"ready"`
+	Players    []string                   `json:"players"`
+	Logs       []LogLine                  `json:"logs"`
+	LastLogID  uint64                     `json:"lastLogId"`
+	ServerPack ServerPackDownloadSnapshot `json:"serverPack"`
 }
 
 type Session struct {

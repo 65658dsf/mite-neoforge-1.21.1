@@ -26,26 +26,35 @@ type Preferences struct {
 }
 
 type RuntimeSettings struct {
-	Directory string             `json:"directory"`
-	Java      string             `json:"java"`
-	MinMiB    int                `json:"minMiB"`
-	MaxMiB    int                `json:"maxMiB"`
-	EULA      bool               `json:"eula"`
-	Issue     string             `json:"issue"`
-	Language  string             `json:"language"`
-	JavaScan  []JavaInstallation `json:"javaScan"`
+	Directory      string             `json:"directory"`
+	DownloadTarget string             `json:"downloadTarget"`
+	PackVersion    string             `json:"packVersion"`
+	Java           string             `json:"java"`
+	MinMiB         int                `json:"minMiB"`
+	MaxMiB         int                `json:"maxMiB"`
+	EULA           bool               `json:"eula"`
+	Issue          string             `json:"issue"`
+	Language       string             `json:"language"`
+	JavaScan       []JavaInstallation `json:"javaScan"`
 }
 
 type App struct {
-	ctx         context.Context
-	started     chan struct{}
-	mu          sync.Mutex
-	preferences Preferences
-	path        string
-	session     *Session
-	closing     atomic.Bool
-	discard     atomic.Bool
-	unsaved     atomic.Bool
+	ctx                context.Context
+	started            chan struct{}
+	mu                 sync.Mutex
+	preferences        Preferences
+	path               string
+	executable         string
+	directory          string
+	downloadTarget     string
+	serverPackReleases map[int]ServerPackRelease
+	serverPackState    ServerPackDownloadSnapshot
+	cancelServerPack   context.CancelFunc
+	serverPackDone     chan struct{}
+	session            *Session
+	closing            atomic.Bool
+	discard            atomic.Bool
+	unsaved            atomic.Bool
 }
 
 func newApp(arguments []string) *App {
@@ -69,20 +78,21 @@ func newApp(arguments []string) *App {
 	}
 	executable, _ := os.Executable()
 	working, _ := os.Getwd()
-	candidates := []string{filepath.Dir(executable), prefs.Directory, working}
+	requested := ""
 	if len(arguments) == 2 && arguments[0] == "--server" {
-		candidates = append([]string{arguments[1]}, candidates...)
+		requested = arguments[1]
 	}
-	prefs.Directory = ""
-	for _, candidate := range candidates {
-		if isServerDirectory(candidate) {
-			prefs.Directory, _ = filepath.Abs(candidate)
-			break
-		}
+	directory, downloadTarget := initialServerLocation(executable, requested, prefs.Directory, working)
+	if directory != "" {
+		prefs.Directory = directory
 	}
 	session := NewSession()
 	session.english.Store(prefs.Language == "en")
-	return &App{preferences: prefs, path: path, session: session, started: make(chan struct{})}
+	return &App{
+		preferences: prefs, path: path, session: session, started: make(chan struct{}),
+		executable: executable, directory: directory, downloadTarget: downloadTarget,
+		serverPackState: ServerPackDownloadSnapshot{Phase: "idle"},
+	}
 }
 
 func isServerDirectory(path string) bool {
@@ -145,6 +155,17 @@ func (a *App) beforeClose(ctx context.Context) bool {
 		a.mu.Unlock()
 		return true
 	}
+	if a.cancelServerPack != nil {
+		a.cancelServerPack()
+		done := a.serverPackDone
+		a.mu.Unlock()
+		go func() {
+			<-done
+			a.discard.Store(true)
+			runtime.Quit(ctx)
+		}()
+		return true
+	}
 	a.mu.Unlock()
 	if !active && !a.unsaved.Load() {
 		return false
@@ -182,7 +203,13 @@ func (a *App) beforeClose(ctx context.Context) bool {
 
 func (a *App) SetUnsaved(unsaved bool) { a.unsaved.Store(unsaved) }
 
-func (a *App) Snapshot(after uint64) SessionSnapshot { return a.session.Snapshot(after) }
+func (a *App) Snapshot(after uint64) SessionSnapshot {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	snapshot := a.session.Snapshot(after)
+	snapshot.ServerPack = a.serverPackState
+	return snapshot
+}
 
 func (a *App) GetRuntime() RuntimeSettings {
 	a.mu.Lock()
@@ -191,14 +218,15 @@ func (a *App) GetRuntime() RuntimeSettings {
 }
 
 func (a *App) runtimeSettings() RuntimeSettings {
-	directory := a.preferences.Directory
+	directory := a.directory
 	result := RuntimeSettings{
 		Directory: directory, MinMiB: 2048, MaxMiB: 6144,
-		Language: a.preferences.Language, JavaScan: a.cachedJavaScan(),
+		Language: a.preferences.Language, JavaScan: a.cachedJavaScan(), DownloadTarget: a.downloadTarget,
 	}
 	if directory == "" {
 		return result
 	}
+	result.PackVersion = installedServerPackVersion(directory)
 	result.Java = a.preferences.Java[strings.ToLower(directory)]
 	minimum, maximum, err := readMemory(directory)
 	if err == nil {
@@ -215,14 +243,16 @@ func (a *App) runtimeSettings() RuntimeSettings {
 
 func (a *App) ChooseDirectory() (RuntimeSettings, error) {
 	current := a.GetRuntime()
-	directory, err := runtime.OpenDirectoryDialog(a.windowContext(), runtime.OpenDialogOptions{
-		Title: a.text("选择 NeoForge 服务端目录", "Choose NeoForge server folder"), DefaultDirectory: current.Directory,
-	})
-	if err != nil || directory == "" || strings.EqualFold(filepath.Clean(directory), filepath.Clean(current.Directory)) {
-		return current, err
+	defaultDirectory := current.Directory
+	if defaultDirectory == "" {
+		defaultDirectory = current.DownloadTarget
 	}
-	if !isServerDirectory(directory) {
-		return current, errors.New(a.text("请选择包含 server.properties 或 NeoForge 启动脚本的服务端目录。", "Choose a folder containing server.properties or the NeoForge launch scripts."))
+	directory, err := runtime.OpenDirectoryDialog(a.windowContext(), runtime.OpenDialogOptions{
+		Title:            a.text("选择服务端或空安装目录", "Choose a server folder or an empty installation folder"),
+		DefaultDirectory: defaultDirectory, CanCreateDirectories: true,
+	})
+	if err != nil || directory == "" {
+		return current, err
 	}
 	a.mu.Lock()
 	defer a.mu.Unlock()
@@ -232,12 +262,26 @@ func (a *App) ChooseDirectory() (RuntimeSettings, error) {
 	if a.session.IsActive() {
 		return current, errors.New(a.text("停服后可以切换目录。", "Stop the server before switching folders."))
 	}
-	old := a.preferences.Directory
-	a.preferences.Directory = filepath.Clean(directory)
-	if err = a.savePreferences(); err != nil {
-		a.preferences.Directory = old
-		return current, err
+	if a.cancelServerPack != nil {
+		return current, errors.New(a.text("请等服务端下载结束后再切换目录。", "Wait for the server pack download to end before switching folders."))
 	}
+	selected, downloadTarget := resolveServerLocation(directory, a.executable, a.preferences.Directory)
+	if selected == "" && downloadTarget == "" {
+		return current, errors.New(a.text("请选择已有服务端目录或一个空安装目录。", "Choose an existing server folder or an empty installation folder."))
+	}
+	if strings.EqualFold(selected, a.directory) && strings.EqualFold(downloadTarget, a.downloadTarget) {
+		return a.runtimeSettings(), nil
+	}
+	if selected != "" {
+		old := a.preferences.Directory
+		a.preferences.Directory = selected
+		if err := a.savePreferences(); err != nil {
+			a.preferences.Directory = old
+			return current, err
+		}
+	}
+	a.directory, a.downloadTarget = selected, downloadTarget
+	a.serverPackState = ServerPackDownloadSnapshot{Phase: "idle"}
 	a.session.Reset()
 	return a.runtimeSettings(), nil
 }
@@ -245,10 +289,14 @@ func (a *App) ChooseDirectory() (RuntimeSettings, error) {
 func (a *App) OpenDirectory() error {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	if a.preferences.Directory == "" {
+	directory := a.directory
+	if directory == "" {
+		directory = a.downloadTarget
+	}
+	if directory == "" {
 		return errors.New(a.text("请先选择服务端目录。", "Choose a server folder first."))
 	}
-	command := exec.Command("explorer.exe", a.preferences.Directory)
+	command := exec.Command("explorer.exe", directory)
 	if err := command.Start(); err != nil {
 		return err
 	}
@@ -276,7 +324,7 @@ func (a *App) ScanJava() ([]JavaInstallation, error) {
 		return nil, errors.New(a.text("无法找到 Windows 用户配置目录。", "Could not find the Windows user settings folder."))
 	}
 	a.mu.Lock()
-	directory := a.preferences.Directory
+	directory := a.directory
 	selected := a.preferences.Java[strings.ToLower(directory)]
 	a.mu.Unlock()
 
@@ -426,10 +474,10 @@ func (a *App) Send(command string) error { return a.session.Send(command) }
 func (a *App) ReadConfig(kind string) (ConfigResult, error) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	if a.preferences.Directory == "" {
+	if a.directory == "" {
 		return ConfigResult{}, errors.New(a.text("请先选择服务端目录。", "Choose a server folder first."))
 	}
-	return readConfig(a.preferences.Directory, kind)
+	return readConfig(a.directory, kind)
 }
 
 func (a *App) SaveConfig(kind, text, revision string) (ConfigResult, error) {
@@ -469,13 +517,13 @@ func (a *App) editableDirectory() (string, error) {
 	if a.closing.Load() {
 		return "", errors.New(a.text("管理器正在退出。", "The server manager is closing."))
 	}
-	if a.preferences.Directory == "" {
+	if a.directory == "" {
 		return "", errors.New(a.text("请先选择服务端目录。", "Choose a server folder first."))
 	}
 	if a.session.IsActive() {
 		return "", errors.New(a.text("请在停服后调整设置。", "Stop the server before editing settings."))
 	}
-	return a.preferences.Directory, nil
+	return a.directory, nil
 }
 
 func (a *App) lockEditableDirectory() (string, func(), error) {
