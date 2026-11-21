@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -69,7 +70,10 @@ public final class AnimalCommon032Goals {
         return selected;
     }
     public static final class Flee extends SourceMovement032Goal implements Marker {
-        private static final float FLEE_SPEED_MULTIPLIER = 0.9025F;
+        private static final float FLEE_SPEED_MULTIPLIER = 0.92F;
+        // Ground mobs use their controlled speed as both movement speed and forward input.
+        // Cap its square below a player's ordinary sprint speed (0.1 × 1.3).
+        private static final double MAX_FLEE_CONTROL_SPEED = Math.sqrt(0.13D * 0.95D);
         private static final int REPLAN_INTERVAL=10;
         private final float panicChance;
         private boolean startingPath;
@@ -211,7 +215,11 @@ public final class AnimalCommon032Goals {
         private void clearFailure() {failures=0;retryAt=Long.MIN_VALUE;failureOrigin=null;}
         private void cancelSession() {AnimalFleeBudget.cancel(session);session=null;}
         private boolean controlled() { return mob.isPassenger() || mob.getFirstPassenger() instanceof Player; }
-        @Override protected float movementSpeed() { return (movementSpeed+(panicking() ? .2F : 0F))*FLEE_SPEED_MULTIPLIER; }
+        @Override protected float movementSpeed() {
+            float scaledSpeed = (movementSpeed + (panicking() ? .2F : 0F)) * FLEE_SPEED_MULTIPLIER;
+            double attributeSpeed = mob.getAttributeValue(Attributes.MOVEMENT_SPEED);
+            return (float) Math.min(scaledSpeed, MAX_FLEE_CONTROL_SPEED / attributeSpeed);
+        }
         @Override public boolean canContinueToUse() {
             if(controlled()) return false;
             R196AnimalAi032.considerStopFleeing(mob);

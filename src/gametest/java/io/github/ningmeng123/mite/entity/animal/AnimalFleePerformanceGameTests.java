@@ -152,8 +152,8 @@ public final class AnimalFleePerformanceGameTests {
                 f.tick() - hitTick[0] >= 21 && chicken.getX() > chicken.start.x + 3D && chicken.recording().returnedWalkingRoute(),
                 "The original player causes actual eastward escape along a genuine native route: " + f.describe(chicken)))
                 .thenExecute(() -> {
-                    h.assertTrue(chicken.recording().requestedSpeed(1.35375D),
-                            "Real navigation receives (1.3 + 0.2) × 90.25% while the chicken panics");
+                    h.assertTrue(chicken.recording().requestedSpeed(1.38D),
+                            "Real navigation receives (1.3 + 0.2) × 92% while the chicken panics");
                     // Only the new human moves into striking distance. The animal's position,
                     // controls and navigation remain driven entirely by normal world ticks.
                     second.moveTo(chicken.position().add(2.5D, 0D, 0D));
@@ -174,8 +174,8 @@ public final class AnimalFleePerformanceGameTests {
                         "The bounded roomy enclosure keeps the threat nearby while the original panic expires naturally"))
                 .thenExecute(() -> {
                     h.assertTrue(R196AnimalAi032.state(chicken).getInt("panic_countdown") == 0
-                                    && R196AnimalAi032.lastAttacker(chicken) == second && chicken.recording().requestedSpeed(1.17325D),
-                            "Normal ongoing fleeing receives 1.3 × 90.25% immediately after the real panic boost finishes: " + f.describe(chicken));
+                                    && R196AnimalAi032.lastAttacker(chicken) == second && chicken.recording().requestedSpeed(1.196D),
+                            "Normal ongoing fleeing receives 1.3 × 92% immediately after the real panic boost finishes: " + f.describe(chicken));
                     h.assertTrue(chicken.nativeTicks > 200 && chicken.furthest > 3D && chicken.isAlive(),
                             "Speed and response checks use a naturally moving live chicken through full entity ticks");
                     f.assertNativeLimits(); f.report("changed-attacker-speed"); f.close();
