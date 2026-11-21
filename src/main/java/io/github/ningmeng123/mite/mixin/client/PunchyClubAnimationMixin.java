@@ -17,7 +17,10 @@ import org.spongepowered.asm.mixin.injection.At;
 @Pseudo
 @Mixin(targets = "punchy.client.render.ToolKindResolver", remap = false)
 public abstract class PunchyClubAnimationMixin {
-    @WrapOperation(method = "resolveItemKind(Lnet/minecraft/world/item/ItemStack;Lpunchy/client/renderer/layer/VanillaFirstPersonItemLayer$ToolKind;)Lpunchy/client/renderer/layer/VanillaFirstPersonItemLayer$ToolKind;",
+    // Punchy 3.2b delegates the tag checks to original$resolveItemKind after checking overrides.
+    @WrapOperation(method = {
+            "resolveItemKind(Lnet/minecraft/world/item/ItemStack;Lpunchy/client/renderer/layer/VanillaFirstPersonItemLayer$ToolKind;)Lpunchy/client/renderer/layer/VanillaFirstPersonItemLayer$ToolKind;",
+            "original$resolveItemKind(Lnet/minecraft/world/item/ItemStack;Lpunchy/client/renderer/layer/VanillaFirstPersonItemLayer$ToolKind;)Lpunchy/client/renderer/layer/VanillaFirstPersonItemLayer$ToolKind;"},
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/tags/TagKey;)Z"), require = 1)
     private static boolean mite$clubStackSwordAnimation(ItemStack stack, TagKey<Item> tag, Operation<Boolean> original) {
         return original.call(stack, tag) || tag.equals(ItemTags.SWORDS) && mite$club(stack);
