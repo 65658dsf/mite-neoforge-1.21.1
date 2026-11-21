@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.registry;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.worldgen.CaveMushroomFeature;
 import io.github.ningmeng123.mite.worldgen.NetherBoundaryFeature;
 import io.github.ningmeng123.mite.worldgen.R196OreFeature;
 import io.github.ningmeng123.mite.worldgen.SurfaceCaveConnectionFeature;
@@ -19,6 +20,8 @@ public final class MiteWorldFeatures {
     public static final DeferredHolder<Feature<?>, R196OreFeature> R196_ORES = FEATURES.register("r196_ores", R196OreFeature::new);
     public static final DeferredHolder<Feature<?>, SurfaceCaveConnectionFeature> SURFACE_CAVE_CONNECTIONS = FEATURES.register(
             "surface_cave_connections", SurfaceCaveConnectionFeature::new);
+    public static final DeferredHolder<Feature<?>, CaveMushroomFeature> CAVE_MUSHROOMS = FEATURES.register(
+            "cave_mushrooms", CaveMushroomFeature::new);
     private MiteWorldFeatures() {}
     public static void register(IEventBus bus) { FEATURES.register(bus); }
 }

@@ -46,8 +46,11 @@ public final class FungalGrowth {
         if(level.dimensionType().hasSkyLight() && level.canSeeSky(pos)) return false;
         if(state.is(Blocks.RED_MUSHROOM)) return soil.is(Blocks.GRASS_BLOCK);
         if(!state.is(Blocks.BROWN_MUSHROOM)) return false;
-        return level.getRawBrightness(pos,0)<=13 && (soil.is(Blocks.STONE)||soil.is(Blocks.GRAVEL)||soil.is(Blocks.DIRT)
-                ||soil.getBlock() instanceof FarmBlock||soil.is(Blocks.MYCELIUM));
+        return level.getRawBrightness(pos,0)<=13 && brownMushroomSoil(soil);
+    }
+    public static boolean brownMushroomSoil(BlockState soil) {
+        return soil.is(Blocks.STONE) || soil.is(Blocks.GRAVEL) || soil.is(Blocks.DIRT)
+                || soil.getBlock() instanceof FarmBlock || soil.is(Blocks.MYCELIUM);
     }
     public static boolean placement(LevelReader level,BlockPos pos,BlockState state) {
         if(!survives(level,pos,state)) return false;
