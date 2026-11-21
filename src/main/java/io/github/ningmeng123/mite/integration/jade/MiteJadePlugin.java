@@ -7,6 +7,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.CocoaBlock;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.MushroomBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.StemBlock;
 import net.minecraft.world.level.block.SugarCaneBlock;
+import net.neoforged.fml.ModList;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -40,6 +42,11 @@ public final class MiteJadePlugin implements IWailaPlugin {
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
+        if (ModList.get().isLoaded("witherplus")) {
+            // Wither Plus stores the skull variant on the block entity and returns it when picked.
+            registration.usePickedResult(Blocks.WITHER_SKELETON_SKULL);
+            registration.usePickedResult(Blocks.WITHER_SKELETON_WALL_SKULL);
+        }
         TARGETS.forEach(target -> registration.registerBlockComponent(CropJadeProvider.INSTANCE, target));
         registration.registerBlockComponent(CampfireJadeProvider.INSTANCE, CampfireBlock.class);
         registration.registerBlockComponent(AnvilJadeProvider.INSTANCE, AnvilBlock.class);
