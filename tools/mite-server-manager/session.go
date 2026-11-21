@@ -307,6 +307,9 @@ func (s *Session) run(directory, javaPath string) error {
 	if !s.advance("starting", "正在启动服务端") {
 		return errStartCanceled
 	}
+	if err := enforceServerDifficulty(directory); err != nil {
+		return fmt.Errorf(s.text("无法将游戏难度设为困难。%w", "Could not set the server difficulty to Hard. %w"), err)
+	}
 	return s.runServer(java, directory, runtimeArgs)
 }
 

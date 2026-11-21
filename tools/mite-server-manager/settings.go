@@ -22,6 +22,7 @@ import (
 )
 
 const missingRevision = "missing"
+const hardServerDifficulty = "hard"
 
 var (
 	errConfigConflict = errors.New("文件在读取后已被修改，请重新加载")
@@ -105,6 +106,27 @@ func alignConfigLineEndings(text, original string) string {
 	return strings.ReplaceAll(normalized, "\n", preferredLineEnding(original))
 }
 
+func enforceServerDifficulty(directory string) error {
+	const path = "server.properties"
+	settingsWriteLock.Lock()
+	defer settingsWriteLock.Unlock()
+	root, err := os.OpenRoot(directory)
+	if err != nil {
+		return err
+	}
+	defer root.Close()
+	doc, err := readSettingsFile(root, path)
+	if err != nil {
+		return err
+	}
+	_, err = writeSettingsFile(root, path, doc, withHardServerDifficulty(doc.text))
+	return err
+}
+
+func withHardServerDifficulty(text string) string {
+	return alignConfigLineEndings(mergeProperties(text, map[string]string{"difficulty": hardServerDifficulty}), text)
+}
+
 func updateConfig(directory, kind, revision string, edit func(settingsFile) (string, error)) (ConfigResult, error) {
 	path, err := configPath(kind)
 	if err != nil {
@@ -135,6 +157,9 @@ func updateConfig(directory, kind, revision string, edit func(settingsFile) (str
 	text, err := edit(doc)
 	if err != nil {
 		return ConfigResult{}, err
+	}
+	if kind == "server" {
+		text = withHardServerDifficulty(text)
 	}
 	doc, err = writeSettingsFile(root, path, doc, text)
 	if err != nil {

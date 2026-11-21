@@ -271,6 +271,11 @@
     opacity: .65;
 }
 
+.config-input.config-locked-value {
+    color: var(--accent);
+    opacity: 1;
+}
+
 .config-editor {
     display: grid;
     gap: 10px;
@@ -281,6 +286,18 @@
     border: 1px solid var(--border);
     border-radius: 14px;
     background: var(--panel);
+}
+
+.config-editor-heading {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+}
+
+.config-editor-note {
+    color: var(--muted);
+    font-size: .78rem;
 }
 
 .config-text {

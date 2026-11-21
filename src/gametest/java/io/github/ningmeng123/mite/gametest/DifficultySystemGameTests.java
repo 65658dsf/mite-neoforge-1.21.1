@@ -8,6 +8,8 @@ import io.github.ningmeng123.mite.world.DifficultySystem;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +28,8 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServerSettings;
+import net.minecraft.server.dedicated.Settings;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -62,6 +66,29 @@ public final class DifficultySystemGameTests {
 
     private static void close(GameTestHelper helper, float actual, float expected, String message) {
         helper.assertTrue(Math.abs(actual - expected) < .00001F, message + ": " + actual + " vs " + expected);
+    }
+
+    @GameTest(template = "empty")
+    public static void dedicatedStartupWritesHardToServerProperties(GameTestHelper helper) throws Exception {
+        Path file = Files.createTempFile("mite-server-properties-", ".properties");
+        try {
+            for (String difficulty : List.of("", "difficulty=peaceful\n", "difficulty=easy\n",
+                    "difficulty=normal\n", "difficulty=hard\n", "difficulty=2\n")) {
+                Files.writeString(file, difficulty + "motd=MITE 测试\nhardcore=false\ngamemode=creative\n");
+                DedicatedServerSettings settings = new DedicatedServerSettings(file);
+                helper.assertValueEqual(settings.getProperties().difficulty, Difficulty.HARD,
+                        "Dedicated server startup settings expose fixed Hard");
+                settings.forceSave();
+                var saved = Settings.loadFromFile(file);
+                helper.assertValueEqual(saved.getProperty("difficulty"), "hard", "Startup saves canonical Hard");
+                helper.assertValueEqual(saved.getProperty("motd"), "MITE 测试", "Startup retains the custom MOTD");
+                helper.assertValueEqual(saved.getProperty("hardcore"), "false", "Hard does not enable Hardcore");
+                helper.assertValueEqual(saved.getProperty("gamemode"), "creative", "Startup retains the configured game mode");
+            }
+        } finally {
+            Files.deleteIfExists(file);
+        }
+        helper.succeed();
     }
 
     @GameTest(template = "empty")

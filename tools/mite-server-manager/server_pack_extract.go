@@ -78,6 +78,9 @@ func extractMiteServerPack(ctx context.Context, archive, target string) error {
 	if err := unpackServerPack(ctx, staging, entries); err != nil {
 		return err
 	}
+	if err := enforceServerDifficulty(staging); err != nil {
+		return fmt.Errorf("could not set the server difficulty to Hard: %w", err)
+	}
 	if err := ctx.Err(); err != nil {
 		return err
 	}

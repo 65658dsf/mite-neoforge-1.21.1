@@ -110,8 +110,29 @@ func isServerDirectory(path string) bool {
 }
 
 func (a *App) startup(ctx context.Context) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
 	a.ctx = ctx
+	a.enforceSelectedDifficulty()
 	close(a.started)
+}
+
+func (a *App) enforceSelectedDifficulty() {
+	if a.directory == "" {
+		return
+	}
+	config, err := readConfig(a.directory, "server")
+	if err == nil && config.Properties["difficulty"] != hardServerDifficulty {
+		directory, unlock, lockErr := a.lockEditableDirectory()
+		err = lockErr
+		if err == nil {
+			defer unlock()
+			err = enforceServerDifficulty(directory)
+		}
+	}
+	if err != nil {
+		a.session.appendLog(a.text("无法将游戏难度设为困难。", "Could not set the server difficulty to Hard. ") + err.Error())
+	}
 }
 
 func (a *App) windowContext() context.Context {
@@ -271,6 +292,7 @@ func (a *App) ChooseDirectory() (RuntimeSettings, error) {
 		return current, errors.New(a.text("请选择已有服务端目录或一个空安装目录。", "Choose an existing server folder or an empty installation folder."))
 	}
 	if strings.EqualFold(selected, a.directory) && strings.EqualFold(downloadTarget, a.downloadTarget) {
+		a.enforceSelectedDifficulty()
 		return a.runtimeSettings(), nil
 	}
 	if selected != "" {
@@ -285,6 +307,7 @@ func (a *App) ChooseDirectory() (RuntimeSettings, error) {
 	a.serverPackState = ServerPackDownloadSnapshot{Phase: "idle"}
 	a.checkedPackUpdate = nil
 	a.session.Reset()
+	a.enforceSelectedDifficulty()
 	return a.runtimeSettings(), nil
 }
 

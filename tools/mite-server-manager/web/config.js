@@ -30,7 +30,7 @@ const serverGroups = [
 
 const serverDefaults = {
     "motd": "A Minecraft Server", "server-port": "25565", "max-players": "20", "online-mode": "true",
-    "white-list": "false", "difficulty": "easy", "gamemode": "survival", "pvp": "true",
+    "white-list": "false", "difficulty": "hard", "gamemode": "survival", "pvp": "true",
     "view-distance": "10", "simulation-distance": "10"
 };
 
@@ -57,8 +57,6 @@ const serverRanges = {
 };
 
 const serverChoices = {
-    difficulty: [["peaceful", "和平", "Peaceful"], ["easy", "简单", "Easy"],
-        ["normal", "普通", "Normal"], ["hard", "困难", "Hard"]],
     gamemode: [["survival", "生存", "Survival"], ["creative", "创造", "Creative"],
         ["adventure", "冒险", "Adventure"], ["spectator", "旁观", "Spectator"]],
     "region-file-compression": [["deflate", "Deflate", "Deflate"], ["lz4", "LZ4", "LZ4"],
@@ -131,7 +129,7 @@ function makeServerField(id, value, language) {
         id, key: id, label: translatedField("server", id, id, language), value, type, options,
         alias: translatedField("server", id, id, otherLanguage(language)),
         range: Object.hasOwn(serverRanges, id) ? serverRanges[id] : null,
-        legacyEnum: id === "difficulty" || id === "gamemode"
+        legacyEnum: id === "gamemode"
     };
 }
 
@@ -383,6 +381,15 @@ export function mountConfig(container, api) {
         row.dataset.search = [field.label, field.alias, field.key, field.id, group.key, group.title, group.alias]
             .join(" ").toLocaleLowerCase();
         row.dataset.field = field.id;
+        if (state.kind === "server" && field.id === "difficulty") {
+            const control = element("input", "config-input config-locked-value");
+            control.type = "text";
+            control.value = t("困难", "Hard");
+            control.readOnly = true;
+            key.textContent += t(" · 已锁定", " · Locked");
+            row.append(control);
+            return row;
+        }
         const value = state.updates.get(field.id) ?? field.value;
         const isBoolean = field.type === "boolean" || field.type === "bool";
         let control;
@@ -469,8 +476,17 @@ export function mountConfig(container, api) {
         const wrapper = element("div", "config-editor");
         const label = element("label", "config-field-label", t("配置文件原文", "Raw configuration file"));
         label.htmlFor = "config-raw";
+        const heading = element("div", "config-editor-heading");
+        heading.append(label);
         const text = element("textarea", "config-text");
         text.id = label.htmlFor;
+        if (state.kind === "server") {
+            const note = element("span", "config-editor-note", t("游戏难度已锁定，保存时固定为 difficulty=hard。",
+                "Difficulty is locked. The file is saved with difficulty=hard."));
+            note.id = "config-difficulty-note";
+            text.setAttribute("aria-describedby", note.id);
+            heading.append(note);
+        }
         text.spellcheck = false;
         text.wrap = "off";
         text.setAttribute("data-config-edit", "");
@@ -481,7 +497,7 @@ export function mountConfig(container, api) {
             result.textContent = "";
             updateMeta();
         });
-        wrapper.append(label, text);
+        wrapper.append(heading, text);
         return wrapper;
     }
 
