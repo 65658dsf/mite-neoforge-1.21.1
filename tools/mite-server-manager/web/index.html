@@ -45,7 +45,12 @@
             <div class="server-emblem" aria-hidden="true"><i></i></div>
             <div class="server-text">
               <h2 id="server-name">MITE 服务端</h2>
-              <div class="phase-row"><span id="phase-dot" class="phase-dot" data-tone="idle"></span><span id="phase-label">等待选择服务端</span><span class="pack-version" id="pack-version" hidden></span></div>
+              <div class="phase-row">
+                <span id="phase-dot" class="phase-dot" data-tone="idle"></span>
+                <span id="phase-label">等待选择服务端</span>
+                <span class="pack-version" id="pack-version" hidden></span>
+                <button class="btn quiet compact update-badge" type="button" id="server-pack-update" hidden>检查更新</button>
+              </div>
             </div>
           </div>
           <div class="server-actions">
@@ -159,6 +164,41 @@
       <button class="btn" type="button" id="retry-pack-catalog" data-en="Retry list" hidden>重读版本列表</button>
       <button class="btn" type="button" id="close-pack-dialog" data-en="Back">返回</button>
       <button class="btn primary" type="button" id="begin-server-pack" data-en="Download and unpack" disabled>下载并解压</button>
+    </div>
+  </dialog>
+  <dialog id="server-pack-update-dialog" class="dialog pack-dialog update-dialog" aria-labelledby="update-dialog-title">
+    <h2 id="update-dialog-title" data-en="Update MITE Modern ITE server">更新 MITE Modern ITE 服务端</h2>
+    <p id="update-versions" class="update-versions"></p>
+    <p id="update-release-details" class="pack-dialog-status"></p>
+    <section class="update-risk" id="update-risk">
+      <h3 data-en="Before you update">更新前请确认</h3>
+      <ul>
+        <li data-en="The update can replace server files. Existing mods and custom configuration may conflict with the new version.">升级可能替换服务端文件，已有模组和自定义配置可能与新版冲突。</li>
+        <li data-en="The manager creates a backup first. Backing up, downloading, and extracting take time and require extra disk space.">管理器会先备份服务端。备份、下载与解压需要时间和额外的磁盘空间。</li>
+        <li data-en="The backup ZIP is stored in the adjacent MITE-Server-Backups folder. To roll back, stop the server, extract the backup into a new folder, and select that folder.">备份 ZIP 保存在同级 MITE-Server-Backups 文件夹。需要回退时先停服，再将备份解压到新目录并切换。</li>
+      </ul>
+    </section>
+    <details id="update-changelog" class="update-changelog" hidden>
+      <summary data-en="Matching client changelog">同版客户端更新日志</summary>
+      <pre id="update-changelog-text" class="pack-changelog-text" tabindex="0"></pre>
+    </details>
+    <section id="update-progress-panel" class="update-progress-panel" hidden>
+      <p id="update-progress-status" role="status"></p>
+      <progress id="update-progress" class="pack-progress" aria-label="服务端更新进度" data-en-aria-label="Server update progress" hidden></progress>
+      <p id="update-progress-detail" class="pack-dialog-status"></p>
+      <div id="update-backup" class="pack-target" hidden>
+        <span data-en="Backup location">备份位置</span>
+        <code id="update-backup-path"></code>
+      </div>
+      <p id="update-error" class="pack-dialog-status" data-error="true" role="alert" hidden></p>
+    </section>
+    <p id="update-blocked" class="pack-dialog-status"></p>
+    <div class="dialog-actions pack-dialog-actions">
+      <button class="btn quiet compact" type="button" id="recheck-server-pack" data-en="Check updates" hidden>检查更新</button>
+      <button class="btn" type="button" id="close-pack-update" data-en="Close" autofocus>关闭</button>
+      <button class="btn stop-button" type="button" id="cancel-server-pack-update" data-en="Cancel update" hidden>取消更新</button>
+      <button class="btn" type="button" id="refresh-updated-runtime" data-en="Reload server settings" hidden>重新载入服务端</button>
+      <button class="btn primary" type="button" id="begin-server-pack-update" data-en="Back up and update" disabled>备份并更新</button>
     </div>
   </dialog>
   <dialog id="confirm-dialog" class="dialog">

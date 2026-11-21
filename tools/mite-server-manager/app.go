@@ -49,6 +49,7 @@ type App struct {
 	downloadTarget     string
 	serverPackReleases map[int]ServerPackRelease
 	serverPackState    ServerPackDownloadSnapshot
+	checkedPackUpdate  *checkedServerPackUpdate
 	cancelServerPack   context.CancelFunc
 	serverPackDone     chan struct{}
 	session            *Session
@@ -282,6 +283,7 @@ func (a *App) ChooseDirectory() (RuntimeSettings, error) {
 	}
 	a.directory, a.downloadTarget = selected, downloadTarget
 	a.serverPackState = ServerPackDownloadSnapshot{Phase: "idle"}
+	a.checkedPackUpdate = nil
 	a.session.Reset()
 	return a.runtimeSettings(), nil
 }
@@ -520,8 +522,14 @@ func (a *App) editableDirectory() (string, error) {
 	if a.directory == "" {
 		return "", errors.New(a.text("请先选择服务端目录。", "Choose a server folder first."))
 	}
+	if a.cancelServerPack != nil {
+		return "", errors.New(a.text("请等服务端操作结束后再继续。", "Wait for the server pack operation to finish."))
+	}
 	if a.session.IsActive() {
 		return "", errors.New(a.text("请在停服后调整设置。", "Stop the server before editing settings."))
+	}
+	if err := a.interruptedServerPackUpdate(a.directory); err != nil {
+		return "", err
 	}
 	return a.directory, nil
 }

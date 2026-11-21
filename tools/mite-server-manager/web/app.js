@@ -17,6 +17,7 @@ const maximum = byId('memory-max');
 const dialogue = byId('confirm-dialog');
 const packDialog = byId('server-pack-dialog');
 const packRelease = byId('pack-release');
+const updateDialog = byId('server-pack-update-dialog');
 const languageSelect = byId('language');
 const username = /^[A-Za-z0-9_-]{1,16}$/;
 const history = [];
@@ -52,6 +53,11 @@ let packListing = false;
 let packListError = '';
 let selectedPack = '';
 const packChangelogs = new Map();
+let configContext;
+let updateCheck = { key: '' };
+let updateJob = null;
+let updateCompleted = false;
+let updateRuntimeError = '';
 
 function t(chinese, english) {
   return language === 'en' ? english : chinese;
@@ -150,11 +156,23 @@ function updateControls() {
   byId('accept-eula').disabled = runtimeLocked || settings.eula;
   byId('runtime-note').textContent = settings?.issue || (!selected ? t('请先选择服务端目录。', 'Choose a server folder first.')
     : active ? t('服务器运行中，停服后可以编辑。', 'Stop the server to edit these settings.')
-    : runtimeChanged() ? t('有未保存的启动设置。', 'Launch settings have unsaved changes.')
-      : t('Java 路径留空时自动查找。', 'Leave the Java path empty to find Java automatically.'));
+      : packBusy ? t('请等待服务端包操作完成后再编辑。', 'Wait for the server pack operation to finish before editing.')
+        : runtimeChanged() ? t('有未保存的启动设置。', 'Launch settings have unsaved changes.')
+          : t('Java 路径留空时自动查找。', 'Leave the Java path empty to find Java automatically.'));
   byId('eula-state').textContent = settings?.eula ? t('此服务端已接受协议。', 'The EULA has been accepted for this server.')
     : t('首次启动需要阅读并接受协议。', 'Read and accept the EULA before the first launch.');
+  syncConfigContext();
   renderPackState();
+  renderPackUpdate();
+}
+
+function syncConfigContext() {
+  if (!config || !settings) return;
+  const directory = settings.directory;
+  const locked = active || packIsBusy();
+  if (configContext?.directory === directory && configContext?.locked === locked) return;
+  configContext = { directory, locked };
+  config.setContext(directory, locked);
 }
 
 function updateDirectoryText() {
@@ -198,17 +216,220 @@ function applySettings(value, preserveInputs = false, scanRevision = javaScanRev
     historyIndex = 0;
     command.value = '';
   }
-  config.setContext(value.directory, active);
   updateControls();
   reportUnsaved();
+  watchPackUpdate();
+}
+
+function packPhaseIsWorking(phase) {
+  return ['backing-up', 'downloading', 'verifying', 'extracting', 'updating'].includes(phase);
 }
 
 function packIsWorking() {
-  return ['downloading', 'verifying', 'extracting'].includes(packStatus.phase);
+  return packPhaseIsWorking(packStatus.phase);
 }
 
 function packIsBusy() {
   return Boolean(packAction) || packIsWorking();
+}
+
+function packUpdateKey() {
+  return settings?.directory && settings.packVersion
+    ? settings.directory.toLowerCase() + '\n' + settings.packVersion : '';
+}
+
+function watchPackUpdate() {
+  const key = packUpdateKey();
+  if (updateCheck.key === key) return;
+  updateCheck = { key };
+  if (key && api?.CheckServerPackUpdate) void checkPackUpdate();
+}
+
+async function checkPackUpdate() {
+  const key = packUpdateKey();
+  if (!key || updateCheck.loading || !api?.CheckServerPackUpdate) return;
+  const request = { key, loading: true };
+  updateCheck = request;
+  renderPackUpdate();
+  try {
+    const result = await api.CheckServerPackUpdate();
+    if (updateCheck === request) updateCheck = { key, result, checkedAt: Date.now() };
+  } catch (error) {
+    if (updateCheck === request) updateCheck = { key, error: errorMessage(error), checkedAt: Date.now() };
+  }
+  if (updateCheck.key === key) {
+    renderPackUpdate();
+    if (updateDialog.open) void loadPackChangelog(updateReleaseForDialog());
+  }
+}
+
+function currentUpdateStatus() {
+  return settings?.directory && packStatus.operation === 'update' ? packStatus : null;
+}
+
+function updateReleaseForDialog() {
+  const status = currentUpdateStatus();
+  if (status && (packIsBusy() || status.phase === 'complete') && updateJob?.release) return updateJob.release;
+  return updateCheck.result?.release || updateJob?.release;
+}
+
+function updateProgressText(status) {
+  if (updateRuntimeError) return t('已应用更新，无法重新载入服务端设置。', 'Update applied. Could not reload the server settings.');
+  if (packAction === 'cancel') return t('正在取消更新…', 'Canceling update…');
+  if (packAction === 'restore') return t('正在重新载入服务端…', 'Reloading the server…');
+  switch (status.phase) {
+    case 'backing-up': return t('正在备份当前服务端…', 'Backing up the current server…');
+    case 'downloading': return t('正在下载新版服务端包…', 'Downloading the new server pack…');
+    case 'verifying': return t('正在校验服务端包…', 'Verifying the server pack…');
+    case 'extracting': return t('正在解压服务端包…', 'Unpacking the server pack…');
+    case 'updating': return t('正在应用更新…', 'Applying the update…');
+    case 'error': return t('服务端更新失败。', 'The server update failed.');
+    case 'canceled': return t('服务端更新已取消。', 'The server update was canceled.');
+    case 'complete': return t('服务端更新完成。', 'Server update complete.');
+    default: return '';
+  }
+}
+
+function renderPackUpdate() {
+  const button = byId('server-pack-update');
+  const status = currentUpdateStatus();
+  const working = Boolean(status && packIsBusy());
+  const available = Boolean(updateCheck.result?.release);
+  const failed = Boolean(updateCheck.error);
+  const unknown = updateCheck.result && !updateCheck.result.installedVersion;
+  const checkedMessage = unknown
+    ? t('无法识别已安装的服务端包版本。', 'Could not identify the installed server pack version.')
+    : t('当前服务端包已是最新版本。', 'The server pack is up to date.');
+  button.hidden = !Boolean(api?.CheckServerPackUpdate && (packUpdateKey() || status));
+  button.disabled = inTransition || (updateCheck.loading && !status);
+  button.dataset.tone = available && !working ? 'available' : failed ? 'error' : '';
+  button.textContent = working ? t('更新进度', 'Update progress')
+    : available ? t('有更新', 'Update available')
+      : status ? t('更新结果', 'Update result')
+        : updateCheck.loading ? t('检查更新中…', 'Checking updates…')
+          : failed ? t('重试检查', 'Retry update check') : t('检查更新', 'Check updates');
+  button.title = failed ? t('无法检查更新。', 'Could not check for updates. ') + ' ' + updateCheck.error
+    : (updateCheck.result && !available) ? checkedMessage : '';
+  if (!updateDialog.open) return;
+
+  const release = updateReleaseForDialog();
+  const installed = (working || status?.phase === 'complete') && updateJob
+    ? updateJob.installedVersion : (updateCheck.result?.installedVersion || settings?.packVersion || '');
+  const canConfirm = available && Boolean(updateCheck.result?.installedVersion) && !updateCheck.loading
+    && !packIsBusy() && !active && !inTransition && !runtimeSaving;
+  byId('update-versions').textContent = release && installed && installed !== release.version
+    ? installed + ' → ' + release.version : installed;
+  byId('update-release-details').textContent = release
+    ? [release.fileName, packFormatSize(release.fileLength)].filter(Boolean).join(' · ') : '';
+  byId('update-risk').hidden = !available || working;
+  const notes = byId('update-changelog');
+  notes.hidden = !release?.clientId || working;
+  if (!notes.hidden) {
+    const log = packChangelogs.get(String(release.id));
+    const text = byId('update-changelog-text');
+    const content = log?.loading ? t('正在读取同版客户端更新日志…', 'Loading the matching client changelog…')
+      : log?.error ? t('无法读取同版客户端更新日志。', 'Could not load the matching client changelog.')
+        : log?.text || t('暂无同版客户端更新日志。', 'No changelog is available for the matching client version.');
+    if (text.textContent !== content) text.textContent = content;
+    text.title = log?.error || '';
+  }
+  const blocked = byId('update-blocked');
+  const draft = available && !working && hasChanges();
+  const reason = updateCheck.loading ? t('正在检查更新…', 'Checking for updates…')
+    : failed ? button.title
+      : available && !working && active ? t('请先停止当前服务器，再确认更新。', 'Stop the current server before updating.')
+        : draft ? t('请先保存当前设置，再确认更新。', 'Save your current settings before updating.')
+          : !available && updateCheck.result ? checkedMessage : '';
+  if (blocked.textContent !== reason) blocked.textContent = reason;
+  blocked.dataset.error = String(failed);
+
+  const begin = byId('begin-server-pack-update');
+  begin.hidden = !available || working;
+  begin.disabled = !canConfirm || draft;
+  const check = byId('recheck-server-pack');
+  check.hidden = !status || working;
+  check.disabled = updateCheck.loading;
+  const cancel = byId('cancel-server-pack-update');
+  cancel.hidden = !status || !packIsWorking();
+  cancel.disabled = Boolean(packAction);
+  byId('refresh-updated-runtime').hidden = !updateRuntimeError || working;
+  byId('update-progress-panel').hidden = !status;
+  if (!status) return;
+  const phase = byId('update-progress-status');
+  const outcome = updateProgressText(status);
+  if (phase.textContent !== outcome) phase.textContent = outcome;
+  const progress = byId('update-progress');
+  progress.hidden = !working;
+  let detail = '';
+  if (status.phase === 'downloading' && status.total > 0) {
+    progress.max = status.total;
+    progress.value = Math.min(status.total, status.received || 0);
+    detail = packFormatSize(progress.value) + ' / ' + packFormatSize(progress.max) + ' · '
+      + Math.floor(progress.value / progress.max * 100) + '%';
+  } else {
+    progress.removeAttribute('value');
+  }
+  byId('update-progress-detail').textContent = detail;
+  const backup = status.backupPath || updateJob?.backupPath || '';
+  byId('update-backup').hidden = !backup;
+  byId('update-backup-path').textContent = backup;
+  const problem = byId('update-error');
+  const message = updateRuntimeError || status.error || '';
+  if (problem.textContent !== message) problem.textContent = message;
+  problem.hidden = !message;
+}
+
+function openPackUpdate() {
+  if (!currentUpdateStatus() && !updateCheck.result?.release) {
+    void checkPackUpdate();
+    return;
+  }
+  if (updateDialog.open) return;
+  updateDialog.showModal();
+  renderPackUpdate();
+  void loadPackChangelog(updateReleaseForDialog());
+}
+
+async function beginPackUpdate() {
+  const update = updateCheck.result;
+  if (!update?.release || !update.installedVersion || !updateDialog.open || updateCheck.loading
+      || active || inTransition || runtimeSaving || packIsBusy() || hasChanges()) return;
+  updateJob = { installedVersion: update.installedVersion, release: update.release };
+  updateCompleted = false;
+  updateRuntimeError = '';
+  packRevision++;
+  packAction = 'begin';
+  packStatus = { operation: 'update', phase: 'backing-up', transient: true };
+  updateControls();
+  try {
+    await api.BeginServerPackUpdate(update.release.id, update.installedVersion);
+  } catch (error) {
+    packStatus = { operation: 'update', phase: 'error', error: errorMessage(error), transient: true };
+  } finally {
+    packRevision++;
+    packAction = '';
+    updateControls();
+  }
+}
+
+async function loadUpdatedServer() {
+  if (packAction || !settings?.directory) return;
+  packAction = 'restore';
+  updateCompleted = true;
+  updateRuntimeError = '';
+  updateControls();
+  const scanRevision = javaScanRevision;
+  try {
+    const value = await api.GetRuntime();
+    if (!value.directory) throw new Error(t('无法找到更新后的服务端目录。', 'Could not find the updated server folder.'));
+    applySettings(value, false, scanRevision);
+    toast(t('服务端已更新。', 'Server updated.'));
+  } catch (error) {
+    updateRuntimeError = errorMessage(error);
+  } finally {
+    packAction = '';
+    updateControls();
+  }
 }
 
 function packFormatSize(bytes) {
@@ -336,14 +557,16 @@ async function loadPackChangelog(release) {
   const existing = packChangelogs.get(key);
   if (existing && !existing.error) return;
   packChangelogs.set(key, { loading: true });
-  renderPackDialog();
+  if (selectedPack === key && packDialog.open) renderPackDialog();
+  if (updateDialog.open && String(updateReleaseForDialog()?.id) === key) renderPackUpdate();
   try {
     const text = await api.GetServerPackChangelog(release.id);
     packChangelogs.set(key, { text: typeof text === 'string' ? text.trim() : '' });
   } catch (error) {
     packChangelogs.set(key, { error: errorMessage(error) });
   }
-  if (selectedPack === key) renderPackDialog();
+  if (selectedPack === key && packDialog.open) renderPackDialog();
+  if (updateDialog.open && String(updateReleaseForDialog()?.id) === key) renderPackUpdate();
 }
 
 async function loadPackReleases() {
@@ -385,10 +608,15 @@ async function loadDownloadedServer() {
 }
 
 function applyPackSnapshot(value) {
-  if (!value?.phase || packAction === 'begin' || (value.phase === 'idle' && packStatus.transient)) return;
+  if (!value?.phase || packAction === 'begin') return;
+  if (packStatus.transient && (value.phase === 'idle' || (packStatus.phase === 'error' && !packPhaseIsWorking(value.phase)))) return;
   packStatus = value;
-  if (value.phase === 'complete' && !packRuntimeError) void loadDownloadedServer();
-  else renderPackState();
+  if (value.operation === 'update' && value.backupPath && updateJob) updateJob.backupPath = value.backupPath;
+  if (value.phase === 'complete') {
+    if (value.operation === 'update') {
+      if (!updateCompleted) void loadUpdatedServer();
+    } else if (!packRuntimeError) void loadDownloadedServer();
+  }
 }
 
 async function openPackDialog() {
@@ -557,14 +785,12 @@ async function scanJava() {
 
 function applySnapshot(snapshot) {
   if (!settings) return;
-  const previousActive = active;
   active = snapshot.active;
   ready = snapshot.ready;
   currentPhase = snapshot.phase;
   byId('phase-label').textContent = settings.directory ? snapshot.status : t('等待选择服务端', 'Waiting for a server folder');
   byId('phase-dot').dataset.tone = snapshot.ready ? 'running'
     : snapshot.phase === 'error' ? 'error' : snapshot.active ? 'busy' : 'idle';
-  if (previousActive !== active) config.setContext(settings.directory, active);
   if (settings.directory) renderLogs((snapshot.logs ?? []).filter(line => line.id > lastLogId));
   lastLogId = Math.max(lastLogId, snapshot.lastLogId);
   renderPlayers(snapshot.players ?? []);
@@ -662,6 +888,9 @@ async function chooseDirectory() {
       packRevision++;
       packStatus = { phase: 'idle' };
       packRuntimeError = '';
+      updateJob = null;
+      updateCompleted = false;
+      updateRuntimeError = '';
       applySettings(value, false, scanRevision);
     }
   } catch (error) {
@@ -689,6 +918,7 @@ async function startServer() {
       return;
     }
     await api.Start();
+    if (Date.now() - (updateCheck.checkedAt ?? 0) >= 5000) void checkPackUpdate();
     applySnapshot(await api.Snapshot(lastLogId));
   } catch (error) {
     toast(errorMessage(error), 'error');
@@ -729,6 +959,12 @@ function actions() {
   byId('open-server-pack').addEventListener('click', openPackDialog);
   byId('begin-server-pack').addEventListener('click', beginPackDownload);
   byId('cancel-server-pack').addEventListener('click', cancelPackDownload);
+  byId('server-pack-update').addEventListener('click', openPackUpdate);
+  byId('close-pack-update').addEventListener('click', () => updateDialog.close());
+  byId('recheck-server-pack').addEventListener('click', checkPackUpdate);
+  byId('begin-server-pack-update').addEventListener('click', beginPackUpdate);
+  byId('cancel-server-pack-update').addEventListener('click', cancelPackDownload);
+  byId('refresh-updated-runtime').addEventListener('click', loadUpdatedServer);
   byId('close-pack-dialog').addEventListener('click', () => packDialog.close());
   byId('retry-pack-catalog').addEventListener('click', loadPackReleases);
   byId('open-pack-source').addEventListener('click', () => api.OpenServerPackPage().catch(error => toast(errorMessage(error), 'error')));

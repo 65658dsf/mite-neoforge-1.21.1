@@ -649,56 +649,69 @@ func acquireServerLock(directory string) (func(), error) {
 }
 
 func probeWorldLock(directory string) error {
+	unlock, err := holdWorldLock(directory)
+	if err != nil || unlock == nil {
+		return err
+	}
+	return unlock()
+}
+
+func holdWorldLock(directory string) (func() error, error) {
 	config, err := readConfig(directory, "server")
 	if err != nil {
-		return fmt.Errorf("无法读取世界目录设置：%w", err)
+		return nil, fmt.Errorf("无法读取世界目录设置：%w", err)
 	}
 	level := config.Properties["level-name"]
 	if level == "" {
 		level = "world"
 	}
 	if !filepath.IsLocal(level) {
-		return errors.New("世界目录 level-name 必须位于服务端目录内")
+		return nil, errors.New("世界目录 level-name 必须位于服务端目录内")
 	}
 	root, err := os.OpenRoot(directory)
 	if err != nil {
-		return fmt.Errorf("无法访问服务端目录：%w", err)
+		return nil, fmt.Errorf("无法访问服务端目录：%w", err)
 	}
 	defer root.Close()
 	path := filepath.Join(level, "session.lock")
 	file, err := root.Open(path)
 	if errors.Is(err, os.ErrNotExist) {
-		return nil
+		return nil, nil
 	}
 	if errors.Is(err, windows.ERROR_SHARING_VIOLATION) {
-		return fmt.Errorf("世界 %q 正被另一 Minecraft 进程使用，请先停服", level)
+		return nil, fmt.Errorf("世界 %q 正被另一 Minecraft 进程使用，请先停服", level)
 	}
 	if err != nil {
-		return fmt.Errorf("无法打开世界锁 %s：%w", path, err)
+		return nil, fmt.Errorf("无法打开世界锁 %s：%w", path, err)
 	}
-	defer file.Close()
 	info, err := file.Stat()
 	if err != nil {
-		return fmt.Errorf("无法检查世界锁 %s：%w", path, err)
+		file.Close()
+		return nil, fmt.Errorf("无法检查世界锁 %s：%w", path, err)
 	}
 	if !info.Mode().IsRegular() {
-		return fmt.Errorf("世界锁 %s 不是普通文件", path)
+		file.Close()
+		return nil, fmt.Errorf("世界锁 %s 不是普通文件", path)
 	}
 
 	// Java locks the entire file, so testing its first byte detects a running world.
 	handle := windows.Handle(file.Fd())
 	var position windows.Overlapped
 	err = windows.LockFileEx(handle, windows.LOCKFILE_EXCLUSIVE_LOCK|windows.LOCKFILE_FAIL_IMMEDIATELY, 0, 1, 0, &position)
-	if errors.Is(err, windows.ERROR_LOCK_VIOLATION) {
-		return fmt.Errorf("世界 %q 正被另一 Minecraft 进程使用，请先停服", level)
-	}
 	if err != nil {
-		return fmt.Errorf("无法检查世界锁 %s：%w", path, err)
+		file.Close()
+		if errors.Is(err, windows.ERROR_LOCK_VIOLATION) {
+			return nil, fmt.Errorf("世界 %q 正被另一 Minecraft 进程使用，请先停服", level)
+		}
+		return nil, fmt.Errorf("无法检查世界锁 %s：%w", path, err)
 	}
-	if err := windows.UnlockFileEx(handle, 0, 1, 0, &position); err != nil {
-		return fmt.Errorf("无法释放世界锁 %s：%w", path, err)
-	}
-	return nil
+	return func() error {
+		defer file.Close()
+		if err := windows.UnlockFileEx(handle, 0, 1, 0, &position); err != nil {
+			return fmt.Errorf("无法释放世界锁 %s：%w", path, err)
+		}
+		return nil
+	}, nil
 }
 
 func regularFile(path string) bool {

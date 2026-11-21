@@ -25,10 +25,12 @@ const (
 var serverPackVersionPattern = regexp.MustCompile(`^[0-9]+(?:\.[0-9]+){1,3}(?:-[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*)?$`)
 
 type ServerPackDownloadSnapshot struct {
-	Phase    string `json:"phase"`
-	Received int64  `json:"received"`
-	Total    int64  `json:"total"`
-	Error    string `json:"error"`
+	Operation  string `json:"operation"`
+	Phase      string `json:"phase"`
+	Received   int64  `json:"received"`
+	Total      int64  `json:"total"`
+	BackupPath string `json:"backupPath"`
+	Error      string `json:"error"`
 }
 
 func initialServerLocation(executable, requested, previous, working string) (directory, target string) {
@@ -197,7 +199,7 @@ func (a *App) BeginServerPackDownload(id int) error {
 	done := make(chan struct{})
 	a.cancelServerPack = cancel
 	a.serverPackDone = done
-	a.serverPackState = ServerPackDownloadSnapshot{Phase: "downloading", Total: release.FileLength}
+	a.serverPackState = ServerPackDownloadSnapshot{Operation: "download", Phase: "downloading", Total: release.FileLength}
 	go a.runServerPackDownload(ctx, cancel, done, a.downloadTarget, release)
 	return nil
 }
@@ -229,11 +231,11 @@ func (a *App) runServerPackDownload(ctx context.Context, cancel context.CancelFu
 	a.serverPackDone = nil
 	if err != nil {
 		if errors.Is(ctx.Err(), context.Canceled) {
-			a.serverPackState = ServerPackDownloadSnapshot{Phase: "canceled"}
+			a.serverPackState = ServerPackDownloadSnapshot{Operation: "download", Phase: "canceled"}
 			return
 		}
 		a.serverPackState = ServerPackDownloadSnapshot{
-			Phase: "error", Error: a.text("无法安装服务端。", "Could not install the server pack. ") + err.Error(),
+			Operation: "download", Phase: "error", Error: a.text("无法安装服务端。", "Could not install the server pack. ") + err.Error(),
 		}
 		return
 	}
@@ -263,7 +265,12 @@ func (a *App) installDownloadedServerPack(ctx context.Context, root, destination
 	if err := ctx.Err(); err != nil {
 		return err
 	}
+	return a.withDownloadedPack(ctx, root, release, "download", "", func(archive string) error {
+		return extractMiteServerPack(ctx, archive, destination)
+	})
+}
 
+func (a *App) withDownloadedPack(ctx context.Context, root string, release ServerPackRelease, operation, backupPath string, consume func(string) error) error {
 	stage, err := os.MkdirTemp(root, packDownloadTempPrefix)
 	if err != nil {
 		return err
@@ -273,7 +280,9 @@ func (a *App) installDownloadedServerPack(ctx context.Context, root, destination
 	defer os.Remove(archive)
 	report := func(phase string, received, total int64) {
 		a.mu.Lock()
-		a.serverPackState = ServerPackDownloadSnapshot{Phase: phase, Received: received, Total: total}
+		a.serverPackState = ServerPackDownloadSnapshot{
+			Operation: operation, Phase: phase, Received: received, Total: total, BackupPath: backupPath,
+		}
 		a.mu.Unlock()
 	}
 
@@ -284,5 +293,5 @@ func (a *App) installDownloadedServerPack(ctx context.Context, root, destination
 		return err
 	}
 	report("extracting", release.FileLength, release.FileLength)
-	return extractMiteServerPack(ctx, archive, destination)
+	return consume(archive)
 }
