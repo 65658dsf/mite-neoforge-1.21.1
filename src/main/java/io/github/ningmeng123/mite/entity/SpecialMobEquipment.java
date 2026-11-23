@@ -38,7 +38,7 @@ public final class SpecialMobEquipment {
         if (armor == null && tool == null && !bow) return sourceId;
         String floorMaterial = armor != null ? armor.material() : tool != null ? tool.material()
                 : sourceId.equals("mite:mithril_bow") ? "mithril" : "ancient_metal";
-        int floorTier = materialTier(floorMaterial);
+        int floorTier = BloodMoonEquipmentRules.materialTier(floorMaterial);
         if (floorTier < 0) return sourceId;
 
         CompoundTag progress = progress(mob, level);
@@ -64,22 +64,6 @@ public final class SpecialMobEquipment {
         return MiteTools.definitions().stream()
                 .filter(candidate -> candidate.material().equals(selectedMaterial) && candidate.family() == tool.family())
                 .map(MiteTools.Definition::id).findFirst().orElse(sourceId);
-    }
-
-    private static int materialTier(String material) {
-        return switch (material) {
-            case "leather" -> 0;
-            case "rusted_iron" -> 1;
-            case "gold" -> 2;
-            case "copper" -> 3;
-            case "silver" -> 4;
-            case "iron" -> 5;
-            case "ancient_metal" -> 6;
-            case "mithril" -> 7;
-            case "adamantium" -> 8;
-            case "vibranium" -> 9;
-            default -> -1;
-        };
     }
 
     /** Every piece of this newborn mob uses the same date snapshot; saved mobs never enter this generator. */

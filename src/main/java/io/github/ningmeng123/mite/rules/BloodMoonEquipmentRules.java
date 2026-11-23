@@ -48,6 +48,22 @@ public final class BloodMoonEquipmentRules {
         return tier <= 3 ? tier : tier - 1;
     }
 
+    public static int materialTier(String material) {
+        return switch (material) {
+            case "leather" -> 0;
+            case "rusted_iron" -> 1;
+            case "gold" -> 2;
+            case "copper" -> 3;
+            case "silver" -> 4;
+            case "iron" -> 5;
+            case "ancient_metal" -> 6;
+            case "mithril" -> 7;
+            case "adamantium" -> 8;
+            case "vibranium" -> 9;
+            default -> -1;
+        };
+    }
+
     public static boolean ordinaryActive(long highestDay) {
         return highestDay >= ORDINARY_START_DAY;
     }

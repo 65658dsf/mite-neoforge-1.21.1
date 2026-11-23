@@ -102,12 +102,12 @@ public final class ModernHostileSpawningGameTests {
             try (site; var progress = new DaylightUndeadSpawnGameTests.Progress(site.level);
                     var plains = new Habitat(site.level, site.pos, Biomes.PLAINS);
                     var mushrooms = new Habitat(site.level, Biomes.MUSHROOM_FIELDS)) {
-                progress.time(223L * 24_000L + 18_000L);
-                progress.data.restoreProgress(224L);
+                progress.time(159L * 24_000L + 18_000L);
+                progress.data.restoreProgress(160L);
                 var bruteEntries = plains.nativePool().stream().filter(entry -> entry.type == EntityType.PIGLIN_BRUTE).toList();
                 helper.assertValueEqual(bruteEntries.size(), 1, "Plains have exactly one native brute spawn entry");
                 var bruteEntry = bruteEntries.getFirst();
-                helper.assertValueEqual(bruteEntry.getWeight().asInt(), 2, "The default Overworld weight matches the zombie lord's weight");
+                helper.assertValueEqual(bruteEntry.getWeight().asInt(), 10, "The native Overworld entry matches the ghast's base pool weight");
                 helper.assertTrue(bruteEntry.minCount == 1 && bruteEntry.maxCount == 1, "The Overworld brute has a singleton spawn group");
                 helper.assertFalse(mushrooms.nativeCandidates().contains(EntityType.PIGLIN_BRUTE),
                         "Mushroom fields retain their existing exclusion from ordinary brute spawns");
@@ -307,11 +307,17 @@ public final class ModernHostileSpawningGameTests {
             Set<EntityType<?>> expected) {
         try (var site = new Habitat(level, biome)) {
             helper.assertTrue(level.getBiome(site.pos).is(biome), "The fuzzy native biome lookup resolves the fixture's intended habitat");
-            helper.assertTrue(site.nativeCandidates().containsAll(expected), "The native biome supplies the expected modern variants in " + biome);
+            Set<EntityType<?>> nativeCandidates = site.nativeCandidates();
+            helper.assertTrue(nativeCandidates.containsAll(expected), "The native biome supplies the expected modern variants in " + biome);
             Set<EntityType<?>> selected = site.selected(helper);
             helper.assertTrue(selected.containsAll(expected), "The reference natural selection entrypoint retains those variants in " + biome);
             selected.removeIf(R196MobSpawning::sourceType);
-            helper.assertValueEqual(selected, site.nativeCandidates(), "Selected modern candidates match the full native habitat pool in " + biome);
+            if (level.dimension().equals(Level.OVERWORLD)) {
+                // The dedicated brute tests cover its calendar-dependent entry.
+                selected.remove(EntityType.PIGLIN_BRUTE);
+                nativeCandidates.remove(EntityType.PIGLIN_BRUTE);
+            }
+            helper.assertValueEqual(selected, nativeCandidates, "Selected modern candidates match the ordinary native habitat pool in " + biome);
         }
     }
 

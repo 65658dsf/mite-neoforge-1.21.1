@@ -63,10 +63,11 @@ public final class MonsterDayScaling {
     public static double attackBase(Mob mob, double nativeBase) {
         if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return nativeBase;
         var settings = MiteConfig.monsterGrowthSettings();
-        double initial = settings.damageBase() > 0D ? settings.damageBase() : nativeBase;
+        double multiplier = PiglinBruteReinforcements.attributeMultiplier(mob);
+        double initial = settings.damageBase() > 0D ? settings.damageBase() : nativeBase / multiplier;
         // Commands and saved NBT can supply a negative base that equipment later offsets.
         if (initial < 0D || !Double.isFinite(initial)) return nativeBase;
-        return grownAttack(day(mob, level), initial, settings);
+        return grownAttack(day(mob, level), initial, settings) * multiplier;
     }
 
     private static double grownAttack(long day, double nativeBase, MonsterGrowthRules.Settings settings) {
@@ -109,12 +110,13 @@ public final class MonsterDayScaling {
         double baseHealth=unscaled.getValue();
         if (!(baseHealth > 0D) || !Double.isFinite(baseHealth)) return;
         double growth=MiteConfig.monsterGrowthMultiplier() * MiteConfig.monsterHealthGrowthMultiplier();
-        var growthResult = MonsterGrowthRules.healthPreview(day, baseHealth, mob instanceof AbstractSkeleton,
+        double multiplier = PiglinBruteReinforcements.attributeMultiplier(mob);
+        var growthResult = MonsterGrowthRules.healthPreview(day, baseHealth / multiplier, mob instanceof AbstractSkeleton,
                 MiteConfig.monsterGrowthSettings(), growth);
         reportFallback(growthResult);
         double limit=io.github.ningmeng123.mite.api.MiteExtensions.policy().mobHealthLimit(mob,1024D);
         if (!Double.isFinite(limit)||limit<1D) throw new IllegalStateException("Invalid monster health limit");
-        double amount=Math.min(limit,growthResult.value())/baseHealth-1D;
+        double amount=Math.min(limit,growthResult.value() * multiplier)/baseHealth-1D;
         var previous = attribute.getModifier(HEALTH_MODIFIER);
         if (amount == 0D ? previous != null : previous == null || previous.amount() != amount
                 || previous.operation() != AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {

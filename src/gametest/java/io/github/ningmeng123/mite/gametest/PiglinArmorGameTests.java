@@ -1,11 +1,13 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.util.List;
 import java.util.function.Function;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.Tag;
@@ -15,6 +17,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.monster.piglin.PiglinBrute;
@@ -44,6 +47,8 @@ public final class PiglinArmorGameTests {
                 finalizeSpawn(early, nether);
                 h.assertTrue(early.getItemBySlot(EquipmentSlot.HEAD).is(Items.GOLDEN_HELMET),
                         "The real legacy leather helmet roll becomes gold on day one for " + type);
+                if (type == EntityType.PIGLIN_BRUTE)
+                    h.assertTrue(early.getMainHandItem().is(Items.GOLDEN_AXE), "The brute's early weapon is the native gold axe");
 
                 history.restoreProgress(firstOrdinaryDay);
                 var minimum = prepare(type, nether, ordinarySeed(firstOrdinaryDay, 0));
@@ -62,9 +67,30 @@ public final class PiglinArmorGameTests {
                                 && later.getItemBySlot(EquipmentSlot.LEGS).is(Items.IRON_LEGGINGS)
                                 && later.getItemBySlot(EquipmentSlot.FEET).is(Items.IRON_BOOTS),
                         "A later ordinary iron roll equips the full iron set for " + type);
-                if (type == EntityType.PIGLIN_BRUTE)
-                    h.assertTrue(later.getMainHandItem().is(Items.GOLDEN_AXE), "A piglin brute still spawns with its native axe");
             }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void brutesRollHigherMaterialAxesOnAdvancedDatesWithoutArmor(GameTestHelper h) {
+        try (var clock = new SourceEquipmentDateFixture(h)) {
+            var server = h.getLevel().getServer();
+            var overworld = server.overworld();
+            var nether = server.getLevel(Level.NETHER);
+            overworld.setDayTime(6_000L);
+            long unlockedDay = 192L;
+            BloodMoonInvasionData.get(overworld).restoreProgress(unlockedDay);
+
+            var late = prepare(EntityType.PIGLIN_BRUTE, nether, unarmoredWeaponSeed(unlockedDay, true));
+            finalizeSpawn(late, nether);
+            h.assertTrue(late.getItemBySlot(EquipmentSlot.HEAD).isEmpty()
+                            && late.getMainHandItem().is(MiteTools.get("mite:vibranium_axe")),
+                    "The real spawn rolls a higher-tier axe when there is no armor to borrow a tier from");
+
+            var fallback = prepare(EntityType.PIGLIN_BRUTE, nether, unarmoredWeaponSeed(unlockedDay, false));
+            finalizeSpawn(fallback, nether);
+            h.assertTrue(fallback.getMainHandItem().is(Items.GOLDEN_AXE), "An unsuccessful late weapon roll keeps the gold axe");
         }
         h.succeed();
     }
@@ -79,13 +105,50 @@ public final class PiglinArmorGameTests {
                 var template = NbtIo.readCompressed(input, NbtAccounter.unlimitedHeap());
                 var nbt = template.getList("entities", Tag.TAG_COMPOUND).getCompound(0).getCompound("nbt");
                 var brute = (PiglinBrute)EntityType.loadEntityRecursive(nbt, nether, Function.identity());
-                h.assertTrue(brute != null && brute.getHealth() == 50F && brute.getMaxHealth() == 100F,
+                h.assertTrue(brute != null && brute.getHealth() == 50F && brute.getMaxHealth() == 150F,
                         "The actual bastion template loads its former full health before structure finalization");
                 finalizeSpawn(brute, nether);
-                h.assertTrue(brute.getHealth() == 100F && brute.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) == 14D,
+                h.assertTrue(brute.getHealth() == 150F && brute.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) == 20D,
                         "An actual bastion brute starts at its new full health and innate attack");
             }
         }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void oldBruteAttributesMigrateWithoutHealingTheirWoundsOrChangingCustomStats(GameTestHelper h) {
+        var level = h.getLevel();
+        var old = prepare(EntityType.PIGLIN_BRUTE, level, 0L);
+        old.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100D);
+        old.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier(
+                ResourceLocation.withDefaultNamespace("brute_health_test"), 20D, AttributeModifier.Operation.ADD_VALUE));
+        old.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(14D);
+        old.setHealth(60F);
+        var currentSave = old.saveWithoutId(new CompoundTag());
+        var legacySave = currentSave.copy();
+        legacySave.remove("mite:brute_attributes_current");
+
+        var migrated = prepare(EntityType.PIGLIN_BRUTE, level, 0L);
+        migrated.load(legacySave);
+        h.assertTrue(migrated.getMaxHealth() == 170F && migrated.getHealth() == 85F
+                        && migrated.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) == 20D,
+                "Saved old defaults migrate while preserving the modifier and the brute's half-health state");
+
+        var current = prepare(EntityType.PIGLIN_BRUTE, level, 0L);
+        current.load(currentSave);
+        h.assertTrue(current.getMaxHealth() == 120F && current.getHealth() == 60F
+                        && current.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) == 14D,
+                "A newly saved brute can intentionally use the old numerical values");
+
+        old.getAttribute(Attributes.MAX_HEALTH).setBaseValue(120D);
+        old.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(16D);
+        var customSave = old.saveWithoutId(new CompoundTag());
+        customSave.remove("mite:brute_attributes_current");
+        var custom = prepare(EntityType.PIGLIN_BRUTE, level, 0L);
+        custom.load(customSave);
+        h.assertTrue(custom.getMaxHealth() == 140F && custom.getHealth() == 60F
+                        && custom.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) == 16D,
+                "Other custom bases also survive an old save unchanged");
         h.succeed();
     }
 
@@ -120,5 +183,17 @@ public final class PiglinArmorGameTests {
                     && BloodMoonEquipmentRules.selectOrdinaryTier(progress, material) == tier) return seed;
         }
         throw new AssertionError("No ordinary armor fixture");
+    }
+
+    private static long unarmoredWeaponSeed(long day, boolean upgrade) {
+        double progress = BloodMoonEquipmentRules.ordinaryProgress(day);
+        for (long seed = 0L; seed < 100_000L; seed++) {
+            var random = RandomSource.create(seed);
+            if (random.nextDouble() < BloodMoonEquipmentRules.ordinaryArmorChance(progress)) continue;
+            boolean accepted = random.nextDouble() < BloodMoonEquipmentRules.ordinaryHeldChance(progress);
+            if (upgrade ? accepted && BloodMoonEquipmentRules.selectOrdinaryTier(progress, random.nextDouble())
+                    == BloodMoonEquipmentRules.HIGHEST_TIER : !accepted) return seed;
+        }
+        throw new AssertionError("No unarmored brute weapon fixture");
     }
 }

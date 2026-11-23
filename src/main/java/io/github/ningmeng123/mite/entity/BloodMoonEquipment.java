@@ -111,16 +111,31 @@ public final class BloodMoonEquipment {
         int stage = equipment.getInt("stage");
         if (stage < 0 || !(mob instanceof Zombie || mob instanceof R196Undead)) return;
         if (!mob.getMainHandItem().isEmpty()) { held.putBoolean("preserved", true); return; }
-        boolean blood = equipment.getBoolean("blood_date");
-        double progress = equipment.getDouble("progress");
-        double heldChance = blood ? BloodMoonEquipmentRules.heldChance(stage, true)
-                : BloodMoonEquipmentRules.ordinaryHeldChance(progress);
-        if (mob.getRandom().nextDouble() >= heldChance) return;
-        int tier = armorTier(mob);
-        if (tier < 0) tier = selectTier(progress, blood, mob.getRandom().nextDouble());
+        int tier = rollHeldTier(mob, equipment);
+        if (tier < 0) return;
         int tool = mob.getRandom().nextInt(TOOLS.length);
         mob.setItemSlot(EquipmentSlot.MAINHAND, R196MobEquipment.generated(mob, TOOL_PREFIXES[tier] + TOOLS[tool], true));
         held.putInt("tier", tier); held.putInt("tool", tool); held.putBoolean("generated", true);
+    }
+
+    /** The vanilla gold axe remains equipped when the date roll yields no better material. */
+    public static void populateBruteAxe(Mob brute) {
+        if (brute.getType() != EntityType.PIGLIN_BRUTE || !brute.getMainHandItem().is(Items.GOLDEN_AXE)) return;
+        CompoundTag equipment = brute.getPersistentData().getCompound(DATA_KEY);
+        if (equipment.getInt("version") != VERSION || equipment.getInt("stage") < 0) return;
+        int tier = rollHeldTier(brute, equipment);
+        if (tier > PiglinArmor.MINIMUM_TIER)
+            brute.setItemSlot(EquipmentSlot.MAINHAND, R196MobEquipment.generated(brute, TOOL_PREFIXES[tier] + "axe", true));
+    }
+
+    private static int rollHeldTier(Mob mob, CompoundTag equipment) {
+        boolean blood = equipment.getBoolean("blood_date");
+        double progress = equipment.getDouble("progress");
+        double chance = blood ? BloodMoonEquipmentRules.heldChance(equipment.getInt("stage"), true)
+                : BloodMoonEquipmentRules.ordinaryHeldChance(progress);
+        if (mob.getRandom().nextDouble() >= chance) return -1;
+        int tier = armorTier(mob);
+        return tier >= 0 ? tier : selectTier(progress, blood, mob.getRandom().nextDouble());
     }
 
     private static int selectTier(double progress, boolean blood, double draw) {

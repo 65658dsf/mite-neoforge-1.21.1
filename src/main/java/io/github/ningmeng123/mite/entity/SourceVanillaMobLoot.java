@@ -90,6 +90,18 @@ public final class SourceVanillaMobLoot {
     private static boolean meatAnimal(EntityType<?> type) {
         return livestock(type) || type == EntityType.HORSE || type == EntityType.DONKEY || type == EntityType.MULE;
     }
+    private static boolean suppressFewItems(Mob mob) {
+        return mob.isBaby() || !meatAnimal(mob.getType()) && massive(mob) && mob.getRandom().nextFloat() >= .1F;
+    }
+    private static void emitGhastReward(Mob mob, DamageSource source, Item reward) {
+        int count = mob.getRandom().nextInt(2);
+        if (source.getDirectEntity() instanceof LargeFireball && source.getEntity() instanceof Player) count = 1;
+        emit(mob, reward, count);
+    }
+    /** Adds the ghast reward roll to the brute's native loot. */
+    public static void bruteScrap(Mob mob, DamageSource source) {
+        if (!suppressFewItems(mob)) emitGhastReward(mob, source, Items.NETHERITE_SCRAP);
+    }
     private static int reduced(Mob mob,int count,boolean recent) { return count>0 && !recent ? count-mob.getRandom().nextInt(count+1) : count; }
     /** One source drop call per item preserves both source random ordering and the low stack limits. */
     public static ItemEntity emit(Mob mob,ItemStack stack,float yOffset) {
@@ -117,7 +129,7 @@ public final class SourceVanillaMobLoot {
     }
     public static void fewItems(Mob mob,DamageSource source,boolean recent) {
         initialize(mob);
-        if (mob.isBaby() || !meatAnimal(mob.getType()) && massive(mob) && mob.getRandom().nextFloat()>=.1F) return;
+        if (suppressFewItems(mob)) return;
         var type=mob.getType(); var random=mob.getRandom(); int looting=looting(mob,source),butchering=butchering(mob,source);
         boolean cooked = shouldCookDrops(mob, source);
         if (type==EntityType.ZOMBIE || type==EntityType.ZOMBIE_VILLAGER) {
@@ -162,8 +174,7 @@ public final class SourceVanillaMobLoot {
         else if(type==EntityType.SPIDER || type==EntityType.CAVE_SPIDER) {
             if(recent) { emit(mob,Items.STRING,webStock(mob)); setWebStock(mob,0); if(spiderEye(mob,source)) emit(mob,Items.SPIDER_EYE,1); }
         } else if(type==EntityType.GHAST) {
-            int tears=random.nextInt(2); if(source.getDirectEntity() instanceof LargeFireball && source.getEntity() instanceof Player && tears<1) tears=1;
-            emit(mob,Items.GHAST_TEAR,tears); emit(mob,Items.GUNPOWDER,random.nextInt(3));
+            emitGhastReward(mob,source,Items.GHAST_TEAR); emit(mob,Items.GUNPOWDER,random.nextInt(3));
         } else if(type==EntityType.ENDERMAN) emit(mob,Items.ENDER_PEARL,random.nextInt(2+looting));
         else if(type==EntityType.BLAZE) { if(recent) emit(mob,Items.BLAZE_ROD,random.nextInt(2+looting)); }
         else if(type==EntityType.WITHER) { ItemEntity star=emit(mob,new ItemStack(Items.NETHER_STAR),mob.getBbHeight()*.5F); if(star!=null) star.setExtendedLifetime(); }

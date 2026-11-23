@@ -24,7 +24,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -100,42 +99,73 @@ public final class MonsterSpawnRuntimeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void overworldBruteFollowsTheIteLordsEffectiveNaturalWeight(GameTestHelper helper) {
-        var lordId = ResourceLocation.fromNamespaceAndPath("modern_ite", "zombie_lord");
-        var lordType = BuiltInRegistries.ENTITY_TYPE.getOptional(lordId);
-        if (lordType.isEmpty()) {
-            helper.succeed();
-            return;
-        }
+    public static void overworldBruteFollowsGhastSpawnWindowAndEffectiveWeight(GameTestHelper helper) {
         var level = helper.getLevel();
         var pos = helper.absolutePos(BlockPos.ZERO);
-        var brute = new R196MobSpawning.Entry(EntityType.PIGLIN_BRUTE, null, Category.MONSTER, 2, 1, 1, 1, true);
+        var history = BloodMoonInvasionData.get(level);
+        long previousHighest = history.highestDay();
+        boolean dirty = history.isDirty();
+        var brute = new R196MobSpawning.Entry(EntityType.PIGLIN_BRUTE, null, Category.MONSTER, 10, 1, 1, 1, true);
         var control = new R196MobSpawning.Entry(EntityType.PILLAGER, null, Category.MONSTER, 5, 1, 1, 1, true);
+        var context = new MiteExtensions.SpawnContext(level, Category.MONSTER, null);
         try (var settings = new Settings(helper)) {
-            level.setDayTime(223L * 24_000L + 18_000L);
-            level.updateSkyBrightness();
-            BloodMoonInvasionData.get(level).restoreProgress(224L);
-            settings.rates(List.of());
-            settings.weights(List.of("minecraft:pillager=5"));
-            settings.ite.snapshot(Map.of(lordId.toString(), 3D), Map.of(lordId.toString(), 2.5D));
-            var context = new MiteExtensions.SpawnContext(level, Category.MONSTER, null);
-            var lord = MiteExtensions.policy().spawnPool(context, pos, List.of(brute)).stream()
-                    .filter(entry -> entry.type() == lordType.get()).findFirst().orElseThrow();
-            var entries = List.of(brute, lord, control);
+            settings.rates(List.of("minecraft:ghast=3"));
+            settings.weights(List.of("minecraft:ghast=2.5", "minecraft:pillager=5"));
+            var random = RandomSource.create(61109L);
+            setOverworldSpawnDate(level, history, 96L, 18_000L);
+            helper.assertTrue(chooseBruteOrGhast(context, pos, brute, random) == null,
+                    "An early blood night cannot select either an Overworld brute or a ghast");
+            setOverworldSpawnDate(level, history, 128L, 18_000L);
+            helper.assertTrue(chooseBruteOrGhast(context, pos, brute, random) == null,
+                    "The default unlock date is a blue moon and cannot select either candidate");
+            setOverworldSpawnDate(level, history, 160L, 6_000L);
+            helper.assertTrue(chooseBruteOrGhast(context, pos, brute, random) == null,
+                    "A late blood date before nightfall cannot select either candidate");
+
+            setOverworldSpawnDate(level, history, 160L, 18_000L);
+            var ghast = settings.ite == null
+                    ? new R196MobSpawning.Entry(EntityType.GHAST, "tj", Category.MONSTER, 10, 1, 1, 1, false)
+                    : MiteExtensions.policy().spawnPool(context, pos, List.of(brute)).stream()
+                            .filter(entry -> entry.type() == EntityType.GHAST).findFirst().orElseThrow();
+            var entries = List.of(brute, ghast, control);
             helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, entries,
-                    fixedWeightDraw(Math.nextDown(.375D)), true) == brute, "The brute receives the same effective 7.5 weight as the ITE lord");
+                    fixedWeightDraw(Math.nextDown(.375D)), true) == brute, "The brute receives the same effective 7.5 weight as the ghast");
             helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, entries,
-                    fixedWeightDraw(.375D), true) == lord, "The ITE lord begins exactly at its equal selection boundary");
+                    fixedWeightDraw(.375D), true) == ghast, "The ghast begins exactly at its equal selection boundary");
             helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, entries,
                     fixedWeightDraw(.75D), true) == control, "The two equal weights together occupy 15 of 20 selection units");
-            helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, List.of(brute),
-                    fixedWeightDraw(0D), true) == null, "When the ITE lord is unavailable at a position, its brute counterpart is absent");
+            if (settings.ite == null) {
+                var standalone = List.of(brute, control);
+                helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, standalone,
+                        fixedWeightDraw(Math.nextDown(.6D)), true) == brute, "Standalone fallback uses the same configured ghast weight without a ghast entry");
+                helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, standalone,
+                        fixedWeightDraw(Math.nextUp(.6D)), true) == control, "The standalone fallback occupies 7.5 of 12.5 selection units");
+            } else {
+                helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, List.of(brute),
+                        random, true) == null, "When the ITE ghast is unavailable at a position, its brute counterpart is absent");
+            }
 
-            settings.ite.snapshot(Map.of(lordId.toString(), 3D), Map.of(lordId.toString(), 0D));
+            settings.weights(List.of("minecraft:ghast=0", "minecraft:pillager=5"));
             helper.assertTrue(ConfiguredMonsterSpawns.choose(level, pos, Category.MONSTER, entries,
-                    fixedWeightDraw(0D), true) == control, "An ITE zero-weight override disables the brute counterpart too");
+                    fixedWeightDraw(0D), true) == control, "A zero-weight ghast override disables the brute counterpart too");
+        } finally {
+            history.restoreProgress(previousHighest);
+            history.setDirty(dirty);
         }
         helper.succeed();
+    }
+
+    private static void setOverworldSpawnDate(ServerLevel level, BloodMoonInvasionData history, long day, long timeOfDay) {
+        level.setDayTime((day - 1L) * 24_000L + timeOfDay);
+        level.updateSkyBrightness();
+        history.restoreProgress(day);
+    }
+
+    private static R196MobSpawning.Entry chooseBruteOrGhast(MiteExtensions.SpawnContext context, BlockPos pos,
+            R196MobSpawning.Entry brute, RandomSource random) {
+        var entries = MiteExtensions.policy().spawnPool(context, pos, List.of(brute)).stream()
+                .filter(entry -> entry.type() == EntityType.PIGLIN_BRUTE || entry.type() == EntityType.GHAST).toList();
+        return ConfiguredMonsterSpawns.choose(context.level(), pos, Category.MONSTER, entries, random, true);
     }
 
     @GameTest(template = "empty")

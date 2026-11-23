@@ -1,10 +1,12 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.enchantment.SourceEnchantmentCombat;
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import javax.annotation.Nullable;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
@@ -34,7 +36,7 @@ public final class MobEquipmentUpgrades {
         if (!handles(mob) || incoming.isEmpty() || RemovedDiamondEquipment.isRemoved(incoming)
                 || PiglinArmor.rejects(mob, incoming)) return null;
         Kind incomingKind = kind(incoming);
-        if (incomingKind == Kind.NONE) return null;
+        if (incomingKind == Kind.NONE || rejectsBruteWeapon(mob, incoming, incomingKind)) return null;
         EquipmentSlot slot;
         if (incoming.getItem() instanceof ArmorItem armor) slot = armor.getEquipmentSlot();
         else if (incomingKind == Kind.SHIELD) slot = EquipmentSlot.OFFHAND;
@@ -58,6 +60,8 @@ public final class MobEquipmentUpgrades {
                 || incoming.isDamageableItem() && incoming.getDamageValue() >= incoming.getMaxDamage()) return false;
         ItemStack current = mob.getItemBySlot(slot);
         if (locked(current)) return false;
+        Boolean material = bruteMaterialUpgrade(mob, incoming, current);
+        if (material != null) return material;
         return current.isEmpty() || kind(current) == Kind.NONE
                 || EquipmentDurability.quality(incoming).ordinal() > EquipmentDurability.quality(current).ordinal();
     }
@@ -66,14 +70,29 @@ public final class MobEquipmentUpgrades {
     @Nullable public static Boolean replacementDecision(Mob mob, ItemStack incoming, ItemStack current) {
         if (!handles(mob)) return null;
         if (RemovedDiamondEquipment.isRemoved(incoming) || PiglinArmor.rejects(mob, incoming)) return false;
-        if (!equipment(incoming)) return null;
+        Kind incomingKind = kind(incoming);
+        if (rejectsBruteWeapon(mob, incoming, incomingKind)) return false;
+        if (incomingKind == Kind.NONE) return null;
         if (SourceEnchantmentCombat.disarmed(mob) || locked(current)) return false;
         if (current.isEmpty() || kind(current) == Kind.NONE) return true;
         // Pursuit only compares like roles; collision pickup must still retain native role changes,
         // including a dedicated melee skeleton replacing an unsuitable bow with a sword.
         if (!comparable(incoming, current)) return null;
+        Boolean material = bruteMaterialUpgrade(mob, incoming, current);
+        if (material != null) return material;
         int comparison = Integer.compare(EquipmentDurability.quality(incoming).ordinal(), EquipmentDurability.quality(current).ordinal());
         return comparison == 0 ? null : comparison > 0;
+    }
+
+    private static boolean rejectsBruteWeapon(Mob mob, ItemStack incoming, Kind kind) {
+        return mob.getType() == EntityType.PIGLIN_BRUTE && kind == Kind.MELEE && !PiglinBruteWeapons.canEquip(incoming);
+    }
+
+    @Nullable private static Boolean bruteMaterialUpgrade(Mob mob, ItemStack incoming, ItemStack current) {
+        if (mob.getType() != EntityType.PIGLIN_BRUTE) return null;
+        int incomingGrade = PiglinBruteWeapons.grade(incoming);
+        int currentGrade = PiglinBruteWeapons.grade(current);
+        return incomingGrade < 0 || currentGrade < 0 || incomingGrade == currentGrade ? null : incomingGrade > currentGrade;
     }
 
     private static boolean locked(ItemStack stack) {
@@ -93,7 +112,7 @@ public final class MobEquipmentUpgrades {
         if (MobShields.shield(stack)) return Kind.SHIELD;
         if (stack.getItem() instanceof BowItem) return Kind.BOW;
         if (stack.getItem() instanceof CrossbowItem) return Kind.CROSSBOW;
-        if (MiteTools.definition(stack) != null || stack.getItem() instanceof SwordItem
+        if (MiteTools.definition(stack) != null || SimplySwordsCompat.definition(stack) != null || stack.getItem() instanceof SwordItem
                 || stack.getItem() instanceof DiggerItem || stack.getItem() instanceof TridentItem) return Kind.MELEE;
         return Kind.NONE;
     }

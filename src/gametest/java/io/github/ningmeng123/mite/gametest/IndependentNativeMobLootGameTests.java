@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -22,10 +23,12 @@ import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
@@ -95,6 +98,55 @@ public final class IndependentNativeMobLootGameTests {
     @GameTest(template="empty") public static void nativeSpiderReturnsOnlyRemainingWebStock(GameTestHelper h) { var e=mob(h,EntityType.SPIDER); SourceVanillaMobLoot.setWebStock(e,2); var drops=death(h,e,0,true); h.assertTrue(count(drops,Items.STRING)==2 && SourceVanillaMobLoot.webStock(e)==0,"Source stock is consumed once atdeath"); h.succeed(); }
     @GameTest(template="empty") public static void caveSpiderEnvironmentalDeathDropsNoStringOrEye(GameTestHelper h) { var e=mob(h,EntityType.CAVE_SPIDER); SourceVanillaMobLoot.setWebStock(e,3); h.assertTrue(death(h,e,0,false).isEmpty(),"Source arachnid recentplayer gate applies toboth pools"); h.succeed(); }
     @GameTest(template="empty") public static void blazeRodRequiresRecentlyHitPlayer(GameTestHelper h) { h.assertTrue(death(h,mob(h,EntityType.BLAZE),0,false).isEmpty(),"td no automaticrods"); var drops=death(h,mob(h,EntityType.BLAZE),0,true); h.assertTrue(count(drops,Items.BLAZE_ROD)==new Random(0).nextInt(2),"Source recentplayerrod count"); h.succeed(); }
+    @GameTest(template = "empty")
+    public static void bruteScrapAndGhastTearsUseTheSameDeathRoll(GameTestHelper h) {
+        Player player = killer(h);
+        ItemStack sword = new ItemStack(Items.IRON_SWORD);
+        sword.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                .getHolderOrThrow(Enchantments.LOOTING), 3);
+        player.setItemSlot(EquipmentSlot.MAINHAND, sword);
+        for (boolean playerKill : new boolean[]{false, true}) {
+            DamageSource source = playerKill ? player.damageSources().playerAttack(player) : h.getLevel().damageSources().generic();
+            for (int expected : new int[]{0, 1}) {
+                long rollSeed = seed(random -> random.nextInt(2) == expected);
+                var ghast = mob(h, EntityType.GHAST);
+                var brute = mob(h, EntityType.PIGLIN_BRUTE);
+                brute.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_AXE));
+                brute.setDropChance(EquipmentSlot.MAINHAND, 2F);
+                var ghastDrops = death(h, ghast, rollSeed, playerKill, source, true);
+                var bruteDrops = death(h, brute, rollSeed, playerKill, source, true);
+                h.assertValueEqual(count(ghastDrops, Items.GHAST_TEAR), expected,
+                        "The source ghast keeps its zero-or-one roll on environmental and Looting III deaths");
+                h.assertValueEqual(count(bruteDrops, Items.NETHERITE_SCRAP), expected,
+                        "The brute scrap uses the same two possible outcomes without a Looting bonus");
+                h.assertValueEqual(count(bruteDrops, Items.GOLDEN_AXE), 1, "Native equipment drops remain in the same death transaction");
+                ghast.discard();
+                brute.discard();
+            }
+        }
+        h.succeed();
+    }
+    @GameTest(template = "empty")
+    public static void bruteScrapAndGhastTearsFollowTheSameSpecialDeathRules(GameTestHelper h) {
+        Player player = killer(h);
+        var fireball = new LargeFireball(EntityType.FIREBALL, h.getLevel());
+        DamageSource reflected = h.getLevel().damageSources().fireball(fireball, player);
+        long losingRoll = seed(random -> random.nextInt(2) == 0);
+        long suppressedFall = seed(random -> random.nextFloat() >= .1F && random.nextInt(2) == 1);
+        for (var type : List.of(EntityType.GHAST, EntityType.PIGLIN_BRUTE)) {
+            Item reward = type == EntityType.GHAST ? Items.GHAST_TEAR : Items.NETHERITE_SCRAP;
+            var reflectedVictim = mob(h, type);
+            h.assertValueEqual(count(death(h, reflectedVictim, losingRoll, true, reflected, true), reward), 1,
+                    "A reflected player fireball guarantees one " + reward);
+            reflectedVictim.discard();
+            var fallingVictim = mob(h, type);
+            fallingVictim.getPersistentData().putBoolean("mite_massive_fall_031", true);
+            h.assertValueEqual(count(death(h, fallingVictim, suppressedFall, false, fallingVictim.damageSources().fall(), true), reward), 0,
+                    "A failed massive-fall gate suppresses " + reward);
+            fallingVictim.discard();
+        }
+        h.succeed();
+    }
     @GameTest(template="empty") public static void sourceHorseAddsBeefWhilePreservingLeather(GameTestHelper h) { var e=mob(h,EntityType.HORSE); Random r=new Random(3); int skins=r.nextInt(3)+1; for(int i=0;i<skins;i++) r.nextInt(4); int beef=r.nextInt(3)+1; var drops=death(h,e,3,true); h.assertTrue(count(drops,Items.LEATHER)==skins && count(drops,Items.BEEF)==beef,"rs horse subtype0 source meat and exactskin draws"); h.succeed(); }
     @GameTest(template="empty") public static void sourceWolfDropsOneLeather(GameTestHelper h) { var drops=death(h,mob(h,EntityType.WOLF),0,true); h.assertTrue(drops.size()==1 && count(drops,Items.LEATHER)==1,"sf source fixedleather"); h.succeed(); }
     @GameTest(template="empty") public static void sixWitchPotionDurationsMatchGuardedSourceOracle(GameTestHelper h) { int[] expected={3600,1,676,1351,1351,1}; for(int i=0;i<6;i++) { ItemStack stack=SourceVanillaMobLoot.witchPotion(i); var effects=new ArrayList<net.minecraft.world.effect.MobEffectInstance>(); stack.get(DataComponents.POTION_CONTENTS).getAllEffects().forEach(effects::add); h.assertTrue(stack.is(i<2?Items.POTION:Items.SPLASH_POTION) && effects.size()==1 && effects.get(0).getDuration()==expected[i] && effects.get(0).getAmplifier()==0,"Pure yp/zp oracle subtype effect duration "+i); } h.succeed(); }

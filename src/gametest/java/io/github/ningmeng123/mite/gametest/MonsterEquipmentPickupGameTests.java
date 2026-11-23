@@ -30,6 +30,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.piglin.PiglinArmPose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -389,6 +390,41 @@ public final class MonsterEquipmentPickupGameTests {
                             "The normal piglin still picks up and admires barter currency");
                 }
             }
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 240)
+    public static void brutesConsumeBetterMaterialWeaponsButRejectToolsAndDowngrades(GameTestHelper h) {
+        ready(h, f -> {
+            var brute = f.track(EntityType.PIGLIN_BRUTE.create(h.getLevel()));
+            brute.setNoAi(true);
+            brute.setCanPickUpLoot(true);
+            brute.setItemSlot(EquipmentSlot.MAINHAND, quality(new ItemStack(Items.GOLDEN_AXE), Quality.EXCELLENT));
+            ItemStack copper = quality(new ItemStack(MiteTools.get("mite:copper_axe")), Quality.AVERAGE);
+            copper.setDamageValue(20);
+            h.assertTrue(MobEquipmentUpgrades.isUpgrade(brute, copper), "The brute pursues higher material even at lower quality");
+            ItemEntity better = f.item(copper.copy(), 0, 0, 0);
+            brute.aiStep();
+            h.assertTrue(better.isRemoved() && ItemStack.matches(brute.getMainHandItem(), copper),
+                    "Native pickup consumes and keeps the original custom copper axe stack");
+            brute.setAggressive(true);
+            h.assertTrue(brute.getArmPose() == PiglinArmPose.ATTACKING_WITH_MELEE_WEAPON,
+                    "The custom axe activates the real native melee pose");
+
+            for (var rejected : List.of(new ItemStack(Items.GOLDEN_AXE), new ItemStack(Items.IRON_SHOVEL),
+                    new ItemStack(MiteTools.get("mite:rusted_iron_sword")))) {
+                var item = f.item(rejected.copy(), 0, 0, 0);
+                brute.aiStep();
+                h.assertTrue(item.isAlive() && brute.equipItemIfPossible(rejected.copy()).isEmpty()
+                                && ItemStack.matches(brute.getMainHandItem(), copper),
+                        "Lower materials and non-weapon tools cannot replace the equipped weapon");
+                item.discard();
+            }
+
+            var iron = f.item(new ItemStack(Items.IRON_SWORD), 0, 0, 0);
+            brute.aiStep();
+            h.assertTrue(iron.isRemoved() && brute.getMainHandItem().is(Items.IRON_SWORD),
+                    "A better-material melee weapon may replace an axe");
         });
     }
 

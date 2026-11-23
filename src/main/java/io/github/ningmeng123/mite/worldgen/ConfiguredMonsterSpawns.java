@@ -4,6 +4,7 @@ import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.registry.MiteMobs;
+import io.github.ningmeng123.mite.rules.LunarCalendar;
 import io.github.ningmeng123.mite.rules.MonsterSpawnRules;
 import io.github.ningmeng123.mite.rules.R196SpawnRules;
 import java.util.List;
@@ -12,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BooleanSupplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -20,13 +20,14 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 /** Applies saved rates to the actual natural-spawn pool, including source replacement families. @author NingMeng123 */
 public final class ConfiguredMonsterSpawns {
     public static final String ADMITTED = "mite:natural_spawn_admitted";
-    private static final ResourceLocation ZOMBIE_LORD = ResourceLocation.fromNamespaceAndPath("modern_ite", "zombie_lord");
+    private static final long OVERWORLD_GHAST_FALLBACK_DAY = 128L;
     private static final Set<EntityJoinLevelEvent> PROVISIONAL_ADMISSIONS = ConcurrentHashMap.newKeySet();
     private ConfiguredMonsterSpawns() {}
 
@@ -96,25 +97,27 @@ public final class ConfiguredMonsterSpawns {
         boolean nativeWeights = true;
         long nativeTotal = 0L;
         var context = new MiteExtensions.SpawnContext(level, category, null);
-        var lordType = category == R196SpawnRules.Category.MONSTER && level.dimension().equals(Level.OVERWORLD)
-                ? BuiltInRegistries.ENTITY_TYPE.getOptional(ZOMBIE_LORD).orElse(null) : null;
-        // The addon's actual pool has already applied its date and habitat gates.
-        var lord = lordType == null ? null : entries.stream().filter(entry -> entry.type() == lordType).findFirst().orElse(null);
+        boolean overworldHostiles = category == R196SpawnRules.Category.MONSTER && level.dimension().equals(Level.OVERWORLD);
+        // The active pool already reflects the extension's calendar, configuration and availability checks.
+        var ghast = !overworldHostiles ? null : entries.stream().filter(entry -> entry.type() == EntityType.GHAST).findFirst().orElse(null);
         for (int index = 0; index < entries.size(); index++) {
             var entry = entries.get(index);
-            boolean followsLord = lordType != null && entry.type() == EntityType.PIGLIN_BRUTE;
-            if (followsLord && lord == null) {
+            boolean followsGhast = overworldHostiles && entry.type() == EntityType.PIGLIN_BRUTE;
+            if (followsGhast && ghast == null && (ModList.get().isLoaded("modern_ite")
+                    || !LunarCalendar.state(level.getDayTime(), true).bloodNight()
+                    || BloodMoonInvasion.highestDay(level) < OVERWORLD_GHAST_FALLBACK_DAY)) {
                 nativeWeights = false;
                 continue;
             }
-            var basis = followsLord ? lord : entry;
-            double rate = familyMultiplier(level, pos, basis, finalizationTransforms);
+            var basis = followsGhast && ghast != null ? ghast : entry;
+            var rateType = followsGhast ? EntityType.GHAST : entry.type();
+            double rate = followsGhast && ghast == null ? multiplier(rateType) : familyMultiplier(level, pos, basis, finalizationTransforms);
             if (finalizationTransforms) {
-                double extended = MiteExtensions.policy().monsterSpawnWeightMultiplier(context, pos, basis.type(), rate);
+                double extended = MiteExtensions.policy().monsterSpawnWeightMultiplier(context, pos, rateType, rate);
                 if (Double.isFinite(extended) && extended >= 0D && extended <= 100D) rate = extended;
             }
-            double baseWeight = weight(basis.type(), Math.max(0, basis.weight()));
-            if (followsLord) {
+            double baseWeight = weight(rateType, Math.max(0, basis.weight()));
+            if (followsGhast) {
                 rate *= multiplier(entry.type());
                 if (baseWeight > 0D) baseWeight = weight(entry.type(), baseWeight);
             }

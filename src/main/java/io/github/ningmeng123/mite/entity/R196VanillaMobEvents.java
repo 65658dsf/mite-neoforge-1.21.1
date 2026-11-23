@@ -15,6 +15,9 @@ import net.neoforged.neoforge.event.entity.EntityEvent;
 
 /** Registers native mob baselines through NeoForge while preserving existing saved attributes. @author NingMeng123 */
 public final class R196VanillaMobEvents {
+    public static final double PIGLIN_BRUTE_HEALTH = 150D;
+    public static final double PIGLIN_BRUTE_ATTACK = 20D;
+
     private R196VanillaMobEvents() {}
     public static void register(IEventBus modBus) {
         modBus.addListener(R196VanillaMobEvents::attributes);
@@ -22,8 +25,8 @@ public final class R196VanillaMobEvents {
     }
     @SuppressWarnings("unchecked")
     private static void attributes(EntityAttributeModificationEvent event) {
-        event.add(EntityType.PIGLIN_BRUTE, Attributes.MAX_HEALTH, 100D);
-        event.add(EntityType.PIGLIN_BRUTE, Attributes.ATTACK_DAMAGE, 14D);
+        event.add(EntityType.PIGLIN_BRUTE, Attributes.MAX_HEALTH, PIGLIN_BRUTE_HEALTH);
+        event.add(EntityType.PIGLIN_BRUTE, Attributes.ATTACK_DAMAGE, PIGLIN_BRUTE_ATTACK);
         R196VanillaMobRules.entries().forEach((rawType, row) -> {
             EntityType<? extends LivingEntity> type = (EntityType<? extends LivingEntity>)rawType;
             event.add(type, Attributes.MAX_HEALTH, row.health());

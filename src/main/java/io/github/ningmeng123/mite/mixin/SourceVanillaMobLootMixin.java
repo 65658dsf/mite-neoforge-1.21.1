@@ -19,7 +19,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 public abstract class SourceVanillaMobLootMixin {
     @WrapOperation(method="dropAllDeathLoot",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/LivingEntity;dropFromLootTable(Lnet/minecraft/world/damagesource/DamageSource;Z)V"))
     private void mite$sourceFewItems(LivingEntity self,DamageSource source,boolean recent,Operation<Void> original) {
-        if(!SourceVanillaMobLoot.managed(self) || self instanceof Slime) { original.call(self,source,recent); return; }
+        if(!SourceVanillaMobLoot.managed(self) || self instanceof Slime) {
+            if (self.getType() == EntityType.PIGLIN_BRUTE) SourceVanillaMobLoot.bruteScrap((Mob)self, source);
+            original.call(self,source,recent);
+            return;
+        }
         SourceVanillaMobLoot.fewItems((Mob)self,source,recent);
     }
     @WrapOperation(method="dropAllDeathLoot",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/LivingEntity;dropCustomDeathLoot(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;Z)V"))
@@ -34,7 +38,8 @@ public abstract class SourceVanillaMobLootMixin {
     @Inject(method="hurt",at=@At("HEAD"))
     private void mite$sourceFallFlag(DamageSource source,float amount,org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Boolean> cir) {
         LivingEntity self=(LivingEntity)(Object)this;
-        if(SourceVanillaMobLoot.managed(self) && source.is(net.minecraft.tags.DamageTypeTags.IS_FALL) && amount>=self.getMaxHealth()*.5F)
+        if((SourceVanillaMobLoot.managed(self) || self.getType() == EntityType.PIGLIN_BRUTE)
+                && source.is(net.minecraft.tags.DamageTypeTags.IS_FALL) && amount>=self.getMaxHealth()*.5F)
             self.getPersistentData().putBoolean("mite_massive_fall_031",true);
     }
 }
