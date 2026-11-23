@@ -14,6 +14,7 @@
 	adamantium = 1.3
 	redstone = 1.0
 	diamond = 2.0
+	red_diamond = 1.0
 	lapis = 2.0
 	infested = 3.0
 	deepslate_copper = 3.0
@@ -101,6 +102,11 @@
 		chance_percent = 10.0
 		height_range = ""
 		deepslate_height_range = ""
+
+	[underworld_generation.red_diamond]
+		candidates = 1.0
+		chance_percent = 100.0
+		height_range = ""
 
 	[underworld_generation.lapis]
 		candidates = 40.0

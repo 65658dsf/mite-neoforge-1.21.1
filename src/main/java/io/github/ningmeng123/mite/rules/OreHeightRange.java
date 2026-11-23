@@ -18,6 +18,8 @@ public record OreHeightRange(int minimum, int maximum) {
     }
 
     public static OreHeightRange defaults(R196OreRules.Kind kind, R196OreRules.Dimension dimension) {
+        if (kind == R196OreRules.Kind.RED_DIAMOND && dimension == R196OreRules.Dimension.UNDERWORLD)
+            return new OreHeightRange(131, 274);
         if (dimension == R196OreRules.Dimension.NETHER) {
             if (kind == R196OreRules.Kind.ANCIENT_DEBRIS) return new OreHeightRange(8, 119);
             if (kind == R196OreRules.Kind.NETHER_ADAMANTIUM) return new OreHeightRange(0, 128);

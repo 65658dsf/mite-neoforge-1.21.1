@@ -1381,6 +1381,8 @@
   "mite.config.ore.redstone.tooltip": "矿脉候选数量倍率：1 为默认，0 禁止生成；支持小数，仅影响新生成区块。",
   "mite.config.ore.diamond": "钻石矿",
   "mite.config.ore.diamond.tooltip": "矿脉候选数量倍率：1 为默认，0 禁止生成；支持小数，仅影响新生成区块。",
+  "mite.config.ore.red_diamond": "红钻矿石",
+  "mite.config.ore.red_diamond.tooltip": "红钻矿脉候选次数倍率。1 为默认，0 停止生成，仅影响新生成的地底区块。",
   "mite.config.ore.lapis": "青金石矿",
   "mite.config.ore.lapis.tooltip": "矿脉候选数量倍率：1 为默认，0 禁止生成；支持小数，仅影响新生成区块。",
   "mite.config.ore.infested": "虫蚀石",

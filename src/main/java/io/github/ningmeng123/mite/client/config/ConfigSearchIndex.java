@@ -82,11 +82,13 @@ public final class ConfigSearchIndex {
             if (value.getValue() instanceof UnmodifiableConfig section) collect(result, config, section, path, available, open);
             else if (value.getValue() instanceof ModConfigSpec.ConfigValue<?>) {
                 List<String> target = List.copyOf(path);
-                if (config.getModId().equals(Mite.MOD_ID) && target.getFirst().equals("gravel_drops")) continue;
-                if (config.getModId().equals(Mite.MOD_ID) && target.equals(List.of("monsters", "damage_rate_migrated"))) continue;
-                if (config.getModId().equals(Mite.MOD_ID) && oreDimension(target.getFirst()) == Dimension.NETHER
-                        && ((available && !MiteConfigClient.netherOreSettingsAvailable())
-                                || R196OreFeature.generationBlock(oreKind(target)) == Blocks.AIR)) continue;
+                if (config.getModId().equals(Mite.MOD_ID)) {
+                    if (target.equals(List.of("monsters", "damage_rate_migrated"))) continue;
+                    if (target.getFirst().equals("gravel_drops")) continue;
+                    Dimension dimension = oreDimension(target.getFirst());
+                    if (dimension != null && (dimension == Dimension.NETHER && available && !MiteConfigClient.netherOreSettingsAvailable()
+                            || R196OreFeature.generationBlock(oreKind(target)) == Blocks.AIR)) continue;
+                }
                 ModConfigSpec.ValueSpec definition = spec.getSpec().get(path);
                 String translation = definition.getTranslationKey();
                 Component description = translation != null && Language.getInstance().has(translation + ".tooltip")

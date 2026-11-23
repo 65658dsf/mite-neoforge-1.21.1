@@ -9,7 +9,7 @@ public final class R196OreRules {
     public enum Kind {
         DIRT, GRAVEL, COAL, COPPER, SILVER, GOLD, IRON, MITHRIL, ADAMANTIUM,
         INFESTED, REDSTONE, DIAMOND, LAPIS, EMERALD, QUARTZ, NETHER_GOLD, NETHER_INFESTED,
-        ANCIENT_DEBRIS, NETHER_ADAMANTIUM
+        ANCIENT_DEBRIS, NETHER_ADAMANTIUM, RED_DIAMOND
     }
     public static final List<Kind> OVERWORLD = List.of(Kind.DIRT, Kind.GRAVEL, Kind.COAL,
             Kind.COPPER, Kind.SILVER, Kind.GOLD, Kind.IRON, Kind.MITHRIL, Kind.INFESTED,
@@ -22,8 +22,11 @@ public final class R196OreRules {
     public static final List<Kind> CONFIGURABLE_OVERWORLD = List.of(Kind.COPPER, Kind.SILVER, Kind.IRON,
             Kind.GOLD, Kind.MITHRIL, Kind.LAPIS, Kind.DIAMOND, Kind.ADAMANTIUM, Kind.COAL, Kind.EMERALD);
     /** User-requested modern additions; the archived UNDERWORLD source table remains unchanged. */
-    public static final List<Kind> CONFIGURABLE_UNDERWORLD = java.util.stream.Stream.concat(
+    private static final List<Kind> UNDERWORLD_GENERATION = java.util.stream.Stream.concat(
             UNDERWORLD.stream(), java.util.stream.Stream.of(Kind.COAL, Kind.EMERALD)).toList();
+    // Modern ITE supplies its own placed feature for red diamond.
+    public static final List<Kind> CONFIGURABLE_UNDERWORLD = java.util.stream.Stream.concat(
+            UNDERWORLD_GENERATION.stream(), java.util.stream.Stream.of(Kind.RED_DIAMOND)).toList();
     public static final List<Kind> CONFIGURABLE_NETHER = List.of(Kind.QUARTZ, Kind.NETHER_GOLD,
             Kind.ANCIENT_DEBRIS, Kind.NETHER_ADAMANTIUM, Kind.NETHER_INFESTED);
     private static final List<Kind> OVERWORLD_GENERATION = java.util.stream.Stream.concat(
@@ -41,7 +44,7 @@ public final class R196OreRules {
     public static List<Kind> generationKinds(Dimension dimension) {
         return switch (dimension) {
             case OVERWORLD -> OVERWORLD_GENERATION;
-            case UNDERWORLD -> CONFIGURABLE_UNDERWORLD;
+            case UNDERWORLD -> UNDERWORLD_GENERATION;
             case NETHER -> NETHER;
         };
     }
@@ -60,6 +63,7 @@ public final class R196OreRules {
 
     /** Keep archival candidate counts intact while exposing explicit defaults for modern additions. */
     public static int configuredCandidateCount(Kind kind, Dimension dimension) {
+        if (kind == Kind.RED_DIAMOND && dimension == Dimension.UNDERWORLD) return 1;
         if (modernUnderworldAddition(kind, dimension)) return kind == Kind.COAL ? 50 : 3;
         if (dimension == Dimension.NETHER) {
             if (kind == Kind.ANCIENT_DEBRIS) return 2; // One attempt in each vanilla placed feature.
@@ -69,6 +73,7 @@ public final class R196OreRules {
         return candidateCount(kind, dimension);
     }
     public static double configuredCandidateChance(Kind kind, Dimension dimension) {
+        if (kind == Kind.RED_DIAMOND && dimension == Dimension.UNDERWORLD) return 1D;
         return kind == Kind.EMERALD && dimension != Dimension.NETHER ? 1D : candidateChance(dimension);
     }
 

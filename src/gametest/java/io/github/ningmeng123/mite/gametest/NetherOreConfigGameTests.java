@@ -7,8 +7,10 @@ import io.github.ningmeng123.mite.network.GameplayConfigPayload;
 import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import io.github.ningmeng123.mite.rules.R196OreRules.Kind;
+import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
 import io.github.ningmeng123.mite.worldgen.R196OreFeature;
 import io.netty.buffer.Unpooled;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +19,16 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -108,6 +115,105 @@ public final class NetherOreConfigGameTests {
             if (previousRemote != null) MiteConfig.receiveServerSnapshot(previousRemote);
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "netherOreSettings", timeoutTicks = 400)
+    public static void redDiamondOreSettingsReachItsNativeUnderworldPlacedFeature(GameTestHelper helper) {
+        var level = helper.getLevel().getServer().getLevel(MiteWorldDimensions.UNDERWORLD);
+        helper.assertTrue(level != null, "The Underworld dimension is available");
+        var kind = Kind.RED_DIAMOND;
+        var block = R196OreFeature.generationBlock(kind);
+        if (block == Blocks.AIR) {
+            helper.succeed();
+            return;
+        }
+        var feature = level.registryAccess().registryOrThrow(Registries.PLACED_FEATURE)
+                .get(ResourceLocation.fromNamespaceAndPath("modern_ite", "fancy_red_ore"));
+        helper.assertTrue(feature != null, "The ITE red diamond placed feature is registered");
+        var nativeFeature = new PlacedFeature(feature.feature(), feature.placement().stream()
+                .filter(modifier -> modifier.type() != PlacementModifierType.BIOME_FILTER).toList());
+        var rate = MiteConfig.UNDERWORLD_ORES.get(kind);
+        var count = MiteConfig.UNDERWORLD_ORE_CANDIDATES.get(kind);
+        var chance = MiteConfig.UNDERWORLD_ORE_CHANCES.get(kind);
+        var height = MiteConfig.UNDERWORLD_ORE_HEIGHTS.get(kind);
+        double originalRate = rate.get(), originalCount = count.get(), originalChance = chance.get();
+        String originalHeight = height.get();
+        var originalRemote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot() ? null : MiteConfig.effectiveSnapshot();
+        try {
+            MiteConfig.clearServerSnapshot();
+            rate.set(1D);
+            count.set(1D);
+            chance.set(100D);
+            height.set("");
+            pinLocalOreSettings();
+            var defaults = decorateRedDiamond(level, feature, block, true);
+            helper.assertTrue(defaults.placed() && !defaults.blocks().isEmpty(), "The native default places red diamond ore");
+            helper.assertValueEqual(defaults, decorateRedDiamond(level, nativeFeature, block, false),
+                    "Default settings retain the original positions and random sequence");
+
+            rate.set(0D);
+            pinLocalOreSettings();
+            helper.assertValueEqual(MiteConfig.underworldOreMultiplier(kind), 0D, "The zero multiplier reaches the effective settings");
+            helper.assertFalse(decorateRedDiamond(level, feature, block, true).placed(), "A zero multiplier disables the original feature");
+            rate.set(1D);
+            count.set(0D);
+            pinLocalOreSettings();
+            helper.assertFalse(decorateRedDiamond(level, feature, block, true).placed(), "A zero candidate count disables the original feature");
+            count.set(100D);
+            chance.set(0D);
+            height.set("[150,152]");
+            pinLocalOreSettings();
+            helper.assertFalse(decorateRedDiamond(level, feature, block, true).placed(), "A zero pass chance disables the original feature");
+
+            chance.set(25D);
+            pinLocalOreSettings();
+            var scarce = decorateRedDiamond(level, feature, block, true);
+            chance.set(100D);
+            pinLocalOreSettings();
+            var common = decorateRedDiamond(level, feature, block, true);
+            helper.assertTrue(scarce.placed() && common.placed() && common.blocks().size() > scarce.blocks().size(),
+                    "A higher saved pass chance admits more candidates on the same seed");
+            for (var sample : List.of(scarce, common)) {
+                helper.assertTrue(sample.blocks().stream().allMatch(pos -> pos.getY() >= 150 && pos.getY() <= 152),
+                        "Every block of the native red diamond vein stays inside its edited height range");
+            }
+        } finally {
+            rate.set(originalRate);
+            count.set(originalCount);
+            chance.set(originalChance);
+            height.set(originalHeight);
+            MiteConfig.clearServerSnapshot();
+            MiteConfig.refreshEnchantmentRules();
+            if (originalRemote != null) MiteConfig.receiveServerSnapshot(originalRemote);
+        }
+        helper.succeed();
+    }
+
+    private static void pinLocalOreSettings() {
+        MiteConfig.refreshEnchantmentRules();
+        MiteConfig.receiveServerSnapshot(MiteConfig.localSnapshot());
+    }
+
+    private record RedDiamondDecoration(boolean placed, List<BlockPos> blocks, long nextRandom) {}
+
+    private static RedDiamondDecoration decorateRedDiamond(ServerLevel level, PlacedFeature feature, Block block, boolean checkBiome) {
+        var biome = ResourceKey.create(Registries.BIOME, MiteWorldDimensions.UNDERWORLD_ID);
+        var fixture = new OreGenerationGameTests.GenerationFixture(level, new ChunkPos(6740, -6740), false, biome);
+        fixture.fill(125, 281);
+        var generator = level.getChunkSource().getGenerator();
+        var random = new LegacyRandomSource(196L);
+        var origin = fixture.center.getPos().getWorldPosition();
+        boolean placed = checkBiome ? feature.placeWithBiomeCheck(fixture.region, generator, random, origin)
+                : feature.place(fixture.region, generator, random, origin);
+        var blocks = new ArrayList<BlockPos>();
+        var pos = new BlockPos.MutableBlockPos();
+        for (var chunk : fixture.all) {
+            int startX = chunk.getPos().getMinBlockX(), startZ = chunk.getPos().getMinBlockZ();
+            for (int x = 0; x < 16; x++) for (int z = 0; z < 16; z++) for (int y = 125; y < 281; y++) {
+                if (chunk.getBlockState(pos.set(startX + x, y, startZ + z)).is(block)) blocks.add(pos.immutable());
+            }
+        }
+        return new RedDiamondDecoration(placed, blocks, random.nextLong());
     }
 
     private static boolean save(Map<Kind, Double> rates, Map<Kind, String> heights) {

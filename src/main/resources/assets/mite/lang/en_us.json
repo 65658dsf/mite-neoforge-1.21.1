@@ -1381,6 +1381,8 @@
   "mite.config.ore.redstone.tooltip": "Vein attempt multiplier: 1 = default, 0 = disabled. Supports fractions; new chunks only.",
   "mite.config.ore.diamond": "Diamond",
   "mite.config.ore.diamond.tooltip": "Vein attempt multiplier: 1 = default, 0 = disabled. Supports fractions; new chunks only.",
+  "mite.config.ore.red_diamond": "Red Diamond Ore",
+  "mite.config.ore.red_diamond.tooltip": "Red diamond vein attempt multiplier. 1 preserves the default and 0 disables generation. Affects new Underworld chunks only.",
   "mite.config.ore.lapis": "Lapis lazuli",
   "mite.config.ore.lapis.tooltip": "Vein attempt multiplier: 1 = default, 0 = disabled. Supports fractions; new chunks only.",
   "mite.config.ore.infested": "Infested stone",

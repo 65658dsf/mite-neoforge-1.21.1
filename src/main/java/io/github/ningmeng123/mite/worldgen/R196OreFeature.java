@@ -247,6 +247,7 @@ public final class R196OreFeature extends Feature<OreFeatureConfiguration> {
             case INFESTED -> deep ? Blocks.INFESTED_DEEPSLATE : Blocks.INFESTED_STONE;
             case REDSTONE -> deep ? Blocks.DEEPSLATE_REDSTONE_ORE : Blocks.REDSTONE_ORE;
             case DIAMOND -> deep ? Blocks.DEEPSLATE_DIAMOND_ORE : Blocks.DIAMOND_ORE;
+            case RED_DIAMOND -> BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("modern_ite", "fancy_red_ore"));
             case LAPIS -> deep ? Blocks.DEEPSLATE_LAPIS_ORE : Blocks.LAPIS_ORE;
             case EMERALD -> deep ? Blocks.DEEPSLATE_EMERALD_ORE : Blocks.EMERALD_ORE;
             case QUARTZ -> Blocks.NETHER_QUARTZ_ORE;

@@ -13,11 +13,23 @@ final class ModernUnderworldOreRulesTest {
         assertFalse(R196OreRules.UNDERWORLD.contains(EMERALD));
         assertEquals(0, R196OreRules.candidateCount(COAL, UNDERWORLD));
         assertEquals(0, R196OreRules.candidateCount(EMERALD, UNDERWORLD));
-        assertEquals(13, R196OreRules.configurableKinds(UNDERWORLD).size());
         assertTrue(R196OreRules.configurableKinds(UNDERWORLD).containsAll(List.of(COAL, EMERALD)));
+        assertEquals(13, R196OreRules.generationKinds(UNDERWORLD).size());
         assertEquals(R196OreRules.UNDERWORLD,
                 R196OreRules.generationKinds(UNDERWORLD).subList(0, R196OreRules.UNDERWORLD.size()));
         assertEquals(List.of(COAL, EMERALD), R196OreRules.generationKinds(UNDERWORLD).subList(11, 13));
+    }
+
+    @Test void redDiamondIsConfigurableOnlyInTheUnderworldAndKeepsItsSeparateFeatureDefaults() {
+        assertEquals(14, R196OreRules.configurableKinds(UNDERWORLD).size());
+        assertTrue(R196OreRules.configurableKinds(UNDERWORLD).contains(RED_DIAMOND));
+        assertFalse(R196OreRules.configurableKinds(OVERWORLD).contains(RED_DIAMOND));
+        assertFalse(R196OreRules.configurableKinds(NETHER).contains(RED_DIAMOND));
+        assertFalse(R196OreRules.generationKinds(UNDERWORLD).contains(RED_DIAMOND));
+        assertFalse(R196OreRules.hasDeepslateOre(RED_DIAMOND));
+        assertEquals(1, R196OreRules.configuredCandidateCount(RED_DIAMOND, UNDERWORLD));
+        assertEquals(1D, R196OreRules.configuredCandidateChance(RED_DIAMOND, UNDERWORLD));
+        assertEquals(new OreHeightRange(131, 274), OreHeightRange.defaults(RED_DIAMOND, UNDERWORLD));
     }
     @Test void defaultBudgetsDoNotAccidentallyApplyTheUnderworldEightfoldOrTenfoldFilter() {
         assertEquals(50, R196OreRules.configuredCandidateCount(COAL, UNDERWORLD));
