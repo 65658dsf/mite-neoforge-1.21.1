@@ -53,6 +53,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS, ENCHANTMENT_CHANCES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_RATES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_WEIGHTS;
+    static final ModConfigSpec.ConfigValue<List<? extends String>> GRAVEL_RATES;
     public static final Map<MonsterSpawningSettings.Option, ModConfigSpec.ConfigValue<? extends Number>> SPAWNING_CONTROLS =
             new EnumMap<>(MonsterSpawningSettings.Option.class);
     private static final Snapshot FACTORY;
@@ -192,6 +193,10 @@ public final class MiteConfig {
         ENCHANTMENT_CHANCES = builder.translation("mite.config.enchantment_chances")
                 .comment("Random enchanting candidate admission chance: namespace:enchantment=percent (0..100). Omitted IDs and 100 retain vanilla selection; 0 excludes the enchantment from random enchanting. This does not change existing enchantments, anvil application, or commands. Unknown IDs are retained for temporarily removed mods.")
                 .defineListAllowEmpty(List.of("chance_percent"), () -> BundledGameplayDefaults.list("enchantments.chance_percent"), () -> "minecraft:sharpness=50", MiteConfig::validEnchantmentChanceOverride);
+        builder.pop();
+        builder.translation("mite.config.gravel_drops").push("gravel_drops");
+        GRAVEL_RATES = builder.comment("Player-mined gravel drop percentages before Fortune: ordinary/namespace:item=percent or nether/namespace:item=percent. Each supplied group must include all products and total 100. Omitted groups use the original distribution. With ITE the flint and flint-chip entries count towards the same flint result.")
+                .defineListAllowEmpty(List.of("rates"), List::of, () -> "ordinary/minecraft:gravel=75", GravelDropSettings::validEntry);
         builder.pop();
         SPEC = builder.build();
         // Publish defaults before configuration loading; workers never read ModConfigSpec's mutable caches.
@@ -948,6 +953,7 @@ public final class MiteConfig {
         if (!DAMAGE_RATE_MIGRATED.get()) migrateAttackGrowth();
         EnchantmentCatalog.entries();
         refreshEnchantmentRules();
+        GravelDropSettings.reload();
         GameplayConfigSync.broadcast();
     }
 }

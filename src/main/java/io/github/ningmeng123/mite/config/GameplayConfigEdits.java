@@ -71,6 +71,9 @@ public final class GameplayConfigEdits {
                 yield MiteConfig.saveMonsterSpawnSettings(draft.rates(), draft.weights());
             }
             case "enchantments" -> validEnchantmentsShape(object) && saveEnchantments(GSON.fromJson(object, Enchantments.class));
+            case "gravel_drops" -> object.keySet().equals(Set.of("ordinary", "nether"))
+                    && object.get("ordinary").isJsonObject() && object.get("nether").isJsonObject()
+                    && numericTree(object, false) && GravelDropSettings.save(GSON.fromJson(object, GravelDropSettings.Rates.class));
             case "ore_multipliers" -> {
                 var draft = GSON.fromJson(object, OreMultipliers.class);
                 yield MiteConfig.saveOreMultipliers(draft.multipliers(), draft.deepslateMultipliers(), draft.heights(), draft.deepslateHeights());

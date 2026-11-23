@@ -51,8 +51,11 @@ public final class MiteSettingsScreen extends Screen {
         // Reserve that complete row even at Minecraft's minimum 320x240 GUI size.
         int y = menuTop();
         var ores = addRenderableWidget(Button.builder(Component.translatable("mite.config.ore_generation"),
-                button -> minecraft.setScreen(new OreGenerationSettingsScreen(this))).bounds(width / 2 - 130, y, 260, 20).build());
+                button -> minecraft.setScreen(new OreGenerationSettingsScreen(this))).bounds(width / 2 - 130, y, 128, 20).build());
         ores.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_generation.tooltip")));
+        var gravel = addRenderableWidget(Button.builder(Component.translatable("mite.config.gravel_drops"),
+                button -> minecraft.setScreen(new GravelDropSettingsScreen(this))).bounds(width / 2 + 2, y, 128, 20).build());
+        gravel.setTooltip(Tooltip.create(Component.translatable("mite.config.gravel_drops.tooltip")));
         var monsters = addRenderableWidget(Button.builder(Component.translatable("mite.config.monster_formulas"),
                 button -> minecraft.setScreen(new MonsterGrowthSettingsScreen(this))).bounds(width / 2 - 130, y + 24, 260, 20).build());
         monsters.setTooltip(Tooltip.create(Component.translatable("mite.config.monster_formulas.tooltip")));
@@ -74,7 +77,7 @@ public final class MiteSettingsScreen extends Screen {
         var enchantments = addRenderableWidget(Button.builder(Component.translatable("mite.config.registry_enchantments"),
                 button -> minecraft.setScreen(new EnchantmentSettingsScreen(this))).bounds(width / 2 - 130, y + 72, 260, 20).build());
         enchantments.setTooltip(Tooltip.create(Component.translatable("mite.config.registry_enchantments.tooltip")));
-        categories.addAll(List.of(ores, monsters, spawnRates, general, enchantments));
+        categories.addAll(List.of(ores, gravel, monsters, spawnRates, general, enchantments));
         int searchWidth = Math.min(260, width - 32);
         search = addRenderableWidget(new EditBox(font, (width - searchWidth) / 2, y - 26, searchWidth, 20,
                 Component.translatable("mite.config.search_all")));
@@ -144,10 +147,10 @@ public final class MiteSettingsScreen extends Screen {
             super(parent, type, config, title, GameplaySectionScreen::filterValue);
         }
 
-        private static boolean hidesOreSection(String key) {
+        private static boolean hasDedicatedEditor(String key) {
             return switch (key) {
                 case "underworld_ores", "overworld_ores", "nether_ores",
-                        "underworld_generation", "overworld_generation", "nether_generation", "monster_spawning" -> true;
+                        "underworld_generation", "overworld_generation", "nether_generation", "monster_spawning", "gravel_drops" -> true;
                 default -> false;
             };
         }
@@ -160,7 +163,7 @@ public final class MiteSettingsScreen extends Screen {
         }
 
         @Override protected Element createSection(String key, UnmodifiableConfig subconfig, UnmodifiableConfig subsection) {
-            if (context.keylist().isEmpty() && hidesOreSection(key)) return null;
+            if (context.keylist().isEmpty() && hasDedicatedEditor(key)) return null;
             return super.createSection(key, subconfig, subsection);
         }
     }

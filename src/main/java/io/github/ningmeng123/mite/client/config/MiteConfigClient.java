@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.client.config;
 import com.google.gson.Gson;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.api.MiteExtensions;
+import io.github.ningmeng123.mite.config.GravelDropSettings;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.network.GameplayConfigEditPayload;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public final class MiteConfigClient {
     private static final Map<Integer, Pending> PENDING = new HashMap<>();
     private static Map<String, Object> gameplayValues = Map.of();
     private static Map<String, Object> spawningValues = Map.of();
+    private static GravelDropSettings.Snapshot gravelDrops;
     private static int nextRequest;
     private MiteConfigClient() {}
     public static void register(ModContainer container) {
@@ -49,6 +51,14 @@ public final class MiteConfigClient {
         return snapshot != MiteConfig.localSnapshot() && !snapshot.netherOres().isEmpty();
     }
     public static Map<String, Object> gameplayValues() { return gameplayValues; }
+    public static GravelDropSettings.Rates gravelDropRates() {
+        if (!remoteServer()) return GravelDropSettings.localRates();
+        return gravelDrops == null ? null : gravelDrops.rates();
+    }
+    public static boolean gravelDropsUseWholeFlint() {
+        if (!remoteServer()) return GravelDropSettings.wholeFlint();
+        return gravelDrops != null && gravelDrops.wholeFlint();
+    }
     public static Map<String, Object> spawningControlValues() {
         return remoteServer() && !spawningValues.isEmpty() ? spawningValues : MiteExtensions.policy().spawningControlValues();
     }
@@ -73,15 +83,17 @@ public final class MiteConfigClient {
                 : message.startsWith("mite.config.remote.") ? Component.translatable(message) : Component.literal(message));
     }
     public static void receive(MiteConfig.Snapshot snapshot) {
-        receive(snapshot, Map.of(), Map.of());
+        receive(snapshot, Map.of(), Map.of(), null);
     }
-    public static void receive(MiteConfig.Snapshot snapshot, Map<String, Object> general, Map<String, Object> spawning) {
+    public static void receive(MiteConfig.Snapshot snapshot, Map<String, Object> general, Map<String, Object> spawning,
+                               GravelDropSettings.Snapshot gravel) {
         // Integrated server and client share the same config values. Never shadow live edits with an old packet.
         var mc = Minecraft.getInstance();
         if (mc.getConnection() != null && !mc.hasSingleplayerServer()) {
             MiteConfig.receiveServerSnapshot(snapshot);
             gameplayValues = Map.copyOf(general);
             spawningValues = Map.copyOf(spawning);
+            gravelDrops = gravel;
         }
     }
     @EventBusSubscriber(modid = Mite.MOD_ID, value = Dist.CLIENT)
@@ -99,6 +111,7 @@ public final class MiteConfigClient {
             MiteConfig.clearServerSnapshot();
             gameplayValues = Map.of();
             spawningValues = Map.of();
+            gravelDrops = null;
             var pending = java.util.List.copyOf(PENDING.values());
             PENDING.clear();
             pending.forEach(request -> request.completion().accept(Component.translatable("mite.config.remote.disconnected")));

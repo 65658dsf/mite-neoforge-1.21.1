@@ -52,6 +52,31 @@ class MineralGravelRulesTest {
     }
 
     @Test
+    void displayedDefaultPercentagesMatchTheUnenchantedDropTree() {
+        for (boolean nether : new boolean[]{false, true}) {
+            var rates = FlintGravelRules.defaultRates(nether);
+            distribution(0, nether).forEach((drop, fraction) -> {
+                double percent = 100D * fraction.numerator().doubleValue() / fraction.denominator().doubleValue();
+                assertEquals(percent, rates.getOrDefault(drop, 0D), 1E-12D, drop.name());
+            });
+        }
+    }
+
+    @Test
+    void customRatesKeepProductProportionsAndZeroPercentOutcomes() {
+        var rates = new EnumMap<>(Map.of(GRAVEL, 75D, FLINT, 5D, COPPER_NUGGET, 20D, FLINT_CHIP, 0D));
+        assertEquals(FLINT, FlintGravelRules.rollConfigured(rates, 0, 0, () -> .04D));
+        assertEquals(FLINT, FlintGravelRules.rollConfigured(rates, 3, 0, () -> .08D));
+        assertEquals(COPPER_NUGGET, FlintGravelRules.rollConfigured(rates, 0, 0, () -> .06D));
+        assertEquals(COPPER_NUGGET, FlintGravelRules.rollConfigured(rates, 3, 0, () -> .12D));
+        assertEquals(GRAVEL, FlintGravelRules.rollConfigured(rates, 0, 0, () -> .30D));
+        assertEquals(COPPER_NUGGET, FlintGravelRules.rollConfigured(rates, 3, 0, () -> .30D));
+        assertEquals(FLINT, FlintGravelRules.rollConfigured(Map.of(GRAVEL, 0D, FLINT, 99.9999999D),
+                0, 0, () -> .9999999999D));
+        assertEquals(GRAVEL, FlintGravelRules.rollConfigured(Map.of(GRAVEL, 100D, FLINT, 0D), 3, 4, () -> 0D));
+    }
+
+    @Test
     void bothGravelsClampExtremeFortunesWithoutChangingTheirFullDistribution() {
         for (boolean nether : new boolean[]{false, true}) {
             var zero = distribution(0, nether);

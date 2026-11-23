@@ -12,9 +12,11 @@ import com.mojang.blaze3d.vertex.VertexSorting;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.client.config.ConfigSearchIndex;
 import io.github.ningmeng123.mite.client.config.EnchantmentSettingsScreen;
+import io.github.ningmeng123.mite.client.config.GravelDropSettingsScreen;
 import io.github.ningmeng123.mite.client.config.MiteSettingsScreen;
 import io.github.ningmeng123.mite.client.config.OreGenerationSettingsScreen;
 import io.github.ningmeng123.mite.client.config.SingleConfigValueScreen;
+import io.github.ningmeng123.mite.config.GravelDropSettings;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
@@ -60,7 +62,8 @@ public final class SettingsSearchClientAudit {
     private static int ticks, saveTicks;
     private static String originalLanguage;
     private static Double originalReach, originalReduction;
-    private static final List<Runnable> restoreOreSettings = new ArrayList<>();
+    private static GravelDropSettings.Rates originalGravelRates;
+    private static final List<Runnable> restoreSettings = new ArrayList<>();
     private static Path configFile;
     private static byte[] originalFile;
     private static JsonObject report;
@@ -146,6 +149,7 @@ public final class SettingsSearchClientAudit {
 
         boolean ite = ModList.get().isLoaded("modern_ite");
         report.addProperty("modern_ite_loaded", ite);
+        auditGravelDropSettings(mc, home, ite);
         auditNetherOreSettings(mc, home, ite);
         nativeResetAndSave(mc, home);
         if (ite) {
@@ -163,6 +167,49 @@ public final class SettingsSearchClientAudit {
         report.addProperty("chinese_key_whitespace_clear_and_unmatched_search", true);
         report.addProperty("multiple_result_pages_and_resize_preserve_query", true);
         report.addProperty("dedicated_result_navigation_preselects_entry", true);
+    }
+
+    private static void auditGravelDropSettings(Minecraft mc, Screen home, boolean ite) throws Exception {
+        originalGravelRates = GravelDropSettings.localRates();
+        rememberSettings(MiteConfig.SPEC.getValues().get("gravel_drops"));
+        home.init(mc, 320, 240);
+        search(home).setValue("gravel_drops:ordinary/mite:flint_chip");
+        check(matches(home).size() == (ite ? 0 : 1), "Search only exposes the flint chip when it can drop separately");
+        search(home).setValue("");
+        press(home, "mite.config.gravel_drops");
+        Screen gravel = mc.screen;
+        check(gravel instanceof GravelDropSettingsScreen, "The gravel settings category opens its dedicated editor");
+        gravel.init(mc, 320, 240);
+        bounds(gravel);
+        noOverlap(gravel);
+        capture(mc, gravel, 320, 240, "settings-gravel-drops-zh-cn");
+        press(gravel, "mite.config.reset");
+        EditBox flint = input(gravel, "item.minecraft.flint");
+        flint.setValue("101");
+        check(!button(gravel, "mite.config.save").active, "An out-of-range gravel drop chance prevents saving");
+        flint.setValue("14");
+        check(!button(gravel, "mite.config.save").active, "A gravel draft must total 100 before saving");
+        press(gravel, "mite.config.gravel_drops.balance");
+        press(gravel, "mite.config.save");
+        check(mc.screen == home && GravelDropSettings.localRates().ordinary().get("minecraft:flint") == 14D,
+                "The balanced draft saves the new flint chance and returns to settings");
+        var disk = new TomlParser().parse(Files.readString(configFile));
+        check(disk.get("gravel_drops.rates") instanceof List<?> entries && !entries.isEmpty(),
+                "The configured rates persist to the COMMON file");
+
+        search(home).setValue("gravel_drops:nether/minecraft:gold_nugget");
+        openOnlyResult(home, "gravel_drops:nether/minecraft:gold_nugget");
+        gravel = mc.screen;
+        gravel.init(mc, 320, 240);
+        check(!button(gravel, "block.mite.nether_gravel").active
+                        && Double.parseDouble(input(gravel, "item.minecraft.gold_nugget").getValue())
+                                == GravelDropSettings.defaults(ite).nether().get("minecraft:gold_nugget"),
+                "Selecting a result opens the Nether tab with the requested product visible");
+        press(gravel, "mite.config.reset");
+        press(gravel, "mite.config.save");
+        check(mc.screen == home && GravelDropSettings.localRates().equals(GravelDropSettings.defaults(ite)),
+                "Restoring defaults and saving resets both types of gravel");
+        report.addProperty("gravel_drop_visibility_validation_balance_save_and_reset", true);
     }
 
     private static void auditNetherOreSettings(Minecraft mc, Screen home, boolean ite) throws Exception {
@@ -263,7 +310,7 @@ public final class SettingsSearchClientAudit {
 
     private static <T> void rememberSetting(ModConfigSpec.ConfigValue<T> value) {
         T original = value.get();
-        restoreOreSettings.add(() -> value.set(original));
+        restoreSettings.add(() -> value.set(original));
     }
 
     private static void nativeResetAndSave(Minecraft mc, Screen home) throws Exception {
@@ -338,7 +385,10 @@ public final class SettingsSearchClientAudit {
                 .filter(box -> box.getMessage().getString().equals(Component.translatable("mite.config.search_all").getString())).findFirst().orElseThrow();
     }
     private static EditBox oreInput(Screen screen, String key) {
-        String label = Component.translatable("mite.config." + key).getString();
+        return input(screen, "mite.config." + key);
+    }
+    private static EditBox input(Screen screen, String key) {
+        String label = Component.translatable(key).getString();
         return editBoxes(screen).stream().filter(box -> box.getMessage().getString().equals(label)).findFirst().orElseThrow();
     }
     private static Button nativeButton(Screen screen, String field) throws Exception {
@@ -413,7 +463,9 @@ public final class SettingsSearchClientAudit {
             if (originalReach != null) {
                 MiteConfig.WEAPON_REACH_MULTIPLIER.set(originalReach);
                 MiteConfig.WEAPON_REACH_REDUCTION.set(originalReduction);
-                restoreOreSettings.forEach(Runnable::run);
+                if (originalGravelRates != null) check(GravelDropSettings.save(originalGravelRates),
+                        "Original in-memory gravel rates restored");
+                restoreSettings.forEach(Runnable::run);
                 MiteConfig.SPEC.save();
                 MiteConfig.refreshEnchantmentRules();
                 if (originalFile == null) Files.deleteIfExists(configFile); else Files.write(configFile, originalFile);

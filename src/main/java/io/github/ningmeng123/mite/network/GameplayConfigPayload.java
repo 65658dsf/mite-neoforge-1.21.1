@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.config.GameplayConfigEdits;
+import io.github.ningmeng123.mite.config.GravelDropSettings;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import java.util.Map;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -21,13 +22,17 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 /** Server settings including ore generation, sent on login and config reload. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public record GameplayConfigPayload(MiteConfig.Snapshot snapshot, Map<String, Object> gameplayValues,
-        Map<String, Object> addonSpawning) implements CustomPacketPayload {
+        Map<String, Object> addonSpawning, GravelDropSettings.Snapshot gravelDrops) implements CustomPacketPayload {
     private static final Gson GSON = new Gson();
     public GameplayConfigPayload {
         gameplayValues = Map.copyOf(gameplayValues);
         addonSpawning = Map.copyOf(addonSpawning);
     }
-    public GameplayConfigPayload(MiteConfig.Snapshot snapshot) { this(snapshot, Map.of(), Map.of()); }
+    public GameplayConfigPayload(MiteConfig.Snapshot snapshot) { this(snapshot, Map.of(), Map.of(), null); }
+    public GameplayConfigPayload(MiteConfig.Snapshot snapshot, Map<String, Object> gameplayValues,
+                                 Map<String, Object> addonSpawning) {
+        this(snapshot, gameplayValues, addonSpawning, null);
+    }
     public static final Type<GameplayConfigPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "gameplay_config"));
     public static final StreamCodec<RegistryFriendlyByteBuf, GameplayConfigPayload> CODEC = new StreamCodec<>() {
         @Override public GameplayConfigPayload decode(RegistryFriendlyByteBuf buffer) {
@@ -35,24 +40,28 @@ public record GameplayConfigPayload(MiteConfig.Snapshot snapshot, Map<String, Ob
             java.lang.reflect.Type valuesType = new TypeToken<Map<String, Object>>() {}.getType();
             return new GameplayConfigPayload(GSON.fromJson(json, MiteConfig.Snapshot.class),
                     json.has("gameplayValues") ? GSON.fromJson(json.get("gameplayValues"), valuesType) : Map.of(),
-                    json.has("addonSpawning") ? GSON.fromJson(json.get("addonSpawning"), valuesType) : Map.of());
+                    json.has("addonSpawning") ? GSON.fromJson(json.get("addonSpawning"), valuesType) : Map.of(),
+                    GSON.fromJson(json.get("gravelDrops"), GravelDropSettings.Snapshot.class));
         }
         @Override public void encode(RegistryFriendlyByteBuf buffer, GameplayConfigPayload payload) {
             // Extra fields retain the original snapshot shape for older read-only clients.
             var json = GSON.toJsonTree(payload.snapshot()).getAsJsonObject();
             json.add("gameplayValues", GSON.toJsonTree(payload.gameplayValues()));
             json.add("addonSpawning", GSON.toJsonTree(payload.addonSpawning()));
+            if (payload.gravelDrops() != null) json.add("gravelDrops", GSON.toJsonTree(payload.gravelDrops()));
             buffer.writeUtf(json.toString(), 262144);
         }
     };
     @Override public Type<GameplayConfigPayload> type() { return TYPE; }
     @SubscribeEvent public static void register(RegisterPayloadHandlersEvent event) {
         event.registrar("5").playToClient(TYPE, CODEC, (payload, context) -> context.enqueueWork(() ->
-                io.github.ningmeng123.mite.client.config.MiteConfigClient.receive(payload.snapshot(), payload.gameplayValues(), payload.addonSpawning())));
+                io.github.ningmeng123.mite.client.config.MiteConfigClient.receive(payload.snapshot(), payload.gameplayValues(),
+                        payload.addonSpawning(), payload.gravelDrops())));
     }
     public static void send(ServerPlayer player) {
         if (player.connection != null && player.connection.hasChannel(TYPE))
             PacketDistributor.sendToPlayer(player, new GameplayConfigPayload(MiteConfig.localSnapshot(),
-                    GameplayConfigEdits.gameplayValues(), MiteExtensions.policy().spawningControlValues()));
+                    GameplayConfigEdits.gameplayValues(), MiteExtensions.policy().spawningControlValues(),
+                    GravelDropSettings.localSnapshot()));
     }
 }

@@ -135,6 +135,7 @@ public final class GameplayConfigExport {
         put(content, MiteConfig.MONSTER_DAMAGE_FORMULA, growth.damageFormula());
         put(content, MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA, growth.healthBloodMoonFormula());
         put(content, MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA, growth.damageBloodMoonFormula());
+        put(content, MiteConfig.GRAVEL_RATES, GravelDropSettings.exportEntries());
         return content;
     }
 

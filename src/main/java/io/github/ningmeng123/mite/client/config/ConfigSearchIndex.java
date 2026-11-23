@@ -57,6 +57,7 @@ public final class ConfigSearchIndex {
         PROVIDERS.values().forEach(provider -> result.addAll(provider.apply(parent)));
         addEnchantments(result, parent);
         addMonsters(result, parent);
+        addGravelDrops(result, parent);
         result.sort(Comparator.comparing(entry -> entry.category().getString() + " " + entry.label().getString() + " " + entry.id()));
         return List.copyOf(result);
     }
@@ -81,6 +82,7 @@ public final class ConfigSearchIndex {
             if (value.getValue() instanceof UnmodifiableConfig section) collect(result, config, section, path, available, open);
             else if (value.getValue() instanceof ModConfigSpec.ConfigValue<?>) {
                 List<String> target = List.copyOf(path);
+                if (config.getModId().equals(Mite.MOD_ID) && target.getFirst().equals("gravel_drops")) continue;
                 if (config.getModId().equals(Mite.MOD_ID) && target.equals(List.of("monsters", "damage_rate_migrated"))) continue;
                 if (config.getModId().equals(Mite.MOD_ID) && oreDimension(target.getFirst()) == Dimension.NETHER
                         && ((available && !MiteConfigClient.netherOreSettingsAvailable())
@@ -208,6 +210,19 @@ public final class ConfigSearchIndex {
         known.forEach((id, name) -> result.add(new Entry("monster_spawning:" + id, name,
                 Component.translatable("mite.config.monster_spawning"),
                 Component.translatable("mite.config.monster_spawning.tooltip"), true, () -> monsterScreen(parent, id))));
+    }
+
+    private static void addGravelDrops(List<Entry> result, Screen parent) {
+        var rates = MiteConfigClient.gravelDropRates();
+        if (rates == null) return;
+        for (var gravel : GravelDropSettingsScreen.Gravel.values()) {
+            Component category = Component.translatable("mite.config.gravel_drops.search_category", gravel.label());
+            for (String id : gravel.rates(rates).keySet()) {
+                result.add(new Entry("gravel_drops:" + gravel.key + "/" + id, GravelDropSettingsScreen.itemName(id),
+                        category, Component.translatable("mite.config.gravel_drops.tooltip"), true,
+                        () -> new GravelDropSettingsScreen(parent, gravel, id)));
+            }
+        }
     }
 
     private static MonsterSpawnSettingsScreen monsterScreen(Screen parent, String query) {
