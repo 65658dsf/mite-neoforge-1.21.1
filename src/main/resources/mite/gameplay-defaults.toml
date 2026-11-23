@@ -194,6 +194,7 @@
 	weapon_reach_multiplier = 1.0
 	weapon_reach_reduction = 0.0
 	height_reach_penalty = true
+	better_combat_damage_multiplier = 0.8
 	better_combat_mobs = false
 
 [structures]

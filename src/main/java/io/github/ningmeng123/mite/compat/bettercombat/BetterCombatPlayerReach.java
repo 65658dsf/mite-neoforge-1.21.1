@@ -29,9 +29,14 @@ public final class BetterCombatPlayerReach {
         }
     }
 
+    public static boolean isAttackInProgress(Player player) {
+        Attack attack = ATTACK.get();
+        return attack != null && attack.player() == player;
+    }
+
     /** Null preserves the source rules for ordinary packets, fake players and absent optional mods. */
     public static Double reach(Player player) {
-        if (!BetterCombatBridge.enabled()) return null;
+        if (!BetterCombatBridge.enabled() || BetterCombatPlayerMode.isVanilla(player)) return null;
         Attack attack = ATTACK.get();
         if (attack != null && attack.player() == player)
             return Loaded.range(player, attack.weapon(), attack.moveMultiplier(), false);
@@ -40,7 +45,7 @@ public final class BetterCombatPlayerReach {
 
     /** Use the selected hand for MITE's tool bonus, before the client swaps equipment. */
     public static ItemStack attackingWeapon(Player player) {
-        if (BetterCombatBridge.enabled()) {
+        if (BetterCombatBridge.enabled() && !BetterCombatPlayerMode.isVanilla(player)) {
             Attack attack = ATTACK.get();
             if (attack != null && attack.player() == player) return attack.weapon();
             if (player.level().isClientSide) {
@@ -53,7 +58,7 @@ public final class BetterCombatPlayerReach {
 
     /** Read both value and obsolete modifier from the same actual attacking hand. */
     public static double rangeAttribute(Player player, ResourceLocation ignoredModifier) {
-        if (BetterCombatBridge.enabled() && player.level().isClientSide)
+        if (BetterCombatBridge.enabled() && player.level().isClientSide && !BetterCombatPlayerMode.isVanilla(player))
             return ClientLoaded.rangeAttribute(player, ignoredModifier);
         return currentRangeAttribute(player, ignoredModifier);
     }

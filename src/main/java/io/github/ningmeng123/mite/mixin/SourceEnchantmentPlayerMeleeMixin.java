@@ -45,7 +45,7 @@ public abstract class SourceEnchantmentPlayerMeleeMixin {
         boolean blunt = tool != null && target instanceof AbstractSkeleton && switch (tool.family()) {
             case CLUB, CUDGEL, WAR_HAMMER -> true; default -> false;
         };
-        float damage = io.github.ningmeng123.mite.progression.GearModifierEffects.meleeDamage(player,
+        float damage = SourcePlayerCombat.meleeDamage(player,
                 SourcePlayerCombatRules.primaryDamage(criticalBase, player.experienceLevel,
                         silver, blunt, enchantmentDamage, SourcePlayerCombat.suspended(player)));
         // Modern sweep/stat/particle calculations reuse f3 after this call; give them the same final primary basis.

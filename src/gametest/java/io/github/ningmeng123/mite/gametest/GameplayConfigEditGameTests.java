@@ -117,6 +117,7 @@ public final class GameplayConfigEditGameTests {
                     Map.entry("gameplay", "{\"combat.weapon_reach_multiplier\":2,\"missing.option\":true}"),
                     Map.entry("gameplay", "{\"combat.weapon_reach_multiplier\":2,\"combat.height_reach_penalty\":0}"),
                     Map.entry("gameplay", "{\"combat.weapon_reach_multiplier\":1e400}"),
+                    Map.entry("gameplay", "{\"combat.better_combat_damage_multiplier\":-0.1}"),
                     Map.entry("growth", "null"),
                     Map.entry("enchantments", "{\"caps\":{\"minecraft:sharpness\":0},\"disabled\":[],\"chances\":{}}"),
                     Map.entry("enchantments", "{\"caps\":{\"minecraft:sharpness\":2.5},\"disabled\":[],\"chances\":{}}"),
@@ -138,18 +139,38 @@ public final class GameplayConfigEditGameTests {
         try (var settings = new Settings(); var operator = new Operator(helper)) {
             operator.permission(2);
             var oldSpawning = MiteConfig.localSnapshot().spawningSettings();
+            helper.assertValueEqual(MiteConfig.factorySnapshot().betterCombatDamageMultiplier(), .8D,
+                    "The bundled Better Combat damage multiplier defaults to 80 percent");
             helper.assertTrue(GameplayConfigEdits.apply(operator.player, "gameplay", GSON.toJson(Map.of(
                     "combat.weapon_reach_multiplier", 2.25D, "combat.height_reach_penalty", false,
+                    "combat.better_combat_damage_multiplier", .65D,
                     "monsters.damage_growth_multiplier", 1.5D))) == null,
                     "A general gameplay patch is accepted through the server authority boundary");
             helper.assertValueEqual(MiteConfig.weaponReachMultiplier(), 2.25D, "The live reach rule receives the server edit");
+            helper.assertValueEqual(MiteConfig.betterCombatDamageMultiplier(), .65D, "The live Better Combat damage uses the server edit");
+            helper.assertValueEqual(GameplayConfigEdits.gameplayValues().get("combat.better_combat_damage_multiplier"), .65D,
+                    "The remote editor receives the live multiplier");
             helper.assertValueEqual(MiteConfig.localSnapshot().damageGrowth(), 1.5D, "The server applies the edited attack growth multiplier");
             helper.assertFalse(MiteConfig.heightReachPenaltyEnabled(), "The live boolean rule receives the server edit");
             helper.assertValueEqual(MiteConfig.localSnapshot().spawningSettings(), oldSpawning, "A gameplay patch preserves unrelated dedicated settings");
             var disk = new TomlParser().parse(Files.readString(configPath()));
             helper.assertValueEqual(((Number)disk.get(List.of("combat", "weapon_reach_multiplier"))).doubleValue(), 2.25D,
                     "General gameplay saves target the loaded server config");
+            helper.assertValueEqual(((Number)disk.get(List.of("combat", "better_combat_damage_multiplier"))).doubleValue(), .65D,
+                    "The Better Combat damage multiplier is saved to the dedicated server config");
             helper.assertValueEqual(disk.get(List.of("combat", "height_reach_penalty")), false, "Boolean values stay booleans on disk");
+            var bytes = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+            try {
+                var snapshot = MiteConfig.localSnapshot();
+                GameplayConfigPayload.CODEC.encode(bytes, new GameplayConfigPayload(snapshot));
+                helper.assertValueEqual(GameplayConfigPayload.CODEC.decode(bytes).snapshot().betterCombatDamageMultiplier(), .65D,
+                        "Server synchronization includes the new multiplier");
+                var legacy = GSON.toJsonTree(snapshot).getAsJsonObject();
+                legacy.remove("betterCombatDamageMultiplier");
+                bytes.writeUtf(legacy.toString(), 262144);
+                helper.assertValueEqual(GameplayConfigPayload.CODEC.decode(bytes).snapshot().betterCombatDamageMultiplier(), .8D,
+                        "Older snapshots without the multiplier use the factory value");
+            } finally { bytes.release(); }
         }
         helper.succeed();
     }

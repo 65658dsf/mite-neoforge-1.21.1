@@ -46,6 +46,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_FORMULA, MONSTER_DAMAGE_FORMULA;
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_BLOOD_MOON_FORMULA, MONSTER_DAMAGE_BLOOD_MOON_FORMULA;
     public static final ModConfigSpec.DoubleValue WEAPON_REACH_MULTIPLIER, WEAPON_REACH_REDUCTION;
+    public static final ModConfigSpec.DoubleValue BETTER_COMBAT_DAMAGE_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue HEIGHT_REACH_PENALTY, UNDERWORLD_TRIALS, OVERWORLD_TRIALS;
     public static final ModConfigSpec.BooleanValue BETTER_COMBAT_MOBS;
     public static final ModConfigSpec.BooleanValue ASYNC_PATHFINDING, AI_LOAD_REDUCTION;
@@ -170,6 +171,9 @@ public final class MiteConfig {
         WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Multiplier of balanced melee reach before the fixed reduction. MITE and Simply Swords select separate family ranges according to Better Combat availability.");
         WEAPON_REACH_REDUCTION = number(builder, "weapon_reach_reduction", 0D, 16D, "Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.");
         HEIGHT_REACH_PENALTY = builder.translation("mite.config.height_reach_penalty").comment("Apply MITE target-height reach adjustments.").define("height_reach_penalty", true);
+        BETTER_COMBAT_DAMAGE_MULTIPLIER = number(builder, "better_combat_damage_multiplier",
+                BundledGameplayDefaults.number("combat.better_combat_damage_multiplier", .8D), 10D,
+                "Damage multiplier for player melee attacks performed through Better Combat.");
         BETTER_COMBAT_MOBS = builder.translation("mite.config.better_combat_mobs")
                 .comment("Enable Better Combat weapon attacks and animations for hostile mobs when Better Combat is installed. False preserves their original attacks. Does not affect player compatibility.")
                 .define("better_combat_mobs", false);
@@ -493,6 +497,7 @@ public final class MiteConfig {
     public static double weaponReachMultiplier() { return effectiveSnapshot().reachMultiplier(); }
     public static double weaponReachReduction() { return effectiveSnapshot().reachReduction(); }
     public static boolean heightReachPenaltyEnabled() { return effectiveSnapshot().heightPenalty(); }
+    public static double betterCombatDamageMultiplier() { return effectiveSnapshot().betterCombatDamageMultiplier(); }
     public static boolean betterCombatMobsEnabled() { return effectiveSnapshot().betterCombatMobs(); }
     public static boolean underworldTrialsEnabled() { return effectiveSnapshot().underworldTrials(); }
     public static boolean overworldTrialsEnabled() { return effectiveSnapshot().overworldTrials(); }
@@ -517,7 +522,8 @@ public final class MiteConfig {
             Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
             Map<String, String> oreHeights, Map<String, String> overworldOreHeights,
             MonsterSpawningSettings.Settings spawningSettings, Map<String, Double> monsterSpawnWeights,
-            boolean betterCombatMobs, Map<String, Double> netherOres, Map<String, String> netherOreHeights) {
+            boolean betterCombatMobs, Map<String, Double> netherOres, Map<String, String> netherOreHeights,
+            Double betterCombatDamageMultiplier) {
         public Snapshot {
             ores = Map.copyOf(ores);
             caps = Map.copyOf(caps);
@@ -536,6 +542,24 @@ public final class MiteConfig {
             monsterSpawnWeights = spawnWeightOverrides(monsterSpawnWeights);
             netherOres = netherOres == null ? Map.of() : Map.copyOf(netherOres);
             netherOreHeights = heightOverrides(netherOreHeights);
+            if (betterCombatDamageMultiplier == null || !Double.isFinite(betterCombatDamageMultiplier)
+                    || !BETTER_COMBAT_DAMAGE_MULTIPLIER.getSpec().test(betterCombatDamageMultiplier))
+                betterCombatDamageMultiplier = BETTER_COMBAT_DAMAGE_MULTIPLIER.getDefault();
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
+                Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
+                Map<String, String> oreHeights, Map<String, String> overworldOreHeights,
+                MonsterSpawningSettings.Settings spawningSettings, Map<String, Double> monsterSpawnWeights,
+                boolean betterCombatMobs, Map<String, Double> netherOres, Map<String, String> netherOreHeights) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, overworldOres, enchantmentChances, monsterSpawnRates,
+                    oreHeights, overworldOreHeights, spawningSettings, monsterSpawnWeights, betterCombatMobs, netherOres,
+                    netherOreHeights, null);
         }
         public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
                 double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
@@ -703,7 +727,8 @@ public final class MiteConfig {
                 surfaceCandidates, surfaceChances, surfaceMultipliers, enchantmentChances, spawnRates,
                 readHeights(UNDERWORLD_ORE_HEIGHTS, UNDERWORLD_DEEPSLATE_ORE_HEIGHTS),
                 readHeights(OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS), readSpawningSettings(), spawnWeights,
-                value(BETTER_COMBAT_MOBS), netherMultipliers, readHeights(NETHER_ORE_HEIGHTS, Map.of()));
+                value(BETTER_COMBAT_MOBS), netherMultipliers, readHeights(NETHER_ORE_HEIGHTS, Map.of()),
+                value(BETTER_COMBAT_DAMAGE_MULTIPLIER));
     }
 
     private static MonsterSpawningSettings.Settings readSpawningSettings() {

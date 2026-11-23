@@ -180,6 +180,7 @@ public final class GameplayConfigEdits {
         values.put("combat.weapon_reach_multiplier", MiteConfig.WEAPON_REACH_MULTIPLIER);
         values.put("combat.weapon_reach_reduction", MiteConfig.WEAPON_REACH_REDUCTION);
         values.put("combat.height_reach_penalty", MiteConfig.HEIGHT_REACH_PENALTY);
+        values.put("combat.better_combat_damage_multiplier", MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER);
         values.put("combat.better_combat_mobs", MiteConfig.BETTER_COMBAT_MOBS);
         values.put("structures.underworld_trials", MiteConfig.UNDERWORLD_TRIALS);
         values.put("structures.overworld_trials", MiteConfig.OVERWORLD_TRIALS);

@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.combat;
 
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerReach;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
+import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerMode;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsReach;
 import io.github.ningmeng123.mite.config.MiteConfig;
@@ -79,11 +80,16 @@ public final class SourcePlayerReach {
     }
     /** Weapon length is independent of its durability family; external range is included exactly once. */
     public static double baseMeleeReach(ItemStack weapon, double itemRange) {
-        boolean betterCombat = BetterCombatBridge.enabled();
+        return baseMeleeReach(weapon, itemRange, BetterCombatBridge.enabled());
+    }
+    private static boolean usesBetterCombat(Player player) {
+        return BetterCombatBridge.enabled() && (player == null || !BetterCombatPlayerMode.isVanilla(player));
+    }
+    private static double baseMeleeReach(ItemStack weapon, double itemRange, boolean betterCombat) {
         var simplySwords = SimplySwordsCompat.definition(weapon);
         if (simplySwords != null) {
-            Double metadata = BetterCombatBridge.weaponBaseReach(weapon, itemRange);
-            if (metadata == null && !betterCombat) metadata = SimplySwordsReach.baseReach(weapon, itemRange);
+            Double metadata = betterCombat ? BetterCombatBridge.weaponBaseReach(weapon, itemRange)
+                    : SimplySwordsReach.baseReach(weapon, itemRange);
             if (hasExplicitRange(weapon)) return metadata == null ? itemRange : metadata;
             double balanced = SimplySwordsBalanceRules.meleeReach(simplySwords.family(), betterCombat) + itemRange - 3D;
             return metadata == null ? balanced : Math.min(metadata, balanced);
@@ -119,7 +125,7 @@ public final class SourcePlayerReach {
             if (entry.attribute().is(Attributes.ENTITY_INTERACTION_RANGE) && !entry.modifier().id().equals(LEGACY_TOOL_REACH))
                 modifiers.add(entry.attribute(), entry.modifier(), entry.slot());
         }
-        double base = baseMeleeReach(weapon, modifiers.build().compute(3D, EquipmentSlot.MAINHAND));
+        double base = baseMeleeReach(weapon, modifiers.build().compute(3D, EquipmentSlot.MAINHAND), usesBetterCombat(player));
         return base <= 0D || !Double.isFinite(base) ? 0D : SourcePlayerCombatRules.configuredWeaponReach(base,
                 MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction())
                 + ProgressionRules.meleeReachBonusForLevel(player == null ? 0 : player.experienceLevel);
@@ -127,7 +133,8 @@ public final class SourcePlayerReach {
     /** Preserve MITE's weapon, target-height and attribute limits for either attack system. */
     public static double sourceMeleeReach(Player player, Entity target) {
         ItemStack weapon = BetterCombatPlayerReach.attackingWeapon(player);
-        double base = baseMeleeReach(weapon, BetterCombatPlayerReach.rangeAttribute(player, LEGACY_TOOL_REACH));
+        double base = baseMeleeReach(weapon, BetterCombatPlayerReach.rangeAttribute(player, LEGACY_TOOL_REACH),
+                usesBetterCombat(player));
         if (!player.getAbilities().instabuild && (!Double.isFinite(base)
                 || base <= 0D && SimplySwordsCompat.definition(weapon) != null)) return 0D;
         return SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
@@ -140,7 +147,8 @@ public final class SourcePlayerReach {
         Double weaponReach = BetterCombatPlayerReach.reach(player);
         if (weaponReach != null) return Math.max(16D, weaponReach);
         if (player.getAbilities().instabuild) return 16D;
-        double base = baseMeleeReach(player.getMainHandItem(), BetterCombatPlayerReach.rangeAttribute(player, LEGACY_TOOL_REACH));
+        double base = baseMeleeReach(player.getMainHandItem(), BetterCombatPlayerReach.rangeAttribute(player, LEGACY_TOOL_REACH),
+                usesBetterCombat(player));
         return Math.max(16D, SourcePlayerCombatRules.meleeReach(player.getAbilities().instabuild,
                 2.5D, base - 1.5D, true, 0D,
                 MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled())

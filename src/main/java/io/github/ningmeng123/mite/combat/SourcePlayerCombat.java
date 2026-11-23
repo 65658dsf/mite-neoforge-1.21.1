@@ -1,11 +1,14 @@
 package io.github.ningmeng123.mite.combat;
 
+import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerReach;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.enchantment.SourceEnchantmentCombat;
 import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.MobCorrosion;
 import io.github.ningmeng123.mite.entity.R196Cube;
 import io.github.ningmeng123.mite.entity.R196Mob;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
+import io.github.ningmeng123.mite.progression.GearModifierEffects;
 import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
 import io.github.ningmeng123.mite.survival.FoodConsumption;
 import java.util.function.BooleanSupplier;
@@ -44,6 +47,12 @@ public final class SourcePlayerCombat {
     public static boolean suspended(Player player) {
         // nn.getBlockRestingOn ignores its allowance and immediately returns null when not onGround.
         return !player.isPassenger() && !player.onGround() && (player.isInWater() || player.isInLava());
+    }
+
+    public static float meleeDamage(Player player, float sourceDamage) {
+        float damage = GearModifierEffects.meleeDamage(player, sourceDamage);
+        return BetterCombatPlayerReach.isAttackInProgress(player)
+                ? (float)(damage * MiteConfig.betterCombatDamageMultiplier()) : damage;
     }
 
     /** uf:1107-1109: native damage, then the target's melee callback, then enchantment procs. */

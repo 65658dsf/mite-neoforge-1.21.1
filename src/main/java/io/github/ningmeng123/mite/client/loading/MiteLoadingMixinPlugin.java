@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.client.loading;
 import java.util.List;
 import java.util.Set;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -24,6 +25,10 @@ public final class MiteLoadingMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (mixinClassName.equals("io.github.ningmeng123.mite.mixin.BetterCombatLastAttackAccess")
+                || mixinClassName.equals("io.github.ningmeng123.mite.mixin.BetterCombatVanillaPlayerMixin")) {
+            return FMLLoader.getLoadingModList().getModFileById("bettercombat") != null;
+        }
         return true;
     }
 

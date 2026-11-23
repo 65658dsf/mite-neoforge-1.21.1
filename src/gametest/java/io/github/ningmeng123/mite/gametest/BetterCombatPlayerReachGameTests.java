@@ -3,11 +3,13 @@ package io.github.ningmeng123.mite.gametest;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
+import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerMode;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerReach;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsReach;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
+import io.github.ningmeng123.mite.network.BetterCombatModePayload;
 import io.github.ningmeng123.mite.rules.ProgressionRules;
 import io.github.ningmeng123.mite.survival.DualFoodData;
 import io.github.ningmeng123.mite.survival.PlayerExperience;
@@ -21,14 +23,17 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -55,6 +60,14 @@ public final class BetterCombatPlayerReachGameTests {
         if (BetterCombatBridge.enabled()) return false;
         h.succeed();
         return true;
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void configuredDamageMultiplierAppliesOnlyToBetterCombatRequests(GameTestHelper h)
+            throws ReflectiveOperationException {
+        if (absent(h)) return;
+        Loaded.damageMultiplier(h);
+        h.succeed();
     }
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
@@ -637,6 +650,20 @@ public final class BetterCombatPlayerReachGameTests {
     }
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void combatModePacketSwitchesOnePlayerBetweenRealAttackPaths(GameTestHelper h) {
+        if (absent(h)) return;
+        try (ReachSettings ignored = new ReachSettings(1D, 0D)) { Loaded.toggleCombatMode(h); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void vanillaModeRestoresOffhandAndRemovesDualWieldSpeedBoost(GameTestHelper h) {
+        if (absent(h)) return;
+        Loaded.toggleEquipmentBehavior(h);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
     public static void simplySwordsCutlassAndGlaiveKeepTheirDistinctNativeRanges(GameTestHelper h) {
         if (absent(h)) return;
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
@@ -802,6 +829,14 @@ public final class BetterCombatPlayerReachGameTests {
         player.connection.handleInteract(ServerboundInteractPacket.createAttackPacket(target, false));
     }
 
+    private static void completeQueuedPackets(ServerPlayer player) {
+        var completed = player.server.submit(() -> {});
+        long deadline = System.nanoTime() + 5_000_000_000L;
+        player.server.managedBlock(() -> completed.isDone() || System.nanoTime() >= deadline);
+        if (!completed.isDone()) throw new AssertionError("The queued combat packets did not finish within five seconds");
+        completed.join();
+    }
+
     private static Session session(GameTestHelper h) {
         UUID playerId = UUID.randomUUID();
         var cookie = CommonListenerCookie.createInitial(new GameProfile(playerId,
@@ -863,6 +898,86 @@ public final class BetterCombatPlayerReachGameTests {
 
     /** Loading the test holder never resolves optional Better Combat classes on an absent-mod run. */
     private static final class Loaded {
+        private static void toggleCombatMode(GameTestHelper h) {
+            try (Session session = session(h); Session otherSession = session(h)) {
+                ServerPlayer player = session.player();
+                ServerPlayer other = otherSession.player();
+                equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
+                h.assertFalse(BetterCombatPlayerMode.isVanilla(player), "A fresh player starts in Better Combat mode");
+                try (Target near = target(h, player, 2D, 0D); Target far = target(h, player, 2.4D, 0D)) {
+                    toggleModePacket(player);
+                    h.assertTrue(BetterCombatPlayerMode.isVanilla(player), "The MITE key payload switches the sending player to vanilla combat");
+                    h.assertTrue(net.bettercombat.api.CombatFlags.isAttackDisabled(player),
+                            "The upstream client attack gate sees the selected vanilla mode");
+                    h.assertFalse(BetterCombatPlayerMode.isVanilla(other), "Another player's mode is independent");
+
+                    request(player, near.entity(), 0);
+                    h.assertValueEqual(near.entity().getHealth(), 200F, "The Better Combat packet is ignored while vanilla mode is active");
+                    vanillaAttack(player, far.entity());
+                    h.assertValueEqual(far.entity().getHealth(), 200F, "Vanilla packets still enforce MITE's normal reach boundary");
+                    vanillaAttack(player, near.entity());
+                    h.assertTrue(near.entity().getHealth() < 200F, "An in-range vanilla attack packet damages its target");
+
+                    var restored = new ServerPlayer(player.server, player.serverLevel(), player.getGameProfile(), player.clientInformation());
+                    restored.load(player.saveWithoutId(new CompoundTag()));
+                    h.assertTrue(BetterCombatPlayerMode.isVanilla(restored), "Vanilla mode survives saving and reloading the player");
+                    var respawned = new ServerPlayer(player.server, player.serverLevel(), player.getGameProfile(), player.clientInformation());
+                    respawned.restoreFrom(player, false);
+                    h.assertTrue(BetterCombatPlayerMode.isVanilla(respawned), "Vanilla mode survives death and respawn");
+
+                    net.bettercombat.api.CombatFlags.setAttacksDisabled(player, true);
+                    toggleModePacket(player);
+                    h.assertFalse(BetterCombatPlayerMode.isVanilla(player), "The same key payload restores Better Combat mode");
+                    h.assertTrue(net.bettercombat.api.CombatFlags.isAttackDisabled(player),
+                            "An independent Better Combat restriction survives the MITE toggle");
+                    net.bettercombat.api.CombatFlags.setAttacksDisabled(player, false);
+                    h.assertFalse(net.bettercombat.api.CombatFlags.isAttackDisabled(player), "Better Combat input is available again");
+                    near.entity().setHealth(200F);
+                    request(player, near.entity(), 0);
+                    h.assertTrue(near.entity().getHealth() < 200F, "A fresh Better Combat packet damages its target after switching back");
+                }
+            }
+        }
+
+        private static void toggleModePacket(ServerPlayer player) {
+            player.connection.handleCustomPayload(new ServerboundCustomPayloadPacket(new BetterCombatModePayload()));
+            completeQueuedPackets(player);
+        }
+
+        private static void toggleEquipmentBehavior(GameTestHelper h) {
+            try (Session session = session(h)) {
+                ServerPlayer player = session.player();
+                var mainHand = new ItemStack(Items.IRON_SWORD);
+                equip(player, mainHand, new ItemStack(Items.IRON_SWORD));
+                var attackSpeed = player.getAttribute(Attributes.ATTACK_SPEED);
+                var boost = ResourceLocation.fromNamespaceAndPath("bettercombat", "dual_wield");
+                h.assertTrue(attackSpeed.hasModifier(boost), "Better Combat adds its attack speed boost when both hands hold swords");
+                BetterCombatPlayerMode.setVanilla(player, true);
+                player.doTick();
+                h.assertFalse(attackSpeed.hasModifier(boost), "Vanilla mode removes the Better Combat dual wield attack speed boost");
+                BetterCombatPlayerMode.setVanilla(player, false);
+                player.doTick();
+                h.assertTrue(attackSpeed.hasModifier(boost), "Better Combat restores its speed boost when re-enabled");
+
+                var swordId = BuiltInRegistries.ITEM.getKey(mainHand.getItem());
+                var swordProfile = net.bettercombat.logic.WeaponRegistry.getAttributes(mainHand);
+                net.bettercombat.logic.WeaponRegistry.register(swordId, new net.bettercombat.api.WeaponAttributes(
+                        swordProfile.attackRange(), swordProfile.rangeBonus(), swordProfile.pose(), swordProfile.offHandPose(),
+                        true, swordProfile.category(), swordProfile.attacks(), swordProfile.trailAppearance()));
+                try {
+                    equip(player, mainHand, new ItemStack(Items.SHIELD));
+                    h.assertTrue(player.getItemBySlot(EquipmentSlot.OFFHAND).isEmpty(),
+                            "Better Combat hides the shield when the equipped weapon is marked two-handed");
+                    BetterCombatPlayerMode.setVanilla(player, true);
+                    h.assertTrue(player.getItemBySlot(EquipmentSlot.OFFHAND).is(Items.SHIELD), "Vanilla mode restores the equipped shield");
+                    BetterCombatPlayerMode.setVanilla(player, false);
+                    h.assertTrue(player.getItemBySlot(EquipmentSlot.OFFHAND).isEmpty(), "Better Combat mode restores its two-handed rule");
+                } finally {
+                    net.bettercombat.logic.WeaponRegistry.register(swordId, swordProfile);
+                }
+            }
+        }
+
         private static double creativeLevelReach(ServerPlayer player) {
             double raw = net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, player.getMainHandItem());
             return Math.min(5D, raw) + ProgressionRules.meleeReachBonusForLevel(player.experienceLevel);
@@ -936,6 +1051,54 @@ public final class BetterCombatPlayerReachGameTests {
             }
         }
 
+        private static void damageMultiplier(GameTestHelper h) throws ReflectiveOperationException {
+            var lock = GameplayConfigEditGameTests.lockCommonConfig();
+            double previous = MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER.get();
+            try (Session session = session(h)) {
+                ServerPlayer player = session.player();
+                MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER.set(1D);
+                MiteConfig.refreshEnchantmentRules();
+                float full = hitDamage(h, player, true);
+                h.assertTrue(full > 0F, "A Better Combat request deals full damage with multiplier 1");
+
+                MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER.set(MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER.getDefault());
+                MiteConfig.refreshEnchantmentRules();
+                float scaled = hitDamage(h, player, true);
+                h.assertTrue(Math.abs(scaled - full * .8F) < .001F,
+                        "The default Better Combat multiplier deals 80 percent of the same attack: " + scaled + " / " + full);
+
+                BetterCombatPlayerMode.setVanilla(player, true);
+                float vanilla = hitDamage(h, player, false);
+                h.assertTrue(vanilla > 0F, "A normal melee packet still deals damage");
+
+                MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER.set(0D);
+                MiteConfig.refreshEnchantmentRules();
+                h.assertValueEqual(hitDamage(h, player, false), vanilla, "Normal melee damage ignores the Better Combat multiplier");
+                BetterCombatPlayerMode.setVanilla(player, false);
+                h.assertValueEqual(hitDamage(h, player, true), 0F, "A zero multiplier prevents the Better Combat hit from dealing damage");
+            } finally {
+                try {
+                    MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER.set(previous);
+                    MiteConfig.refreshEnchantmentRules();
+                } finally { lock.unlock(); }
+            }
+        }
+
+        private static float hitDamage(GameTestHelper h, ServerPlayer player, boolean betterCombat) {
+            equip(player, new ItemStack(Items.IRON_SWORD), ItemStack.EMPTY);
+            try (Target target = target(h, player, 1.2D, 0D)) {
+                Zombie zombie = target.entity();
+                for (EquipmentSlot slot : EquipmentSlot.values()) {
+                    if (slot.isArmor()) zombie.setItemSlot(slot, ItemStack.EMPTY);
+                }
+                zombie.getAttribute(Attributes.ARMOR).setBaseValue(0D);
+                zombie.getAttribute(Attributes.ARMOR_TOUGHNESS).setBaseValue(0D);
+                if (betterCombat) request(player, zombie, 0);
+                else vanillaAttack(player, zombie);
+                return 200F - zombie.getHealth();
+            }
+        }
+
         private static void request(ServerPlayer player, Zombie target, int combo) {
             target.invulnerableTime = 0;
             net.bettercombat.network.ServerNetwork.handleAttackRequest(
@@ -944,11 +1107,7 @@ public final class BetterCombatPlayerReachGameTests {
                     player.server, player, player.connection);
             // executeIfPossible may queue even on the server thread while it is already running a task.
             // Keep the real packet, target and player alive until the preceding FIFO attack transaction completes.
-            var completed = player.server.submit(() -> {});
-            long deadline = System.nanoTime() + 5_000_000_000L;
-            player.server.managedBlock(() -> completed.isDone() || System.nanoTime() >= deadline);
-            if (!completed.isDone()) throw new AssertionError("The queued Better Combat attack did not finish within five seconds");
-            completed.join();
+            completeQueuedPackets(player);
         }
 
         private static void realSword(GameTestHelper h) {

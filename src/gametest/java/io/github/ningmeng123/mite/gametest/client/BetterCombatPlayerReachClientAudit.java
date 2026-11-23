@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
+import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerMode;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerReach;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.config.MiteConfig;
@@ -14,8 +15,10 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.AccessibilityOnboardingScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -48,6 +51,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
@@ -61,6 +65,7 @@ public final class BetterCombatPlayerReachClientAudit {
     private static int readyTicks;
     private static int nextEntityId = -42000;
     private static boolean punchyClassificationDone;
+    private static int modePhase;
     private static JsonObject report;
 
     private BetterCombatPlayerReachClientAudit() {}
@@ -110,6 +115,11 @@ public final class BetterCombatPlayerReachClientAudit {
             if (mc.screen != null) return;
             // Let the new world's client-requested chunks finish generation before shutdown unloads them.
             if (++readyTicks < 200) return;
+            if (readyTicks == 200 && BetterCombatBridge.enabled() && ModList.get().isLoaded("punchy")
+                    && !Boolean.getBoolean("mite.punchyClubAudit")) {
+                mc.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+                return;
+            }
             if (Boolean.getBoolean("mite.punchyClubAudit")) {
                 if (!punchyClassificationDone) {
                     PunchyClubAnimationClientAudit.audit(mc, report);
@@ -123,7 +133,10 @@ public final class BetterCombatPlayerReachClientAudit {
                                 "Full weapon frame capture requires the optional external animation pack; Polaris scope was audited.");
                     }
                 }
-            } else audit(mc);
+            } else {
+                if (BetterCombatBridge.enabled() && !auditModeKey(mc)) return;
+                audit(mc);
+            }
             report.addProperty("status", Boolean.getBoolean("mite.punchyClubAudit")
                     ? report.get("standalone_pack_enabled").getAsBoolean()
                     ? "passed_standalone_punchy_resource_pack_all_weapon_families_default_sword_and_polaris"
@@ -135,6 +148,40 @@ public final class BetterCombatPlayerReachClientAudit {
         } catch (Throwable failure) {
             fail(mc, failure);
         }
+    }
+
+    private static boolean auditModeKey(Minecraft mc) throws ReflectiveOperationException {
+        if (!net.bettercombat.client.BetterCombatClientMod.ENABLED) return false;
+        var toggle = Arrays.stream(mc.options.keyMappings)
+                .filter(mapping -> mapping.getName().equals("key.mite.toggle_better_combat"))
+                .findFirst().orElseThrow(() -> new AssertionError("Missing MITE combat mode key mapping"));
+        if (modePhase == 0) {
+            check(!BetterCombatPlayerMode.attacksDisabled(mc.player), "Better Combat starts enabled");
+            check(toggle.getDefaultKey().getValue() == org.lwjgl.glfw.GLFW.GLFW_KEY_V, "The default toggle is V");
+            if (ModList.get().isLoaded("punchy")) {
+                Object enabled = Class.forName("punchy.config.PunchyConfig")
+                        .getMethod("isBetterCombatCompatEnabled").invoke(null);
+                check(Boolean.TRUE.equals(enabled), "Punchy compatibility starts enabled with both mods installed");
+                check(net.bettercombat.client.compat.FirstPersonAnimationCompatibility.firstPersonMode()
+                                == dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode.NONE,
+                        "Punchy takes over Better Combat's first-person renderer");
+                report.addProperty("punchy_owns_first_person_combat_rendering", true);
+            }
+            KeyMapping.click(toggle.getKey());
+            modePhase++;
+            return false;
+        }
+        if (modePhase == 1) {
+            if (!BetterCombatPlayerMode.isVanilla(mc.player)) return false;
+            check(BetterCombatPlayerMode.attacksDisabled(mc.player), "Better Combat sees the synchronized vanilla mode");
+            KeyMapping.click(toggle.getKey());
+            modePhase++;
+            return false;
+        }
+        if (BetterCombatPlayerMode.isVanilla(mc.player)) return false;
+        check(!BetterCombatPlayerMode.attacksDisabled(mc.player), "The second key press restores Better Combat");
+        report.addProperty("combat_mode_key_synced_both_directions", true);
+        return true;
     }
 
     private static void audit(Minecraft mc) throws ReflectiveOperationException {

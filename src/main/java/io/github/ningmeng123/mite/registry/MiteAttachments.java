@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.registry;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.network.BetterCombatModePayload;
 import io.github.ningmeng123.mite.survival.DeathExperience;
 import io.github.ningmeng123.mite.survival.DeathOrbOwner;
 import io.github.ningmeng123.mite.survival.NutritionState;
@@ -44,6 +45,12 @@ public final class MiteAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<NutritionState>> NUTRITION =
             ATTACHMENTS.register("nutrition", () -> AttachmentType.builder(() -> NutritionState.INITIAL)
                     .serialize(NutritionState.CODEC).copyOnDeath().build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> VANILLA_COMBAT =
+            ATTACHMENTS.register("vanilla_combat", () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL).copyOnDeath()
+                    .sync((holder, viewer) -> viewer.connection != null
+                            && viewer.connection.hasChannel(BetterCombatModePayload.TYPE), ByteBufCodecs.BOOL)
+                    .build());
 
     /** The world curse ledger is authoritative; this attachment mirrors its realised state. */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<io.github.ningmeng123.mite.curse.CurseState>> CURSE_STATE =
