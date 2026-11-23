@@ -79,7 +79,7 @@ public final class PlayerRest {
         if (threat(player, bed)!=null) return "mobs";
         if (starting && R196OutdoorChecks.outdoors(player.serverLevel(),bed)) return "shelter";
         if (digging(player,bed)) return "digging";
-        if (player.getFoodData() instanceof DualFoodData food && food.mite$getNutrition()==0) return "hungry";
+        if (!FoodConsumption.hasEnergy(player)) return "hungry";
         if (starting && player.hasEffect(MobEffects.POISON)) return "poison";
         return null;
     }

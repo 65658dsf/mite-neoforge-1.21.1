@@ -80,8 +80,9 @@ public final class PlayerRestAchievementGameTests {
             h.assertValueEqual(PlayerRest.problem(f.player,bed,true),"shelter","Exposed bed is refused before hunger");
             for(BlockPos pos:BlockPos.betweenClosed(bed.offset(-4,3,-4),bed.offset(4,3,4)))h.getLevel().setBlock(pos,Blocks.STONE.defaultBlockState(),2);
             try{
+                f.player.getFoodData().setFoodLevel(0);
                 ((DualFoodData)f.player.getFoodData()).mite$setNutrition(0);
-                h.assertValueEqual(PlayerRest.problem(f.player,bed,true),"hungry","Sheltered bed still requires nutrition");
+                h.assertValueEqual(PlayerRest.problem(f.player,bed,true),"hungry","A sheltered bed requires some food energy");
                 ((DualFoodData)f.player.getFoodData()).mite$setNutrition(6);
                 f.player.addEffect(new MobEffectInstance(MobEffects.POISON,100));
                 h.assertValueEqual(PlayerRest.problem(f.player,bed,true),"poison","Poison prevents initial sleep");

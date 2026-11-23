@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
@@ -29,11 +30,15 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.SleepStatus;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
@@ -45,23 +50,87 @@ public final class RestLifecycleGameTests {
     private RestLifecycleGameTests() {}
 
     @GameTest(template = "empty")
-    public static void sleepingHealsAtTheRequestedEightfoldRateThroughActualMetabolism(GameTestHelper h) {
+    public static void sleepingWithoutSeedBufferHealsAtTheReducedRate(GameTestHelper h) {
         try (var bed = new BedChamber(h); var session = new Session(h)) {
             ServerPlayer player = session.player();
             feed(player, 6, 6);
             player.setHealth(player.getMaxHealth() - 2F);
             float before = player.getHealth();
             player.startSleeping(bed.head);
-            h.assertValueEqual(PlayerRest.simulate(h.getLevel(), 240, List.of(player), tick -> false), 240,
+            h.assertValueEqual(PlayerRest.simulate(h.getLevel(), 480, List.of(player), tick -> false), 480,
                     "A fed sleeper forwards every requested food-update tick");
             h.assertValueEqual(player.getHealth(), before,
-                    "Nutrition six remains below one health of recovery after 240 sleeping updates");
+                    "Nutrition six without seed buffer remains below one health after 480 sleeping updates");
             h.assertValueEqual(PlayerRest.simulate(h.getLevel(), 1, List.of(player), tick -> false), 1,
                     "The next sleeping update also executes actual food metabolism");
             h.assertValueEqual(player.getHealth(), before + 1F,
-                    "Nutrition six heals one health after 241 sleeping updates at the requested eightfold bed rate");
+                    "Nutrition six without seed buffer heals one health after 481 sleeping updates");
             h.assertTrue(player.getFoodData().getExhaustionLevel() > 1.15F,
                     "Accelerated recovery spends the increased 1.15-exhaustion healing cost");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void spendingTheLastSeedBufferSlowsRecoveryOnThatTick(GameTestHelper h) {
+        try (var bed = new BedChamber(h); var session = new Session(h)) {
+            ServerPlayer player = session.player();
+            feed(player, 6, 6);
+            player.getFoodData().setSaturation(1F);
+            player.setHealth(player.getMaxHealth() - 2F);
+            player.startSleeping(bed.head);
+            PlayerRest.simulate(h.getLevel(), 1, List.of(player), tick -> false);
+            float progress = player.saveWithoutId(new CompoundTag()).getFloat("mite_heal_progress");
+            h.assertTrue(Math.abs(progress - 0.00432F) < 0.000000001F,
+                    "One bed update with seed buffer accumulates the eightfold recovery increment");
+
+            player.getFoodData().setExhaustion(4F);
+            PlayerRest.simulate(h.getLevel(), 1, List.of(player), tick -> false);
+            h.assertValueEqual(player.getFoodData().getSaturationLevel(), 0F, "The update spends the final seed buffer point");
+            h.assertValueEqual(player.getFoodData().getFoodLevel(), 6, "Spending seed buffer preserves satiation");
+            h.assertValueEqual(((DualFoodData) player.getFoodData()).mite$getNutrition(), 6, "Spending seed buffer preserves nutrition");
+            h.assertTrue(player.isSleeping(), "Spending seed buffer alone does not end sleep");
+            float depletedProgress = player.saveWithoutId(new CompoundTag()).getFloat("mite_heal_progress");
+            h.assertTrue(Math.abs(depletedProgress - progress - 0.00208F) < 0.000000001F,
+                    "The same update applies the reduced bed rate to the existing recovery progress");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void satiationAloneLetsPlayersRestAndHealInDaylight(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        long previousTime = level.getDayTime();
+        GameRules.BooleanValue naturalRegeneration = level.getGameRules().getRule(GameRules.RULE_NATURAL_REGENERATION);
+        boolean previousRegeneration = naturalRegeneration.get();
+        try (var bed = new BedChamber(h); var session = new Session(h)) {
+            level.setDayTime(6000L);
+            level.updateSkyBrightness();
+            naturalRegeneration.set(true, level.getServer());
+            ServerPlayer player = session.player();
+            feed(player, 6, 0);
+            player.setHealth(player.getMaxHealth() - 2F);
+            float initialHealth = player.getHealth();
+
+            var result = player.startSleepInBed(bed.head);
+            h.assertTrue(result.right().isPresent() && player.isSleeping(),
+                    "Players with only satiation can enter a sheltered bed during the day");
+            var rest = NeoForge.EVENT_BUS.post(new CanContinueSleepingEvent(player, Player.BedSleepingProblem.NOT_POSSIBLE_NOW));
+            h.assertTrue(rest.mayContinueSleeping(), "Daylight rest continues with satiation alone");
+            for (int tick = 0; tick < 624; tick++) player.getFoodData().tick(player);
+            h.assertValueEqual(player.getHealth(), initialHealth,
+                    "Satiation alone remains below one health of recovery after 624 sleeping updates");
+            player.getFoodData().tick(player);
+            h.assertValueEqual(player.getHealth(), initialHealth + 1F,
+                    "The 625th sleeping update heals one health using the reduced fallback rate");
+
+            player.getFoodData().setFoodLevel(0);
+            var depleted = NeoForge.EVENT_BUS.post(new CanContinueSleepingEvent(player, null));
+            h.assertFalse(depleted.mayContinueSleeping(), "Depleting both food reserves ends ongoing rest");
+        } finally {
+            level.setDayTime(previousTime);
+            level.updateSkyBrightness();
+            naturalRegeneration.set(previousRegeneration, level.getServer());
         }
         h.succeed();
     }

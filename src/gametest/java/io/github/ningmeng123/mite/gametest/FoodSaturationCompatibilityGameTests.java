@@ -21,7 +21,7 @@ public final class FoodSaturationCompatibilityGameTests {
     private FoodSaturationCompatibilityGameTests() {}
 
     @GameTest(template = "empty")
-    public static void breadAndBakedPotatoConsumeDisplayedSaturationBeforeHunger(GameTestHelper helper) {
+    public static void breadAndBakedPotatoConsumeSatiationAndNutritionTogether(GameTestHelper helper) {
         for (Item item : new Item[]{Items.BREAD, Items.BAKED_POTATO}) {
             Player player = player(helper);
             ItemStack serving = new ItemStack(item, 2);
@@ -33,14 +33,11 @@ public final class FoodSaturationCompatibilityGameTests {
             ItemStack remaining = serving.finishUsingItem(helper.getLevel(), player);
             helper.assertValueEqual(remaining.getCount(), 1, "The actual player consumes only one serving: " + item);
             assertReserves(helper, player, 2, saturation);
-            for (int nutrition = saturation - 1; nutrition >= 0; nutrition--) {
+            for (int spent = 1; spent <= saturation; spent++) {
                 player.getFoodData().addExhaustion(4F);
                 player.getFoodData().tick(player);
-                assertReserves(helper, player, 2, nutrition);
+                assertReserves(helper, player, Math.max(0, 2 - spent), saturation - spent);
             }
-            player.getFoodData().addExhaustion(4F);
-            player.getFoodData().tick(player);
-            assertReserves(helper, player, 1, 0);
             helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 0F,
                     "The food preview leaves the separate seed buffer at zero: " + item);
         }

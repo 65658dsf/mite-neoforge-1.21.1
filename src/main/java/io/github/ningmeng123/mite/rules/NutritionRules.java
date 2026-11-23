@@ -96,13 +96,14 @@ public final class NutritionRules {
         return 1F + wetness + (malnourished ? 0.5F : 0F);
     }
 
-    /** ux:74-85 and aaw:333-334, with the requested eightfold recovery while in bed. */
-    public static float regenerationIncrement(int nutrition, boolean malnourished, boolean inBed,
-                                              int regenerationEnchantmentLevel) {
-        return (0.0004F + nutrition * 0.00002F)
+    /** Nutrition and saturation determine recovery. An empty saturation buffer halves the rate. */
+    public static float regenerationIncrement(int nutrition, float saturation, boolean malnourished,
+                                              boolean inBed, int regenerationEnchantmentLevel) {
+        return (0.0004F + (nutrition + saturation) * 0.00002F)
                 * (malnourished ? 0.25F : 1F)
                 * (inBed ? 8F : 1F)
-                * (1F + regenerationEnchantmentLevel * 0.5F);
+                * (1F + regenerationEnchantmentLevel * 0.5F)
+                * (saturation > 0F ? 1F : 0.5F);
     }
 
     /** ux:64-73. Difficulty IDs follow peaceful=0, easy=1, normal=2, hard=3. */

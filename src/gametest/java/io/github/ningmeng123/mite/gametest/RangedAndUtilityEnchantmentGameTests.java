@@ -306,9 +306,10 @@ public final class RangedAndUtilityEnchantmentGameTests {
             natural.set(true, h.getLevel().getServer());
             for (int tick = 0; tick < 100; tick++) player.getFoodData().tick(player);
             CompoundTag saved = player.saveWithoutId(new CompoundTag());
-            close(h, saved.getFloat("mite_heal_progress"), .182D, "Nutrition6 and highestV accumulate100source increments of.00182");
+            close(h, saved.getFloat("mite_heal_progress"), .091D,
+                    "Nutrition six and highest enchantment V accumulate one hundred reduced increments of 0.00091");
             h.assertTrue(player.getHealth() == 4F, "The enchantment does not grant an independent instant heal");
-            saved.putFloat("mite_heal_progress", .999F);
+            saved.putFloat("mite_heal_progress", .9995F);
             player.getFoodData().readAdditionalSaveData(saved);
             float exhaustion = player.getFoodData().getExhaustionLevel();
             player.getFoodData().tick(player);

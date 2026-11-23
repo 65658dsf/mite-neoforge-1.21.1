@@ -121,7 +121,7 @@ public final class NutritionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void oneSeedSaturationBuffersOneExhaustionDeductionBeforeNutritionResumes(GameTestHelper helper) {
+    public static void oneSeedSaturationBuffersOneExhaustionDeductionBeforeBothReservesResume(GameTestHelper helper) {
         Player player = player(helper);
         setEnergy(player, 4, 3);
         player.getFoodData().setSaturation(0F);
@@ -132,7 +132,7 @@ public final class NutritionGameTests {
                 "The first queued hunger deduction consumes the one-point saturation buffer");
         assertEnergy(helper, player, 4, 3, "Consuming saturation protects both independent food reserves for that deduction");
         player.getFoodData().tick(player);
-        assertEnergy(helper, player, 4, 2, "Once seed saturation is depleted the next deduction consumes nutrition");
+        assertEnergy(helper, player, 3, 2, "Once seed saturation is depleted the next deduction consumes both reserves");
         helper.succeed();
     }
 
@@ -142,14 +142,23 @@ public final class NutritionGameTests {
         setEnergy(player, 6, 6);
         player.getFoodData().setSaturation(6F);
         player.setHealth(4F);
+        Player withoutBuffer = player(helper);
+        setEnergy(withoutBuffer, 6, 6);
+        withoutBuffer.setHealth(4F);
         MinecraftServer server = helper.getLevel().getServer();
         GameRules.BooleanValue natural = helper.getLevel().getGameRules().getRule(GameRules.RULE_NATURAL_REGENERATION);
         boolean previous = natural.get();
         try {
             natural.set(true, server);
-            for (int tick = 0; tick < 80; tick++) player.getFoodData().tick(player);
+            for (int tick = 0; tick < 80; tick++) {
+                player.getFoodData().tick(player);
+                withoutBuffer.getFoodData().tick(withoutBuffer);
+            }
             helper.assertValueEqual(player.getHealth(), 4F,
-                    "High native saturation does not bypass the source slow nutrition-driven healing progress");
+                    "High native saturation still takes longer than vanilla fast healing");
+            helper.assertTrue(player.saveWithoutId(new CompoundTag()).getFloat("mite_heal_progress")
+                            > withoutBuffer.saveWithoutId(new CompoundTag()).getFloat("mite_heal_progress"),
+                    "The native seed buffer accelerates gradual recovery");
             helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 6F,
                     "The retained saturation buffer is not spent by modern fast regeneration");
             assertEnergy(helper, player, 6, 6, "The short regeneration probe changes neither food reserve");
@@ -257,14 +266,14 @@ public final class NutritionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void accumulatedHungerUsesOneDeductionPerTickAndKeepsTheIndependentReserve(GameTestHelper helper) {
+    public static void accumulatedHungerUsesOneDeductionPerTickAcrossBothReserves(GameTestHelper helper) {
         Player player = player(helper);
         setEnergy(player, 6, 6);
         player.getFoodData().addExhaustion(8F);
         player.getFoodData().tick(player);
-        assertEnergy(helper, player, 6, 5, "Eight hunger deducts only one nutrition on its first tick");
+        assertEnergy(helper, player, 5, 5, "Eight hunger deducts only one point from each reserve on the first tick");
         player.getFoodData().tick(player);
-        assertEnergy(helper, player, 6, 4, "The queued second nutrition deduction occurs on the next tick");
+        assertEnergy(helper, player, 4, 4, "The queued second deduction occurs on the next tick");
         setEnergy(player, 0, 6);
         player.getFoodData().addExhaustion(4F);
         player.getFoodData().tick(player);
@@ -300,26 +309,55 @@ public final class NutritionGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void nutritionSixRegeneratesAfter1924UpdatesAndFullHealthClearsProgress(GameTestHelper helper) {
+    public static void satiationAloneRegeneratesMoreSlowlyThanWithNutrition(GameTestHelper helper) {
         Player player = player(helper);
-        setEnergy(player, 6, 6);
-        // Keep nutrition six available while the increased metabolism spends its first food unit.
-        player.getFoodData().setSaturation(1F);
+        setEnergy(player, 6, 0);
+        player.getFoodData().setSaturation(0F);
         player.setHealth(4F);
         MinecraftServer server = helper.getLevel().getServer();
         GameRules.BooleanValue natural = helper.getLevel().getGameRules().getRule(GameRules.RULE_NATURAL_REGENERATION);
         boolean old = natural.get();
         try {
             natural.set(true, server);
-            for (int i = 0; i < 1_923; i++) player.getFoodData().tick(player);
+            for (int tick = 0; tick < 5_000; tick++) player.getFoodData().tick(player);
+            helper.assertValueEqual(player.getHealth(), 4F, "Satiation alone takes longer than the nutrition-six rate");
+            player.getFoodData().tick(player);
+            helper.assertValueEqual(player.getHealth(), 5F, "The hunger bar alone heals one health after 5001 updates");
+
+            player.getFoodData().tick(player);
+            setEnergy(player, 0, 0);
+            player.getFoodData().tick(player);
+            helper.assertValueEqual(player.saveWithoutId(new CompoundTag()).getFloat("mite_heal_progress"), 0F,
+                    "Running out of both food reserves clears remaining recovery progress");
+        } finally {
+            natural.set(old, server);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void nutritionSixWithoutBufferRegeneratesAfter3847UpdatesAndClearsProgressAtFullHealth(GameTestHelper helper) {
+        Player player = player(helper);
+        setEnergy(player, 6, 6);
+        player.setHealth(4F);
+        MinecraftServer server = helper.getLevel().getServer();
+        GameRules.BooleanValue natural = helper.getLevel().getGameRules().getRule(GameRules.RULE_NATURAL_REGENERATION);
+        boolean old = natural.get();
+        try {
+            natural.set(true, server);
+            // Hold nutrition at six to measure its fixed recovery rate.
+            for (int i = 0; i < 3_846; i++) {
+                if (i % 1_000 == 0) player.getFoodData().setExhaustion(0F);
+                player.getFoodData().tick(player);
+            }
             helper.assertValueEqual(player.getHealth(), 4F, "Nutrition six does not use modern fast regeneration");
-            assertEnergy(helper, player, 6, 6, "The native buffer preserves the nutrition used to test healing speed");
+            assertEnergy(helper, player, 6, 6, "The nutrition bonus stays at six throughout the recovery probe");
             player.getFoodData().setExhaustion(3F);
             player.getFoodData().tick(player);
-            helper.assertValueEqual(player.getHealth(), 5F, "The one-thousand nine-hundred twenty-fourth update heals one health");
+            helper.assertValueEqual(player.getHealth(), 5F, "The 3847th update heals one health without seed buffer");
             assertEnergy(helper, player, 6, 6, "Regeneration's extra hunger is queued after this tick's deduction stage");
             player.getFoodData().tick(player);
-            assertEnergy(helper, player, 6, 5, "Regeneration's queued hunger consumes nutrition before satiation");
+            assertEnergy(helper, player, 5, 5, "Regeneration's queued hunger consumes satiation and nutrition together");
             player.setHealth(6F);
             player.getFoodData().tick(player);
             CompoundTag saved = player.saveWithoutId(new CompoundTag());

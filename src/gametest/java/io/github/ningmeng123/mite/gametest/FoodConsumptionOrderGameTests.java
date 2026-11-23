@@ -17,23 +17,23 @@ import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Actual server food ticks verify displayed saturation priority and two-reserve starvation. @author NingMeng123 */
+/** Actual food ticks verify seed buffer priority, shared deductions and starvation. @author NingMeng123 */
 @GameTestHolder("mite")
 @PrefixGameTestTemplate(false)
 public final class FoodConsumptionOrderGameTests {
     private FoodConsumptionOrderGameTests() {}
 
     @GameTest(template = "empty")
-    public static void ordinaryExhaustionSpendsNutritionBeforeSatiation(GameTestHelper helper) {
+    public static void ordinaryExhaustionSpendsSatiationAndNutritionTogether(GameTestHelper helper) {
         Player player = player(helper, GameType.SURVIVAL);
-        setReserves(player, 5, 1, 0F);
+        setReserves(player, 2, 1, 0F);
         player.getFoodData().addExhaustion(8F);
         player.getFoodData().tick(player);
-        assertReserves(helper, player, 5, 0, 0F,
-                "The first queued deduction spends the final displayed saturation unit");
+        assertReserves(helper, player, 1, 0, 0F,
+                "The first queued deduction spends one point from both available reserves");
         player.getFoodData().tick(player);
-        assertReserves(helper, player, 4, 0, 0F,
-                "The following tick consumes the first hunger-bar unit");
+        assertReserves(helper, player, 0, 0, 0F,
+                "The following tick spends the remaining satiation without making nutrition negative");
         helper.succeed();
     }
 
@@ -48,9 +48,9 @@ public final class FoodConsumptionOrderGameTests {
         player.getFoodData().tick(player);
         assertReserves(helper, player, 4, 1, 0F, "The first deduction spends the seed buffer only");
         player.getFoodData().tick(player);
-        assertReserves(helper, player, 4, 0, 0F, "The second deduction spends nutrition only");
+        assertReserves(helper, player, 3, 0, 0F, "The second deduction spends a point from both available reserves");
         player.getFoodData().tick(player);
-        assertReserves(helper, player, 3, 0, 0F, "The third deduction starts spending satiation");
+        assertReserves(helper, player, 2, 0, 0F, "The third deduction continues spending satiation alone");
         NutritionState state = NutritionState.get(player);
         helper.assertValueEqual(state.protein(), 17, "Three updates consume exactly three protein points");
         helper.assertValueEqual(state.fat(), 17, "Three updates consume exactly three essential-fat points");
@@ -67,8 +67,8 @@ public final class FoodConsumptionOrderGameTests {
         assertReserves(helper, player, 5, 2, 0F,
                 "The positive fractional buffer is depleted without also touching a food reserve");
         player.getFoodData().tick(player);
-        assertReserves(helper, player, 5, 1, 0F,
-                "A later deduction consumes the displayed nutrition reserve");
+        assertReserves(helper, player, 4, 1, 0F,
+                "The next deduction spends one satiation and one nutrition");
         helper.succeed();
     }
 
@@ -82,14 +82,14 @@ public final class FoodConsumptionOrderGameTests {
         Player restored = player(helper, GameType.SURVIVAL);
         restored.load(saved);
         assertReserves(helper, restored, 5, 2, 2F, "Saving preserves all three distinct resources");
-        int[] satiation = {5, 5, 5, 5, 4};
+        int[] satiation = {5, 5, 4, 3, 2};
         int[] nutrition = {2, 2, 1, 0, 0};
         float[] nativeBuffer = {1F, 0F, 0F, 0F, 0F};
         float[] legacyHunger = {40F, 40F, 0F, 0F, 0F};
         for (int tick = 0; tick < 5; tick++) {
             restored.getFoodData().tick(restored);
             assertReserves(helper, restored, satiation[tick], nutrition[tick], nativeBuffer[tick],
-                    "The restored queue spends seed buffer, nutrition and satiation in order on update " + (tick + 1));
+                    "The restored queue spends buffer first, then the two reserves together on update " + (tick + 1));
             helper.assertValueEqual(restored.saveWithoutId(new CompoundTag()).getFloat("mite_nutrition_hunger"),
                     legacyHunger[tick], "Only an actual nutrition deduction clears the saved legacy counter");
         }
@@ -97,7 +97,7 @@ public final class FoodConsumptionOrderGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void savedNutritionHungerCannotChangeNutritionFirstConsumption(GameTestHelper helper) {
+    public static void savedNutritionHungerCannotChangeJointConsumption(GameTestHelper helper) {
         float[] savedHunger = {0F, 3.998F, 3.999F, 4F, 40F};
         for (int index = 0; index < savedHunger.length; index++) {
             Player player = player(helper, GameType.SURVIVAL);
@@ -107,8 +107,8 @@ public final class FoodConsumptionOrderGameTests {
             saved.putFloat("foodExhaustionLevel", 4F);
             player.getFoodData().readAdditionalSaveData(saved);
             player.getFoodData().tick(player);
-            assertReserves(helper, player, 5, 1, 0F,
-                    "Saved nutrition hunger " + savedHunger[index] + " follows the same nutrition-first deduction");
+            assertReserves(helper, player, 4, 1, 0F,
+                    "Saved nutrition hunger " + savedHunger[index] + " still spends both reserves together");
             CompoundTag after = player.saveWithoutId(new CompoundTag());
             helper.assertValueEqual(after.getFloat("mite_nutrition_hunger"),
                     0F, "A nutrition deduction clears the legacy nutrition-hunger counter");
@@ -144,7 +144,7 @@ public final class FoodConsumptionOrderGameTests {
             saved.putFloat("foodExhaustionLevel", 4F);
             player.getFoodData().readAdditionalSaveData(saved);
             player.getFoodData().tick(player);
-            assertReserves(helper, player, 5, 1, 0F, "Malformed legacy hunger follows nutrition-first consumption");
+            assertReserves(helper, player, 4, 1, 0F, "Malformed legacy hunger still spends both reserves together");
             helper.assertValueEqual(player.saveWithoutId(new CompoundTag()).getFloat("mite_nutrition_hunger"), 0F,
                     "The loaded legacy counter remains finite and inactive");
         }
@@ -152,7 +152,7 @@ public final class FoodConsumptionOrderGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void emptyNutritionFallsBackToSatiationWithoutEverGoingNegative(GameTestHelper helper) {
+    public static void queuedExhaustionCannotMakeEmptyReservesNegative(GameTestHelper helper) {
         Player player = player(helper, GameType.SURVIVAL);
         setReserves(player, 1, 0, 0F);
         CompoundTag saved = player.saveWithoutId(new CompoundTag());
@@ -160,7 +160,7 @@ public final class FoodConsumptionOrderGameTests {
         saved.putFloat("foodExhaustionLevel", 8F);
         player.getFoodData().readAdditionalSaveData(saved);
         player.getFoodData().tick(player);
-        assertReserves(helper, player, 0, 0, 0F, "Due nutrition hunger falls back to the final satiation unit when nutrition is empty");
+        assertReserves(helper, player, 0, 0, 0F, "Queued exhaustion spends the final satiation unit when nutrition is empty");
         player.getFoodData().tick(player);
         assertReserves(helper, player, 0, 0, 0F, "Queued exhaustion leaves both empty reserves at zero");
         helper.succeed();
@@ -185,12 +185,12 @@ public final class FoodConsumptionOrderGameTests {
             for (int tick = 0; tick < 501; tick++) player.getFoodData().tick(player);
             helper.assertValueEqual(player.getHealth(), 4F,
                     "Retained satiation supplies energy throughout five-hundred and one updates");
-            assertReserves(helper, player, 5, 0, 2F, "All three reserves stay available before a unit deduction is due");
+            assertReserves(helper, player, 5, 0, 2F, "Satiation and its seed buffer remain before a deduction is due");
             CompoundTag saved = player.saveWithoutId(new CompoundTag());
             helper.assertValueEqual(saved.getFloat("mite_starve_progress"), 0F,
                     "Available satiation clears the saved starvation interval");
-            helper.assertValueEqual(saved.getFloat("mite_heal_progress"), 0F,
-                    "Absent nutrition cannot accumulate slow healing progress from satiation alone");
+            helper.assertTrue(saved.getFloat("mite_heal_progress") > .375F,
+                    "Remaining satiation keeps accumulating recovery when nutrition is empty");
         } finally {
             natural.set(previousNatural, server);
             server.getWorldData().setDifficulty(previousDifficulty);

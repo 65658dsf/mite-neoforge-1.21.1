@@ -137,14 +137,22 @@ class NutritionRulesTest {
     }
 
     @Test
-    void RegenerationCombinesNutritionMalnourishmentBedAndHighestEnchantment() {
-        assertEquals(0.00052F, regenerationIncrement(6, false, false, 0), 0.000000001F);
-        assertEquals(0.0008F, regenerationIncrement(20, false, false, 0), 0.000000001F);
-        assertEquals(0.00013F, regenerationIncrement(6, true, false, 0), 0.000000001F);
-        assertEquals(0.00416F, regenerationIncrement(6, false, true, 0), 0.000000001F);
-        assertEquals(0.00104F, regenerationIncrement(6, true, true, 0), 0.000000001F);
-        assertEquals(0.0013F, regenerationIncrement(6, false, false, 3), 0.000000001F);
-        assertEquals(0.0004F, regenerationIncrement(0, false, false, 0), 0.000000001F);
+    void RegenerationWithoutSeedBufferHalvesBothAwakeAndSleepingRates() {
+        assertEquals(0.00026F, regenerationIncrement(6, 0F, false, false, 0), 0.000000001F);
+        assertEquals(0.0004F, regenerationIncrement(20, 0F, false, false, 0), 0.000000001F);
+        assertEquals(0.000065F, regenerationIncrement(6, 0F, true, false, 0), 0.000000001F);
+        assertEquals(0.00208F, regenerationIncrement(6, 0F, false, true, 0), 0.000000001F);
+        assertEquals(0.00052F, regenerationIncrement(6, 0F, true, true, 0), 0.000000001F);
+        assertEquals(0.00065F, regenerationIncrement(6, 0F, false, false, 3), 0.000000001F);
+        assertEquals(0.0002F, regenerationIncrement(0, 0F, false, false, 0), 0.000000001F);
+    }
+
+    @Test
+    void PositiveSeedBufferKeepsItsRecoveryBonusEvenWhenFractional() {
+        assertEquals(0.00054F, regenerationIncrement(6, 1F, false, false, 0), 0.000000001F);
+        assertEquals(0.00432F, regenerationIncrement(6, 1F, false, true, 0), 0.000000001F);
+        assertEquals(0.00108F, regenerationIncrement(6, 1F, true, true, 0), 0.000000001F);
+        assertEquals(0.00420F, regenerationIncrement(6, .25F, false, true, 0), 0.000000001F);
     }
 
     @Test
