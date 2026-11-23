@@ -42,6 +42,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen.Context;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
@@ -115,8 +116,14 @@ public final class SettingsSearchClientAudit {
         check(home instanceof MiteSettingsScreen, "The production config factory opens the actual search homepage");
         mc.setScreen(home); home.init(mc, 320, 240);
         bounds(home); noOverlap(home); capture(mc, home, 320, 240, "settings-home-zh-cn");
-        check(search(home).getBottom() <= button(home, "mite.config.ore_generation").getY(),
+        check(search(home).getBottom() <= button(home, "mite.config.category.world").getY(),
                 "The actual search field is above the category menu at minimum size");
+        boolean ite = ModList.get().isLoaded("modern_ite");
+        boolean legacyIte = ModList.get().getModContainerById("modern_ite")
+                .flatMap(addon -> addon.getCustomExtension(IConfigScreenFactory.class)).isPresent();
+        report.addProperty("modern_ite_loaded", ite);
+        report.addProperty("legacy_ite_config_factory_present", legacyIte);
+        auditCategories(mc, home, ite && !legacyIte);
         search(home).setValue("攻击距离");
         check(matches(home).stream().anyMatch(entry -> entry.id().equals("mite:combat.weapon_reach_multiplier")),
                 "Chinese configuration label search finds the actual reach setting");
@@ -125,7 +132,7 @@ public final class SettingsSearchClientAudit {
         check(matches(home).isEmpty(), "An unmatched search produces zero real results");
         bounds(home); noOverlap(home); capture(mc, home, 320, 240, "settings-search-empty-zh-cn");
         search(home).setValue("   ");
-        check(button(home, "mite.config.ore_generation").visible, "Whitespace clears searching and restores categories");
+        check(button(home, "mite.config.category.world").visible, "Whitespace clears searching and restores categories");
         search(home).setValue("mite:");
         check(((Number)field(home, "pageCount")).intValue() > 1, "A broad query has multiple actual result pages");
         press(home, ">");
@@ -136,7 +143,7 @@ public final class SettingsSearchClientAudit {
         check(search(home).getValue().equals("mite:"), "Window resize preserves the actual search input");
         bounds(home); noOverlap(home); capture(mc, home, 854, 480, "settings-search-large-zh-cn");
         search(home).setValue("");
-        check(button(home, "mite.config.ore_generation").visible, "Clearing the search restores category navigation");
+        check(button(home, "mite.config.category.world").visible, "Clearing the search restores category navigation");
         bounds(home); noOverlap(home); capture(mc, home, 854, 480, "settings-home-large-zh-cn");
 
         search(home).setValue("minecraft:sharpness");
@@ -147,11 +154,10 @@ public final class SettingsSearchClientAudit {
         mc.screen.onClose();
         check(mc.screen == home, "Closing a result returns to the same search homepage");
 
-        boolean ite = ModList.get().isLoaded("modern_ite");
-        report.addProperty("modern_ite_loaded", ite);
         auditGravelDropSettings(mc, home, ite);
         auditNetherOreSettings(mc, home, ite);
         nativeResetAndSave(mc, home);
+        auditScopedReset(mc, home);
         if (ite) {
             mc.setScreen(home); home.init(mc, 854, 480);
             search(home).setValue("longer_day_time_end_day");
@@ -169,6 +175,29 @@ public final class SettingsSearchClientAudit {
         report.addProperty("dedicated_result_navigation_preselects_entry", true);
     }
 
+    private static void auditCategories(Minecraft mc, Screen home, boolean ite) throws Exception {
+        check(widgets(home).stream().filter(Button.class::isInstance).filter(widget -> widget.visible)
+                        .anyMatch(widget -> widget.getMessage().equals(Component.translatable("mite.config.category.survival"))) == ite,
+                "The Survival category is available when the ITE extension contributes settings");
+        check(button(home, "mite.config.export").visible, "Configuration export stays available from the homepage");
+        List<String> groups = new ArrayList<>(List.of("world", "creatures", "combat", "system"));
+        if (ite) groups.add("survival");
+        for (String group : groups) {
+            press(home, "mite.config.category." + group);
+            Screen category = mc.screen;
+            check(category != home, "The homepage opens its category: " + group);
+            for (int[] size : new int[][] {{320, 240}, {854, 480}}) {
+                category.init(mc, size[0], size[1]);
+                bounds(category); noOverlap(category);
+                capture(mc, category, size[0], size[1], "settings-category-" + group + "-zh-cn");
+            }
+            category.onClose();
+            check(mc.screen == home, "Closing a category returns to the settings homepage");
+            home.init(mc, 320, 240);
+        }
+        report.addProperty("group_navigation_and_layout_at_minimum_and_large_sizes", true);
+    }
+
     private static void auditGravelDropSettings(Minecraft mc, Screen home, boolean ite) throws Exception {
         originalGravelRates = GravelDropSettings.localRates();
         rememberSettings(MiteConfig.SPEC.getValues().get("gravel_drops"));
@@ -176,7 +205,9 @@ public final class SettingsSearchClientAudit {
         search(home).setValue("gravel_drops:ordinary/mite:flint_chip");
         check(matches(home).size() == (ite ? 0 : 1), "Search only exposes the flint chip when it can drop separately");
         search(home).setValue("");
-        press(home, "mite.config.gravel_drops");
+        press(home, "mite.config.category.world");
+        Screen world = mc.screen;
+        press(world, "mite.config.gravel_drops");
         Screen gravel = mc.screen;
         check(gravel instanceof GravelDropSettingsScreen, "The gravel settings category opens its dedicated editor");
         gravel.init(mc, 320, 240);
@@ -191,12 +222,14 @@ public final class SettingsSearchClientAudit {
         check(!button(gravel, "mite.config.save").active, "A gravel draft must total 100 before saving");
         press(gravel, "mite.config.gravel_drops.balance");
         press(gravel, "mite.config.save");
-        check(mc.screen == home && GravelDropSettings.localRates().ordinary().get("minecraft:flint") == 14D,
-                "The balanced draft saves the new flint chance and returns to settings");
+        check(mc.screen == world && GravelDropSettings.localRates().ordinary().get("minecraft:flint") == 14D,
+                "The balanced draft saves the new flint chance and returns to the World category");
         var disk = new TomlParser().parse(Files.readString(configFile));
         check(disk.get("gravel_drops.rates") instanceof List<?> entries && !entries.isEmpty(),
                 "The configured rates persist to the COMMON file");
 
+        world.onClose();
+        check(mc.screen == home, "Closing the World category restores the homepage search");
         search(home).setValue("gravel_drops:nether/minecraft:gold_nugget");
         openOnlyResult(home, "gravel_drops:nether/minecraft:gold_nugget");
         gravel = mc.screen;
@@ -306,6 +339,41 @@ public final class SettingsSearchClientAudit {
             if (entry.getValue() instanceof UnmodifiableConfig subsection) rememberSettings(subsection);
             else if (entry.getValue() instanceof ModConfigSpec.ConfigValue<?> value) rememberSetting(value);
         }
+    }
+
+    private static void auditScopedReset(Minecraft mc, Screen home) throws Exception {
+        rememberSetting(MiteConfig.MONSTER_GROWTH);
+        rememberSetting(MiteConfig.MONSTER_HEALTH_DAILY_PERCENT);
+        MiteConfig.MONSTER_GROWTH.set(MiteConfig.MONSTER_GROWTH.getDefault() == 1.7D ? 1.5D : 1.7D);
+        double daily = MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.getDefault() + 1D;
+        MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.set(daily);
+        search(home).setValue("");
+        press(home, "mite.config.category.creatures");
+        Screen creatures = mc.screen;
+        press(creatures, "mite.config.monsters");
+        Screen growth = mc.screen;
+        check(growth instanceof SingleConfigValueScreen, "Growth Multipliers opens its scoped native configuration screen");
+        var contextField = ConfigurationSectionScreen.class.getDeclaredField("context");
+        contextField.setAccessible(true);
+        Context context = (Context) contextField.get(growth);
+        var keys = context.entries().stream().map(UnmodifiableConfig.Entry::getKey).collect(java.util.stream.Collectors.toSet());
+        check(context.keylist().equals(List.of("monsters"))
+                        && keys.equals(Set.of("growth_multiplier", "health_growth_multiplier", "damage_growth_multiplier"))
+                        && context.valueSpecs().keySet().equals(keys),
+                "The editor scopes both entries and definitions to the three growth multipliers");
+        growth.init(mc, 320, 240);
+        bounds(growth); capture(mc, growth, 320, 240, "settings-growth-multipliers-zh-cn");
+        Button reset = nativeButton(growth, "resetButton");
+        check(reset.active, "The scoped reset is available after changing a multiplier");
+        reset.onPress();
+        check(MiteConfig.MONSTER_GROWTH.get().equals(MiteConfig.MONSTER_GROWTH.getDefault())
+                        && MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.get() == daily,
+                "Reset restores multipliers and preserves the daily growth used by the separate formula editor");
+        nativeButton(growth, "doneButton").onPress();
+        check(mc.screen == creatures, "Saving the scoped editor returns to its Creatures category");
+        creatures.onClose();
+        check(mc.screen == home, "Closing the Creatures category returns to the homepage");
+        report.addProperty("native_section_reset_preserves_unrelated_settings", true);
     }
 
     private static <T> void rememberSetting(ModConfigSpec.ConfigValue<T> value) {

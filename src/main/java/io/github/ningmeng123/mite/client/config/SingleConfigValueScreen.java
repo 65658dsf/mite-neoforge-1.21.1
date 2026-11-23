@@ -1,9 +1,12 @@
 package io.github.ningmeng123.mite.client.config;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -12,7 +15,7 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectio
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.ModConfigSpec.RestartType;
 
-/** Opens one search result with the native editor, undo history and persistence. @author NingMeng123 */
+/** Opens a selection of config values with the native editor, undo history and persistence. @author NingMeng123 */
 public final class SingleConfigValueScreen extends ConfigurationSectionScreen {
     private SingleConfigValueScreen(Context context, Component title) {
         super(context, title);
@@ -42,6 +45,25 @@ public final class SingleConfigValueScreen extends ConfigurationSectionScreen {
         // Narrow the context itself so resetting this result cannot reset its siblings.
         Context context = new Context(config.getModId(), parent, config, spec, Set.of(entry), Map.of(key, definition),
                 List.copyOf(location.subList(0, location.size() - 1)), (ignored, name, original) -> original);
+        return new SingleConfigValueScreen(context, title);
+    }
+
+    static Screen createSection(Screen parent, ModConfig config, String section, Predicate<String> include, Component title) {
+        var spec = (ModConfigSpec) config.getSpec();
+        UnmodifiableConfig values = spec.getValues().get(section);
+        UnmodifiableConfig definitions = spec.getSpec().get(section);
+        var entries = new LinkedHashSet<UnmodifiableConfig.Entry>();
+        var valueSpecs = new LinkedHashMap<String, Object>();
+        for (var entry : values.entrySet()) {
+            String key = entry.getKey();
+            if (include.test(key) && entry.getRawValue() instanceof ModConfigSpec.ConfigValue<?>) {
+                entries.add(entry);
+                valueSpecs.put(key, definitions.valueMap().get(key));
+            }
+        }
+        // Reset and undo operate on the scoped entries, even when the TOML contains other settings.
+        var context = new Context(config.getModId(), parent, config, spec, entries, valueSpecs, List.of(section),
+                (ignored, name, original) -> original);
         return new SingleConfigValueScreen(context, title);
     }
 

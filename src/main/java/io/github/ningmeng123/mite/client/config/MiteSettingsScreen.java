@@ -1,11 +1,14 @@
 package io.github.ningmeng123.mite.client.config;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.config.GameplayConfigExport;
+import io.github.ningmeng123.mite.config.MiteConfig;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -15,98 +18,170 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.fml.config.ModConfigs;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
-/** Compact entry point for gameplay settings and the offline/live enchantment catalog. @author NingMeng123 */
+/** Shared configuration entry point for MITE and its optional addons. @author NingMeng123 */
 public final class MiteSettingsScreen extends Screen {
+    public enum Category {
+        WORLD, CREATURES, COMBAT, SURVIVAL, SYSTEM;
+
+        private String key() {
+            return "mite.config.category." + name().toLowerCase(Locale.ROOT);
+        }
+
+        public Component title() {
+            return Component.translatable(key());
+        }
+
+        private Component description() {
+            return Component.translatable(key() + ".tooltip");
+        }
+
+        static Category forConfigSection(String section) {
+            return switch (section) {
+                case "monsters", "monster_spawning" -> CREATURES;
+                case "combat", "enchantments" -> COMBAT;
+                case "performance" -> SYSTEM;
+                default -> WORLD;
+            };
+        }
+    }
+
+    public record CategoryEntry(Component label, Component description, boolean available, Function<Screen, Screen> open) {}
+
+    private static final List<Function<Category, List<CategoryEntry>>> CATEGORY_PROVIDERS = new ArrayList<>();
+    private static final int MENU_TOP = 64;
+    private static final int CATEGORY_STEP = 26;
+    private static final int RESULT_STEP = 34;
     private final ModContainer container;
     private final Screen parent;
-    private final List<AbstractWidget> categories = new ArrayList<>();
+    private final List<Button> categories = new ArrayList<>();
     private final List<AbstractWidget> results = new ArrayList<>();
-    private List<ConfigSearchIndex.Entry> index = List.of();
     private List<ConfigSearchIndex.Entry> matches = List.of();
+    private List<ConfigSearchIndex.Entry> index = List.of();
     private String query = "";
     private EditBox search;
+    private int menuTop;
     private int page;
     private int pageCount = 1;
-    private int matchCount;
+
     public MiteSettingsScreen(ModContainer container, Screen parent) {
         super(Component.translatable("mite.configuration.title"));
         this.container = container;
         this.parent = parent;
     }
+
+    /** Client-side addons can contribute links while keeping ownership of their editors and values. */
+    public static void registerCategoryProvider(Function<Category, List<CategoryEntry>> provider) {
+        CATEGORY_PROVIDERS.add(provider);
+    }
+
     @Override protected void init() {
         categories.clear();
         results.clear();
         index = ConfigSearchIndex.entries(this);
-        Component exportLabel = Component.translatable("mite.config.export");
-        int exportWidth = Math.min(110, Math.max(78, font.width(exportLabel) + 16));
-        var export = addRenderableWidget(Button.builder(exportLabel,
-                button -> exportConfiguration()).bounds(width - exportWidth - 8, 8, exportWidth, 20).build());
-        export.active = MiteConfigClient.localEditable();
-        export.setTooltip(Tooltip.create(Component.translatable(export.active
-                ? "mite.config.export.tooltip" : "mite.config.export.remote")));
-        // The addon moves both header controls to y=34 when the title needs its own line.
-        // Reserve that complete row even at Minecraft's minimum 320x240 GUI size.
-        int y = menuTop();
-        var ores = addRenderableWidget(Button.builder(Component.translatable("mite.config.ore_generation"),
-                button -> minecraft.setScreen(new OreGenerationSettingsScreen(this))).bounds(width / 2 - 130, y, 128, 20).build());
-        ores.setTooltip(Tooltip.create(Component.translatable("mite.config.ore_generation.tooltip")));
-        var gravel = addRenderableWidget(Button.builder(Component.translatable("mite.config.gravel_drops"),
-                button -> minecraft.setScreen(new GravelDropSettingsScreen(this))).bounds(width / 2 + 2, y, 128, 20).build());
-        gravel.setTooltip(Tooltip.create(Component.translatable("mite.config.gravel_drops.tooltip")));
-        var monsters = addRenderableWidget(Button.builder(Component.translatable("mite.config.monster_formulas"),
-                button -> minecraft.setScreen(new MonsterGrowthSettingsScreen(this))).bounds(width / 2 - 130, y + 24, 260, 20).build());
-        monsters.setTooltip(Tooltip.create(Component.translatable("mite.config.monster_formulas.tooltip")));
-        var spawnRates = addRenderableWidget(Button.builder(Component.translatable("mite.config.monster_spawning"),
-                button -> minecraft.setScreen(new MonsterSpawnSettingsScreen(this, Mite.MOD_ID,
-                        () -> io.github.ningmeng123.mite.config.MiteConfig.effectiveSnapshot().monsterSpawnRates(),
-                        () -> io.github.ningmeng123.mite.config.MiteConfig.effectiveSnapshot().monsterSpawnWeights(),
-                        (rates, weights) -> {
-                            if (!io.github.ningmeng123.mite.config.MiteConfig.saveMonsterSpawnSettings(rates, weights))
-                                throw new IllegalArgumentException("Invalid monster spawn weights or multipliers");
-                        }, null,
-                        () -> io.github.ningmeng123.mite.config.MiteConfig.factorySnapshot().monsterSpawnRates(),
-                        () -> io.github.ningmeng123.mite.config.MiteConfig.factorySnapshot().monsterSpawnWeights()))).bounds(width / 2 - 130, y + 48, 260, 20).build());
-        spawnRates.setTooltip(Tooltip.create(Component.translatable("mite.config.monster_spawning.tooltip")));
-        var general = addRenderableWidget(Button.builder(Component.translatable("mite.config.gameplay"),
-                button -> minecraft.setScreen(gameplayScreen())).bounds(width / 2 - 130, y + 96, 260, 20).build());
-        general.active = MiteConfigClient.editable();
-        general.setTooltip(Tooltip.create(Component.translatable(general.active ? "mite.config.gameplay.tooltip" : "mite.config.server_owned")));
-        var enchantments = addRenderableWidget(Button.builder(Component.translatable("mite.config.registry_enchantments"),
-                button -> minecraft.setScreen(new EnchantmentSettingsScreen(this))).bounds(width / 2 - 130, y + 72, 260, 20).build());
-        enchantments.setTooltip(Tooltip.create(Component.translatable("mite.config.registry_enchantments.tooltip")));
-        categories.addAll(List.of(ores, gravel, monsters, spawnRates, general, enchantments));
-        int searchWidth = Math.min(260, width - 32);
-        search = addRenderableWidget(new EditBox(font, (width - searchWidth) / 2, y - 26, searchWidth, 20,
+        // Older ITE builds add their own header button, including a second row at narrow widths.
+        boolean legacyIte = ModList.get().getModContainerById("modern_ite")
+                .flatMap(addon -> addon.getCustomExtension(IConfigScreenFactory.class)).isPresent();
+        menuTop = legacyIte ? 88 : MENU_TOP;
+        int menuWidth = Math.min(300, width - 32);
+        int left = (width - menuWidth) / 2;
+        search = addRenderableWidget(new EditBox(font, left, menuTop - 29, menuWidth, 20,
                 Component.translatable("mite.config.search_all")));
         search.setMaxLength(200);
         search.setHint(Component.translatable("mite.config.search_all"));
         search.setTooltip(Tooltip.create(Component.translatable("mite.config.search_all.tooltip")));
         search.setValue(query);
-        search.setResponder(text -> { query = text; page = 0; updateResults(); });
-        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> onClose()).bounds(width / 2 - 100, height - 30, 200, 20).build());
-        updateResults();
+        search.setResponder(text -> {
+            query = text;
+            page = 0;
+            matches = index.stream().filter(entry -> entry.matches(query)).toList();
+            rebuildResults();
+        });
+
+        for (Category category : Category.values()) {
+            var entries = new ArrayList<>(baseEntries(category));
+            CATEGORY_PROVIDERS.forEach(provider -> entries.addAll(provider.apply(category)));
+            if (entries.isEmpty()) continue;
+            categories.add(addRenderableWidget(Button.builder(category.title(),
+                            button -> minecraft.setScreen(new CategoryScreen(this, category, List.copyOf(entries))))
+                    .bounds(left, menuTop + categories.size() * CATEGORY_STEP, menuWidth, 20)
+                    .tooltip(Tooltip.create(category.description())).build()));
+        }
+
+        int footerWidth = (menuWidth - 8) / 2;
+        var export = addRenderableWidget(Button.builder(Component.translatable("mite.config.export"),
+                        button -> exportConfiguration()).bounds(left, height - 28, footerWidth, 20).build());
+        export.active = MiteConfigClient.localEditable();
+        export.setTooltip(Tooltip.create(Component.translatable(export.active
+                ? "mite.config.export.tooltip" : "mite.config.export.remote")));
+        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> onClose())
+                .bounds(left + footerWidth + 8, height - 28, footerWidth, 20).build());
+        matches = query.isBlank() ? List.of() : index.stream().filter(entry -> entry.matches(query)).toList();
+        rebuildResults();
     }
 
-    private void updateResults() {
+    private List<CategoryEntry> baseEntries(Category category) {
+        return switch (category) {
+            case WORLD -> List.of(
+                    entry("mite.config.ore_generation", OreGenerationSettingsScreen::new),
+                    entry("mite.config.structures", "structures", key -> true),
+                    entry("mite.config.gravel_drops", GravelDropSettingsScreen::new));
+            case CREATURES -> List.of(
+                    entry("mite.config.spawning_rules.button", MonsterSpawningRulesScreen::new),
+                    entry("mite.config.monster_spawning", screen -> ConfigSearchIndex.monsterScreen(screen, "")),
+                    entry("mite.config.monster_formulas", MonsterGrowthSettingsScreen::new),
+                    entry("mite.config.monsters", "monsters", key -> key.endsWith("_multiplier")));
+            case COMBAT -> List.of(
+                    entry("mite.config.combat", "combat", key -> true),
+                    entry("mite.config.registry_enchantments", EnchantmentSettingsScreen::new),
+                    new CategoryEntry(Component.translatable("mite.config.enchantments"),
+                            Component.translatable("mite.config.enchantments.tooltip"), MiteConfigClient.localEditable(),
+                            screen -> SingleConfigValueScreen.createSection(screen, gameplayConfig(), "enchantments", key -> true,
+                                    Component.translatable("mite.config.enchantments"))));
+            case SURVIVAL -> List.of();
+            case SYSTEM -> List.of(entry("mite.config.performance", "performance", key -> true));
+        };
+    }
+
+    private static CategoryEntry entry(String key, Function<Screen, Screen> open) {
+        return new CategoryEntry(Component.translatable(key), Component.translatable(key + ".tooltip"), true, open);
+    }
+
+    private CategoryEntry entry(String key, String section, Predicate<String> include) {
+        Component label = Component.translatable(key);
+        boolean remote = MiteConfigClient.remoteServer();
+        boolean available = !remote || MiteConfigClient.editable() && MiteConfigClient.gameplayValues().keySet().stream()
+                .anyMatch(path -> path.startsWith(section + "."));
+        return new CategoryEntry(label, Component.translatable(key + ".tooltip"), available,
+                screen -> remote ? ServerGameplaySettingsScreen.forSection(screen, section, label)
+                        : SingleConfigValueScreen.createSection(screen, gameplayConfig(), section, include, label));
+    }
+
+    private ModConfig gameplayConfig() {
+        return ModConfigs.getConfigSet(ModConfig.Type.COMMON).stream()
+                .filter(config -> config.getModId().equals(container.getModId()) && config.getSpec() == MiteConfig.SPEC)
+                .findFirst().orElseThrow();
+    }
+
+    private void rebuildResults() {
         if (getFocused() != search) setFocused(null);
         results.forEach(this::removeWidget);
         results.clear();
         boolean searching = !query.isBlank();
-        categories.forEach(widget -> widget.visible = !searching);
+        categories.forEach(button -> button.visible = !searching);
         if (!searching) return;
-        matches = index.stream().filter(entry -> entry.matches(query)).toList();
-        matchCount = matches.size();
-        int rows = Math.max(1, (height - 64 - menuTop()) / 34);
-        pageCount = Math.max(1, (matchCount + rows - 1) / rows);
+        int rows = resultRows();
+        pageCount = Math.max(1, (matches.size() + rows - 1) / rows);
         page = Math.clamp(page, 0, pageCount - 1);
         int resultWidth = Math.min(360, width - 32);
         int left = (width - resultWidth) / 2;
-        for (int i = page * rows; i < Math.min(matchCount, (page + 1) * rows); i++) {
+        for (int i = page * rows; i < Math.min(matches.size(), (page + 1) * rows); i++) {
             var entry = matches.get(i);
-            int y = menuTop() + (i - page * rows) * 34;
+            int y = menuTop + (i - page * rows) * RESULT_STEP;
             String name = entry.label().getString();
             var button = Button.builder(Component.literal(font.plainSubstrByWidth(name, resultWidth - 12)),
                     ignored -> { if (entry.available()) minecraft.setScreen(entry.open().get()); })
@@ -118,13 +193,14 @@ public final class MiteSettingsScreen extends Screen {
             button.active = entry.available();
             results.add(addRenderableWidget(button));
         }
-        results.add(addRenderableWidget(Button.builder(Component.literal("<"), button -> { page--; updateResults(); })
-                .bounds(left, height - 56, 24, 20).build()));
-        results.get(results.size() - 1).active = page > 0;
-        results.add(addRenderableWidget(Button.builder(Component.literal(">"), button -> { page++; updateResults(); })
-                .bounds(left + resultWidth - 24, height - 56, 24, 20).build()));
-        results.get(results.size() - 1).active = page + 1 < pageCount;
+        results.add(addRenderableWidget(Button.builder(Component.literal("<"), button -> { page--; rebuildResults(); })
+                .bounds(left, height - 54, 24, 20).build()));
+        results.getLast().active = page > 0;
+        results.add(addRenderableWidget(Button.builder(Component.literal(">"), button -> { page++; rebuildResults(); })
+                .bounds(left + resultWidth - 24, height - 54, 24, 20).build()));
+        results.getLast().active = page + 1 < pageCount;
     }
+
     private void exportConfiguration() {
         if (!MiteConfigClient.localEditable()) return;
         try {
@@ -136,62 +212,92 @@ public final class MiteSettingsScreen extends Screen {
                     exception.getMessage() == null ? exception.getClass().getSimpleName() : exception.getMessage()));
         }
     }
-    private Screen gameplayScreen() {
-        if (MiteConfigClient.remoteServer()) return new ServerGameplaySettingsScreen(this);
-        return new ConfigurationScreen(container, this, GameplaySectionScreen::new);
-    }
 
-    /** Native sections bypass the value filter, so remove groups with dedicated editors here. */
-    private static final class GameplaySectionScreen extends ConfigurationScreen.ConfigurationSectionScreen {
-        private GameplaySectionScreen(Screen parent, ModConfig.Type type, ModConfig config, Component title) {
-            super(parent, type, config, title, GameplaySectionScreen::filterValue);
-        }
-
-        private static boolean hasDedicatedEditor(String key) {
-            return switch (key) {
-                case "underworld_ores", "overworld_ores", "nether_ores",
-                        "underworld_generation", "overworld_generation", "nether_generation", "monster_spawning", "gravel_drops" -> true;
-                default -> false;
-            };
-        }
-
-        private static Element filterValue(Context context, String key, Element original) {
-            // Formula edits go through the dedicated page's full validation and trial calculations.
-            if (context.keylist().equals(java.util.List.of("monsters"))
-                    && !key.endsWith("_multiplier")) return null;
-            return original;
-        }
-
-        @Override protected Element createSection(String key, UnmodifiableConfig subconfig, UnmodifiableConfig subsection) {
-            if (context.keylist().isEmpty() && hasDedicatedEditor(key)) return null;
-            return super.createSection(key, subconfig, subsection);
-        }
-    }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
-        graphics.drawCenteredString(font, title, width / 2, 18, 0xFFFFFF);
+        graphics.drawCenteredString(font, title, width / 2, 15, 0xFFFFFF);
         if (!query.isBlank()) {
             int resultWidth = Math.min(360, width - 32);
-            int rows = Math.max(1, (height - 64 - menuTop()) / 34);
+            int rows = resultRows();
             for (int i = page * rows; i < Math.min(matches.size(), (page + 1) * rows); i++)
                 graphics.drawString(font, font.plainSubstrByWidth(matches.get(i).category().getString(), resultWidth),
-                        (width - resultWidth) / 2, menuTop() + (i - page * rows) * 34 + 22, 0xAAAAAA);
-            if (matchCount == 0) graphics.drawCenteredString(font, Component.translatable("mite.config.search_all.empty"),
-                    width / 2, menuTop() + 12, 0xCCCCCC);
-            graphics.drawCenteredString(font, Component.translatable("mite.config.page", page + 1, pageCount, matchCount),
-                    width / 2, height - 50, 0xCCCCCC);
-            return;
-        }
-        int hintY = menuTop() + 124;
-        int availableLines = Math.max(0, (height - 36 - hintY) / font.lineHeight);
-        var hint = Component.translatable(!MiteConfigClient.editable() ? "mite.config.server_owned"
-                : MiteConfigClient.remoteServer() ? "mite.config.remote.scope"
-                : height < 280 ? "mite.config.scope_compact" : "mite.config.scope");
-        for (var line : font.split(hint, Math.min(360, width - 24)).stream().limit(availableLines).toList()) {
-            graphics.drawString(font, line, Math.max(12, width / 2 - 180), hintY, 0xCCCCCC);
-            hintY += font.lineHeight;
+                        (width - resultWidth) / 2, menuTop + (i - page * rows) * RESULT_STEP + 22, 0xAAAAAA);
+            if (matches.isEmpty()) graphics.drawCenteredString(font, Component.translatable("mite.config.search_all.empty"),
+                    width / 2, menuTop + 12, 0xCCCCCC);
+            graphics.drawCenteredString(font, Component.translatable("mite.config.page", page + 1, pageCount, matches.size()),
+                    width / 2, height - 48, 0xCCCCCC);
+        } else if (MiteConfigClient.remoteServer() && categories.getLast().getBottom() < height - 44) {
+            graphics.drawCenteredString(font, Component.translatable("mite.config.menu.server_view"),
+                    width / 2, height - 44, 0xCCCCCC);
         }
     }
-    private int menuTop() { return Math.max(88, height / 2 - 78); }
-    @Override public void onClose() { minecraft.setScreen(parent); }
+
+    private int resultRows() {
+        return Math.max(1, (height - 54 - menuTop) / RESULT_STEP);
+    }
+
+    @Override public void onClose() {
+        minecraft.setScreen(parent);
+    }
+
+    private static final class CategoryScreen extends Screen {
+        private static final int TOP = 42;
+        private static final int STEP = 23;
+        private final Screen parent;
+        private final List<CategoryEntry> entries;
+        private int page;
+        private int pageCount;
+
+        private CategoryScreen(Screen parent, Category category, List<CategoryEntry> entries) {
+            super(category.title());
+            this.parent = parent;
+            this.entries = entries;
+        }
+
+        @Override protected void init() {
+            int rows = Math.max(1, (height - 34 - TOP) / STEP);
+            if (entries.size() > rows) rows = Math.max(1, (height - 60 - TOP) / STEP);
+            pageCount = (entries.size() + rows - 1) / rows;
+            page = Math.clamp(page, 0, pageCount - 1);
+            int menuWidth = Math.min(300, width - 32);
+            int left = (width - menuWidth) / 2;
+            for (int i = page * rows; i < Math.min(entries.size(), (page + 1) * rows); i++) {
+                CategoryEntry entry = entries.get(i);
+                Component tooltip = entry.available() ? entry.description() : entry.description().copy().append("\n")
+                        .append(Component.translatable("mite.config.server_owned"));
+                var button = addRenderableWidget(Button.builder(entry.label(),
+                                ignored -> minecraft.setScreen(entry.open().apply(this)))
+                        .bounds(left, TOP + (i - page * rows) * STEP, menuWidth, 20)
+                        .tooltip(Tooltip.create(tooltip)).build());
+                button.active = entry.available();
+            }
+            if (pageCount > 1) {
+                addRenderableWidget(Button.builder(Component.literal("<"), button -> changePage(-1))
+                        .bounds(left, height - 54, 24, 20).build()).active = page > 0;
+                addRenderableWidget(Button.builder(Component.literal(">"), button -> changePage(1))
+                        .bounds(left + menuWidth - 24, height - 54, 24, 20).build()).active = page + 1 < pageCount;
+            }
+            addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, button -> onClose())
+                    .bounds(width / 2 - 100, height - 28, 200, 20).build());
+        }
+
+        private void changePage(int step) {
+            page += step;
+            setFocused(null);
+            clearWidgets();
+            init();
+        }
+
+        @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            super.render(graphics, mouseX, mouseY, partialTick);
+            graphics.drawCenteredString(font, title, width / 2, 16, 0xFFFFFF);
+            if (pageCount > 1) graphics.drawCenteredString(font,
+                    Component.translatable("mite.config.page", page + 1, pageCount, entries.size()),
+                    width / 2, height - 48, 0xCCCCCC);
+        }
+
+        @Override public void onClose() {
+            minecraft.setScreen(parent);
+        }
+    }
 }

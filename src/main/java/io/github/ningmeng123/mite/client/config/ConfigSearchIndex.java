@@ -119,6 +119,7 @@ public final class ConfigSearchIndex {
 
     private static Component category(String modId, List<String> path) {
         var parts = new ArrayList<String>();
+        if (modId.equals(Mite.MOD_ID)) parts.add(MiteSettingsScreen.Category.forConfigSection(path.getFirst()).title().getString());
         parts.add(modId.equals(Mite.MOD_ID) ? "MITE" : "ITE");
         for (String key : path.subList(0, path.size() - 1)) {
             String translation = modId.equals("modern_ite") ? modId + ".config.category." + key : "mite.config." + key;
@@ -194,7 +195,7 @@ public final class ConfigSearchIndex {
         configured.addAll(snapshot.enchantmentChances().keySet());
         configured.forEach(id -> known.putIfAbsent(id, Component.literal(id)));
         known.forEach((id, name) -> result.add(new Entry("enchantments:" + id, name,
-                Component.translatable("mite.config.registry_enchantments"),
+                breadcrumb(MiteSettingsScreen.Category.COMBAT, Component.translatable("mite.config.registry_enchantments")),
                 Component.translatable("mite.config.registry_enchantments.tooltip"), true,
                 () -> new EnchantmentSettingsScreen(parent, id))));
     }
@@ -210,7 +211,7 @@ public final class ConfigSearchIndex {
         configured.stream().filter(id -> MonsterSpawnCatalog.ownedBy(Mite.MOD_ID, id))
                 .forEach(id -> known.putIfAbsent(id, Component.literal(id)));
         known.forEach((id, name) -> result.add(new Entry("monster_spawning:" + id, name,
-                Component.translatable("mite.config.monster_spawning"),
+                breadcrumb(MiteSettingsScreen.Category.CREATURES, Component.translatable("mite.config.monster_spawning")),
                 Component.translatable("mite.config.monster_spawning.tooltip"), true, () -> monsterScreen(parent, id))));
     }
 
@@ -218,7 +219,8 @@ public final class ConfigSearchIndex {
         var rates = MiteConfigClient.gravelDropRates();
         if (rates == null) return;
         for (var gravel : GravelDropSettingsScreen.Gravel.values()) {
-            Component category = Component.translatable("mite.config.gravel_drops.search_category", gravel.label());
+            Component category = breadcrumb(MiteSettingsScreen.Category.WORLD,
+                    Component.translatable("mite.config.gravel_drops.search_category", gravel.label()));
             for (String id : gravel.rates(rates).keySet()) {
                 result.add(new Entry("gravel_drops:" + gravel.key + "/" + id, GravelDropSettingsScreen.itemName(id),
                         category, Component.translatable("mite.config.gravel_drops.tooltip"), true,
@@ -227,7 +229,11 @@ public final class ConfigSearchIndex {
         }
     }
 
-    private static MonsterSpawnSettingsScreen monsterScreen(Screen parent, String query) {
+    private static Component breadcrumb(MiteSettingsScreen.Category category, Component label) {
+        return category.title().copy().append(" / ").append(label);
+    }
+
+    static MonsterSpawnSettingsScreen monsterScreen(Screen parent, String query) {
         var screen = new MonsterSpawnSettingsScreen(parent, Mite.MOD_ID,
                 () -> MiteConfig.effectiveSnapshot().monsterSpawnRates(), () -> MiteConfig.effectiveSnapshot().monsterSpawnWeights(),
                 (rates, weights) -> {

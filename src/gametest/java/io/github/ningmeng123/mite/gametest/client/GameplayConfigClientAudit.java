@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.RegistryAccess;
@@ -48,8 +49,6 @@ import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.config.ModConfigs;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen.Context;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen.Element;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -164,7 +163,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
         check(entityRegistry, "Monster settings enumerate the actual entity registry without a UI entity allowlist");
         report.addProperty("shared_monster_spawn_screen_and_registry_catalog_linkage_verified", true);
         report.addProperty("monster_spawn_screen_constructor_or_init_invoked", false);
-        auditSpawnWeightEditor(report, landing, spawnSettings);
+        auditSpawnWeightEditor(report, spawnSettings);
         auditSpawningRulesScreen(report, spawnSettings);
         Class<?> exportResult = Class.forName(CLIENT + "ConfigExportResultScreen", false, loader);
         MethodHandles.publicLookup().findConstructor(exportResult,
@@ -207,7 +206,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
         report.addProperty("registered_factory_class", factory.getClass().getName());
         report.addProperty("actual_factory_screen_class", screen.getClass().getName());
         report.addProperty("landing_screen_constructor_invoked", true);
-        auditAdvancedSections(report, screen);
+        auditScopedEditor(report);
 
         ClassNode browser = bytecode(enchantments.getName());
         String catalogName = "io.github.ningmeng123.mite.config.EnchantmentCatalog";
@@ -275,100 +274,22 @@ public final class GameplayConfigClientAudit implements DataProvider {
         }
     }
 
-    private static void auditAdvancedSections(JsonObject report, Screen parent) throws Exception {
-        String name = CLIENT + "MiteSettingsScreen$GameplaySectionScreen";
-        String owner = name.replace('.', '/');
-        String nativeOwner = ConfigurationSectionScreen.class.getName().replace('.', '/');
-        Class<?> section = Class.forName(name, false, GameplayConfigClientAudit.class.getClassLoader());
-        check(section.getSuperclass() == ConfigurationSectionScreen.class,
-                "The advanced page uses the native section screen with its save and restart handling");
-        check(section.getDeclaredMethod("createSection", String.class, UnmodifiableConfig.class, UnmodifiableConfig.class)
-                .getReturnType() == Element.class, "The advanced page overrides native subsection creation");
+    private static void auditScopedEditor(JsonObject report) throws Exception {
+        String name = CLIENT + "SingleConfigValueScreen";
+        Class<?> editor = Class.forName(name, false, GameplayConfigClientAudit.class.getClassLoader());
+        check(editor.getSuperclass() == ConfigurationSectionScreen.class && editor.getDeclaredMethod("createSection",
+                        Screen.class, ModConfig.class, String.class, Predicate.class, Component.class).getReturnType() == Screen.class,
+                "Settings sections retain the native editor's save and restart handling");
+        ClassNode menu = bytecode(CLIENT + "MiteSettingsScreen");
+        check(callsOrLinkedLambda(menu, "entry", name.replace('.', '/'), "createSection")
+                        && callsOrLinkedLambda(menu, "entry", CLIENT.replace('.', '/') + "ServerGameplaySettingsScreen", "forSection"),
+                "Category links use section-specific editors for local and server settings");
         ClassNode code = bytecode(name);
-        check(references(bytecode(CLIENT + "MiteSettingsScreen"), "gameplayScreen", owner, "<init>"),
-                "The advanced config factory is bound to the filtered section constructor");
-        check(references(code, "<init>", owner, "filterValue"),
-                "The filtered section constructor installs its leaf-value filter");
-        check(calls(code, "createSection", owner, "hidesOreSection")
-                && calls(code, "createSection", Context.class.getName().replace('.', '/'), "keylist")
-                && calls(code, "createSection", "java/util/List", "isEmpty"),
-                "Subsection creation checks the native context's root path and ore-section policy");
-        boolean delegatesToNative = false;
-        for (var method : code.methods) if (method.name.equals("createSection")) for (var instruction : method.instructions)
-            if (instruction instanceof MethodInsnNode call && call.getOpcode() == Opcodes.INVOKESPECIAL
-                    && call.owner.equals(nativeOwner) && call.name.equals("createSection")) delegatesToNative = true;
-        check(delegatesToNative, "Retained subsections delegate to native section creation");
-
-        var hiddenPolicy = section.getDeclaredMethod("hidesOreSection", String.class);
-        var leafPolicy = section.getDeclaredMethod("filterValue", Context.class, String.class, Element.class);
-        check(hiddenPolicy.trySetAccessible() && leafPolicy.trySetAccessible(), "Production section policies are accessible to the audit");
-        var matchingConfigs = new ArrayList<ModConfig>();
-        for (var type : ModConfig.Type.values()) for (var config : ModConfigs.getConfigSet(type))
-            if (config.getModId().equals(Mite.MOD_ID) && config.getSpec() == MiteConfig.SPEC) matchingConfigs.add(config);
-        check(matchingConfigs.size() == 1, "The audit uses the actual registered MITE gameplay config spec");
-        ModConfig config = matchingConfigs.getFirst();
-        var originalLoadedConfig = config.getLoadedConfig();
-        boolean originallyLoaded = MiteConfig.SPEC.isLoaded();
-        var originalValues = new LinkedHashMap<>(MiteConfig.SPEC.getValues().valueMap());
-        var originalSpecs = new LinkedHashMap<>(MiteConfig.SPEC.getSpec().valueMap());
-        Context root = Context.top(Mite.MOD_ID, parent, config, (context, key, original) -> {
-            try { return (Element) leafPolicy.invoke(null, context, key, original); }
-            catch (ReflectiveOperationException failure) { throw new IllegalStateException("Cannot invoke the production leaf filter", failure); }
-        });
-        check(root.keylist().isEmpty() && root.modSpec() == MiteConfig.SPEC,
-                "The native top context exposes the actual root entries with an empty path");
-        Set<String> expectedHidden = Set.of("underworld_ores", "overworld_ores", "nether_ores", "underworld_generation",
-                "overworld_generation", "nether_generation", "monster_spawning");
-        Set<String> expectedVisible = new TreeSet<>(Set.of("monsters", "combat", "structures", "enchantments"));
-        if (MiteConfig.SPEC.getSpec().contains("performance")) expectedVisible.add("performance");
-        Set<String> hidden = new TreeSet<>(), visible = new TreeSet<>(), monsterValues = new TreeSet<>();
-        Element sentinel = new Element(null, null, null, null, true);
-        int suppressedMonsterValues = 0;
-        for (var entry : root.entries()) {
-            String key = entry.getKey();
-            check(entry.getRawValue() instanceof UnmodifiableConfig && root.valueSpecs().get(key) instanceof UnmodifiableConfig,
-                    "The registered root entry is a native config subsection: " + key);
-            if ((boolean) hiddenPolicy.invoke(null, key)) {
-                hidden.add(key);
-                continue;
-            }
-            visible.add(key);
-            UnmodifiableConfig values = (UnmodifiableConfig) entry.getRawValue();
-            UnmodifiableConfig specs = (UnmodifiableConfig) root.valueSpecs().get(key);
-            Context child = Context.section(root, parent, values.entrySet(), specs.valueMap(), key);
-            check(child.keylist().equals(List.of(key)) && child.filter() == root.filter(),
-                    "Native subsection contexts preserve their absolute path and inherited leaf filter: " + key);
-            for (var value : child.entries()) {
-                check(value.getRawValue() instanceof ModConfigSpec.ConfigValue<?>, "A retained section contains a native config value");
-                Element selected = child.filter().filterEntry(child, value.getKey(), sentinel);
-                if (key.equals("monsters")) {
-                    if (selected == null) suppressedMonsterValues++;
-                    else {
-                        check(selected == sentinel, "Retained monster settings preserve the original native element");
-                        monsterValues.add(value.getKey());
-                    }
-                } else check(selected == sentinel, "Other gameplay and advanced enchantment values remain visible: " + key + "." + value.getKey());
-            }
-        }
-        check(hidden.equals(expectedHidden) && visible.equals(expectedVisible),
-                "Dedicated ore and monster-spawn sections are suppressed; all other gameplay sections remain");
-        check(monsterValues.equals(Set.of("growth_multiplier", "health_growth_multiplier", "damage_growth_multiplier"))
-                && suppressedMonsterValues > 0, "The advanced page exposes the overall, health and damage growth multipliers");
-        check(originalValues.equals(MiteConfig.SPEC.getValues().valueMap()) && originalSpecs.equals(MiteConfig.SPEC.getSpec().valueMap())
-                && config.getLoadedConfig() == originalLoadedConfig && MiteConfig.SPEC.isLoaded() == originallyLoaded,
-                "Section visibility checks do not modify the registered spec, config values or loaded config");
-        var hiddenNames = new JsonArray(); hidden.forEach(hiddenNames::add);
-        var visibleNames = new JsonArray(); visible.forEach(visibleNames::add);
-        var monsterNames = new JsonArray(); monsterValues.forEach(monsterNames::add);
-        report.add("advanced_hidden_ore_sections", hiddenNames);
-        report.add("advanced_visible_sections", visibleNames);
-        report.add("advanced_visible_monster_values", monsterNames);
-        report.addProperty("advanced_suppressed_monster_values", suppressedMonsterValues);
-        report.addProperty("advanced_section_factory_and_native_override_bytecode_verified", true);
-        report.addProperty("advanced_section_policies_invoked_on_native_config_contexts", true);
-        report.addProperty("advanced_section_config_spec_and_values_unchanged", true);
-        report.addProperty("advanced_section_screen_constructor_invoked", false);
-        report.addProperty("advanced_section_widgets_created", false);
+        check(calls(code, "createSection", "java/util/function/Predicate", "test")
+                        && calls(code, "createSection", ConfigurationSectionScreen.Context.class.getName().replace('.', '/'), "<init>"),
+                "The section factory filters entries before creating the native editor context");
+        report.addProperty("category_links_use_scoped_local_and_remote_editors", true);
+        report.addProperty("native_section_context_created_from_selected_entries", true);
     }
 
     private static void auditEnchantmentSeed(JsonObject report) throws Exception {
@@ -504,9 +425,11 @@ public final class GameplayConfigClientAudit implements DataProvider {
         var expected = new TreeSet<String>();
         collectSearchLeafIds(MiteConfig.SPEC.getSpec(), List.of(), expected);
         expected.remove("mite:monsters.damage_rate_migrated");
+        expected.removeIf(id -> id.startsWith("mite:gravel_drops."));
         if (!ModList.get().isLoaded("modern_ite")) {
             expected.remove("mite:nether_ores.nether_adamantium");
             expected.remove("mite:nether_generation.nether_adamantium.height_range");
+            expected.removeIf(id -> id.endsWith(".red_diamond") || id.contains(".red_diamond."));
         }
         var opened = new java.util.concurrent.atomic.AtomicInteger();
         // Availability=false short-circuits connection/permission checks. Do not construct a Minecraft instance or open a screen.
@@ -521,7 +444,13 @@ public final class GameplayConfigClientAudit implements DataProvider {
                             && !entry.category().getString().isBlank() && entry.matches(entry.id()),
                     "Search metadata retains a label, category, lazy target and searchable full path: " + entry.id());
         }
-        check(!expected.isEmpty() && actual.equals(expected), "The homepage metadata indexes every supported MITE config leaf exactly once");
+        var missing = new TreeSet<>(expected);
+        missing.removeAll(actual);
+        var unexpected = new TreeSet<>(actual);
+        unexpected.removeAll(expected);
+        check(!expected.isEmpty() && actual.equals(expected),
+                "The homepage metadata indexes every supported MITE config leaf exactly once. Missing: " + missing
+                        + ". Unexpected: " + unexpected);
         check(opened.get() == 0, "Constructing search metadata does not invoke any screen-opening callback");
         Class<?> single = Class.forName(CLIENT + "SingleConfigValueScreen", false, GameplayConfigClientAudit.class.getClassLoader());
         MethodHandles.publicLookup().findStatic(single, "create",
@@ -565,18 +494,19 @@ public final class GameplayConfigClientAudit implements DataProvider {
                 "Its constructor reads Minecraft connection state and its init requires native font/widgets. Datagen verifies linkage and native-parsed labels/tooltips for every runtime option without initializing or rendering the screen.");
     }
 
-    private static void auditSpawnWeightEditor(JsonObject report, Class<?> landing, Class<?> spawnSettings) throws Exception {
+    private static void auditSpawnWeightEditor(JsonObject report, Class<?> spawnSettings) throws Exception {
         ClassNode screen = bytecode(spawnSettings.getName());
-        ClassNode menu = bytecode(landing.getName());
+        ClassNode index = bytecode(ConfigSearchIndex.class.getName());
         String config = "io/github/ningmeng123/mite/config/MiteConfig";
         String snapshot = config + "$Snapshot";
-        check(callsThroughLambdas(menu, "init", snapshot, "monsterSpawnRates", new java.util.HashSet<>())
-                        && callsThroughLambdas(menu, "init", snapshot, "monsterSpawnWeights", new java.util.HashSet<>()),
+        check(callsThroughLambdas(index, "monsterScreen", snapshot, "monsterSpawnRates", new java.util.HashSet<>())
+                        && callsThroughLambdas(index, "monsterScreen", snapshot, "monsterSpawnWeights", new java.util.HashSet<>()),
                 "The production settings entry supplies authoritative rate and absolute-weight snapshots separately");
-        check(callsThroughLambdas(menu, "init", config, "saveMonsterSpawnSettings", new java.util.HashSet<>()),
+        check(callsThroughLambdas(index, "monsterScreen", config, "saveMonsterSpawnSettings", new java.util.HashSet<>()),
                 "The production settings entry saves both maps through one validated configuration operation");
-        check(callsOrLinkedLambda(menu, "init", screen.name, "<init>"),
-                "The settings menu opens the shared natural-spawn browser");
+        check(calls(index, "monsterScreen", screen.name, "<init>")
+                        && callsOrLinkedLambda(bytecode(CLIENT + "MiteSettingsScreen"), "baseEntries", index.name, "monsterScreen"),
+                "The Creatures category opens the shared natural-spawn browser");
         check(calls(screen, "save", "java/util/function/BiConsumer", "accept")
                         && calls(screen, "save", CLIENT.replace('.', '/') + "MiteConfigClient", "editable")
                         && calls(screen, "save", screen.name, "validDrafts"),
@@ -715,12 +645,6 @@ public final class GameplayConfigClientAudit implements DataProvider {
             if (instruction instanceof InvokeDynamicInsnNode dynamic) for (Object argument : dynamic.bsmArgs)
                 if (argument instanceof Handle handle && handle.getOwner().equals(type.name)
                         && callsThroughLambdas(type, handle.getName(), owner, name, visited)) return true;
-        return false;
-    }
-    private static boolean references(ClassNode type, String methodName, String owner, String name) {
-        for (var method : type.methods) if (method.name.equals(methodName)) for (var instruction : method.instructions)
-            if (instruction instanceof InvokeDynamicInsnNode dynamic) for (Object argument : dynamic.bsmArgs)
-                if (argument instanceof Handle handle && handle.getOwner().equals(owner) && handle.getName().equals(name)) return true;
         return false;
     }
     private static ClassNode bytecode(String name) throws Exception {

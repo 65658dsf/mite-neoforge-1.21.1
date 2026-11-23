@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -44,10 +45,18 @@ public final class ServerGameplaySettingsScreen extends Screen {
     }
 
     public ServerGameplaySettingsScreen(Screen parent, String selectedPath) {
-        super(Component.translatable("mite.config.gameplay"));
+        this(parent, Component.translatable("mite.config.gameplay"), path -> selectedPath == null || path.equals(selectedPath));
+    }
+
+    static Screen forSection(Screen parent, String section, Component title) {
+        return new ServerGameplaySettingsScreen(parent, title, path -> path.startsWith(section + "."));
+    }
+
+    private ServerGameplaySettingsScreen(Screen parent, Component title, Predicate<String> include) {
+        super(title);
         this.parent = parent;
         values = new HashMap<>(MiteConfigClient.gameplayValues());
-        if (selectedPath != null) values.keySet().removeIf(path -> !path.equals(selectedPath));
+        values.keySet().removeIf(include.negate());
         paths = values.keySet().stream().sorted().toList();
     }
 

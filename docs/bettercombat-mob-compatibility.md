@@ -2,7 +2,7 @@
 
 作者：NingMeng123
 
-模组设置新增「开启怪物更好战斗兼容」，默认关闭。入口为「模组 → MITE → 配置 → 其他玩法与高级设置 → 战斗设置」，也可在 `config/mite-common.toml` 的 `[combat]` 下设置 `better_combat_mobs = true`。联机时以服务端设置为准。
+模组设置中的「开启怪物更好战斗兼容」默认关闭。入口为「MITE: Modern → 配置 → 战斗与附魔 → 战斗设置」，也可在 `config/mite-common.toml` 的 `[combat]` 下设置 `better_combat_mobs = true`。联机时以服务端设置为准。
 
 关闭时，即使安装 Better Combat，怪物也使用项目原有的 Source AI 或原版攻击方式，不使用本适配的攻击前摇、连招、冷却或怪物动画。攻击中关闭会取消待命中的挥击、移除攻击减速与兼容冷却，恢复原本攻击；再次开启不会恢复已取消的攻击。玩家的 Better Combat 兼容不受此开关影响。
 

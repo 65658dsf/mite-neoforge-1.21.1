@@ -92,7 +92,9 @@ public final class EnchantmentProbabilityClientAudit {
         var container = ModList.get().getModContainerById(Mite.MOD_ID).orElseThrow();
         Screen home = IConfigScreenFactory.getForMod(container.getModInfo()).orElseThrow().createScreen(container, mc.screen);
         mc.setScreen(home); home.init(mc, 320, 240);
-        press(home, "mite.config.registry_enchantments");
+        press(home, "mite.config.category.combat");
+        Screen combat = mc.screen;
+        press(combat, "mite.config.registry_enchantments");
         check(mc.screen instanceof EnchantmentSettingsScreen, "The production config factory and button open the production enchantment page");
         Screen screen = mc.screen; screen.init(mc, 320, 240);
         check(Component.translatable("mite.config.enchantment_chance").getString().contains("概率"),
@@ -122,9 +124,9 @@ public final class EnchantmentProbabilityClientAudit {
                 "A larger window shows multiple real chance inputs while keeping drafts");
         bounds(screen); capture(mc, screen, 854, 480, "probability-edited-zh-cn");
         press(screen, "mite.config.save");
-        check(mc.screen == home, "The actual Save callback returns to its real parent screen");
+        check(mc.screen == combat, "The actual Save callback returns to the Combat category");
         checkSaved();
-        home.init(mc, 854, 480); press(home, "mite.config.registry_enchantments");
+        combat.init(mc, 854, 480); press(combat, "mite.config.registry_enchantments");
         Screen reopened = mc.screen; reopened.init(mc, 854, 480);
         search(reopened).setValue(firstId);
         check(chance(reopened).getValue().equals("37.5"), "A newly constructed production page reads the saved decimal probability");
