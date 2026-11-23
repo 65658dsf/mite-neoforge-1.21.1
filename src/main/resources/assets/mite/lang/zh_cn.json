@@ -774,6 +774,8 @@
   "enchantment.mite.arrow_recovery.desc": "提高箭矢命中生物后可回收的概率，可在目标死亡后收回。",
   "enchantment.mite.stun": "击晕",
   "enchantment.mite.stun.desc": "近战攻击有概率对目标施加强力缓慢。等级越高，触发概率、持续时间和减速强度越高。",
+  "enchantment.mite.attack_speed": "迅击",
+  "enchantment.mite.attack_speed.desc": "主手持有该武器时，每级提高 10% 攻击速度。",
   "enchantment.mite.fishing_fortune": "钓鱼时运",
   "enchantment.mite.fishing_fortune.desc": "提高钓鱼时鱼咬钩的概率，缩短平均等待时间。",
   "enchantment.mite.tree_felling": "砍伐",

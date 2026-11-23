@@ -106,8 +106,11 @@ public final class EnchantmentAssetsProvider implements DataProvider {
         });
         agriculture.add(optionalTag("mite:simplyswords/enchantable/harvesting"));
         save(cache, work, "data/mite/tags/item/agricultural_tools.json", tag(false, agriculture));
-        for (String id : List.of("in_enchanting_table", "tradeable", "on_random_loot", "non_treasure"))
+        for (String id : List.of("in_enchanting_table", "tradeable", "on_random_loot"))
             save(cache, work, "data/minecraft/tags/enchantment/" + id + ".json", tag(false, added));
+        JsonArray nonTreasure = added.deepCopy();
+        nonTreasure.add("mite:attack_speed");
+        save(cache, work, "data/minecraft/tags/enchantment/non_treasure.json", tag(false, nonTreasure));
         return CompletableFuture.allOf(work.toArray(CompletableFuture[]::new));
     }
 

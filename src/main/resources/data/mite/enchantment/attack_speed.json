@@ -1,0 +1,35 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.mite.attack_speed"
+  },
+  "effects": {
+    "minecraft:attributes": [
+      {
+        "id": "mite:attack_speed",
+        "attribute": "minecraft:generic.attack_speed",
+        "amount": {
+          "type": "minecraft:linear",
+          "base": 0.1,
+          "per_level_above_first": 0.1
+        },
+        "operation": "add_multiplied_total"
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 30,
+    "per_level_above_first": 8
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 10,
+    "per_level_above_first": 8
+  },
+  "primary_items": "#mite:enchantable/attack_speed",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#mite:enchantable/attack_speed",
+  "weight": 5
+}

@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.item;
 
+import io.github.ningmeng123.mite.enchantment.R196Enchantments;
 import io.github.ningmeng123.mite.registry.MiteTags;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.ToolFamily;
 import io.github.ningmeng123.mite.rules.NativeWeaponBalanceRules;
@@ -8,6 +9,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -25,6 +27,8 @@ import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 
 /** Preserve the vanilla ID while replacing its default components and sword behavior. @author NingMeng123 */
 public final class WoodenClubBehavior {
+    private static final ResourceKey<Enchantment> ATTACK_SPEED = R196Enchantments.key("attack_speed");
+
     private WoodenClubBehavior() {}
 
     public static void modifyComponents(ModifyDefaultComponentsEvent event) {
@@ -48,7 +52,7 @@ public final class WoodenClubBehavior {
     public static boolean allowsEnchantment(Holder<Enchantment> enchantment) {
         return enchantment.is(Enchantments.KNOCKBACK) || enchantment.is(Enchantments.LOOTING)
                 || enchantment.is(Enchantments.UNBREAKING) || enchantment.is(Enchantments.MENDING)
-                || enchantment.is(Enchantments.VANISHING_CURSE);
+                || enchantment.is(Enchantments.VANISHING_CURSE) || enchantment.is(ATTACK_SPEED);
     }
 
     public static boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miner) {

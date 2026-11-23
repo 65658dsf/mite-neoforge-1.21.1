@@ -244,7 +244,8 @@ def main() -> int:
         added = {value for value in source_ids if value.startswith("mite:")}
         for name in ["in_enchanting_table", "tradeable", "on_random_loot", "non_treasure"]:
             tag = read_json(generated_file("tags/enchantment", "minecraft:" + name))
-            check(tag["replace"] is False and set(tag["values"]) == added, f"New enchantment availability is additive for modern tags: {name}")
+            expected_tag = added | {"mite:attack_speed"} if name == "non_treasure" else added
+            check(tag["replace"] is False and set(tag["values"]) == expected_tag, f"New enchantment availability is additive for modern tags: {name}")
         check({p.stem for p in (generated / "minecraft/enchantment").glob("*.json")} == {x.split(":", 1)[1] for x in source_ids if x.startswith("minecraft:")}, "Only the 21 old source-equivalent vanilla definitions are overridden")
         check({p.stem for p in (generated / "mite/enchantment").glob("*.json")} == {x.split(":", 1)[1] for x in added}, "Exactly 17 enabled MITE enchantments are generated")
         for name, base, per in [("sharpness", 1, 1), ("smite", 2, 2), ("bane_of_arthropods", 2, 2), ("power", 1, .5)]:

@@ -217,6 +217,11 @@
       "descriptionJson": "{\"translate\":\"enchantment.mite.arrow_recovery\"}"
     },
     {
+      "id": "mite:attack_speed",
+      "defaultMaxLevel": 3,
+      "descriptionJson": "{\"translate\":\"enchantment.mite.attack_speed\"}"
+    },
+    {
       "id": "mite:butchering",
       "defaultMaxLevel": 3,
       "descriptionJson": "{\"translate\":\"enchantment.mite.butchering\"}"

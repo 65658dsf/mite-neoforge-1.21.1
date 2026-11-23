@@ -2,22 +2,29 @@ package io.github.ningmeng123.mite.data;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
+import io.github.ningmeng123.mite.registry.MiteItems;
 import io.github.ningmeng123.mite.registry.MiteTags;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 /** Explicit tools below the current log-harvesting stage. @author NingMeng123 */
 public final class MiteItemTagsProvider extends ItemTagsProvider {
+    private static final TagKey<Item> ATTACK_SPEED_ENCHANTABLE = TagKey.create(Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "enchantable/attack_speed"));
+
     public MiteItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup,
             CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, ExistingFileHelper existingFiles) {
         super(output, lookup, blockTags, Mite.MOD_ID, existingFiles);
@@ -78,6 +85,8 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
         tag(ItemTags.DURABILITY_ENCHANTABLE).add(Items.WOODEN_SWORD);
         tag(ItemTags.VANISHING_ENCHANTABLE).add(Items.WOODEN_SWORD);
         tag(MiteTags.SHEARS).add(Items.SHEARS);
+        var attackSpeed = tag(ATTACK_SPEED_ENCHANTABLE).addTag(ItemTags.SWORDS).addTag(ItemTags.AXES)
+                .add(Items.WOODEN_SWORD, Items.TRIDENT, Items.MACE, MiteItems.FLINT_HATCHET.get());
         for (var definition : MiteTools.definitions()) {
             if (!definition.isNew()) continue;
             var item = MiteTools.get(definition.id());
@@ -85,7 +94,12 @@ public final class MiteItemTagsProvider extends ItemTagsProvider {
             tag(ItemTags.VANISHING_ENCHANTABLE).add(item);
             switch (definition.family()) {
                 case AXE, HATCHET, BATTLE_AXE -> tag(ItemTags.AXES).add(item);
-                case PICKAXE, WAR_HAMMER -> tag(ItemTags.PICKAXES).add(item);
+                case PICKAXE -> tag(ItemTags.PICKAXES).add(item);
+                case WAR_HAMMER -> {
+                    tag(ItemTags.PICKAXES).add(item);
+                    attackSpeed.add(item);
+                }
+                case CLUB, CUDGEL -> attackSpeed.add(item);
                 case SHOVEL, MATTOCK -> tag(ItemTags.SHOVELS).add(item);
                 case HOE -> tag(ItemTags.HOES).add(item);
                 case SWORD, DAGGER, KNIFE, SCYTHE -> tag(ItemTags.SWORDS).add(item);

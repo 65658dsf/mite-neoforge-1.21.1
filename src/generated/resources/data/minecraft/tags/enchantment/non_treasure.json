@@ -17,6 +17,7 @@
     "mite:piercing",
     "mite:harvesting",
     "mite:butchering",
-    "mite:endurance"
+    "mite:endurance",
+    "mite:attack_speed"
   ]
 }

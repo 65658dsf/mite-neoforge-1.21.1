@@ -774,6 +774,8 @@
   "enchantment.mite.arrow_recovery.desc": "Increases the chance to recover arrows that hit living targets after the target dies.",
   "enchantment.mite.stun": "Stun",
   "enchantment.mite.stun.desc": "Melee attacks may inflict strong Slowness. Higher levels increase the chance, duration, and slowing strength.",
+  "enchantment.mite.attack_speed": "Rapid Strikes",
+  "enchantment.mite.attack_speed.desc": "Increases attack speed by 10% per level while the weapon is held in the main hand.",
   "enchantment.mite.fishing_fortune": "Luring",
   "enchantment.mite.fishing_fortune.desc": "Increases the chance of a fish biting, reducing the average wait while fishing.",
   "enchantment.mite.tree_felling": "Tree Felling",
