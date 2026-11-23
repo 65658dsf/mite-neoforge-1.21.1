@@ -115,7 +115,7 @@ public final class BetterCombatPlayerReachClientAudit {
             if (mc.screen != null) return;
             // Let the new world's client-requested chunks finish generation before shutdown unloads them.
             if (++readyTicks < 200) return;
-            if (readyTicks == 200 && BetterCombatBridge.enabled() && ModList.get().isLoaded("punchy")
+            if (readyTicks == 200 && BetterCombatBridge.enabled()
                     && !Boolean.getBoolean("mite.punchyClubAudit")) {
                 mc.player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
                 return;
@@ -158,6 +158,7 @@ public final class BetterCombatPlayerReachClientAudit {
         if (modePhase == 0) {
             check(!BetterCombatPlayerMode.attacksDisabled(mc.player), "Better Combat starts enabled");
             check(toggle.getDefaultKey().getValue() == org.lwjgl.glfw.GLFW.GLFW_KEY_V, "The default toggle is V");
+            auditAttackInterval(mc.player, .8F);
             if (ModList.get().isLoaded("punchy")) {
                 Object enabled = Class.forName("punchy.config.PunchyConfig")
                         .getMethod("isBetterCombatCompatEnabled").invoke(null);
@@ -174,14 +175,37 @@ public final class BetterCombatPlayerReachClientAudit {
         if (modePhase == 1) {
             if (!BetterCombatPlayerMode.isVanilla(mc.player)) return false;
             check(BetterCombatPlayerMode.attacksDisabled(mc.player), "Better Combat sees the synchronized vanilla mode");
+            auditAttackInterval(mc.player, 1F);
             KeyMapping.click(toggle.getKey());
             modePhase++;
             return false;
         }
         if (BetterCombatPlayerMode.isVanilla(mc.player)) return false;
         check(!BetterCombatPlayerMode.attacksDisabled(mc.player), "The second key press restores Better Combat");
+        auditAttackInterval(mc.player, .8F);
+        var gson = new GsonBuilder().create();
+        var changed = gson.toJsonTree(MiteConfig.effectiveSnapshot()).getAsJsonObject();
+        changed.addProperty("betterCombatAttackSpeedMultiplier", .6D);
+        try {
+            MiteConfig.receiveServerSnapshot(gson.fromJson(changed, MiteConfig.Snapshot.class));
+            auditAttackInterval(mc.player, .6F);
+        } finally {
+            MiteConfig.clearServerSnapshot();
+        }
+        report.addProperty("better_combat_attack_rate_updates_from_live_settings", true);
+        report.addProperty("better_combat_attack_rate_scales_with_mode", true);
         report.addProperty("combat_mode_key_synced_both_directions", true);
         return true;
+    }
+
+    private static void auditAttackInterval(Player player, float expectedRate) {
+        float nativeTicks = player.getCurrentItemAttackStrengthDelay();
+        int minimumTicks = net.bettercombat.BetterCombatMod.getConfig().attack_interval_cap;
+        near(net.bettercombat.logic.PlayerAttackHelper.getAttackCooldownTicksCapped(player),
+                Math.max(nativeTicks, minimumTicks) / expectedRate, "The player's swing interval follows the current mode");
+        player.resetAttackStrengthTicker();
+        near(player.getAttackStrengthScale(nativeTicks * .5F), expectedRate * .5F,
+                "The player's attack cooldown indicator follows the current mode");
     }
 
     private static void audit(Minecraft mc) throws ReflectiveOperationException {

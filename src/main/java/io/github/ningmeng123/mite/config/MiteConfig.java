@@ -46,7 +46,8 @@ public final class MiteConfig {
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_FORMULA, MONSTER_DAMAGE_FORMULA;
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_BLOOD_MOON_FORMULA, MONSTER_DAMAGE_BLOOD_MOON_FORMULA;
     public static final ModConfigSpec.DoubleValue WEAPON_REACH_MULTIPLIER, WEAPON_REACH_REDUCTION;
-    public static final ModConfigSpec.DoubleValue BETTER_COMBAT_DAMAGE_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue BETTER_COMBAT_DAMAGE_MULTIPLIER, BETTER_COMBAT_ATTACK_SPEED_MULTIPLIER;
+    private static final ModConfigSpec.BooleanValue BETTER_COMBAT_DAMAGE_MIGRATED;
     public static final ModConfigSpec.BooleanValue HEIGHT_REACH_PENALTY, UNDERWORLD_TRIALS, OVERWORLD_TRIALS;
     public static final ModConfigSpec.BooleanValue BETTER_COMBAT_MOBS;
     public static final ModConfigSpec.BooleanValue ASYNC_PATHFINDING, AI_LOAD_REDUCTION;
@@ -173,8 +174,14 @@ public final class MiteConfig {
         WEAPON_REACH_REDUCTION = number(builder, "weapon_reach_reduction", 0D, 16D, "Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.");
         HEIGHT_REACH_PENALTY = builder.translation("mite.config.height_reach_penalty").comment("Apply MITE target-height reach adjustments.").define("height_reach_penalty", true);
         BETTER_COMBAT_DAMAGE_MULTIPLIER = number(builder, "better_combat_damage_multiplier",
-                BundledGameplayDefaults.number("combat.better_combat_damage_multiplier", .8D), 10D,
+                BundledGameplayDefaults.number("combat.better_combat_damage_multiplier", .75D), 10D,
                 "Damage multiplier for player melee attacks performed through Better Combat.");
+        BETTER_COMBAT_ATTACK_SPEED_MULTIPLIER = builder.translation("mite.config.better_combat_attack_speed_multiplier")
+                .comment("Attack speed multiplier for player melee attacks performed through Better Combat.")
+                .defineInRange("better_combat_attack_speed_multiplier",
+                        BundledGameplayDefaults.number("combat.better_combat_attack_speed_multiplier", .8D), .05D, 10D);
+        BETTER_COMBAT_DAMAGE_MIGRATED = builder.comment("Set automatically after upgrading the old Better Combat damage default.")
+                .define("better_combat_damage_migrated", false);
         BETTER_COMBAT_MOBS = builder.translation("mite.config.better_combat_mobs")
                 .comment("Enable Better Combat weapon attacks and animations for hostile mobs when Better Combat is installed. False preserves their original attacks. Does not affect player compatibility.")
                 .define("better_combat_mobs", false);
@@ -503,6 +510,7 @@ public final class MiteConfig {
     public static double weaponReachReduction() { return effectiveSnapshot().reachReduction(); }
     public static boolean heightReachPenaltyEnabled() { return effectiveSnapshot().heightPenalty(); }
     public static double betterCombatDamageMultiplier() { return effectiveSnapshot().betterCombatDamageMultiplier(); }
+    public static double betterCombatAttackSpeedMultiplier() { return effectiveSnapshot().betterCombatAttackSpeedMultiplier(); }
     public static boolean betterCombatMobsEnabled() { return effectiveSnapshot().betterCombatMobs(); }
     public static boolean underworldTrialsEnabled() { return effectiveSnapshot().underworldTrials(); }
     public static boolean overworldTrialsEnabled() { return effectiveSnapshot().overworldTrials(); }
@@ -528,7 +536,7 @@ public final class MiteConfig {
             Map<String, String> oreHeights, Map<String, String> overworldOreHeights,
             MonsterSpawningSettings.Settings spawningSettings, Map<String, Double> monsterSpawnWeights,
             boolean betterCombatMobs, Map<String, Double> netherOres, Map<String, String> netherOreHeights,
-            Double betterCombatDamageMultiplier) {
+            Double betterCombatDamageMultiplier, Double betterCombatAttackSpeedMultiplier) {
         public Snapshot {
             ores = Map.copyOf(ores);
             caps = Map.copyOf(caps);
@@ -550,6 +558,25 @@ public final class MiteConfig {
             if (betterCombatDamageMultiplier == null || !Double.isFinite(betterCombatDamageMultiplier)
                     || !BETTER_COMBAT_DAMAGE_MULTIPLIER.getSpec().test(betterCombatDamageMultiplier))
                 betterCombatDamageMultiplier = BETTER_COMBAT_DAMAGE_MULTIPLIER.getDefault();
+            if (betterCombatAttackSpeedMultiplier == null || !Double.isFinite(betterCombatAttackSpeedMultiplier)
+                    || !BETTER_COMBAT_ATTACK_SPEED_MULTIPLIER.getSpec().test(betterCombatAttackSpeedMultiplier))
+                betterCombatAttackSpeedMultiplier = BETTER_COMBAT_ATTACK_SPEED_MULTIPLIER.getDefault();
+        }
+        public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
+                double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
+                boolean overworldTrials, Map<String, Integer> caps, Set<String> disabled,
+                MonsterGrowthRules.Settings monsterSettings, Map<String, Double> oreCandidates, Map<String, Double> oreChances,
+                Map<String, Double> overworldOreCandidates, Map<String, Double> overworldOreChances, Map<String, Double> overworldOres,
+                Map<String, Double> enchantmentChances, Map<String, Double> monsterSpawnRates,
+                Map<String, String> oreHeights, Map<String, String> overworldOreHeights,
+                MonsterSpawningSettings.Settings spawningSettings, Map<String, Double> monsterSpawnWeights,
+                boolean betterCombatMobs, Map<String, Double> netherOres, Map<String, String> netherOreHeights,
+                Double betterCombatDamageMultiplier) {
+            this(ores, growth, healthGrowth, damageGrowth, reachMultiplier, reachReduction, heightPenalty,
+                    underworldTrials, overworldTrials, caps, disabled, monsterSettings, oreCandidates, oreChances,
+                    overworldOreCandidates, overworldOreChances, overworldOres, enchantmentChances, monsterSpawnRates,
+                    oreHeights, overworldOreHeights, spawningSettings, monsterSpawnWeights, betterCombatMobs, netherOres,
+                    netherOreHeights, betterCombatDamageMultiplier, null);
         }
         public Snapshot(Map<String, Double> ores, double growth, double healthGrowth, double damageGrowth,
                 double reachMultiplier, double reachReduction, boolean heightPenalty, boolean underworldTrials,
@@ -733,7 +760,7 @@ public final class MiteConfig {
                 readHeights(UNDERWORLD_ORE_HEIGHTS, UNDERWORLD_DEEPSLATE_ORE_HEIGHTS),
                 readHeights(OVERWORLD_ORE_HEIGHTS, OVERWORLD_DEEPSLATE_ORE_HEIGHTS), readSpawningSettings(), spawnWeights,
                 value(BETTER_COMBAT_MOBS), netherMultipliers, readHeights(NETHER_ORE_HEIGHTS, Map.of()),
-                value(BETTER_COMBAT_DAMAGE_MULTIPLIER));
+                value(BETTER_COMBAT_DAMAGE_MULTIPLIER), value(BETTER_COMBAT_ATTACK_SPEED_MULTIPLIER));
     }
 
     private static MonsterSpawningSettings.Settings readSpawningSettings() {
@@ -937,7 +964,6 @@ public final class MiteConfig {
             if (!validLegacyAttack(formula, settlement)) MONSTER_DAMAGE_BLOOD_MOON_FORMULA.set(defaultFormula);
         }
         DAMAGE_RATE_MIGRATED.set(true);
-        SPEC.save();
     }
 
     private static boolean validLegacyAttack(String formula, String settlement) {
@@ -950,7 +976,15 @@ public final class MiteConfig {
 
     @SubscribeEvent public static void changed(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC || event instanceof ModConfigEvent.Unloading) return;
-        if (!DAMAGE_RATE_MIGRATED.get()) migrateAttackGrowth();
+        boolean upgradeAttackGrowth = !DAMAGE_RATE_MIGRATED.get();
+        boolean upgradeBetterCombatDamage = !BETTER_COMBAT_DAMAGE_MIGRATED.get();
+        if (upgradeAttackGrowth) migrateAttackGrowth();
+        if (upgradeBetterCombatDamage) {
+            if (BETTER_COMBAT_DAMAGE_MULTIPLIER.get() == .8D)
+                BETTER_COMBAT_DAMAGE_MULTIPLIER.set(BETTER_COMBAT_DAMAGE_MULTIPLIER.getDefault());
+            BETTER_COMBAT_DAMAGE_MIGRATED.set(true);
+        }
+        if (upgradeAttackGrowth || upgradeBetterCombatDamage) SPEC.save();
         EnchantmentCatalog.entries();
         refreshEnchantmentRules();
         GravelDropSettings.reload();

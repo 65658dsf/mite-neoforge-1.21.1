@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerMode;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -11,9 +12,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Restore the real offhand and forget Better Combat's previous hit before a vanilla attack. @author NingMeng123 */
+/** Keep native player actions consistent with the selected combat mode. @author NingMeng123 */
 @Mixin(Player.class)
 public abstract class BetterCombatVanillaPlayerMixin {
+    @ModifyExpressionValue(method = "getAttackStrengthScale", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;getCurrentItemAttackStrengthDelay()F"))
+    private float mite$attackRecovery(float ticks) {
+        return BetterCombatPlayerMode.attackInterval((Player)(Object)this, ticks);
+    }
+
     // Insert the vanilla-mode return before Better Combat can cancel the offhand lookup.
     @Inject(method = "getItemBySlot", at = @At("HEAD"), cancellable = true, order = 900)
     private void mite$vanillaOffhand(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir) {

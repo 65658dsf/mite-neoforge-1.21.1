@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerMode;
 import net.bettercombat.api.AttackHand;
 import net.bettercombat.logic.Pose;
@@ -14,6 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Pseudo
 @Mixin(targets = "net.bettercombat.logic.PlayerAttackHelper", remap = false)
 public abstract class BetterCombatPlayerHandlingMixin {
+    @ModifyReturnValue(method = "getAttackCooldownTicksCapped", at = @At("RETURN"))
+    private static float mite$attackInterval(float ticks, Player player) {
+        return BetterCombatPlayerMode.attackInterval(player, ticks);
+    }
+
     @Inject(method = "getCurrentAttack", at = @At("HEAD"), cancellable = true)
     private static void mite$vanillaAttack(Player player, int combo, CallbackInfoReturnable<AttackHand> cir) {
         if (BetterCombatPlayerMode.isVanilla(player)) cir.setReturnValue(null);

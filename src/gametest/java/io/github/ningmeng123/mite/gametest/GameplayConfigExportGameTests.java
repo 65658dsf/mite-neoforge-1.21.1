@@ -209,7 +209,8 @@ public final class GameplayConfigExportGameTests {
 
     private static void restoreDefaults() {
         for (var value : values()) {
-            if (!value.getPath().equals(List.of("monsters", "damage_rate_migrated"))) set(value, value.getDefault());
+            if (!value.getPath().equals(List.of("monsters", "damage_rate_migrated"))
+                    && !value.getPath().equals(List.of("combat", "better_combat_damage_migrated"))) set(value, value.getDefault());
         }
         MiteConfig.clearServerSnapshot();
         MiteConfig.refreshEnchantmentRules();

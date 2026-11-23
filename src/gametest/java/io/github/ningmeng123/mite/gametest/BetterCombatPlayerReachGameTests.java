@@ -664,6 +664,13 @@ public final class BetterCombatPlayerReachGameTests {
     }
 
     @GameTest(template = "empty", batch = "bettercombat_player_reach")
+    public static void betterCombatAttackRateUsesItsLiveSetting(GameTestHelper h) throws ReflectiveOperationException {
+        if (absent(h)) return;
+        Loaded.attackIntervals(h);
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "bettercombat_player_reach")
     public static void simplySwordsCutlassAndGlaiveKeepTheirDistinctNativeRanges(GameTestHelper h) {
         if (absent(h)) return;
         if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
@@ -978,6 +985,46 @@ public final class BetterCombatPlayerReachGameTests {
             }
         }
 
+        private static void attackIntervals(GameTestHelper h) throws ReflectiveOperationException {
+            var lock = GameplayConfigEditGameTests.lockCommonConfig();
+            var setting = MiteConfig.BETTER_COMBAT_ATTACK_SPEED_MULTIPLIER;
+            double previous = setting.get();
+            try (Session session = session(h)) {
+                ServerPlayer player = session.player();
+                ItemStack weapon = new ItemStack(Items.IRON_SWORD);
+                equip(player, weapon, ItemStack.EMPTY);
+                int minimumTicks = net.bettercombat.BetterCombatMod.getConfig().attack_interval_cap;
+                for (double baseSpeed : new double[] {4D, 20D}) {
+                    player.getAttribute(Attributes.ATTACK_SPEED).setBaseValue(baseSpeed);
+                    player.resetAttackStrengthTicker();
+                    float nativeTicks = player.getCurrentItemAttackStrengthDelay();
+                    float cappedTicks = Math.max(nativeTicks, minimumTicks);
+                    float partialTicks = nativeTicks * .5F;
+                    h.assertValueEqual(player.getAttackStrengthScale(partialTicks), .5F,
+                            "Ordinary server attacks still use their native recovery time");
+                    for (double rate : new double[] {setting.getDefault(), .6D}) {
+                        setting.set(rate);
+                        MiteConfig.refreshEnchantmentRules();
+                        BetterCombatPlayerReach.duringAttack(player, weapon, 1D, () -> {
+                            h.assertValueEqual(net.bettercombat.logic.PlayerAttackHelper.getAttackCooldownTicksCapped(player),
+                                    cappedTicks / (float)rate, "The next Better Combat swing uses the saved rate after applying its minimum interval");
+                            h.assertTrue(Math.abs(player.getAttackStrengthScale(partialTicks) - rate * .5D) < .00001D,
+                                    "The server's Better Combat attack strength recovers at the live rate");
+                        });
+                    }
+                    BetterCombatPlayerMode.setVanilla(player, true);
+                    h.assertValueEqual(net.bettercombat.logic.PlayerAttackHelper.getAttackCooldownTicksCapped(player),
+                            cappedTicks, "Switching to vanilla removes the Better Combat attack interval change");
+                    BetterCombatPlayerMode.setVanilla(player, false);
+                }
+            } finally {
+                try {
+                    setting.set(previous);
+                    MiteConfig.refreshEnchantmentRules();
+                } finally { lock.unlock(); }
+            }
+        }
+
         private static double creativeLevelReach(ServerPlayer player) {
             double raw = net.bettercombat.logic.PlayerAttackHelper.getRangeForItem(player, player.getMainHandItem());
             return Math.min(5D, raw) + ProgressionRules.meleeReachBonusForLevel(player.experienceLevel);
@@ -1064,8 +1111,8 @@ public final class BetterCombatPlayerReachGameTests {
                 MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER.set(MiteConfig.BETTER_COMBAT_DAMAGE_MULTIPLIER.getDefault());
                 MiteConfig.refreshEnchantmentRules();
                 float scaled = hitDamage(h, player, true);
-                h.assertTrue(Math.abs(scaled - full * .8F) < .001F,
-                        "The default Better Combat multiplier deals 80 percent of the same attack: " + scaled + " / " + full);
+                h.assertTrue(Math.abs(scaled - full * .75F) < .001F,
+                        "The default Better Combat multiplier deals 75 percent of the same attack: " + scaled + " / " + full);
 
                 BetterCombatPlayerMode.setVanilla(player, true);
                 float vanilla = hitDamage(h, player, false);

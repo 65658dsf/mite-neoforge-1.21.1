@@ -136,7 +136,7 @@ public final class MiteSettingsScreen extends Screen {
                     entry("mite.config.monster_formulas", MonsterGrowthSettingsScreen::new),
                     entry("mite.config.monsters", "monsters", key -> key.endsWith("_multiplier")));
             case COMBAT -> List.of(
-                    entry("mite.config.combat", "combat", key -> true),
+                    entry("mite.config.combat", "combat", key -> !key.equals("better_combat_damage_migrated")),
                     entry("mite.config.registry_enchantments", EnchantmentSettingsScreen::new),
                     new CategoryEntry(Component.translatable("mite.config.enchantments"),
                             Component.translatable("mite.config.enchantments.tooltip"), MiteConfigClient.localEditable(),

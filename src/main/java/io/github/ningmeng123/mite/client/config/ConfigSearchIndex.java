@@ -83,7 +83,8 @@ public final class ConfigSearchIndex {
             else if (value.getValue() instanceof ModConfigSpec.ConfigValue<?>) {
                 List<String> target = List.copyOf(path);
                 if (config.getModId().equals(Mite.MOD_ID)) {
-                    if (target.equals(List.of("monsters", "damage_rate_migrated"))) continue;
+                    if (target.equals(List.of("monsters", "damage_rate_migrated"))
+                            || target.equals(List.of("combat", "better_combat_damage_migrated"))) continue;
                     if (target.getFirst().equals("gravel_drops")) continue;
                     Dimension dimension = oreDimension(target.getFirst());
                     if (dimension != null && (dimension == Dimension.NETHER && available && !MiteConfigClient.netherOreSettingsAvailable()

@@ -425,6 +425,7 @@ public final class GameplayConfigClientAudit implements DataProvider {
         var expected = new TreeSet<String>();
         collectSearchLeafIds(MiteConfig.SPEC.getSpec(), List.of(), expected);
         expected.remove("mite:monsters.damage_rate_migrated");
+        expected.remove("mite:combat.better_combat_damage_migrated");
         expected.removeIf(id -> id.startsWith("mite:gravel_drops."));
         if (!ModList.get().isLoaded("modern_ite")) {
             expected.remove("mite:nether_ores.nether_adamantium");

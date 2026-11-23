@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.compat.bettercombat;
 
+import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.registry.MiteAttachments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -23,9 +24,25 @@ public final class BetterCombatPlayerMode {
         return BetterCombatBridge.enabled() && Loaded.attacksDisabled(player);
     }
 
+    public static float attackInterval(Player player, float ticks) {
+        if (!BetterCombatBridge.enabled() || Loaded.attacksDisabled(player)) return ticks;
+        boolean betterCombatAttack = player.level().isClientSide
+                ? ClientLoaded.hasWeapon(player) : BetterCombatPlayerReach.isAttackInProgress(player);
+        return betterCombatAttack ? ticks / (float)MiteConfig.betterCombatAttackSpeedMultiplier() : ticks;
+    }
+
     private static final class Loaded {
         private static boolean attacksDisabled(Player player) {
             return net.bettercombat.api.CombatFlags.isAttackDisabled(player);
+        }
+    }
+
+    private static final class ClientLoaded {
+        private static boolean hasWeapon(Player player) {
+            if (!(player instanceof net.minecraft.client.player.LocalPlayer)
+                    || !net.bettercombat.client.BetterCombatClientMod.ENABLED) return false;
+            var attributes = net.bettercombat.logic.WeaponRegistry.getAttributes(player.getMainHandItem());
+            return attributes != null && attributes.attacks() != null;
         }
     }
 }
