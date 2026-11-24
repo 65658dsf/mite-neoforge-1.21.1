@@ -123,16 +123,6 @@ public final class MobShields {
         }
     }
 
-    /** Native LivingEntity handles shield direction and the five-tick raise delay before reaching this hook. */
-    public static void afterBlock(LivingEntity defender, LivingEntity attacker) {
-        if (!(defender instanceof Mob mob) || !defending(mob)) return;
-        if (!attacker.canDisableShield()) return;
-        mob.getPersistentData().putLong(DISABLED_UNTIL, mob.level().getGameTime() + 100L);
-        mob.stopUsingItem();
-        mob.playSound(SoundEvents.SHIELD_BREAK, .8F, .9F + mob.getRandom().nextFloat() * .2F);
-        mob.level().broadcastEntityEvent(mob, (byte)30);
-    }
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void join(EntityJoinLevelEvent event) {
         if (event.isCanceled() || event.getLevel().isClientSide || !(event.getEntity() instanceof Mob mob) || !handles(mob)) return;

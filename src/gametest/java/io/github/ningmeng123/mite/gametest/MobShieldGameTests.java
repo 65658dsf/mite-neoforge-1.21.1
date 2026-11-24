@@ -9,6 +9,7 @@ import io.github.ningmeng123.mite.mixin.MobSpawnTypeAccessor;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.registry.MiteShields;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.github.ningmeng123.mite.rules.ShieldGuardRules;
 import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -153,15 +154,16 @@ public final class MobShieldGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void axesInterruptRaisedMobShieldsForOneHundredTicks(GameTestHelper h) {
+    public static void axesInterruptRaisedMobIronShieldsForTheirMaterialCooldown(GameTestHelper h) {
+        int cooldown = ShieldGuardRules.profile("iron").cooldownTicks();
         for (String axe : List.of("minecraft:iron_axe", "mite:copper_axe", "mite:ancient_metal_battle_axe", "mite:rusted_iron_hatchet")) {
             Mob mob = mob(h, EntityType.ZOMBIE); shield(mob, "iron"); Player player = player(h, mob, 2D);
             player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(MiteTools.get(axe))); raise(mob);
             h.assertTrue(mob.isBlocking(), "The fixture has completed native raise delay");
             mob.hurt(h.getLevel().damageSources().playerAttack(player), 4F);
             h.assertFalse(mob.isUsingItem(), "A real blocked axe attack interrupts " + axe);
-            h.assertValueEqual(mob.getPersistentData().getLong(MobShields.DISABLED_UNTIL), h.getLevel().getGameTime() + 100L,
-                    "Interrupted mob shields have the native five-second disable duration");
+            h.assertValueEqual(mob.getPersistentData().getLong(MobShields.DISABLED_UNTIL), h.getLevel().getGameTime() + cooldown,
+                    "Interrupted mob shields use the iron shield cooldown");
             ShieldBlockGoal goal = new ShieldBlockGoal(mob); mob.setTarget(player); mob.tickCount += 20;
             h.assertFalse(goal.canUse(), "AI cannot raise a disabled shield again");
             mob.discard(); player.discard();

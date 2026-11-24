@@ -154,8 +154,8 @@ public final class ShieldGuardGameTests {
                 helper.assertValueEqual(session.defender.getHealth(), health, "The final accepted block still protects health");
                 state(helper, session.shield, 0D, 0, "The material-specific exhaustion resets both counters");
                 helper.assertValueEqual(session.defender.getPersistentData().getLong(MobShields.DISABLED_UNTIL),
-                        helper.getLevel().getGameTime() + ShieldGuard.COOLDOWN_TICKS,
-                        "Every material keeps the same five-second cooldown for players and mobs");
+                        helper.getLevel().getGameTime() + profile.cooldownTicks(),
+                        definition.material() + " applies its own cooldown to players and mobs");
             }
         helper.succeed();
     }
@@ -332,39 +332,67 @@ public final class ShieldGuardGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 180)
-    public static void allMetalShieldsStayDisabledThroughTickNinetyNineAndRecoverAtTickOneHundred(GameTestHelper helper) {
-        Session player = new Session(helper, true), mob = new Session(helper, false);
+    public static void copperShieldsRecoverExactlyWhenTheirGuardBreakCooldownEnds(GameTestHelper helper) {
+        verifyCooldownBoundary(helper, "copper", session -> {
+            session.hit(1F); session.hit(1F); session.hit(1F);
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void vibraniumShieldsClearPressureAndRecoverExactlyWhenTheirAxeCooldownEnds(GameTestHelper helper) {
+        verifyCooldownBoundary(helper, "vibranium", session -> {
+            session.hit(4F);
+            state(helper, session.shield, 4D, 1, "The fixture has existing guard pressure before an axe disable");
+            session.attacker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteTools.get("copper_axe")));
+            helper.assertTrue(session.attacker.canDisableShield(), "The attack source carries a shield-disabling MITE axe");
+            session.hit(4F);
+            state(helper, session.shield, 0D, 0, "An axe disable clears accumulated pressure for either wearer");
+        });
+    }
+
+    private static void verifyCooldownBoundary(GameTestHelper helper, String material, Consumer<Session> breakShield) {
+        int cooldown = ShieldGuardRules.profile(material).cooldownTicks();
+        Session player = new Session(helper, true, InteractionHand.OFF_HAND, material);
+        Session mob = new Session(helper, false, InteractionHand.OFF_HAND, material);
+        var playerCooldowns = ((ServerPlayer)player.defender).getCooldowns();
         try {
             for (Session session : List.of(player, mob)) {
-                session.hit(1F); session.hit(1F); session.hit(1F);
-                helper.assertTrue(ShieldGuard.disabled(session.defender), "Three successful blocks start a real cooldown");
+                breakShield.accept(session);
+                helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
+                        "Breaking the shield lowers it and starts a real cooldown");
                 helper.assertValueEqual(session.defender.getPersistentData().getLong(MobShields.DISABLED_UNTIL),
-                        helper.getLevel().getGameTime() + ShieldGuard.COOLDOWN_TICKS, "Both kinds of wearer store exactly one hundred world ticks");
+                        helper.getLevel().getGameTime() + cooldown, material + " records its exact world cooldown");
                 for (var definition : MiteShields.definitions()) {
                     session.defender.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(MiteShields.get(definition.material())));
                     session.defender.startUsingItem(InteractionHand.OFF_HAND);
                     helper.assertFalse(session.defender.isUsingItem(), "Changing shield material cannot bypass the forced cooldown");
-                    if (session.defender instanceof ServerPlayer realPlayer)
-                        helper.assertTrue(realPlayer.getCooldowns().isOnCooldown(MiteShields.get(definition.material())),
+                    if (session == player)
+                        helper.assertTrue(playerCooldowns.isOnCooldown(MiteShields.get(definition.material())),
                                 "Every registered metal shield also receives the native player cooldown");
                 }
             }
         } catch (RuntimeException | Error failure) { player.close(); mob.close(); throw failure; }
-        helper.runAfterDelay(99L, () -> {
+        helper.runAfterDelay(cooldown - 1L, () -> {
             try {
-                for (int tick = 0; tick < 99; tick++) ((ServerPlayer)player.defender).doTick();
-                helper.assertTrue(ShieldGuard.disabled(player.defender) && ShieldGuard.disabled(mob.defender), "The cooldown remains active at tick99");
+                for (int tick = 0; tick < cooldown - 1; tick++) playerCooldowns.tick();
+                helper.assertTrue(ShieldGuard.disabled(player.defender) && ShieldGuard.disabled(mob.defender),
+                        "Both world cooldowns remain active one tick before expiry");
+                helper.assertTrue(playerCooldowns.isOnCooldown(player.shield.getItem()),
+                        "The native item cooldown for the broken shield remains active one tick before expiry");
                 player.defender.startUsingItem(InteractionHand.OFF_HAND);
                 mob.defender.startUsingItem(InteractionHand.OFF_HAND);
                 helper.assertFalse(player.defender.isUsingItem() || mob.defender.isUsingItem(), "Neither wearer can raise a shield one tick early");
             } catch (RuntimeException | Error failure) { player.close(); mob.close(); throw failure; }
         });
-        helper.runAfterDelay(100L, () -> {
+        helper.runAfterDelay(cooldown, () -> {
             try {
-                ((ServerPlayer)player.defender).doTick();
-                helper.assertFalse(ShieldGuard.disabled(player.defender) || ShieldGuard.disabled(mob.defender), "The world cooldown ends exactly at tick100");
-                helper.assertFalse(((ServerPlayer)player.defender).getCooldowns().isOnCooldown(player.defender.getOffhandItem().getItem()),
-                        "Exactly one hundred real player ticks also clear the native item cooldown");
+                playerCooldowns.tick();
+                helper.assertFalse(ShieldGuard.disabled(player.defender) || ShieldGuard.disabled(mob.defender),
+                        "Both world cooldowns end at the broken shield's exact material duration");
+                for (var definition : MiteShields.definitions()) {
+                    helper.assertFalse(playerCooldowns.isOnCooldown(MiteShields.get(definition.material())),
+                            "Every native item cooldown ends at the broken shield's exact material duration");
+                }
                 player.raise(); mob.raise();
                 helper.assertTrue(player.defender.isBlocking() && mob.defender.isBlocking(), "Both wearers can complete a fresh shield raise after cooldown");
                 helper.succeed();
@@ -395,21 +423,6 @@ public final class ShieldGuardGameTests {
             ItemStack crafted = repair.assemble(CraftingInput.of(2, 1, List.of(first.copy(), second.copy())), helper.getLevel().registryAccess());
             helper.assertFalse(crafted.isEmpty(), "The actual two-item repair recipe produces a shield");
             helper.assertValueEqual(ShieldGuard.state(crafted), expected, "Crafting repair preserves exactly the first shield's guard state");
-        }
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty")
-    public static void ordinaryAxeDisableAlsoClearsAccumulatedPressureForPlayersAndMobs(GameTestHelper helper) {
-        for (boolean player : new boolean[]{false, true}) try (Session session = new Session(helper, player)) {
-            session.hit(4F);
-            state(helper, session.shield, 4D, 1, "The fixture has existing guard pressure before an ordinary axe disable");
-            session.attacker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(MiteTools.get("copper_axe")));
-            helper.assertTrue(session.attacker.canDisableShield(), "The actual cow attack source now carries a shield-disabling MITE axe");
-            session.hit(4F);
-            helper.assertFalse(session.defender.isUsingItem(), "The ordinary native axe-disable path lowers the shield");
-            helper.assertTrue(ShieldGuard.disabled(session.defender), "The ordinary disable starts the shared five-second cooldown");
-            state(helper, session.shield, 0D, 0, "An ordinary axe disable cannot leave stale cumulative pressure on either kind of wearer");
         }
         helper.succeed();
     }

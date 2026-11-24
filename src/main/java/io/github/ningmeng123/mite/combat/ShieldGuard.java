@@ -25,7 +25,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /** Persistent per-shield guard exhaustion, applied only after the native blocked hit finishes. @author NingMeng123 */
 public final class ShieldGuard {
-    public static final int COOLDOWN_TICKS = ShieldGuardRules.COOLDOWN_TICKS;
     private static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Mite.MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<State>> GUARD =
             COMPONENTS.registerComponentType("shield_guard", builder -> builder.persistent(State.CODEC)
@@ -100,12 +99,7 @@ public final class ShieldGuard {
             reset(accepted.shield(), scope.defender);
             // The existing mob AI uses offhand shields. A manually equipped mainhand
             // shield still obeys the same accepted axe interruption after native wear.
-            if (scope.defender.getUseItem() == accepted.shield() && shield(accepted.shield())) {
-                scope.defender.stopUsingItem();
-                if (!(scope.defender instanceof Player))
-                    scope.defender.playSound(SoundEvents.SHIELD_BREAK, .8F, .9F + scope.defender.getRandom().nextFloat() * .2F);
-                scope.defender.level().broadcastEntityEvent(scope.defender, (byte)30);
-            }
+            if (scope.defender.getUseItem() == accepted.shield() && shield(accepted.shield())) stopUsingShield(scope.defender);
             return;
         }
         State before = accepted.shield().isEmpty() ? accepted.before() : state(accepted.shield());
@@ -115,8 +109,8 @@ public final class ShieldGuard {
     }
 
     /** Native axe interruptions clear this shield and share their cooldown across every shield item. */
-    public static void nativeDisabled(LivingEntity defender, ItemStack capturedShield) {
-        if (!(defender.level() instanceof ServerLevel)) return;
+    public static boolean nativeDisabled(LivingEntity defender, ItemStack capturedShield) {
+        if (!(defender.level() instanceof ServerLevel)) return false;
         HitScope matching = null;
         for (HitScope scope = CURRENT_HIT.get(); scope != null; scope = scope.parent) {
             if (scope.defender == defender && scope.accepted != null) {
@@ -125,17 +119,29 @@ public final class ShieldGuard {
                 if (matching == null) matching = scope;
             }
         }
-        if (!shield(capturedShield) && matching == null) return;
+        if (!shield(capturedShield) && matching == null) return false;
         reset(capturedShield, defender);
-        cooldown(defender, matching != null ? matching.accepted.item() : capturedShield.getItem());
+        if (matching != null) {
+            Accepted accepted = matching.accepted;
+            cooldown(defender, accepted.item(), accepted.profile().cooldownTicks());
+        } else {
+            cooldown(defender, capturedShield.getItem(), profile(capturedShield).cooldownTicks());
+        }
+        return true;
     }
 
-    /** Keep MobShields' native stop/sound path intact, regardless of mixin tail ordering. */
+    /** Interrupt offhand guards immediately and finish accepted main-hand interruptions after native wear. */
     public static void axeBlocked(LivingEntity defender, LivingEntity attacker) {
-        if (!(defender instanceof Mob) || !attacker.canDisableShield()) return;
+        if (!(defender instanceof Mob mob) || !(mob.level() instanceof ServerLevel) || !attacker.canDisableShield()) return;
+        boolean offhandGuard = MobShields.defending(mob);
         HitScope scope = CURRENT_HIT.get();
-        if (scope != null && scope.defender == defender && scope.accepted != null)
+        if (scope != null && scope.defender == defender && scope.accepted != null) {
             nativeDisabled(defender, scope.accepted.shield());
+        } else if (offhandGuard) {
+            ItemStack shield = mob.getUseItem();
+            cooldown(mob, shield.getItem(), profile(shield).cooldownTicks());
+        }
+        if (offhandGuard) stopUsingShield(mob);
     }
 
     private static void disable(LivingEntity defender, Accepted accepted) {
@@ -145,22 +151,28 @@ public final class ShieldGuard {
             player.disableShield();
             return;
         }
-        cooldown(defender, accepted.item());
+        cooldown(defender, accepted.item(), accepted.profile().cooldownTicks());
+        stopUsingShield(defender);
+    }
+
+    private static void stopUsingShield(LivingEntity defender) {
         defender.stopUsingItem();
         if (!(defender instanceof Player))
             defender.playSound(SoundEvents.SHIELD_BREAK, .8F, .9F + defender.getRandom().nextFloat() * .2F);
         defender.level().broadcastEntityEvent(defender, (byte)30);
     }
 
-    private static void cooldown(LivingEntity defender, Item capturedItem) {
-        defender.getPersistentData().putLong(MobShields.DISABLED_UNTIL,
-                Math.max(defender.getPersistentData().getLong(MobShields.DISABLED_UNTIL), defender.level().getGameTime() + COOLDOWN_TICKS));
+    private static void cooldown(LivingEntity defender, Item capturedItem, int cooldownTicks) {
+        long now = defender.level().getGameTime();
+        long deadline = Math.max(defender.getPersistentData().getLong(MobShields.DISABLED_UNTIL), now + cooldownTicks);
+        defender.getPersistentData().putLong(MobShields.DISABLED_UNTIL, deadline);
         if (defender instanceof Player player) {
+            int remainingTicks = (int)(deadline - now);
             // Default stacks cover vanilla, all MITE materials and ordinary third-party shields.
             // The shared entity deadline also blocks component-dependent shields from swapping around it.
-            for (Item item : BuiltInRegistries.ITEM) if (shield(item.getDefaultInstance()))
-                player.getCooldowns().addCooldown(item, COOLDOWN_TICKS);
-            player.getCooldowns().addCooldown(capturedItem, COOLDOWN_TICKS);
+            for (Item item : BuiltInRegistries.ITEM)
+                if (item != capturedItem && shield(item.getDefaultInstance())) player.getCooldowns().addCooldown(item, remainingTicks);
+            player.getCooldowns().addCooldown(capturedItem, remainingTicks);
         }
     }
 

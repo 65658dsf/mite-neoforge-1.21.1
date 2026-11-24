@@ -6,11 +6,10 @@ public final class ShieldGuardRules {
     public static final int BASE_BLOCK_LIMIT = 3;
     public static final int MAX_BLOCK_LIMIT = 11;
     public static final double MAX_DAMAGE_LIMIT = BASE_DAMAGE_LIMIT * MAX_BLOCK_LIMIT / BASE_BLOCK_LIMIT;
-    public static final int COOLDOWN_TICKS = 100;
 
-    public record Profile(double damageLimit, int blockLimit) {
+    public record Profile(double damageLimit, int blockLimit, int cooldownTicks) {
         public Profile {
-            if (!Double.isFinite(damageLimit) || damageLimit <= 0D || blockLimit <= 0)
+            if (!Double.isFinite(damageLimit) || damageLimit <= 0D || blockLimit <= 0 || cooldownTicks <= 0)
                 throw new IllegalArgumentException("Invalid shield guard profile");
         }
     }
@@ -21,15 +20,19 @@ public final class ShieldGuardRules {
 
     /** Material tiers are independent of an individual shield's experience level or quality. */
     public static Profile profile(String material) {
-        int tier = switch (material == null ? "" : material) {
-            case "iron", "ancient_metal" -> 1;
-            case "mithril" -> 2;
-            case "adamantium" -> 3;
-            case "vibranium" -> 4;
-            default -> 0;
+        return switch (material == null ? "" : material) {
+            case "iron" -> tier(1, 100);
+            case "ancient_metal" -> tier(1, 90);
+            case "mithril" -> tier(2, 80);
+            case "adamantium" -> tier(3, 60);
+            case "vibranium" -> tier(4, 30);
+            default -> tier(0, 110);
         };
+    }
+
+    private static Profile tier(int tier, int cooldownTicks) {
         int blocks = BASE_BLOCK_LIMIT + 2 * tier;
-        return new Profile(BASE_DAMAGE_LIMIT * blocks / BASE_BLOCK_LIMIT, blocks);
+        return new Profile(BASE_DAMAGE_LIMIT * blocks / BASE_BLOCK_LIMIT, blocks, cooldownTicks);
     }
 
     public static Result advance(Profile profile, double blockedDamage, int blocks, float acceptedDamage) {

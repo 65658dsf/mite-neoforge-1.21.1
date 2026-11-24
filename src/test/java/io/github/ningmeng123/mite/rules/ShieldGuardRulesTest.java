@@ -21,6 +21,18 @@ class ShieldGuardRulesTest {
         assertEquals(11, ShieldGuardRules.MAX_BLOCK_LIMIT);
     }
 
+    @Test void cooldownDecreasesAlongTheShieldUpgradePath() {
+        for (String material : new String[]{"rusted_iron", "copper", "silver", "gold", "unknown"}) {
+            assertEquals(110, ShieldGuardRules.profile(material).cooldownTicks(), material);
+        }
+        assertEquals(110, ShieldGuardRules.profile(null).cooldownTicks());
+        assertEquals(100, ShieldGuardRules.profile("iron").cooldownTicks());
+        assertEquals(90, ShieldGuardRules.profile("ancient_metal").cooldownTicks());
+        assertEquals(80, ShieldGuardRules.profile("mithril").cooldownTicks());
+        assertEquals(60, ShieldGuardRules.profile("adamantium").cooldownTicks());
+        assertEquals(30, ShieldGuardRules.profile("vibranium").cooldownTicks());
+    }
+
     @Test void damageLimitTriggersAtTwentyFiveAndResetsBothCounters() {
         var first = ShieldGuardRules.advance(BASE, 0D, 0, 24F);
         assertEquals(24D, first.blockedDamage());
@@ -64,7 +76,6 @@ class ShieldGuardRulesTest {
         assertTrue(ShieldGuardRules.advance(BASE, 24D, 1, 1F).broken());
         assertTrue(ShieldGuardRules.advance(BASE, 1D, 2, .5F).broken());
         assertFalse(ShieldGuardRules.advance(BASE, 10D, 1, .5F).broken());
-        assertEquals(100, ShieldGuardRules.COOLDOWN_TICKS);
     }
 
     @Test void everyBandBreaksOnItsOwnFinalSmallBlockAndNotBefore() {

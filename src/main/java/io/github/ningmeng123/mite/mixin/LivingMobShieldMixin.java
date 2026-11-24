@@ -29,11 +29,6 @@ public abstract class LivingMobShieldMixin {
         return event;
     }
 
-    @Inject(method = "blockUsingShield", at = @At("TAIL"))
-    private void mite$interruptMobShieldWithAxe(LivingEntity attacker, CallbackInfo ci) {
-        MobShields.afterBlock((LivingEntity)(Object)this, attacker);
-    }
-
     @Inject(method = "hurtCurrentlyUsedShield", at = @At("HEAD"))
     private void mite$wearBlockingMobShield(float damage, CallbackInfo ci) {
         MobShields.hurtShield((LivingEntity)(Object)this, damage);
