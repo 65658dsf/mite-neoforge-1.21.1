@@ -423,6 +423,7 @@
     "client.MinimalDebugCrosshairMixin",
     "client.DisabledHitboxDebugKeyMixin",
     "client.FixedBrightnessOptionMixin",
+    "client.OptionsGammaMixin",
     "client.SodiumBrightnessOptionMixin",
     "client.WorldCreationDifficultyMixin",
     "client.ExperimentalWorldWarningMixin",

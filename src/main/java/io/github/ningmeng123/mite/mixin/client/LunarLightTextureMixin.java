@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** R196 moon exposure before sky mixing, then its colored night tint after modern gamma. @author NingMeng123 */
@@ -34,6 +35,13 @@ public abstract class LunarLightTextureMixin {
             target = "Lnet/minecraft/client/renderer/LightTexture;getBrightness(Lnet/minecraft/world/level/dimension/DimensionType;I)F", ordinal = 0))
     private float mite$moonSkyBrightness(float original) {
         return mite$lunarFrame == null ? original : original * mite$lunarFrame.skyMultiplier();
+    }
+
+    @ModifyExpressionValue(method = "updateLightTexture",
+            slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/Options;gamma()Lnet/minecraft/client/OptionInstance;")),
+            at = @At(value = "INVOKE", target = "Ljava/lang/Double;floatValue()F", ordinal = 0))
+    private float mite$lockLightmapGamma(float original) {
+        return 0F;
     }
 
     @WrapOperation(method = "updateLightTexture", at = @At(value = "INVOKE",
