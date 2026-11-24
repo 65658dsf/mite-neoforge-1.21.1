@@ -139,7 +139,7 @@ public final class ConfigSearchIndex {
         if (section.endsWith("_generation") && (key.equals("candidates") || key.equals("chance_percent"))) return false;
         if (section.equals("monster_spawning") && !key.equals("rates") && !key.equals("weights")
                 && !MiteExtensions.policy().spawningControls().isEmpty()) return false;
-        if (section.equals("performance") || section.equals("combat") || section.equals("structures")
+        if (section.equals("performance") || section.equals("shader_restrictions") || section.equals("combat") || section.equals("structures")
                 || section.equals("monsters") && key.endsWith("_multiplier"))
             return MiteConfigClient.editable() && MiteConfigClient.gameplayValues().containsKey(String.join(".", path));
         return MiteConfigClient.editable();

@@ -51,6 +51,22 @@ public final class MiteConfigClient {
         return snapshot != MiteConfig.localSnapshot() && !snapshot.netherOres().isEmpty();
     }
     public static Map<String, Object> gameplayValues() { return gameplayValues; }
+    public static boolean blockNightVisionShaders() {
+        return blockPack(MiteConfig.BLOCK_NIGHT_VISION_SHADERS_PATH, MiteConfig.blockNightVisionShaders());
+    }
+
+    public static boolean blockNightVisionResourcePacks() {
+        return blockPack(MiteConfig.BLOCK_NIGHT_VISION_RESOURCE_PACKS_PATH, MiteConfig.blockNightVisionResourcePacks());
+    }
+
+    public static boolean blockXrayResourcePacks() {
+        return blockPack(MiteConfig.BLOCK_XRAY_RESOURCE_PACKS_PATH, MiteConfig.blockXrayResourcePacks());
+    }
+
+    private static boolean blockPack(String path, boolean localValue) {
+        return remoteServer() ? !Boolean.FALSE.equals(gameplayValues.get(path)) : localValue;
+    }
+
     public static GravelDropSettings.Rates gravelDropRates() {
         if (!remoteServer()) return GravelDropSettings.localRates();
         return gravelDrops == null ? null : gravelDrops.rates();

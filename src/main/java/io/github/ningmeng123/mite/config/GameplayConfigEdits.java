@@ -194,6 +194,9 @@ public final class GameplayConfigEdits {
         values.put("combat.better_combat_mobs", MiteConfig.BETTER_COMBAT_MOBS);
         values.put("structures.underworld_trials", MiteConfig.UNDERWORLD_TRIALS);
         values.put("structures.overworld_trials", MiteConfig.OVERWORLD_TRIALS);
+        values.put(MiteConfig.BLOCK_NIGHT_VISION_SHADERS_PATH, MiteConfig.BLOCK_NIGHT_VISION_SHADERS);
+        values.put(MiteConfig.BLOCK_NIGHT_VISION_RESOURCE_PACKS_PATH, MiteConfig.BLOCK_NIGHT_VISION_RESOURCE_PACKS);
+        values.put(MiteConfig.BLOCK_XRAY_RESOURCE_PACKS_PATH, MiteConfig.BLOCK_XRAY_RESOURCE_PACKS);
         Object asynchronous = MiteConfig.SPEC.getValues().get("performance.async_pathfinding");
         if (asynchronous instanceof ModConfigSpec.BooleanValue setting)
             values.put("performance.async_pathfinding", setting);

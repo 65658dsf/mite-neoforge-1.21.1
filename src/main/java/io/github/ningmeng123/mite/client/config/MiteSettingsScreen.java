@@ -44,7 +44,7 @@ public final class MiteSettingsScreen extends Screen {
             return switch (section) {
                 case "monsters", "monster_spawning" -> CREATURES;
                 case "combat", "enchantments" -> COMBAT;
-                case "performance" -> SYSTEM;
+                case "performance", "shader_restrictions" -> SYSTEM;
                 default -> WORLD;
             };
         }
@@ -143,7 +143,9 @@ public final class MiteSettingsScreen extends Screen {
                             screen -> SingleConfigValueScreen.createSection(screen, gameplayConfig(), "enchantments", key -> true,
                                     Component.translatable("mite.config.enchantments"))));
             case SURVIVAL -> List.of();
-            case SYSTEM -> List.of(entry("mite.config.performance", "performance", key -> true));
+            case SYSTEM -> List.of(
+                    entry("mite.config.performance", "performance", key -> true),
+                    entry("mite.config.shader_restrictions", "shader_restrictions", key -> true));
         };
     }
 

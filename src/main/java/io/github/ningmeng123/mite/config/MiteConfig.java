@@ -25,6 +25,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 @EventBusSubscriber(modid = Mite.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class MiteConfig {
     public static final ModConfigSpec SPEC;
+    public static final String BLOCK_NIGHT_VISION_SHADERS_PATH = "shader_restrictions.block_night_vision_shaders";
+    public static final String BLOCK_NIGHT_VISION_RESOURCE_PACKS_PATH = "shader_restrictions.block_night_vision_resource_packs";
+    public static final String BLOCK_XRAY_RESOURCE_PACKS_PATH = "shader_restrictions.block_xray_resource_packs";
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> UNDERWORLD_ORES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> OVERWORLD_ORES = new EnumMap<>(R196OreRules.Kind.class);
     public static final Map<R196OreRules.Kind, ModConfigSpec.DoubleValue> NETHER_ORES = new EnumMap<>(R196OreRules.Kind.class);
@@ -52,6 +55,8 @@ public final class MiteConfig {
     public static final ModConfigSpec.BooleanValue HEIGHT_REACH_PENALTY, UNDERWORLD_TRIALS, OVERWORLD_TRIALS;
     public static final ModConfigSpec.BooleanValue BETTER_COMBAT_MOBS;
     public static final ModConfigSpec.BooleanValue ASYNC_PATHFINDING, AI_LOAD_REDUCTION;
+    static final ModConfigSpec.BooleanValue BLOCK_NIGHT_VISION_SHADERS;
+    static final ModConfigSpec.BooleanValue BLOCK_NIGHT_VISION_RESOURCE_PACKS, BLOCK_XRAY_RESOURCE_PACKS;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS, ENCHANTMENT_CHANCES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_RATES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_WEIGHTS;
@@ -61,6 +66,9 @@ public final class MiteConfig {
     private static final Snapshot FACTORY;
     private static volatile Snapshot local;
     private static volatile Snapshot remote;
+    private static volatile boolean blockNightVisionShaders;
+    private static volatile boolean blockNightVisionResourcePacks;
+    private static volatile boolean blockXrayResourcePacks;
 
     static {
         var builder = new ModConfigSpec.Builder();
@@ -173,6 +181,17 @@ public final class MiteConfig {
         AI_LOAD_REDUCTION = builder.translation("mite.config.ai_load_reduction").comment("Limit and stagger expensive AI searches across server ticks. Animals resume food/water scans in batches; hostile mobs queue synchronous decisions and retry impossible routes less often. Preserves immediate attacks and real danger responses, but delays some decisions and reduces hostile search node budgets. False restores the previous search frequency and node limits.")
                 .define("ai_load_reduction", true);
         builder.pop();
+        builder.translation("mite.config.shader_restrictions").push("shader_restrictions");
+        BLOCK_NIGHT_VISION_SHADERS = builder.translation("mite.config.block_night_vision_shaders")
+                .comment("Block detected fullbright shader packs, such as Clarity. Multiplayer uses the server setting.")
+                .define("block_night_vision_shaders", true);
+        BLOCK_NIGHT_VISION_RESOURCE_PACKS = builder.translation("mite.config.block_night_vision_resource_packs")
+                .comment("Block detected fullbright resource packs. Multiplayer uses the server setting.")
+                .define("block_night_vision_resource_packs", true);
+        BLOCK_XRAY_RESOURCE_PACKS = builder.translation("mite.config.block_xray_resource_packs")
+                .comment("Block detected X-ray resource packs. Multiplayer uses the server setting.")
+                .define("block_xray_resource_packs", true);
+        builder.pop();
         builder.translation("mite.config.combat").push("combat");
         WEAPON_REACH_MULTIPLIER = number(builder, "weapon_reach_multiplier", 1D, 10D, "Multiplier of balanced melee reach before the fixed reduction. MITE and Simply Swords select separate family ranges according to Better Combat availability.");
         WEAPON_REACH_REDUCTION = number(builder, "weapon_reach_reduction", 0D, 16D, "Subtract this many blocks after multiplying survival melee reach. Minimum resulting reach is 0.");
@@ -213,9 +232,16 @@ public final class MiteConfig {
         // Publish defaults before configuration loading; workers never read ModConfigSpec's mutable caches.
         local = readLocalSnapshot();
         FACTORY = local;
+        blockNightVisionShaders = BLOCK_NIGHT_VISION_SHADERS.getDefault();
+        blockNightVisionResourcePacks = BLOCK_NIGHT_VISION_RESOURCE_PACKS.getDefault();
+        blockXrayResourcePacks = BLOCK_XRAY_RESOURCE_PACKS.getDefault();
     }
 
     private MiteConfig() {}
+
+    public static boolean blockNightVisionShaders() { return blockNightVisionShaders; }
+    public static boolean blockNightVisionResourcePacks() { return blockNightVisionResourcePacks; }
+    public static boolean blockXrayResourcePacks() { return blockXrayResourcePacks; }
 
     /** Read only on the server thread. A JVM override also permits synchronous regression runs. */
     public static boolean asyncPathfindingEnabled() {
@@ -800,6 +826,9 @@ public final class MiteConfig {
     public static void refreshEnchantmentRules() {
         // Retain the original entry point while publishing every setting as one immutable revision.
         local = readLocalSnapshot();
+        blockNightVisionShaders = value(BLOCK_NIGHT_VISION_SHADERS);
+        blockNightVisionResourcePacks = value(BLOCK_NIGHT_VISION_RESOURCE_PACKS);
+        blockXrayResourcePacks = value(BLOCK_XRAY_RESOURCE_PACKS);
         io.github.ningmeng123.mite.enchantment.ConfiguredEnchantments.rulesChanged();
     }
 
