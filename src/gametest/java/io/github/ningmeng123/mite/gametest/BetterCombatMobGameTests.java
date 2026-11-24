@@ -741,18 +741,16 @@ public final class BetterCombatMobGameTests {
                 MiteConfig.WEAPON_REACH_MULTIPLIER.set(1D);
                 MiteConfig.WEAPON_REACH_REDUCTION.set(0D);
                 MiteConfig.refreshEnchantmentRules();
-                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 1.8D, 1.8D, true);
-                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 2D, 2D, false);
-                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 2.9D, 2.9D, false);
-                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 2.9D, 2.9D, true);
-                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 3.4D, 3.4D, false);
-                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 3.7D, 3.7D, false);
-                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 1.8D, 2.9D, false);
-                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 2.9D, 3.7D, false);
-                simplySwordsDistanceCase(h, "greathammer", 4D, 3.25D, 2.9D, 2.9D, true);
-                simplySwordsDistanceCase(h, "greathammer", 4D, 3.25D, 3.1D, 3.1D, false);
-                simplySwordsDistanceCase(h, "spear", 4D, 3.75D, 3.4D, 3.4D, true);
-                simplySwordsDistanceCase(h, "spear", 4D, 3.75D, 3.65D, 3.65D, false);
+                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 1.64D, 1.64D, true);
+                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 1.76D, 1.76D, false);
+                simplySwordsDistanceCase(h, "cutlass", 2.75D, 2.1D, 1.64D, 1.76D, false);
+                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 2.1D, 2.1D, true);
+                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 2.22D, 2.22D, false);
+                simplySwordsDistanceCase(h, "glaive", 3.5D, 3.5D, 2.1D, 2.22D, false);
+                simplySwordsDistanceCase(h, "greathammer", 4D, 3.25D, 2.02D, 2.02D, true);
+                simplySwordsDistanceCase(h, "greathammer", 4D, 3.25D, 2.14D, 2.14D, false);
+                simplySwordsDistanceCase(h, "spear", 4D, 3.75D, 2.19D, 2.19D, true);
+                simplySwordsDistanceCase(h, "spear", 4D, 3.75D, 2.31D, 2.31D, false);
             } finally {
                 MiteConfig.WEAPON_REACH_MULTIPLIER.set(multiplier);
                 MiteConfig.WEAPON_REACH_REDUCTION.set(reduction);
@@ -773,9 +771,14 @@ public final class BetterCombatMobGameTests {
             var profile = profile(h, attacker);
             h.assertTrue(Math.abs(profile.range() - expectedRange) < .000001D,
                     "The actual Better Combat weapon registry retains its distinct native range: " + id);
-            double expectedMobReach = expectedPlayerReach - .2D;
+            double expectedBonus = (expectedPlayerReach - 1.5D) / 3D;
+            double expectedMobReach = 1.5D + expectedBonus;
+            h.assertTrue(Math.abs(MobWeaponReach.weaponBonus(attacker) - expectedBonus) < .000001D,
+                    "The mob receives one third of the weapon's reach bonus: " + id);
+            h.assertTrue(Math.abs(MobWeaponReach.sourceLimit(attacker, target, attacker.getY()) - (expectedPlayerReach - .2D)) < .000001D,
+                    "The separate player-equivalent cap still includes the fixed margin: " + id);
             h.assertTrue(Math.abs(profile.reach(attacker, target) - expectedMobReach) < .000001D,
-                    "The mob retains this weapon's distinct player range minus the fixed margin: " + id);
+                    "The weapon profile allows the one-third bonus above the melee base: " + id);
             placeAtEyeDistance(attacker, target, startDistance);
             float health = target.getHealth();
             if (startDistance > expectedMobReach) {
@@ -806,6 +809,39 @@ public final class BetterCombatMobGameTests {
         double vertical = Math.max(0D, attacker.getEyeHeight() - target.getBbHeight());
         double forward = Math.sqrt(distance * distance - vertical * vertical) + target.getBbWidth() * .5D;
         target.setPos(attacker.position().add(0D, 0D, forward));
+    }
+
+    @GameTest(template = "empty")
+    public static void swordRangeUsesTheSameEyeGeometryForNativeGoalsAndPlannedFeet(GameTestHelper helper) {
+        try (var compatibility = new BetterCombatMobSettings(true)) {
+            if (absent(helper)) return;
+            try (ReachSettings ignored = new ReachSettings(1D, 0D)) {
+                Mob attacker = armed(helper, EntityType.ZOMBIE);
+                Mob target = target(helper, attacker);
+                try {
+                    var profile = profile(helper, attacker);
+                    helper.assertTrue(Math.abs(MobWeaponReach.weaponBonus(attacker) - .25D) < .000001D,
+                            "The iron sword's .75-block bonus contributes .25 blocks to the mob");
+                    helper.assertTrue(Math.abs(profile.reach(attacker, target) - 1.75D) < .000001D,
+                            "The iron sword profile allows a 1.75-block eye-to-hitbox distance");
+                    placeAtEyeDistance(attacker, target, 1.8D);
+                    helper.assertTrue(MobWeaponReach.canReachFrom(attacker, target, attacker.position()),
+                            "The target inside the older player-equivalent cap isolates the new mob range");
+                    helper.assertFalse(attacker.isWithinMeleeAttackRange(target), "Native AI rejects the target beyond 1.75 blocks");
+                    helper.assertFalse(SourceMeleeGoal.canStrike((PathfinderMob)attacker, target),
+                            "The source goal applies the same reduced range");
+                    Vec3 planned = attacker.position().add(0D, 0D, .15D);
+                    helper.assertTrue(SourceMeleeGoal.canStrikeFrom((PathfinderMob)attacker, target, planned),
+                            "Planning a closer foot position uses the same eye-to-hitbox measurement");
+                    attacker.setPos(planned);
+                    begin(helper, attacker, target);
+                    float health = target.getHealth();
+                    advance(attacker, target, profile.windupTicks());
+                    helper.assertTrue(target.getHealth() < health, "Moving to the planned point allows the actual delayed hit");
+                } finally { BetterMobCombat.cancel(attacker); attacker.discard(); target.discard(); }
+            }
+            helper.succeed();
+        }
     }
 
     @GameTest(template = "empty")
@@ -896,6 +932,8 @@ public final class BetterCombatMobGameTests {
                         "The half-block configured reduction follows the actual move multiplier before the monster margin");
                 helper.assertTrue(Math.abs(MobWeaponReach.sourceLimit(attacker, target, attacker.getY()) - 1.55D) < .000001D,
                         "The source 2.25-block sword minus .5 reduction and .2 monster margin is 1.55, still wider than this short move");
+                helper.assertTrue(Math.abs(profile.reach(attacker, target) - 1.55D) < .000001D,
+                        "The configured source cap remains smaller than the 1.75-block mob allowance");
                 placeAtShoulderDistance(attacker, target, start);
                 float health = target.getHealth();
                 if (start > 1.1D) {
@@ -970,6 +1008,10 @@ public final class BetterCombatMobGameTests {
                     helper.assertTrue(Math.abs(profile.itemRange() - 4.25D) < .000001D
                                     && Math.abs(BetterCombatBridge.playerEquivalentRange(attacker, weapon, 1D) - 4.25D) < .000001D,
                             "Explicit real item range overrides metadata without restoring the obsolete modifier");
+                    double sourceWeaponReach = simply ? 4.25D : 3.5D;
+                    double expectedBonus = (sourceWeaponReach - 1.5D) / 3D;
+                    helper.assertTrue(Math.abs(MobWeaponReach.weaponBonus(attacker) - expectedBonus) < .000001D,
+                            "Only one third of the held weapon bonus contributes after filtering legacy range");
                     helper.assertTrue(profile.reach(attacker, target) <= Math.max(0D, SourcePlayerReach.sourceMeleeReach(player, target) - .2D) + .000001D,
                             "The same legacy-bearing item cannot give the monster a longer source cap than the real equipped player");
                 } finally { BetterMobCombat.cancel(attacker); attacker.discard(); target.discard(); player.discard(); }

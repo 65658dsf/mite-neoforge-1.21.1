@@ -63,7 +63,7 @@ public final class BetterCombatBridge {
     public record Profile(double range, double angle, double upswing, String animation,
             double damageMultiplier, int cooldownTicks, boolean twoHanded, float movementSpeedMultiplier,
             String hitbox, double itemRange, double rangeMultiplier) {
-        /** Retain the previous range as an additional ceiling beneath the current source limit. */
+        /** The move's own reach may be shorter than the armed monster's attack range. */
         public double reach(Mob mob, Entity target) {
             return reach(mob, target, mob.getY());
         }
@@ -74,7 +74,8 @@ public final class BetterCombatBridge {
                     MiteConfig.weaponReachMultiplier(), MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled());
             double previousLimit = Math.max(0D, Math.min(range, sourceReach));
             return MobWeaponReach.applies(mob)
-                    ? Math.min(previousLimit, MobWeaponReach.sourceLimit(mob, target, feetY)) : previousLimit;
+                    ? Math.min(MobWeaponReach.sourceMeleeRange(mob), Math.min(previousLimit, MobWeaponReach.sourceLimit(mob, target, feetY)))
+                    : previousLimit;
         }
 
         public int windupTicks() { return Math.max(1, (int)Math.round(cooldownTicks * upswing)); }

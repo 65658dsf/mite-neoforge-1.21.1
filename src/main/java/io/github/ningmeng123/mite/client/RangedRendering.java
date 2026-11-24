@@ -35,9 +35,8 @@ public final class RangedRendering {
     private static final class MaterialArrowRenderer extends TippableArrowRenderer {
         MaterialArrowRenderer(EntityRendererProvider.Context context) { super(context); }
         @Override public ResourceLocation getTextureLocation(Arrow arrow) {
-            if (arrow.getColor() > 0) return super.getTextureLocation(arrow);
             String material = ((MaterialArrowView)arrow).mite$arrowMaterial();
-            return material.isEmpty() ? super.getTextureLocation(arrow)
+            return material.isEmpty() || "flint".equals(material) && arrow.getColor() > 0 ? super.getTextureLocation(arrow)
                     : ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "textures/entity/arrows/" + material + ".png");
         }
     }

@@ -104,6 +104,35 @@ public final class GameplayConfigEditGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void remoteGrowthEditsSaveTheMinimumReferenceAndLegacyEditsPreserveIt(GameTestHelper helper) throws Exception {
+        try (var settings = new Settings(); var operator = new Operator(helper)) {
+            operator.permission(2);
+            var draft = GSON.toJsonTree(MiteConfig.localSnapshot().monsterSettings()).getAsJsonObject();
+            draft.addProperty("minimumHealthReference", 55D);
+            helper.assertTrue(GameplayConfigEdits.apply(operator.player, "growth", draft.toString()) == null,
+                    "A valid operator draft can change the minimum health reference");
+            helper.assertValueEqual(MiteConfig.monsterGrowthSettings().minimumHealthReference(), 55D,
+                    "Server growth immediately uses the edited minimum");
+            var disk = new TomlParser().parse(Files.readString(configPath()));
+            helper.assertValueEqual(((Number)disk.get(List.of("monsters", "minimum_health_reference"))).doubleValue(), 55D,
+                    "The edited minimum is saved to the common config");
+
+            draft.remove("minimumHealthReference");
+            draft.addProperty("healthBase", 25D);
+            helper.assertTrue(GameplayConfigEdits.apply(operator.player, "growth", draft.toString()) == null,
+                    "An older operator client can still edit the other growth fields");
+            helper.assertValueEqual(MiteConfig.monsterGrowthSettings().minimumHealthReference(), 55D,
+                    "The legacy edit preserves the configured minimum");
+            draft.addProperty("minimumHealthReference", -1D);
+            helper.assertTrue(GameplayConfigEdits.apply(operator.player, "growth", draft.toString()) != null,
+                    "A negative minimum is rejected");
+            helper.assertValueEqual(MiteConfig.monsterGrowthSettings().minimumHealthReference(), 55D,
+                    "A rejected edit does not change the active minimum");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void malformedAndPartlyInvalidOperatorDraftsLeaveEverySettingAndFileUntouched(GameTestHelper helper) throws Exception {
         try (var settings = new Settings(); var operator = new Operator(helper)) {
             operator.permission(2);

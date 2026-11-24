@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.integration.jade;
 
+import io.github.ningmeng123.mite.entity.MonsterBirthScaling;
 import io.github.ningmeng123.mite.entity.MonsterDayScaling;
 import io.github.ningmeng123.mite.entity.MonsterMeleeScaling;
 import io.github.ningmeng123.mite.entity.R196Cube;
@@ -62,7 +63,8 @@ public enum MonsterAttackJadeProvider implements IEntityComponentProvider, IServ
             return MonsterDayScaling.scaledOwnedDamage(slime, contactDamage);
         }
         try (MonsterMeleeScaling.Scope ignored = MonsterMeleeScaling.enter(mob)) {
-            return MonsterMeleeScaling.attackValue(mob, mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
+            return MonsterMeleeScaling.attackValue(mob, mob.getAttributeValue(Attributes.ATTACK_DAMAGE))
+                    * MonsterBirthScaling.damageMultiplier(mob);
         }
     }
 

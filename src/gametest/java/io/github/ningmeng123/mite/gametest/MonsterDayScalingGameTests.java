@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.entity.MonsterDayScaling;
 import io.github.ningmeng123.mite.entity.MonsterMeleeScaling;
 import io.github.ningmeng123.mite.registry.MiteMobs;
+import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,10 +31,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.NeoForge;
@@ -69,9 +73,9 @@ public final class MonsterDayScalingGameTests {
         return cow;
     }
 
-    private static void set(GameTestHelper helper, long highestDay) {
-        helper.getLevel().getServer().overworld().setDayTime(6_000L);
-        BloodMoonInvasionData.get(helper.getLevel()).restoreProgress(highestDay);
+    private static void set(GameTestHelper helper, long day) {
+        long elapsed = Math.min(day - 1L, (Long.MAX_VALUE - 6_000L) / 24_000L);
+        helper.getLevel().getServer().overworld().setDayTime(elapsed * 24_000L + 6_000L);
     }
 
     private static void close(GameTestHelper helper, double actual, double expected, String description) {
@@ -119,17 +123,20 @@ public final class MonsterDayScalingGameTests {
             MonsterDayScaling.refresh(monster); health(helper, monster, 20F, 20F);
             double attack = monster.getAttributeValue(Attributes.ATTACK_DAMAGE);
             set(helper, 33L);
-            MonsterDayScaling.refresh(monster); health(helper, monster, 23.2F, 23.2F); modifier(helper, monster, .16D);
-            monster.setHealth(11.6F);
+            MonsterDayScaling.refresh(monster); health(helper, monster, 26.4F, 26.4F); modifier(helper, monster, .32D);
+            monster.setHealth(13.2F);
             set(helper, 65L);
-            MonsterDayScaling.refresh(monster); health(helper, monster, 26.912F, 13.456F); modifier(helper, monster, .3456D);
+            MonsterDayScaling.refresh(monster); health(helper, monster, 32.8F, 16.4F); modifier(helper, monster, .64D);
             for (int count = 0; count < 20; count++) MonsterDayScaling.refresh(monster);
-            health(helper, monster, 26.912F, 13.456F); modifier(helper, monster, .3456D);
+            health(helper, monster, 32.8F, 16.4F); modifier(helper, monster, .64D);
             close(helper, monster.getAttributeValue(Attributes.ATTACK_DAMAGE), attack, "Calendar damage is not also multiplied in ATTACK_DAMAGE");
+            BloodMoonInvasionData.get(helper.getLevel()).restoreProgress(65L);
             set(helper, 1L);
-            MonsterDayScaling.refresh(monster); health(helper, monster, 26.912F, 13.456F);
-            helper.assertValueEqual(monster.getPersistentData().getCompound(MonsterDayScaling.DATA_KEY).getLong("day"), 65L,
-                    "An earlier world clock or migration value cannot downgrade an already recorded monster");
+            MonsterDayScaling.refresh(monster); health(helper, monster, 20F, 10F);
+            helper.assertTrue(!monster.getAttribute(Attributes.MAX_HEALTH).hasModifier(HEALTH),
+                    "Returning to day one removes the old growth modifier");
+            helper.assertValueEqual(monster.getPersistentData().getCompound(MonsterDayScaling.DATA_KEY).getLong("day"), 1L,
+                    "An existing mob follows the current clock even after the world recorded a later date");
         }
         helper.succeed();
     }
@@ -156,7 +163,7 @@ public final class MonsterDayScalingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void nativeSaveReloadAndLegacyFirstJoinKeepActualInjuriesAndOnePermanentModifier(GameTestHelper helper) {
+    public static void nativeSaveReloadAndLegacyFirstJoinRecalculateHealthAtTheCurrentDay(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 65L);
             Mob original = mob(helper, EntityType.ZOMBIE); MonsterDayScaling.refresh(original); original.setHealth(14F);
@@ -167,16 +174,18 @@ public final class MonsterDayScalingGameTests {
             set(helper, 1L);
             for (boolean loaded : new boolean[]{true, false, true}) {
                 MonsterDayScaling.join(new EntityJoinLevelEvent(restored, helper.getLevel(), loaded));
-                health(helper, restored, 26.912F, 14F); modifier(helper, restored, .3456D);
-                close(helper, MonsterDayScaling.attackMultiplier(restored), 1.3456D,
-                        "Repeated joins use the saved day for attack growth after a clock rollback");
+                health(helper, restored, 20F, 14F / 32.8F * 20F);
+                helper.assertTrue(!restored.getAttribute(Attributes.MAX_HEALTH).hasModifier(HEALTH),
+                        "Repeated joins discard the later day's saved modifier");
+                close(helper, MonsterDayScaling.attackMultiplier(restored), 1D,
+                        "After a clock rollback, a loaded mob attacks with the earlier day's damage");
             }
             set(helper, 65L);
             Mob legacy = mob(helper, EntityType.ZOMBIE); legacy.setHealth(5F);
             CompoundTag unscaled = new CompoundTag(); legacy.saveWithoutId(unscaled);
             Mob old = mob(helper, EntityType.ZOMBIE); old.load(unscaled);
             MonsterDayScaling.join(new EntityJoinLevelEvent(old, helper.getLevel(), true));
-            health(helper, old, 26.912F, 6.728F);
+            health(helper, old, 32.8F, 8.2F);
             helper.assertTrue(old.getPersistentData().getCompound(MonsterDayScaling.DATA_KEY).getInt("version") > 0,
                     "First adoption of an old save writes a versioned day snapshot without healing it full");
         }
@@ -184,21 +193,28 @@ public final class MonsterDayScalingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void oneFullEntityTickWindowUpdatesExistingMonstersAfterTheHighestDayChanges(GameTestHelper helper) {
+    public static void entityTickUpdatesExistingMonstersWhenTheCurrentDayChangesInBothDirections(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 1L);
             Mob monster = mob(helper, EntityType.ZOMBIE); MonsterDayScaling.refresh(monster); monster.setHealth(10F);
-            set(helper, 65L);
-            int transitions = 0; float previous = monster.getMaxHealth();
-            for (int tick = 1; tick <= 20; tick++) {
-                monster.tickCount = tick;
-                NeoForge.EVENT_BUS.post(new EntityTickEvent.Post(monster));
-                if (monster.getMaxHealth() != previous) transitions++;
-                previous = monster.getMaxHealth();
+            for (long day : new long[]{65L, 1L}) {
+                set(helper, day);
+                int transitions = 0;
+                float previous = monster.getMaxHealth();
+                for (int tick = 0; tick < 20; tick++) {
+                    monster.tickCount++;
+                    NeoForge.EVENT_BUS.post(new EntityTickEvent.Post(monster));
+                    if (monster.getMaxHealth() != previous) transitions++;
+                    previous = monster.getMaxHealth();
+                }
+                if (day == 65L) {
+                    health(helper, monster, 32.8F, 16.4F);
+                    modifier(helper, monster, .64D);
+                } else {
+                    health(helper, monster, 20F, 10F);
+                }
+                helper.assertValueEqual(transitions, 1, "Each full native entity-post-tick window updates the existing mob once");
             }
-            health(helper, monster, 26.912F, 13.456F);
-            helper.assertValueEqual(transitions, 1, "A full native entity-post-tick window updates the existing mob once");
-            modifier(helper, monster, .3456D);
         }
         helper.succeed();
     }
@@ -211,7 +227,7 @@ public final class MonsterDayScalingGameTests {
                 Mob bat = mob(helper, MiteMobs.type(kind)); float maximum = bat.getMaxHealth();
                 helper.assertTrue(MonsterDayScaling.handles(bat), "MITE attacking ambient bat is part of hostile growth: " + kind);
                 MonsterDayScaling.refresh(bat);
-                float grown = (maximum + 3.2F) * 1.16F;
+                float grown = (float)MonsterGrowthRules.health(65L, maximum, false, MonsterGrowthRules.DEFAULTS, 1D);
                 health(helper, bat, grown, grown);
             }
             for (EntityType<?> type : List.of(EntityType.COW, EntityType.WOLF, EntityType.BAT, MiteMobs.type(MobKind.DIRE_WOLF))) {
@@ -237,12 +253,16 @@ public final class MonsterDayScalingGameTests {
             Arrow arrow = EntityType.ARROW.create(helper.getLevel());
             helper.assertTrue(arrow != null, "Native arrow source exists"); arrow.setOwner(attacker);
             hit(helper, target, target.damageSources().arrow(arrow, attacker), 20F, 20F);
+            hit(helper, target, target.damageSources().arrow(arrow, attacker), 6F, 6F);
             set(helper, 2L);
             hit(helper, target, target.damageSources().arrow(arrow, attacker), 20F, 20.1F);
+            hit(helper, target, target.damageSources().arrow(arrow, attacker), 6F, 6.1F);
             set(helper, 65L);
             for (DamageSource source : List.of(target.damageSources().mobAttack(attacker), target.damageSources().arrow(arrow, attacker),
-                    target.damageSources().explosion(attacker, attacker), target.damageSources().indirectMagic(arrow, attacker)))
+                    target.damageSources().explosion(attacker, attacker), target.damageSources().indirectMagic(arrow, attacker))) {
                 hit(helper, target, source, 20F, 26.912F);
+                hit(helper, target, source, 6F, 12.4F);
+            }
             set(helper, 97L);
             hit(helper, target, target.damageSources().arrow(arrow, attacker), 20F, 31.21792F);
             helper.assertTrue(!attacker.getAttribute(Attributes.ATTACK_DAMAGE).hasModifier(HEALTH), "No health multiplier is installed on attack damage");
@@ -292,12 +312,13 @@ public final class MonsterDayScalingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void recordedAttackerDaySurvivesClockRollbackAndCanceledIncomingDamageRemainsCanceled(GameTestHelper helper) {
+    public static void existingAttackersFollowClockRollbackAndCanceledIncomingDamageRemainsCanceled(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             set(helper, 65L);
             Mob attacker = mob(helper, EntityType.ZOMBIE), target = cow(helper);
-            MonsterDayScaling.refresh(attacker); set(helper, 1L);
             hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 26.912F);
+            MonsterDayScaling.refresh(attacker); set(helper, 1L);
+            hit(helper, target, target.damageSources().mobAttack(attacker), 20F, 20F);
             LivingIncomingDamageEvent canceled = new LivingIncomingDamageEvent(target,
                     new DamageContainer(target.damageSources().mobAttack(attacker), 20F));
             canceled.setCanceled(true); MonsterDayScaling.damage(canceled);
@@ -306,6 +327,37 @@ public final class MonsterDayScalingGameTests {
                     new DamageContainer(target.damageSources().mobAttack(attacker), Float.MAX_VALUE));
             MonsterDayScaling.damage(huge);
             helper.assertTrue(Float.isFinite(huge.getAmount()), "Scaled damage remains finite at the float storage limit");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void nativeArrowImpactUsesTheCurrentDayEvenWhenTheShooterWasAlreadyLoaded(GameTestHelper helper) throws ReflectiveOperationException {
+        try (Progress ignored = new Progress(helper)) {
+            set(helper, 1L);
+            Mob shooter = mob(helper, EntityType.SKELETON), target = cow(helper);
+            MonsterDayScaling.refresh(shooter);
+            Method impact = AbstractArrow.class.getDeclaredMethod("onHitEntity", EntityHitResult.class);
+            impact.setAccessible(true);
+            long[] days = {1L, 2L, 65L, 1L};
+            double[] expected = {2D, 2.1D, 8.4D, 2D};
+            for (int index = 0; index < days.length; index++) {
+                set(helper, days[index]);
+                Arrow arrow = new Arrow(helper.getLevel(), shooter, new ItemStack(Items.ARROW), null);
+                arrow.setDeltaMovement(1D, 0D, 0D);
+                target.setHealth(target.getMaxHealth());
+                target.invulnerableTime = 0;
+                impact.invoke(arrow, new EntityHitResult(target));
+                close(helper, target.getMaxHealth() - target.getHealth(), expected[index],
+                        "A real two-damage arrow gains one tenth per day until twenty and follows clock rollback");
+                arrow.discard();
+            }
+            set(helper, 65L);
+            Arrow projectile = new Arrow(helper.getLevel(), shooter, new ItemStack(Items.ARROW), null);
+            var type = helper.getLevel().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.ARROW);
+            hit(helper, target, new DamageSource(type, projectile, null), 20F, 26.912F);
+            hit(helper, target, new DamageSource(type, projectile, null), 6F, 12.4F);
+            projectile.discard();
         }
         helper.succeed();
     }
@@ -339,8 +391,8 @@ public final class MonsterDayScalingGameTests {
                     helper.assertTrue(attacker.doHurtTarget(target), "Actual zombie melee with the current held stack succeeds");
                     helper.assertValueEqual(calls[0], 1, "A native melee strike enters the common incoming-damage pipeline once");
                     double weaponDelta = combined - bareDamage;
-                    double expected = 6D * 1.3456D + weaponDelta;
-                    close(helper, raw[0], expected, "Two blood-moon settlements grow innate damage before the weapon bonus");
+                    double expected = 12.4D + weaponDelta;
+                    close(helper, raw[0], expected, "The twenty reference adds 6.4 before the weapon bonus across two settlements");
                     close(helper, incoming[0], expected, "A real melee transaction is not multiplied again at the common incoming boundary");
                     close(helper, 200F - target.getHealth(), expected, "Native melee health loss includes grown innate attack plus weapon damage");
                     close(helper, MonsterDayScaling.attackMultiplier(attacker), 1.3456D, "Day 65 uses two compounded 16-percent increments");
@@ -353,6 +405,28 @@ public final class MonsterDayScalingGameTests {
                 helper.assertTrue(attacker.doHurtTarget(target), "A sword can offset a negative command-supplied attack base");
                 close(helper, incoming[0], weaponAdjusted, "Native combat still combines the negative base with the weapon");
             } finally { NeoForge.EVENT_BUS.unregister(capture); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void lowInnateAttackUsesTheAttainedValueAfterCrossingTwentyAndRewinds(GameTestHelper helper) {
+        try (Progress ignored = new Progress(helper)) {
+            Zombie attacker = (Zombie)mob(helper, EntityType.ZOMBIE);
+            Mob target = cow(helper);
+            var attack = attacker.getAttribute(Attributes.ATTACK_DAMAGE);
+            attack.setBaseValue(19.95D);
+            long[] days = {1L, 2L, 3L, 1L};
+            double[] expected = {19.95D, 20.05D, 20.15025D, 19.95D};
+            for (int index = 0; index < days.length; index++) {
+                set(helper, days[index]);
+                target.setHealth(target.getMaxHealth());
+                target.invulnerableTime = 0;
+                helper.assertTrue(attacker.doHurtTarget(target), "The same native attacker can strike on day " + days[index]);
+                close(helper, target.getMaxHealth() - target.getHealth(), expected[index],
+                        "Innate damage follows the threshold transition and calendar rewind on day " + days[index]);
+                close(helper, attack.getBaseValue(), 19.95D, "Calendar damage preserves the native attribute basis");
+            }
         }
         helper.succeed();
     }
@@ -397,9 +471,11 @@ public final class MonsterDayScalingGameTests {
                 try {
                     for (DamageSource source : List.of(target.damageSources().mobAttack(boss), target.damageSources().arrow(arrow, boss),
                             target.damageSources().explosion(boss, boss), target.damageSources().indirectMagic(arrow, boss))) {
-                        LivingIncomingDamageEvent event = new LivingIncomingDamageEvent(target, new DamageContainer(source, 20F));
-                        MonsterDayScaling.damage(event);
-                        close(helper, event.getAmount(), 20F, "Boss-owned incoming damage receives no calendar multiplier: " + source);
+                        for (float raw : new float[]{7.5F, 20F}) {
+                            LivingIncomingDamageEvent event = new LivingIncomingDamageEvent(target, new DamageContainer(source, raw));
+                            MonsterDayScaling.damage(event);
+                            close(helper, event.getAmount(), raw, "Boss-owned damage retains its native value: " + source);
+                        }
                     }
                 } finally { arrow.discard(); boss.discard(); }
             }
@@ -493,14 +569,16 @@ public final class MonsterDayScalingGameTests {
             Mob lord = (Mob)EntityType.loadEntityRecursive(saved, helper.getLevel(), Function.identity());
             helper.assertTrue(lord != null && MonsterDayScaling.handles(lord), "The wounded lord loads as a growth participant: " + type);
             for (int repeat = 0; repeat < 2; repeat++) MonsterDayScaling.join(new EntityJoinLevelEvent(lord, helper.getLevel(), true));
-            float grownMaximum = (nativeMaximum + 3.2F) * 1.16F;
+            float grownMaximum = (float)MonsterGrowthRules.health(65L, nativeMaximum, false, MonsterGrowthRules.DEFAULTS, 1D);
             health(helper, lord, grownMaximum, grownMaximum / 2F);
             helper.assertValueEqual(lord.getPersistentData().getCompound(MonsterDayScaling.DATA_KEY).getLong("day"), 65L,
-                    "The lord adopts the world's historical day: " + type);
+                    "The lord adopts the world's current day: " + type);
             double nativeAttack = lord.getAttributeBaseValue(Attributes.ATTACK_DAMAGE);
+            helper.assertTrue(nativeAttack > 0D && nativeAttack + 6.4D < 20D,
+                    "The lord's innate attack stays below twenty throughout this fixture: " + type);
             Mob target = cow(helper);
             helper.assertTrue(lord.doHurtTarget(target), "The lord completes a native melee strike: " + type);
-            close(helper, target.getMaxHealth() - target.getHealth(), nativeAttack * 1.3456D, "Day 65 lord melee health loss: " + type);
+            close(helper, target.getMaxHealth() - target.getHealth(), nativeAttack + 6.4D, "Day 65 lord melee health loss: " + type);
             hit(helper, target, target.damageSources().explosion(lord, lord), 20F, 26.912F);
         } finally {
             bind.invoke(holder, originalTags);
@@ -518,11 +596,11 @@ public final class MonsterDayScalingGameTests {
                     "Initial six-health skeletons are not raised to twenty or assigned a nonneutral date modifier");
             skeleton.setHealth(3F);
             set(helper, 33L);
-            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 9.2F, 4.6F); modifier(helper, skeleton, 3.2D / 6D);
+            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 12.4F, 6.2F); modifier(helper, skeleton, 6.4D / 6D);
             set(helper, 65L);
-            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 10.672F, 5.336F); modifier(helper, skeleton, 4.672D / 6D);
+            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 18.8F, 9.4F); modifier(helper, skeleton, 12.8D / 6D);
             for (int repeat = 0; repeat < 20; repeat++) MonsterDayScaling.refresh(skeleton);
-            health(helper, skeleton, 10.672F, 5.336F);
+            health(helper, skeleton, 18.8F, 9.4F);
             CompoundTag saved = new CompoundTag(); skeleton.saveWithoutId(saved);
             saved.putString("id", "minecraft:skeleton");
             set(helper, 1L);
@@ -530,8 +608,13 @@ public final class MonsterDayScalingGameTests {
             helper.assertTrue(restored != null, "A real native skeleton reloads with its date and ordinary max-health attributes");
             for (boolean loaded : new boolean[]{true, false, true}) {
                 MonsterDayScaling.join(new EntityJoinLevelEvent(restored, helper.getLevel(), loaded));
-                health(helper, restored, 10.672F, 5.336F); modifier(helper, restored, 4.672D / 6D);
+                health(helper, restored, 6F, 3F);
+                helper.assertTrue(!restored.getAttribute(Attributes.MAX_HEALTH).hasModifier(HEALTH),
+                        "The restored skeleton removes its saved growth when the date goes back to day one");
             }
+            set(helper, 65L);
+            MonsterDayScaling.refresh(restored);
+            health(helper, restored, 18.8F, 9.4F); modifier(helper, restored, 12.8D / 6D);
             close(helper, restored.getAttributeBaseValue(Attributes.MAX_HEALTH), 6D,
                     "The detached growth calculation preserves the original six-health base across save and read");
         }
@@ -539,7 +622,7 @@ public final class MonsterDayScalingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void skeletonsAndOtherMonstersShareTwentyReferenceAcrossDifferentNativeHealth(GameTestHelper helper) {
+    public static void skeletonsAndOtherMonstersShareFortyReferenceUntilTheyReachIt(GameTestHelper helper) {
         try (Progress ignored = new Progress(helper)) {
             for (double basis : new double[]{20D, 30D}) {
                 set(helper, 1L);
@@ -547,9 +630,9 @@ public final class MonsterDayScalingGameTests {
                 skeleton.getAttribute(Attributes.MAX_HEALTH).setBaseValue(basis); skeleton.setHealth((float)basis);
                 MonsterDayScaling.refresh(skeleton); health(helper, skeleton, (float)basis, (float)basis);
                 set(helper, 33L);
-                MonsterDayScaling.refresh(skeleton); health(helper, skeleton, basis == 20D ? 23.2F : 33.2F, basis == 20D ? 23.2F : 33.2F);
+                MonsterDayScaling.refresh(skeleton); health(helper, skeleton, (float)basis + 6.4F, (float)basis + 6.4F);
                 set(helper, 65L);
-                MonsterDayScaling.refresh(skeleton); health(helper, skeleton, basis == 20D ? 26.912F : 38.512F, basis == 20D ? 26.912F : 38.512F);
+                MonsterDayScaling.refresh(skeleton); health(helper, skeleton, (float)basis + 12.8F, (float)basis + 12.8F);
                 close(helper, skeleton.getAttributeBaseValue(Attributes.MAX_HEALTH), basis,
                         "The greater skeleton basis is not replaced by an unconditional twenty-health value");
             }
@@ -558,10 +641,10 @@ public final class MonsterDayScalingGameTests {
             smallZombie.getAttribute(Attributes.MAX_HEALTH).setBaseValue(6D); smallZombie.setHealth(3F);
             MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 6F, 3F);
             set(helper, 33L);
-            MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 9.2F, 4.6F);
+            MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 12.4F, 6.2F);
             set(helper, 65L);
-            MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 10.672F, 5.336F);
-            modifier(helper, smallZombie, 4.672D / 6D);
+            MonsterDayScaling.refresh(smallZombie); health(helper, smallZombie, 18.8F, 9.4F);
+            modifier(helper, smallZombie, 12.8D / 6D);
         }
         helper.succeed();
     }
@@ -576,11 +659,11 @@ public final class MonsterDayScalingGameTests {
             skeleton.setHealth(15F);
             health(helper, skeleton, 30F, 15F);
             set(helper, 33L);
-            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 33.2F, 16.6F); modifier(helper, skeleton, 3.2D / 30D);
+            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 36.4F, 18.2F); modifier(helper, skeleton, 6.4D / 30D);
             for (int repeat = 0; repeat < 20; repeat++) MonsterDayScaling.refresh(skeleton);
-            health(helper, skeleton, 33.2F, 16.6F);
+            health(helper, skeleton, 36.4F, 18.2F);
             set(helper, 65L);
-            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 38.512F, 19.256F); modifier(helper, skeleton, 8.512D / 30D);
+            MonsterDayScaling.refresh(skeleton); health(helper, skeleton, 42.8F, 21.4F); modifier(helper, skeleton, 12.8D / 30D);
             helper.assertValueEqual(skeleton.getAttribute(Attributes.MAX_HEALTH).getModifiers().size(), 2,
                     "The actual thirty-health basis retains one independent native modifier plus one date modifier");
             close(helper, skeleton.getAttribute(Attributes.MAX_HEALTH).getModifier(LEADER).amount(), 4D,

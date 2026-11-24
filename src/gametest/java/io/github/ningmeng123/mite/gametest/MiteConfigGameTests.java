@@ -248,7 +248,7 @@ public final class MiteConfigGameTests {
             String healthBloodMoonFormula = "base + reference * rate * days + 1";
             String damageBloodMoonFormula = "base + reference * rate * days + 2";
             var growth = new MonsterGrowthRules.Settings(31D, 5D, 27D, .0075D, .005D, customFormula, customFormula,
-                    healthBloodMoonFormula, damageBloodMoonFormula);
+                    healthBloodMoonFormula, damageBloodMoonFormula, 45D);
             helper.assertTrue(MiteConfig.saveMonsterGrowth(growth).valid(), "An executable custom formula and its actual bases and rates can be saved");
             helper.assertTrue(MiteConfig.saveUnderworldOreGeneration(candidates, chancePercent), "Valid actual generation settings can be saved together");
             close(helper, MiteConfig.underworldOreCandidates(R196OreRules.Kind.COPPER), 720D, "Migrating the old copper multiplier preserves its actual candidate count");
@@ -260,6 +260,8 @@ public final class MiteConfigGameTests {
             close(helper, published.oreCandidates().get("IRON"), 123.5D, "The immutable snapshot carries custom fractional counts");
             close(helper, published.oreChances().get("COPPER"), .375D, "The immutable snapshot carries custom probabilities");
             close(helper, published.monsterSettings().healthBase(), 31D, "The published monster revision carries the configured health base");
+            close(helper, published.monsterSettings().minimumHealthReference(), 45D,
+                    "The published revision carries the configured low-health reference");
             close(helper, published.monsterSettings().damageRate(), .005D, "The published monster revision converts daily percentages to formula fractions");
             helper.assertValueEqual(published.monsterSettings().healthFormula(), customFormula, "The published monster revision retains the custom formula");
             helper.assertValueEqual(published.monsterSettings().healthBloodMoonFormula(), healthBloodMoonFormula,
@@ -280,6 +282,8 @@ public final class MiteConfigGameTests {
                 close(helper, MiteConfig.underworldOreCandidates(R196OreRules.Kind.COPPER), 720D, "Remote runtime sees actual copper candidates without multiplying twice");
                 close(helper, MiteConfig.underworldOreCandidates(R196OreRules.Kind.IRON), 123.5D, "Remote runtime sees fractional iron candidates");
                 close(helper, MiteConfig.underworldOrePassChance(R196OreRules.Kind.COPPER), .375D, "Remote runtime sees custom copper probability");
+                close(helper, MiteConfig.monsterGrowthSettings().minimumHealthReference(), 45D,
+                        "The live remote snapshot preserves the configured low-health reference");
                 helper.assertValueEqual(MiteConfig.monsterGrowthSettings().healthBloodMoonFormula(), healthBloodMoonFormula,
                         "Remote formula previews use the server's independent health settlement expression");
                 helper.assertValueEqual(MiteConfig.monsterGrowthSettings().damageBloodMoonFormula(), damageBloodMoonFormula,
@@ -298,6 +302,7 @@ public final class MiteConfigGameTests {
             String healthFormula = "base + reference * rate * days * 2";
             String damageFormula = "base + reference * rate * days * 3";
             MiteConfig.MONSTER_HEALTH_BASE.set(0D);
+            MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE.set(0D);
             MiteConfig.MONSTER_DAMAGE_BASE.set(0D);
             MiteConfig.MONSTER_SKELETON_REFERENCE.set(20D);
             MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.set(.5D);
@@ -365,14 +370,16 @@ public final class MiteConfigGameTests {
 
     @GameTest(template = "empty")
     public static void commonSettingsReachActualMonsterScalingAndPlayerMeleeCalculations(GameTestHelper helper) {
+        var overworld = helper.getLevel().getServer().overworld();
+        long previousTime = overworld.getDayTime();
         try (var ignored = new Settings()) {
+            long day = 33L;
+            overworld.setDayTime((day - 1L) * 24_000L);
             var monster = EntityType.ZOMBIE.create(helper.getLevel());
             helper.assertTrue(monster != null, "The native zombie fixture can be constructed");
             monster.setNoAi(true);
-            var progress = monster.getPersistentData().getCompound(MonsterDayScaling.DATA_KEY);
-            progress.putLong("day", 33L);
-            monster.getPersistentData().put(MonsterDayScaling.DATA_KEY, progress);
             MiteConfig.MONSTER_GROWTH.set(0D);
+            MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE.set(0D);
             MiteConfig.MONSTER_HEALTH_GROWTH.set(3D);
             MiteConfig.MONSTER_DAMAGE_GROWTH.set(4D);
             MiteConfig.WEAPON_REACH_MULTIPLIER.set(2D);
@@ -385,7 +392,6 @@ public final class MiteConfigGameTests {
             MiteConfig.MONSTER_GROWTH.set(2D);
             MiteConfig.refreshEnchantmentRules();
             MonsterDayScaling.refresh(monster);
-            long day = monster.getPersistentData().getCompound(MonsterDayScaling.DATA_KEY).getLong("day");
             close(helper, monster.getMaxHealth(), Math.min(1024D, 20D * MonsterDayScalingRules.healthMultiplier(day, 6D)),
                     "Overall and health growth multiply in the runtime attribute update");
             close(helper, MonsterDayScaling.attackMultiplier(monster), MonsterDayScalingRules.damageMultiplier(day, 8D),
@@ -405,6 +411,8 @@ public final class MiteConfigGameTests {
             player.getAbilities().instabuild = true;
             close(helper, SourcePlayerReach.meleeReach(player, monster), 5D, "Creative reach retains its vanilla-style fixed range");
             monster.discard();
+        } finally {
+            overworld.setDayTime(previousTime);
         }
         helper.succeed();
     }
@@ -415,6 +423,7 @@ public final class MiteConfigGameTests {
 
     private static List<Object> monsterEditorValues() {
         return List.of(MiteConfig.MONSTER_HEALTH_BASE.get(), MiteConfig.MONSTER_DAMAGE_BASE.get(), MiteConfig.MONSTER_SKELETON_REFERENCE.get(),
+                MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE.get(),
                 MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.get(), MiteConfig.MONSTER_DAMAGE_DAILY_PERCENT.get(),
                 MiteConfig.MONSTER_HEALTH_FORMULA.get(), MiteConfig.MONSTER_DAMAGE_FORMULA.get(),
                 MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA.get(), MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.get());
@@ -431,6 +440,7 @@ public final class MiteConfigGameTests {
         private final Map<R196OreRules.Kind, Double> surfaceMultipliers = new EnumMap<>(R196OreRules.Kind.class);
         private final double healthBase = MiteConfig.MONSTER_HEALTH_BASE.get(), damageBase = MiteConfig.MONSTER_DAMAGE_BASE.get();
         private final double skeletonReference = MiteConfig.MONSTER_SKELETON_REFERENCE.get();
+        private final double minimumHealthReference = MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE.get();
         private final double healthPercent = MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.get(), damagePercent = MiteConfig.MONSTER_DAMAGE_DAILY_PERCENT.get();
         private final String healthFormula = MiteConfig.MONSTER_HEALTH_FORMULA.get(), damageFormula = MiteConfig.MONSTER_DAMAGE_FORMULA.get();
         private final String healthBloodMoonFormula = MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA.get();
@@ -462,6 +472,7 @@ public final class MiteConfigGameTests {
             MiteConfig.MONSTER_HEALTH_BASE.set(healthBase);
             MiteConfig.MONSTER_DAMAGE_BASE.set(damageBase);
             MiteConfig.MONSTER_SKELETON_REFERENCE.set(skeletonReference);
+            MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE.set(minimumHealthReference);
             MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.set(healthPercent);
             MiteConfig.MONSTER_DAMAGE_DAILY_PERCENT.set(damagePercent);
             MiteConfig.MONSTER_HEALTH_FORMULA.set(healthFormula);

@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.combat;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.entity.MobAttackBoundsAccess;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.SourcePlayerCombatRules;
@@ -12,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -32,10 +34,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-/** Armed monsters retain their old limits and cannot out-reach equivalent survival weapons. @author NingMeng123 */
+/** Shared weapon reach bonus and attack limits for armed monsters. @author NingMeng123 */
 @EventBusSubscriber(modid = Mite.MOD_ID)
 public final class MobWeaponReach {
     public static final double MARGIN = .2D;
+    private static final double UNARMED_SOURCE_REACH = 1.5D;
     private static final ResourceLocation LEGACY_TOOL_REACH = ResourceLocation.fromNamespaceAndPath(Mite.MOD_ID, "tool_reach");
 
     private MobWeaponReach() {}
@@ -77,10 +80,32 @@ public final class MobWeaponReach {
     public static double sourceLimit(Mob mob, Entity target, double feetY) {
         double base = SourcePlayerReach.baseMeleeReach(mob.getMainHandItem(), itemRange(mob));
         if (!Double.isFinite(base) || base <= 0D && SimplySwordsCompat.definition(mob.getMainHandItem()) != null) return 0D;
-        double playerReach = SourcePlayerCombatRules.meleeReach(false, feetY - target.getY(), base - 1.5D,
+        double playerReach = SourcePlayerCombatRules.meleeReach(false, feetY - target.getY(), base - UNARMED_SOURCE_REACH,
                 target instanceof AbstractHurtingProjectile, 0D, MiteConfig.weaponReachMultiplier(),
                 MiteConfig.weaponReachReduction(), MiteConfig.heightReachPenaltyEnabled());
         return Double.isFinite(playerReach) ? Math.max(0D, playerReach - MARGIN) : 0D;
+    }
+
+    public static double weaponBonus(Mob mob) {
+        if (!applies(mob)) return 0D;
+        double reach = SourcePlayerReach.baseMeleeReach(mob.getMainHandItem(), itemRange(mob));
+        return Double.isFinite(reach) ? Math.max(0D, reach - UNARMED_SOURCE_REACH) / 3D : 0D;
+    }
+
+    public static double sourceMeleeRange(Mob mob) {
+        return UNARMED_SOURCE_REACH + weaponBonus(mob);
+    }
+
+    /** Add horizontal reach to the native volume while preserving its vertical overlap requirement. */
+    public static boolean nativeRangeAllows(Mob mob, LivingEntity target, Vec3 feet) {
+        var attack = ((MobAttackBoundsAccess)mob).mite$attackBoundingBox().move(feet.subtract(mob.position()));
+        var hitbox = target.getHitbox();
+        if (attack.intersects(hitbox)) return true;
+        double bonus = weaponBonus(mob);
+        if (bonus <= 0D || attack.minY >= hitbox.maxY || attack.maxY <= hitbox.minY) return false;
+        double dx = Math.max(0D, Math.max(attack.minX - hitbox.maxX, hitbox.minX - attack.maxX));
+        double dz = Math.max(0D, Math.max(attack.minZ - hitbox.maxZ, hitbox.minZ - attack.maxZ));
+        return dx * dx + dz * dz <= bonus * bonus;
     }
 
     public static boolean canReachFrom(Mob mob, Entity target, Vec3 feet) {

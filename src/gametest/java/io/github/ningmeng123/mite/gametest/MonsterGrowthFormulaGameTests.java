@@ -3,7 +3,6 @@ package io.github.ningmeng123.mite.gametest;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MonsterDayScaling;
 import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
-import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,6 +30,9 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder("mite_config")
 @PrefixGameTestTemplate(false)
 public final class MonsterGrowthFormulaGameTests {
+    private static final MonsterGrowthRules.Settings WITHOUT_MINIMUM = new MonsterGrowthRules.Settings(
+            20D, 0D, 20D, .005D, .005D, MonsterGrowthRules.DEFAULT_FORMULA, MonsterGrowthRules.DEFAULT_FORMULA);
+
     private MonsterGrowthFormulaGameTests() {}
 
     @GameTest(template = "empty")
@@ -63,15 +65,15 @@ public final class MonsterGrowthFormulaGameTests {
             NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, LivingIncomingDamageEvent.class, capture);
             try {
                 helper.assertTrue(attacker.doHurtTarget(target), "A real native zombie melee transaction succeeds");
-                close(helper, raw[0], 6.48D + weapon, "The configured quarter-percent rate grows the six-damage body before adding the sword bonus");
-                close(helper, 200D - target.getHealth(), 6.48D + weapon, "The damage transaction grows innate damage once");
+                close(helper, raw[0], 7.6D + weapon, "The configured quarter-percent rate uses twenty to grow the six-damage body before adding the sword bonus");
+                close(helper, 200D - target.getHealth(), 7.6D + weapon, "The damage transaction grows innate damage once");
             } finally { NeoForge.EVENT_BUS.unregister(capture); }
             close(helper, attacker.getAttributeValue(Attributes.ATTACK_DAMAGE), nativeAttack, "The actual melee attribute remains unchanged");
-            close(helper, MonsterDayScaling.attackMultiplier(attacker), 1.08D, "Other owned attacks receive relative growth independent of the configured melee base");
+            close(helper, MonsterDayScaling.scaledOwnedDamage(attacker, 2.5F), 4.1D, "Other owned attacks grow from their own damage independent of the configured melee base");
 
             apply(MonsterGrowthRules.DEFAULTS);
             MonsterDayScaling.refresh(attacker);
-            close(helper, attacker.getMaxHealth(), 23.2D, "Restoring settings recomputes from the native basis without retaining the configured override");
+            close(helper, attacker.getMaxHealth(), 26.4D, "Restoring settings recomputes the native basis with the default minimum reference");
         }
         helper.succeed();
     }
@@ -118,7 +120,7 @@ public final class MonsterGrowthFormulaGameTests {
     @GameTest(template = "empty")
     public static void blueMoonKeepsTheOldBasisAndTheFollowingBloodMoonResetsIt(GameTestHelper helper) {
         try (var ignored = new Fixture(helper)) {
-            apply(MonsterGrowthRules.DEFAULTS);
+            apply(WITHOUT_MINIMUM);
             day(helper, 129L);
             Mob monster = mob(helper, EntityType.ZOMBIE);
             MonsterDayScaling.refresh(monster);
@@ -146,7 +148,7 @@ public final class MonsterGrowthFormulaGameTests {
             MonsterDayScaling.refresh(monster);
             close(helper, monster.getMaxHealth(), 30D,
                     "The first blood moon installs the independent health settlement result as the new basis");
-            close(helper, MonsterDayScaling.attackMultiplier(monster), 2D,
+            close(helper, MonsterDayScaling.scaledOwnedDamage(monster, 5F), 10D,
                     "The first blood moon doubles the attack basis using the custom settlement expression");
             day(helper, 34L);
             MonsterDayScaling.refresh(monster);
@@ -156,13 +158,13 @@ public final class MonsterGrowthFormulaGameTests {
             MonsterDayScaling.refresh(monster);
             close(helper, monster.getMaxHealth(), 58D,
                     "The blue moon leaves three completed blood settlements and thirty-two days of period growth");
-            close(helper, MonsterDayScaling.attackMultiplier(monster), 8.64D,
+            close(helper, MonsterDayScaling.scaledOwnedDamage(monster, 5F), 43.2D,
                     "Daily attack growth continues from the third blood moon across the blue moon");
             day(helper, 161L);
             MonsterDayScaling.refresh(monster);
             close(helper, monster.getMaxHealth(), 60D,
                     "The next blood moon applies the custom health settlement after the extended period");
-            close(helper, MonsterDayScaling.attackMultiplier(monster), 16D,
+            close(helper, MonsterDayScaling.scaledOwnedDamage(monster, 5F), 80D,
                     "The following blood moon doubles the attack basis once after the extended cycle");
         }
         helper.succeed();
@@ -178,12 +180,45 @@ public final class MonsterGrowthFormulaGameTests {
             day(helper, 201L);
             Mob monster = mob(helper, EntityType.ZOMBIE);
             for (int repeat = 0; repeat < 5; repeat++) MonsterDayScaling.refresh(monster);
-            double expected = MonsterGrowthRules.health(201L, 20D, false, MonsterGrowthRules.DEFAULTS, 1D);
+            double expected = MonsterGrowthRules.health(201L, 20D, false, WITHOUT_MINIMUM, 1D);
             close(helper, monster.getMaxHealth(), expected, "A division by zero for the real date falls back to the default growth");
             helper.assertTrue(Float.isFinite(monster.getHealth()) && monster.getHealth() > 0F,
                     "A late formula domain error cannot install NaN, infinity or nonpositive monster health");
             helper.assertValueEqual(monster.getAttribute(Attributes.MAX_HEALTH).getModifiers().size(), 1,
                     "Repeated fallback refreshes retain one calendar modifier");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void minimumHealthReferenceKeepsNativeHealthThenRebasesAtTheThreshold(GameTestHelper helper) {
+        try (var ignored = new Fixture(helper)) {
+            apply(MonsterGrowthRules.DEFAULTS);
+            day(helper, 1L);
+            Mob skeleton = mob(helper, EntityType.SKELETON);
+            Mob zombie = mob(helper, EntityType.ZOMBIE);
+            zombie.getAttribute(Attributes.MAX_HEALTH).setBaseValue(39.9D);
+            zombie.setHealth(19.95F);
+            MonsterDayScaling.refresh(skeleton);
+            MonsterDayScaling.refresh(zombie);
+            close(helper, skeleton.getMaxHealth(), 6D, "The minimum reference does not grant starting health");
+            close(helper, zombie.getMaxHealth(), 39.9D, "A monster close to the threshold retains its starting maximum");
+
+            day(helper, 2L);
+            MonsterDayScaling.refresh(skeleton);
+            MonsterDayScaling.refresh(zombie);
+            close(helper, skeleton.getMaxHealth(), 6.2D, "Low native health grows using the forty-point reference");
+            close(helper, zombie.getMaxHealth(), 40.1D, "The first increase can cross the threshold");
+
+            day(helper, 3L);
+            MonsterDayScaling.refresh(zombie);
+            close(helper, zombie.getMaxHealth(), 40.3005D, "After crossing, regular growth uses the attained health");
+            close(helper, zombie.getHealth(), 20.15025D, "Switching growth references preserves the wounded fraction");
+
+            day(helper, 2L);
+            apply(WITHOUT_MINIMUM);
+            MonsterDayScaling.refresh(skeleton);
+            close(helper, skeleton.getMaxHealth(), 6.1D, "A zero setting restores the regular first-period reference");
         }
         helper.succeed();
     }
@@ -197,14 +232,14 @@ public final class MonsterGrowthFormulaGameTests {
     }
 
     private static void day(GameTestHelper helper, long day) {
-        helper.getLevel().getServer().overworld().setDayTime(6000L);
-        BloodMoonInvasionData.get(helper.getLevel()).restoreProgress(day);
+        helper.getLevel().getServer().overworld().setDayTime((day - 1L) * 24_000L + 6_000L);
     }
 
     private static void apply(MonsterGrowthRules.Settings settings) {
         MiteConfig.MONSTER_HEALTH_BASE.set(settings.healthBase());
         MiteConfig.MONSTER_DAMAGE_BASE.set(settings.damageBase());
         MiteConfig.MONSTER_SKELETON_REFERENCE.set(settings.skeletonReference());
+        MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE.set(settings.minimumHealthReference());
         MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.set(settings.healthRate() * 100D);
         MiteConfig.MONSTER_DAMAGE_DAILY_PERCENT.set(settings.damageRate() * 100D);
         MiteConfig.MONSTER_HEALTH_FORMULA.set(settings.healthFormula());
@@ -226,12 +261,11 @@ public final class MonsterGrowthFormulaGameTests {
         private final String healthBloodMoonFormula = MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA.get();
         private final String damageBloodMoonFormula = MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.get();
         private final ServerLevel level;
-        private final long time, highest;
+        private final long time;
 
         private Fixture(GameTestHelper helper) {
             level = helper.getLevel().getServer().overworld();
             time = level.getDayTime();
-            highest = BloodMoonInvasionData.get(level).highestDay();
         }
 
         @Override public void close() {
@@ -243,7 +277,6 @@ public final class MonsterGrowthFormulaGameTests {
             MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.set(damageBloodMoonFormula);
             MiteConfig.refreshEnchantmentRules();
             level.setDayTime(time);
-            BloodMoonInvasionData.get(level).restoreProgress(highest);
         }
     }
 }

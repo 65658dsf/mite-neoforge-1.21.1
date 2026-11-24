@@ -65,6 +65,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
@@ -361,12 +362,16 @@ public final class R196MobSpawning {
             if (category == Category.MONSTER && level.dimension().equals(Level.NETHER) && structures.fortressMonsters == null)
                 entries.addAll(Tables.NETHER_MONSTERS);
         }
+        Holder<Biome> biome = level.getBiome(pos);
+        // The legacy Nether pool has no Endermen. Retain the warped forest's native habitat for them.
+        boolean warpedNetherForest = level.dimension().equals(Level.NETHER) && biome.is(Biomes.WARPED_FOREST);
         for (MobCategory vanilla : MobCategory.values()) if (category(vanilla) == category) {
-            // Keep native-only species in their actual biome or structure habitats in both presets.
+            // Keep native entries in their actual biome or structure habitats in both presets.
             var nativePool = vanilla == MobCategory.MONSTER && structures.fortressMonsters != null
                     ? structures.fortressMonsters.spawns()
-                    : level.getChunkSource().getGenerator().getMobsAt(level.getBiome(pos), level.structureManager(), vanilla, pos);
-            for (var value : nativePool.unwrap()) if (usesNativeSpawnEntries(value.type)) {
+                    : level.getChunkSource().getGenerator().getMobsAt(biome, level.structureManager(), vanilla, pos);
+            for (var value : nativePool.unwrap()) if (usesNativeSpawnEntries(value.type)
+                    || (warpedNetherForest && value.type == EntityType.ENDERMAN)) {
                 @SuppressWarnings("unchecked") EntityType<? extends Mob> type = (EntityType<? extends Mob>) value.type;
                 int pack = type == EntityType.PIGLIN_BRUTE ? value.maxCount : 4;
                 entries.add(new Entry(type, null, category, value.getWeight().asInt(), value.minCount, value.maxCount, pack, true));

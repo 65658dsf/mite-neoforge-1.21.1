@@ -647,18 +647,25 @@ public final class MonsterTargetMeleeGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void sourceMeleeUsesOnePointFiveAndHeldToolReach(GameTestHelper h) {
-        var zombie = mob(h, EntityType.ZOMBIE, 0, 0, 0);
-        var target = mob(h, EntityType.VILLAGER, 1.5, 0, 0);
-        h.assertTrue(SourceMeleeGoal.canStrike(zombie, target), "Unarmed source reach includes exactly 1.5");
-        target.setPos(zombie.getX() + 1.51, target.getY(), target.getZ());
-        h.assertFalse(SourceMeleeGoal.canStrike(zombie, target), "Unarmed source reach rejects 1.51");
-        zombie.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
-        target.setPos(zombie.getX() + 1.94, target.getY(), target.getZ());
-        h.assertTrue(SourceMeleeGoal.canStrike(zombie, target), "Source sword +.75 reach contributes only .75*.6 to mob reach");
-        target.setPos(zombie.getX() + 1.96, target.getY(), target.getZ());
-        h.assertFalse(SourceMeleeGoal.canStrike(zombie, target), "Sword mob reach is 1.95, not full player tool reach");
-        zombie.discard(); target.discard(); h.succeed();
+    public static void sourceMeleeUsesOnePointFiveAndOneThirdOfTheWeaponBonus(GameTestHelper h) {
+        try (var compatibility = new BetterCombatMobSettings(false)) {
+            var zombie = mob(h, EntityType.ZOMBIE, 0, 0, 0);
+            var target = mob(h, EntityType.VILLAGER, 1.5, 0, 0);
+            try {
+                h.assertTrue(SourceMeleeGoal.canStrike(zombie, target), "Unarmed source reach includes exactly 1.5 blocks");
+                target.setPos(zombie.getX() + 1.51, target.getY(), target.getZ());
+                h.assertFalse(SourceMeleeGoal.canStrike(zombie, target), "Unarmed source reach rejects 1.51 blocks");
+                zombie.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+                target.setPos(zombie.getX() + 1.75, target.getY(), target.getZ());
+                h.assertTrue(SourceMeleeGoal.canStrike(zombie, target), "The sword adds .25 blocks to source reach");
+                target.setPos(zombie.getX() + 1.76, target.getY(), target.getZ());
+                h.assertFalse(SourceMeleeGoal.canStrike(zombie, target), "Source sword reach rejects 1.76 blocks");
+            } finally {
+                zombie.discard();
+                target.discard();
+            }
+        }
+        h.succeed();
     }
 
     @GameTest(template = "empty")

@@ -64,7 +64,7 @@ public final class GameplayConfigEdits {
             }
             case "addon_spawning" -> MiteExtensions.policy().saveSpawningControls(
                     validateAddonSpawning(GSON.fromJson(object, VALUES)));
-            case "growth" -> validGrowthShape(object) && saveGrowth(GSON.fromJson(object, MonsterGrowthRules.Settings.class));
+            case "growth" -> saveGrowth(object);
             case "spawn_rates" -> {
                 if (!object.keySet().equals(Set.of("rates", "weights")) || !numericTree(object, false)) yield false;
                 var draft = GSON.fromJson(object, SpawnRates.class);
@@ -88,7 +88,8 @@ public final class GameplayConfigEdits {
     }
 
     private static boolean validGrowthShape(JsonObject object) {
-        Set<String> numeric = Set.of("healthBase", "damageBase", "skeletonReference", "healthRate", "damageRate");
+        Set<String> numeric = Set.of("healthBase", "damageBase", "skeletonReference", "healthRate", "damageRate",
+                "minimumHealthReference");
         Set<String> text = Set.of("healthFormula", "damageFormula", "healthBloodMoonFormula", "damageBloodMoonFormula");
         if (object.size() != numeric.size() + text.size()) return false;
         for (String key : numeric) {
@@ -122,8 +123,13 @@ public final class GameplayConfigEdits {
         return Double.isFinite(value) && (!whole || value == Math.rint(value));
     }
 
-    private static boolean saveGrowth(MonsterGrowthRules.Settings draft) {
-        // Legacy attack fields are stored but not executed, so enforce their storage bounds separately.
+    private static boolean saveGrowth(JsonObject object) {
+        // Older editors omit the new field. Retain the server's configured minimum on their edits.
+        if (!object.has("minimumHealthReference"))
+            object.addProperty("minimumHealthReference", MiteConfig.localSnapshot().monsterSettings().minimumHealthReference());
+        if (!validGrowthShape(object)) return false;
+        var draft = GSON.fromJson(object, MonsterGrowthRules.Settings.class);
+        // Apply storage bounds before validating the resulting growth formulas.
         if (draft == null || !finiteRange(draft.damageRate(), 0D, 1D)
                 || draft.damageFormula() == null || draft.damageBloodMoonFormula() == null
                 || draft.damageFormula().length() > 512 || draft.damageBloodMoonFormula().length() > 512) return false;

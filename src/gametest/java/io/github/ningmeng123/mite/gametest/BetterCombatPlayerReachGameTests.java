@@ -1,6 +1,7 @@
 package io.github.ningmeng123.mite.gametest;
 
 import com.mojang.authlib.GameProfile;
+import io.github.ningmeng123.mite.combat.MobWeaponReach;
 import io.github.ningmeng123.mite.combat.SourcePlayerReach;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatBridge;
 import io.github.ningmeng123.mite.compat.bettercombat.BetterCombatPlayerMode;
@@ -560,9 +561,11 @@ public final class BetterCombatPlayerReachGameTests {
                 h.assertValueEqual(SourcePlayerReach.meleeReach(session.player(), target.entity()), 5D,
                         "Height adjustment remains part of the same configured calculation");
                 target.entity().setItemInHand(InteractionHand.MAIN_HAND, spear.copy());
-                h.assertTrue(Math.abs(io.github.ningmeng123.mite.combat.MobWeaponReach.sourceLimit(target.entity(),
+                h.assertTrue(Math.abs(MobWeaponReach.sourceLimit(target.entity(),
                         session.player(), session.player().getY()) - 4.05D) < .00001D,
                         "An armed monster uses the same weapon length before its existing .2-block margin");
+                h.assertTrue(Math.abs(MobWeaponReach.weaponBonus(target.entity()) - .5D) < .00001D,
+                        "Standalone spear metadata gives the mob one third of the unconfigured 1.5-block weapon bonus");
             }
             MiteConfig.WEAPON_REACH_MULTIPLIER.set(10D);
             MiteConfig.refreshEnchantmentRules();

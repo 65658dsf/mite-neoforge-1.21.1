@@ -8,6 +8,7 @@ import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.entity.MobAttackBoundsAccess;
 import io.github.ningmeng123.mite.entity.SourceMeleeGoal;
+import io.github.ningmeng123.mite.entity.VanillaMeleePursuit;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -35,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Weapon reach caps use the real player metric without extending historical mob reach. @author NingMeng123 */
+/** Held-weapon reach and player-relative caps through actual mob attacks and planning. @author NingMeng123 */
 @GameTestHolder("mite_mob_reach")
 @PrefixGameTestTemplate(false)
 public final class MobWeaponReachGameTests {
@@ -184,6 +185,51 @@ public final class MobWeaponReachGameTests {
     }
 
     @GameTest(template = "empty", templateNamespace = "mite_targeting")
+    public static void nativeSwordExtendsOnlyTheHorizontalHitboxGap(GameTestHelper helper) {
+        try (var compatibility = new BetterCombatMobSettings(false);
+                ReachSettings ignored = new ReachSettings(1D, 0D, false);
+                Fixture fixture = new Fixture(helper, EntityType.VINDICATOR)) {
+            var attacker = (PathfinderMob)fixture.attacker;
+            Vec3 feet = attacker.position();
+            fixture.equip(ItemStack.EMPTY);
+            var bounds = ((MobAttackBoundsAccess)attacker).mite$attackBoundingBox();
+            double xEdge = bounds.maxX + fixture.target.getBbWidth() * .5D;
+            double zEdge = bounds.maxZ + fixture.target.getBbWidth() * .5D;
+            fixture.target.setPos(feet.x, feet.y, zEdge + .249D);
+            helper.assertFalse(attacker.isWithinMeleeAttackRange(fixture.target), "The unarmed native attack ends at the native hitbox edge");
+            helper.assertFalse(VanillaMeleePursuit.canStrikeFrom(attacker, fixture.target, feet),
+                    "The unarmed route planner uses the same native edge");
+            fixture.equip(new ItemStack(Items.IRON_SWORD));
+            close(helper, MobWeaponReach.weaponBonus(attacker), .25D, "An iron sword grants one third of its .75-block player bonus");
+            helper.assertTrue(attacker.isWithinMeleeAttackRange(fixture.target)
+                            && VanillaMeleePursuit.canStrikeFrom(attacker, fixture.target, feet),
+                    "The native attack and its planner both reach a horizontal gap just inside .25 blocks");
+            fixture.target.setPos(feet.x, feet.y, zEdge + .251D);
+            helper.assertFalse(attacker.isWithinMeleeAttackRange(fixture.target)
+                            || VanillaMeleePursuit.canStrikeFrom(attacker, fixture.target, feet),
+                    "Both native predicates reject gaps just beyond .25 blocks");
+            fixture.target.setPos(xEdge + .2D, feet.y, zEdge + .2D);
+            helper.assertFalse(attacker.isWithinMeleeAttackRange(fixture.target)
+                            || VanillaMeleePursuit.canStrikeFrom(attacker, fixture.target, feet),
+                    "The combined diagonal gap exceeds .25 blocks");
+            fixture.target.setPos(feet.x, bounds.maxY + .01D, feet.z);
+            helper.assertTrue(MobWeaponReach.canReachFrom(attacker, fixture.target, feet),
+                    "The player-relative cap admits this vertically separated target");
+            helper.assertFalse(attacker.isWithinMeleeAttackRange(fixture.target)
+                            || VanillaMeleePursuit.canStrikeFrom(attacker, fixture.target, feet),
+                    "The weapon bonus preserves the native vertical overlap requirement");
+            fixture.target.setPos(feet.x, feet.y, zEdge + .35D);
+            Vec3 planned = feet.add(0D, 0D, .12D);
+            helper.assertTrue(VanillaMeleePursuit.canStrikeFrom(attacker, fixture.target, planned),
+                    "The planner accounts for the sword bonus at a prospective attack position");
+            attacker.setPos(planned);
+            helper.assertTrue(attacker.isWithinMeleeAttackRange(fixture.target),
+                    "The actual native range agrees with the route endpoint after movement");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", templateNamespace = "mite_targeting")
     public static void directMobAttackDamageCannotBypassTheFinalDistanceCheck(GameTestHelper helper) {
         try (ReachSettings ignored = new ReachSettings(.75D, .25D, false);
                 Fixture fixture = new Fixture(helper, EntityType.ZOMBIE)) {
@@ -205,30 +251,31 @@ public final class MobWeaponReachGameTests {
     }
 
     @GameTest(template = "empty", templateNamespace = "mite_targeting")
-    public static void sourceGoalsKeepTheirHistoricalGateAndUseTheCapAtPlannedAttackPositions(GameTestHelper helper) {
+    public static void sourceGoalsUseTheWeaponBonusAndTheCapAtPlannedAttackPositions(GameTestHelper helper) {
         try (var compatibility = new BetterCombatMobSettings(false);
                 ReachSettings ignored = new ReachSettings(1.5D, 0D, false);
                 Fixture fixture = new Fixture(helper, EntityType.ZOMBIE)) {
             fixture.equip(new ItemStack(Items.IRON_SWORD));
-            fixture.target.setPos(fixture.attacker.position().add(0D, 0D, 1.96D));
+            fixture.target.setPos(fixture.attacker.position().add(0D, 0D, 1.76D));
             helper.assertTrue(MobWeaponReach.canReachFrom(fixture.attacker, fixture.target, fixture.attacker.position()),
-                    "The generous configured cap is not itself the historical source distance gate");
+                    "The configured player-relative cap permits this point");
             helper.assertFalse(SourceMeleeGoal.canStrike((PathfinderMob)fixture.attacker, fixture.target),
-                    "Adding the player-relative cap does not expand the old source sword reach");
-            fixture.target.setPos(fixture.attacker.position().add(0D, 0D, 1.94D));
+                    "The source sword feet-distance limit rejects 1.76 blocks");
+            fixture.target.setPos(fixture.attacker.position().add(0D, 0D, 1.74D));
             helper.assertTrue(SourceMeleeGoal.canStrike((PathfinderMob)fixture.attacker, fixture.target),
-                    "The historical source sword boundary remains usable inside the new cap");
+                    "The source sword feet-distance limit admits 1.74 blocks");
         }
-        try (ReachSettings ignored = new ReachSettings(.75D, .5D, false);
+        try (var compatibility = new BetterCombatMobSettings(false);
+                ReachSettings ignored = new ReachSettings(.75D, .5D, false);
                 Fixture fixture = new Fixture(helper, EntityType.ZOMBIE)) {
             fixture.equip(new ItemStack(Items.IRON_SWORD));
             fixture.atDistance(MobWeaponReach.sourceLimit(fixture.attacker, fixture.target, fixture.attacker.getY()) + .05D, 0D);
             PathfinderMob attacker = (PathfinderMob)fixture.attacker;
             helper.assertFalse(SourceMeleeGoal.canStrike(attacker, fixture.target),
-                    "The old source sword feet distance cannot bypass a tighter configured player cap");
+                    "A tighter configured player cap rejects the target within the source sword feet distance");
             Vec3 planned = attacker.position().add(0D, 0D, .1D);
-            helper.assertTrue(planned.distanceTo(fixture.target.position()) < 1.95D,
-                    "The planned endpoint stays inside the historical source sword gate");
+            helper.assertTrue(planned.distanceTo(fixture.target.position()) < 1.75D,
+                    "The planned endpoint stays inside the source sword feet distance");
             helper.assertTrue(SourceMeleeGoal.canStrikeFrom(attacker, fixture.target, planned),
                     "The route planner can still select a genuinely closer attack endpoint");
             float before = fixture.target.getHealth();
@@ -256,11 +303,15 @@ public final class MobWeaponReachGameTests {
             fixture.equip(withRange(original, LEGACY_REACH, 8D));
             close(helper, MobWeaponReach.itemRange(fixture.attacker), originalRange,
                     "An obsolete saved mite:tool_reach component cannot add eight blocks to mob range");
+            close(helper, MobWeaponReach.weaponBonus(fixture.attacker), .25D,
+                    "The obsolete component leaves the sword's one-third reach bonus at .25 blocks");
             close(helper, MobWeaponReach.sourceLimit(fixture.attacker, fixture.target, fixture.attacker.getY()), originalLimit,
                     "Legacy reach filtering happens before the player-relative cap");
             fixture.equip(withRange(original, ResourceLocation.fromNamespaceAndPath("mite", "mob_reach_component_test"), .5D));
             close(helper, MobWeaponReach.itemRange(fixture.attacker), originalRange + .5D,
                     "A real modern held-item range modifier is preserved exactly once");
+            close(helper, MobWeaponReach.weaponBonus(fixture.attacker), 1.25D / 3D,
+                    "The current component contributes one third of its real .5-block addition");
             close(helper, MobWeaponReach.sourceLimit(fixture.attacker, fixture.target, fixture.attacker.getY()),
                     Math.max(0D, SourcePlayerReach.sourceMeleeReach(fixture.player, fixture.target) - MobWeaponReach.MARGIN),
                     "The same actual range component yields the same player base before the mob margin");

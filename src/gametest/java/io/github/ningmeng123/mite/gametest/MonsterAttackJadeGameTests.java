@@ -2,7 +2,6 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.entity.MobKind;
-import io.github.ningmeng123.mite.entity.MonsterDayScaling;
 import io.github.ningmeng123.mite.entity.MonsterMeleeScaling;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import java.util.ArrayList;
@@ -90,15 +89,21 @@ public final class MonsterAttackJadeGameTests {
         private static void zombieAttack(GameTestHelper helper) {
             double originalBase = MiteConfig.MONSTER_DAMAGE_BASE.get();
             var zombie = mob(helper, EntityType.ZOMBIE);
+            var overworld = helper.getLevel().getServer().overworld();
+            long previousTime = overworld.getDayTime();
             try {
                 MiteConfig.MONSTER_DAMAGE_BASE.set(0D);
                 MiteConfig.refreshEnchantmentRules();
+                zombie.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(6D);
                 CompoundTag data = new CompoundTag();
                 var accessor = accessor(zombie, data);
                 helper.assertTrue(PROVIDER.shouldRequestData(accessor), "A living zombie requests authoritative attack data");
-                PROVIDER.appendServerData(data, accessor);
-                close(helper, snapshot(helper, accessor), MonsterDayScaling.attackBase(zombie, zombie.getAttributeBaseValue(Attributes.ATTACK_DAMAGE)),
-                        "The unarmed zombie uses its current innate attack");
+                for (long time : new long[]{0L, 32L * 24_000L, 0L}) {
+                    overworld.setDayTime(time);
+                    PROVIDER.appendServerData(data, accessor);
+                    close(helper, snapshot(helper, accessor), time == 0L ? 6D : 9.2D,
+                            "Jade shows the twenty-point growth reference and reverts on clock rollback");
+                }
 
                 zombie.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
                 zombie.tick();
@@ -132,6 +137,7 @@ public final class MonsterAttackJadeGameTests {
                         "Fractional attack values round to two decimal places");
             } finally {
                 zombie.discard();
+                overworld.setDayTime(previousTime);
                 MiteConfig.MONSTER_DAMAGE_BASE.set(originalBase);
                 MiteConfig.refreshEnchantmentRules();
             }
@@ -140,22 +146,26 @@ public final class MonsterAttackJadeGameTests {
         private static void cubeAttack(GameTestHelper helper) {
             Map<EntityType<? extends Mob>, Float> contactDamages = Map.of(
                     EntityType.SLIME, 4F, EntityType.MAGMA_CUBE, 8F, MiteMobs.type(MobKind.BLOB), 17F);
-            for (var entry : contactDamages.entrySet()) {
-                Slime cube = (Slime)mob(helper, entry.getKey());
-                try {
-                    cube.setSize(4, true);
-                    cube.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(17D);
-                    CompoundTag calendar = new CompoundTag();
-                    calendar.putLong("day", 33L);
-                    cube.getPersistentData().put(MonsterDayScaling.DATA_KEY, calendar);
-                    double multiplier = MonsterDayScaling.attackMultiplier(cube);
-                    helper.assertTrue(multiplier > 1D, "The fixture has reached a date with attack growth");
-                    CompoundTag data = new CompoundTag();
-                    var accessor = accessor(cube, data);
-                    PROVIDER.appendServerData(data, accessor);
-                    close(helper, snapshot(helper, accessor), (float)(entry.getValue() * multiplier),
-                            "Jade scales size-based vanilla contact and attribute-based MITE contact exactly once");
-                } finally { cube.discard(); }
+            var overworld = helper.getLevel().getServer().overworld();
+            long previousTime = overworld.getDayTime();
+            try {
+                for (var entry : contactDamages.entrySet()) {
+                    Slime cube = (Slime)mob(helper, entry.getKey());
+                    try {
+                        cube.setSize(4, true);
+                        cube.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(17D);
+                        CompoundTag data = new CompoundTag();
+                        var accessor = accessor(cube, data);
+                        for (long time : new long[]{32L * 24_000L, 0L}) {
+                            overworld.setDayTime(time);
+                            PROVIDER.appendServerData(data, accessor);
+                            close(helper, snapshot(helper, accessor), entry.getValue() + (time == 0L ? 0D : 3.2D),
+                                    "Jade shows the grown contact amount for vanilla and MITE cubes on the current day");
+                        }
+                    } finally { cube.discard(); }
+                }
+            } finally {
+                overworld.setDayTime(previousTime);
             }
         }
 

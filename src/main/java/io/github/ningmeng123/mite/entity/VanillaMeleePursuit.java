@@ -62,8 +62,7 @@ public final class VanillaMeleePursuit {
     public static boolean canStrikeFrom(PathfinderMob mob, LivingEntity target, Vec3 feet) {
         if (!target.isAlive() || target.level() != mob.level() || !MobWeaponReach.canReachFrom(mob, target, feet)) return false;
         if (BetterMobCombat.supported(mob)) return BetterMobCombat.canStrikeFrom(mob, target, feet);
-        var attack = ((MobAttackBoundsAccess)mob).mite$attackBoundingBox().move(feet.subtract(mob.position()));
-        if (!attack.intersects(target.getHitbox())) return false;
+        if (!MobWeaponReach.nativeRangeAllows(mob, target, feet)) return false;
         return mob.level().clip(new ClipContext(feet.add(0D, mob.getEyeHeight(), 0D), target.getEyePosition(),
                 ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob)).getType() == HitResult.Type.MISS;
     }
@@ -71,7 +70,7 @@ public final class VanillaMeleePursuit {
     static int attackPositionRadius(PathfinderMob mob, LivingEntity target) {
         var attack = ((MobAttackBoundsAccess)mob).mite$attackBoundingBox();
         return Math.clamp((int)Math.ceil(Math.max(attack.getXsize() + target.getHitbox().getXsize(),
-                attack.getZsize() + target.getHitbox().getZsize()) * .5D), 2, 6);
+                attack.getZsize() + target.getHitbox().getZsize()) * .5D + MobWeaponReach.weaponBonus(mob)), 2, 6);
     }
 
     /** Called only by a currently running native melee goal, never by patrol or door goals. */

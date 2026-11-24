@@ -41,6 +41,7 @@ public final class MiteConfig {
     public static final Map<R196OreRules.Kind, ModConfigSpec.ConfigValue<String>> OVERWORLD_DEEPSLATE_ORE_HEIGHTS = new EnumMap<>(R196OreRules.Kind.class);
     public static final ModConfigSpec.DoubleValue MONSTER_GROWTH, MONSTER_HEALTH_GROWTH, MONSTER_DAMAGE_GROWTH;
     public static final ModConfigSpec.DoubleValue MONSTER_HEALTH_BASE, MONSTER_DAMAGE_BASE, MONSTER_SKELETON_REFERENCE;
+    public static final ModConfigSpec.DoubleValue MONSTER_MINIMUM_HEALTH_REFERENCE;
     public static final ModConfigSpec.DoubleValue MONSTER_HEALTH_DAILY_PERCENT, MONSTER_DAMAGE_DAILY_PERCENT;
     private static final ModConfigSpec.BooleanValue DAMAGE_RATE_MIGRATED;
     public static final ModConfigSpec.ConfigValue<String> MONSTER_HEALTH_FORMULA, MONSTER_DAMAGE_FORMULA;
@@ -128,7 +129,10 @@ public final class MiteConfig {
         MONSTER_GROWTH = number(builder, "growth_multiplier", 1D, 100D, "Overall multiplier of the formula's rate variable; 0 disables rate-based growth in the default formula. Custom formulas may also use day or days directly. Existing monsters refresh periodically.");
         MONSTER_HEALTH_GROWTH = number(builder, "health_growth_multiplier", 1D, 100D, "Daily health growth multiplier, multiplied by the overall growth multiplier.");
         MONSTER_DAMAGE_GROWTH = number(builder, "damage_growth_multiplier", 1D, 100D, "Daily attack damage growth multiplier, multiplied by the overall growth multiplier.");
-        MONSTER_HEALTH_BASE = number(builder, "health_base", 20D, 1024D, "First-period health growth reference shared by all monsters. 0 uses the default 20. Each entity retains its native initial health, including independent modifiers. Later blood-moon periods reference actual settled health.");
+        MONSTER_HEALTH_BASE = number(builder, "health_base", 20D, 1024D, "First-period health growth reference shared by all monsters. 0 uses the default 20. Each entity retains its native initial health, including independent modifiers.");
+        MONSTER_MINIMUM_HEALTH_REFERENCE = number(builder, "minimum_health_reference",
+                BundledGameplayDefaults.number("monsters.minimum_health_reference", MonsterGrowthRules.DEFAULT_MINIMUM_HEALTH_REFERENCE),
+                1024D, "Monsters whose native maximum health is lower use this growth reference until they reach it. 0 disables this rule. Monsters retain their starting health.");
         MONSTER_DAMAGE_BASE = number(builder, "damage_base", 0D, 2048D, "Initial innate melee attack damage. 0 uses the entity's native base. Weapon bonuses are added after growth.");
         MONSTER_SKELETON_REFERENCE = number(builder, "skeleton_reference", 20D, 1024D, "Legacy compatibility value. All monsters now share health_base as their first-period growth reference.");
         MONSTER_HEALTH_DAILY_PERCENT = number(builder, "health_daily_percent", .5D, 100D, "Daily health growth in percent of the current blood-moon baseline: 0.5 means 0.5%, or rate=0.005 in the formula.");
@@ -743,7 +747,8 @@ public final class MiteConfig {
                 value(MONSTER_SKELETON_REFERENCE), value(MONSTER_HEALTH_DAILY_PERCENT) / 100D,
                 value(MONSTER_DAMAGE_DAILY_PERCENT) / 100D, healthFormula, damageFormula,
                 inheritedFormula(value(MONSTER_HEALTH_BLOOD_MOON_FORMULA), healthFormula),
-                inheritedFormula(value(MONSTER_DAMAGE_BLOOD_MOON_FORMULA), damageFormula));
+                inheritedFormula(value(MONSTER_DAMAGE_BLOOD_MOON_FORMULA), damageFormula),
+                value(MONSTER_MINIMUM_HEALTH_REFERENCE));
         double overall = value(MONSTER_GROWTH), healthMultiplier = value(MONSTER_HEALTH_GROWTH), damageMultiplier = value(MONSTER_DAMAGE_GROWTH);
         var validation = MonsterGrowthRules.validate(growth, overall * healthMultiplier, overall * damageMultiplier);
         if (!validation.valid()) {
@@ -830,6 +835,7 @@ public final class MiteConfig {
         var validation = validateMonsterGrowth(settings);
         if (!validation.valid()) return validation;
         MONSTER_HEALTH_BASE.set(settings.healthBase());
+        MONSTER_MINIMUM_HEALTH_REFERENCE.set(settings.minimumHealthReference());
         MONSTER_DAMAGE_BASE.set(settings.damageBase());
         MONSTER_SKELETON_REFERENCE.set(settings.skeletonReference());
         MONSTER_HEALTH_DAILY_PERCENT.set(settings.healthRate() * 100D);

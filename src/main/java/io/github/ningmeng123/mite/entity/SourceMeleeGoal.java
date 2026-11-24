@@ -1,7 +1,6 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.combat.MobWeaponReach;
-import io.github.ningmeng123.mite.registry.MiteTools;
 import java.util.EnumSet;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -73,8 +72,7 @@ public final class SourceMeleeGoal extends Goal {
         if (!MobWeaponReach.canReachFrom(mob, target, feet)) return false;
         if (io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat.supported(mob))
             return io.github.ningmeng123.mite.compat.bettercombat.BetterMobCombat.canStrikeFrom(mob, target, feet);
-        var definition = MiteTools.definition(mob.getMainHandItem());
-        double reach = 1.5D + (definition == null ? 0D : definition.reach() * .6D);
+        double reach = MobWeaponReach.sourceMeleeRange(mob);
         if (feet.distanceToSqr(new Vec3(target.getX(),target.getBoundingBox().minY,target.getZ())) > reach * reach) return false;
         Vec3 origin = feet.add(0, mob.getBbHeight() * .75D, 0);
         for (double fraction : new double[]{.5D, .9D, .1D}) {

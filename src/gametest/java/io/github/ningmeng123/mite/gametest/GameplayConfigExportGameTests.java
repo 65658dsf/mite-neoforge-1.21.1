@@ -109,6 +109,7 @@ public final class GameplayConfigExportGameTests {
             MiteConfig.MONSTER_HEALTH_GROWTH.set(8D);
             MiteConfig.MONSTER_DAMAGE_GROWTH.set(7D);
             MiteConfig.MONSTER_HEALTH_BASE.set(99D);
+            MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE.set(75D);
             MiteConfig.MONSTER_DAMAGE_BASE.set(44D);
             MiteConfig.MONSTER_SKELETON_REFERENCE.set(55D);
             MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.set(2D);
@@ -129,6 +130,7 @@ public final class GameplayConfigExportGameTests {
             assertNumber(helper, parsed, "health_growth_multiplier", valid.healthGrowth());
             assertNumber(helper, parsed, "damage_growth_multiplier", valid.damageGrowth());
             assertNumber(helper, parsed, "health_base", settings.healthBase());
+            assertNumber(helper, parsed, "minimum_health_reference", settings.minimumHealthReference());
             assertNumber(helper, parsed, "damage_base", settings.damageBase());
             assertNumber(helper, parsed, "skeleton_reference", settings.skeletonReference());
             assertNumber(helper, parsed, "health_daily_percent", settings.healthRate() * 100D);
@@ -189,6 +191,7 @@ public final class GameplayConfigExportGameTests {
         MiteConfig.MONSTER_HEALTH_GROWTH.set(1.5D);
         MiteConfig.MONSTER_DAMAGE_GROWTH.set(.75D);
         MiteConfig.MONSTER_HEALTH_BASE.set(31D);
+        MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE.set(45D);
         MiteConfig.MONSTER_DAMAGE_BASE.set(4D);
         MiteConfig.MONSTER_SKELETON_REFERENCE.set(27D);
         MiteConfig.MONSTER_HEALTH_DAILY_PERCENT.set(.75D);

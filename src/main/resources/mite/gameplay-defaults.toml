@@ -173,6 +173,7 @@
 	health_growth_multiplier = 1.0
 	damage_growth_multiplier = 1.0
 	health_base = 20.0
+	minimum_health_reference = 40.0
 	damage_base = 0.0
 	skeleton_reference = 20.0
 	health_daily_percent = 0.5

@@ -26,6 +26,21 @@ public final class R196RangedRules {
     }
     private R196RangedRules() {}
 
+    /** Use the calendar equipment stages without replacing a mob's stronger native ammunition. */
+    public static Material monsterArrow(long day, Material original) {
+        Material unlocked = switch (BloodMoonEquipmentRules.stageForDay(day)) {
+            case 1 -> Material.RUSTED_IRON;
+            case 3 -> Material.COPPER;
+            case 5 -> Material.IRON;
+            case 6 -> Material.ANCIENT_METAL;
+            case 7 -> Material.MITHRIL;
+            case 8, 9 -> Material.ADAMANTIUM;
+            default -> original;
+        };
+        return BloodMoonEquipmentRules.materialTier(unlocked.id) > BloodMoonEquipmentRules.materialTier(original.id)
+                ? unlocked : original;
+    }
+
     /** ul.checkForBite: adjusted dawn starts at 6000, dawn/dusk minima at 5500/17500. */
     public static int biteChanceDenominator(long unadjustedTime, boolean blueMoon, boolean raining,
             int fishingFortune, boolean worm) {

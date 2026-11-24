@@ -221,7 +221,7 @@ public final class ZombieRouteGameTests {
     @GameTest(template="empty")
     public static void fractionalPlayerCornerUsesExactPathUntilActuallyInMeleeReach(GameTestHelper h) {
         PathfindingTestSettings.runSynchronous(() -> {
-            try(Fixture f=new Fixture(h)) {
+            try (var compatibility = new BetterCombatMobSettings(false); Fixture f = new Fixture(h)) {
                 f.player.moveTo(f.origin.getX()+1.99D,f.origin.getY(),f.origin.getZ()+.99D,0,0);
                 h.assertFalse(SourceMeleeGoal.canStrike(f.mob,f.player),"A 1.568-block diagonal is outside the real unarmed reach");
                 var plan=f.digger.pursuitPlan();
@@ -234,6 +234,14 @@ public final class ZombieRouteGameTests {
                 var sword=f.digger.pursuitPlan();
                 h.assertTrue(sword.completeWalkingRoute()&&sword.walkingTicks()<plan.walkingTicks(),
                         "The planner uses the same weapon reach and can stop earlier when the real sword can hit");
+                f.player.setPos(f.mob.position().add(1.8D, 0D, 0D));
+                h.assertFalse(SourceMeleeGoal.canStrike(f.mob, f.player), "A target 1.8 blocks away requires the sword user to approach");
+                var retreat = f.digger.pursuitPlan();
+                h.assertTrue(retreat.completeWalkingRoute() && retreat.walkingTicks() > 0D,
+                        "Leaving the sword's feet-distance limit invalidates the cached stationary plan");
+                var attackPosition = retreat.path().getEntityPosAtNode(f.mob, retreat.path().getNodeCount() - 1);
+                h.assertTrue(SourceMeleeGoal.canStrikeFrom(f.mob, f.player, attackPosition),
+                        "The new route ends at a position inside the source sword's reach");
             }h.succeed();
         });
     }

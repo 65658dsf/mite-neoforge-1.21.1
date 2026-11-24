@@ -83,7 +83,6 @@ public final class ModernHostileSpawningGameTests {
         try (var preset = new SpawnPreset(true)) {
             assertHabitat(helper, nether, Biomes.NETHER_WASTES, Set.of(EntityType.PIGLIN, EntityType.PIGLIN_BRUTE));
             assertHabitat(helper, nether, Biomes.CRIMSON_FOREST, Set.of(EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.HOGLIN));
-            assertHabitat(helper, nether, Biomes.WARPED_FOREST, Set.of());
             try (var warped = new Habitat(nether, Biomes.WARPED_FOREST)) {
                 Set<EntityType<?>> selected = warped.selected(helper);
                 helper.assertFalse(selected.contains(EntityType.PIGLIN), "Warped forest has no native piglin candidate");
@@ -92,6 +91,40 @@ public final class ModernHostileSpawningGameTests {
             }
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 240)
+    public static void warpedForestEndermenAreSelectedAndEnterTheNetherNaturallyInBothPresets(GameTestHelper helper) {
+        ServerLevel nether = helper.getLevel().getServer().getLevel(Level.NETHER);
+        helper.assertTrue(nether != null, "The native Nether dimension is available");
+        var site = new DaylightUndeadSpawnGameTests.Site(nether, true, 88);
+        site.set(site.pos.below(), Blocks.WARPED_NYLIUM.defaultBlockState());
+        site.keepLoaded(helper);
+        helper.startSequence().thenWaitUntil(() -> site.requireLightingReady(helper)).thenExecute(() -> {
+            try (site; var warped = new Habitat(nether, site.pos, Biomes.WARPED_FOREST)) {
+                helper.assertTrue(nether.getBiome(site.pos).is(Biomes.WARPED_FOREST), "The spawn point resolves to the warped forest biome");
+                var entries = warped.nativePool().stream().filter(entry -> entry.type == EntityType.ENDERMAN).toList();
+                helper.assertValueEqual(entries.size(), 1, "The actual biome supplies one native Enderman entry");
+                var expected = entries.getFirst();
+                for (boolean reference : new boolean[]{false, true}) try (var preset = new SpawnPreset(reference)) {
+                    for (boolean modernOnly : new boolean[]{false, true}) {
+                        var selected = findCandidate(warped, EntityType.ENDERMAN, modernOnly);
+                        helper.assertTrue(selected != null && selected.modern(),
+                                "The scheduler selects an Enderman in reference=" + reference + ", modernOnly=" + modernOnly);
+                        helper.assertValueEqual(selected.weight(), expected.getWeight().asInt(), "The native spawn weight survives selection");
+                        helper.assertValueEqual(selected.minimum(), expected.minCount, "The native minimum group size survives selection");
+                        helper.assertValueEqual(selected.maximum(), expected.maxCount, "The native maximum group size survives selection");
+                    }
+                    Mob enderman = site.mob(EntityType.ENDERMAN);
+                    try {
+                        helper.assertTrue(qualifies(enderman, nether), "The Enderman qualifies over warped nylium with clearance and darkness");
+                        var result = R196MobSpawning.finalizeNaturalMonster(nether, enderman, null, 1);
+                        helper.assertTrue(result.monsters() == 1 && enderman.isAddedToLevel() && enderman.getSpawnType() == MobSpawnType.NATURAL,
+                                "The qualified Enderman enters the world through natural finalization");
+                    } finally { enderman.discard(); }
+                }
+            }
+        }).thenSucceed();
     }
 
     @GameTest(template = "empty", timeoutTicks = 240)
@@ -112,7 +145,7 @@ public final class ModernHostileSpawningGameTests {
                 helper.assertFalse(mushrooms.nativeCandidates().contains(EntityType.PIGLIN_BRUTE),
                         "Mushroom fields retain their existing exclusion from ordinary brute spawns");
 
-                var selected = findBrute(plains);
+                var selected = findCandidate(plains, EntityType.PIGLIN_BRUTE, false);
                 helper.assertTrue(selected != null && selected.modern() && selected.minimum() == 1 && selected.maximum() == 1
                                 && selected.pack() == 1,
                         "The actual natural scheduler can select a solitary Overworld brute");
@@ -155,7 +188,7 @@ public final class ModernHostileSpawningGameTests {
         site.keepLoaded(helper);
         helper.startSequence().thenWaitUntil(() -> site.requireLightingReady(helper)).thenExecute(() -> {
             try (site; var wastes = new Habitat(nether, site.pos, Biomes.NETHER_WASTES)) {
-                var selected = findBrute(wastes);
+                var selected = findCandidate(wastes, EntityType.PIGLIN_BRUTE, false);
                 helper.assertTrue(selected != null && selected.pack() == 1, "The real Nether wastes natural scheduler selects a solitary brute");
                 var brute = (PiglinBrute)site.mob(EntityType.PIGLIN_BRUTE);
                 site.set(site.pos.below(), Blocks.NETHER_WART_BLOCK.defaultBlockState());
@@ -184,11 +217,11 @@ public final class ModernHostileSpawningGameTests {
         }).thenSucceed();
     }
 
-    private static R196MobSpawning.Entry findBrute(Habitat site) {
+    private static R196MobSpawning.Entry findCandidate(Habitat site, EntityType<?> type, boolean modernOnly) {
         RandomSource random = RandomSource.create(604_732L);
         for (int draw = 0; draw < 4_096; draw++) {
-            var selected = R196MobSpawning.select(site.level, site.pos, Category.MONSTER, random, false, true);
-            if (selected != null && selected.type() == EntityType.PIGLIN_BRUTE) return selected;
+            var selected = R196MobSpawning.select(site.level, site.pos, Category.MONSTER, random, modernOnly, true);
+            if (selected != null && selected.type() == type) return selected;
         }
         return null;
     }
@@ -311,7 +344,7 @@ public final class ModernHostileSpawningGameTests {
             helper.assertTrue(nativeCandidates.containsAll(expected), "The native biome supplies the expected modern variants in " + biome);
             Set<EntityType<?>> selected = site.selected(helper);
             helper.assertTrue(selected.containsAll(expected), "The reference natural selection entrypoint retains those variants in " + biome);
-            selected.removeIf(R196MobSpawning::sourceType);
+            selected.removeIf(type -> !site.retainsNativeCandidate(type));
             if (level.dimension().equals(Level.OVERWORLD)) {
                 // The dedicated brute tests cover its calendar-dependent entry.
                 selected.remove(EntityType.PIGLIN_BRUTE);
@@ -392,8 +425,13 @@ public final class ModernHostileSpawningGameTests {
 
         Set<EntityType<?>> nativeCandidates() {
             Set<EntityType<?>> result = new HashSet<>();
-            for (var entry : nativePool()) if (!R196MobSpawning.sourceType(entry.type)) result.add(entry.type);
+            for (var entry : nativePool()) if (retainsNativeCandidate(entry.type)) result.add(entry.type);
             return result;
+        }
+
+        boolean retainsNativeCandidate(EntityType<?> type) {
+            return !R196MobSpawning.sourceType(type) || type == EntityType.ENDERMAN && level.dimension().equals(Level.NETHER)
+                    && level.getBiome(pos).is(Biomes.WARPED_FOREST);
         }
 
         List<MobSpawnSettings.SpawnerData> nativePool() {

@@ -220,6 +220,7 @@
     "SourceArmorDamageMixin",
     "SourceArmorDefenseMixin",
     "RangedArrowMixin",
+    "MobBowAmmunitionMixin",
     "SkeletonMaterialArrowMixin",
     "SkeletonArrowLeavesMixin",
     "RangedFishingRodMixin",

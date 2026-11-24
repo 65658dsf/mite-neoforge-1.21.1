@@ -127,6 +127,7 @@ public final class GameplayConfigExport {
         put(content, MiteConfig.MONSTER_HEALTH_GROWTH, local.healthGrowth());
         put(content, MiteConfig.MONSTER_DAMAGE_GROWTH, local.damageGrowth());
         put(content, MiteConfig.MONSTER_HEALTH_BASE, growth.healthBase());
+        put(content, MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE, growth.minimumHealthReference());
         put(content, MiteConfig.MONSTER_DAMAGE_BASE, growth.damageBase());
         put(content, MiteConfig.MONSTER_SKELETON_REFERENCE, growth.skeletonReference());
         put(content, MiteConfig.MONSTER_HEALTH_DAILY_PERCENT, growth.healthRate() * 100D);
@@ -179,7 +180,8 @@ public final class GameplayConfigExport {
                 content.get(MiteConfig.MONSTER_HEALTH_FORMULA.getPath()),
                 content.get(MiteConfig.MONSTER_DAMAGE_FORMULA.getPath()),
                 content.get(MiteConfig.MONSTER_HEALTH_BLOOD_MOON_FORMULA.getPath()),
-                content.get(MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.getPath()));
+                content.get(MiteConfig.MONSTER_DAMAGE_BLOOD_MOON_FORMULA.getPath()),
+                number(content, MiteConfig.MONSTER_MINIMUM_HEALTH_REFERENCE));
         double overall = number(content, MiteConfig.MONSTER_GROWTH);
         var validation = MonsterGrowthRules.validate(settings, overall * number(content, MiteConfig.MONSTER_HEALTH_GROWTH),
                 overall * number(content, MiteConfig.MONSTER_DAMAGE_GROWTH));

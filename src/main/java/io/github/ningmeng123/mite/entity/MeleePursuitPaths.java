@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.entity;
 
+import io.github.ningmeng123.mite.combat.MobWeaponReach;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -398,7 +399,8 @@ public final class MeleePursuitPaths {
         // attack positions together, so the closest failed endpoint cannot hide a side entrance.
         Set<BlockPos> positions = new LinkedHashSet<>();
         BlockPos center = target.blockPosition();
-        int radius = vanilla ? VanillaMeleePursuit.attackPositionRadius(mob, target) : 2;
+        int radius = vanilla ? VanillaMeleePursuit.attackPositionRadius(mob, target)
+                : Math.clamp((int)Math.ceil(MobWeaponReach.sourceMeleeRange(mob)), 2, 6);
         int below = vanilla ? Math.max(2, (int)Math.ceil(mob.getBbHeight())) : 2;
         for (int x = -radius; x <= radius; x++) for (int z = -radius; z <= radius; z++) for (int y = -below; y <= 1; y++) {
             BlockPos feet = center.offset(x, y, z);

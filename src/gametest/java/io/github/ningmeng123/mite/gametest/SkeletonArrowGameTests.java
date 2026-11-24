@@ -1,6 +1,10 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.entity.MobKind;
+import io.github.ningmeng123.mite.ranged.MaterialArrowView;
+import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.registry.MiteRangedItems;
+import io.github.ningmeng123.mite.registry.MiteWeaponContent;
 import io.github.ningmeng123.mite.rules.R196RangedRules.Material;
 import java.util.List;
 import java.util.function.Consumer;
@@ -10,14 +14,17 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -27,6 +34,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -38,23 +46,116 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class SkeletonArrowGameTests {
     private SkeletonArrowGameTests() {}
+
+    private static Arrow shoot(GameTestHelper helper, AbstractSkeleton skeleton, Cow target) {
+        skeleton.performRangedAttack(target, 1F);
+        var arrows = helper.getLevel().getEntitiesOfClass(Arrow.class, skeleton.getBoundingBox().inflate(5), a -> a.getOwner() == skeleton);
+        helper.assertValueEqual(arrows.size(), 1, "Native ranged attack spawns one arrow");
+        return arrows.getFirst();
+    }
+
     @GameTest(template = "ranged_027")
     public static void OrdinarySkeletonShootsRustyArrowsWhileModernVariantsKeepEffects(GameTestHelper helper) {
         Cow target = new Cow(EntityType.COW, helper.getLevel());
         target.moveTo(helper.absolutePos(new BlockPos(6, 3, 2)).getCenter());
-        for (EntityType<? extends AbstractSkeleton> type : List.of(EntityType.SKELETON, EntityType.STRAY, EntityType.BOGGED)) {
-            AbstractSkeleton skeleton = type.create(helper.getLevel());
-            skeleton.moveTo(helper.absolutePos(new BlockPos(2, 3, 2)).getCenter());
-            skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-            skeleton.performRangedAttack(target, 1F);
-            var arrows = helper.getLevel().getEntitiesOfClass(Arrow.class, skeleton.getBoundingBox().inflate(5), a -> a.getOwner() == skeleton);
-            helper.assertValueEqual(arrows.size(), 1, "Native ranged attack spawns one arrow");
-            ItemStack pickup = arrows.getFirst().getPickupItemStackOrigin();
-            if (type == EntityType.SKELETON)
-                helper.assertTrue(pickup.is(MiteRangedItems.arrow(Material.RUSTED_IRON)), "Ordinary skeleton fires source rusty ammunition");
-            else helper.assertTrue(!pickup.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).equals(PotionContents.EMPTY),
-                    "Stray and Bogged keep modern potion ammunition");
-            arrows.forEach(Arrow::discard);
+        var overworld = helper.getLevel().getServer().overworld();
+        long time = overworld.getDayTime();
+        try {
+            overworld.setDayTime(6_000L);
+            for (EntityType<? extends AbstractSkeleton> type : List.of(EntityType.SKELETON, EntityType.STRAY, EntityType.BOGGED)) {
+                AbstractSkeleton skeleton = type.create(helper.getLevel());
+                skeleton.moveTo(helper.absolutePos(new BlockPos(2, 3, 2)).getCenter());
+                skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+                Arrow arrow = shoot(helper, skeleton, target);
+                try {
+                    ItemStack pickup = arrow.getPickupItemStackOrigin();
+                    if (type == EntityType.SKELETON)
+                        helper.assertTrue(pickup.is(MiteRangedItems.arrow(Material.RUSTED_IRON)), "Ordinary skeleton fires source rusty ammunition");
+                    else helper.assertTrue(!pickup.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).equals(PotionContents.EMPTY),
+                            "Stray and Bogged keep their early potion ammunition");
+                } finally { arrow.discard(); }
+            }
+        } finally { overworld.setDayTime(time); }
+        helper.succeed();
+    }
+
+    @GameTest(template = "ranged_027")
+    public static void BowMobShotsUseTheLiveDayForAmmunitionAndImpactDamage(GameTestHelper helper) throws ReflectiveOperationException {
+        var level = helper.getLevel();
+        var overworld = level.getServer().overworld();
+        long time = overworld.getDayTime();
+        Cow target = new Cow(EntityType.COW, level);
+        target.moveTo(helper.absolutePos(new BlockPos(6, 3, 2)).getCenter());
+        Skeleton skeleton = EntityType.SKELETON.create(level);
+        skeleton.moveTo(helper.absolutePos(new BlockPos(2, 3, 2)).getCenter());
+        skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+        var impact = AbstractArrow.class.getDeclaredMethod("onHitEntity", EntityHitResult.class);
+        impact.setAccessible(true);
+        float firstDayDamage = 0F;
+        int[] days = {1, 31, 48, 64, 96, 112, 128, 144, 1};
+        Material[] expected = {Material.RUSTED_IRON, Material.RUSTED_IRON, Material.COPPER, Material.IRON,
+                Material.ANCIENT_METAL, Material.MITHRIL, Material.ADAMANTIUM, Material.ADAMANTIUM, Material.RUSTED_IRON};
+        try {
+            for (int index = 0; index < days.length; index++) {
+                int day = days[index];
+                overworld.setDayTime((day - 1L) * 24_000L + 6_000L);
+                Arrow arrow = shoot(helper, skeleton, target);
+                try {
+                    helper.assertTrue(arrow.getPickupItemStackOrigin().is(MiteRangedItems.arrow(expected[index])),
+                            "Existing skeleton uses the current day's material on day " + day);
+                    helper.assertValueEqual(((MaterialArrowView)arrow).mite$arrowMaterial(), expected[index].id,
+                            "The material used by the client renderer is synchronized on day " + day);
+                    if (day <= 31) {
+                        target.invulnerableTime = 0;
+                        target.setHealth(target.getMaxHealth());
+                        impact.invoke(arrow, new EntityHitResult(target));
+                        float damage = target.getMaxHealth() - target.getHealth();
+                        if (index == 0) {
+                            helper.assertTrue(damage > 0F, "The native arrow impact hurts the target");
+                            firstDayDamage = damage;
+                        } else if (day == 31) helper.assertTrue(damage > firstDayDamage, "Damage grows with the same arrow material");
+                        else helper.assertValueEqual(damage, firstDayDamage, "Returning to day one restores the initial damage");
+                    }
+                } finally { arrow.discard(); }
+            }
+
+            var longdead = (AbstractSkeleton)MiteMobs.type(MobKind.LONGDEAD).create(level);
+            var stray = EntityType.STRAY.create(level);
+            for (AbstractSkeleton archer : List.of(longdead, stray)) {
+                archer.moveTo(skeleton.position());
+                archer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(MiteWeaponContent.ANCIENT_METAL_BOW.get()));
+            }
+            Arrow earlyLongdead = shoot(helper, longdead, target);
+            try {
+                helper.assertTrue(earlyLongdead.getPickupItemStackOrigin().is(MiteRangedItems.arrow(Material.ANCIENT_METAL)),
+                        "Longdead retain their original ancient metal as a minimum");
+            } finally { earlyLongdead.discard(); }
+            overworld.setDayTime(127L * 24_000L + 6_000L);
+            for (AbstractSkeleton archer : List.of(longdead, stray)) {
+                Arrow arrow = shoot(helper, archer, target);
+                try {
+                    helper.assertTrue(arrow.getPickupItemStackOrigin().is(MiteRangedItems.arrow(Material.ADAMANTIUM)),
+                            "Reinforced bows fire the same unlocked material");
+                    if (archer == stray) {
+                        var contents = arrow.getPickupItemStackOrigin().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+                        helper.assertTrue(contents.customEffects().stream().anyMatch(effect -> effect.is(MobEffects.MOVEMENT_SLOWDOWN)),
+                                "The stronger Stray arrow keeps Slowness");
+                    }
+                } finally { arrow.discard(); }
+            }
+
+            var pigman = EntityType.ZOMBIFIED_PIGLIN.create(level);
+            ItemStack iron = new ItemStack(MiteRangedItems.arrow(Material.IRON));
+            ArrowItem ironArrow = (ArrowItem)iron.getItem();
+            var pigmanShot = ironArrow.createArrow(level, iron, pigman, new ItemStack(Items.BOW));
+            var crossbowShot = ironArrow.createArrow(level, iron, pigman, new ItemStack(Items.CROSSBOW));
+            var playerShot = ironArrow.createArrow(level, iron, helper.makeMockPlayer(GameType.SURVIVAL), new ItemStack(Items.BOW));
+            helper.assertTrue(pigmanShot.getPickupItemStackOrigin().is(MiteRangedItems.arrow(Material.ADAMANTIUM)),
+                    "Direct arrow creation also upgrades the ITE pigman's bow path");
+            helper.assertTrue(crossbowShot.getPickupItemStackOrigin().is(iron.getItem()), "Crossbow ammunition keeps its original material");
+            helper.assertTrue(playerShot.getPickupItemStackOrigin().is(iron.getItem()), "Player ammunition keeps its original material");
+        } finally {
+            overworld.setDayTime(time);
         }
         helper.succeed();
     }

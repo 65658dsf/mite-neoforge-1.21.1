@@ -1,10 +1,10 @@
 package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.combat.SourcePlayerCombat;
 import io.github.ningmeng123.mite.config.MiteConfig;
 import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
-import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -38,43 +39,43 @@ public final class MonsterDayScaling {
                 || mob instanceof R196Mob source && source.miteKind() != null && source.miteKind().family() == MobKind.Family.BAT);
     }
 
-    private static long day(Mob mob, ServerLevel level) {
-        return Math.max(Math.max(1L, BloodMoonInvasion.highestDay(level)),
-                mob.getPersistentData().getCompound(DATA_KEY).getLong("day"));
+    /** The live lunar calendar uses the overworld clock in every dimension. */
+    public static long currentDay(ServerLevel level) {
+        ServerLevel overworld = level.getServer().overworld();
+        return Math.max(0L, (overworld == null ? level : overworld).getDayTime()) / 24_000L + 1L;
     }
 
-    /** Projectiles, explosions and contact attacks have their own base damage. */
+    /** Relative estimate for callers without a raw hit amount. */
     public static double attackMultiplier(Mob mob) {
-        if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return 1D;
-        var settings = MiteConfig.monsterGrowthSettings();
-        if (settings.damageBase() != 0D) {
-            settings = new MonsterGrowthRules.Settings(settings.healthBase(), 0D, settings.skeletonReference(),
-                    settings.healthRate(), settings.damageRate(), settings.healthFormula(), settings.damageFormula(),
-                    settings.healthBloodMoonFormula(), settings.damageBloodMoonFormula());
-        }
-        return grownAttack(day(mob, level), 1D, settings);
+        if (!handles(mob) || !(mob.level() instanceof ServerLevel level) || !MiteExtensions.policy().scalesMonsterDamage(mob)) return 1D;
+        var result = MonsterGrowthRules.relativeDamagePreview(currentDay(level), MiteConfig.monsterGrowthSettings(), damageGrowth());
+        reportFallback(result);
+        return result.value() * MonsterBirthScaling.multiplier(mob);
     }
 
     public static float scaledOwnedDamage(Mob attacker, float amount) {
-        return (float)Math.min(Float.MAX_VALUE, amount * attackMultiplier(attacker));
+        if (!(amount > 0F) || !Float.isFinite(amount) || !handles(attacker) || !(attacker.level() instanceof ServerLevel level)
+                || !MiteExtensions.policy().scalesMonsterDamage(attacker)) return amount;
+        var result = MonsterGrowthRules.ownedDamagePreview(currentDay(level), amount, MiteConfig.monsterGrowthSettings(), damageGrowth());
+        reportFallback(result);
+        return (float)Math.min(Float.MAX_VALUE, result.value() * MonsterBirthScaling.multiplier(attacker));
     }
 
     /** The innate attribute is evaluated before the native weapon, equipment and effect modifiers. */
     public static double attackBase(Mob mob, double nativeBase) {
-        if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return nativeBase;
+        if (!handles(mob) || !(mob.level() instanceof ServerLevel level) || !MiteExtensions.policy().scalesMonsterDamage(mob)) return nativeBase;
         var settings = MiteConfig.monsterGrowthSettings();
         double multiplier = PiglinBruteReinforcements.attributeMultiplier(mob);
         double initial = settings.damageBase() > 0D ? settings.damageBase() : nativeBase / multiplier;
         // Commands and saved NBT can supply a negative base that equipment later offsets.
         if (initial < 0D || !Double.isFinite(initial)) return nativeBase;
-        return grownAttack(day(mob, level), initial, settings) * multiplier;
+        var result = MonsterGrowthRules.damagePreview(currentDay(level), initial, settings, damageGrowth());
+        reportFallback(result);
+        return result.value() * multiplier;
     }
 
-    private static double grownAttack(long day, double nativeBase, MonsterGrowthRules.Settings settings) {
-        var result = MonsterGrowthRules.damagePreview(day, nativeBase, settings,
-                MiteConfig.monsterGrowthMultiplier() * MiteConfig.monsterDamageGrowthMultiplier());
-        reportFallback(result);
-        return result.value();
+    private static double damageGrowth() {
+        return MiteConfig.monsterGrowthMultiplier() * MiteConfig.monsterDamageGrowthMultiplier();
     }
 
     private static void reportFallback(MonsterGrowthRules.Result result) {
@@ -100,7 +101,7 @@ public final class MonsterDayScaling {
             mob.getPersistentData().remove(DATA_KEY);
             return;
         }
-        long day = day(mob, level);
+        long day = currentDay(level);
         var attribute = mob.getAttribute(Attributes.MAX_HEALTH);
         if (attribute == null) return;
         // Explicitly retain the ordinary1024 ceiling even when an extension raises the attribute range.
@@ -114,9 +115,9 @@ public final class MonsterDayScaling {
         var growthResult = MonsterGrowthRules.healthPreview(day, baseHealth / multiplier, mob instanceof AbstractSkeleton,
                 MiteConfig.monsterGrowthSettings(), growth);
         reportFallback(growthResult);
-        double limit=io.github.ningmeng123.mite.api.MiteExtensions.policy().mobHealthLimit(mob,1024D);
+        double limit=MiteExtensions.policy().mobHealthLimit(mob,1024D);
         if (!Double.isFinite(limit)||limit<1D) throw new IllegalStateException("Invalid monster health limit");
-        double amount=Math.min(limit,growthResult.value() * multiplier)/baseHealth-1D;
+        double amount=Math.min(limit,growthResult.value() * multiplier * MonsterBirthScaling.multiplier(mob))/baseHealth-1D;
         var previous = attribute.getModifier(HEALTH_MODIFIER);
         if (amount == 0D ? previous != null : previous == null || previous.amount() != amount
                 || previous.operation() != AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
@@ -138,7 +139,10 @@ public final class MonsterDayScaling {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void join(EntityJoinLevelEvent event) {
-        if (!event.isCanceled() && !event.getLevel().isClientSide && event.getEntity() instanceof Mob mob) refresh(mob);
+        if (!event.isCanceled() && event.getLevel() instanceof ServerLevel level && event.getEntity() instanceof Mob mob) {
+            MonsterBirthScaling.join(mob, level, event.loadedFromDisk());
+            refresh(mob);
+        }
     }
 
     @SubscribeEvent
@@ -147,15 +151,21 @@ public final class MonsterDayScaling {
                 && Math.floorMod(mob.tickCount + mob.getId(), 20) == 0) refresh(mob);
     }
 
-    /** Native melee already includes the grown body attribute when it reaches this event. */
+    /** Native melee already includes the grown body attribute, then the birth bonus scales the completed hit. */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void damage(LivingIncomingDamageEvent event) {
         var source = event.getSource();
         float amount = event.getAmount();
         if (event.isCanceled() || !(amount > 0F) || !Float.isFinite(amount) || event.getEntity().level().isClientSide
-                || !(source.getEntity() instanceof Mob attacker) || source.is(DamageTypes.THORNS)
-                || SourcePlayerCombat.isHandDamage(source)) return;
-        if (source.getDirectEntity() == attacker && source.is(DamageTypes.MOB_ATTACK) && MonsterMeleeScaling.active(attacker)) return;
-        event.setAmount(scaledOwnedDamage(attacker, amount));
+                || source.is(DamageTypes.THORNS) || SourcePlayerCombat.isHandDamage(source)) return;
+        var causingEntity = source.getEntity();
+        var directEntity = source.getDirectEntity();
+        if ((causingEntity == null || causingEntity == directEntity) && directEntity instanceof Projectile projectile)
+            causingEntity = projectile.getOwner();
+        if (!(causingEntity instanceof Mob attacker)) return;
+        if (directEntity == attacker && source.is(DamageTypes.MOB_ATTACK) && MonsterMeleeScaling.active(attacker)) {
+            double multiplier = MonsterBirthScaling.damageMultiplier(attacker);
+            if (multiplier != 1D) event.setAmount((float)Math.min(Float.MAX_VALUE, amount * multiplier));
+        } else event.setAmount(scaledOwnedDamage(attacker, amount));
     }
 }

@@ -7,16 +7,19 @@ import static org.junit.jupiter.api.Assertions.*;
 /** Independently tabulated real blood-moon bases and editable-formula safety. @author NingMeng123 */
 class MonsterGrowthRulesTest {
     private static final MonsterGrowthRules.Settings DEFAULTS = MonsterGrowthRules.DEFAULTS;
+    private static final MonsterGrowthRules.Settings LEGACY_SETTINGS = new MonsterGrowthRules.Settings(
+            DEFAULTS.healthBase(), DEFAULTS.damageBase(), DEFAULTS.skeletonReference(), DEFAULTS.healthRate(),
+            DEFAULTS.damageRate(), DEFAULTS.healthFormula(), DEFAULTS.damageFormula());
 
-    @Test void defaultGrowthShowsHalfPercentDailyAndRebasesToTheLastBloodMoonValue() {
+    @Test void growthWithoutAFloorUsesHalfPercentDailyAndRebasesToTheLastBloodMoonValue() {
         long[] days = {1L, 2L, 32L, 33L, 34L, 65L, 97L, 129L, 130L, 161L};
         double[] health = {20D, 20.1D, 23.1D, 23.2D, 23.316D, 26.912D, 31.21792D,
                 36.2127872D, 36.3688768D, 41.2076544D};
         for (int index = 0; index < days.length; index++) {
-            assertEquals(health[index], MonsterGrowthRules.health(days[index], 20D, false, DEFAULTS, 1D), 1E-10);
-            assertEquals(3D * health[index] / 20D, MonsterGrowthRules.damage(days[index], 3D, DEFAULTS, 1D), 1E-12);
+            assertEquals(health[index], MonsterGrowthRules.health(days[index], 20D, false, LEGACY_SETTINGS, 1D), 1E-10);
+            assertEquals(24D * health[index] / 20D, MonsterGrowthRules.damage(days[index], 24D, DEFAULTS, 1D), 1E-12);
         }
-        var afterFirstMoon = MonsterGrowthRules.healthPreview(34L, 20D, false, DEFAULTS, 1D);
+        var afterFirstMoon = MonsterGrowthRules.healthPreview(34L, 20D, false, LEGACY_SETTINGS, 1D);
         assertEquals(23.2D, afterFirstMoon.base(), 1E-12);
         assertEquals(23.2D, afterFirstMoon.reference(), 1E-12);
         assertEquals(1L, afterFirstMoon.days());
@@ -24,24 +27,155 @@ class MonsterGrowthRulesTest {
         assertFalse(afterFirstMoon.fallback());
     }
 
+    @Test void lowInnateDamageUsesTwentyUntilItReachesTheThreshold() {
+        assertEquals(20D, MonsterGrowthRules.MINIMUM_DAMAGE_REFERENCE);
+        long[] days = {1L, 2L, 32L, 33L, 34L, 65L, 97L, 129L, 161L, 170L, 171L, 172L};
+        double[] values = {3D, 3.1D, 6.1D, 6.2D, 6.3D, 9.4D, 12.6D, 15.8D, 19D, 19.9D, 20D, 20.1D};
+        for (int i = 0; i < days.length; i++)
+            assertEquals(values[i], MonsterGrowthRules.damage(days[i], 3D, DEFAULTS, 1D), 1E-12);
+        var settlement = MonsterGrowthRules.damagePreview(33L, 3D, DEFAULTS, 1D);
+        assertEquals(6.2D, settlement.base(), 1E-12);
+        assertEquals(20D, settlement.reference());
+        assertEquals(0L, settlement.days());
+        assertEquals(1L, settlement.bloodMoons());
+        assertEquals(3D, MonsterGrowthRules.damage(172L, 3D, DEFAULTS, 0D));
+        assertEquals(0D, MonsterGrowthRules.damage(172L, 0D, DEFAULTS, 1D));
+    }
+
+    @Test void damageBaseOverrideRebasesToTheAttainedValueAfterCrossing() {
+        var settings = new MonsterGrowthRules.Settings(20D, 19.95D, 20D, .005D, .005D,
+                MonsterGrowthRules.DEFAULT_FORMULA, MonsterGrowthRules.DEFAULT_FORMULA);
+        assertEquals(19.95D, MonsterGrowthRules.damage(1L, 3D, settings, 1D));
+        assertEquals(20.05D, MonsterGrowthRules.damage(2L, 3D, settings, 1D), 1E-12);
+        var following = MonsterGrowthRules.damagePreview(3L, 3D, settings, 1D);
+        assertEquals(20.05D, following.base(), 1E-12);
+        assertEquals(20.05D, following.reference(), 1E-12);
+        assertEquals(1L, following.days());
+        assertEquals(20.15025D, following.value(), 1E-12);
+        assertEquals(23.15775D, MonsterGrowthRules.damage(33L, 3D, settings, 1D), 1E-12);
+    }
+
+    @Test void ownedDamageUsesTheRealHitAsItsBaseAndKeepsTheSameThreshold() {
+        var settings = new MonsterGrowthRules.Settings(20D, 12D, 20D, .005D, .005D,
+                MonsterGrowthRules.DEFAULT_FORMULA, MonsterGrowthRules.DEFAULT_FORMULA);
+        assertEquals(2.5D, MonsterGrowthRules.ownedDamagePreview(1L, 2.5D, settings, 1D).value());
+        var arrow = MonsterGrowthRules.ownedDamagePreview(2L, 2.5D, settings, 1D);
+        assertEquals(2.5D, arrow.base());
+        assertEquals(20D, arrow.reference());
+        assertEquals(2.6D, arrow.value(), 1E-12);
+        assertEquals(10.1D, MonsterGrowthRules.ownedDamagePreview(2L, 10D, settings, 1D).value(), 1E-12);
+        var strong = MonsterGrowthRules.ownedDamagePreview(2L, 25D, settings, 1D);
+        assertEquals(25D, strong.reference());
+        assertEquals(25.125D, strong.value(), 1E-12);
+    }
+
+    @Test void customDamageFormulasCanCrossTheThresholdAtBloodMoonSettlement() {
+        var settings = new MonsterGrowthRules.Settings(20D, 0D, 20D, .005D, .005D,
+                MonsterGrowthRules.DEFAULT_FORMULA, "base + reference * rate * min(days, 1)",
+                MonsterGrowthRules.DEFAULT_FORMULA, "base + 3");
+        assertTrue(MonsterGrowthRules.validate(settings).valid());
+        assertEquals(17.6D, MonsterGrowthRules.damage(32L, 17.5D, settings, 1D), 1E-12);
+        var crossing = MonsterGrowthRules.damagePreview(33L, 17.5D, settings, 1D);
+        assertEquals(20.5D, crossing.value());
+        assertEquals(20.5D, crossing.reference());
+        assertEquals(20.6025D, MonsterGrowthRules.damage(34L, 17.5D, settings, 1D), 1E-12);
+    }
+
     @Test void blueMoonDoesNotChangeTheBasisAndTheFollowingBloodMoonEndsTheLongerPeriod() {
-        var blue = MonsterGrowthRules.healthPreview(129L, 20D, false, DEFAULTS, 1D);
+        var blue = MonsterGrowthRules.healthPreview(129L, 20D, false, LEGACY_SETTINGS, 1D);
         assertEquals(31.21792D, blue.base(), 1E-12);
         assertEquals(32L, blue.days());
         assertEquals(3L, blue.bloodMoons());
-        var next = MonsterGrowthRules.healthPreview(161L, 20D, false, DEFAULTS, 1D);
+        var next = MonsterGrowthRules.healthPreview(161L, 20D, false, LEGACY_SETTINGS, 1D);
         assertEquals(41.2076544D, next.base(), 1E-10);
         assertEquals(0L, next.days());
         assertEquals(4L, next.bloodMoons());
     }
 
     @Test void sixHealthSkeletonUsesTwentyInitiallyThenItsActualBloodMoonHealth() {
-        assertEquals(6D, MonsterGrowthRules.health(1L, 6D, true, DEFAULTS, 1D));
-        assertEquals(6.1D, MonsterGrowthRules.health(2L, 6D, true, DEFAULTS, 1D), 1E-12);
-        assertEquals(9.2D, MonsterGrowthRules.health(33L, 6D, true, DEFAULTS, 1D), 1E-12);
-        assertEquals(9.246D, MonsterGrowthRules.health(34L, 6D, true, DEFAULTS, 1D), 1E-12);
-        assertEquals(10.672D, MonsterGrowthRules.health(65L, 6D, true, DEFAULTS, 1D), 1E-12);
-        assertEquals(10.672D, MonsterGrowthRules.health(65L, 6D, false, DEFAULTS, 1D), 1E-12);
+        assertEquals(6D, MonsterGrowthRules.health(1L, 6D, true, LEGACY_SETTINGS, 1D));
+        assertEquals(6.1D, MonsterGrowthRules.health(2L, 6D, true, LEGACY_SETTINGS, 1D), 1E-12);
+        assertEquals(9.2D, MonsterGrowthRules.health(33L, 6D, true, LEGACY_SETTINGS, 1D), 1E-12);
+        assertEquals(9.246D, MonsterGrowthRules.health(34L, 6D, true, LEGACY_SETTINGS, 1D), 1E-12);
+        assertEquals(10.672D, MonsterGrowthRules.health(65L, 6D, true, LEGACY_SETTINGS, 1D), 1E-12);
+        assertEquals(10.672D, MonsterGrowthRules.health(65L, 6D, false, LEGACY_SETTINGS, 1D), 1E-12);
+    }
+
+    @Test void defaultFloorPreservesNativeHealthAndAppliesUntilTheThresholdIsReached() {
+        assertEquals(40D, DEFAULTS.minimumHealthReference());
+        long[] days = {1L, 2L, 32L, 33L, 65L, 97L, 129L, 161L, 171L, 172L};
+        double[] values = {6D, 6.2D, 12.2D, 12.4D, 18.8D, 25.2D, 31.6D, 38D, 40D, 40.2D};
+        for (int i = 0; i < days.length; i++)
+            assertEquals(values[i], MonsterGrowthRules.health(days[i], 6D, true, DEFAULTS, 1D), 1E-12);
+        var afterMoon = MonsterGrowthRules.healthPreview(34L, 6D, true, DEFAULTS, 1D);
+        assertEquals(12.4D, afterMoon.base(), 1E-12);
+        assertEquals(40D, afterMoon.reference());
+        assertEquals(1L, afterMoon.bloodMoons());
+        assertEquals(40.1D, MonsterGrowthRules.health(2L, 40D, false, DEFAULTS, 1D), 1E-12);
+        assertEquals(6D, MonsterGrowthRules.health(Long.MAX_VALUE, 6D, true, DEFAULTS, 0D));
+    }
+
+    @Test void crossingUsesTheAttainedValueAndPreservesTheNextSettlementDate() {
+        var atCrossing = MonsterGrowthRules.healthPreview(2L, 39.9D, false, DEFAULTS, 1D);
+        assertEquals(40.1D, atCrossing.value(), 1E-12);
+        var following = MonsterGrowthRules.healthPreview(3L, 39.9D, false, DEFAULTS, 1D);
+        assertEquals(40.1D, following.base(), 1E-12);
+        assertEquals(40.1D, following.reference(), 1E-12);
+        assertEquals(1L, following.days());
+        assertEquals(40.3005D, following.value(), 1E-12);
+        var settlement = MonsterGrowthRules.healthPreview(33L, 39.9D, false, DEFAULTS, 1D);
+        assertEquals(46.3155D, settlement.value(), 1E-12);
+        assertEquals(1L, settlement.bloodMoons());
+        assertEquals(0L, settlement.days());
+        assertEquals(atCrossing, MonsterGrowthRules.healthPreview(2L, 39.9D, false, DEFAULTS, 1D));
+        assertEquals(1L, MonsterGrowthRules.lastBloodMoonSettlementDay(3L));
+        assertEquals(97L, MonsterGrowthRules.lastBloodMoonSettlementDay(129L));
+        assertEquals(161L, MonsterGrowthRules.lastBloodMoonSettlementDay(161L));
+    }
+
+    @Test void customFormulaDetectsATransientCrossingAndCanAlsoCrossAtSettlement() {
+        var transientCrossing = withFloor(40D,
+                "base + reference * rate * min(days, 1) + max(0, 1 - abs(day - 5)) * 3", DEFAULTS.healthBloodMoonFormula());
+        assertTrue(MonsterGrowthRules.validate(transientCrossing).valid());
+        assertEquals(37.2D, MonsterGrowthRules.health(4L, 37D, false, transientCrossing, 1D), 1E-12);
+        assertEquals(40.2D, MonsterGrowthRules.health(5L, 37D, false, transientCrossing, 1D), 1E-12);
+        assertEquals(40.401D, MonsterGrowthRules.health(6L, 37D, false, transientCrossing, 1D), 1E-12);
+        assertEquals(45.828D, MonsterGrowthRules.health(33L, 37D, false, transientCrossing, 1D), 1E-12);
+
+        var settlementCrossing = withFloor(40D, "base + reference * rate * min(days, 1)", "base + 3");
+        assertEquals(37.7D, MonsterGrowthRules.health(32L, 37.5D, false, settlementCrossing, 1D), 1E-12);
+        var crossing = MonsterGrowthRules.healthPreview(33L, 37.5D, false, settlementCrossing, 1D);
+        assertEquals(40.5D, crossing.value(), 1E-12);
+        assertEquals(40.5D, crossing.reference(), 1E-12);
+        assertEquals(40.7025D, MonsterGrowthRules.health(34L, 37.5D, false, settlementCrossing, 1D), 1E-12);
+    }
+
+    @Test void equivalentLinearAndCustomExpressionsAgreeAtExactThresholdAfterSeveralSettlements() {
+        var custom = withFloor(40D, DEFAULTS.healthFormula() + " + 0", DEFAULTS.healthBloodMoonFormula());
+        assertEquals(40D, MonsterGrowthRules.health(197L, .8D, false, custom, 1D), 1E-12);
+        assertEquals(40.4D, MonsterGrowthRules.health(199L, .8D, false, custom, 1D), 1E-12);
+        assertEquals(MonsterGrowthRules.health(199L, .8D, false, DEFAULTS, 1D),
+                MonsterGrowthRules.health(199L, .8D, false, custom, 1D), 1E-12);
+    }
+
+    @Test void configuredFloorIsValidatedAndDoesNotChangeDamage() {
+        for (double invalid : new double[]{-1D, 1025D, Double.NaN, Double.POSITIVE_INFINITY})
+            assertFalse(MonsterGrowthRules.validate(withFloor(invalid, DEFAULTS.healthFormula(), DEFAULTS.healthBloodMoonFormula())).valid());
+        var settings = withFloor(50D, DEFAULTS.healthFormula(), DEFAULTS.healthBloodMoonFormula());
+        assertEquals(6.25D, MonsterGrowthRules.health(2L, 6D, true, settings, 1D), 1E-12);
+        assertEquals(MonsterGrowthRules.damage(65L, 3D, LEGACY_SETTINGS, 1D),
+                MonsterGrowthRules.damage(65L, 3D, settings, 1D));
+        var bounded = withFloor(40D, "base", "base");
+        var stable = MonsterGrowthRules.healthPreview(100_000L, 6D, true, bounded, 1D);
+        assertEquals(6D, stable.value());
+        assertFalse(stable.fallback());
+        assertEquals(40.5D, MonsterGrowthRules.health(33L, 37.5D, false, withFloor(40D, "base", "base + 3"), 0D));
+    }
+
+    private static MonsterGrowthRules.Settings withFloor(double floor, String period, String bloodMoon) {
+        return new MonsterGrowthRules.Settings(DEFAULTS.healthBase(), DEFAULTS.damageBase(), DEFAULTS.skeletonReference(),
+                DEFAULTS.healthRate(), DEFAULTS.damageRate(), period, DEFAULTS.damageFormula(), bloodMoon,
+                DEFAULTS.damageBloodMoonFormula(), floor);
     }
 
     @Test void allNativeHealthValuesUseTheSameFirstReferenceWithLegacyZeroAndExplicitTwenty() {
@@ -136,7 +270,7 @@ class MonsterGrowthRulesTest {
             assertTrue(validation.message().contains("生命血月基准公式"), validation.message());
             var fallback = MonsterGrowthRules.healthPreview(65L, 20D, false, settings, 1D);
             assertTrue(fallback.fallback(), expression);
-            assertEquals(MonsterGrowthRules.health(65L, 20D, false, DEFAULTS, 1D), fallback.value());
+            assertEquals(MonsterGrowthRules.health(65L, 20D, false, LEGACY_SETTINGS, 1D), fallback.value());
         }
         var badPeriod = new MonsterGrowthRules.Settings(0D, 0D, 20D, .005D, .0025D,
                 "base / abs(blood_moons - 1)", MonsterGrowthRules.DEFAULT_FORMULA,
@@ -153,6 +287,9 @@ class MonsterGrowthRulesTest {
         var invalidForProjectiles = new MonsterGrowthRules.Settings(20D, 5D, 20D, .005D, .005D,
                 MonsterGrowthRules.DEFAULT_FORMULA, "base / (initial - 1)");
         assertFalse(MonsterGrowthRules.validate(invalidForProjectiles).valid());
+        var invalidAtOwnedReference = new MonsterGrowthRules.Settings(20D, 30D, 20D, .005D, .005D,
+                MonsterGrowthRules.DEFAULT_FORMULA, "base / abs(reference - 20)");
+        assertFalse(MonsterGrowthRules.validate(invalidAtOwnedReference).valid());
         var zeroAttack = new MonsterGrowthRules.Settings(0D, 0D, 20D, .005D, .0025D,
                 MonsterGrowthRules.DEFAULT_FORMULA, MonsterGrowthRules.DEFAULT_FORMULA,
                 MonsterGrowthRules.DEFAULT_FORMULA, "0");
@@ -193,7 +330,7 @@ class MonsterGrowthRulesTest {
         assertTrue(MonsterGrowthRules.validate(edge).valid());
         var actual = MonsterGrowthRules.healthPreview(201L, 20D, false, edge, 1D);
         assertTrue(actual.fallback());
-        assertEquals(MonsterGrowthRules.health(201L, 20D, false, DEFAULTS, 1D), actual.value());
+        assertEquals(MonsterGrowthRules.health(201L, 20D, false, LEGACY_SETTINGS, 1D), actual.value());
         assertTrue(Double.isFinite(actual.value()) && actual.value() > 0D);
     }
 

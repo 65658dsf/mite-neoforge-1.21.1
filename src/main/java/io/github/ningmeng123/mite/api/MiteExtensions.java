@@ -85,6 +85,7 @@ public final class MiteExtensions {
         default float craftingDifficulty(ItemStack stack, float original) { return original; }
         default int materialUpgradeIngots(ItemStack stack, int original) { return original; }
         default double mobHealthLimit(Mob mob, double original) { return original; }
+        default boolean scalesMonsterDamage(Mob mob) { return true; }
         default double maximumHealthAttributeRange(double original) { return original; }
         default io.github.ningmeng123.mite.rules.R196FurnaceRules.Profile furnaceProfile(net.minecraft.world.level.block.state.BlockState state, io.github.ningmeng123.mite.rules.R196FurnaceRules.Profile original) { return original; }
         default io.github.ningmeng123.mite.rules.R196FurnaceRules.Fuel fuel(ItemStack stack, io.github.ningmeng123.mite.rules.R196FurnaceRules.Fuel original) { return original; }
