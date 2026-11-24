@@ -14,6 +14,9 @@ import io.github.ningmeng123.mite.client.config.ConfigSearchIndex;
 import io.github.ningmeng123.mite.client.config.EnchantmentSettingsScreen;
 import io.github.ningmeng123.mite.client.config.GravelDropSettingsScreen;
 import io.github.ningmeng123.mite.client.config.MiteSettingsScreen;
+import io.github.ningmeng123.mite.client.config.MonsterGrowthSettingsScreen;
+import io.github.ningmeng123.mite.client.config.MonsterSpawnSettingsScreen;
+import io.github.ningmeng123.mite.client.config.MonsterSpawningRulesScreen;
 import io.github.ningmeng123.mite.client.config.OreGenerationSettingsScreen;
 import io.github.ningmeng123.mite.client.config.SingleConfigValueScreen;
 import io.github.ningmeng123.mite.config.GravelDropSettings;
@@ -36,7 +39,9 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.AccessibilityOnboardingScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
@@ -124,6 +129,8 @@ public final class SettingsSearchClientAudit {
         report.addProperty("modern_ite_loaded", ite);
         report.addProperty("legacy_ite_config_factory_present", legacyIte);
         auditCategories(mc, home, ite && !legacyIte);
+        auditBaseCategoryEditors(mc, home);
+        auditBaseSearchEditors(mc, home);
         search(home).setValue("攻击距离");
         check(matches(home).stream().anyMatch(entry -> entry.id().equals("mite:combat.weapon_reach_multiplier")),
                 "Chinese configuration label search finds the actual reach setting");
@@ -196,6 +203,118 @@ public final class SettingsSearchClientAudit {
             home.init(mc, 320, 240);
         }
         report.addProperty("group_navigation_and_layout_at_minimum_and_large_sizes", true);
+    }
+
+    private static void auditBaseCategoryEditors(Minecraft mc, Screen home) throws Exception {
+        home.init(mc, 854, 480);
+        int entries = 0;
+        entries += auditNativeCategory(mc, home, "world", "structures");
+        entries += auditNativeCategory(mc, home, "creatures", "monsters");
+        entries += auditNativeCategory(mc, home, "combat", "combat");
+        entries += auditNativeCategory(mc, home, "combat", "enchantments");
+        entries += auditNativeCategory(mc, home, "system", "performance");
+        report.addProperty("base_native_category_settings_with_editors", entries);
+
+        press(home, "mite.config.category.creatures");
+        Screen creatures = mc.screen;
+        press(creatures, "mite.config.monster_formulas");
+        Screen growth = mc.screen;
+        growth.init(mc, 854, 480);
+        check(growth instanceof MonsterGrowthSettingsScreen
+                        && editable(input(growth, "mite.config.health_formula")),
+                "The dedicated growth page has an editable health formula");
+        press(growth, "mite.config.damage_tab");
+        check(editable(input(growth, "mite.config.damage_formula")), "The dedicated damage formula is editable");
+        growth.onClose();
+        press(creatures, "mite.config.monster_spawning");
+        Screen weights = mc.screen;
+        check(weights instanceof MonsterSpawnSettingsScreen
+                        && editBoxes(weights).stream().filter(box -> box.getMessage()
+                                .equals(Component.translatable("mite.config.monster_spawn_weight")))
+                                .anyMatch(SettingsSearchClientAudit::editable),
+                "The dedicated weight page has an editable control");
+        weights.onClose();
+        press(creatures, "mite.config.spawning_rules.button");
+        Screen rules = mc.screen;
+        check(rules instanceof MonsterSpawningRulesScreen && button(rules, "mite.config.save").active,
+                "The dedicated rules page can save local settings");
+        rules.onClose();
+        creatures.onClose();
+        report.addProperty("base_creatures_dedicated_controls_available", true);
+    }
+
+    private static int auditNativeCategory(Minecraft mc, Screen home, String category, String section) throws Exception {
+        press(home, "mite.config.category." + category);
+        Screen categoryScreen = mc.screen;
+        press(categoryScreen, "mite.config." + section);
+        Screen editor = mc.screen;
+        int entries = auditNativeInputs(editor, section);
+        editor.onClose();
+        check(mc.screen == categoryScreen, "The native editor returns to " + category);
+        categoryScreen.onClose();
+        return entries;
+    }
+
+    private static void auditBaseSearchEditors(Minecraft mc, Screen home) throws Exception {
+        var entries = ConfigSearchIndex.entries(home).stream()
+                .filter(entry -> entry.id().startsWith("mite:"))
+                .filter(entry -> {
+                    String path = entry.id().substring("mite:".length());
+                    return path.startsWith("combat.") || path.startsWith("structures.") || path.startsWith("performance.")
+                            || path.startsWith("monsters.") && path.endsWith("_multiplier")
+                            || path.contains("_generation.") && (path.endsWith(".candidates") || path.endsWith(".chance_percent"));
+                }).toList();
+        for (var entry : entries) {
+            search(home).setValue(entry.id());
+            openOnlyResult(home, entry.id());
+            Screen editor = mc.screen;
+            check(auditNativeInputs(editor, entry.id()) == 1, "Search opens one editable setting for " + entry.id());
+            editor.onClose();
+            check(mc.screen == home, "The single-value editor returns to search");
+        }
+        search(home).setValue("");
+        home.init(mc, 320, 240);
+        report.addProperty("base_native_search_settings_with_editors", entries.size());
+    }
+
+    private static int auditNativeInputs(Screen screen, String label) throws Exception {
+        check(screen instanceof SingleConfigValueScreen, "Native configuration editor opens for " + label);
+        var contextField = ConfigurationSectionScreen.class.getDeclaredField("context");
+        contextField.setAccessible(true);
+        Context context = (Context) contextField.get(screen);
+        var options = screen.children().stream().filter(OptionsList.class::isInstance)
+                .map(OptionsList.class::cast).findFirst().orElseThrow();
+        List<?> rows = options.children();
+        var controls = rows.stream().flatMap(row -> ((ContainerEventHandler) row).children().stream())
+                .filter(AbstractWidget.class::isInstance).map(AbstractWidget.class::cast).toList();
+        long toggles = controls.stream().filter(widget -> widget instanceof CycleButton<?> && widget.active).count();
+        long textFields = controls.stream().filter(EditBox.class::isInstance).map(EditBox.class::cast)
+                .filter(SettingsSearchClientAudit::editable).count();
+        long listButtons = controls.stream().filter(widget -> widget instanceof Button && widget.active).count();
+        int expectedToggles = 0;
+        int expectedTextFields = 0;
+        int expectedListButtons = 0;
+        for (Object definition : context.valueSpecs().values()) {
+            Object value = ((ModConfigSpec.ValueSpec) definition).getDefault();
+            if (value instanceof Boolean) expectedToggles++;
+            else if (value instanceof List<?>) expectedListButtons++;
+            else expectedTextFields++;
+        }
+        check(toggles == expectedToggles && textFields == expectedTextFields && listButtons == expectedListButtons,
+                "Every setting has an active native editor for " + label
+                        + " (toggles " + toggles + "/" + expectedToggles + ", fields " + textFields + "/"
+                        + expectedTextFields + ", lists " + listButtons + "/" + expectedListButtons + ")");
+        return context.valueSpecs().size();
+    }
+
+    private static boolean editable(EditBox box) {
+        boolean focused = box.isFocused();
+        box.setFocused(true);
+        try {
+            return box.canConsumeInput();
+        } finally {
+            box.setFocused(focused);
+        }
     }
 
     private static void auditGravelDropSettings(Minecraft mc, Screen home, boolean ite) throws Exception {
