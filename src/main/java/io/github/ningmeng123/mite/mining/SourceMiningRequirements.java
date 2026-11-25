@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.registry.MiteFurnaces;
 import io.github.ningmeng123.mite.registry.MiteMetalBlocks;
 import io.github.ningmeng123.mite.rules.OreBlockRules;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,7 +43,11 @@ public final class SourceMiningRequirements {
     public static boolean requiresTool(BlockState state) {
         // Ice and snow allow hand destruction independently of tool requirements for drops.
         if (state.is(BlockTags.ICE) || state.is(BlockTags.SNOW) || sourceHandBreakable(state)) return false;
-        return minimumHarvestLevel(state) > 0 || state.requiresCorrectToolForDrops();
+        if (state.requiresCorrectToolForDrops()) return true;
+        // Vanilla tool preferences and material tiers can affect effective tools without blocking hand breaking.
+        // Logs retain their explicit survival progression gate.
+        boolean vanilla = ResourceLocation.DEFAULT_NAMESPACE.equals(BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace());
+        return (!vanilla || state.is(BlockTags.LOGS)) && minimumHarvestLevel(state) > 0;
     }
     /** These R196 materials have neither requires_tool nor a positive block minimum, despite modern pickaxe tags. */
     public static boolean sourceHandBreakable(BlockState state) {

@@ -1,21 +1,35 @@
 package io.github.ningmeng123.mite.gametest;
 
+import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.mining.ToolHarvestRules;
 import io.github.ningmeng123.mite.registry.MiteTools;
+import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -65,6 +79,67 @@ public final class SourceMiningGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty")
+    public static void survivalRemovalOfGlassAndPackedMudRetainsNativeLoot(GameTestHelper helper) {
+        var level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
+        var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "mite-glass-test"), false);
+        var player = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation());
+        var connection = new Connection(PacketFlow.SERVERBOUND);
+        var channel = new EmbeddedChannel(connection);
+        var blockDrops = level.getGameRules().getRule(GameRules.RULE_DOBLOCKDROPS);
+        boolean previousBlockDrops = blockDrops.get();
+        try {
+            level.getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
+            player.setGameMode(GameType.SURVIVAL);
+            player.moveTo(Vec3.atBottomCenterOf(pos.south().below()));
+            player.setOnGround(true);
+            blockDrops.set(true, level.getServer());
+
+            BlockState purpleGlass = Blocks.PURPLE_STAINED_GLASS.defaultBlockState();
+            assertSurvivalBreak(helper, player, pos, purpleGlass, ItemStack.EMPTY, 0);
+            assertSurvivalBreak(helper, player, pos, purpleGlass, new ItemStack(Items.IRON_PICKAXE), 0);
+            assertSurvivalBreak(helper, player, pos, purpleGlass, new ItemStack(MiteTools.get("vibranium_pickaxe")), 0);
+
+            ItemStack silkTouch = new ItemStack(Items.IRON_PICKAXE);
+            silkTouch.enchant(level.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                    .getHolderOrThrow(Enchantments.SILK_TOUCH), 1);
+            assertSurvivalBreak(helper, player, pos, purpleGlass, silkTouch, 1);
+            assertSurvivalBreak(helper, player, pos, Blocks.TINTED_GLASS.defaultBlockState(), ItemStack.EMPTY, 1);
+            assertSurvivalBreak(helper, player, pos, Blocks.PACKED_MUD.defaultBlockState(), ItemStack.EMPTY, 1);
+        } finally {
+            blockDrops.set(previousBlockDrops, level.getServer());
+            try {
+                if (level.getServer().getPlayerList().getPlayer(player.getUUID()) != null) {
+                    level.getServer().getPlayerList().remove(player);
+                }
+            } finally {
+                channel.finishAndReleaseAll();
+            }
+        }
+        helper.succeed();
+    }
+
+    private static void assertSurvivalBreak(GameTestHelper helper, ServerPlayer player, BlockPos pos, BlockState state,
+                                            ItemStack held, int expectedDrops) {
+        var level = helper.getLevel();
+        level.setBlock(pos, state, 2);
+        player.setItemSlot(EquipmentSlot.MAINHAND, held);
+        String context = state + " with " + held;
+        AABB dropArea = new AABB(pos).inflate(1);
+        try (var spawned = new SpawnedEntityCapture(level, entity -> entity instanceof ItemEntity
+                && dropArea.contains(entity.position()))) {
+            helper.assertTrue(state.getDestroyProgress(player, level, pos) > 0F, "Break progress for " + context);
+            helper.assertTrue(player.gameMode.destroyBlock(pos) && level.getBlockState(pos).isAir(),
+                    "The survival server removes " + context);
+            List<ItemEntity> drops = spawned.live(ItemEntity.class);
+            helper.assertValueEqual(drops.stream().mapToInt(entity -> entity.getItem().getCount()).sum(), expectedDrops,
+                    "Native drop count for " + context);
+            helper.assertTrue(drops.stream().allMatch(entity -> entity.getItem().is(state.getBlock().asItem())),
+                    "Native drop item for " + context);
+        }
+    }
+
     @GameTest(template="empty")
     public static void bareHandsAndUnrelatedItemsCannotRemoveRequiredMaterialsAtAnyLevel(GameTestHelper h) {
         var p=h.makeMockPlayer(GameType.SURVIVAL);p.setOnGround(true);p.experienceLevel=500;
@@ -81,22 +156,47 @@ public final class SourceMiningGameTests {
         }
         h.succeed();
     }
-    @GameTest(template="empty")
-    public static void requiredGlassAndSandstoneAcceptOnlyAnEffectiveSufficientSourceTool(GameTestHelper h) {
-        var p=h.makeMockPlayer(GameType.SURVIVAL);p.setOnGround(true);BlockPos pos=h.absolutePos(new BlockPos(2,2,2));
-        for(var block:new net.minecraft.world.level.block.Block[]{Blocks.GLASS,Blocks.RED_STAINED_GLASS,Blocks.TINTED_GLASS,Blocks.SANDSTONE}) {
-            var state=block.defaultBlockState();p.setItemSlot(EquipmentSlot.MAINHAND,ItemStack.EMPTY);
-            h.assertTrue(ToolHarvestRules.isBlocked(p,state),"Whole glass and sandstone need a tool even without vanilla drop flags");
-            p.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("mite:flint_axe"))));
-            h.assertTrue(!ToolHarvestRules.isBlocked(p,state) && state.getDestroyProgress(p,h.getLevel(),pos)>0F,"Flint axe satisfies source level one and material effectiveness");
+    @GameTest(template = "empty")
+    public static void sourceToolTiersAndExistingDropExceptionsStillApply(GameTestHelper helper) {
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setOnGround(true);
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
+        var sandstone = Blocks.SANDSTONE.defaultBlockState();
+        helper.assertTrue(ToolHarvestRules.isBlocked(player, sandstone), "Sandstone retains its tool gate");
+        player.setItemSlot(EquipmentSlot.MAINHAND,
+                new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("mite:flint_axe"))));
+        helper.assertTrue(sandstone.getDestroyProgress(player, helper.getLevel(), pos) > 0F,
+                "The flint axe qualifies for sandstone");
+
+        player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        for (var block : List.of(Blocks.PISTON, Blocks.STONE_BUTTON, Blocks.RAIL, Blocks.COAL_BLOCK, Blocks.GLOWSTONE)) {
+            var state = block.defaultBlockState();
+            helper.assertFalse(ToolHarvestRules.isBlocked(player, state), "The existing hand break rule permits " + block);
+            helper.assertTrue(player.hasCorrectToolForDrops(state), "The existing hand drop rule permits " + block);
         }
-        p.setItemSlot(EquipmentSlot.MAINHAND,ItemStack.EMPTY);
-        h.assertTrue(!ToolHarvestRules.isBlocked(p,Blocks.GLASS_PANE.defaultBlockState()),"Thin glass retains its source zero minimum");
-        h.assertTrue(!ToolHarvestRules.isBlocked(p,Blocks.DIRT.defaultBlockState()),"Soil remains hand-breakable");
-        for(var block:new net.minecraft.world.level.block.Block[]{Blocks.PISTON,Blocks.STONE_BUTTON,Blocks.RAIL,Blocks.COAL_BLOCK,Blocks.GLOWSTONE})
-            h.assertTrue(!ToolHarvestRules.isBlocked(p,block.defaultBlockState()) && p.hasCorrectToolForDrops(block.defaultBlockState()),
-                    "A modern pickaxe tag cannot invent a source tool requirement for "+block);
-        p.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.STONE_PICKAXE));
-        h.assertTrue(!ToolHarvestRules.isBlocked(p,Blocks.STONE.defaultBlockState()),"Modern tools retain explicit native Tool compatibility");h.succeed();
+        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_PICKAXE));
+        helper.assertFalse(ToolHarvestRules.isBlocked(player, Blocks.STONE.defaultBlockState()),
+                "Modern tools retain native Tool compatibility");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vanillaHandBreakableBlocksMakeProgressWithEmptyHandAndStick(GameTestHelper helper) {
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setOnGround(true);
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
+
+        for (ItemStack held : List.of(ItemStack.EMPTY, new ItemStack(Items.STICK))) {
+            player.setItemSlot(EquipmentSlot.MAINHAND, held);
+            for (var block : BuiltInRegistries.BLOCK) {
+                var state = block.defaultBlockState();
+                if (!ResourceLocation.DEFAULT_NAMESPACE.equals(BuiltInRegistries.BLOCK.getKey(block).getNamespace())
+                        || state.isAir() || state.is(BlockTags.LOGS) || state.requiresCorrectToolForDrops()
+                        || state.getDestroySpeed(helper.getLevel(), pos) < 0F) continue;
+                helper.assertTrue(state.getDestroyProgress(player, helper.getLevel(), pos) > 0F,
+                        "Vanilla hand-breakable block must make progress with " + held + ": " + state);
+            }
+        }
+        helper.succeed();
     }
 }

@@ -111,9 +111,11 @@
 ```mcfunction
 /setblock 2 101 0 minecraft:glass
 /setblock 2 101 2 minecraft:glass_pane
+/setblock 2 101 4 minecraft:purple_stained_glass
+/setblock 2 101 6 minecraft:tinted_glass
 ```
 
-整块玻璃空手不可破坏，合格燧石斧可破坏；玻璃板可空手拆。按钮、铁轨、活塞、萤石、煤炭块等来源零门槛例外不要被一并封锁。新版材料家族已有明确映射，并非所有现代“适合用镐”标签都变成必须持镐。
+这些玻璃都可空手或持镐破坏。遮光玻璃空手就会掉落自身，其他三种需用精准采集工具才会掉落自身。再空手测试潜影盒、泥坯、滴水石锥、按钮、铁轨、活塞、萤石和煤炭块，确认都有破坏进度。
 
 ## 5. 便携方块规则
 
