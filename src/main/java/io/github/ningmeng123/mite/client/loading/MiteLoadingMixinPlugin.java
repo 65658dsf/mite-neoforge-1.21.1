@@ -29,6 +29,11 @@ public final class MiteLoadingMixinPlugin implements IMixinConfigPlugin {
                 || mixinClassName.equals("io.github.ningmeng123.mite.mixin.BetterCombatVanillaPlayerMixin")) {
             return FMLLoader.getLoadingModList().getModFileById("bettercombat") != null;
         }
+        if (mixinClassName.equals("io.github.ningmeng123.mite.mixin.client.PunchyBetterCombatCompatMixin")) {
+            var loadingMods = FMLLoader.getLoadingModList();
+            return loadingMods.getModFileById("punchy") != null
+                    && loadingMods.getModFileById("bettercombat") != null;
+        }
         return true;
     }
 
