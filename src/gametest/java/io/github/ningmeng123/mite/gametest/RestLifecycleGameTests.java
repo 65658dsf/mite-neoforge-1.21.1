@@ -38,7 +38,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
@@ -289,6 +291,9 @@ public final class RestLifecycleGameTests {
             List<ServerPlayer> candidates = List.of(living, dead, spectator);
             var nativeStatus = new SleepStatus();
             nativeStatus.update(candidates);
+            var sleepStatusField = ServerLevel.class.getDeclaredField("sleepStatus");
+            sleepStatusField.setAccessible(true);
+            var noticeStatus = (SleepStatus) sleepStatusField.get(level);
             h.assertFalse(nativeStatus.areEnoughSleeping(100), "Native active-player accounting includes the dead player");
             h.assertFalse(nativeStatus.areEnoughDeepSleeping(100, candidates), "Native deep-sleep denominator also includes the dead player");
 
@@ -296,17 +301,40 @@ public final class RestLifecycleGameTests {
             // Isolate candidates and dayTime for this synchronous call only; never yield or tick.
             List<ServerPlayer> liveList = level.players(), original = new ArrayList<>(liveList);
             long oldDayTime = level.getDayTime(), oldGameTime = level.getGameTime();
+            var sleepingPercentage = level.getGameRules().getRule(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
+            int oldPercentage = sleepingPercentage.get();
             try {
                 liveList.clear(); liveList.addAll(candidates);
                 level.setDayTime(15000L);
+                sleepingPercentage.set(100, level.getServer());
+                level.updateSleepingPlayerList();
+                h.assertValueEqual(noticeStatus.amountSleeping(), 1, "The server notice counts the occupied bed");
+                h.assertValueEqual(noticeStatus.sleepersNeeded(100), 1, "The server notice excludes the dead player and spectator");
                 h.assertTrue(serverGate(level, nativeStatus, 100, liveList, false), "Transformed outer gate excludes dead and spectator players");
                 h.assertTrue(serverGate(level, nativeStatus, 100, liveList, true), "Transformed inner gate allows the sole living deep sleeper");
                 living.getPersistentData().putInt(PlayerRest.COUNTER, 99);
                 h.assertFalse(serverGate(level, nativeStatus, 100, liveList, true), "An occupied bed below deep-sleep consciousness cannot skip time");
                 living.getPersistentData().putInt(PlayerRest.COUNTER, 110);
+                sleepingPercentage.set(101, level.getServer());
+                h.assertFalse(PlayerRest.canForward(level), "A percentage above 100 requires more than every eligible player");
+                h.assertFalse(serverGate(level, nativeStatus, 101, liveList, false), "Even every eligible player does not meet 101 percent");
+                h.assertFalse(serverGate(level, nativeStatus, 101, liveList, true), "Deep sleep cannot bypass the disabled percentage");
+
                 dead.setHealth(dead.getMaxHealth());
-                h.assertFalse(serverGate(level, nativeStatus, 1, liveList, false), "Even a one-percent gamerule cannot omit an awake living player");
-                h.assertFalse(serverGate(level, nativeStatus, 1, liveList, true), "The deep gate also requires every living player to sleep");
+                nativeStatus.update(liveList);
+                level.updateSleepingPlayerList();
+                h.assertValueEqual(noticeStatus.sleepersNeeded(100), 2, "The revived awake player joins the notice denominator");
+                h.assertTrue(noticeStatus.areEnoughSleeping(50), "The notice accepts one of two at 50 percent");
+                h.assertFalse(noticeStatus.areEnoughSleeping(51), "The notice still needs a second sleeper at 51 percent");
+                for (int percentage : new int[] {0, 50, 51, 100}) {
+                    sleepingPercentage.set(percentage, level.getServer());
+                    boolean enough = percentage <= 50;
+                    h.assertValueEqual(PlayerRest.canForward(level), enough, "One of two eligible sleepers at " + percentage + " percent");
+                    h.assertValueEqual(serverGate(level, nativeStatus, percentage, liveList, false), enough,
+                            "Transformed occupied-bed threshold with one of two players at " + percentage + " percent");
+                    h.assertValueEqual(serverGate(level, nativeStatus, percentage, liveList, true), enough,
+                            "Transformed deep-sleep threshold with one of two players at " + percentage + " percent");
+                }
                 dead.setHealth(0F);
                 level.setDayTime(31L * 24000L + 15000L);
                 h.assertFalse(serverGate(level, nativeStatus, 100, liveList, true), "A blood date cannot skip time through either native denominator");
@@ -316,11 +344,83 @@ public final class RestLifecycleGameTests {
                 liveList.remove(living);
                 h.assertFalse(serverGate(level, nativeStatus, 100, liveList, false), "Dead and spectator players alone do not count as sleepers");
                 h.assertFalse(serverGate(level, nativeStatus, 100, liveList, true), "Deep sleep requires at least one living participant");
+                dead.setHealth(dead.getMaxHealth());
+                nativeStatus.update(liveList);
+                sleepingPercentage.set(0, level.getServer());
+                h.assertFalse(PlayerRest.canForward(level), "Zero percent still requires a sleeper when a player is awake");
+                h.assertFalse(serverGate(level, nativeStatus, 0, liveList, false), "Zero percent cannot skip an empty bed");
+                h.assertFalse(serverGate(level, nativeStatus, 0, liveList, true), "Zero percent cannot skip without a deep sleeper");
                 h.assertValueEqual(level.getGameTime(), oldGameTime, "Call-site gate verification never advances the shared game clock");
             } finally {
+                sleepingPercentage.set(oldPercentage, level.getServer());
                 level.setDayTime(oldDayTime);
                 liveList.clear(); liveList.addAll(original);
+                level.updateSleepingPlayerList();
             }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void sleepFinishSimulatesOnlyPlayersInBedAtTheConfiguredThreshold(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        long previousTime = level.getDayTime();
+        long nightTime = 21999L;
+        long sunrise = 23000L;
+        var sleepingPercentage = level.getGameRules().getRule(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
+        int previousPercentage = sleepingPercentage.get();
+        try (var bed = new BedChamber(h); var secondBed = new BedChamber(h, new BlockPos(5, 24, 1));
+             var sleeperSession = new Session(h); var awakeSession = new Session(h); var newSleeperSession = new Session(h)) {
+            ServerPlayer sleeper = sleeperSession.player(), awake = awakeSession.player(), newSleeper = newSleeperSession.player();
+            feed(sleeper, 6, 6);
+            feed(awake, 6, 6);
+            feed(newSleeper, 6, 6);
+            sleeper.startSleeping(bed.head);
+            sleeper.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 10000));
+            awake.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 10000));
+            sleeper.getPersistentData().putInt(PlayerRest.COUNTER, 99);
+
+            // Keep other tests' sessions out of the shared level list during the synchronous event.
+            List<ServerPlayer> players = level.players(), previousPlayers = new ArrayList<>(players);
+            try {
+                players.clear();
+                players.addAll(List.of(sleeper, awake));
+                level.setDayTime(nightTime);
+                sleepingPercentage.set(51, level.getServer());
+                PlayerRest.tick(new PlayerTickEvent.Post(sleeper));
+                h.assertValueEqual(PlayerRest.counter(sleeper), 98, "Below quorum the sleeper's consciousness does not advance");
+                sleeper.getPersistentData().putInt(PlayerRest.COUNTER, 99);
+                sleepingPercentage.set(50, level.getServer());
+                PlayerRest.tick(new PlayerTickEvent.Post(sleeper));
+                h.assertTrue(sleeper.isSleepingLongEnough(), "One of two players reaches deep sleep at 50 percent");
+
+                long finishTime = EventHooks.onSleepFinished(level, 24000L, nightTime);
+                h.assertValueEqual(finishTime, sunrise, "Actual NeoForge sleep finish returns the source sunrise");
+                int simulatedTicks = (int) (sunrise - nightTime);
+                h.assertValueEqual(NutritionState.get(sleeper).protein(), NutritionState.INITIAL.protein() - simulatedTicks,
+                        "The sleeper's food metabolism runs for every simulated tick");
+                h.assertValueEqual(NutritionState.get(awake), NutritionState.INITIAL, "The awake player's nutrition does not advance");
+                h.assertValueEqual(awake.getFoodData().getExhaustionLevel(), 0F, "The awake player pays no resting exhaustion");
+                h.assertFalse(sleeper.hasEffect(MobEffects.DAMAGE_RESISTANCE), "After 1000 simulated ticks a sleeper clears status effects");
+                h.assertTrue(awake.hasEffect(MobEffects.DAMAGE_RESISTANCE), "The awake player retains status effects");
+
+                players.add(newSleeper);
+                newSleeper.startSleeping(secondBed.head);
+                h.assertTrue(newSleeper.isSleeping(), "The third player has entered a second bed");
+                h.assertFalse(newSleeper.isSleepingLongEnough(), "The third player has yet to reach deep sleep");
+                sleepingPercentage.set(33, level.getServer());
+                long finishWithNewSleeper = EventHooks.onSleepFinished(level, 24000L, nightTime);
+                h.assertValueEqual(finishWithNewSleeper, sunrise, "One of three deep sleepers meets the new percentage");
+                h.assertValueEqual(NutritionState.get(newSleeper), NutritionState.INITIAL,
+                        "A player who has only just entered a bed does not receive simulated resting time");
+            } finally {
+                players.clear();
+                players.addAll(previousPlayers);
+                level.updateSleepingPlayerList();
+            }
+        } finally {
+            sleepingPercentage.set(previousPercentage, level.getServer());
+            level.setDayTime(previousTime);
         }
         h.succeed();
     }

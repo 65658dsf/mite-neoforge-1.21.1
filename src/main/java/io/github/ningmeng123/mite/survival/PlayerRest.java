@@ -6,6 +6,7 @@ import io.github.ningmeng123.mite.world.LunarWeather;
 import io.github.ningmeng123.mite.worldgen.R196OutdoorChecks;
 import java.util.List;
 import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -14,6 +15,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
@@ -31,27 +33,27 @@ public final class PlayerRest {
     public static final String COUNTER = "mite_sleep_consciousness";
     private PlayerRest() {}
     public static int counter(Player player) { return Math.clamp(player.getPersistentData().getInt(COUNTER), 0, 110); }
-    public static boolean allInBed(ServerLevel level) {
-        boolean one = false;
-        for (ServerPlayer player : level.players()) {
-            if (!player.isAlive() || player.isSpectator()) continue;
-            if (!player.isSleeping()) return false;
-            one = true;
-        }
-        return one;
+    public static boolean countsForSleep(ServerPlayer player) {
+        return player.isAlive() && !player.isSpectator();
     }
-    public static boolean allDeeplyAsleep(List<ServerPlayer> players) {
-        boolean one = false;
+    public static boolean hasEnoughSleeping(List<ServerPlayer> players, int percentage, Predicate<ServerPlayer> sleeping) {
+        if (percentage > 100) return false;
+        int eligible = 0;
+        int sleepers = 0;
         for (ServerPlayer player : players) {
-            if (!player.isAlive() || player.isSpectator()) continue;
-            if (!player.isSleepingLongEnough()) return false;
-            one = true;
+            if (!countsForSleep(player)) continue;
+            eligible++;
+            if (sleeping.test(player)) sleepers++;
         }
-        return one;
+        return sleepers >= Math.max(1L, Math.ceilDiv((long) eligible * percentage, 100L));
     }
     public static boolean canForward(ServerLevel level) {
+        return canForward(level, level.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE));
+    }
+    public static boolean canForward(ServerLevel level, int percentage) {
         return level.dimension().equals(Level.OVERWORLD) && !LunarWeather.bloodPeriod(level)
-                && RestRules.sleepingTime(level.getDayTime()) && allInBed(level);
+                && RestRules.sleepingTime(level.getDayTime())
+                && hasEnoughSleeping(level.players(), percentage, ServerPlayer::isSleeping);
     }
     public static boolean hostile(Mob mob) {
         return io.github.ningmeng123.mite.worldgen.R196MobSpawning.category(mob)
@@ -107,7 +109,7 @@ public final class PlayerRest {
     }
     @SubscribeEvent public static void tick(PlayerTickEvent.Post event) {
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
-        advanceConsciousness(player,player.isSleeping() && canForward(player.serverLevel()));
+        advanceConsciousness(player, countsForSleep(player) && player.isSleeping() && canForward(player.serverLevel()));
     }
     public static void advanceConsciousness(ServerPlayer player,boolean falling) {
         int before=counter(player);
@@ -126,7 +128,8 @@ public final class PlayerRest {
         event.setTimeAddition(level.getDayTime()+elapsed);
     }
     public static int simulate(ServerLevel level,int ticks) {
-        List<ServerPlayer> sleepers=level.players().stream().filter(p->p.isAlive()&&!p.isSpectator()).toList();
+        List<ServerPlayer> sleepers = level.players().stream()
+                .filter(player -> countsForSleep(player) && player.isSleepingLongEnough()).toList();
         return simulate(level,ticks,sleepers);
     }
     public static int simulate(ServerLevel level,int ticks,List<ServerPlayer> sleepers) {

@@ -3,6 +3,7 @@ package io.github.ningmeng123.mite.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.ningmeng123.mite.rules.LunarWeatherRules;
+import io.github.ningmeng123.mite.survival.PlayerRest;
 import io.github.ningmeng123.mite.world.LunarWeather;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -54,7 +55,7 @@ public abstract class LunarServerLevelMixin {
     private boolean mite$sourceSleepers(SleepStatus status, int percentage, Operation<Boolean> original) {
         ServerLevel level=(ServerLevel)(Object)this;
         return level.dimension().equals(Level.OVERWORLD)
-                ? io.github.ningmeng123.mite.survival.PlayerRest.allInBed(level)
+                ? PlayerRest.hasEnoughSleeping(level.players(), percentage, ServerPlayer::isSleeping)
                 : original.call(status,percentage);
     }
 
@@ -62,7 +63,15 @@ public abstract class LunarServerLevelMixin {
     private boolean mite$bloodMoonCannotSkip(SleepStatus status, int percentage, List<ServerPlayer> players, Operation<Boolean> original) {
         ServerLevel level=(ServerLevel)(Object)this;
         if(!level.dimension().equals(Level.OVERWORLD))return original.call(status,percentage,players);
-        return io.github.ningmeng123.mite.survival.PlayerRest.canForward(level)
-                && io.github.ningmeng123.mite.survival.PlayerRest.allDeeplyAsleep(players);
+        return PlayerRest.canForward(level, percentage)
+                && PlayerRest.hasEnoughSleeping(players, percentage, ServerPlayer::isSleepingLongEnough);
+    }
+
+    @WrapOperation(method = "updateSleepingPlayerList", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;update(Ljava/util/List;)Z"))
+    private boolean mite$countEligibleSleepersForNotice(SleepStatus status, List<ServerPlayer> players, Operation<Boolean> original) {
+        ServerLevel level = (ServerLevel) (Object) this;
+        return original.call(status, level.dimension().equals(Level.OVERWORLD)
+                ? players.stream().filter(PlayerRest::countsForSleep).toList()
+                : players);
     }
 }
