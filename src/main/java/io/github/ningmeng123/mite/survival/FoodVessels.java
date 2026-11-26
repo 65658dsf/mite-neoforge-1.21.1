@@ -1,12 +1,16 @@
 package io.github.ningmeng123.mite.survival;
 
 import io.github.ningmeng123.mite.Mite;
+import io.github.ningmeng123.mite.entity.MobCombat;
+import io.github.ningmeng123.mite.entity.R196FireElemental;
 import io.github.ningmeng123.mite.item.MiteBowlItem;
 import io.github.ningmeng123.mite.item.MiteBucketItem;
 import io.github.ningmeng123.mite.registry.MiteFoods;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
@@ -44,7 +48,11 @@ public final class FoodVessels {
     }
 
     public static boolean water(ItemStack stack) {
-        return waterBottle(stack) || stack.is(MiteFoods.WATER_BOWL.get()) || stack.is(Items.WATER_BUCKET)
+        return waterBottle(stack) || stack.is(MiteFoods.WATER_BOWL.get()) || waterBucket(stack);
+    }
+
+    private static boolean waterBucket(ItemStack stack) {
+        return stack.is(Items.WATER_BUCKET)
                 || stack.getItem() instanceof MiteBucketItem bucket && bucket.contents() == MiteBucketItem.Contents.WATER;
     }
 
@@ -121,6 +129,28 @@ public final class FoodVessels {
         if (result.isEmpty() || player.hasInfiniteMaterials()) return;
         // Conversion is not FOOD completion: nutrition/effects are deliberately not applied.
         player.setItemInHand(hand, ItemUtils.createFilledResult(player.getItemInHand(hand), player, result));
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void douseFireElemental(PlayerInteractEvent.EntityInteract event) {
+        if (!(event.getTarget() instanceof R196FireElemental fire) || !fire.isAlive()) return;
+        Player player = event.getEntity();
+        ItemStack held = event.getItemStack();
+        if (player.isSpectator() || player.getCooldowns().isOnCooldown(held.getItem())) return;
+        if (waterBottle(held) || !canDouse(held)) return;
+
+        if (event.getLevel() instanceof ServerLevel level) {
+            // R196 milk buckets are a separate legacy item class and use the five-point dose.
+            fire.hurt(MobCombat.source(fire, "water"), waterBucket(held) ? 20F : 5F);
+            double centerY = fire.getY() + fire.getBbHeight() * .5;
+            level.sendParticles(ParticleTypes.CLOUD, fire.getX(), centerY, fire.getZ(), 5, .25, .3, .25, .02);
+            var random = level.getRandom();
+            level.playSound(null, fire.getX(), centerY, fire.getZ(), SoundEvents.FIRE_EXTINGUISH, fire.getSoundSource(),
+                    .7F, 1.6F + (random.nextFloat() - random.nextFloat()) * .4F);
+            convertHeld(player, event.getHand(), empty(held));
+        }
+        event.setCanceled(true);
+        event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide));
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

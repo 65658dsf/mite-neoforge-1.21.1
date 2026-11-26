@@ -24495,7 +24495,7 @@
   ],
   "confirmed_surprising_actual_behavior": [
     "FireElemental receives water1 every40 ticks even while dry; javap offsets44..69",
-    "FireElemental rejects Power/Sharpness magic physical sources; javap isImmuneTo offsets19..90",
+    "FireElemental rejects magical arrow or melee damage when the bow has only Flame or the melee weapon has only Fire Aspect; javap isImmuneTo offsets19..90 and ye.hasEnchantment offsets0..22",
     "InfernalCreeper getScale resolves static of.getScale=1; only blast base doubles",
     "empty subtype classes Copperspine/Hoary/GiantBat/BlackWidow inherit real subtype branches in parents"
   ],

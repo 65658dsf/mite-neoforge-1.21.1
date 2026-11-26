@@ -23,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
-/** The released R196 bytecode's unconditional water pulse and reversed physical magic gate are deliberate. @author NingMeng123 */
+/** Fire elemental with R196 water damage and enchanted weapon immunities. @author NingMeng123 */
 public final class R196FireElemental extends Monster implements R196Mob {
     private final MobKind kind;
     private int fizzDelay;
@@ -49,8 +49,11 @@ public final class R196FireElemental extends Monster implements R196Mob {
         if (MobCombat.water(source) || source.getDirectEntity() instanceof Snowball) return false;
         if (!MobCombat.magic(source)) return true;
         ItemStack weapon = MobCombat.weapon(source);
-        var enchant = source.getDirectEntity() instanceof AbstractArrow ? Enchantments.POWER : Enchantments.SHARPNESS;
-        return weapon != null && weapon.getTagEnchantments().entrySet().stream().anyMatch(e -> e.getKey().is(enchant) && e.getIntValue() > 0);
+        if (weapon == null) return false;
+        var enchantment = source.getDirectEntity() instanceof AbstractArrow ? Enchantments.FLAME : Enchantments.FIRE_ASPECT;
+        var enchantments = weapon.getTagEnchantments();
+        // R196 passes true to hasEnchantment, which requires exactly one enchantment.
+        return enchantments.size() == 1 && enchantments.keySet().iterator().next().is(enchantment);
     }
     @Override public boolean doHurtTarget(Entity target) {
         float before = target instanceof LivingEntity living ? living.getHealth() : 0;

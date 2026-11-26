@@ -30,6 +30,7 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.monster.Silverfish;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -76,8 +77,78 @@ public final class ElementalCubeSilverfishGameTests {
     @GameTest(template="empty") public static void snowballQuenchesMagmaEarth(GameTestHelper h) throws Exception { R196Elemental e=earth(h); e.convertToMagma(); Snowball ball=new Snowball(h.getLevel(),player(h)); var impact=Snowball.class.getDeclaredMethod("onHitEntity",net.minecraft.world.phys.EntityHitResult.class); impact.setAccessible(true); impact.invoke(ball,new net.minecraft.world.phys.EntityHitResult(e)); h.assertTrue(!e.isMagma(),"Native impact quench runs even if mineral gate rejects hit"); h.succeed(); }
     @GameTest(template="empty") public static void fireSourceAttributes(GameTestHelper h) { R196FireElemental e=(R196FireElemental)mob(h,MobKind.FIRE_ELEMENTAL); near(h,e.getMaxHealth(),20,"40 in source is range, not health"); near(h,e.getAttributeValue(Attributes.FOLLOW_RANGE),40,"Fire range"); near(h,e.getAttributeValue(Attributes.ATTACK_DAMAGE),5,"Fire attack"); h.assertTrue(!e.healsWithTime() && !e.biologicallyAlive(),"Source fire biological flags"); h.succeed(); }
     @GameTest(template="empty") public static void dryFireReceivesSourceWaterPulse(GameTestHelper h) { R196FireElemental e=(R196FireElemental)mob(h,MobKind.FIRE_ELEMENTAL); e.tickCount=Math.floorMod(-e.getId()*47,40); float before=e.getHealth(); h.assertTrue(!e.isInWaterOrRain(),"Dry test fixture"); e.aiStep(); near(h,e.getHealth(),before-1,"Confirmed R196 unconditional water pulse"); h.succeed(); }
-    @GameTest(template="empty") public static void fireRejectsPlainAndAdmitsWater(GameTestHelper h) { R196FireElemental e=(R196FireElemental)mob(h,MobKind.FIRE_ELEMENTAL); h.assertTrue(e.isInvulnerableTo(e.damageSources().generic()) && !e.isInvulnerableTo(MobCombat.source(e,"water")),"Source physical/water gate"); Snowball ball=new Snowball(h.getLevel(),player(h)); h.assertTrue(!e.isInvulnerableTo(e.damageSources().thrown(ball,ball.getOwner())),"Source explicitly admits snowball"); h.succeed(); }
-    @GameTest(template="empty") public static void fireSharpnessGateRetainsReleasedDirection(GameTestHelper h) { R196FireElemental e=(R196FireElemental)mob(h,MobKind.FIRE_ELEMENTAL); Player p=player(h); ItemStack sword=new ItemStack(Items.IRON_SWORD); sword.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING),1); p.setItemSlot(EquipmentSlot.MAINHAND,sword); h.assertTrue(!e.isInvulnerableTo(e.damageSources().playerAttack(p)),"Magic weapon without Sharpness is admitted"); sword.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.SHARPNESS),1); h.assertTrue(e.isInvulnerableTo(e.damageSources().playerAttack(p)),"R196 actual bytecode rejects Sharpness magic"); h.succeed(); }
+    @GameTest(template = "empty")
+    public static void fireRejectsPlainAndAdmitsWater(GameTestHelper h) {
+        R196FireElemental elemental = (R196FireElemental) mob(h, MobKind.FIRE_ELEMENTAL);
+        h.assertTrue(elemental.isInvulnerableTo(elemental.damageSources().generic()), "Ordinary physical damage is rejected");
+        h.assertTrue(!elemental.isInvulnerableTo(MobCombat.source(elemental, "water")), "Water damage is admitted");
+        h.assertTrue(!elemental.isInvulnerableTo(elemental.damageSources().magic()), "Magic damage without a weapon is admitted");
+        Snowball ball = new Snowball(h.getLevel(), player(h));
+        h.assertTrue(!elemental.isInvulnerableTo(elemental.damageSources().thrown(ball, ball.getOwner())), "Snowballs are admitted");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void fireMeleeChecksForSoleFireAspect(GameTestHelper h) {
+        Player attacker = player(h);
+        DamageSource melee = attacker.damageSources().playerAttack(attacker);
+        var enchantments = h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        var sharpness = enchantments.getHolderOrThrow(Enchantments.SHARPNESS);
+
+        ItemStack pickaxe = new ItemStack(Items.IRON_PICKAXE);
+        attacker.setItemSlot(EquipmentSlot.MAINHAND, pickaxe);
+        assertFireHealthLoss(h, melee, false, "An unenchanted pickaxe cannot hurt the fire elemental");
+        pickaxe.enchant(enchantments.getHolderOrThrow(Enchantments.EFFICIENCY), 1);
+        assertFireHealthLoss(h, melee, true, "An Efficiency pickaxe can hurt the fire elemental");
+
+        ItemStack sword = new ItemStack(Items.IRON_SWORD);
+        attacker.setItemSlot(EquipmentSlot.MAINHAND, sword);
+        assertFireHealthLoss(h, melee, false, "An unenchanted sword cannot hurt the fire elemental");
+        sword.enchant(sharpness, 1);
+        assertFireHealthLoss(h, melee, true, "A sword with Sharpness can hurt the fire elemental");
+
+        ItemStack fireSword = new ItemStack(Items.IRON_SWORD);
+        fireSword.enchant(enchantments.getHolderOrThrow(Enchantments.FIRE_ASPECT), 1);
+        attacker.setItemSlot(EquipmentSlot.MAINHAND, fireSword);
+        assertFireHealthLoss(h, melee, false, "A sword with Fire Aspect alone cannot hurt the fire elemental");
+        fireSword.enchant(sharpness, 1);
+        assertFireHealthLoss(h, melee, true, "A sword with Fire Aspect and Sharpness can hurt the fire elemental");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void fireArrowsCheckForSoleFlame(GameTestHelper h) {
+        Player shooter = player(h);
+        var enchantments = h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        var power = enchantments.getHolderOrThrow(Enchantments.POWER);
+
+        ItemStack bow = new ItemStack(Items.BOW);
+        assertFireArrowHealthLoss(h, shooter, bow, false, "An unenchanted bow cannot hurt the fire elemental");
+        bow.enchant(power, 1);
+        assertFireArrowHealthLoss(h, shooter, bow, true, "A bow with Power can hurt the fire elemental");
+
+        ItemStack flameBow = new ItemStack(Items.BOW);
+        flameBow.enchant(enchantments.getHolderOrThrow(Enchantments.FLAME), 1);
+        assertFireArrowHealthLoss(h, shooter, flameBow, false, "A bow with Flame alone cannot hurt the fire elemental");
+        flameBow.enchant(power, 1);
+        assertFireArrowHealthLoss(h, shooter, flameBow, true, "A bow with Flame and Power can hurt the fire elemental");
+        h.succeed();
+    }
+
+    private static void assertFireArrowHealthLoss(GameTestHelper h, Player shooter, ItemStack bow, boolean expected, String message) {
+        Arrow arrow = new Arrow(h.getLevel(), shooter, new ItemStack(Items.ARROW), bow);
+        assertFireHealthLoss(h, shooter.damageSources().arrow(arrow, shooter), expected, message);
+        arrow.discard();
+    }
+
+    private static void assertFireHealthLoss(GameTestHelper h, DamageSource source, boolean expected, String message) {
+        R196FireElemental elemental = (R196FireElemental) mob(h, MobKind.FIRE_ELEMENTAL);
+        float before = elemental.getHealth();
+        elemental.hurt(source, 2F);
+        h.assertValueEqual(elemental.getHealth() < before, expected, message);
+        elemental.discard();
+    }
+
     @GameTest(template="empty") public static void fireMeleeIgnitesSixSeconds(GameTestHelper h) { R196FireElemental e=(R196FireElemental)mob(h,MobKind.FIRE_ELEMENTAL); Cow target=cow(h); h.assertTrue(e.doHurtTarget(target),"Fire melee must damage target"); h.assertTrue(target.getRemainingFireTicks()==120,"Source six seconds at20TPS"); h.succeed(); }
     @GameTest(template="empty") public static void cubeSizeAttributes(GameTestHelper h) { for (MobKind kind:List.of(MobKind.JELLY,MobKind.BLOB,MobKind.PUDDING)) { R196Cube e=cube(h,kind,4); near(h,e.getMaxHealth(),16,"Cube size square"); near(h,e.getBbWidth(),2,"Source width .5size"); near(h,e.getBbHeight(),2,"Source height .5size"); near(h,e.getAttributeValue(Attributes.ATTACK_DAMAGE),kind==MobKind.JELLY ? 8 : kind==MobKind.BLOB ? 12 : 16,"Independent type multipliers"); } h.succeed(); }
     @GameTest(template="empty") public static void oozeMaximumSize(GameTestHelper h) { R196Cube e=cube(h,MobKind.OOZE,4); h.assertTrue(e.getSize()==2,"Virtual setSize caps at2"); near(h,e.getMaxHealth(),4,"Ooze max health4"); near(h,e.getAttributeValue(Attributes.ATTACK_DAMAGE),6,"Ooze damage6"); h.succeed(); }
