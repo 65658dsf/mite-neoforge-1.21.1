@@ -29,6 +29,9 @@ public final class NutritionOverlay {
     private static final int WIDTH = 81;
     private static final int NUTRIENT_WIDTH = 120;
     private static final int NUTRIENT_HEIGHT = 5;
+    private static final int PROTEIN_COLOR = 0xB68A2C;
+    private static final int FAT_COLOR = 0xFFA4D6;
+    private static final int PLANT_NUTRIENTS_COLOR = 0x8EBC28;
     private NutritionOverlay() {}
 
     @SubscribeEvent public static void besideHotbar(RenderGuiLayerEvent.Post event) {
@@ -54,8 +57,8 @@ public final class NutritionOverlay {
         int rightStart = center + 91 + rightOccupied + 10;
         int leftWidth = Math.min(NUTRIENT_WIDTH, Math.max(0, leftEnd - 4));
         int rightWidth = Math.min(NUTRIENT_WIDTH, Math.max(0, graphics.guiWidth() - 4 - rightStart));
-        drawNutrient(graphics, minecraft, leftEnd - leftWidth, leftWidth, state.protein(), 0xFFB68A2C);
-        drawNutrient(graphics, minecraft, rightStart, rightWidth, state.plants(), 0xFF8EBC28);
+        drawNutrient(graphics, minecraft, leftEnd - leftWidth, leftWidth, state.protein(), 0xFF000000 | PROTEIN_COLOR);
+        drawNutrient(graphics, minecraft, rightStart, rightWidth, state.plants(), 0xFF000000 | PLANT_NUTRIENTS_COLOR);
     }
 
     private static NutritionPayload visibleState(Minecraft minecraft) {
@@ -122,15 +125,17 @@ public final class NutritionOverlay {
         if (saturationGain > 0F)
             tooltip.add(Component.translatable("tooltip.mite.food_native_saturation", saturationGain)
                     .withStyle(ChatFormatting.YELLOW));
-        addGain(tooltip, "tooltip.mite.food_protein_gain", NutritionRules.addMicronutrient(0, profile.nutrition(), profile.protein()));
-        addGain(tooltip, "tooltip.mite.food_fat_gain", NutritionRules.addMicronutrient(0, profile.nutrition(), profile.fat()));
-        addGain(tooltip, "tooltip.mite.food_plant_nutrient_gain", profile.plantNutrientGain());
-        addGain(tooltip, "tooltip.mite.food_sugar", NutritionRules.addedResistance(profile.sugar()));
+        addGain(tooltip, "tooltip.mite.food_protein_gain",
+                NutritionRules.addMicronutrient(0, profile.nutrition(), profile.protein()), PROTEIN_COLOR);
+        addGain(tooltip, "tooltip.mite.food_fat_gain",
+                NutritionRules.addMicronutrient(0, profile.nutrition(), profile.fat()), FAT_COLOR);
+        addGain(tooltip, "tooltip.mite.food_plant_nutrient_gain", profile.plantNutrientGain(), PLANT_NUTRIENTS_COLOR);
+        addGain(tooltip, "tooltip.mite.food_sugar", NutritionRules.addedResistance(profile.sugar()), ChatFormatting.YELLOW.getColor());
     }
 
-    private static void addGain(List<Component> tooltip, String translationKey, int amount) {
+    private static void addGain(List<Component> tooltip, String translationKey, int amount, int color) {
         if (amount > 0) {
-            tooltip.add(Component.translatable(translationKey, amount).withStyle(ChatFormatting.YELLOW));
+            tooltip.add(Component.translatable(translationKey, amount).withColor(color));
         }
     }
 
