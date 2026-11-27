@@ -108,37 +108,30 @@ public final class NutritionOverlay {
     @SubscribeEvent public static void explainFood(ItemTooltipEvent event) {
         var profile = MiteFoodCatalog.profile(event.getItemStack());
         if (profile == null) return;
-        var player=Minecraft.getInstance().player;
-        var state=NutritionPayload.latest();
-        int level=player!=null && state!=null && state.entityId()==player.getId() ? state.resistanceLevel() : -1;
-        int satiation=NutritionRules.adjustedSatiation(profile.satiation(),profile.sugar(),level);
-        event.getToolTip().add(Component.translatable("tooltip.mite.food_values", satiation, profile.nutrition())
+        Minecraft minecraft = Minecraft.getInstance();
+        var player = minecraft == null ? null : minecraft.player;
+        var state = NutritionPayload.latest();
+        int level = player != null && state != null && state.entityId() == player.getId() ? state.resistanceLevel() : -1;
+        int satiation = NutritionRules.adjustedSatiation(profile.satiation(), profile.sugar(), level);
+        List<Component> tooltip = event.getToolTip();
+        tooltip.add(Component.translatable("tooltip.mite.food_values", satiation, profile.nutrition())
                 .withStyle(ChatFormatting.GREEN));
         var nativeFood = event.getItemStack().get(DataComponents.FOOD);
         float saturationGain = event.getItemStack().is(Items.WHEAT_SEEDS) && nativeFood != null
                 ? nativeFood.saturation() : profile.saturationGain();
         if (saturationGain > 0F)
-            event.getToolTip().add(Component.translatable("tooltip.mite.food_native_saturation", saturationGain)
+            tooltip.add(Component.translatable("tooltip.mite.food_native_saturation", saturationGain)
                     .withStyle(ChatFormatting.YELLOW));
-        List<Component> sources = new ArrayList<>();
-        if (profile.protein()) sources.add(Component.translatable("tooltip.mite.food_protein"));
-        if (profile.fat()) sources.add(Component.translatable("tooltip.mite.food_fat"));
-        if (profile.plants()) {
-            sources.add(profile.nutrition() == 0 && profile.plantNutrientGain() > 0
-                    ? Component.translatable("tooltip.mite.food_plant_nutrient_gain", profile.plantNutrientGain())
-                    : Component.translatable("tooltip.mite.food_plants"));
+        addGain(tooltip, "tooltip.mite.food_protein_gain", NutritionRules.addMicronutrient(0, profile.nutrition(), profile.protein()));
+        addGain(tooltip, "tooltip.mite.food_fat_gain", NutritionRules.addMicronutrient(0, profile.nutrition(), profile.fat()));
+        addGain(tooltip, "tooltip.mite.food_plant_nutrient_gain", profile.plantNutrientGain());
+        addGain(tooltip, "tooltip.mite.food_sugar", NutritionRules.addedResistance(profile.sugar()));
+    }
+
+    private static void addGain(List<Component> tooltip, String translationKey, int amount) {
+        if (amount > 0) {
+            tooltip.add(Component.translatable(translationKey, amount).withStyle(ChatFormatting.YELLOW));
         }
-        if (!sources.isEmpty()) {
-            var joined = Component.empty();
-            for (int i = 0; i < sources.size(); i++) {
-                if (i > 0) joined.append(Component.translatable("tooltip.mite.food_separator"));
-                joined.append(sources.get(i));
-            }
-            event.getToolTip().add(Component.translatable("tooltip.mite.food_sources", joined).withStyle(ChatFormatting.GRAY));
-        }
-        if (profile.sugar() > 0)
-            event.getToolTip().add(Component.translatable("tooltip.mite.food_sugar", NutritionRules.addedResistance(profile.sugar()))
-                    .withStyle(ChatFormatting.YELLOW));
     }
 
     @SubscribeEvent public static void disconnected(ClientPlayerNetworkEvent.LoggingOut event) {
