@@ -143,7 +143,7 @@ public final class WitchCurseManufacturingGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void equipmentDecayDoublesNativeAndCustomWearOnceAndPreservesArmorLastPoint(GameTestHelper helper) {
+    public static void equipmentDecayDoublesNativeAndCustomWearOnceAndCanBreakArmor(GameTestHelper helper) {
         try (Fixture f = new Fixture(helper)) {
             f.curse(R196Curse.EQUIPMENT_DECAY);
             ItemStack nativeTool = new ItemStack(Items.IRON_PICKAXE);
@@ -158,9 +158,9 @@ public final class WitchCurseManufacturingGameTests {
             ItemStack armor = new ItemStack(Items.IRON_CHESTPLATE);
             f.player.setItemSlot(EquipmentSlot.CHEST, armor);
             armor.setDamageValue(armor.getMaxDamage() - 4);
-            armor.hurtAndBreak(10, f.player, EquipmentSlot.CHEST);
-            helper.assertFalse(armor.isEmpty(), "Ordinary worn armor still retains its final durability point");
-            helper.assertValueEqual(armor.getDamageValue(), armor.getMaxDamage() - 1, "Last-point clamp follows doubled wear");
+            armor.hurtAndBreak(2, f.player, EquipmentSlot.CHEST);
+            helper.assertTrue(armor.isEmpty() && f.player.getItemBySlot(EquipmentSlot.CHEST).isEmpty(),
+                    "The curse doubles two points of armor wear to four and breaks the equipped chestplate");
             f.player.setGameMode(GameType.CREATIVE);
             nativeTool.hurtAndBreak(11, f.player, EquipmentSlot.MAINHAND);
             helper.assertValueEqual(nativeTool.getDamageValue(), 22, "Creative mode retains its source wear exemption");

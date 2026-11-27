@@ -171,7 +171,7 @@ public final class ShieldEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void shieldWearUsesNativeBreakCallbacksAndDoesNotReceiveArmorLastPointProtection(GameTestHelper helper) {
+    public static void shieldWearUsesNativeBreakCallbacksAtTheLastPoint(GameTestHelper helper) {
         Zombie owner = new Zombie(EntityType.ZOMBIE, helper.getLevel());
         try {
             for (var definition : MiteShields.definitions()) {

@@ -97,18 +97,21 @@ public final class BlobDeathRecoveryGameTests {
     public static void repeatedBlobHitsCanLevelWornMetalArmorWithoutLosingItsDeathDrop(GameTestHelper helper) {
         for (Item item : List.of(Items.IRON_CHESTPLATE, MiteArmorContent.get("mite:mithril_chestplate"))) {
             try (Fixture f = new Fixture(helper)) {
-                ItemStack armor = f.equipment(item, true);
+                ItemStack armor = f.equipment(item, false);
                 UUID id = GearProgression.id(armor);
                 armor.set(GearProgression.PROGRESS.get(), new GearProgress(id, 3,
                         GearProgression.nextLevelExperienceMillis(armor, 3) - 1, Map.of(), 1));
                 f.player.setItemSlot(EquipmentSlot.CHEST, armor);
                 int maximum = armor.getMaxDamage();
+                int lastWear = maximum / 2;
+                armor.setDamageValue(lastWear);
                 Quality quality = EquipmentDurability.quality(armor);
                 for (int hit = 0; hit < 8; hit++) {
                     f.nonfatalHit();
                     ItemStack worn = f.player.getItemBySlot(EquipmentSlot.CHEST);
                     helper.assertTrue(worn == armor && !worn.isEmpty(), "Real repeated hits retain the worn equipment stack");
-                    helper.assertValueEqual(worn.getDamageValue(), maximum - 1, "Ordinary armor wear preserves its final point");
+                    helper.assertTrue(worn.getDamageValue() >= lastWear, "Repeated attacks never repair the worn stack");
+                    lastWear = worn.getDamageValue();
                     helper.assertTrue(worn.getMaxDamage() == maximum && EquipmentDurability.quality(worn) == quality
                             && id.equals(GearProgression.id(worn)), "Growth updates do not replace the item or rewrite durability/quality");
                 }
@@ -118,8 +121,9 @@ public final class BlobDeathRecoveryGameTests {
                 f.killWithBlob();
                 ItemEntity drop = f.drop(id);
                 ItemStack afterDeath = drop.getItem().copy();
-                helper.assertTrue(afterDeath.getDamageValue() == maximum - 1 && GearProgression.state(afterDeath).level() >= 4,
-                        "The terminal hit and native inventory drop preserve the progressed one-point armor");
+                helper.assertTrue(afterDeath.getDamageValue() >= lastWear && afterDeath.getDamageValue() < maximum
+                                && GearProgression.state(afterDeath).level() >= 4,
+                        "The terminal hit and native inventory drop preserve the grown armor that had durability left");
                 f.holdInBlob(drop);
                 f.tickContact(120);
                 helper.assertTrue(ItemStack.matches(f.drop(id).getItem(), afterDeath),

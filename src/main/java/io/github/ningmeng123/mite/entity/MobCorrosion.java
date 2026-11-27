@@ -83,7 +83,7 @@ public final class MobCorrosion {
         if (stack.isDamageableItem()) {
             int damage=wear(stack,amount);
             if (damage<=0) return false;
-            // Chemical damage may destroy worn armor. The null native owner avoids ordinary last-point armor protection.
+            // Corrosion supplies its own wear budget and sends the break notification for the affected slot.
             stack.hurtAndBreak(damage,server,null,item->owner.onEquippedItemBroken(item,slot));
             return true;
         }

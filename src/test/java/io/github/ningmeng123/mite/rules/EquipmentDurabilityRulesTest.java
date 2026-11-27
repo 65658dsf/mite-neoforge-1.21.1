@@ -124,15 +124,6 @@ class EquipmentDurabilityRulesTest {
     }
 
     @Test
-    void ordinaryArmorRetainsItsLastPointAfterWearReduction() {
-        assertEquals(9, preventDestruction(100, 118, 128));
-        assertEquals(0, preventDestruction(100, 127, 128));
-        assertEquals(0, preventDestruction(100, 128, 128));
-        assertEquals(0, preventDestruction(1, 0, 1));
-        assertEquals(2, preventDestruction(2, 118, 128));
-    }
-
-    @Test
     void armorProtectionFallsOnlyInSecondHalfAndIsZeroAtOneRemaining() {
         assertEquals(1F, armorProtectionFactor(0, 128, true));
         assertEquals(1F, armorProtectionFactor(64, 128, true));

@@ -184,13 +184,13 @@ public final class ModernArmorDefenseGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void copperArmorAtEveryWearStageAbsorbsRealSkeletonArrowsIdentically(GameTestHelper helper)
+    public static void copperArmorAbsorbsRealSkeletonArrowsUntilTheHitThatBreaksIt(GameTestHelper helper)
             throws ReflectiveOperationException {
         var impact = AbstractArrow.class.getDeclaredMethod("onHitEntity", EntityHitResult.class);
         impact.setAccessible(true);
         try (Session session = newPlayer(helper)) {
             var player = session.player();
-            for (int wear : new int[]{0, 75, 99, 100}) {
+            for (int wear : new int[]{0, 75, 95, 100}) {
                 equip(player, "copper", false);
                 for (var slot : SLOTS) {
                     ItemStack piece = player.getItemBySlot(slot);
@@ -222,10 +222,18 @@ public final class ModernArmorDefenseGameTests {
                     close(helper, before - player.getHealth(), .9D,
                             "Copper seventeen and toughness two reduce the real arrow equally at wear " + wear);
                     refresh(player);
-                    close(helper, player.getAttributeValue(Attributes.ARMOR), 17D, "The real hit does not weaken copper armor");
-                    close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "The real hit does not weaken copper toughness");
-                    for (var slot : SLOTS) helper.assertFalse(player.getItemBySlot(slot).isEmpty(),
-                            "Ordinary arrow wear retains equipped armor, including the last durability point");
+                    int broken = 0;
+                    for (var slot : SLOTS) if (player.getItemBySlot(slot).isEmpty()) broken++;
+                    helper.assertValueEqual(broken, wear == 100 ? 1 : 0,
+                            "The arrow's one-point minimum wear breaks only the selected piece at its last point");
+                    if (broken == 0) {
+                        close(helper, player.getAttributeValue(Attributes.ARMOR), 17D, "Surviving armor retains its protection");
+                        close(helper, player.getAttributeValue(Attributes.ARMOR_TOUGHNESS), 2D, "Surviving armor retains its toughness");
+                    } else {
+                        helper.assertTrue(player.getAttributeValue(Attributes.ARMOR) < 17D
+                                        && player.getAttributeValue(Attributes.ARMOR_TOUGHNESS) < 2D,
+                                "Subsequent hits no longer get the broken piece's armor or toughness");
+                    }
                 } finally {
                     NeoForge.EVENT_BUS.unregister(capture); arrow.discard(); shooter.discard();
                 }

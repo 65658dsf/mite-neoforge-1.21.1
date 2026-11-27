@@ -67,9 +67,7 @@ public final class EquipmentDurability {
     private static final Map<Item, ShieldProfile> SHIELDS = new IdentityHashMap<>();
     private static final EquipmentSlot[] ARMOR_SLOTS = {
             EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
-    private static final ThreadLocal<WearContext> WEAR_CONTEXT = new ThreadLocal<>();
     private static final ThreadLocal<LivingEntity> ARMOR_WEARER = new ThreadLocal<>();
-    private record WearContext(ItemStack stack, boolean protectLastPoint) {}
 
     public static final class ArmorAttributeScope implements AutoCloseable {
         private final LivingEntity previous;
@@ -265,21 +263,6 @@ public final class EquipmentDurability {
         if (amount > 0 && !exempt(owner)) stack.hurtAndBreak(amount, owner, slot);
     }
 
-    /** Called after enchantment effects, so last-point protection does not change their probability. */
-    public static int limitArmorWear(ItemStack stack, int amount, LivingEntity owner) {
-        if (armorProfile(stack) == null || owner == null) return amount;
-        WearContext context = WEAR_CONTEXT.get();
-        if (context != null && context.stack() == stack) {
-            return context.protectLastPoint()
-                    ? EquipmentDurabilityRules.preventDestruction(amount, stack.getDamageValue(), stack.getMaxDamage()) : amount;
-        }
-        for (EquipmentSlot slot : ARMOR_SLOTS) {
-            if (owner.getItemBySlot(slot) == stack)
-                return EquipmentDurabilityRules.preventDestruction(amount, stack.getDamageValue(), stack.getMaxDamage());
-        }
-        return amount;
-    }
-
     /** Preserve NeoForge's cancellable armor event, with R196's budget and random slot allocation. */
     public static boolean hurtArmor(Player player, DamageSource source, float incoming) {
         boolean managed = false;
@@ -328,17 +311,10 @@ public final class EquipmentDurability {
             boolean lava = source.is(DamageTypes.LAVA);
             boolean leather = stack.is(Items.LEATHER_BOOTS) || stack.is(Items.LEATHER_LEGGINGS)
                     || stack.is(Items.LEATHER_CHESTPLATE) || stack.is(Items.LEATHER_HELMET);
-            boolean protect = !lava && !(leather && source.is(DamageTypeTags.IS_FIRE));
-            WearContext previous = WEAR_CONTEXT.get();
-            WEAR_CONTEXT.set(new WearContext(stack, protect));
-            try {
-                int amount = (int)entry.newDamage;
-                if (lava && !leather && armorProfile(stack) != null)
-                    amount = (int)Math.min((long)amount * 10L, Integer.MAX_VALUE);
-                hurt(stack, amount, player, slot);
-            } finally {
-                if (previous == null) WEAR_CONTEXT.remove(); else WEAR_CONTEXT.set(previous);
-            }
+            int amount = (int)entry.newDamage;
+            if (lava && !leather && armorProfile(stack) != null)
+                amount = (int)Math.min((long)amount * 10L, Integer.MAX_VALUE);
+            hurt(stack, amount, player, slot);
         });
         return true;
     }

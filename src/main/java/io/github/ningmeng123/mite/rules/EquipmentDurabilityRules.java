@@ -128,10 +128,6 @@ public final class EquipmentDurabilityRules {
         return remaining;
     }
 
-    public static int preventDestruction(int requested, int damage, int maximum) {
-        return Math.min(Math.max(requested, 0), Math.max(maximum - Math.max(damage, 0) - 1, 0));
-    }
-
     /** wh's player factor. Non-player R196 armor always used 0.5, independently of wear. */
     public static float armorProtectionFactor(int damage, int maximum, boolean player) {
         if (!player) return 0.5F;
