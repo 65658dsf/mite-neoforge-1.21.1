@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.ningmeng123.mite.item.FoodProfile;
+import io.github.ningmeng123.mite.rules.NutritionRules;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -89,9 +90,8 @@ public final class MiteFoodCatalog {
             builder.effect(() -> new MobEffectInstance(type, duration, amplifier), effect.get("probability").getAsFloat());
         }
         FoodProperties properties = builder.build();
-        // AppleSkin reads absolute FOOD.saturation: expose R196 N for its food preview, not a
-        // modern multiplier or a third reserve. Actual consumption ingests the profile once;
-        // only the explicit wheat-seed override also supplies its existing one-point buffer.
+        // AppleSkin reads absolute FOOD.saturation. Foods without an explicit gain expose R196 N
+        // for display, while consuming a food still applies its actual profile values once.
         return new FoodProperties(properties.nutrition(), entry.compatibilitySaturation(), properties.canAlwaysEat(),
                 entry.useTicks() / 20F, properties.usingConvertsTo(), properties.effects());
     }
@@ -123,12 +123,18 @@ public final class MiteFoodCatalog {
             for (JsonElement element : foods) {
                 JsonObject food = element.getAsJsonObject();
                 Item item = item(food.get("id").getAsString());
-                FoodProfile profile = new FoodProfile(food.get("satiation").getAsInt(), food.get("nutrition").getAsInt(),
-                        food.get("protein").getAsBoolean(), food.get("fat").getAsBoolean(), food.get("plants").getAsBoolean(),
-                        food.get("sugar").getAsInt(), food.get("drink").getAsBoolean(), food.get("always_edible").getAsBoolean());
+                int nutrition = food.get("nutrition").getAsInt();
+                boolean plants = food.get("plants").getAsBoolean();
+                float saturationGain = food.has("saturation_gain") ? food.get("saturation_gain").getAsFloat() : 0F;
+                int plantNutrientGain = food.has("plant_nutrient_gain") ? food.get("plant_nutrient_gain").getAsInt()
+                        : NutritionRules.addMicronutrient(0, nutrition, plants);
+                FoodProfile profile = new FoodProfile(food.get("satiation").getAsInt(), nutrition,
+                        food.get("protein").getAsBoolean(), food.get("fat").getAsBoolean(), plants,
+                        food.get("sugar").getAsInt(), food.get("drink").getAsBoolean(), food.get("always_edible").getAsBoolean(),
+                        saturationGain, plantNutrientGain);
                 Item remainder = food.has("remainder") ? item(food.get("remainder").getAsString()) : null;
-                float compatibilitySaturation = food.has("native_saturation")
-                        ? food.get("native_saturation").getAsFloat() : profile.nutrition();
+                float compatibilitySaturation = saturationGain > 0F ? saturationGain : nutrition;
+                if (food.has("native_saturation")) compatibilitySaturation = food.get("native_saturation").getAsFloat();
                 String sourceKind = food.get("source_kind").getAsString();
                 if (!("r196".equals(sourceKind) || "modern_adaptation".equals(sourceKind) || "user_adaptation".equals(sourceKind)))
                     throw new IllegalArgumentException("Unknown food source kind: " + sourceKind);

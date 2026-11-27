@@ -25,7 +25,7 @@ public final class FoodCatalogGameTests {
     @GameTest(template = "empty")
     public static void sourceFoodsCarryIndependentResourcesAndOpenTheServerQualifiedUsePath(GameTestHelper helper) {
         helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size(), 62, "31 existing IDs and31 newly registered source foods preserve verified release values");
-        helper.assertValueEqual(MiteFoodCatalog.modernProfiles().size(), 18, "15 modern foods and three explicit user food adaptations have separate profiles");
+        helper.assertValueEqual(MiteFoodCatalog.modernProfiles().size(), 18, "Modern foods and explicit user adaptations have separate profiles");
         helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size() + MiteFoodCatalog.modernProfiles().size(), 80,
                 "The complete current ingestion catalog has80 profiles including source zero-resource water bowl");
         verifyComponents(helper, MiteFoodCatalog.sourceProfiles());
@@ -137,8 +137,9 @@ public final class FoodCatalogGameTests {
             helper.assertTrue(food != null, "Mapped food has native component: " + item);
             helper.assertTrue(food.canAlwaysEat(), "Native use delegates fullness decisions to authoritative dual resource rules: " + item);
             helper.assertValueEqual(food.nutrition(), profile.satiation(), "Native HUD metadata represents S, not modern saturation: " + item);
-            helper.assertValueEqual(food.saturation(), item == Items.WHEAT_SEEDS ? 1F : (float) profile.nutrition(),
-                    "AppleSkin saturation metadata displays absolute source N; wheat seeds retain their explicit one-point exception: " + item);
+            float expectedSaturation = profile.saturationGain() > 0F ? profile.saturationGain() : profile.nutrition();
+            helper.assertValueEqual(food.saturation(), item == Items.WHEAT_SEEDS ? 1F : expectedSaturation,
+                    "AppleSkin metadata shows explicit saturation or absolute source nutrition: " + item);
             helper.assertValueEqual(food.eatDurationTicks(), 32, "Catalog use duration is32 ticks: " + item);
         });
     }

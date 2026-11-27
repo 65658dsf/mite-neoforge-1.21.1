@@ -25,6 +25,8 @@ class AppleSkinNutritionRulesTest {
             "6,0,0,6,0,true,1,true,0",
             "3,4,4,8,0,true,1,true,0",
             "3,3,4,8,0,true,1,true,1",
+            "3,0.25,4,8,0,true,0.5,true,0.5",
+            "3,3.75,4,8,0,true,0.5,true,0.25",
             "3,0,0,6,0,true,1,true,0",
             "3,0,4,8,0,true,1,false,0",
             "20,0,20,26,8,false,0,true,6",

@@ -159,6 +159,10 @@ public final class FurnaceThermalGameTests {
             helper.assertValueEqual(side.insertItem(0, new ItemStack(Items.COAL), false).getCount(), 1,
                     "A real capability insertion returns the rejected over-hot fuel");
             helper.assertTrue(f.furnace.getItem(0).isEmpty() && f.furnace.getItem(1).isEmpty(), "Rejected capability transfers do not mutate either slot");
+            ItemStack clay = new ItemStack(Items.CLAY);
+            helper.assertTrue(f.menu.getSlot(0).mayPlace(clay), "The small oven accepts clay blocks in its input slot");
+            helper.assertTrue(top.insertItem(0, clay, false).isEmpty() && f.furnace.getItem(0).is(Items.CLAY),
+                    "A real top capability can insert a clay block into the small oven");
         }
         for (String id : new String[]{"mite:large_clay_oven", "mite:sandstone_furnace"}) try (Fixture f = new Fixture(helper, id)) {
             helper.assertTrue(f.menu.getSlot(0).mayPlace(new ItemStack(Items.SAND)), "The source's two other ovens accept large sand inputs");

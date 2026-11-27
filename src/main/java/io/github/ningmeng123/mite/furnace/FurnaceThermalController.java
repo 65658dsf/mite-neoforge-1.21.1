@@ -88,10 +88,14 @@ public final class FurnaceThermalController {
     }
     public static boolean canInput(Level level, RecipeType<? extends AbstractCookingRecipe> type,
             R196FurnaceRules.Profile profile, ItemStack input) {
-        if (input.isEmpty() || profile == null || !profile.acceptsLarge() && isLarge(input)) return false;
+        if (input.isEmpty() || profile == null || !fitsInput(type, profile, input)) return false;
         if (type == RecipeType.SMELTING && (input.is(Items.SAND) || input.is(Items.RED_SAND)
                 || input.is(Items.SANDSTONE) || input.is(Items.RED_SANDSTONE))) return true;
         return level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) type, new SingleRecipeInput(input), level).isPresent();
+    }
+    private static boolean fitsInput(RecipeType<? extends AbstractCookingRecipe> type,
+            R196FurnaceRules.Profile profile, ItemStack input) {
+        return profile.acceptsLarge() || type == RecipeType.SMELTING && input.is(Items.CLAY) || !isLarge(input);
     }
     public static boolean emptyBucket(ItemStack stack) {
         return stack.is(Items.BUCKET) || stack.getItem() instanceof MiteBucketItem bucket && bucket.contents() == MiteBucketItem.Contents.EMPTY;
@@ -168,7 +172,7 @@ public final class FurnaceThermalController {
             R196FurnaceRules.Profile profile, ItemStack input, ItemStack existing, int maxStackSize,
             int heat, RecipeHolder<? extends AbstractCookingRecipe> recipe) {
         if (input.isEmpty() || heat <= 0 || heat > profile.maxHeat() || heat < requiredHeat(input)
-                || !profile.acceptsLarge() && isLarge(input)) return null;
+                || !fitsInput(type, profile, input)) return null;
         boolean normal = type == RecipeType.SMELTING;
         int consumed = 1;
         ItemStack result;

@@ -389,6 +389,7 @@
   "tooltip.mite.food_protein": "Protein",
   "tooltip.mite.food_fat": "Fat",
   "tooltip.mite.food_plants": "Plant nutrients",
+  "tooltip.mite.food_plant_nutrient_gain": "Plant nutrients +%s",
   "tooltip.mite.food_separator": ", ",
   "tooltip.mite.food_sources": "Nutrient sources: %s",
   "tooltip.mite.food_sugar": "Sugar resistance buildup +%s",

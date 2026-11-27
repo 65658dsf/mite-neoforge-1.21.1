@@ -32,7 +32,7 @@ public record NutritionState(int version, int protein, int fat, int plants, int 
         int next = Math.clamp((long) resistance + NutritionRules.addedResistance(p.sugar()), 0, 192000);
         return new NutritionState(VERSION, NutritionRules.addMicronutrient(protein,p.nutrition(),p.protein()),
                 NutritionRules.addMicronutrient(fat,p.nutrition(),p.fat()),
-                NutritionRules.addMicronutrient(plants,p.nutrition(),p.plants()), next,
+                Math.clamp((long) plants + p.plantNutrientGain(), 0, NutritionRules.MICRONUTRIENT_MAX), next,
                 NutritionRules.resistanceLevel(next,resistanceLevel));
     }
 }

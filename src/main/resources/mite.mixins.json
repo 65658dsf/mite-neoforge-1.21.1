@@ -39,6 +39,8 @@
     "GearPlacedChunkMixin",
     "GearPlacedPistonMoveMixin",
     "GearPlacedPistonFinishMixin",
+    "PistonDuplicationMixin",
+    "TripWireDuplicationMixin",
     "GearPlacedFallingMixin",
     "GearEnchantmentNumericMixin",
     "GearEnchantmentIterationMixin",

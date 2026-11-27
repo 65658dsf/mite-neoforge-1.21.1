@@ -4,23 +4,22 @@ package io.github.ningmeng123.mite.rules;
 public final class AppleSkinNutritionRules {
     private AppleSkinNutritionRules() {}
 
-    public static float displayedCurrent(int nutrition, float seedBuffer, int capacity) {
+    public static float displayedCurrent(int nutrition, float saturation, int capacity) {
         int cap = Math.max(0, capacity);
-        return Math.clamp(Math.clamp(nutrition, 0, cap) + positiveFinite(seedBuffer), 0F, (float) cap);
+        return Math.clamp(Math.clamp(nutrition, 0, cap) + positiveFinite(saturation), 0F, (float) cap);
     }
 
-    /** Source nutrition is capped independently of S; only seed buffer gains are capped to S. */
-    public static float previewGain(int nutrition, float seedBuffer, int satiation, int capacity,
-                                    int foodNutrition, boolean seeds, float addedSeedBuffer, boolean canIngest) {
+    /** Source nutrition is capped independently of S, while native saturation gains are capped to S. */
+    public static float previewGain(int nutrition, float saturation, int satiation, int capacity,
+                                    int foodNutrition, boolean addsSaturation, float saturationGain, boolean canIngest) {
         if (!canIngest) return 0F;
         int cap = Math.max(0, capacity);
-        float before = displayedCurrent(nutrition, seedBuffer, cap);
-        if (seeds) {
-            float afterBuffer = Math.min(Math.clamp(satiation, 0, cap), positiveFinite(seedBuffer) + positiveFinite(addedSeedBuffer));
-            return Math.max(0F, displayedCurrent(nutrition, afterBuffer, cap) - before);
-        }
+        float before = displayedCurrent(nutrition, saturation, cap);
+        float afterSaturation = addsSaturation
+                ? Math.min(Math.clamp(satiation, 0, cap), positiveFinite(saturation) + positiveFinite(saturationGain))
+                : saturation;
         int afterNutrition = Math.clamp((long) nutrition + Math.max(0, foodNutrition), 0, cap);
-        return Math.max(0F, displayedCurrent(afterNutrition, seedBuffer, cap) - before);
+        return Math.max(0F, displayedCurrent(afterNutrition, afterSaturation, cap) - before);
     }
 
     public static int maximumIcons(int capacity) { return (int) ((Math.max(0, capacity) + 1L) / 2L); }

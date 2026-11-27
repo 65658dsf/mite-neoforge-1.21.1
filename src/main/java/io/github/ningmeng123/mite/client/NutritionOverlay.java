@@ -115,13 +115,19 @@ public final class NutritionOverlay {
         event.getToolTip().add(Component.translatable("tooltip.mite.food_values", satiation, profile.nutrition())
                 .withStyle(ChatFormatting.GREEN));
         var nativeFood = event.getItemStack().get(DataComponents.FOOD);
-        if (event.getItemStack().is(Items.WHEAT_SEEDS) && nativeFood != null)
-            event.getToolTip().add(Component.translatable("tooltip.mite.food_native_saturation", nativeFood.saturation())
+        float saturationGain = event.getItemStack().is(Items.WHEAT_SEEDS) && nativeFood != null
+                ? nativeFood.saturation() : profile.saturationGain();
+        if (saturationGain > 0F)
+            event.getToolTip().add(Component.translatable("tooltip.mite.food_native_saturation", saturationGain)
                     .withStyle(ChatFormatting.YELLOW));
         List<Component> sources = new ArrayList<>();
         if (profile.protein()) sources.add(Component.translatable("tooltip.mite.food_protein"));
         if (profile.fat()) sources.add(Component.translatable("tooltip.mite.food_fat"));
-        if (profile.plants()) sources.add(Component.translatable("tooltip.mite.food_plants"));
+        if (profile.plants()) {
+            sources.add(profile.nutrition() == 0 && profile.plantNutrientGain() > 0
+                    ? Component.translatable("tooltip.mite.food_plant_nutrient_gain", profile.plantNutrientGain())
+                    : Component.translatable("tooltip.mite.food_plants"));
+        }
         if (!sources.isEmpty()) {
             var joined = Component.empty();
             for (int i = 0; i < sources.size(); i++) {

@@ -187,6 +187,21 @@ public final class FurnaceJeiRecipesGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void smallClayOvenShowsAndFiresClayBlocksIntoTerracotta(GameTestHelper helper) {
+        var recipes = FurnaceJeiRecipes.build(helper.getLevel());
+        var pages = matching(recipes, Items.CLAY, Items.TERRACOTTA);
+        helper.assertTrue(pages.stream().map(FurnaceJeiRecipe::furnaceId).collect(Collectors.toSet()).equals(SOURCE_DEVICES),
+                "Terracotta is available in all six smelting furnaces, including the small clay oven");
+        var smallOvenPage = pages.stream().filter(page -> page.furnaceId().equals("mite:clay_oven")).findFirst().orElseThrow();
+        helper.assertValueEqual(smallOvenPage.heat(), 1, "The small oven shows heat one for terracotta");
+        helper.assertValueEqual(smallOvenPage.cycleTicks(), 200, "The small oven shows a ten-second terracotta cycle");
+        helper.assertValueEqual(input(smallOvenPage, Items.CLAY).getCount(), 1, "The terracotta recipe takes one clay block");
+        helper.assertValueEqual(smallOvenPage.output().getCount(), 1, "The terracotta recipe produces one block");
+        tickShown(helper, recipes, "mite:clay_oven", Items.CLAY, Items.TERRACOTTA, Items.CHARCOAL);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void clayPagesKeepEveryOneThroughFourInputBatchAndRealOutputRoomLimit(GameTestHelper helper) {
         var recipes = FurnaceJeiRecipes.build(helper.getLevel());
         for (String furnaceId : SOURCE_DEVICES) {

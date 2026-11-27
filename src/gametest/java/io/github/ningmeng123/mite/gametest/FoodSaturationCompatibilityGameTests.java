@@ -91,6 +91,35 @@ public final class FoodSaturationCompatibilityGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "empty")
+    public static void driedKelpAddsHalfSaturationAndExactlyOneHundredPlantNutrients(GameTestHelper helper) {
+        Player player = player(helper);
+        player.getFoodData().setFoodLevel(4);
+        ((DualFoodData) player.getFoodData()).mite$setNutrition(3);
+        player.getFoodData().setSaturation(0.25F);
+        NutritionState.set(player, new NutritionState(1, 1000, 2000, 4000, 0, -1));
+
+        ItemStack serving = new ItemStack(Items.DRIED_KELP, 2);
+        var metadata = serving.get(DataComponents.FOOD);
+        helper.assertValueEqual(metadata.nutrition(), 0, "Dried kelp previews zero hunger gain");
+        helper.assertValueEqual(metadata.saturation(), 0.5F, "Dried kelp previews exactly half a point of saturation");
+        ItemStack remaining = serving.finishUsingItem(helper.getLevel(), player);
+
+        helper.assertValueEqual(remaining.getCount(), 1, "The actual player consumes one piece of dried kelp");
+        assertReserves(helper, player, 4, 3);
+        helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 0.75F,
+                "Dried kelp adds exactly half a point to the actual saturation reserve");
+        helper.assertValueEqual(NutritionState.get(player), new NutritionState(1, 1000, 2000, 4100, 0, -1),
+                "Only plant nutrients increase, by exactly 100");
+
+        player.getFoodData().setSaturation(3.75F);
+        remaining.finishUsingItem(helper.getLevel(), player);
+        helper.assertValueEqual(player.getFoodData().getSaturationLevel(), 4F,
+                "The existing saturation cap still applies to dried kelp");
+        helper.assertValueEqual(NutritionState.get(player).plants(), 4200, "A capped serving still supplies plant nutrients");
+        helper.succeed();
+    }
+
     private static Player player(GameTestHelper helper) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         player.experienceLevel = 35;

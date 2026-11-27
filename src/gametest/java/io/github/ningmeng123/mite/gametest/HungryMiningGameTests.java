@@ -43,10 +43,10 @@ public final class HungryMiningGameTests {
         assertBits(helper, leaves.getDestroyProgress(player, helper.getLevel(), position), 0x3b000000,
                 "Hungry level-zero leaves require 512 effective progress increments");
 
-        ItemStack food = new ItemStack(Items.DRIED_KELP);
+        ItemStack food = new ItemStack(Items.BROWN_MUSHROOM);
         ItemStack remaining = food.finishUsingItem(helper.getLevel(), player);
-        helper.assertTrue(remaining.isEmpty(), "The real item consumption path consumes the kelp");
-        helper.assertValueEqual(player.getFoodData().getFoodLevel(), 1, "Kelp restores exactly one food point");
+        helper.assertTrue(remaining.isEmpty(), "The real item consumption path consumes the mushroom");
+        helper.assertValueEqual(player.getFoodData().getFoodLevel(), 1, "A brown mushroom restores exactly one food point");
         assertBits(helper, player.getDigSpeed(leaves, position), 0x3f800000,
                 "Eating restores speed immediately without a tick or cached-state update");
         assertBits(helper, leaves.getDestroyProgress(player, helper.getLevel(), position), 0x3c200000,

@@ -70,8 +70,7 @@ public abstract class FoodDataMixin implements DualFoodData {
         int satiation = NutritionRules.adjustedSatiation(profile.satiation(),profile.sugar(),before.resistanceLevel());
         foodLevel = Math.clamp((long)foodLevel+satiation,0,mite$limit());
         mite$nutrition = Math.clamp((long)mite$nutrition+profile.nutrition(),0,mite$limit());
-        // The user's wheat-seed saturation buffer stays distinct from R196 nutrition.
-        saturationLevel = Mth.clamp(saturationLevel,0F,(float)foodLevel);
+        saturationLevel = Mth.clamp(saturationLevel + profile.saturationGain(), 0F, (float) foodLevel);
         NutritionState after = before.ingest(profile);
         NutritionState.set(mite$player,after);
         int response = NutritionRules.addedResistance(profile.sugar());
