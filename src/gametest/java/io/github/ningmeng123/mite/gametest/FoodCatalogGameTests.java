@@ -2,6 +2,9 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.item.FoodProfile;
 import io.github.ningmeng123.mite.registry.MiteFoodCatalog;
+import io.github.ningmeng123.mite.registry.MiteFoods;
+import io.github.ningmeng123.mite.survival.DualFoodData;
+import io.github.ningmeng123.mite.survival.NutritionState;
 import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -13,6 +16,8 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -25,9 +30,9 @@ public final class FoodCatalogGameTests {
     @GameTest(template = "empty")
     public static void sourceFoodsCarryIndependentResourcesAndOpenTheServerQualifiedUsePath(GameTestHelper helper) {
         helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size(), 62, "31 existing IDs and31 newly registered source foods preserve verified release values");
-        helper.assertValueEqual(MiteFoodCatalog.modernProfiles().size(), 18, "Modern foods and explicit user adaptations have separate profiles");
-        helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size() + MiteFoodCatalog.modernProfiles().size(), 80,
-                "The complete current ingestion catalog has80 profiles including source zero-resource water bowl");
+        helper.assertValueEqual(MiteFoodCatalog.modernProfiles().size(), 24, "The adaptation profiles include the six new lemon items");
+        helper.assertValueEqual(MiteFoodCatalog.sourceProfiles().size() + MiteFoodCatalog.modernProfiles().size(), 86,
+                "The full catalog includes the source zero-resource water bowl and all lemon profiles");
         verifyComponents(helper, MiteFoodCatalog.sourceProfiles());
         verifyComponents(helper, MiteFoodCatalog.modernProfiles());
         helper.assertValueEqual(profile(Items.BREAD), new FoodProfile(2, 8, false, false, false, 0, false, false),
@@ -43,6 +48,39 @@ public final class FoodCatalogGameTests {
         helper.assertValueEqual(profile(Items.COD), new FoodProfile(3, 3, true, true, false, 0, false, false), "Modern cod explicitly represents R196 small fish");
         helper.assertValueEqual(profile(Items.MUTTON), new FoodProfile(3, 3, true, false, false, 0, false, false), "R196 lambchop maps existing mutton");
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void lemonFoodsApplyNutritionAndReturnTheirOwnContainers(GameTestHelper helper) {
+        checkLemonServing(helper, MiteFoods.LEMON.get(), Items.AIR, 1, 1, false, false, false, 0);
+        checkLemonServing(helper, MiteFoods.LEMON_JUICE.get(), Items.GLASS_BOTTLE, 0, 2, true, false, false, 0);
+        checkLemonServing(helper, MiteFoods.CANDIED_LEMON.get(), Items.AIR, 2, 2, false, false, false, 1000);
+        checkLemonServing(helper, MiteFoods.LEMON_PIE.get(), Items.AIR, 6, 6, false, true, false, 1000);
+        checkLemonServing(helper, MiteFoods.LEMON_FISH.get(), Items.AIR, 6, 7, false, true, true, 0);
+        checkLemonServing(helper, MiteFoods.LEMON_SALAD.get(), Items.BOWL, 3, 5, false, false, false, 0);
+        helper.succeed();
+    }
+
+    private static void checkLemonServing(GameTestHelper helper, Item item, Item container, int satiation, int nutrition,
+                                          boolean drink, boolean protein, boolean fat, int sugar) {
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.experienceLevel = 35;
+        var food = player.getFoodData();
+        var dual = (DualFoodData) food;
+        food.setFoodLevel(0);
+        dual.mite$setNutrition(0);
+        NutritionState.set(player, new NutritionState(1, 0, 0, 0, 0, -1));
+
+        ItemStack serving = new ItemStack(item);
+        FoodProfile expected = new FoodProfile(satiation, nutrition, protein, fat, true, sugar, drink, false);
+        helper.assertValueEqual(MiteFoodCatalog.modernProfiles().get(item), expected, "Registered profile for " + item);
+        helper.assertValueEqual(serving.getUseAnimation(), drink ? UseAnim.DRINK : UseAnim.EAT, "Use animation for " + item);
+        ItemStack remaining = serving.finishUsingItem(helper.getLevel(), player);
+        helper.assertTrue(container == Items.AIR ? remaining.isEmpty() : remaining.is(container) && remaining.getCount() == 1,
+                "One serving returns only its original container: " + item);
+        helper.assertValueEqual(food.getFoodLevel(), satiation, "Actual satiation for " + item);
+        helper.assertValueEqual(dual.mite$getNutrition(), nutrition, "Actual nutrition for " + item);
+        helper.assertValueEqual(NutritionState.get(player).plants(), nutrition * 8000, "Actual plant nutrients for " + item);
     }
 
     @GameTest(template = "empty")

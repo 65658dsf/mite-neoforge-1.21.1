@@ -30,6 +30,13 @@ public final class MiteFoods {
             new ItemNameBlockItem(MiteFoodPlants.ONIONS.get(), new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> ORANGE = simple("orange");
     public static final DeferredItem<Item> BANANA = simple("banana");
+    public static final DeferredItem<Item> LEMON = simple("lemon");
+    public static final DeferredItem<Item> LEMON_JUICE = add("lemon_juice",
+            () -> new Item(new Item.Properties().stacksTo(4).craftRemainder(Items.GLASS_BOTTLE)));
+    public static final DeferredItem<Item> CANDIED_LEMON = simple("candied_lemon");
+    public static final DeferredItem<Item> LEMON_PIE = add("lemon_pie",
+            () -> new Item(new Item.Properties().stacksTo(8)));
+    public static final DeferredItem<Item> LEMON_FISH = simple("lemon_fish");
     public static final DeferredItem<BlueberriesItem> BLUEBERRIES = add("blueberries", () ->
             new BlueberriesItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> RAW_LARGE_FISH = simple("raw_large_fish");
@@ -44,6 +51,7 @@ public final class MiteFoods {
     public static final DeferredItem<MiteBowlItem> VEGETABLE_SOUP = bowl("vegetable_soup", MiteBowlItem.Contents.SOUP);
     public static final DeferredItem<MiteBowlItem> ICE_CREAM = bowl("ice_cream", MiteBowlItem.Contents.FOOD);
     public static final DeferredItem<MiteBowlItem> SALAD = bowl("salad", MiteBowlItem.Contents.FOOD);
+    public static final DeferredItem<MiteBowlItem> LEMON_SALAD = bowl("lemon_salad", MiteBowlItem.Contents.FOOD);
     public static final DeferredItem<MiteBowlItem> CREAM_OF_MUSHROOM_SOUP = bowl("cream_of_mushroom_soup", MiteBowlItem.Contents.SOUP);
     public static final DeferredItem<MiteBowlItem> CREAM_OF_VEGETABLE_SOUP = bowl("cream_of_vegetable_soup", MiteBowlItem.Contents.SOUP);
     public static final DeferredItem<MiteBowlItem> PUMPKIN_SOUP = bowl("pumpkin_soup", MiteBowlItem.Contents.SOUP);

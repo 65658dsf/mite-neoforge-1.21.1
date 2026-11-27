@@ -1,0 +1,40 @@
+{
+  "variants": {
+    "age=0,mite_blighted=false,mite_dead=false": {
+      "model": "mite:block/lemon_crop_stage0"
+    },
+    "age=0,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/lemon_crop_blighted_stage0"
+    },
+    "age=0,mite_dead=true": {
+      "model": "mite:block/lemon_crop_dead_stage0"
+    },
+    "age=1,mite_blighted=false,mite_dead=false": {
+      "model": "mite:block/lemon_crop_stage1"
+    },
+    "age=1,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/lemon_crop_blighted_stage1"
+    },
+    "age=1,mite_dead=true": {
+      "model": "mite:block/lemon_crop_dead_stage1"
+    },
+    "age=2,mite_blighted=false,mite_dead=false": {
+      "model": "mite:block/lemon_crop_stage2"
+    },
+    "age=2,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/lemon_crop_blighted_stage2"
+    },
+    "age=2,mite_dead=true": {
+      "model": "mite:block/lemon_crop_dead_stage2"
+    },
+    "age=3,mite_blighted=false,mite_dead=false": {
+      "model": "mite:block/lemon_crop_stage3"
+    },
+    "age=3,mite_blighted=true,mite_dead=false": {
+      "model": "mite:block/lemon_crop_blighted_stage3"
+    },
+    "age=3,mite_dead=true": {
+      "model": "mite:block/lemon_crop_dead_stage3"
+    }
+  }
+}

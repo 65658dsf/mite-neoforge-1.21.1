@@ -46,6 +46,11 @@ public final class ArmorStructureLootModifier extends LootModifier {
     public static Map<String, Pool> pools() { return POOLS; }
 
     @Override protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
+        // The underworld's spawner dungeon replaces the native pool before adding crop rewards.
+        return LemonSeedChestLoot.append(applyStructureLoot(loot, context), context);
+    }
+
+    private ObjectArrayList<ItemStack> applyStructureLoot(ObjectArrayList<ItemStack> loot, LootContext context) {
         if (context.getQueriedLootTableId().toString().equals("minecraft:chests/simple_dungeon")
                 && context.getLevel().dimension().equals(MiteWorldDimensions.UNDERWORLD))
             // Keep food after the complete replacement; NeoForge's GLM map does not preserve list order.

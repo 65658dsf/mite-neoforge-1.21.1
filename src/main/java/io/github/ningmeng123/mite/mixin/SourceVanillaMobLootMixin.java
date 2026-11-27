@@ -34,6 +34,7 @@ public abstract class SourceVanillaMobLootMixin {
                 slot -> ((SourceMobDropChanceAccess)mob).mite$equipmentDropChance(slot));
         SourceVanillaMobLoot.skeletonKilledCreeperRecord(mob,source);
         SourceVanillaMobLoot.chargedHead(mob,source);
+        SourceVanillaMobLoot.bonusZombieProduce(mob, source, recent);
     }
     @Inject(method="hurt",at=@At("HEAD"))
     private void mite$sourceFallFlag(DamageSource source,float amount,org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Boolean> cir) {

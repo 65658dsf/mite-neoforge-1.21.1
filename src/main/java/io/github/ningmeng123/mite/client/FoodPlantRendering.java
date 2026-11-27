@@ -17,6 +17,7 @@ public final class FoodPlantRendering {
         event.enqueueWork(() -> {
             ItemBlockRenderTypes.setRenderLayer(MiteFoodPlants.ONIONS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(MiteFoodPlants.BLUEBERRY_BUSH.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(MiteFoodPlants.LEMON_CROP.get(), RenderType.cutout());
         });
     }
 }

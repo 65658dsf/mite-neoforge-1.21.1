@@ -13,6 +13,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -53,7 +54,7 @@ public final class FoodRecipeGameTests {
     public static void sourceFoodsAndModernWaterBowlSoupsLoadWithoutConflictingCrafts(GameTestHelper helper) {
         var foods = helper.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING).stream()
                 .filter(holder -> holder.value() instanceof FoodManufacturingRecipe).toList();
-        helper.assertValueEqual(foods.size(), 258, "253 active source recipes, four modern soups and the timed water-bowl salad load; retired apple order773 remains source evidence only");
+        helper.assertValueEqual(foods.size(), 263, "Source food manufacturing, modern soups, water-bowl salad and five lemon recipes load");
         helper.assertValueEqual(foods.stream().filter(holder -> holder.value() instanceof FoodShapedRecipe).count(), 15L,
                 "Eight food/material patterns plus seven empty-bucket patterns retain their shaped form");
         helper.assertValueEqual(foods.stream().filter(holder -> holder.value().getResultItem(helper.getLevel().registryAccess())
@@ -65,6 +66,44 @@ public final class FoodRecipeGameTests {
             helper.assertTrue(helper.getLevel().getRecipeManager().byKey(ResourceLocation.withDefaultNamespace(id)).isEmpty(),
                     "The modern default recipe cannot bypass the source ingredients or timing: " + id);
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void lemonUnlocksAndCraftsFiveFoodsWithTheirActualIngredients(GameTestHelper helper) {
+        try (Fixture f = new Fixture(helper)) {
+            ItemStack lemon = new ItemStack(MiteFoods.LEMON.get());
+            f.player.getInventory().setItem(0, lemon);
+            CriteriaTriggers.INVENTORY_CHANGED.trigger(f.player, f.player.getInventory(), lemon);
+            for (String path : new String[]{"lemon_juice", "candied_lemon", "lemon_pie", "lemon_fish", "lemon_salad"}) {
+                var id = ResourceLocation.fromNamespaceAndPath("mite", path);
+                helper.assertTrue(f.player.getRecipeBook().contains(id), "Obtaining a lemon unlocks " + id);
+            }
+
+            craftWithLemon(f, MiteFoods.LEMON_JUICE.get(), 25, Items.GLASS_BOTTLE);
+            craftWithLemon(f, MiteFoods.CANDIED_LEMON.get(), 25, Items.SUGAR);
+            craftWithLemon(f, MiteFoods.LEMON_PIE.get(), 62, MiteFoods.DOUGH.get(), Items.EGG, Items.SUGAR);
+            for (Item fish : new Item[]{Items.COOKED_COD, Items.COOKED_SALMON, MiteFoods.COOKED_LARGE_FISH.get()}) {
+                craftWithLemon(f, MiteFoods.LEMON_FISH.get(), 41, fish);
+            }
+            craftWithLemon(f, MiteFoods.LEMON_SALAD.get(), 41, Items.CARROT, Items.BEETROOT, Items.BOWL);
+        }
+        helper.succeed();
+    }
+
+    private static void craftWithLemon(Fixture fixture, Item result, int ticks, Item... ingredients) {
+        ItemStack[] stacks = new ItemStack[ingredients.length + 1];
+        stacks[0] = new ItemStack(MiteFoods.LEMON.get());
+        for (int index = 0; index < ingredients.length; index++) {
+            stacks[index + 1] = new ItemStack(ingredients[index]);
+        }
+        fixture.load(stacks);
+        fixture.helper.assertTrue(fixture.menu.getSlot(0).getItem().is(result), "The current inputs preview " + result);
+        fixture.craft(ticks);
+        fixture.helper.assertValueEqual(fixture.count(result), 1, "Completing the recipe produces exactly one " + result);
+        fixture.helper.assertValueEqual(fixture.count(MiteFoods.LEMON.get()), 0, "The recipe consumes one lemon");
+        for (Item ingredient : ingredients) {
+            fixture.helper.assertValueEqual(fixture.count(ingredient), 0, "The recipe consumes " + ingredient);
+        }
     }
 
     @GameTest(template = "empty")

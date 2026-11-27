@@ -2,6 +2,7 @@ package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.entity.OrdinarySkeletonState;
 import io.github.ningmeng123.mite.entity.SourceVanillaMobLoot;
+import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.registry.MiteRangedItems;
 import io.github.ningmeng123.mite.rules.R196RangedRules.Material;
 import java.util.ArrayList;
@@ -89,6 +90,71 @@ public final class IndependentNativeMobLootGameTests {
     @GameTest(template="empty") public static void nativeZombieRareRewardIsNuggetNotIngot(GameTestHelper h) { long n=seed(r->{ r.nextFloat(); return r.nextInt(200)<5; }); Random r=new Random(n); boolean flesh=r.nextFloat()<.5F; r.nextInt(200); Item[] expected={SourceVanillaMobLoot.item("mite:copper_nugget"),SourceVanillaMobLoot.item("mite:silver_nugget"),Items.GOLD_NUGGET,Items.IRON_NUGGET}; Item nugget=expected[r.nextInt(4)]; var e=mob(h,EntityType.ZOMBIE); var drops=death(h,e,n,true); h.assertTrue(count(drops,nugget)==1 && count(drops,Items.ROTTEN_FLESH)==(flesh?1:0),"Source tw exactrare RNG and metal tier"); h.assertTrue(count(drops,Items.IRON_INGOT)==0 && count(drops,Items.CARROT)==0 && count(drops,Items.POTATO)==0,"Vanilla rare ingot and crops cannot duplicate ordinarysource zombie"); h.succeed(); }
     @GameTest(template="empty") public static void zombieVillagerExactRareOnionHasNoModifierDuplicate(GameTestHelper h) { long n=seed(r->{r.nextFloat();return r.nextInt(50)<5 && r.nextInt(6)==5;}); var e=mob(h,EntityType.ZOMBIE_VILLAGER); var drops=death(h,e,n,true); h.assertTrue(count(drops,SourceVanillaMobLoot.item("mite:onion"))==1 && count(drops,Items.IRON_INGOT)==0,"Source villager rare50 pool6, old NaturalFood modifier never runs again"); h.succeed(); }
     @GameTest(template="empty") public static void environmentalZombieGetsQuarterFleshAndNoRare(GameTestHelper h) { long n=seed(r->r.nextFloat()<.25F); var e=mob(h,EntityType.ZOMBIE); var drops=death(h,e,n,false); h.assertTrue(drops.size()==1 && count(drops,Items.ROTTEN_FLESH)==1,"Source nonplayer quarterflesh cannotrollrare"); h.succeed(); }
+
+    @GameTest(template = "empty")
+    public static void ordinaryZombieFruitSharesTheCarrotRollAndLootingThreshold(GameTestHelper h) {
+        List<Item> fruit = zombieProduce();
+        Player attacker = killer(h);
+        DamageSource source = attacker.damageSources().playerAttack(attacker);
+        for (int looting : new int[] {0, 3}) {
+            ItemStack weapon = new ItemStack(Items.IRON_SWORD);
+            if (looting > 0) {
+                weapon.enchant(h.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                        .getHolderOrThrow(Enchantments.LOOTING), looting);
+            }
+            attacker.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+            int threshold = 5 + 2 * looting;
+            for (int slot = 0; slot < 6; slot++) {
+                var zombie = mob(h, EntityType.ZOMBIE);
+                var drops = death(h, zombie, zombieProduceSeed(threshold - 1, slot), true, source, true);
+                for (int index = 0; index < fruit.size(); index++) {
+                    h.assertValueEqual(count(drops, fruit.get(index)), index == slot ? 1 : 0,
+                            "Each fruit occupies one of the six carrot-rate outcomes at Looting " + looting);
+                }
+                h.assertValueEqual(count(drops, Items.CARROT), 0, "Ordinary zombies retain their existing carrot behavior");
+                zombie.discard();
+            }
+            var zombie = mob(h, EntityType.ZOMBIE);
+            var missed = death(h, zombie, zombieProduceSeed(threshold, 0), true, source, true);
+            h.assertTrue(fruit.stream().noneMatch(item -> count(missed, item) > 0), "The exact threshold misses the produce roll");
+            zombie.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void ordinaryZombieFruitSharesTheCarrotKillAndFallRestrictions(GameTestHelper h) {
+        List<Item> fruit = zombieProduce();
+        Player attacker = killer(h);
+        DamageSource playerAttack = attacker.damageSources().playerAttack(attacker);
+        long seed = zombieProduceSeed(4, 0);
+        var environmental = mob(h, EntityType.ZOMBIE);
+        var environmentalDrops = death(h, environmental, seed, false, environmental.damageSources().generic(), true);
+        h.assertTrue(fruit.stream().noneMatch(item -> count(environmentalDrops, item) > 0),
+                "An environmental death without recent player damage does not drop produce");
+        environmental.discard();
+
+        var fell = mob(h, EntityType.ZOMBIE);
+        fell.getPersistentData().putBoolean("mite_massive_fall_031", true);
+        var fallDrops = death(h, fell, seed, true, playerAttack, true);
+        h.assertTrue(fruit.stream().noneMatch(item -> count(fallDrops, item) > 0),
+                "Massive fall damage prevents produce even with recent player damage");
+        fell.discard();
+        h.succeed();
+    }
+
+    private static List<Item> zombieProduce() {
+        return List.of(MiteFoods.get("lemon"), MiteFoods.get("onion"), MiteFoods.get("banana"), MiteFoods.get("orange"));
+    }
+
+    private static long zombieProduceSeed(int gate, int slot) {
+        return seed(random -> {
+            random.nextFloat();
+            // Skip nugget rolls so the fixture isolates the added produce gate at Looting 0 and III.
+            return random.nextInt(200) >= 11 && random.nextInt(50) == gate && random.nextInt(6) == slot;
+        });
+    }
+
     @GameTest(template="empty") public static void skeletonActualDeathHasSourceArrowAndBoneCounts(GameTestHelper h) { var e=mob(h,EntityType.SKELETON); ((OrdinarySkeletonState)e).mite$setSourceSkeletonType(0); Random r=new Random(0); int arrows=r.nextInt(2),bones=r.nextInt(3); var drops=death(h,e,0,true); h.assertTrue(count(drops,MiteRangedItems.arrow(Material.RUSTED_IRON))==arrows && count(drops,Items.BONE)==bones && count(drops,Items.ARROW)==0,"Source tr pools invoked once, no SkeletonArrow modifier second draw"); h.succeed(); }
     @GameTest(template="empty") public static void meleeSkeletonDropsBonesWithoutArrows(GameTestHelper h) { var e=mob(h,EntityType.SKELETON); ((OrdinarySkeletonState)e).mite$setSourceSkeletonType(2); var drops=death(h,e,0,true); h.assertTrue(count(drops,Items.BONE)==new Random(0).nextInt(3) && drops.stream().noneMatch(s->MiteRangedItems.arrowMaterial(s)!=null),"Source subtype2 skips arrow random draw entirely"); h.succeed(); }
     @GameTest(template="empty") public static void separateWitherSkeletonUsesSourceSubtypeOne(GameTestHelper h) { var e=mob(h,EntityType.WITHER_SKELETON); Random r=new Random(11); int coal=r.nextInt(3)-1; boolean skull=r.nextInt(200)<5; int bones=r.nextInt(3); var drops=death(h,e,11,true); h.assertTrue(count(drops,Items.COAL)==Math.max(0,coal) && count(drops,Items.WITHER_SKELETON_SKULL)==(skull?1:0) && count(drops,Items.BONE)==bones,"Modern split uses exactsource tr type1"); h.succeed(); }

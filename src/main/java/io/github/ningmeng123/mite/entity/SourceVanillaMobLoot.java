@@ -34,6 +34,10 @@ import net.minecraft.world.level.block.Blocks;
 public final class SourceVanillaMobLoot {
     public static final String STATE = "mite_native_loot_state_031";
     private static final Item[] ZOMBIE_NUGGETS = {item("mite:copper_nugget"),item("mite:silver_nugget"),Items.GOLD_NUGGET,Items.IRON_NUGGET};
+    private static final int ZOMBIE_VILLAGER_RARE_BOUND = 50;
+    private static final Item[] ZOMBIE_VILLAGER_PRODUCE = {
+            Items.WHEAT_SEEDS, Items.PUMPKIN_SEEDS, Items.MELON_SEEDS, Items.CARROT, Items.POTATO, item("mite:onion")};
+    private static final List<String> ZOMBIE_BONUS_PRODUCE = List.of("mite:lemon", "mite:onion", "mite:banana", "mite:orange");
     private static final String[] WITCH_POOL = {"minecraft:glowstone_dust","minecraft:sugar","minecraft:redstone","minecraft:spider_eye",
             "minecraft:glass_bottle","minecraft:gunpowder","minecraft:stick","minecraft:stick","mite:flint_knife","minecraft:iron_nugget",
             "minecraft:wheat_seeds","minecraft:pumpkin_seeds","minecraft:carrot","minecraft:potato","mite:onion",
@@ -87,6 +91,19 @@ public final class SourceVanillaMobLoot {
         return mob.getRandom().nextFloat() < Math.clamp(chance, 0D, 1D);
     }
     private static boolean massive(Mob mob) { return mob.getPersistentData().getBoolean("mite_massive_fall_031"); }
+    private static boolean zombieRareRoll(Mob mob, int bound, int looting) {
+        return mob.getRandom().nextInt(bound) < 5 + looting * 2;
+    }
+
+    /** Each produce reward takes one slot at the source zombie-villager carrot probability. */
+    public static void bonusZombieProduce(Mob mob, DamageSource source, boolean recent) {
+        if (mob.getType() != EntityType.ZOMBIE || !recent || mob.isBaby() || massive(mob)
+                || !zombieRareRoll(mob, ZOMBIE_VILLAGER_RARE_BOUND, looting(mob, source))) return;
+
+        int slot = mob.getRandom().nextInt(ZOMBIE_VILLAGER_PRODUCE.length);
+        if (slot < ZOMBIE_BONUS_PRODUCE.size()) emit(mob, item(ZOMBIE_BONUS_PRODUCE.get(slot)), 1);
+    }
+
     private static boolean meatAnimal(EntityType<?> type) {
         return livestock(type) || type == EntityType.HORSE || type == EntityType.DONKEY || type == EntityType.MULE;
     }
@@ -135,8 +152,8 @@ public final class SourceVanillaMobLoot {
         if (type==EntityType.ZOMBIE || type==EntityType.ZOMBIE_VILLAGER) {
             if (random.nextFloat()<(recent ?.5F:.25F)) emit(mob,Items.ROTTEN_FLESH,1);
             boolean villager=type==EntityType.ZOMBIE_VILLAGER;
-            if (recent && !massive(mob) && random.nextInt(villager?50:200)<5+looting*2) {
-                Item[] candidates=villager ? new Item[]{Items.WHEAT_SEEDS,Items.PUMPKIN_SEEDS,Items.MELON_SEEDS,Items.CARROT,Items.POTATO,item("mite:onion")} : ZOMBIE_NUGGETS;
+            if (recent && !massive(mob) && zombieRareRoll(mob, villager ? ZOMBIE_VILLAGER_RARE_BOUND : 200, looting)) {
+                Item[] candidates = villager ? ZOMBIE_VILLAGER_PRODUCE : ZOMBIE_NUGGETS;
                 emit(mob,candidates[random.nextInt(candidates.length)],1);
             }
         } else if (type==EntityType.ZOMBIFIED_PIGLIN) {

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "mite:onion_crop"
+    "mite:onion_crop",
+    "mite:lemon_crop"
   ]
 }

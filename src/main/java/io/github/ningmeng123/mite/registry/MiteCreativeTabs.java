@@ -92,7 +92,7 @@ public final class MiteCreativeTabs {
             return Group.COMBAT;
         if (item instanceof SpawnEggItem) return Group.SPAWN_EGGS;
         if (item instanceof io.github.ningmeng123.mite.phantom.PhantomBladeItem) return Group.COMBAT;
-        if (item instanceof R196StoneBucketItem || item == MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get()
+        if (item instanceof R196StoneBucketItem || item == MiteFoodPlants.BLUEBERRY_BUSH_ITEM.get() || item == MiteFoodPlants.LEMON_SEEDS.get()
                 || MiteFoods.entries().values().stream().anyMatch(entry -> entry.get() == item)) return Group.FOODS;
         var tool = MiteTools.definition(new ItemStack(item));
         if (tool != null) return switch (tool.family()) {

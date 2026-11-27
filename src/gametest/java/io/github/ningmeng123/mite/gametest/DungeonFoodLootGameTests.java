@@ -1,6 +1,8 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.loot.DungeonFoodLoot;
+import io.github.ningmeng123.mite.loot.LemonSeedChestLoot;
+import io.github.ningmeng123.mite.registry.MiteFoodPlants;
 import io.github.ningmeng123.mite.registry.MiteFoods;
 import io.github.ningmeng123.mite.utility.UniqueMusicSavedData;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
@@ -114,6 +116,84 @@ public final class DungeonFoodLootGameTests {
             }
         }
         h.succeed();
+    }
+
+    @GameTest(template = "empty", templateNamespace = "mite", timeoutTicks = 400)
+    public static void registeredSurfaceAndUnderworldDungeonsAndAllVillageHousesAwardLemonSeeds(GameTestHelper h) {
+        try (var records = new RecordClaims(h.getLevel())) {
+            assertSeedRewards(h, h.getLevel(), DUNGEON);
+            assertSeedRewards(h, underworld(h), DUNGEON);
+            for (String type : List.of("desert", "plains", "savanna", "snowy", "taiga")) {
+                assertSeedRewards(h, h.getLevel(), vanilla("chests/village/village_" + type + "_house"));
+            }
+            for (String path : List.of("chests/village/village_weaponsmith", "chests/abandoned_mineshaft",
+                    "chests/trial_chambers/reward")) {
+                ResourceLocation id = vanilla(path);
+                LootTable table = loadedTable(h.getLevel(), id);
+                h.assertTrue(table != LootTable.EMPTY, "The unrelated chest table is registered: " + id);
+                for (int sample = 1; sample <= 32; sample++) {
+                    h.assertValueEqual(seedCount(table.getRandomItems(params(h.getLevel()), sample * 104729L)), 0,
+                            "Unrelated registered chests do not generate lemon seeds: " + id);
+                }
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty", templateNamespace = "mite")
+    public static void lemonSeedRollUsesTheChestSpecificChanceAndPreservesExistingLoot(GameTestHelper h) {
+        for (ResourceLocation id : List.of(DUNGEON, vanilla("chests/village/village_plains_house"))) {
+            float chance = id.equals(DUNGEON) ? 0.20F : 0.125F;
+            for (float roll : new float[] {Math.nextDown(chance), chance}) {
+                ItemStack original = new ItemStack(Items.IRON_INGOT, 2);
+                original.set(DataComponents.CUSTOM_NAME, Component.literal("Existing chest reward"));
+                ItemStack before = original.copy();
+                var loot = new ObjectArrayList<ItemStack>();
+                loot.add(original);
+                var random = new LegacyRandomSource(196L) {
+                    @Override public float nextFloat() { return roll; }
+                    @Override public int nextInt(int bound) {
+                        h.assertValueEqual(bound, 2, "The seed stack has two possible quantities");
+                        return 1;
+                    }
+                };
+                var result = LemonSeedChestLoot.append(loot, context(h.getLevel(), id, random));
+                h.assertTrue(result == loot && result.getFirst() == original && ItemStack.matches(original, before),
+                        "The additive reward preserves the original stack and its components");
+                h.assertValueEqual(seedCount(result), roll < chance ? 2 : 0,
+                        "A roll equal to the chest's probability yields no seeds: " + id);
+            }
+        }
+        for (ResourceLocation id : List.of(vanilla("chests/village/village_weaponsmith"),
+                ResourceLocation.fromNamespaceAndPath("addon", "chests/simple_dungeon"))) {
+            var loot = new ObjectArrayList<ItemStack>();
+            var result = LemonSeedChestLoot.append(loot, context(h.getLevel(), id, new ForbiddenRandom()));
+            h.assertTrue(result == loot && result.isEmpty(), "Unrelated tables neither change loot nor consume RNG: " + id);
+        }
+        h.succeed();
+    }
+
+    private static void assertSeedRewards(GameTestHelper h, ServerLevel level, ResourceLocation id) {
+        LootTable table = loadedTable(level, id);
+        h.assertTrue(table != LootTable.EMPTY, "The intended chest table is registered: " + id);
+        int[] outcomes = new int[3];
+        boolean ordinaryLoot = false;
+        for (int sample = 1; sample <= 128; sample++) {
+            var loot = table.getRandomItems(params(level), 0x4c454d4f4eL + sample * 104729L);
+            int seeds = seedCount(loot);
+            h.assertTrue(seeds <= 2, "At most two lemon seeds generate per chest: " + id);
+            outcomes[seeds]++;
+            ordinaryLoot |= loot.stream().anyMatch(stack -> !stack.is(MiteFoodPlants.LEMON_SEEDS.get()) && !food(stack));
+        }
+        for (int outcome = 0; outcome < outcomes.length; outcome++) {
+            h.assertTrue(outcomes[outcome] > 0,
+                    "The registered chest can roll " + outcome + " lemon seeds: " + id + " in " + level.dimension().location());
+        }
+        h.assertTrue(ordinaryLoot, "The registered chest still delivers its ordinary rewards: " + id);
+    }
+
+    private static int seedCount(List<ItemStack> loot) {
+        return loot.stream().filter(stack -> stack.is(MiteFoodPlants.LEMON_SEEDS.get())).mapToInt(ItemStack::getCount).sum();
     }
 
     private static void assertUntouched(GameTestHelper h, ResourceLocation table) {

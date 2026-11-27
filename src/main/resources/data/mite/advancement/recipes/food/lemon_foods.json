@@ -1,0 +1,30 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_lemon": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:lemon"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_lemon"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "mite:lemon_juice",
+      "mite:candied_lemon",
+      "mite:lemon_pie",
+      "mite:lemon_fish",
+      "mite:lemon_salad"
+    ]
+  },
+  "sends_telemetry_event": false
+}

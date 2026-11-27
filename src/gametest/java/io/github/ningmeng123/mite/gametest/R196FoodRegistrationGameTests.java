@@ -115,7 +115,8 @@ public final class R196FoodRegistrationGameTests {
             if (expected.profile() == null)
                 helper.assertTrue(MiteFoodCatalog.profile(stack) == null, "Flour/manure/empty and water buckets are not silently edible: " + expected.id());
         }
-        helper.assertValueEqual(MiteFoods.entries().keySet(), names, "Registered new item set exactly matches all51 independent expected IDs");
+        names.addAll(Set.of("lemon", "lemon_juice", "candied_lemon", "lemon_pie", "lemon_fish", "lemon_salad"));
+        helper.assertValueEqual(MiteFoods.entries().keySet(), names, "The source items and six lemon adaptations match the registered food item set");
         helper.succeed();
     }
 
@@ -168,7 +169,7 @@ public final class R196FoodRegistrationGameTests {
         } catch (Exception exception) {
             throw new IllegalStateException("Cannot read the production food resource", exception);
         }
-        helper.assertValueEqual(foodRows.size(), 80, "Current production catalog has80 ingestion profiles");
+        helper.assertValueEqual(foodRows.size(), 86, "The current production catalog includes six lemon ingestion profiles");
         helper.assertValueEqual(nonFoodRows.size(), 20, "Source materials and noningestible fluid vessels include six lava peers among20 explicit metadata entries");
         for (Expected expected : EXPECTED) {
             JsonObject row = (expected.profile() != null ? foodRows : nonFoodRows).get(expected.id().toString());
