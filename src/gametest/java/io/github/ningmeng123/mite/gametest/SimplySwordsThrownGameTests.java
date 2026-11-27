@@ -1,6 +1,9 @@
 package io.github.ningmeng123.mite.gametest;
 
 import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
+import io.github.ningmeng123.mite.entity.MobKind;
+import io.github.ningmeng123.mite.registry.MiteMobs;
+import io.github.ningmeng123.mite.registry.MiteTools;
 import java.lang.reflect.Method;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -8,6 +11,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -61,6 +65,28 @@ public final class SimplySwordsThrownGameTests {
         spear.setNoPhysics(true); spear.pickup = AbstractArrow.Pickup.ALLOWED;
         Method pickup = Class.forName(SPEAR).getDeclaredMethod("tryPickup", Player.class);
         pickup.setAccessible(true); return (boolean)pickup.invoke(spear, player);
+    }
+
+    @GameTest(template = "empty")
+    public static void thrownSpearsUseTheirOwnMaterialAgainstWights(GameTestHelper h) throws ReflectiveOperationException {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        Player owner = owner(h, GameType.SURVIVAL);
+        Mob wight = MiteMobs.type(MobKind.WIGHT).create(h.getLevel());
+        wight.moveTo(h.absolutePos(new BlockPos(3, 3, 3)).getCenter());
+        AbstractArrow copper = spear(h, owner, new ItemStack(SimplySwordsCompat.weapon("copper", "spear")));
+        AbstractArrow silver = spear(h, owner, new ItemStack(SimplySwordsCompat.weapon("silver", "spear")));
+        try {
+            float health = wight.getHealth();
+            owner.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(MiteTools.get("mite:silver_sword")));
+            hit(copper, wight);
+            h.assertValueEqual(wight.getHealth(), health, "A copper spear cannot borrow silver from the thrower's held sword");
+            owner.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            hit(silver, wight);
+            h.assertTrue(wight.getHealth() < health, "The thrown silver spear damages a wight after leaving the thrower's hand");
+        } finally {
+            copper.discard(); silver.discard(); wight.discard(); owner.discard();
+        }
+        h.succeed();
     }
 
     @GameTest(template = "empty")

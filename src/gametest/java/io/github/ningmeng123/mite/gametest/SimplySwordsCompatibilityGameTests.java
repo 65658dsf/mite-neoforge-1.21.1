@@ -5,10 +5,12 @@ import io.github.ningmeng123.mite.crafting.CraftingQuality;
 import io.github.ningmeng123.mite.crafting.MaterialAnvilRules;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
 import io.github.ningmeng123.mite.enchantment.R196EnchantmentCatalog;
+import io.github.ningmeng123.mite.entity.MobKind;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.item.RemovedDiamondEquipment;
 import io.github.ningmeng123.mite.registry.MiteCreativeTabs;
 import io.github.ningmeng123.mite.registry.MiteFunctionalBlocks;
+import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.registry.MiteWorkbenches;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules;
 import io.github.ningmeng123.mite.rules.EquipmentDurabilityRules.Quality;
@@ -34,6 +36,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -61,6 +64,37 @@ public final class SimplySwordsCompatibilityGameTests {
     private static final List<String> ALL_METALS = List.of("rusted_iron", "copper", "silver", "gold",
             "ancient_metal", "mithril", "adamantium", "vibranium");
     private SimplySwordsCompatibilityGameTests() {}
+
+    @GameTest(template = "empty", batch = "simplyswords_compat")
+    public static void silverMeleeWeaponsDamageMobsThatRejectCopper(GameTestHelper h) {
+        if (!SimplySwordsCompat.enabled()) { h.succeed(); return; }
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        player.setPos(h.absolutePos(new BlockPos(1, 3, 1)).getCenter());
+        player.setOnGround(true);
+        player.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(10D);
+        try {
+            for (MobKind kind : List.of(MobKind.WIGHT, MobKind.SHADOW, MobKind.NIGHTWING)) {
+                for (String family : SimplySwordsCompat.families()) {
+                    var target = MiteMobs.type(kind).create(h.getLevel());
+                    try {
+                        target.moveTo(player.position().add(1D, 0D, 0D));
+                        float health = target.getHealth();
+                        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(SimplySwordsCompat.weapon("copper", family)));
+                        player.attack(target);
+                        h.assertValueEqual(target.getHealth(), health, kind + " rejects copper " + family);
+                        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(SimplySwordsCompat.weapon("silver", family)));
+                        player.attack(target);
+                        h.assertTrue(target.getHealth() < health, kind + " takes melee damage from silver " + family);
+                    } finally {
+                        target.discard();
+                    }
+                }
+            }
+        } finally {
+            player.discard();
+        }
+        h.succeed();
+    }
 
     @GameTest(template = "empty", batch = "simplyswords_compat")
     public static void everyCopperAndSilverFamilySharesTheEightPointSwordBasisBelowNativeIron(GameTestHelper h) {

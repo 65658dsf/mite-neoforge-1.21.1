@@ -1,7 +1,9 @@
 package io.github.ningmeng123.mite.entity;
 
+import io.github.ningmeng123.mite.compat.simplyswords.SimplySwordsCompat;
 import io.github.ningmeng123.mite.item.SilverArmor;
 import io.github.ningmeng123.mite.item.SourceArmorDefense;
+import io.github.ningmeng123.mite.progression.ProgressionThrownWeapon;
 import io.github.ningmeng123.mite.ranged.MaterialArrowView;
 import io.github.ningmeng123.mite.rules.SourceArmorDefenseRules;
 import java.util.ArrayDeque;
@@ -27,13 +29,17 @@ public final class MobCombat {
     public static int ticksWithOffset(Entity entity) { return entity.tickCount + entity.getId() * 47; }
     public static float silverResistance(LivingEntity entity) { return SilverArmor.coverage(entity) * .5F; }
     public static boolean silver(DamageSource source) {
-        if (source.getDirectEntity() instanceof MaterialArrowView arrow) return "silver".equals(arrow.mite$arrowMaterial());
+        Entity direct = source.getDirectEntity();
+        // Simply Swords spears inherit the arrow material view from AbstractArrow.
+        if (direct instanceof ProgressionThrownWeapon thrown) return silverItem(thrown.mite$progressionWeapon());
+        if (direct instanceof MaterialArrowView arrow) return "silver".equals(arrow.mite$arrowMaterial());
         return silverItem(weapon(source));
     }
     public static boolean silverItem(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return false;
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        return id.getNamespace().equals("mite") && id.getPath().startsWith("silver_");
+        return (id.getNamespace().equals("mite") && id.getPath().startsWith("silver_"))
+                || "silver".equals(SimplySwordsCompat.material(stack));
     }
     public static ItemStack weapon(DamageSource source) {
         ItemStack weapon = source.getWeaponItem();
