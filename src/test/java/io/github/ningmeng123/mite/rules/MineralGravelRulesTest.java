@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.rules;
 
+import io.github.ningmeng123.mite.config.GravelDropSettings;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -60,6 +61,36 @@ class MineralGravelRulesTest {
                 assertEquals(percent, rates.getOrDefault(drop, 0D), 1E-12D, drop.name());
             });
         }
+    }
+
+    @Test
+    void displayedHarvestChancesTrackTheHeldToolAndIteFlintConversion() {
+        for (boolean nether : new boolean[]{false, true}) {
+            for (int fortune = 0; fortune <= 3; fortune++) {
+                var expected = distribution(fortune, nether);
+                for (boolean wholeFlint : new boolean[]{false, true}) {
+                    var rates = GravelDropSettings.defaults(wholeFlint);
+                    Fraction flint = expected.get(FLINT);
+                    if (wholeFlint) flint = flint.plus(expected.get(FLINT_CHIP));
+                    assertEquals(100D * flint.numerator().doubleValue() / flint.denominator().doubleValue(),
+                            rates.harvestPercent(nether, "minecraft:flint", fortune, 0, false), 1E-12D);
+                    assertEquals(!wholeFlint, rates.harvestPercent(nether, "mite:flint_chip", fortune, 0, false) > 0D);
+                    var group = nether ? rates.nether() : rates.ordinary();
+                    double total = 0D;
+                    for (String product : group.keySet()) total += rates.harvestPercent(nether, product, fortune, 0, false);
+                    assertEquals(100D, total, 1E-12D);
+                }
+            }
+        }
+        var custom = new GravelDropSettings.Rates(
+                Map.of("minecraft:gravel", 75D, "minecraft:flint", 5D, "mite:copper_nugget", 20D),
+                Map.of("mite:nether_gravel", 100D, "mite:quartz_shard", 0D));
+        assertEquals(25D, custom.harvestPercent(false, "minecraft:gravel", 3, 3, false), 1E-12D);
+        assertEquals(15D, custom.harvestPercent(false, "minecraft:flint", 3, 3, false), 1E-12D);
+        assertEquals(60D, custom.harvestPercent(false, "mite:copper_nugget", 3, 3, false), 1E-12D);
+        assertEquals(100D, custom.harvestPercent(false, "minecraft:gravel", 3, 3, true));
+        assertEquals(0D, custom.harvestPercent(false, "mite:copper_nugget", 3, 3, true));
+        assertEquals(100D, custom.harvestPercent(true, "mite:nether_gravel", 3, 3, false));
     }
 
     @Test

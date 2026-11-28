@@ -323,6 +323,8 @@ dependencies {
     compileOnly 'mezz.jei:jei-1.21.1-neoforge-api:19.57.0.451'
     // Optional native sidebar hook; JEI internals are compile-only and never bundled or required.
     compileOnly('mezz.jei:jei-1.21.1-neoforge:19.57.0.451') { transitive = false }
+    // JER 1.6.0.57 for NeoForge. Its worldgen entries identify the source block and dimension.
+    compileOnly('maven.modrinth:just-enough-resources-jer:A2G7NFcD') { transitive = false }
     // Jade discovers its integration only when installed; its classes are never bundled or required.
     compileOnly 'maven.modrinth:jade:15.10.6+neoforge'
     gametestCompileOnly 'maven.modrinth:jade:15.10.6+neoforge'

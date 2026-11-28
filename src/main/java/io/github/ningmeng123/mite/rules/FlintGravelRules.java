@@ -85,8 +85,7 @@ public final class FlintGravelRules {
         for (var entry : rates.entrySet()) {
             if (entry.getKey() != Drop.GRAVEL) total += entry.getValue();
         }
-        double baseChance = 100D * (total / (total + rates.get(Drop.GRAVEL)));
-        double chance = Math.min(100D, baseChance * (successChance(normal, affix) / BASE_SUCCESS));
+        double chance = productChancePercent(total, rates.get(Drop.GRAVEL), normal, affix);
         double roll = random.getAsDouble() * 100D;
         if (roll >= chance) return Drop.GRAVEL;
         double productRoll = roll * total / chance;
@@ -98,5 +97,10 @@ public final class FlintGravelRules {
             if (productRoll < 0D) return last;
         }
         return last;
+    }
+
+    public static double productChancePercent(double products, double gravel, int normal, int affix) {
+        double baseChance = 100D * (products / (products + gravel));
+        return Math.min(100D, baseChance * (successChance(normal, affix) / BASE_SUCCESS));
     }
 }

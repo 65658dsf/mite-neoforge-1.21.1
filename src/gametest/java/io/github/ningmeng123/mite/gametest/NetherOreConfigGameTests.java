@@ -8,6 +8,7 @@ import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import io.github.ningmeng123.mite.rules.R196OreRules.Kind;
 import io.github.ningmeng123.mite.worldgen.MiteWorldDimensions;
+import io.github.ningmeng123.mite.worldgen.OreGenerationDisplay;
 import io.github.ningmeng123.mite.worldgen.R196OreFeature;
 import io.netty.buffer.Unpooled;
 import java.util.ArrayList;
@@ -51,6 +52,9 @@ public final class NetherOreConfigGameTests {
         var previousRemote = MiteConfig.effectiveSnapshot() == MiteConfig.localSnapshot() ? null : MiteConfig.effectiveSnapshot();
 
         try {
+            var quartzPage = OreGenerationDisplay.entries().stream().filter(entry -> entry.kind() == Kind.QUARTZ)
+                    .findFirst().orElseThrow();
+            var previousPage = quartzPage.settings();
             var rates = new EnumMap<Kind, Double>(Kind.class);
             originalRates.keySet().forEach(kind -> rates.put(kind, 0D));
             rates.put(Kind.QUARTZ, 2.5D);
@@ -67,6 +71,11 @@ public final class NetherOreConfigGameTests {
                 helper.assertValueEqual(MiteConfig.oreMultiplier(Kind.QUARTZ, Dimension.NETHER), 2.5D, "The client reads the saved rate");
                 helper.assertValueEqual(MiteConfig.oreHeightOverride(Kind.QUARTZ, Dimension.NETHER, false),
                         new OreHeightRange(30, 32), "The client reads the saved height");
+                var livePage = quartzPage.settings(0, 256, true);
+                helper.assertTrue(livePage != null && livePage != previousPage, "An indexed ore page sees the new server revision");
+                helper.assertValueEqual(livePage.candidates(), 40D, "The page uses the generator's adjusted quartz attempts");
+                helper.assertTrue(livePage.blockDensityAt(31) > 0, "The native graph contains quartz at the edited height");
+                helper.assertValueEqual(livePage.blockDensityAt(33), 0D, "Quartz is absent outside the edited height");
             } finally {
                 buffer.release();
             }
@@ -88,6 +97,14 @@ public final class NetherOreConfigGameTests {
                     MiteConfig.NETHER_ORE_HEIGHTS.get(deposit.kind()).set("[30,32]");
                     MiteConfig.refreshEnchantmentRules();
                     MiteConfig.receiveServerSnapshot(MiteConfig.localSnapshot());
+                    if (deposit.kind() == Kind.NETHER_ADAMANTIUM) {
+                        var page = OreGenerationDisplay.entries().stream().filter(entry -> entry.kind() == deposit.kind())
+                                .findFirst().orElseThrow().settings();
+                        long nativeCount = feature.placement().getFirst()
+                                .getPositions(null, new LegacyRandomSource(196L), BlockPos.ZERO).count();
+                        helper.assertValueEqual(page.candidates(), nativeCount * rate,
+                                "Display uses the actual ITE repeater multiplied by the MITE setting");
+                    }
                     var fixture = new OreGenerationGameTests.GenerationFixture(nether, new ChunkPos(6740, -6740), true);
                     fixture.fill(0, 128);
                     boolean placed = feature.placeWithBiomeCheck(fixture.region, nether.getChunkSource().getGenerator(),

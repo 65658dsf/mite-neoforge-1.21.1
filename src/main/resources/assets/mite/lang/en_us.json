@@ -1,4 +1,8 @@
 {
+  "mite.jer.veins": "Estimated vein density in new chunks. Terrain affects the actual yield.",
+  "mite.jer.nether_gravel": "Vein estimate excludes surface gravel.",
+  "mite.jer.gravel_tool": "Chance with your main-hand tool, including affixes.",
+  "jer.dim.mite:underworld": "Underworld",
   "key.categories.mite": "MITE",
   "key.mite.toggle_better_combat": "Toggle Better Combat",
   "message.mite.better_combat.on": "Better Combat enabled",

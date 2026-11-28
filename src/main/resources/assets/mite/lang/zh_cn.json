@@ -1,4 +1,8 @@
 {
+  "mite.jer.veins": "新区块矿脉的估算占比，实际数量受地形影响。",
+  "mite.jer.nether_gravel": "仅统计矿脉，不含地表沙砾。",
+  "mite.jer.gravel_tool": "按当前主手工具的附魔与词缀计算掉落概率。",
+  "jer.dim.mite:underworld": "地底世界",
   "key.categories.mite": "MITE",
   "key.mite.toggle_better_combat": "切换更好的战斗",
   "message.mite.better_combat.on": "已开启更好的战斗",

@@ -24,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.neoforged.fml.ModList;
 
 /** JEI discovers this optional client integration without any common-side linkage. @author NingMeng123 */
 @JeiPlugin
@@ -96,6 +97,7 @@ public final class MiteJeiPlugin implements IModPlugin {
         recipeLevel = null;
         // This is a menu operation rather than a RecipeManager recipe, so JEI cannot discover it automatically.
         registration.addRecipes(ENCHANTING_TYPE, List.of(EnchantingJeiRecipe.goldenApple()));
+        if (ModList.get().isLoaded("jeresources")) MiteJerCompat.register(registration);
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
         recipeLevel = level;
@@ -149,6 +151,7 @@ public final class MiteJeiPlugin implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(IJeiRuntime runtime) {
+        if (ModList.get().isLoaded("jeresources")) MiteJerCompat.hideReplaced(runtime);
         var ingredientManager = runtime.getIngredientManager();
         var removedEquipment = ingredientManager.getAllItemStacks().stream()
                 .filter(stack -> RemovedDiamondEquipment.isRemoved(stack) || stack.is(Items.CRAFTER)).toList();

@@ -30,14 +30,30 @@ public final class GravelDropSettings {
             ordinary = Collections.unmodifiableMap(new LinkedHashMap<>(ordinary));
             nether = Collections.unmodifiableMap(new LinkedHashMap<>(nether));
         }
+
+        /** Chance for a player to find this product with the given tool, in percent. */
+        public double harvestPercent(boolean isNether, String id, int normal, int affix, boolean silkTouch) {
+            var weights = isNether ? nether : ordinary;
+            String gravel = itemId(Drop.GRAVEL, isNether);
+            if (silkTouch) return id.equals(gravel) ? 100D : 0D;
+            double products = 0D;
+            for (var entry : weights.entrySet()) {
+                if (!entry.getKey().equals(gravel)) products += entry.getValue();
+            }
+            if (products == 0D) return id.equals(gravel) ? 100D : 0D;
+            double chance = FlintGravelRules.productChancePercent(products, weights.get(gravel), normal, affix);
+            return id.equals(gravel) ? 100D - chance : (weights.getOrDefault(id, 0D) / products) * chance;
+        }
     }
 
     public record Snapshot(boolean wholeFlint, Rates rates) {}
 
-    private record Pools(Rates rates, Map<Drop, Double> ordinary, Map<Drop, Double> nether) {
+    private record Pools(Rates rates, Rates wholeFlintRates, Map<Drop, Double> ordinary, Map<Drop, Double> nether) {
         private Pools(Rates rates) {
-            this(rates, customPool(rates.ordinary(), false), customPool(rates.nether(), true));
+            this(rates, combineFlint(rates), customPool(rates.ordinary(), false), customPool(rates.nether(), true));
         }
+
+        private Rates rates(boolean wholeFlint) { return wholeFlint ? wholeFlintRates : rates; }
     }
 
     private GravelDropSettings() {}
@@ -51,13 +67,12 @@ public final class GravelDropSettings {
     }
 
     public static Rates localRates() {
-        return localSnapshot().rates();
+        return local.rates(wholeFlint());
     }
 
     public static Snapshot localSnapshot() {
         boolean wholeFlint = wholeFlint();
-        Rates rates = local.rates();
-        return new Snapshot(wholeFlint, wholeFlint ? combineFlint(rates) : rates);
+        return new Snapshot(wholeFlint, local.rates(wholeFlint));
     }
 
     public static Drop roll(boolean nether, int normal, int affix, IntUnaryOperator nextInt, DoubleSupplier nextDouble) {
