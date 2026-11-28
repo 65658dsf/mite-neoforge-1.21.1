@@ -56,12 +56,20 @@ public final class EmeraldGenerationGameTests {
 
     @GameTest(template = "empty", timeoutTicks = 400)
     public static void plainsDesertOceanAndFormerMountainBiomeGenerateTheSameRealUnlitEmeraldCandidates(GameTestHelper helper) {
-        var regular = MiteConfig.OVERWORLD_ORES.get(R196OreRules.Kind.EMERALD);
-        var deep = MiteConfig.OVERWORLD_DEEPSLATE_ORES.get(R196OreRules.Kind.EMERALD);
-        double regularBefore=regular.get(), deepBefore=deep.get();
+        var kind = R196OreRules.Kind.EMERALD;
+        var regular = MiteConfig.OVERWORLD_ORES.get(kind);
+        var deep = MiteConfig.OVERWORLD_DEEPSLATE_ORES.get(kind);
+        var regularHeight = MiteConfig.OVERWORLD_ORE_HEIGHTS.get(kind);
+        var deepHeight = MiteConfig.OVERWORLD_DEEPSLATE_ORE_HEIGHTS.get(kind);
+        double regularBefore = regular.get(), deepBefore = deep.get();
+        String regularHeightBefore = regularHeight.get(), deepHeightBefore = deepHeight.get();
         try {
-            // This source-budget comparison is independent of the latest requested factory multiplier of1.5.
-            regular.set(1D); deep.set(1D); MiteConfig.refreshEnchantmentRules();
+            // Use the original candidate budget and height distribution to compare biomes.
+            regular.set(1D);
+            deep.set(1D);
+            regularHeight.set("");
+            deepHeight.set("");
+            MiteConfig.refreshEnchantmentRules();
             Set<BlockPos> reference = null;
             for (var biome : List.of(Biomes.PLAINS, Biomes.DESERT, Biomes.OCEAN, Biomes.WINDSWEPT_HILLS)) {
                 var fixture = new OreGenerationGameTests.GenerationFixture(helper.getLevel(), ORIGIN, false, biome);
@@ -80,7 +88,13 @@ public final class EmeraldGenerationGameTests {
                 else helper.assertValueEqual(found, reference, "Changing only the biome does not change candidate placement or inflate the old mountain ore rate");
                 helper.assertFalse(fixture.center.isLightCorrect(), "Actual feature placement takes place on an unlit proto chunk");
             }
-        } finally { regular.set(regularBefore); deep.set(deepBefore); MiteConfig.refreshEnchantmentRules(); }
+        } finally {
+            regular.set(regularBefore);
+            deep.set(deepBefore);
+            regularHeight.set(regularHeightBefore);
+            deepHeight.set(deepHeightBefore);
+            MiteConfig.refreshEnchantmentRules();
+        }
         helper.succeed();
     }
 

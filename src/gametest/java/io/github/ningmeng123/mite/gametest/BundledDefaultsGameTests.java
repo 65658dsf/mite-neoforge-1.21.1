@@ -50,7 +50,7 @@ public final class BundledDefaultsGameTests {
     @GameTest(template="empty")
     public static void latestSurfaceOreRatesReachFactoryResetAndSnapshotWithoutChangingUnderworld(GameTestHelper helper) {
         var kinds = new R196OreRules.Kind[]{R196OreRules.Kind.COAL, R196OreRules.Kind.COPPER, R196OreRules.Kind.SILVER};
-        double[] surface = {2.8D, 3.69D, 4.77D}, underworld = {1D, 3D, 3D};
+        double[] surface = {2.8D, 3.69D, 14.76D}, underworld = {1D, 3D, 3D};
         for (int index = 0; index < kinds.length; index++) for (boolean deep : new boolean[]{false, true}) {
             var kind = kinds[index];
             String key = deep ? R196OreRules.deepslateMultiplierKey(kind) : kind.name();
