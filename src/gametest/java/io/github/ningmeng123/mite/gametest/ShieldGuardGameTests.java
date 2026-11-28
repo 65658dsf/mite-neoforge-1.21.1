@@ -185,8 +185,8 @@ public final class ShieldGuardGameTests {
     public static void transferringAHigherTierShieldToTheOtherHandKeepsItsExistingPressure(GameTestHelper helper) {
         for (boolean player : new boolean[]{false, true})
             try (Session session = new Session(helper, player, InteractionHand.OFF_HAND, "mithril")) {
-                session.hit(1F); session.hit(1F); session.hit(1F); session.hit(1F);
-                state(helper, session.shield, 4D, 4, "A higher-tier shield retains history beyond the former third-block cap");
+                for (int count = 0; count < 11; count++) session.hit(1F);
+                state(helper, session.shield, 11D, 11, "A mithril shield retains history beyond the iron shield's ten-block cap");
                 session.defender.stopUsingItem();
                 session.defender.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
                 session.defender.setItemInHand(InteractionHand.MAIN_HAND, session.shield);
@@ -196,11 +196,11 @@ public final class ShieldGuardGameTests {
                 }
                 session.forward();
                 helper.assertTrue(session.defender.isBlocking(), "The transferred physical shield completes its native raising delay");
-                session.hit(1F); session.hit(1F);
-                state(helper, session.shield, 6D, 6, "Changing hands cannot erase the same shield's accepted blocks");
+                for (int count = 0; count < 3; count++) session.hit(1F);
+                state(helper, session.shield, 14D, 14, "Changing hands cannot erase the same shield's accepted blocks");
                 session.hit(1F);
                 helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
-                        "The transferred mithril shield still exhausts on its seventh cumulative block");
+                        "The transferred mithril shield still exhausts on its fifteenth cumulative block");
             }
         helper.succeed();
     }
@@ -215,30 +215,30 @@ public final class ShieldGuardGameTests {
         helper.assertValueEqual(ShieldGuard.State.CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow(), maximum,
                 "The codec round-trips both maximum-tier bounds without truncation");
         helper.assertTrue(ShieldGuard.State.CODEC.parse(JsonOps.INSTANCE,
-                JsonParser.parseString("{\"blocked_damage\":92,\"blocks\":11,\"version\":1}")).error().isPresent(),
+                JsonParser.parseString("{\"blocked_damage\":525,\"blocks\":25,\"version\":1}")).error().isPresent(),
                 "Damage above the highest supported material limit is rejected");
         helper.assertTrue(ShieldGuard.State.CODEC.parse(JsonOps.INSTANCE,
-                JsonParser.parseString("{\"blocked_damage\":1,\"blocks\":12,\"version\":1}")).error().isPresent(),
+                JsonParser.parseString("{\"blocked_damage\":1,\"blocks\":26,\"version\":1}")).error().isPresent(),
                 "Block counts above the highest supported material limit are rejected");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void damageLimitWaitsAtTwentyFourAndTripsAtExactlyTwentyFiveOnOnlyTheSecondBlock(GameTestHelper helper) {
+    public static void damageLimitWaitsAtFortyNineAndTripsAtExactlyFiftyOnOnlyTheSecondBlock(GameTestHelper helper) {
         try (Session session = new Session(helper, true)) {
             float health = session.defender.getHealth();
-            session.hit(24F);
-            state(helper, session.shield, 24D, 1, "Twenty-four blocked damage is still below the damage boundary");
+            session.hit(49F);
+            state(helper, session.shield, 49D, 1, "Forty-nine blocked damage is still below the damage boundary");
             helper.assertTrue(session.defender.isUsingItem() && !ShieldGuard.disabled(session.defender),
-                    "A twenty-four-damage first block does not disable the shield early");
-            helper.assertValueEqual(session.shield.getDamageValue(), 25, "The large accepted hit keeps native1+floor24 wear");
-            helper.assertValueEqual(session.experience(), 24_000L, "Every blocked point grants one shield experience after the earning reduction");
+                    "A forty-nine-damage first block does not disable the shield early");
+            helper.assertValueEqual(session.shield.getDamageValue(), 50, "The large accepted hit spends fifty durability points");
+            helper.assertValueEqual(session.experience(), 49_000L, "Every blocked point grants one shield experience after the earning reduction");
             session.hit(1F);
             helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
-                    "Exactly twenty-five cumulative damage forces the shield down even with only two blocks");
+                    "Exactly fifty cumulative damage forces the shield down even with only two blocks");
             helper.assertValueEqual(session.defender.getHealth(), health, "The boundary-crossing hit is still fully blocked");
-            helper.assertValueEqual(session.experience(), 25_000L, "The final one-point block retains its halved shield experience");
-            helper.assertValueEqual(session.shield.getDamageValue(), 25, "A sub-three terminal hit retains native zero wear");
+            helper.assertValueEqual(session.experience(), 50_000L, "The final one-point block retains its halved shield experience");
+            helper.assertValueEqual(session.shield.getDamageValue(), 50, "A sub-three terminal hit retains native zero wear");
             state(helper, session.shield, 0D, 0, "Guard pressure resets when the forced cooldown begins");
         }
         helper.succeed();
@@ -247,7 +247,7 @@ public final class ShieldGuardGameTests {
     @GameTest(template = "empty")
     public static void terminalDamagingBlockKeepsNativeDurabilityWithoutTrainingBeforeTheShieldLowers(GameTestHelper helper) {
         try (Session session = new Session(helper, true)) {
-            session.shield.set(ShieldGuard.GUARD.get(), new ShieldGuard.State(24D, 1));
+            session.shield.set(ShieldGuard.GUARD.get(), new ShieldGuard.State(49D, 1));
             float health = session.defender.getHealth();
             session.hit(4F);
             helper.assertValueEqual(session.shield.getDamageValue(), 5, "The terminal hit spends its actual five durability points");
@@ -259,26 +259,25 @@ public final class ShieldGuardGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void thirdSmallBlockDisablesPlayersAndMobsAndLoweringDoesNotClearTheFirstTwoBlocks(GameTestHelper helper) {
+    public static void fifthSmallBlockDisablesPlayersAndMobsAndLoweringDoesNotClearTheFirstFourBlocks(GameTestHelper helper) {
         for (boolean player : new boolean[]{false, true}) for (InteractionHand hand : InteractionHand.values())
             try (Session session = new Session(helper, player, hand)) {
             float health = session.defender.getHealth();
-            session.hit(1F);
-            session.hit(1F);
-            state(helper, session.shield, 2D, 2, "Two small successful blocks persist below the third-block boundary");
-            helper.assertTrue(session.defender.isUsingItem(), "Two blocks keep the shield raised");
-            helper.assertValueEqual(session.defender.getHealth(), health, "The first two small hits are fully blocked");
+            for (int count = 0; count < 4; count++) session.hit(1F);
+            state(helper, session.shield, 4D, 4, "Four small successful blocks persist below the fifth-block boundary");
+            helper.assertTrue(session.defender.isUsingItem(), "Four blocks keep the shield raised");
+            helper.assertValueEqual(session.defender.getHealth(), health, "The first four small hits are fully blocked");
             session.defender.stopUsingItem();
             session.raise();
-            state(helper, session.shield, 2D, 2, "Lowering and raising the same shield cannot clear cumulative guard pressure");
+            state(helper, session.shield, 4D, 4, "Lowering and raising the same shield cannot clear cumulative guard pressure");
             // Raising ticks the live defender; a sunlit zombie can take unrelated fire damage.
             health = session.defender.getHealth();
             session.hit(1F);
             helper.assertTrue(ShieldGuard.disabled(session.defender) && !session.defender.isUsingItem(),
-                    "The third one-point block disables both real survival players and shield-bearing monsters");
-            helper.assertValueEqual(session.shield.getDamageValue(), 0, "All three small hits retain the native zero-durability rule");
-            helper.assertValueEqual(session.defender.getHealth(), health, "The third small hit is still blocked");
-            if (player) helper.assertValueEqual(session.experience(), 3_000L, "Small blocks still grant their complete halved experience");
+                    "The fifth one-point block disables both real survival players and shield-bearing monsters");
+            helper.assertValueEqual(session.shield.getDamageValue(), 0, "All five small hits retain the native zero-durability rule");
+            helper.assertValueEqual(session.defender.getHealth(), health, "The fifth small hit is still blocked");
+            if (player) helper.assertValueEqual(session.experience(), 5_000L, "Small blocks still grant their complete halved experience");
         }
         helper.succeed();
     }
@@ -334,7 +333,7 @@ public final class ShieldGuardGameTests {
     @GameTest(template = "empty", timeoutTicks = 180)
     public static void copperShieldsRecoverExactlyWhenTheirGuardBreakCooldownEnds(GameTestHelper helper) {
         verifyCooldownBoundary(helper, "copper", session -> {
-            session.hit(1F); session.hit(1F); session.hit(1F);
+            for (int count = 0; count < 5; count++) session.hit(1F);
         });
     }
 
@@ -403,8 +402,8 @@ public final class ShieldGuardGameTests {
     @GameTest(template = "empty")
     public static void savedPressureAndAllThreeRepairRoutesKeepOnlyTheFirstShieldsPressure(GameTestHelper helper) {
         try (Session session = new Session(helper, true, InteractionHand.OFF_HAND, "vibranium")) {
-            session.hit(8F); session.hit(8F); session.hit(8F); session.hit(8F);
-            state(helper, session.shield, 32D, 4, "The saved high-tier fixture exceeds both former global limits");
+            for (int count = 0; count < 12; count++) session.hit(8F);
+            state(helper, session.shield, 96D, 12, "The saved high-tier fixture exceeds both former global limits");
             var expected = ShieldGuard.state(session.shield);
             ItemStack saved = ItemStack.parse(helper.getLevel().registryAccess(), session.shield.save(helper.getLevel().registryAccess())).orElseThrow();
             helper.assertValueEqual(ShieldGuard.state(saved), expected, "Both cumulative damage and block count survive real ItemStack save/load");

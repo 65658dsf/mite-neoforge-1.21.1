@@ -218,7 +218,10 @@ public final class EquipmentDurability {
     }
 
     public static int qualityAdjustedMaximum(ItemStack stack, int base) {
-        return isManaged(stack) && base > 0 ? EquipmentDurabilityRules.maxDurability(base, quality(stack)) : base;
+        if (base <= 0 || !isManaged(stack)) return base;
+        Quality quality = quality(stack);
+        return shieldProfile(stack) == null ? EquipmentDurabilityRules.maxDurability(base, quality)
+                : EquipmentDurabilityRules.maxShieldDurability(base, quality);
     }
 
     public static boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miner) {

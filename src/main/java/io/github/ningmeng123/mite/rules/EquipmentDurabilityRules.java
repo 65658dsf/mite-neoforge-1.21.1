@@ -47,7 +47,7 @@ public final class EquipmentDurabilityRules {
         }
     }
 
-    /** Shields use half the original iron baseline, retaining source metal ratios. */
+    /** Shields scale from the iron baseline using the source metal durability ratios. */
     public record ShieldProfile(float materialDurability, Quality maxQuality) {
         public ShieldProfile {
             requirePositiveFinite(materialDurability);
@@ -69,12 +69,22 @@ public final class EquipmentDurabilityRules {
     }
 
     public static int baseShieldDurability(ShieldProfile profile) {
-        return Math.max(Math.round(168F * profile.materialDurability() / 8F), 1);
+        return Math.max(Math.round(336F * profile.materialDurability() / 8F), 1);
     }
 
     public static int maxDurability(int base, Quality quality) {
+        return maxDurability(base, quality, 1F);
+    }
+
+    public static int maxShieldDurability(int base, Quality quality) {
+        float qualityScale = quality.compareTo(Quality.AVERAGE) > 0 ? 0.75F : 1F;
+        return maxDurability(base, quality, qualityScale);
+    }
+
+    private static int maxDurability(int base, Quality quality, float qualityScale) {
         if (base < 1) throw new IllegalArgumentException("Durability must be positive");
-        return Math.max(Math.round((float)base * Objects.requireNonNull(quality).multiplier()), 1);
+        float multiplier = Objects.requireNonNull(quality).multiplier() * qualityScale;
+        return Math.max(Math.round((float)base * multiplier), 1);
     }
 
     /** specialPlant means grass/wheat for scythes, or cloth/plants/vines for knives. */

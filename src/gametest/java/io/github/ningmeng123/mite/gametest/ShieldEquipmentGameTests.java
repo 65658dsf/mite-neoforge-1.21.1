@@ -41,8 +41,9 @@ public final class ShieldEquipmentGameTests {
 
     @GameTest(template = "empty")
     public static void allEightShieldMaterialsRetainNativeBlockingAndHaveCappedQuality(GameTestHelper helper) {
-        int[] bases = {84, 84, 84, 84, 168, 336, 1344, 5376, 10752};
-        int[] maxima = {63, 84, 84, 84, 168, 336, 1344, 5376, 10752};
+        int[] bases = {168, 168, 168, 168, 336, 672, 2688, 10752, 21504};
+        int[] defaults = {126, 168, 168, 168, 336, 672, 2688, 10752, 21504};
+        int[] maxima = {126, 252, 252, 315, 756, 1512, 7056, 28224, 56448};
         helper.assertValueEqual(MiteShields.definitions().size(), 9, "Eight new shields and the original iron shield are registered");
         helper.assertTrue(MiteShields.get("iron") == Items.SHIELD, "Original shield keeps its native registry identity");
         for (int i = 0; i < bases.length; i++) {
@@ -53,12 +54,13 @@ public final class ShieldEquipmentGameTests {
             helper.assertTrue(EquipmentDurability.toolProfile(stack) == null && EquipmentDurability.armorProfile(stack) == null,
                     "Shield does not masquerade as a mining tool or humanoid armor");
             helper.assertValueEqual(stack.getOrDefault(DataComponents.MAX_DAMAGE, 0), bases[i], "Modern iron baseline scales by source material ratio");
-            helper.assertValueEqual(stack.getMaxDamage(), maxima[i], "Rusted quality is capped at Poor; other defaults remain Average");
+            helper.assertValueEqual(stack.getMaxDamage(), defaults[i], "Rusted quality is capped at Poor; other defaults remain Average");
             helper.assertValueEqual(stack.getUseAnimation(), UseAnim.BLOCK, "Native blocking use animation is retained");
             helper.assertTrue(stack.canPerformAction(ItemAbilities.SHIELD_BLOCK), "Native shield blocking ability is retained");
             helper.assertValueEqual(stack.getItem().getEnchantmentValue(), definition.enchantability(), "Shield has source metal enchantability");
             stack.set(EquipmentDurability.QUALITY.get(), Quality.LEGENDARY.ordinal());
             helper.assertValueEqual(EquipmentDurability.quality(stack), definition.maxQuality(), "Command-injected quality respects its material ceiling");
+            helper.assertValueEqual(stack.getMaxDamage(), maxima[i], "Shield durability uses the material's capped quality");
         }
         helper.succeed();
     }

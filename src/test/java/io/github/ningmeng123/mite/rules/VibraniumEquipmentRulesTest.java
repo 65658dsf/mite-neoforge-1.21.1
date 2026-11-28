@@ -19,7 +19,7 @@ class VibraniumEquipmentRulesTest {
         assertEquals(Quality.LEGENDARY, VibraniumEquipmentRules.MAXIMUM_QUALITY);
         assertEquals(614400, baseToolDurability(new ToolProfile(PICKAXE, 512F, Quality.LEGENDARY)));
         assertEquals(2150400, maxDurability(614400, Quality.LEGENDARY));
-        assertEquals(10752, baseShieldDurability(new ShieldProfile(512F, Quality.LEGENDARY)));
+        assertEquals(21504, baseShieldDurability(new ShieldProfile(512F, Quality.LEGENDARY)));
     }
 
     @Test void armorUsesProjectSourceCapacityInsteadOfCopyingModernVanillaDurability() {

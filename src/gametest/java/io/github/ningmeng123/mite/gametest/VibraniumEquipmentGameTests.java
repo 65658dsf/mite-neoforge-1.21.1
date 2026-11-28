@@ -145,7 +145,7 @@ public final class VibraniumEquipmentGameTests {
         ItemStack shield = new ItemStack(MiteShields.get("vibranium"));
         helper.assertTrue(shield.getItem() instanceof ShieldItem && shield.canPerformAction(ItemAbilities.SHIELD_BLOCK),
                 "Modern shield extension uses the native block action");
-        helper.assertValueEqual(shield.getMaxDamage(), 10752, "Modern shield extension keeps the established metal capacity ratio");
+        helper.assertValueEqual(shield.getMaxDamage(), 21504, "Modern shield extension keeps the established metal capacity ratio");
         helper.assertTrue(shield.has(DataComponents.FIRE_RESISTANT), "Shield also retains material lava immunity");
         helper.succeed();
     }
@@ -163,7 +163,8 @@ public final class VibraniumEquipmentGameTests {
         for (ItemStack stack : equipment) {
             int averageCapacity = stack.getMaxDamage();
             EquipmentDurability.setQuality(stack, Quality.LEGENDARY);
-            helper.assertValueEqual(stack.getMaxDamage(), Math.round(averageCapacity * 3.5F), "Legendary quality applies exactly once");
+            float legendaryMultiplier = stack.getItem() instanceof ShieldItem ? 2.625F : 3.5F;
+            helper.assertValueEqual(stack.getMaxDamage(), Math.round(averageCapacity * legendaryMultiplier), "Legendary quality applies exactly once");
             stack.setDamageValue(stack.getMaxDamage() / 3);
             ItemStack saved = ItemStack.parse(helper.getLevel().registryAccess(), stack.save(helper.getLevel().registryAccess())).orElseThrow();
             RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());

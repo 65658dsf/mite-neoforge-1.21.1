@@ -217,16 +217,16 @@ public final class MaterialEquipmentUpgradeGameTests {
         source.set(DataComponents.BANNER_PATTERNS, new BannerPatternLayers.Builder().add(h.getLevel().registryAccess()
                 .registryOrThrow(Registries.BANNER_PATTERN).getHolderOrThrow(BannerPatterns.CROSS), DyeColor.BLUE).build());
         source.set(ShieldGuard.GUARD.get(), new ShieldGuard.State(24D, 2));
-        source.setDamageValue(source.getMaxDamage() / 2);
+        source.setDamageValue(94);
         ItemStack before = source.copy();
         ItemStack output = recipe(h, upgrade).assemble(input(source, upgrade.addition()), h.getLevel().registryAccess());
         assertPersonalComponents(h, source, output);
         h.assertValueEqual(output.get(DataComponents.BASE_COLOR), DyeColor.RED, "The metal upgrade keeps its banner's base color");
         h.assertValueEqual(output.get(DataComponents.BANNER_PATTERNS), source.get(DataComponents.BANNER_PATTERNS), "The complete banner layer order survives");
         h.assertValueEqual(ShieldGuard.state(output), ShieldGuard.state(source), "Changing metal cannot reset the used shield's guard history");
-        h.assertValueEqual(ShieldGuard.profile(output).blockLimit(), 5, "The upgraded iron shield now accepts five blocks");
-        h.assertTrue(ShieldGuard.profile(output).damageLimit() > ShieldGuard.profile(source).damageLimit(), "The new damage threshold increases proportionally");
-        h.assertValueEqual(output.getDamageValue(), output.getMaxDamage() / 2, "Shield wear keeps the same proportion");
+        h.assertValueEqual(ShieldGuard.profile(output).blockLimit(), 10, "The upgraded iron shield now accepts ten blocks");
+        h.assertValueEqual(ShieldGuard.profile(output).damageLimit(), 90D, "The upgraded iron shield increases the damage limit to ninety");
+        h.assertValueEqual(output.getDamageValue(), 188, "The iron shield keeps the copper shield's 94 out of 189 wear proportion");
         h.assertTrue(ItemStack.matches(source, before), "Shield decoration and guard remain untouched in the input");
         h.succeed();
     }

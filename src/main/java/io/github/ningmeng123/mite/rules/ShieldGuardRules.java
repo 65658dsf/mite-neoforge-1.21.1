@@ -2,10 +2,12 @@ package io.github.ningmeng123.mite.rules;
 
 /** Actual blocked damage and accepted blocks independently exhaust a shield guard. @author NingMeng123 */
 public final class ShieldGuardRules {
-    public static final double BASE_DAMAGE_LIMIT = 25D;
-    public static final int BASE_BLOCK_LIMIT = 3;
-    public static final int MAX_BLOCK_LIMIT = 11;
-    public static final double MAX_DAMAGE_LIMIT = BASE_DAMAGE_LIMIT * MAX_BLOCK_LIMIT / BASE_BLOCK_LIMIT;
+    public static final double BASE_DAMAGE_LIMIT = 50D;
+    public static final int BASE_BLOCK_LIMIT = 5;
+    private static final int BLOCKS_PER_TIER = 5;
+    private static final int MAX_TIER = 4;
+    public static final int MAX_BLOCK_LIMIT = BASE_BLOCK_LIMIT + BLOCKS_PER_TIER * MAX_TIER;
+    public static final double MAX_DAMAGE_LIMIT = damageLimit(MAX_TIER);
 
     public record Profile(double damageLimit, int blockLimit, int cooldownTicks) {
         public Profile {
@@ -25,14 +27,18 @@ public final class ShieldGuardRules {
             case "ancient_metal" -> tier(1, 90);
             case "mithril" -> tier(2, 80);
             case "adamantium" -> tier(3, 60);
-            case "vibranium" -> tier(4, 30);
+            case "vibranium" -> tier(MAX_TIER, 30);
             default -> tier(0, 110);
         };
     }
 
     private static Profile tier(int tier, int cooldownTicks) {
-        int blocks = BASE_BLOCK_LIMIT + 2 * tier;
-        return new Profile(BASE_DAMAGE_LIMIT * blocks / BASE_BLOCK_LIMIT, blocks, cooldownTicks);
+        return new Profile(damageLimit(tier), BASE_BLOCK_LIMIT + BLOCKS_PER_TIER * tier, cooldownTicks);
+    }
+
+    private static double damageLimit(int tier) {
+        // Calculate 1.8 as a ratio so each tier rounds to its decimal threshold only once.
+        return BASE_DAMAGE_LIMIT * Math.pow(18D, tier) / Math.pow(10D, tier);
     }
 
     public static Result advance(Profile profile, double blockedDamage, int blocks, float acceptedDamage) {
