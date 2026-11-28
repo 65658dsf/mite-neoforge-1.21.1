@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": { "layer0": "mite:item/mossy_dungeon_eye" }
+}

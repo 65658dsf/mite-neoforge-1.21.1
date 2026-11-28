@@ -248,6 +248,8 @@
   "item.mite.flint_chip": "Flint Chip",
   "item.mite.sinew": "Sinew",
   "item.mite.flint_hatchet": "Flint Hatchet",
+  "item.mite.mossy_dungeon_eye": "Mossy Dungeon Eye",
+  "item.mite.mossy_dungeon_eye.not_found": "No spawner dungeon found nearby",
   "message.mite.log_requires_axe": "Requires a flint hatchet or a better axe",
   "item.mite.obsidian_hatchet": "Obsidian Hatchet",
   "item.mite.copper_hatchet": "Copper Hatchet",

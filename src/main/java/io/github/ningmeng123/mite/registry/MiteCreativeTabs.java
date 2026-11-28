@@ -11,6 +11,7 @@ import io.github.ningmeng123.mite.block.StrongboxBlock;
 import io.github.ningmeng123.mite.rules.FunctionalBlockRules;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
 import io.github.ningmeng123.mite.item.GelatinousSphereItem;
+import io.github.ningmeng123.mite.item.MossyDungeonEyeItem;
 import io.github.ningmeng123.mite.item.R196DisenchantingBottleItem;
 import io.github.ningmeng123.mite.item.R196RecordItem;
 import io.github.ningmeng123.mite.item.R196StoneBucketItem;
@@ -102,7 +103,8 @@ public final class MiteCreativeTabs {
         if (item instanceof ArmorItem || item instanceof AnimalArmorItem || item instanceof ArrowItem
                 || item instanceof BowItem || item instanceof ShieldItem || item instanceof GelatinousSphereItem) return Group.COMBAT;
         if (item instanceof FishingRodItem || item instanceof FoodOnAStickItem<?>
-                || item instanceof R196RecordItem || item instanceof R196DisenchantingBottleItem) return Group.TOOLS;
+                || item instanceof R196RecordItem || item instanceof R196DisenchantingBottleItem
+                || item instanceof MossyDungeonEyeItem) return Group.TOOLS;
         if (item instanceof BlockItem blockItem) {
             var block = blockItem.getBlock();
             if (block instanceof MaterialWorkbenchBlock || block instanceof R196FurnaceBlock

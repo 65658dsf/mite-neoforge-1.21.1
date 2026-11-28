@@ -5,6 +5,7 @@ import io.github.ningmeng123.mite.crafting.BulkMaterialRecipe;
 import io.github.ningmeng123.mite.crafting.FoodManufacturingRecipe;
 import io.github.ningmeng123.mite.crafting.FoodShapedRecipe;
 import io.github.ningmeng123.mite.crafting.FoodShapelessRecipe;
+import io.github.ningmeng123.mite.crafting.MossyDungeonEyeRecipe;
 import io.github.ningmeng123.mite.crafting.WorkbenchDismantleRecipe;
 import io.github.ningmeng123.mite.crafting.WorkbenchRules;
 import io.github.ningmeng123.mite.crafting.WaterBowlSuspiciousStewRecipe;
@@ -98,6 +99,7 @@ public final class WorkbenchJeiRecipes {
         // Unknown subclasses can change matching/assembly and have their own JEI extensions.
         return recipe.getClass() == ShapedRecipe.class || recipe.getClass() == ShapelessRecipe.class
                 || recipe instanceof FoodShapedRecipe || recipe instanceof FoodShapelessRecipe
+                || recipe instanceof MossyDungeonEyeRecipe
                 || recipe instanceof BulkMaterialRecipe || recipe instanceof WorkbenchDismantleRecipe
                 || recipe instanceof io.github.ningmeng123.mite.crafting.RangedRodConversionRecipe
                 || recipe instanceof io.github.ningmeng123.mite.crafting.UtilityShapelessRecipe

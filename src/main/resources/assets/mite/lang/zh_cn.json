@@ -248,6 +248,8 @@
   "item.mite.flint_chip": "燧石碎片",
   "item.mite.sinew": "筋",
   "item.mite.flint_hatchet": "燧石手斧",
+  "item.mite.mossy_dungeon_eye": "苔石地牢之眼",
+  "item.mite.mossy_dungeon_eye.not_found": "附近没有找到刷怪笼地牢",
   "message.mite.log_requires_axe": "需要燧石短斧或更好的斧头",
   "item.mite.obsidian_hatchet": "黑曜石手斧",
   "item.mite.copper_hatchet": "铜手斧",

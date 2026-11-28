@@ -1,0 +1,22 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mithril_nugget": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "mite:mithril_nugget"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_mithril_nugget"]
+  ],
+  "rewards": {
+    "recipes": ["mite:mossy_dungeon_eye"]
+  },
+  "sends_telemetry_event": false
+}
